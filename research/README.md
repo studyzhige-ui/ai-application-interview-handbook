@@ -4,14 +4,17 @@
 
 ## 当前进度（2026-09-09）
 
-- 已归档 `Sxxx` 来源记录：**76 个（S001–S076）**。
-- 已形成规范化问题：**169 道 canonical questions**（按当前去重口径）。
-- 当前仍处于“扩展召回”阶段，尚未认为样本饱和；后续会继续按 **平台 × 公司 × 岗位别名 × 技术关键词** 滚动搜索。
+- 已归档 `Sxxx` 来源记录：**86 个（S001–S086）**。
+- 已形成规范化问题：**177 道 canonical questions**（按当前去重口径）。
+- 当前仍处于“扩展召回 + 分层校准”阶段，尚未认为样本饱和；后续会继续按 **平台 × 公司 × 岗位别名 × 技术关键词** 滚动搜索。
 - 从 Batch 06 起正式执行更严格的 **“宁缺毋滥”准入规则**：新增正式样本优先要求第一人称、元数据明确、技术问题具体；水短视频、SEO 答案博客、模拟题库和无法追溯原帖的拼接内容不进入正式频率统计。
-- 76 条来源记录 **不等于 76 场等权真实面试**：仍区分第一人称高置信、低信息密度真实复盘、整理/合集、面试题信号和待核实平台线索。
+- 从 Batch 07 起增加 **基础工程校准 Lane**：在继续寻找 Agent Harness / Runtime 深挖的同时，主动检查 Python、FastAPI、MySQL、Redis、MQ、并发等基础是否因搜索策略和 canonical 去重而被低估。
+- 86 条来源记录 **不等于 86 场等权真实面试**：仍区分第一人称高置信、低信息密度真实复盘、整理/合集、面试题信号和待核实平台线索。
 - 持续监控发现的新来源先写入 `research/monitoring/inbox.md`，再按质量门槛决定是否进入正式 Batch。
 
 详细准入规则见：[`quality/source-quality-policy.md`](./quality/source-quality-policy.md)。
+
+基础能力信号校准见：[`analysis/foundation-signal-after-batch-07.md`](./analysis/foundation-signal-after-batch-07.md)。
 
 > 上述数量是当前研究数据库的工作计数，不代表“2026 全互联网全部面经”。我们的目标是尽可能扩大**高质量、可核验**公开样本，并在新增 canonical question 增速显著下降时判断接近信息饱和。
 
@@ -21,6 +24,7 @@
 - 保留“原始面经来源”和“规范化问题库”两层，避免去重后丢掉真实面试官的问法。
 - 用真实问题反向检查 MySQL、Redis、Vector DB、RAG、Agent Harness 等系统课程是否有缺口。
 - 扩展牛客之外的平台，降低单个平台在岗位、公司和题型上的采样偏差；但**跨平台不等于降低质量门槛**。
+- 后续统计按岗位与轮次分层，避免把 Agent Harness 二面与 AI 应用一面混成一个失真的总频率。
 
 ## 数据层次
 
@@ -106,6 +110,13 @@
 - 公司名 + 上述岗位名
 - LangGraph / MCP / Skills / RAG / Redis / MySQL / Vector DB / Harness / Context Engineering / Coding Agent 等高价值术语
 
+### 两条搜索 Lane
+
+- **Lane A — Agent / Harness Frontier**：Harness、Runtime、Context、Memory、Tool、MCP、Security、Evaluation、Coding Agent、Claude Code、Codex。
+- **Lane B — AI Application Foundation**：Python、FastAPI、MySQL、Redis、MQ、网络、异步、并发、缓存、数据库与系统设计。
+
+两条 Lane 都只收高质量、可核验真实来源。这样既不会因为“只搜基础”错过新 Harness 能力，也不会因为“只搜 Harness”错误低估后端基础。
+
 ### 平台范围
 
 不局限于牛客，持续覆盖：
@@ -127,3 +138,4 @@
 - **Batch 04**：2026-09-09，重点补充 8 月下旬～9 月上旬的新鲜样本，新增 Long-running Agent Latency、Cancellation、Runtime Message Model、Codex/Claude Code 源码级追问、TB 级 RAG、可靠异步任务与 HotKey 等主题，`S035–S047`。
 - **Batch 05**：2026-09-09，正式扩展到 CSDN、抖音、Bilibili 和小红书线索；新增 Context Compaction Lifecycle、Memory Retrieval Gating、Risk-based Approval、Goal Versioning、Tool Compensation、Cross-session Reconciliation、MCP Transport/Version、Agent Persistence Schema、RAG Retrieval Audit 等主题，`S048–S063`。小红书待核实标题单独存于 `research/leads/xiaohongshu-batch-05.md`。
 - **Batch 06**：2026-09-09，切换到严格高置信准入；正式收录百度 Agent Harness/Agent、MINISO、小鹏、美团、懂车帝、字节、快手、腾讯 CSIG、法本信息、上海 Agent 初创等第一人称高密度样本，`S064–S076`。新增 Tool Executor、Memory/Skill Write Safety、Checkpoint Crash Window、Compaction 保真评测、Coding Repo Navigation、Agent Topology Governance、Observability Evidence Quality、Tool Result Compression、Coding Verification 等主题。
+- **Batch 07**：2026-09-09，在保持 A 级来源门槛的前提下做基础能力校准，`S077–S086`。重点证明 Python/GIL/FastAPI、MySQL 索引/MVCC/慢查询、Redis ZSet/Cluster/HotKey/一致性仍大量出现在 AI Agent / AI 应用真实面试中，并新建 Python canonical questions 与多层缓存一致性等问题。
