@@ -4,20 +4,23 @@
 
 ## 当前进度（2026-09-09）
 
-- 已归档 `Sxxx` 来源记录：**63 个（S001–S063）**。
-- 已形成规范化问题：**155 道 canonical questions**（按当前去重口径）。
+- 已归档 `Sxxx` 来源记录：**76 个（S001–S076）**。
+- 已形成规范化问题：**169 道 canonical questions**（按当前去重口径）。
 - 当前仍处于“扩展召回”阶段，尚未认为样本饱和；后续会继续按 **平台 × 公司 × 岗位别名 × 技术关键词** 滚动搜索。
-- 63 条来源记录 **不等于 63 场等权真实面试**：从 Batch 05 开始显式区分第一人称真实面经、低信息密度真实复盘、二次整理、面试题信号和待核实平台线索。
-- 从 Batch 04 开始额外重点追踪 8 月下旬～9 月的新发布内容，并把持续监控发现的新来源先写入 `research/monitoring/inbox.md`，再定期归入正式 Batch。
+- 从 Batch 06 起正式执行更严格的 **“宁缺毋滥”准入规则**：新增正式样本优先要求第一人称、元数据明确、技术问题具体；水短视频、SEO 答案博客、模拟题库和无法追溯原帖的拼接内容不进入正式频率统计。
+- 76 条来源记录 **不等于 76 场等权真实面试**：仍区分第一人称高置信、低信息密度真实复盘、整理/合集、面试题信号和待核实平台线索。
+- 持续监控发现的新来源先写入 `research/monitoring/inbox.md`，再按质量门槛决定是否进入正式 Batch。
 
-> 上述数量是当前研究数据库的工作计数，不代表“2026 全互联网全部面经”。我们的目标是尽可能扩大公开可访问样本，并在新增 canonical question 增速显著下降时判断接近信息饱和。
+详细准入规则见：[`quality/source-quality-policy.md`](./quality/source-quality-policy.md)。
+
+> 上述数量是当前研究数据库的工作计数，不代表“2026 全互联网全部面经”。我们的目标是尽可能扩大**高质量、可核验**公开样本，并在新增 canonical question 增速显著下降时判断接近信息饱和。
 
 ## 研究目标
 
 - 尽可能覆盖 2026 年公开可访问的 AI 应用开发、AI Agent 开发、RAG / LLM 应用、Applied AI 等相关面经。
 - 保留“原始面经来源”和“规范化问题库”两层，避免去重后丢掉真实面试官的问法。
 - 用真实问题反向检查 MySQL、Redis、Vector DB、RAG、Agent Harness 等系统课程是否有缺口。
-- 扩展牛客之外的平台，降低单个平台在岗位、公司和题型上的采样偏差。
+- 扩展牛客之外的平台，降低单个平台在岗位、公司和题型上的采样偏差；但**跨平台不等于降低质量门槛**。
 
 ## 数据层次
 
@@ -73,15 +76,16 @@
 
 ### D. 面试题信号 / 二次创作
 
-例如短视频中的“面试官问你这个场景怎么办”、高频题讲解、模拟面试。它们可以暴露很有价值的 Production / System Design 边界，但不能证明某家公司真实问过，因此：
+例如短视频中的“面试官问你这个场景怎么办”、高频题讲解、模拟面试。它们可以暴露有价值的 Production / System Design 边界，但不能证明某家公司真实问过，因此：
 
 - 可以进入课程 Gap Analysis；
-- 可以成为 canonical system-design question；
-- **不增加真实面经频率**。
+- 极少数独特问题可作为系统设计训练题；
+- **不增加真实面经频率**；
+- 从 Batch 06 开始，默认不会仅因为二次创作就新增大量 canonical question。
 
 ### E. 平台线索 / 待核实
 
-典型是小红书：搜索引擎或第三方索引能够发现原标题，但公开直链依赖登录态 / 签名、正文不能稳定验证。只进入 `research/leads/`，找到稳定原帖后再升级为正式来源。
+典型是小红书：搜索引擎或第三方索引能够发现原标题，但公开直链依赖登录态 / 签名、正文不能稳定验证。只进入 `research/leads/`，找到稳定原帖、原作者同步帖或其他证据后再升级为正式来源。
 
 ## 去重规则
 
@@ -90,6 +94,7 @@
 3. **同主题不同问题**：不合并。例如“Redis 为什么快？”与“Redis 为什么常用单线程执行命令？”属于相关但不同问题。
 4. **来源权重**：第一人称原始面经优先；合集/整理页用于扩展召回和发现原帖，但最终频率统计时不与其原帖重复计数。
 5. **跨平台同步**：同一作者把一场面试同步到牛客、小红书、CSDN、抖音，只算一个独立面试样本，其他 URL 作为关联来源。
+6. **来源质量优先于覆盖率**：不能稳定核验的高频标题，不因为“看起来很热门”就进入统计。
 
 ## 搜索策略
 
@@ -103,15 +108,14 @@
 
 ### 平台范围
 
-不再局限于牛客，持续覆盖：
+不局限于牛客，持续覆盖：
 
 - 牛客
 - 小红书（稳定原帖 + 标题线索池）
-- 抖音
-- Bilibili
+- 抖音 / Bilibili（**只有第一人称、信息密度足够的内容才可能升级为正式来源；普通短视频直接过滤**）
 - 知乎
 - 脉脉的公开可索引内容
-- CSDN / 博客园 / 掘金等技术社区
+- CSDN / 博客园 / 掘金等技术社区（优先第一人称长篇复盘，过滤 SEO/标准答案文）
 - GitHub 上的公开面经索引与题库（仅作为发现入口 / 参考资料，不能自动视为真实场次）
 - 其他搜索引擎能够稳定索引和核实的公开来源
 
@@ -122,3 +126,4 @@
 - **Batch 03**：2026-09-09，补充京东、滴滴、去哪儿、商汤、拓竹、华为等样本，并显著强化 MCP Lifecycle、Deterministic Replay、RAG Versioning、Hybrid Retrieval、MySQL/Redis/Backend 工程交叉问题，`S021–S034`。
 - **Batch 04**：2026-09-09，重点补充 8 月下旬～9 月上旬的新鲜样本，新增 Long-running Agent Latency、Cancellation、Runtime Message Model、Codex/Claude Code 源码级追问、TB 级 RAG、可靠异步任务与 HotKey 等主题，`S035–S047`。
 - **Batch 05**：2026-09-09，正式扩展到 CSDN、抖音、Bilibili 和小红书线索；新增 Context Compaction Lifecycle、Memory Retrieval Gating、Risk-based Approval、Goal Versioning、Tool Compensation、Cross-session Reconciliation、MCP Transport/Version、Agent Persistence Schema、RAG Retrieval Audit 等主题，`S048–S063`。小红书待核实标题单独存于 `research/leads/xiaohongshu-batch-05.md`。
+- **Batch 06**：2026-09-09，切换到严格高置信准入；正式收录百度 Agent Harness/Agent、MINISO、小鹏、美团、懂车帝、字节、快手、腾讯 CSIG、法本信息、上海 Agent 初创等第一人称高密度样本，`S064–S076`。新增 Tool Executor、Memory/Skill Write Safety、Checkpoint Crash Window、Compaction 保真评测、Coding Repo Navigation、Agent Topology Governance、Observability Evidence Quality、Tool Result Compression、Coding Verification 等主题。
