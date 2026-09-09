@@ -11,13 +11,19 @@ FastAPI
   ↓
 AI Backend Engineering
   ↓
-MySQL → Redis → Vector DB
-                  ↓
-                 RAG
-                  ↓
-            Agent Harness
-                  ↓
-             System Design
+MySQL
+  ↓
+Redis
+  ↓
+Vector DB
+  ↓
+LLM Foundation（应用工程深度）
+  ↓
+RAG
+  ↓
+Agent Harness / Runtime
+  ↓
+System Design
 ```
 
 同时持续用 2026 真人高质量面经检查：
@@ -28,11 +34,20 @@ MySQL → Redis → Vector DB
 
 ## 核心原则
 
-### 1. 知识体系是骨架，真人面经是血肉
+### 1. 知识体系是骨架，高质量真人面经是血肉
 
-Python、FastAPI、MySQL、Redis、Vector DB、RAG、Agent Harness 等模块都会从 0 建立完整知识体系，绝不会因为某个知识点暂时没出现在面经里就不学。
+Python、FastAPI、AI Backend、MySQL、Redis、Vector DB、LLM Foundation、RAG、Agent Harness 等模块都会从 0 建立自己的完整知识体系。
 
-真人面经负责：校准优先级、保留真实问法、发现教材缺口、验证口述 / 追问 / System Design 能力。
+知识体系决定：**应该学什么。**
+
+真人面经负责：
+
+- 校准复习优先级；
+- 保留真人面试官的真实问法；
+- 判断问题通常追到什么深度；
+- 验证是否真的能口述、设计和 Coding。
+
+低质量帖子、题库、合集或二次创作不会为了“补知识点”增加额外学习任务。
 
 ### 2. 从 Demo 能力走到 Production 能力
 
@@ -51,19 +66,25 @@ Agent Harness / Runtime 的首要权威实现参考：
 
 ### 4. 正式面经只认 HUMAN-A
 
-从 Batch 11 起，新的正式研究样本必须同时满足：
+平台可以来自牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源，但所有平台执行完全相同的准入标准：
 
 ```text
 真人面试官
    +
-候选人本人高质量第一人称复盘
+候选人本人第一人称复盘
+   +
+高信息密度与真实现场痕迹
    +
 AI Application / Agent 目标岗位
+   +
+正文可稳定核验
+   +
+非转载 / 非合集 / 非同场重复
    ↓
-HUMAN-A Core
+HUMAN-A
 ```
 
-AI 自动面试、低信息密度复盘、合集 / 整理、`含完整答案` / 标准答案、SEO 博客、水短视频和无法核验的线索不进入新的正式 Batch。
+不满足任一条件的内容不进入正式研究，也不贡献面试题、频率或课程优先级。
 
 详细规则：[`research/quality/source-quality-policy.md`](research/quality/source-quality-policy.md)
 
@@ -98,6 +119,8 @@ HTTP / ASGI / Uvicorn
 → Testing / Trace / Deployment
 → RAG / Agent API Design
 ```
+
+FastAPI 是从“会 Python”走到“能做真实 AI Service”的独立一环。
 
 ### [AI Backend Engineering](backend-engineering/README.md) 🟡
 
@@ -139,7 +162,9 @@ Embedding → Distance → TopK → ANN → HNSW / IVF → Metadata Filter → D
 
 ### LLM Foundation（应用工程深度） 🔎
 
-真实真人面经已经持续出现 Transformer / Attention / Token / Long Context / Lost in the Middle / KV Cache 等问题。课程边界是理解模型行为、推理延迟和应用决策，不扩展成 CUDA / RLHF / 分布式训练手册。
+目标是理解模型行为和应用决策需要的基础：Token、Transformer / Attention、Long Context、KV Cache、Decoding 等。
+
+这一层服务于 AI 应用工程，不扩展成 CUDA / RLHF / 分布式训练 Infra 手册。
 
 ### RAG ⏳
 
@@ -218,38 +243,36 @@ System Design
 
 入口：[`research/README.md`](research/README.md)
 
-截至 2026-09-09：
+当前研究已经完成一次严格清洗，并从干净基线重新累计：
 
-- 历史来源 ID 已到 `S141`；
-- 当前约 **209 道 canonical questions**；
-- 最新 [`Batch 11`](research/interviews/batch-11.md) 新增 `S129–S141` 共 13 个 **HUMAN-A** 样本；
-- 从 Batch 11 起正式样本只收真人面试官 + 高质量第一人称；
-- 旧批次中曾保存的 automated / B/C/D/E 信号只保留历史追溯，不进入后续 HUMAN-A 真人频率核心；
-- 搜索继续保持两条 Lane：Agent / Harness Frontier 与 AI Application Foundation；
-- 当前判断：**高质量真人来源远未饱和，继续搜索。**
+- 当前正式来源：**S001–S013，共 13 个 HUMAN-A 样本**；
+- 当前正式批次：[`research/interviews/batch-01.md`](research/interviews/batch-01.md)；
+- Canonical Question 层已经重置，只允许由 HUMAN-A 来源重新建立；
+- 不保留低质量来源产生的额外面试题；
+- 不使用自动化面试、合集、二次创作、标准答案、低信息密度复盘或无法核验线索；
+- 搜索平台开放，但质量标准固定；
+- 当前高质量真人来源仍远未饱和。
 
 研究工作流：
 
 ```text
-HUMAN-A 真人面经
+公开平台搜索
+      ↓
+HUMAN-A Gate
       ↓
 Role Scope Gate
       ↓
+原帖核验 / 去重
+      ↓
 来源归档
       ↓
-问题提取
+问题简洁转述
       ↓
-转载 / 语义去重
-      ↓
-Canonical Question
-      ↓
-模块 / 知识点标签
+Canonical Question 语义去重
       ↓
 公司 / 轮次 / 深度 / 频率分析
       ↓
-反向校验完整知识体系
-      ↓
-发现 Gap → 补教材
+校准复习优先级
 ```
 
 ---
