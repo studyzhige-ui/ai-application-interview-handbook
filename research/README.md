@@ -1,92 +1,57 @@
-# 2026 AI 应用 / Agent 面经研究
+# 2026 AI 应用 / Agent 真人面经研究
 
-这里不是“面试题大全”，而是整套知识体系的 **招聘现实校准层**。
+这里不是“面试题大全”，而是整套 AI Application / Agent 求职知识体系的 **真人招聘现实校准层**。
 
 ## 当前进度（2026-09-09）
 
-- 历史 `Sxxx` 编号范围：**S001–S141**。
-- 最新正式批次：[`interviews/batch-11.md`](./interviews/batch-11.md)。
-- 当前规范化问题：约 **209 道 canonical questions**（工作去重口径）。
-- 当前仍处于扩展召回阶段，**远未认为来源饱和**。
-- **从 Batch 11 起，新的正式样本只接受 `HUMAN-A`：真人面试官 + 候选人本人高质量第一人称 + 目标 AI Application / Agent 岗位。**
-- AI 自动面试、B 级低信息密度、合集、标准答案 / 题库、二次创作、SEO 博客和无法核验的跨平台线索，不再进入新的正式 Batch。
-- 历史批次为了研究召回曾保存过 B/C/D/E 与 automated 信号，这些稳定 ID 暂时保留用于追溯，但**后续真人面试频率与课程优先级统计只认 HUMAN-A Core**。例如 Batch 10 的自动化面试样本 `S119` 不属于真人核心样本。
+- 当前活跃来源：**13 个 HUMAN-A 真人高质量第一人称样本（S001–S013）**。
+- 当前正式批次：[`interviews/batch-01.md`](./interviews/batch-01.md)。
+- Canonical Question 层已经完成清空并重新建立干净基线，当前从 HUMAN-A 来源重新累计，不沿用任何清洗前的问题 ID 或统计数字。
+- 当前仍远未达到来源饱和，后续继续扩展高质量真人样本。
+- 所有平台执行同一套固定标准：平台可以是牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源，但**平台本身不提供任何质量加成**。
 
-详细准入：
+详细准入规则：
 
-- [`quality/source-quality-policy.md`](./quality/source-quality-policy.md)：HUMAN-A 硬门槛。
-- [`quality/role-scope-policy.md`](./quality/role-scope-policy.md)：岗位范围。
-- [`analysis/foundation-signal-after-batch-07.md`](./analysis/foundation-signal-after-batch-07.md)：Python / MySQL / Redis 基础能力信号校准。
+- [`quality/source-quality-policy.md`](./quality/source-quality-policy.md)：统一 HUMAN-A 来源标准。
+- [`quality/role-scope-policy.md`](./quality/role-scope-policy.md)：目标岗位范围。
 
 ---
 
-## 为什么只保留 HUMAN-A
+# 唯一正式来源标准：HUMAN-A
 
-我们最终想回答的是：
-
-> **真实 AI 应用 / Agent 技术面里，真人面试官究竟在问什么？**
-
-因此正式证据必须同时满足：
+正式面经必须同时满足：
 
 ```text
-真人技术面 / Leader 面
-        +
+真人面试官
+   +
 候选人本人第一人称复盘
-        +
-足够具体的技术追问与现场痕迹
-        +
+   +
+高信息密度与真实现场痕迹
+   +
 AI Application / Agent 目标岗位
-        ↓
-HUMAN-A Core
+   +
+正文可稳定核验
+   +
+非转载 / 非合集 / 非同场重复
+   ↓
+HUMAN-A
 ```
 
-自动化 AI 面试、整理账号和“含完整答案”内容即使题目本身有知识价值，也不能替代真人面试证据。
+不满足任一条件的内容都不进入正式研究，也不贡献任何 Canonical Question、频率或课程优先级。
 
 ---
 
-## 研究目标
+# 知识体系与面经的分工
 
-- 尽可能覆盖 2026 年公开可访问的高质量 AI 应用开发、AI Agent、RAG、AI Backend、AI Full-stack、Applied AI、Agent Runtime 面经。
-- 保留“原始来源层”和“Canonical Question 语义去重层”，避免归一化后丢掉面试官真实问法。
-- 用真人面经反向验收：Python、FastAPI、AI Backend、MySQL、Redis、Vector DB、RAG、Agent Harness、LLM Foundation、System Design 是否有缺口。
-- 不因为最近 Harness 问题更前沿就低估 Python / MySQL / Redis，也不为了补基础去混入传统后端 / 数据分析岗位。
-- 最终按 **岗位类型 × 公司 × 面试轮次 × 知识模块 × 深度** 做分层统计。
+本项目坚持：
 
----
+> **知识体系是骨架，高质量真人面经是血肉。**
 
-## 数据层次
+两者职责严格分开。
 
-### 1. Interviews / Sources
+## 完整知识体系负责
 
-每个 HUMAN-A 来源至少记录：
-
-- `source_id`
-- 公司 / 岗位 / 日期 / 轮次
-- 原始 URL
-- 真人面试证据
-- 第一人称真实性证据
-- 5～12 条最有信息量的问题转述
-- 本场对知识体系的价值
-
-第三方帖子只保存研究所需的事实性元数据和简洁问题转述，不复制全文。
-
-### 2. Canonical Questions
-
-语义相同的问题归并，例如：
-
-```text
-Context 满了怎么办？
-长任务上下文怎么压缩？
-Compaction 怎么避免关键信息丢失？
-        ↓
-一个 canonical capability
-```
-
-但不同真人来源仍然分别记录命中，以便后续做真实频率统计。
-
-### 3. Taxonomy
-
-一级模块持续覆盖：
+决定一个 AI Application Engineer 应该系统学习什么：
 
 ```text
 Python
@@ -94,21 +59,63 @@ FastAPI
 AI Backend Engineering
 MySQL
 Redis
-Vector DB
+Vector Database
+LLM Foundation（应用工程深度）
 RAG
-LLM Foundation
 Agent Harness / Runtime
 System Design
-Project / Coding
 ```
 
-问题继续标注 Definition / Principle / Comparison / Debugging / Design / Project Deep Dive / Coding，以及 Basic / Intermediate / Advanced。
+课程完整性不依赖面经题量。
+
+## HUMAN-A 面经负责
+
+- 提供真人面试官的真实问法；
+- 校准哪些知识更常被问；
+- 观察不同公司 / 岗位 / 轮次的追问深度；
+- 验证知识能否真正口述、设计和 Coding；
+- 帮助安排复习优先级。
+
+低质量来源不会为了“补知识点”额外增加学习任务。
 
 ---
 
-## 搜索策略
+# 数据层
 
-### Lane A — Agent / Harness Frontier
+## 1. Interviews / Sources
+
+每个正式来源至少记录：
+
+- `source_id`
+- 公司 / 岗位 / 日期 / 轮次
+- 原始 URL
+- 真人面试证据
+- 第一人称证据
+- 5～12 条高信息量问题的简洁转述
+
+第三方面经只保留研究所需的元数据与问题转述，不复制全文。
+
+## 2. Canonical Questions
+
+Canonical Question 只是 HUMAN-A 面经的**语义去重层**，不是第二套知识体系。
+
+例如多个独立真人来源分别问：
+
+```text
+Context 满了怎么办？
+长任务上下文怎么压缩？
+Compaction 怎么避免关键信息丢失？
+```
+
+如果核心能力相同，可以归一化为一个 Canonical Question，同时记录每个独立真人来源的命中。
+
+规则见：[`questions/README.md`](./questions/README.md)。
+
+---
+
+# 搜索范围
+
+## Lane A — Agent / Harness Frontier
 
 ```text
 Harness / Runtime / Agent Loop
@@ -116,12 +123,12 @@ Context / Memory / Compaction
 Tool / MCP / Skill
 Permission / Sandbox / Security
 Checkpoint / Resume / Cancel
-Multi-Agent
+Multi-Agent / Sub-agent
 Coding Agent / Claude Code / Codex
 Evaluation / Trace / Cost / Reliability
 ```
 
-### Lane B — AI Application Foundation
+## Lane B — AI Application Foundation
 
 ```text
 Python / GIL / asyncio
@@ -130,31 +137,62 @@ MySQL / Index / MVCC / Lock / Log
 Redis / Cache / Cluster / Lock
 MQ / Network / Concurrency
 Vector DB / RAG
+LLM Foundation
 System Design
 ```
 
-两条 Lane **都只从目标 AI 岗的真人 HUMAN-A 面试中取证**。
-
-### 平台
-
-搜索不局限于牛客，也会查看小红书、知乎、脉脉公开内容、CSDN、掘金、Bilibili、抖音等；但平台多样性不能降低门槛：正文、第一人称和真人属性无法稳定验证，就不进入正式样本。
+两条 Lane 都只从通过 HUMAN-A 的目标 AI 岗真人面试中取证。
 
 ---
 
-## 批次
+# 平台原则
 
-- **Batch 01–05**：建立召回框架并扩展来源、主题和跨平台线索。
-- **Batch 06**：开始严格“宁缺毋滥”。
-- **Batch 07**：基础工程能力校准，确认 Python / MySQL / Redis / 并发仍大量出现在 AI 岗。
-- **Batch 08**：增加 Role Scope Gate，只研究我们的 AI Application / Agent 求职方向。
-- **Batch 09**：开始明确 LLM Foundation 的应用工程深度。
-- **Batch 10**：扩展到 KV Cache、Cost Accounting、Data Access Governance、Bi-Encoder / Cross-Encoder、Redis Cluster 原子性等 Production 问题；其中 automated 来源后续不进入 HUMAN-A Core。
-- **Batch 11**：正式切换为 **HUMAN-A Only**，`S129–S141`，13 个全部为真人高质量第一人称目标岗位面经；新增 Long-context / Lost in the Middle、Tool Runtime Execution Boundary、MySQL redo/binlog 2PC、Distributed ID 等 canonical 能力。
+搜索范围不设平台偏好：
+
+- 牛客
+- 小红书
+- 知乎
+- 脉脉公开内容
+- CSDN / 掘金 / 个人技术博客
+- Bilibili / 抖音
+- 其他可公开访问的平台
+
+但任何来源都必须实际验证正文、候选人第一人称、真人面试属性、岗位范围和信息密度。
+
+如果只能看到标题、截图、摘要、二次转述或标准答案，直接放弃，不进入研究库。
 
 ---
 
-## 当前判断
+# 研究工作流
 
-目前并不接近来源饱和。
+```text
+公开平台搜索
+      ↓
+HUMAN-A Gate
+      ↓
+岗位范围校验
+      ↓
+原帖核验
+      ↓
+跨平台 / 同场去重
+      ↓
+来源归档
+      ↓
+问题简洁转述
+      ↓
+Canonical Question 语义去重
+      ↓
+公司 / 轮次 / 模块 / 深度 / 频率分析
+      ↓
+反向校准复习优先级
+```
 
-真正发生变化的是：随着 canonical question 越来越完整，**新增 HUMAN-A 面经更常是在强化已有知识点，而不是每篇都创造新题**。这正是我们后续做频率、公司、轮次和模块权重分析所需要的数据。
+---
+
+# 当前判断
+
+当前只有 13 个严格 HUMAN-A 样本，这是有意为之。
+
+我们宁可从一个较小但干净的数据集重新向外扩展，也不会为了恢复旧数量重新引入无法确认质量的材料。
+
+接下来的目标是持续扩大 **独立、真人、第一人称、高信息密度、岗位方向正确** 的 2026 AI Application / Agent 面经，直到新增来源在问题分布、公司覆盖和轮次覆盖上逐步趋于饱和。
