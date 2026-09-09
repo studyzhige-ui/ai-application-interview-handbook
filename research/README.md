@@ -4,11 +4,12 @@
 
 ## 当前进度（2026-09-09）
 
-- 当前活跃来源：**51 个 HUMAN-A 真人高质量第一人称样本（S001–S051）**。
-- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md)。
+- 当前活跃来源：**74 个 HUMAN-A 真人高质量第一人称样本（S001–S074）**。
+- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md) + [`Batch 04`](./interviews/batch-04.md)。
 - Batch 01：`S001–S013`，13 个干净基线来源。
 - Batch 02：`S014–S031`，新增 18 个 HUMAN-A。
-- Batch 03：`S032–S051`，新增 **20 个 HUMAN-A**。
+- Batch 03：`S032–S051`，新增 20 个 HUMAN-A。
+- Batch 04：`S052–S074`，新增 **23 个 HUMAN-A**。
 - Canonical Question 层已在历史清洗时归零，只允许从当前 HUMAN-A 来源重新累计，不继承清洗前的题目 ID 或频率。
 - 当前仍远未达到来源饱和；每批数量不设目标，唯一目标是继续扩大**独立、高质量、可核验的真人目标岗位面经**。
 - 平台没有质量加成：牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源全部执行同一 HUMAN-A 标准。
@@ -183,14 +184,14 @@ Canonical Question 语义去重
 
 ---
 
-# Batch 03 后的信号
+# Batch 04 后的信号
 
-当前 51 个 HUMAN-A 已经稳定覆盖整条路线，而不是只覆盖 Agent 名词：
+当前 74 个 HUMAN-A 已经稳定覆盖整条路线，而不是只覆盖 Agent 名词：
 
 ```text
 Python / OS / Network
         ↓
-FastAPI / Streaming / Service Runtime
+FastAPI / Async / Streaming / Service Runtime
         ↓
 MySQL / Redis / MQ / Concurrency
         ↓
@@ -203,6 +204,12 @@ Agent / Harness / Tool / MCP / Skill
 Production / Security / Evaluation / System Design
 ```
 
-Batch 03 尤其新增了真人面试中的：Agent Harness 源码级追问、MCP Transport / Version Compatibility、SSE 断点续传、Tool Executor、Checkpoint Crash Window、Sandbox、Compaction Verification、Tool Result Security，以及 Python / MySQL / Redis / MQ 等基础能力同场考察。
+Batch 04 进一步强化了几个真人面试趋势：
+
+- FastAPI Middleware / DI、Python Async / Multiprocessing 已经直接进入大模型应用岗位一面；
+- MySQL / Redis / OS / Network 并没有因 Agent 深挖而消失，反而经常作为 AI Backend 的可靠性底座同场出现；
+- RAG 面试越来越强调实验依据和量化证明，而不是只会背 Pipeline；
+- Agent Runtime 开始追 Long-running Task、补偿、Sandbox、OOM、Regression Evaluation、Tool Failure 和 State / Context 管理；
+- 项目是否真实上线、用户规模、本人贡献和指标是否可信，是区分 Demo 与真实工程经验的重要验真方式。
 
 当前判断仍然明确：**高质量真人来源远未饱和。** 后续继续扩大独立 HUMAN-A 样本，直到公司、岗位、轮次和问题分布本身逐步趋于饱和，而不是人为限制 Batch 数量。
