@@ -233,6 +233,8 @@ System Design
 
 `AI Backend Engineering` 不需要一次学完，它会在 MySQL / Redis / RAG / Agent 阶段反复回来加深。
 
+> Batch 09 已出现一个持续值得观察的信号：AI 应用岗会追问 Transformer / Attention / Temperature / Top-p 等 **LLM Foundation 的应用工程深度**。后续若更多高质量样本继续强化，会把这一层正式纳入总学习路线，但不会把本项目扩展成训练算法 / CUDA Infra 手册。
+
 ## 第二遍：真实面经反向验收
 
 ```text
@@ -267,8 +269,8 @@ Review 自测
 
 截至 2026-09-09 当前研究状态：
 
-- 已归档 `S001–S100` 来源记录；
-- 已形成约 **191 道 canonical questions**；
+- 已归档 `S001–S114` 来源记录；
+- 已形成约 **200 道 canonical questions**；
 - 从 Batch 06 起执行严格“宁缺毋滥”准入；
 - 从 Batch 08 起增加 Role Scope Gate，排除与目标方向无关的数据分析 / BI / 纯推荐 / 纯训练 Infra 场次；
 - 搜索同时保持两条 Lane：
