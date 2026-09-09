@@ -4,13 +4,14 @@
 
 ## 当前进度（2026-09-09）
 
-- 已归档 `Sxxx` 来源记录：**100 个（S001–S100）**。
-- 已形成规范化问题：**约 191 道 canonical questions**（按当前工作去重口径）。
+- 已归档 `Sxxx` 来源记录：**114 个（S001–S114）**。
+- 已形成规范化问题：**约 200 道 canonical questions**（按当前工作去重口径）。
 - 当前仍处于“扩展召回 + 分层校准”阶段，**远未认为样本饱和**；后续继续按 **平台 × 公司 × 目标岗位别名 × 技术关键词** 滚动搜索。
 - 从 Batch 06 起正式执行更严格的 **“宁缺毋滥”准入规则**：新增正式样本优先要求第一人称、元数据明确、技术问题具体；水短视频、SEO 答案博客、模拟题库和无法追溯原帖的拼接内容不进入正式频率统计。
 - 从 Batch 07 起增加 **基础工程校准 Lane**：在继续寻找 Agent Harness / Runtime 深挖的同时，主动检查 Python、FastAPI、MySQL、Redis、MQ、并发等基础是否因搜索策略和 canonical 去重而被低估。
 - 从 Batch 08 起新增 **Role Scope Gate**：正式样本必须服务于 AI Application / Agent 求职方向。传统数据分析 / BI、纯推荐算法、纯模型训练/Infra、以及与 AI 应用无实质关系的传统后端场次默认排除。
-- 100 条来源记录 **不等于 100 场等权真实面试**：仍区分第一人称高置信、低信息密度真实复盘、整理/合集、面试题信号和待核实平台线索。
+- Batch 09 继续扩展整条知识链，并出现一个值得后续正式建模的新信号：**AI 应用岗需要一层“应用工程深度”的 LLM Foundation**（Transformer / Attention / Decoding / Token 与推理行为），但不应因此滑向 CUDA、RLHF、分布式训练等算法/训练 Infra 主线。
+- 114 条来源记录 **不等于 114 场等权真实面试**：仍区分第一人称高置信、低信息密度真实复盘、整理/合集、面试题信号和待核实平台线索。
 - 持续监控发现的新来源先写入 `research/monitoring/inbox.md`，再按质量与岗位范围门槛决定是否进入正式 Batch。
 
 详细准入规则：
@@ -147,3 +148,4 @@
 - **Batch 06**：2026-09-09，切换到严格高置信准入；正式收录百度 Agent Harness/Agent、MINISO、小鹏、美团、懂车帝、字节、快手、腾讯 CSIG、法本信息、上海 Agent 初创等第一人称高密度样本，`S064–S076`。新增 Tool Executor、Memory/Skill Write Safety、Checkpoint Crash Window、Compaction 保真评测、Coding Repo Navigation、Agent Topology Governance、Observability Evidence Quality、Tool Result Compression、Coding Verification 等主题。
 - **Batch 07**：2026-09-09，在保持 A 级来源门槛的前提下做基础能力校准，`S077–S086`。重点证明 Python/GIL/FastAPI、MySQL 索引/MVCC/慢查询、Redis ZSet/Cluster/HotKey/一致性仍大量出现在 AI Agent / AI 应用真实面试中，并新建 Python canonical questions 与多层缓存一致性等问题。
 - **Batch 08**：2026-09-09，加入 Role Scope Gate 后的第一批全链路样本，`S087–S100`。全部来自 AI 应用 / Agent / AI 全栈 / AI 后端目标岗位，新增 FastAPI Middleware vs DI、ASGI Runtime、asyncio Fan-out、Python 混合并发、Vector DB 多租户数据组织、私有化 RAG、人评一致性、AI 技术选型、AI Application Version Bundle、A2A Loop Prevention 与 Harness Self-improvement Governance 等问题。
+- **Batch 09**：2026-09-09，继续按目标岗位扩展整条能力链，`S101–S114`。新增 LLM Foundation 应用深度、RAG Knowledge Gap / Corpus Data Audit、`AGENTS.md` / Project Rules、Execution Truth、Pre-prod/Canary/A-B Release Validation、Transcript vs Working Context、Bounded Concurrency 等问题。
