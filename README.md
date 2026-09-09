@@ -27,6 +27,8 @@ Agent Harness / Runtime 模块以以下两个源码仓库为首要实现参考�
 
 目标不是复制某个框架 API，而是从成熟 Agent 产品源码中抽取稳定的 Runtime / Harness 设计能力：工具执行、权限与审批、沙箱、上下文管理、会话与状态、MCP、可靠性、异步执行、可观测性、安全边界等。
 
+详细原则见：[`roadmap/agent-authoritative-sources.md`](roadmap/agent-authoritative-sources.md)
+
 ## 研究工作流
 
 ```text
@@ -50,3 +52,14 @@ Agent Harness / Runtime 模块以以下两个源码仓库为首要实现参考�
 ```
 
 > 注意：第三方面经只保存来源信息与面试问题的简洁转述，不复制整篇受版权保护的帖子。
+
+## 当前研究进度
+
+已启动 2026 面经大规模采集：
+
+- [`research/interviews/batch-01.md`](research/interviews/batch-01.md)：第一批 15 个高密度来源/合集样本。
+- [`research/interviews/batch-02.md`](research/interviews/batch-02.md)：新增快手、拼多多、网易、第四范式等工程化样本。
+- [`research/questions/canonical-batch-01.md`](research/questions/canonical-batch-01.md)：第一版语义归一化问题库。
+- [`research/questions/canonical-batch-02-delta.md`](research/questions/canonical-batch-02-delta.md)：Batch 02 新增问题与课程目录约束。
+
+当前数据仅是研究初期批次，不用于宣称最终频率结论。后续继续按公司、岗位别名、月份和技术关键词扩展，再统一做转载去重、语义聚类、频率统计和覆盖矩阵。
