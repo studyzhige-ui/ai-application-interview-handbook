@@ -4,15 +4,16 @@
 
 ## 当前进度（2026-09-09）
 
-- 当前活跃来源：**94 个 HUMAN-A 真人高质量第一人称样本（S001–S094）**。
-- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md) + [`Batch 04`](./interviews/batch-04.md) + [`Batch 05`](./interviews/batch-05.md)。
+- 当前活跃来源：**117 个 HUMAN-A 真人高质量第一人称样本（S001–S117）**。
+- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md) + [`Batch 04`](./interviews/batch-04.md) + [`Batch 05`](./interviews/batch-05.md) + [`Batch 06`](./interviews/batch-06.md)。
 - Batch 01：`S001–S013`，13 个干净基线来源。
 - Batch 02：`S014–S031`，新增 18 个 HUMAN-A。
 - Batch 03：`S032–S051`，新增 20 个 HUMAN-A。
 - Batch 04：`S052–S074`，新增 23 个 HUMAN-A。
-- Batch 05：`S075–S094`，新增 **20 个 HUMAN-A**。
+- Batch 05：`S075–S094`，新增 20 个 HUMAN-A。
+- Batch 06：`S095–S117`，新增 **23 个 HUMAN-A**。
 - Canonical Question 层已在历史清洗时归零，只允许从当前 HUMAN-A 来源重新累计，不继承清洗前的题目 ID 或频率。
-- 当前仍远未达到来源饱和；每批数量不设目标，唯一目标是继续扩大**独立、高质量、可核验的真人目标岗位面经**。
+- 当前仍未达到来源饱和；每批数量不设目标，唯一目标是继续扩大**独立、高质量、可核验的真人目标岗位面经**。
 - 平台没有质量加成：牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源全部执行同一 HUMAN-A 标准。
 
 详细准入规则：
@@ -185,9 +186,9 @@ Canonical Question 语义去重
 
 ---
 
-# Batch 05 后的信号
+# Batch 06 后的信号
 
-当前 94 个 HUMAN-A 已经稳定覆盖整条路线，而不是只覆盖 Agent 名词：
+当前 117 个 HUMAN-A 已经稳定覆盖整条路线：
 
 ```text
 Python / OS / Network
@@ -196,7 +197,7 @@ FastAPI / Async / Streaming / Service Runtime
         ↓
 MySQL / Redis / MQ / Concurrency / Sharding
         ↓
-Vector DB / RAG
+Vector DB / RAG / OCR / Retrieval Evaluation
         ↓
 LLM Foundation / Context
         ↓
@@ -205,12 +206,23 @@ Agent / Harness / Tool / MCP / Skill
 Production / Security / Evaluation / System Design
 ```
 
-Batch 05 进一步强化了几个真人面试趋势：
+Batch 06 进一步强化了这些真人面试趋势：
 
-- **Harness / Runtime 正在从术语进入执行语义**：Tool Discovery / Dynamic Registry、Task Isolation、Long-running Latency、执行幻觉、Compaction、Self-evolution、自动交付可靠性已经出现在真人一二面 / Leader 面。
-- **Agent 越来越像分布式后端系统**：RPC、Async、MQ、Checkpoint、Retry / Fallback、SSE、Rate Limit、Idempotency、Cache、Observability 与 Capacity 是同一套 Production 问题。
-- **RAG 更强调可证明的实验依据**：父子索引、BM25 + Vector + Rerank、OCR / Table、Index Update、RRF、Top-K、Evaluation 都要求解释选择原因和收益验证。
-- **MySQL / Redis / Network / Concurrency 是明确 AI 岗的真实主线**：AI 应用 / AI 后端真人场次会长时间追事务、日志、缓存、锁、分库分表、ThreadLocal、TCP、WebSocket，而不是只问 Agent 名词。
-- **项目验真继续升级**：面试官会追本人贡献、业务量、真实指标、失败恢复、AI 代码能否进生产、为什么不用 Workflow / Script，以及平台能力能否规模化复用。
+- **来源仍未饱和**：S001–S094 后继续按公司 × 岗位 × 月份 × 技术词回扫，仍新增 23 个独立 HUMAN-A；2026-09-09 当天仍出现新的快手 AI 应用服务端三面。
+- **AI Backend / Agent Backend 的基础底座是真实主线**：Sharding、Transaction、Redis / Lua、Kafka、ThreadLocal、TCP / HTTPS、Go Runtime、Service Discovery 与 Agent / RAG 同场出现。
+- **Runtime 开始追可恢复执行而不是只背框架**：State Competition、Checkpoint / Resume、Disconnect Recovery、Tool Failure、Interrupt、Sub-agent Accounting、Race Condition 与 Distributed Failure 都出现了独立真人命中。
+- **RAG 继续强调“选择依据 + Evaluation”**：OCR / Table、Hybrid Retrieval、Rerank、Vector DB、RRF、Dynamic Update 和 Retrieval Evaluation 被持续追问。
+- **项目验真非常强**：真实用户 / QPS、指标怎么测、本人贡献、代码是否能生产、Failure Case 与恢复机制，经常比“会不会调 API”更决定面试深度。
+- **Role Scope 必须看实际内容而不是标题**：例如 OPPO 标题为后端，但作者明确说明两轮基本都在 Agent 技术上；相反，普通后端只顺带问 Agent 的场次继续排除。
 
-当前判断仍然明确：**高质量真人来源远未饱和。** 后续继续扩大独立 HUMAN-A 样本，优先补 2026 年 3–9 月未覆盖公司 / 轮次和最新发布内容，直到公司、岗位、轮次和问题分布本身逐步趋于饱和，而不是人为限制 Batch 数量。
+## 什么时候停止继续搜？
+
+停止条件从来不是达到某个 `Sxxx` 或某个 Batch 数，而是出现**来源饱和**：
+
+1. 连续多轮按公司 × 岗位别名 × 月份 × 技术关键词扩大搜索；
+2. 牛客之外也继续查公开平台、作者页、企业 / 话题页和跨平台原帖；
+3. 新结果绝大多数变成已收录同场、转载、合集、低质量内容或 Role Scope 外来源；
+4. 每轮几乎不再产生新的、独立、可稳定核验的 HUMAN-A；
+5. 新增来源的公司 / 岗位 / 轮次与问题模块分布也逐渐稳定。
+
+只有这些信号同时持续出现，才说明接近停止点。**目前 117 个样本仍没有出现这种饱和迹象。**
