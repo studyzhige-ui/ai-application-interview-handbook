@@ -4,8 +4,8 @@
 
 ## 当前进度（2026-09-10）
 
-- 当前活跃来源：**168 个 HUMAN-A 真人高质量第一人称样本（S001–S168）**。
-- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md) + [`Batch 04`](./interviews/batch-04.md) + [`Batch 05`](./interviews/batch-05.md) + [`Batch 06`](./interviews/batch-06.md) + [`Batch 07`](./interviews/batch-07.md) + [`Batch 08`](./interviews/batch-08.md)。
+- 当前活跃来源：**196 个 HUMAN-A 真人高质量第一人称样本（S001–S196）**。
+- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md) + [`Batch 04`](./interviews/batch-04.md) + [`Batch 05`](./interviews/batch-05.md) + [`Batch 06`](./interviews/batch-06.md) + [`Batch 07`](./interviews/batch-07.md) + [`Batch 08`](./interviews/batch-08.md) + [`Batch 09`](./interviews/batch-09.md)。
 - Batch 01：`S001–S013`，13 个干净基线来源。
 - Batch 02：`S014–S031`，新增 18 个 HUMAN-A。
 - Batch 03：`S032–S051`，新增 20 个 HUMAN-A。
@@ -13,9 +13,10 @@
 - Batch 05：`S075–S094`，新增 20 个 HUMAN-A。
 - Batch 06：`S095–S117`，新增 23 个 HUMAN-A。
 - Batch 07：`S118–S147`，新增 30 个 HUMAN-A。
-- Batch 08：`S148–S168`，新增 **21 个 HUMAN-A**。
+- Batch 08：`S148–S168`，新增 21 个 HUMAN-A。
+- Batch 09：`S169–S196`，新增 **28 个 HUMAN-A**。
 - Canonical Question 层只允许从当前 HUMAN-A 来源累计证据；低质量来源继续保持零贡献。
-- 当前仍未达到来源饱和，但 **Batch 08 已出现泛搜索重复率明显上升的早期信号**。后续除了统计新增来源数量，还要同时观察新增 HUMAN-A 比例与重复 / 整理 / 低质量结果比例。
+- 当前仍未达到来源饱和。Batch 08 起泛搜索重复率明显上升，Batch 09 这一趋势继续，但精确公司 / 岗位 / 月份 / 轮次、企业 / 话题页、作者时间线和跨平台原帖回溯仍一次找到 28 个新的独立 HUMAN-A。
 - 平台没有质量加成：牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源全部执行同一 HUMAN-A 标准。
 
 详细准入规则：
@@ -94,7 +95,7 @@ HUMAN-A 面经负责提供：
 - 真人 / 第一人称证据
 - 5～12 条高信息量问题的简洁转述
 
-同一候选人的同一招聘流程如果存在一面 / 二面 / 三面多篇帖子，在能够确认同源时合并计为一个来源，避免人为抬高样本量。
+同一候选人的同一招聘流程如果存在一面 / 二面 / 三面多篇帖子，在能够确认同源时合并计为一个来源，避免人为抬高样本量；不同候选人即使同公司、同日、题目相近，也按独立真人场次分别判断。
 
 第三方面经只保存研究所需元数据与问题转述，不复制全文。
 
@@ -200,9 +201,9 @@ Canonical Question 语义去重
 
 ---
 
-# Batch 08 后的信号
+# Batch 09 后的信号
 
-当前 168 个 HUMAN-A 已经稳定覆盖整条路线：
+当前 196 个 HUMAN-A 已经稳定覆盖整条路线：
 
 ```text
 Python / OS / Network
@@ -224,29 +225,32 @@ Controlled Runtime / Resume / Interrupt / Evaluation
 Production / Security / System Design
 ```
 
-Batch 08 进一步强化了这些真人面试趋势：
+Batch 09 进一步强化了这些真人面试趋势：
 
-- **开始出现重复率上升，但还没有来源饱和。** 泛关键词搜索越来越容易命中 `S001–S147` 已收录来源、答案版、总结页和后发同题版本；但精确到公司 / 岗位 / 月份 / 轮次后，仍然能找到 21 个新的独立 HUMAN-A。
-- **Agent Runtime 已经进入受控执行与恢复语义。** Controlled Workflow、Planner / Executor / Critic、Long-running Task 新输入、Loop Termination、Checkpoint、Interrupt、Retry Safety、Human Intervention、Trace / Observability 都来自真人面试。
-- **AI Coding 不再只是“是否使用 Cursor”。** 代码库理解、项目 Wiki / Spec、需求拆分、Git 工作流、AI 生成代码能否进 Production、质量验收和在线 Coding System Design 都被真实追问。
-- **RAG 参数必须有实验依据。** Top-K、Chunk、Hybrid Retrieval、Rerank、No-answer、Permission / Freshness、Retrieval Miss 归因等问题越来越强调“为什么”和“如何证明”。
-- **AI Backend Foundation 继续稳定出现。** Redis HotKey / Lock / Watchdog、MySQL MVCC / Index / Transaction、MQ Idempotency / Rate Limit、Thread Pool / JVM、HTTP/3 / SSE、Consistent Hashing 与 Agent / RAG 同场出现。
-- **去重必须按招聘流程保守计数。** Token Foundry 三轮和淘天 Agent 二 / 三面均合并为一个来源；腾讯 AI 应用的多份高度相同后发版本只记重复信号。
+- **泛搜索重复率继续升高，但精确搜索仍有显著增量。** 企业 / 话题页、公司 × 岗位 × 月份 × 轮次、作者时间线继续找到 28 个新的独立 HUMAN-A，因此当前仍不能停止。
+- **完整招聘流程比单篇题单更有研究价值。** 百度 Coding Agent 三轮、字节 AI 全栈一二面等样本能看到问题随轮次从项目 / Agent 深入到 OS / Backend / Coding；同流程合并计数但保留整场知识。
+- **Coding Agent / Agent Runtime 已稳定进入“可控软件执行系统”层。** Skill Mis-selection、Dynamic Args、Context Isolation、Container Restart Resume、Secret Boundary、Sub-agent Token Accounting、Loop Oscillation、Compaction、Prompt Cache 等都有独立真人命中。
+- **AI Backend Foundation 继续被目标岗位直接确认。** MySQL MVCC / Index / Deep Pagination、Redis Lock / Cache / HotKey、MQ Reliability、TCP / HTTPS、Go Context、Java Lock / ThreadPool 与 Agent / RAG 同场出现。
+- **项目价值量化是越来越强的验真点。** QPS、DAU、Cache Hit Rate、节省人力、准确率、Latency、Cost、失败案例和本人贡献被持续追问。
+- **跨平台原帖回溯开始产生实际增量。** Batch 09 找到候选人个人博客中的小红书 AI 应用原始面经；与此同时 CSDN / 51CTO 等大量搜索结果仍是转载、路线和营销内容，不能为了覆盖平台降低门槛。
+- **作者身份和招聘流程时间线已经成为必要去重层。** 同公司同日不一定是同一候选人；同作者跨多个 URL 的一二三面则应合并。
 
 ## 什么时候停止继续搜？
 
-停止条件从来不是达到某个 `Sxxx` 或某个 Batch 数，而是出现**来源饱和**。后续将同时观察两个维度：
+停止条件从来不是达到某个 `Sxxx` 或某个 Batch 数，而是出现**来源饱和**。后续持续观察：
 
 ```text
 A. 新增 HUMAN-A 的绝对数量
 B. 新增 HUMAN-A / 全部候选结果 的比例
+C. 精确搜索是否仍能找到新来源
+D. 新增问题模块与追问深度是否继续变化
 ```
 
 只有连续多轮跨公司、岗位、月份、轮次、平台扩大搜索后，同时出现以下信号，才进入收尾阶段：
 
 1. 新结果绝大多数已经是已收录同场、转载、合集、答案型内容、低质量来源或 Role Scope 外来源；
-2. 每轮几乎不再产生新的、独立、可稳定核验的 HUMAN-A；
-3. 精确公司 / 轮次搜索也难以发现新来源，而不是只有泛关键词搜索变重复；
-4. 新增来源的公司 / 岗位 / 轮次与问题模块、追问深度分布也逐渐稳定。
+2. 每轮新增 HUMAN-A 的绝对数量和比例都持续接近零；
+3. 精确公司 / 轮次 / 作者页搜索也难以发现新来源，而不是只有泛关键词搜索变重复；
+4. 新增来源的公司 / 岗位 / 轮次与问题模块、追问深度分布逐渐稳定。
 
-**当前 168 个样本已经出现“重复率上升”的早期信号，但精确搜索仍持续产生新的 HUMAN-A，因此仍未达到停止点。**
+**当前 196 个样本虽然重复率继续上升，但 Batch 09 仍新增 28 个独立 HUMAN-A，因此明显未达到停止点。**
