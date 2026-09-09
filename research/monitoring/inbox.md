@@ -51,9 +51,9 @@
 ## 当前基线
 
 - 更新日期：2026-09-09
-- 正式来源：`S001–S051`，共 **51 个 HUMAN-A**
-- 当前正式批次：`research/interviews/batch-01.md` + `batch-02.md` + `batch-03.md`
-- 最新正式批次：Batch 03（`S032–S051`，新增 20 个）
+- 正式来源：`S001–S074`，共 **74 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` + `batch-02.md` + `batch-03.md` + `batch-04.md`
+- 最新正式批次：Batch 04（`S052–S074`，新增 23 个）
 - Canonical Question：旧数据已清空，只从当前干净 HUMAN-A 来源重新累计
 - 当前判断：**高质量真人来源远未饱和，继续扩大搜索召回。**
 
