@@ -69,13 +69,13 @@ asyncio / MySQL / Redis / Vector DB / Context / Memory / Tool / Coding）
 ## 当前基线
 
 - 更新日期：2026-09-09
-- 正式来源：`S001–S117`，共 **117 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` + `batch-02.md` + `batch-03.md` + `batch-04.md` + `batch-05.md` + `batch-06.md`
-- 最新正式批次：Batch 06（`S095–S117`，新增 23 个）
+- 正式来源：`S001–S147`，共 **147 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` + `batch-02.md` + `batch-03.md` + `batch-04.md` + `batch-05.md` + `batch-06.md` + `batch-07.md`
+- 最新正式批次：Batch 07（`S118–S147`，新增 30 个）
 - Canonical Question：旧数据已清空，只从当前干净 HUMAN-A 来源重新累计；低质量来源继续保持零贡献
-- 当前最大来源编号：`S117`，下一条正式来源从 `S118` 开始
-- 下一轮优先级：继续回扫 2026 年 3–9 月未覆盖公司 / 二三面 / Leader 面，优先补 Agent Runtime / Harness / Coding Agent / AI Backend / AI Full-stack 深挖，并持续检查 9 月新发布内容
-- 当前停止判断：**尚未接近来源饱和。Batch 06 在已有 94 个样本后仍一次新增 23 个独立 HUMAN-A，且 9 月 9 日当天仍发现新的目标岗位真人三面。**
+- 当前最大来源编号：`S147`，下一条正式来源从 `S148` 开始
+- 下一轮优先级：继续回扫 2026 年 3–9 月未覆盖公司、二三面 / Leader 面、Agent Runtime / Harness / Coding Agent / AI Backend / AI Full-stack；同时继续追 9 月新发布原帖，并加强牛客之外可稳定验证来源的召回
+- 当前停止判断：**仍未接近来源饱和。Batch 07 在已有 117 个样本后仍新增 30 个独立 HUMAN-A，同时继续发现大量重复 / 二次答案版，说明搜索深度和去重都需要继续推进。**
 - 停止条件：只有连续多轮跨公司、岗位、月份、轮次、平台扩大搜索后，几乎不再产生新的独立 HUMAN-A，且新增问题分布也稳定收敛，才进入收尾阶段；不以 Batch 数或 `Sxxx` 编号为停止阈值。
 
 ---
