@@ -4,12 +4,14 @@
 
 ## 当前进度（2026-09-09）
 
-- 当前活跃来源：**31 个 HUMAN-A 真人高质量第一人称样本（S001–S031）**。
-- 当前正式批次：[`interviews/batch-01.md`](./interviews/batch-01.md) + [`interviews/batch-02.md`](./interviews/batch-02.md)。
-- Batch 02 新增 `S014–S031` 共 **18 个 HUMAN-A**，证明清洗后的 13 个只是初始干净基线，不是公开市场供给上限。
-- Canonical Question 层已经完成清空并重新建立干净基线，当前只允许从 HUMAN-A 来源重新累计，不沿用清洗前的问题 ID 或统计数字。
-- 当前仍远未达到来源饱和，后续继续扩展高质量真人样本。
-- 所有平台执行同一套固定标准：平台可以是牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源，但**平台本身不提供任何质量加成**。
+- 当前活跃来源：**51 个 HUMAN-A 真人高质量第一人称样本（S001–S051）**。
+- 当前正式批次：[`Batch 01`](./interviews/batch-01.md) + [`Batch 02`](./interviews/batch-02.md) + [`Batch 03`](./interviews/batch-03.md)。
+- Batch 01：`S001–S013`，13 个干净基线来源。
+- Batch 02：`S014–S031`，新增 18 个 HUMAN-A。
+- Batch 03：`S032–S051`，新增 **20 个 HUMAN-A**。
+- Canonical Question 层已在历史清洗时归零，只允许从当前 HUMAN-A 来源重新累计，不继承清洗前的题目 ID 或频率。
+- 当前仍远未达到来源饱和；每批数量不设目标，唯一目标是继续扩大**独立、高质量、可核验的真人目标岗位面经**。
+- 平台没有质量加成：牛客、小红书、知乎、脉脉、Bilibili、抖音、CSDN、个人博客或其他公开来源全部执行同一 HUMAN-A 标准。
 
 详细准入规则：
 
@@ -48,11 +50,7 @@ HUMAN-A
 
 > **知识体系是骨架，高质量真人面经是血肉。**
 
-两者职责严格分开。
-
-## 完整知识体系负责
-
-决定一个 AI Application Engineer 应该系统学习什么：
+完整知识体系决定一个 AI Application Engineer 应该系统学习什么：
 
 ```text
 Python
@@ -67,9 +65,7 @@ Agent Harness / Runtime
 System Design
 ```
 
-课程完整性不依赖面经题量。
-
-## HUMAN-A 面经负责
+HUMAN-A 面经只负责：
 
 - 提供真人面试官的真实问法；
 - 校准哪些知识更常被问；
@@ -77,7 +73,7 @@ System Design
 - 验证知识能否真正口述、设计和 Coding；
 - 帮助安排复习优先级。
 
-低质量来源不会为了“补知识点”额外增加学习任务。
+低质量来源不会为了“补知识点”增加任何学习任务。
 
 ---
 
@@ -90,25 +86,16 @@ System Design
 - `source_id`
 - 公司 / 岗位 / 日期 / 轮次
 - 原始 URL
-- 真人面试证据
-- 第一人称证据
+- 真人 / 第一人称证据
 - 5～12 条高信息量问题的简洁转述
 
-第三方面经只保留研究所需的元数据与问题转述，不复制全文。
+第三方面经只保存研究所需元数据与问题转述，不复制全文。
 
 ## 2. Canonical Questions
 
 Canonical Question 只是 HUMAN-A 面经的**语义去重层**，不是第二套知识体系。
 
-例如多个独立真人来源分别问：
-
-```text
-Context 满了怎么办？
-长任务上下文怎么压缩？
-Compaction 怎么避免关键信息丢失？
-```
-
-如果核心能力相同，可以归一化为一个 Canonical Question，同时记录每个独立真人来源的命中。
+多个独立真人来源语义相同的问题可以归并成一个 Capability，同时分别记录 HUMAN-A 命中。没有 HUMAN-A 证据的问题不能进入这一层。
 
 规则见：[`questions/README.md`](./questions/README.md)。
 
@@ -148,35 +135,23 @@ System Design
 
 # 平台与访问限制
 
-搜索范围不设平台偏好：
-
-- 牛客
-- 小红书
-- 知乎
-- 脉脉公开内容
-- CSDN / 掘金 / 个人技术博客
-- Bilibili / 抖音
-- 其他可公开访问的平台
-
-但任何来源都必须实际验证正文、候选人第一人称、真人面试属性、岗位范围和信息密度。
-
-需要特别注意：**“搜索工具直接能打开多少篇”不等于“网上实际有多少篇”。** 一些平台存在登录态、App 跳转、动态加载、搜索引擎只索引摘要、帖子删除或跨平台同步等情况，因此直接搜索会系统性低估供给。
-
-为提高 Recall，可以：
+搜索不设平台偏好。登录态、App 跳转、动态加载和搜索索引不完整会让“直接能打开的帖子数”显著少于市场实际供给，因此提高 Recall 时会组合使用：
 
 ```text
 关键词搜索
    +
 企业 / 话题页回溯
    +
-搜索引擎索引摘要定位标题
+搜索索引定位标题
    +
-候选人主页 / 个人博客交叉验证
+候选人主页 / 个人博客核验
    +
-跨平台寻找同一作者原帖
+跨平台查找同一作者原帖
 ```
 
-但这些方法只负责**发现来源**，不能降低 HUMAN-A 准入标准。若最终仍无法稳定核验原正文，就不入库。
+这些方法只负责**发现来源**，不能降低 HUMAN-A 门槛。最终无法稳定核验原正文，就不入库。
+
+本项目也明确排除“为了平台多样性而收水内容”：CSDN / 知乎 / 视频平台中的标准答案、帮粉丝复盘、SEO 资料导流等内容，即使问题很多也不进入正式数据。
 
 ---
 
@@ -189,7 +164,7 @@ System Design
       ↓
 HUMAN-A Gate
       ↓
-岗位范围校验
+Role Scope Gate
       ↓
 原帖 / 作者 / 时间线核验
       ↓
@@ -208,10 +183,26 @@ Canonical Question 语义去重
 
 ---
 
-# 当前判断
+# Batch 03 后的信号
 
-清洗后最初只保留 13 个 HUMAN-A，是因为当时采用了非常保守的“只继承已明确复核来源”策略，并不是判断公开市场只有十几篇。
+当前 51 个 HUMAN-A 已经稳定覆盖整条路线，而不是只覆盖 Agent 名词：
 
-Batch 02 在保持同一 HUMAN-A 标准的前提下，一次新增了 18 个合格来源，使当前核心样本达到 **31 个**。这验证了：只要扩大搜索入口、处理登录 / 索引限制并沿原作者回溯，仍然可以持续找到大量高质量真人面经。
+```text
+Python / OS / Network
+        ↓
+FastAPI / Streaming / Service Runtime
+        ↓
+MySQL / Redis / MQ / Concurrency
+        ↓
+Vector DB / RAG
+        ↓
+LLM Foundation / Context
+        ↓
+Agent / Harness / Tool / MCP / Skill
+        ↓
+Production / Security / Evaluation / System Design
+```
 
-当前明确判断：**距离来源饱和还很远。** 后续目标是继续扩大独立 HUMAN-A 样本，直到新增来源在公司、岗位、轮次与问题分布上逐步趋于饱和，而不是人为限制每批数量。
+Batch 03 尤其新增了真人面试中的：Agent Harness 源码级追问、MCP Transport / Version Compatibility、SSE 断点续传、Tool Executor、Checkpoint Crash Window、Sandbox、Compaction Verification、Tool Result Security，以及 Python / MySQL / Redis / MQ 等基础能力同场考察。
+
+当前判断仍然明确：**高质量真人来源远未饱和。** 后续继续扩大独立 HUMAN-A 样本，直到公司、岗位、轮次和问题分布本身逐步趋于饱和，而不是人为限制 Batch 数量。
