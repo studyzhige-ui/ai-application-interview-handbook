@@ -4,10 +4,11 @@
 
 ## 当前进度（2026-09-09）
 
-- 已归档公开可访问来源：**34 个 `Sxxx` 样本**
-- 已形成规范化问题：**121 道 canonical questions**（按当前去重口径）
+- 已归档公开可访问来源：**47 个 `Sxxx` 样本**
+- 已形成规范化问题：**143 道 canonical questions**（按当前去重口径）
 - 当前仍处于“扩展召回”阶段，尚未认为样本饱和；后续会继续按公司 × 岗位别名 × 技术关键词滚动搜索。
 - 统计时会区分 **原始/第一人称面经** 与 **整理/合集型来源**，避免二次转载把频次放大。
+- 从 Batch 04 开始额外重点追踪 8 月下旬～9 月的新发布内容，并把持续监控发现的新来源先写入 `research/monitoring/inbox.md`，再定期归入正式 Batch。
 
 > 上述数量是当前研究数据库的工作计数，不代表“2026 全互联网全部面经”。我们的目标是尽可能扩大公开可访问样本，并在新增 canonical question 增速显著下降时判断接近信息饱和。
 
@@ -79,3 +80,4 @@
 - **Batch 01**：2026-09-09，建立搜索框架并收集第一批高密度样本，`S001–S015`。
 - **Batch 02**：2026-09-09，补充 Tool Cache、Security、Trace、Checkpoint/Resume、Codebase Memory、Model Routing 等工程主题，`S016–S020`。
 - **Batch 03**：2026-09-09，补充京东、滴滴、去哪儿、商汤、拓竹、华为等样本，并显著强化 MCP Lifecycle、Deterministic Replay、RAG Versioning、Hybrid Retrieval、MySQL/Redis/Backend 工程交叉问题，`S021–S034`。
+- **Batch 04**：2026-09-09，重点补充 8 月下旬～9 月上旬的新鲜样本，新增 Long-running Agent Latency、Cancellation、Runtime Message Model、Codex/Claude Code 源码级追问、TB 级 RAG、可靠异步任务与 HotKey 等主题，`S035–S047`。
