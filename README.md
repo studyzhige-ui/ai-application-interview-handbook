@@ -245,9 +245,9 @@ System Design
 
 当前研究已经完成严格清洗，并从干净基线继续扩大：
 
-- 当前正式来源：**S001–S051，共 51 个 HUMAN-A 样本**；
-- 当前正式批次：[`Batch 01`](research/interviews/batch-01.md) + [`Batch 02`](research/interviews/batch-02.md) + [`Batch 03`](research/interviews/batch-03.md)；
-- Batch 02 新增 18 个 HUMAN-A；Batch 03 又新增 **20 个 HUMAN-A**；
+- 当前正式来源：**S001–S074，共 74 个 HUMAN-A 样本**；
+- 当前正式批次：[`Batch 01`](research/interviews/batch-01.md) + [`Batch 02`](research/interviews/batch-02.md) + [`Batch 03`](research/interviews/batch-03.md) + [`Batch 04`](research/interviews/batch-04.md)；
+- Batch 01 = 13 个，Batch 02 = 18 个，Batch 03 = 20 个，Batch 04 新增 **23 个 HUMAN-A**；
 - Canonical Question 层已经重置，只允许由 HUMAN-A 来源重新建立；
 - 不保留低质量来源产生的额外面试题；
 - 不使用自动化面试、合集、二次创作、标准答案、低信息密度复盘或无法核验线索；
