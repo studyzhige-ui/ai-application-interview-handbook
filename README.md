@@ -245,14 +245,14 @@ System Design
 
 当前研究已经完成严格清洗，并从干净基线继续扩大：
 
-- 当前正式来源：**S001–S031，共 31 个 HUMAN-A 样本**；
-- 当前正式批次：[`Batch 01`](research/interviews/batch-01.md) + [`Batch 02`](research/interviews/batch-02.md)；
-- Batch 02 在不降低质量标准的情况下新增 18 个来源；
+- 当前正式来源：**S001–S051，共 51 个 HUMAN-A 样本**；
+- 当前正式批次：[`Batch 01`](research/interviews/batch-01.md) + [`Batch 02`](research/interviews/batch-02.md) + [`Batch 03`](research/interviews/batch-03.md)；
+- Batch 02 新增 18 个 HUMAN-A；Batch 03 又新增 **20 个 HUMAN-A**；
 - Canonical Question 层已经重置，只允许由 HUMAN-A 来源重新建立；
 - 不保留低质量来源产生的额外面试题；
 - 不使用自动化面试、合集、二次创作、标准答案、低信息密度复盘或无法核验线索；
 - 搜索平台开放，但质量标准固定；
-- 对登录态 / 搜索索引受限的平台，会通过搜索摘要定位、企业 / 话题页回溯、个人博客和跨平台原帖交叉验证来提高召回；
+- 对登录态 / 搜索索引受限的平台，通过搜索摘要定位、企业 / 话题页回溯、作者主页、个人博客和跨平台原帖交叉验证来提高 Recall；
 - 当前高质量真人来源仍远未饱和。
 
 研究工作流：
