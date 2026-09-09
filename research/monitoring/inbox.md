@@ -33,6 +33,24 @@
 
 对于登录态 / App 跳转 / 动态加载导致无法直接访问的内容，可以利用搜索引擎摘要、企业页 / 话题页、作者主页和跨平台同步来定位原帖；但最终无法稳定验证正文时仍然不进入 HUMAN-A。
 
+## 固定搜索方法
+
+后续监控继续以组合搜索为主，而不是只看泛关键词首页：
+
+```text
+公司
+×
+岗位别名（AI应用开发 / Agent开发 / 智能体开发 / 大模型应用开发 /
+LLM应用 / RAG开发 / AI后端 / AI全栈 / Applied AI / FDE / Coding Agent）
+×
+月份（重点回扫 2026-03～09）
+×
+技术关键词（RAG / MCP / Skill / Harness / Runtime / FastAPI /
+asyncio / MySQL / Redis / Vector DB / Context / Memory / Tool / Coding）
+```
+
+并继续使用：企业页 / 话题页 → 精确标题 → 作者主页 → 原帖正文 → 跨平台重复核验。
+
 ## 保存字段
 
 每个候选至少记录：
@@ -51,11 +69,13 @@
 ## 当前基线
 
 - 更新日期：2026-09-09
-- 正式来源：`S001–S074`，共 **74 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` + `batch-02.md` + `batch-03.md` + `batch-04.md`
-- 最新正式批次：Batch 04（`S052–S074`，新增 23 个）
-- Canonical Question：旧数据已清空，只从当前干净 HUMAN-A 来源重新累计
-- 当前判断：**高质量真人来源远未饱和，继续扩大搜索召回。**
+- 正式来源：`S001–S094`，共 **94 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` + `batch-02.md` + `batch-03.md` + `batch-04.md` + `batch-05.md`
+- 最新正式批次：Batch 05（`S075–S094`，新增 20 个）
+- Canonical Question：旧数据已清空，只从当前干净 HUMAN-A 来源重新累计；低质量来源继续保持零贡献
+- 当前最大来源编号：`S094`，下一条正式来源从 `S095` 开始
+- 下一轮优先级：继续扫 2026 年 3–9 月未覆盖公司 / 轮次，同时优先发现 9 月新发布的 Agent Runtime / Harness / AI Backend / AI Full-stack 真人深挖
+- 当前判断：**高质量真人来源远未饱和，继续扩大搜索召回，但不降低 HUMAN-A 标准。**
 
 ---
 
