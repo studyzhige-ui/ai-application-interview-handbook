@@ -46,10 +46,9 @@
 2. Infra 为什么能提升 Agent 能力，真正的工程难点在哪里？
 3. 平台做过哪些优化，哪一项最有挑战，收益怎样证明？
 4. 探索型 Agent 项目具体解决什么问题，为什么值得做？
-5. Agent Infra 与具体业务 Agent 的职责边界如何划分？
-6. Go GMP 如何支撑高并发 Runtime？
-7. Redis Cache 在 Agent Backend 中如何使用与治理？
-8. Coding：课程表变体，除了判断可行还要输出一条合法路径。
+5. Go GMP 如何支撑高并发 Runtime？
+6. Redis Cache 在 Agent Backend 中如何使用与治理？
+7. Coding：课程表变体，除了判断可行还要输出一条合法路径。
 
 ---
 
@@ -146,7 +145,6 @@
 3. MCP 与 Skill 的边界是什么，为什么不能互相完全替代？
 4. 如果设计一个模仿特定人格的 Skill，需要哪些约束和数据？
 5. Agent 之间有哪些协作拓扑，中央 Coordinator 与更扁平的协作方式如何选择？
-6. 多 Agent 协作中如何防止重复工作、目标漂移和信息丢失？
 
 ---
 
@@ -344,13 +342,13 @@
 
 高价值问题：
 
-1. Agent 项目与 Backend 项目分别解决什么问题？
-2. `synchronized` 用在业务方法上除了阻塞用户还有哪些问题？
-3. 如果可以接受性能变慢，单机锁能否保证秒杀正确性，边界在哪里？
-4. 同一业务扩展到上万台机器后，单机锁为什么失效？
-5. Distributed Lock 应怎样设计 Key 粒度？
-6. 锁的 Owner、TTL、Renewal 和 Unlock Atomicity 应如何保证？
-7. Agent 服务在分布式部署后还需要额外处理哪些 Session / State 问题？
+1. 介绍并深挖本人项目。
+2. 对 Agent 的理解是什么？
+3. 后端项目整体是怎样设计和实现的？
+4. `synchronized` 用在业务方法上除了阻塞多用户访问，还有什么问题？
+5. 如果可以接受性能变慢，单机 `synchronized` 能否保证秒杀场景的正确性？
+6. 同一业务扩展到上万台机器后，原来的单机锁方案会发生什么变化？
+7. Redis 分布式锁的 Key 应怎样设计？
 
 ---
 
@@ -551,8 +549,7 @@
 4. MySQL Replication、Transaction 和 Isolation 如何影响高并发订单正确性？
 5. Agent 的核心组成是什么，为什么不是一次 LLM Call？
 6. RAG 的 Retrieval → Generation 链路如何解释？
-7. AI Backend 中哪些失败适合 Runtime Deterministic Recovery，哪些可以交给 LLM？
-8. Coding：链表求和类变体，并严格处理输入输出与边界条件。
+7. Coding：链表求和类变体，并严格处理输入输出与边界条件。
 
 ---
 
