@@ -30,7 +30,7 @@ MySQL → Redis → Vector DB
 
 ### 1. 知识体系是骨架，真实面经是血肉
 
-MySQL、Redis、Vector DB、RAG、Agent Harness 等模块都会从 0 建立完整知识体系，绝不会因为某个知识点暂时没出现在面经里就不学。
+Python、FastAPI、MySQL、Redis、Vector DB、RAG、Agent Harness 等模块都会从 0 建立完整知识体系，绝不会因为某个知识点暂时没出现在面经里就不学。
 
 真实面经负责：
 
@@ -56,6 +56,18 @@ FastAPI、LangGraph、向量数据库产品都可能演进，因此正文会区�
 - 稳定原理；
 - 当前框架事实；
 - 工程设计取舍。
+
+### 4. 面经必须同时满足“高质量 + 岗位方向正确”
+
+正式面经样本不仅要求第一人称、可核验、问题具体，还必须服务于我们的求职方向：
+
+```text
+AI 应用开发 / AI Agent 开发 / 大模型应用开发
+AI 全栈 / AI 后端 / RAG / Applied AI / FDE
+Agent Harness / Runtime / Coding Agent
+```
+
+传统数据分析 / BI、纯推荐算法、纯模型训练/Infra，以及与 AI 应用没有实质关系的传统后端面经，不用于本项目的真实面试频率统计。
 
 ---
 
@@ -246,6 +258,7 @@ Review 自测
 当前已经建立：
 
 - 高质量来源分级规则；
+- AI Application / Agent 岗位范围准入规则；
 - 原始面经层；
 - Canonical Question 语义去重层；
 - 跨平台 Leads；
@@ -254,9 +267,10 @@ Review 自测
 
 截至 2026-09-09 当前研究状态：
 
-- 已归档 `S001–S086` 来源记录；
-- 已形成约 **177 道 canonical questions**；
+- 已归档 `S001–S100` 来源记录；
+- 已形成约 **191 道 canonical questions**；
 - 从 Batch 06 起执行严格“宁缺毋滥”准入；
+- 从 Batch 08 起增加 Role Scope Gate，排除与目标方向无关的数据分析 / BI / 纯推荐 / 纯训练 Infra 场次；
 - 搜索同时保持两条 Lane：
   - **Agent / Harness Frontier**；
   - **AI Application Foundation**（Python / FastAPI / MySQL / Redis / Backend）。
@@ -267,6 +281,8 @@ Review 自测
 
 ```text
 高质量真实面经
+      ↓
+Role Scope Gate
       ↓
 来源归档
       ↓
