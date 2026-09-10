@@ -44,6 +44,7 @@ HUMAN-A
 
 ```text
 Python / FastAPI / Backend Engineering
+Java / Spring / Go
 MySQL / Redis / Vector Database
 LLM Foundation / RAG
 Agent / MCP / Skill / Tool / Memory
@@ -83,15 +84,16 @@ LLM应用 / RAG开发 / AI后端 / AI全栈 / Applied AI / FDE / Coding Agent）
 ×
 月份（重点回扫 2026-03～09，同时追最新发布）
 ×
-技术关键词（Python / FastAPI / asyncio / MySQL / Redis / Vector DB /
-RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool / Benchmark / Coding）
+技术关键词（Python / FastAPI / asyncio / Java / Spring / Go / MySQL / Redis /
+Vector DB / RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool /
+Benchmark / Coding）
 ```
 
 搜索不能停在结果页：继续追企业 / 话题页、精确标题、公司 + 轮次、作者主页、候选人其他帖子、个人博客 / 独立站、原始正文、评论区和跨平台同步关系。
 
 ## 强化去重流程
 
-从 Batch 15 起，**任何候选在分配 `Sxxx` 前必须先完成历史 Batch 直接回读**。Batch 16 已实际直接回读 `batch-01.md` ～ `batch-15.md` 全历史；以后继续保持，不能把 GitHub Code Search / 搜索引擎的“0 命中”当成去重完成。
+**任何候选在分配 `Sxxx` 前必须先完成历史 Batch 直接回读。** GitHub Code Search / 搜索引擎的“0 命中”只能作为辅助，不是“未收录”的证明。
 
 固定执行：
 
@@ -117,34 +119,36 @@ URL 精确去重
 - 更早不同作者页面与候选页面几乎逐题同序、又无法证明候选页面独立 → 候选页面排除；
 - 跨平台同步、镜像、后发近似复制 → 只保留能确认的原始候选人来源；
 - 无法可靠确认原场次 → 整条不确定链排除；
+- **正文最终无法稳定访问、只能依赖搜索摘要 → 不进入正式来源，即使初筛时已经进入强候选池；**
 - 不同候选人独立遇到相同常见问题 → 分别计数。
 
-Batch 16 的应用实例：快手 AI 全栈同一作者的一面 / 二面合并为 `S305`；同一作者的字节 `S301` 与淘天 `S308` 因属于不同公司、不同时间和不同招聘流程，分别计数。米哈游 4/9 / 4/24 近似逐题复制链因原场归属仍不可靠，继续整链不新增。
+Batch 17 的应用实例：快手 AI 应用服务端 8/26、9/1、9/9 三轮由同一作者连续发布，合并为 `S318`；灵犀互娱 8/31、9/2、9/7 三轮及 9/8 意向 Timeline 合并为 `S319`。两者虽然同一作者且都深挖 `CR Agent`，但公司与招聘流程独立，因此分别计数。另有一条某中厂 Agent 应用开发候选在最终复核时正文无法稳定打开，只能依赖 Search Snippet，因此编号前撤出。
 
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S308`，共 **308 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-16.md`
-- 最新正式批次：Batch 16（`S301–S308`，新增 8 个）
-- 当前最大来源编号：`S308`
-- 下一条正式来源从 **`S309`** 开始
+- 正式来源：`S001–S319`，共 **319 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-17.md`
+- 最新正式批次：Batch 17（`S309–S319`，新增 11 个）
+- 当前最大来源编号：`S319`
+- 下一条正式来源从 **`S320`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**仍未达到来源饱和，但已经进入高去重成本阶段。** 在 `S001–S300` 全历史直接回读后，本轮仍确认 8 个独立 HUMAN-A；同时 AI 自动面、内容账号、答案版和复制链继续增加。
+- 当前停止判断：**仍未达到来源饱和，但已经进入高去重 / 高 Provenance 核验成本阶段。** 在 `S001–S308` 全历史重新直接回读后，本轮仍确认 11 个独立 HUMAN-A；同时内容账号、答案版、自动面、同序改写和正文不稳定候选比例继续上升。
 
 ## 下一轮搜索优先级
 
-1. 从 `S309` 开始，但必须在分配编号前直接回读历史 Batch 做完整去重；
-2. 持续追 2026-09 最新 AI Application / Agent 原帖；
-3. 沿 Batch 16 新增候选人的作者主页回看后续技术面 / Leader 面，同公司同流程只合并；
+1. 从 `S320` 开始，但必须在分配编号前直接回读历史 Batch 做完整去重；
+2. 持续追 2026-09 最新 AI Application / Agent 原帖，尤其是能沿作者 Timeline 闭环的多轮流程；
+3. 沿 Batch 17 新增候选人的后续技术面 / Leader 面继续追踪，同公司同流程只合并；
 4. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
-5. 深挖 Agent Benchmark / Evaluation：Task Construction / Process Metric / Failure Attribution / Domain Expert Review / Regression；
-6. 深挖 Skill / Workflow Governance：Hard Guarantee / Auth / Sensitive Context / SubAgent Isolation / Output Review；
-7. 继续补 Python / FastAPI / Async 与 Agent Runtime 同场真人样本；
-8. 继续追 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
-9. 继续寻找目标 AI 岗中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
-10. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
-11. 持续记录新增 HUMAN-A 数量和命中率、重复率、二次整理 / 内容账号比例和 Role Scope 外比例，判断是否真正接近饱和。
+5. 深挖 Tool Calling / Agent Runtime：Structured Tool Call、Content Block、Executor、Tool Result、Retry / Failure；
+6. 深挖 RAG 反例：Chunk Semantic Boundary、Summary-induced Recall Loss、Embedding Strategy、Retrieval Failure Attribution；
+7. 深挖 Skill / Tool / Function Call 的实现边界与 Progressive Disclosure；
+8. 继续补 Python / FastAPI / Async 与 Agent Runtime 同场真人样本；
+9. 继续追 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
+10. 继续寻找目标 AI 岗中 Java / Spring / Go / MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
+11. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
+12. 持续记录新增 HUMAN-A 数量、重复率、二次整理 / 内容账号比例、Role Scope 外比例与正文稳定核验失败率，判断是否真正接近饱和。
 
 ## 当前 Inbox
 
