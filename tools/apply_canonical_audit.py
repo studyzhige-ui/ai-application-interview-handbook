@@ -51,33 +51,49 @@ def heat(count: int) -> str:
 
 def block_bounds(text: str, qid: str) -> tuple[int, int]:
     matches = list(QID_RE.finditer(text))
-    for i, m in enumerate(matches):
-        if m.group(1) == qid:
-            return m.start(), matches[i + 1].start() if i + 1 < len(matches) else len(text)
+    for i, match in enumerate(matches):
+        if match.group(1) == qid:
+            end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+            return match.start(), end
     raise KeyError(qid)
+
+
+def replace_field_line(block: str, label: str, value: str, qid: str) -> str:
+    """Replace exactly one Markdown metadata line without consuming blank lines/headings."""
+    pattern = re.compile(rf"^- \*\*{re.escape(label)}\*\*：[^\r\n]*$", re.M)
+    matches = list(pattern.finditer(block))
+    if len(matches) != 1:
+        raise ValueError(f"expected one {label} line for {qid}, got {len(matches)}")
+    match = matches[0]
+    replacement = f"- **{label}**：{value}"
+    return block[:match.start()] + replacement + block[match.end():]
 
 
 def merge_evidence(text: str, qid: str, additions: set[str]) -> str:
     start, end = block_bounds(text, qid)
     block = text[start:end]
-    m = re.search(r"^- \*\*Evidence Sources\*\*：(.+?)\s*$", block, re.M)
-    if not m:
-        raise ValueError(f"missing Evidence Sources for {qid}")
-    current = set(re.findall(r"S\d{3}", m.group(1)))
+
+    evidence_pattern = re.compile(r"^- \*\*Evidence Sources\*\*：([^\r\n]*)$", re.M)
+    evidence_matches = list(evidence_pattern.finditer(block))
+    if len(evidence_matches) != 1:
+        raise ValueError(f"expected one Evidence Sources line for {qid}, got {len(evidence_matches)}")
+
+    current = set(re.findall(r"S\d{3}", evidence_matches[0].group(1)))
     merged = sorted(current | additions, key=source_sort_key)
-    evidence_line = "- **Evidence Sources**：" + ", ".join(f"`{sid}`" for sid in merged)
-    block = block[:m.start()] + evidence_line + block[m.end():]
+    evidence_value = ", ".join(f"`{sid}`" for sid in merged)
 
-    cm = re.search(r"^- \*\*Source Count\*\*：.*$", block, re.M)
-    if not cm:
-        raise ValueError(f"missing Source Count for {qid}")
-    count_line = f"- **Source Count**：**{len(merged)}**"
-    block = block[:cm.start()] + count_line + block[cm.end():]
+    # Each replacement is line-bounded; this keeps the next ### QID heading intact even when
+    # several questions in the same Markdown file are updated sequentially.
+    block = replace_field_line(block, "Evidence Sources", evidence_value, qid)
+    block = replace_field_line(block, "Source Count", f"**{len(merged)}**", qid)
 
-    hm = re.search(r"^- \*\*Interview Heat\*\*：.*$", block, re.M)
-    if hm:
-        heat_line = f"- **Interview Heat**：{heat(len(merged))}"
-        block = block[:hm.start()] + heat_line + block[hm.end():]
+    heat_pattern = re.compile(r"^- \*\*Interview Heat\*\*：[^\r\n]*$", re.M)
+    heat_matches = list(heat_pattern.finditer(block))
+    if len(heat_matches) > 1:
+        raise ValueError(f"multiple Interview Heat lines for {qid}")
+    if heat_matches:
+        block = replace_field_line(block, "Interview Heat", heat(len(merged)), qid)
+
     return text[:start] + block + text[end:]
 
 
@@ -133,7 +149,8 @@ def main() -> None:
     # QID, the source is already present in the reviewed new-question evidence set.
     new_by_qid = {item["qid"]: item for item in audit.get("new_questions", [])}
 
-    # Apply additions to existing questions first.
+    # Apply additions to existing questions. The line-bounded updater is idempotent, so multiple
+    # QIDs in the same file can be processed safely without swallowing the following heading.
     for qid, sources in additions_by_qid.items():
         if qid in new_by_qid and qid not in qid_to_file:
             missing = sources - set(new_by_qid[qid]["evidence"])
