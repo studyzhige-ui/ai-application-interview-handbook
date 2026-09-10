@@ -1,17 +1,17 @@
-# Agent Harness / Runtime Canonical Questions — S001–S279 全库纵向扫描 v2
+# Agent Harness / Runtime Canonical Questions — S001–S279 全库纵向扫描 v3
 
 更新日期：2026-09-10
 
-> 一级板块：**Agent Harness / Runtime**。本文件只保留 Agent 控制面与执行运行时：Loop、State、Context Assembly / Compaction、Memory、Tool / MCP / Skill、Checkpoint / Resume、Permission / Sandbox、Multi-Agent、Evaluation、Coding Agent Runtime 等。通用 Network / Streaming Transport、Rate Limit / Backpressure、服务扩容归 `AI Backend Engineering`；Long-context 模型本体限制归 `LLM Foundation`；端到端 Agent Backend 架构题归 `System Design`。
+> 一级板块：**Agent Harness / Runtime**。本文件只保留 Agent 控制面与执行运行时：Loop、State、Context Assembly / Compaction、Memory、Tool / MCP / Skill、Checkpoint / Resume、Permission / Sandbox、Multi-Agent、Execution Trace、Evaluation、Coding Agent Runtime 等。通用 Network / Streaming Transport、Rate Limit / Backpressure、服务扩容与普通 Backend Observability 归 `AI Backend Engineering`；Long-context 模型本体限制归 `LLM Foundation`；端到端 Agent Backend 架构题归 `System Design`。
 >
-> 本文件所有 ACTIVE 条目的 `Primary Module = Agent Harness / Runtime`。最终课程仍要额外研究 Claude Code / Codex 源码，但源码不能反向改变 HUMAN-A Source Count。
+> 本文件所有 ACTIVE 条目的 `Primary Module = Agent Harness / Runtime`。正式课程还要额外研究 Claude Code / Codex 源码，但源码不能反向改变 HUMAN-A Source Count。
 
 ## 1. 当前扫描结论
 
-- ACTIVE Canonical Questions：**38**
+- ACTIVE Canonical Questions：**39**
 - MOVED：**4**（旧 `AGENT-013`, `033`, `039`, `040`）
 - 证据范围：仅 `S001–S279`
-- 当前版本：`v2`（十板块归属审计版）
+- 当前版本：`v3`（Global Merge / Split Audit）
 
 ### 高频信号
 
@@ -21,12 +21,12 @@
 - `AGENT-024` · 27：Skill / Tool / Function / MCP / Rule / Workflow 边界
 - `AGENT-001` · 25：Agent vs LLM / Chatbot / Workflow
 - `AGENT-003` · 24：Agent Loop / Runtime
-- `AGENT-020` · 22：Tool Failure Handling
+- `AGENT-020` · 22：Tool Call Failure Handling
 - `AGENT-030` · 21：Multi-Agent / Sub-agent
 - `AGENT-034` · 19：Agent Evaluation
 - `AGENT-005` · 18：Agent Paradigm
 - `AGENT-021` · 17：Dynamic Tool Discovery / Progressive Loading
-- `AGENT-028` · 15：Permission / HITL / Sandbox
+- `AGENT-028` · 16：Permission / HITL / Sandbox
 - `AGENT-036` · 15：Code Verification
 
 ---
@@ -160,8 +160,8 @@
 - **Source Count**：**8**
 - **Evidence Sources**：`S001`, `S012`, `S022`, `S043`, `S057`, `S214`, `S236`, `S275`
 
-### AGENT-020 · Tool Failure / Invalid Call / Timeout / Permission Error 怎样分类、反馈、Retry、Fallback 与 Recovery？
-- **Topic**：Tool Failure Handling
+### AGENT-020 · 单次 Tool Call 出现 Invalid Arguments / Invalid Schema / Permission / Execution / Timeout 等失败时，Runtime 怎样归一化错误、反馈给模型并决定 Repair / Retry / Fail？
+- **Topic**：Tool Call Failure Semantics
 - **Question Type**：Troubleshoot / Failure Analysis
 - **Depth**：L4
 - **Source Count**：**22**
@@ -223,8 +223,8 @@
 - **Topic**：Permission / Approval / Sandbox
 - **Question Type**：Security / System Design
 - **Depth**：L4
-- **Source Count**：**15**
-- **Evidence Sources**：`S015`, `S019`, `S025`, `S027`, `S030`, `S032`, `S037`, `S042`, `S059`, `S081`, `S214`, `S241`, `S245`, `S253`, `S275`
+- **Source Count**：**16**
+- **Evidence Sources**：`S015`, `S019`, `S025`, `S027`, `S030`, `S032`, `S037`, `S042`, `S059`, `S081`, `S214`, `S241`, `S245`, `S253`, `S254`, `S275`
 - **Related Modules**：AI Backend Engineering
 
 ### AGENT-029 · Tool 已成功产生外部副作用，但 Checkpoint / DB 写失败或服务崩溃时，如何避免 Resume 后重复执行？
@@ -286,8 +286,8 @@
 - **Evidence Sources**：`S008`, `S038`, `S059`, `S132`, `S145`, `S218`, `S231`, `S236`, `S248`
 - **Related Modules**：RAG
 
-### AGENT-038 · Agent Runtime 的 Retry、Backoff、Circuit Breaker、Model / Tool Fallback 怎样设计？哪些错误不该重试？
-- **Topic**：Agent-specific Reliability
+### AGENT-038 · Agent Runtime 如何制定跨 Model / Tool / Provider 的 Resilience Policy？Retry Eligibility、Backoff、Circuit Breaker、Fallback / Model Failover 应怎样组合？
+- **Topic**：Agent Runtime Resilience Policy
 - **Question Type**：Failure Analysis
 - **Depth**：L4
 - **Source Count**：**12**
@@ -308,9 +308,17 @@
 - **Source Count**：**1**
 - **Evidence Sources**：`S242`
 
+### AGENT-043 · Agent Runtime 怎样建立 step / model / tool / state 级 Trace 与 Observability？如何用执行轨迹定位卡住、失败、延迟和 Token 异常，并支持 Replay / Debug？
+- **Topic**：Execution Trace / Observability
+- **Question Type**：Troubleshoot / System Design
+- **Depth**：L4
+- **Source Count**：**5**
+- **Evidence Sources**：`S034`, `S129`, `S146`, `S240`, `S242`
+- **Related Modules**：AI Backend Engineering
+
 ---
 
-## 3. MOVED：新十板块归属修正
+## 3. MOVED：十板块归属修正
 
 | Legacy QID | 原问题 | 新 Primary Canonical |
 |---|---|---|
@@ -319,4 +327,41 @@
 | `AGENT-039` | Concurrency / Backpressure / Fairness / Quota / Token Budget | `AIBE-013`, `AIBE-017` |
 | `AGENT-040` | Agent Service 从 Demo 扩到多实例 / 多机器 | `SD-021`; 通用部署底座见 `AIBE-027`～`AIBE-031` |
 
-`AGENT-038` 仍保留，因为它关注 **Agent Runtime 如何理解模型 / Tool 错误语义并决定是否重试**，与通用服务 Resilience（`AIBE-018`）不是同一道题。
+---
+
+## 4. Global Merge / Split Audit 修正
+
+### Repository Understanding 统一 Primary
+
+旧 `RAG-030` 与 `AGENT-037` 共享同一个核心知识模型，而且 `RAG-030` 的全部证据 `S038`, `S059`, `S132`, `S145`, `S218` 都已包含在 `AGENT-037` 中。Global Audit 后统一以 `AGENT-037` 为唯一 Primary；RAG 继续作为 Related Module。
+
+### Backend Observability 与 Agent Execution Trace 拆分
+
+旧 `AIBE-029` 同时混入了通用服务 Metrics / Log / Trace 和 Agent step / model / tool 执行轨迹。审计后：
+
+- 通用 Backend Observability 留在 `AIBE-029`；
+- Agent 执行轨迹单独建立 `AGENT-043`，来源 `S034`, `S129`, `S146`, `S240`, `S242`。
+
+### Permission / Sandbox 证据补全
+
+`S254` 明确追问 Agent Code Execution Boundary、Tool Calling Security、OpenClaw Permission Model、Reverse Shell / Docker Escape，因此加入 `AGENT-028`；Source Count 从 15 修正为 16。
+
+### Tool Call Failure 与 Runtime Resilience 保持分离
+
+`AGENT-020` 与 `AGENT-038` 词面相近，但不合并：
+
+- `AGENT-020` 是**单次 Tool Call 的错误语义与反馈 / Repair**；
+- `AGENT-038` 是**跨 Model / Tool / Provider 的 Runtime Resilience Policy**，关注 Retry Eligibility、Backoff、Circuit Breaker 和 Fallback。
+
+这符合仓库 `schema.md` 的规则：正常调用 / 局部错误语义，与跨依赖恢复策略属于可以独立追问的能力。
+
+---
+
+## 5. Agent 课程的特殊证据规则
+
+本文件的 Source Count 只代表 `S001–S279` HUMAN-A 市场证据。后续正式建设 Agent Harness / Runtime 教材时，还必须研究：
+
+- `studyzhige-ui/claude-code-source-private`
+- `openai/codex`
+
+两套成熟产品源码用于补齐课程知识边界、实现机制和工程 Trade-off，但**不能**反向增加任何 HUMAN-A Source Count。
