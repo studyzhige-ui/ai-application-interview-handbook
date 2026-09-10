@@ -15,56 +15,74 @@
 
 > 注意：Batch 文件中的历史“累计来源数 / 下一编号”等过程性统计按采集时口径保留；Canonical 重建只使用当前去重后的 `S001–S279` 正式编号。
 
-## 模块纵向扫描
+## 五大核心模块纵向扫描
 
-| 模块 | 状态 | 说明 |
-|---|---|---|
-| MySQL | ✅ v1 完成 | 已对 `S001–S279` 做一次全库纵向扫描，建立正式 Canonical Question 与证据 Source IDs |
-| Redis | ⏳ 待开始 | 下一模块 |
-| Vector DB | ⏳ 待开始 | |
-| RAG | ⏳ 待开始 | |
-| Agent Harness / Runtime | ⏳ 待开始 | 最后结合 Claude Code / Codex 做知识体系校准；面经仍只负责市场证据 |
-| FastAPI | ⏳ | 前五模块后处理 |
-| Backend Engineering | ⏳ | |
-| LLM Foundation | ⏳ | |
-| System Design | ⏳ | |
-| Coding / Debug / AI Coding | ⏳ | |
+| 模块 | 状态 | Canonical 条目数 | 说明 |
+|---|---:|---:|---|
+| MySQL | ✅ v1 完成 | 28 | 索引、事务、MVCC、锁、日志、Sharding、DB-Cache Consistency 等 |
+| Redis | ✅ v1 完成 | 24 | 数据结构、缓存、BigKey/HotKey、锁、Cluster、Session、Agent State 等 |
+| Vector DB | ✅ v1 完成 | 23 | Embedding、ANN、HNSW/IVF、Hybrid、RRF、Rerank、Evaluation 等 |
+| RAG | ✅ v1 完成 | 30 | Parse、Chunk、Retrieval、Rerank、Evaluation、Freshness、Production 等 |
+| Agent Harness / Runtime | ✅ v1 完成 | 42 | Loop、Context、Memory、Tool、MCP/Skill、Checkpoint、Permission、Eval 等 |
 
-## 为什么先按模块完成，再做最终频率榜
+当前五大核心模块共形成 **147 个“模块内 Canonical 条目”**。这个数字**不是全局独立问题数**：
 
-真实面试问题高度交叉。例如：
+- `MySQL + Redis Consistency` 同时属于 MySQL / Redis；
+- `Hybrid Retrieval / RRF / Rerank` 同时属于 Vector DB / RAG；
+- `RAG Context / Agent Context`、`Redis Checkpoint / Agent Checkpoint` 等存在跨模块交叉。
 
-```text
-“Redis + MySQL 双写一致性”
-```
+因此下一步必须做跨模块审计，建立全局能力视图，而不能直接把 147 当成“147 道独立面试题”。
 
-既属于 Redis，也属于 MySQL / Backend System Design。
+## 下一步：Cross-module Audit + Market Analysis
 
-又例如：
+当前开始进入第二阶段：
 
 ```text
-“Vector + BM25 → RRF → Rerank”
+五大模块 v1
+    ↓
+Cross-module Merge / Split Audit
+    ↓
+全局 Capability / Question Index
+    ↓
+Frequency Ranking
+    ↓
+Interview Depth / Follow-up Chain
+    ↓
+Curriculum Coverage Matrix
+    ↓
+Knowledge Gap Analysis
 ```
 
-同时跨 Vector DB 与 RAG。
+随后再处理支持模块：
 
-因此当前每个模块先完成自己的 Canonical Question 与证据链接；待五大核心模块完成后，再做一次跨模块 Merge / Split 审计，最终生成：
+| 模块 | 状态 |
+|---|---|
+| FastAPI | ⏳ |
+| Backend Engineering | ⏳ |
+| LLM Foundation | ⏳ |
+| System Design | ⏳ |
+| Coding / Debug / AI Coding | ⏳ |
 
-- 全局 Canonical Question Index；
-- 独立来源频率榜；
-- 独立公司覆盖；
-- 追问深度；
-- 典型追问链；
-- Curriculum Coverage Matrix；
-- Knowledge Gap Analysis。
+这些支持模块并不会阻塞 MySQL 教材启动；但在最终“全市场画像”发布前仍应补齐，因为 HUMAN-A 中大量真实考察正是 AI + Backend Foundation 混合型。
 
 ## 质量状态
 
-MySQL v1 中的 `Source Count` 等于该条目列出的唯一 `Sxxx` 数量。它是本轮全库人工语义扫描的可复核结果，不使用搜索引擎命中数，也不使用被删除来源。
+所有 v1 文件中的 `Source Count` 都必须等于对应条目列出的唯一 `Sxxx` 数量，并且只使用冻结后的正式 HUMAN-A。
 
-在最终跨模块审计前，文件标记为 `v1`，允许出现以下两类修正：
+当前仍允许两类修正：
 
 1. 某个问题更适合被拆成两个 Canonical Question；
-2. 某个跨模块问题需要增加 / 移动证据来源。
+2. 某个跨模块问题需要合并到同一个 Global Capability，或增加 / 移动证据来源。
 
-修正必须保留可追溯的 `Sxxx`，不能凭常识虚增“面试频率”。
+任何修正都必须保留可追溯的 `Sxxx`，不能凭常识、搜索热度或其它题库虚增“面试频率”。
+
+## Agent Harness 特殊规则
+
+Agent Harness 的**面经统计层**已经完成 v1；它只反映 2026 HUMAN-A 实际问到的能力。
+
+后续做 Agent 课程时，还必须单独研究：
+
+- `studyzhige-ui/claude-code-source-private`
+- `openai/codex`
+
+用两套成熟产品源码补齐完整 Runtime / Harness 知识体系。源码研究属于“课程权威实现证据”，不能反向改变 HUMAN-A 的 Source Count。
