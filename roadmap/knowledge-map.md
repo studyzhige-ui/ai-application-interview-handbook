@@ -1,6 +1,8 @@
 # AI Application Engineer 求职知识总地图
 
-> 这不是“把所有技术都学一遍”的清单，而是围绕 **AI 应用开发 / Agent 开发岗位**构建的一套从语言 → 服务 → 数据 → 检索 → Agent Runtime → 生产系统的完整知识体系。
+> 这不是“把所有技术都学一遍”的清单，而是围绕 **AI 应用开发 / Agent 开发岗位**构建的一套从语言 → 服务 → 数据 → 模型基础 → 检索 → Agent Runtime → 生产系统的完整知识体系。
+>
+> 当前真实面经研究基线已冻结：`S001–S279` HUMAN-A，经过 Phase 2B 补漏后共有 **235 ACTIVE Canonical**。面经负责校准市场频率和追问深度，不反向限制完整知识体系。
 
 ## 1. 总体结构
 
@@ -17,17 +19,20 @@ AI Application Engineer Knowledge System
 │   ├── Redis
 │   └── Vector Database
 │
+├── Model Foundation
+│   └── LLM Foundation（应用工程深度）
+│
 ├── AI Application
 │   └── RAG
 │
 ├── Agent Runtime
-│   └── Agent Harness
+│   └── Agent Harness / Runtime
 │
 ├── Integration
 │   └── System Design
 │
 └── Interview Reality
-    └── 2026 高质量真实面经研究
+    └── 2026 HUMAN-A Frozen Research Baseline
 ```
 
 ---
@@ -56,21 +61,23 @@ Backend Engineering
 ```text
 01 Python Foundation
         ↓
-02 FastAPI
+02 FastAPI / ASGI AI Service
         ↓
-03 AI Backend Engineering 基础
+03 AI Backend Engineering
         ↓
 04 MySQL
         ↓
 05 Redis
         ↓
-06 Vector Database
+06 Vector Database / ANN Infrastructure
         ↓
-07 RAG
+07 LLM Foundation（应用工程深度）
         ↓
-08 Agent Harness / Runtime
+08 RAG Engineering
         ↓
-09 Production System Design
+09 Agent Harness / Runtime
+        ↓
+10 Production System Design
 ```
 
 注意：`AI Backend Engineering` 不是第三阶段学完就结束，而是一条贯穿后续所有模块的横向主线。
@@ -86,6 +93,16 @@ Backend Engineering
 
 学习 Agent
   └─ 同时学习 Retry / Idempotency / Cancellation / Lease / Backpressure
+```
+
+横向还要持续贯穿：
+
+```text
+Evaluation / Verification
+Reliability / Failure Recovery
+Security / Permission
+Observability
+AI-assisted Development
 ```
 
 ---
@@ -123,6 +140,8 @@ AI 应用重点：
 - 上下文管理
 - 大文件流式处理
 
+市场直接命中不高不等于知识重要度低。Python 是完整学习路径的基础层，Review 权重可以向 `asyncio / GIL / Decorator / Generator` 倾斜，但主体知识不能按面经频率裁掉。
+
 ---
 
 # 5. 模块二：FastAPI
@@ -155,6 +174,8 @@ HTTP
 
 最终目标：能从 0 设计和解释一个真实 AI API Service，而不只是会写路由装饰器。
 
+真实面经里 FastAPI 直接命中较少，但 ASGI、Streaming 与 Runtime Boundary 都是后续 Agent Service 的必要桥梁，因此保持完整课程地位。
+
 ---
 
 # 6. 模块三：AI Backend Engineering
@@ -178,6 +199,7 @@ Network / HTTP
 → MQ / Reliable Task
 → Backpressure
 → Cache / Rate Limit
+→ Data Consistency
 → Large File Pipeline
 → Observability
 → Security
@@ -194,6 +216,8 @@ Network / HTTP
 > 谁来恢复？
 > 怎么知道哪里出错？
 
+真实面经还稳定出现 JVM / Java Concurrency / ThreadLocal / Go GMP 等跨语言信号。它们后续采用 **Role-dependent Backend Bridge** 形式补充，不把主线扩成全语言后端大全。
+
 ---
 
 # 7. 模块四：MySQL
@@ -204,24 +228,33 @@ Network / HTTP
 
 ```text
 01 MySQL 在 AI 应用里的职责
-02 SQL 基础
+02 SQL 基础 / SQL Execution
 03 Index 基础
 04 B+Tree
-05 Composite Index / Leftmost Prefix
-06 Covering Index / Back Table / ICP
-07 EXPLAIN / Slow SQL
-08 ACID
-09 Isolation Level
-10 MVCC / Undo / Read View
-11 Lock / Gap / Next-key
-12 redo / undo / binlog
-13 Pagination / Query Optimization
-14 Schema Design
-15 MySQL + Redis Consistency
-16 AI Application Data Modeling
+05 Clustered / Secondary Index
+06 Composite Index / Leftmost Prefix
+07 Covering Index / Back Table / ICP
+08 Index Invalidation / Lifecycle
+09 EXPLAIN / Slow SQL
+10 Primary Key Design
+11 ACID
+12 Isolation Level
+13 MVCC / Undo / Read View
+14 Lock / Gap / Next-key / Deadlock
+15 redo / undo / binlog / Two-phase Commit
+16 Pagination / Query Optimization
+17 Schema Design
+18 Replication
+19 Sharding
+20 CDC / Data Sync
+21 Bulk Write / Write Path
+22 MySQL + Redis Consistency Boundary
+23 AI Application Data Modeling
 ```
 
-原则：不学成 DBA，但要能设计 AI 产品的数据层，并解释性能与一致性。
+原则：不学成 DBA，但要能设计 AI 产品的数据层，并解释性能、一致性与 Scale。
+
+`MySQL + Redis Consistency` 的完整系统语义 Primary 在 AI Backend Engineering；MySQL 章节负责解释事务、锁、日志和写路径等自身机制。
 
 ---
 
@@ -233,81 +266,141 @@ Network / HTTP
 01 Redis 为什么存在
 02 String / Hash / List / Set / ZSet
 03 Redis 为什么快
-04 Thread Model
-05 IO Multiplexing
-06 TTL / Expiration
-07 Eviction
-08 Cache Penetration / Breakdown / Avalanche
-09 BigKey / HotKey
-10 RDB / AOF
-11 Distributed Lock / Lease / WatchDog
-12 Lua / Atomicity
-13 Cache Consistency
-14 Session / Conversation
-15 Agent Short-term State
-16 Checkpoint / Runtime State
-17 Rate Limit
-18 Redis in AI System Design
+04 Thread Model / IO Multiplexing
+05 TTL / Expiration
+06 Eviction
+07 Cache Penetration / Breakdown / Avalanche
+08 BigKey / HotKey
+09 RDB / AOF
+10 Primary / Replica / Sentinel
+11 Cluster / Hash Slot / Reshard
+12 Distributed Lock / Lease / WatchDog
+13 Lock Correctness / Owner / Lua Release
+14 Lua / Atomicity
+15 Cache Consistency Boundary
+16 Multi-level Cache
+17 Session / Conversation
+18 Semantic / Result Cache
+19 Agent Short-term State
+20 Rate Limit
+21 Security Boundary
+22 Redis in AI System Design
 ```
+
+Agent Checkpoint / Runtime State 的**执行语义**归 Agent Harness；Redis 这里只解释作为 State Store 时的数据结构、持久化与一致性能力。
 
 ---
 
 # 9. 模块六：Vector Database
 
-计划从原理开始，而不是从 Milvus API 开始：
+计划从原理开始，而不是从 Milvus API 开始。最新 Primary Ownership 已明确把完整 Retrieval Strategy 归到 RAG，因此 Vector DB 只负责向量基础设施与 ANN Index：
 
 ```text
-Embedding
+Embedding Vector Storage Semantics
 → Vector Space
 → Cosine / IP / L2
-→ TopK
-→ Exact Search
-→ ANN
+→ Exact Search vs ANN
 → HNSW
 → IVF
-→ Index Trade-off
+→ Index Selection / Parameter Trade-off
 → Metadata Filtering
-→ Dense / Sparse
-→ BM25
-→ Hybrid Retrieval
-→ RRF / Score Fusion
-→ Reranker
+→ Vector Data Modeling
 → Recall / Latency / Memory / QPS
-→ Index Lifecycle
-→ Milvus / Qdrant / pgvector Selection
+→ Index Lifecycle / Freshness
+→ Graph DB vs Vector DB
+→ Milvus / FAISS / pgvector / ES Vector Selection
+```
+
+以下内容**不再作为 Vector DB Primary**，统一在 RAG 讲完整 Retrieval Pipeline：
+
+```text
+Dense vs Sparse / BM25
+Hybrid Retrieval
+RRF / Fusion
+Rerank Pipeline
+Top-K Strategy
+Retrieval Evaluation
 ```
 
 ---
 
-# 10. 模块七：RAG
+# 10. 模块七：LLM Foundation（应用工程深度）
+
+这是 Phase 2B 对 Roadmap 补出的正式一级模块。目标不是学成训练算法工程师，而是理解会直接改变 AI Application / RAG / Agent 行为的模型机制。
+
+计划主线：
+
+```text
+01 Tokenization / Token Budget
+02 Context Window / Long-context Limitation
+03 Transformer Architecture
+04 Self-Attention / QKV / Multi-Head Attention
+05 FFN / Positional Encoding / RoPE
+06 Inference / Generation
+07 KV Cache
+08 Prefill / Decode
+09 Inference Engine / PagedAttention / vLLM / SGLang
+10 Inference Latency / Cost
+11 Model API / Sampling Parameters
+12 Model Selection
+13 Embedding Model
+14 Reranker / Cross-Encoder
+15 Prompt Engineering
+16 Hallucination / Factuality Boundary
+17 Fine-tuning
+18 SFT / LoRA / DPO / GRPO / Distillation
+19 Multimodal Foundation
+```
+
+### Prompt Engineering 必须单独成章
+
+Phase 2B 中 `LLM-023` 有 30 个独立 HUMAN-A 信号。课程不能只讲“Prompt 写清楚一点”，而要形成：
+
+```text
+Goal / Role / Instruction
+→ Context / Example
+→ Tool / Output Contract
+→ Versioning
+→ Evaluation / Regression
+→ Failure / Injection Boundary
+```
+
+Prompt Injection 的完整安全治理继续在 Agent Harness 的 Untrusted Context / Permission 中深化。
+
+---
+
+# 11. 模块八：RAG
 
 计划主线：
 
 ```text
 Document
 → Parse / OCR / Layout
-→ Chunk
-→ Embedding
-→ Index
-→ Query Rewrite
-→ Retrieval
-→ Hybrid Search
-→ Rerank
+→ Chunk Principles / Strategy / Parameters
+→ Embedding / Index Boundary
+→ Query Rewrite / Decomposition / Clarification
+→ No-hit / Refusal Boundary
+→ Dense / Sparse / BM25
+→ Hybrid Retrieval
+→ RRF / Fusion
+→ Rerank / Top-K
+→ Retrieval Metrics
 → Context Build
 → Grounding / Citation
-→ Generation
-→ Evaluation
-→ Observability
-→ Version / Snapshot / Knowledge Governance
+→ End-to-end Evaluation
+→ Bad Case Attribution
+→ Permission / Freshness / Version Governance
 → Incremental Update
 → Agentic RAG
 ```
 
 重点不仅是“怎么做”，还要学习“怎么知道它哪里做错了”。
 
+真实面试里 29 道 RAG Canonical 有 20 道达到 L4，因此每个核心章节都应该带：参数依据、Failure Case、Evaluation 与 Regression，而不是只解释组件名词。
+
 ---
 
-# 11. 模块八：Agent Harness / Runtime
+# 12. 模块九：Agent Harness / Runtime
 
 这是最终最深、最大的模块。
 
@@ -318,19 +411,25 @@ Document
 
 入口原则：[`agent-authoritative-sources.md`](agent-authoritative-sources.md)
 
-当前根据高质量真实面经，Agent Harness 至少应形成这些大域：
+当前根据 235 道 Canonical 与高质量真实面经，Agent Harness 至少应形成这些大域：
 
 ```text
-Agent Harness
+Agent Harness / Runtime
 │
+├── Agent Boundary / Why Agent
 ├── Agent Loop / Control Loop
-├── Planning / Routing / ReAct
+├── Planning / ReAct / Routing
+├── Intent Recognition / Router
 ├── Context Assembly
-├── Context Compaction
+├── Context Budget / Compaction
+├── Compaction Correctness
 ├── Memory
 ├── Tool Runtime / Executor
-├── MCP / Skills / Discovery
+├── Tool Discovery / Progressive Loading
+├── MCP / Skills / Capability Boundary
+├── A2A / Agent Communication Protocol
 ├── Permission / Approval / Sandbox
+├── Prompt Injection / Untrusted Context Security
 ├── Runtime Message / Event Model
 ├── State / Persistence
 ├── Checkpoint / Resume
@@ -338,12 +437,14 @@ Agent Harness
 ├── Retry / Idempotency / Compensation
 ├── Multi-Agent
 ├── Filesystem / Workspace Transaction
+├── Repository Understanding
+├── AI-assisted Development Workflow
 ├── Coding Verification
+├── Agent Framework Selection
 ├── Model Provider / Routing / Failover
 ├── Trace / Replay / Observability
-├── Evaluation
+├── Evaluation / Benchmark
 ├── Cost / Latency
-├── Security
 └── Production Runtime
 ```
 
@@ -359,21 +460,27 @@ Claude Code / Codex 源码事实
 Agent Harness 教材
 ```
 
+Agent Framework（LangChain / LangGraph / Spring AI 等）应在 Runtime 理论之后作为**实现映射**，不作为课程起点。
+
+AI-assisted Development 也不是“工具推荐”附录，而要覆盖 Requirement → Context → Repo Understanding → Generation → Test → Diff / Review → Verification → Delivery。
+
 ---
 
-# 12. 模块九：System Design
+# 13. 模块十：System Design
 
 前面所有模块最终在这里汇合。
 
 典型系统：
 
 - 企业知识库 RAG
-- 多租户 AI Chat
+- 大规模文档 RAG
+- 多租户 AI Chat / Agent Platform
 - Agent 知识助手
 - Coding Agent Backend
 - Long-running Agent Platform
 - Multi-Agent Workflow
 - AI Customer Service
+- Data / Analytical Agent
 - AI Interview / Learning Assistant
 
 一张总图：
@@ -412,9 +519,36 @@ Agent Harness 教材
 
 ---
 
-# 13. Interview Reality：真实面经不是目录，而是验收标准
+# 14. Bridge Labs：避免十个模块学成十座孤岛
+
+Phase 2B 的真实共现中，最高组合包括 RAG ↔ Agent Harness、AI Backend ↔ Agent Harness、AI Backend ↔ Redis、AI Backend ↔ MySQL、LLM Foundation ↔ Agent Harness。
+
+因此正式课程增加四个桥接项目：
+
+```text
+Bridge A：FastAPI + Async LLM Service
+Bridge B：MySQL + Redis + MQ 的可靠 AI Backend
+Bridge C：Vector DB + RAG Evaluation Pipeline
+Bridge D：RAG + Agent Harness + Long-running Runtime
+```
+
+目标是让每个模块既能独立解释，也能在真实系统里串起来。
+
+---
+
+# 15. Interview Reality：真实面经不是目录，而是验收标准
 
 研究层：[`../research/README.md`](../research/README.md)
+
+当前正式研究口径：
+
+```text
+HUMAN-A：S001–S279（Frozen）
+ACTIVE Canonical：235
+Mapped Sources：278
+VALID-UNMAPPED：1（S271）
+主动采集：停止，除非用户明确重新开启
+```
 
 核心闭环：
 
@@ -438,21 +572,35 @@ Agent Harness 教材
 
 > **面经决定“哪里更高频、哪里缺了一块”，但不会决定“只学哪些知识”。**
 
-这是整个 Handbook 最重要的设计原则。
+真实追问链还表明，高频面试通常沿：
+
+```text
+Concept
+→ Mechanism
+→ Trade-off
+→ Failure
+→ Scale
+→ Evaluation / Verification
+```
+
+所以后续教材不能只增加更多定义题，而要把 Production 深度写进章节结构。
 
 ---
 
-# 14. 当前建设状态
+# 16. 当前建设状态
 
 | 模块 | 当前状态 |
 |---|---|
 | Python | ✅ 已有完整 12 章 + Review + Interview |
 | FastAPI | 🟡 已建立完整课程地图，下一步写正文 |
 | AI Backend Engineering | 🟡 已建立完整课程地图，后续按项目穿插建设 |
-| MySQL | ⏳ 下一块正式系统教材 |
-| Redis | ⏳ MySQL 之后 |
-| Vector DB | ⏳ Redis 之后 |
-| RAG | ⏳ Vector DB 之后 |
-| Agent Harness | 🔬 持续用 Claude Code / Codex + 面经校准后建设 |
+| MySQL | ⏳ 下一块正式系统教材；Phase 2B 已重排重点 |
+| Redis | ⏳ MySQL 之后；课程边界已校准 |
+| Vector DB | ⏳ Redis 之后；已与 RAG 重划 Primary Boundary |
+| LLM Foundation | 🆕 已正式进入一级 Roadmap，后续建设应用工程深度教材 |
+| RAG | ⏳ LLM Foundation 之后；按 Evaluation / Failure 深度建设 |
+| Agent Harness / Runtime | 🔬 用 Claude Code / Codex + Frozen HUMAN-A 继续校准后建设 |
 | System Design | ⏳ 随各模块成熟逐步汇总 |
-| 真实面经研究 | 🔄 持续滚动采集与去重 |
+| 真实面经研究 | ✅ `S001–S279` 已冻结；235 Canonical / Phase 2B 市场分析完成 |
+
+下一块正式系统教材仍然从 **MySQL** 开始；本次市场分析调整的是课程边界、章节顺序和重点，不推翻原定建设节奏。
