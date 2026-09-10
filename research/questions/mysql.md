@@ -1,4 +1,4 @@
-# MySQL Canonical Questions — S001–S279 全库纵向扫描 v2
+# MySQL Canonical Questions — S001–S279 全库纵向扫描 v3
 
 更新日期：2026-09-10
 
@@ -11,7 +11,7 @@
 - ACTIVE Canonical Questions：**26**
 - MOVED：**2**（旧 `MYSQL-001`, `MYSQL-023`）
 - 证据范围：仅 `S001–S279`
-- 当前版本：`v2`（十板块归属审计版）
+- 当前版本：`v3`（Global Merge / Split Audit）
 
 ### 高频信号
 
@@ -84,12 +84,13 @@
 - **Source Count**：**3**
 - **Evidence Sources**：`S175`, `S247`, `S274`
 
-### MYSQL-010 · 深分页为什么越来越慢？单表、分库分表场景分别怎样优化 Offset / 跳页 / 跨库聚合？
+### MYSQL-010 · 单表或单分片内的 Deep Pagination 为什么随着 Offset 增大而变慢？怎样用覆盖索引、Seek / Keyset Pagination 等方法优化？
 - **Topic**：Deep Pagination
-- **Question Type**：Troubleshoot / System Design
-- **Depth**：L4
-- **Source Count**：**5**
-- **Evidence Sources**：`S010`, `S025`, `S093`, `S131`, `S147`
+- **Question Type**：Troubleshoot / Optimization
+- **Depth**：L3
+- **Source Count**：**4**
+- **Evidence Sources**：`S010`, `S025`, `S131`, `S148`
+- **Related Modules**：System Design
 
 ### MYSQL-011 · 事务的 ACID 分别是什么？MySQL 通过哪些机制实现原子性、隔离性和持久性？
 - **Topic**：ACID
@@ -168,12 +169,13 @@
 - **Source Count**：**10**
 - **Evidence Sources**：`S005`, `S093`, `S111`, `S127`, `S138`, `S147`, `S154`, `S189`, `S253`, `S273`
 
-### MYSQL-022 · 大批量写入 / 导入 MySQL 时，怎样控制吞吐、事务大小、内存、失败重试与断点恢复？
-- **Topic**：Bulk Write / Import
-- **Question Type**：System Design / Troubleshoot
-- **Depth**：L4
-- **Source Count**：**5**
-- **Evidence Sources**：`S094`, `S191`, `S207`, `S232`, `S244`
+### MYSQL-022 · 大批量写入 MySQL 时，怎样控制 Batch Size、Transaction Size、Index / Log 开销与写入吞吐？
+- **Topic**：Bulk Write / MySQL Write Path
+- **Question Type**：Optimization / Troubleshoot
+- **Depth**：L3
+- **Source Count**：**1**
+- **Evidence Sources**：`S191`
+- **Related Modules**：AI Backend Engineering, System Design
 
 ### MYSQL-024 · 能否使用 MySQL 实现分布式锁？与 Redis / ZooKeeper 等方案相比边界在哪里？
 - **Topic**：DB Lock as Distributed Lock
@@ -215,7 +217,7 @@
 
 ---
 
-## 3. MOVED：新十板块归属修正
+## 3. MOVED：十板块归属修正
 
 这些旧 QID 保留映射以避免引用失效，但不再计入 MySQL ACTIVE 数量。
 
@@ -223,5 +225,12 @@
 |---|---|---|
 | `MYSQL-001` | MySQL 与 Redis 的数据分层 | `AIBE-039`（AI Backend Engineering） |
 | `MYSQL-023` | MySQL + Redis Cache Consistency | `AIBE-020`（AI Backend Engineering） |
+
+---
+
+## 4. Global Merge / Split Audit 修正
+
+- `MYSQL-010` 不再把“单表 Offset 深分页”和“分库分表后的跨 Shard 分页 / 全局排序”揉成一题。`S093`, `S147` 的跨分片问题继续由 `MYSQL-021` 承接；`MYSQL-010` 只保留单表 / 单分片访问路径，并补入明确讨论 `ORDER BY + Deep Pagination` 的 `S148`。
+- `MYSQL-022` 不再吸收通用“批处理 / 数据迁移 / 断点恢复”场景。`S094`, `S207`, `S232`, `S244` 的端到端批处理能力由 `SD-007` 承接；MySQL 本模块只保留 `S191` 中“一亿条数据怎样快速写入 MySQL”的存储引擎 / 写入路径问题。
 
 `SD-001` 等 System Design 场景可以引用 MySQL 机制，但不会把场景题复制回本模块。
