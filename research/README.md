@@ -10,16 +10,16 @@
 
 ## 1. 当前进度
 
-- 正式 HUMAN-A 来源：**292 个**
-- 来源编号：`S001–S292`
-- 当前最大编号：`S292`
-- 下一条正式来源：**`S293`**
-- 正式 Batch：`batch-01.md` ～ `batch-14.md`
-- 最新 Batch：[`interviews/batch-14.md`](interviews/batch-14.md)，新增 **16 个 HUMAN-A（S277–S292）**
+- 正式 HUMAN-A 来源：**300 个**
+- 来源编号：`S001–S300`
+- 当前最大编号：`S300`
+- 下一条正式来源：**`S301`**
+- 正式 Batch：`batch-01.md` ～ `batch-15.md`
+- 最新 Batch：[`interviews/batch-15.md`](interviews/batch-15.md)，新增 **8 个 HUMAN-A（S293–S300）**
 - Monitoring Inbox：[`monitoring/inbox.md`](monitoring/inbox.md)，当前无待归档 HUMAN-A
-- 当前停止判断：**仍未达到来源饱和**
+- 当前停止判断：**仍未达到来源饱和，但去重成本明显上升**
 
-Batch 14 在已有 276 个正式样本后仍确认 16 个独立 HUMAN-A，说明精确公司 / 岗位、作者主页与历史月份回扫仍有明显产出。与此同时，复制链、内容账号、付费墙、自动 AI 面和只能看到 Search Snippet 的结果继续增加，来源核验成本正在上升，但尚未达到停止条件。
+Batch 15 在分配编号前对候选做了更严格的跨 Batch 去重：原始候选中先删除 6 条已入库 / 高度重复 / 无法证明独立原场的来源，仅保留 8 个独立 HUMAN-A，再连续编号为 `S293–S300`。今后不再把 GitHub Code Search 或搜索引擎“0 命中”视为去重完成，必须直接回读历史 Batch 并核对 URL、题序、项目语义、作者与招聘时间线。
 
 ---
 
@@ -99,25 +99,34 @@ AI Coding
 
 ---
 
-## 5. 三层去重
+## 5. 去重：必须在分配 `Sxxx` 之前完成
 
 每个候选固定执行：
 
 ```text
+历史 Batch 直接回读
++
 URL 精确去重
 +
 题序 / 项目语义去重
 +
 作者 / 招聘流程时间线去重
++
+外部原帖 / 后发复制链核验
 ```
 
-- 同一候选人的一面 / 二面 / 三面 / Leader 面属于同一招聘流程 → **合并为一个 `Sxxx`**，保留所有轮次真实问题；
-- 同一候选人面试不同公司 → 属于独立招聘流程，可以分别计数；
-- 不同 URL 但公司、岗位、问题顺序、项目描述和措辞高度一致 → 继续核验作者、发布时间、评论和流程；
-- 无法确认复制链原始候选人 → **整条链排除，不猜原帖**；
-- 不同候选人的独立招聘流程，即使遇到相同问题 → 分别计为独立真人命中。
+### 强制规则
 
-近期典型案例：`S287` 把同一候选人字节中国交易与广告一 / 二 / 三面合并为一个来源；`S288` 把同一作者连续发布的字节 Agent 一 / 二面合并；Batch 14 同时发现 B 端小公司 / 法本信息近似逐题复制链，因无法确认原场次而整链排除。
+- **GitHub Code Search / 搜索引擎“0 命中”不是未收录证明。** 最近 Batch 可能尚未被代码搜索索引，必须直接读取历史 Batch 内容核验。
+- 新候选在分配编号前，至少检查：URL、公司、岗位、日期 / 轮次、作者、项目关键词、5～10 个独特题序特征。
+- 同一候选人的一面 / 二面 / 三面 / Leader 面属于同一公司同一招聘流程 → **合并为一个 `Sxxx`**，保留所有轮次真实问题。
+- 同一候选人面试不同公司 → 属于独立招聘流程，可以分别计数。
+- 不同 URL 但公司、岗位、问题顺序、项目描述和措辞高度一致 → 必须继续核验作者、发布时间、评论和流程；不能因为 URL 不同就算新来源。
+- 如果发现更早不同作者页面与候选帖几乎逐题同序，而无法证明候选帖属于独立真人场次 → **候选帖不入库**。
+- 无法确认复制链原始候选人 → **整条不确定链排除，不猜原帖**。
+- 不同候选人的独立招聘流程即使遇到相同常见问题 → 分别计为独立真人命中。
+
+Batch 15 的写入前审查实际删除了 6 条候选：拼多多 7/25 已存在历史 `S061`；京东 5/7 与历史 `S217` 题序 / 语义高度一致；Moka 4/27 与历史 `S208` 高度一致；字节 8/6 URL 已入库；影石 3/11 已是 `S220`；米哈游 4/24 又发现更早不同作者、几乎逐题同序的 4/9 页面，因此不作为独立原场进入。
 
 ---
 
@@ -152,22 +161,23 @@ URL 精确去重
 → 原始正文
 → 评论区
 → 跨平台同步关系
+→ 回到全部历史 Batch 做最终去重
 ```
 
-搜索摘要只负责发现线索。最终无法稳定核验正文、候选人本人和真人面试，就不能进入 HUMAN-A。
+搜索摘要只负责发现线索。最终无法稳定核验正文、候选人本人和真人面试，或无法证明相对已有来源的独立性，就不能进入 HUMAN-A。
 
 ---
 
-## 7. Batch 14 的现实信号
+## 7. Batch 15 的现实信号
 
-1. **Recovery 已进入“外部副作用幂等”层。** 面试不再满足于“有 Checkpoint 就能 Resume”，而是追问外部任务已成功、进程在持久化 Checkpoint 前崩溃时，恢复后如何避免重复执行。
-2. **Long-running Agent 开始考真正的 Cancel / Timeout / State。** “是否真的实现过取消”、异常 Loop 怎样停止、恢复时状态怎么处理，都比单纯背 Resume 概念更接近 Runtime Engineering。
-3. **Tool / Skill 的规模化治理成为高频深挖。** 100+ Tool 如何 Registry、Retrieval、Dynamic Injection / Lazy Load，Tool 不可用如何 Fallback，Skill 的 Metadata / Scripts / References / Assets 怎样 Progressive Loading，开始进入真实面试。
-4. **Security 与 Runtime Boundary 正在合流。** Prompt Injection、Tool Permission、Sandbox、高风险写操作确认、Tool Result Compression / Validation 往往不再是独立安全题，而是 Agent 执行链的一部分。
-5. **AI Coding 正从工具使用变成代码归属与质量验真。** 面试官会问代码到底是候选人写的还是 AI 写的，并通过现场修改、复杂度约束、页面实操、Compile / Test 和人工验收验证本人能力。
-6. **项目指标必须能够被审计。** “准确率 90%+”“性能提升 20%”“节约多少人力”会继续追 Baseline、Dataset、测量方法、Failure Case 与本人贡献。
-7. **AI Application / Agent 岗的 Backend 深度没有下降。** ThreadLocal、Redis Lock / HotKey、RocketMQ Delay、NIO / Reactor、Config Center 动态刷新 / Fallback、MySQL Index 与 DB / Cache Consistency 均继续和 Agent 同场出现。
-8. **作者时间线正在成为质量基础设施。** 同一候选人同流程多轮可以可靠合并，不同公司流程可以独立计数；反过来，数百篇多公司高频发布、私域导流与模板化内容也能通过作者主页被识别并排除。
+1. **Context 已经从“超窗怎么办”升级成显式 Runtime Data Structure。** 面试会逐层问 System Prompt、Memory、Chat History、Tool Result、Retrieval Evidence 各放哪里、顺序如何、何时压缩、怎样回填。
+2. **RAG 与 Agent 原生文件 / Repository Search 的边界开始被直接挑战。** 面试官会问“大 Context 已很强，为什么不让 Agent 直接用文件搜索 / grep”，要求从索引、搜索空间、可控性、Latency、Evaluation 等维度回答，而不只是 Token Cost。
+3. **TB 级垂直 RAG 已进入 System Design。** 600GB–1TB PDF、扫描件 / 电子件混合解析、跨页语义、Hybrid Retrieval、Embedding 初始化与增量成本成为真人追问。
+4. **Context / Memory 与 Security 正在融合。** Red-team Agent、可修改 Skill / Role / Knowledge、Tool Result 注入位置等问题要求同时理解 Context Governance 与攻击面。
+5. **AI Coding 继续作为本人能力验真。** AI 连续改坏代码怎样恢复、怎样通过 Test / Review / Sandbox / Spec 保证质量、候选人是否理解并能验证生成结果，越来越重要。
+6. **指标必须可审计。** Accuracy、Regression、RRF 参数、Latency 降幅、真实用户量、节约人力、数据规模都要说明 Baseline、Dataset、测量方法和 Failure Case。
+7. **AI 岗 Backend 深度没有下降。** Kafka、Distributed Lock、OOM、MySQL Index、HTTP/2/3、V8、Go Concurrency 继续和 Agent / RAG 同场出现。
+8. **Provenance / 去重本身已经成为研究质量基础设施。** 本轮原始候选 14 条最终只保留 8 条；以后宁可少收，也不能让重复来源占用编号或影响频率统计。
 
 ---
 
@@ -179,8 +189,8 @@ research/
 ├── interviews/
 │   ├── batch-01.md
 │   ├── ...
-│   ├── batch-13.md
-│   └── batch-14.md
+│   ├── batch-14.md
+│   └── batch-15.md
 ├── monitoring/
 │   └── inbox.md
 ├── quality/
@@ -198,13 +208,14 @@ Canonical Question 的规则见 [`questions/README.md`](questions/README.md)：�
 
 ## 9. 下一轮优先级
 
-- 从 **`S293`** 开始；
+- 从 **`S301`** 开始；
+- **在搜索新来源前先建立 `S001–S300` 的直接去重基线**，至少覆盖 URL、公司 / 岗位 / 日期、作者和独特题序；
+- 新来源在分配编号前必须直接回读历史 Batch，不依赖代码搜索索引；
 - 持续追 2026-09 最新 AI Application / Agent 原帖，优先直接正文而不是推荐 / 聚合页；
-- 沿 Batch 14 新增来源作者主页继续寻找二 / 三面 / Leader 面，并按同候选人同流程合并；
+- 沿 Batch 15 新增来源作者主页继续寻找后续轮次，同公司同流程只合并不增号；
 - 回扫 2026-03～09 尚未充分覆盖的公司和岗位别名；
-- 重点补 Long-running Agent 的 Cancel / Checkpoint / Resume / Idempotence / State；
+- 深挖 Context Runtime、Long-running Agent、Cancel / Checkpoint / Resume / Idempotence / State；
 - 继续深挖 Tool Registry / Retrieval / Lazy Loading、Permission / Sandbox、Trace / Evaluation；
-- 继续观察 Token / Cost Budget、Rate Limit、Backend Concurrency 与 Streaming Budget；
 - 继续寻找 AI Backend / AI Full-stack 中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
 - 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
 - 持续记录新增 HUMAN-A 绝对数与命中率、重复率、内容账号 / 二次整理率、Role Scope 外比例。

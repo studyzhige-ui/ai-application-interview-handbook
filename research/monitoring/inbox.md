@@ -89,45 +89,62 @@ RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool / Coding）
 
 搜索不能停在结果页：继续追企业 / 话题页、精确标题、公司 + 轮次、作者主页、候选人其他帖子、个人博客 / 独立站、原始正文、评论区和跨平台同步关系。
 
-## 三层去重
+## 强化去重流程
+
+从 Batch 15 起，**任何候选在分配 `Sxxx` 前必须先完成历史 Batch 直接回读**。不能再把 GitHub Code Search / 搜索引擎的“0 命中”当成去重完成。
+
+固定执行：
 
 ```text
+直接回读 S001–当前最大编号所在 Batch
++
 URL 精确去重
++
+公司 / 岗位 / 日期 / 轮次比对
 +
 题序 / 项目语义去重
 +
 作者 / 招聘流程时间线去重
++
+外部原帖 / 后发复制链核验
 ```
 
-- 同候选人同流程多轮 → 合并计为一个来源，但保留所有轮次真实问题；
+至少检查：URL、作者、公司、岗位、日期 / 轮次、项目关键词和 5～10 个独特题序特征。
+
+- 同候选人同公司同流程多轮 → 合并一个来源，保留各轮问题，不新增编号；
 - 同一候选人不同公司招聘流程 → 可以分别计为独立真人命中；
-- 跨平台同步、镜像、后发近似复制 → 只保留更原始、更稳定、更有现场证据的一份；
-- 不同候选人独立遇到相同问题 → 分别计为独立 HUMAN-A 命中；
-- 无法可靠确认谁是原场次的逐题复制链 → 整链排除。
+- 不同 URL 但题序 / 项目语义高度一致 → 继续核验作者和时间线，不能直接视为新来源；
+- 更早不同作者页面与候选页面几乎逐题同序、又无法证明候选页面独立 → 候选页面排除；
+- 跨平台同步、镜像、后发近似复制 → 只保留能确认的原始候选人来源；
+- 无法可靠确认原场次 → 整条不确定链排除；
+- 不同候选人独立遇到相同常见问题 → 分别计数。
+
+Batch 15 写入前已经据此删除 6 条重复 / 非独立候选，正式编号只分给通过完整去重的 8 条来源。
 
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S292`，共 **292 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-14.md`
-- 最新正式批次：Batch 14（`S277–S292`，新增 16 个）
-- 当前最大来源编号：`S292`
-- 下一条正式来源从 **`S293`** 开始
+- 正式来源：`S001–S300`，共 **300 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-15.md`
+- 最新正式批次：Batch 15（`S293–S300`，新增 8 个）
+- 当前最大来源编号：`S300`
+- 下一条正式来源从 **`S301`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**仍未达到来源饱和**。本轮在 276 个正式样本基础上仍新增 16 个独立 HUMAN-A；精确公司 / 岗位、作者主页、个人博客和历史月份回扫继续产出，但复制链 / 内容账号 / 付费墙 / 自动 AI 面的污染与核验成本同步上升。
+- 当前停止判断：**仍未达到来源饱和，但重复 / 非独立来源比例和核验成本明显上升。** Batch 15 原始候选先删除 6 条重复 / 非独立来源后，仍保留 8 个独立 HUMAN-A。
 
 ## 下一轮搜索优先级
 
-1. 持续追 2026-09 最新 AI Application / Agent 原帖；
-2. 沿 Batch 14 新增候选人的作者主页回看二面 / 三面 / Leader 面，并按同一招聘流程合并；
-3. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
-4. 深挖 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
-5. 深挖 Tool / Skill Scale：Registry / Retrieval / Dynamic Injection / Lazy Loading / Fallback；
-6. 持续追 Permission / Sandbox / Prompt Injection / Trace / Evaluation；
-7. 继续观察 Token / Cost Budget、Rate Limit、Streaming 中途预算耗尽与 Backend Concurrency；
-8. 继续寻找目标 AI 岗中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
-9. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
-10. 持续记录新增 HUMAN-A 数量和命中率、重复率、内容账号 / 二次整理比例、Role Scope 外比例，判断是否真正接近饱和。
+1. 从 `S301` 开始，但必须在分配编号前直接回读历史 Batch 做完整去重；
+2. 持续追 2026-09 最新 AI Application / Agent 原帖；
+3. 沿 Batch 15 新增候选人的作者主页回看二面 / 三面 / Leader 面，同公司同流程只合并；
+4. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
+5. 深挖 Context Runtime：Context Assembly / Compression / Memory Reinjection / Tool Result；
+6. 深挖 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
+7. 深挖 Tool / Skill Scale、Permission / Sandbox / Prompt Injection / Trace / Evaluation；
+8. 继续观察 RAG vs Agent File / Repo Search、TB 级 RAG System Design；
+9. 继续寻找目标 AI 岗中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
+10. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
+11. 持续记录新增 HUMAN-A 数量和命中率、重复率、二次整理 / 内容账号比例和 Role Scope 外比例，判断是否真正接近饱和。
 
 ## 当前 Inbox
 
