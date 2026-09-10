@@ -222,9 +222,11 @@ Network / HTTP
 
 # 7. 模块四：MySQL
 
-建设顺序：**下一阶段正式教材的第一块。**
+当前状态：**✅ 第一版 0→1 系统教材已完成。**
 
-计划主线：
+入口：[`../mysql/README.md`](../mysql/README.md)
+
+主线严格按知识依赖而不是面经热度组织：
 
 ```text
 01 MySQL 在 AI 应用里的职责
@@ -234,27 +236,40 @@ Network / HTTP
 05 Clustered / Secondary Index
 06 Composite Index / Leftmost Prefix
 07 Covering Index / Back Table / ICP
-08 Index Invalidation / Lifecycle
+08 Index Invalidation / Optimizer
 09 EXPLAIN / Slow SQL
-10 Primary Key Design
+10 Primary Key / Index Lifecycle
 11 ACID
 12 Isolation Level
 13 MVCC / Undo / Read View
-14 Lock / Gap / Next-key / Deadlock
+14 Record / Gap / Next-key Lock / Deadlock
 15 redo / undo / binlog / Two-phase Commit
-16 Pagination / Query Optimization
+16 Deep Pagination
 17 Schema Design
 18 Replication
 19 Sharding
 20 CDC / Data Sync
 21 Bulk Write / Write Path
-22 MySQL + Redis Consistency Boundary
-23 AI Application Data Modeling
+22 AI Application Data Modeling
+23 MySQL + Redis Consistency Boundary
 ```
 
-原则：不学成 DBA，但要能设计 AI 产品的数据层，并解释性能、一致性与 Scale。
+这里特别固定一条课程规则：
 
-`MySQL + Redis Consistency` 的完整系统语义 Primary 在 AI Backend Engineering；MySQL 章节负责解释事务、锁、日志和写路径等自身机制。
+> **真实面经只能提高某些章节的复习优先级、补充项目场景和追问深度，不能因为 Sharding / Cache Consistency 更高频就把它们提前到 B+Tree、Transaction、MVCC 之前。**
+
+`MySQL + Redis Consistency` 的完整系统语义 Primary 在 AI Backend Engineering，因此故意放在 MySQL 最后一章作为跨模块桥梁；MySQL 主体先完整闭环自己的 SQL / Index / Transaction / Log / Scale / Data Modeling。
+
+当前配套已经包括：
+
+```text
+23 章正文
++ 每章折叠自测
++ Review 图解总入口
++ 高频面试题
++ 面试易错点
++ 面试前速查表
+```
 
 ---
 
@@ -288,6 +303,8 @@ Network / HTTP
 ```
 
 Agent Checkpoint / Runtime State 的**执行语义**归 Agent Harness；Redis 这里只解释作为 State Store 时的数据结构、持久化与一致性能力。
+
+Redis 也将遵循和 MySQL 相同的 0→1 原则：先建立数据结构和 Runtime 基础，再进入缓存、分布式锁、集群与 AI 场景；面经只校准重点，不打乱主干。
 
 ---
 
@@ -594,8 +611,8 @@ Concept
 | Python | ✅ 已有完整 12 章 + Review + Interview |
 | FastAPI | 🟡 已建立完整课程地图，下一步写正文 |
 | AI Backend Engineering | 🟡 已建立完整课程地图，后续按项目穿插建设 |
-| MySQL | ⏳ 下一块正式系统教材；Phase 2B 已重排重点 |
-| Redis | ⏳ MySQL 之后；课程边界已校准 |
+| MySQL | ✅ 第一版完整 23 章 + Review + Interview 已完成 |
+| Redis | ⏳ 下一块正式系统教材；课程边界已校准 |
 | Vector DB | ⏳ Redis 之后；已与 RAG 重划 Primary Boundary |
 | LLM Foundation | 🆕 已正式进入一级 Roadmap，后续建设应用工程深度教材 |
 | RAG | ⏳ LLM Foundation 之后；按 Evaluation / Failure 深度建设 |
@@ -603,4 +620,4 @@ Concept
 | System Design | ⏳ 随各模块成熟逐步汇总 |
 | 真实面经研究 | ✅ `S001–S279` 已冻结；235 Canonical / Phase 2B 市场分析完成 |
 
-下一块正式系统教材仍然从 **MySQL** 开始；本次市场分析调整的是课程边界、章节顺序和重点，不推翻原定建设节奏。
+下一块正式系统教材进入 **Redis**。依然坚持：完整知识体系先按初学者 0→1 建立，再让真人面经校准复习权重和追问深度。
