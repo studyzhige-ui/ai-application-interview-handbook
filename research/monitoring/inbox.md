@@ -1,6 +1,8 @@
-# 2026 AI 应用 / Agent 真人面经持续监控 Inbox
+# HUMAN-A Monitoring Inbox
 
-用途：只保存尚未归入正式 Batch、但已经达到 **HUMAN-A** 标准的候选来源。
+更新日期：2026-09-10
+
+本文件只保存**已经满足 HUMAN-A，但尚未归入正式 Batch** 的候选。普通搜索线索、摘要、低质量面经、答案型文章、Role Scope 外来源和待核验复制链都不进入 Inbox。
 
 ## 固定准入标准
 
@@ -11,26 +13,26 @@
 1. **真人面试官**：人与人进行的技术面 / Leader 面 / 项目深挖；
 2. **候选人本人第一人称**：不是整理、搬运或二次转述；
 3. **高信息密度**：具体技术问题足够丰富；
-4. **真实现场痕迹**：追问、答题状态、轮次、结果、互动、Coding / Demo 等可验证线索；
+4. **真实现场痕迹**：追问、答题状态、轮次、结果、互动、Coding / Demo / 屏幕共享等可验证线索；
 5. **Role Scope Gate**：AI 应用、Agent、LLM 应用、RAG、AI Backend、AI Full-stack、Applied AI、FDE、Agent Runtime / Harness / Coding Agent 等目标方向；
 6. **正文稳定可核验**：原始正文与 URL 可以实际访问并验证；
 7. **非重复**：不是转载、合集、跨平台同场重复或后发近似复制。
 
 ```text
-真人面试官
-+
-候选人本人第一人称
-+
-高信息密度
-+
-真实现场痕迹
-+
-目标 AI Application / Agent 岗位
-+
-正文稳定可核验
-+
-非转载 / 非合集 / 非重复
-=
+公开候选
+   ↓
+真人面试？
+   ↓
+候选人本人？
+   ↓
+高信息密度 + 真实现场？
+   ↓
+目标 AI Application / Agent 岗？
+   ↓
+正文稳定？
+   ↓
+三层去重通过？
+   ↓
 HUMAN-A
 ```
 
@@ -46,40 +48,29 @@ FastAPI
 Backend Engineering
 MySQL
 Redis
-Vector DB
+Vector Database
 LLM Foundation
 RAG
 Agent Harness / Runtime
 System Design
+OS / Network / Concurrency
+MQ / Kafka
+HTTP / SSE / WebSocket
+Coding / Debug / Security / Evaluation
+AI Coding
 ```
-
-以及 OS / Network / MQ / Kafka / Concurrency / HTTP / SSE / WebSocket / Coding / Debug / Security / Evaluation。
 
 **不使用普通后端、数据分析、BI、推荐算法等 Role Scope 外面经人为补基础题。**
 
-## 平台范围
-
-持续主动搜索：
-
-```text
-牛客 / 小红书 / 知乎 / 脉脉
-CSDN / 掘金 / 个人博客 / 独立站
-Bilibili / 抖音
-其他公开可稳定核验来源
-```
-
-平台只影响核验难度，不影响质量标准。登录态、App 跳转、动态加载、企业 / 话题页和搜索摘要都可以用于发现，但最终必须回到可稳定核验的正文 / 作者 / 招聘流程。
-
 ## 默认排除
 
-- AI 自动面试 / 模拟面试；
+- AI 自动面试 / Mock Interview / 模拟题；
 - 低信息密度第一人称；
 - 合集 / 整理 / 搬运 / 后发近似复制；
 - 标准答案 / 高频题 / 面试宝典 / 完整解析；
-- SEO、课程、资源导流；
+- SEO、课程、资源导流、付费墙无法完整核验正文；
 - 内容账号批量模板化“真人叙事”，无法可靠确认候选人本人经历；
 - 只有标题、截图、Search Snippet 或评论传言；
-- 付费墙只露少量内容，无法核验完整上下文；
 - 普通后端 / 前端、传统数据分析 / BI、纯推荐 / 纯训练 Infra 等 Role Scope 外场次；
 - 仅因标题或个别问题出现 AI / Agent 字样，但无法证明实际职责属于目标方向；
 - 无法确认原作者归属的逐题复制链：宁可整链排除，不按发布时间猜原帖。
@@ -100,17 +91,9 @@ LLM应用 / RAG开发 / AI后端 / AI全栈 / Applied AI / FDE / Coding Agent）
 RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool / Coding）
 ```
 
-并继续：
+搜索不能停在结果页：继续追企业 / 话题页、精确标题、公司 + 轮次、作者主页、候选人其他帖子、个人博客 / 独立站、原始正文、评论区和跨平台同步关系。
 
-```text
-企业 / 话题页
-→ 精确标题 / 精确轮次
-→ 作者主页 / 个人博客
-→ 原始正文
-→ 跨平台重复核验
-```
-
-## 固定三层去重
+## 三层去重
 
 ```text
 URL 精确去重
@@ -125,28 +108,27 @@ URL 精确去重
 - 不同候选人独立遇到相同问题 → 分别计为独立 HUMAN-A 命中；
 - 无法可靠确认谁是原场次的逐题复制链 → 整链排除。
 
-## 保存字段
-
-每个候选至少记录：发现日期、面试日期 / 轮次、公司 / 岗位、原始 URL、真人 / 第一人称 / 现场证据、5～12 条左右高信息量问题的简洁转述、三层去重结论。
-
-问题只能记录原帖能够确认真实问到的内容，不把合理推导写成面试问题。
-
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S254`，共 **254 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-11.md`
-- 最新正式批次：Batch 11（`S226–S254`，新增 29 个）
-- Canonical Question：只从当前干净 HUMAN-A 来源累计；低质量来源继续保持零贡献
-- 当前最大来源编号：`S254`，下一条正式来源从 **`S255`** 开始
-- 下一轮优先级：继续回扫 2026 年 3–9 月未覆盖公司 / 二三面 / Leader 面，重点 Agent Runtime / Harness / Coding Agent / AI Backend / AI Full-stack；持续追最新 9 月原帖；继续主动搜索牛客外的高质量原始来源
-- 继续完整记录目标岗位实际出现的 Python / FastAPI / Backend / MySQL / Redis / Vector DB / LLM / RAG / Agent Harness / System Design，不只摘 AI 关键词
-- 持续监控指标：**新增 HUMAN-A 绝对数量、新增 HUMAN-A 占全部候选比例、已收录重复比例、二次整理 / 低质量 / Role Scope 外比例**
-- 当前停止判断：**仍未达到来源饱和。Batch 11 在已有 225 个 HUMAN-A 后仍新增 29 个独立高质量来源；泛搜索重复率虽高，但精确公司 / 岗位 / 轮次搜索仍有明显产出。**
-- 停止条件：只有连续多轮扩大公司、岗位、月份、轮次、平台 Recall 后，新增 HUMAN-A 数量与占比都持续接近零，精确公司 / 轮次 / 作者页 / 原帖搜索也难以发现新来源，并且新增知识模块 / 追问深度分布稳定收敛，才进入收尾；不以 Batch 或 `Sxxx` 数量为阈值。
+- 正式来源：`S001–S264`，共 **264 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-12.md`
+- 最新正式批次：Batch 12（`S255–S264`，新增 10 个）
+- 当前最大来源编号：`S264`
+- 下一条正式来源从 **`S265`** 开始
+- Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
+- 当前停止判断：**仍未达到来源饱和**。本轮新增数量下降且重复 / 内容账号 / 低质量比例继续上升，但精确公司 / 岗位 / 作者时间线仍产生新的独立 HUMAN-A。
 
----
+## 下一轮搜索优先级
 
-## 待整理新来源
+1. 持续追 2026-09 最新 AI Application / Agent 原帖；
+2. 沿 Batch 12 新增候选人的作者页回看二面 / 三面 / Leader 面，并按同一招聘流程合并；
+3. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
+4. 优先补 Agent Runtime / Harness / Coding Agent、长任务 Resume / State、Tool Permission / Sandbox / Trace / Evaluation 等深挖；
+5. 继续寻找 AI Backend / AI Full-stack 中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
+6. 牛客外继续主动搜原始正文，但不设置平台配额；
+7. 持续记录新增 HUMAN-A 数量、命中率、重复率、二次整理 / 低质量率和 Role Scope 外比例，判断是否真正接近饱和。
 
-暂无。
+## 当前 Inbox
+
+暂无待归档 HUMAN-A。
