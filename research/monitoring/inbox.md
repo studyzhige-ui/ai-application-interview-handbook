@@ -19,20 +19,20 @@
 7. **非重复**：不是转载、合集、跨平台同场重复或后发近似复制。
 
 ```text
-公开候选
-   ↓
-真人面试？
-   ↓
-候选人本人？
-   ↓
-高信息密度 + 真实现场？
-   ↓
-目标 AI Application / Agent 岗？
-   ↓
-正文稳定？
-   ↓
-三层去重通过？
-   ↓
+真人面试官
++
+候选人本人第一人称
++
+高信息密度
++
+真实现场痕迹
++
+目标 AI Application / Agent 岗位
++
+正文稳定可核验
++
+非转载 / 非合集 / 非重复
+=
 HUMAN-A
 ```
 
@@ -43,14 +43,10 @@ HUMAN-A
 确认是一场目标 AI 岗 HUMAN-A 后，真实出现的以下知识全部一视同仁记录：
 
 ```text
-Python
-FastAPI
-Backend Engineering
-MySQL
-Redis
-Vector Database
-LLM Foundation
-RAG
+Python / FastAPI / Backend Engineering
+MySQL / Redis / Vector Database
+LLM Foundation / RAG
+Agent / MCP / Skill / Tool / Memory
 Agent Harness / Runtime
 System Design
 OS / Network / Concurrency
@@ -71,7 +67,7 @@ AI Coding
 - SEO、课程、资源导流、付费墙无法完整核验正文；
 - 内容账号批量模板化“真人叙事”，无法可靠确认候选人本人经历；
 - 只有标题、截图、Search Snippet 或评论传言；
-- 普通后端 / 前端、传统数据分析 / BI、纯推荐 / 纯训练 Infra 等 Role Scope 外场次；
+- 普通后端 / 前端、传统数据分析 / BI、纯推荐 / 纯训练 Infra、AI 测试等 Role Scope 外场次；
 - 仅因标题或个别问题出现 AI / Agent 字样，但无法证明实际职责属于目标方向；
 - 无法确认原作者归属的逐题复制链：宁可整链排除，不按发布时间猜原帖。
 
@@ -111,23 +107,26 @@ URL 精确去重
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S264`，共 **264 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-12.md`
-- 最新正式批次：Batch 12（`S255–S264`，新增 10 个）
-- 当前最大来源编号：`S264`
-- 下一条正式来源从 **`S265`** 开始
+- 正式来源：`S001–S276`，共 **276 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-13.md`
+- 最新正式批次：Batch 13（`S265–S276`，新增 12 个）
+- 本轮存量修正：小红书 `S260` 同一候选人的 8 月 17 日二面已合并回原来源，不新增 `Sxxx`
+- 当前最大来源编号：`S276`
+- 下一条正式来源从 **`S277`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**仍未达到来源饱和**。本轮新增数量下降且重复 / 内容账号 / 低质量比例继续上升，但精确公司 / 岗位 / 作者时间线仍产生新的独立 HUMAN-A。
+- 当前停止判断：**仍未达到来源饱和**。泛搜索污染率、内容账号与重复率继续上升，但精确公司 / 岗位 / 作者时间线与历史月份回扫仍能产生独立 HUMAN-A 和已收录候选人的新轮次。
 
 ## 下一轮搜索优先级
 
 1. 持续追 2026-09 最新 AI Application / Agent 原帖；
-2. 沿 Batch 12 新增候选人的作者页回看二面 / 三面 / Leader 面，并按同一招聘流程合并；
+2. 沿 Batch 13 新增候选人的作者主页回看二面 / 三面 / Leader 面，并按同一招聘流程合并；
 3. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
-4. 优先补 Agent Runtime / Harness / Coding Agent、长任务 Resume / State、Tool Permission / Sandbox / Trace / Evaluation 等深挖；
-5. 继续寻找 AI Backend / AI Full-stack 中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
-6. 牛客外继续主动搜原始正文，但不设置平台配额；
-7. 持续记录新增 HUMAN-A 数量、命中率、重复率、二次整理 / 低质量率和 Role Scope 外比例，判断是否真正接近饱和。
+4. 优先补 Long-running Agent / Checkpoint / Resume / State、Tool Permission / Sandbox / Trace / Evaluation；
+5. 继续观察 Token / Cost Budget、Rate Limit、并发预算预留等 AI Backend 新追问；
+6. 深挖 Vector Retrieval / RAG Evaluation：HNSW / IVF / PGVector / BM25 / RRF / Rerank / Recall / Precision Trade-off；
+7. 继续寻找 AI Backend / AI Full-stack 中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
+8. 牛客外继续主动搜原始正文，但不设置平台配额；
+9. 持续记录新增 HUMAN-A 数量、命中率、重复率、二次整理 / 内容账号比例和 Role Scope 外比例，判断是否真正接近饱和。
 
 ## 当前 Inbox
 
