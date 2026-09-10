@@ -9,11 +9,9 @@
 - 主动采集：已冻结
 - 本轮目标：不再搜索新面经，只把冻结语料按正式学习路径归一化为可统计、可回溯的问题数据集
 
-## 第一阶段定义
+## 第一阶段正式口径
 
-第一阶段**不是**“先整理五大核心模块，再补支持模块”。旧口径废弃。
-
-正式一级板块只有下面十个，并严格按这条学习路径组织：
+旧的“五大核心模块 + 支持模块”口径已经废弃。正式一级板块只有下面十个，并严格按学习路径组织：
 
 ```text
 Python
@@ -39,110 +37,103 @@ System Design
 
 `Coding / Debug / AI Coding` 只作为 `Question Type`，不再单独成为一级板块。
 
-第一阶段只有同时满足下面三件事才算完成：
+第一阶段完成标准：
 
-1. 十个一级板块都对 `S001–S279` 做完一轮全库纵向扫描；
-2. 每一道 Canonical Question 完成 `Primary Module` 唯一归属；
-3. 十个板块都通过跨模块 Merge / Move 审计，不能把同一个核心问题复制到多个一级板块。
-
-因此，**只有“十板块文件都存在”并不代表第一阶段完成。**
+1. 十个一级板块都对 `S001–S279` 完成全库纵向扫描；
+2. 每一道 Canonical Question 只有一个 `Primary Module`；
+3. 十个板块都完成跨模块 Merge / Move 归属审计，同一核心问题不靠复制进入多个板块；
+4. 跨板块关系只通过 `Related Modules` 和 MOVED 映射表达。
 
 ---
 
 ## 全库读取状态
 
-`S001–S279` 所在 26 个 Batch 已完成一轮直接回读，用于建立统一归一化标准。
+`S001–S279` 所在 26 个 Batch 已完成直接回读，并已按十板块完成一轮语义归一化与归属复核。
 
 > Batch 文件中的历史“累计来源数 / 下一编号”等过程性统计按采集时口径保留；Canonical 重建只使用当前去重后的 `S001–S279` 正式编号。
 
-## 十板块纵向扫描 / 归属审计状态
+## 十板块 v2 状态
 
-| 顺序 | 一级板块 | 当前状态 | 当前条目 | 说明 |
-|---:|---|---|---:|---|
-| 1 | Python | 🟡 v1 扫描完成，待 v2 归属审计 | 15 | 语言 / Runtime；需与 FastAPI、AI Backend 再做边界复核 |
-| 2 | FastAPI | ✅ v2 归属审计完成 | 4 ACTIVE + 1 MOVED | `await` / Event Loop 核心语义已迁回 Python `PY-012` |
-| 3 | AI Backend Engineering | ✅ v2 归属审计完成 | 39 | Network、Streaming、Concurrency、MQ、Rate Limit、Retry、Auth、Session、Infra 等 |
-| 4 | MySQL | ✅ v2 归属审计完成 | 26 ACTIVE + 2 MOVED | 跨存储一致性已迁移到 AI Backend Engineering |
-| 5 | Redis | ✅ v2 归属审计完成 | 19 ACTIVE + 5 MOVED | 通用 Rate Limit / DB-Cache Consistency / Agent Checkpoint 等已迁出 |
-| 6 | Vector DB | ✅ v2 归属审计完成 | 13 ACTIVE + 10 MOVED | Hybrid / RRF / Rerank 归 RAG；Embedding/Rerank 模型原理归 LLM Foundation |
-| 7 | LLM Foundation（应用工程深度） | 🟡 v1 扫描完成，待 v2 归属审计 | 22 | Token、Transformer、Inference、Model API、Embedding/Rerank Model、Post-training |
-| 8 | RAG | ✅ v2 归属审计完成 | 30 | Parse、Chunk、Retrieval、Fusion、Rerank、Evaluation、Freshness、Production |
-| 9 | Agent Harness / Runtime | ✅ v2 归属审计完成 | 38 ACTIVE + 4 MOVED | 通用 Transport / Rate Limit / Scale 已迁到 AI Backend；端到端架构归 System Design |
-| 10 | System Design | 🟡 v1 扫描完成，待 v2 归属审计 | 24 | 只保留端到端 Scenario，需继续检查是否误收底层单点问题 |
+| 顺序 | 一级板块 | 状态 | ACTIVE Canonical | MOVED |
+|---:|---|---:|---:|---:|
+| 1 | Python | ✅ v2 | 15 | 0 |
+| 2 | FastAPI | ✅ v2 | 4 | 1 |
+| 3 | AI Backend Engineering | ✅ v2 | 39 | 0 |
+| 4 | MySQL | ✅ v2 | 26 | 2 |
+| 5 | Redis | ✅ v2 | 19 | 5 |
+| 6 | Vector DB | ✅ v2 | 13 | 10 |
+| 7 | LLM Foundation（应用工程深度） | ✅ v2 | 22 | 0 |
+| 8 | RAG | ✅ v2 | 30 | 0 |
+| 9 | Agent Harness / Runtime | ✅ v2 | 38 | 4 |
+| 10 | System Design | ✅ v2 | 24 | 0 |
+|  | **合计** | **10 / 10** | **230 ACTIVE** | **22 MOVED** |
 
-### 当前第一阶段状态
+因此：**第一阶段现在才正式完成。**
 
-- 十板块文件：**10 / 10 已建立**
-- 全库纵向扫描：**10 / 10 已有 v1**
-- `Primary Module` / 跨模块去重审计：**7 / 10 完成 v2**
-- 尚待完成 v2 的板块：`Python`、`LLM Foundation`、`System Design`
-- 当前 ACTIVE 模块条目暂计：**230**；这仍不是最终全局独立问题数
-- 结论：**第一阶段尚未完成。**
+`230` 是完成十板块 Primary Ownership 后的 ACTIVE 模块条目数。它仍不是最终发布版“全局独立问题数”，因为第二阶段还要对整个集合做 Global Merge / Split 与 Evidence 一致性审计。
 
 ---
 
-## 当前已执行的跨模块迁移原则
+## 第一阶段关键归属修正
 
-```text
-MySQL + Redis 双写一致性
-        ↓
-Primary: AI Backend Engineering
-Related: MySQL, Redis
-```
-
-```text
-Vector + BM25 → RRF → Rerank
-        ↓
-如果问 RAG Retrieval Pipeline：Primary = RAG
-如果问 HNSW / IVF / ANN Index：Primary = Vector DB
-如果问 Embedding / Cross-Encoder 模型原理：Primary = LLM Foundation
-```
+### Python / FastAPI
 
 ```text
 FastAPI async 调 LLM 时 await 期间 Event Loop / CPU / Thread 在做什么
         ↓
-Primary: Python（asyncio Runtime）
-Related: FastAPI, AI Backend Engineering
+Primary = Python / PY-012
+Related = FastAPI, AI Backend Engineering
 ```
 
+因此旧 `FASTAPI-003` 已 MOVED，不再重复计一题。
+
+### AI Backend / MySQL / Redis
+
 ```text
-Agent SSE / WebSocket
+MySQL + Redis 双写一致性
         ↓
-协议与服务端传输：AI Backend Engineering
-FastAPI 具体实现：FastAPI
-Agent Event / State 如何进入流：Agent Harness / Runtime
-端到端 Agent Backend：System Design
+Primary = AI Backend Engineering / AIBE-020
+Related = MySQL, Redis
+```
+
+数据库自身事务 / 索引 / 日志继续留 MySQL；Redis 自身数据结构 / Cluster / Lock / Lua 继续留 Redis。
+
+### Vector DB / LLM / RAG
+
+```text
+Embedding / Rerank Model 原理 → LLM Foundation
+ANN / HNSW / IVF / Vector Storage → Vector DB
+Dense/Sparse / Hybrid / RRF / Rerank Pipeline / Top-K / Retrieval Eval → RAG
+```
+
+### LLM / Agent Harness
+
+```text
+Context Window / Lost in the Middle 的模型本体限制 → LLM Foundation
+Context Assembly / Compaction / Memory / Tool Runtime → Agent Harness / Runtime
+```
+
+### Agent / AI Backend / System Design
+
+```text
+SSE / WebSocket 协议与通用 Streaming Reliability → AI Backend Engineering
+Agent Event / State / Tool / Checkpoint 控制语义 → Agent Harness / Runtime
+端到端 Production Agent Backend / Long-running Agent → System Design
 ```
 
 ---
 
-## 第一阶段接下来怎么做
+## 第二阶段：Global Canonical Audit + Market Analysis
 
-继续完成剩余三个 v2 审计：
-
-```text
-Python
-  ↓
-LLM Foundation（应用工程深度）
-  ↓
-System Design
-```
-
-每完成一个板块，都检查：
-
-- 是否与另外九个板块存在同一道核心问题的重复 Canonical；
-- 是否应该 `MOVE` 而不是复制；
-- `Source Count` 是否等于唯一 `Evidence Sources` 数量；
-- `Primary Module` 是否只有一个；
-- 真实问法是否仍然保留面经语境，而不是被抽象成普通教材目录。
-
-只有这三个板块全部升级到 v2 后，才把第一阶段标为完成。
-
----
-
-## 第二阶段（第一阶段完成后再开始）
+下一步从这 **230 个 ACTIVE** 出发，不再改一级分类，而是做全局问题层审计：
 
 ```text
+230 Primary-owned Canonical
+        ↓
+Global Merge / Split Audit
+        ↓
+Source Count / Evidence 一致性校验
+        ↓
 Global Canonical Question Index
         ↓
 Frequency Ranking
@@ -155,6 +146,13 @@ Curriculum Coverage Matrix
         ↓
 Knowledge Gap Analysis
 ```
+
+第二阶段允许继续修正：
+
+1. 两个不同 Primary Module 的条目如果核心知识模型实际上仍相同 → Merge；
+2. 某个 Canonical 过宽、混了两个可独立追问能力 → Split；
+3. Evidence Source 归属过宽 / 过窄 → 修正；
+4. System Design 场景与底层能力建立关系，但不把场景频率重复计到底层问题上。
 
 任何修正都必须保留可追溯 `Sxxx`，不能凭常识、搜索热度或其它题库虚增真人面试频率。
 
