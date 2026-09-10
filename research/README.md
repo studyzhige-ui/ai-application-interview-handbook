@@ -10,16 +10,16 @@
 
 ## 1. 当前进度
 
-- 正式 HUMAN-A 来源：**365 个**
-- 来源编号：`S001–S365`
-- 当前最大编号：`S365`
-- 下一条正式来源：**`S366`**
-- 正式 Batch：`batch-01.md` ～ `batch-23.md`
-- 最新 Batch：[`interviews/batch-23.md`](interviews/batch-23.md)，新增 **5 个 HUMAN-A（S361–S365）**
+- 正式 HUMAN-A 来源：**369 个**
+- 来源编号：`S001–S369`
+- 当前最大编号：`S369`
+- 下一条正式来源：**`S370`**
+- 正式 Batch：`batch-01.md` ～ `batch-24.md`
+- 最新 Batch：[`interviews/batch-24.md`](interviews/batch-24.md)，新增 **4 个 HUMAN-A（S366–S369）**
 - Monitoring Inbox：[`monitoring/inbox.md`](monitoring/inbox.md)，当前无待归档 HUMAN-A
-- 当前停止判断：**热门结果页已明显局部饱和，但热门公司全年真人来源整体尚不能判定饱和。Batch 21 / 22 的完整高搜索量周期仍分别新增 11 / 12 个；Batch 23 是已有候选池的收尾批次，5 个新增不能单独视为饱和信号。**
+- 当前停止判断：**热门结果页局部饱和进一步加深，但热门公司全年真人来源整体仍不能判定饱和。Batch 24 是完整高搜索量扫描，最终只新增 4 个；与此同时 8 月仍能找到新的独立大厂流程，3～7 月长尾也继续出现未收录来源，因此更准确的结论是“新增边际下降 + Provenance / 去重成本显著上升”，而不是已经搜尽。**
 
-Batch 23 在编号前重新直接回读 `batch-01.md` ～ `batch-22.md`，覆盖 `S001–S360` 全历史。最终只保留 5 个独立招聘流程：字节中国交易与广告完整三轮 + HR/Offer、快手 AI 应用服务端三轮、小红书 PE 全栈 AI 方向、小红书 PE 工程师 AI+全栈方向、字节抖音电商 / 中国交易与广告 AI 开发/全栈。
+Batch 24 在编号前重新直接回读 `batch-01.md` ～ `batch-23.md`，覆盖 `S001–S365` 全历史。最终只保留 4 个独立招聘流程：阿里云 Agent Infra（Data Infra）、阿里淘天 AI 应用研发、字节抖音 Agent 开发、字节安全与风控后端研发（AI Agent）。本轮多次出现 GitHub Code Search 0 命中但历史正文实际已经收录的情况，进一步确认 Code Search 只能辅助，不能承担去重判定。
 
 ---
 
@@ -73,7 +73,7 @@ AI-Native Application Engineer
 
 岗位标题不是唯一依据。标题叫 Backend，只要实际职责和整场面试主体明确围绕 Agent / RAG / LLM Service / Runtime，可以进入；反之，普通 Backend 仅深挖候选人的 Agent 项目、但岗位本身无法确认属于目标方向时，不收。
 
-Batch 23 的典型案例：字节 `S361` 虽为后端日常实习，但一、二面主体持续围绕 Agent / Harness / Skill / Memory / Evaluation，因此通过；另一个 8/23 字节页面虽 Agent 项目问得多，但岗位 Role Scope 无法稳定确认，因此排除。
+Batch 24 的典型案例：`S369` 标题是字节安全与风控后端研发实习生，但原帖明确标注 AI Agent，面试前半段连续围绕 Vector Retrieval、Hybrid Retrieval、RRF、Vector DB、OpenClaw / Context Engineering，因此按 AI Backend / Agent Role Scope 通过；通过后继续保留 HTTP / TCP、Redis Persistence、Process / Thread、Python GIL 和 Coding 等整场基础问题。
 
 ---
 
@@ -123,13 +123,13 @@ URL 精确去重
 - GitHub Code Search / 搜索引擎“0 命中”只能辅助，不能证明未收录；
 - 每个候选至少检查 URL、作者、公司、岗位、日期 / 轮次、项目关键词和 5～10 个独特连续题序；
 - 同一候选人同一公司同一招聘流程的一面 / 二面 / 三面 / Leader 面必须合并为一个 `Sxxx`；
-- 同一候选人不同公司、招聘流程独立时可以分别计数；
+- 同一候选人不同公司 / BU、招聘流程独立时可以分别计数；
 - 不同 URL 但题序 / 项目语义高度一致时必须继续追源；
 - 无法确认复制链原始候选人时整链排除；
 - 搜索摘要只负责发现，正文最终不能稳定打开则零贡献；
 - 不同候选人的独立流程即使出现相同常见问题，仍分别计数。
 
-Batch 23 中，字节 `S361` 的三轮和快手 `S362` 的三轮均通过作者 Timeline 合并；快手父子索引 / BM25 / Rerank 多日期高度同序链继续排除；热门公司投稿 / 答案包装和内容账号仍零贡献。
+Batch 24 的典型去重：阿里 Token Foundry 8/17 → 8/24 → 9/3 三轮在 Code Search 中无命中，但直接历史回读确认就是 `S148`；字节 TikTok Agent 8/9 同样被历史正文确认已收录；小红书 Agent 服务端 9/8 在搜索末段一度看起来是新候选，再次对历史正文后确认就是历史 `S033`；PDD 同一候选人的 8/31 后续轮次则因同公司同流程而不新增。上述页面全部零贡献。
 
 ---
 
@@ -173,11 +173,11 @@ Batch 23 中，字节 `S361` 的三轮和快手 `S362` 的三轮均通过作者 
 
 ## 7. 当前饱和度判断
 
-1. **最新热门结果页局部饱和已经较明确。** 8～9 月泛搜中历史重复、内容账号、答案版、后发扩写和 Role Scope 模糊结果越来越多。
-2. **热门公司全年来源尚未整体饱和。** Batch 21 / 22 在扩大 Recall 后仍分别新增 11 / 12 个，主要来自 3～7 月长尾与作者 Timeline。
-3. **Batch 23 的 5 个不作为独立饱和证据。** 该批是在已有候选池基础上做收尾，不是完整新一轮高搜索量实验。
-4. **去重 / Provenance 成本高于搜索成本。** 新 URL 很多，但真正需要验证的是作者、流程、原始正文和罕见题序。
-5. **下一轮继续扩量搜索。** 只有当最新层、3～7 月长尾、作者 Timeline 三条路径连续多轮都出现明显低新增，才判断热门公司 HUMAN-A 接近饱和。
+1. **最新热门结果页局部饱和已经很强。** 8～9 月泛搜中历史重复、内容账号、答案版、后发扩写、同流程后续轮次和 Role Scope 模糊页面占比继续升高。
+2. **热门公司全年来源仍未证明整体饱和。** Batch 24 做了完整高搜索量扫描后仍能从 8 月独立流程和 4 月长尾各拿到新 HUMAN-A；说明 Recall 尚未归零。
+3. **新增边际正在下降。** Batch 21 / 22 分别新增 11 / 12 个，Batch 23 为候选池收尾新增 5 个，Batch 24 完整扫描新增 4 个。单批下降不能直接宣布饱和，但需要连续观察。
+4. **Provenance / 去重成本已经高于搜索成本。** 很多“新 URL”最终是历史样本、复制链、答案包装或同一招聘流程；作者、流程、题序和原始正文核验成为主要工作量。
+5. **下一轮仍继续扩量，但更加偏向作者 Timeline 与历史长尾。** 只有当最新层、3～7 月长尾、作者 Timeline 三条路径连续多轮都明显低新增，才判断热门公司 HUMAN-A 接近饱和。
 
 ---
 
@@ -189,8 +189,8 @@ research/
 ├── interviews/
 │   ├── batch-01.md
 │   ├── ...
-│   ├── batch-22.md
-│   └── batch-23.md
+│   ├── batch-23.md
+│   └── batch-24.md
 ├── monitoring/
 │   └── inbox.md
 ├── quality/
@@ -208,12 +208,12 @@ Canonical Question 只允许由正式 HUMAN-A 产生证据。
 
 ## 9. 下一轮优先级
 
-- 从 **`S366`** 开始；
-- 继续保持 Batch 21 / 22 的高搜索量，不因 Batch 23 只有 5 个就降低 Recall；
+- 从 **`S370`** 开始；
+- 继续高搜索量，不因 Batch 24 只有 4 个就降低 HUMAN-A 门槛或停止长尾搜索；
 - 热门公司优先，尤其继续深挖腾讯、字节 / 抖音、美团、快手、小红书、PDD、京东、滴滴、B站、OPPO / vivo / 小米，以及百度 / 阿里 / 蚂蚁历史长尾；
 - 最新 8～9 月与 3～7 月长尾同时搜索；
-- 优先沿已核验真人作者 Timeline 找同公司后续轮次与不同公司独立流程；
+- 优先沿已核验真人作者 Timeline 找同公司后续轮次与不同公司 / BU 的独立招聘流程；
 - 继续重点观察 Agent Runtime Verification、Context / Memory Correctness、RAG Evaluation、AI Coding Verification、Harness / AgentOS；
 - 继续补 Java / Python / FastAPI / Go / MySQL / Redis / MQ / Network / Concurrency 与 Agent 同场的大厂样本；
 - 内容账号、投稿 / 答案、付费墙、后发扩写、同作者流程不清、换公司标题同序链继续零容忍；
-- 分配编号前再次直接回读 `S001–S365` 全历史。
+- 分配编号前再次直接回读 `S001–S369` 全历史。
