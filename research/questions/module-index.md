@@ -2,7 +2,9 @@
 
 更新日期：2026-09-10
 
-本文件是 `S001–S279` 冻结 HUMAN-A 语料在新学习路径下的一级归属索引。
+> **Repository-first：** 本文件与 `README.md`、`schema.md`、`progress.md`、各模块最新文件共同构成当前正式口径；历史聊天总结或旧分类不能覆盖这里的最新状态。
+
+本文件是 `S001–S279` 冻结 HUMAN-A 语料在正式学习路径下的一级归属索引。
 
 ```text
 Python
@@ -26,25 +28,27 @@ Agent Harness / Runtime
 System Design
 ```
 
-## 1. 第一阶段最终 Primary-owned Canonical 数量
+## 1. Global Merge / Split Audit 后的 Ownership
 
-| 顺序 | 一级板块 | 文件 | ACTIVE Canonical | MOVED | 状态 |
+| 顺序 | 一级板块 | 文件 | ACTIVE | MOVED | 当前版本 |
 |---:|---|---|---:|---:|---|
-| 1 | Python | `python.md` | 15 | 0 | ✅ v2 |
-| 2 | FastAPI | `fastapi.md` | 4 | 1 | ✅ v2 |
-| 3 | AI Backend Engineering | `ai-backend-engineering.md` | 39 | 0 | ✅ v2 |
-| 4 | MySQL | `mysql.md` | 26 | 2 | ✅ v2 |
-| 5 | Redis | `redis.md` | 19 | 5 | ✅ v2 |
-| 6 | Vector DB | `vector-db.md` | 13 | 10 | ✅ v2 |
-| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 22 | 0 | ✅ v2 |
-| 8 | RAG | `rag.md` | 30 | 0 | ✅ v2 |
-| 9 | Agent Harness / Runtime | `agent-harness.md` | 38 | 4 | ✅ v2 |
-| 10 | System Design | `system-design.md` | 24 | 0 | ✅ v2 |
-|  | **合计** |  | **230** | **22** | **10 / 10** |
+| 1 | Python | `python.md` | 15 | 0 | v2 |
+| 2 | FastAPI | `fastapi.md` | 4 | 1 | v2 |
+| 3 | AI Backend Engineering | `ai-backend-engineering.md` | 39 | 0 | v3 |
+| 4 | MySQL | `mysql.md` | 26 | 2 | v3 |
+| 5 | Redis | `redis.md` | 19 | 5 | v2 |
+| 6 | Vector DB | `vector-db.md` | 12 | 11 | v3 |
+| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 22 | 0 | v2 |
+| 8 | RAG | `rag.md` | 29 | 1 | v3 |
+| 9 | Agent Harness / Runtime | `agent-harness.md` | 39 | 4 | v3 |
+| 10 | System Design | `system-design.md` | 24 | 0 | v2 |
+|  | **合计** |  | **229** | **24** |  |
 
-`230` 是第一阶段完成十板块 Primary Ownership 后的 ACTIVE 条目数，**还不是第二阶段最终发布版的全局独立问题数**。后续仍要做 Global Merge / Split 与 Evidence 审计。
+`229` 是当前经过 Global Merge / Split Audit 后的 Primary-owned ACTIVE Canonical 数量。
 
-## 2. 从旧分类中迁移的主要问题
+---
+
+## 2. Phase 1 的主要迁移
 
 ### FastAPI → Python
 
@@ -74,7 +78,7 @@ System Design
 - `VDB-017` Top-K → `RAG-016`
 - `VDB-019` Retrieval Evaluation → `RAG-020` / `RAG-021`
 - `VDB-021` Multimodal Retrieval → `RAG-005`; 模型侧 → `LLM-010`
-- `VDB-023` Code Retrieval Boundary → `RAG-030` / `AGENT-037`
+- `VDB-023` Code Retrieval Boundary → 历史曾映射 `RAG-030` / `AGENT-037`；Global Audit 后统一到 `AGENT-037`
 
 ### Agent Harness → LLM / AI Backend / System Design
 
@@ -83,7 +87,39 @@ System Design
 - `AGENT-039` Concurrency / Backpressure / Quota → `AIBE-013` / `AIBE-017`
 - `AGENT-040` Demo → Multi-instance Production Scale → `SD-021` + AI Backend Deployment
 
-## 3. Primary Module 判断例子
+---
+
+## 3. Phase 2A Global Audit 的新增修正
+
+### `VDB-010` → `VDB-009`
+
+Vector DB “为什么需要独立存储 / pgvector / FAISS / 专用 Vector DB”与“Milvus / FAISS / pgvector / ES Vector 产品选型”共享同一核心知识模型，合并到 `VDB-009`。合并后 Source Count = 18。
+
+### `RAG-030` → `AGENT-037`
+
+Code RAG / AST / LSP / ripgrep / Filesystem Search 与 Coding Agent Repository Understanding 是同一能力。`RAG-030` 的全部证据均已包含在 `AGENT-037`，因此统一 Primary = Agent Harness / Runtime。
+
+### `AIBE-029` → 拆出 `AGENT-043`
+
+通用 Backend Metrics / Log / Trace 留 `AIBE-029`；Agent step / model / tool / state 执行轨迹独立为 `AGENT-043`。
+
+### `MYSQL-010` Narrow
+
+单表 / 单分片 Deep Pagination 留 `MYSQL-010`；跨 Shard Pagination / Global Sort 由 `MYSQL-021` Sharding 承接。
+
+### `MYSQL-022` Narrow
+
+MySQL-specific Bulk Write 留 `MYSQL-022`；通用批处理 / 数据迁移 / Backpressure / Resume 由 `SD-007` 承接。
+
+### `AGENT-028` Evidence 修正
+
+补入 `S254` Agent Code Execution / Tool Permission / Sandbox 安全证据，Source Count 15 → 16。
+
+完整判断依据与 KEEP-SEPARATE 清单见 `global-audit.md`。
+
+---
+
+## 4. Primary Module 判断例子
 
 ```text
 “RRF 为什么不用线性加权？”
@@ -115,9 +151,11 @@ Primary = AI Backend Engineering
 Related = MySQL, Redis
 ```
 
-## 4. Coding / Debug / AI Coding 的位置
+---
 
-它们不再单独作为一级板块。
+## 5. Coding / Debug / AI Coding 的位置
+
+它们不是一级板块，而是 Question Type：
 
 - Python Decorator 手写 → Python
 - FastAPI Streaming / Middleware 实现 → FastAPI
@@ -130,20 +168,19 @@ Related = MySQL, Redis
 - Coding Agent Repo Modification / Verification → Agent Harness / Runtime
 - 完整业务架构题 → System Design
 
-`Question Type` 仍可标为 `Coding`, `Debug`, `AI Coding`, `Troubleshoot`, `System Design` 等。
+---
 
-## 5. 下一步
+## 6. 下一步
 
-第一阶段十板块归属审计已经完成。下一步对这 230 个 ACTIVE 条目做第二阶段：
+Phase 2A Global Merge / Split Audit 已完成。下一步从 **229 ACTIVE** 进入 Phase 2B：
 
 ```text
-Global Merge / Split Audit
-→ Source Count / Evidence 一致性校验
-→ Global Canonical Question Index
+Global Canonical Question Index
+→ Evidence / Source Count 一致性复核
 → Frequency / Company / Role / Round 统计
 → Follow-up Chain / Depth
 → Curriculum Coverage Matrix
 → Knowledge Gap Analysis
 ```
 
-第二阶段不会新增一级分类；任何 Merge / Split 都必须保留 `Sxxx` 可追溯证据。
+如果后续发现新的边界问题，不直接改分类：先回到 HUMAN-A 原始来源核验，并把决策追加到 `global-audit.md`。
