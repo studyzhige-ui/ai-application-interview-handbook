@@ -10,18 +10,18 @@
 
 ## 1. 当前进度
 
-- 正式 HUMAN-A 来源：**331 个**
-- 来源编号：`S001–S331`
-- 当前最大编号：`S331`
-- 下一条正式来源：**`S332`**
-- 正式 Batch：`batch-01.md` ～ `batch-19.md`
-- 最新 Batch：[`interviews/batch-19.md`](interviews/batch-19.md)，新增 **6 个 HUMAN-A（S326–S331）**
+- 正式 HUMAN-A 来源：**337 个**
+- 来源编号：`S001–S337`
+- 当前最大编号：`S337`
+- 下一条正式来源：**`S338`**
+- 正式 Batch：`batch-01.md` ～ `batch-20.md`
+- 最新 Batch：[`interviews/batch-20.md`](interviews/batch-20.md)，新增 **6 个 HUMAN-A（S332–S337）**
 - Monitoring Inbox：[`monitoring/inbox.md`](monitoring/inbox.md)，当前无待归档 HUMAN-A
-- 当前停止判断：**尚未整体达到来源饱和。热门公司仍能找到独立高质量来源，但字节 / 腾讯 / 美团 / 快手等热门结果面的历史重复、复制链和内容包装比例已经很高；百度、阿里系本轮仍有明显新增。**
+- 当前停止判断：**尚未整体达到来源饱和。热门公司仍能找到新的独立 HUMAN-A，但普通热门结果页的历史重复、跨 URL 同场、换公司标题同序链、内容包装和正文不稳定比例已经很高。**
 
-Batch 19 按本轮要求把搜索重心重新放到热门公司。分配编号前先确认 `main` 仍处于 Batch 18 的 `S001–S325` 基线；结合上一批刚完成的历史 Batch 直接回读结果，重新读取最新 Batch 18，并对每个候选回查相关历史来源。最终只放行百度 2 个独立流程、阿里 3 个独立流程和 OPPO 1 个独立流程，共 6 个 HUMAN-A。
+Batch 20 继续按“热门公司优先”搜索，最终只放行字节 / 抖音电商 2 个独立流程、快手 1 个、小红书 1 个、Bilibili 1 个、京东 1 个，共 6 个 HUMAN-A。分配编号前重新确认 `main` 为 `S001–S331` 基线，并直接回读相关历史 Batch 做 URL、作者、招聘流程、项目和连续题序对照。
 
-本轮同时撤出多个“看起来很强”的热门来源：拼多多复活赛因作者属于 100+ 社招面经 / 订阅内容生态而触发非内容账号 Gate；快手 7 月候选向前追到 2 月原场和 3 / 4 月多个高度同序版本，原始归属无法可靠确认，整链排除；美团、腾讯、字节多条热门结果则已精确命中历史正式来源。
+本轮典型去重包括：OPPO 8/13 候选与历史 `S154` 几乎整段同序，因此不新增；小红书 OpenManus 候选与历史 `S260` 高度重合，排除；滴滴 AI Agent Backend 后半段与快手原场形成长连续同序链，排除；腾讯 4 月 AI Backend 虽技术密度高，但原始正文无法稳定完整打开，按 Verifiable Gate 排除；抖音电商同一作者一分钟附近发布两篇不同题序页面，流程关系无法确认，因此只收能独立成立的 Agent 全栈页面，另一页零贡献。
 
 ---
 
@@ -100,6 +100,8 @@ AI Coding
 
 基础工程问题只能来自通过 Role Scope 的目标 AI 岗真人样本，不使用普通后端、数据分析、推荐算法等场次人为抬高频率。
 
+Batch 20 再次体现这一原则：小红书 `S334` 一场 75 分钟面试大面积考 LRU、秒杀、RocketMQ、Redis、MVCC、Index、Deep Pagination，但后半场明确深问 Agent Architecture / Memory / RAG / Evaluation，因此整场基础问题全部保留。
+
 ---
 
 ## 5. 去重：必须在分配 `Sxxx` 之前完成
@@ -127,12 +129,12 @@ URL 精确去重
 - 同一候选人同一公司同一流程的一面 / 二面 / 三面 / Leader 面 → **合并为一个 `Sxxx`**。
 - 同一候选人面试不同公司 → 若招聘流程独立，可以分别计数。
 - 不同 URL 但题序、项目描述和措辞高度一致 → 必须继续追作者、发布时间和流程；不能因为 URL 不同就算新来源。
-- 如果更早不同作者页面与候选帖几乎逐题同序，而无法证明独立场次 → 候选帖不入库。
+- 更早不同作者页面与候选帖几乎逐题同序、又无法证明独立场次 → 候选帖不入库。
 - 无法确认复制链原始候选人 → **整条不确定链排除，不猜原帖。**
 - 搜索摘要只负责发现；正文最终不能稳定打开 → 不进入正式来源。
 - 不同候选人的独立招聘流程即使出现相同常见问题 → 分别计数。
 
-Batch 19 的应用实例：百度 8/20 与 8/26 两轮由同一作者发布，合并为 `S327`；阿里控股 8/17 与 8/21 两轮同样合并为 `S329`。阿里云 `S330` 只保留 8/31 原场，09-07 后发页面因复用 SGX / EPC / PV / Coding 核心题序而排除。OPPO 后发“帮转”页面不计数，只保留 `S331` 原作者页。快手 7 月候选继续追到 2 月、3 月、4 月多个高度同序版本后无法确认独立性，整条不确定链排除。
+Batch 20 的应用实例：Bilibili 8/11 + 8/13 同一作者连续两轮合并为 `S335`；快手原作者页面 `S333` 的招聘账号“帮转”页只作为转载证据；OPPO 8/13 跨 URL 页面与历史 `S154` 整段同序，直接排除；滴滴候选虽然公司不同，但后半段与 `S333` 快手连续同序，不按公司标题强行计新来源；抖音电商同作者相邻双帖流程归属不清，只收其中能独立成立的 `S336` 页面，另一页零贡献。
 
 ---
 
@@ -148,11 +150,13 @@ Batch 19 的应用实例：百度 8/20 与 8/26 两轮由同一作者发布，�
 月份
 ×
 技术关键词
+×
+作者 Timeline / 原始正文
 ```
 
-当前公司优先级：字节、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、拼多多、京东、滴滴、Bilibili、OPPO、vivo、小米等；同时保留高质量长尾公司补充，但不再为了公司数量平均分配搜索预算。
+当前公司优先级：字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、拼多多、京东、滴滴、Bilibili、OPPO、vivo、小米等。高质量长尾公司仍可补充，但主要搜索预算继续优先热门公司。
 
-重点月份：`2026-03` ～ `2026-09`，优先 `2026-08` ～ `2026-09` 最新秋招。
+重点月份：`2026-03` ～ `2026-09`，优先 `2026-08` ～ `2026-09` 秋招新流程。
 
 岗位别名轮换：AI 应用开发、AI 应用研发、Agent 开发、智能体开发、大模型应用开发、LLM 应用、RAG 开发、AI 后端、Agent 后端、AI 全栈、Applied AI、FDE、Coding Agent、Agent Runtime、Agent Harness。
 
@@ -162,25 +166,24 @@ Batch 19 的应用实例：百度 8/20 与 8/26 两轮由同一作者发布，�
 
 ```text
 搜索引擎 / 企业页 / 话题页
-→ 精确公司 + 岗位 + 轮次
+→ 精确公司 + 岗位 + 日期 / 轮次
 → 作者主页 / 候选人 Timeline
 → 原始正文 / 评论区
-→ 跨平台同步与复制关系
+→ 跨平台同步 / 帮转 / 复制关系
 → 回到全部历史 Batch 做最终去重
 ```
 
 ---
 
-## 7. Batch 19 的现实信号
+## 7. Batch 20 的现实信号
 
-1. **热门公司仍未完全饱和。** 回到热门公司精确搜索后仍新增 6 个独立流程，尤其百度和阿里系仍有高价值长链路面经。
-2. **Observability 已经进入 Runtime Trace 层。** 百度 `S326` 会追 Trace Hook、请求到 Trace 的映射、节点级故障分析，不再停留在“有没有日志”。
-3. **RAG 参数必须拿实验说话。** `S326` 会追 Hybrid 的真实收益、RRF 为什么不用线性权重、常数如何确定，以及最终 Citation / Verification 如何回链证据。
-4. **Agent Infra 与 Data / System Infra 正在融合。** 阿里云 `S330` 同场出现 SGX / EPC、多租户安全、吞吐瓶颈、State Persistence 与 120min SLS → MySQL AI Coding。
-5. **Agent Self-evolution 成为真实 Infra 问题。** 阿里控股 `S329` 连续追 Agent Pool、自进化机制、Evolution Metric、数据采集、DAU、Resource 和二面实现细节。
-6. **Checkpoint + 外部副作用仍是可靠性高频深题。** 阿里 `S328` 直接追 Tool 已成功但 Checkpoint 写失败后的恢复与幂等。
-7. **AI 应用项目验真更强调 Delivery / Regression。** OPPO `S331` 把个人贡献、效果指标、Tool Failure、Human Confirmation 与 AI 改码回归验证放在同一条链中。
-8. **热门结果页复制 / 内容包装比例很高。** PDD 强候选因内容账号撤出，快手强候选因跨月份同序链撤出，美团 / 腾讯 / 字节大量结果已是历史样本。
+1. **热门公司 AI 岗越来越强调先验真项目。** 快手 `S333` 开场直接确认项目是不是实习、是否上线、有没有真实用户和调用量，然后才进入 Memory / Context / Runtime。
+2. **AI Backend 仍是 Backend + Agent 的一体化能力模型。** 小红书 `S334` 从 LRU、秒杀、RocketMQ、Redis、MVCC、Index、Deep Pagination 一直问到 Agent / RAG；京东 `S337` 同场考 MySQL、Redis Cluster、ReAct、SubAgent 和 Skill Trigger Reliability。
+3. **Evaluation 从最终答案下钻到 Runtime 行为。** Bilibili `S335` 直接追 Deterministic Output Verification、Hook / Callback Validation 和 Bad Case Attribution。
+4. **AI Coding 的考法持续工程化。** 字节 `S332` 追生成代码的质量保障与测试，不满足于“平时使用什么工具”；抖音 `S336` 继续追生成 Field / API Design 后怎样 Review / Verify。
+5. **GraphRAG 必须证明实际增益。** 抖音 `S336` 追 Pure RAG Baseline、Metric、Judge Input，以及哪些 Query 真正适合 Graph DB。
+6. **Context / Memory 与行为可靠性正在合流。** 快手追 Retrieval Conflict 和 Memory 分层，B站追 Compaction 后状态保真，京东直接问 Skill 是否能 100% 触发。
+7. **热门公司 Provenance 成本继续升高。** 同场跨 URL、同作者一分钟双帖、换公司标题后大段同序、内容账号 / 付费包装均真实出现；热门公司优先必须继续配套严格作者 Timeline 与题序核验。
 
 ---
 
@@ -192,8 +195,8 @@ research/
 ├── interviews/
 │   ├── batch-01.md
 │   ├── ...
-│   ├── batch-18.md
-│   └── batch-19.md
+│   ├── batch-19.md
+│   └── batch-20.md
 ├── monitoring/
 │   └── inbox.md
 ├── quality/
@@ -211,15 +214,17 @@ Canonical Question 的规则见 [`questions/README.md`](questions/README.md)：�
 
 ## 9. 下一轮优先级
 
-- 从 **`S332`** 开始；
-- 继续以**热门公司优先**：重点补字节、腾讯、美团、快手、小红书、拼多多、京东、滴滴、B站，以及 OPPO / vivo / 小米；百度 / 阿里系继续追新增轮次；
-- 新来源分配编号前继续直接回读 `S001–S331` 对应历史 Batch，不依赖代码搜索索引；
-- 对 `S326 / S327` 百度和 `S328 / S329 / S330` 阿里系的后续技术面继续追踪，同公司同流程只合并，不另增来源；
-- 热门公司搜索优先使用“公司 + Agent / AI 应用 + 轮次 + 日期 + 作者 Timeline”，避免只刷热门关键词结果页；
-- 深挖 Runtime Trace / Observability、Tool Runtime、Checkpoint / Resume / Idempotence、Agent Self-evolution、Enterprise Knowledge Permission、RAG Evaluation / Citation；
-- 继续补 Python / FastAPI / ASGI / asyncio、Java / Spring / Go、MySQL / Redis / MQ / Network / Concurrency 与 Agent 同场样本；
-- 对内容账号、答案帖、付费专栏、后发扩写、跨月同序题单保持零容忍；
-- 牛客外继续主动搜索小红书、知乎、脉脉、个人博客 / 独立站，但主要搜索预算优先热门公司；
-- 持续记录热门公司新增率、历史重复率、复制链比例和内容账号比例，区分“热门结果面局部饱和”和“热门公司真实来源整体饱和”。
+- 从 **`S338`** 开始；
+- 继续以**热门公司优先**，重点补腾讯、美团、拼多多、滴滴、字节 / 抖音、快手、小红书、京东、B站，以及 OPPO / vivo / 小米；百度、阿里系继续追新轮次；
+- 新来源分配编号前继续直接回读 `S001–S337` 对应历史 Batch，不依赖代码搜索索引；
+- 继续追本批候选后续轮次：同候选人同公司同招聘流程只合并，不另增 `Sxxx`；
+- 热门公司搜索优先使用“公司 + 岗位 + 日期 / 轮次 + 技术关键词 + 作者 Timeline”，减少热门结果页重复噪声；
+- 深挖 Agent Runtime Verification：Hook / Callback、Trace、Deterministic Output、Tool Failure、Checkpoint / Resume / Idempotence；
+- 深挖 Context / Memory Correctness：Conflict Resolution、Compaction Validation、Skill Trigger Reliability、Long-context Boundary；
+- 继续补 GraphRAG / Hybrid Retrieval / Rerank / Evaluation / Judge / Citation 的真实指标验真；
+- 继续补 Python / FastAPI / ASGI / asyncio、Java / Spring / Go、MySQL / Redis / MQ / Network / Concurrency 与 Agent 同场的大厂样本；
+- 对内容账号、答案帖、付费专栏、后发扩写、同作者相邻多帖和换公司标题同序链保持零容忍；
+- 牛客外继续主动搜索小红书、知乎、脉脉、个人博客 / 独立站，但主要搜索预算仍优先热门公司；
+- 持续记录热门公司新增率、历史重复率、复制链比例和正文稳定失败率，区分“热门结果面局部饱和”和“热门公司真实来源整体饱和”。
 
 只有连续多轮对热门公司和跨平台原始来源做精确搜索后，新增 HUMAN-A 持续接近 0、作者 Timeline 也难以产生新独立流程，才判断热门公司来源真正接近饱和。

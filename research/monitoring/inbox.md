@@ -16,7 +16,7 @@
 4. **真实现场痕迹**：追问、答题状态、轮次、结果、互动、Coding / Demo / 屏幕共享等可验证线索；
 5. **Role Scope Gate**：AI 应用、Agent、LLM 应用、RAG、AI Backend、AI Full-stack、Applied AI、FDE、Agent Runtime / Harness / Coding Agent 等目标方向；
 6. **正文稳定可核验**：原始正文与 URL 可以实际访问并验证；
-7. **非重复**：不是转载、合集、跨平台同场重复、后发近似复制或无法确认原场的题序链。
+7. **非重复**：不是转载、合集、跨平台同场重复、后发近似复制、换公司标题同序或无法确认原场的题序链。
 
 ```text
 真人面试官
@@ -63,24 +63,25 @@ AI Coding
 
 - AI 自动面试 / Mock Interview / 模拟题；
 - 低信息密度第一人称；
-- 合集 / 整理 / 搬运 / 后发近似复制；
+- 合集 / 整理 / 搬运 / 帮转 / 后发近似复制；
 - 标准答案 / 高频题 / 面试宝典 / 完整解析；
 - SEO、课程、资源导流、付费墙无法完整核验正文；
 - 内容账号批量模板化“真人叙事”，即使技术题质量高也不能直接升级；
 - 只有标题、截图、Search Snippet 或评论传言；
 - 普通后端 / 前端、传统数据分析 / BI、纯推荐 / 纯训练 Infra、AI 测试等 Role Scope 外场次；
 - 仅因标题或个别问题出现 AI / Agent 字样，但无法证明实际职责属于目标方向；
+- 同作者同公司相邻多帖但招聘流程关系无法确认，且不能安全合并；
 - 无法确认原作者归属的逐题复制链：宁可整链排除，不按发布时间猜原帖。
 
 临时线索只用于寻找真正 HUMAN-A 原帖，线索本身零贡献。
 
 ## 固定搜索方法
 
-当前搜索预算以**热门公司优先**：
+当前搜索预算继续以**热门公司优先**：
 
 ```text
-字节 / 阿里系 / 腾讯 / 美团 / 快手 / 小红书 / 百度 / 蚂蚁 / 拼多多 /
-京东 / 滴滴 / Bilibili / OPPO / vivo / 小米
+字节 / 抖音 / 阿里系 / 腾讯 / 美团 / 快手 / 小红书 / 百度 / 蚂蚁 /
+拼多多 / 京东 / 滴滴 / Bilibili / OPPO / vivo / 小米
 ×
 岗位别名（AI应用开发 / Agent开发 / 智能体开发 / 大模型应用开发 /
 LLM应用 / RAG开发 / AI后端 / AI全栈 / Applied AI / FDE / Coding Agent）
@@ -88,11 +89,11 @@ LLM应用 / RAG开发 / AI后端 / AI全栈 / Applied AI / FDE / Coding Agent）
 月份（重点 2026-08～09，同时回扫 2026-03～07）
 ×
 技术关键词（Python / FastAPI / asyncio / Java / Spring / Go / MySQL / Redis /
-Vector DB / RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool /
-Trace / Checkpoint / Resume / Evaluation / Benchmark / Coding）
+Vector DB / RAG / GraphRAG / MCP / Skill / Harness / Runtime / Context / Memory /
+Tool / Trace / Checkpoint / Resume / Evaluation / Hook / Benchmark / Coding）
 ```
 
-搜索不能停在结果页：继续追企业 / 话题页、精确标题、公司 + 轮次、作者主页、候选人其他帖子、原始正文、评论区和跨平台同步关系。
+搜索不能停在结果页：继续追企业 / 话题页、精确标题、公司 + 日期 / 轮次、作者主页、候选人其他帖子、原始正文、评论区和跨平台同步关系。
 
 ## 强化去重流程
 
@@ -120,38 +121,39 @@ URL 精确去重
 - 同一候选人不同公司招聘流程 → 可以分别计为独立真人命中；
 - 不同 URL 但题序 / 项目语义高度一致 → 继续核验作者和时间线，不能直接视为新来源；
 - 更早不同作者页面与候选页面几乎逐题同序、又无法证明候选页面独立 → 候选页面排除；
-- 跨平台同步、镜像、后发近似复制 → 只保留能确认的原始候选人来源；
+- 跨平台同步、镜像、帮转、后发近似复制 → 只保留能确认的原始候选人来源；
+- 同作者同公司同时间段多帖，若无法证明不同招聘流程，也不能拆成多个 `Sxxx`；
 - 无法可靠确认原场次 → 整条不确定链排除；
-- **正文最终无法稳定访问、只能依赖搜索摘要 → 不进入正式来源；**
+- **正文最终无法稳定访问、只能依赖搜索摘要 / Cache → 不进入正式来源；**
 - 不同候选人独立遇到相同常见问题 → 分别计数。
 
-Batch 19 的应用实例：百度 8/20 + 8/26 同作者流程合并为 `S327`；阿里控股 8/17 + 8/21 合并为 `S329`。阿里云 8/31 原场保留为 `S330`，09-07 高度同序扩写页排除。OPPO 后发“帮转”页排除，只保留原作者 `S331`。拼多多强候选因作者属于内容订阅生态撤出。快手 7 月候选继续追到 2 月 / 3 月 / 4 月多个高度同序版本后无法可靠确认独立性，整链排除。
+Batch 20 的应用实例：Bilibili 8/11 + 8/13 同作者同流程合并为 `S335`；快手原作者 `S333` 的招聘账号帮转页只作复制证据；OPPO 8/13 页面与历史 `S154` 整段同序，排除；滴滴 AI Agent Backend 后半段与快手 `S333` 形成长连续同序链，不能因公司不同强行计新来源；腾讯 4 月强候选因正文最终不稳定而撤出；抖音电商同作者一分钟附近双帖的流程关系不清，只保留可独立成立的 `S336` 页面，另一页零贡献。
 
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S331`，共 **331 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-19.md`
-- 最新正式批次：Batch 19（`S326–S331`，新增 6 个）
-- 当前最大来源编号：`S331`
-- 下一条正式来源从 **`S332`** 开始
+- 正式来源：`S001–S337`，共 **337 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-20.md`
+- 最新正式批次：Batch 20（`S332–S337`，新增 6 个）
+- 当前最大来源编号：`S337`
+- 下一条正式来源从 **`S338`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**尚未整体达到来源饱和，热门公司仍能产生新的独立真人来源；但热门结果面的历史重复、复制链、答案化和内容账号比例已经很高。** 本轮热门公司优先仍确认 6 个独立 HUMAN-A，主要来自百度、阿里系与 OPPO。
+- 当前停止判断：**尚未整体达到来源饱和。热门公司仍能产生新的独立真人来源，但热门结果面的跨 URL 同场、历史重复、换公司标题同序、答案化 / 付费包装与正文稳定失败比例都很高。**
 
 ## 下一轮搜索优先级
 
-1. 从 `S332` 开始，分配编号前直接回读 `S001–S331` 做完整去重；
-2. 继续以热门公司为主，优先补字节、腾讯、美团、快手、小红书、拼多多、京东、滴滴、B站、OPPO / vivo / 小米；
-3. 百度、阿里系继续追后续轮次；同公司同候选人同流程只合并，不增号；
+1. 从 `S338` 开始，分配编号前直接回读 `S001–S337` 做完整去重；
+2. 继续以热门公司为主，重点补腾讯、美团、拼多多、滴滴、字节 / 抖音、快手、小红书、京东、B站、OPPO / vivo / 小米；百度、阿里系继续追后续轮次；
+3. 沿 Batch 20 新来源继续追后续技术面 / Leader 面，同候选人同公司同流程只合并不增号；
 4. 对热门公司使用“公司 + 岗位别名 + 日期 / 轮次 + 技术关键词 + 作者 Timeline”的精确搜索，避免只刷热门结果页；
-5. 深挖 Agent Runtime Trace / Observability、Tool Runtime、Checkpoint / Resume / Idempotence、Self-evolution；
-6. 深挖企业 Knowledge / Permission / Data Leakage / Sandbox 与 MCP / Skill / Tool Security；
-7. 继续补 RAG Hybrid Retrieval / RRF / Evaluation / Citation 与真实实验参数；
+5. 深挖 Agent Runtime Verification：Hook / Callback、Trace、Deterministic Output、Tool Failure、Checkpoint / Resume / Idempotence；
+6. 深挖 Context / Memory Correctness：Conflict Resolution、Compaction Validation、Skill Trigger Reliability、Long-context Boundary；
+7. 继续补 GraphRAG / Hybrid Retrieval / Rerank / Evaluation / Judge / Citation 的真实指标验真；
 8. 继续补 Python / FastAPI / ASGI / asyncio 与 Agent Runtime 同场真人样本；
 9. 继续寻找 Java / Spring / Go / MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场的大厂样本；
-10. 对内容账号、答案帖、付费专栏、后发扩写、跨月同序题单保持零容忍；
+10. 对内容账号、答案帖、付费专栏、后发扩写、同作者相邻多帖和换公司标题同序链保持零容忍；
 11. 牛客外继续主动搜索小红书、知乎、脉脉、个人博客 / 独立站，但主要搜索预算优先热门公司；
-12. 持续记录热门公司新增率、历史重复率、复制链比例和内容账号比例，判断热门公司何时真正接近来源饱和。
+12. 持续记录热门公司新增率、历史重复率、复制链比例和正文稳定失败率，判断热门公司何时真正接近来源饱和。
 
 ## 当前 Inbox
 
