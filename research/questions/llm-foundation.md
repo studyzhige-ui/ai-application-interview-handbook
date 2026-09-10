@@ -1,15 +1,17 @@
-# LLM Foundation（应用工程深度）Canonical Questions — S001–S279 全库纵向扫描 v1
+# LLM Foundation（应用工程深度）Canonical Questions — S001–S279 全库纵向扫描 v2
 
 更新日期：2026-09-10
 
-> 本文件只保留 AI Application Engineer 真正被问到的模型基础深度。目标不是训练算法岗题库，而是让应用工程师理解 Token、Transformer、Inference、Model API、Embedding / Rerank 与 Post-training 到足够解释系统行为和工程取舍的程度。
+> 一级板块：**LLM Foundation（应用工程深度）**。本文件只保留 AI Application Engineer 真正被问到的模型基础深度。目标不是训练算法岗题库，而是让应用工程师理解 Token、Transformer、Inference、Model API、Embedding / Rerank 与 Post-training 到足够解释系统行为和工程取舍的程度。
+>
+> 本文件所有条目的 `Primary Module = LLM Foundation（应用工程深度）`。RAG Pipeline 的 Chunk / Retrieval / Fusion / Evaluation 归 `RAG`；ANN Index / Vector Storage 归 `Vector DB`；Context Assembly / Memory / Tool Runtime 归 `Agent Harness / Runtime`。
 
 ## 1. 当前扫描结论
 
-- Canonical Questions：**22** 道
+- ACTIVE Canonical Questions：**22**
 - 证据范围：仅 `S001–S279`
 - 频率口径：独立 HUMAN-A 来源数
-- 当前版本：`v1`
+- 当前版本：`v2`（十板块归属审计版）
 
 真人面经给出的边界很清楚：应用岗不一定要求推导训练算法，但会追问“为什么模型这样表现、参数怎样影响生成、Context 为什么会失效、推理成本从哪里来、Embedding / Rerank 为什么不同”。
 
@@ -268,7 +270,21 @@
 
 ---
 
-## 8. 对课程结构的直接信号
+## 8. 十板块归属审计结论
+
+本模块不再承载 RAG Retrieval Pipeline 或 Vector DB Index 题：
+
+- Embedding / Rerank **模型原理**保留在 `LLM-018` / `LLM-019`；
+- Embedding Vector 的存储、ANN / HNSW / IVF 归 `Vector DB`；
+- Dense / Sparse、Hybrid、RRF、Rerank Pipeline、Top-K 与 Retrieval Evaluation 归 `RAG`；
+- Long-context 的**模型本体限制**保留在 `LLM-002` / `LLM-003`，而 Context Assembly / Compaction / Memory 属于 `Agent Harness / Runtime`；
+- Serving Engine / KV Cache / Prefill-Decode 属于模型推理基础，不迁入通用 AI Backend。
+
+本轮没有需要迁出的 ACTIVE Canonical；22 道均保持唯一 Primary Ownership。
+
+---
+
+## 9. 对课程结构的直接信号
 
 LLM Foundation 应控制在“应用工程深度”，但不能浅成术语解释。真人面试至少要求形成下面这条因果链：
 
