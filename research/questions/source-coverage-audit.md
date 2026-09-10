@@ -19,8 +19,8 @@
 | `AGENT-044` | Agent Harness / Runtime | Prompt Injection / Untrusted Context Security | 8 |
 | `AGENT-045` | Agent Harness / Runtime | Intent Recognition / Routing | 11 |
 | `AGENT-046` | Agent Harness / Runtime | A2A / Agent Communication Protocol | 6 |
-| `AGENT-047` | Agent Harness / Runtime | Agent Framework Selection | 27 |
-| `AGENT-048` | Agent Harness / Runtime | AI-assisted Development Workflow | 37 |
+| `AGENT-047` | Agent Harness / Runtime | Agent Framework Selection | 24 |
+| `AGENT-048` | Agent Harness / Runtime | AI-assisted Development Workflow | 36 |
 
 ## 原零映射来源处理
 
