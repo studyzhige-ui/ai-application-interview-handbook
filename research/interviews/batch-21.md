@@ -2,15 +2,13 @@
 
 采集日期：2026-09-10
 
-> 本批从 `S338` 继续编号。本轮专门扩大搜索量，用于判断“连续两批只新增 6 个”究竟是搜索 Recall 不足，还是热门公司真人来源已接近饱和。搜索仍以热门公司为主，但把重点从 8–9 月热门结果页扩展到 **2026-03～07 历史长尾 + 作者 Timeline + 公司 / 岗位 / 月份交叉检索**。
->
-> 本轮保守统计发起 **120+ 组公司 × 岗位别名 × 月份 × 平台 / 技术关键词检索组合**，逐页核验数十个候选；随后重新直接回读 `batch-01.md` ～ `batch-20.md`，覆盖 `S001–S337` 全历史。正式来源仍必须同时满足：**真人面试官 + 候选人本人第一人称 + 高信息密度 + 真实现场 / 招聘流程痕迹 + AI Application / Agent Role Scope + 正文稳定可核验 + 非转载 / 非合集 / 非内容账号 / 非重复 = HUMAN-A**。
->
-> 最终放行 **11 个独立 HUMAN-A（S338–S348）**。这说明前两批“每批 6 个”并不等价于整体饱和：扩大历史月份和作者 Timeline 后仍能显著抬高新增量。但 8–9 月热门关键词第一页依旧大量由历史重复、内容账号、后发扩写、同场多 URL 与正文不稳定构成，因此当前更准确的判断是：**热门结果面局部饱和，但热门公司的历史长尾真实来源仍未挖完。**
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **8** 个正式来源。
 
 ---
 
-## S338 腾讯｜Agent 开发｜日常实习一面｜发布 2026-04-09，已挂｜HUMAN-A
+## S248 腾讯｜Agent 开发｜日常实习一面｜发布 2026-04-09，已挂｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/aef9769bc0604700bcc8ed4fa8db8377
 
@@ -43,11 +41,11 @@
 23. 模型后训练如何利用真实 Bad Case；只有约 400 条差回答时怎样扩展到万级训练数据？
 24. 最近看过哪些 Agent / AI Engineering 技术文章或框架，它们解决什么问题？
 
-去重：已直接回读 `S001–S337`。本场独特的“多模态跨场景误召回 → Qwen Tool Call 适配 → Memory 生长 / 淘汰 → State Machine → Repo Dependency Retrieval → 400 Bad Case 扩万级训练集”连续长链未在历史 Tencent 来源中构成同场；URL、作者和日期也均独立。
+去重：已直接回读 `S001–S247`。本场独特的“多模态跨场景误召回 → Qwen Tool Call 适配 → Memory 生长 / 淘汰 → State Machine → Repo Dependency Retrieval → 400 Bad Case 扩万级训练集”连续长链未在历史 Tencent 来源中构成同场；URL、作者和日期也均独立。
 
 ---
 
-## S339 腾讯｜AI Application / Agent（实际面试内容明确）｜实习二面｜发布 2026-04-08，约 50min｜HUMAN-A
+## S249 腾讯｜AI Application / Agent（实际面试内容明确）｜实习二面｜发布 2026-04-08，约 50min｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/4d7f1675cf01408283a41aa044f13215
 
@@ -76,7 +74,7 @@
 
 ---
 
-## S340 小红书｜Agent 开发｜一面｜发布 2026-04-24｜HUMAN-A
+## S250 小红书｜Agent 开发｜一面｜发布 2026-04-24｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/3a50438ddf984a38a2b98fa8ead0328c
 
@@ -98,110 +96,38 @@
 12. 对“搜索量不大不小”的中频 Keyword，Cache / Online Generation 怎样取舍？
 13. Coding / Scheduling：给定 N 个任务耗时、最多 K 个线程并行，求最小总完成时间。
 
-去重：历史 `S260` 为另一候选人的 OpenManus / Harness 流程；本场独特的“小红书产品场景缓存 → 中频搜索词 → 超长不可丢 Context → 内部代码库模糊检索 → K 线程最小 makespan”题序独立。另有 3 月小红书多页面出现 Deep Research 停止条件等高度同序链，本批未混入该不确定复制链。
+去重：历史 `S027` 为另一候选人的 OpenManus / Harness 流程；本场独特的“小红书产品场景缓存 → 中频搜索词 → 超长不可丢 Context → 内部代码库模糊检索 → K 线程最小 makespan”题序独立。另有 3 月小红书多页面出现 Deep Research 停止条件等高度同序链，本批未混入该不确定复制链。
 
 ---
 
-## S341 字节跳动｜Agent 开发｜实习一面 + 二面（同一候选人同流程合并）｜发布 2026-06-17 / 06-23｜HUMAN-A
-
-一面来源：https://www.nowcoder.com/feed/main/detail/075c06bf50a143a785c039f9951624f6
-
-二面来源：https://www.nowcoder.com/feed/main/detail/675f834ce9fa4a29b2c413d87241e6bb
-
-真人 / 第一人称证据：两篇均由作者 `Ariasu` 发布，作者主页只有这两篇求职记录；公司、岗位、项目和时间线连续，一面 6/17，二面 6/23，明确属于同一字节 Agent 招聘流程，因此只计一个 `Sxxx`。一面持续追 Context 三层压缩、会话恢复、Skill / Tool、Multi-Agent 与 RAG 增量知识，二面继续追 Memory 生长、Token 成本、GraphRAG 与 SFT / DPO / GRPO。
-
-整场技术问题：
-
-### 一面
-
-1. Claude Code 与 Codex 各自有什么特点？
-2. 一次请求给模型的 Prompt / Context 由哪些部分组成，哪些必须注入？
-3. 自己的 Coding Agent 与 Claude Code / Codex 的本质差异是什么？
-4. Context Compression 怎样做？为什么采用三层压缩策略？
-5. 三层压缩各自压什么、在什么条件触发？
-6. 怎样发现“压缩过度已经伤害任务效果”，如何恢复？
-7. 用户在旧任务上继续加功能时，怎样恢复 Session，哪些状态必须重新注入？
-8. Tool Calling 完整链路是什么，Skill 能否替代 Tool？
-9. Skill 体系怎样设计，模型实际调用 Tool / Skill 的次数怎样观测？
-10. 复杂任务的 Planning 怎样生成和更新？
-11. Multi-Agent Orchestration 怎样实现，各 SubAgent 有何区别？
-12. SubAgent 是否应该共享全部 Tools，为什么？
-13. 第二个 RAG 项目的数据源是什么，入库前怎样清洗冗余噪声？
-14. PDF 各种结构怎样解析，是否做 Knowledge Extraction？
-15. Knowledge Base 增量更新怎样实现？
-16. 多文档内容冲突怎样解决，如何做版本控制和错误文档 Rollback？
-17. Coding：0/1 Grid 中判断左上到右下是否存在可行路径。
-
-### 二面
-
-18. Coding Agent 从输入到执行的完整 Chain 是什么？
-19. Skill 分层体系怎样实现，用户输入怎样匹配相关 Skill？
-20. Skill 是否可以从执行轨迹自动沉淀，还是只能人工构造？
-21. Long-term / Short-term Memory 怎样设计；为什么还区分 Static / Dynamic Long-term Memory？
-22. 每轮都可能写 Memory 时，怎样避免长期记忆快速膨胀？
-23. LLM 怎样决定是否 Recall 某条长期记忆？
-24. Context Compaction 的 Token Window / Trigger Threshold 怎样定，为什么？
-25. Dynamic Prompt 与 Static Prompt 有何区别？
-26. 模型底座如何选；生成约 1000 行代码需要多少 Token / Cost，是否真正量化过？
-27. 为什么 Agent Cost 会达到当前水平，哪些环节最耗 Token？
-28. 为什么当前项目需要 GraphRAG，而不是纯 Vector Retrieval？
-29. 什么问题才算 Multi-hop / Reasoning Query？
-30. Llama3、SFT、DPO、GRPO 等训练 / 对齐方法在当前项目里理解到什么深度，Data 与 Evaluation 怎样设计？
-
-去重：两 URL 均未在 `S001–S337` 出现；同作者同公司同项目明确合并。独特的“三层 Context Compression → 压缩质量检测 / Session 恢复 → Skill 调用次数 → RAG 版本回滚 → 二面 Memory Growth / Token Cost → GraphRAG → Alignment 方法”连续链未在历史字节来源出现。
-
----
-
-## S342 字节跳动安全与风控｜后端研发实习生（AI Agent）｜一面｜发布 2026-04-26｜HUMAN-A
+## S251 字节跳动安全与风控｜后端研发实习生（AI Agent）｜一面｜发布 2026-04-26｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/604a4a66936d4a00b4a6b22b5a40bb0c
 
-真人 / 第一人称证据：作者 `zzzilik` 明确以本人“字节跳动-后端研发实习生（ai agent）-安全与风控 一面面经”发布，实习深挖约 20 分钟，随后从 Hybrid Retrieval / RRF / Vector DB 进入 OpenClaw、网络、Redis、OS、GIL 和 Coding。作者其它动态是个人求职时间线，不是批量答案账号。
+真人 / 第一人称证据：作者 `zzzilik` 的主页可串起本人 2026 实习求职 Timeline，并在不同公司持续记录个人面试；本帖标题明确为“字节跳动-后端研发实习生（ai agent）-安全与风控 一面面经”，正文以“发面经攒人品”发布。前半段围绕候选人实习中的 Vector Retrieval、Hybrid Retrieval、RRF、OpenClaw / Context Engineering，后半段进入 Network、Redis、OS、Python 与现场 Coding；岗位标题虽是后端，但 AI Agent / RAG 是明确业务与面试主体，按 AI Backend / Agent Role Scope 通过。
 
 整场技术问题：
 
-1. 实习项目本人真正负责什么，核心效果怎样验证？
+1. 约 20 分钟实习深挖。
 2. 了解哪些 Vector Index，各自优缺点是什么？
-3. 为什么业务选择 Hybrid Retrieval，收益来自哪里？
-4. RRF 怎样融合多路排序？
-5. 怎样在 Rerank Quality 与 Latency 之间权衡？
-6. 了解哪些 Vector Database，各自边界是什么？
-7. OpenClaw Architecture 怎样理解，它的 Context Engineering 怎么做？
-8. HTTP 与 HTTPS 的核心区别是什么？
-9. TCP 三次握手 / 四次挥手怎样工作，为什么握手不能只有两次？
-10. Redis Persistence 有哪些机制，各自适合什么业务？
+3. 实习项目为什么使用 Hybrid Retrieval；从业务角度分析这样做的收益。
+4. RRF 算法怎样工作？
+5. 怎样平衡 Rerank 的速度与质量？
+6. 了解哪些 Vector Retrieval Database，各自优缺点是什么？
+7. OpenClaw 的 Architecture 怎样理解，Context Engineering 是怎样做的？
+8. HTTP 与 HTTPS 的区别是什么？
+9. TCP 三次握手和四次挥手的流程是什么，为什么建立连接需要三次握手而不是两次？
+10. Redis 有哪些 Persistence 机制，各自优缺点和适用场景是什么？
 11. Process 与 Thread 的区别是什么？
-12. Python GIL 怎样影响并发？
-13. Coding：Fold / 重排链表类问题。
+12. Python GIL 的机制和影响是什么？
+13. Coding：对折链表。
 14. Coding / Design：实现 Singleton Pattern。
 
-去重：作者、日期、BU 和题序独立；历史字节安全 / Agent 样本中未出现“Vector Index → Hybrid/RRF → Rerank Latency → OpenClaw Context → HTTP/TCP → Redis Persistence → GIL → Fold List/Singleton”同场长链。
+去重：已直接回读 `S001–S269`。作者 4 月还存在快手等其它公司独立求职流程，其中部分已在历史库；本场是字节安全与风控独立流程，不与不同公司合并。当前 URL 和“Hybrid Retrieval / RRF → Vector DB → OpenClaw Context → HTTPS / TCP → Redis Persistence → GIL → 链表 / Singleton”连续题序未在正式来源中形成同场重复。
 
 ---
 
-## S343 腾讯｜AI 应用开发后端｜实习一面｜发布 2026-04-23｜HUMAN-A
-
-来源：https://www.nowcoder.com/feed/main/detail/144c6ae334b24c0aa643ed43ccfebaac
-
-真人 / 第一人称证据：作者 `面试从容应对` 明确写“腾讯实习 ai应用开发后端面经分享 / 攒人品”，项目深挖约 40 分钟，随后面试官现场引入跨境汇款金融场景继续追 Agent Timeout / Failure 与资金安全，再问不停服更新 RAG KB 和 Coding，面试结构非常自然。
-
-整场技术问题：
-
-1. 项目是否已有正式用户，为什么当前没有上线？
-2. Multi-Agent 怎样编排，具体执行流程是什么？
-3. Training Sample 从哪里来，是否做过 Model Tuning？
-4. Agent Failure / Interrupt 怎样处理，Retry 怎样保证安全？
-5. 金融场景：跨境汇款 Agent 超时 / 失败时怎样保护资金安全？
-6. 有副作用的金融 Tool 怎样避免重复执行和错误恢复？
-7. RAG Knowledge Base 更新时怎样做到不停服？
-8. 项目里实际用过哪些 Design Pattern，为什么？
-9. Coding：Maximum Area of Island / DFS。
-
-去重：历史腾讯 Agent Backend 场次虽多，但当前作者、日期和“40min 项目验真 → 跨境汇款资金安全 → RAG Hot Update → Design Pattern → Island DFS”题序独立；未发现同候选人同流程已入库来源。
-
----
-
-## S344 美团｜AI 全栈开发｜日常实习一面｜发布 2026-04-14｜HUMAN-A
+## S252 美团｜AI 全栈开发｜日常实习一面｜发布 2026-04-14｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/71e51594f46f45e18bc8481286895031
 
@@ -226,7 +152,7 @@
 
 ---
 
-## S345 蚂蚁｜智能体 / 大模型应用｜暑期一面 + AI 应用开发二面（同一候选人同流程合并）｜发布 2026-04-10 / 04-24｜HUMAN-A
+## S253 蚂蚁｜智能体 / 大模型应用｜暑期一面 + AI 应用开发二面（同一候选人同流程合并）｜发布 2026-04-10 / 04-24｜HUMAN-A
 
 一面来源：https://www.nowcoder.com/feed/main/detail/8d817a84839949ed85d2bc7fe5f8e9bf
 
@@ -273,7 +199,7 @@
 
 ---
 
-## S346 阿里云｜后端 AI 开发｜实习一面｜发布 2026-04-22｜HUMAN-A
+## S254 阿里云｜后端 AI 开发｜实习一面｜发布 2026-04-22｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/37add5c1c697419ca0589d2c9782f797
 
@@ -302,34 +228,7 @@
 
 ---
 
-## S347 字节跳动｜后端 AI 开发｜实习一面 1h｜发布 2026-05-04｜HUMAN-A
-
-来源：https://www.nowcoder.com/feed/main/detail/ab0601f3dbad49ab87ea870a00bb3691
-
-真人 / 第一人称证据：作者 `想奋斗的柠檬精天天摸鱼` 明确写“27实习-字节后端ai开发一面 1h / 发点面经攒攒人品”。问题从 Smart Ops Agent 的真实含义、Spring AI Alibaba 覆盖边界、Planner/Executor/Supervisor 架构，连续追到 RAG / Fine-tuning、MySQL/Redis 和万级 Producer / Consumer 并发场景。
-
-整场技术问题：
-
-1. Agent 项目的核心功能是什么？
-2. “智能运维助手”的运维具体指什么业务动作？
-3. 系统有哪些主要组件，数据 / 控制流怎样走？
-4. Spring AI Alibaba 覆盖了哪些部分，哪些 Runtime 能力仍需自己实现？
-5. Planner / Executor / Supervisor Pattern 的优势是什么？
-6. 三个 Agent 与一个 Agent 相比，关键收益和额外代价是什么？
-7. RAG 的核心流程是什么？
-8. Recall / Rerank 使用什么算法；如果没做 Rerank，为什么？
-9. 为什么当前业务需要 RAG？
-10. Model Response Bad Case 应怎样从 RAG 层优化，又在什么情况下考虑 Fine-tuning？
-11. Fine-tuning 属于 Pre-train 还是 Post-train，应用工程师需要理解哪些边界？
-12. MySQL 与 Redis 各自适合什么数据 / 访问模式，“Relational”是什么意思？
-13. Redis 能否承担持久存储，而不仅是 Cache？
-14. System Design：1 万 Producer、5 万 Consumer 的 Java 生产消费模型怎样做并发控制、队列、背压与资源治理？
-
-去重：同作者 4 月还有其它公司独立招聘流程，可以分别计数；同作者 4/21 另有字节相关页面，但与 5/4 同公司、同招聘季且流程关系无法稳定拆分，本批只保留能独立成立、信息更完整的 5/4 一面，不对 4/21 另行编号或补题。历史字节样本没有当前“Spring AI Alibaba → 3-Agent vs 1-Agent → RAG/Fine-tuning → 万级 Producer/Consumer”连续链。
-
----
-
-## S348 百度｜AI 应用开发｜实习一面｜发布 2026-05-03｜HUMAN-A
+## S255 百度｜AI 应用开发｜实习一面｜发布 2026-05-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/c55cd0d8ef1f40f39a0a5b2b4f9b7974
 
@@ -354,24 +253,30 @@
 
 ---
 
+> 注：以下批次观察 / 排除说明为采集时的过程记录；其中历史数量描述按采集当时口径保留，出现的来源 ID 已映射到当前正式编号。
+
+---
+
 ## 本轮扩大搜索的典型排除 / 重复案例
 
-- **Code Search 0 命中但历史已收**：阿里平头哥 4/28 候选在辅助 Code Search 中没有直接命中，但重新直接回读历史 Batch 后确认就是历史 `S122`；再次证明不能把“0 命中”当未收录证据。
+- **Code Search 0 命中但历史已收**：阿里平头哥 4/28 候选在辅助 Code Search 中没有直接命中，但重新直接回读历史 Batch 后确认就是历史 `S118`；再次证明不能把“0 命中”当未收录证据。
 - **拼多多历史精确重复**：7/25 提前批线下 AI Agent 两轮原帖 `45f6e73f8e9d4888b9c066a160f89f60` 已是历史 `S061`，不新增。
 - **同候选人同公司后续轮次**：`想奋斗的柠檬精天天摸鱼` 的腾讯 4/27 页面已经是历史 `S020`；同公司相邻后续流程不因为出现新 URL 就重复计数，也不反向修改历史 Batch。
-- **作者级复制风险**：账号 `星轨偏差` 的腾讯 5/3 页面虽然 URL / 作者不同，但“Minimum Path Sum → Java Interface/Abstract Class → StringBuilder/Buffer → synchronized → DI → HashMap → MyBatis → 熔断限流 → Kafka → Slow Query → EasyExcel 1 万行 / 第 5000 行失败恢复”的长题序与历史 `S310` 几乎整场一致。该账号其它新候选（如京东）因此进入高风险 Provenance 状态，本批全部不收。
+- **作者级复制风险**：账号 `星轨偏差` 的腾讯 5/3 页面虽然 URL / 作者不同，但“Minimum Path Sum → Java Interface/Abstract Class → StringBuilder/Buffer → synchronized → DI → HashMap → MyBatis → 熔断限流 → Kafka → Slow Query → EasyExcel 1 万行 / 第 5000 行失败恢复”的长题序与历史 `S232` 几乎整场一致。该账号其它新候选（如京东）因此进入高风险 Provenance 状态，本批全部不收。
 - **正文稳定失败，即使 Search Snippet 很强也不收**：蚂蚁国际 4/21、京东 5/3、快手 4/30 等若干候选在搜索结果里题目很强，但重新打开原始正文时只剩壳页 / Internal Error / 极少行，按 Verifiable Gate 排除。
 - **美团同作者同公司相邻双帖**：`脆片温柔` 4/7 与 4/14 两条都像真实面试，但同公司、同岗位方向、时间仅隔一周，无法证明不同招聘流程；不拆两个 ID，只保留 4/14 现场验真证据更完整的页面。
 - **字节同作者同公司相邻流程**：`想奋斗的柠檬精天天摸鱼` 4/21 与 5/4 均为字节 AI / Agent 方向，但流程边界无法稳定确认，因此只计 5/4 一个独立来源，避免双计。
 - **Bilibili / CSDN / 聚合站“2026 大厂面经”**：大量页面明确写“整理全网干货 / 高频题 / 每题标准答案 / 资料包”，以及 NiceOffer 等二次整理站，即使公司标题热门也全部零贡献。
-- **最新热门结果面仍高度饱和**：9 月热门关键词返回的大量字节 / 腾讯 / 美团 / PDD / 百度结果已在 `S001–S337`，或属于内容账号、后发扩写、转载 / 帮转；本轮大部分新增来自 4–6 月长尾和作者 Timeline，而不是 9 月第一页。
+- **最新热门结果面仍高度饱和**：9 月热门关键词返回的大量字节 / 腾讯 / 美团 / PDD / 百度结果已在 `S001–S247`，或属于内容账号、后发扩写、转载 / 帮转；本轮大部分新增来自 4–6 月长尾和作者 Timeline，而不是 9 月第一页。
+
+---
 
 ## Batch 21 搜索漏斗 / 饱和度判断
 
 1. **搜索量显著增加后，新增 HUMAN-A 从连续两批的 6 个提高到 11 个。** 这不是放松门槛：本轮反而重新直接回读了全部 20 个历史 Batch，并继续执行稳定正文 / 作者 / 题序硬 Gate。
 2. **因此“当前整体已接近来源饱和”证据不足。** 如果整体真正接近饱和，把 Query 组合扩到 120+、增加 3–7 月长尾和作者 Timeline 后，边际产出应该仍接近 0–3；实际仍得到 11 个独立来源，说明此前搜索 Recall 确实还有缺口。
 3. **但“热门最新结果面局部饱和”已经很明确。** 8–9 月普通热门关键词搜索的新增率很低，重复 / 内容包装 / 同场多 URL / 不稳定正文比例高；新的正式来源越来越依赖精确月份、作者主页、候选人跨公司 Timeline 和项目独特词。
-4. **4–6 月历史长尾仍有可观剩余。** 本轮腾讯 `S338/S339/S343`、字节 `S341/S342/S347`、小红书 `S340`、美团 `S344`、蚂蚁 `S345`、阿里云 `S346`、百度 `S348` 大量来自春季实习周期，说明这一区间过去覆盖仍不充分。
+4. **4–6 月历史长尾仍有可观剩余。** 本轮腾讯 `S248/S249/S158`、字节 `S107/S251/S097`、小红书 `S250`、美团 `S252`、蚂蚁 `S253`、阿里云 `S254`、百度 `S255` 大量来自春季实习周期，说明这一区间过去覆盖仍不充分。
 5. **下一轮应继续做“固定搜索预算下的边际产出实验”。** 建议继续保持每轮至少约 100 组公司 × 岗位 × 月份 × 平台组合，同时单独记录新增来源来自 `最新结果页 / 历史长尾 / 作者 Timeline / 牛客外原帖` 哪个 Bucket；只有连续多轮在相同搜索强度下新增持续降到很低，才应判断接近整体饱和。
 
-本批新增 **11 个 HUMAN-A：`S338–S348`**。正式库累计 **348 个**，下一编号 **`S349`**。当前结论：**不是整体饱和；此前确有搜索 Recall 不足，同时热门最新结果面已经局部饱和。**
+本批新增 **11 个 HUMAN-A：`S248–S255`**。正式库累计 **348 个**，下一编号 **`S256`**。当前结论：**不是整体饱和；此前确有搜索 Recall 不足，同时热门最新结果面已经局部饱和。**

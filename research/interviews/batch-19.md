@@ -2,15 +2,13 @@
 
 采集日期：2026-09-10
 
-> 本批从 `S326` 继续编号。按本轮要求，搜索重点重新收回**热门公司**，优先覆盖百度、阿里系、字节、腾讯、美团、快手、小红书、拼多多、OPPO 等；但公司热度不构成质量加分，正式来源仍必须同时满足：**真人面试官 + 候选人本人第一人称 + 高信息密度 + 真实现场 / 招聘流程痕迹 + AI Application / Agent Role Scope + 正文稳定可核验 + 非转载 / 非合集 / 非内容账号 / 非重复 = HUMAN-A**。
->
-> 分配编号前，先确认当前 `main` 仍为 Batch 18 基线 `S001–S325`；结合本会话上一批刚完成的 `batch-01.md` ～ `batch-17.md` 全历史直接回读结果，重新读取最新 `batch-18.md`，并对本批每个候选回查相关历史 Batch，执行 URL、公司 / 岗位 / 日期 / 轮次、作者、项目语义、5～10 个独特题序特征与招聘 Timeline 去重。GitHub Code Search 的 0 命中仍只作辅助。
->
-> 本轮热门公司噪声非常明显：拼多多强候选最终确认作者属于“100+ 社招面经 / 订阅内容”生态，按非内容账号 Gate 撤出；快手 7 月候选向前追到 2 月同序一二面以及 3 / 4 月多个高度同序版本，原始归属不再可靠，因此整条复制链排除；美团、腾讯、字节多条热门结果则直接命中历史正式来源。宁可只保留 6 个独立样本，也不为公司覆盖率降低标准。
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **6** 个正式来源。
 
 ---
 
-## S326 百度｜Agent 开发｜秋招一面｜发布 2026-09-06｜HUMAN-A
+## S240 百度｜Agent 开发｜秋招一面｜发布 2026-09-06｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/72858aade19d443facc870fea8bb134f
 
@@ -43,11 +41,11 @@
 23. 子网与 VLAN 的基本边界是什么？
 24. Coding：数组 Top-K；先讨论 Heap，再在面试官提示下继续到 Quickselect 与复杂度优化。
 
-去重：历史中百度 `S034 / S197` 同样出现 Resume / Trace / Memory，但当前作者、日期、项目和完整题序不同；本场独有“LLM Runtime vs Tool Runtime → Streaming → Tool 并发 / 幂等 → Trace Hook → PDF 表格 HTML → RRF 常数 → 金融指标 Agent → MySQL / Network → Top-K”长链，确认是独立招聘流程。
+去重：历史中百度 `S034 / S034` 同样出现 Resume / Trace / Memory，但当前作者、日期、项目和完整题序不同；本场独有“LLM Runtime vs Tool Runtime → Streaming → Tool 并发 / 幂等 → Trace Hook → PDF 表格 HTML → RRF 常数 → 金融指标 Agent → MySQL / Network → Top-K”长链，确认是独立招聘流程。
 
 ---
 
-## S327 百度｜Agent 开发｜秋招一面 + 二面（同一候选人同流程合并）｜面试 2026-08-20 / 08-26｜HUMAN-A
+## S241 百度｜Agent 开发｜秋招一面 + 二面（同一候选人同流程合并）｜面试 2026-08-20 / 08-26｜HUMAN-A
 
 一面来源：https://www.nowcoder.com/feed/main/detail/53542e2dcfd44b1d84b0ae55b4fc1b35
 
@@ -85,11 +83,11 @@
 21. Windows 环境运行 Docker 时，资源隔离底层怎样实现？
 22. 二面现场共享代码：怎样从真实实现证明上述框架封装和运行机制确实是本人完成？
 
-去重：两条 URL 均未进入 `S001–S325`；同作者 8/20 → 8/26 时间线连续，主动合并。与历史百度 Coding Agent / Harness 来源相比，本场“本地异常进程 Agent → Sandbox 并发 → Memory Conflict → Enterprise QA → Linux / Docker / TCP → 自研 Framework → FastAPI Async → K8s / Windows Docker → 共享代码”题序独立。
+去重：两条 URL 均未进入 `S001–S239`；同作者 8/20 → 8/26 时间线连续，主动合并。与历史百度 Coding Agent / Harness 来源相比，本场“本地异常进程 Agent → Sandbox 并发 → Memory Conflict → Enterprise QA → Linux / Docker / TCP → 自研 Framework → FastAPI Async → K8s / Windows Docker → 共享代码”题序独立。
 
 ---
 
-## S328 阿里优酷 / 大文娱 AI 创新业务｜Agent 开发（实际面试内容）｜秋招一面｜面试 2026-09-03，发布 09-04，已过｜HUMAN-A
+## S242 阿里优酷 / 大文娱 AI 创新业务｜Agent 开发（实际面试内容）｜秋招一面｜面试 2026-09-03，发布 09-04，已过｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/bdebbb6088b6405e9eb2bd2c345acb6e
 
@@ -124,7 +122,7 @@
 
 ---
 
-## S329 阿里控股｜Agent Infra 开发工程｜秋招一面 + 二面（同一候选人同流程合并）｜面试 2026-08-17 / 08-21｜HUMAN-A
+## S243 阿里控股｜Agent Infra 开发工程｜秋招一面 + 二面（同一候选人同流程合并）｜面试 2026-08-17 / 08-21｜HUMAN-A
 
 一面来源：https://www.nowcoder.com/feed/main/detail/0354c1c8f1164c8aaf0e3bb796b535c8
 
@@ -163,7 +161,7 @@
 
 ---
 
-## S330 阿里云｜Agent Infra / Data Infra｜秋招一面 + AI Coding｜面试 2026-08-31，发布 09-01｜HUMAN-A
+## S244 阿里云｜Agent Infra / Data Infra｜秋招一面 + AI Coding｜面试 2026-08-31，发布 09-01｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/924245733962719232
 
@@ -187,7 +185,7 @@
 
 ---
 
-## S331 OPPO｜AI 应用研发 / Agent 方向（实际内容明确）｜秋招一面｜发布 2026-08-21，约 50min｜HUMAN-A
+## S245 OPPO｜AI 应用研发 / Agent 方向（实际内容明确）｜秋招一面｜发布 2026-08-21，约 50min｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/5a94fd0b4f924b8b903f28087b28d701
 
@@ -214,26 +212,32 @@
 
 ---
 
+> 注：以下批次观察 / 排除说明为采集时的过程记录；其中历史数量描述按采集当时口径保留，出现的来源 ID 已映射到当前正式编号。
+
+---
+
 ## 本批典型排除 / 重复案例
 
 - **内容账号 Gate：拼多多复活赛 Agent 一面** `https://www.nowcoder.com/feed/main/detail/2109cf8eb0254507911fbf86bcbf51e4`，技术题非常强，但作者 `赛文X` 同时经营“100+ 社招面经记录 / 订阅内容”生态。当前规则明确要求非内容账号，因此编号前撤出。
 - **快手多版本复制链**：7/30 `https://www.nowcoder.com/feed/main/detail/8ef62dcdde1340f987507d2d1e1433a8` 的“父子索引 → BM25 → Rerank Top-K → 限流 → RAG Eval”题序，继续追到 2/9 一二面 `511a8021...`、3/20 `f4567cec...`、4/9 `7ce89f...` 等多个高度同序版本；无法可靠确认 7 月页为独立场次，整条不确定链不收。
-- **美团精确重复**：9/2 AI 后端 `https://www.nowcoder.com/feed/main/detail/9b94f595d15148869e0334029b5ddb67` 已是历史 `S198`；不因近期重新进入热门结果而重复编号。
-- **腾讯精确重复**：AI 应用 `a02baa2ac6634904992561494a1746a4` 已是 `S255`；WXG Agent / Coding Agent `3ffc762437274543b6a8f5e2ea6fb535` 已是 `S176`。
+- **美团精确重复**：9/2 AI 后端 `https://www.nowcoder.com/feed/main/detail/9b94f595d15148869e0334029b5ddb67` 已是历史 `S011`；不因近期重新进入热门结果而重复编号。
+- **腾讯精确重复**：AI 应用 `a02baa2ac6634904992561494a1746a4` 已是 `S045`；WXG Agent / Coding Agent `3ffc762437274543b6a8f5e2ea6fb535` 已是 `S130`。
 - **字节精确 / 语义重复**：TikTok Agent、App Infra、9/3 Agent 等热门结果均已在历史 Batch；另有 Seed / 专栏式页面存在答案化、付费或内容包装，继续零贡献。
-- **阿里云后发扩写**：09-07 页面与 `S330` 的 SGX / EPC / PV / Coding 题序高度一致却加入大量额外高级题，无法证明为独立候选场次，排除后发链。
-- **OPPO 明确转载**：`953daca379ac40d58a813b972175dc87` 明写“帮转”，只保留 `S331` 原作者页面。
+- **阿里云后发扩写**：09-07 页面与 `S244` 的 SGX / EPC / PV / Coding 题序高度一致却加入大量额外高级题，无法证明为独立候选场次，排除后发链。
+- **OPPO 明确转载**：`953daca379ac40d58a813b972175dc87` 明写“帮转”，只保留 `S245` 原作者页面。
 - **美团疑似分享账号**：`398d270fc3eb407ca2341007cd13a1b2` 虽题量足，但作者以“继续分享最近面经”方式持续发布，评论还出现把美团误称腾讯的异常内容信号；当前无法稳定确认候选人本人，排除。
+
+---
 
 ## Batch 19 信号
 
 1. **热门公司仍能挖到新的独立 HUMAN-A，但必须精确搜公司 + 岗位 + 作者 Timeline。** 本轮回到热门公司后仍确认 6 个新流程，说明“热门公司来源已完全饱和”的判断还过早。
-2. **Observability 从日志题升级到 Agent Runtime Trace。** 百度 `S326` 会直接追 Trace Hook 放在哪层、一次请求怎样形成 Trace、如何用 Trace 定位具体节点，已经是 Runtime 级验真。
-3. **RAG 参数需要实验依据。** `S326` 不只问 Hybrid / RRF，而继续追为什么不用线性权重、RRF 常数怎样定、纯 Vector 与 Hybrid 的收益如何实验验证，并要求最终结论带可追溯 Citation。
-4. **Agent Infra 开始与 Data / System Infra 深度融合。** 阿里云 `S330` 把 SGX / EPC、多租户安全、吞吐瓶颈、State Persistence 与 120min SLS → MySQL AI Coding 放在同一场，Agent Infra 已远不只是编排框架。
-5. **Agent Self-evolution 从前沿名词变成真实工程题。** 阿里控股 `S329` 连续追 Agent Pool、自进化机制、Evolution Metric、数据采集、DAU、Resource 与二面 15 分钟实现细节，要求证明闭环而不是讲概念。
-6. **Checkpoint + External Side Effect 继续成为热门公司的可靠性核心。** 阿里 `S328` 的“Tool 已成功但 Checkpoint 写失败”要求候选人处理恢复后的重复执行风险，与 Long-running Agent 的 Idempotence 直接连接。
-7. **AI 应用项目验真越来越强调 Delivery / Regression。** OPPO `S331` 连续追个人贡献、真实效果、Tool Failure、Human Confirmation 和 AI 修改代码后的 Regression，而不是只问用了哪个 Framework。
+2. **Observability 从日志题升级到 Agent Runtime Trace。** 百度 `S240` 会直接追 Trace Hook 放在哪层、一次请求怎样形成 Trace、如何用 Trace 定位具体节点，已经是 Runtime 级验真。
+3. **RAG 参数需要实验依据。** `S240` 不只问 Hybrid / RRF，而继续追为什么不用线性权重、RRF 常数怎样定、纯 Vector 与 Hybrid 的收益如何实验验证，并要求最终结论带可追溯 Citation。
+4. **Agent Infra 开始与 Data / System Infra 深度融合。** 阿里云 `S244` 把 SGX / EPC、多租户安全、吞吐瓶颈、State Persistence 与 120min SLS → MySQL AI Coding 放在同一场，Agent Infra 已远不只是编排框架。
+5. **Agent Self-evolution 从前沿名词变成真实工程题。** 阿里控股 `S243` 连续追 Agent Pool、自进化机制、Evolution Metric、数据采集、DAU、Resource 与二面 15 分钟实现细节，要求证明闭环而不是讲概念。
+6. **Checkpoint + External Side Effect 继续成为热门公司的可靠性核心。** 阿里 `S242` 的“Tool 已成功但 Checkpoint 写失败”要求候选人处理恢复后的重复执行风险，与 Long-running Agent 的 Idempotence 直接连接。
+7. **AI 应用项目验真越来越强调 Delivery / Regression。** OPPO `S245` 连续追个人贡献、真实效果、Tool Failure、Human Confirmation 和 AI 修改代码后的 Regression，而不是只问用了哪个 Framework。
 8. **热门结果页的复制 / 内容包装比例非常高。** 本轮 PDD 强候选因内容账号撤出，快手强候选因跨月份同序复制链撤出，美团 / 腾讯 / 字节大量结果已是历史正式来源；“热门公司优先”必须与更严格 Provenance 同时执行。
 
-本批新增 **6 个 HUMAN-A：`S326–S331`**。正式库累计 **331 个**，下一编号 **`S332`**。当前整体仍未达到来源饱和；热门公司中百度、阿里系仍能通过作者 Timeline 与精确岗位搜索找到高价值独立来源，但字节、腾讯、美团、快手的热门搜索面已表现出更高的历史重复 / 内容包装比例。
+本批新增 **6 个 HUMAN-A：`S240–S245`**。正式库累计 **331 个**，下一编号 **`S083`**。当前整体仍未达到来源饱和；热门公司中百度、阿里系仍能通过作者 Timeline 与精确岗位搜索找到高价值独立来源，但字节、腾讯、美团、快手的热门搜索面已表现出更高的历史重复 / 内容包装比例。

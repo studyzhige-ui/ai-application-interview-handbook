@@ -2,15 +2,13 @@
 
 采集日期：2026-09-09
 
-> 本批继续执行统一固定准入：**真人面试官 + 候选人本人第一人称 + 高信息密度 + AI Application / Agent 目标岗位 + 正文可稳定核验 + 非转载重复**。
->
-> 本轮继续按 `公司 × 岗位别名 × 月份 × 技术关键词` 回扫 2026 年 3–9 月，并重点补一二面之外的完整流程、AI Backend 基础底座、Coding Agent / Harness、AI Full-stack 与近期发布内容。对于同一候选人的同一招聘流程，多轮帖子在能够确认同源时合并计为一个来源；后发近似复制、标准答案、付费专栏、AI 自动面试和只有搜索摘要的内容继续保持零贡献。
->
-> 问题全部为简洁转述，只保存研究所需信息，不复制第三方正文；不把合理推导写成“面试官真实问过”。
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **29** 个正式来源。
 
 ---
 
-## S118 腾讯｜AI 应用开发｜二面｜发布 2026-03-23｜HUMAN-A
+## S115 腾讯｜AI 应用开发｜二面｜发布 2026-03-23｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/e066e1295b46447b8224a59c5a4e8ac5
 
@@ -30,49 +28,30 @@
 
 ---
 
-## S119 字节跳动｜AI 应用开发｜一面｜面试 2026-08-06，发布 08-10｜HUMAN-A
-
-来源：https://www.nowcoder.com/feed/main/detail/15af3788a038477bba99f2f9d94b2cef
-
-真人 / 第一人称证据：作者明确记录面试日期并描述面试官根据项目细节不断追问，整场从 Agent / RAG 项目进入 Failure、Cost 和 Observability，具有自然真人面试流。
-
-高价值问题：
-
-1. 一个 Agent 系统真正需要哪些核心模块？
-2. Tool Schema、错误码和调用失败应该如何设计？
-3. Memory 有哪些类型，分别如何存储、过期和去重？
-4. ReAct 与 Plan-Execute 怎样选，如何防止循环和任务不断下推？
-5. Multi-Agent 怎样通信与同步 State？
-6. RAG 的完整 Offline / Online 链路是什么？
-7. Chunk Size / Overlap 应怎样通过实验确定？
-8. Vector Recall 不准时，Hybrid Retrieval 与 Rerank 怎样继续优化？
-9. RAG 与 Fine-tuning 的边界是什么？
-10. 模型超时 / 异常、Latency、Cost 与 Observability 怎样治理？
-
----
-
-## S120 嘉为科技｜AI 应用开发｜一面｜面试 2026-07-15，发布 07-16｜HUMAN-A
+## S116 嘉为科技｜AI 应用开发｜技术面｜面试 2026-07-15，发布 07-16｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/fb4da04c8f2846b19060315fd05a2e4b
 
-真人 / 第一人称证据：作者以本人面试复盘发布并带“发面经攒人品”语境，问题从自己的并发导入 / AI 应用项目连续进入 Java、Redis、Spring AI、AI Coding 与幂等设计。
+真人 / 第一人称证据：作者以本人 7 月 15 日面试发布“发面经攒人品”，25 个问题中持续保留“我说了什么 / 当时如何回答”的第一人称括注，问题从真实项目一路追到 Redis、Spring AI、JVM、并发与 Claude Code，具有自然面试流而非标准化题单。
 
 高价值问题：
 
-1. `CompletableFuture` 与自定义线程池在批量任务中怎样使用？
-2. Bloom Filter 在业务里解决什么问题，有什么误判代价？
-3. Redisson 可重入锁和 Watchdog 如何工作，无限续期可能带来什么风险？
-4. Redis Sentinel 与 Cluster 的能力边界是什么？
-5. Spring AI 的 Memory 是怎样组织的？
-6. Spring AI 与直接调用模型 SDK / API 的工程差异是什么？
-7. 批量导入高并发任务怎样做限流、错误恢复和资源隔离？
-8. Retry 与 Idempotency 怎样通过状态机等方式协同？
-9. Claude Code 等 AI Coding 工具在真实实习中怎样使用并验证结果？
-10. Java Object Header、Lock Upgrade、Bean Lifecycle 等底层基础如何解释？
+1. 项目里为什么使用 `CompletableFuture`，为什么需要自定义线程池？
+2. 项目真实部署过吗，常见部署方式分别怎样选择？
+3. Bloom Filter 的原理和适用场景是什么？
+4. Redisson 可重入锁、Watchdog 如何实现，无限续期怎样避免演变成死锁？
+5. Redis Cluster 与 Sentinel 的边界是什么？
+6. Spring AI 中 Memory 如何实现，直接使用模型 SDK 与 Spring AI 的取舍是什么？
+7. 批量导入同一券 / 卡密时如何处理并发、加密和重复发券重试？
+8. 实习项目里的状态机如何保证消息重试后不重复执行？
+9. Claude Code 在真实实习开发里怎么使用，哪些工作由人负责兜底？
+10. MyBatis 接口代理、Bean 生命周期、Java 对象头与锁升级机制如何解释？
+
+去重：URL 与标题均未在现有 Batch 命中；题序与项目链路未发现现有同场复制。
 
 ---
 
-## S121 阿里千问事业群｜AI 应用研发工程师｜一面｜发布 2026-04-29｜HUMAN-A
+## S117 阿里千问事业群｜AI 应用研发工程师｜一面｜发布 2026-04-29｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/4a666d0e366f4bd5899bdd219047ea60
 
@@ -93,7 +72,7 @@
 
 ---
 
-## S122 阿里平头哥｜AI 应用研发工程师｜暑期一面｜面试 2026-04-28，发布 05-06｜HUMAN-A
+## S118 阿里平头哥｜AI 应用研发工程师｜暑期一面｜面试 2026-04-28，发布 05-06｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/51f34fe0d0cf4b918bd45dd4ec8824a9
 
@@ -113,7 +92,7 @@
 
 ---
 
-## S123 小红书｜存储云平台·数据库智能化 / Agent｜日常实习一面 + 二面｜面试 2026-07-29 / 08-03｜HUMAN-A
+## S119 小红书｜存储云平台·数据库智能化 / Agent｜日常实习一面 + 二面｜面试 2026-07-29 / 08-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/4823889d98114bcba7e55eace6242353
 
@@ -135,7 +114,7 @@
 
 ---
 
-## S124 米哈游｜Agent 开发｜提前批一面｜面试 2026-08-01，发布 08-05｜HUMAN-A
+## S120 米哈游｜Agent 开发｜提前批一面｜面试 2026-08-01，发布 08-05｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/7b13b3c9e42745819ad822397a115812
 
@@ -155,28 +134,31 @@
 
 ---
 
-## S125 阿里｜Agent 开发｜暑期实习一面｜发布 2026-08-05｜HUMAN-A
+## S121 阿里｜Agent 开发暑期实习｜一面｜发布 2026-08-05，已 GG｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/3181217280144ee0ab47fe979dc28ff1
 
-真人 / 第一人称证据：作者以本人 Agent 暑期实习“凉经”发布，记录项目被长时间深挖与多个场景追问，问题围绕架构、Memory、Context、Vector DB 和 Failure 继续展开。
+真人 / 第一人称证据：作者以本人暑期 Agent 开发一面复盘发布，并明确更新已 GG；问题沿个人项目持续进入 Agent 架构、Vector Search、LangGraph、Memory、异常容错与 Coding，不包含标准答案扩写。
 
 高价值问题：
 
-1. Agent 项目的整体架构、技术栈和完整执行流程是什么？
-2. 做过哪些 Agent Optimization，怎样验证有效？
-3. Semantic Retrieval 如何实现？
-4. Vector DB 在系统中承担什么职责？
-5. LangChain / LangGraph 怎样选，底层 State / Graph 如何理解？
-6. Structured Output / Rule Following 不稳定时怎样治理？
-7. Memory 应如何设计，多轮会话与多 Session 如何隔离？
-8. Agent System Fault Tolerance 怎样设计？
-9. Context 过长或信息噪声高时怎样优化？
-10. Coding：Greedy 类现场题。
+1. 项目整体架构和技术栈是什么，Agent 在其中承担什么角色？
+2. 从用户输入到 Agent 最终输出的完整执行链路是什么？
+3. 项目做过哪些真实优化，收益如何验证？
+4. 给定业务场景时，怎样从零拆 Agent / Workflow？
+5. Semantic Search / Vector Database 在项目中怎样使用？
+6. LangChain 与 LangGraph 分别负责什么，为什么这样选？
+7. 模型输出怎样约束为结构化格式，并处理格式失败？
+8. Memory 与 Multi-session Memory 怎样设计，如何避免不同会话串数据？
+9. Tool / Model 异常时如何 Retry、Fallback 与恢复 Context？
+10. Context 太长时如何优化？
+11. Coding：贪心类现场题。
+
+去重：URL 未在 `S001–S212` 收录；项目链与现有阿里 / 淘天 / 阿里云 Agent 来源不属于同一候选流程。
 
 ---
 
-## S126 哔哩哔哩｜AI 应用岗 Agent 开发｜一面｜面试 2026-08-16，发布 08-18｜HUMAN-A
+## S122 哔哩哔哩｜AI 应用岗 Agent 开发｜一面｜面试 2026-08-16，发布 08-18｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/0df78025653d492d86cc7b7273c2a0c2
 
@@ -195,31 +177,34 @@
 
 ---
 
-## S127 小红书｜AI 全栈开发｜一面 + 二面｜发布 2026-06-25 / 07-01｜HUMAN-A
+## S123 小红书｜AI 全栈开发｜业务交叉面 + 二面（同一候选人同流程合并）｜发布 2026-06-25 / 07-01｜HUMAN-A
 
-一面来源：https://www.nowcoder.com/feed/main/detail/45d2815e4dc54a2fa9161273f6046c97
+业务交叉面来源：https://www.nowcoder.com/feed/main/detail/45d2815e4dc54a2fa9161273f6046c97
 
 二面来源：https://www.nowcoder.com/feed/main/detail/b0aba5ebac994002a27bf0892b8991f9
 
-真人 / 第一人称证据：两篇来自同一候选人连续流程，均详细记录约 40 分钟真人面试、面试官追问和个人答题体验，因此合并为一个独立来源，不把两轮人为拆成两个样本。
+真人 / 第一人称证据：两个页面均由同一作者 `Recall_15` 发布，岗位均为小红书 AI 全栈开发；首轮约 40 分钟，作者记录面试官对业务、AI Coding 和系统上线的具体追问，二面再次约 40 分钟并写“问很细、95% 答上来、希望能过”等现场状态，因此合并为一个招聘流程来源。
 
 高价值问题：
 
-1. 0→1 做一个 AI Full-stack Product，需求、前后端、Deployment 与 Ops 怎样串起来？
-2. 模糊需求怎样快速收敛到可交付 MVP，验收标准怎么定？
-3. LLM Traffic Spike / Error Rate 上升时怎样监控、Degrade 和 Rollback？
-4. AI 生成代码质量差时怎样 Review / Test / Rework？
-5. Video Agent 从文本到脚本、音视频生成的完整链路是什么？
-6. Model Call 如何做 Stability / Retry / Timeout / Circuit Breaker？
-7. 30 分钟级任务怎样优化到约 5 分钟，瓶颈如何测？
-8. Agent Output Quality 怎样用自动指标与 Human Evaluation 结合？
-9. LangGraph 的核心 State / Graph 能力是什么？
-10. Knowledge Base / Spec Document 怎样作为可验证事实约束 Agent？
-11. Multimodal Agent 与纯文本 Agent 在 Context 和 Evaluation 上有什么差异？
+1. 实习里的 AI 开发到底难在哪里，哪些部分是候选人独立完成？
+2. 一个功能从 Task 到 Production Release 的完整流程是什么，上线看哪些正 / 负向指标？
+3. 从零做一个 AI 产品，前端、后端、部署和运维分别要承担什么？
+4. 大模型流量突然上涨时，如何监控、扩容、降级和回滚？
+5. AI Coding 生成的低质量代码有哪些典型问题，怎样人工兜底？
+6. 给一个模糊需求，如何快速做多平台 Prototype / MVP，并定义验收时间和标准？
+7. 视频编辑 Agent 的核心难点是什么，Tool Call / Memory / Prompt Orchestration 怎样组织？
+8. 文本 → 编辑脚本 → 视频的完整链路怎样设计，视频质量如何 Evaluation？
+9. 如何把生成 / 编辑延迟从约 30 分钟降到约 5 分钟，并证明优化有效？
+10. 音视频同步、分辨率、字幕等工程问题如何保证稳定性？
+11. LangGraph 在这类 Agent 中承担什么关键职责？
+12. 多模态知识库怎样做可验证 Retrieval，关键帧如何选择？
+
+去重：两条 URL 为同一作者、同公司、同岗位连续轮次，主动合并为一个 `Sxxx`；现有正式来源未出现该作者和视频编辑 Agent 项目链。
 
 ---
 
-## S128 字节跳动财经｜AI 应用开发后端｜日常实习一面｜发布 2026-05-06｜HUMAN-A
+## S124 字节跳动财经｜AI 应用开发后端｜日常实习一面｜发布 2026-05-06｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/09fac7f955d34c1d8fc50f9a25fce714
 
@@ -239,7 +224,7 @@
 
 ---
 
-## S129 京东｜AI 应用开发｜实习一面｜发布 2026-04-03｜HUMAN-A
+## S125 京东｜AI 应用开发｜实习一面｜发布 2026-04-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/d8dae532f7e4479d8e3fa71e6ca24631
 
@@ -260,7 +245,7 @@
 
 ---
 
-## S130 阿里灵犀｜AI 应用｜暑期一面｜发布 2026-04-03｜HUMAN-A
+## S126 阿里灵犀｜AI 应用｜暑期一面｜发布 2026-04-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/26012e0bdf7c493e824b1e29913ff9d4
 
@@ -281,7 +266,7 @@
 
 ---
 
-## S131 汇川技术｜AI 全栈开发工程师｜一面 + 二面｜面试 2026-08-27 / 08-28｜HUMAN-A
+## S127 汇川技术｜AI 全栈开发工程师｜一面 + 二面｜面试 2026-08-27 / 08-28｜HUMAN-A
 
 一面来源：https://www.nowcoder.com/discuss/925156092424749056
 
@@ -303,26 +288,35 @@
 
 ---
 
-## S132 OPPO｜AI 全栈｜一面｜发布 2026-08-23｜HUMAN-A
+## S128 OPPO｜AI 全栈开发｜一面｜发布 2026-08-23，次日查看已挂｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/920830730643443712
 
-真人 / 第一人称证据：作者明确记录周五面试、周六查看已挂，不到半小时；保留“都回答了但语言组织不好”等个人状态，并记录面试官先介绍这是新 AI 全栈岗位。
+真人 / 第一人称证据：候选人记录面试官开场介绍这是较新的 AI Full-stack 岗位，并说明面试不足 30 分钟；作者自评题基本答出但语言组织不佳，次日查看流程已挂。问题把 AI Coding / Skill 与项目上线、团队协作和基础数据结构放在同一场，现场与结果明确。
 
 高价值问题：
 
-1. 平时使用哪些 AI Development Tool？
-2. AI 生成代码效果不好时怎样迭代？
-3. 使用过哪些 Skill 提升开发效率？
-4. 为什么一个内容很短的 Skill 仍可能取得明显效果？
-5. 项目中本人承担什么角色，是否真实上线？
-6. 团队意见不一致时如何处理技术决策？
-7. Array / Linked List 分别适合哪些场景？
-8. Stack / Queue / BFS 如何理解并应用？
+1. 平时实际使用哪些 AI Development Tools，各自适合什么任务？
+2. AI 生成代码质量差时怎样修正、测试和验证？
+3. 怎样用 Skill 提升研发效率，什么能力值得沉淀成 Skill？
+4. `grill-me` 类 Skill 为什么文本很短仍可能有效，核心约束在哪里？
+5. 项目中本人担任什么角色，具体负责什么？
+6. 项目真正上线了吗，如何验证使用效果？
+7. 团队出现技术分歧时怎样处理？
+8. Array / Linked List / Stack / Queue 的差异是什么，BFS 为什么通常使用 Queue？
+9. AI 全栈岗位为什么仍要求能解释基础数据结构和完整产品实现？
+
+去重：URL、岗位介绍和面后状态未在现有 OPPO AI 全栈样本中出现；与 `S106 / S067` 等为不同候选人独立流程。
 
 ---
 
-## S133 深圳 Tuitti / 视界之外｜Coding Agent / AI Backend 实习｜一面｜发布 2026-09-05｜HUMAN-A
+# 本批清洗与研究观察
+
+本批正式新增：**16 个 HUMAN-A（S042–S128）**。
+
+---
+
+## S129 深圳 Tuitti / 视界之外｜Coding Agent / AI Backend 实习｜一面｜发布 2026-09-05｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/9b1329caf4b64389a0ab666585bda045
 
@@ -345,7 +339,7 @@
 
 ---
 
-## S134 腾讯 WXG 微信读书｜Coding Agent / Agent 工程方向｜一面｜2026-08｜HUMAN-A
+## S130 腾讯 WXG 微信读书｜Coding Agent / Agent 工程方向｜一面｜2026-08｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/3ffc762437274543b6a8f5e2ea6fb535
 
@@ -365,7 +359,7 @@
 
 ---
 
-## S135 小红书社区工程｜AI 与全栈｜一面｜面试 / 发布 2026-03-21｜HUMAN-A
+## S131 小红书社区工程｜AI 与全栈｜一面｜面试 / 发布 2026-03-21｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/864966931239952384
 
@@ -388,7 +382,7 @@
 
 ---
 
-## S136 阿里高德地图｜AI 应用开发｜一面｜发布 2026-04-17｜HUMAN-A
+## S132 阿里高德地图｜AI 应用开发｜一面｜发布 2026-04-17｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/eb2fe3c0e80549939c8bc55a621f449e
 
@@ -410,7 +404,7 @@
 
 ---
 
-## S137 字节跳动｜后端 AI 开发｜暑期一面｜发布 2026-04-30｜HUMAN-A
+## S133 字节跳动｜后端 AI 开发｜暑期一面｜发布 2026-04-30｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/684c3c18ca774b149ea859a14ca9c323
 
@@ -430,25 +424,25 @@
 
 ---
 
-## S138 字节跳动｜后端 AI 开发｜暑期二面｜发布 2026-04-30｜HUMAN-A
+## S134 字节跳动｜后端 AI 开发｜暑期二面｜发布 2026-04-30｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/12cfda50776f482ba03bb775bb720238
 
-真人 / 第一人称证据：作者以“二面凉经、喜提人才库”发布并写“发点面经攒人品”，现场先严格限时 Coding，再从秒杀项目追到 MySQL、Agent 和 RAG。
+真人 / 第一人称证据：作者明确以本人二面凉经发布并更新进入人才库；问题由项目和秒杀一致性继续进入 MySQL、Agent / RAG 与严格输入输出 Coding。
 
 高价值问题：
 
-1. Coding：链表求和变种，怎样在严格输入输出约束下实现？
-2. 秒杀系统怎样防止 Oversell？
-3. Redis 已扣库存但数据库未成功更新时怎样处理一致性？
-4. MySQL Primary / Replica Replication 的原理是什么？
-5. MySQL Transaction 的核心实现机制是什么？
-6. Agent 的核心组成与基本执行原理是什么？
-7. RAG 是什么，在 AI Backend 中解决什么问题？
+1. Flash Sale 如何防止 Oversell / Undersell？
+2. Redis 扣库存与数据库最终订单状态如何保持一致？
+3. Redis 成功但 DB 失败时怎样 Compensation？
+4. MySQL Replication、Transaction 和 Isolation 如何影响高并发订单正确性？
+5. Agent 的核心组成是什么，为什么不是一次 LLM Call？
+6. RAG 的 Retrieval → Generation 链路如何解释？
+7. Coding：链表求和类变体，并严格处理输入输出与边界条件。
 
 ---
 
-## S139 腾讯｜后台 AI 开发｜一面｜发布 2026-04-30｜HUMAN-A
+## S135 腾讯｜后台 AI 开发｜一面｜发布 2026-04-30｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/ae63356673914217b3d9c986e6de8814
 
@@ -465,7 +459,7 @@
 
 ---
 
-## S140 阿里淘天｜AI 应用研发｜一面｜发布 2026-04-17｜HUMAN-A
+## S136 阿里淘天｜AI 应用研发｜一面｜发布 2026-04-17｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/80058a5c487347b5bbf7c8e5d694377d
 
@@ -486,27 +480,27 @@
 
 ---
 
-## S141 快手｜Agent 开发｜暑期一面｜发布 2026-04-30｜HUMAN-A
+## S137 快手｜Agent 开发｜暑期一面｜发布 2026-04-30｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/be29f78d1c174fe2ab2af85f89f6b792
 
-真人 / 第一人称证据：作者明确写“发点面经攒攒人品”，岗位直接为 Agent 开发；问题从实习经历进入 AI Coding 判断、Java Concurrency、ThreadLocal、HTTPS 和 Runtime 基础。
+真人 / 第一人称证据：作者以本人 Agent 一面“发面经攒人品”发布，问题从实习与 AI Coding 进入 Java Concurrency / JVM / HTTPS 基础，并有现场 Coding。
 
 高价值问题：
 
-1. AI Coding 能力未来可能发展到什么程度，目前最大的不足是什么？
-2. 什么场景应该使用 Multi-threading？
-3. `synchronized` 与 `ReentrantLock` 的差异是什么？
-4. ThreadLocal 解决什么问题？
-5. Thread Pool 中 Worker 抛异常后会发生什么，调用方怎样感知？
-6. HTTP 与 HTTPS 的差异是什么，HTTPS 怎样完成加密？
-7. Java Thread 有哪些状态，怎样终止？
-8. Reflection 与 Dynamic Proxy 如何实现？
+1. AI Coding 未来可能发展到什么程度，目前最大不足是什么？
+2. 什么场景值得使用 Multi-threading？
+3. `synchronized` 与 `ReentrantLock` 的差异和适用边界是什么？
+4. ThreadLocal 解决什么问题，又可能引入什么风险？
+5. Thread Pool Worker 抛异常时会怎样，业务如何感知失败？
+6. HTTPS 为什么安全，TLS 大致如何建立安全通道？
+7. Java Thread State 怎样变化，线程怎样正确终止？
+8. Reflection / Dynamic Proxy 如何实现，什么场景触发 Class Loading？
 9. Coding：3Sum。
 
 ---
 
-## S142 虾皮｜后端 AI 开发｜二面｜发布 2026-04-30｜HUMAN-A
+## S138 虾皮｜后端 AI 开发｜二面｜发布 2026-04-30｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/ad22a4b4908848519a72f8c94925c081
 
@@ -523,7 +517,7 @@
 
 ---
 
-## S143 联想｜Agent 应用开发｜实习一面｜发布 2026-04-17｜HUMAN-A
+## S139 联想｜Agent 应用开发｜实习一面｜发布 2026-04-17｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/1f425d6759cf4857ace42e56f14cb79f
 
@@ -545,7 +539,7 @@
 
 ---
 
-## S144 阿里国际｜AI 应用研发｜二面｜发布 2026-04-22｜HUMAN-A
+## S140 阿里国际｜AI 应用研发｜二面｜发布 2026-04-22｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/8610272cb5ea4e53a3281a3fbe0cc9a3
 
@@ -564,7 +558,7 @@
 
 ---
 
-## S145 腾讯｜Agent 开发｜暑期一面｜发布 2026-04-17｜HUMAN-A
+## S141 腾讯｜Agent 开发｜暑期一面｜发布 2026-04-17｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/427caf4cc5ec4192b64fdb6ea6698bef
 
@@ -586,24 +580,26 @@
 
 ---
 
-## S146 阿里淘天｜AI 应用研发｜一面｜面试 2026-08-26，发布 08-27｜HUMAN-A
+## S142 阿里淘天｜AI 应用研发｜秋招一面 + AI Coding｜面试 2026-08-26，发布 08-27｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/922452114809376768
 
-真人 / 第一人称证据：作者明确记录 8 月 26 日一面，30 分钟项目深挖 + 5 分钟业务题 + 30 分钟 AI Coding，并在反问中确认团队主要做平台和用户场景的 Agent 化；现场流程和岗位方向清晰。
+真人 / 第一人称证据：同为作者 `Florentino_73` 的本人求职记录，但这是 8 月 26 日淘天 AI 应用研发独立面试，和 8 月 31 日阿里云 Agent Infra 属于不同组织 / 岗位与独立招聘流程，因此不合并。正文记录约 30 分钟项目深挖、5 分钟业务数据结构题、约 30 分钟 AI Coding，并在反问中确认业务重点是把平台商家与用户场景 Agent 化，Role Scope 明确。
 
-高价值问题：
+整场技术问题：
 
-1. 项目里的 Model Tuning 与 RAG 具体做了什么？
-2. 某 URL 一秒涌入大量请求但只能处理 100 个时，怎样选择数据结构 / 限流策略？
-3. 实时商品销量 Top-10 应选什么数据结构？
-4. AI Coding：实现可动态更新会员价、满减等策略的商品计价系统。
-5. AI Coding 平时怎样使用，最常见的问题是什么？
-6. 商家平台和用户场景 Agent 化时，哪些能力适合由 Agent 承担？
+1. 约 30 分钟自我介绍和项目介绍，主要深挖华为项目中的模型调优与 RAG 相关问题。
+2. 某个 URL 一秒内涌入大量需求，但系统只能处理 100 个时，适合使用什么数据结构？
+3. 需要实时维护商品销量 Top 10，适合使用什么数据结构？
+4. AI Coding：实现商品计价系统，优惠策略需要能够随时更新，例如会员价、满减等。
+5. 围绕平时使用 AI Coding 的心得和实际遇到的问题继续交流。
+6. 反问：团队主要把平台商家与用户场景做 Agent 化。
+
+去重：已直接回读 `S001–S269`。历史阿里 / 淘天 AI Application 来源很多，但没有当前作者的 8/26 流程和“华为模型调优 / RAG → 单 URL 高并发容量 → 实时商品 Top10 → 动态优惠商品计价 AI Coding”连续题序。同作者 8/31 阿里云为独立招聘流程，按规则分别计数。
 
 ---
 
-## S147 字节跳动｜Agent 开发｜暑期一面｜发布 2026-04-17｜HUMAN-A
+## S143 字节跳动｜Agent 开发｜暑期一面｜发布 2026-04-17｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/d34ec2281429417eb546f160f181cdfa
 
@@ -637,7 +633,7 @@
 
 # Batch 07 观察
 
-本批新增 `S118–S147` 共 **30 个 HUMAN-A 来源**，当前干净核心样本达到 **147 个**。
+本批新增 `S115–S143` 共 **30 个 HUMAN-A 来源**，当前干净核心样本达到 **147 个**。
 
 本轮最重要的信号：
 

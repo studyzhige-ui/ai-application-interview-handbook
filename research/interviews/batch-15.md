@@ -2,17 +2,13 @@
 
 采集日期：2026-09-10
 
-> 本批从 `S293` 继续编号。HUMAN-A Gate 不变：**真人面试官 + 候选人本人第一人称 + 高信息密度 + 真实现场痕迹 + AI Application / Agent 目标岗位 + 正文稳定可核验 + 非转载 / 非合集 / 非重复**。
->
-> 本批对去重流程做了强化：**分配 `Sxxx` 前必须直接回读历史 Batch，并执行 URL 精确比对 + 题序 / 项目语义比对 + 作者 / 招聘流程时间线比对。GitHub Code Search 或搜索引擎“0 命中”只能作为线索，不能作为“未收录”的证明。**
->
-> 同一候选人同一公司同一招聘流程的多轮必须合并；不同 URL 但题序、项目语义和现场流程高度重合时，必须继续核验原作者与时间线，无法证明独立则不入库。
->
-> 通过 Role Scope 后仍保留整场真实问题：Agent / RAG / Harness 与 Python / Java、MySQL、Redis、MQ、Network、Concurrency、Security、Coding、Evaluation、AI Coding、System Design 一视同仁。
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **8** 个正式来源。
 
 ---
 
-## S293 某小厂｜AI Agent / 大模型应用开发｜HR + 技术一面｜面试 / 发布 2026-09-04｜HUMAN-A
+## S217 某小厂｜AI Agent / 大模型应用开发｜HR + 技术一面｜面试 / 发布 2026-09-04｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/10b2fcaf73d2401f8636bd0459e1cd08
 
@@ -35,7 +31,7 @@
 
 ---
 
-## S294 美团｜Agent 开发｜日常实习一面｜发布 2026-08-25，75min｜HUMAN-A
+## S218 美团｜Agent 开发｜日常实习一面｜发布 2026-08-25，75min｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/58159306df52463ab75d72daa80d66df
 
@@ -60,7 +56,7 @@
 
 ---
 
-## S295 元石科技｜后端 / Agent｜一面｜发布 2026-08-25｜HUMAN-A
+## S219 元石科技｜后端 / Agent｜一面｜发布 2026-08-25｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/921742843704549376
 
@@ -85,7 +81,7 @@
 
 ---
 
-## S296 匿名游戏公司（1000–9999 人）｜AI Agent 应用开发｜一面 + 后续二面｜面试 2026-03-03｜HUMAN-A
+## S220 匿名游戏公司（1000–9999 人）｜AI Agent 应用开发｜一面 + 后续二面｜面试 2026-03-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/416c3118a9c84fe0a43dc00f9eb9bec2
 
@@ -108,7 +104,7 @@
 
 ---
 
-## S297 某中型 AI 设备研发公司｜AI Agent 开发｜一面 + 二面 + HR/Boss，已 Offer｜发布 2026-06-17｜HUMAN-A
+## S221 某中型 AI 设备研发公司｜AI Agent 开发｜一面 + 二面 + HR/Boss，已 Offer｜发布 2026-06-17｜HUMAN-A
 
 来源：https://ai.codefather.cn/post/2067118684236795905
 
@@ -133,7 +129,7 @@
 
 ---
 
-## S298 美团 Keeta｜Agent 开发（智能客服）｜一面｜发布 2026-04-28｜HUMAN-A
+## S222 美团 Keeta｜Agent 开发（智能客服）｜一面｜发布 2026-04-28｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/abef26e941054c9db854cba7c81049cd
 
@@ -156,7 +152,7 @@
 
 ---
 
-## S299 阿里国际｜AI 应用开发｜暑期技术面约 1h｜发布 2026-04-30｜HUMAN-A
+## S223 阿里国际｜AI 应用开发｜暑期技术面约 1h｜发布 2026-04-30｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/05618d54fc8f487bb9413ad2adfc1591
 
@@ -180,7 +176,7 @@
 
 ---
 
-## S300 美团｜AI 全栈开发｜实习一面｜发布 2026-04-20｜HUMAN-A
+## S224 美团｜AI 全栈开发｜实习一面｜发布 2026-04-20｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/3a899c176bef400883ae833ae1094086
 
@@ -206,18 +202,26 @@
 
 # 本批清洗与研究观察
 
-本批正式新增：**8 个 HUMAN-A（S293–S300）**。
+本批正式新增：**8 个 HUMAN-A（S217–S224）**。
+
+---
+
+> 注：以下批次观察 / 排除说明为采集时的过程记录；其中历史数量描述按采集当时口径保留，出现的来源 ID 已映射到当前正式编号。
+
+---
 
 ## 本批在分配 ID 前删除的重复来源
 
 1. **拼多多 2026-07-25 AI Agent 线下面试**：候选 URL `45f6e73...` 已在历史 `S061` 正式入库，删除。
-2. **京东 2026-05-07 AI Agent**：虽 URL 不同，但与历史 `S217` 的 ThreadLocal → RPC/HTTP → 限流 → RAG → Agent vs Workflow → AI Coding 题序和语义高度一致，无法证明独立原场，删除。
-3. **Moka 2026-04-27 后端 AI 应用**：虽 URL 不同，但与历史 `S208` 的 Video Progress Redis → Hash/TTL → RabbitMQ Delay → Memory → MCP/SSE 追问链高度一致，删除。
+2. **京东 2026-05-07 AI Agent**：虽 URL 不同，但与历史 `S185` 的 ThreadLocal → RPC/HTTP → 限流 → RAG → Agent vs Workflow → AI Coding 题序和语义高度一致，无法证明独立原场，删除。
+3. **Moka 2026-04-27 后端 AI 应用**：虽 URL 不同，但与历史 `S181` 的 Video Progress Redis → Hash/TTL → RabbitMQ Delay → Memory → MCP/SSE 追问链高度一致，删除。
 4. **字节 2026-08-06 AI 应用开发**：URL `15af3788...` 已在历史正式来源中出现，删除。
-5. **影石 2026-03-11 Agent 开发**：URL `f9c5e9f...` 已在历史 `S220` 正式入库，删除。
+5. **影石 2026-03-11 Agent 开发**：URL `f9c5e9f...` 已在历史 `S187` 正式入库，删除。
 6. **米哈游 2026-04-24 Agent 研发**：发现更早 2026-04-09、不同作者的同公司页面，SFT → Attention / RNN → Workflow vs Agent → Memory → MCP → Few-shot → Sandbox → AI Code Testing → LRU 几乎逐题同序；无法证明 4/24 页面是独立原场，因此不进入正式 Batch。
 
-上述来源在本批正式编号前即被剔除，**不占用 `Sxxx`，因此本批连续编号为 `S293–S300`。**
+上述来源在本批正式编号前即被剔除，**不占用 `Sxxx`，因此本批连续编号为 `S217–S224`。**
+
+---
 
 ## 本批新增信号
 
@@ -230,8 +234,10 @@
 7. **Backend 深度没有因为 Agent 增长而下降。** Kafka、Distributed Lock、OOM、MySQL Index、HTTP/2/3、V8、Go Concurrency 与 Agent / RAG 持续同场出现。
 8. **去重必须发生在 ID 分配之前。** 以后每轮先直接读取历史 Batch 的 URL / 公司 / 日期 / 作者 / 独特题序，再做外部原帖和复制链核验；不能依赖单一代码搜索索引判断“是否已收录”。
 
+---
+
 ## 饱和判断
 
 **仍未达到来源饱和，但去重成本明显上升。** 本轮原始候选中删除了 6 条重复 / 非独立来源后，仍保留 8 个通过完整 HUMAN-A Gate 的独立流程，说明精确公司 / 作者页 / 历史月份搜索仍有新增；同时也说明后续每一批必须把 provenance 和跨 Batch 直接回读放在搜索数量之前。
 
-下一条正式来源从 **`S301`** 开始。
+下一条正式来源从 **`S225`** 开始。

@@ -2,11 +2,9 @@
 
 采集日期：2026-09-09
 
-> 本批继续严格执行统一准入：**真人面试官 + 候选人本人第一人称 + 高信息密度 + AI Application / Agent 目标岗位 + 正文可稳定核验 + 非转载重复**。
->
-> 搜索方式不依赖单一泛关键词，而是继续组合公司、岗位别名、月份与技术关键词，并沿企业页、话题页、作者页、精确标题与跨页面索引回溯原帖。本轮重点补 2026 年 3–9 月历史缺口与 9 月近期新增内容。
->
-> 问题均为研究所需的简洁转述，不复制第三方正文。低质量线索、合集、标准答案、AI 自动面试、非本人投稿、岗位越界和无法稳定核验的内容均不贡献任何问题。
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **20** 个正式来源。
 
 ---
 
@@ -35,58 +33,66 @@
 
 来源：https://www.nowcoder.com/discuss/925342611194286080
 
-真人 / 第一人称证据：作者明确给出 9 月 3 日一面，按项目、八股、算法顺序记录，并写“发面经攒人品”；问题绑定本人 AI 项目，包含长任务突然变慢、Tool 参数可靠性与 Context 压缩信息损失等现场场景题。
+真人 / 第一人称证据：本帖此前因单页现场证据偏弱未在 Batch 12 入库。本轮沿作者“小妞脂”主页回溯，确认其持续记录百度、文远知行等多家公司明确日期、多轮与结果的本人秋招时间线；当前帖子与该时间线一致，且项目、算法与 Harness 追问具有独立场次特征，因此在补足作者 / 招聘流程证据后升级为 HUMAN-A。
 
 高价值问题：
 
-1. AI 项目中的结构化评分如何设计字段和维度？
-2. RAG 的离线上传与在线问答链路分别如何实现？
-3. Agent Harness 应如何理解，它与模型和 Agent Logic 的边界是什么？
-4. 一个通常 5 分钟完成的长任务突然运行 15–20 分钟，应如何定位延迟来源？
-5. 长任务延迟异常可以从模型、Tool、网络、队列、上下文和循环次数哪些层面治理？
-6. Tool 入参固定但由模型结合上下文生成时，Runtime 如何保障调用可靠性？
-7. 对话轮次不断增长导致 Context Window 膨胀时如何治理？
-8. Summary / Compaction 必然损失信息时，怎样最小化关键事实、约束和任务状态的丢失？
-9. Coding：给定数字集合，构造小于目标整数的最大可表示数字。
+1. AI 项目的整体架构是什么，简历评分怎样 Structured Output？
+2. RAG 的 Offline Upload 与 Online QA 两条链路分别怎样实现？
+3. 如何理解 Agent Harness？
+4. 正常 5 分钟的 Long-running Agent 突然跑到 15–20 分钟，怎样定位延迟来源？
+5. 发现延迟后，从 Model / Tool / Network / Queue / Retry / Context 哪些层定位和治理？
+6. Tool 参数由模型结合 Context 生成时，如何保证 Tool Call Reliability？
+7. Conversation 轮数增长导致 Context Window 膨胀时怎么处理？
+8. Summary / Compression 必然丢信息，怎样保护关键约束和任务状态？
+9. Coding：给定数字集合，可重复使用数字，求严格小于 `n` 的最大可构成数字。
+
+去重：URL 与题序未在现有来源出现；本轮新增的是作者时间线证据，而不是因题目内容“看起来高级”降低门槛。
 
 ---
 
-## S077 深信服｜Agent 开发实习生｜一面 + 二面｜发布 2026-09-02｜HUMAN-A
+## S077 深信服｜Agent 开发实习生｜一面 + 二面（同一候选人同流程合并）｜发布 2026-09-02｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/14b2c379ae434062a009aefea9fc5df9
 
-真人 / 第一人称证据：作者完整记录两轮，明确面试官介绍岗位包含 AI Agent 平台、Harness 工程工具和 Agent 数据分析；二面后被告知通过、等待 HR，随后收到感谢信，并详细描述本人对这一结果的感受和时间线。
+真人 / 第一人称证据：与 `S042` 为同一真实候选人，但属于不同公司独立招聘流程。本帖完整记录深信服一面、二面及面后 HR 时间线：面试官介绍 AI Agent 平台 / Harness 工程方向，作者随后被告知通过、等待 HR，之后又收到感谢信，现场与结果链路完整。
 
 高价值问题：
 
-1. Agent Tool 数量过多、接口上百时，如何解决 Tool Discovery 与 Selection 问题？
-2. Agent 的准确率 / 端到端效果如何定义并构建评测？
-3. 一个业务 Agent 的用户目标、数据流、处理链和最终效果如何完整说明？
-4. AI Coding 在生产代码中如何形成可验证的方法论和质量保障流程？
-5. 动态 Tool Registry 如何实现注册、动态注入与运行时更新？
-6. 自研 Tool 调用体系与 MCP、LangChain Tools / Skills 的差异是什么？
-7. 上百个 Tool 中如何让模型稳定找到正确接口，Tool Retrieval 如何实现？
-8. 当前 Tool 都无法完成任务时，Agent 应如何扩展能力或安全失败？
-9. 自研 Multi-Agent Framework 与 AutoGen / CrewAI 等框架如何比较？
-10. Coding：最长无重复子串。
+1. 实习中跨团队接口协作真正遇到过什么问题，如何解决？
+2. Agent Tool / API 数量越来越多时，当前架构暴露了什么问题？
+3. Agent 效果与准确率怎样 Evaluation，谁构建数据集？
+4. 自动拆题 Agent 从业务输入到输出的完整技术链路是什么？
+5. 公司在 Production 中如何使用 AI Coding，怎样保证生成代码质量？
+6. 二面继续追：项目最核心、最有业务价值的工作是什么？
+7. Dynamic Tool Registry 怎样设计；动态注入与 MCP / LangChain Tool / Skill 有何边界？
+8. 当 Tool 超过 100 个时，模型怎样发现正确 API，是否需要 Tool Retrieval / Lazy Loading？
+9. 目标 Tool 临时不可用时，Agent 如何 Fallback 或向用户暴露失败？
+10. Tool Registry 的 Schema / Metadata / Version / Permission 管理难点是什么？
+11. Multi-Agent 架构与 AutoGen / CrewAI 等方案如何比较？
+12. Coding：最长无重复子串。
+
+去重：同作者不同公司流程，不能与 `S042` 合并；一面与二面属于同公司连续流程，因此合并为一个 `Sxxx`。URL、题序与既有深信服样本均不构成同场重复。
 
 ---
 
-## S078 拼多多｜Agent 开发｜二面｜面试 2026-08-25，发布 09-04｜HUMAN-A
+## S078 拼多多｜Agent 开发｜二面｜面试 2026-08-25，40min｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/f5e7351df8364147ac8da085b99d9d18
 
-真人 / 第一人称证据：作者明确给出 8 月 25 日、40 分钟二面，记录自己的面试感想以及现场手撕；问题围绕真实 Agent 系统的任务隔离、结果正确性、评测与框架选型。
+真人 / 第一人称证据：作者明确给出 8 月 25 日、40 分钟二面，正文区分“项目&基础 / 手撕”，面后评价“没有硬八股，抓住问题与项目结合点先说原理再说应用”，并以发面经攒人品发布。
 
 高价值问题：
 
-1. Agent 如何隔离不同用户 / 不同任务的状态、文件和执行环境？
-2. 如何保证 Agent 分析过程和最终输出尽可能正确？
-3. Agent Evaluation 应覆盖哪些维度，测试用例如何构造？
-4. 一个真实 Agent 业务的完整执行链路如何描述？
-5. LangChain 与 LangGraph 的核心工程差异是什么？
-6. 自研 Agent Framework 与开源框架相比，收益、代价和边界是什么？
-7. Coding：设计线程安全的 LRU Cache。
+1. Agent 怎样实现不同任务之间的状态与 Context Isolation？
+2. Agent 如何保证分析和最终输出的准确性？
+3. Evaluation 体系怎样设计，测试用例覆盖范围如何确定？
+4. 从用户输入到 Agent 执行 / 回答的完整业务流是什么？
+5. LangChain 与 LangGraph 的核心差异是什么，什么场景需要图状态机？
+6. 自研 Agent Framework 与开源框架的差异和选择依据是什么？
+7. Coding：实现线程安全的 LRU，并解释并发控制选择。
+
+去重：本来源与检索到的拼多多“提前批一面”复制链作者、日期和题序均不同，是独立候选人的二面；URL 未入库。
 
 ---
 
@@ -113,23 +119,26 @@
 
 ---
 
-## S080 平安健康保险｜AI 应用开发｜秋招一面｜面试 2026-08-23，发布 08-30｜HUMAN-A
+## S080 平安健康保险｜AI 应用开发｜秋招一面｜面试 2026-08-23，08-26 感谢信｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/6c11a75a8bd44628943deff3e42ae15c
 
-真人 / 第一人称证据：作者给出完整时间线：8 月 19 日投递、8 月 23 日面试、8 月 26 日收到感谢信，并写明自己的 Coding Agent 来源、27 分钟时长和反问内容。
+真人 / 第一人称证据：作者明确记录 8 月 19 日投递、8 月 23 日面试、8 月 26 日收到感谢信；项目是自己参考 Claude Code / Kimi 思路拼出的 Coding Agent，评论区继续讨论现场 PDF→HTML System Design 题，流程与项目归属可核验。
 
 高价值问题：
 
-1. Agent Loop 的最小执行过程是什么？
-2. Harness Engineering 与 Prompt / Agent Logic 的差异是什么？
-3. 什么场景值得引入 Sub-agent？
-4. 模型“偷懒”或提前宣称完成时如何治理？
-5. Agent Hallucination 如何从 Runtime、Verification 和 Context 层控制？
-6. 一个 Skill 的组成、适用场景和真实编写经验是什么？
-7. SDD / Spec-driven Development 在 AI Coding 中解决什么问题？
-8. 输入大量 PDF、最终输出 HTML 且需要 Knowledge Base 核验时，LLM Workflow 如何设计？
-9. Coding Agent 能否 Self-bootstrap，如何区分真正自研与借助其他 Agent 完成？
+1. Agent Loop 的核心执行结构是什么？
+2. 怎样理解 Harness Engineering，它和单纯 Prompt / Workflow 有什么区别？
+3. 什么场景应该使用 Sub-agent？
+4. 模型“偷懒”或不完成任务时怎样检测和约束？
+5. Hallucination 怎样治理？
+6. Skill 的组成、应用场景和加载方式是什么？
+7. 是否理解 SDD / Spec-driven Development，它怎样约束 Coding Agent？
+8. System Design：输入大量 PDF、输出 HTML、期间还要与知识库核对，如何设计 LLM Workflow？
+9. 自研 Coding Agent 能否 Self-bootstrap，还是依赖其它 Coding Agent 开发？
+10. 金融保险业务中 Agent / Vibe Coding 实际落地到什么程度，人工开发边界在哪里？
+
+去重：URL、Claude Code 架构项目与投递→面试→感谢信时间线均未在现有来源出现。
 
 ---
 
@@ -173,21 +182,26 @@
 
 ---
 
-## S083 字节跳动｜Agent 开发｜一面｜面试 2026-08-12，发布 08-24｜HUMAN-A
+## S083 字节跳动｜Agent 开发｜秋招一面｜面试 2026-08-12，发布 08-24，1h+｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/921444774287003648
 
-真人 / 第一人称证据：作者明确给出岗位、8 月 12 日面试和 1 小时以上时长；面试官让候选人在自己的三个项目中任选一个展开，并一路追问到 RAG、AI Coding、Streaming、数据库、并发场景和现场 Coding。
+真人 / 第一人称证据：作者以本人秋招面试记录发布，明确给出 8 月 12 日、Agent 开发与一小时以上时长；问题从候选人自己的三个项目中任选一个深挖，再进入 RAG、AI Coding、Streaming、高并发场景和现场 Coding。候选人记录了面试官对算法方案继续追问线程安全，具有自然现场互动，而不是答案型题单。
 
-高价值问题：
+整场技术问题：
 
-1. 如何选择一个最能代表自己的 Agent 项目并讲清业务与技术价值？
-2. RAG 项目经验如何展开说明，而不是只背 Pipeline？
-3. AI Coding 如何保证生成代码质量，而不是只追求生成速度？
-4. SSE 与 WebSocket 的协议特性和适用场景有什么区别？
-5. 数据库常见索引结构与查询优化思路是什么？
-6. 热点榜单实时更新且高并发时，数据结构和数据库如何选型？
-7. Coding：两个栈实现队列，并继续追问如何实现线程安全。
+1. 三个项目中任选一个完整说明：业务目标、技术链路、本人职责和关键难点是什么？
+2. 项目里是否真正做过 RAG，完整实现链路怎样组织？
+3. 使用 AI Coding 时，怎样让生成代码达到更高质量，而不是只追求生成速度？
+4. AI 生成代码怎样做正确性、可维护性和测试验证？
+5. SSE 与 WebSocket 的通信模型、连接方向和适用场景有什么差异？
+6. 数据库常见 Index 有哪些，索引为什么能够加速查询，选型时关注什么？
+7. 场景题：实时更新一个高并发热门榜单，数据结构和存储层怎样设计？
+8. 高并发排行榜中，排序更新、读取热点和持久化分别可能出现什么瓶颈？
+9. Coding：使用两个 Stack 实现 Queue。
+10. 在上一题基础上继续追：多线程并发访问时怎样保证线程安全？
+
+去重：URL 未在 `S001–S245` 正式库出现；历史字节 Agent 来源虽然大量涉及 RAG / Context / Coding，但本场“项目任选深挖 → RAG → AI Coding 质量 → SSE/WebSocket → 高并发排行榜 → 两栈队列 + 线程安全”的连续题序、作者与 8/12 流程均独立。
 
 ---
 

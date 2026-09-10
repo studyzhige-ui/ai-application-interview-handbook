@@ -2,35 +2,13 @@
 
 采集日期：2026-09-09
 
-> 本批继续执行固定准入：**真人面试官 + 候选人本人第一人称 + 高信息密度 + AI Application / Agent 目标岗位 + 正文可稳定核验 + 非转载重复**。
->
-> 本轮继续用 `公司 × 岗位别名 × 月份 × 技术关键词` 扩大 Recall，重点回扫 2026 年 3–8 月历史缺口，同时加入 9 月 9 日当天新发布内容。AI 自动面试、面经合集、付费答案专栏、题库 / 标准答案、同账号批量模板化内容、岗位越界和无法稳定核验的帖子全部保持零贡献。
->
-> 问题均为研究所需的简洁转述，不复制第三方正文；只记录原帖中能够确认真实问到的内容，不把合理推导写成面试问题。
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **20** 个正式来源。
 
 ---
 
-## S095 阿里淘天｜AI 应用开发 / Agent｜一面｜发布 2026-04-10｜HUMAN-A
-
-来源：https://www.nowcoder.com/feed/main/detail/a0306a045d594b02b63fb0654d517901
-
-真人 / 第一人称证据：作者明确以本人一面复盘发布并写“发面经攒人品”，问题从自己的 RAG 项目连续追到 Multi-Agent State、MCP、FastAPI / SSE、Checkpoint 和向量检索。
-
-高价值问题：
-
-1. BM25 与向量检索怎样组合，Hybrid Retrieval 为什么能提升效果？
-2. 扫描 PDF 的 OCR、表格结构化抽取有哪些难点，准确率如何衡量？
-3. Multi-Agent 的 State 如何全局管理，怎样处理执行中的状态竞争？
-4. 业务接口封装为 MCP Tool 时，标准化输入输出与兼容问题如何处理？
-5. MCP 出现之前模型如何调用外部能力，MCP 本身有哪些挑战？
-6. 子任务失败或数据为空时，Workflow 如何重试或降级？
-7. FastAPI + SSE 如何把 LangGraph Node 的中间结果实时推给前端？
-8. Checkpoint 如何持久化，断线重连后怎样恢复之前状态？
-9. Vector DB、Index、RRF 与精排模型如何选？
-
----
-
-## S096 钉钉｜后端 AI 研发｜暑期一面 1h｜发布 2026-04-13｜HUMAN-A
+## S095 钉钉｜后端 AI 研发｜暑期一面 1h｜发布 2026-04-13｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/27171d436e7b4ee0a0c5ef3414c18d8b
 
@@ -49,49 +27,7 @@
 
 ---
 
-## S097 携程｜AI 后端｜暑期一面｜发布 2026-04-10｜HUMAN-A
-
-来源：https://www.nowcoder.com/feed/main/detail/0514bdd618cf43ae9be9240bc483cc9a
-
-真人 / 第一人称证据：作者明确写“发点面经攒攒人品”，整场围绕自己的 AI Coding、分库分表、缓存和订单项目连续追问，并包含现场 Coding。
-
-高价值问题：
-
-1. AI Coding 生成的代码质量怎样判断，能否直接投入生产？
-2. 分片键为什么选业务核心 ID 而不是用户 ID，何时需要分库分表？
-3. 分片后“我的评论”等跨分片查询、分页和全局排序怎么做？
-4. 评论 / 多级回复表结构如何设计以减少 I/O？
-5. Sharding-JDBC 在真实分库分表系统中如何使用？
-6. Bloom Filter 为什么用于当前业务，为什么不用空值缓存？
-7. Distributed Lock 解锁时怎样保证原子性、避免误删？
-8. MySQL Optimistic Lock 如何处理并发更新？
-9. 扣库存与生成订单如何用 Transaction 保证一致性？
-10. Coding：LRU Cache 或 Merge K Sorted Lists。
-
----
-
-## S098 字节跳动｜后端 AI 开发｜暑期一面｜发布 2026-04-10｜HUMAN-A
-
-来源：https://www.nowcoder.com/feed/main/detail/f46e1419b49c4fe6832a1180b344af23
-
-真人 / 第一人称证据：候选人明确写自己面后感觉很难、还需要练习；问题从项目一路追到 WebSocket、Redis、ThreadLocal、TCP、OpenClaw 和 Coding，回答状态清晰。
-
-高价值问题：
-
-1. WebSocket 推送订单状态时，弱网断连后怎样补齐状态？
-2. 订单 ID 如何生成，随机方案有没有碰撞风险？
-3. Redis 多级缓存具体是什么，Distributed Lock 如何帮助处理秒杀并发？
-4. ThreadLocal 为什么能线程隔离，ThreadLocalMap 存在哪里？
-5. ThreadLocal 为什么可能导致 Memory Leak？
-6. TCP 四次挥手为什么这样设计，为什么存在 2MSL？
-7. SYN Attack 是什么，怎样检测或缓解？
-8. OpenClaw 的实现原理了解多少，部署时用了什么模型？
-9. 通义千问、DeepSeek 等模型如何比较？
-10. Coding：SQL + Zig-zag Tree Traversal。
-
----
-
-## S099 字节跳动｜AI 后端开发｜暑期二面｜发布 2026-04-10｜HUMAN-A
+## S096 字节跳动｜AI 后端开发｜暑期二面｜发布 2026-04-10｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/a7169bcbc4554deba204cac4349c6a43
 
@@ -111,27 +47,34 @@
 
 ---
 
-## S100 字节跳动｜后端 AI 开发｜实习一面 1h｜发布 2026-05-04｜HUMAN-A
+## S097 字节跳动｜后端 AI 开发｜实习一面 1h｜发布 2026-05-04｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/ab0601f3dbad49ab87ea870a00bb3691
 
-真人 / 第一人称证据：候选人明确记录一小时真人一面，问题以自己的 Agent 项目为主线，从系统目标追到 Planner / Executor / Supervisor、RAG 和 Java 并发。
+真人 / 第一人称证据：作者 `想奋斗的柠檬精天天摸鱼` 明确写“27实习-字节后端ai开发一面 1h / 发点面经攒攒人品”。问题从 Smart Ops Agent 的真实含义、Spring AI Alibaba 覆盖边界、Planner/Executor/Supervisor 架构，连续追到 RAG / Fine-tuning、MySQL/Redis 和万级 Producer / Consumer 并发场景。
 
-高价值问题：
+整场技术问题：
 
-1. Agent 项目的核心功能和整体组件是什么？
-2. Spring AI Alibaba 在项目里具体覆盖哪些能力？
-3. Planner / Executor / Supervisor 架构的优势是什么？
-4. 为什么拆成多个 Agent，而不是一个 Agent 完成？
-5. RAG 的完整流程是什么，Retrieval / Rerank 怎么做？
-6. 如果没有 Rerank 会怎样？
-7. 回答质量差时，RAG 层和 Fine-tuning 分别能怎么优化？
-8. MySQL 与 Redis 的职责差异是什么，Redis 能不能当主要存储？
-9. 大量 Producer / Consumer 的并发场景在 Java 中如何设计？
+1. Agent 项目的核心功能是什么？
+2. “智能运维助手”的运维具体指什么业务动作？
+3. 系统有哪些主要组件，数据 / 控制流怎样走？
+4. Spring AI Alibaba 覆盖了哪些部分，哪些 Runtime 能力仍需自己实现？
+5. Planner / Executor / Supervisor Pattern 的优势是什么？
+6. 三个 Agent 与一个 Agent 相比，关键收益和额外代价是什么？
+7. RAG 的核心流程是什么？
+8. Recall / Rerank 使用什么算法；如果没做 Rerank，为什么？
+9. 为什么当前业务需要 RAG？
+10. Model Response Bad Case 应怎样从 RAG 层优化，又在什么情况下考虑 Fine-tuning？
+11. Fine-tuning 属于 Pre-train 还是 Post-train，应用工程师需要理解哪些边界？
+12. MySQL 与 Redis 各自适合什么数据 / 访问模式，“Relational”是什么意思？
+13. Redis 能否承担持久存储，而不仅是 Cache？
+14. System Design：1 万 Producer、5 万 Consumer 的 Java 生产消费模型怎样做并发控制、队列、背压与资源治理？
+
+去重：同作者 4 月还有其它公司独立招聘流程，可以分别计数；同作者 4/21 另有字节相关页面，但与 5/4 同公司、同招聘季且流程关系无法稳定拆分，本批只保留能独立成立、信息更完整的 5/4 一面，不对 4/21 另行编号或补题。历史字节样本没有当前“Spring AI Alibaba → 3-Agent vs 1-Agent → RAG/Fine-tuning → 万级 Producer/Consumer”连续链。
 
 ---
 
-## S101 字节跳动｜AI Agent｜实习二面｜发布 2026-03-22｜HUMAN-A
+## S098 字节跳动｜AI Agent｜实习二面｜发布 2026-03-22｜HUMAN-A
 
 来源：https://api-cdn.nowcoder.com/feed/main/detail/d31969d954a94f1cb1bb06abc3196fe9
 
@@ -152,7 +95,7 @@
 
 ---
 
-## S102 小红书｜Agent 后端开发｜日常实习二面｜发布 2026-04-03｜HUMAN-A
+## S099 小红书｜Agent 后端开发｜日常实习二面｜发布 2026-04-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/be9b14f9b1cf4fe09111b856c4f89608
 
@@ -169,7 +112,7 @@
 
 ---
 
-## S103 腾讯｜AI 后台开发｜日常实习一面｜发布 2026-04-27｜HUMAN-A
+## S100 腾讯｜AI 后台开发｜日常实习一面｜发布 2026-04-27｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/793e6ceb32c74c2ea1137106f661ae2e
 
@@ -189,7 +132,7 @@
 
 ---
 
-## S104 美团｜后端 AI 开发｜暑期一面｜发布 2026-04-27｜HUMAN-A
+## S101 美团｜后端 AI 开发｜暑期一面｜发布 2026-04-27｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/4a18e41893f1491fae094650eda78d6d
 
@@ -210,89 +153,99 @@
 
 ---
 
-## S105 腾讯｜AI 后端开发｜二面 50min｜发布 2026-04-01｜HUMAN-A
+## S102 腾讯｜AI 后端开发｜二面 50min｜发布 2026-04-01｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/f0e993c94c17476180e1a0185a6662f2
 
-真人 / 第一人称证据：作者明确记录 50 分钟二面并写“攒人品中”，问题从本人项目 / 论文进入 Transformer、LLM / RAG / Agent、定时任务和并发系统设计。
+真人 / 第一人称证据：作者以本人腾讯 AI 后端二面复盘发布并写“攒人品”，问题从项目 / 论文进入 Transformer、LLM Application、Agent 与系统设计，面试时长明确为 50 分钟。
 
 高价值问题：
 
-1. Transformer 的劣势是什么，Mamba 与 Transformer 各适合什么场景？
-2. LLM、Prompt、RAG、Agent 的现有实现和优化方式有哪些？
-3. Agent 有哪些真正适合的应用场景？
-4. 怎样设计增加 / 删除任务都为 O(1) 的定时任务触发器？
-5. Consistent Hashing 是什么，适合什么场景？
-6. 如何保证系统并发安全？
-7. 项目开发中最大的难点是什么？
-8. 怎样快速学习 Go 等新语言并实际使用？
+1. Transformer 的主要局限是什么，可以从哪些方向优化？
+2. Transformer 与 Mamba 的适用场景如何比较？
+3. LLM、Prompt Engineering、RAG、Agent 在真实项目里分别如何实现和优化？
+4. Agent 有哪些真正值得落地的应用场景？
+5. 怎样设计一个 Add / Delete 都为 O(1) 的定时任务触发器？
+6. Consistent Hashing 的原理和适用场景是什么？
+7. 怎样保证系统并发安全？
+8. 项目遇到的真实工程难点如何定位和解决？
+9. 如何快速学习并投入使用新的工程语言，例如 Go？
 
 ---
 
-## S106 阿里淘天｜AI 应用开发｜一面｜面试 2026-04-16｜HUMAN-A
+## S103 淘天｜AI 应用开发｜一面｜发布 2026-04-16｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/e6bd714a536b4723b67f97631b174f60
 
-真人 / 第一人称证据：候选人明确记录本人 AI 应用一面，面试官介绍部门后围绕其 Agent 项目持续追问，最后安排多轮现场 AI Coding。
+真人 / 第一人称证据：作者以本人淘天 AI 应用一面发布“发面经攒人品”，并记录现场压力和多个 AI Coding 环节；问题从 RAG / Harness 连续进入 Agent 自纠错、Sandbox、Prompt Attack、Multi-Agent 与真实用户量，符合目标岗位且非答案型文章。
 
 高价值问题：
 
-1. RAG 在 Agent 项目中承担什么职责？
-2. Harness Engineering 相比普通 Agent / ReAct 增加了什么？
-3. Hermes 一类 Agent 的自我纠正 / 演化机制怎样理解？
-4. LLM 内部知识与 Retrieval Evidence 冲突时应该怎么办？
-5. MCP 在项目里的真实用途和限制是什么？
-6. Sandbox 在 Agent 系统里解决什么风险？
-7. 客服场景中的 ReAct 与 Workflow 怎样取舍？
-8. Prompt Injection 怎样防？
-9. Multi-Agent 怎样设计，什么时候不值得拆？
-10. AI Coding：连续完成多轮限时需求实现。
+1. RAG 的完整链路是什么，当前项目为什么需要它？
+2. 如何理解 Agent Harness，它与 Agent Framework 的关系是什么？
+3. Hermes 类 Agent 的 Self-correct / Self-evolve 怎样实现？
+4. LLM 原有知识与 RAG 检索事实冲突时如何处理？
+5. MCP 在 Tool Integration 中解决什么问题？
+6. Agent Sandbox 怎样隔离代码 / Shell / 文件等高风险操作？
+7. 智能客服里 ReAct 与固定 Workflow 怎样选择？
+8. 当前 Agent 的主要限制和 Failure Case 是什么？
+9. Prompt Attack / Prompt Injection 如何防护？
+10. Multi-Agent 为什么需要，Agent 间如何协作？
+11. 项目是否真实部署、用户量多少？
+12. AI Coding：多轮现场编码任务，考察生成、修改和验证能力。
+
+去重：URL、作者与题序未在旧来源出现；与其它阿里系来源为独立候选流程。
 
 ---
 
-## S107 阿里国际｜AI 应用研发｜一面｜发布 2026-04-03｜HUMAN-A
+## S104 阿里国际｜AI 应用研发｜暑期一面｜发布 2026-04-03｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/6d98fa8b5b8e4832a982c0c12a0fdc6d
 
-真人 / 第一人称证据：作者明确以同岗本人一面分享并写“攒人品中”，问题从实习、Java / MQ / Redis 基础自然进入 RAG、Agent 和高流量系统设计。
+真人 / 第一人称证据：作者 `励志搞钱大鹅` 以“发一下问题给大家参考，攒攒人品”记录本人流程；与 `S261` 是同一真实候选人，但公司不同、招聘流程独立，因此分别计数。本场从项目验真进入 Java / JVM / RabbitMQ / Redis，再回到 RAG、系统并发与现场 Coding，是典型 AI Backend / AI Application Engineering 组合。
 
-高价值问题：
+整场技术问题：
 
-1. Java HashMap 在 JDK 8 中怎样实现？
-2. JVM Memory Area 怎样理解？
-3. AI Coding 生成代码时如何说明自己真正理解并验收过？
-4. RabbitMQ 怎样提高消息可靠性？
-5. Redis / ZSet 在项目里怎么用？
-6. RAG 的整体流程是什么，检索效果差的原因有哪些？
-7. Retrieval Poor 时可以从哪些层面优化？
-8. 请求量暴增时系统可能出现哪些瓶颈？
-9. 如果重新设计项目，会做哪些工程优化？
-10. Coding：Merge Intervals。
+1. 深挖项目业务和本人职责。
+2. Java HashMap 底层结构是什么，JDK 8 做了哪些优化？
+3. JVM Memory Area 有哪些，各自职责是什么？
+4. 项目主要是本人手写还是借助 AI Coding，边界怎样证明？
+5. 平时使用哪些 AI Coding Tool？
+6. RabbitMQ 在项目中的完整 Consumption Flow 是什么，怎样保证 Message Reliability / No-loss？
+7. Redis 在项目中使用在哪些场景？
+8. ZSet 的底层数据结构是什么？
+9. RAG 的整体流程是什么？
+10. RAG Retrieval Quality 很差可能有哪些原因，应怎样分层解决？
+11. 系统突然收到大量并发请求时，可能出现哪些瓶颈，怎样保护服务？
+12. 如果重新设计当前系统，最值得优化哪些地方？
+13. Coding：Merge Intervals。
+
+去重：URL、作者的阿里国际流程与“HashMap/JVM → RabbitMQ Reliability → Redis/ZSet → RAG Failure Attribution → High Concurrency → Merge Intervals”题序未在历史阿里国际样本形成同场重复。
 
 ---
 
-## S108 深信服｜AI 全栈开发｜二面｜面试 2026-06-23｜HUMAN-A
+## S105 深信服｜AI 全栈开发｜二面｜面试 2026-06-23｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/7fd4389e0a0844faa4dce49ba5e5c3f1
 
-真人 / 第一人称证据：作者以“面试全部面试官问题汇总 / 发面经攒人品”记录本人 6 月 23 日二面；问题从后端缓存与锁一路深挖到开源 Agent 的 Token 统计、Sub-agent 调度和容错。
+真人 / 第一人称证据：作者以本人二面复盘发布，评论区继续许愿 HR 面；面试官沿三层缓存、Redis / MySQL 一致性、分布式锁和开源 Agent 子 Agent Token 统计持续追问，项目链完整。
 
 高价值问题：
 
-1. 三层 Cache 为什么这样分层，多级缓存一致性怎样保证？
-2. Redis / MySQL 重启后数据不一致时怎样兜底修复？
-3. 缓存命中率如何测量，淘汰策略如何设计？
-4. 通用注解锁怎样避免和业务逻辑耦合，重复上锁 / 释放怎么处理？
-5. Main Agent 提前关闭、Sub-agent 延迟退出时 Token Usage 怎样补偿？
-6. Tool / Sub-agent 的 Token 统计适合在哪些 Runtime Event 埋点？
-7. 多个 Sub-agent 同时更新 Conversation Statistics 会不会存在竞争？
-8. 主 / 子 Agent 的调度模式和通信机制是什么？
-9. 第三方大模型如何适配不同思考模式？
-10. 接入 RAG Tool 后 Token 统计会新增哪些问题？
+1. 三层 Cache Hierarchy 为什么这样设计，重启后如何恢复状态？
+2. Redis 与 MySQL 不一致时如何修复，为什么某些链路选择先写 Redis？
+3. Cache Hit Rate 等项目指标如何证明有效而不是拍脑袋？
+4. 基于注解的锁封装如何避免通用性不足和 Deadlock？
+5. OAuth2 改造如何落到真实服务边界？
+6. Agent Token Accounting 为什么容易漏算 Sub-agent / Tool Call？
+7. Main Agent 断连但 Child Agent 延迟退出时，如何做补偿和资源回收？
+8. 多 Sub-agent 并行更新 Token / Usage 统计时怎样避免 Race Condition？
+9. 主 Agent 与 Sub-agent 如何通信并保持 Task State 一致？
+10. RAG Tool 加入后会给 Token Accounting / Context Tracking 带来哪些额外复杂度？
 
 ---
 
-## S109 OPPO｜后端开发（实际 Agent 方向）｜两轮技术面｜面试 2026-05-18｜HUMAN-A
+## S106 OPPO｜后端开发（实际 Agent 方向）｜两轮技术面｜面试 2026-05-18｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/09fd6466f3f64e7dbfb5a09ed9d660a4
 
@@ -311,28 +264,57 @@
 
 ---
 
-## S110 字节跳动｜Agent 开发｜二面｜面试 2026-06-23｜HUMAN-A
+## S107 字节跳动｜Agent 开发｜实习一面 + 二面（同一候选人同流程合并）｜发布 2026-06-17 / 06-23｜HUMAN-A
 
-来源：https://www.nowcoder.com/feed/main/detail/675f834ce9fa4a29b2c413d87241e6bb
+一面来源：https://www.nowcoder.com/feed/main/detail/075c06bf50a143a785c039f9951624f6
 
-真人 / 第一人称证据：作者以本人 Agent 二面复盘发布并标注“攒人品”，问题围绕 Coding Agent、Skill、Memory、Prompt、Cost、GraphRAG 与训练基础连续展开。
+二面来源：https://www.nowcoder.com/feed/main/detail/675f834ce9fa4a29b2c413d87241e6bb
 
-高价值问题：
+真人 / 第一人称证据：两篇均由作者 `Ariasu` 发布，作者主页只有这两篇求职记录；公司、岗位、项目和时间线连续，一面 6/17，二面 6/23，明确属于同一字节 Agent 招聘流程，因此只计一个 `Sxxx`。一面持续追 Context 三层压缩、会话恢复、Skill / Tool、Multi-Agent 与 RAG 增量知识，二面继续追 Memory 生长、Token 成本、GraphRAG 与 SFT / DPO / GRPO。
 
-1. Coding Agent 的完整链路是什么？
-2. Skill 如何分层、匹配和沉淀？
-3. Long-term / Short-term Memory 怎样设计？
-4. Memory 越积越多时如何处理？
-5. 模型怎样决定什么时候检索 Memory？
-6. Context Compression 在什么时候触发，Token Limit 怎样考虑？
-7. Dynamic Prompt 与 Static Prompt 有什么区别？
-8. 模型调用成本 / Token 怎样估算？
-9. GraphRAG 与向量检索有什么差异，什么 Query 更适合图推理？
-10. SFT / DPO / GRPO 等方法怎样理解？
+整场技术问题：
+
+### 一面
+
+1. Claude Code 与 Codex 各自有什么特点？
+2. 一次请求给模型的 Prompt / Context 由哪些部分组成，哪些必须注入？
+3. 自己的 Coding Agent 与 Claude Code / Codex 的本质差异是什么？
+4. Context Compression 怎样做？为什么采用三层压缩策略？
+5. 三层压缩各自压什么、在什么条件触发？
+6. 怎样发现“压缩过度已经伤害任务效果”，如何恢复？
+7. 用户在旧任务上继续加功能时，怎样恢复 Session，哪些状态必须重新注入？
+8. Tool Calling 完整链路是什么，Skill 能否替代 Tool？
+9. Skill 体系怎样设计，模型实际调用 Tool / Skill 的次数怎样观测？
+10. 复杂任务的 Planning 怎样生成和更新？
+11. Multi-Agent Orchestration 怎样实现，各 SubAgent 有何区别？
+12. SubAgent 是否应该共享全部 Tools，为什么？
+13. 第二个 RAG 项目的数据源是什么，入库前怎样清洗冗余噪声？
+14. PDF 各种结构怎样解析，是否做 Knowledge Extraction？
+15. Knowledge Base 增量更新怎样实现？
+16. 多文档内容冲突怎样解决，如何做版本控制和错误文档 Rollback？
+17. Coding：0/1 Grid 中判断左上到右下是否存在可行路径。
+
+### 二面
+
+18. Coding Agent 从输入到执行的完整 Chain 是什么？
+19. Skill 分层体系怎样实现，用户输入怎样匹配相关 Skill？
+20. Skill 是否可以从执行轨迹自动沉淀，还是只能人工构造？
+21. Long-term / Short-term Memory 怎样设计；为什么还区分 Static / Dynamic Long-term Memory？
+22. 每轮都可能写 Memory 时，怎样避免长期记忆快速膨胀？
+23. LLM 怎样决定是否 Recall 某条长期记忆？
+24. Context Compaction 的 Token Window / Trigger Threshold 怎样定，为什么？
+25. Dynamic Prompt 与 Static Prompt 有何区别？
+26. 模型底座如何选；生成约 1000 行代码需要多少 Token / Cost，是否真正量化过？
+27. 为什么 Agent Cost 会达到当前水平，哪些环节最耗 Token？
+28. 为什么当前项目需要 GraphRAG，而不是纯 Vector Retrieval？
+29. 什么问题才算 Multi-hop / Reasoning Query？
+30. Llama3、SFT、DPO、GRPO 等训练 / 对齐方法在当前项目里理解到什么深度，Data 与 Evaluation 怎样设计？
+
+去重：两 URL 均未在 `S001–S247` 出现；同作者同公司同项目明确合并。独特的“三层 Context Compression → 压缩质量检测 / Session 恢复 → Skill 调用次数 → RAG 版本回滚 → 二面 Memory Growth / Token Cost → GraphRAG → Alignment 方法”连续链未在历史字节来源出现。
 
 ---
 
-## S111 懂车帝｜Agent 开发｜一面｜发布 2026-08-13｜HUMAN-A
+## S108 懂车帝｜Agent 开发｜一面｜发布 2026-08-13｜HUMAN-A
 
 来源：https://api-cdn.nowcoder.com/feed/main/detail/8d84590d7efe4c78943b28708b4395f2
 
@@ -353,47 +335,56 @@
 
 ---
 
-## S112 字节跳动｜AI 应用开发｜一面｜面试 2026-08-06｜HUMAN-A
+## S109 字节跳动｜AI 应用开发｜一面｜面试 2026-08-06，发布 08-10｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/15af3788a038477bba99f2f9d94b2cef
 
-真人 / 第一人称证据：作者明确记录 8 月 6 日真人一面和面试体验；问题围绕自己的 Agent 学习、AI Coding、Tool / Memory / ReAct 设计连续展开。
+真人 / 第一人称证据：作者明确记录面试日期并描述面试官根据项目细节不断追问，整场从 Agent / RAG 项目进入 Failure、Cost 和 Observability，具有自然真人面试流。
 
 高价值问题：
 
-1. 为什么选择 AI Application / Agent 方向？
-2. 最近怎样学习 Agent 前沿、使用 AI Coding？
-3. 一个 Agent 的核心模块有哪些？
-4. Tool 应怎样设计，能力抽象和 Schema 怎么定义？
-5. Memory 有哪些类型，分别存什么？
-6. Memory 存储、过期和去重怎样设计？
-7. ReAct 与 Plan-Execute 怎样取舍？
-8. Agent 怎样避免循环或任务反复传递？
+1. 一个 Agent 系统真正需要哪些核心模块？
+2. Tool Schema、错误码和调用失败应该如何设计？
+3. Memory 有哪些类型，分别如何存储、过期和去重？
+4. ReAct 与 Plan-Execute 怎样选，如何防止循环和任务不断下推？
+5. Multi-Agent 怎样通信与同步 State？
+6. RAG 的完整 Offline / Online 链路是什么？
+7. Chunk Size / Overlap 应怎样通过实验确定？
+8. Vector Recall 不准时，Hybrid Retrieval 与 Rerank 怎样继续优化？
+9. RAG 与 Fine-tuning 的边界是什么？
+10. 模型超时 / 异常、Latency、Cost 与 Observability 怎样治理？
 
 ---
 
-## S113 快手｜Agent 开发｜日常实习一面｜发布 2026-08-13｜HUMAN-A
+## S110 快手｜Agent 开发｜日常实习一面｜发布 2026-08-13｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/ce1b038c57c44cc08464561a8cfa0434
 
-真人 / 第一人称证据：作者明确记录自己本来以为重点问 Agent，实际一路被追到后端基础，并坦言练手项目没有真实业务流量、回答用户量和调用量时“有点虚”；现场真实性很强。
+真人 / 第一人称证据：作者 `等个消息橘子` 的主页只有极少个人求职内容，不是面经内容账号。本场面试官先连续验真候选人的 Agent 项目是否来自实习、是否真正上线、有没有真实用户和调用量；作者直接承认项目主要是个人 / 校园场景、没有生产业务流量。之后问题从 Memory / Context / ReAct 进入 Go、Redis 与后端系统设计，现场验真痕迹很强。
 
-高价值问题：
+整场技术问题：
 
-1. Agent 项目是否真实上线，用户量和调用量是多少？
-2. 为什么需要 Long-term / Short-term Memory，什么信息分别进入两层？
-3. Context 不够时，截断、摘要压缩、Retrieval 怎样取舍？
-4. 项目是 ReAct 还是 Workflow，为什么？
-5. Tool 调用失败怎么处理？
-6. Retrieval 结果互相矛盾时模型应该信谁？
-7. Go Channel 与 Mutex、GMP Work Stealing 等并发基础怎样理解？
-8. Redis 为什么快，怎样设计实时模糊搜索？
-9. 扫码登录、Service Discovery、Nacos / Consul Heartbeat 怎样工作？
-10. Coding：100 个任务限制最大并发为 3，模拟并发调用外部接口。
+1. Agent 项目是不是实习项目，是否真正上线？
+2. 有没有真实用户、真实调用量或生产业务数据，如何证明项目不是 Demo？
+3. 为什么设计 Long-term Memory 与 Short-term Memory，两者各自解决什么问题？
+4. 哪些信息应该进入长期记忆，哪些只保留在当前会话 / 短期状态？
+5. Context Window 不够时，截断、摘要和 Retrieval 分别有什么代价，怎样选？
+6. 当前 Agent 使用 ReAct 还是 Workflow，为什么这样设计？
+7. Tool Call 失败、超时或返回异常时怎样处理？
+8. Retrieval 返回互相矛盾的证据时，模型应该信谁，如何做冲突消解和 Verification？
+9. Go Channel 是否线程安全，它与 Mutex 分别适合什么并发场景？
+10. GMP 调度怎样理解；当前 P 的本地队列为空时如何继续获取任务？
+11. Redis 为什么快，常见数据结构和典型场景有哪些？
+12. System Design：实现类似淘宝搜索框的实时模糊联想 / 自动补全。
+13. 二维码登录从生成二维码、扫码确认到 Web 端登录完成的完整链路是什么？
+14. Service Registration / Discovery 如何工作，Nacos / Consul 的 Heartbeat 与实例失效怎样处理？
+15. Coding / 并发题：有 100 个任务 ID，最多只允许 3 个任务同时调用外部 API，怎样实现并发控制？
+
+去重：另发现 `bec7cc3ac12c464eaa2361f99040ed1a` 明确以招聘账号“转 @等个消息橘子：快手 Agent 开发一面”的方式复用本帖，只作为转载证据、零贡献。当前原帖的“生产验真 → Memory / Context → ReAct → Tool Failure → Go Channel / GMP → Redis → 模糊搜索 → 二维码登录 → 服务发现 → 限并发”题序未在历史快手来源出现。
 
 ---
 
-## S114 百度｜Agent Harness｜秋招一面｜面试 2026-07-18，发布 2026-08-22｜HUMAN-A
+## S111 百度｜Agent Harness｜秋招一面｜面试 2026-07-18，发布 2026-08-22｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/878ede5477714cce9d6276e75e04ce0b
 
@@ -409,7 +400,7 @@
 
 ---
 
-## S115 成都晓多科技｜Agent 开发｜社招二面 + HR / 产品面｜发布 2026-08-23｜HUMAN-A
+## S112 成都晓多科技｜Agent 开发｜社招二面 + HR / 产品面｜发布 2026-08-23｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/46fb9f8bb8434687921f5363fe1db94f
 
@@ -430,7 +421,7 @@
 
 ---
 
-## S116 商汤 SenseTime｜AI 后端开发｜暑期二面 + 三面｜发布 2026-03-15｜HUMAN-A
+## S113 商汤 SenseTime｜AI 后端开发｜暑期二面 + 三面｜发布 2026-03-15｜HUMAN-A
 
 来源：https://www.nowcoder.com/discuss/862704816219328512
 
@@ -450,45 +441,42 @@
 
 ---
 
-## S117 快手｜AI 应用服务端｜秋招三面｜面试 2026-09-09｜HUMAN-A
+## S114 快手｜AI 应用服务端开发｜一面 + 二面 + 三面｜2026-08-26 / 09-01 / 09-09｜HUMAN-A
 
-来源：https://www.nowcoder.com/feed/main/detail/ef8b41f126664ff2879337d43889a4ee
+一面来源：https://www.nowcoder.com/feed/main/detail/1f6732ca32c74e17af502c71e77c8c59
 
-真人 / 第一人称证据：作者在 9 月 9 日当天面完后发布，明确写面试 30 多分钟、面试官体验和 Offer / 实习时间交流；技术问题围绕自己的 CR Agent 项目继续深挖。
+二面来源：https://www.nowcoder.com/feed/main/detail/2892c62d66b24268959644260a7d7044
 
-高价值问题：
+三面来源：https://www.nowcoder.com/feed/main/detail/ef8b41f126664ff2879337d43889a4ee
 
-1. CR Agent 为什么要做分布式？
-2. Agent 与 Agent 之间怎样通信？
-3. 出现异常情况后怎样保障 Agent 系统稳定？
-4. Redis Lua Script 如果包含过长的业务逻辑会发生什么？
-5. 什么逻辑适合放进 Lua，什么逻辑不适合？
-6. Coding：两道基础算法题，重点验证现场实现。
+真人 / 第一人称证据：三篇均由候选人 `27备战秋招` 发布，个人主页是可连续核验的本人求职 Timeline，并明确记录快手 `AI应用服务端`：8 月 26 日一面、9 月 1 日二面、9 月 9 日三面。作者在二面保留“Coding 虽做出但过程不好、感觉面试官态度变化”“SDD 被继续挑战”等现场状态；三面又记录面试官交流体感、到岗时间和其它 Offer，属于连续真人招聘流程而非题单整理。
 
----
+整场技术问题：
 
-# 本轮明确排除
+### 一面
 
-Batch 06 扩大搜索时，以下内容仍保持 **零贡献**：
+1. CR Agent 项目的业务背景、完整链路和本人职责是什么？
+2. Agent-to-Agent / A2A 与 MCP 分别解决什么问题，如何配合？
+3. Java 常见 Design Pattern 在当前工程里怎样实际使用？
+4. SDD / Spec-driven Development 怎样理解，怎样约束 AI Coding 或 Agent 开发？
+5. Coding：现场算法实现与复杂度说明。
+6. 日常写代码有多少使用 AI，形成了怎样的 AI-assisted Development 习惯？
 
-- 去哪儿等公司的 AI 自动面试 / AI 面：没有真人面试官，直接不满足 HUMAN-A；
-- “三年面试五年模拟”“面经合集”“含完整答案”“高频题解析”等专栏 / 二次整理；
-- 同一账号短时间批量发布多家公司、结构和措辞高度模板化，无法可靠确认候选人本人经历的帖子；
-- 与已有来源题序高度一致、只是替换公司 / 日期的疑似复制或再加工内容；
-- 传统 Java / Go / 数据开发 / 算法岗位，只因最后顺带问一两个 Agent 问题的场次；
-- AI 测试 / 测开、纯模型训练 / 算法、普通前后端等 Role Scope 外内容；
-- 只有搜索摘要或聚合页、原正文无法稳定核验的线索。
+### 二面
 
-# Batch 06 观察
+7. 继续深挖 CR Agent：真正的技术难点和业务价值是什么？
+8. 微软实习中的 Backend 工作是什么，哪些能力能迁移到 Agent Service？
+9. Coding：现场完成算法题；候选人自评最终写出，但过程不够顺畅。
+10. SDD 在真实项目中具体怎样落地，为什么面试官会继续挑战方案细节？
+11. 如何证明 Spec / Test / Review 确实约束了 AI 生成结果，而不是只加了一份文档？
 
-本批新增 `S095–S117` 共 **23 个 HUMAN-A 来源**，当前干净核心样本达到 **117 个**。
+### 三面
 
-这一轮出现了更稳定的信号：
+12. CR Agent 为什么需要 Distributed Architecture？
+13. 多 Agent 之间怎样通信，Agent-to-Agent Message / State 应怎样组织？
+14. 某个 Agent / Service 执行失败后，系统怎样保证整体 Stability 和恢复能力？
+15. Redis Lua 如果封装了过多业务逻辑，会带来什么维护、演进和可测试性问题？
+16. Coding：两道基础算法现场实现。
+17. 反问 / 招聘：团队业务方向、候选人的业务兴趣、其它 Offer 和春节后实习到岗时间。
 
-1. **来源仍未饱和。** 在 S001–S094 后继续做月份 × 公司 × 岗位 × 技术词回扫，仍能找到 20+ 个独立 HUMAN-A，而且 9 月 9 日当天仍有新的目标岗位真人三面发布。
-2. **AI Backend / Agent Backend 的基础工程权重很高。** Sharding、Transaction、Redis、Kafka、ThreadLocal、TCP / HTTPS、Go Runtime、Service Discovery 与 Agent / RAG 同场出现，不是传统后端样本混入造成的假频率。
-3. **Agent Runtime 更强调可恢复执行。** State Competition、Checkpoint Resume、Disconnect Recovery、Tool Failure、Interrupt、Sub-agent Accounting、Race Condition、Distributed Agent Failure 都来自真人追问。
-4. **RAG 继续从“会搭 Pipeline”转向“能解释选择并评估”。** OCR / Table、Hybrid Retrieval、Rerank、Vector DB、RRF、Dynamic Update、Retrieval Evaluation 反复出现。
-5. **项目验真是核心能力。** 面试官持续追真实用户 / QPS、指标来源、代码能否生产、本人贡献和 Failure Case；练手 Demo 虚构数据非常容易被追穿。
-
-停止条件不变：继续扩大 Recall，直到跨公司、岗位、月份、轮次和平台的多轮搜索都几乎不再产生新的、互不重复且可稳定核验的 HUMAN-A，并且新增来源的问题分布也开始稳定收敛；**不是达到某个 S 编号或 Batch 数就停止。**
+去重：已直接回读所有历史快手来源。本场独特的“CR Agent → A2A / MCP → Java Design Pattern → SDD → 二面微软 Backend + SDD 追问 → 三面 Distributed Agent / A2A Communication / Failure Stability / Lua 业务逻辑膨胀”的连续流程未在历史样本出现；三轮同作者同公司同岗位，主动合并。

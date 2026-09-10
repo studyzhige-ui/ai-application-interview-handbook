@@ -2,11 +2,9 @@
 
 采集日期：2026-09-09
 
-> 本批继续执行统一固定准入：**真人面试官 + 候选人本人第一人称 + 高信息密度 + AI Application / Agent 目标岗位 + 正文可稳定核验 + 非转载重复**。
->
-> 本轮继续扩大搜索 Recall，但没有为了数量降低门槛。搜索覆盖牛客公开原帖、企业 / 话题索引以及牛客之外的公开搜索结果；CSDN / 聚合站 / 题库站中大量“完整答案、高手解析、学员复盘、资源导流”内容全部排除。
->
-> 问题均为简洁转述，只保存面试研究所需的信息，不复制第三方正文。
+> **2026-09-10 全库同场去重 / 重编号版本。** 当前 `Sxxx` 为去重后的正式编号；同一实际面试只保留最早 canonical。若后期重复条目包含更完整复盘或额外轮次，完整内容已合并回最早 canonical 后再删除后期重复编号。
+> HUMAN-A / Role Scope Gate 不变；同一招聘流程中的不同实际轮次不会仅因属于同一流程而被删除。
+> 本批去重后当前保留 **23** 个正式来源。
 
 ---
 
@@ -112,23 +110,26 @@
 
 ---
 
-## S057 快手｜AI 应用开发｜留用实习一面｜2026-08-26｜HUMAN-A
+## S057 快手｜AI 应用开发｜留用实习一面｜发布 2026-08-26，35min｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/631e9b79e433415ca3dea24642f94b4c
 
-真人 / 第一人称证据：作者明确写出公司、岗位、35 分钟时长，并二次更新“第二天约二面、因没有转正 HC 拒绝继续”；真实性与时间线非常清晰。
+真人 / 第一人称证据：作者明确写公司、AI 应用开发岗位和 35 分钟时长；问题连续深挖本人智能体平台。次日作者二次编辑，记录已约二面但被告知没有转正 HC，因此主动拒绝二面，招聘时间线完整。
 
 高价值问题：
 
-1. 智能体平台如何接入 IM / 对话入口？
-2. Clarification / 反问机制是什么，什么时候触发？
-3. 一次完整问答链路如何流转？
-4. Intent Tree / Intent Classification 如何设计？
-5. 意图识别准确率如何评测？
-6. Evaluation Dataset 如何构建，规模多少，谁负责维护？
-7. MCP Tool 调用需要注意哪些 Failure Case？
-8. Tool 调用失败后如何恢复？
-9. 用户量、日会话量等真实规模如何影响 Agent Service 设计？
+1. 项目中真正与 AI 相关的部分是什么，另一个项目是否真的属于 Agent？
+2. 智能体平台以什么产品形态存在，是否接入 IM？
+3. Clarification / 反问什么时候触发，怎样实现？
+4. 从用户输入到最终回答的完整问答链路是什么？
+5. Intent Tree / Intent Recognition 怎样实现，准确率如何测？
+6. Evaluation Set 谁构建、数量多大、怎样证明代表真实业务？
+7. MCP Tool 使用时有哪些注意事项，调用失败如何处理？
+8. 真实用户规模、每日会话量是多少？
+9. 候选人是否真正做过模型训练 / 图像分类，项目边界在哪里？
+10. Coding：反转链表；平时如何使用 AI 学习。
+
+去重：URL 与“无转正 HC → 拒绝二面”的流程未在现有 Batch 出现；与其它快手 AI Application / Agent 样本作者和项目链不同。
 
 ---
 
@@ -211,66 +212,74 @@
 
 ---
 
-## S062 中兴通讯｜Agent 开发｜实习一面｜2026-05-21｜HUMAN-A
+## S062 中兴通讯｜Agent 开发｜实习一面凉经｜发布 2026-05-21｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/81ef46253510446d93530b20fcb0815f
 
-真人 / 第一人称证据：作者以“实习 Agent 开发一面凉经”发布，正文围绕自己的医疗科技实习持续追问 RAG 细节，并保留学校、毕业时间、实习时长等自然面试信息。
+真人 / 第一人称证据：作者为东南大学候选人，主页能看到连续个人求职记录；本帖明确是“实习 Agent 开发一面凉经 / 发面经攒人品”。面试官围绕候选人在北京医疗科技公司的 RAG 实习逐层挑战具体实现，尤其直接质疑其“>512 Token 存向量库、<512 存缓存”的设计是否能被检索，具有强项目验真痕迹。
 
 高价值问题：
 
-1. 从原始文本到企业 RAG Knowledge Base 的完整处理链路是什么？
-2. Chunk / Token 阈值与 Vector DB / Cache 的存储设计是否合理？
-3. 如果内容没有进入向量索引，查询时如何还能找到它？
-4. 用户自然语言表达高度变化时，Retrieval 稳定性如何保证？
-5. 文本是如何被 Embedding Model 转换成向量的？
-6. Embedding Model 如何选，是否需要 GPU？
-7. Knowledge Base 应部署在本地还是企业服务端？
-8. Knowledge Distillation 在应用工程中是什么？
-9. Skill 是什么，是否自己真正写过？
-10. Cursor / AI Coding 与独立编码能力如何平衡？
+1. 北京医疗科技实习实际做了什么，RAG Knowledge Base 从原始 Text 到可检索数据的完整流程是什么？
+2. 候选人所说“大于 512 Token 存向量数据库、小于 512 存缓存”具体是什么意思？如果某部分不进入 Vector DB，查询时如何找到？
+3. 用户 Natural Language 表达高度不确定时，RAG Response 的波动和错误怎样评估与治理？
+4. Retrieval 中的 Vector Distance 是否来自 Embedding Model，文本向量化过程怎样解释？
+5. 实际使用哪个 Embedding Model，为什么？
+6. 项目是否使用 GPU，公司是否有训练 / 推理资源，RAG 部署在本地还是企业服务器？
+7. Knowledge Distillation 是什么，为什么项目会使用？
+8. 是否写过 Skill，Skill 在当前 Agent 体系里是什么？
+9. 项目使用哪些语言和开发工具？除了 Cursor，候选人是否能独立编码？
+10. Cursor / AI Coding 与本人手写代码各自适合什么场景，怎样证明自己理解生成代码？
+11. 英语 / CET6 等沟通能力如何满足岗位需求？
+
+去重：URL 未在 `S001–S230` 出现；“512 Token → Vector DB / Cache 的设计被面试官反问检索闭环”是独特现场题序，历史中未发现同作者同流程或高相似复制。
 
 ---
 
-## S063 字节跳动｜Agent 全栈｜一面｜2026-06-23｜HUMAN-A
+## S063 字节跳动｜Agent 全栈开发｜一面｜面试 / 发布 2026-06-23｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/b62416eaa3764a9ba46269c0058019fd
 
-真人 / 第一人称证据：作者以“字节 Agent 全栈一面”发布并标注发面经，评论中补充自己最终凉经；问题按项目 → SQL → Agent → RAG → Multi-Agent → Coding 顺序展开。
+真人 / 第一人称证据：候选人以本人一面复盘发布，明确项目 `utbench`、实习 SQL 问题与两道现场 Coding；文末自评“细节没讲到位”，并写面试官也觉得总体还行，次日作者在评论区更新“凉经+1”。
 
 高价值问题：
 
-1. Agent / Coding Benchmark 如何衡量模型生成效果？
-2. SQL 多表查询和 Slow Query 如何定位与优化？
-3. Agent 如何产生 Tool Call，如何判断什么时候应该调用 Tool？
-4. MCP 解决了 Tool Integration 的什么问题？
-5. Context Window 满了以后有哪些 Compaction 方法？
-6. RAG 的完整 Retrieval / Embedding 链路是什么？
-7. Agent Memory 如何存储与管理？
-8. Multi-Agent 如何协作、传递 Context 与 Task State？
-9. Multi-Agent Workflow 和输出质量如何量化评估？
-10. Coding：Merge Intervals、LRU。
+1. `utbench` 如何衡量模型生成效果，Evaluation 指标怎样设计？
+2. 实习中的 SQL 多表查询 / Slow Query 是怎样定位和优化的？
+3. Agent 调用 Tool 的完整链路是什么，还有哪些调用方式？
+4. Agent 如何判断是否需要调用工具，MCP 解决了什么协议问题？
+5. Context Window 满后有哪些 Compression 策略，分别会丢什么信息？
+6. RAG 的完整链路和 Embedding / Vector Retrieval 如何实现？
+7. Agent Memory 如何管理，哪些状态存 Context、Cache 或持久化存储？
+8. Multi-Agent 如何协作、隔离上下文并传递 Task State？
+9. Multi-Agent Workflow 与生成质量如何量化 Evaluation？
+10. Coding：Merge Intervals；实现带输入输出的 LRU Cache，并满足平均 `O(1)`。
+
+去重：URL 与独特项目词 `utbench` 均未在现有来源出现；与已有字节 Agent / AI 全栈面经题序、项目语义和作者流程均不同。
 
 ---
 
-## S064 字节跳动｜大模型应用开发｜实习一面｜2026-03-21｜HUMAN-A
+## S064 字节跳动｜大模型应用开发｜一面｜发布 2026-03-21｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/95b8c6edf3ad46818b94605675a12089
 
-真人 / 第一人称证据：作者明确写一面 1 小时，并以“给我面没招了、发面经攒人品”发布；问题横跨本人项目、FastAPI、Python Async、RAG 和 Multi-Agent。
+真人 / 第一人称证据：这是与 S184 不同候选人的独立场次；作者以本人项目为主线连续回答 RAG、Agent、FastAPI、Python Concurrency 与 Coding，信息密度很高。
 
 高价值问题：
 
-1. Recursive Character Splitter 相比固定长度 Chunk 的优势是什么？
-2. Milvus 中 Collection 与 Partition 如何用于分类检索？
-3. Agent Reflection 在应用中如何落地？
-4. Function Calling 从模型生成参数到本地执行再回传结果的完整链路是什么？
-5. FastAPI Middleware 与 Dependency Injection 分别适合处理什么逻辑？
-6. Python multiprocessing 与 threading 如何组合提升吞吐？
-7. `asyncio.gather` 与 `as_completed` 有何差异，单个模型超时如何降级？
-8. Prompt / Context 过长时，除了截断还可以怎样治理？
-9. Multi-Agent State Sync 的主要难点是什么？
-10. A2A 如何避免两个 Agent 递归对话？
+1. Recursive Character Splitter 与 Fixed Chunk 有什么差异？
+2. Milvus Collection 与 Partition / Metadata Filter 怎样使用？
+3. Counseling Agent 中 Reflection 怎样实现？
+4. 工业图纸类 Hallucination 怎样通过 Prompt / Post-processing 控制？
+5. Function Calling 从模型 JSON 到代码执行再回填结果的完整过程是什么？
+6. vLLM PagedAttention 怎样理解？
+7. FastAPI Middleware 与 Dependency Injection 的差异是什么？
+8. `multiprocessing` 与 `threading` 怎样选择？
+9. `asyncio.gather` 与 `as_completed` 有什么差异，Timeout / Fallback 怎样处理？
+10. Context Overflow 除了直接 Truncate 还能怎样治理？
+11. Multi-Agent State 怎样同步？
+12. A2A Communication 怎样避免递归对话 / 无限互调？
+13. Coding：LRU。
 
 ---
 
@@ -278,19 +287,22 @@
 
 来源：https://www.nowcoder.com/feed/main/detail/eccea78e38b447c9a3ae73570c5d00b6
 
-真人 / 第一人称证据：作者明确记录二面日期、整体交流体感并以个人面经发布；问题围绕本人学校项目与 Agent 设计逐层讨论。
+真人 / 第一人称证据：作者“找工小蜜蜂”明确给出二面日期 7 月 18 日，并写整场基本在与面试官聊天；评论继续围绕岗位、项目和后续流程核验。作者主页还能看到更早一次字节暑期 Agent 一面凉经，当前场次时间更晚且为独立流程，未与旧流程混算。
 
 高价值问题：
 
-1. Agent Framework 选型应该看什么，为什么不能只会 LangChain？
-2. Agent 的核心组件和 Runtime Mechanism 如何描述？
-3. Planning 应由 Framework 还是 Model 承担？
-4. Planning 有哪些实现范式？
-5. Short-term / Long-term Memory 分别解决什么问题？
-6. Function Call / Tool Result 是否应该进入短期会话历史，为什么？
-7. MCP / 自定义 Tool 的工程收益和代价是什么？
-8. RAG Recall 参数如何调优并验证？
-9. Python 基础与 Coding 如何结合实际工程表达？
+1. 两个项目是不是学校项目，硕士期间实验室真实做了什么？
+2. 为什么做当前 Agent 项目，项目出发点是什么？
+3. Agent Framework 如何选型，除了 LangChain 还调研过什么？
+4. Agent 的核心组成与运行机制怎样解释？
+5. Planning 主要由 Agent Framework 还是模型承担，常见实现方式有哪些？
+6. Short-term / Long-term Memory 的边界是什么？
+7. Function Call 的内容是否应该写入短期记忆；如果不写会产生什么问题？
+8. MCP / 自写 Tool 分别怎样实现，大模型 Tool 机制带来什么价值？
+9. RAG Retrieval 实际调过哪些召回参数，如何判断调优有效？
+10. Python 基础与 Coding：合并两个有序数组。
+
+去重：当前二面与作者更早的“暑期一面凉经”属于不同时间段、不同招聘流程；URL、题序和本轮项目问法未在正式来源中命中，因此按独立招聘流程计数。
 
 ---
 
@@ -315,22 +327,26 @@
 
 ---
 
-## S067 OPPO｜AI 全栈｜一面｜面试 2026-08-13｜HUMAN-A
+## S067 OPPO｜AI 全栈开发｜一面｜面试 / 发布 2026-08-13｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/cf5a82411c1e473385d8fcae6c250a6e
 
-真人 / 第一人称证据：作者明确写 8 月 13 日、第一次正式面试，并保留自己在 HTTP 状态码处卡壳、面试官切换到会的问题、对面试氛围的感受和反问内容。
+真人 / 第一人称证据：作者明确写这是本人第一次正式面试，记录自己 HTTP 状态码卡壳、面试官会换成候选人更熟悉的问题、整体氛围较融洽；反问还直接确认该岗位前端、后端和 Agent 的能力比例，Role Scope 清晰。
 
 高价值问题：
 
-1. 用户 Prompt 进入系统后到前端输出，中间经历哪些 AI / Backend 处理？
-2. 为什么按 Paragraph Chunk，效果如何验证？
-3. 如何判断证据不足并让系统拒答？
-4. 为什么选择 Multi-Agent，而不是一个大 Agent？
-5. Short-term / Long-term Memory 如何理解？
-6. 常见 HTTP Status Code 在 Service Debugging 中意味着什么？
-7. Hallucination 如何发现和缓解？
-8. AI 全栈岗位里前端性能问题如何定位和优化？
+1. 从用户输入 Prompt 到前端输出，AI Full-stack 链路中做了哪些处理？
+2. 为什么按段落切 Chunk，实际 Retrieval 效果怎样？
+3. 怎样判断 Evidence 不足并拒答，而不是让模型硬生成？
+4. 为什么一个项目需要 Multi-Agent，而不是一个更大的单 Agent？
+5. Short-term / Long-term Memory 怎样理解？
+6. 常见 HTTP Status Code 及工程语义是什么？
+7. 实际遇到 Hallucination 时怎样处理？
+8. 全栈中自己最擅长哪一侧，如何用真实项目证明？
+9. 页面卡顿如何定位性能瓶颈并优化？
+10. 岗位如何平衡 Frontend / Backend / Agent 能力？
+
+去重：URL、候选人“处女面”时间线及项目追问未在现有 OPPO 样本中出现；与 `S106` 为不同候选人、不同流程。
 
 ---
 
@@ -375,24 +391,24 @@
 
 ---
 
-## S070 阿里云｜后端 Agent 开发｜实习一面｜2026-05-04｜HUMAN-A
+## S070 阿里云｜后端 Agent 开发｜实习一面｜发布 2026-05-04｜HUMAN-A
 
 来源：https://www.nowcoder.com/feed/main/detail/10dc395d6a704e1ea22a8fbc0049c7da
 
-真人 / 第一人称证据：作者明确写“给我面没招了”，以本人后端 Agent 实习一面发布；问题集中验证 Agent Backend 所需的 OS / Network / MySQL / Redis Production 基础。
+真人 / 第一人称证据：作者以本人后端 Agent 实习一面发布并写“给我面没招了”；整场几乎都是系统 / 数据库 / Redis 基础，评论区甚至有人问“这问了 Agent 吗”，正是目标 Agent Backend 真实基础权重证据。
 
 高价值问题：
 
-1. Connect / Read / Write 等 Timeout 分别解决什么问题？
+1. Connect / Read / Write 等常见 Timeout 分别解决什么问题？
 2. select / poll / epoll 的核心差异是什么？
-3. CPU Load 与 CPU Usage 不一致时如何诊断？
-4. 磁盘满但找不到大文件时如何排查？
-5. OS Memory Reclaim / Threshold 设置错误会导致什么？
-6. MySQL Back-to-table 如何产生，怎样用 Covering Index 等方式避免？
-7. DB Connection Pool 打满如何发现与处理？
-8. SQL Injection 如何防？Auto Increment ID 到上限怎么办？
-9. Redis + Lua 如何保证库存扣减等多步骤原子性？
-10. Cache Logical Expiry、Physical Expiry、Distributed Lock 与 Sliding Window Rate Limit 如何设计？
+3. Red-Black Tree 的特点是什么，OS 哪些机制会用到它？
+4. CPU Load 与 CPU Usage 有什么区别；低利用率高 Load 如何排查？
+5. `df` 显示磁盘满但找不到大文件可能是什么原因？
+6. OS Memory Reclaim 怎么工作，阈值不合理会有什么后果？
+7. MySQL Back-to-table 如何发生、如何避免；连接数打满怎样治理？
+8. SQL Injection 如何避免；自增 ID 达到上限会怎样？
+9. Redis + Lua 怎样保证秒杀扣减原子性，Logical Expire 与 Physical Expire 怎么选？
+10. Redis Penetration、Redisson Lock、Sliding-window Rate Limit 怎样设计？
 
 ---
 
