@@ -1,0 +1,460 @@
+# AI Backend Engineering Canonical Questions — S001–S279 全库纵向扫描 v1
+
+更新日期：2026-09-10
+
+> 本文件承接新十板块体系中的通用 AI Service / Backend Engineering。MySQL、Redis、Vector DB 的内部机制仍归各自独立模块；端到端大型场景归 `System Design`。
+
+## 1. 当前扫描结论
+
+- Canonical Questions：**38** 道
+- 证据范围：仅 `S001–S279`
+- 频率口径：独立 HUMAN-A 来源数
+- 当前版本：`v1`
+- 说明：Java / Go 生态题仍保留为真实市场信号，但不等价于未来 Python 主线课程必须按相同篇幅教学。
+
+这部分是旧分类里最容易被漏掉的一层。HUMAN-A 明确显示：AI Application / Agent 岗并不是“模型 API + RAG 框架”，而是完整 Backend Service Engineering。
+
+---
+
+## 2. Network / Protocol / Streaming
+
+### AIBE-001 · 从输入 URL 到服务返回，一次 HTTP 请求的 DNS、连接、协议与服务端处理链路怎样发生？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：HTTP Request Lifecycle
+- **Question Type**：Concept / Deep Dive
+- **Depth**：L2
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S013`, `S020`, `S096`, `S117`, `S124`, `S129`, `S202`, `S273`
+
+### AIBE-002 · HTTP 与 HTTPS 的核心差异是什么？TLS 握手、证书信任链、对称 / 非对称加密怎样协作？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：HTTPS / TLS
+- **Question Type**：Concept / Why
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**9**
+- **Evidence Sources**：`S089`, `S096`, `S117`, `S137`, `S170`, `S200`, `S202`, `S251`, `S269`
+
+### AIBE-003 · HTTP/1.1、HTTP/2、HTTP/3 与 QUIC 的核心差异是什么？AI Streaming Service 为什么关心这些差异？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：HTTP Versions / QUIC
+- **Question Type**：Comparison / Why
+- **Depth**：L2
+- **Interview Heat**：🔥🔥
+- **Source Count**：**4**
+- **Evidence Sources**：`S149`, `S156`, `S200`, `S224`
+
+### AIBE-004 · TCP 与 UDP 有什么差异？可靠传输、顺序、连接语义和实时性怎样影响服务选型？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：TCP / UDP
+- **Question Type**：Comparison
+- **Depth**：L2
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**12**
+- **Evidence Sources**：`S021`, `S089`, `S110`, `S129`, `S133`, `S159`, `S170`, `S173`, `S229`, `S234`, `S251`, `S273`
+
+### AIBE-005 · TCP 三次握手、四次挥手、重传与拥塞控制为什么这样设计？异常断连怎样被感知？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：TCP Reliability
+- **Question Type**：Why / Deep Dive
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**12**
+- **Evidence Sources**：`S013`, `S089`, `S110`, `S129`, `S133`, `S170`, `S173`, `S175`, `S214`, `S229`, `S251`, `S273`
+
+### AIBE-006 · SSE 与 WebSocket 的通信模型、方向、连接维护和适用场景有什么差异？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：FastAPI, Agent Harness / Runtime
+- **Topic**：SSE / WebSocket
+- **Question Type**：Comparison / Trade-off
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**13**
+- **Evidence Sources**：`S033`, `S035`, `S066`, `S083`, `S087`, `S098`, `S156`, `S164`, `S170`, `S171`, `S181`, `S214`, `S240`
+
+### AIBE-007 · Streaming Connection 断开后怎样做 Heartbeat、Reconnect、Resume 与状态补偿？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Agent Harness / Runtime
+- **Topic**：Streaming Reliability
+- **Question Type**：Troubleshoot / System Design
+- **Depth**：L4
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S035`, `S089`, `S156`
+
+### AIBE-008 · HTTP、RPC / gRPC 和 MQ 在跨服务通信中怎样选择？延迟、耦合、Schema、可靠性与演进成本分别是什么？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Service Communication
+- **Question Type**：Comparison / Trade-off
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**5**
+- **Evidence Sources**：`S088`, `S129`, `S185`, `S258`, `S273`
+
+---
+
+## 3. Concurrency / Async / Runtime
+
+### AIBE-009 · Process、Thread、Coroutine 的核心区别是什么？上下文切换、资源隔离与并发模型怎样影响 AI Backend？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Python
+- **Topic**：Process / Thread / Coroutine
+- **Question Type**：Comparison
+- **Depth**：L2
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**12**
+- **Evidence Sources**：`S021`, `S064`, `S129`, `S131`, `S159`, `S166`, `S173`, `S175`, `S184`, `S195`, `S234`, `S269`
+
+### AIBE-010 · Thread Pool 的核心参数、任务流转、拒绝策略和线程数应该怎样设计？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Thread Pool
+- **Question Type**：Concept / System Design
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**12**
+- **Evidence Sources**：`S104`, `S116`, `S137`, `S145`, `S192`, `S193`, `S198`, `S202`, `S214`, `S216`, `S232`, `S277`
+
+### AIBE-011 · 高并发 Producer / Consumer 或任务执行模型怎样设计 Queue、并发上限和 Backpressure？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Producer / Consumer / Backpressure
+- **Question Type**：System Design
+- **Depth**：L4
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S097`, `S214`, `S279`
+
+### AIBE-012 · AI / LLM I/O 为什么适合异步非阻塞调用？同步 / 异步、Event Loop 与 Long-running Task 怎样取舍？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Python, FastAPI, Agent Harness / Runtime
+- **Topic**：Async Service
+- **Question Type**：Why / Trade-off
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**7**
+- **Evidence Sources**：`S075`, `S086`, `S184`, `S205`, `S214`, `S241`, `S256`
+
+### AIBE-013 · 如何限制并发调用外部 API，避免 Connection Pool、Downstream 或模型服务被打满？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Concurrency Control
+- **Question Type**：System Design / Reliability
+- **Depth**：L4
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S110`, `S198`, `S209`
+
+---
+
+## 4. Messaging / Reliability / Flow Control
+
+### AIBE-014 · MQ 在 AI Backend / Agent 异步链路中为什么存在？相比直接写数据库或同步 RPC，它解决什么问题？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Message Queue
+- **Question Type**：Why / Comparison
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**11**
+- **Evidence Sources**：`S018`, `S023`, `S081`, `S104`, `S138`, `S147`, `S164`, `S172`, `S195`, `S203`, `S277`
+
+### AIBE-015 · MQ 怎样保证消息尽量不丢、避免重复消费，并处理 Producer / Broker / Consumer Failure？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：MQ Reliability
+- **Question Type**：Troubleshoot / Reliability
+- **Depth**：L4
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**12**
+- **Evidence Sources**：`S023`, `S079`, `S100`, `S104`, `S138`, `S147`, `S165`, `S199`, `S232`, `S262`, `S277`, `S279`
+
+### AIBE-016 · Kafka Partition、Consumer Group、顺序性与 Backlog 怎样理解？积压时如何定位流量、分区和消费能力瓶颈？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Kafka
+- **Question Type**：Concept / Troubleshoot
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**7**
+- **Evidence Sources**：`S100`, `S136`, `S165`, `S199`, `S232`, `S274`, `S279`
+
+### AIBE-017 · Rate Limit 常见算法怎样比较？Single-node、Distributed、User / Tenant / Token Budget 限流怎样设计？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Redis, Agent Harness / Runtime
+- **Topic**：Rate Limiting
+- **Question Type**：Comparison / System Design
+- **Depth**：L4
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**10**
+- **Evidence Sources**：`S069`, `S079`, `S084`, `S198`, `S201`, `S209`, `S247`, `S270`, `S276`, `S274`
+
+### AIBE-018 · Retry、Circuit Breaker、Degradation 与 Fallback 分别解决什么问题？怎样避免重试风暴和级联故障？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Agent Harness / Runtime
+- **Topic**：Resilience
+- **Question Type**：Comparison / Reliability
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**9**
+- **Evidence Sources**：`S075`, `S079`, `S092`, `S109`, `S144`, `S154`, `S174`, `S198`, `S276`
+
+### AIBE-019 · 有副作用的请求怎样设计 Idempotency？Retry / Timeout / Crash 后怎样避免重复扣款、下单或执行？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：MySQL, Redis, Agent Harness / Runtime
+- **Topic**：Idempotency
+- **Question Type**：System Design / Reliability
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S035`, `S091`, `S093`, `S147`, `S158`, `S165`, `S262`, `S279`
+
+### AIBE-020 · Database + Cache 双写怎样保证最终一致性？Cache Aside、删除缓存、补偿和 Failure Window 怎样理解？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：MySQL, Redis
+- **Topic**：Data Consistency / Cache Architecture
+- **Question Type**：System Design / Troubleshoot
+- **Depth**：L4
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**20**
+- **Evidence Sources**：`S010`, `S023`, `S090`, `S093`, `S105`, `S118`, `S134`, `S135`, `S147`, `S148`, `S154`, `S171`, `S191`, `S194`, `S198`, `S201`, `S212`, `S214`, `S262`, `S266`
+
+> 归属修正：旧 `mysql.md` / `redis.md` 中存在同语义重复条目；新体系最终以本题作为 Primary Canonical，两个存储模块只保留各自内部机制并通过 Related Modules 关联。
+
+---
+
+## 5. API / Auth / Distributed Service
+
+### AIBE-021 · 一个 Production REST API 应怎样设计 Method、Error、Idempotency、Versioning 与演进边界？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：API Design
+- **Question Type**：System Design
+- **Depth**：L3
+- **Interview Heat**：🔥
+- **Source Count**：**2**
+- **Evidence Sources**：`S091`, `S203`
+
+### AIBE-022 · Authentication 与 Authorization 怎样区分？Access Token / Refresh Token、Session、OAuth2 和服务端权限边界怎样设计？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Redis, Agent Harness / Runtime
+- **Topic**：Auth / Permission
+- **Question Type**：Concept / System Design
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S035`, `S105`, `S119`, `S171`, `S183`, `S206`, `S254`, `S268`
+
+### AIBE-023 · 多实例 Session / Token 状态怎样共享与路由？服务无状态化与 Sticky Session 怎样取舍？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Redis, Agent Harness / Runtime
+- **Topic**：Session / Routing
+- **Question Type**：System Design
+- **Depth**：L4
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S171`, `S181`, `S229`
+
+### AIBE-024 · Service Discovery 与 Load Balancing 怎样工作？DNS / Nginx / Registry / Heartbeat 的边界是什么？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Service Discovery / Load Balancing
+- **Question Type**：Concept / System Design
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**5**
+- **Evidence Sources**：`S096`, `S110`, `S112`, `S188`, `S229`
+
+### AIBE-025 · Global Unique ID 怎样生成？Snowflake、自增 ID、随机 ID 的唯一性、趋势递增与可用性如何权衡？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：MySQL
+- **Topic**：Distributed ID
+- **Question Type**：System Design / Trade-off
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**4**
+- **Evidence Sources**：`S013`, `S086`, `S089`, `S253`
+
+---
+
+## 6. Deployment / Observability / Operations
+
+### AIBE-026 · Linux 线上服务出现 CPU、Memory、Disk、Port / Process 异常时怎样系统排查？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Linux Troubleshooting
+- **Question Type**：Troubleshoot
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**6**
+- **Evidence Sources**：`S070`, `S129`, `S178`, `S183`, `S206`, `S241`
+
+### AIBE-027 · Docker / Container 解决什么问题？Container 与 Host 的 Process、Network、Filesystem、Resource Isolation 有什么边界？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Docker / Container
+- **Question Type**：Concept / Comparison
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**6**
+- **Evidence Sources**：`S037`, `S183`, `S187`, `S206`, `S241`, `S254`
+
+### AIBE-028 · Kubernetes 在 AI Service / Agent Backend 中承担哪些 Deployment、Scaling、Isolation 与 Availability 能力？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Kubernetes
+- **Question Type**：Concept / System Design
+- **Depth**：L3
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S037`, `S187`, `S241`
+
+### AIBE-029 · Production Observability 应如何组织 Metrics、Log、Trace？怎样从一次请求定位到具体服务 / 节点故障？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Agent Harness / Runtime
+- **Topic**：Observability
+- **Question Type**：Troubleshoot / System Design
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S066`, `S108`, `S109`, `S146`, `S156`, `S183`, `S240`, `S242`
+
+### AIBE-030 · Configuration Center / Dynamic Config 怎样实现优先级、热更新、监听、失败回退与版本治理？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Configuration Management
+- **Question Type**：System Design / Reliability
+- **Depth**：L4
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S036`, `S051`, `S088`
+
+### AIBE-031 · Monolith 到 Microservice 应怎样拆边界？DDD、Gateway、RPC / MQ、Config、Transaction 与 Observability 如何协同？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Microservice / DDD
+- **Question Type**：System Design
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**5**
+- **Evidence Sources**：`S051`, `S053`, `S171`, `S172`, `S203`
+
+---
+
+## 7. Backend Ecosystem Signals
+
+### AIBE-032 · Spring / Spring Boot 的 Bean Lifecycle、Dependency Injection、AOP / Proxy 与 MVC Request Flow 怎样工作？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Java / Spring
+- **Question Type**：Concept / Deep Dive
+- **Language / Ecosystem**：Java / Spring
+- **Depth**：L2
+- **Interview Heat**：🔥🔥
+- **Source Count**：**6**
+- **Evidence Sources**：`S116`, `S172`, `S188`, `S191`, `S203`, `S232`
+
+### AIBE-033 · Java 并发中的 `synchronized`、`ReentrantLock`、CAS / AQS 与 Concurrent Collection 怎样选择？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Java Concurrency
+- **Question Type**：Comparison / Deep Dive
+- **Language / Ecosystem**：Java
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S025`, `S116`, `S133`, `S137`, `S188`, `S192`, `S214`, `S232`
+
+### AIBE-034 · JVM Memory Area、Class Loading 与 GC 怎样工作？OOM / Memory Leak 出现时如何定位？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：JVM Runtime
+- **Question Type**：Concept / Troubleshoot
+- **Language / Ecosystem**：Java / JVM
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**11**
+- **Evidence Sources**：`S104`, `S116`, `S125`, `S145`, `S152`, `S159`, `S174`, `S188`, `S192`, `S216`, `S229`
+
+### AIBE-035 · Java HashMap / ConcurrentHashMap 的底层结构、Resize、树化与并发安全怎样理解？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Java Collection
+- **Question Type**：Concept / Deep Dive
+- **Language / Ecosystem**：Java
+- **Depth**：L2
+- **Interview Heat**：🔥🔥
+- **Source Count**：**7**
+- **Evidence Sources**：`S117`, `S145`, `S188`, `S192`, `S202`, `S214`, `S232`
+
+### AIBE-036 · ThreadLocal 的实现、生命周期和 Memory Leak 风险是什么？在线程池中怎样正确清理？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：ThreadLocal
+- **Question Type**：Concept / Troubleshoot
+- **Language / Ecosystem**：Java
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S020`, `S089`, `S091`, `S137`, `S185`, `S191`, `S214`, `S232`
+
+### AIBE-037 · Go Goroutine / GMP / Channel 与 Thread / Mutex 的核心差异是什么？Runtime 怎样调度大量并发任务？
+
+- **Primary Module**：AI Backend Engineering
+- **Topic**：Go Runtime
+- **Question Type**：Concept / Comparison
+- **Language / Ecosystem**：Go
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**7**
+- **Evidence Sources**：`S110`, `S166`, `S170`, `S188`, `S195`, `S214`, `S259`
+
+### AIBE-038 · SSRF、CSRF、SQL Injection、XSS、Reverse Shell 与 Container Escape 等常见安全风险怎样理解和防护？
+
+- **Primary Module**：AI Backend Engineering
+- **Related Modules**：Agent Harness / Runtime
+- **Topic**：Backend Security
+- **Question Type**：Concept / Security / System Design
+- **Depth**：L4
+- **Interview Heat**：🔥
+- **Source Count**：**3**
+- **Evidence Sources**：`S089`, `S254`, `S270`
+
+---
+
+## 8. 对新课程结构的直接信号
+
+旧分类把很多问题分散在 MySQL、Redis、Agent 或“支持模块”里，容易掩盖一个事实：**AI Backend Engineering 本身就是独立主干。**
+
+从真人面经看，应该单独形成至少四层能力：
+
+```text
+Protocol / Streaming
+        ↓
+Concurrency / Async / MQ
+        ↓
+Reliability / Idempotency / Rate Limit / Consistency
+        ↓
+Deployment / Observability / Distributed Service
+```
+
+MySQL、Redis 作为后续独立存储模块再深入内部机制；这样才和用户确定的新学习顺序一致。
