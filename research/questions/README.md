@@ -66,10 +66,14 @@ System Design
 - HUMAN-A：`S001–S279`
 - Batch：`batch-01.md` ～ `batch-26.md`
 - 主动采集：已冻结
-- 十板块全库纵向扫描：已完成第一轮
-- Primary-owned ACTIVE Canonical：**231**
+- 十板块全库纵向扫描：**10 / 10 完成**
+- 十板块 v2 Primary Module 归属审计：**10 / 10 完成**
+- Primary-owned ACTIVE Canonical：**230**
+- MOVED 旧分类映射：**22**
 
-`231` 不是最终发布版的全局题数。下一阶段仍需做跨模块 Merge / Split 与 Evidence Audit。
+因此，第一阶段现在才正式完成。
+
+`230` 不是最终发布版的全局独立问题数。第二阶段仍需做跨模块 Global Merge / Split、Evidence 一致性校验、频率 / 公司 / 岗位 / 轮次统计、追问链与课程覆盖分析。
 
 详细状态见：
 
