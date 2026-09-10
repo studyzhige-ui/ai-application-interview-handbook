@@ -1,4 +1,4 @@
-# Vector DB Canonical Questions — S001–S279 全库纵向扫描 v2
+# Vector DB Canonical Questions — S001–S279 全库纵向扫描 v3
 
 更新日期：2026-09-10
 
@@ -8,18 +8,17 @@
 
 ## 1. 当前扫描结论
 
-- ACTIVE Canonical Questions：**13**
-- MOVED：**10**
+- ACTIVE Canonical Questions：**12**
+- MOVED：**11**
 - 证据范围：仅 `S001–S279`
-- 当前版本：`v2`（十板块归属审计版）
+- 当前版本：`v3`（Global Merge / Split Audit）
 
 ### 高频信号
 
-- `VDB-010` · 15：Milvus / FAISS / pgvector / ES Vector 选型
+- `VDB-009` · 18：Vector Storage / Product / Architecture Selection
 - `VDB-005` · 11：HNSW 原理
 - `VDB-004` · 10：Vector Index 选型
 - `VDB-007` · 10：HNSW vs IVF
-- `VDB-009` · 8：为什么需要 Vector DB / 什么时候 pgvector 或 FAISS 足够
 - `VDB-020` · 8：Index Lifecycle / Rebuild / Incremental Update
 
 ---
@@ -77,19 +76,12 @@
 - **Evidence Sources**：`S037`, `S064`, `S101`, `S136`, `S206`, `S275`
 - **Related Modules**：RAG
 
-### VDB-009 · 为什么需要独立 Vector DB？MySQL / PostgreSQL + pgvector、本地 FAISS 与专用 Vector DB 各自适合什么规模？
-- **Topic**：Storage Selection
-- **Question Type**：Comparison / System Design
+### VDB-009 · 为什么需要独立 Vector DB？Milvus、FAISS、pgvector、Elasticsearch Vector 等方案在 Library、DB Extension、Search Engine、专用 Vector DB 之间怎样选？
+- **Topic**：Vector Storage / Product / Architecture Selection
+- **Question Type**：Comparison / System Design / Project
 - **Depth**：L4
-- **Source Count**：**8**
-- **Evidence Sources**：`S022`, `S101`, `S136`, `S211`, `S212`, `S249`, `S267`, `S275`
-
-### VDB-010 · Milvus、FAISS、pgvector、Elasticsearch Vector 等方案怎样选？Library、DB Extension、Search Engine、Vector DB 的边界是什么？
-- **Topic**：Product / Architecture Selection
-- **Question Type**：Comparison / Project
-- **Depth**：L4
-- **Source Count**：**15**
-- **Evidence Sources**：`S004`, `S022`, `S054`, `S064`, `S095`, `S101`, `S109`, `S125`, `S136`, `S184`, `S211`, `S212`, `S251`, `S255`, `S277`
+- **Source Count**：**18**
+- **Evidence Sources**：`S004`, `S022`, `S054`, `S064`, `S095`, `S101`, `S109`, `S125`, `S136`, `S184`, `S211`, `S212`, `S249`, `S251`, `S255`, `S267`, `S275`, `S277`
 
 ### VDB-011 · Vector Database 的 Collection / Partition / Schema / Primary Key / Metadata 应怎样建模？
 - **Topic**：Vector Data Modeling
@@ -124,11 +116,12 @@
 
 ---
 
-## 3. MOVED：新十板块归属修正
+## 3. MOVED：十板块 / Global Audit 归属修正
 
 | Legacy QID | 原问题 | 新 Primary Canonical |
 |---|---|---|
 | `VDB-001` | Embedding 语义 / Model Selection | `LLM-018` |
+| `VDB-010` | Milvus / FAISS / pgvector / ES Vector 产品选型 | **MERGED → `VDB-009`**；二者共享同一个“向量存储架构 / 产品边界”知识模型 |
 | `VDB-012` | Dense vs Sparse | `RAG-012` |
 | `VDB-013` | Hybrid Retrieval | `RAG-013` |
 | `VDB-014` | BM25 | `RAG-012` / `RAG-013` 的 Keyword Retrieval 子主题 |
@@ -137,6 +130,12 @@
 | `VDB-017` | Retrieval / Rerank Top-K | `RAG-016` |
 | `VDB-019` | Retrieval Evaluation | `RAG-020`, `RAG-021` |
 | `VDB-021` | Multimodal Retrieval | `RAG-005`；模型对齐另见 `LLM-010` |
-| `VDB-023` | Codebase Retrieval Boundary | `RAG-030`, `AGENT-037` |
+| `VDB-023` | Codebase Retrieval Boundary | `RAG-030`, `AGENT-037`；Global Audit 后 `RAG-030` 再并入 `AGENT-037` |
 
-这次归属修正的核心原则是：**Vector DB 负责“怎么高效存和找向量”；RAG 负责“检索系统怎样设计并证明有效”。**
+---
+
+## 4. Global Merge / Split Audit 结论
+
+`VDB-009` 与旧 `VDB-010` 在核心知识模型、真实问法和证据来源上高度重叠：都在问“为什么需要某类 Vector Storage，以及 FAISS / pgvector / Milvus / ES Vector 如何按规模、能力和工程边界选型”。两者共有 `S022`, `S101`, `S136`, `S211`, `S212`，继续分成两题会虚增产品选型频率，因此合并并对证据取唯一并集，共 **18** 个独立 HUMAN-A。
+
+这次归属修正后的核心原则仍是：**Vector DB 负责“怎么高效存和找向量”；RAG 负责“检索系统怎样设计并证明有效”。**
