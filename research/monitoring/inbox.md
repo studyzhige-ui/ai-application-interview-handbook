@@ -100,6 +100,7 @@ URL 精确去重
 ```
 
 - 同候选人同流程多轮 → 合并计为一个来源，但保留所有轮次真实问题；
+- 同一候选人不同公司招聘流程 → 可以分别计为独立真人命中；
 - 跨平台同步、镜像、后发近似复制 → 只保留更原始、更稳定、更有现场证据的一份；
 - 不同候选人独立遇到相同问题 → 分别计为独立 HUMAN-A 命中；
 - 无法可靠确认谁是原场次的逐题复制链 → 整链排除。
@@ -107,26 +108,26 @@ URL 精确去重
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S276`，共 **276 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-13.md`
-- 最新正式批次：Batch 13（`S265–S276`，新增 12 个）
-- 本轮存量修正：小红书 `S260` 同一候选人的 8 月 17 日二面已合并回原来源，不新增 `Sxxx`
-- 当前最大来源编号：`S276`
-- 下一条正式来源从 **`S277`** 开始
+- 正式来源：`S001–S292`，共 **292 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-14.md`
+- 最新正式批次：Batch 14（`S277–S292`，新增 16 个）
+- 当前最大来源编号：`S292`
+- 下一条正式来源从 **`S293`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**仍未达到来源饱和**。泛搜索污染率、内容账号与重复率继续上升，但精确公司 / 岗位 / 作者时间线与历史月份回扫仍能产生独立 HUMAN-A 和已收录候选人的新轮次。
+- 当前停止判断：**仍未达到来源饱和**。本轮在 276 个正式样本基础上仍新增 16 个独立 HUMAN-A；精确公司 / 岗位、作者主页、个人博客和历史月份回扫继续产出，但复制链 / 内容账号 / 付费墙 / 自动 AI 面的污染与核验成本同步上升。
 
 ## 下一轮搜索优先级
 
 1. 持续追 2026-09 最新 AI Application / Agent 原帖；
-2. 沿 Batch 13 新增候选人的作者主页回看二面 / 三面 / Leader 面，并按同一招聘流程合并；
+2. 沿 Batch 14 新增候选人的作者主页回看二面 / 三面 / Leader 面，并按同一招聘流程合并；
 3. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
-4. 优先补 Long-running Agent / Checkpoint / Resume / State、Tool Permission / Sandbox / Trace / Evaluation；
-5. 继续观察 Token / Cost Budget、Rate Limit、并发预算预留等 AI Backend 新追问；
-6. 深挖 Vector Retrieval / RAG Evaluation：HNSW / IVF / PGVector / BM25 / RRF / Rerank / Recall / Precision Trade-off；
-7. 继续寻找 AI Backend / AI Full-stack 中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
-8. 牛客外继续主动搜原始正文，但不设置平台配额；
-9. 持续记录新增 HUMAN-A 数量、命中率、重复率、二次整理 / 内容账号比例和 Role Scope 外比例，判断是否真正接近饱和。
+4. 深挖 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
+5. 深挖 Tool / Skill Scale：Registry / Retrieval / Dynamic Injection / Lazy Loading / Fallback；
+6. 持续追 Permission / Sandbox / Prompt Injection / Trace / Evaluation；
+7. 继续观察 Token / Cost Budget、Rate Limit、Streaming 中途预算耗尽与 Backend Concurrency；
+8. 继续寻找目标 AI 岗中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
+9. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
+10. 持续记录新增 HUMAN-A 数量和命中率、重复率、内容账号 / 二次整理比例、Role Scope 外比例，判断是否真正接近饱和。
 
 ## 当前 Inbox
 
