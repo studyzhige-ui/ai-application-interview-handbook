@@ -1,15 +1,17 @@
-# Python Canonical Questions — S001–S279 全库纵向扫描 v1
+# Python Canonical Questions — S001–S279 全库纵向扫描 v2
 
 更新日期：2026-09-10
 
-> 本文件只记录冻结 HUMAN-A 中真实出现的 Python 语言与 Python Runtime 问题。通用 Network / MQ / Distributed System 归 `AI Backend Engineering`；FastAPI / ASGI 归 `FastAPI`。
+> 一级板块：**Python**。本文件只记录冻结 HUMAN-A 中真实出现的 Python 语言与 Python Runtime 问题。通用 Network / MQ / Distributed System 归 `AI Backend Engineering`；FastAPI / ASGI 框架行为归 `FastAPI`。
+>
+> 本文件所有条目的 `Primary Module = Python`。FastAPI 语境下出现的 `await` / Event Loop / CPU / Thread 语义已统一并入 `PY-012`，避免重复建题。
 
 ## 1. 当前扫描结论
 
-- Canonical Questions：**15** 道
+- ACTIVE Canonical Questions：**15**
 - 证据范围：仅 `S001–S279`
 - 频率口径：独立 HUMAN-A 来源数
-- 当前版本：`v1`，后续与 FastAPI / AI Backend Engineering 做 Primary Module 归属复核
+- 当前版本：`v2`（十板块归属审计版）
 
 当前信号很明确：Python 在这批面经里的“纯语言八股”频率远低于 Agent / RAG / Backend，但一旦团队明确使用 Python，会直接追到参数绑定、Duck Typing、Iterator / Generator、GIL、`asyncio` 和运行时语义，而不只是“会不会写脚本”。
 
@@ -176,7 +178,7 @@
 
 **真实问法变体：**
 - `asyncio.gather` 与 `as_completed` 有什么差异？
-- `await` 等待 LLM 时 CPU / Event Loop / Thread 在做什么？
+- FastAPI 异步调用 LLM 时，`await` 等待期间 CPU / Event Loop / Thread 在做什么？
 - Timeout / Fallback 怎样与异步调用结合？
 
 ### PY-013 · `Lock`、`RLock`、`Semaphore` 分别解决什么并发问题，什么时候使用？
@@ -216,7 +218,15 @@
 
 ---
 
-## 3. 对课程结构的直接信号
+## 3. 十板块归属审计结论
+
+Python 侧没有需要迁出的 ACTIVE Canonical。唯一明确的跨模块重复来自旧 `FASTAPI-003`，其核心是 Python `asyncio` Runtime，已迁入 `PY-012`。
+
+通用 ThreadPool、Network、MQ、Service Deployment 等问题不因实现语言是 Python 而进入本模块；它们继续由 `AI Backend Engineering` 维护。
+
+---
+
+## 4. 对课程结构的直接信号
 
 这批真人面经不支持把 Python 教材写成“面试八股大全”。高频仍然发生在 AI Backend / RAG / Agent；Python 更像底层语言前置。课程应完整覆盖语言基础，但复习加权应优先放在：
 
