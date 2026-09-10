@@ -1,0 +1,71 @@
+name: dedupe-date-round-once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dedupe-date-round-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dedupe-379-audit
+          fetch-depth: 1
+      - name: Build same-date same-round report
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json,re,itertools,difflib
+          d=json.loads(Path('research/dedupe-audit.json').read_text(encoding='utf-8'))
+          byid={e['id']:e for e in d['entries']}
+          exact=set()
+          for g in d['exact_url_groups']:
+              for a,b in itertools.combinations(sorted(set(g['ids'])),2): exact.add((a,b))
+          def dates(t):
+              return set(re.findall(r'2026[-/.年]\d{1,2}(?:[-/.月]\d{1,2})?|\b\d{1,2}[/-]\d{1,2}\b',t))
+          def roundset(t):
+              x=[]
+              for r in ['一面','二面','三面','四面','终面','leader面','hr面','技术面']:
+                  if r.lower() in t.lower():x.append(r.lower())
+              return set(x)
+          rows=[]
+          ids=sorted(byid)
+          for a,b in itertools.combinations(ids,2):
+              if (a,b) in exact:continue
+              ea,eb=byid[a],byid[b]
+              if ea['company_norm']!=eb['company_norm']:continue
+              ds=dates(ea['title'])&dates(eb['title']); ra=roundset(ea['title']); rb=roundset(eb['title'])
+              if not ds or not ra or not rb or not (ra&rb):continue
+              # Exclude pairs whose only overlap is generic 技术面 when one also has a distinct numbered round
+              common=ra&rb
+              if common=={'技术面'} and ((ra-{'技术面'}) or (rb-{'技术面'})):continue
+              qa=''.join(ea.get('qtext','').split()); qb=''.join(eb.get('qtext','').split())
+              qs=difflib.SequenceMatcher(None,qa,qb,autojunk=False).ratio() if qa and qb else 0
+              rows.append((qs,a,b,ds,common))
+          rows.sort(reverse=True)
+          out=['# Same-date same-round non-exact candidates','',f'Pairs: {len(rows)}','']
+          for qs,a,b,ds,rr in rows:
+              ea,eb=byid[a],byid[b]
+              out += [f'## S{a:03d} ↔ S{b:03d}',f'- same dates: {sorted(ds)}; same round labels: {sorted(rr)}; sequence={qs:.3f}',f"- A: {ea['title']}",f"- B: {eb['title']}",f"- authors: {ea.get('author','')!r} / {eb.get('author','')!r}",f"- A urls: {ea.get('source_urls',[])}",f"- B urls: {eb.get('source_urls',[])}",'- A questions:']
+              out += [f'  {q}' for q in ea.get('qtext','').splitlines()[:8]] or ['  (none)']
+              out += ['- B questions:']
+              out += [f'  {q}' for q in eb.get('qtext','').splitlines()[:8]] or ['  (none)']
+              out += ['']
+          Path('research/dedupe-date-round.md').write_text('\n'.join(out)+'\n',encoding='utf-8')
+          print('\n'.join(out[:350]))
+          PY
+      - name: Commit report to temporary branch
+        shell: bash
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add research/dedupe-date-round.md
+          git commit -m 'chore: generate same-date same-round audit' || exit 0
+          git push origin HEAD:dedupe-379-audit
