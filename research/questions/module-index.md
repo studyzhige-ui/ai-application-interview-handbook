@@ -1,6 +1,6 @@
 # Canonical Question 十板块 Ownership Index
 
-更新日期：2026-09-10
+更新日期：2026-09-11
 
 > **Repository-first：** 本文件与 `README.md`、`schema.md`、`progress.md`、各模块最新文件共同构成当前正式口径；历史聊天总结或旧分类不能覆盖这里的最新状态。
 
@@ -28,7 +28,7 @@ Agent Harness / Runtime
 System Design
 ```
 
-## 1. Global Merge / Split Audit 后的 Ownership
+## 1. Phase 2B 后的正式 Ownership
 
 | 顺序 | 一级板块 | 文件 | ACTIVE | MOVED | 当前版本 |
 |---:|---|---|---:|---:|---|
@@ -38,13 +38,13 @@ System Design
 | 4 | MySQL | `mysql.md` | 26 | 2 | v3 |
 | 5 | Redis | `redis.md` | 19 | 5 | v2 |
 | 6 | Vector DB | `vector-db.md` | 12 | 11 | v3 |
-| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 22 | 0 | v2 |
+| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 23 | 0 | v3 |
 | 8 | RAG | `rag.md` | 29 | 1 | v3 |
-| 9 | Agent Harness / Runtime | `agent-harness.md` | 39 | 4 | v3 |
+| 9 | Agent Harness / Runtime | `agent-harness.md` | 44 | 4 | v4 |
 | 10 | System Design | `system-design.md` | 24 | 0 | v2 |
-|  | **合计** |  | **229** | **24** |  |
+|  | **合计** |  | **235** | **24** |  |
 
-`229` 是当前经过 Global Merge / Split Audit 后的 Primary-owned ACTIVE Canonical 数量。
+`235` 是当前经过 Phase 2A Global Merge / Split Audit + Phase 2B Coverage Gap Audit 后的 Primary-owned ACTIVE Canonical 数量。
 
 ---
 
@@ -93,7 +93,7 @@ System Design
 
 ### `VDB-010` → `VDB-009`
 
-Vector DB “为什么需要独立存储 / pgvector / FAISS / 专用 Vector DB”与“Milvus / FAISS / pgvector / ES Vector 产品选型”共享同一核心知识模型，合并到 `VDB-009`。合并后 Source Count = 18。
+Vector DB “为什么需要独立存储 / pgvector / FAISS / 专用 Vector DB”与“Milvus / FAISS / pgvector / ES Vector 产品选型”共享同一核心知识模型，合并到 `VDB-009`。
 
 ### `RAG-030` → `AGENT-037`
 
@@ -113,13 +113,46 @@ MySQL-specific Bulk Write 留 `MYSQL-022`；通用批处理 / 数据迁移 / Bac
 
 ### `AGENT-028` Evidence 修正
 
-补入 `S254` Agent Code Execution / Tool Permission / Sandbox 安全证据，Source Count 15 → 16。
+补入 `S254` Agent Code Execution / Tool Permission / Sandbox 安全证据。
 
 完整判断依据与 KEEP-SEPARATE 清单见 `global-audit.md`。
 
 ---
 
-## 4. Primary Module 判断例子
+## 4. Phase 2B Coverage Gap Audit 新增 Canonical
+
+首次全量 Source Coverage Validation 发现：229 道 Canonical 自身一致，但有 28 个 HUMAN-A 来源完全未映射。逐条回到原始 Batch 后确认其中既有 Evidence 漏挂，也有 Phase 1 真正漏掉的独立能力。
+
+新增：
+
+| QID | Primary Module | Topic | Source Count |
+|---|---|---|---:|
+| `LLM-023` | LLM Foundation（应用工程深度） | Prompt Engineering | 30 |
+| `AGENT-044` | Agent Harness / Runtime | Prompt Injection / Untrusted Context Security | 8 |
+| `AGENT-045` | Agent Harness / Runtime | Intent Recognition / Routing | 11 |
+| `AGENT-046` | Agent Harness / Runtime | A2A / Agent Communication Protocol | 6 |
+| `AGENT-047` | Agent Harness / Runtime | Agent Framework Selection | 27 |
+| `AGENT-048` | Agent Harness / Runtime | AI-assisted Development Workflow | 37 |
+
+因此：
+
+```text
+229
++ 6 reviewed independent knowledge models
+= 235 ACTIVE
+```
+
+`S271` 为唯一 `VALID-UNMAPPED`：招聘流程明确属于 Agent 工程师大池，但本场可核验技术题全部是 React Hook / JavaScript / 版本号 Coding，不能安全归入十板块中的 AI / Backend Canonical，因此不强行造题。
+
+详细记录：
+
+- `source-coverage-audit.md`
+- `../analysis/source-coverage-validation.md`
+- `../../tools/phase2b_canonical_audit.json`
+
+---
+
+## 5. Primary Module 判断例子
 
 ```text
 “RRF 为什么不用线性加权？”
@@ -151,9 +184,21 @@ Primary = AI Backend Engineering
 Related = MySQL, Redis
 ```
 
+```text
+“Prompt 怎样从 Goal / Constraint / Context / Example / Output Contract 组织并做 Regression？”
+Primary = LLM Foundation（应用工程深度）
+Related = RAG, Agent Harness / Runtime
+```
+
+```text
+“LangGraph 为什么适合当前 Agent，什么时候应该不用 Framework 而自研 Runtime？”
+Primary = Agent Harness / Runtime
+Related = FastAPI, AI Backend Engineering
+```
+
 ---
 
-## 5. Coding / Debug / AI Coding 的位置
+## 6. Coding / Debug / AI Coding 的位置
 
 它们不是一级板块，而是 Question Type：
 
@@ -168,19 +213,40 @@ Related = MySQL, Redis
 - Coding Agent Repo Modification / Verification → Agent Harness / Runtime
 - 完整业务架构题 → System Design
 
+`AI-assisted Development Workflow` 虽然是 AI Coding 类型，但其核心知识模型是 Coding Agent / Human-AI Runtime Workflow，因此 Primary = Agent Harness / Runtime。
+
 ---
 
-## 6. 下一步
-
-Phase 2A Global Merge / Split Audit 已完成。下一步从 **229 ACTIVE** 进入 Phase 2B：
+## 7. 当前验证状态
 
 ```text
-Global Canonical Question Index
-→ Evidence / Source Count 一致性复核
-→ Frequency / Company / Role / Round 统计
-→ Follow-up Chain / Depth
-→ Curriculum Coverage Matrix
-→ Knowledge Gap Analysis
+Frozen HUMAN-A              279 / 279
+ACTIVE Canonical            235 / 235
+Mapped to >=1 Canonical     278
+VALID-UNMAPPED                1
+Unexpected uncovered          0
+Evidence outside baseline     0
+Source Count mismatch         0
 ```
 
-如果后续发现新的边界问题，不直接改分类：先回到 HUMAN-A 原始来源核验，并把决策追加到 `global-audit.md`。
+---
+
+## 8. 下一步
+
+Phase 2B 已完成：Global Index、Frequency、Company / Role / Round、Depth、Co-occurrence、Verified Follow-up Chain、Curriculum Evidence Matrix 与 Knowledge Gap Analysis 均已生成。
+
+下一阶段进入 **Phase 3：Curriculum Build / Remediation**。
+
+正式建设顺序：
+
+```text
+MySQL
+→ Redis
+→ Vector DB
+→ LLM Foundation
+→ RAG
+→ Agent Harness / Runtime
+→ System Design
+```
+
+每块教材同时以 `research/analysis/curriculum-evidence-matrix.md` 和 `research/analysis/follow-up-chains.md` 做市场验收，但课程边界仍由完整知识体系决定。
