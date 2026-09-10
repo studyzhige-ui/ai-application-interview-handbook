@@ -1,6 +1,6 @@
 # Canonical Question 重建进度
 
-更新日期：2026-09-10
+更新日期：2026-09-11
 
 ## Repository-first 规则
 
@@ -76,7 +76,7 @@ Phase 1 结束时共有 **230 ACTIVE Canonical / 22 MOVED**。
 
 完整审计决策见 `global-audit.md`。
 
-### 本轮主要变化
+### Phase 2A 主要变化
 
 - `VDB-010` 产品选型 → MERGED 到 `VDB-009`；
 - `RAG-030` Code RAG / Repo Search → MERGED 到 `AGENT-037`；
@@ -101,33 +101,179 @@ MySQL 两项属于 Narrow / Evidence Reassignment，不改变 Canonical 数量�
 
 ---
 
-## Phase 2B：Global Index + Market Analysis ⏳ 下一步
+## Phase 2B：Global Index + Market Analysis ✅
 
-从当前 **229 个 ACTIVE Canonical** 出发，下一步生成真正的全局可分析视图：
+Phase 2B 已完成自动统计层与人工核验层。
+
+### 2B-1 自动统计与一致性验证
+
+自动构建：
+
+- `research/analysis/global-question-index.md`
+- `research/analysis/global-question-index.csv`
+- `research/analysis/frequency-ranking.md`
+- `research/analysis/market-coverage.md`
+- `research/analysis/depth-and-types.md`
+- `research/analysis/cooccurrence.md`
+- `research/analysis/curriculum-evidence-matrix.md`
+- `research/analysis/module-metrics.csv`
+- `research/analysis/source-coverage-validation.md`
+
+最终硬校验：
+
+| Check | Result |
+|---|---|
+| Frozen HUMAN-A | ✅ 279 / 279 |
+| ACTIVE Canonical | ✅ 235 / 235 |
+| Mapped to >=1 Canonical | ✅ 278 |
+| Documented VALID-UNMAPPED | ✅ 1 (`S271`) |
+| Unexpected uncovered | ✅ 0 |
+| Evidence outside S001–S279 | ✅ 0 |
+| Source Count mismatch | ✅ 0 |
+
+### 2B-2 Coverage Gap Audit
+
+首次自动校验发现 28 个零映射 HUMAN-A。回到原始 Batch 人工复核后：
+
+- 27 个来源补入已有 / 新 Canonical；
+- `S271` 明确保留 `VALID-UNMAPPED`，不为追求 279/279 强行造题；
+- 新增 6 道真实独立能力 Canonical：
+  - `LLM-023` Prompt Engineering
+  - `AGENT-044` Prompt Injection / Untrusted Context Security
+  - `AGENT-045` Intent Recognition / Routing
+  - `AGENT-046` A2A / Agent Communication Protocol
+  - `AGENT-047` Agent Framework Selection
+  - `AGENT-048` AI-assisted Development Workflow
+
+因此：
 
 ```text
-Global Canonical Question Index
-        ↓
-Evidence / Source Count 一致性复核
-        ↓
-Frequency Ranking
-        ↓
-Company / Role / Round Coverage
-        ↓
-Interview Depth / Follow-up Chain
-        ↓
-Curriculum Coverage Matrix
-        ↓
-Knowledge Gap Analysis
+229 ACTIVE
++ 6 Phase 2B reviewed gaps
+= 235 ACTIVE
 ```
 
-这一阶段不再随意调整一级分类。如果发现新的 Merge / Split 问题，必须先记录到 `global-audit.md`，回到 HUMAN-A 原始来源核验后再修改 Canonical。
+人工审计记录见 `source-coverage-audit.md` 与 `tools/phase2b_canonical_audit.json`。
+
+### 2B-3 Verified Follow-up Chains
+
+已从 `cooccurrence.md` 回到原始 Batch 核验真正有方向的追问链，见：
+
+- `research/analysis/follow-up-chains.md`
+
+高价值递进包括：
+
+```text
+RAG Pipeline
+→ Chunk
+→ Hybrid Retrieval
+→ Rerank
+→ Evaluation / Bad Case
+
+Agent Boundary
+→ Harness / Loop
+→ Tool / Skill
+→ Context / Memory
+→ Failure / Resume
+→ Evaluation
+
+Context Assembly
+→ Compaction
+→ Correctness
+→ Memory Pollution
+→ Resume
+
+AI Coding
+→ Requirement / Context
+→ Repo Modification
+→ Test / Review
+→ Verification / Delivery
+```
+
+### 2B-4 Knowledge Gap Analysis
+
+已将市场证据矩阵与 `roadmap/knowledge-map.md` 对照，见：
+
+- `research/analysis/knowledge-gap-analysis.md`
+
+主要修正：
+
+1. LLM Foundation 正式补成一级 Roadmap；
+2. Vector DB / RAG Primary Boundary 对齐最新 Canonical；
+3. Agent Harness 吸收 Phase 2B 新增能力域；
+4. MySQL / Redis / RAG 按真实面试深度补 Failure / Scale / Evaluation；
+5. 面经研究状态从“持续滚动采集”同步为 Frozen `S001–S279`。
+
+---
+
+## 当前正式 Ownership
+
+| 顺序 | 一级板块 | ACTIVE |
+|---:|---|---:|
+| 1 | Python | 15 |
+| 2 | FastAPI | 4 |
+| 3 | AI Backend Engineering | 39 |
+| 4 | MySQL | 26 |
+| 5 | Redis | 19 |
+| 6 | Vector DB | 12 |
+| 7 | LLM Foundation（应用工程深度） | 23 |
+| 8 | RAG | 29 |
+| 9 | Agent Harness / Runtime | 44 |
+| 10 | System Design | 24 |
+|  | **合计** | **235** |
+
+---
+
+## Phase 3：Curriculum Build / Remediation ⏳ 下一步
+
+Canonical 重建和市场分析已经足够稳定，下一阶段不再继续围绕题目数量做优化，而把结果反哺正式教材。
+
+当前推荐顺序：
+
+```text
+P0 Roadmap 一致性修复 ✅ 已同步
+        ↓
+MySQL 正式系统教材
+        ↓
+Redis
+        ↓
+Vector DB
+        ↓
+LLM Foundation
+        ↓
+RAG
+        ↓
+Agent Harness / Runtime
+        ↓
+System Design
+```
+
+Python 已有完整教材；FastAPI / AI Backend Engineering 已有课程骨架，后续按项目和 Bridge Lab 逐步写正文。
+
+每个新教材模块都应同时参考：
+
+- 完整知识体系；
+- `curriculum-evidence-matrix.md` 的市场信号；
+- `follow-up-chains.md` 的真实递进；
+- 对应 Canonical 的 Evidence Sources；
+- 必要的官方 / 权威资料。
+
+统一章节深度模板：
+
+```text
+Concept
+→ Mechanism
+→ Trade-off
+→ Failure
+→ Scale
+→ Evaluation / Verification
+```
 
 ---
 
 ## Agent Harness 特殊规则
 
-Agent Harness 的**面经统计层**只反映 `S001–S279` 真人面试已经问到的内容。
+Agent Harness 的**面经统计层**只反映 `S001–S279` HUMAN-A 市场证据。
 
 正式建设 Agent 教材时，还必须额外研究：
 
