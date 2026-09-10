@@ -26,25 +26,25 @@ Agent Harness / Runtime
 System Design
 ```
 
-## 1. 当前 Primary-owned Canonical 数量
+## 1. 当前 Primary-owned Canonical 数量（阶段一审计中）
 
-| 顺序 | 一级板块 | 文件 | ACTIVE Canonical |
-|---:|---|---|---:|
-| 1 | Python | `python.md` | 15 |
-| 2 | FastAPI | `fastapi.md` | 5 |
-| 3 | AI Backend Engineering | `ai-backend-engineering.md` | 39 |
-| 4 | MySQL | `mysql.md` | 26 |
-| 5 | Redis | `redis.md` | 19 |
-| 6 | Vector DB | `vector-db.md` | 13 |
-| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 22 |
-| 8 | RAG | `rag.md` | 30 |
-| 9 | Agent Harness / Runtime | `agent-harness.md` | 38 |
-| 10 | System Design | `system-design.md` | 24 |
-|  | **合计** |  | **231** |
+| 顺序 | 一级板块 | 文件 | ACTIVE Canonical | 审计状态 |
+|---:|---|---|---:|---|
+| 1 | Python | `python.md` | 15 | 🟡 v1，待 v2 |
+| 2 | FastAPI | `fastapi.md` | 4 | ✅ v2；另 1 MOVED |
+| 3 | AI Backend Engineering | `ai-backend-engineering.md` | 39 | ✅ v2 |
+| 4 | MySQL | `mysql.md` | 26 | ✅ v2；另 2 MOVED |
+| 5 | Redis | `redis.md` | 19 | ✅ v2；另 5 MOVED |
+| 6 | Vector DB | `vector-db.md` | 13 | ✅ v2；另 10 MOVED |
+| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 22 | 🟡 v1，待 v2 |
+| 8 | RAG | `rag.md` | 30 | ✅ v2 |
+| 9 | Agent Harness / Runtime | `agent-harness.md` | 38 | ✅ v2；另 4 MOVED |
+| 10 | System Design | `system-design.md` | 24 | 🟡 v1，待 v2 |
+|  | **当前 ACTIVE 暂计** |  | **230** | **7 / 10 已完成 v2** |
 
-`231` 是当前完成一级 Primary Ownership 后的 ACTIVE 模块条目数，**还不是最终发布版的全局题数**。下一阶段仍要进行一次跨模块 Merge / Split 与 Evidence 审计，防止概念边界过宽 / 过窄。
+`230` 仍然只是当前阶段的模块 ACTIVE 条目数，**不是最终发布版的全局独立问题数**。Python、LLM Foundation、System Design 仍需完成 v2 Primary Ownership / Merge-Move 审计，因此第一阶段尚未结束。
 
-## 2. 这次从旧分类中真正迁移了什么
+## 2. 已完成的主要归属迁移
 
 ### MySQL → AI Backend Engineering
 
@@ -79,6 +79,12 @@ System Design
 - `AGENT-039` Concurrency / Backpressure / Quota → `AIBE-013` / `AIBE-017`
 - `AGENT-040` Demo → Multi-instance Production Scale → `SD-021` + AI Backend Deployment
 
+### FastAPI → Python
+
+- `FASTAPI-003` `await` 期间 Event Loop / CPU / Thread 语义 → `PY-012`
+
+这次迁移用于消除“因为问题出现在某框架语境，就在两个板块各建一题”的重复。
+
 ## 3. Primary Module 判断例子
 
 ```text
@@ -96,6 +102,14 @@ Related = RAG
 ```
 
 因为核心知识模型是 ANN Index。
+
+```text
+“FastAPI async 调 LLM，await 期间 CPU / Event Loop / Thread 在做什么？”
+Primary = Python
+Related = FastAPI, AI Backend Engineering
+```
+
+因为核心知识模型是 `asyncio` Runtime，而不是 FastAPI 路由 API。
 
 ```text
 “Tool 已成功扣款，但 Checkpoint 写失败，恢复后怎么办？”
@@ -118,10 +132,10 @@ Related = MySQL, Redis
 它们不再单独作为一级板块。
 
 - Python Decorator 手写 → Python
-- FastAPI Async Endpoint Debug → FastAPI
+- FastAPI Async Endpoint / Streaming 实现 → FastAPI
 - MQ / Linux / ThreadPool Troubleshoot → AI Backend Engineering
 - SQL / Index Coding → MySQL
-- Redis Lua / Rate Limit Implementation → Redis
+- Redis Lua Implementation → Redis
 - ANN / Index 参数推演 → Vector DB
 - Attention / RoPE 手写 → LLM Foundation
 - Retrieval Evaluation / Chunk Failure → RAG
@@ -130,12 +144,21 @@ Related = MySQL, Redis
 
 `Question Type` 仍可标为 `Coding`, `Debug`, `AI Coding`, `Troubleshoot`, `System Design` 等。
 
-## 5. 下一步
+## 5. 第一阶段剩余工作
 
-十个一级板块都已经有全库纵向扫描结果和明确 Primary Ownership。下一步不再新增一级分类，而是对这 231 个 ACTIVE 条目做：
+当前不进入全局频率发布。先完成：
 
 ```text
-Cross-module Merge / Split Audit
+Python v2 audit
+→ LLM Foundation v2 audit
+→ System Design v2 audit
+→ 十板块最终 Primary Ownership consistency check
+```
+
+只有十个板块全部通过 v2 后，才开始：
+
+```text
+Global Merge / Split Audit
 → Source Count / Evidence 一致性校验
 → Global Canonical Question Index
 → Frequency / Company / Role / Round 统计
