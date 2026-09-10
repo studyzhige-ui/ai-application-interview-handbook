@@ -122,33 +122,33 @@ URL 精确去重
 - **正文最终无法稳定访问、只能依赖搜索摘要 → 不进入正式来源，即使初筛时已经进入强候选池；**
 - 不同候选人独立遇到相同常见问题 → 分别计数。
 
-Batch 17 的应用实例：快手 AI 应用服务端 8/26、9/1、9/9 三轮由同一作者连续发布，合并为 `S318`；灵犀互娱 8/31、9/2、9/7 三轮及 9/8 意向 Timeline 合并为 `S319`。两者虽然同一作者且都深挖 `CR Agent`，但公司与招聘流程独立，因此分别计数。另有一条某中厂 Agent 应用开发候选在最终复核时正文无法稳定打开，只能依赖 Search Snippet，因此编号前撤出。
+Batch 18 的应用实例：07-07 匿名 B 端 Coding Agent 原帖与 07-12 带 PDD 内推导流的后发页面几乎逐题同序，结合发布时间、原帖第一人称开场和作者评论区互动后只保留更早原帖为 `S320`；07-14 字节 AI 应用候选虽然真人痕迹很强，但“Agent 模块 / 异常自恢复 / Token → 线程池重设计 → JVM 类加载 → MySQL 三日志 / 两阶段提交 → 合并数组”的连续题序与历史 `S229` 高度重合，因此编号前排除；虾皮二面 `S325` 与历史 `S081` 同公司但作者、日期、轮次、项目和题序不同，确认属于独立候选人流程。
 
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S319`，共 **319 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-17.md`
-- 最新正式批次：Batch 17（`S309–S319`，新增 11 个）
-- 当前最大来源编号：`S319`
-- 下一条正式来源从 **`S320`** 开始
+- 正式来源：`S001–S325`，共 **325 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-18.md`
+- 最新正式批次：Batch 18（`S320–S325`，新增 6 个）
+- 当前最大来源编号：`S325`
+- 下一条正式来源从 **`S326`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**仍未达到来源饱和，但已经进入高去重 / 高 Provenance 核验成本阶段。** 在 `S001–S308` 全历史重新直接回读后，本轮仍确认 11 个独立 HUMAN-A；同时内容账号、答案版、自动面、同序改写和正文不稳定候选比例继续上升。
+- 当前停止判断：**尚未整体达到来源饱和，但牛客热门 Agent 关键词已明显进入局部来源饱和。** 本轮仍确认 6 个独立 HUMAN-A，但新增主要来自 7–8 月长尾回扫、冷门公司、FDE / AI Application 别名与作者 Timeline；复制链、内容账号、付费墙、模板化题单和历史同序候选比例继续上升。
 
 ## 下一轮搜索优先级
 
-1. 从 `S320` 开始，但必须在分配编号前直接回读历史 Batch 做完整去重；
-2. 持续追 2026-09 最新 AI Application / Agent 原帖，尤其是能沿作者 Timeline 闭环的多轮流程；
-3. 沿 Batch 17 新增候选人的后续技术面 / Leader 面继续追踪，同公司同流程只合并；
-4. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
-5. 深挖 Tool Calling / Agent Runtime：Structured Tool Call、Content Block、Executor、Tool Result、Retry / Failure；
-6. 深挖 RAG 反例：Chunk Semantic Boundary、Summary-induced Recall Loss、Embedding Strategy、Retrieval Failure Attribution；
-7. 深挖 Skill / Tool / Function Call 的实现边界与 Progressive Disclosure；
-8. 继续补 Python / FastAPI / Async 与 Agent Runtime 同场真人样本；
-9. 继续追 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
+1. 从 `S326` 开始，但必须在分配编号前直接回读 `S001–S325` 历史 Batch 做完整去重；
+2. 持续追 2026-09 最新 AI Application / Agent 原帖，同时继续回扫 2026-03～08 长尾公司和岗位；
+3. 沿 Batch 18 与历史候选人的后续技术面 / Leader 面继续追踪，同公司同流程只合并；
+4. 增加 FDE / Applied AI / AI Full-stack / Agent Runtime / Coding Agent 等岗位别名搜索，避免只在“Agent 开发”热门关键词里打转；
+5. 深挖 Coding Agent Context Correctness：Summary Validation、Stale Memory、Incorrect Fact Correction、Loop Detection、Patch Rollback、Repo-scale Planning；
+6. 深挖 Agent Runtime State：Checkpoint / Resume / Cancel / Human-in-the-loop Timeout / Model Switch / External Side-effect Idempotence；
+7. 继续补 Python / FastAPI / ASGI / asyncio 与 Agent Runtime 同场真人样本；
+8. 深挖 Tool / MCP / Skill 的 Permission、Audit、Sandbox、Structured Result 与 Error Recovery；
+9. 继续补 RAG Hybrid Retrieval / Rerank / Evaluation 与真实指标验真；
 10. 继续寻找目标 AI 岗中 Java / Spring / Go / MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
-11. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
-12. 持续记录新增 HUMAN-A 数量、重复率、二次整理 / 内容账号比例、Role Scope 外比例与正文稳定核验失败率，判断是否真正接近饱和。
+11. 牛客外继续主动搜索小红书、知乎、脉脉、个人博客 / 独立站等稳定原始正文，不设置平台配额；
+12. 持续记录新增 HUMAN-A 数量、重复率、二次整理 / 内容账号比例、Role Scope 外比例与正文稳定核验失败率，区分局部平台饱和与全网整体饱和。
 
 ## 当前 Inbox
 
