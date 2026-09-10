@@ -1,0 +1,100 @@
+name: dedupe-audit-main-once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/dedupe-audit-main-once.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: dedupe-379-audit
+          fetch-depth: 1
+      - name: Build dedupe audit on temporary branch
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, json, itertools, difflib, urllib.parse
+          from collections import defaultdict, Counter
+          root = Path('research/interviews')
+          files = sorted(root.glob('batch-*.md'))
+          entries=[]
+          hpat=re.compile(r'^## S(\d{3})\s+(.+)$',re.M)
+          urlpat=re.compile(r'https?://[^\s)]+')
+          def norm_url(u):
+              u=u.rstrip('.,;，。；')
+              p=urllib.parse.urlsplit(u); host=p.netloc.lower()
+              if host in {'api-cdn.nowcoder.com','www.nowcoder.com','nowcoder.com'}: host='www.nowcoder.com'
+              return urllib.parse.urlunsplit((p.scheme.lower(),host,p.path.rstrip('/'),'',''))
+          def company_of(t): return t.split('｜',1)[0].strip()
+          def norm_company(c):
+              s=c.lower()
+              rules=[('字节跳动抖音','字节跳动'),('字节跳动中国交易与广告','字节跳动'),('字节跳动','字节跳动'),('阿里淘天','阿里'),('阿里控股','阿里'),('阿里千问','阿里'),('阿里灵犀互娱','阿里'),('阿里','阿里'),('腾讯wxg','腾讯'),('腾讯','腾讯'),('快手杭州电商','快手'),('快手','快手'),('小红书','小红书'),('百度','百度'),('蚂蚁国际','蚂蚁'),('蚂蚁','蚂蚁'),('拼多多','拼多多'),('京东科技','京东'),('京东','京东'),('哔哩哔哩','bilibili'),('bilibili','bilibili'),('oppo','oppo')]
+              for a,b in rules:
+                  if a in s:return b
+              return re.sub(r'\s+','',s)
+          def author_of(sec):
+              for p in [r'作者\s*[`“\"]([^`”\"，。；;]+)[`”\"]',r'作者\s+([^，。；;\n]{2,30}?)(?:\s+的|\s+明确|\s+以|\s+为|，|。)',r'候选人\s*[`“\"]([^`”\"，。；;]+)[`”\"]']:
+                  m=re.search(p,sec)
+                  if m:return m.group(1).strip()
+              return ''
+          def compact(s):
+              s=re.sub(r'https?://\S+',' ',s.lower()); s=re.sub(r'[`*_#>|\-]',' ',s); return re.sub(r'\s+','',s)
+          def grams(s,n=3):
+              s=compact(s); return set(s[i:i+n] for i in range(max(0,len(s)-n+1)))
+          for f in files:
+              text=f.read_text(encoding='utf-8'); ms=list(hpat.finditer(text))
+              for i,m in enumerate(ms):
+                  sec=text[m.start():(ms[i+1].start() if i+1<len(ms) else len(text))].strip(); sid=int(m.group(1)); title=m.group(2).strip()
+                  src=[]
+                  for line in sec.splitlines():
+                      if '来源：' in line or '来源:' in line: src += [u.rstrip('.,;，。；') for u in urlpat.findall(line)]
+                  q='\n'.join(ln.strip() for ln in sec.splitlines() if re.match(r'^\d+\.\s+',ln.strip()))
+                  entries.append({'id':sid,'file':str(f),'title':title,'company':company_of(title),'company_norm':norm_company(company_of(title)),'author':author_of(sec),'source_urls':src,'norm_urls':[norm_url(u) for u in src],'qtext':q})
+          entries.sort(key=lambda e:e['id'])
+          urlg=defaultdict(list)
+          for e in entries:
+              for u in set(e['norm_urls']):urlg[u].append(e['id'])
+          exact=[{'url':u,'ids':sorted(set(v))} for u,v in urlg.items() if len(set(v))>1]
+          exact.sort(key=lambda x:x['ids'])
+          ac=defaultdict(list)
+          for e in entries:
+              if e['author']:ac[(e['company_norm'],e['author'])].append(e['id'])
+          same_author=[{'company':k[0],'author':k[1],'ids':sorted(v)} for k,v in ac.items() if len(v)>1]
+          pairs=[]
+          for a,b in itertools.combinations(entries,2):
+              if a['company_norm']!=b['company_norm']:continue
+              ga,gb=grams(a['qtext']),grams(b['qtext']); jac=len(ga&gb)/len(ga|gb) if ga and gb else 0
+              seq=difflib.SequenceMatcher(None,compact(a['qtext']),compact(b['qtext']),autojunk=False).ratio() if a['qtext'] and b['qtext'] else 0
+              score=max(jac,seq)
+              if score>=0.30:
+                  pairs.append({'a':a['id'],'b':b['id'],'company':a['company_norm'],'jac':round(jac,3),'seq':round(seq,3),'score':round(score,3),'author_a':a['author'],'author_b':b['author'],'title_a':a['title'],'title_b':b['title'],'urls_a':a['source_urls'],'urls_b':b['source_urls']})
+          pairs.sort(key=lambda p:(-p['score'],p['a'],p['b']))
+          out={'entry_count':len(entries),'min_id':min(e['id'] for e in entries),'max_id':max(e['id'] for e in entries),'id_duplicates':{str(k):v for k,v in Counter(e['id'] for e in entries).items() if v>1},'exact_url_groups':exact,'same_author_company':same_author,'similar_pairs':pairs[:800],'entries':entries}
+          Path('research/dedupe-audit.json').write_text(json.dumps(out,ensure_ascii=False,indent=2),encoding='utf-8')
+          md=['# Dedupe audit','',f"Parsed {len(entries)} entries: S{out['min_id']:03d}–S{out['max_id']:03d}",'','## Exact normalized URL duplicates','']
+          md += [f"- {', '.join('S%03d'%i for i in g['ids'])} — {g['url']}" for g in exact] or ['- none']
+          md += ['','## Same author + company','']
+          md += [f"- {g['company']} / {g['author']}: {', '.join('S%03d'%i for i in g['ids'])}" for g in same_author] or ['- none']
+          md += ['','## High-similarity same-company pairs','']
+          for p in pairs[:350]:
+              md += [f"- S{p['a']:03d} ↔ S{p['b']:03d} | {p['company']} | score={p['score']:.3f} jac={p['jac']:.3f} seq={p['seq']:.3f} | authors={p['author_a']!r}/{p['author_b']!r}",f"  - A: {p['title_a']}",f"  - B: {p['title_b']}"]
+          Path('research/dedupe-audit.md').write_text('\n'.join(md)+'\n',encoding='utf-8')
+          print('\n'.join(md[:160]))
+          PY
+      - name: Commit report to temporary branch
+        shell: bash
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add research/dedupe-audit.json research/dedupe-audit.md
+          git commit -m 'chore: generate dedupe audit report' || exit 0
+          git push origin HEAD:dedupe-379-audit
