@@ -84,14 +84,14 @@ LLM应用 / RAG开发 / AI后端 / AI全栈 / Applied AI / FDE / Coding Agent）
 月份（重点回扫 2026-03～09，同时追最新发布）
 ×
 技术关键词（Python / FastAPI / asyncio / MySQL / Redis / Vector DB /
-RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool / Coding）
+RAG / MCP / Skill / Harness / Runtime / Context / Memory / Tool / Benchmark / Coding）
 ```
 
 搜索不能停在结果页：继续追企业 / 话题页、精确标题、公司 + 轮次、作者主页、候选人其他帖子、个人博客 / 独立站、原始正文、评论区和跨平台同步关系。
 
 ## 强化去重流程
 
-从 Batch 15 起，**任何候选在分配 `Sxxx` 前必须先完成历史 Batch 直接回读**。不能再把 GitHub Code Search / 搜索引擎的“0 命中”当成去重完成。
+从 Batch 15 起，**任何候选在分配 `Sxxx` 前必须先完成历史 Batch 直接回读**。Batch 16 已实际直接回读 `batch-01.md` ～ `batch-15.md` 全历史；以后继续保持，不能把 GitHub Code Search / 搜索引擎的“0 命中”当成去重完成。
 
 固定执行：
 
@@ -119,29 +119,29 @@ URL 精确去重
 - 无法可靠确认原场次 → 整条不确定链排除；
 - 不同候选人独立遇到相同常见问题 → 分别计数。
 
-Batch 15 写入前已经据此删除 6 条重复 / 非独立候选，正式编号只分给通过完整去重的 8 条来源。
+Batch 16 的应用实例：快手 AI 全栈同一作者的一面 / 二面合并为 `S305`；同一作者的字节 `S301` 与淘天 `S308` 因属于不同公司、不同时间和不同招聘流程，分别计数。米哈游 4/9 / 4/24 近似逐题复制链因原场归属仍不可靠，继续整链不新增。
 
 ## 当前基线
 
 - 更新日期：2026-09-10
-- 正式来源：`S001–S300`，共 **300 个 HUMAN-A**
-- 当前正式批次：`batch-01.md` ～ `batch-15.md`
-- 最新正式批次：Batch 15（`S293–S300`，新增 8 个）
-- 当前最大来源编号：`S300`
-- 下一条正式来源从 **`S301`** 开始
+- 正式来源：`S001–S308`，共 **308 个 HUMAN-A**
+- 当前正式批次：`batch-01.md` ～ `batch-16.md`
+- 最新正式批次：Batch 16（`S301–S308`，新增 8 个）
+- 当前最大来源编号：`S308`
+- 下一条正式来源从 **`S309`** 开始
 - Canonical Question：只从正式 HUMAN-A 累计；其他来源继续保持零贡献
-- 当前停止判断：**仍未达到来源饱和，但重复 / 非独立来源比例和核验成本明显上升。** Batch 15 原始候选先删除 6 条重复 / 非独立来源后，仍保留 8 个独立 HUMAN-A。
+- 当前停止判断：**仍未达到来源饱和，但已经进入高去重成本阶段。** 在 `S001–S300` 全历史直接回读后，本轮仍确认 8 个独立 HUMAN-A；同时 AI 自动面、内容账号、答案版和复制链继续增加。
 
 ## 下一轮搜索优先级
 
-1. 从 `S301` 开始，但必须在分配编号前直接回读历史 Batch 做完整去重；
+1. 从 `S309` 开始，但必须在分配编号前直接回读历史 Batch 做完整去重；
 2. 持续追 2026-09 最新 AI Application / Agent 原帖；
-3. 沿 Batch 15 新增候选人的作者主页回看二面 / 三面 / Leader 面，同公司同流程只合并；
+3. 沿 Batch 16 新增候选人的作者主页回看后续技术面 / Leader 面，同公司同流程只合并；
 4. 回扫 2026-03～09 未充分覆盖公司和岗位别名；
-5. 深挖 Context Runtime：Context Assembly / Compression / Memory Reinjection / Tool Result；
-6. 深挖 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
-7. 深挖 Tool / Skill Scale、Permission / Sandbox / Prompt Injection / Trace / Evaluation；
-8. 继续观察 RAG vs Agent File / Repo Search、TB 级 RAG System Design；
+5. 深挖 Agent Benchmark / Evaluation：Task Construction / Process Metric / Failure Attribution / Domain Expert Review / Regression；
+6. 深挖 Skill / Workflow Governance：Hard Guarantee / Auth / Sensitive Context / SubAgent Isolation / Output Review；
+7. 继续补 Python / FastAPI / Async 与 Agent Runtime 同场真人样本；
+8. 继续追 Long-running Agent：Cancel / Checkpoint / Resume / State / 外部副作用 Idempotence；
 9. 继续寻找目标 AI 岗中 MySQL / Redis / MQ / Network / Concurrency / Coding 与 Agent 同场出现的真人样本；
 10. 牛客外继续主动搜索个人博客 / 独立站 / 稳定原始正文，不设置平台配额；
 11. 持续记录新增 HUMAN-A 数量和命中率、重复率、二次整理 / 内容账号比例和 Role Scope 外比例，判断是否真正接近饱和。
