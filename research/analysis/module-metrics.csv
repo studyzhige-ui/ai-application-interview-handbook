@@ -1,0 +1,11 @@
+module,canonical_questions,unique_sources,source_question_incidences,mean_sources_per_question,median_sources_per_question,triple_heat_questions,l4_questions
+Python,15,15,25,1.67,1,0,0
+FastAPI,4,3,4,1,1.0,0,1
+AI Backend Engineering,39,120,290,7.44,7,11,16
+MySQL,26,55,138,5.31,4.0,6,6
+Redis,19,68,163,8.58,7,7,8
+Vector DB,12,34,91,7.58,6.5,4,5
+LLM Foundation（应用工程深度）,22,57,99,4.5,4.0,1,1
+RAG,29,78,357,12.31,10,15,20
+Agent Harness / Runtime,39,104,521,13.36,12,21,32
+System Design,24,66,76,3.17,2.0,2,24
