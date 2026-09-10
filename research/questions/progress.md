@@ -2,16 +2,18 @@
 
 更新日期：2026-09-10
 
+## Repository-first 规则
+
+> **后续所有工作都以仓库当前最新描述为准。** 每次继续研究前，先读取本目录的 `README.md`、`schema.md`、`progress.md`、`module-index.md` 与相关模块文件；聊天中的历史总结、旧分类、旧计数只能作为背景，不能覆盖仓库最新状态。
+
 ## Frozen Baseline
 
 - 正式 HUMAN-A：`S001–S279`
 - 正式 Batch：`batch-01.md` ～ `batch-26.md`
 - 主动采集：已冻结
-- 本轮目标：不再搜索新面经，只把冻结语料按正式学习路径归一化为可统计、可回溯的问题数据集
+- 不继续搜索新面经，除非用户明确重新开启采集
 
-## 第一阶段正式口径
-
-旧的“五大核心模块 + 支持模块”口径已经废弃。正式一级板块只有下面十个，并严格按学习路径组织：
+## 正式十板块
 
 ```text
 Python
@@ -35,106 +37,78 @@ Agent Harness / Runtime
 System Design
 ```
 
-`Coding / Debug / AI Coding` 只作为 `Question Type`，不再单独成为一级板块。
-
-第一阶段完成标准：
-
-1. 十个一级板块都对 `S001–S279` 完成全库纵向扫描；
-2. 每一道 Canonical Question 只有一个 `Primary Module`；
-3. 十个板块都完成跨模块 Merge / Move 归属审计，同一核心问题不靠复制进入多个板块；
-4. 跨板块关系只通过 `Related Modules` 和 MOVED 映射表达。
+`Coding / Debug / AI Coding` 只作为 `Question Type`，不作为一级板块。
 
 ---
 
-## 全库读取状态
+## Phase 1：十板块纵向 Canonicalization ✅
 
-`S001–S279` 所在 26 个 Batch 已完成直接回读，并已按十板块完成一轮语义归一化与归属复核。
+已完成：
 
-> Batch 文件中的历史“累计来源数 / 下一编号”等过程性统计按采集时口径保留；Canonical 重建只使用当前去重后的 `S001–S279` 正式编号。
+1. `S001–S279` 全库直接回读；
+2. 十个一级板块分别纵向扫描；
+3. 每道 Canonical 建立唯一 `Primary Module`；
+4. 第一轮跨模块 Merge / Move 归属审计。
 
-## 十板块 v2 状态
+Phase 1 结束时共有 **230 ACTIVE Canonical / 22 MOVED**。
 
-| 顺序 | 一级板块 | 状态 | ACTIVE Canonical | MOVED |
+---
+
+## Phase 2A：Global Merge / Split Audit ✅
+
+已对 Phase 1 的 230 个 Primary-owned ACTIVE 条目做全局问题级复核，并对可疑项回到原始 `batch-xx.md` 核验。
+
+### 审计后状态
+
+| 顺序 | 一级板块 | 当前版本 | ACTIVE | MOVED |
 |---:|---|---:|---:|---:|
-| 1 | Python | ✅ v2 | 15 | 0 |
-| 2 | FastAPI | ✅ v2 | 4 | 1 |
-| 3 | AI Backend Engineering | ✅ v2 | 39 | 0 |
-| 4 | MySQL | ✅ v2 | 26 | 2 |
-| 5 | Redis | ✅ v2 | 19 | 5 |
-| 6 | Vector DB | ✅ v2 | 13 | 10 |
-| 7 | LLM Foundation（应用工程深度） | ✅ v2 | 22 | 0 |
-| 8 | RAG | ✅ v2 | 30 | 0 |
-| 9 | Agent Harness / Runtime | ✅ v2 | 38 | 4 |
-| 10 | System Design | ✅ v2 | 24 | 0 |
-|  | **合计** | **10 / 10** | **230 ACTIVE** | **22 MOVED** |
+| 1 | Python | v2 | 15 | 0 |
+| 2 | FastAPI | v2 | 4 | 1 |
+| 3 | AI Backend Engineering | v3 | 39 | 0 |
+| 4 | MySQL | v3 | 26 | 2 |
+| 5 | Redis | v2 | 19 | 5 |
+| 6 | Vector DB | v3 | 12 | 11 |
+| 7 | LLM Foundation（应用工程深度） | v2 | 22 | 0 |
+| 8 | RAG | v3 | 29 | 1 |
+| 9 | Agent Harness / Runtime | v3 | 39 | 4 |
+| 10 | System Design | v2 | 24 | 0 |
+|  | **合计** |  | **229 ACTIVE** | **24 MOVED** |
 
-因此：**第一阶段现在才正式完成。**
+完整审计决策见 `global-audit.md`。
 
-`230` 是完成十板块 Primary Ownership 后的 ACTIVE 模块条目数。它仍不是最终发布版“全局独立问题数”，因为第二阶段还要对整个集合做 Global Merge / Split 与 Evidence 一致性审计。
+### 本轮主要变化
+
+- `VDB-010` 产品选型 → MERGED 到 `VDB-009`；
+- `RAG-030` Code RAG / Repo Search → MERGED 到 `AGENT-037`；
+- `MYSQL-010` 拆清单表 Deep Pagination 与跨 Shard Pagination；
+- `MYSQL-022` 拆清 MySQL Bulk Write 与通用 Batch / Migration System Design；
+- `AIBE-029` 拆清通用 Backend Observability 与 Agent Execution Trace；
+- 新建 `AGENT-043` Execution Trace / Observability；
+- `AGENT-028` 补入 `S254` Permission / Sandbox 安全证据；
+- 明确一批词面相似但核心知识模型不同的 KEEP-SEPARATE 对。
+
+### 数量变化
+
+```text
+230
+- 1  VDB-010 → VDB-009
+- 1  RAG-030 → AGENT-037
++ 1  AIBE-029 拆出 AGENT-043
+= 229 ACTIVE
+```
+
+MySQL 两项属于 Narrow / Evidence Reassignment，不改变 Canonical 数量。
 
 ---
 
-## 第一阶段关键归属修正
+## Phase 2B：Global Index + Market Analysis ⏳ 下一步
 
-### Python / FastAPI
-
-```text
-FastAPI async 调 LLM 时 await 期间 Event Loop / CPU / Thread 在做什么
-        ↓
-Primary = Python / PY-012
-Related = FastAPI, AI Backend Engineering
-```
-
-因此旧 `FASTAPI-003` 已 MOVED，不再重复计一题。
-
-### AI Backend / MySQL / Redis
+从当前 **229 个 ACTIVE Canonical** 出发，下一步生成真正的全局可分析视图：
 
 ```text
-MySQL + Redis 双写一致性
-        ↓
-Primary = AI Backend Engineering / AIBE-020
-Related = MySQL, Redis
-```
-
-数据库自身事务 / 索引 / 日志继续留 MySQL；Redis 自身数据结构 / Cluster / Lock / Lua 继续留 Redis。
-
-### Vector DB / LLM / RAG
-
-```text
-Embedding / Rerank Model 原理 → LLM Foundation
-ANN / HNSW / IVF / Vector Storage → Vector DB
-Dense/Sparse / Hybrid / RRF / Rerank Pipeline / Top-K / Retrieval Eval → RAG
-```
-
-### LLM / Agent Harness
-
-```text
-Context Window / Lost in the Middle 的模型本体限制 → LLM Foundation
-Context Assembly / Compaction / Memory / Tool Runtime → Agent Harness / Runtime
-```
-
-### Agent / AI Backend / System Design
-
-```text
-SSE / WebSocket 协议与通用 Streaming Reliability → AI Backend Engineering
-Agent Event / State / Tool / Checkpoint 控制语义 → Agent Harness / Runtime
-端到端 Production Agent Backend / Long-running Agent → System Design
-```
-
----
-
-## 第二阶段：Global Canonical Audit + Market Analysis
-
-下一步从这 **230 个 ACTIVE** 出发，不再改一级分类，而是做全局问题层审计：
-
-```text
-230 Primary-owned Canonical
-        ↓
-Global Merge / Split Audit
-        ↓
-Source Count / Evidence 一致性校验
-        ↓
 Global Canonical Question Index
+        ↓
+Evidence / Source Count 一致性复核
         ↓
 Frequency Ranking
         ↓
@@ -147,22 +121,17 @@ Curriculum Coverage Matrix
 Knowledge Gap Analysis
 ```
 
-第二阶段允许继续修正：
+这一阶段不再随意调整一级分类。如果发现新的 Merge / Split 问题，必须先记录到 `global-audit.md`，回到 HUMAN-A 原始来源核验后再修改 Canonical。
 
-1. 两个不同 Primary Module 的条目如果核心知识模型实际上仍相同 → Merge；
-2. 某个 Canonical 过宽、混了两个可独立追问能力 → Split；
-3. Evidence Source 归属过宽 / 过窄 → 修正；
-4. System Design 场景与底层能力建立关系，但不把场景频率重复计到底层问题上。
-
-任何修正都必须保留可追溯 `Sxxx`，不能凭常识、搜索热度或其它题库虚增真人面试频率。
+---
 
 ## Agent Harness 特殊规则
 
-Agent Harness 的面经统计层只反映 `S001–S279` 真人面试已经问到的内容。
+Agent Harness 的**面经统计层**只反映 `S001–S279` 真人面试已经问到的内容。
 
-后续正式建设 Agent 教材时，还要单独研究：
+正式建设 Agent 教材时，还必须额外研究：
 
 - `studyzhige-ui/claude-code-source-private`
 - `openai/codex`
 
-成熟源码属于课程实现证据，不能反向改变 HUMAN-A 的 `Source Count`。
+成熟源码属于课程权威实现证据，用于补齐完整 Harness / Runtime 知识边界；**不得**反向改变 HUMAN-A `Source Count`。
