@@ -9,6 +9,9 @@ on:
       - 'research/interviews/**'
       - 'tools/build_market_analysis.py'
       - 'tools/build_gap_candidates.py'
+      - 'tools/apply_canonical_audit.py'
+      - 'tools/validate_source_coverage.py'
+      - 'tools/phase2b_canonical_audit.json'
       - '.github/workflows/rebuild-market-analysis.yml'
 
 permissions:
@@ -30,21 +33,49 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Apply reviewed canonical coverage audit
+        run: python tools/apply_canonical_audit.py
+
+      - name: Sync expected canonical count from reviewed audit
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, re
+          from pathlib import Path
+          root = Path('.')
+          audit = json.loads((root / 'tools/phase2b_canonical_audit.json').read_text(encoding='utf-8'))
+          path = root / 'tools/build_market_analysis.py'
+          text = path.read_text(encoding='utf-8')
+          text, n = re.subn(
+              r'^EXPECTED_QUESTIONS = \d+$',
+              f"EXPECTED_QUESTIONS = {int(audit['expected_active_after'])}",
+              text,
+              count=1,
+              flags=re.M,
+          )
+          if n != 1:
+              raise SystemExit('could not sync EXPECTED_QUESTIONS')
+          path.write_text(text, encoding='utf-8')
+          PY
+
       - name: Build raw gap candidates
         run: python tools/build_gap_candidates.py
 
       - name: Build and validate Phase 2B analysis
         run: python tools/build_market_analysis.py
 
-      - name: Commit generated analysis
+      - name: Validate reviewed source coverage
+        run: python tools/validate_source_coverage.py
+
+      - name: Commit canonical and generated analysis
         shell: bash
         run: |
-          if [ -z "$(git status --porcelain research/analysis)" ]; then
+          if [ -z "$(git status --porcelain research/questions research/analysis tools/build_market_analysis.py)" ]; then
             echo 'No generated changes.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add research/analysis
-          git commit -m 'research: rebuild phase 2B market analysis'
+          git add research/questions research/analysis tools/build_market_analysis.py
+          git commit -m 'research: apply phase 2B canonical coverage audit'
           git push origin HEAD:${{ github.ref_name }}
