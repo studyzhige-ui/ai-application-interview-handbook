@@ -8,6 +8,7 @@ on:
       - 'research/questions/**'
       - 'research/interviews/**'
       - 'tools/build_market_analysis.py'
+      - 'tools/build_gap_candidates.py'
       - '.github/workflows/rebuild-market-analysis.yml'
 
 permissions:
@@ -28,6 +29,9 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Build raw gap candidates
+        run: python tools/build_gap_candidates.py
 
       - name: Build and validate Phase 2B analysis
         run: python tools/build_market_analysis.py
