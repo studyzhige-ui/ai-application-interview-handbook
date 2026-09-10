@@ -1,15 +1,17 @@
-# System Design Canonical Questions — S001–S279 全库纵向扫描 v1
+# System Design Canonical Questions — S001–S279 全库纵向扫描 v2
 
 更新日期：2026-09-10
 
-> 本文件只保留端到端场景设计题。底层 MySQL / Redis / MQ / RAG / Agent 单点原理仍只在各自 Primary Module 维护；这里关注如何把多个能力组合成可交付系统。
+> 一级板块：**System Design**。本文件只保留端到端场景设计题。底层 MySQL / Redis / MQ / RAG / Agent 单点原理仍只在各自 Primary Module 维护；这里关注如何把多个能力组合成可交付系统。
+>
+> 本文件所有条目的 `Primary Module = System Design`。同一来源可以同时支撑一个底层 Canonical 与一个端到端 Scenario，但两者考察目标必须不同，不能只是换标题复制同一道题。
 
 ## 1. 当前扫描结论
 
-- Canonical Questions：**24** 道
+- ACTIVE Canonical Questions：**24**
 - 证据范围：仅 `S001–S279`
 - 频率口径：独立 HUMAN-A 来源数
-- 当前版本：`v1`
+- 当前版本：`v2`（十板块归属审计版）
 
 System Design 是新十板块路径的最后一层，因为它本质上是在检验前九块知识能否组合起来处理容量、状态、一致性、可靠性、成本、安全和演进。
 
@@ -156,7 +158,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-013 · 设计统一 Model / LLM Gateway：多 Provider Schema、Routing、Streaming、Rate Limit、Cost、Failover 和 Observability 怎样组织？
 
 - **Primary Module**：System Design
-- **Related Modules**：AI Backend Engineering, LLM Foundation, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, LLM Foundation（应用工程深度）, Agent Harness / Runtime
 - **Topic**：LLM Gateway
 - **Question Type**：System Design
 - **Depth**：L4
@@ -193,7 +195,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-016 · 从零设计 Enterprise Knowledge-base QA / RAG Service：Ingestion、Permission、Retrieval、Generation、Evaluation 与 Update 怎样组织？
 
 - **Primary Module**：System Design
-- **Related Modules**：Vector DB, LLM Foundation, RAG, AI Backend Engineering
+- **Related Modules**：Vector DB, LLM Foundation（应用工程深度）, RAG, AI Backend Engineering
 - **Topic**：Enterprise RAG
 - **Question Type**：System Design
 - **Depth**：L4
@@ -215,7 +217,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-018 · 设计 Financial / Data Analysis Agent：从自然语言问题到检索、计算、结论 Verification 与 Citation 怎样闭环？
 
 - **Primary Module**：System Design
-- **Related Modules**：RAG, Agent Harness / Runtime, LLM Foundation
+- **Related Modules**：RAG, Agent Harness / Runtime, LLM Foundation（应用工程深度）
 - **Topic**：Analytical Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -274,7 +276,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-023 · 设计 Game / Interactive Agent：Goal、State、Action / Tool、Memory、Evaluation 与安全边界怎样映射具体游戏业务？
 
 - **Primary Module**：System Design
-- **Related Modules**：Agent Harness / Runtime, LLM Foundation
+- **Related Modules**：Agent Harness / Runtime, LLM Foundation（应用工程深度）
 - **Topic**：Game Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -295,7 +297,22 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 
 ---
 
-## 6. 对课程结构的直接信号
+## 6. 十板块归属审计结论
+
+System Design 与前九块的关系不是“再复制一遍底层知识”，而是保留**端到端组合题**。本轮逐项复核后，24 道均满足至少两个模块 / 多个工程约束的组合特征，因此保持 `System Design` Primary。
+
+典型边界：
+
+- `Rate Limit 算法 / Token Bucket / Sliding Window` → `AI Backend Engineering`；完整 Distributed Rate Limiter 的容量、一致性、故障设计 → `SD-009`。
+- `DB + Cache Consistency` 原理 → `AIBE-020`；完整秒杀库存链路 → `SD-001`。
+- `RAG Parse / Chunk / Rerank` → `RAG`；Enterprise / TB-scale RAG 的端到端架构 → `SD-016` / `SD-017`。
+- `Checkpoint / Resume / External Side Effect` Runtime 语义 → `Agent Harness / Runtime`；数小时 / 数天 Long-running Agent 的完整系统设计 → `SD-022`。
+
+本轮没有需要迁出的 ACTIVE Canonical。
+
+---
+
+## 7. 对课程结构的直接信号
 
 System Design 不应该从零重新讲 MySQL、Redis、RAG 或 Agent，而应把前九块作为可组合组件：
 
