@@ -16,7 +16,7 @@
     },
     {
       "file": "agent-harness.md",
-      "insert_before": "## 3. MOVED：新十板块归属修正",
+      "insert_before": "## 3. MOVED：十板块归属修正",
       "section_heading": "",
       "qid": "AGENT-044",
       "question": "Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？",
@@ -29,7 +29,7 @@
     },
     {
       "file": "agent-harness.md",
-      "insert_before": "## 3. MOVED：新十板块归属修正",
+      "insert_before": "## 3. MOVED：十板块归属修正",
       "section_heading": "",
       "qid": "AGENT-045",
       "question": "Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？",
@@ -42,7 +42,7 @@
     },
     {
       "file": "agent-harness.md",
-      "insert_before": "## 3. MOVED：新十板块归属修正",
+      "insert_before": "## 3. MOVED：十板块归属修正",
       "section_heading": "",
       "qid": "AGENT-046",
       "question": "A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？",
@@ -55,7 +55,7 @@
     },
     {
       "file": "agent-harness.md",
-      "insert_before": "## 3. MOVED：新十板块归属修正",
+      "insert_before": "## 3. MOVED：十板块归属修正",
       "section_heading": "",
       "qid": "AGENT-047",
       "question": "LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？",
@@ -68,7 +68,7 @@
     },
     {
       "file": "agent-harness.md",
-      "insert_before": "## 3. MOVED：新十板块归属修正",
+      "insert_before": "## 3. MOVED：十板块归属修正",
       "section_heading": "",
       "qid": "AGENT-048",
       "question": "AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？",
