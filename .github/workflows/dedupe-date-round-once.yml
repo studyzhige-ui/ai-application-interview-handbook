@@ -17,55 +17,57 @@ jobs:
         with:
           ref: dedupe-379-audit
           fetch-depth: 1
-      - name: Build same-date same-round report
+      - name: Build exact-overlap component report
         shell: bash
         run: |
           python - <<'PY'
           from pathlib import Path
-          import json,re,itertools,difflib
+          import json
           d=json.loads(Path('research/dedupe-audit.json').read_text(encoding='utf-8'))
           byid={e['id']:e for e in d['entries']}
-          exact=set()
+          parent={i:i for i in byid}
+          def find(x):
+              while parent[x]!=x:
+                  parent[x]=parent[parent[x]]
+                  x=parent[x]
+              return x
+          def union(a,b):
+              ra,rb=find(a),find(b)
+              if ra!=rb: parent[rb]=ra
           for g in d['exact_url_groups']:
-              for a,b in itertools.combinations(sorted(set(g['ids'])),2): exact.add((a,b))
-          def dates(t):
-              return set(re.findall(r'2026[-/.年]\d{1,2}(?:[-/.月]\d{1,2})?|\b\d{1,2}[/-]\d{1,2}\b',t))
-          def roundset(t):
-              x=[]
-              for r in ['一面','二面','三面','四面','终面','leader面','hr面','技术面']:
-                  if r.lower() in t.lower():x.append(r.lower())
-              return set(x)
-          rows=[]
-          ids=sorted(byid)
-          for a,b in itertools.combinations(ids,2):
-              if (a,b) in exact:continue
-              ea,eb=byid[a],byid[b]
-              if ea['company_norm']!=eb['company_norm']:continue
-              ds=dates(ea['title'])&dates(eb['title']); ra=roundset(ea['title']); rb=roundset(eb['title'])
-              if not ds or not ra or not rb or not (ra&rb):continue
-              # Exclude pairs whose only overlap is generic 技术面 when one also has a distinct numbered round
-              common=ra&rb
-              if common=={'技术面'} and ((ra-{'技术面'}) or (rb-{'技术面'})):continue
-              qa=''.join(ea.get('qtext','').split()); qb=''.join(eb.get('qtext','').split())
-              qs=difflib.SequenceMatcher(None,qa,qb,autojunk=False).ratio() if qa and qb else 0
-              rows.append((qs,a,b,ds,common))
-          rows.sort(reverse=True)
-          out=['# Same-date same-round non-exact candidates','',f'Pairs: {len(rows)}','']
-          for qs,a,b,ds,rr in rows:
-              ea,eb=byid[a],byid[b]
-              out += [f'## S{a:03d} ↔ S{b:03d}',f'- same dates: {sorted(ds)}; same round labels: {sorted(rr)}; sequence={qs:.3f}',f"- A: {ea['title']}",f"- B: {eb['title']}",f"- authors: {ea.get('author','')!r} / {eb.get('author','')!r}",f"- A urls: {ea.get('source_urls',[])}",f"- B urls: {eb.get('source_urls',[])}",'- A questions:']
-              out += [f'  {q}' for q in ea.get('qtext','').splitlines()[:8]] or ['  (none)']
-              out += ['- B questions:']
-              out += [f'  {q}' for q in eb.get('qtext','').splitlines()[:8]] or ['  (none)']
+              ids=sorted(set(g['ids']))
+              for i in ids[1:]: union(ids[0],i)
+          comps={}
+          for i in byid: comps.setdefault(find(i),[]).append(i)
+          comps=[sorted(v) for v in comps.values() if len(v)>1]
+          comps.sort(key=lambda v:v[0])
+          out=['# Exact URL connected components','',f'Components: {len(comps)}',f'Duplicate member count removed if one canonical/component: {sum(len(c)-1 for c in comps)}','']
+          for c in comps:
+              can=min(c)
+              ranked=[]
+              for i in c:
+                  e=byid[i]
+                  ranked.append((len(set(e.get('norm_urls',[]))),len(e.get('qtext','')),i))
+              ranked.sort(reverse=True)
+              richest=ranked[0][2]
+              allurls=[]
+              for i in c:
+                  for u in byid[i].get('norm_urls',[]):
+                      if u not in allurls: allurls.append(u)
+              out += [f"## canonical S{can:03d} | members {', '.join('S%03d'%i for i in c)} | richest S{richest:03d}",f'- all distinct source URLs: {len(allurls)}']
+              for i in c:
+                  e=byid[i]
+                  new_vs_can=[u for u in e.get('norm_urls',[]) if u not in byid[can].get('norm_urls',[])]
+                  out += [f"- S{i:03d}: urls={len(set(e.get('norm_urls',[])))} qchars={len(e.get('qtext',''))} title={e['title']}",f"  urls: {e.get('source_urls',[])}",f"  URLs beyond earliest canonical: {new_vs_can}"]
               out += ['']
-          Path('research/dedupe-date-round.md').write_text('\n'.join(out)+'\n',encoding='utf-8')
-          print('\n'.join(out[:350]))
+          Path('research/dedupe-components.md').write_text('\n'.join(out)+'\n',encoding='utf-8')
+          print('\n'.join(out[:500]))
           PY
       - name: Commit report to temporary branch
         shell: bash
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add research/dedupe-date-round.md
-          git commit -m 'chore: generate same-date same-round audit' || exit 0
+          git add research/dedupe-components.md
+          git commit -m 'chore: generate exact duplicate component report' || exit 0
           git push origin HEAD:dedupe-379-audit
