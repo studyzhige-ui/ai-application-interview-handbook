@@ -80,8 +80,8 @@
 - **Topic**：Vector Storage / Product / Architecture Selection
 - **Question Type**：Comparison / System Design / Project
 - **Depth**：L4
-- **Source Count**：**18**
-- **Evidence Sources**：`S004`, `S022`, `S054`, `S064`, `S095`, `S101`, `S109`, `S125`, `S136`, `S184`, `S211`, `S212`, `S249`, `S251`, `S255`, `S267`, `S275`, `S277`
+- **Source Count**：**20**
+- **Evidence Sources**：`S004`, `S022`, `S054`, `S064`, `S095`, `S101`, `S109`, `S113`, `S121`, `S125`, `S136`, `S184`, `S211`, `S212`, `S249`, `S251`, `S255`, `S267`, `S275`, `S277`
 
 ### VDB-011 · Vector Database 的 Collection / Partition / Schema / Primary Key / Metadata 应怎样建模？
 - **Topic**：Vector Data Modeling
@@ -102,8 +102,8 @@
 - **Topic**：Index Lifecycle / Freshness
 - **Question Type**：System Design
 - **Depth**：L4
-- **Source Count**：**8**
-- **Evidence Sources**：`S068`, `S095`, `S101`, `S109`, `S140`, `S217`, `S246`, `S277`
+- **Source Count**：**9**
+- **Evidence Sources**：`S068`, `S095`, `S101`, `S109`, `S140`, `S217`, `S221`, `S246`, `S277`
 - **Related Modules**：RAG, LLM Foundation（应用工程深度）
 
 ### VDB-022 · Graph Database 与 Vector Database 的数据模型、查询能力和适用场景有什么差异？

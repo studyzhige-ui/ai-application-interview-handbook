@@ -9,35 +9,35 @@
 | Depth | Canonical Questions | Evidence Incidences |
 |---|---:|---:|
 | L1 | 0 | 0 |
-| L2 | 44 | 220 |
-| L3 | 72 | 613 |
-| L4 | 113 | 931 |
+| L2 | 44 | 224 |
+| L3 | 75 | 739 |
+| L4 | 116 | 1095 |
 
 ## Question Type token
 
 | Type | Canonical Questions | Evidence Incidences |
 |---|---:|---:|
-| System Design | 101 | 761 |
-| Concept | 72 | 521 |
-| Comparison | 45 | 394 |
-| Why | 39 | 288 |
-| Trade-off | 32 | 277 |
-| Troubleshoot | 25 | 225 |
+| System Design | 104 | 869 |
+| Concept | 74 | 606 |
+| Comparison | 48 | 474 |
+| Why | 39 | 310 |
+| Trade-off | 33 | 339 |
+| Troubleshoot | 25 | 239 |
 | Deep Dive | 19 | 120 |
-| Failure Analysis | 16 | 158 |
-| Evaluation | 10 | 118 |
-| Project | 8 | 115 |
+| Failure Analysis | 17 | 184 |
+| Evaluation | 12 | 177 |
+| Project | 11 | 222 |
+| Security | 7 | 49 |
 | Coding | 6 | 12 |
-| Reliability | 6 | 36 |
-| Security | 6 | 34 |
+| Reliability | 6 | 38 |
 | Scenario | 5 | 40 |
 | Optimization | 3 | 13 |
-| Project Verification | 3 | 38 |
+| Verification | 3 | 64 |
+| Project Verification | 3 | 41 |
 | Implementation | 2 | 9 |
-| Verification | 2 | 18 |
+| AI Coding | 2 | 61 |
 | System | 1 | 3 |
 | Cost | 1 | 5 |
-| AI Coding | 1 | 15 |
 
 ## Module × Depth
 
@@ -49,7 +49,7 @@
 | MySQL | 0 | 8 | 12 | 6 |
 | Redis | 0 | 7 | 4 | 8 |
 | Vector DB | 0 | 2 | 5 | 5 |
-| LLM Foundation（应用工程深度） | 0 | 11 | 10 | 1 |
+| LLM Foundation（应用工程深度） | 0 | 11 | 11 | 1 |
 | RAG | 0 | 0 | 9 | 20 |
-| Agent Harness / Runtime | 0 | 0 | 7 | 32 |
+| Agent Harness / Runtime | 0 | 0 | 9 | 35 |
 | System Design | 0 | 0 | 0 | 24 |

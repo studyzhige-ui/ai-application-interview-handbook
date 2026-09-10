@@ -8,7 +8,7 @@
 
 ## 1. 当前扫描结论
 
-- ACTIVE Canonical Questions：**39**
+- ACTIVE Canonical Questions：**44**
 - MOVED：**4**（旧 `AGENT-013`, `033`, `039`, `040`）
 - 证据范围：仅 `S001–S279`
 - 当前版本：`v3`（Global Merge / Split Audit）
@@ -37,22 +37,22 @@
 - **Topic**：Agent Boundary
 - **Question Type**：Concept / Comparison
 - **Depth**：L3
-- **Source Count**：**25**
-- **Evidence Sources**：`S004`, `S014`, `S018`, `S019`, `S022`, `S026`, `S027`, `S031`, `S038`, `S041`, `S045`, `S048`, `S061`, `S073`, `S081`, `S087`, `S109`, `S145`, `S222`, `S227`, `S230`, `S233`, `S247`, `S257`, `S275`
+- **Source Count**：**30**
+- **Evidence Sources**：`S004`, `S014`, `S018`, `S019`, `S022`, `S026`, `S027`, `S031`, `S038`, `S041`, `S045`, `S048`, `S061`, `S073`, `S081`, `S085`, `S087`, `S109`, `S145`, `S186`, `S190`, `S197`, `S222`, `S227`, `S230`, `S233`, `S239`, `S247`, `S257`, `S275`
 
 ### AGENT-002 · Harness、Runtime、Orchestrator / Workflow Engine 分别解决什么问题？为什么“模型 + API”还不够？
 - **Topic**：Harness / Runtime Boundary
 - **Question Type**：Concept / Why
 - **Depth**：L3
-- **Source Count**：**13**
-- **Evidence Sources**：`S001`, `S003`, `S004`, `S027`, `S032`, `S043`, `S135`, `S214`, `S233`, `S235`, `S236`, `S246`, `S265`
+- **Source Count**：**25**
+- **Evidence Sources**：`S001`, `S003`, `S004`, `S027`, `S032`, `S043`, `S076`, `S078`, `S082`, `S085`, `S103`, `S135`, `S143`, `S155`, `S160`, `S186`, `S190`, `S213`, `S214`, `S233`, `S235`, `S236`, `S239`, `S246`, `S265`
 
 ### AGENT-003 · 一个完整 Agent Loop / Runtime 从 User Input 到 Final Answer 怎样执行？Model、Tool、State、Context 各在哪一层？
 - **Topic**：Agent Loop
 - **Question Type**：Concept / System Design
 - **Depth**：L3
-- **Source Count**：**24**
-- **Evidence Sources**：`S001`, `S003`, `S012`, `S014`, `S015`, `S018`, `S021`, `S022`, `S026`, `S036`, `S038`, `S041`, `S043`, `S063`, `S073`, `S081`, `S087`, `S145`, `S214`, `S226`, `S231`, `S233`, `S266`, `S279`
+- **Source Count**：**36**
+- **Evidence Sources**：`S001`, `S003`, `S012`, `S014`, `S015`, `S018`, `S021`, `S022`, `S026`, `S036`, `S038`, `S041`, `S043`, `S063`, `S073`, `S077`, `S078`, `S081`, `S087`, `S121`, `S141`, `S143`, `S145`, `S157`, `S160`, `S186`, `S190`, `S197`, `S213`, `S214`, `S221`, `S226`, `S231`, `S233`, `S266`, `S279`
 
 ### AGENT-004 · Agent Message / Event Model 应怎样设计？Assistant Text、Tool Call、Tool Result、System / User Message 为什么需要不同结构？
 - **Topic**：Message / Event Model
@@ -65,44 +65,44 @@
 - **Topic**：Agent Paradigm
 - **Question Type**：Comparison / Trade-off
 - **Depth**：L3
-- **Source Count**：**18**
-- **Evidence Sources**：`S014`, `S017`, `S021`, `S026`, `S031`, `S038`, `S039`, `S042`, `S044`, `S049`, `S061`, `S065`, `S073`, `S145`, `S214`, `S227`, `S247`, `S279`
+- **Source Count**：**31**
+- **Evidence Sources**：`S014`, `S017`, `S021`, `S026`, `S031`, `S038`, `S039`, `S042`, `S044`, `S049`, `S061`, `S065`, `S073`, `S078`, `S085`, `S099`, `S103`, `S121`, `S141`, `S145`, `S153`, `S155`, `S186`, `S190`, `S196`, `S197`, `S214`, `S219`, `S227`, `S247`, `S279`
 
 ### AGENT-006 · Agent 怎样判断任务已经完成并可靠停止？Max Step、Stop Condition、Dead Loop / Oscillation 如何检测？
 - **Topic**：Termination / Loop Detection
 - **Question Type**：Failure Analysis
 - **Depth**：L4
-- **Source Count**：**14**
-- **Evidence Sources**：`S017`, `S021`, `S022`, `S036`, `S042`, `S043`, `S044`, `S061`, `S073`, `S081`, `S214`, `S228`, `S236`, `S274`
+- **Source Count**：**15**
+- **Evidence Sources**：`S017`, `S021`, `S022`, `S036`, `S042`, `S043`, `S044`, `S061`, `S073`, `S081`, `S085`, `S214`, `S228`, `S236`, `S274`
 
 ### AGENT-007 · Agent Goal Drift / 执行方向偏离原始需求时，怎样发现并拉回主任务？
 - **Topic**：Goal Control
 - **Question Type**：Failure Analysis
 - **Depth**：L4
-- **Source Count**：**3**
-- **Evidence Sources**：`S042`, `S081`, `S214`
+- **Source Count**：**4**
+- **Evidence Sources**：`S042`, `S081`, `S143`, `S214`
 
 ### AGENT-008 · 一次 Agent Context 包含什么？System / User、History、Memory、Retrieval、Tool Schema、Tool Result 怎样排序与组装？
 - **Topic**：Context Assembly
 - **Question Type**：System Design
 - **Depth**：L4
-- **Source Count**：**12**
-- **Evidence Sources**：`S015`, `S017`, `S026`, `S036`, `S063`, `S066`, `S081`, `S214`, `S227`, `S231`, `S240`, `S275`
+- **Source Count**：**16**
+- **Evidence Sources**：`S015`, `S017`, `S026`, `S036`, `S063`, `S066`, `S081`, `S153`, `S155`, `S157`, `S214`, `S219`, `S227`, `S231`, `S240`, `S275`
 
 ### AGENT-009 · Context Window 接近上限时，怎样 Trim / Summarize / Compact，同时保留当前任务关键状态？
 - **Topic**：Context Compaction
 - **Question Type**：System Design / Trade-off
 - **Depth**：L4
-- **Source Count**：**33**
-- **Evidence Sources**：`S002`, `S003`, `S014`, `S016`, `S017`, `S026`, `S031`, `S032`, `S034`, `S037`, `S039`, `S043`, `S045`, `S048`, `S060`, `S063`, `S064`, `S066`, `S073`, `S081`, `S087`, `S109`, `S135`, `S145`, `S214`, `S227`, `S231`, `S236`, `S237`, `S240`, `S242`, `S250`, `S275`
+- **Source Count**：**41**
+- **Evidence Sources**：`S002`, `S003`, `S014`, `S016`, `S017`, `S026`, `S031`, `S032`, `S034`, `S037`, `S039`, `S043`, `S045`, `S048`, `S060`, `S063`, `S064`, `S066`, `S073`, `S076`, `S081`, `S087`, `S109`, `S121`, `S135`, `S143`, `S145`, `S155`, `S190`, `S197`, `S214`, `S219`, `S221`, `S227`, `S231`, `S236`, `S237`, `S240`, `S242`, `S250`, `S275`
 - **Related Modules**：LLM Foundation（应用工程深度）
 
 ### AGENT-010 · Compaction / Summary 后如何验证信息没有丢坏？哪些状态必须保留，错误摘要如何纠正？
 - **Topic**：Compaction Correctness
 - **Question Type**：Failure Analysis / Evaluation
 - **Depth**：L4
-- **Source Count**：**13**
-- **Evidence Sources**：`S003`, `S016`, `S017`, `S032`, `S039`, `S043`, `S048`, `S081`, `S214`, `S236`, `S237`, `S240`, `S275`
+- **Source Count**：**15**
+- **Evidence Sources**：`S003`, `S016`, `S017`, `S032`, `S039`, `S043`, `S048`, `S076`, `S081`, `S214`, `S221`, `S236`, `S237`, `S240`, `S275`
 
 ### AGENT-011 · Tool Result / 文件 / 日志过大时怎样压缩、引用、延迟加载或外部化，而不是全部塞进 Context？
 - **Topic**：Large Tool Result / Context Offloading
@@ -122,8 +122,8 @@
 - **Topic**：Memory Architecture
 - **Question Type**：System Design
 - **Depth**：L4
-- **Source Count**：**31**
-- **Evidence Sources**：`S003`, `S006`, `S017`, `S018`, `S027`, `S031`, `S034`, `S036`, `S038`, `S039`, `S044`, `S048`, `S050`, `S054`, `S060`, `S063`, `S065`, `S066`, `S073`, `S081`, `S087`, `S105`, `S145`, `S214`, `S227`, `S230`, `S236`, `S237`, `S241`, `S248`, `S253`
+- **Source Count**：**36**
+- **Evidence Sources**：`S003`, `S006`, `S017`, `S018`, `S027`, `S031`, `S034`, `S036`, `S038`, `S039`, `S044`, `S048`, `S050`, `S054`, `S060`, `S063`, `S065`, `S066`, `S073`, `S081`, `S085`, `S087`, `S105`, `S143`, `S145`, `S190`, `S197`, `S214`, `S219`, `S227`, `S230`, `S236`, `S237`, `S241`, `S248`, `S253`
 
 ### AGENT-015 · Memory 什么时候从短期晋升长期？怎样做 Extraction / Consolidation / Retrieval-on-demand，而不是无限堆历史？
 - **Topic**：Memory Lifecycle
@@ -143,72 +143,72 @@
 - **Topic**：Multi-tenant State Isolation
 - **Question Type**：System Design / Security
 - **Depth**：L4
-- **Source Count**：**8**
-- **Evidence Sources**：`S027`, `S033`, `S035`, `S060`, `S081`, `S194`, `S240`, `S276`
+- **Source Count**：**10**
+- **Evidence Sources**：`S027`, `S033`, `S035`, `S060`, `S078`, `S081`, `S121`, `S194`, `S240`, `S276`
 
 ### AGENT-018 · Tool / Function Calling 从 Schema 暴露、模型选择、Structured Call、Runtime 执行到 Result 回填的完整链路是什么？
 - **Topic**：Tool Calling Protocol
 - **Question Type**：Concept / System Design
 - **Depth**：L3
-- **Source Count**：**28**
-- **Evidence Sources**：`S001`, `S009`, `S012`, `S015`, `S018`, `S021`, `S022`, `S023`, `S028`, `S038`, `S039`, `S041`, `S046`, `S049`, `S054`, `S057`, `S063`, `S064`, `S065`, `S068`, `S071`, `S081`, `S145`, `S214`, `S231`, `S233`, `S240`, `S277`
+- **Source Count**：**29**
+- **Evidence Sources**：`S001`, `S009`, `S012`, `S015`, `S018`, `S021`, `S022`, `S023`, `S028`, `S038`, `S039`, `S041`, `S046`, `S049`, `S054`, `S057`, `S063`, `S064`, `S065`, `S068`, `S071`, `S081`, `S085`, `S145`, `S214`, `S231`, `S233`, `S240`, `S277`
 
 ### AGENT-019 · 一个新 Tool 从定义、注册、Discovery、Schema Validation、调用到版本升级的生命周期怎样设计？
 - **Topic**：Tool Lifecycle
 - **Question Type**：System Design
 - **Depth**：L4
-- **Source Count**：**8**
-- **Evidence Sources**：`S001`, `S012`, `S022`, `S043`, `S057`, `S214`, `S236`, `S275`
+- **Source Count**：**10**
+- **Evidence Sources**：`S001`, `S012`, `S022`, `S043`, `S057`, `S077`, `S213`, `S214`, `S236`, `S275`
 
 ### AGENT-020 · 单次 Tool Call 出现 Invalid Arguments / Invalid Schema / Permission / Execution / Timeout 等失败时，Runtime 怎样归一化错误、反馈给模型并决定 Repair / Retry / Fail？
 - **Topic**：Tool Call Failure Semantics
 - **Question Type**：Troubleshoot / Failure Analysis
 - **Depth**：L4
-- **Source Count**：**22**
-- **Evidence Sources**：`S003`, `S015`, `S017`, `S021`, `S022`, `S034`, `S042`, `S043`, `S045`, `S050`, `S057`, `S060`, `S071`, `S073`, `S081`, `S145`, `S214`, `S236`, `S240`, `S245`, `S275`, `S277`
+- **Source Count**：**27**
+- **Evidence Sources**：`S003`, `S015`, `S017`, `S021`, `S022`, `S034`, `S042`, `S043`, `S045`, `S050`, `S057`, `S060`, `S071`, `S073`, `S077`, `S081`, `S085`, `S103`, `S145`, `S153`, `S157`, `S214`, `S236`, `S240`, `S245`, `S275`, `S277`
 - **Related Modules**：AI Backend Engineering
 
 ### AGENT-021 · Tool 数量持续增长时怎样 Dynamic Discovery / Progressive Loading，避免所有 Schema 一次性挤占 Context？
 - **Topic**：Tool Discovery / Progressive Loading
 - **Question Type**：System Design / Trade-off
 - **Depth**：L4
-- **Source Count**：**17**
-- **Evidence Sources**：`S001`, `S017`, `S038`, `S039`, `S057`, `S081`, `S109`, `S135`, `S145`, `S214`, `S228`, `S231`, `S233`, `S252`, `S274`, `S275`, `S279`
+- **Source Count**：**20**
+- **Evidence Sources**：`S001`, `S017`, `S038`, `S039`, `S057`, `S077`, `S081`, `S109`, `S135`, `S145`, `S155`, `S213`, `S214`, `S228`, `S231`, `S233`, `S252`, `S274`, `S275`, `S279`
 
 ### AGENT-022 · Structured Output / Tool Arguments 如何做 Schema Validation、Repair 与 Hallucination Handling？
 - **Topic**：Structured Output / Validation
 - **Question Type**：Failure Analysis
 - **Depth**：L4
-- **Source Count**：**8**
-- **Evidence Sources**：`S012`, `S018`, `S057`, `S071`, `S081`, `S214`, `S248`, `S253`
+- **Source Count**：**11**
+- **Evidence Sources**：`S012`, `S018`, `S057`, `S071`, `S076`, `S081`, `S121`, `S157`, `S214`, `S248`, `S253`
 
 ### AGENT-023 · MCP 解决什么标准化问题？Client / Server、Tools / Resources / Prompts 与 stdio / SSE / Streamable HTTP 怎样理解？
 - **Topic**：MCP Protocol
 - **Question Type**：Concept / System Design
 - **Depth**：L3
-- **Source Count**：**18**
-- **Evidence Sources**：`S009`, `S015`, `S017`, `S019`, `S021`, `S022`, `S023`, `S028`, `S033`, `S034`, `S038`, `S041`, `S049`, `S057`, `S214`, `S231`, `S238`, `S259`
+- **Source Count**：**20**
+- **Evidence Sources**：`S009`, `S015`, `S017`, `S019`, `S021`, `S022`, `S023`, `S028`, `S033`, `S034`, `S038`, `S041`, `S049`, `S057`, `S103`, `S157`, `S214`, `S231`, `S238`, `S259`
 
 ### AGENT-024 · Skill、Tool、Function Calling、MCP、Rule / Prompt / Workflow 的职责边界是什么？
 - **Topic**：Capability Abstraction Boundary
 - **Question Type**：Comparison
 - **Depth**：L4
-- **Source Count**：**27**
-- **Evidence Sources**：`S001`, `S009`, `S014`, `S018`, `S019`, `S020`, `S023`, `S028`, `S038`, `S039`, `S041`, `S049`, `S054`, `S055`, `S061`, `S081`, `S109`, `S214`, `S227`, `S228`, `S230`, `S231`, `S233`, `S238`, `S247`, `S252`, `S275`
+- **Source Count**：**34**
+- **Evidence Sources**：`S001`, `S009`, `S014`, `S018`, `S019`, `S020`, `S023`, `S028`, `S038`, `S039`, `S041`, `S049`, `S054`, `S055`, `S061`, `S077`, `S081`, `S109`, `S128`, `S186`, `S196`, `S197`, `S214`, `S219`, `S227`, `S228`, `S230`, `S231`, `S233`, `S238`, `S247`, `S252`, `S261`, `S275`
 
 ### AGENT-025 · Skill 怎样做 Progressive Disclosure / Resource Loading？为什么不把所有 Instructions / Assets 一次性注入 Context？
 - **Topic**：Skill Progressive Disclosure
 - **Question Type**：Why / System Design
 - **Depth**：L4
-- **Source Count**：**9**
-- **Evidence Sources**：`S039`, `S081`, `S135`, `S214`, `S228`, `S231`, `S233`, `S252`, `S275`
+- **Source Count**：**10**
+- **Evidence Sources**：`S039`, `S081`, `S135`, `S155`, `S214`, `S228`, `S231`, `S233`, `S252`, `S275`
 
 ### AGENT-026 · Agent 长耗时任务怎样 Timeout、Cancel、Interrupt、Resume？取消传播和资源清理怎样保证？
 - **Topic**：Cancellation / Long-running Task
 - **Question Type**：Failure Analysis / System Design
 - **Depth**：L4
-- **Source Count**：**9**
-- **Evidence Sources**：`S019`, `S034`, `S036`, `S047`, `S059`, `S081`, `S182`, `S214`, `S240`
+- **Source Count**：**10**
+- **Evidence Sources**：`S019`, `S034`, `S036`, `S047`, `S059`, `S081`, `S182`, `S213`, `S214`, `S240`
 - **Related Modules**：AI Backend Engineering, System Design
 
 ### AGENT-027 · Checkpoint / Persistence / Resume 应保存哪些 Runtime State？Crash 后怎样恢复到可继续执行状态？
@@ -223,8 +223,8 @@
 - **Topic**：Permission / Approval / Sandbox
 - **Question Type**：Security / System Design
 - **Depth**：L4
-- **Source Count**：**16**
-- **Evidence Sources**：`S015`, `S019`, `S025`, `S027`, `S030`, `S032`, `S037`, `S042`, `S059`, `S081`, `S214`, `S241`, `S245`, `S253`, `S254`, `S275`
+- **Source Count**：**20**
+- **Evidence Sources**：`S015`, `S019`, `S025`, `S027`, `S030`, `S032`, `S037`, `S042`, `S059`, `S077`, `S081`, `S085`, `S103`, `S196`, `S214`, `S241`, `S245`, `S253`, `S254`, `S275`
 - **Related Modules**：AI Backend Engineering
 
 ### AGENT-029 · Tool 已成功产生外部副作用，但 Checkpoint / DB 写失败或服务崩溃时，如何避免 Resume 后重复执行？
@@ -239,15 +239,15 @@
 - **Topic**：Multi-Agent Architecture
 - **Question Type**：System Design / Trade-off
 - **Depth**：L4
-- **Source Count**：**21**
-- **Evidence Sources**：`S001`, `S002`, `S017`, `S026`, `S027`, `S028`, `S031`, `S034`, `S037`, `S042`, `S044`, `S058`, `S060`, `S061`, `S063`, `S064`, `S081`, `S145`, `S214`, `S228`, `S253`
+- **Source Count**：**29**
+- **Evidence Sources**：`S001`, `S002`, `S017`, `S026`, `S027`, `S028`, `S031`, `S034`, `S037`, `S042`, `S044`, `S058`, `S060`, `S061`, `S063`, `S064`, `S077`, `S081`, `S085`, `S103`, `S145`, `S153`, `S155`, `S157`, `S190`, `S197`, `S214`, `S228`, `S253`
 
 ### AGENT-031 · 多 Agent 并行修改同一文件 / Workspace 或共享资源时，如何避免 Conflict、Race、Lost Update？
 - **Topic**：Workspace / Shared-resource Concurrency
 - **Question Type**：System Design / Failure Analysis
 - **Depth**：L4
-- **Source Count**：**6**
-- **Evidence Sources**：`S017`, `S027`, `S030`, `S032`, `S081`, `S214`
+- **Source Count**：**7**
+- **Evidence Sources**：`S017`, `S027`, `S030`, `S032`, `S081`, `S157`, `S214`
 
 ### AGENT-032 · Agent Runtime 怎样做 Model Routing？不同 Provider 的 Tool Protocol、Context 与错误语义如何适配？
 - **Topic**：Model Routing / Runtime Adapter
@@ -261,22 +261,22 @@
 - **Topic**：Agent Evaluation
 - **Question Type**：Evaluation / System Design
 - **Depth**：L4
-- **Source Count**：**19**
-- **Evidence Sources**：`S003`, `S007`, `S031`, `S041`, `S043`, `S048`, `S057`, `S058`, `S061`, `S063`, `S081`, `S214`, `S225`, `S228`, `S235`, `S236`, `S242`, `S243`, `S279`
+- **Source Count**：**27**
+- **Evidence Sources**：`S003`, `S007`, `S031`, `S041`, `S043`, `S048`, `S057`, `S058`, `S061`, `S063`, `S077`, `S078`, `S081`, `S121`, `S143`, `S160`, `S186`, `S213`, `S214`, `S221`, `S225`, `S228`, `S235`, `S236`, `S242`, `S243`, `S279`
 
 ### AGENT-035 · Agent Benchmark / Eval Dataset / Ground Truth 怎样构建？如何让 Offline Case 代表真实线上任务并用于 Regression？
 - **Topic**：Benchmark Engineering
 - **Question Type**：Evaluation / Project Verification
 - **Depth**：L4
-- **Source Count**：**9**
-- **Evidence Sources**：`S043`, `S057`, `S061`, `S081`, `S214`, `S225`, `S228`, `S236`, `S279`
+- **Source Count**：**12**
+- **Evidence Sources**：`S043`, `S057`, `S061`, `S077`, `S078`, `S081`, `S213`, `S214`, `S225`, `S228`, `S236`, `S279`
 
 ### AGENT-036 · AI / Coding Agent 生成代码后，怎样用 Test、Diff、Regression、Review、Rollback 证明结果可交付？
 - **Topic**：Code Verification
 - **Question Type**：AI Coding / Verification
 - **Depth**：L4
-- **Source Count**：**15**
-- **Evidence Sources**：`S003`, `S007`, `S009`, `S030`, `S032`, `S043`, `S046`, `S048`, `S061`, `S214`, `S226`, `S236`, `S245`, `S259`, `S279`
+- **Source Count**：**24**
+- **Evidence Sources**：`S003`, `S007`, `S009`, `S030`, `S032`, `S043`, `S046`, `S048`, `S061`, `S077`, `S103`, `S128`, `S157`, `S186`, `S196`, `S214`, `S215`, `S221`, `S226`, `S236`, `S245`, `S259`, `S261`, `S279`
 
 ### AGENT-037 · Coding Agent 怎样理解大型 Repository？Vector RAG、AST / LSP、ripgrep / Filesystem Search、Dependency Graph 各适合什么？
 - **Topic**：Repository Understanding
@@ -290,16 +290,16 @@
 - **Topic**：Agent Runtime Resilience Policy
 - **Question Type**：Failure Analysis
 - **Depth**：L4
-- **Source Count**：**12**
-- **Evidence Sources**：`S003`, `S007`, `S019`, `S022`, `S045`, `S060`, `S073`, `S081`, `S214`, `S236`, `S240`, `S276`
+- **Source Count**：**15**
+- **Evidence Sources**：`S003`, `S007`, `S019`, `S022`, `S045`, `S060`, `S073`, `S081`, `S121`, `S186`, `S214`, `S236`, `S239`, `S240`, `S276`
 - **Related Modules**：AI Backend Engineering
 
 ### AGENT-041 · Agent Self-evolution / Data Flywheel 怎样闭环？Bad Case、数据采集、Metric、上线验证与 Rollback 如何设计？
 - **Topic**：Self-evolution / Data Flywheel
 - **Question Type**：System Design / Evaluation
 - **Depth**：L4
-- **Source Count**：**3**
-- **Evidence Sources**：`S243`, `S248`, `S265`
+- **Source Count**：**6**
+- **Evidence Sources**：`S082`, `S103`, `S219`, `S243`, `S248`, `S265`
 
 ### AGENT-042 · Agent 正在执行时用户追加 / 修改需求，新指令怎样进入当前 State，并安全影响后续 Planning / Execution？
 - **Topic**：Dynamic Instruction / Steering
@@ -312,9 +312,61 @@
 - **Topic**：Execution Trace / Observability
 - **Question Type**：Troubleshoot / System Design
 - **Depth**：L4
-- **Source Count**：**5**
-- **Evidence Sources**：`S034`, `S129`, `S146`, `S240`, `S242`
+- **Source Count**：**7**
+- **Evidence Sources**：`S034`, `S076`, `S082`, `S129`, `S146`, `S240`, `S242`
 - **Related Modules**：AI Backend Engineering
+
+---
+
+### AGENT-044 · Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？
+- **Primary Module**：Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, RAG
+- **Topic**：Prompt Injection / Untrusted Context Security
+- **Question Type**：Security / Failure Analysis / System Design
+- **Depth**：L4
+- **Interview Heat**：🔥🔥
+- **Source Count**：**8**
+- **Evidence Sources**：`S027`, `S079`, `S084`, `S103`, `S159`, `S207`, `S228`, `S276`
+
+### AGENT-045 · Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？
+- **Primary Module**：Agent Harness / Runtime
+- **Related Modules**：LLM Foundation（应用工程深度）
+- **Topic**：Intent Recognition / Routing
+- **Question Type**：Comparison / System Design / Evaluation
+- **Depth**：L4
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**11**
+- **Evidence Sources**：`S008`, `S010`, `S012`, `S024`, `S057`, `S122`, `S139`, `S248`, `S255`, `S260`, `S276`
+
+### AGENT-046 · A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？
+- **Primary Module**：Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering
+- **Topic**：A2A / Agent Communication Protocol
+- **Question Type**：Concept / Comparison / System Design
+- **Depth**：L3
+- **Interview Heat**：🔥🔥
+- **Source Count**：**6**
+- **Evidence Sources**：`S021`, `S048`, `S064`, `S114`, `S227`, `S238`
+
+### AGENT-047 · LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？
+- **Primary Module**：Agent Harness / Runtime
+- **Related Modules**：FastAPI, AI Backend Engineering
+- **Topic**：Agent Framework Selection
+- **Question Type**：Comparison / Trade-off / Project
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**27**
+- **Evidence Sources**：`S004`, `S027`, `S049`, `S054`, `S065`, `S071`, `S074`, `S077`, `S078`, `S087`, `S118`, `S121`, `S124`, `S126`, `S136`, `S155`, `S164`, `S165`, `S179`, `S182`, `S186`, `S221`, `S223`, `S227`, `S269`, `S275`, `S278`
+
+### AGENT-048 · AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？
+- **Primary Module**：Agent Harness / Runtime
+- **Related Modules**：Python, AI Backend Engineering
+- **Topic**：AI-assisted Development Workflow
+- **Question Type**：AI Coding / Project / Verification
+- **Depth**：L4
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**37**
+- **Evidence Sources**：`S012`, `S020`, `S026`, `S031`, `S046`, `S055`, `S062`, `S071`, `S077`, `S080`, `S083`, `S092`, `S093`, `S103`, `S104`, `S113`, `S114`, `S117`, `S120`, `S123`, `S127`, `S128`, `S142`, `S143`, `S152`, `S157`, `S186`, `S196`, `S215`, `S218`, `S221`, `S236`, `S237`, `S244`, `S246`, `S256`, `S261`
 
 ---
 

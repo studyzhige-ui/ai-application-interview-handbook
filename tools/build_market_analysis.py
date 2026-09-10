@@ -36,7 +36,7 @@ MODULE_FILES = [
     ("System Design", "system-design.md"),
 ]
 MODULE_ORDER = {name: i for i, (name, _) in enumerate(MODULE_FILES)}
-EXPECTED_QUESTIONS = 229
+EXPECTED_QUESTIONS = 235
 EXPECTED_SOURCE_IDS = {f"S{i:03d}" for i in range(1, 280)}
 
 QUESTION_RE = re.compile(

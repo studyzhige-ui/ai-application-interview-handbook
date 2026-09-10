@@ -37,9 +37,9 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 - **Topic**：Realtime Ranking
 - **Question Type**：System Design
 - **Depth**：L4
-- **Interview Heat**：单点真实信号
-- **Source Count**：**1**
-- **Evidence Sources**：`S083`
+- **Interview Heat**：🔥
+- **Source Count**：**2**
+- **Evidence Sources**：`S083`, `S142`
 
 ### SD-003 · 设计搜索框实时联想 / 模糊搜索：如何同时支持代码、名称、拼音 / Prefix / Infix，并控制实时交互成本？
 
@@ -259,8 +259,8 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 - **Question Type**：System Design
 - **Depth**：L4
 - **Interview Heat**：🔥🔥🔥
-- **Source Count**：**9**
-- **Evidence Sources**：`S068`, `S122`, `S129`, `S171`, `S177`, `S192`, `S214`, `S241`, `S256`
+- **Source Count**：**13**
+- **Evidence Sources**：`S068`, `S082`, `S085`, `S122`, `S129`, `S171`, `S177`, `S192`, `S214`, `S221`, `S239`, `S241`, `S256`
 
 ### SD-022 · 设计 Long-running Agent Runtime：数小时 / 数天任务怎样做 Checkpoint、Resume、Cancel、Idempotency、外部副作用和状态迁移？
 

@@ -33,16 +33,16 @@
 - **Topic**：RAG Boundary
 - **Question Type**：Why / Comparison
 - **Depth**：L4
-- **Source Count**：**11**
-- **Evidence Sources**：`S023`, `S031`, `S045`, `S068`, `S145`, `S218`, `S222`, `S249`, `S257`, `S267`, `S275`
+- **Source Count**：**12**
+- **Evidence Sources**：`S023`, `S031`, `S045`, `S068`, `S141`, `S145`, `S218`, `S222`, `S249`, `S257`, `S267`, `S275`
 - **Related Modules**：LLM Foundation（应用工程深度）, Agent Harness / Runtime
 
 ### RAG-002 · Production RAG 从 Ingestion / Parse / Chunk / Embedding / Index 到 Retrieve / Rerank / Context / LLM 的完整链路是什么？
 - **Topic**：End-to-end Pipeline
 - **Question Type**：Concept / Project
 - **Depth**：L3
-- **Source Count**：**31**
-- **Evidence Sources**：`S006`, `S021`, `S024`, `S026`, `S029`, `S031`, `S040`, `S053`, `S063`, `S068`, `S071`, `S074`, `S081`, `S087`, `S095`, `S101`, `S109`, `S132`, `S148`, `S150`, `S163`, `S184`, `S200`, `S211`, `S217`, `S240`, `S249`, `S251`, `S262`, `S275`, `S277`
+- **Source Count**：**38**
+- **Evidence Sources**：`S006`, `S021`, `S024`, `S026`, `S029`, `S031`, `S040`, `S053`, `S063`, `S068`, `S071`, `S074`, `S076`, `S081`, `S087`, `S095`, `S099`, `S101`, `S103`, `S109`, `S113`, `S132`, `S142`, `S148`, `S150`, `S153`, `S163`, `S184`, `S200`, `S211`, `S217`, `S221`, `S240`, `S249`, `S251`, `S262`, `S275`, `S277`
 
 ### RAG-003 · 建 RAG 前怎样审计 Corpus：数据来源、质量、重复、版本、权限和真实规模如何影响方案？
 - **Topic**：Corpus / Data Audit
@@ -55,8 +55,8 @@
 - **Topic**：Parsing / OCR / Layout
 - **Question Type**：System Design / Project
 - **Depth**：L4
-- **Source Count**：**12**
-- **Evidence Sources**：`S024`, `S029`, `S052`, `S058`, `S074`, `S095`, `S162`, `S184`, `S217`, `S240`, `S253`, `S275`
+- **Source Count**：**13**
+- **Evidence Sources**：`S024`, `S029`, `S052`, `S058`, `S074`, `S095`, `S162`, `S184`, `S213`, `S217`, `S240`, `S253`, `S275`
 
 ### RAG-005 · 表格、图片与多模态内容怎样保留结构和引用关系？Cross-page Table 被切断时如何恢复语义？
 - **Topic**：Multimodal / Table Parsing
@@ -81,8 +81,8 @@
 - **Topic**：Chunk Strategy
 - **Question Type**：Comparison / Project
 - **Depth**：L3
-- **Source Count**：**29**
-- **Evidence Sources**：`S002`, `S018`, `S021`, `S022`, `S024`, `S026`, `S029`, `S031`, `S037`, `S040`, `S054`, `S055`, `S058`, `S064`, `S068`, `S072`, `S074`, `S081`, `S084`, `S095`, `S101`, `S109`, `S162`, `S184`, `S217`, `S240`, `S249`, `S253`, `S275`
+- **Source Count**：**30**
+- **Evidence Sources**：`S002`, `S018`, `S021`, `S022`, `S024`, `S026`, `S029`, `S031`, `S037`, `S040`, `S054`, `S055`, `S058`, `S064`, `S068`, `S072`, `S074`, `S081`, `S084`, `S095`, `S101`, `S109`, `S141`, `S162`, `S184`, `S217`, `S240`, `S249`, `S253`, `S275`
 
 ### RAG-008 · Chunk Size / Overlap 如何设置？参数怎样通过 Dataset / Experiment 验证，而不是照抄默认值？
 - **Topic**：Chunk Parameters
@@ -95,8 +95,8 @@
 - **Topic**：Semantic Boundary Failure
 - **Question Type**：Failure Analysis
 - **Depth**：L4
-- **Source Count**：**6**
-- **Evidence Sources**：`S024`, `S058`, `S162`, `S218`, `S240`, `S253`
+- **Source Count**：**7**
+- **Evidence Sources**：`S024`, `S058`, `S141`, `S162`, `S218`, `S240`, `S253`
 
 ---
 
@@ -106,8 +106,8 @@
 - **Topic**：Query Transformation
 - **Question Type**：System Design / Comparison
 - **Depth**：L4
-- **Source Count**：**17**
-- **Evidence Sources**：`S008`, `S024`, `S040`, `S055`, `S056`, `S057`, `S066`, `S072`, `S081`, `S095`, `S101`, `S132`, `S148`, `S150`, `S240`, `S249`, `S250`
+- **Source Count**：**18**
+- **Evidence Sources**：`S008`, `S024`, `S040`, `S055`, `S056`, `S057`, `S066`, `S072`, `S081`, `S095`, `S101`, `S113`, `S132`, `S148`, `S150`, `S240`, `S249`, `S250`
 
 ### RAG-011 · Retrieval Miss / No-hit 如何定义？阈值怎样设置，何时拒答、澄清或走 Fallback？
 - **Topic**：No-hit / Refusal
@@ -128,8 +128,8 @@
 - **Topic**：Hybrid Retrieval
 - **Question Type**：Why / System Design
 - **Depth**：L4
-- **Source Count**：**24**
-- **Evidence Sources**：`S018`, `S031`, `S034`, `S037`, `S040`, `S058`, `S066`, `S072`, `S081`, `S084`, `S087`, `S095`, `S101`, `S109`, `S132`, `S148`, `S150`, `S184`, `S200`, `S211`, `S217`, `S218`, `S240`, `S251`
+- **Source Count**：**25**
+- **Evidence Sources**：`S018`, `S031`, `S034`, `S037`, `S040`, `S058`, `S066`, `S072`, `S081`, `S084`, `S087`, `S095`, `S101`, `S109`, `S132`, `S148`, `S150`, `S157`, `S184`, `S200`, `S211`, `S217`, `S218`, `S240`, `S251`
 - **Related Modules**：Vector DB
 
 ### RAG-014 · RRF / Fusion 为什么常用于多路召回？为什么不简单线性加权，参数怎样调？
@@ -151,8 +151,8 @@
 - **Topic**：Top-K
 - **Question Type**：Trade-off / Evaluation
 - **Depth**：L3
-- **Source Count**：**9**
-- **Evidence Sources**：`S021`, `S069`, `S081`, `S084`, `S095`, `S101`, `S109`, `S184`, `S240`
+- **Source Count**：**10**
+- **Evidence Sources**：`S021`, `S069`, `S081`, `S084`, `S095`, `S101`, `S109`, `S153`, `S184`, `S240`
 
 ### RAG-017 · Retrieval Evidence 怎样组装进 LLM Context？标题、Metadata、邻居块、来源与排序怎样影响回答？
 - **Topic**：Context Construction
@@ -177,15 +177,15 @@
 - **Topic**：Bad Case Attribution
 - **Question Type**：Troubleshoot
 - **Depth**：L4
-- **Source Count**：**18**
-- **Evidence Sources**：`S010`, `S022`, `S037`, `S041`, `S045`, `S052`, `S055`, `S058`, `S061`, `S067`, `S081`, `S095`, `S109`, `S150`, `S218`, `S240`, `S249`, `S255`
+- **Source Count**：**19**
+- **Evidence Sources**：`S010`, `S022`, `S037`, `S041`, `S045`, `S052`, `S055`, `S058`, `S061`, `S067`, `S081`, `S095`, `S109`, `S150`, `S157`, `S218`, `S240`, `S249`, `S255`
 
 ### RAG-020 · 怎样定义 Retrieval Quality：Recall、Precision、Hit Rate、MRR / NDCG 等指标分别回答什么问题？
 - **Topic**：Retrieval Metrics
 - **Question Type**：Concept / Evaluation
 - **Depth**：L3
-- **Source Count**：**15**
-- **Evidence Sources**：`S021`, `S022`, `S037`, `S052`, `S055`, `S058`, `S065`, `S095`, `S101`, `S109`, `S132`, `S184`, `S211`, `S240`, `S248`
+- **Source Count**：**16**
+- **Evidence Sources**：`S021`, `S022`, `S037`, `S052`, `S055`, `S058`, `S065`, `S095`, `S101`, `S109`, `S132`, `S153`, `S184`, `S211`, `S240`, `S248`
 
 ### RAG-021 · RAG 质量怎样做 End-to-end Evaluation？Retrieval、Faithfulness、Answer Relevance / Correctness 怎样分层？
 - **Topic**：RAG Evaluation
@@ -240,8 +240,8 @@
 - **Topic**：Latency / Cost
 - **Question Type**：Troubleshoot / Trade-off
 - **Depth**：L4
-- **Source Count**：**7**
-- **Evidence Sources**：`S021`, `S029`, `S045`, `S109`, `S217`, `S223`, `S257`
+- **Source Count**：**8**
+- **Evidence Sources**：`S021`, `S029`, `S045`, `S109`, `S153`, `S217`, `S223`, `S257`
 - **Related Modules**：AI Backend Engineering, LLM Foundation（应用工程深度）
 
 ### RAG-028 · GraphRAG / Knowledge Graph Retrieval 相比普通 Vector RAG 解决什么问题？Triple / Community / Graph Update 怎样保证质量？

@@ -109,8 +109,8 @@
 - **Topic**：Producer / Consumer / Backpressure
 - **Question Type**：System Design
 - **Depth**：L4
-- **Source Count**：**3**
-- **Evidence Sources**：`S097`, `S214`, `S279`
+- **Source Count**：**4**
+- **Evidence Sources**：`S097`, `S142`, `S214`, `S279`
 
 ### AIBE-012 · AI / LLM I/O 为什么适合异步非阻塞调用？同步 / 异步、Event Loop 与 Long-running Task 怎样取舍？
 - **Topic**：Async Service
@@ -124,8 +124,8 @@
 - **Topic**：Concurrency Control
 - **Question Type**：System Design / Reliability
 - **Depth**：L4
-- **Source Count**：**3**
-- **Evidence Sources**：`S110`, `S198`, `S209`
+- **Source Count**：**4**
+- **Evidence Sources**：`S110`, `S190`, `S198`, `S209`
 
 ---
 
@@ -164,8 +164,8 @@
 - **Topic**：Resilience
 - **Question Type**：Comparison / Reliability
 - **Depth**：L4
-- **Source Count**：**9**
-- **Evidence Sources**：`S075`, `S079`, `S092`, `S109`, `S144`, `S154`, `S174`, `S198`, `S276`
+- **Source Count**：**10**
+- **Evidence Sources**：`S075`, `S079`, `S092`, `S109`, `S113`, `S144`, `S154`, `S174`, `S198`, `S276`
 - **Related Modules**：Agent Harness / Runtime
 
 ### AIBE-019 · 有副作用的请求怎样设计 Idempotency？Retry / Timeout / Crash 后怎样避免重复扣款、下单或执行？
@@ -241,8 +241,8 @@
 - **Topic**：Docker / Container
 - **Question Type**：Concept / Comparison
 - **Depth**：L3
-- **Source Count**：**6**
-- **Evidence Sources**：`S037`, `S183`, `S187`, `S206`, `S241`, `S254`
+- **Source Count**：**7**
+- **Evidence Sources**：`S037`, `S183`, `S187`, `S206`, `S221`, `S241`, `S254`
 
 ### AIBE-028 · Kubernetes 在 AI Service / Agent Backend 中承担哪些 Deployment、Scaling、Isolation 与 Availability 能力？
 - **Topic**：Kubernetes
@@ -255,8 +255,8 @@
 - **Topic**：Backend Observability
 - **Question Type**：Troubleshoot / System Design
 - **Depth**：L4
-- **Source Count**：**5**
-- **Evidence Sources**：`S066`, `S108`, `S109`, `S156`, `S183`
+- **Source Count**：**6**
+- **Evidence Sources**：`S066`, `S108`, `S109`, `S156`, `S183`, `S221`
 - **Related Modules**：Agent Harness / Runtime
 
 ### AIBE-030 · Configuration Center / Dynamic Config 怎样实现优先级、热更新、监听、失败回退与版本治理？
@@ -298,8 +298,8 @@
 - **Question Type**：Concept / Troubleshoot
 - **Language / Ecosystem**：Java / JVM
 - **Depth**：L3
-- **Source Count**：**11**
-- **Evidence Sources**：`S104`, `S116`, `S125`, `S145`, `S152`, `S159`, `S174`, `S188`, `S192`, `S216`, `S229`
+- **Source Count**：**12**
+- **Evidence Sources**：`S104`, `S116`, `S125`, `S145`, `S152`, `S159`, `S174`, `S188`, `S190`, `S192`, `S216`, `S229`
 
 ### AIBE-035 · Java HashMap / ConcurrentHashMap 的底层结构、Resize、树化与并发安全怎样理解？
 - **Topic**：Java Collection
@@ -322,23 +322,23 @@
 - **Question Type**：Concept / Comparison
 - **Language / Ecosystem**：Go
 - **Depth**：L3
-- **Source Count**：**7**
-- **Evidence Sources**：`S110`, `S166`, `S170`, `S188`, `S195`, `S214`, `S259`
+- **Source Count**：**8**
+- **Evidence Sources**：`S110`, `S160`, `S166`, `S170`, `S188`, `S195`, `S214`, `S259`
 
 ### AIBE-038 · SSRF、CSRF、SQL Injection、XSS、Reverse Shell 与 Container Escape 等常见安全风险怎样理解和防护？
 - **Topic**：Backend Security
 - **Question Type**：Concept / Security / System Design
 - **Depth**：L4
-- **Source Count**：**3**
-- **Evidence Sources**：`S089`, `S254`, `S270`
+- **Source Count**：**4**
+- **Evidence Sources**：`S089`, `S221`, `S254`, `S270`
 - **Related Modules**：Agent Harness / Runtime
 
 ### AIBE-039 · 结构化业务事实、Cache、Session 与 Runtime State 应怎样在 MySQL / Redis 等存储之间分层？
 - **Topic**：Data Layering
 - **Question Type**：Comparison / System Design
 - **Depth**：L4
-- **Source Count**：**10**
-- **Evidence Sources**：`S090`, `S092`, `S097`, `S118`, `S178`, `S181`, `S194`, `S212`, `S214`, `S273`
+- **Source Count**：**11**
+- **Evidence Sources**：`S090`, `S092`, `S097`, `S118`, `S160`, `S178`, `S181`, `S194`, `S212`, `S214`, `S273`
 - **Related Modules**：MySQL, Redis, Agent Harness / Runtime
 
 ---

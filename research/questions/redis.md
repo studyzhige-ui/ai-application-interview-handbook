@@ -32,8 +32,8 @@
 - **Topic**：Data Structures
 - **Question Type**：Concept / Comparison
 - **Depth**：L2
-- **Source Count**：**17**
-- **Evidence Sources**：`S010`, `S070`, `S079`, `S086`, `S100`, `S110`, `S131`, `S148`, `S154`, `S188`, `S191`, `S200`, `S201`, `S204`, `S234`, `S262`, `S273`
+- **Source Count**：**18**
+- **Evidence Sources**：`S010`, `S070`, `S079`, `S086`, `S100`, `S110`, `S131`, `S148`, `S154`, `S188`, `S190`, `S191`, `S200`, `S201`, `S204`, `S234`, `S262`, `S273`
 
 ### REDIS-003 · Redis 为什么快？“单线程”到底指什么，命令执行、网络 I/O 与后台任务怎样理解？
 - **Topic**：Performance / Thread Model

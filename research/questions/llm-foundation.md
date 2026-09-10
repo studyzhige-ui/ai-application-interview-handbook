@@ -8,7 +8,7 @@
 
 ## 1. 当前扫描结论
 
-- ACTIVE Canonical Questions：**22**
+- ACTIVE Canonical Questions：**23**
 - 证据范围：仅 `S001–S279`
 - 频率口径：独立 HUMAN-A 来源数
 - 当前版本：`v2`（十板块归属审计版）
@@ -82,8 +82,8 @@
 - **Question Type**：Concept / Why
 - **Depth**：L2
 - **Interview Heat**：🔥🔥
-- **Source Count**：**6**
-- **Evidence Sources**：`S002`, `S008`, `S095`, `S126`, `S152`, `S258`
+- **Source Count**：**7**
+- **Evidence Sources**：`S002`, `S008`, `S095`, `S126`, `S141`, `S152`, `S258`
 
 ### LLM-007 · Multi-Head Attention 为什么需要多个 Head？不同 Head 带来什么表达能力？
 
@@ -122,9 +122,9 @@
 - **Topic**：Multimodal Foundation
 - **Question Type**：Concept / Why
 - **Depth**：L2
-- **Interview Heat**：🔥
-- **Source Count**：**3**
-- **Evidence Sources**：`S018`, `S098`, `S126`
+- **Interview Heat**：🔥🔥
+- **Source Count**：**4**
+- **Evidence Sources**：`S018`, `S098`, `S099`, `S126`
 
 ---
 
@@ -202,9 +202,9 @@
 - **Topic**：Model Selection
 - **Question Type**：Trade-off / Project
 - **Depth**：L4
-- **Interview Heat**：🔥🔥
-- **Source Count**：**9**
-- **Evidence Sources**：`S089`, `S092`, `S112`, `S139`, `S151`, `S177`, `S246`, `S255`, `S260`
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**10**
+- **Evidence Sources**：`S089`, `S092`, `S112`, `S139`, `S151`, `S177`, `S221`, `S246`, `S255`, `S260`
 
 ---
 
@@ -218,8 +218,8 @@
 - **Question Type**：Concept / Why
 - **Depth**：L2
 - **Interview Heat**：🔥🔥
-- **Source Count**：**5**
-- **Evidence Sources**：`S095`, `S178`, `S211`, `S255`, `S272`
+- **Source Count**：**6**
+- **Evidence Sources**：`S095`, `S141`, `S178`, `S211`, `S255`, `S272`
 
 ### LLM-019 · Embedding Model、Bi-Encoder 与 Cross-Encoder / Reranker 的目标、计算方式和成本有什么差异？
 
@@ -244,8 +244,8 @@
 - **Question Type**：Concept / Project
 - **Depth**：L3
 - **Interview Heat**：🔥🔥
-- **Source Count**：**8**
-- **Evidence Sources**：`S052`, `S097`, `S107`, `S126`, `S150`, `S151`, `S158`, `S233`
+- **Source Count**：**9**
+- **Evidence Sources**：`S052`, `S097`, `S107`, `S126`, `S141`, `S150`, `S151`, `S158`, `S233`
 
 ### LLM-021 · SFT、LoRA、PPO、DPO、GRPO、Knowledge Distillation 分别解决什么问题，什么时候值得使用？
 
@@ -254,8 +254,8 @@
 - **Question Type**：Comparison / Why
 - **Depth**：L3
 - **Interview Heat**：🔥🔥
-- **Source Count**：**7**
-- **Evidence Sources**：`S002`, `S052`, `S062`, `S107`, `S152`, `S222`, `S233`
+- **Source Count**：**8**
+- **Evidence Sources**：`S002`, `S052`, `S062`, `S107`, `S152`, `S197`, `S222`, `S233`
 
 ### LLM-022 · Hallucination / Factuality 问题为什么出现？哪些属于模型本身局限，哪些应由 RAG / Agent / Verification 层治理？
 
@@ -264,9 +264,23 @@
 - **Topic**：Hallucination / Factuality
 - **Question Type**：Why / Troubleshoot
 - **Depth**：L3
-- **Interview Heat**：🔥🔥
-- **Source Count**：**7**
-- **Evidence Sources**：`S003`, `S052`, `S100`, `S120`, `S148`, `S192`, `S224`
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**10**
+- **Evidence Sources**：`S003`, `S052`, `S085`, `S100`, `S103`, `S120`, `S148`, `S192`, `S196`, `S224`
+
+---
+
+## 7.5 Prompt Engineering（Phase 2B 补漏）
+
+### LLM-023 · Prompt Engineering 应怎样从目标、角色、约束、Context、Example、Tool 与 Output Contract 组织并迭代？怎样用真实 Case / Evaluation 证明 Prompt 优化有效？
+- **Primary Module**：LLM Foundation（应用工程深度）
+- **Related Modules**：RAG, Agent Harness / Runtime
+- **Topic**：Prompt Engineering
+- **Question Type**：Concept / Project / Evaluation
+- **Depth**：L3
+- **Interview Heat**：🔥🔥🔥
+- **Source Count**：**30**
+- **Evidence Sources**：`S003`, `S008`, `S016`, `S029`, `S044`, `S049`, `S055`, `S066`, `S068`, `S071`, `S074`, `S092`, `S099`, `S100`, `S102`, `S107`, `S150`, `S159`, `S168`, `S178`, `S179`, `S200`, `S208`, `S210`, `S221`, `S230`, `S233`, `S238`, `S263`, `S277`
 
 ---
 
