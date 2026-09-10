@@ -1,16 +1,17 @@
-# RAG Canonical Questions — S001–S279 全库纵向扫描 v2
+# RAG Canonical Questions — S001–S279 全库纵向扫描 v3
 
 更新日期：2026-09-10
 
 > 一级板块：**RAG**。本文件负责完整 Retrieval-Augmented Generation 工程链：Corpus → Parse → Chunk → Query Transformation → Retrieval → Fusion → Rerank → Context → Generate → Evaluate → Operate。Vector DB 的 ANN / Index / Storage 归 `Vector DB`；Embedding / Rerank 模型内部原理归 `LLM Foundation`；Agentic orchestration 控制面归 `Agent Harness / Runtime`。
 >
-> 本文件所有条目的 `Primary Module = RAG`。
+> 本文件所有 ACTIVE 条目的 `Primary Module = RAG`。
 
 ## 1. 当前扫描结论
 
-- Canonical Questions：**30**
+- ACTIVE Canonical Questions：**29**
+- MOVED：**1**（旧 `RAG-030`）
 - 证据范围：仅 `S001–S279`
-- 当前版本：`v2`（十板块归属审计版）
+- 当前版本：`v3`（Global Merge / Split Audit）
 
 ### 高频信号
 
@@ -259,17 +260,19 @@
 - **Evidence Sources**：`S045`, `S081`, `S109`, `S150`, `S222`, `S277`
 - **Related Modules**：Agent Harness / Runtime
 
-### RAG-030 · Code RAG / Repository QA 与 AST、LSP、ripgrep、Filesystem Search 等 Tool-based Search 怎样分工？
-- **Topic**：Code RAG Boundary
-- **Question Type**：Comparison / System Design
-- **Depth**：L4
-- **Source Count**：**5**
-- **Evidence Sources**：`S038`, `S059`, `S132`, `S145`, `S218`
-- **Related Modules**：Agent Harness / Runtime
+---
+
+## 7. MOVED：Global Merge / Split Audit
+
+| Legacy QID | 原问题 | 新 Primary Canonical |
+|---|---|---|
+| `RAG-030` | Code RAG / Repository QA 与 AST、LSP、ripgrep、Filesystem Search 等 Tool-based Search 怎样分工？ | **MERGED → `AGENT-037`**（Agent Harness / Runtime） |
+
+`RAG-030` 的全部证据 `S038`, `S059`, `S132`, `S145`, `S218` 都已经包含在 `AGENT-037` 的证据集合中，而且两题共享完全相同的核心知识模型：Coding Agent 如何理解 / 检索大型 Repository，以及 Vector RAG、AST/LSP、ripgrep / Filesystem Search 等机制如何分工。继续保留两题会重复计频，因此以 Agent Runtime 的 Repository Understanding 作为唯一 Primary。
 
 ---
 
-## 7. 新体系下的 RAG 主干
+## 8. 新体系下的 RAG 主干
 
 ```text
 Corpus Audit / Parsing
@@ -286,5 +289,7 @@ Retrieval + E2E Evaluation / Bad-case Attribution
         ↓
 Freshness / Permission / Scale / Cost
         ↓
-GraphRAG / Agentic RAG / Code RAG 边界
+GraphRAG / Agentic RAG
 ```
+
+Codebase Retrieval / Repository Understanding 的 Primary 已统一归 `Agent Harness / Runtime`，RAG 只作为其中的 Related Module。
