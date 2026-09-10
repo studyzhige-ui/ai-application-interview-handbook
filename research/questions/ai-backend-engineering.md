@@ -1,4 +1,4 @@
-# AI Backend Engineering Canonical Questions — S001–S279 全库纵向扫描 v2
+# AI Backend Engineering Canonical Questions — S001–S279 全库纵向扫描 v3
 
 更新日期：2026-09-10
 
@@ -8,9 +8,9 @@
 
 ## 1. 当前扫描结论
 
-- Canonical Questions：**39**
+- ACTIVE Canonical Questions：**39**
 - 证据范围：仅 `S001–S279`
-- 当前版本：`v2`（十板块归属审计版）
+- 当前版本：`v3`（Global Merge / Split Audit）
 
 ### 高频信号
 
@@ -251,12 +251,12 @@
 - **Source Count**：**3**
 - **Evidence Sources**：`S037`, `S187`, `S241`
 
-### AIBE-029 · Production Observability 应如何组织 Metrics、Log、Trace？怎样从一次请求定位到具体服务 / 节点故障？
-- **Topic**：Observability
+### AIBE-029 · Production Backend Observability 应如何组织 Metrics、Log、Trace，并从一次请求定位到具体服务 / 进程 /依赖故障？
+- **Topic**：Backend Observability
 - **Question Type**：Troubleshoot / System Design
 - **Depth**：L4
-- **Source Count**：**8**
-- **Evidence Sources**：`S066`, `S108`, `S109`, `S146`, `S156`, `S183`, `S240`, `S242`
+- **Source Count**：**5**
+- **Evidence Sources**：`S066`, `S108`, `S109`, `S156`, `S183`
 - **Related Modules**：Agent Harness / Runtime
 
 ### AIBE-030 · Configuration Center / Dynamic Config 怎样实现优先级、热更新、监听、失败回退与版本治理？
@@ -343,7 +343,19 @@
 
 ---
 
-## 8. 新体系下的主干
+## 8. Global Merge / Split Audit 修正
+
+旧 `AIBE-029` 把“通用后端 Metrics / Log / Trace”和“Agent Runtime 的 step / tool / model 级执行 Trace”放在同一个 Canonical 中。全局审计后拆开：
+
+- `AIBE-029` 只保留 Production Backend 的通用可观测性，证据为 `S066`, `S108`, `S109`, `S156`, `S183`；
+- `S146`, `S240`, `S242` 明确追问 Agent 长任务 / 多层 Agent 的执行 Trace、节点故障与 Token Usage，迁入新建 `AGENT-043`；
+- 另把 `S034`, `S129` 中明确的 Agent 卡住定位 / Trace Replay 证据一并归入 `AGENT-043`。
+
+这两个 Canonical 允许互为 Related Module，但不再用同一个问题标题重复计算同一能力。
+
+---
+
+## 9. 新体系下的主干
 
 ```text
 Protocol / Streaming
@@ -356,7 +368,7 @@ Data Layering / Cache Consistency
         ↓
 Auth / Session / Distributed Service
         ↓
-Deployment / Observability / Operations
+Deployment / Backend Observability / Operations
 ```
 
 Java / Go 相关题作为真实市场信号保留；未来课程以 Python 主线讲通用工程原理，再用这些来源校准跨语言面试覆盖。
