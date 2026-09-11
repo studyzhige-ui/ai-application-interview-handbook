@@ -91,37 +91,18 @@ System Design
 
 ## 3. Phase 2A Global Audit 的新增修正
 
-### `VDB-010` → `VDB-009`
-
-Vector DB “为什么需要独立存储 / pgvector / FAISS / 专用 Vector DB”与“Milvus / FAISS / pgvector / ES Vector 产品选型”共享同一核心知识模型，合并到 `VDB-009`。
-
-### `RAG-030` → `AGENT-037`
-
-Code RAG / AST / LSP / ripgrep / Filesystem Search 与 Coding Agent Repository Understanding 是同一能力。`RAG-030` 的全部证据均已包含在 `AGENT-037`，因此统一 Primary = Agent Harness / Runtime。
-
-### `AIBE-029` → 拆出 `AGENT-043`
-
-通用 Backend Metrics / Log / Trace 留 `AIBE-029`；Agent step / model / tool / state 执行轨迹独立为 `AGENT-043`。
-
-### `MYSQL-010` Narrow
-
-单表 / 单分片 Deep Pagination 留 `MYSQL-010`；跨 Shard Pagination / Global Sort 由 `MYSQL-021` Sharding 承接。
-
-### `MYSQL-022` Narrow
-
-MySQL-specific Bulk Write 留 `MYSQL-022`；通用批处理 / 数据迁移 / Backpressure / Resume 由 `SD-007` 承接。
-
-### `AGENT-028` Evidence 修正
-
-补入 `S254` Agent Code Execution / Tool Permission / Sandbox 安全证据。
+- `VDB-010` → `VDB-009`：向量存储架构 / 产品选型合并。
+- `RAG-030` → `AGENT-037`：Code RAG / Repo Search 统一到 Coding Agent Repository Understanding。
+- `AIBE-029` → 拆出 `AGENT-043`：通用 Observability 与 Agent Execution Trace 分离。
+- `MYSQL-010` Narrow：单表 Deep Pagination 与跨 Shard Pagination 分离。
+- `MYSQL-022` Narrow：MySQL Bulk Write 与通用 Batch / Migration 分离。
+- `AGENT-028`：补入 `S254` Permission / Sandbox 安全证据。
 
 完整判断依据与 KEEP-SEPARATE 清单见 `global-audit.md`。
 
 ---
 
 ## 4. Phase 2B Coverage Gap Audit 新增 Canonical
-
-首次全量 Source Coverage Validation 发现：229 道 Canonical 自身一致，但有 28 个 HUMAN-A 来源完全未映射。逐条回到原始 Batch 后确认其中既有 Evidence 漏挂，也有 Phase 1 真正漏掉的独立能力。
 
 新增：
 
@@ -142,7 +123,7 @@ MySQL-specific Bulk Write 留 `MYSQL-022`；通用批处理 / 数据迁移 / Bac
 = 235 ACTIVE
 ```
 
-`S271` 为唯一 `VALID-UNMAPPED`：招聘流程明确属于 Agent 工程师大池，但本场可核验技术题全部是 React Hook / JavaScript / 版本号 Coding，不能安全归入十板块中的 AI / Backend Canonical，因此不强行造题。
+`S271` 为唯一 `VALID-UNMAPPED`。
 
 详细记录：
 
@@ -190,12 +171,6 @@ Primary = LLM Foundation（应用工程深度）
 Related = RAG, Agent Harness / Runtime
 ```
 
-```text
-“LangGraph 为什么适合当前 Agent，什么时候应该不用 Framework 而自研 Runtime？”
-Primary = Agent Harness / Runtime
-Related = FastAPI, AI Backend Engineering
-```
-
 ---
 
 ## 6. Coding / Debug / AI Coding 的位置
@@ -213,8 +188,6 @@ Related = FastAPI, AI Backend Engineering
 - Coding Agent Repo Modification / Verification → Agent Harness / Runtime
 - 完整业务架构题 → System Design
 
-`AI-assisted Development Workflow` 虽然是 AI Coding 类型，但其核心知识模型是 Coding Agent / Human-AI Runtime Workflow，因此 Primary = Agent Harness / Runtime。
-
 ---
 
 ## 7. 当前验证状态
@@ -231,22 +204,26 @@ Source Count mismatch         0
 
 ---
 
-## 8. 下一步
+## 8. Phase 3 Curriculum Build 状态
 
-Phase 2B 已完成：Global Index、Frequency、Company / Role / Round、Depth、Co-occurrence、Verified Follow-up Chain、Curriculum Evidence Matrix 与 Knowledge Gap Analysis 均已生成。
+Canonical Ownership 已稳定，当前工作重点已经从“题目归属”切换为“把研究结果反哺完整教材”。
 
-下一阶段进入 **Phase 3：Curriculum Build / Remediation**。
+固定原则：
 
-正式建设顺序：
+> **初学者 0→1 的知识依赖决定课程主干；真人面经只校准复习权重、真实问法和追问深度。**
+
+当前建设顺序与状态：
 
 ```text
-MySQL
-→ Redis
-→ Vector DB
-→ LLM Foundation
+MySQL ✅ 23 章 + Review + Interview
+→ Redis ✅ 27 章 + Review + Interview
+→ Vector DB ✅ 23 章 + Review + Interview
+→ LLM Foundation 🚧 当前建设
 → RAG
 → Agent Harness / Runtime
 → System Design
 ```
 
-每块教材同时以 `research/analysis/curriculum-evidence-matrix.md` 和 `research/analysis/follow-up-chains.md` 做市场验收，但课程边界仍由完整知识体系决定。
+Python 已有完整教材；FastAPI / AI Backend Engineering 已有课程骨架，后续按项目与 Bridge Lab 补齐正文。
+
+每完成一个模块，必须同步根 `README.md`、`roadmap/knowledge-map.md`、`progress.md`、`research/analysis/README.md` 以及所有仍写着“下一块 / 待建设”的入口。
