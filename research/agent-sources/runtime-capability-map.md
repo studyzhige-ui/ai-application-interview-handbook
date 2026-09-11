@@ -2,9 +2,11 @@
 
 更新日期：2026-09-11
 
-> 这是最终课程目录之前的抽象层。它综合 Tier A（44 道 HUMAN-A Canonical + Verified Follow-up Chains）、Tier B（Claude Code / Codex 固定源码快照）与 Tier C（官方文章 / 协议 / 原始论文）。课程顺序仍由初学者 0→1 依赖决定。
+> 这是研究能力层，不等于教材目录。它综合 Tier A（44 道 HUMAN-A Canonical + Verified Follow-up Chains）、Tier B（Claude Code / Codex 固定源码快照）与 Tier C（官方文章 / 协议 / 原始论文），再由 beginner-first 认知依赖映射到教材层。
+>
+> **Capability 可以比教材章节更细。当前教材已经稳定为 23 个知识小板块，不再按一个 Capability / Canonical 一个文件。**
 
-## 1. 总结：Agent Harness 不是一个“框架”
+## 1. Agent Harness 不是一个“框架”
 
 成熟 Agent Runtime 需要解决的不是单一 `while(tool_call)`：
 
@@ -43,300 +45,211 @@ Observability / Evaluation Plane
 
 ## A. Agent Boundary & Control Loop
 
-核心问题：为什么这里是 Agent，而不是普通 LLM Call / deterministic workflow？
+能力：Agent vs Workflow、Harness / Runtime vs Model、Run / Turn / Step / Loop、stop condition、planning / ReAct / routing、loop guard、budget。
 
-能力：
-
-- Agent vs Workflow；
-- Harness / Runtime vs Model；
-- Turn / Step / Loop；
-- stop condition；
-- planning / ReAct / routing；
-- loop guard / max turns / budget。
-
-证据：
-
-- HUMAN-A：Agent Boundary、Harness Boundary、Agent Loop、Agent Paradigm；
-- Claude Code：`QueryEngine` 持有 turn lifecycle、max turns、budget、tools、agents；
-- OpenAI Agents SDK：公开 built-in loop；
-- ReAct：reason/action/observation 交替。
+证据：HUMAN-A Agent Boundary / Harness / Loop；Claude Code `QueryEngine`；OpenAI Agents SDK built-in loop；ReAct。
 
 ## B. Runtime Message / Event Model
 
-核心问题：一次执行发生的事情怎样成为可持久化、可追踪、可恢复的数据？
+能力：user / assistant / tool call / result、turn item / event、call id / correlation、progress / interruption / error、runtime event vs model-visible message。
 
-能力：
-
-- user / assistant / tool call / tool result；
-- turn item / event；
-- call id / correlation；
-- progress / interruption / error；
-- runtime event vs model-visible message。
-
-证据：Codex `EventMsg` / `TurnItem` / rollout trace；Claude Code Message / ProgressMessage / SystemMessage / ToolResult。
+证据：Codex Event / Turn / rollout trace；Claude Code Message / Progress / ToolResult。
 
 ## C. Tool Runtime
 
-能力：
+能力：schema / validation、registry / router、execution、result normalization、timeout / retry / error、side-effect classification、concurrency safety、cancellation / progress。
 
-- schema / validation；
-- registry / router；
-- execution；
-- result normalization；
-- timeout / retry / error；
-- side effect classification；
-- concurrency safety；
-- cancellation / interrupt behavior。
-
-证据：Claude Code `Tool.ts`；Codex `codex-rs/tools/*` / router；HUMAN-A Tool Calling / Failure 高热度。
+证据：Claude Code `Tool.ts`；Codex tools/router/executor；HUMAN-A Tool Calling / Failure。
 
 ## D. Context Engineering
 
-能力：
+能力：context source、assembly order、token budget、large result offloading、cache、compaction trigger / replacement、correctness、stale context。
 
-- context sources；
-- assembly order；
-- token budget；
-- large tool-result management；
-- compaction trigger / strategy；
-- compaction correctness；
-- context cache / stable prefix；
-- stale context / pollution。
-
-证据：HUMAN-A 全库最高信号之一；Codex `compact.rs`；Claude Code compact / nested memory / tool-result budget；Anthropic Context Engineering。
+证据：HUMAN-A Context / Compaction；Codex `compact.rs`；Claude Code compact / tool-result storage；Anthropic Context Engineering。
 
 ## E. Memory & Durable State
 
-必须先区分：
+稳定边界：
 
 ```text
 Context = 当前 model call 看见什么
-Memory  = 可被未来再次取回的信息
-State   = Runtime 当前执行事实
-History = 过去事件 / message 记录
+Memory = 可被未来再次取回的信息
+State = Runtime 当前执行事实
+History = 已发生事件 / message
 Checkpoint = 可恢复执行点
 ```
 
-能力：session、memory lifecycle、state persistence、checkpoint、resume、fork、version。
-
-证据：Claude Code QueryEngine/session/memdir；Codex Session/Turn/compacted persisted history；OpenAI Sessions/HITL RunState。
+能力：session、memory write/retrieve/consolidate/invalidate、state persistence、tenant isolation、version。
 
 ## F. Long-running Reliability
 
-能力：
+能力：checkpoint、resume、fork、cancellation、retry、idempotency、external side-effect ledger、compensation、task state machine、lease / fencing / worker takeover。
 
-- cancellation；
-- pause / resume；
-- retry；
-- idempotency；
-- external side-effect ledger；
-- compensation；
-- progress artifact；
-- task state machine；
-- lease / worker failure / backpressure boundary。
+## G. Permission / Approval / Sandbox / Security
 
-证据：HUMAN-A Checkpoint/Resume/Failure；Claude Code Task state + AbortController；OpenAI HITL RunState；Anthropic long-running harness。
-
-## G. Permission, Approval & Sandbox
-
-必须拆成三层：
+三层必须分开：
 
 ```text
-Policy: 规则上可不可以？
-Approval: 这一次要不要人确认？
-Sandbox: 执行环境实际上能碰到什么？
+Policy: 规则上能不能做
+Approval: 这一次是否要人确认
+Sandbox: 执行环境实际允许碰什么
 ```
 
-再加：untrusted context / prompt injection、secret/data exfiltration、blast radius。
+再加 Guardrail、Prompt Injection、Secret Isolation、Egress、Containment。
 
-证据：Claude Code permission context；Codex SandboxPolicy；Anthropic sandbox/containment；OpenAI HITL/Guardrails。
+## H. Capability Discovery / MCP / Skills / Hooks
 
-## H. Capability Discovery / MCP / Skills
+能力：registry、discovery、progressive loading、MCP Host/Client/Server、Tool/Resource/Prompt、Skill package、Hook lifecycle extension。
 
-能力：
-
-- tool registry；
-- metadata / schema；
-- discovery；
-- progressive loading；
-- MCP Host / Client / Server；
-- Resource / Prompt / Tool；
-- Skill procedural package；
-- hook / plugin boundary。
-
-关键边界：
+边界：
 
 ```text
 Tool = 可执行能力
-MCP = 能力 / Context 的标准连接协议
+MCP = 外部能力 / Context 标准连接协议
 Skill = 可发现、可加载的程序性知识包
 Hook = Runtime 生命周期扩展点
 ```
 
-证据：Claude Code Tool searchHint / skill triggers / MCP；Codex MCP+Hooks；MCP spec；Anthropic Skills / Advanced Tool Use。
+## I. Intent / Model Routing & Provider Resilience
 
-## I. Intent / Model Routing
-
-能力：
-
-- intent recognition；
-- capability router；
-- model selection / provider adapter；
-- fallback；
-- cost / latency / quality route；
-- route evaluation。
-
-注意：这不是把所有 request 都交给一个 LLM router。
+能力：intent recognition、capability route、model/provider selection、adapter、error classification、retry eligibility、fallback、circuit breaker、route evaluation。
 
 ## J. Multi-Agent / Delegation / A2A
 
-能力：
+能力：subagent as tool、manager/specialist、handoff、context isolation、task ownership、shared workspace concurrency、aggregation、A2A、partial failure、recursive delegation、budget。
 
-- subagent as tool；
-- manager / specialist；
-- handoff；
-- context isolation；
-- shared resource conflicts；
-- task ownership；
-- aggregation；
-- A2A protocol；
-- failure / recursion / budget。
+## K. Trace / Replay / Evaluation
 
-证据：HUMAN-A Multi-Agent；Claude Code Task/Agent；OpenAI agents-as-tools/handoffs；Anthropic multi-agent research；A2A spec。
+能力：trace/span/event、model-visible evidence、tool call/result、state transition、replay、outcome verification、eval dataset、grader、benchmark、regression、data flywheel。
 
-## K. Coding Agent Runtime
+## L. Coding Agent Runtime
 
-能力：
-
-- repo discovery；
-- file/search/code navigation；
-- workspace state；
-- patch / command execution；
-- test / lint / typecheck；
-- diff / review；
-- verification；
-- acceptance / delivery。
-
-证据：HUMAN-A Repository Understanding / Code Verification / AI-assisted Development；SWE-bench；Claude Code / Codex 产品源码。
-
-## L. Trace / Replay / Evaluation
-
-能力：
-
-- trace / span / event；
-- model input / output evidence；
-- tool call / result；
-- state transition；
-- replay；
-- task outcome verification；
-- eval dataset；
-- grader / environment outcome；
-- cost / latency / success metrics；
-- regression。
-
-证据：Codex rollout trace；OpenAI Agents SDK tracing；Anthropic agent evals；HUMAN-A Evaluation / Benchmark。
+能力：repo discovery、text/symbol/AST/LSP/semantic navigation、workspace state、patch、command、test/lint/typecheck、diff/review、verification、acceptance/delivery。
 
 ## M. Production Runtime Architecture
 
-能力：
+能力：API / streaming、session/run service、scheduler/queue、replaceable harness worker、durable state/event store、sandbox pool、tool gateway、model gateway、artifact store、tenant isolation、quota/backpressure、deployment/scale/cost。
 
-- API / streaming；
-- session service；
-- stateless harness worker；
-- durable event/state store；
-- execution sandbox pool；
-- tool gateway；
-- tenant isolation；
-- queue / quota / backpressure；
-- model provider routing；
-- secrets；
-- deployment / scaling / cost。
-
-Anthropic Managed Agents 的 brain / hands / session 分离提供了一个很好的成熟架构参考，但课程会把它抽象成通用组件，而不是复制产品拓扑。
+Anthropic Managed Agents 的 brain / hands / session 分离是成熟实现参考，不是所有系统必须复制的唯一拓扑。
 
 ---
 
-# 3. 从 0→1 的课程依赖图
+# 3. 0→1 课程依赖图
 
 ```text
 Agent vs Workflow
-        ↓
-Harness / Runtime Boundary
-        ↓
-Minimal Agent Loop
-        ↓
-Runtime Message / Event
-        ↓
-Tool Contract / Execution / Failure
-        ↓
-Planning / Routing / Stop
-        ↓
-Context Assembly / Budget
-        ↓
-Compaction / Correctness
-        ↓
-Memory / State / Session
-        ↓
-Checkpoint / Resume / Cancellation
-        ↓
-Idempotency / Side Effects / Compensation
-        ↓
-Permission / Approval / Sandbox / Injection
-        ↓
-Tool Discovery / MCP / Skills / Hooks
-        ↓
-Multi-Agent / A2A / Shared Resource
-        ↓
-Trace / Replay / Evaluation
-        ↓
-Coding Agent Verification
-        ↓
-Production Architecture / Scale / Cost
-        ↓
-Framework Mapping
+→ Harness / Runtime Boundary
+→ Agent Loop / Event / State
+→ Tool Contract / Discovery / Execution / Failure
+→ Planning / Stop / Budget
+→ Context Assembly / Compaction
+→ Memory / Session / Durable State
+→ Checkpoint / Resume / Side-effect Correctness
+→ Permission / Approval / Sandbox / Injection
+→ MCP / Skills / Hooks / Routing
+→ Multi-Agent / A2A / Workspace
+→ Trace / Evaluation
+→ Coding Agent Verification
+→ Production Runtime Architecture
+→ Framework Mapping
 ```
 
-这条顺序故意没有按面经热度把 Context Compaction 放到最前面。
+这条顺序故意不按面经热度把 Context Compaction、MCP 或 Multi-Agent 提到前面。
 
 ---
 
-# 4. 课程决定：建议 42 章
+# 4. Capability → 23 个教材知识块
 
-最终正式教材建议拆为 42 章，避免把多个独立 failure model 塞进一章：
+研究层保持以上 Capability Domain；教材层最终映射为：
 
 ```text
-01–05  Agent / Harness / Loop / Event 基础
-06–11  Tool Runtime
-12–17  Planning / Context / Compaction
-18–23  Memory / State / Checkpoint / Reliability
-24–28  Permission / Sandbox / Security
-29–33  Discovery / MCP / Skill / Hook / Routing
-34–37  Multi-Agent / A2A / Workspace
-38–40  Trace / Evaluation / Coding Verification
-41     Production Runtime Architecture
-42     Framework Mapping & Build-vs-Buy
+01 Agent Harness 在 AI 应用中的职责
+02 Agent vs Workflow + Harness / Runtime / Orchestrator Boundary
+03 Agent Loop + Run / Turn / Step + Event / State
+04 Tool Contract + Schema + Validation
+05 Tool Registry + Router + Progressive Discovery
+06 Tool Execution + Result + Failure
+07 Tool Side Effect + Concurrency + Cancellation + Progress
+08 Planning / ReAct + Goal + Stop + Budget
+09 Context Assembly + Budget + Cache + Tool-result Offloading
+10 Context Compaction + Correctness + Stale Context
+11 Memory Architecture + Lifecycle + Correctness
+12 Session / State / History / Persistence + Tenant Isolation
+13 Checkpoint / Resume / Fork / Replay + Long-running Reliability
+14 Permission + Approval / HITL + Sandbox
+15 Guardrails + Prompt Injection + Secrets + Containment
+16 MCP + Skills + Hooks + Capability Extension
+17 Intent / Model Routing + Provider Adapter + Runtime Resilience
+18 Multi-Agent + Subagent + Handoff + A2A + Workspace Concurrency
+19 Trace + Replay + Observability
+20 Agent Evaluation + Benchmark + Data Flywheel
+21 Coding Agent：Repo → Patch → Test → Verify
+22 Production Agent Runtime Architecture
+23 Framework Mapping + Build-vs-Buy
 ```
 
-详细章节名写入 `agent-harness/README.md`。
+这里不是把 Capability 删除，而是把共享同一认知闭环的 Capability 放回同一个教材文件。
 
 ---
 
-# 5. 课程验收标准
+# 5. 为什么 23 比旧 42 / 47 更合理
 
-学完不能只回答“Agent = LLM + Tools”。至少应该能从零设计：
+旧目录接近：
+
+```text
+一个 interview capability
+→ 一个 runtime primitive
+→ 一个 Markdown
+```
+
+导致 Context、Tool、State、Evaluation 等连续机制被切成很多短文件。
+
+现在采用：
+
+```text
+一个 Markdown
+= 一个大问题
+= 有完整前置与输出心智模型
+= 有独立 Failure / Trade-off
+= 能形成 Why → Mechanism → Failure → Validation 闭环
+```
+
+例如 Tool 研究层仍然能单独讨论 Schema、Registry、Failure、Cancellation，但教材层组织为 04–07 四个 Tool Runtime 子系统，而不是十几个碎章。
+
+---
+
+# 6. 课程验收标准
+
+23-block 深度验收已经完成。正文不是“文件存在”即通过，而必须能支撑：
+
+```text
+为什么存在
+→ Runtime Mental Model
+→ 正常执行路径
+→ State / Protocol / Data Structure
+→ Failure Timeline
+→ Cancellation / Recovery / Idempotency
+→ Security / Permission Boundary
+→ Observability / Evaluation
+→ Claude Code / Codex 实现证据
+→ HUMAN-A 追问
+→ 面试回答 / 自测
+```
+
+学完至少应能从零设计并解释：
 
 ```text
 Run State Machine
-Tool Contract
-Context Assembly
-Compaction Transaction
-Permission + Sandbox
-Pause / Resume
+Tool Contract / Failure
+Context Assembly / Compaction
+Memory / Durable State
+Checkpoint / Resume
 Side-effect Correctness
+Permission / Sandbox
 Capability Discovery
 Multi-Agent Ownership
 Trace / Eval
 Production Deployment
 ```
 
-并能解释为什么某个 Runtime 决策存在、失败时如何恢复、怎样验证它真的工作。
+并能说明为什么某个 Runtime 决策存在、失败时如何恢复、怎样验证它真的工作。
