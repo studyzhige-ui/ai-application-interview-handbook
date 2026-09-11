@@ -30,32 +30,31 @@ System Design
 
 ### 1. 知识体系决定主干，真人面经校准重点
 
-所有模块都先按初学者认知依赖从 0→1 建立完整体系。
-
-真人面经只负责：
-
-- 调整复习优先级；
-- 保留真实问法；
-- 补充追问链；
-- 检查 Failure / Scale / Evaluation 深度；
-- 验收“学完能不能真的回答”。
+所有模块都先按初学者认知依赖从 0→1 建立完整体系。真人面经只负责调整复习优先级、保留真实问法、补充追问链，并检查 Failure / Scale / Evaluation 深度。
 
 **不会因为某个知识点真人面经更高频，就打乱模块本身的主要演进顺序。**
 
 ### 2. 从 Demo 能力走到 Production 能力
 
-不仅学习“怎么调 API”，还要回答：
+不仅学习“怎么调 API”，还要回答：超时怎么办、重复执行怎么办、Context 满了怎么办、缓存不一致怎么办、RAG 召回不准怎么定位、Agent 如何取消、恢复和验证。
 
-> 超时怎么办？重复执行怎么办？Context 满了怎么办？缓存不一致怎么办？RAG 召回不准怎么定位？Agent 如何取消、恢复和验证？
+### 3. Agent Harness 使用多层权威证据
 
-### 3. Agent Harness 以成熟产品源码为最高实现参考
+Agent Harness / Runtime 正式教材综合：
 
-首要权威实现参考：
+```text
+44 道 HUMAN-A Agent Canonical
++ Verified Follow-up Chains
++ Claude Code 固定源码快照
++ OpenAI Codex 固定源码快照
++ Anthropic / OpenAI 官方工程资料
++ MCP / A2A 官方规范
++ ReAct / SWE-bench 等原始论文
+```
 
-- Claude Code：`studyzhige-ui/claude-code-source-private`
-- OpenAI Codex：`openai/codex`
+源码与外部权威资料用于补齐成熟 Runtime 知识边界，**不能反向改变 HUMAN-A Source Count**。
 
-面经告诉我们市场已经问到哪里；Claude Code / Codex 源码帮助补齐成熟 Harness / Runtime 实际必须解决的工程问题。
+证据入口：[`research/agent-sources/README.md`](research/agent-sources/README.md)
 
 ### 4. 正式面经只认 HUMAN-A
 
@@ -80,8 +79,6 @@ VALID-UNMAPPED：1（S271）
 
 Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Depth / Question Type、Co-occurrence、Verified Follow-up Chains、Curriculum Evidence Matrix 与 Knowledge Gap Analysis。
 
-研究结果见 [`research/analysis/`](research/analysis/README.md)。
-
 ---
 
 # 总知识地图
@@ -96,36 +93,11 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 
 ### [FastAPI｜AI 应用服务层](fastapi/README.md) 🟡
 
-已建立完整课程地图：
-
-```text
-HTTP / ASGI / Uvicorn
-→ Routing / Pydantic
-→ Dependency / Lifespan
-→ async def / Event Loop
-→ Streaming / SSE / WebSocket
-→ Auth
-→ DB / Redis / Provider Integration
-→ Timeout / Cancellation
-→ Testing / Trace / Deployment
-→ RAG / Agent API Design
-```
+已建立完整课程地图：HTTP / ASGI / Uvicorn → Routing / Pydantic → Dependency / Lifespan → async / Streaming → Auth → Provider Integration → Timeout / Cancellation → Testing / Trace / Deployment → RAG / Agent API。
 
 ### [AI Backend Engineering](backend-engineering/README.md) 🟡
 
-已建立完整课程地图：
-
-```text
-Network / HTTP
-→ Concurrency
-→ Connection Pool
-→ Timeout / Retry / Circuit Breaker
-→ Cancellation / Idempotency
-→ MQ / Backpressure
-→ Cache / Rate Limit / Data Consistency
-→ Observability / Security
-→ Deployment / Scaling
-```
+已建立完整课程地图：Network / HTTP → Concurrency → Pool → Timeout / Retry / Circuit Breaker → Cancellation / Idempotency → MQ / Backpressure → Cache / Rate Limit / Consistency → Observability / Security → Deployment / Scaling。
 
 ---
 
@@ -133,62 +105,17 @@ Network / HTTP
 
 ### [MySQL](mysql/README.md) ✅
 
-第一版系统教材已完成：**23 章正文 + 每章折叠自测 + Review + 高频面试题 + 易错点 + 面试前速查。**
-
-```text
-SQL / Execution
-→ Index / B+Tree
-→ Clustered / Secondary
-→ Composite / Covering / Optimizer / EXPLAIN
-→ ACID / Isolation / MVCC / Lock
-→ Redo / Undo / Binlog / Recovery
-→ Pagination / Schema
-→ Replication → Sharding → CDC
-→ Bulk Write
-→ AI Application Data Modeling
-→ MySQL + Redis Integration Boundary
-```
+第一版系统教材已完成：**23 章正文 + Review + 高频面试题 + 易错点 + 面试前速查。**
 
 ### [Redis](redis/README.md) ✅
 
-第一版系统教材已完成：**27 章正文 + 每章折叠自测 + Review 总图 + 35 道面试题 + 45 个易错点 + 面试前速查。**
-
-```text
-Redis Role / Keyspace / Command
-→ Data Structures / Internal Encoding
-→ Thread Model / Event Loop / I/O Multiplexing
-→ TTL / Eviction / Cache Failure / BigKey / HotKey
-→ RDB / AOF / Replication / Sentinel / Cluster
-→ MULTI / WATCH / Pipeline / Lua
-→ Distributed Lock / Lease / Fencing
-→ Pub/Sub / Streams
-→ Multi-level / Semantic Cache
-→ Session / Conversation / Agent State Store
-→ Rate Limit / Security / Troubleshooting
-→ Redis in AI System Design
-```
+第一版系统教材已完成：**27 章正文 + Review + 35 道面试题 + 45 个易错点 + 面试前速查。**
 
 ### [Vector Database](vector-db/README.md) ✅
 
-第一版系统教材已完成：**23 章正文 + 每章折叠自测 + Review 图解总览 + 31 道面试题 + 45 个易错点 + 面试前速查。**
+第一版系统教材已完成：**23 章正文 + Review + 31 道面试题 + 45 个易错点 + 面试前速查。**
 
-```text
-Vector / Dimension / Normalization
-→ Cosine / Dot / L2
-→ Top-K Exact Search → ANN
-→ HNSW / IVF / Quantization
-→ Index Selection
-→ Collection / Schema / Metadata
-→ Metadata Filter / Tenant Isolation
-→ Insert / Update / Delete / Compaction
-→ Re-embedding / Rebuild / Version
-→ Shard / Replica
-→ Capacity / Troubleshooting
-→ Product / Architecture Selection
-→ Graph DB / RAG Boundary
-```
-
-Dense / Sparse、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation 统一留在 RAG。
+Vector DB 负责 Vector Infrastructure；Dense / Sparse、Hybrid、RRF、Rerank、Retrieval Evaluation 归 RAG。
 
 ---
 
@@ -196,24 +123,19 @@ Dense / Sparse、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation
 
 ### [LLM Foundation（应用工程深度）](llm-foundation/README.md) ✅
 
-第一版系统教材已完成：**29 章正文 + 每章折叠自测 + 7 张 Review 总图 + 30 道面试题 + 55 个易错点 + 面试前速查。**
+第一版系统教材已完成：**29 章正文 + Review + 30 道面试题 + 55 个易错点 + 面试前速查。**
 
 ```text
-Token / Tokenization
-→ Context Window / Long Context
+Token / Context
 → Transformer / Attention / RoPE
-→ Autoregressive Generation / Sampling
+→ Generation / Sampling
 → KV Cache / Prefill / Decode
-→ Continuous Batching / PagedAttention
-→ TTFT / TPOT / Throughput / Cost
-→ Model API / Model Selection
+→ Serving / Cost
+→ Model API / Selection
 → Embedding / Reranker / Multimodal
-→ Prompt Engineering / Hallucination
-→ Prompt vs RAG vs Fine-tuning
+→ Prompt / Hallucination
 → SFT / LoRA / Preference Optimization / Distillation
 ```
-
-这一层解释“模型为什么这样工作和这样表现”，不扩展成 CUDA / Distributed Training Infra 大全。
 
 ---
 
@@ -221,44 +143,69 @@ Token / Tokenization
 
 ### [RAG](rag/README.md) ✅
 
-第一版系统教材已完成：**34 章正文 + 每章折叠自测 + 6 张 Review 总图 + 20 个综合自测 + 40 道高频面试题 + 60 个易错点 + 面试前速查。**
+第一版系统教材已完成：**34 章正文 + Review + 40 道高频面试题 + 60 个易错点 + 面试前速查。**
 
 ```text
-RAG Boundary / Corpus Audit
-→ Document Identity / Lineage / Version
-→ Parsing / OCR / Layout / Multimodal
-→ Cleaning / Dedup
-→ Chunk Principles / Strategy / Parameters
-→ Parent-child / Semantic Boundary / Chunk Data Model
-→ Query Rewrite / Clarification / Decomposition / HyDE
-→ Dense / Sparse / BM25
-→ Hybrid Retrieval / RRF
-→ Rerank / Top-K / Candidate Budget
-→ Context Construction / Grounding / Citation
-→ Retrieval Metrics / Eval Dataset / End-to-end Eval
-→ Experiment / Regression / Bad Case Attribution
+Corpus / Lineage / Parse / Clean
+→ Chunk
+→ Query Transformation
+→ Dense / Sparse / Hybrid / RRF
+→ Rerank / Top-K
+→ Context / Grounding / Citation
+→ Metrics / Eval / Regression / Bad Case
 → Freshness / Permission / Scale / Observability
 → GraphRAG / Agentic RAG
 ```
-
-真实面经用于加强 Chunk、Hybrid、Rerank、Evaluation 和 Failure Attribution，但没有打乱从 Corpus 到 Production 的 0→1 主线。
 
 ---
 
 ## Agent Runtime
 
-### Agent Harness / Runtime 🚧
+### [Agent Harness / Runtime](agent-harness/README.md) ✅
+
+第一版 0→1 系统教材已完成：**47 章正文 + Review + 56 道高频/核心面试题 + 86 个易错点 + 面试前速查。**
+
+主干不是 Framework API，而是 Runtime 问题演进：
+
+```text
+Agent vs Workflow
+→ Harness / Runtime Boundary
+→ Agent Loop
+→ Run / Turn / Step / Event
+→ Tool Contract / Validation / Execution / Failure
+→ Planning / Stop / Budget
+→ Context Assembly / Budget / Tool-result Offload
+→ Compaction / Correctness
+→ Memory / Session / State / Persistence
+→ Checkpoint / Resume / Fork / Cancellation
+→ Idempotency / Side Effect / Compensation
+→ Permission / Approval / Sandbox / Guardrails
+→ Prompt Injection / Secret Containment
+→ Tool Discovery / MCP / Skills / Hooks
+→ Intent / Model Routing
+→ Multi-Agent / Handoff / A2A / Workspace Concurrency
+→ Trace / Replay / Evaluation
+→ Coding Agent Verification
+→ Production Runtime Architecture
+→ Framework Mapping / Build-vs-Buy
+```
+
+实现参考已固定版本：
+
+- Claude Code commit：`58231dcce408f805c645cfbc352d2876b517223b`
+- OpenAI Codex commit：`fc948f8c473e5d11e780ffcf1fd7f812a2020932`
+
+外部权威资料索引：[`research/agent-sources/authoritative-web-sources.md`](research/agent-sources/authoritative-web-sources.md)
+
+---
+
+## Integration
+
+### System Design 🚧
 
 **下一块正式系统教材。**
 
-必须额外结合：
-
-- `studyzhige-ui/claude-code-source-private`
-- `openai/codex`
-
-重点覆盖 Agent Boundary / Loop / Planning / Routing、Context Assembly / Compaction、Memory、Tool Runtime、MCP / Skill / A2A、Permission / Sandbox、State / Checkpoint / Resume、Cancellation / Retry / Idempotency、Multi-Agent、Repository Understanding、Trace / Evaluation、Model Routing、Cost 与 Production Reliability。
-
-Framework（LangChain / LangGraph 等）作为 Runtime 理论之后的实现映射，不作为课程起点。
+它会把 FastAPI、Backend、MySQL、Redis、Vector DB、LLM、RAG 与 Agent Harness 汇合到完整 Production Architecture。
 
 ---
 
@@ -269,7 +216,7 @@ Python
   ↓
 FastAPI
   ↓
-AI Backend Engineering 基础
+AI Backend Engineering
   ↓
 MySQL
   ↓
@@ -277,7 +224,7 @@ Redis
   ↓
 Vector DB
   ↓
-LLM Foundation（应用层）
+LLM Foundation
   ↓
 RAG
   ↓
@@ -286,19 +233,15 @@ Agent Harness / Runtime
 System Design
 ```
 
-`AI Backend Engineering` 是横向主线，会在 MySQL / Redis / RAG / Agent 阶段反复加深。
-
 ---
 
 # 写作风格
 
-所有正式教材尽量遵循：
+正式教材遵循：
 
-> **先讲人话 → 准确定义 → 代码 / 数学 / 图解 → 原理 → 对比 → Failure Case → AI 实际场景 → 易错点 → 面试怎么答 → 深入追问 → 真人面经 → 折叠自测**
+> **先讲人话 → 准确定义 → 代码 / 数学 / 图解 → 原理 → 对比 → Failure Case → AI 场景 → 易错点 → 面试回答 → 深入追问 → 真人面经 → 折叠自测**
 
-最终让每个知识点达到：
-
-> **定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
+最终目标：**定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
 
 ---
 
@@ -314,6 +257,6 @@ System Design
 | Vector DB | ✅ 第一版完整系统教材 |
 | LLM Foundation | ✅ 第一版完整系统教材 |
 | RAG | ✅ 第一版完整系统教材 |
-| Agent Harness / Runtime | 🚧 **下一块正式系统教材；源码 + 面经双重校准** |
-| System Design | ⏳ 随前置模块汇总 |
+| Agent Harness / Runtime | ✅ 第一版完整系统教材 |
+| System Design | 🚧 **下一块正式系统教材** |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
