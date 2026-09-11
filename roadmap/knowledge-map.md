@@ -8,24 +8,15 @@
 
 ```text
 01 Python
-        ↓
-02 FastAPI
-        ↓
-03 AI Backend Engineering
-        ↓
-04 MySQL
-        ↓
-05 Redis
-        ↓
-06 Vector DB
-        ↓
-07 LLM Foundation（应用工程深度）
-        ↓
-08 RAG
-        ↓
-09 Agent Harness / Runtime
-        ↓
-10 System Design
+→ 02 FastAPI
+→ 03 AI Backend Engineering
+→ 04 MySQL
+→ 05 Redis
+→ 06 Vector DB
+→ 07 LLM Foundation（应用工程深度）
+→ 08 RAG
+→ 09 Agent Harness / Runtime
+→ 10 System Design
 ```
 
 贯穿所有模块：Evaluation / Verification、Reliability / Failure Recovery、Security / Permission、Observability、AI-assisted Development、Cost / Latency / Scale。
@@ -34,23 +25,14 @@
 
 # 2. 教材文件粒度规则
 
-研究层和教材层不使用同一粒度：
-
 ```text
-Canonical Question
-= 可独立追问能力
-
-Capability Primitive
-= 工程最小机制
-
-教材文件
-= 一个完整知识小板块 / 认知闭环
-
-Section
-= 参数、变体、Failure、追问
+Canonical Question = 可独立追问能力
+Capability Primitive = 工程最小机制
+教材文件 = 一个完整知识小板块 / 认知闭环
+Section = 参数、变体、Failure、追问
 ```
 
-审计记录：[`curriculum-granularity-audit.md`](curriculum-granularity-audit.md)。
+章节数不追求统一。审计记录：[`curriculum-granularity-audit.md`](curriculum-granularity-audit.md)。
 
 ---
 
@@ -63,26 +45,26 @@ Section
 入口：[`../fastapi/README.md`](../fastapi/README.md) — 完整课程骨架，正文后续补齐。
 
 ## AI Backend Engineering 🟡
-入口：[`../backend-engineering/README.md`](../backend-engineering/README.md) — 完整课程骨架，是贯穿后续模块的横向主线。
+入口：[`../backend-engineering/README.md`](../backend-engineering/README.md) — 完整课程骨架，是贯穿后续模块的横向 Production 主线。
 
 ---
 
 # 4. Data
 
-## MySQL ✅
-入口：[`../mysql/README.md`](../mysql/README.md) — **23 章 + Review + Interview**。
+## MySQL ✅ — 23 blocks
+入口：[`../mysql/README.md`](../mysql/README.md)。
 
-教材粒度审计：**PASS**。查询性能、事务并发和生产扩展的章节都形成独立知识闭环，不为了和其它模块统一数字而机械合并。
+Granularity Audit：PASS。查询性能、事务并发、生产扩展的章节均形成独立认知闭环。
 
-## Redis 🟠
-入口：[`../redis/README.md`](../redis/README.md) — 当前 **27 章 + Review + Interview**。
+## Redis ✅ — 24 blocks
+入口：[`../redis/README.md`](../redis/README.md)。
 
-内容体系已完成，进入 Minor Granularity Remediation：重点审查 Runtime/Performance、Transaction/Pipeline/Lua、Distributed Lock 等相邻文件，目标约 23 个知识板块。
+已完成 **27 → 24** 的物理颗粒度整改：合并 Runtime/Performance、Cache Design/Failure、Distributed Lock Correctness；Transaction / Pipeline / Lua 因解决的问题和 Failure Model 不同，仍保持独立。
 
-## Vector Database 🟠
-入口：[`../vector-db/README.md`](../vector-db/README.md) — 当前 **23 章 + Review + Interview**。
+## Vector Database ✅ — 16 blocks
+入口：[`../vector-db/README.md`](../vector-db/README.md)。
 
-内容体系已完成，进入 Moderate Granularity Remediation：Vector Space、Exact→ANN、HNSW、Index Lifecycle、Production Diagnosis 等应按知识闭环重新组合，目标约 16–18 个知识板块。
+已完成 **23 → 16**：Vector Space & Similarity、Exact vs ANN、HNSW、Index Lifecycle、Performance Diagnosis 等连续机制已经按知识闭环收敛。
 
 Primary Boundary：Vector DB 负责向量基础设施；Dense/Sparse、Hybrid、RRF、Rerank、Retrieval Evaluation 归 RAG。
 
@@ -90,19 +72,21 @@ Primary Boundary：Vector DB 负责向量基础设施；Dense/Sparse、Hybrid、
 
 # 5. Model Foundation
 
-## LLM Foundation（应用工程深度） 🟠
-入口：[`../llm-foundation/README.md`](../llm-foundation/README.md) — 当前 **29 章 + Review + Interview**。
+## LLM Foundation（应用工程深度） ✅ — 14 blocks
+入口：[`../llm-foundation/README.md`](../llm-foundation/README.md)。
 
-知识演进顺序正确，但 Transformer / Generation / Serving 等部分按 mechanism 拆得过细，进入 Moderate Granularity Remediation，目标约 14–17 个知识板块。
+已完成 **29 → 14**。正式主线：
 
 ```text
 Token / Context
-→ Transformer / Attention / RoPE
-→ Generation / Sampling
-→ KV Cache / Serving / Cost
+→ Transformer Block
+→ Attention / Position
+→ Autoregressive Generation
+→ KV Cache / Prefill / Decode
+→ Serving Engine / Latency / Quantization
 → Model API / Selection
 → Embedding / Reranker / Multimodal
-→ Prompt / Hallucination
+→ Prompt / Factuality
 → Fine-tuning / Alignment Boundary
 ```
 
@@ -110,19 +94,25 @@ Token / Context
 
 # 6. AI Application
 
-## RAG 🟠
-入口：[`../rag/README.md`](../rag/README.md) — 当前 **34 章 + Review + Interview**。
+## RAG ✅ — 14 blocks
+入口：[`../rag/README.md`](../rag/README.md)。
 
-Pipeline 顺序本身正确，但 Chunk、Query、Retrieval、Evaluation 等连续机制被切成过多小文件，进入 Major Granularity Remediation，目标约 14–16 个知识板块。
+已完成 **34 → 14**。正式子系统：
 
 ```text
-Corpus / Lineage / Parse / Clean
-→ Chunk
-→ Query Transformation
-→ Dense / Sparse / Hybrid / RRF / Rerank
-→ Context / Grounding / Citation
-→ Evaluation / Regression / Bad Case
-→ Freshness / Permission / Scale
+RAG Role & Pipeline
+→ Corpus Governance
+→ Document Processing
+→ Chunking Design
+→ Advanced Chunk Structure
+→ Query Planning
+→ Retrieval Stack
+→ Rerank & Candidate Budget
+→ Evidence Delivery
+→ Retrieval Evaluation
+→ End-to-End Quality Engineering
+→ Production Governance
+→ Scale / Cost / Observability
 → GraphRAG / Agentic RAG
 ```
 
@@ -130,11 +120,11 @@ Corpus / Lineage / Parse / Clean
 
 # 7. Agent Runtime
 
-## Agent Harness / Runtime 🚧
+## Agent Harness / Runtime 🚧 — 23 blocks
 
 入口：[`../agent-harness/README.md`](../agent-harness/README.md)
 
-旧 47 章目录已经完成颗粒度重组，当前 `docs/` 正式为 **23 个连续知识小板块**；旧碎片文件已删除。当前继续做深度验收和 Review / Interview 导航校准，因此暂不标为最终完成。
+旧 47 章已经物理迁移为 **23 个连续知识小板块**。结构颗粒度已经稳定，当前任务不是继续合并，而是把部分由旧短稿合并来的章节提升到 MySQL / RAG 同级教学深度。
 
 证据体系：
 
@@ -148,63 +138,39 @@ Corpus / Lineage / Parse / Clean
 + ReAct / SWE-bench primary papers
 ```
 
-证据入口：[`../research/agent-sources/README.md`](../research/agent-sources/README.md)
-
-固定实现快照：
+固定快照：
 
 ```text
-Claude Code commit = 58231dcce408f805c645cfbc352d2876b517223b
-OpenAI Codex commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
+Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
+OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 ```
 
-正式 0→1 主线：
+主线：
 
 ```text
 Agent / Workflow / Harness
-→ Loop / Run / Turn / Step / Event
+→ Loop / Event / State
 → Tool Runtime
-→ Planning / Goal / Stop / Budget
-→ Context Assembly / Compaction
-→ Memory / State / Checkpoint / Resume
-→ Permission / Sandbox / Injection / Containment
+→ Planning / Stop / Budget
+→ Context / Compaction
+→ Memory / Session / Checkpoint
+→ Permission / Sandbox / Injection
 → MCP / Skills / Hooks / Routing
 → Multi-Agent / A2A / Workspace
 → Trace / Eval / Coding Agent
 → Production Runtime
-→ Framework Mapping / Build-vs-Buy
+→ Framework Mapping
 ```
 
-课程继续坚持：
-
-> **先 Runtime Problem，再 Runtime Primitive，再看成熟源码实现，最后才映射 Framework。**
-
-因此 LangGraph / LangChain / OpenAI Agents SDK 不作为课程起点。
+课程坚持：**先 Runtime Problem，再 Runtime Primitive，再看成熟源码实现，最后映射 Framework。**
 
 ---
 
 # 8. System Design ⏸️
 
-System Design 仍是第 10 个正式一级模块，但现在暂缓启动。
+System Design 是第 10 个正式一级模块，但当前继续暂缓：先完成 Agent 23-block 正文深度验收，再用已经验证过的教材粒度规则开始设计。
 
-先完成当前 Granularity Remediation，尤其是 Agent / RAG / LLM，避免把：
-
-```text
-Canonical Question
-≈ Markdown Chapter
-```
-
-这种错误粒度复制到 System Design。
-
-未来 System Design 仍会汇合：
-
-- 企业知识库 RAG；
-- 大规模文档 RAG；
-- 多租户 AI Chat / Agent Platform；
-- Coding Agent Backend；
-- Long-running Agent Platform；
-- Multi-Agent Workflow；
-- AI Customer Service；
-- Data / Analytical Agent。
+未来重点：企业知识库 RAG、大规模文档 RAG、多租户 AI Chat / Agent Platform、Coding Agent Backend、Long-running Agent Platform、Multi-Agent Workflow、AI Customer Service、Data / Analytical Agent。
 
 ---
 
@@ -221,8 +187,6 @@ Bridge D：RAG + Agent Harness + Long-running Runtime
 
 # 10. Interview Reality
 
-研究入口：[`../research/README.md`](../research/README.md)
-
 ```text
 HUMAN-A：S001–S279（Frozen）
 ACTIVE Canonical：235
@@ -230,7 +194,7 @@ Mapped Sources：278
 VALID-UNMAPPED：1（S271）
 ```
 
-> 面经决定“哪里高频、哪里追得深”，不决定“只学哪些知识”，也不决定“每一道题都必须独立成为一章”。
+> 面经决定“哪里高频、哪里追得深”，不决定“只学哪些知识”，也不决定“每一道题都独立成为一章”。
 
 ---
 
@@ -241,11 +205,11 @@ VALID-UNMAPPED：1（S271）
 | Python | ✅ 完整教材 |
 | FastAPI | 🟡 完整课程骨架 |
 | AI Backend Engineering | 🟡 完整课程骨架 |
-| MySQL | ✅ 23 章；Granularity PASS |
-| Redis | 🟠 27 章内容完成；Minor Remediation |
-| Vector DB | 🟠 23 章内容完成；Moderate Remediation |
-| LLM Foundation | 🟠 29 章内容完成；Moderate Remediation |
-| RAG | 🟠 34 章内容完成；Major Remediation |
-| Agent Harness / Runtime | 🚧 已迁移为 23 章；深度验收中 |
-| System Design | ⏸️ Granularity Remediation 后启动 |
+| MySQL | ✅ 23 blocks |
+| Redis | ✅ 24 blocks；整改完成 |
+| Vector DB | ✅ 16 blocks；整改完成 |
+| LLM Foundation | ✅ 14 blocks；整改完成 |
+| RAG | ✅ 14 blocks；整改完成 |
+| Agent Harness / Runtime | 🚧 23 blocks；深度验收中 |
+| System Design | ⏸️ Agent 验收后启动 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
