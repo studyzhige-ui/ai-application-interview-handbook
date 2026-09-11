@@ -3,8 +3,6 @@
 更新日期：2026-09-11
 
 > 本文件解决一个长期问题：**研究粒度、面试题粒度、能力粒度、教材文件粒度不是同一个层级。**
->
-> 后续所有一级模块都必须先决定“知识体系里的小板块”，再决定文件；不能因为 Canonical Question 可以独立追问，就自动拆成独立 Markdown。
 
 ## 1. 四种粒度必须分开
 
@@ -26,85 +24,74 @@ Capability Map
 
 > **Canonical 可以很细，Capability Map 可以更细，但教材文件必须按“认知闭环”组织。**
 
-不能使用：
-
-```text
-1 Canonical Question
-≈ 1 Capability
-≈ 1 Markdown File
-```
-
-作为默认映射。
+不再使用 `1 Canonical ≈ 1 Capability ≈ 1 Markdown` 作为默认映射。
 
 ---
 
-## 2. 一个知识点什么时候应该单独成文件
+## 2. 独立成文件的判断标准
 
-至少满足以下大部分条件：
+一个主题至少应满足以下大部分条件，才适合作为单独 Markdown：
 
-1. 能回答一个独立的“大问题”；
+1. 能回答一个独立“大问题”；
 2. 有自己的前置知识和输出心智模型；
-3. 有区别于相邻主题的 failure model / trade-off；
-4. 学完后可以独立画出流程图 / 状态机 / 数据结构；
-5. 可以形成完整的“为什么 → 怎么工作 → 哪里会坏 → 怎么验证”；
-6. 与相邻文件合并后不会只是机械变长，而会形成更自然的因果闭环。
+3. 有区别于相邻主题的 Failure Model / Trade-off；
+4. 学完后可以独立画出流程图、状态机或数据结构；
+5. 可以形成“为什么 → 怎么工作 → 哪里会坏 → 怎么验证”的闭环；
+6. 与相邻文件合并后不会只是机械变长，而会形成更自然的因果关系。
 
-反过来，如果两个文件满足下面任一情况，优先合并：
+优先合并的信号：
 
-- A 文件几乎只是 B 文件的参数 / 变体；
-- 必须读完下一文件才能回答当前文件的“为什么”；
-- 两个文件大量重复同一背景与定义；
-- 单文件长期只有约 3–5KB，内容主要是提纲而不是完整教学闭环；
-- 只是因为真人面经可以分别追问而拆开。
+- 一个文件只是另一个文件的参数或变体；
+- 必须读下一篇才能回答当前篇的“为什么”；
+- 大量重复相同背景；
+- 单文件长期只有短提纲；
+- 只是因为面试官可以分别追问而拆开。
 
-> 文件大小不是硬指标，只是审计信号。复杂主题 15–25KB 很正常；真正重要的是认知闭环。
+文件大小只是审计信号，不是硬指标。
 
 ---
 
-## 3. 已完成模块审计
+# 3. 最终整改结果
 
-### MySQL — PASS
+## MySQL — PASS：23 → 23
 
-当前：23 章。
+MySQL 的 B+Tree、Composite Index、MVCC、Lock、Replication、Sharding 等本身有独立数据结构、执行机制和 Failure Model，因此不为统一数字机械合并。
 
-特征：
+## Redis — COMPLETE：27 → 24
 
-- 正文章节普遍约 9–14KB；
-- `B+Tree`、`Composite Index`、`MVCC`、`Lock`、`Replication`、`Sharding` 等都有独立数据结构 / failure model；
-- 三条主线清晰：查询性能、并发正确性、生产扩展。
+实际阅读正文后，对最初审计做了修正。
 
-结论：**不因为其它模块缩章而机械改 MySQL。** 当前文件粒度基本符合“知识小板块”。
-
-### Redis — MINOR REMEDIATION
-
-当前：27 章，多数约 5–7KB。
-
-明显可合并候选：
+真正合并：
 
 ```text
-06 Redis 为什么快
-+ 07 I/O Multiplexing / Event Loop
-→ Redis Runtime / Performance Model
+Redis 为什么快
++ I/O Multiplexing / Event Loop
+→ Redis Runtime & Performance Model
 
-17 MULTI / WATCH
-+ 18 Pipeline
-+ 19 Lua / Functions
-→ Command Batching / Transaction / Atomic Programmability
+Cache / Key Design
++ Penetration / Breakdown / Avalanche
+→ Cache Design & Failure Patterns
 
-20 Distributed Lock Basics
-+ 21 Lock Correctness
-→ Distributed Lock：从 Acquire 到 Lease / Renewal / Fencing
+Distributed Lock Basics
++ Lock Correctness
+→ Acquire / Owner / Lease / Renewal / Failover / Fencing
 ```
 
-其它如 TTL vs Eviction、Replication vs Sentinel vs Cluster 仍有独立 failure model，应保留。
+保留独立：
 
-目标：**27 → 23 左右**，属于轻度整理，不推倒重写。
+```text
+MULTI / WATCH
+Pipeline
+Lua / Functions
+```
 
-### Vector DB — MODERATE REMEDIATION
+因为三者分别解决执行连续性/乐观并发、网络 RTT、服务器端原子逻辑，Failure Model 不同。
 
-当前：23 章，多数约 4–5KB，存在明显“一个算法子概念一个文件”。
+**结论：24 是比预估 23 更合理的结构。**
 
-推荐合并：
+## Vector DB — COMPLETE：23 → 16
+
+已完成核心合并：
 
 ```text
 Vector + Dimension
@@ -120,94 +107,104 @@ HNSW Principle
 + HNSW Parameters
 → HNSW：Mechanism + Tuning
 
-Insert/Update/Delete
-+ Tombstone/Compaction
-+ Re-embedding/Index Lifecycle
+Insert / Update / Delete
++ Tombstone / Compaction
++ Re-embedding / Rebuild
 → Vector Index Lifecycle
 
-Performance Metrics/Capacity
+Performance Metrics / Capacity
 + Production Troubleshooting
 → Performance & Production Diagnosis
 ```
 
-目标：**23 → 16–18**。
+保留 ANN Taxonomy、IVF、Quantization、Index Selection、Metadata Filter、Tenant Isolation、Distributed Vector DB、Product Selection 等独立闭环。
 
-### LLM Foundation — MODERATE REMEDIATION
+## LLM Foundation — COMPLETE：29 → 14
 
-当前：29 章，多数约 3–6KB。知识顺序正确，但文件边界偏细。
-
-推荐把机制链重新组合：
+已按机制链收敛：
 
 ```text
 Tokenization + Context Budget + Long Context
-Transformer Block + FFN/Residual/Norm
-Attention/QKV + Multi-head/Causal + RoPE
+Transformer Architecture + FFN / Residual / Norm
+Attention / QKV + Multi-head / Causal + RoPE
 Autoregressive Generation + Logits + Sampling
-KV Cache + Prefill/Decode
-Continuous Batching + PagedAttention + Latency/Cost + Precision
+KV Cache + Prefill / Decode
+Continuous Batching + PagedAttention + Latency / Cost + Precision
 Model API + Model Selection
-Embedding + Reranker（Multimodal 可独立）
+Embedding + Reranker
+Multimodal
+Prompt Engineering
 Hallucination + Prompt/RAG/Fine-tuning Boundary
-SFT + LoRA + Post-training/Distillation
+SFT + LoRA / PEFT
+Post-training / Alignment / Distillation
 ```
 
-目标：**29 → 14–17**。
+课程不再把 Logits、Sampling、Prefill、PagedAttention 等子机制默认拆成独立文件。
 
-### RAG — MAJOR REMEDIATION
+## RAG — COMPLETE：34 → 14
 
-当前：34 章，多数约 2.6–4.6KB。知识体系顺序是对的，但文件明显接近 Canonical / mechanism 粒度。
-
-推荐按 Pipeline 子系统组合：
+最终按 Production 子系统组织：
 
 ```text
-RAG Role + End-to-end Pipeline
-Corpus Audit + Identity/Lineage
-Parsing/OCR + Layout/Multimodal + Cleaning/Dedup
-Chunking Principles + Strategy + Size/Overlap
-Parent-child/Neighbor + Semantic Boundary + Chunk Data Model
-Request Lifecycle + Rewrite/Clarification + Decomposition + No-hit
-Dense + Sparse/BM25 + Hybrid + Fusion
-Rerank + Top-K/Candidate Budget
-Context Construction + Grounding/Citation
-Retrieval Metrics + Eval Dataset/Judge
-End-to-end Eval + Experiment/Regression + Bad Case Attribution
-Freshness/Version + Permission/Tenant
-Scale/Cost/Observability
-GraphRAG/Agentic RAG
+01 RAG Role & End-to-End Pipeline
+02 Corpus Governance
+03 Document Processing
+04 Chunking Design
+05 Advanced Chunk Structure & Data Model
+06 Query Understanding & Retrieval Planning
+07 Retrieval Stack: Dense / Sparse / Hybrid / Fusion
+08 Rerank & Candidate Budget
+09 Evidence Delivery: Context / Grounding / Citation
+10 Retrieval Evaluation
+11 End-to-End Quality Engineering
+12 Production Governance: Freshness / Version / Permission
+13 Scale / Cost / Cache / Observability
+14 GraphRAG / Agentic RAG
 ```
 
-目标：**34 → 14–16**。
+29 道 RAG Canonical 和 40 道面试题仍保持更细粒度，不跟教材文件数量绑定。
 
-这里的整改只改变教材文件粒度，不改变 29 道 RAG Canonical、Source Count 或市场分析。
+## Agent Harness / Runtime — STRUCTURE COMPLETE：47 → 23
 
-### Agent Harness / Runtime — MAJOR REMEDIATION NOW
+旧 47 章主要沿 Capability Primitive 切分，已完成物理迁移为 23 个知识小板块；旧碎片文件删除。
 
-旧目录：47 章。
+当前剩余任务不是继续缩章，而是**正文深度验收**：部分由旧短稿合并来的 08–23 仍需提升到 MySQL / RAG 同级教学深度。
 
-问题最明显：目录基本沿 Capability Primitive 切分；旧短稿 19–47 只有约 1.4–1.8KB，说明很多更适合作为章节内 section。
+正式主线：
 
-正式目标：**23 个知识小板块**。
-
-详见 `agent-harness/README.md`。
+```text
+Agent / Workflow / Harness
+→ Loop / Run / Turn / Step / Event
+→ Tool Runtime
+→ Planning / Goal / Stop / Budget
+→ Context Assembly / Compaction
+→ Memory / State / Long-running Reliability
+→ Permission / Sandbox / Injection / Containment
+→ MCP / Skills / Hooks / Routing
+→ Multi-Agent / A2A / Workspace
+→ Trace / Eval / Coding Agent
+→ Production Runtime
+→ Framework Mapping
+```
 
 ---
 
-## 4. 整改优先级
+# 4. 当前教材结构总览
 
-```text
-Agent Harness     P0  现在重组，继续正文前先解决
-RAG               P1  Agent 完成后回头合并
-LLM Foundation    P1  与 RAG 同批整理
-Vector DB         P2  中度整理
-Redis             P2  轻度整理
-MySQL             PASS
-```
+| 模块 | 原结构 | 当前结构 | 粒度状态 |
+|---|---:|---:|---|
+| MySQL | 23 | 23 | ✅ PASS |
+| Redis | 27 | 24 | ✅ COMPLETE |
+| Vector DB | 23 | 16 | ✅ COMPLETE |
+| LLM Foundation | 29 | 14 | ✅ COMPLETE |
+| RAG | 34 | 14 | ✅ COMPLETE |
+| Agent Harness | 47 | 23 | ✅ STRUCTURE COMPLETE；🚧 深度验收 |
 
-原则：先修结构，再继续新增 System Design，避免把错误的文件粒度复制到最后一个模块。
+这些数字是结果，不是目标。不同模块保留不同文件数量是正常现象。
 
 ---
 
-## 5. 重组不改变研究事实
+# 5. 重组不改变研究事实
 
 任何教材 Merge / Rename 都不得改变：
 
@@ -218,24 +215,21 @@ MySQL             PASS
 - Verified Follow-up Chain；
 - Frequency Ranking。
 
-它只改变：
+教材重组只回答：
 
-```text
-“这些知识应该放进几个教材文件里？”
-```
-
-而不改变：
-
-```text
-“市场问了哪些独立能力？”
-```
+> **这些知识最适合放进几个教学文件？**
 
 ---
 
-## 6. 后续模块的固定规则
+# 6. System Design 的固定规则
 
-System Design 开始前必须先应用本规则：
+System Design 开始前直接使用这套方法：
 
-> **先画知识依赖与子系统边界 → 再确定文件 → 最后才把 Canonical / 面经追问映射进去。**
+```text
+先画知识依赖与子系统边界
+→ 确定知识小板块
+→ 再决定 Markdown 文件
+→ 最后映射 24 道 System Design Canonical 和真实追问
+```
 
-不再先按问题清单建 30–50 个 Markdown，再事后合并。
+禁止再先按问题清单生成几十个 Markdown，再事后合并。
