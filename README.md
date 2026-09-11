@@ -145,7 +145,7 @@ Source Count mismatch         0
 ## 8. 仓库目录
 
 ```text
-python/              FastAPI/             backend-engineering/
+python/              fastapi/             backend-engineering/
 mysql/               redis/               vector-db/
 llm-foundation/      rag/                 agent-harness/
 system-design/
