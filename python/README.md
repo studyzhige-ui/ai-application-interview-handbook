@@ -1,5 +1,7 @@
 # Python Foundation｜秋招面试知识手册
 
+> **Status：🟠 v1 完整可用，但当前统一标准的二次整改尚未完成。** 现有 `12` 章正文 + Review + Interview 可以正常学习；后续不推倒重写，而是在 FastAPI / AI Backend Engineering 补齐后，对照最新 `15` 道 Python Canonical 做 Coverage / Depth Remediation。详见 [`../roadmap/foundation-status-audit.md`](../roadmap/foundation-status-audit.md)。
+
 > 本模块由原独立仓库 `python-interview-handbook` 迁入，现作为 **AI Application Interview Handbook** 的 Python 基础层继续维护。
 >
 > 目标不是只会 Python 语法，而是建立后续 FastAPI、异步服务、RAG 与 Agent Runtime 所需要的语言与运行时基础。

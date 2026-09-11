@@ -1,5 +1,7 @@
 # FastAPI｜AI 应用服务层
 
+> **Status：⏳ 课程骨架已完成，正式教材尚未撰写。** 当前仓库只有本 README/课程蓝图，尚无 `docs/`、`review/`、`interview/`。System Design 完成后回到 Foundation，FastAPI 是第一项正式补齐工作。详见 [`../roadmap/foundation-status-audit.md`](../roadmap/foundation-status-audit.md)。
+
 > **FastAPI 在本手册中是一级模块，而不是 Python 的一个小附录。**
 >
 > 原因很简单：对 AI 应用 / Agent 开发岗位来说，Python 解决“语言怎么运行”，FastAPI 解决“怎样把模型、RAG、Agent、数据库和外部工具真正做成一个可被用户调用的服务”。

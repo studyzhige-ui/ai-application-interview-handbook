@@ -125,6 +125,20 @@ Agent / Workflow / Harness
 → Framework Mapping
 ```
 
+## System Design — COMPLETE：24 Canonical → 19 curriculum blocks
+
+System Design 的 24 道 Canonical 全部是 L4 Scenario，但没有采用 `24 题 = 24 文件`。最终结构是：
+
+```text
+12 个通用设计知识块
++ 7 个综合 Scenario Pattern
+= 19 个教材文件
+```
+
+前 12 章按 `Requirement → SLO → Capacity → State → Flow → Scale → Correctness → Reliability → Security → Verification` 的知识依赖建立；后 7 章再把 Flash Sale、Feed、Migration、LLM Gateway、Enterprise RAG、Production Agent 等真人场景映射进去。
+
+这验证了本审计的核心规则：**Scenario 可以很多，但教材应先教可迁移的方法，再用 Scenario 验证迁移能力。**
+
 ---
 
 # 4. 当前教材结构总览
@@ -137,6 +151,7 @@ Agent / Workflow / Harness
 | LLM Foundation | 29 | 14 | ✅ COMPLETE |
 | RAG | 34 | 14 | ✅ COMPLETE |
 | Agent Harness | 47 | 23 | ✅ COMPLETE（结构 + 深度） |
+| System Design | 24 Canonical | 19 | ✅ COMPLETE |
 
 这些数字是结果，不是目标。不同模块保留不同文件数量是正常现象。
 
@@ -157,15 +172,15 @@ Agent / Workflow / Harness
 
 ---
 
-# 6. System Design 的固定规则
+# 6. System Design 验证结果
 
-System Design 是下一模块，并直接使用本轮已经验证的粒度方法：
+System Design 已按本轮规则完成，并验证这套方法可以直接用于 Scenario-heavy 模块：
 
 ```text
 先画知识依赖与子系统边界
-→ 确定知识小板块
-→ 再决定 Markdown 文件
+→ 12 个通用设计知识块
+→ 7 个综合场景知识块
 → 最后映射 24 道 System Design Canonical 和真实追问
 ```
 
-禁止再先按问题清单生成几十个 Markdown，再事后合并。
+最终为 **19 blocks**，没有出现“一题一章”后再返工合并的问题。未来新增模块继续沿用同一方法。

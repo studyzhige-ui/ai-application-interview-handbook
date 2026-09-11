@@ -23,7 +23,8 @@
 `235` 是正式 Primary-owned ACTIVE Canonical 数量。
 
 > **Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。
-> **教材深度已独立验收。** Redis / Vector DB / LLM Foundation / RAG 的结果见 `../../roadmap/content-depth-audit.md`，不会以文件数量或字数替代人工质量判断。
+> **教材深度已独立验收。** Redis / Vector DB / LLM Foundation / RAG / System Design 的结果见 `../../roadmap/content-depth-audit.md`，不会以文件数量或字数替代人工质量判断。
+> **Foundation 实际完成度已单独核实。** 见 `../../roadmap/foundation-status-audit.md`。
 
 ---
 
@@ -83,10 +84,10 @@ Vector DB ✅ 16 blocks；23→16 COMPLETE
 LLM Foundation ✅ 14 blocks；29→14 COMPLETE
 RAG ✅ 14 blocks；34→14 COMPLETE
 Agent Harness / Runtime ✅ 23 blocks；47→23 COMPLETE + depth validated
-System Design ⏳ NEXT
+System Design ✅ 19 blocks；24 Canonical → 19 curriculum blocks COMPLETE
 ```
 
-Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
+Python 已有可用 v1 教材但需当前标准定向整改；FastAPI / AI Backend Engineering 当前只有 README 课程骨架，正式正文尚未撰写。
 
 ### 为什么教材文件数小于 Canonical 数量
 
@@ -113,4 +114,4 @@ RAG 教材 = 14 blocks
 
 Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
 
-下一正式教材模块：**System Design**。
+下一仓库建设阶段：**Foundation Completion — FastAPI → AI Backend Engineering → Python v1 Remediation**。学习顺序仍保持 `Python → FastAPI → AI Backend Engineering`。

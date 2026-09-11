@@ -1,5 +1,7 @@
 # AI Backend Engineering｜AI 应用后端工程基础
 
+> **Status：⏳ 课程骨架已完成，正式教材尚未撰写。** 当前仓库只有本 README/课程蓝图，尚无 `docs/`、`review/`、`interview/`。System Design 已完成，后续在 FastAPI 正文之后正式建设这一横向 Production 主线。详见 [`../roadmap/foundation-status-audit.md`](../roadmap/foundation-status-audit.md)。
+
 > 这是整套手册里的**横向工程主线**。
 >
 > FastAPI 教你如何把 Python 程序做成服务；MySQL / Redis / Vector DB 教你不同数据系统；RAG / Agent Harness 教你 AI 应用层能力。**AI Backend Engineering 负责把这些东西在生产环境里可靠地连接起来。**

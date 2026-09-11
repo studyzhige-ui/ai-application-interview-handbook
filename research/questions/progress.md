@@ -64,21 +64,22 @@ Source Count mismatch         0
 
 详细规则：`../../roadmap/curriculum-granularity-audit.md`。
 内容深度验收：`../../roadmap/content-depth-audit.md`。Redis / Vector DB / LLM Foundation / RAG 已完成全量 QA 与人工复核并通过。
+Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。FastAPI / AI Backend Engineering 当前只有课程骨架；Python 是可用 v1，但需最新 Canonical / 当前统一深度标准的定向整改。
 
 ## 当前正式建设状态
 
 | 模块 | Phase 3 状态 |
 |---|---|
-| Python | ✅ 既有完整系统教材 |
-| FastAPI | 🟡 完整课程骨架，正文后续补齐 |
-| AI Backend Engineering | 🟡 完整课程骨架，按 Production 主线持续补齐 |
+| Python | 🟠 v1 完整可用；最新 15 Canonical / 当前标准定向整改待完成 |
+| FastAPI | ⏳ 只有 README 课程骨架；正式正文未写 |
+| AI Backend Engineering | ⏳ 只有 README 课程骨架；正式正文未写 |
 | MySQL | ✅ **23 blocks**；Granularity PASS |
 | Redis | ✅ **24 blocks**；27→24 整改完成 |
 | Vector DB | ✅ **16 blocks**；23→16 整改完成 |
 | LLM Foundation | ✅ **14 blocks**；29→14 整改完成 |
 | RAG | ✅ **14 blocks**；34→14 整改完成 |
 | Agent Harness / Runtime | ✅ **23 blocks**；47→23 结构整改 + 正文深度验收完成 |
-| System Design | ⏳ **下一正式模块** |
+| System Design | ✅ **19 blocks**；正文 + Review + Interview 完成 |
 
 ### Granularity Remediation 最终结果
 
@@ -89,6 +90,7 @@ Vector DB      23 → 16  COMPLETE
 LLM Foundation 29 → 14  COMPLETE
 RAG            34 → 14  COMPLETE
 Agent Harness  47 → 23  COMPLETE（结构 + 深度）
+System Design  24 Canonical → 19 curriculum blocks  COMPLETE
 ```
 
 不同数字是正常结果，不追求统一章数。
@@ -145,10 +147,14 @@ OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 
 ---
 
-## 下一阶段
+## 下一阶段：Foundation Completion
+
+System Design 已完成。接下来补齐此前 Foundation 的真实缺口，仓库建设顺序为：
 
 ```text
-System Design
+FastAPI 正式教材
+→ AI Backend Engineering 正式教材
+→ Python v1 Canonical Coverage / Depth Remediation
 ```
 
-开始时先画知识依赖与子系统边界，再确定教材文件粒度，最后映射 24 道 System Design Canonical 与真人追问；禁止一题一章。
+这只是建设顺序；学习者的正式学习顺序仍为 `Python → FastAPI → AI Backend Engineering`。

@@ -86,7 +86,8 @@ Section = 参数 / 变体 / Failure / 深挖追问
 ```
 
 因此 **44 道 Agent Canonical 不等于 44 章，29 道 RAG Canonical 也不等于 29 章。**
-当前 Redis / Vector DB / LLM Foundation / RAG 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。
+当前 Redis / Vector DB / LLM Foundation / RAG / System Design 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。
+Foundation 当前真实完成度详见 `../../roadmap/foundation-status-audit.md`。
 
 当前教材结构：
 
@@ -97,10 +98,10 @@ Vector DB ✅ 16 blocks（23→16）
 LLM Foundation ✅ 14 blocks（29→14）
 RAG ✅ 14 blocks（34→14）
 Agent Harness / Runtime ✅ 23 blocks（47→23，结构 + 深度验收完成）
-System Design ⏳ 下一正式模块
+System Design ✅ 19 blocks（24 Canonical → 19 curriculum blocks）
 ```
 
-Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
+Python 已有完整可用 v1，但需最新 Canonical / 当前深度标准定向整改；FastAPI / AI Backend Engineering 目前只有 README 课程骨架，正式正文未写。
 
 ---
 

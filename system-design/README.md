@@ -1,5 +1,7 @@
 # System Design｜AI Application / Agent Production 终局模块
 
+> **Status：✅ 第一版完整系统教材已完成。** 当前为 `19` 个连续知识小板块 + Review + Interview 三件套；24 道 System Design Canonical 已按场景/能力映射进入教材，而不是一题一章。
+
 > System Design 是这套 Handbook 的最后一个正式一级模块。
 >
 > 它不再重新讲 MySQL、Redis、Vector DB、RAG 或 Agent Harness 的单点原理，而是回答：**面对一个真实需求，怎样把前面所有能力组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的系统。**

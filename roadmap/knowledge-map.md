@@ -33,20 +33,21 @@ Section = 参数、变体、Failure、追问
 ```
 
 章节数不追求统一。审计记录：[`curriculum-granularity-audit.md`](curriculum-granularity-audit.md)。
-内容深度验收：[`content-depth-audit.md`](content-depth-audit.md)；Redis / Vector DB / LLM Foundation / RAG 均已通过。
+内容深度验收：[`content-depth-audit.md`](content-depth-audit.md)；Redis / Vector DB / LLM Foundation / RAG / System Design 均已通过。
+Foundation 实际完成度：[`foundation-status-audit.md`](foundation-status-audit.md)。
 
 ---
 
 # 3. Foundation
 
-## Python ✅
-入口：[`../python/README.md`](../python/README.md) — 完整系统教材 + Review + Interview。
+## Python 🟠
+入口：[`../python/README.md`](../python/README.md) — v1 已有 12 章正文 + Review + Interview，可学习；最新 15 Canonical / 当前统一深度标准的定向整改待完成。
 
-## FastAPI 🟡
-入口：[`../fastapi/README.md`](../fastapi/README.md) — 完整课程骨架，正文后续补齐。
+## FastAPI ⏳
+入口：[`../fastapi/README.md`](../fastapi/README.md) — 当前只有 README 课程骨架，正式 `docs / review / interview` 尚未撰写。
 
-## AI Backend Engineering 🟡
-入口：[`../backend-engineering/README.md`](../backend-engineering/README.md) — 完整课程骨架，是贯穿后续模块的横向 Production 主线。
+## AI Backend Engineering ⏳
+入口：[`../backend-engineering/README.md`](../backend-engineering/README.md) — 当前只有 README 课程骨架，正式 `docs / review / interview` 尚未撰写。
 
 ---
 
@@ -144,22 +145,29 @@ Agent / Workflow / Harness
 
 ---
 
-# 8. System Design ⏳
+# 8. System Design ✅ — 19 blocks
 
-System Design 是第 10 个正式一级模块，也是当前下一阶段。
+入口：[`../system-design/README.md`](../system-design/README.md)。
 
-开始前直接应用已验证的教材粒度规则：
+24 道 System Design Canonical 全部为 L4，但教材没有一题一章，而是组织为：
 
 ```text
-先画知识依赖与系统子域
-→ 确定知识小板块
-→ 决定 Markdown 文件
-→ 最后映射 24 道 System Design Canonical 与真实追问
+Part A：12 个通用设计能力
+Requirement / SLO / Capacity / State / Flow
+→ Cache / Partition / Consistency / Queue
+→ Reliability / Multi-tenancy / Observability / Evaluation
+
+Part B：7 类综合真人场景
+High-concurrency Transactional
+→ Realtime Read-heavy
+→ Large-scale Data Processing
+→ LLM Gateway / Multi-tenant AI Platform
+→ Enterprise RAG
+→ Production / Long-running Agent Backend
+→ Vertical AI Agent Patterns
 ```
 
-禁止再从“一题一章”开始。
-
-未来重点：企业知识库 RAG、大规模文档 RAG、多租户 AI Chat / Agent Platform、Coding Agent Backend、Long-running Agent Platform、Multi-Agent Workflow、AI Customer Service、Data / Analytical Agent。
+真人面经决定 Case、Failure、Scale 与 Verification 深度；通用知识依赖决定前 12 章主干。
 
 ---
 
@@ -191,14 +199,14 @@ VALID-UNMAPPED：1（S271）
 
 | 模块 | 当前状态 |
 |---|---|
-| Python | ✅ 完整教材 |
-| FastAPI | 🟡 完整课程骨架 |
-| AI Backend Engineering | 🟡 完整课程骨架 |
+| Python | 🟠 v1 完整可用；定向整改待完成 |
+| FastAPI | ⏳ 只有课程骨架；正式正文未写 |
+| AI Backend Engineering | ⏳ 只有课程骨架；正式正文未写 |
 | MySQL | ✅ 23 blocks |
 | Redis | ✅ 24 blocks |
 | Vector DB | ✅ 16 blocks |
 | LLM Foundation | ✅ 14 blocks |
 | RAG | ✅ 14 blocks |
 | Agent Harness / Runtime | ✅ 23 blocks；深度验收完成 |
-| System Design | ⏳ 下一正式模块 |
+| System Design | ✅ 19 blocks；Review / Interview 完成 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |

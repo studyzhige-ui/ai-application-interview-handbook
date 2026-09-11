@@ -43,6 +43,7 @@ Section = 参数 / 变体 / Failure Case / 追问
 
 因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
 Redis / Vector DB / LLM Foundation / RAG 的正文深度也已完成全量 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
+Foundation 的真实完成度与 Python v1 质量核实见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。System Design 完成后的仓库补齐顺序是：**FastAPI → AI Backend Engineering → Python v1 定向整改**。
 
 ### 3. 从 Demo 能力走到 Production 能力
 
@@ -83,9 +84,9 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 
 ## Foundation
 
-- [Python Foundation](python/README.md) ✅ 完整系统教材
-- [FastAPI](fastapi/README.md) 🟡 完整课程骨架，正文后续补齐
-- [AI Backend Engineering](backend-engineering/README.md) 🟡 完整课程骨架，按 Production 主线持续补齐
+- [Python Foundation](python/README.md) 🟠 **v1 完整可用**；最新 15 Canonical / 当前统一深度标准的定向整改待完成
+- [FastAPI](fastapi/README.md) ⏳ **只有 README 课程骨架**；正式 `docs / review / interview` 尚未撰写
+- [AI Backend Engineering](backend-engineering/README.md) ⏳ **只有 README 课程骨架**；正式 `docs / review / interview` 尚未撰写
 
 ## Data
 
@@ -131,7 +132,7 @@ Agent / Workflow / Harness
 
 ## Integration
 
-- System Design ⏳ **下一正式模块**；开始前先按知识子系统确定教材粒度，再映射 24 道 System Design Canonical。
+- [System Design](system-design/README.md) ✅ **19 个知识小板块**；24 道 L4 Canonical 已映射到通用设计方法 + 7 类综合真人场景，Review / Interview 已完成。
 
 ---
 
@@ -146,6 +147,7 @@ Vector DB 16
 LLM Foundation 14
 RAG 14
 Agent Harness 23
+System Design 19
 ```
 
 这些数字来自各模块自己的认知闭环，而不是为了统一格式。MySQL 的 B+Tree、MVCC、Lock、Replication、Sharding 本来就有独立数据结构和 Failure Model；RAG 与 LLM 原先则明显把机制切得过细，因此大幅收敛。
@@ -179,14 +181,14 @@ Python
 
 | 模块 | 状态 |
 |---|---|
-| Python | ✅ 完整系统教材 |
-| FastAPI | 🟡 完整课程骨架 |
-| AI Backend Engineering | 🟡 完整课程骨架 |
+| Python | 🟠 v1 完整可用；最新 Canonical / 当前深度标准定向整改待完成 |
+| FastAPI | ⏳ README 课程骨架；正式正文未写 |
+| AI Backend Engineering | ⏳ README 课程骨架；正式正文未写 |
 | MySQL | ✅ 23-block；Granularity PASS |
 | Redis | ✅ 24-block；整改完成 |
 | Vector DB | ✅ 16-block；整改完成 |
 | LLM Foundation | ✅ 14-block；整改完成 |
 | RAG | ✅ 14-block；整改完成 |
 | Agent Harness / Runtime | ✅ 23-block；结构整改 + 深度验收完成 |
-| System Design | ⏳ 下一正式模块 |
+| System Design | ✅ 19-block；正文 + Review + Interview 完成 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
