@@ -20,7 +20,7 @@
 | 10 | System Design | `system-design.md` | 24 | 0 | v2 |
 |  | **合计** |  | **235** | **24** |  |
 
-`235` 是 Phase 2A + Phase 2B 后的正式 Primary-owned ACTIVE Canonical 数量。
+`235` 是正式 Primary-owned ACTIVE Canonical 数量。
 
 > **Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。
 
@@ -36,11 +36,9 @@
 - SSE / WebSocket transport、通用 Concurrency / Backpressure → AI Backend；
 - Agent Demo → Multi-instance Production Scale → System Design。
 
-完整历史判断见 `global-audit.md`。
-
 ---
 
-## 3. Phase 2B Coverage Gap Audit 新增 Canonical
+## 3. Phase 2B Coverage Gap 新增 Canonical
 
 | QID | Primary Module | Topic | Source Count |
 |---|---|---|---:|
@@ -83,15 +81,13 @@ Redis ✅ 24 blocks；27→24 COMPLETE
 Vector DB ✅ 16 blocks；23→16 COMPLETE
 LLM Foundation ✅ 14 blocks；29→14 COMPLETE
 RAG ✅ 14 blocks；34→14 COMPLETE
-Agent Harness / Runtime 🚧 23 blocks；47→23 STRUCTURE COMPLETE，深度验收中
-System Design ⏸️ Agent 深度验收后启动
+Agent Harness / Runtime ✅ 23 blocks；47→23 COMPLETE + depth validated
+System Design ⏳ NEXT
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
 
 ### 为什么教材文件数小于 Canonical 数量
-
-例如：
 
 ```text
 Agent Canonical = 44
@@ -101,7 +97,7 @@ RAG Canonical = 29
 RAG 教材 = 14 blocks
 ```
 
-因为多个可独立追问能力可能属于同一个认知闭环。教材章节不应机械跟随题目数量。
+多个可独立追问能力可以属于同一个认知闭环，教材章节不应机械跟随题目数量。
 
 ### Agent Harness 的证据输入
 
@@ -115,3 +111,5 @@ RAG 教材 = 14 blocks
 ```
 
 Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
+
+下一正式教材模块：**System Design**。
