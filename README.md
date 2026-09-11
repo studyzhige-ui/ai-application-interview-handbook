@@ -34,11 +34,29 @@ System Design
 
 **不会因为某个知识点真人面经更高频，就打乱模块本身的主要演进顺序。**
 
-### 2. 从 Demo 能力走到 Production 能力
+### 2. 不同层级使用不同粒度
+
+```text
+HUMAN-A / Canonical Question
+= 可独立追问的面试能力
+
+Capability Map
+= 更细的工程 primitive
+
+教材文件
+= 一个可以独立学习、复习、画图并解释 Failure / Trade-off 的知识小板块
+
+文件内 Section
+= 参数、变体、Failure Case、追问
+```
+
+因此不再默认 `1 Canonical ≈ 1 Markdown`。课程粒度审计与整改记录：[`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
+
+### 3. 从 Demo 能力走到 Production 能力
 
 不仅学习“怎么调 API”，还要回答：超时怎么办、重复执行怎么办、Context 满了怎么办、缓存不一致怎么办、RAG 召回不准怎么定位、Agent 如何取消、恢复和验证。
 
-### 3. Agent Harness 使用多层权威证据
+### 4. Agent Harness 使用多层权威证据
 
 Agent Harness / Runtime 正式教材综合：
 
@@ -56,7 +74,7 @@ Agent Harness / Runtime 正式教材综合：
 
 证据入口：[`research/agent-sources/README.md`](research/agent-sources/README.md)
 
-### 4. 正式面经只认 HUMAN-A
+### 5. 正式面经只认 HUMAN-A
 
 只有满足真人候选人第一人称、高质量现场证据、岗位范围符合、原文可核验且非转载 / 非同场重复的来源，才能进入正式研究并贡献频率。
 
@@ -89,7 +107,7 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 
 ### [Python Foundation](python/README.md) ✅
 
-完整 12 章系统正文 + Review + Interview。
+完整系统正文 + Review + Interview。
 
 ### [FastAPI｜AI 应用服务层](fastapi/README.md) 🟡
 
@@ -105,15 +123,15 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 
 ### [MySQL](mysql/README.md) ✅
 
-第一版系统教材已完成：**23 章正文 + Review + 高频面试题 + 易错点 + 面试前速查。**
+**23 章正文 + Review + Interview。教材粒度审计 PASS，当前不做机械合并。**
 
-### [Redis](redis/README.md) ✅
+### [Redis](redis/README.md) 🟠
 
-第一版系统教材已完成：**27 章正文 + Review + 35 道面试题 + 45 个易错点 + 面试前速查。**
+27 章正文 + Review + Interview 内容已完成；颗粒度审计发现少量相邻章节更适合作为同一知识板块，后续做 Minor Remediation，目标约 23 章。
 
-### [Vector Database](vector-db/README.md) ✅
+### [Vector Database](vector-db/README.md) 🟠
 
-第一版系统教材已完成：**23 章正文 + Review + 31 道面试题 + 45 个易错点 + 面试前速查。**
+23 章正文 + Review + Interview 内容已完成；颗粒度审计为 Moderate Remediation，计划把 Vector Space、Exact→ANN、HNSW、Index Lifecycle 等连续机制重新组合为约 16–18 个知识板块。
 
 Vector DB 负责 Vector Infrastructure；Dense / Sparse、Hybrid、RRF、Rerank、Retrieval Evaluation 归 RAG。
 
@@ -121,76 +139,42 @@ Vector DB 负责 Vector Infrastructure；Dense / Sparse、Hybrid、RRF、Rerank�
 
 ## Model Foundation
 
-### [LLM Foundation（应用工程深度）](llm-foundation/README.md) ✅
+### [LLM Foundation（应用工程深度）](llm-foundation/README.md) 🟠
 
-第一版系统教材已完成：**29 章正文 + Review + 30 道面试题 + 55 个易错点 + 面试前速查。**
-
-```text
-Token / Context
-→ Transformer / Attention / RoPE
-→ Generation / Sampling
-→ KV Cache / Prefill / Decode
-→ Serving / Cost
-→ Model API / Selection
-→ Embedding / Reranker / Multimodal
-→ Prompt / Hallucination
-→ SFT / LoRA / Preference Optimization / Distillation
-```
+29 章正文 + Review + Interview 内容已完成；知识顺序正确，但 Transformer / Generation / Serving 等部分文件过细，进入 Moderate Granularity Remediation，目标约 14–17 个知识板块。
 
 ---
 
 ## AI Application
 
-### [RAG](rag/README.md) ✅
+### [RAG](rag/README.md) 🟠
 
-第一版系统教材已完成：**34 章正文 + Review + 40 道高频面试题 + 60 个易错点 + 面试前速查。**
-
-```text
-Corpus / Lineage / Parse / Clean
-→ Chunk
-→ Query Transformation
-→ Dense / Sparse / Hybrid / RRF
-→ Rerank / Top-K
-→ Context / Grounding / Citation
-→ Metrics / Eval / Regression / Bad Case
-→ Freshness / Permission / Scale / Observability
-→ GraphRAG / Agentic RAG
-```
+34 章正文 + Review + Interview 内容已完成；Pipeline 顺序正确，但 Chunk / Query / Retrieval / Evaluation 的文件粒度明显接近 Canonical / mechanism 粒度，进入 Major Granularity Remediation，目标约 14–16 个知识板块。
 
 ---
 
 ## Agent Runtime
 
-### [Agent Harness / Runtime](agent-harness/README.md) ✅
+### [Agent Harness / Runtime](agent-harness/README.md) 🚧
 
-第一版 0→1 系统教材已完成：**47 章正文 + Review + 56 道高频/核心面试题 + 86 个易错点 + 面试前速查。**
-
-主干不是 Framework API，而是 Runtime 问题演进：
+旧 47 章已经完成结构重组，当前正式教材目标为 **23 个知识小板块**；`docs/` 已物理迁移为连续 `01–23`，旧碎片已清理。当前正在做深度验收与 Review / Interview 导航校准，暂不标记最终完成。
 
 ```text
-Agent vs Workflow
-→ Harness / Runtime Boundary
-→ Agent Loop
-→ Run / Turn / Step / Event
-→ Tool Contract / Validation / Execution / Failure
-→ Planning / Stop / Budget
-→ Context Assembly / Budget / Tool-result Offload
-→ Compaction / Correctness
-→ Memory / Session / State / Persistence
-→ Checkpoint / Resume / Fork / Cancellation
-→ Idempotency / Side Effect / Compensation
-→ Permission / Approval / Sandbox / Guardrails
-→ Prompt Injection / Secret Containment
-→ Tool Discovery / MCP / Skills / Hooks
-→ Intent / Model Routing
-→ Multi-Agent / Handoff / A2A / Workspace Concurrency
-→ Trace / Replay / Evaluation
-→ Coding Agent Verification
-→ Production Runtime Architecture
+Agent / Workflow / Harness
+→ Loop / Run / Turn / Step / Event
+→ Tool Runtime
+→ Planning / Goal / Stop / Budget
+→ Context Assembly / Compaction
+→ Memory / State / Long-running Reliability
+→ Permission / Sandbox / Injection / Containment
+→ MCP / Skills / Hooks / Routing
+→ Multi-Agent / A2A / Workspace
+→ Trace / Eval / Coding Agent
+→ Production Runtime
 → Framework Mapping / Build-vs-Buy
 ```
 
-实现参考已固定版本：
+实现参考固定版本：
 
 - Claude Code commit：`58231dcce408f805c645cfbc352d2876b517223b`
 - OpenAI Codex commit：`fc948f8c473e5d11e780ffcf1fd7f812a2020932`
@@ -201,11 +185,9 @@ Agent vs Workflow
 
 ## Integration
 
-### System Design 🚧
+### System Design ⏸️
 
-**下一块正式系统教材。**
-
-它会把 FastAPI、Backend、MySQL、Redis、Vector DB、LLM、RAG 与 Agent Harness 汇合到完整 Production Architecture。
+System Design 仍是正式十板块的最后一块，但**暂不立刻开写**。先完成当前教材粒度整改，尤其是 Agent / RAG / LLM，避免把“Canonical 粒度 = 文件粒度”的问题复制进 System Design。
 
 ---
 
@@ -241,6 +223,8 @@ System Design
 
 > **先讲人话 → 准确定义 → 代码 / 数学 / 图解 → 原理 → 对比 → Failure Case → AI 场景 → 易错点 → 面试回答 → 深入追问 → 真人面经 → 折叠自测**
 
+一个 Markdown 文件应完成一个“知识小板块”的闭环，而不是仅承载一个可独立面试追问。
+
 最终目标：**定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
 
 ---
@@ -252,11 +236,11 @@ System Design
 | Python | ✅ 完整系统教材 |
 | FastAPI | 🟡 完整课程骨架 |
 | AI Backend Engineering | 🟡 完整课程骨架 |
-| MySQL | ✅ 第一版完整系统教材 |
-| Redis | ✅ 第一版完整系统教材 |
-| Vector DB | ✅ 第一版完整系统教材 |
-| LLM Foundation | ✅ 第一版完整系统教材 |
-| RAG | ✅ 第一版完整系统教材 |
-| Agent Harness / Runtime | ✅ 第一版完整系统教材 |
-| System Design | 🚧 **下一块正式系统教材** |
+| MySQL | ✅ 完整教材；粒度审计 PASS |
+| Redis | 🟠 内容完成；Minor Granularity Remediation |
+| Vector DB | 🟠 内容完成；Moderate Granularity Remediation |
+| LLM Foundation | 🟠 内容完成；Moderate Granularity Remediation |
+| RAG | 🟠 内容完成；Major Granularity Remediation |
+| Agent Harness / Runtime | 🚧 47→23 已迁移；深度验收中 |
+| System Design | ⏸️ 待粒度整改后启动 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
