@@ -8,40 +8,67 @@
 
 ---
 
-## 1. FastAPI — ⏳ 只有课程骨架，正式正文未写
+## 1. FastAPI — ✅ 16 blocks / Canonical Coverage / Depth PASS
 
 当前仓库实际结构：
 
 ```text
 fastapi/
-└── README.md
+├── README.md
+├── docs/       01–16 连续知识小板块
+├── review/     六张总图 + 24 个综合折叠自测
+└── interview/  30 道高频题 + 60 个易错点 + 速查表
 ```
 
-当前没有：
+并建立：
 
 ```text
-docs/
-review/
-interview/
+research/fastapi-sources/README.md
 ```
 
-`fastapi/README.md` 已经给出了较完整的课程设计，包括 HTTP / ASGI / Uvicorn、Router、Pydantic、Dependency、Lifespan、`def` vs `async def`、Streaming 等主线；但这些仍然只是**课程蓝图**，不能标成完成教材。
+用于记录 FastAPI / Starlette / Uvicorn / Pydantic 当前官方机制；权威资料只校准技术事实，不改变 HUMAN-A Source Count。
 
-正式补写时必须继续遵守：
+原 README 有约 40 个细粒度内容标题，它们是 Section / Capability 粒度，不适合直接做 40 个 Markdown。正式教材收敛为 16 个认知闭环：
 
 ```text
-Python Runtime 前置
-→ HTTP / ASGI Mental Model
-→ FastAPI Request Lifecycle
-→ Schema / DI / Resource Lifecycle
-→ async / blocking boundary
-→ Streaming / Disconnect
-→ Deployment / Production Boundary
+ASGI Request Lifecycle
+→ API Contract / Validation
+→ DI / Middleware / Resource Lifecycle
+→ Async / Blocking Boundary
+→ Streaming / SSE / WebSocket
+→ Security / Tenant Context
+→ External Resource Integration
+→ Background / Upload / Long-running Boundary
+→ Timeout / Cancellation / Disconnect
+→ Testing / Observability / Deployment
+→ AI Service Patterns
 ```
 
-真人面经只校准 FastAPI 真实问法和深度；通用 Timeout / Retry / Queue / Backpressure 仍由 AI Backend Engineering 负责。
+4 道 FastAPI HUMAN-A Canonical 的作用是校准重点，而不是决定目录：
 
-**结论：FastAPI Formal Curriculum = NOT WRITTEN。**
+```text
+FASTAPI-001  ASGI / Request Lifecycle        → 01 / 02 / 05
+FASTAPI-002  Middleware vs Dependency        → 04 / 05 / 09
+FASTAPI-004  SSE / Agent Streaming           → 07 / 08 / 12 / 16
+FASTAPI-005  Agent Service Framework Boundary→ 05–16，重点 16
+```
+
+低频但必要的 Routing、Pydantic、Testing、Deployment 等仍保留在完整知识主干中。
+
+完成后机械核验：
+
+```text
+docs = 01–16 连续
+16/16 正文 >= 4.5KB
+16/16 正文含面试回答与折叠自测
+README 正文链接存在
+Review / Interview 三件套存在
+Official Source Index 存在
+```
+
+人工重点复核了 `05 Resource Lifecycle`、`07 Streaming/SSE`、`12 Timeout/Cancellation`、`15 Deployment`、`16 AI Service Patterns`，没有发现“大主题只有概览”的短稿。
+
+**结论：FastAPI Formal Curriculum = COMPLETE；Content Depth / Canonical Coverage = PASS。**
 
 ---
 
@@ -178,10 +205,9 @@ Python
 但仓库当前的**建设工作顺序**应按缺口大小：
 
 ```text
-1. FastAPI：从 README 骨架写成正式 docs / review / interview
-2. AI Backend Engineering：从 README 骨架写成正式 docs / review / interview
+1. AI Backend Engineering：从 README 骨架写成正式 docs / review / interview
 
-Python 的 current-standard remediation 已提前完成，不再列为待办。
+Python 与 FastAPI 已完成，不再列为待办。
 ```
 
 原因：Python 已经可用，而另外两块目前没有正式正文。

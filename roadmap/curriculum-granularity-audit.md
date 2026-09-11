@@ -44,6 +44,12 @@ Capability Map = Runtime / Backend / Data System 的能力 primitive
 Python v1 原 12 章 beginner-first 主干保持不变，只新增一个真正独立的 `Structured Data / JSON / Validation` 知识闭环；Language Choice、dict 底层、Slicing、Duck Typing、asyncio Failure / Synchronization 等最新 Canonical 通过加深原章节吸收。因此 **15 道 Canonical → 13 个教材知识块**，没有按题目机械增章。
 
 
+## FastAPI — COMPLETE：约 40 个 outline topics → 16
+
+旧 FastAPI README 规划了约 40 个细粒度标题，但其中 Router、Pydantic、Streaming、Auth、Client、Testing 等很多只是同一知识系统里的 Section。正式建设时没有把这些标题机械落成文件，而是按 Request Lifecycle、Resource Lifecycle、Async/Streaming、Production Boundary 等认知闭环收敛为 **16 blocks**。
+
+同时也没有因为 FastAPI 只有 4 道 Primary Canonical 就只写 4 章：Canonical 决定真实问法和深度，完整 Web/API 前置仍由知识体系保证。
+
 ## MySQL — PASS：23 → 23
 
 B+Tree、Composite Index、MVCC、Lock、Replication、Sharding 等有独立数据结构、执行机制和 Failure Model，不为统一数字机械合并。
@@ -152,6 +158,7 @@ System Design 的 24 道 Canonical 全部是 L4 Scenario，但没有采用 `24 �
 | 模块 | 原结构 | 当前结构 | 状态 |
 |---|---:|---:|---|
 | Python | 12 | 13 | ✅ COMPLETE |
+| FastAPI | ~40 outline topics | 16 | ✅ COMPLETE |
 | MySQL | 23 | 23 | ✅ PASS |
 | Redis | 27 | 24 | ✅ COMPLETE |
 | Vector DB | 23 | 16 | ✅ COMPLETE |

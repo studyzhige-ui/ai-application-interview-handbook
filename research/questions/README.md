@@ -86,13 +86,14 @@ Section = 参数 / 变体 / Failure / 深挖追问
 ```
 
 因此 **44 道 Agent Canonical 不等于 44 章，29 道 RAG Canonical 也不等于 29 章。**
-当前 Python / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。
+当前 Python / FastAPI / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。
 Foundation 当前真实完成度详见 `../../roadmap/foundation-status-audit.md`。
 
 当前教材结构：
 
 ```text
 Python ✅ 13 blocks（12→13；15 Canonical Coverage / Depth PASS）
+FastAPI ✅ 16 blocks（4 Canonical Coverage / Depth PASS）
 MySQL ✅ 23 blocks
 Redis ✅ 24 blocks（27→24）
 Vector DB ✅ 16 blocks（23→16）
@@ -102,7 +103,7 @@ Agent Harness / Runtime ✅ 23 blocks（47→23，结构 + 深度验收完成）
 System Design ✅ 19 blocks（24 Canonical → 19 curriculum blocks）
 ```
 
-Python current-standard remediation 已完成；FastAPI / AI Backend Engineering 目前只有 README 课程骨架，正式正文未写。
+Python 与 FastAPI 已完成 current-standard Curriculum / Coverage / Depth 验收；AI Backend Engineering 目前只有 README 课程骨架，正式正文未写。
 
 ---
 

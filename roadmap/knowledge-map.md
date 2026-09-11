@@ -33,7 +33,7 @@ Section = 参数、变体、Failure、追问
 ```
 
 章节数不追求统一。审计记录：[`curriculum-granularity-audit.md`](curriculum-granularity-audit.md)。
-内容深度验收：[`content-depth-audit.md`](content-depth-audit.md)；Redis / Vector DB / LLM Foundation / RAG / System Design 均已通过。
+内容深度验收：[`content-depth-audit.md`](content-depth-audit.md)；Python / FastAPI / Redis / Vector DB / LLM Foundation / RAG / System Design 均已通过。
 Foundation 实际完成度：[`foundation-status-audit.md`](foundation-status-audit.md)。
 
 ---
@@ -43,8 +43,8 @@ Foundation 实际完成度：[`foundation-status-audit.md`](foundation-status-au
 ## Python ✅ — 13 blocks
 入口：[`../python/README.md`](../python/README.md) — v1 已完成 current-standard Remediation；15 道 Python Canonical 已映射到 13 个 beginner-first 知识块，Review / Interview 同步完成。
 
-## FastAPI ⏳
-入口：[`../fastapi/README.md`](../fastapi/README.md) — 当前只有 README 课程骨架，正式 `docs / review / interview` 尚未撰写。
+## FastAPI ✅ — 16 blocks
+入口：[`../fastapi/README.md`](../fastapi/README.md) — 已完成 `docs/01–16`、Review、Interview 与官方技术资料索引；4 道 FastAPI Canonical 已映射到 beginner-first Web/API 主干，Content Depth PASS。
 
 ## AI Backend Engineering ⏳
 入口：[`../backend-engineering/README.md`](../backend-engineering/README.md) — 当前只有 README 课程骨架，正式 `docs / review / interview` 尚未撰写。
@@ -200,7 +200,7 @@ VALID-UNMAPPED：1（S271）
 | 模块 | 当前状态 |
 |---|---|
 | Python | ✅ 13 blocks；Canonical Coverage / Depth PASS |
-| FastAPI | ⏳ 只有课程骨架；正式正文未写 |
+| FastAPI | ✅ 16 blocks；Canonical Coverage / Depth PASS |
 | AI Backend Engineering | ⏳ 只有课程骨架；正式正文未写 |
 | MySQL | ✅ 23 blocks |
 | Redis | ✅ 24 blocks |

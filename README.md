@@ -42,8 +42,8 @@ Section = 参数 / 变体 / Failure Case / 追问
 ```
 
 因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
-Python / Redis / Vector DB / LLM Foundation / RAG / System Design 的正文深度已完成 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
-Foundation 的真实完成度见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。Python current-standard remediation 已完成；Foundation 剩余缺口只有：**FastAPI → AI Backend Engineering**。
+Python / FastAPI / Redis / Vector DB / LLM Foundation / RAG / System Design 的正文深度已完成 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
+Foundation 的真实完成度见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。Python 与 FastAPI 已完成；Foundation 当前唯一正式教材缺口是 **AI Backend Engineering**。
 
 ### 3. 从 Demo 能力走到 Production 能力
 
@@ -85,7 +85,7 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 ## Foundation
 
 - [Python Foundation](python/README.md) ✅ **13 个知识小板块**；v1 → current-standard Canonical Coverage / Depth Remediation 已完成
-- [FastAPI](fastapi/README.md) ⏳ **只有 README 课程骨架**；正式 `docs / review / interview` 尚未撰写
+- [FastAPI](fastapi/README.md) ✅ **16 个知识小板块**；4 道 Canonical Coverage + 当前官方机制校准 + Depth PASS
 - [AI Backend Engineering](backend-engineering/README.md) ⏳ **只有 README 课程骨架**；正式 `docs / review / interview` 尚未撰写
 
 ## Data
@@ -141,6 +141,8 @@ Agent / Workflow / Harness
 章节数不是优化目标：
 
 ```text
+Python 13
+FastAPI 16
 MySQL 23
 Redis 24
 Vector DB 16
@@ -182,7 +184,7 @@ Python
 | 模块 | 状态 |
 |---|---|
 | Python | ✅ 13-block；15 Canonical Coverage / Depth Remediation 完成 |
-| FastAPI | ⏳ README 课程骨架；正式正文未写 |
+| FastAPI | ✅ 16-block；4 Canonical Coverage / Depth PASS |
 | AI Backend Engineering | ⏳ README 课程骨架；正式正文未写 |
 | MySQL | ✅ 23-block；Granularity PASS |
 | Redis | ✅ 24-block；整改完成 |

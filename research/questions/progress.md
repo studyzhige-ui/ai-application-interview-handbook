@@ -63,15 +63,15 @@ Source Count mismatch         0
 > **研究粒度、Capability 粒度和教材文件粒度必须分开。Canonical 可以很细，但一个 Markdown 文件应代表一个完整知识小板块。**
 
 详细规则：`../../roadmap/curriculum-granularity-audit.md`。
-内容深度验收：`../../roadmap/content-depth-audit.md`。Python / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成 QA 与人工复核并通过。
-Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。Python current-standard remediation 已完成；FastAPI / AI Backend Engineering 当前仍只有课程骨架。
+内容深度验收：`../../roadmap/content-depth-audit.md`。Python / FastAPI / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成 QA 与人工复核并通过。
+Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。Python 与 FastAPI 已完成；AI Backend Engineering 当前仍只有课程骨架。
 
 ## 当前正式建设状态
 
 | 模块 | Phase 3 状态 |
 |---|---|
 | Python | ✅ **13 blocks**；15 Canonical Coverage / current-standard Depth Remediation 完成 |
-| FastAPI | ⏳ 只有 README 课程骨架；正式正文未写 |
+| FastAPI | ✅ **16 blocks**；4 Canonical Coverage / Content Depth PASS |
 | AI Backend Engineering | ⏳ 只有 README 课程骨架；正式正文未写 |
 | MySQL | ✅ **23 blocks**；Granularity PASS |
 | Redis | ✅ **24 blocks**；27→24 整改完成 |
@@ -85,6 +85,7 @@ Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。Python
 
 ```text
 Python         12 → 13  COMPLETE
+FastAPI        ~40 outline topics → 16  COMPLETE
 MySQL          23 → 23  PASS
 Redis          27 → 24  COMPLETE
 Vector DB      23 → 16  COMPLETE
@@ -150,12 +151,10 @@ OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 
 ## 下一阶段：Foundation Completion
 
-System Design 已完成。接下来补齐此前 Foundation 的真实缺口，仓库建设顺序为：
+Python 与 FastAPI 已完成，Foundation 当前唯一缺口是：
 
 ```text
-FastAPI 正式教材
-→ AI Backend Engineering 正式教材
-→ Python v1 Canonical Coverage / Depth Remediation
+AI Backend Engineering 正式教材
 ```
 
-这只是建设顺序；学习者的正式学习顺序仍为 `Python → FastAPI → AI Backend Engineering`。
+学习者的正式学习顺序仍为 `Python → FastAPI → AI Backend Engineering`。

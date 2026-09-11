@@ -2,7 +2,7 @@
 
 更新日期：2026-09-11
 
-> 本文件记录 Python / Redis / Vector DB / LLM Foundation / RAG 的整改后深度验收，以及 System Design 首版完成后的深度验收。目标不是让所有文件达到相同字数，而是确认每个知识小板块都能独立完成学习闭环。
+> 本文件记录 Python / FastAPI / Redis / Vector DB / LLM Foundation / RAG 的整改或首版深度验收，以及 System Design 首版完成后的深度验收。目标不是让所有文件达到相同字数，而是确认每个知识小板块都能独立完成学习闭环。
 
 ---
 
@@ -94,7 +94,40 @@ System Design 在第二轮建设中从一开始按当前标准撰写 19 个连�
 
 ---
 
-# 4. Redis — ✅ PASS
+# 4. FastAPI — ✅ PASS
+
+当前：**16 个连续知识小板块，`docs/01 → 16`，并包含 Review + Interview 三件套。**
+
+FastAPI 从旧 README 的约 40 个 outline topics 直接按当前教材粒度规则重建为 16 个认知闭环，没有经历“一个小标题一个文件”的过度拆分。
+
+完成后机械检查：
+
+```text
+16/16 docs 连续编号
+16/16 >= 4.5KB
+16/16 含 🎯 面试回答
+16/16 含 <details> 折叠自测
+README docs 链接存在
+review/README.md 存在
+interview 三件套存在
+research/fastapi-sources/README.md 存在
+```
+
+人工重点复核：
+
+- `05-ResourceLifecycle.md`：是否真正讲清 yield Dependency scope、Streaming cleanup 与 Lifespan；
+- `07-Streaming与SSE.md`：是否包含 typed event、mid-stream error、disconnect，而不是只教 `yield token`；
+- `12-TimeoutCancellation与Disconnect.md`：是否区分 Transport Disconnect、Timeout、Coroutine Cancel、Business Cancel 和 Durable Run；
+- `15-Deployment与GracefulShutdown.md`：是否覆盖 Worker Process、Pool multiplication、Liveness/Readiness、Drain / Shutdown；
+- `16-AIServicePatterns.md`：是否真正把 Chat / RAG / Ingestion / Agent Run API 与 Agent Harness 分层。
+
+权威技术事实使用当前 FastAPI / Starlette / Uvicorn / Pydantic 官方资料校准；HUMAN-A 市场证据仍只来自 4 道 FastAPI Canonical。
+
+**最终结论：FastAPI Content Depth / Canonical Coverage PASS。**
+
+---
+
+# 5. Redis — ✅ PASS
 
 当前：**24 个连续知识小板块，`docs/01 → 24`。**
 
@@ -156,7 +189,7 @@ interview / self-test
 
 ---
 
-# 5. Vector DB — ✅ PASS
+# 6. Vector DB — ✅ PASS
 
 当前：**16 个连续知识小板块，`docs/01 → 16`。**
 
@@ -216,7 +249,7 @@ hot tenant / capacity
 
 ---
 
-# 6. LLM Foundation — ✅ PASS after targeted remediation
+# 7. LLM Foundation — ✅ PASS after targeted remediation
 
 当前：**14 个连续知识小板块，`docs/01 → 14`。**
 
@@ -287,7 +320,7 @@ RAG / Agent module boundary
 
 ---
 
-# 7. RAG — ✅ PASS after targeted remediation
+# 8. RAG — ✅ PASS after targeted remediation
 
 当前：**14 个连续 Production RAG 子系统，`docs/01 → 14`。**
 
@@ -359,7 +392,7 @@ Production architecture
 
 ---
 
-# 8. System Design — ✅ PASS
+# 9. System Design — ✅ PASS
 
 当前：**19 个连续知识小板块，`docs/01 → 19`，并包含 Review + Interview 三件套。**
 
@@ -396,10 +429,12 @@ Why / Requirement
 
 ---
 
-# 9. 最终验收状态
+# 10. 最终验收状态
 
 | 模块 | Blocks | Numbering | Depth |
 |---|---:|---|---|
+| Python | 13 | ✅ `01–13` 连续 | ✅ PASS |
+| FastAPI | 16 | ✅ `01–16` 连续 | ✅ PASS |
 | Redis | 24 | ✅ `01–24` 连续 | ✅ PASS |
 | Vector DB | 16 | ✅ `01–16` 连续 | ✅ PASS |
 | LLM Foundation | 14 | ✅ `01–14` 连续 | ✅ PASS |
@@ -410,10 +445,11 @@ Why / Requirement
 
 ```text
 Python current-standard remediation：13 篇
-第一轮颗粒度整改后的四模块： 68 篇
-System Design 首版独立验收：     19 篇
----------------------------------
-合计：                          100 篇
+FastAPI 首版独立验收：           16 篇
+第一轮颗粒度整改后的四模块：     68 篇
+System Design 首版独立验收：      19 篇
+----------------------------------
+合计：                           116 篇
 ```
 
 同时已验证：
@@ -426,7 +462,7 @@ System Design 首版独立验收：     19 篇
 
 ---
 
-# 10. 后续规则
+# 11. 后续规则
 
 未来新增或整改模块继续使用同一标准：
 
