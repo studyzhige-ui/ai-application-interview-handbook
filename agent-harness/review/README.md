@@ -1,6 +1,6 @@
 # Agent Harness / Runtime Review
 
-> 复习目标不是再读 47 章，而是能从空白纸画出 Runtime，并沿 Failure Case 推演。
+> 复习目标不是再读 23 个知识小板块，而是能从空白纸画出 Runtime，并沿 Failure Case 推演。**教材文件按知识闭环组织；面试题仍按可独立追问能力保持更细粒度。**
 
 ## 图 1｜最小 Runtime
 
