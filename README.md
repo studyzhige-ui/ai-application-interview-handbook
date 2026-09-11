@@ -198,26 +198,17 @@ Dense / Sparse、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation
 
 第一版系统教材已完成：**29 章正文 + 每章折叠自测 + 7 张 Review 总图 + 30 道面试题 + 55 个易错点 + 面试前速查。**
 
-主干严格按应用工程师 0→1 认知依赖：
-
 ```text
 Token / Tokenization
 → Context Window / Long Context
-→ Transformer Architecture
-→ QKV / Self-Attention / Multi-Head / Causal Mask
-→ FFN / Residual / Norm / RoPE
-→ Autoregressive Generation
-→ Logits / Decoding / Sampling
-→ KV Cache
-→ Prefill / Decode
+→ Transformer / Attention / RoPE
+→ Autoregressive Generation / Sampling
+→ KV Cache / Prefill / Decode
 → Continuous Batching / PagedAttention
 → TTFT / TPOT / Throughput / Cost
-→ Precision / Quantization
-→ Model API / Provider Adapter
-→ Model Selection
+→ Model API / Model Selection
 → Embedding / Reranker / Multimodal
-→ Prompt Engineering
-→ Hallucination / Factuality
+→ Prompt Engineering / Hallucination
 → Prompt vs RAG vs Fine-tuning
 → SFT / LoRA / Preference Optimization / Distillation
 ```
@@ -228,34 +219,42 @@ Token / Tokenization
 
 ## AI Application
 
-### RAG ⏳
+### [RAG](rag/README.md) ✅
 
-**下一块正式系统教材。**
+第一版系统教材已完成：**34 章正文 + 每章折叠自测 + 6 张 Review 总图 + 20 个综合自测 + 40 道高频面试题 + 60 个易错点 + 面试前速查。**
 
 ```text
-Parse / OCR / Layout
-→ Corpus Audit
+RAG Boundary / Corpus Audit
+→ Document Identity / Lineage / Version
+→ Parsing / OCR / Layout / Multimodal
+→ Cleaning / Dedup
 → Chunk Principles / Strategy / Parameters
-→ Embedding / Index Boundary
-→ Query Rewrite / Decomposition / Clarification
+→ Parent-child / Semantic Boundary / Chunk Data Model
+→ Query Rewrite / Clarification / Decomposition / HyDE
 → Dense / Sparse / BM25
 → Hybrid Retrieval / RRF
-→ Rerank / Top-K
-→ Retrieval Evaluation
-→ Context Build / Grounding / Citation
-→ End-to-end Evaluation / Bad Case Attribution
-→ Permission / Version / Freshness
-→ Incremental Update
-→ Agentic RAG
+→ Rerank / Top-K / Candidate Budget
+→ Context Construction / Grounding / Citation
+→ Retrieval Metrics / Eval Dataset / End-to-end Eval
+→ Experiment / Regression / Bad Case Attribution
+→ Freshness / Permission / Scale / Observability
+→ GraphRAG / Agentic RAG
 ```
 
-真实面试已经稳定进入 Evaluation、Failure Attribution 和 Production Governance，不只问组件名词。
+真实面经用于加强 Chunk、Hybrid、Rerank、Evaluation 和 Failure Attribution，但没有打乱从 Corpus 到 Production 的 0→1 主线。
 
 ---
 
 ## Agent Runtime
 
-### Agent Harness / Runtime 🔬
+### Agent Harness / Runtime 🚧
+
+**下一块正式系统教材。**
+
+必须额外结合：
+
+- `studyzhige-ui/claude-code-source-private`
+- `openai/codex`
 
 重点覆盖 Agent Boundary / Loop / Planning / Routing、Context Assembly / Compaction、Memory、Tool Runtime、MCP / Skill / A2A、Permission / Sandbox、State / Checkpoint / Resume、Cancellation / Retry / Idempotency、Multi-Agent、Repository Understanding、Trace / Evaluation、Model Routing、Cost 与 Production Reliability。
 
@@ -314,7 +313,7 @@ System Design
 | Redis | ✅ 第一版完整系统教材 |
 | Vector DB | ✅ 第一版完整系统教材 |
 | LLM Foundation | ✅ 第一版完整系统教材 |
-| RAG | ⏳ **下一块正式系统教材** |
-| Agent Harness / Runtime | 🔬 源码 + 面经校准中 |
+| RAG | ✅ 第一版完整系统教材 |
+| Agent Harness / Runtime | 🚧 **下一块正式系统教材；源码 + 面经双重校准** |
 | System Design | ⏳ 随前置模块汇总 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
