@@ -1,4 +1,10 @@
-# AI Backend Engineering｜Review 总图与综合自测
+# AI Backend Engineering｜Review 与综合自测
+
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [高频面试题 →](../interview/高频面试题.md)
+
+> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
+
+---
 
 > Review 不是重新读 22 章，而是要求你从空白纸画出 Production Backend 的几条主线。
 

@@ -1,170 +1,57 @@
-# Canonical Question 重建与课程建设进度
+# Curriculum & Research Progress｜当前正式状态
 
-更新日期：2026-09-11
+[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../roadmap/knowledge-map.md)
 
-## Repository-first 规则
+> **Repository-first：仓库当前文件高于历史聊天总结。**
 
-> **后续所有工作都以仓库当前最新描述为准。** 每次继续研究或建设教材前，先读取本目录 `README.md`、`schema.md`、`progress.md`、`module-index.md`、根 `README.md`、`roadmap/knowledge-map.md` 与相关模块文件；聊天中的历史总结、旧分类、旧计数只能作为背景。
-
-## Frozen Baseline
-
-- HUMAN-A：`S001–S279`
-- 正式 Batch：26
-- 主动采集：已冻结
-- ACTIVE Canonical：**235**
-- Mapped Sources：**278**
-- VALID-UNMAPPED：**1（S271）**
-
-## 正式十板块
+## Frozen Research Baseline ✅
 
 ```text
-Python
-→ FastAPI
-→ AI Backend Engineering
-→ MySQL
-→ Redis
-→ Vector DB
-→ LLM Foundation（应用工程深度）
-→ RAG
-→ Agent Harness / Runtime
-→ System Design
+HUMAN-A                    279 / 279
+ACTIVE Canonical          235 / 235
+Mapped Sources            278
+VALID-UNMAPPED              1（S271）
+Unexpected uncovered        0
+Source Count mismatch       0
 ```
 
----
+Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Market Analysis ✅
 
-## Phase 1：十板块纵向 Canonicalization ✅
-完成 `S001–S279` 全库回读、十板块纵向扫描、唯一 Primary Module 与第一轮跨模块归属审计。
+## Phase 3 Curriculum Build ✅
 
-## Phase 2A：Global Merge / Split Audit ✅
-完成全局 Merge / Split / Narrow / Evidence Reassignment。
+| # | Module | Curriculum | Canonical | Status |
+|---:|---|---:|---:|---|
+| 01 | [Python Foundation](../../python/README.md) | 13 | 15 | ✅ |
+| 02 | [FastAPI](../../fastapi/README.md) | 16 | 4 | ✅ |
+| 03 | [AI Backend Engineering](../../backend-engineering/README.md) | 22 | 39 | ✅ |
+| 04 | [MySQL](../../mysql/README.md) | 23 | 26 | ✅ |
+| 05 | [Redis](../../redis/README.md) | 24 | 19 | ✅ |
+| 06 | [Vector Database](../../vector-db/README.md) | 16 | 12 | ✅ |
+| 07 | [LLM Foundation（应用工程深度）](../../llm-foundation/README.md) | 14 | 23 | ✅ |
+| 08 | [RAG](../../rag/README.md) | 14 | 29 | ✅ |
+| 09 | [Agent Harness / Runtime](../../agent-harness/README.md) | 23 | 44 | ✅ |
+| 10 | [System Design](../../system-design/README.md) | 19 | 24 | ✅ |
 
-## Phase 2B：Global Index + Market Analysis ✅
-
-```text
-Frozen HUMAN-A              279 / 279
-ACTIVE Canonical            235 / 235
-Mapped to >=1 Canonical     278
-VALID-UNMAPPED                1
-Unexpected uncovered          0
-Evidence outside baseline     0
-Source Count mismatch         0
-```
-
-最终 Ownership：Python 15 / FastAPI 4 / AI Backend 39 / MySQL 26 / Redis 19 / Vector DB 12 / LLM Foundation 23 / RAG 29 / Agent Harness 44 / System Design 24 = **235**。
-
----
-
-# Phase 3：Curriculum Build ✅
+十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。
 
 ## 固定课程原则
 
 > **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
 
-> **研究粒度、Capability 粒度和教材文件粒度必须分开。Canonical 可以很细，但一个 Markdown 文件应代表一个完整知识小板块。**
-
-详细规则：`../../roadmap/curriculum-granularity-audit.md`。
-内容深度验收：`../../roadmap/content-depth-audit.md`。Python / FastAPI / AI Backend Engineering / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成 QA 与人工复核并通过。
-Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。Python / FastAPI / AI Backend Engineering 均已完成，Foundation ✅ COMPLETE。
-
-## 当前正式建设状态
-
-| 模块 | Phase 3 状态 |
-|---|---|
-| Python | ✅ **13 blocks**；15 Canonical Coverage / current-standard Depth Remediation 完成 |
-| FastAPI | ✅ **16 blocks**；4 Canonical Coverage / Content Depth PASS |
-| AI Backend Engineering | ✅ **22 blocks**；39 Canonical Coverage / Content Depth PASS |
-| MySQL | ✅ **23 blocks**；Granularity PASS |
-| Redis | ✅ **24 blocks**；27→24 整改完成 |
-| Vector DB | ✅ **16 blocks**；23→16 整改完成 |
-| LLM Foundation | ✅ **14 blocks**；29→14 整改完成 |
-| RAG | ✅ **14 blocks**；34→14 整改完成 |
-| Agent Harness / Runtime | ✅ **23 blocks**；47→23 结构整改 + 正文深度验收完成 |
-| System Design | ✅ **19 blocks**；正文 + Review + Interview 完成 |
-
-### Granularity Remediation 最终结果
-
-```text
-Python         12 → 13  COMPLETE
-FastAPI        ~40 outline topics → 16  COMPLETE
-AI Backend Eng. ~55 outline topics / 39 Canonical → 22  COMPLETE
-MySQL          23 → 23  PASS
-Redis          27 → 24  COMPLETE
-Vector DB      23 → 16  COMPLETE
-LLM Foundation 29 → 14  COMPLETE
-RAG            34 → 14  COMPLETE
-Agent Harness  47 → 23  COMPLETE（结构 + 深度）
-System Design  24 Canonical → 19 curriculum blocks  COMPLETE
-```
-
-不同数字是正常结果，不追求统一章数。
-
----
-
-## Agent Harness / Runtime 完成状态 ✅
-
-证据层保持：
-
-```text
-Tier A  44 HUMAN-A Agent Canonical + Verified Follow-up Chains
-Tier B  Claude Code + OpenAI Codex 固定源码快照
-Tier C  Anthropic / OpenAI 官方工程资料 + MCP/A2A 规范 + 原始论文
-Tier D  Runtime Capability Map + beginner-first curriculum
-```
-
-固定源码快照：
-
-```text
-Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
-OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
-```
-
-完成内容：
-
-```text
-47 章旧目录
-→ 23 个知识小板块
-→ docs/ 01–23 连续
-→ 旧碎片文件删除
-→ Review 切换到 23-block 口径
-→ 08–23 旧短稿全部深写
-→ 01–07 抽查通过
-→ rewrite / depth-validation checkpoint 清理
-```
-
-当前 23-block 正文已经按：Why → Runtime Model → Execution → Failure → Recovery/Security/Observability → Evidence → Interview → Self-test 验收。
-
----
+> **Canonical / Capability / Curriculum Markdown 使用不同粒度。**
 
 ## 模块完成后的强制同步清单
 
-每完成或重组一个一级模块，必须同步并重新核验：
+每次新增、重组或更新一个一级模块，都必须同步核验：
 
-1. 模块自身 `README.md`；
-2. 根 `README.md`；
-3. `roadmap/knowledge-map.md`；
-4. 本文件；
-5. `research/questions/module-index.md`；
+1. 模块 `README.md`；
+2. 模块 `review/README.md` 与 Interview 入口；
+3. 根 `README.md`；
+4. `roadmap/knowledge-map.md`；
+5. 本文件与 `module-index.md`；
 6. `research/questions/README.md`；
-7. 自动生成的 `research/analysis/README.md` 及生成脚本是否使用最新口径；
-8. `docs / review / interview` 实际文件数、README 链接、旧文件名残留。
+7. 自动生成 `research/analysis/README.md` 的生成源；
+8. `roadmap/documentation-style-guide.md` 的统一格式；
+9. README 本地链接、章节数量与旧状态描述。
 
----
-
-## Phase 3 完成状态
-
-十个正式一级模块的第一版系统教材均已完成：
-
-```text
-Python 13
-FastAPI 16
-AI Backend Engineering 22
-MySQL 23
-Redis 24
-Vector DB 16
-LLM Foundation 14
-RAG 14
-Agent Harness / Runtime 23
-System Design 19
-```
-
-Foundation 也已正式完成。后续工作进入**全仓库最终验收 / 面试训练与持续维护**，不再存在未撰写的一级模块。
+后续工作进入**全仓库质量维护、复习路线与面试训练**，不再存在未撰写的一级模块。

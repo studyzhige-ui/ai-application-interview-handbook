@@ -1,4 +1,10 @@
-# System Design｜图解复习与综合自测
+# System Design｜Review 与综合自测
+
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [高频面试题 →](../interview/高频面试题.md)
+
+> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
+
+---
 
 > 第一遍按 `docs/01 → 19` 学完整主线；这里不按文件重复，而是把 System Design 压缩成几张必须能从空白纸画出来的图。
 

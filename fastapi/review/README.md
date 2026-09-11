@@ -1,4 +1,10 @@
-# FastAPI Review｜六张总图 + 综合自测
+# FastAPI｜Review 与综合自测
+
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [高频面试题 →](../interview/高频面试题.md)
+
+> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
+
+---
 
 > 目标不是再读一遍 16 章，而是能从空白纸把 FastAPI 作为 **AI Service Layer** 重新画出来。
 

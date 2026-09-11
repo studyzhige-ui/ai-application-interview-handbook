@@ -1,4 +1,10 @@
-# FastAPI Authoritative Sources
+# FastAPI｜官方技术资料索引
+
+[← FastAPI](../../fastapi/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../README.md)
+
+> **用途：技术事实校准。** 官方资料只说明当前框架机制，不改变 HUMAN-A 面试频率。
+
+---
 
 更新日期：2026-09-11
 

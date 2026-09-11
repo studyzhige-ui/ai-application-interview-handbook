@@ -1,210 +1,70 @@
-# Redis｜AI 应用开发秋招系统手册
+# Redis｜缓存、短状态与分布式协调
 
-> Redis 是这套 Handbook 的第 5 个正式一级模块。
->
-> 目标不是背“Redis 五种数据结构 + 缓存三兄弟 + 分布式锁”，而是从 0 建立一条完整因果链：**Redis 为什么存在 → 数据怎样组织 → Runtime 为什么快 → 内存什么时候过期/淘汰 → 怎样持久化与高可用 → 怎样做原子并发控制 → 怎样把 Redis 放进 Cache、Session、Rate Limit 和 AI Runtime。**
+[← MySQL](../mysql/README.md) · [↑ Handbook 总目录](../README.md) · [Vector Database →](../vector-db/README.md)
 
-> **Granularity Audit：✅ 已完成。** 原 27 章经过教材粒度审计后收敛为 **24 个知识小板块**。合并依据不是章节数量，而是“一个文件是否形成完整认知闭环”。研究层的 19 道 Redis Canonical、Source Count 和真人面经频率没有变化。
-> **Content Depth Audit：✅ 通过。** `docs/01–24` 已完成全量结构扫描与人工复核；较短章节属于边界较窄的完整主题，不存在占位稿。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。
+> **状态：✅ 第一版系统教材完成**  
+> **教材：24 个连续知识小板块** · **HUMAN-A Canonical：19** · **独立来源覆盖：69**  
+> **质量：Granularity / Coverage / Content Depth 已验收**
 
----
-
-## 1. 最重要的课程原则
-
-本模块固定遵守：
-
-> **知识体系演进顺序优先，真实面经只用于调整复习权重、补充真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
-
-冻结 `S001–S279` HUMAN-A 中，分布式锁是 Redis 最强面试信号之一；但课程仍然不会一上来就讲锁。
-
-因为真正的依赖关系是：
-
-```text
-Key / Value 怎么组织
-→ Command 怎么执行
-→ TTL / Eviction 怎么工作
-→ Persistence / Replication / Failover 有什么语义
-→ MULTI / WATCH / Lua 能保证什么
-→ 才能讨论 Distributed Lock 的正确性
-```
-
-所以面经决定“锁这一块必须讲到 Failure / Fencing”，却不能决定“把锁移到数据结构前面”。
+掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。
 
 ---
 
-## 2. 这次为什么从 27 调整到 24
+## 1. 这个模块解决什么
 
-之前有三组边界偏细：
+掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。
 
-### 2.1 Redis 为什么快 + Event Loop
-
-原来拆成：
+学习目标不是记住一组名词，而是能稳定回答：
 
 ```text
-Redis 为什么快
-I/O Multiplexing / Event Loop
-```
-
-但“为什么快”本身就必须解释 Event Loop / I/O Multiplexing，否则答案不闭环。
-
-现在合并为：
-
-```text
-Redis Runtime & Performance Model
-```
-
-### 2.2 Cache 基础 + 缓存故障
-
-原来拆成：
-
-```text
-Cache / Key Design
-穿透 / 击穿 / 雪崩
-```
-
-但穿透、击穿、雪崩本质上就是 Cache Design 的 Failure Model，应该和 TTL、回源、重建一起学习。
-
-现在合并为：
-
-```text
-Cache Design & Failure Patterns
-```
-
-### 2.3 Distributed Lock 基础 + Correctness
-
-只学 `SET NX PX` 而不继续学 Owner、Lease、Renewal、Failover、Fencing，会得到一个危险的“半知识”。
-
-现在合并为：
-
-```text
-Distributed Lock：Acquire → Lease → Renewal → Failover → Fencing
-```
-
-### 2.4 为什么没有合并 Transaction / Pipeline / Lua
-
-这三者虽然连续，但解决的问题不同：
-
-| 机制 | 主要解决什么 |
-|---|---|
-| MULTI / WATCH | 连续执行 + 乐观并发控制 |
-| Pipeline | 降低网络 RTT |
-| Lua / Functions | 服务器端原子业务逻辑 |
-
-它们各自有不同 Failure Model，因此继续保留独立文件。
-
----
-
-## 3. Redis 在 AI Application 里的位置
-
-```text
-                 FastAPI / Agent Service
-                          │
-        ┌─────────────────┼─────────────────┐
-        ▼                 ▼                 ▼
-      MySQL             Redis           Vector DB
-        │                 │                 │
-   业务事实 / SoT    热点/短状态/协调     语义检索
-```
-
-Redis 常被用在：
-
-- 高频读取 Cache；
-- Session / Conversation；
-- TTL 临时状态；
-- Rate Limit / Quota；
-- 幂等/去重辅助状态；
-- Hot Runtime State；
-- 分布式协调；
-- 某些 Agent Runtime State Store。
-
-Redis 不是“更快的 MySQL”，也不应该成为“所有状态的默认垃圾桶”。
-
----
-
-## 4. 真人面经只校准重点
-
-冻结研究中 Redis 当前有 **19 道 Primary Canonical、69 个独立 HUMAN-A 来源**覆盖。
-
-高频信号包括：
-
-- Distributed Lock Basics；
-- Distributed Lock Correctness；
-- Cache Penetration / Breakdown / Avalanche；
-- Core Data Structures；
-- BigKey / HotKey；
-- Session / Conversation；
-- Lua / Atomicity；
-- Rate Limit；
-- HA / Cluster；
-- TTL / Eviction；
-- Runtime Performance Model。
-
-但：
-
-> **Interview Heat ≠ Knowledge Importance。**
-
-Transaction/WATCH、Pipeline、Pub/Sub/Streams、底层编码等即使面经不是最高频，也属于完整 Redis 体系。
-
----
-
-## 5. 五条知识主线
-
-### 主线 A｜数据模型与 Runtime
-
-```text
-Redis Role
-→ Keyspace / Command
-→ Core Data Types
-→ Specialized Structures
-→ Internal Encoding
-→ Runtime / Event Loop / I/O Multiplexing
-```
-
-### 主线 B｜内存生命周期与 Cache
-
-```text
-TTL
-→ Eviction
-→ Cache Design
-→ Penetration / Breakdown / Avalanche
-→ BigKey / HotKey
-```
-
-### 主线 C｜可靠性与扩展
-
-```text
-RDB / AOF
-→ Replication
-→ Sentinel
-→ Cluster / Hash Slot / Reshard
-```
-
-### 主线 D｜原子性与并发
-
-```text
-Atomic Command
-→ MULTI / WATCH
-→ Pipeline
-→ Lua / Functions
-→ Distributed Lock Correctness
-```
-
-### 主线 E｜应用层落地
-
-```text
-Pub/Sub / Streams
-→ Multi-level / Semantic Cache
-→ Session / Agent State Store
-→ Rate Limit
-→ Security / Troubleshooting
-→ Redis in AI System Design
+为什么需要它？
+→ 核心机制怎样工作？
+→ 正常路径怎样流动？
+→ Failure / Trade-off 在哪里？
+→ Production 场景怎样验证与排障？
+→ 面试官继续追问时怎样解释边界？
 ```
 
 ---
 
-## 6. 正式 24 章
+## 2. 在十板块中的位置
 
-### Part A｜从 Key 到 Runtime
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → **Redis** → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent Harness / Runtime](../agent-harness/README.md) → [System Design](../system-design/README.md)
+
+当前模块角色：**Data / 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。**
+
+---
+
+## 3. 固定课程原则
+
+> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+
+同时固定区分：
+
+```text
+Canonical Question = 可独立追问的面试能力
+Capability Primitive = 更细的工程机制
+教材 Markdown = 一个完整认知闭环
+Section = 参数 / 变体 / Failure / 深挖追问
+```
+
+所以本模块是 **19 道 Canonical → 24 个教材知识块**，两者不需要一一对应。
+
+---
+
+## 4. 正式学习主线
+
+```text
+Key / Data Structure / Encoding → Runtime / TTL / Eviction → Cache Failure / HotKey → RDB / AOF / Replication / Sentinel / Cluster → Transaction / Pipeline / Lua / Distributed Lock → Streams / Session / Rate Limit / Troubleshooting
+```
+
+这个顺序按知识依赖组织，而不是按面经频率排序。
+
+---
+
+## 5. 正式课程目录
+
+### Part A｜数据模型与 Runtime
 
 1. [Redis 在 AI Application 中负责什么](docs/01-Redis在AI应用中的职责.md)
 2. [Keyspace、Command 与基本执行模型](docs/02-Keyspace与Command模型.md)
@@ -245,49 +105,69 @@ Pub/Sub / Streams
 
 ---
 
-## 7. 模块边界
+## 6. 真人面经怎样影响本模块
 
-| 问题 | Primary Module |
-|---|---|
-| Redis Data Structure / TTL / Eviction / RDB / AOF | Redis |
-| Redis Replication / Sentinel / Cluster | Redis |
-| Redis Lock 的具体实现与 Failure | Redis |
-| DB + Cache 最终一致性 | AI Backend Engineering |
-| 通用 Rate Limit 算法选择 | AI Backend Engineering |
-| Redis 上怎样实现 Sliding Window / Token Bucket | Redis |
-| Redis vs Kafka / MQ 的系统选型 | AI Backend Engineering |
-| Agent Checkpoint / Resume 的执行语义 | Agent Harness / Runtime |
-| Redis 作为 Agent State Store 时怎样建 Key / TTL | Redis |
-| 多租户系统如何组合 MySQL / Redis / Vector DB | System Design |
+冻结基线 `S001–S279` 中，本模块有 **19 道 Primary Canonical、69 个独立 HUMAN-A 招聘流程覆盖**。
+
+重点市场信号包括：
+
+- Distributed Lock 与 Correctness
+- Cache Penetration / Breakdown / Avalanche
+- Core Data Structures
+- BigKey / HotKey
+- Lua / Atomicity
+- HA / Cluster
+
+这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
 
 ---
 
-## 8. 推荐三遍学习法
+## 7. 模块边界
 
-### 第一遍：建立体系
+- Redis 数据结构、TTL、持久化、高可用与锁实现归 Redis。
+- DB + Cache 一致性、通用 Rate Limit 与 MQ 选型归 AI Backend Engineering。
+- Agent Checkpoint / Resume 的执行语义归 Agent Harness。
 
-按 `01 → 24` 阅读，重点理解为什么下一章自然出现。
+遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
 
-### 第二遍：用 Review 重新画图
+---
 
-进入 [`review/README.md`](review/README.md)，尽量不看答案，把五条主线重新画出来。
+## 8. Review、Interview 与证据入口
 
-### 第三遍：面试化
+| 入口 | 链接 | 用途 |
+|---|---|---|
+| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
+| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
+| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
+| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
 
-使用：
+研究与质量证据：
 
-- [`interview/高频面试题.md`](interview/高频面试题.md)
-- [`interview/面试易错点.md`](interview/面试易错点.md)
-- [`interview/面试前速查表.md`](interview/面试前速查表.md)
+- [Canonical Questions](../research/questions/redis.md)：市场真实问法与 Source Count；
+- [Verified Follow-up Chains](../research/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
+- [Frequency Ranking](../research/analysis/frequency-ranking.md)：复习热度参考；
+- [Curriculum Granularity Audit](../roadmap/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
+- [Content Depth Audit](../roadmap/content-depth-audit.md)：完成与深度验收口径。
 
-最终目标不是背 Redis 命令，而是能解释：
+---
+
+## 9. 推荐学习方式
+
+1. **第一遍：建立因果链。** 按 `docs/01 → 24` 连续阅读，不按高频题跳章。
+2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
+3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
+4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
+
+---
+
+## 10. 完成状态
 
 ```text
-数据怎么存
-→ Runtime 怎么执行
-→ Memory 怎么失效
-→ Failure 怎么传播
-→ HA / Scale 怎么做
-→ 原子性边界在哪里
-→ Redis 在 AI 系统里应该承担什么、不该承担什么
+docs/      ✅ 01–24 连续
+review/    ✅
+interview/ ✅
+Canonical Coverage ✅
+Content Depth       ✅
 ```
+
+下一环：[Vector Database](../vector-db/README.md)。

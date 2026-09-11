@@ -1,4 +1,10 @@
-# Agent Harness / Runtime Review
+# Agent Harness / Runtime｜Review 与综合自测
+
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [高频面试题 →](../interview/高频面试题.md)
+
+> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
+
+---
 
 > 复习目标不是再读 23 个知识小板块，而是能从空白纸画出 Runtime，并沿 Failure Case 推演。**教材文件按知识闭环组织；面试题仍按可独立追问能力保持更细粒度。**
 

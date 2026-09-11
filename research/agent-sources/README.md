@@ -1,4 +1,10 @@
-# Agent Harness / Runtime Evidence Base
+# Agent Harness｜源码与权威资料索引
+
+[← Agent Harness](../../agent-harness/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../README.md)
+
+> **用途：Tier B/C 技术证据。** 只补 Runtime 实现与工程原则，不改变 HUMAN-A Source Count。
+
+---
 
 更新日期：2026-09-11
 

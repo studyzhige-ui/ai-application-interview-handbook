@@ -1,4 +1,10 @@
-# 图解复习与章节自测
+# Python Foundation｜Review 与综合自测
+
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [高频面试题 →](../interview/高频面试题.md)
+
+> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
+
+---
 
 这一目录与 `docs/` 的 13 个正文章节一一配套，但不是简单重复正文。
 

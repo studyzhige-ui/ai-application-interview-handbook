@@ -1,4 +1,10 @@
-# LLM Foundation｜图解复习与综合自测
+# LLM Foundation（应用工程深度）｜Review 与综合自测
+
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [高频面试题 →](../interview/高频面试题.md)
+
+> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
+
+---
 
 > 第一遍按 `../README.md` 的 **14 个知识小板块**建立体系；这一层不再按文件逐章重复，而是把机制压缩成少数几条因果链。
 >

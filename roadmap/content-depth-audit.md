@@ -1,508 +1,55 @@
-# Curriculum Content Depth Audit
+# Curriculum Content Depth Audit｜正文深度最终口径
 
-更新日期：2026-09-11
+[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Granularity Audit](curriculum-granularity-audit.md)
 
-> 本文件记录 Python / FastAPI / AI Backend Engineering / Redis / Vector DB / LLM Foundation / RAG 的整改或首版深度验收，以及 System Design 首版完成后的深度验收。目标不是让所有文件达到相同字数，而是确认每个知识小板块都能独立完成学习闭环。
+> 当前十个一级模块共 **184 个正文知识块**。本文件统一记录完成状态；文件大小只用于发现异常，不作为质量结论。
 
----
+## 验收标准
 
-## 1. 验收原则
-
-内容深度不按 KB 大小机械判断。
-
-正式标准是一个知识块是否能覆盖大部分：
+一个知识块应覆盖其主题所需要的大部分：
 
 ```text
 为什么需要
 → 准确定义 / Mental Model
 → 机制 / 数据流 / 算法
-→ 参数或关键设计
 → Failure / Trade-off
 → Production / AI Application 场景
 → 模块边界
-→ 面试表达
-→ 易错点 / 深挖
+→ 面试表达 / 易错点 / 深挖
 → 折叠自测
 ```
 
-文件大小、Section 数量只是用于发现异常候选，不是质量结论。
+窄主题可以较短；大型 Production 子系统如果只有概览则不能通过。
 
-例如：
+## 当前状态
 
-- `Pipeline` 本身是窄主题，5KB 左右也可以形成完整闭环；
-- `Scale / Cost / Observability` 是大型 Production 子系统，如果只有 4KB 概览就明显不够。
-
----
-
-## 2. 全量机械扫描
-
-第一轮扫描范围：
-
-```text
-Redis          24 docs
-Vector DB      16 docs
-LLM Foundation 14 docs
-RAG            14 docs
--------------------
-Total          68 docs
-```
-
-扫描信号包括：
-
-- 字节数；
-- Section 数；
-- Code / Diagram block；
-- `<details>` 自测；
-- 面试回答；
-- Failure / Trade-off / 易错边界。
-
-结果：
-
-```text
-Very-short (< 3.5KB)      0
-Missing self-test          0
-Missing interview answer   0
-```
-
-自动扫描曾产生 20 个 Warning，主要是旧正文大量使用 `# 2.` 而不是 `## 2.`，导致简单正则低估 Section 数；这些 Warning 只作为人工复核入口，不能直接判定不合格。
-
-System Design 在第二轮建设中从一开始按当前标准撰写 19 个连续知识块，并在完成后单独做目录、重点章节、Review / Interview 与认知闭环人工验收，因此不混入上面那次 68 篇历史整改机械扫描的统计口径。
-
----
-
-
-# 3. Python — ✅ PASS after current-standard remediation
-
-当前：**13 个连续知识小板块，`docs/01 → 13`。**
-
-本轮不是按 15 道 Canonical 重建题库，而是保留原 0→1 主干并定向补强：
-
-```text
-01 Language Choice + Object Model
-02 dict Hash / Collision / Delete + Slicing Cost
-08 Duck Typing / Protocol Thinking
-10 Structured Data / JSON / Runtime Validation（新增独立闭环）
-11 Memory / GC / GIL
-12 Thread / Process / asyncio / Timeout / Cancellation / Lock / RLock / Semaphore
-```
-
-同时旧 03–07 补齐正文内折叠自测，Review 迁移为 13 章，Interview 增加最新 AI Application Canonical 追问。
-
-验收标准：13/13 正文连续、有 Interview 表达和折叠自测；README / Review 链接指向当前文件；旧 `10/11/12` 历史路径已删除。
-
-**最终结论：Python Content Depth / Canonical Coverage PASS。**
-
----
-
-# 4. FastAPI — ✅ PASS
-
-当前：**16 个连续知识小板块，`docs/01 → 16`，并包含 Review + Interview 三件套。**
-
-FastAPI 从旧 README 的约 40 个 outline topics 直接按当前教材粒度规则重建为 16 个认知闭环，没有经历“一个小标题一个文件”的过度拆分。
-
-完成后机械检查：
-
-```text
-16/16 docs 连续编号
-16/16 >= 4.5KB
-16/16 含 🎯 面试回答
-16/16 含 <details> 折叠自测
-README docs 链接存在
-review/README.md 存在
-interview 三件套存在
-research/fastapi-sources/README.md 存在
-```
-
-人工重点复核：
-
-- `05-ResourceLifecycle.md`：是否真正讲清 yield Dependency scope、Streaming cleanup 与 Lifespan；
-- `07-Streaming与SSE.md`：是否包含 typed event、mid-stream error、disconnect，而不是只教 `yield token`；
-- `12-TimeoutCancellation与Disconnect.md`：是否区分 Transport Disconnect、Timeout、Coroutine Cancel、Business Cancel 和 Durable Run；
-- `15-Deployment与GracefulShutdown.md`：是否覆盖 Worker Process、Pool multiplication、Liveness/Readiness、Drain / Shutdown；
-- `16-AIServicePatterns.md`：是否真正把 Chat / RAG / Ingestion / Agent Run API 与 Agent Harness 分层。
-
-权威技术事实使用当前 FastAPI / Starlette / Uvicorn / Pydantic 官方资料校准；HUMAN-A 市场证据仍只来自 4 道 FastAPI Canonical。
-
-**最终结论：FastAPI Content Depth / Canonical Coverage PASS。**
-
----
-
-# 5. AI Backend Engineering — ✅ PASS
-
-当前：**22 个连续知识小板块，`docs/01 → 22`，并包含 Review + Interview 三件套。**
-
-AIBE 首版从一开始就按当前粒度规则建设：39 道 Canonical 用于市场深度校准，约 55 个旧 outline topics 作为内容素材，最终收敛成 22 个 Production Backend 认知闭环。
-
-机械检查：
-
-```text
-22/22 docs 连续编号
-22/22 >= 6KB
-22/22 含 🎯 面试表达
-22/22 含 ⚠️ 易错点
-22/22 含 <details> 折叠自测
-README docs 链接存在
-review/README.md 存在
-interview 三件套存在
-research/backend-sources/README.md 存在
-```
-
-人工重点复核了 Backpressure、Retry、Reliable Async Task、Consistency/Compensation、K8s Deployment 和 Cross-language Mapping，均包含机制、Failure、Scale、Verification 与明确模块边界，没有“大主题只有概览”的情况。
-
-权威资料只校准 Timeout/Retry/Overload、Idempotency、Kafka、K8s、Observability、OAuth、OWASP 等机制；HUMAN-A 市场证据仍只来自 39 道 AIBE Canonical。
-
-**最终结论：AI Backend Engineering Content Depth / Canonical Coverage PASS。**
-
----
-
-# 6. Redis — ✅ PASS
-
-当前：**24 个连续知识小板块，`docs/01 → 24`。**
-
-重点人工复核了相对较短或被扫描器标记的：
-
-- `04-扩展数据结构.md`
-- `07-TTL与过期删除.md`
-- `12-Replication.md`
-- `16-Pipeline.md`
-- `19-PubSub与Streams.md`
-
-结论：通过。
-
-原因不是“文件够长”，而是主题本身边界较窄但闭环完整。
-
-例如：
-
-### TTL
-
-已经包含：
-
-```text
-expire semantics
-lazy / active expiry
-timeout / jitter / sliding expiry
-persistence / replication boundary
-AI state use case
-interview answer
-self-test
-```
-
-### Pipeline
-
-已经覆盖：
-
-```text
-RTT problem
-pipeline mechanics
-Pipeline ≠ Transaction
-batch size / memory / error semantics
-Cluster boundary
-idempotency / backpressure
-AI batch use case
-interview / self-test
-```
-
-### Extended Data Structures
-
-虽然扫描器没有匹配到英文 `Failure / Trade-off` 关键词，但正文实际已经明确：
-
-- Bitfield 的可读性 / 调试代价；
-- HyperLogLog 的近似误差与不可枚举成员；
-- Stream 与 Kafka 的能力边界；
-- 不同结构适用与不适用场景。
-
-因此属于自动规则误报，不需要为了篇幅再扩写。
-
-**最终结论：Redis Content Depth PASS。**
-
----
-
-# 7. Vector DB — ✅ PASS
-
-当前：**16 个连续知识小板块，`docs/01 → 16`。**
-
-重点人工复核：
-
-- `04-ANN索引谱系.md`
-- `06-IVF原理.md`
-- `07-Quantization与PQ.md`
-- `09-Vector数据建模.md`
-- `10-MetadataFilter.md`
-- `11-Partition与TenantIsolation.md`
-- `13-分布式VectorDB.md`
-
-并结合本来就较深的：
-
-- `05-HNSW机制与调优.md`
-- `12-VectorIndex生命周期.md`
-- `14-性能容量与Production诊断.md`
-- `16-GraphDB边界与系统设计.md`
-
-一起验收。
-
-结论：通过。
-
-### 为什么 4–5KB 的 IVF / PQ 仍可以通过
-
-因为它们是边界明确的算法子系统，正文已经形成：
-
-```text
-为什么需要
-→ 核心机制
-→ 关键参数
-→ Recall / Latency / Memory Trade-off
-→ 与 HNSW / IVF-PQ 等组合关系
-→ Production 选择
-→ 面试 / 自测
-```
-
-### Metadata / Tenant / Distributed
-
-已经覆盖：
-
-```text
-Schema / stable identity / version
-Pre-filter vs Post-filter
-filter selectivity
-permission boundary
-partition vs shard
-fan-out / global Top-K
-replica / rebalance
-hot tenant / capacity
-```
-
-没有发现“合并后承担了大主题但仍只剩概览”的情况。
-
-**最终结论：Vector DB Content Depth PASS。**
-
----
-
-# 8. LLM Foundation — ✅ PASS after targeted remediation
-
-当前：**14 个连续知识小板块，`docs/01 → 14`。**
-
-全量机械扫描中 14/14 均具备：
-
-- 自测；
-- 面试表达；
-- Failure / Trade-off；
-- 足够的机制或工程说明。
-
-人工复核重点：
-
-- `10-MultimodalFoundation.md`
-- `11-PromptEngineering.md`
-- `14-PostTraining与Distillation.md`
-
-### Prompt Engineering
-
-本身已经是完整工程闭环：
-
-```text
-Prompt structure
-→ role / priority boundary
-→ few-shot
-→ structured output
-→ versioning
-→ evaluation / regression
-→ Prompt vs RAG / Fine-tuning / Runtime
-```
-
-无需为了字数继续扩写。
-
-### Post-training
-
-应用工程深度已经足够：
-
-```text
-SFT limit
-→ RLHF / Reward
-→ DPO / GRPO boundary
-→ reward hacking
-→ distillation / synthetic data
-→ when application team should care
-```
-
-没有必要扩成算法岗 PPO / RL 数学课。
-
-### Multimodal Foundation — 已补强
-
-原稿更像 4KB 概览，因此进行了实质扩写，目前加入：
-
-```text
-Perception / Alignment / Reasoning 分层
-Visual Token / Resolution / Cost Budget
-OCR / Layout / Direct Vision boundary
-Document Layout
-Audio / Video temporal complexity
-Multimodal retrieval vs generation
-Production failure attribution
-Evaluation dataset / metrics
-Privacy / data governance
-RAG / Agent module boundary
-```
-
-补强后已经和其它核心 LLM 章节处于同一教学深度。
-
-**最终结论：LLM Foundation Content Depth PASS。**
-
----
-
-# 9. RAG — ✅ PASS after targeted remediation
-
-当前：**14 个连续 Production RAG 子系统，`docs/01 → 14`。**
-
-原 01–12 已经普遍具备较完整的：
-
-```text
-Pipeline / Data Model
-Failure Attribution
-Evaluation
-Production Boundary
-Interview / Self-test
-```
-
-重点复核发现两个大主题原稿偏薄：
-
-- `13-ScaleCostObservability.md`
-- `14-GraphRAG与AgenticRAG.md`
-
-两章已完成实质补强。
-
-### 13 Scale / Cost / Observability
-
-新增并深化：
-
-```text
-Ingestion state machine
-idempotency by source + processing version
-per-stage backpressure
-Generation / Snapshot rebuild
-Delta catch-up
-stage-level latency / SLO
-P99 attribution
-Offline / Online cost model
-Candidate Budget
-Cache versioning
-Production Trace
-Freshness Lag
-Quality monitoring
-Degradation / Load Shedding
-Failure timelines
-```
-
-现在它真正承担 Production RAG 运行子系统，而不是监控指标清单。
-
-### 14 GraphRAG / Agentic RAG
-
-新增并深化：
-
-```text
-Entity extraction / resolution
-Relation provenance
-Graph retrieval patterns
-Vector + Keyword + Graph composition
-Incremental graph update
-Graph quality evaluation
-Agentic Runtime State
-Evidence Sufficiency
-No-new-evidence detection
-Query Drift
-Step / Cost Budget
-Multi-source routing
-Agentic RAG evaluation
-Production architecture
-```
-
-并明确：GraphRAG / Agentic RAG 不是默认升级路线，必须用 Baseline + Evaluation 证明收益。
-
-**最终结论：RAG Content Depth PASS。**
-
----
-
-# 10. System Design — ✅ PASS
-
-当前：**19 个连续知识小板块，`docs/01 → 19`，并包含 Review + Interview 三件套。**
-
-System Design 从一开始就按当前粒度规则建设，没有经历“24 道 Canonical → 24 个文件”的机械映射。正文分成：
-
-```text
-01–12  通用设计方法
-13–19  综合 Scenario Pattern
-```
-
-完成后重点核验了：
-
-- `01-SystemDesign职责与答题框架.md`：是否先教 Clarify / SLO / Capacity / State / Failure / Verify；
-- `13-HighConcurrencyTransactionalSystems.md`：是否从业务 invariant 进入库存 / Rate Limit / Token Refresh，而不是背组件；
-- `17-EnterpriseRAGSystemDesign.md`：是否覆盖 Ingestion / Permission / Generation / Evaluation / Freshness / Cost；
-- `18-ProductionAgentBackend.md`：是否覆盖 Durable Run、Checkpoint、Tool Side Effect、Lease、Cancellation、Trace / Eval；
-- `19-VerticalAIAgentPatterns.md`：是否能把同一套方法迁移到 Analysis / Customer Service / Multimodal / Game / Content，而不是五套模板。
-
-19 章统一具备：
-
-```text
-Why / Requirement
-→ Mental Model / Data Flow
-→ Trade-off / Failure
-→ Scale / Security / Reliability（按主题）
-→ Verification / Observability
-→ 面试回答
-→ 折叠自测
-```
-
-并额外提供 6 张 Review 总图、36 道 Interview Drill、60 个易错点和面试前速查表。
-
-**最终结论：System Design Content Depth PASS。**
-
----
-
-# 11. 最终验收状态
-
-| 模块 | Blocks | Numbering | Depth |
+| 模块 | Blocks | Numbering | Quality Status |
 |---|---:|---|---|
-| Python | 13 | ✅ `01–13` 连续 | ✅ PASS |
-| FastAPI | 16 | ✅ `01–16` 连续 | ✅ PASS |
-| AI Backend Engineering | 22 | ✅ `01–22` 连续 | ✅ PASS |
-| Redis | 24 | ✅ `01–24` 连续 | ✅ PASS |
-| Vector DB | 16 | ✅ `01–16` 连续 | ✅ PASS |
-| LLM Foundation | 14 | ✅ `01–14` 连续 | ✅ PASS |
-| RAG | 14 | ✅ `01–14` 连续 | ✅ PASS |
-| System Design | 19 | ✅ `01–19` 连续 | ✅ PASS |
+| [Python Foundation](../python/README.md) | 13 | ✅ `01–13` | ✅ PASS |
+| [FastAPI](../fastapi/README.md) | 16 | ✅ `01–16` | ✅ PASS |
+| [AI Backend Engineering](../backend-engineering/README.md) | 22 | ✅ `01–22` | ✅ PASS |
+| [MySQL](../mysql/README.md) | 23 | ✅ `01–23` | ✅ PASS |
+| [Redis](../redis/README.md) | 24 | ✅ `01–24` | ✅ PASS |
+| [Vector Database](../vector-db/README.md) | 16 | ✅ `01–16` | ✅ PASS |
+| [LLM Foundation（应用工程深度）](../llm-foundation/README.md) | 14 | ✅ `01–14` | ✅ PASS |
+| [RAG](../rag/README.md) | 14 | ✅ `01–14` | ✅ PASS |
+| [Agent Harness / Runtime](../agent-harness/README.md) | 23 | ✅ `01–23` | ✅ PASS |
+| [System Design](../system-design/README.md) | 19 | ✅ `01–19` | ✅ PASS |
 
-累计验收正文：
+**当前正文总量：184 blocks。**
 
-```text
-Python current-standard remediation：13 篇
-FastAPI 首版独立验收：           16 篇
-AI Backend Engineering 首版验收：22 篇
-第一轮颗粒度整改后的四模块：     68 篇
-System Design 首版独立验收：      19 篇
-----------------------------------
-合计：                           138 篇
-```
+## 验收历史说明
 
-同时已验证：
+- Python：保留 v1 主干后做 Canonical Coverage / Depth Remediation；
+- FastAPI / AIBE / System Design：首版即按当前粒度和深度标准建设；
+- Redis / Vector DB / LLM / RAG：完成旧结构颗粒度整改后重新做深度复核；
+- MySQL：原 23-block 结构本身健康，机制与 correctness 边界审阅通过；
+- Agent Harness：47→23 后对旧短稿区域做第二轮深写与源码 / 官方证据验收。
 
-- README 正文链接指向实际文件；
-- Review / Interview 配套存在并与当前课程结构一致；
-- 编号和 H1 标题一致；
-- 已验收知识块不存在“只有目录/短占位稿却被标为完成”的情况；
-- 较短主题是否通过取决于认知闭环，而不是统一 KB 阈值。
-
----
-
-# 12. 后续规则
-
-未来新增或整改模块继续使用同一标准：
+## 后续规则
 
 ```text
-先定知识闭环
-→ 再定 Markdown
-→ 写完整机制 / Failure / Trade-off / Production
-→ 自动 QA 找异常
-→ 人工深度验收
-→ 最后才标记完成
+先定认知闭环 → 写正文 → QA 找异常 → 人工复核 → 再标记完成
 ```
 
-自动检查永远只是异常发现器，不能替代人工判断内容是否真正形成认知闭环。
+自动检查只负责发现异常，不能代替人工判断。

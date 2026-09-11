@@ -1,8 +1,10 @@
-# Phase 2B Market Analysis Summary
+# Research Analysis｜Phase 2B Market Analysis
+
+[← Research 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../questions/README.md)
+
+> **状态：✅ Frozen Analysis。** 自动统计层只描述冻结 HUMAN-A 市场数据，不承担课程知识补全，也不维护易过期的 Curriculum 下一步状态。
 
 更新日期：2026-09-11
-
-> 自动统计层。这里不做课程知识补全，只描述冻结真人面经数据本身。
 
 ## Baseline
 
@@ -52,4 +54,4 @@
 | Agent Harness / Runtime | 44 | 166 | 741 | 30 | 35 |
 | System Design | 24 | 71 | 81 | 3 | 24 |
 
-Phase 2B 自动统计与人工核验层均已完成。Phase 3 教材建设的实时状态以 `research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；本自动生成文件不重复维护易过期的“下一模块”状态。
+Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。

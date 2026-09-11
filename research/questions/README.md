@@ -1,153 +1,49 @@
-# Canonical Questions
+# Canonical Questions｜真人面试能力归一化层
 
-这里不做“网上见过什么题就全部收进来”的题库。
+[← Research 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Module Index](module-index.md) · [Progress](progress.md)
 
-## Repository-first 规则
+> Canonical Question 只允许由 **HUMAN-A 真人高质量第一人称面经**产生市场证据。官方资料、源码、论文可以校准课程技术边界，但不能创建频率或提高 Source Count。
 
-> **后续继续研究或建设教材时，必须先读取仓库当前最新的 `README.md`、`schema.md`、`progress.md`、`module-index.md`、根 README、知识地图和相关模块文件。仓库最新描述高于聊天中的历史总结、旧分类和旧计数。**
-
-## 唯一证据原则
-
-Canonical Question 只允许由 **HUMAN-A 真人高质量第一人称面经**产生市场证据。源码、官方文章、规范、论文可以补齐课程知识边界，但不能创建真人面试频率或提高 Source Count。
-
-## 正式一级板块
+## Frozen Baseline
 
 ```text
-Python
-→ FastAPI
-→ AI Backend Engineering
-→ MySQL
-→ Redis
-→ Vector DB
-→ LLM Foundation（应用工程深度）
-→ RAG
-→ Agent Harness / Runtime
-→ System Design
+HUMAN-A            S001–S279
+ACTIVE Canonical   235
+Mapped Sources     278
+VALID-UNMAPPED       1（S271）
 ```
 
-`Coding / Debug / AI Coding` 只作为 `Question Type`，不作为一级板块。
+## 十板块 Ownership
 
----
+| Module | Canonical | Curriculum | Entry |
+|---|---:|---:|---|
+| [Python Foundation](python.md) | 15 | 13 | [教材 README](../../python/README.md) |
+| [FastAPI](fastapi.md) | 4 | 16 | [教材 README](../../fastapi/README.md) |
+| [AI Backend Engineering](ai-backend-engineering.md) | 39 | 22 | [教材 README](../../backend-engineering/README.md) |
+| [MySQL](mysql.md) | 26 | 23 | [教材 README](../../mysql/README.md) |
+| [Redis](redis.md) | 19 | 24 | [教材 README](../../redis/README.md) |
+| [Vector Database](vector-db.md) | 12 | 16 | [教材 README](../../vector-db/README.md) |
+| [LLM Foundation（应用工程深度）](llm-foundation.md) | 23 | 14 | [教材 README](../../llm-foundation/README.md) |
+| [RAG](rag.md) | 29 | 14 | [教材 README](../../rag/README.md) |
+| [Agent Harness / Runtime](agent-harness.md) | 44 | 23 | [教材 README](../../agent-harness/README.md) |
+| [System Design](system-design.md) | 24 | 19 | [教材 README](../../system-design/README.md) |
 
-## 当前冻结基线与研究状态
-
-- HUMAN-A：`S001–S279`
-- Batch：26
-- 主动采集：已冻结
-- Phase 1 Canonicalization：✅
-- Phase 2A Global Merge / Split Audit：✅
-- Phase 2B Global Index + Market Analysis：✅
-- Primary-owned ACTIVE Canonical：**235**
-- Legacy MOVED：**24**
-- Mapped HUMAN-A：**278**
-- VALID-UNMAPPED：**1（S271）**
-
-| 一级板块 | ACTIVE |
-|---|---:|
-| Python | 15 |
-| FastAPI | 4 |
-| AI Backend Engineering | 39 |
-| MySQL | 26 |
-| Redis | 19 |
-| Vector DB | 12 |
-| LLM Foundation（应用工程深度） | 23 |
-| RAG | 29 |
-| Agent Harness / Runtime | 44 |
-| System Design | 24 |
-| **合计** | **235** |
-
-最终一致性：
+## 四种粒度
 
 ```text
-Frozen HUMAN-A              279 / 279
-ACTIVE Canonical            235 / 235
-Mapped to >=1 Canonical     278
-VALID-UNMAPPED                1
-Unexpected uncovered          0
-Evidence outside baseline     0
-Source Count mismatch         0
+Canonical Question = 面试最小独立追问单元
+Capability         = 更细工程机制
+Curriculum Block   = 完整教材认知闭环
+Interview Drill    = 训练时可以再次细分的真实问法
 ```
 
----
-
-## Phase 3：Curriculum Build
-
-固定原则：
-
-> **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
-
-同时正式区分：
-
-```text
-Canonical Question = 面试最小可独立追问单元
-Capability Primitive = 工程机制最小单元
-教材 Markdown = 一个完整知识小板块
-Section = 参数 / 变体 / Failure / 深挖追问
-```
-
-因此 **44 道 Agent Canonical 不等于 44 章，29 道 RAG Canonical 也不等于 29 章。**
-当前 Python / FastAPI / AI Backend Engineering / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。
-Foundation 当前真实完成度详见 `../../roadmap/foundation-status-audit.md`。
-
-当前教材结构：
-
-```text
-Python ✅ 13 blocks（12→13；15 Canonical Coverage / Depth PASS）
-FastAPI ✅ 16 blocks（4 Canonical Coverage / Depth PASS）
-AI Backend Engineering ✅ 22 blocks（39 Canonical Coverage / Depth PASS）
-MySQL ✅ 23 blocks
-Redis ✅ 24 blocks（27→24）
-Vector DB ✅ 16 blocks（23→16）
-LLM Foundation ✅ 14 blocks（29→14）
-RAG ✅ 14 blocks（34→14）
-Agent Harness / Runtime ✅ 23 blocks（47→23，结构 + 深度验收完成）
-System Design ✅ 19 blocks（24 Canonical → 19 curriculum blocks）
-```
-
-Python / FastAPI / AI Backend Engineering 已全部完成 current-standard Curriculum / Coverage / Depth 验收；Foundation ✅ COMPLETE，十个一级模块的第一版教材均已完成。
-
----
-
-## Agent Harness 特殊证据规则
-
-Agent Harness 的市场证据仍只来自 Frozen HUMAN-A 的 44 道 Agent Canonical。
-
-正式教材另外使用：
-
-- `research/analysis/follow-up-chains.md`；
-- `studyzhige-ui/claude-code-source-private`；
-- `openai/codex`；
-- Anthropic / OpenAI 官方 Agent / Harness 工程资料；
-- MCP / A2A 官方规范；
-- ReAct / SWE-bench 等原始论文。
-
-完整索引：[`../agent-sources/README.md`](../agent-sources/README.md)
-
-固定源码快照：
-
-```text
-Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
-OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
-```
-
-课程使用原则：
-
-```text
-HUMAN-A → 市场真实度 / 频率 / 追问
-源码     → 成熟实现事实
-官方资料 → 跨产品稳定设计原则
-课程体系 → beginner-first 0→1 演进
-```
-
-源码与权威资料**不能**反向改变 HUMAN-A 面试频率，也不能因为源码中存在一个独立 class / primitive 就自动拆成一章。
-
----
+因此 235 道 Canonical 不等于 184 篇正文。
 
 ## 主要入口
 
-- `schema.md`：Canonical 数据规范；
-- `module-index.md`：Ownership 与 Phase 3 状态；
-- `global-audit.md`：Global Merge / Split 决策；
-- `progress.md`：当前教材建设阶段；
-- `../analysis/`：Frequency / Coverage / Follow-up Chain / Knowledge Gap；
-- `../../roadmap/curriculum-granularity-audit.md`：教材粒度整改结果。
+- [schema.md](schema.md)：Canonical 字段与证据规则；
+- [module-index.md](module-index.md)：Ownership ↔ Curriculum；
+- [progress.md](progress.md)：当前研究 / 教材状态；
+- [global-audit.md](global-audit.md)：Merge / Split / Reassignment；
+- [Market Analysis](../analysis/README.md)：自动统计层；
+- [Verified Follow-up Chains](../analysis/follow-up-chains.md)：人工回读原始流程后的追问链。

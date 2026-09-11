@@ -1,98 +1,70 @@
-# System Design｜AI Application / Agent Production 终局模块
+# System Design｜AI Application / Agent Production 系统设计
 
-> **Status：✅ 第一版完整系统教材已完成。** 当前为 `19` 个连续知识小板块 + Review + Interview 三件套；24 道 System Design Canonical 已按场景/能力映射进入教材，而不是一题一章。
+[← Agent Harness / Runtime](../agent-harness/README.md) · [↑ Handbook 总目录](../README.md)
 
-> System Design 是这套 Handbook 的最后一个正式一级模块。
->
-> 它不再重新讲 MySQL、Redis、Vector DB、RAG 或 Agent Harness 的单点原理，而是回答：**面对一个真实需求，怎样把前面所有能力组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的系统。**
+> **状态：✅ 第一版系统教材完成**  
+> **教材：19 个连续知识小板块** · **HUMAN-A Canonical：24** · **独立来源覆盖：71**  
+> **质量：Granularity / Coverage / Content Depth 已验收**
 
-> **课程原则：知识体系演进顺序优先。** 冻结 `S001–S279` 中的 24 道 System Design Canonical 只用于校准真实场景、Failure、Scale、Trade-off 与追问深度；不会采用 `1 Canonical = 1 Markdown`。
-
----
-
-## 1. 为什么 System Design 放在最后
-
-前面九块分别教会你：
-
-```text
-Python / FastAPI / Backend
-→ 服务怎样运行
-
-MySQL / Redis / Vector DB
-→ 状态怎样存、索引、缓存和扩展
-
-LLM / RAG / Agent Harness
-→ 模型、Evidence、Agent Runtime 怎样工作
-```
-
-System Design 需要把这些局部能力重新组合：
-
-```text
-Requirement
-→ SLO / Constraint
-→ Workload
-→ API / Data / State
-→ Data Flow
-→ Scale
-→ Consistency
-→ Reliability
-→ Security
-→ Observability
-→ Cost
-→ Evolution
-```
-
-这也是为什么它不能从“秒杀系统标准答案”开始。
+把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
 
 ---
 
-## 2. 真人面经怎样影响这一模块
+## 1. 这个模块解决什么
 
-当前冻结研究中：
+把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
 
-- System Design：**24 道 Canonical**；
-- **71 个**独立 HUMAN-A 来源覆盖；
-- 24/24 都是 **L4**；
-- 强信号包括 Production Agent Backend、Long-running Agent、Flash Sale / Inventory、Enterprise RAG、Multi-tenant AI Platform、大规模 Batch / Migration 等。
-
-因此面经会影响：
+学习目标不是记住一组名词，而是能稳定回答：
 
 ```text
-哪些 Failure 必须讲
-哪些场景必须做综合 Case
-面试官会怎样从正常路径追到 Scale / Failure / Verification
-Review / Interview 的复习权重
-```
-
-但不会影响：
-
-```text
-Requirement 必须先于架构
-Workload 必须先于容量方案
-State Ownership 必须先于 Consistency
-正常路径必须先于 Failure Handling
-Evaluation 必须进入最终闭环
+为什么需要它？
+→ 核心机制怎样工作？
+→ 正常路径怎样流动？
+→ Failure / Trade-off 在哪里？
+→ Production 场景怎样验证与排障？
+→ 面试官继续追问时怎样解释边界？
 ```
 
 ---
 
-## 3. 外部权威资料的角色
+## 2. 在十板块中的位置
 
-System Design 还参考 AWS Builders' Library、Google SRE / Cloud Architecture、Stripe API 等官方资料中的稳定工程原则，例如：
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent Harness / Runtime](../agent-harness/README.md) → **System Design**
 
-- Timeout / Retry / Exponential Backoff / Jitter；
-- Overload / Cascading Failure / Load Shedding；
-- Failure Domain / Redundancy；
-- Idempotency Key；
-- SLO / Capacity / Degradation。
-
-这些资料只补工程原则，**不计入 HUMAN-A Source Count**。
+当前模块角色：**Integration / 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。**
 
 ---
 
-# 4. 正式 19 个知识小板块
+## 3. 固定课程原则
 
-## Part A｜先学“怎样设计”，再学“设计什么”
+> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+
+同时固定区分：
+
+```text
+Canonical Question = 可独立追问的面试能力
+Capability Primitive = 更细的工程机制
+教材 Markdown = 一个完整认知闭环
+Section = 参数 / 变体 / Failure / 深挖追问
+```
+
+所以本模块是 **24 道 Canonical → 19 个教材知识块**，两者不需要一一对应。
+
+---
+
+## 4. 正式学习主线
+
+```text
+Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cache / Partition → Consistency / Queue → Reliability / Security → Observability / Evaluation / Cost / Evolution → High-concurrency / Realtime / Data Processing / LLM Gateway / Enterprise RAG / Production Agent Cases
+```
+
+这个顺序按知识依赖组织，而不是按面经频率排序。
+
+---
+
+## 5. 正式课程目录
+
+### Part A｜通用 System Design 方法
 
 1. [System Design 的职责与完整答题框架](docs/01-SystemDesign职责与答题框架.md)
 2. [Requirement、SLO、Constraint 与 Scope](docs/02-Requirement与SLO.md)
@@ -107,7 +79,7 @@ System Design 还参考 AWS Builders' Library、Google SRE / Cloud Architecture�
 11. [Multi-tenancy、Security、Permission 与 Isolation](docs/11-MultiTenancy与Security.md)
 12. [Observability、Evaluation、Cost 与 Evolution](docs/12-ObservabilityEvaluation与Evolution.md)
 
-## Part B｜把通用方法迁移到真人高频场景
+### Part B｜真人高频 Scenario Patterns
 
 13. [High-concurrency Transactional Systems：秒杀、库存、Rate Limit、Token Refresh](docs/13-HighConcurrencyTransactionalSystems.md)
 14. [Realtime Read-heavy Systems：排行榜、Feed、Autocomplete、Notification](docs/14-RealtimeReadHeavySystems.md)
@@ -119,111 +91,69 @@ System Design 还参考 AWS Builders' Library、Google SRE / Cloud Architecture�
 
 ---
 
-## 5. 24 道 Canonical 怎样进入 19 个板块
+## 6. 真人面经怎样影响本模块
 
-Canonical 不和教材文件一一对应，而主要作为 Part B 的 Case / Drill：
+冻结基线 `S001–S279` 中，本模块有 **24 道 Primary Canonical、71 个独立 HUMAN-A 招聘流程覆盖**。
 
-```text
-SD-001 / 009 / 010 / 011
-→ 13 High-concurrency Transactional
+重点市场信号包括：
 
-SD-002 / 003 / 004 / 005
-→ 14 Realtime Read-heavy
+- Production / Long-running Agent Backend
+- Flash Sale / Inventory
+- Enterprise RAG
+- Multi-tenant AI Platform
+- Large-scale Data / Migration
+- Vertical AI Agent Scenarios
 
-SD-006 / 007 / 008 / 012 / 015
-→ 15 Large-scale Data & Processing
-
-SD-013 / 014
-→ 16 LLM Gateway / Multi-tenant AI Platform
-
-SD-016 / 017
-→ 17 Enterprise / Large-scale RAG
-
-SD-021 / 022
-→ 18 Production / Long-running Agent Backend
-
-SD-018 / 019 / 020 / 023 / 024
-→ 19 Vertical AI Agent Patterns
-```
-
-同一个 Scenario 还会反向链接 Part A。例如“秒杀”不是背一个固定架构，而是用它训练：
-
-```text
-Requirement
-→ Capacity
-→ Hot Path
-→ Consistency
-→ Idempotency
-→ Queue
-→ Failure
-→ Observability
-```
-
----
-
-## 6. System Design 面试默认六层追问
-
-根据已核验真人追问链，面试通常不是连续定义题，而是：
-
-```text
-你设计什么？
-→ 为什么这样设计？
-→ 内部机制是什么？
-→ 失败怎么办？
-→ 量大 / 热点 / 多租户怎么办？
-→ 怎么证明它真的工作？
-```
-
-因此每章默认训练：
-
-```text
-Concept
-→ Mechanism
-→ Trade-off
-→ Failure
-→ Scale
-→ Verification
-```
+这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
 
 ---
 
 ## 7. 模块边界
 
-System Design 负责**组合与决策**，不重复基础模块完整原理：
+- System Design 负责组合与决策，不重复单点机制的完整原理。
+- Timeout / Retry / Queue / Backpressure 的机制归 AIBE。
+- MySQL / Redis / Vector / RAG / Agent 的内部机制回到对应 Primary Module。
 
-| 问题 | Primary |
-|---|---|
-| B+Tree / MVCC / Lock | MySQL |
-| Redis TTL / Cluster / Lock 实现 | Redis |
-| HNSW / IVF | Vector DB |
-| KV Cache / Sampling | LLM Foundation |
-| Chunk / Hybrid / Rerank | RAG |
-| Agent Loop / Tool / Context / Checkpoint | Agent Harness |
-| Timeout / Retry / Queue / Backpressure 的通用机制 | AI Backend Engineering |
-| 上述能力怎样组合成完整系统 | **System Design** |
-
-System Design 章节会提供必要摘要，但会明确链接到 Primary Module。
+遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
 
 ---
 
-## 8. 推荐三遍学习法
+## 8. Review、Interview 与证据入口
 
-第一遍按 `01 → 12` 学设计方法；第二遍读 `13 → 19`，每个 Case 先自己画再看正文；第三遍进入：
+| 入口 | 链接 | 用途 |
+|---|---|---|
+| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
+| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
+| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
+| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
 
-- [`review/README.md`](review/README.md)
-- [`interview/高频面试题.md`](interview/高频面试题.md)
-- [`interview/面试易错点.md`](interview/面试易错点.md)
-- [`interview/面试前速查表.md`](interview/面试前速查表.md)
+研究与质量证据：
 
-最终目标不是背架构图，而是面对陌生题也能稳定走完：
+- [Canonical Questions](../research/questions/system-design.md)：市场真实问法与 Source Count；
+- [Verified Follow-up Chains](../research/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
+- [Frequency Ranking](../research/analysis/frequency-ranking.md)：复习热度参考；
+- [Curriculum Granularity Audit](../roadmap/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
+- [Content Depth Audit](../roadmap/content-depth-audit.md)：完成与深度验收口径。
+
+---
+
+## 9. 推荐学习方式
+
+1. **第一遍：建立因果链。** 按 `docs/01 → 19` 连续阅读，不按高频题跳章。
+2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
+3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
+4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
+
+---
+
+## 10. 完成状态
 
 ```text
-Clarify
-→ Quantify
-→ Model State
-→ Draw Flow
-→ Find Bottleneck
-→ Choose Trade-off
-→ Break It
-→ Verify It
+docs/      ✅ 01–19 连续
+review/    ✅
+interview/ ✅
+Canonical Coverage ✅
+Content Depth       ✅
 ```
+
+整套十板块已学完，可以进入全局 Review / 面试训练。

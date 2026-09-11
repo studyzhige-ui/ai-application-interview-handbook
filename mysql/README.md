@@ -1,154 +1,70 @@
-# MySQL｜AI 应用开发秋招系统手册
+# MySQL｜关系型数据、事务与查询工程
 
-> MySQL 是这套 Handbook 的第 4 个正式一级模块。
->
-> 目标不是学成 DBA，也不是背一份“数据库八股题库”，而是建立一条从 0→1 的完整认知主线：**一条 SQL 怎样执行 → 索引为什么快 → 查询为什么会慢 → 事务并发如何保证正确 → 数据量增长后怎样扩展 → MySQL 怎样进入真实 AI Application / Agent Backend。**
+[← AI Backend Engineering](../backend-engineering/README.md) · [↑ Handbook 总目录](../README.md) · [Redis →](../redis/README.md)
 
-## 1. 最重要的课程原则
+> **状态：✅ 第一版系统教材完成**  
+> **教材：23 个连续知识小板块** · **HUMAN-A Canonical：26** · **独立来源覆盖：55**  
+> **质量：Granularity / Coverage / Content Depth 已验收**
 
-本模块固定遵守：
+理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
 
-> **知识体系演进顺序优先，真实面经只用于调整复习权重、补充真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+---
 
-因此，即使 Sharding、Cache Consistency 在真人面经里很高频，也不会提前到 B+Tree、Transaction、MVCC 之前。
+## 1. 这个模块解决什么
 
-正确关系是：
+理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
 
-```text
-完整 MySQL 知识体系
-        ↓
-从 0 建立因果链
-        ↓
-真实面经校准哪里更高频、会追多深
-        ↓
-再用真人问题验收
-```
-
-而不是：
+学习目标不是记住一组名词，而是能稳定回答：
 
 ```text
-别人问什么
-→ 我们就只学什么
+为什么需要它？
+→ 核心机制怎样工作？
+→ 正常路径怎样流动？
+→ Failure / Trade-off 在哪里？
+→ Production 场景怎样验证与排障？
+→ 面试官继续追问时怎样解释边界？
 ```
 
 ---
 
-## 2. 为什么 AI Application / Agent 岗仍然需要系统学 MySQL
+## 2. 在十板块中的位置
 
-AI Demo 可能只有：
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → **MySQL** → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent Harness / Runtime](../agent-harness/README.md) → [System Design](../system-design/README.md)
 
-```text
-User
- ↓
-LLM / RAG / Agent
-```
-
-真正上线以后会出现：
-
-```text
-User / Tenant
-Conversation / Message
-Agent Run / Task
-Tool Execution
-Knowledge Base Metadata
-Document / Permission
-Billing / Usage
-Evaluation Result
-Business State
-```
-
-其中大量数据天然适合关系数据库。
-
-冻结 `S001–S279` HUMAN-A 研究中，MySQL 有 **26 道 Canonical、55 个独立招聘流程**提供证据。
-
-高频市场信号包括：
-
-| Topic | HUMAN-A Sources |
-|---|---:|
-| Isolation Levels | 14 |
-| B+Tree | 13 |
-| Slow SQL / EXPLAIN | 11 |
-| Index Invalidation | 11 |
-| Composite Index | 10 |
-| Sharding | 10 |
-| MVCC / ReadView | 9 |
-| Covering / Back-to-table / ICP | 8 |
-| Phantom / Locks | 6 |
-| Logs | 5 |
-| Schema Design | 5 |
-| CDC / Data Sync | 4 |
-| Deep Pagination | 4 |
-
-> **Interview Heat ≠ Knowledge Importance。** Storage Engine、SQL 基础、Deadlock、Bulk Write 等即使出现次数较少，只要是知识体系必要节点，仍然保留。
+当前模块角色：**Data / 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。**
 
 ---
 
-## 3. 版本口径
+## 3. 固定课程原则
 
-正文以现代 **MySQL + InnoDB** 为主，核心机制以 MySQL 8.4 LTS Reference Manual 作为稳定事实基线。
+> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
-- 不把旧版本实现细节写成永恒规则；
-- 面试默认优先解释 InnoDB；
-- 当前版本变化不会反向修改冻结 HUMAN-A Source Count。
+同时固定区分：
 
-官方入口：
+```text
+Canonical Question = 可独立追问的面试能力
+Capability Primitive = 更细的工程机制
+教材 Markdown = 一个完整认知闭环
+Section = 参数 / 变体 / Failure / 深挖追问
+```
 
-- <https://dev.mysql.com/doc/refman/8.4/en/>
-- <https://dev.mysql.com/doc/refman/8.4/en/innodb-storage-engine.html>
-- <https://dev.mysql.com/doc/refman/8.4/en/optimization.html>
-- <https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-transaction-model.html>
+所以本模块是 **26 道 Canonical → 23 个教材知识块**，两者不需要一一对应。
 
 ---
 
-## 4. 三条核心主线
-
-### 主线 A｜查询性能
+## 4. 正式学习主线
 
 ```text
-SQL
-→ Optimizer
-→ Index
-→ B+Tree
-→ Clustered / Secondary
-→ Composite Index
-→ Covering / ICP
-→ EXPLAIN
-→ Slow SQL
-→ Pagination / Index Lifecycle
+SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolation / MVCC / Lock / Log → Pagination / Schema → Replication / Sharding / CDC / Bulk Write → AI Data Modeling / Cache Boundary
 ```
 
-### 主线 B｜并发正确性
-
-```text
-Transaction
-→ ACID
-→ Isolation
-→ MVCC / ReadView
-→ Record / Gap / Next-Key Lock
-→ Deadlock
-→ Undo / Redo / Binlog
-→ Crash Recovery
-```
-
-### 主线 C｜生产扩展
-
-```text
-Schema
-→ Replication
-→ Sharding
-→ CDC
-→ Bulk Write
-→ AI Application Data Modeling
-→ MySQL + Redis Integration Boundary
-```
-
-这三条线不是按面经频率排序，而是按知识依赖顺序建立。
+这个顺序按知识依赖组织，而不是按面经频率排序。
 
 ---
 
-## 5. 完整 23 章
+## 5. 正式课程目录
 
-### Part A｜一条查询为什么快或慢
+### Part A｜查询与索引
 
 1. [MySQL 在 AI Application 中负责什么](docs/01-MySQL在AI应用中的职责.md)
 2. [SQL 基础与一条 SQL 的执行链路](docs/02-SQL基础与执行链路.md)
@@ -169,7 +85,7 @@ Schema
 14. [Record / Gap / Next-Key Lock 与 Deadlock](docs/14-锁与死锁.md)
 15. [redo、undo、binlog 与两阶段提交](docs/15-日志与两阶段提交.md)
 
-### Part C｜数据量增长后的自然演进
+### Part C｜数据增长与生产扩展
 
 16. [Deep Pagination 与查询优化](docs/16-DeepPagination与查询优化.md)
 17. [Schema Design：从访问模式设计表](docs/17-SchemaDesign.md)
@@ -178,174 +94,76 @@ Schema
 20. [CDC / Data Sync](docs/20-CDC与数据同步.md)
 21. [Bulk Write 与 MySQL Write Path](docs/21-BulkWrite与写入路径.md)
 
-### Part D｜回到 AI Application 数据层
+### Part D｜AI Application 数据层边界
 
 22. [AI Application Data Modeling](docs/22-AI应用数据建模.md)
 23. [MySQL + Redis Consistency 的边界](docs/23-MySQL-Redis一致性边界.md)
 
-为什么把 Cache Consistency 放最后？
+---
 
-因为它已经是**跨存储系统问题**。必须先理解 MySQL 的 Source of Truth、Transaction、Binlog、CDC 与业务数据模型，才能真正理解 Cache Aside、Failure Window 和最终一致性。
+## 6. 真人面经怎样影响本模块
+
+冻结基线 `S001–S279` 中，本模块有 **26 道 Primary Canonical、55 个独立 HUMAN-A 招聘流程覆盖**。
+
+重点市场信号包括：
+
+- Isolation Levels
+- B+Tree
+- Slow SQL / EXPLAIN
+- Index Invalidation / Composite Index
+- Sharding
+- MVCC / Lock
+
+这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
 
 ---
 
-## 6. 推荐三遍学习法
+## 7. 模块边界
 
-### 第一遍：从 0 建立体系
+- InnoDB 索引、事务、MVCC、锁与日志归 MySQL。
+- DB + Cache 最终一致性的完整机制归 AI Backend Engineering。
+- Redis Lock、TTL、Cluster 归 Redis；跨组件架构选择归 System Design。
 
-严格按 `01 → 23` 阅读。
+遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
 
-不要因为 `Sharding`、`Distributed Lock` 更像“高级八股”就跳着学。
+---
 
-### 第二遍：图解与推演
+## 8. Review、Interview 与证据入口
 
-进入：
+| 入口 | 链接 | 用途 |
+|---|---|---|
+| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
+| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
+| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
+| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
 
-> [MySQL 图解复习与自测](review/README.md)
+研究与质量证据：
 
-重点自己画：
+- [Canonical Questions](../research/questions/mysql.md)：市场真实问法与 Source Count；
+- [Verified Follow-up Chains](../research/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
+- [Frequency Ranking](../research/analysis/frequency-ranking.md)：复习热度参考；
+- [Curriculum Granularity Audit](../roadmap/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
+- [Content Depth Audit](../roadmap/content-depth-audit.md)：完成与深度验收口径。
 
-- B+Tree / 回表；
-- Composite Index Range；
-- ReadView；
-- Next-Key Lock；
-- Redo / Binlog；
-- Replication；
-- Sharding；
-- CDC。
+---
 
-### 第三遍：面试化
+## 9. 推荐学习方式
 
-- [高频面试题](interview/高频面试题.md)
-- [面试易错点](interview/面试易错点.md)
-- [面试前速查表](interview/面试前速查表.md)
+1. **第一遍：建立因果链。** 按 `docs/01 → 23` 连续阅读，不按高频题跳章。
+2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
+3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
+4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
 
-正确顺序始终是：
+---
+
+## 10. 完成状态
 
 ```text
-先理解
-→ 再口述
-→ 再承受追问
+docs/      ✅ 01–23 连续
+review/    ✅
+interview/ ✅
+Canonical Coverage ✅
+Content Depth       ✅
 ```
 
-不是先背 30 秒答案。
-
----
-
-## 7. 每章统一写法
-
-```text
-先讲人话
-→ 准确定义
-→ SQL / 示例
-→ 数据结构 / 执行路径
-→ 对比
-→ 为什么
-→ Failure Case
-→ AI 应用场景
-→ 面试怎么答
-→ 易错点
-→ 继续追问
-→ 折叠自测
-```
-
-常用标记：
-
-- 💡 新手理解
-- 🧠 为什么
-- ⚠️ 面试易错点
-- 🎯 面试怎么答
-- 🔍 继续追问
-
----
-
-## 8. 一条贯穿全书的业务
-
-核心示例：
-
-```sql
-CREATE TABLE agent_runs (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id BIGINT NOT NULL,
-    tenant_id BIGINT NOT NULL,
-    status VARCHAR(32) NOT NULL,
-    model_name VARCHAR(64) NOT NULL,
-    token_cost INT NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
-    INDEX idx_tenant_user_created (tenant_id, user_id, created_at),
-    INDEX idx_status_created (status, created_at)
-) ENGINE=InnoDB;
-```
-
-一路追问：
-
-```text
-为什么这样建主键？
-为什么这样设计联合索引？
-回表发生在哪里？
-OFFSET 100000 为什么慢？
-两个 Worker 抢同一个 Run 怎么办？
-RR / MVCC / Lock 会发生什么？
-COMMIT Crash 怎么恢复？
-Replica 延迟怎么办？
-十亿行后是否真的需要 Sharding？
-Binlog / CDC 怎么更新下游？
-Agent Run / Step / Tool Event 应怎样建模？
-Redis Cache 和 MySQL 如何保持可控一致？
-```
-
-同一业务贯穿 23 章，帮助形成长期因果记忆。
-
----
-
-## 9. 与其它一级模块的边界
-
-| 问题 | Primary Module |
-|---|---|
-| InnoDB 索引、事务、MVCC、锁、日志 | MySQL |
-| MySQL + Redis 双写最终一致性 | AI Backend Engineering |
-| Redis Distributed Lock | Redis |
-| Cache 穿透 / 击穿 / 雪崩 | Redis |
-| Agent Checkpoint / Resume | Agent Harness / Runtime |
-| 大规模可靠任务 / Backpressure | AI Backend Engineering / System Design |
-| HNSW / IVF / Vector Index | Vector DB |
-| RAG Retrieval / Rerank / Eval | RAG |
-
-第 23 章只是 MySQL 学习结束时的“跨系统边界桥梁”，不会把 Backend 体系复制进 MySQL。
-
----
-
-## 10. 研究证据入口
-
-- [`../research/questions/mysql.md`](../research/questions/mysql.md)：26 道 MySQL Canonical；
-- [`../research/analysis/curriculum-evidence-matrix.md`](../research/analysis/curriculum-evidence-matrix.md)：Topic 频率与深度；
-- [`../research/analysis/follow-up-chains.md`](../research/analysis/follow-up-chains.md)：回到原始 Batch 核验的追问链；
-- [`../research/analysis/frequency-ranking.md`](../research/analysis/frequency-ranking.md)：全局市场热度。
-
-正式知识解释以官方 / 权威资料为事实基线；**HUMAN-A 只负责回答“市场在问什么、会追多深”。**
-
----
-
-## 11. 当前状态
-
-```text
-MySQL docs 01–23            ✅
-章节折叠自测                 ✅
-Review 总入口与图解          ✅
-高频面试题                   ✅
-面试易错点                   ✅
-面试前速查                   ✅
-```
-
-MySQL 第一版系统教材主体已经完成。
-
----
-
-## 12. 下一环
-
-下一模块：**Redis**。
-
-仍然采用完全相同的原则：
-
-> **从数据结构与 Runtime 原理开始，从 0→1 建体系；面经只校准重点，不决定知识骨架。**
+下一环：[Redis](../redis/README.md)。

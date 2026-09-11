@@ -713,11 +713,13 @@ def build() -> None:
     # Concise summary generated only from repository-derived statistics.
     top20 = frequency_sorted[:20]
     summary_lines = [
-        "# Phase 2B Market Analysis Summary",
+        "# Research Analysis｜Phase 2B Market Analysis",
+        "",
+        "[← Research 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../questions/README.md)",
+        "",
+        "> **状态：✅ Frozen Analysis。** 自动统计层只描述冻结 HUMAN-A 市场数据，不承担课程知识补全，也不维护易过期的 Curriculum 下一步状态。",
         "",
         "更新日期：2026-09-11",
-        "",
-        "> 自动统计层。这里不做课程知识补全，只描述冻结真人面经数据本身。",
         "",
         "## Baseline",
         "",
@@ -748,7 +750,7 @@ def build() -> None:
         )
     summary_lines += [
         "",
-        "下一步人工研究层：基于 `cooccurrence.md` 回到原始 Batch 核验真正的 Follow-up Chain，并将 `curriculum-evidence-matrix.md` 与最新 `roadmap/knowledge-map.md` 对照，形成 Knowledge Gap Analysis。",
+        "Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。",
     ]
     (ANALYSIS_DIR / "README.md").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
 

@@ -1,120 +1,33 @@
-# Canonical Question 十板块 Ownership Index
+# Canonical Ownership & Curriculum Module Index
 
-更新日期：2026-09-11
+[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Progress](progress.md)
 
-> **Repository-first：** 本文件与 `README.md`、`schema.md`、`progress.md`、各模块最新文件共同构成当前正式口径；历史聊天总结或旧分类不能覆盖这里的最新状态。
+> Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。
 
-## 1. 正式十板块与 Phase 2B Ownership
+| # | Module | Canonical File | ACTIVE | Curriculum | Curriculum Entry | Status |
+|---:|---|---|---:|---:|---|---|
+| 01 | Python Foundation | [python.md](python.md) | 15 | 13 | [README](../../python/README.md) | ✅ |
+| 02 | FastAPI | [fastapi.md](fastapi.md) | 4 | 16 | [README](../../fastapi/README.md) | ✅ |
+| 03 | AI Backend Engineering | [ai-backend-engineering.md](ai-backend-engineering.md) | 39 | 22 | [README](../../backend-engineering/README.md) | ✅ |
+| 04 | MySQL | [mysql.md](mysql.md) | 26 | 23 | [README](../../mysql/README.md) | ✅ |
+| 05 | Redis | [redis.md](redis.md) | 19 | 24 | [README](../../redis/README.md) | ✅ |
+| 06 | Vector Database | [vector-db.md](vector-db.md) | 12 | 16 | [README](../../vector-db/README.md) | ✅ |
+| 07 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | 14 | [README](../../llm-foundation/README.md) | ✅ |
+| 08 | RAG | [rag.md](rag.md) | 29 | 14 | [README](../../rag/README.md) | ✅ |
+| 09 | Agent Harness / Runtime | [agent-harness.md](agent-harness.md) | 44 | 23 | [README](../../agent-harness/README.md) | ✅ |
+| 10 | System Design | [system-design.md](system-design.md) | 24 | 19 | [README](../../system-design/README.md) | ✅ |
 
-| 顺序 | 一级板块 | 文件 | ACTIVE | MOVED | 当前版本 |
-|---:|---|---|---:|---:|---|
-| 1 | Python | `python.md` | 15 | 0 | v2 |
-| 2 | FastAPI | `fastapi.md` | 4 | 1 | v2 |
-| 3 | AI Backend Engineering | `ai-backend-engineering.md` | 39 | 0 | v3 |
-| 4 | MySQL | `mysql.md` | 26 | 2 | v3 |
-| 5 | Redis | `redis.md` | 19 | 5 | v2 |
-| 6 | Vector DB | `vector-db.md` | 12 | 11 | v3 |
-| 7 | LLM Foundation（应用工程深度） | `llm-foundation.md` | 23 | 0 | v3 |
-| 8 | RAG | `rag.md` | 29 | 1 | v3 |
-| 9 | Agent Harness / Runtime | `agent-harness.md` | 44 | 4 | v4 |
-| 10 | System Design | `system-design.md` | 24 | 0 | v2 |
-|  | **合计** |  | **235** | **24** |  |
+**ACTIVE total = 235. Legacy MOVED = 24.**
 
-`235` 是正式 Primary-owned ACTIVE Canonical 数量。
+## 主要 Ownership 边界
 
-> **Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。
-> **教材深度已独立验收。** Python / FastAPI / AI Backend Engineering / Redis / Vector DB / LLM Foundation / RAG / System Design 的结果见 `../../roadmap/content-depth-audit.md`，不会以文件数量或字数替代人工质量判断。
-> **Foundation 实际完成度已单独核实。** 见 `../../roadmap/foundation-status-audit.md`。
-
----
-
-## 2. 主要跨模块迁移
-
-- FastAPI async runtime 本体 → Python；
-- MySQL / Redis 数据分层与 DB+Cache 一致性 → AI Backend Engineering；
-- Dense/Sparse、Hybrid、RRF、Rerank Pipeline、Top-K、Retrieval Eval → RAG；
+- FastAPI async Runtime 本体 → Python；
+- DB + Cache 一致性 / 通用 Rate Limit / Retry / MQ → AI Backend Engineering；
+- Dense / Sparse / Hybrid / RRF / Rerank / Retrieval Eval → RAG；
 - Embedding / Reranker 模型内部原理 → LLM Foundation；
-- Code RAG / Repo Search → Agent Harness Repository Understanding；
-- SSE / WebSocket transport、通用 Concurrency / Backpressure → AI Backend；
-- Agent Demo → Multi-instance Production Scale → System Design。
+- Agent Tool / Context / Memory / Checkpoint → Agent Harness；
+- 端到端组合与 Scenario Trade-off → System Design。
 
----
+## 研究事实不随教材重组改变
 
-## 3. Phase 2B Coverage Gap 新增 Canonical
-
-| QID | Primary Module | Topic | Source Count |
-|---|---|---|---:|
-| `LLM-023` | LLM Foundation | Prompt Engineering | 30 |
-| `AGENT-044` | Agent Harness | Prompt Injection / Untrusted Context Security | 8 |
-| `AGENT-045` | Agent Harness | Intent Recognition / Routing | 11 |
-| `AGENT-046` | Agent Harness | A2A / Agent Communication Protocol | 6 |
-| `AGENT-047` | Agent Harness | Agent Framework Selection | 27 |
-| `AGENT-048` | Agent Harness | AI-assisted Development Workflow | 37 |
-
-`S271` 为唯一 `VALID-UNMAPPED`。
-
----
-
-## 4. Phase 2B 验证状态
-
-```text
-Frozen HUMAN-A              279 / 279
-ACTIVE Canonical            235 / 235
-Mapped to >=1 Canonical     278
-VALID-UNMAPPED                1
-Unexpected uncovered          0
-Evidence outside baseline     0
-Source Count mismatch         0
-```
-
----
-
-## 5. Phase 3 Curriculum Build
-
-固定原则：
-
-> **初学者 0→1 的知识依赖决定课程主干；真人面经只校准复习权重、真实问法和追问深度。研究 / Capability / 教材文件使用不同粒度。**
-
-当前教材结构：
-
-```text
-Python ✅ 13 blocks；15 Canonical Coverage / Depth PASS
-FastAPI ✅ 16 blocks；4 Canonical Coverage / Depth PASS
-AI Backend Engineering ✅ 22 blocks；39 Canonical Coverage / Depth PASS
-MySQL ✅ 23 blocks；Granularity PASS
-Redis ✅ 24 blocks；27→24 COMPLETE
-Vector DB ✅ 16 blocks；23→16 COMPLETE
-LLM Foundation ✅ 14 blocks；29→14 COMPLETE
-RAG ✅ 14 blocks；34→14 COMPLETE
-Agent Harness / Runtime ✅ 23 blocks；47→23 COMPLETE + depth validated
-System Design ✅ 19 blocks；24 Canonical → 19 curriculum blocks COMPLETE
-```
-
-Python / FastAPI / AI Backend Engineering 已全部完成 current-standard Curriculum / Coverage / Depth 验收；Foundation ✅ COMPLETE。
-
-### 为什么教材文件数小于 Canonical 数量
-
-```text
-Agent Canonical = 44
-Agent 教材 = 23 blocks
-
-RAG Canonical = 29
-RAG 教材 = 14 blocks
-```
-
-多个可独立追问能力可以属于同一个认知闭环，教材章节不应机械跟随题目数量。
-
-### Agent Harness 的证据输入
-
-```text
-44 HUMAN-A Agent Canonical
-+ Verified Follow-up Chains
-+ Claude Code / Codex pinned source snapshots
-+ official Agent / Harness engineering articles
-+ MCP / A2A specifications
-+ primary papers
-```
-
-Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
-
-十个一级模块的第一版正式教材现已全部完成；后续进入全仓库最终验收、面试训练与持续维护。学习顺序仍保持既定十板块顺序。
+HUMAN-A、Source Count、Primary Ownership、Verified Follow-up Chain 与 Frequency Ranking 均保持 Frozen Research 层独立维护。

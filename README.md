@@ -1,200 +1,158 @@
 # AI Application Interview Handbook
 
-> 面向 **AI 应用开发 / AI Agent 开发** 求职的一套系统化知识体系、工程手册与真人面经验收系统。
+> 面向 **AI Application / AI Agent Engineer** 求职的一套 beginner-first 系统教材、真人面经研究库与面试训练体系。
 
-这不是“按面试题拼起来的八股仓库”。课程主干按初学者 0→1 的知识依赖建立，真人面经只校准市场热度、真实问法、追问深度以及 Failure / Scale / Evaluation 强度。
+> **当前状态：✅ 十个正式一级模块第一版教材全部完成** · **Phase 3 Curriculum Build ✅**  
+> **研究基线：279 个 HUMAN-A 招聘流程（S001–S279，Frozen）** · **235 ACTIVE Canonical**
+
+## 快速入口
+
+[十板块知识地图](roadmap/knowledge-map.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
+
+---
+
+## 1. 这是什么项目
+
+它不是“按面试题拼起来的八股仓库”。项目把三类信息严格分层：
 
 ```text
-Python
-  ↓
-FastAPI
-  ↓
-AI Backend Engineering
-  ↓
-MySQL
-  ↓
-Redis
-  ↓
-Vector DB
-  ↓
-LLM Foundation（应用工程深度）
-  ↓
-RAG
-  ↓
-Agent Harness / Runtime
-  ↓
-System Design
+完整知识体系
+→ 决定初学者 0→1 的课程主干
+
+HUMAN-A 真人面经
+→ 校准市场热度、真实问法、追问深度、Failure / Scale / Evaluation 强度
+
+官方文档 / 规范 / 论文 / 成熟源码
+→ 校准技术事实与 Production 工程边界
 ```
 
-## 核心原则
+核心原则：**知识体系决定先学什么；真人面经决定哪些地方必须学深，但不能反过来打乱课程演进。**
 
-### 1. 知识体系决定主干，真人面经校准重点
+---
 
-不会因为某个知识点真人面经更高频，就打乱模块本身的主要演进顺序。
+## 2. 十个正式一级模块
 
-### 2. 研究粒度、能力粒度、教材粒度必须分开
+| # | 一级模块 | 层级 | 一句话职责 | 教材 | Canonical | 状态 |
+|---:|---|---|---|---:|---:|---|
+| 01 | [Python Foundation](python/README.md) | Foundation | 建立 AI Application / Agent Engineer 所需的 Python 语言、对象模型、结构化数据与并发 Runtime 基础。 | 13 | 15 | ✅ |
+| 02 | [FastAPI](fastapi/README.md) | Foundation | 把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。 | 16 | 4 | ✅ |
+| 03 | [AI Backend Engineering](backend-engineering/README.md) | Foundation | 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。 | 22 | 39 | ✅ |
+| 04 | [MySQL](mysql/README.md) | Data | 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。 | 23 | 26 | ✅ |
+| 05 | [Redis](redis/README.md) | Data | 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。 | 24 | 19 | ✅ |
+| 06 | [Vector Database](vector-db/README.md) | Data | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 | 16 | 12 | ✅ |
+| 07 | [LLM Foundation（应用工程深度）](llm-foundation/README.md) | Model Foundation | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 | 14 | 23 | ✅ |
+| 08 | [RAG](rag/README.md) | AI Application | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 | 14 | 29 | ✅ |
+| 09 | [Agent Harness / Runtime](agent-harness/README.md) | Agent Runtime | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 | 23 | 44 | ✅ |
+| 10 | [System Design](system-design/README.md) | Integration | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 | 19 | 24 | ✅ |
+
+### 正式学习顺序
+
+[Python Foundation](python/README.md) → [FastAPI](fastapi/README.md) → [AI Backend Engineering](backend-engineering/README.md) → [MySQL](mysql/README.md) → [Redis](redis/README.md) → [Vector Database](vector-db/README.md) → [LLM Foundation（应用工程深度）](llm-foundation/README.md) → [RAG](rag/README.md) → [Agent Harness / Runtime](agent-harness/README.md) → [System Design](system-design/README.md)
+
+所有模块标题和名称都可以直接点击进入对应 README。
+
+---
+
+## 3. 每个模块现在都使用同一套结构
+
+```text
+README.md
+├─ 模块职责 / 在十板块中的位置
+├─ beginner-first 正式主线
+├─ 正式章节目录
+├─ HUMAN-A 如何影响复习深度
+├─ 模块边界
+├─ Review / Interview / Evidence 入口
+└─ 完成状态与上一环 / 下一环导航
+
+docs/
+└─ 系统正文
+
+review/
+└─ 第二遍总图与综合自测
+
+interview/
+├─ 高频面试题
+├─ 面试易错点
+└─ 面试前速查表
+```
+
+Python 额外保留 Coding 小题；Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
+
+---
+
+## 4. 为什么教材文件数和 Canonical 数不一样
 
 ```text
 HUMAN-A / Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 可独立学习、画图、解释 Failure / Trade-off 的知识小板块
-Section = 参数 / 变体 / Failure Case / 追问
+Capability Primitive          = 更细的工程机制
+教材 Markdown                 = 一个完整认知闭环
+Section                       = 参数 / 变体 / Failure / 追问
 ```
 
-因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
-Python / FastAPI / AI Backend Engineering / Redis / Vector DB / LLM Foundation / RAG / System Design 的正文深度已完成 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
-Foundation 的真实完成度见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。Python / FastAPI / AI Backend Engineering 已全部达到正式教材 + Coverage / Depth 验收标准，**Foundation ✅ 完成**。
+因此不会默认 `1 Canonical = 1 Markdown`。当前 10 个模块共 **184 个正文知识块**，但研究层仍保持 **235 道 ACTIVE Canonical**。
 
-### 3. 从 Demo 能力走到 Production 能力
-
-不仅会“调 API”，还要能解释 Timeout、Cancellation、Idempotency、Context Compaction、Cache Consistency、RAG Bad Case、Agent Resume / Permission / Evaluation 等系统问题。
-
-### 4. Agent Harness 使用多层证据
-
-```text
-44 道 HUMAN-A Agent Canonical
-+ Verified Follow-up Chains
-+ Claude Code 固定源码快照
-+ OpenAI Codex 固定源码快照
-+ Anthropic / OpenAI 官方工程资料
-+ MCP / A2A 官方规范
-+ ReAct / SWE-bench 等原始论文
-```
-
-外部证据用于补齐成熟 Runtime 的知识边界，**不能改变 HUMAN-A Source Count**。
+详见：[Curriculum Granularity Audit](roadmap/curriculum-granularity-audit.md)。
 
 ---
 
-# 当前研究基线
+## 5. 真人面经证据体系
+
+正式市场证据只允许来自 **HUMAN-A：候选人本人第一人称、高信息密度、可核验的真实招聘流程**。
 
 ```text
-HUMAN-A：S001–S279（Frozen）
-正式 Batch：26
-ACTIVE Canonical：235
-Mapped Sources：278
-VALID-UNMAPPED：1（S271）
-主动采集：已暂停
+Frozen HUMAN-A              279
+ACTIVE Canonical            235
+Mapped Sources              278
+VALID-UNMAPPED                1（S271）
+Unexpected uncovered          0
+Source Count mismatch         0
 ```
 
-Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Depth / Question Type、Co-occurrence、Verified Follow-up Chains、Curriculum Evidence Matrix 与 Knowledge Gap Analysis。
+源码、官方文章、规范和论文可以帮助我们补齐知识边界，但**不能创建面试频率，也不能提高 Source Count**。
+
+入口：[Research Home](research/README.md) · [Market Analysis](research/analysis/README.md) · [Verified Follow-up Chains](research/analysis/follow-up-chains.md)
 
 ---
 
-# 当前教材结构
+## 6. 统一学习方法
 
-## Foundation
+1. **正文第一遍：** 按模块和章节顺序建立完整因果链。
+2. **Review 第二遍：** 从空白纸重新画机制 / 数据流 / Failure，而不是重新抄正文。
+3. **Interview 第三遍：** 练真实问法、30 秒回答、深挖与易错边界。
+4. **项目复盘：** 把自己的项目沿 `为什么 → 机制 → Trade-off → Failure → Scale → Verification` 重新讲一遍。
 
-- [Python Foundation](python/README.md) ✅ **13 个知识小板块**；v1 → current-standard Canonical Coverage / Depth Remediation 已完成
-- [FastAPI](fastapi/README.md) ✅ **16 个知识小板块**；4 道 Canonical Coverage + 当前官方机制校准 + Depth PASS
-- [AI Backend Engineering](backend-engineering/README.md) ✅ **22 个知识小板块**；39 道 Canonical Coverage + 权威工程资料校准 + Depth PASS
+正式教材统一追求：
 
-## Data
-
-- [MySQL](mysql/README.md) ✅ **23 个知识小板块**；Granularity Audit PASS
-- [Redis](redis/README.md) ✅ **24 个知识小板块**；已完成 27→24 颗粒度整改
-- [Vector Database](vector-db/README.md) ✅ **16 个知识小板块**；已完成 23→16 颗粒度整改
-
-## Model Foundation
-
-- [LLM Foundation（应用工程深度）](llm-foundation/README.md) ✅ **14 个知识小板块**；已完成 29→14 颗粒度整改
-
-## AI Application
-
-- [RAG](rag/README.md) ✅ **14 个知识小板块**；已完成 34→14 颗粒度整改
-
-## Agent Runtime
-
-- [Agent Harness / Runtime](agent-harness/README.md) ✅ **23 个知识小板块**；已完成 47→23 结构整改和正文深度验收
-
-Agent 正式主线：
-
-```text
-Agent / Workflow / Harness
-→ Loop / Run / Turn / Step / Event
-→ Tool Runtime
-→ Planning / Goal / Stop / Budget
-→ Context Assembly / Compaction
-→ Memory / State / Long-running Reliability
-→ Permission / Sandbox / Injection / Containment
-→ MCP / Skills / Hooks / Routing
-→ Multi-Agent / A2A / Workspace
-→ Trace / Eval / Coding Agent
-→ Production Runtime
-→ Framework Mapping / Build-vs-Buy
-```
-
-固定源码快照：
-
-- Claude Code：`58231dcce408f805c645cfbc352d2876b517223b`
-- OpenAI Codex：`fc948f8c473e5d11e780ffcf1fd7f812a2020932`
-
-证据入口：[`research/agent-sources/README.md`](research/agent-sources/README.md)
-
-## Integration
-
-- [System Design](system-design/README.md) ✅ **19 个知识小板块**；24 道 L4 Canonical 已映射到通用设计方法 + 7 类综合真人场景，Review / Interview 已完成。
+> **定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
 
 ---
 
-# 为什么不同模块章节数不同
+## 7. 项目质量与维护入口
 
-章节数不是优化目标：
-
-```text
-Python 13
-FastAPI 16
-AI Backend Engineering 22
-MySQL 23
-Redis 24
-Vector DB 16
-LLM Foundation 14
-RAG 14
-Agent Harness 23
-System Design 19
-```
-
-这些数字来自各模块自己的认知闭环，而不是为了统一格式。MySQL 的 B+Tree、MVCC、Lock、Replication、Sharding 本来就有独立数据结构和 Failure Model；RAG 与 LLM 原先则明显把机制切得过细，因此大幅收敛。
-
----
-
-# 推荐学习顺序
-
-```text
-Python
-→ FastAPI
-→ AI Backend Engineering
-→ MySQL
-→ Redis
-→ Vector DB
-→ LLM Foundation
-→ RAG
-→ Agent Harness / Runtime
-→ System Design
-```
-
-正式教材统一遵循：
-
-> **先讲人话 → 准确定义 → 代码 / 数学 / 图解 → 原理 → 对比 → Failure Case → AI 场景 → 易错点 → 面试回答 → 深入追问 → 真人面经 → 折叠自测**
-
-最终目标：**定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
-
----
-
-# 当前 Phase 3 状态
-
-**Phase 3 十板块第一版 Curriculum Build：✅ 完成。**
-
-
-| 模块 | 状态 |
+| 文档 | 作用 |
 |---|---|
-| Python | ✅ 13-block；15 Canonical Coverage / Depth Remediation 完成 |
-| FastAPI | ✅ 16-block；4 Canonical Coverage / Depth PASS |
-| AI Backend Engineering | ✅ 22-block；39 Canonical Coverage / Depth PASS |
-| MySQL | ✅ 23-block；Granularity PASS |
-| Redis | ✅ 24-block；整改完成 |
-| Vector DB | ✅ 16-block；整改完成 |
-| LLM Foundation | ✅ 14-block；整改完成 |
-| RAG | ✅ 14-block；整改完成 |
-| Agent Harness / Runtime | ✅ 23-block；结构整改 + 深度验收完成 |
-| System Design | ✅ 19-block；正文 + Review + Interview 完成 |
-| 真人面经研究 | ✅ Frozen Phase 2B 完成 |
+| [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
+| [Documentation Style Guide](roadmap/documentation-style-guide.md) | README / 描述文件统一规范 |
+| [Granularity Audit](roadmap/curriculum-granularity-audit.md) | 研究粒度与教材粒度为什么分开 |
+| [Content Depth Audit](roadmap/content-depth-audit.md) | 正文深度与完成状态 |
+| [Foundation Status](roadmap/foundation-status-audit.md) | Python / FastAPI / AIBE 完成状态 |
+| [Progress](research/questions/progress.md) | Phase 1–3 当前正式状态 |
+| [Module Index](research/questions/module-index.md) | Canonical Ownership ↔ Curriculum 映射 |
+
+---
+
+## 8. 仓库目录
+
+```text
+python/              FastAPI/             backend-engineering/
+mysql/               redis/               vector-db/
+llm-foundation/      rag/                 agent-harness/
+system-design/
+
+research/            # HUMAN-A / Canonical / Analysis / Source Index
+roadmap/             # Knowledge Map / Audits / Documentation Rules
+tools/               # Research validation / reproducible analysis
+```
+
+> 仓库最新 README、Knowledge Map、Progress 与 Module Index 是当前状态的正式来源；历史聊天和旧摘要不能覆盖仓库当前描述。
