@@ -1,8 +1,10 @@
 # RAG｜AI 应用开发秋招系统手册
 
-> **当前状态：✅ 第一版 0→1 系统教材已完成。**
+> **当前状态：🟠 第一版内容已完成，进入 Major Granularity Remediation。**
 >
 > RAG 是这套 Handbook 的第 8 个正式一级模块。目标不是“会 LangChain Retriever + Vector DB”，而是从 0 建立一条可验证、可维护、可上线的 Retrieval-Augmented Generation 因果链：**为什么需要 RAG → 知识怎样进入系统 → 文档怎样解析 / 切分 → Query 怎样被理解 → 多路 Retrieval 怎样召回 → Fusion / Rerank 怎样收窄 → Evidence 怎样进入 Context → Answer 怎样 Ground → 质量怎样测 → Bad Case 怎样归因 → 知识怎样持续更新和安全运营。**
+>
+> 当前 34 章的**知识顺序是正确的**，但文件边界明显接近 Canonical / mechanism 粒度：Chunk、Query、Retrieval、Evaluation 等连续链路被拆成过多 2–5KB 小文件。后续会在不删知识点的前提下重组为约 **14–16 个知识小板块**。这不会改变 29 道 RAG Canonical、88 个 HUMAN-A 覆盖来源或任何 Source Count。完整审计见 [`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
 
 ## 1. 固定课程原则
 
@@ -184,7 +186,9 @@ Incremental Update
 
 ---
 
-## 5. 完整 34 章
+## 5. 当前 34 章（内容完成，待 Major Granularity Remediation）
+
+> 当前文件仍可按 01→34 正常学习；后续 Merge 只把连续机制组合成更完整的小板块，不改变因果顺序。
 
 ### Part A｜从“为什么 RAG”到可靠 Corpus
 
@@ -243,7 +247,7 @@ Incremental Update
 ## 6. 当前配套
 
 ```text
-34 章系统正文
+34 章正文内容
 + 每章折叠自测
 + review/README.md：6 张总图 + 20 个综合自测
 + interview/高频面试题.md：40 道
@@ -251,13 +255,7 @@ Incremental Update
 + interview/面试前速查表.md
 ```
 
-推荐顺序仍然是：
-
-```text
-严格按 01 → 34 学正文
-→ Review 自己推演
-→ Interview 做表达训练
-```
+这里同样体现不同粒度：Interview 可以保留 40 道独立问法，而教材文件最终会少于这些问题数量。
 
 ---
 
@@ -285,7 +283,7 @@ Parent-child、权限、Version、Citation 和 Debug 都依赖 Retrieval Unit �
 
 ## 8. 下一环
 
-RAG 已完成，下一正式模块进入 **Agent Harness / Runtime**。
+RAG 的内容体系完成后仍进入 **Agent Harness / Runtime**。
 
 RAG 会在 Agent 中作为一种可调用能力：
 
@@ -300,9 +298,4 @@ Agent Loop
 
 RAG 负责检索与证据质量；Agent Harness 负责控制循环、Tool Runtime、Context、Memory、Checkpoint、Permission 与 Failure Recovery。
 
-Agent Harness 建设还必须额外结合：
-
-- `studyzhige-ui/claude-code-source-private`
-- `openai/codex`
-
-作为成熟 Harness / Runtime 的权威实现参考。
+RAG 粒度整改只改变“这些连续知识放进几个 Markdown”，不改变这条系统边界。
