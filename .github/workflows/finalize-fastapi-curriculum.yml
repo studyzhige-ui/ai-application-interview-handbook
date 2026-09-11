@@ -1,0 +1,34 @@
+name: Finalize FastAPI curriculum
+
+on:
+  push:
+    branches:
+      - canonicalize-questions
+    paths:
+      - tools/finalize_fastapi_curriculum.py
+      - .github/workflows/finalize-fastapi-curriculum.yml
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonicalize-questions
+          fetch-depth: 0
+      - name: Validate FastAPI and synchronize repository status
+        run: python tools/finalize_fastapi_curriculum.py
+      - name: Commit synchronized status
+        run: |
+          if git diff --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md roadmap research
+          git commit -m "docs(fastapi): finalize coverage, depth and repository status"
+          git push origin HEAD:canonicalize-questions
