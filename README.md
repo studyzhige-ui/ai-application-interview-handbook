@@ -191,26 +191,38 @@ Redis Role / Keyspace / Command
 
 高频面经中的分布式锁、缓存故障会讲到更深，但不会被提前到数据结构、Runtime、TTL、Persistence 这些必要前置之前。
 
-### Vector Database ⏳
+### [Vector Database](vector-db/README.md) ✅
 
-下一块正式系统教材。Primary 聚焦向量基础设施：
+第一版系统教材已完成：**23 章正文 + 每章折叠自测 + Review 图解总览 + 31 道面试题 + 45 个易错点 + 面试前速查。**
+
+主干继续严格按知识依赖：
 
 ```text
-Vector / Distance
-→ Exact Search vs ANN
-→ HNSW / IVF
-→ Metadata Filter
-→ Index Trade-off / Lifecycle
-→ Product Selection
+Vector / Dimension / Normalization
+→ Cosine / Dot / L2
+→ Top-K Exact Search
+→ ANN
+→ HNSW / IVF / Quantization
+→ Index Selection
+→ Collection / Schema / Metadata
+→ Metadata Filter / Tenant Isolation
+→ Insert / Update / Delete / Compaction
+→ Re-embedding / Rebuild / Version
+→ Shard / Replica
+→ Capacity / Troubleshooting
+→ Product / Architecture Selection
+→ Graph DB / RAG Boundary
 ```
 
-Dense / Sparse、Hybrid、RRF、Rerank、Top-K 与 Retrieval Evaluation 统一归 RAG 主线。
+Primary 只负责 Vector Infrastructure。Dense / Sparse、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation 统一留在 RAG。
 
 ---
 
 ## Model Foundation
 
-### LLM Foundation（应用工程深度） 🆕
+### LLM Foundation（应用工程深度） ⏳
+
+下一块正式系统教材。
 
 ```text
 Tokenization
@@ -325,8 +337,8 @@ System Design
 | AI Backend Engineering | 🟡 完整课程骨架 |
 | MySQL | ✅ 第一版完整系统教材 |
 | Redis | ✅ 第一版完整系统教材 |
-| Vector DB | ⏳ 下一块正式系统教材 |
-| LLM Foundation | 🆕 已纳入一级体系 |
+| Vector DB | ✅ 第一版完整系统教材 |
+| LLM Foundation | ⏳ 下一块正式系统教材 |
 | RAG | ⏳ 待建设 |
 | Agent Harness / Runtime | 🔬 源码 + 面经校准中 |
 | System Design | ⏳ 随前置模块汇总 |
