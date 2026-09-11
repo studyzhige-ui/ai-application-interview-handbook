@@ -1,40 +1,82 @@
 # Agent Harness / Runtime｜AI 应用开发秋招系统手册
 
-> **当前状态：🚧 23 个知识小板块重组 + 深度重写中。**
+> **当前状态：✅ 第一版完整系统教材已完成。**
 >
-> 本模块不再按 Canonical Question / Runtime Primitive 一题一文件。研究层仍保留 44 道 Agent Canonical 和更细 Capability Map；教材层改为 **23 个能够独立形成认知闭环的知识小板块**。
-
-## 1. 为什么从旧 47 章重组为 23 章
-
-旧 47 章的问题不是知识点错，而是粒度错：
-
-```text
-Canonical / Capability Primitive
-        ↓  旧版几乎直接映射
-Markdown File
-```
-
-这会导致：
-
-- 一个概念刚建立背景就切文件；
-- 相邻文件反复解释同一 Runtime；
-- 参数 / failure / variant 被误当成独立知识板块；
-- 学完容易得到“47 个名词”，而不是 Agent Runtime 心智模型。
-
-现在统一为：
-
-```text
-Canonical Question        = 可独立追问的面试能力
-Capability Primitive      = Runtime 最小机制
-教材文件                  = 一个完整知识小板块
-文件内 Section            = 参数 / 变体 / Failure / 追问
-```
-
-仓库级粒度规则见：[`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
+> 旧 47 章已经按教材粒度重组为 **23 个知识小板块**，并完成正文深度验收。研究层仍保留 44 道 Agent Canonical 和更细 Runtime Capability Map；教材层按完整认知闭环组织，不再一题一文件。
 
 ---
 
-## 2. 课程证据层
+## 1. 这一模块到底学什么
+
+Agent Harness / Runtime 不是某个 Framework，也不是一段 System Prompt。
+
+它解决的是：
+
+```text
+用户给出 Goal
+→ Runtime 组装 Context / State
+→ Model 决定 Answer / Tool / Delegate
+→ Runtime 校验权限并执行
+→ Tool / Environment 返回 Observation
+→ State / Event 更新
+→ Loop / Stop / Pause / Resume
+```
+
+成熟系统还必须处理：
+
+```text
+Tool Contract / Failure
+Context Budget / Compaction
+Memory / Session / Checkpoint
+Side-effect Correctness
+Permission / Sandbox / Prompt Injection
+MCP / Skills / Hooks
+Routing / Provider Failure
+Multi-Agent / A2A / Workspace Conflict
+Trace / Evaluation
+Coding Agent Verification
+Production Deployment
+```
+
+所以这套课程的目标不是背：
+
+> `Agent = LLM + Tools`
+
+而是能从零解释一个长期运行、可恢复、可审计、可控权限的 Agent Runtime 为什么这样设计。
+
+---
+
+## 2. 为什么从旧 47 章重组为 23 章
+
+旧版的问题不是知识错误，而是教材粒度接近 Capability Primitive：
+
+```text
+Canonical Question
+≈ Runtime Primitive
+≈ Markdown File
+```
+
+容易导致：
+
+- 同一 Runtime 背景在多个文件重复；
+- 参数 / Failure / 变体被误当独立知识板块；
+- 初学者频繁切文件，难形成大块心智模型；
+- 学完记住几十个词，却不会设计完整系统。
+
+现在正式区分：
+
+```text
+Canonical Question   = 可独立追问能力
+Capability Primitive = 更细的工程机制
+教材 Markdown        = 一个完整知识小板块
+Section              = 参数 / 变体 / Failure / 深挖
+```
+
+仓库级规则：[`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
+
+---
+
+## 3. 课程证据层
 
 ```text
 Tier A  44 道 Agent HUMAN-A Canonical + Verified Follow-up Chains
@@ -43,24 +85,31 @@ Tier C  Anthropic / OpenAI 官方工程资料 + MCP / A2A 规范 + 原始论文
 Tier D  Beginner-first Runtime Curriculum
 ```
 
+只有 Tier A 决定真实市场频率；Tier B/C 用于补齐成熟 Runtime 实现和稳定工程原则，**不改变 Source Count**。
+
 研究入口：[`../research/agent-sources/README.md`](../research/agent-sources/README.md)
 
 固定源码快照：
 
 ```text
-Claude Code commit = 58231dcce408f805c645cfbc352d2876b517223b
-OpenAI Codex commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
+Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
+OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 ```
 
-**只有 Tier A 决定市场频率。Tier B/C 负责课程完整性与实现证据，不改变 Source Count。**
+重点证据：
+
+- Claude Code：`QueryEngine`、`Tool.ts`、`Task.ts`、Context / Compact / Memory / Permission / ToolResultStorage；
+- Codex：Tool Router / Executor / Output、`compact.rs`、Sandbox Policy、Hooks、Rollout Trace、Thread Instructions；
+- Anthropic：Building Effective Agents、Context Engineering、Long-running Harness、Tool Design、Agent Skills、Sandbox / Containment、Multi-Agent、Agent Evals；
+- OpenAI：Practical Guide、Agents SDK HITL / Guardrails / Tracing；
+- MCP / A2A 官方规范；
+- ReAct / SWE-bench 原始论文。
 
 ---
 
-## 3. 课程顺序原则
+## 4. 课程顺序
 
-> **知识依赖决定顺序，面经热度决定复习权重。**
-
-正确顺序：
+> **知识依赖决定顺序，真人面经热度决定复习权重。**
 
 ```text
 Agent Boundary
@@ -78,11 +127,11 @@ Agent Boundary
 → Production / Framework Mapping
 ```
 
-不会因为 Context Compaction 有 41 个真人来源，就在初学者理解 Context Assembly 之前先讲 Summary。
+例如 Context Compaction 虽然是最强真人面经信号之一，也必须先学 Context Assembly；MCP 再热门，也要先理解 Tool Runtime。
 
 ---
 
-# 4. 正式 23 个知识小板块
+# 5. 正式 23 个知识小板块
 
 ## Part A｜Agent 与 Runtime 基础
 
@@ -139,39 +188,7 @@ Agent Boundary
 
 ---
 
-## 5. 旧 47 章怎样迁移
-
-```text
-旧 01                         → 新 01
-旧 02 + 03                    → 新 02
-旧 04 + 05 + 06               → 新 03
-旧 07 + 08                    → 新 04
-旧 09 + 33                    → 新 05
-旧 10 + 11                    → 新 06
-旧 12 + 13                    → 新 07
-旧 14 + 15 + Goal Drift/Steering → 新 08
-旧 16 + 17 + 18 + Context Cache → 新 09
-旧 19 + 20                    → 新 10
-旧 21 + Memory Lifecycle/Correctness → 新 11
-旧 22 + 23 + Tenant Isolation → 新 12
-旧 24 + 25 + 26 + 27          → 新 13
-旧 28 + 29                    → 新 14
-旧 30 + 31 + 32               → 新 15
-旧 34 + 35 + 36 + Progressive Loading → 新 16
-旧 37 + 38 + Runtime Resilience → 新 17
-旧 39 + 40 + 41 + 42          → 新 18
-旧 43                         → 新 19
-旧 44 + Benchmark + Flywheel  → 新 20
-旧 45 + Repo Understanding + AI-assisted Workflow → 新 21
-旧 46                         → 新 22
-旧 47                         → 新 23
-```
-
-这个 Merge **不改变**任何 Canonical、Source Count、Primary Ownership 或 Follow-up Chain。
-
----
-
-## 6. 三个特别重要的边界
+## 6. 三个必须长期分清的边界
 
 ### Prompt / Context / Harness
 
@@ -189,80 +206,92 @@ Harness Engineering
 ### Tool / MCP / Skill / Hook
 
 ```text
-Tool   = 一次可执行能力
-MCP    = 外部能力 / Context 的标准连接协议
-Skill  = 可发现、可加载的程序性知识与资源包
-Hook   = Runtime 生命周期扩展点
+Tool  = 一次可执行能力
+MCP   = 外部能力 / Context 的标准连接协议
+Skill = 可发现、按需加载的程序性知识与资源包
+Hook  = Runtime 生命周期扩展点
 ```
 
 ### Context / Memory / State / History
 
 ```text
 Context    = 当前 Model Call 的输入视图
-Memory     = 可被未来再次取回的信息
+Memory     = 未来可再次取回的信息
 State      = Runtime 当前执行事实
-History    = 已发生事件 / Message 的记录
+History    = 已发生 Event / Message
 Checkpoint = 可恢复执行点
 ```
 
 ---
 
-## 7. 每个文件的正式验收标准
+## 7. 正文深度验收标准
 
-一个知识小板块至少应包含：
+23 个正文现在均按同一标准验收：
 
 ```text
-先讲人话
-→ 准确定义
-→ 为什么需要
-→ Runtime 图 / 状态机 / 数据流
-→ 最小实现 / 伪代码
-→ Failure Semantics
-→ Trade-off
-→ HUMAN-A 真实追问
-→ Claude Code / Codex 实现证据
-→ 官方 / 规范 / 原始论文证据
-→ AI 应用场景
-→ 30 秒回答
-→ 2–3 分钟回答
-→ 深挖追问
+为什么存在
+→ 准确定义 / Runtime Mental Model
+→ 正常执行路径
+→ State / Protocol / Data Structure
+→ Failure Timeline
+→ Recovery / Idempotency / Cancellation
+→ Security / Permission Boundary
+→ Observability / Evaluation
+→ HUMAN-A 对应
+→ Claude Code / Codex / 官方资料证据（适用时）
+→ 30 秒 / 深挖回答
+→ 易错点
 → 折叠自测
 ```
 
-完成标准不是“文件存在”，而是能独立支撑学习和面试追问。
+其中旧短稿合并形成的 08–23 已全部重写到完整教学深度；01–07 的既有深写稿也重新抽查通过。
+
+当前 `docs/` 已实际核验为 **01–23 连续，无旧 47 章碎片文件残留**。
 
 ---
 
-## 8. 当前迁移状态
+## 8. Review 与 Interview 使用不同粒度
 
-当前旧 47 章文件仍在迁移中，因此以本 README 的 **23 章目录**为目标口径。
+第二遍：[`review/README.md`](review/README.md)
 
-已经完成过深写的旧 01–18 内容不会丢失，会在 Merge 时去重并迁入对应新章；旧短稿 19–47 不再逐文件扩写。
+第三遍：
 
-迁移 checkpoint 见：[` .rewrite-in-progress.md`](.rewrite-in-progress.md)。
+- [`interview/高频面试题.md`](interview/高频面试题.md)
+- [`interview/面试易错点.md`](interview/面试易错点.md)
+- [`interview/面试前速查表.md`](interview/面试前速查表.md)
+
+这里不会为了 23 个教材文件，把 44 道 Canonical 或更细的 Interview Question 强行合并。
+
+```text
+23 curriculum blocks
+≠ 44 Agent Canonical
+≠ 更细的面试追问
+```
 
 ---
 
-## 9. 最终验收
+## 9. 学完后的最终能力
 
-学完 Agent Harness，不是会背：
-
-> Agent = LLM + Tools。
-
-而是能够从零设计并解释：
+你应该能从零设计并解释：
 
 ```text
 Run State Machine
-Tool Contract / Failure
+Tool Contract / Discovery / Failure
 Context Assembly / Compaction
 Memory / Durable State
 Checkpoint / Resume
 Side-effect Correctness
-Permission / Sandbox
-Capability Discovery
-Multi-Agent Ownership
+Permission / Approval / Sandbox
+Prompt Injection / Containment
+MCP / Skill / Hook
+Routing / Provider Failure
+Multi-Agent Ownership / A2A
 Trace / Evaluation
+Coding Agent Verification
 Production Runtime
+Framework Build-vs-Buy
 ```
 
-并能说明：**为什么这个 Runtime 决策存在、失败时怎样恢复、怎样验证它真的工作。**
+并能回答：
+
+> **为什么这个 Runtime 决策存在、正常路径怎样工作、失败窗口在哪里、怎样恢复、怎样验证它真的有效。**
