@@ -14,24 +14,15 @@ Canonical Question 只允许由 **HUMAN-A 真人高质量第一人称面经**产
 
 ```text
 Python
-  ↓
-FastAPI
-  ↓
-AI Backend Engineering
-  ↓
-MySQL
-  ↓
-Redis
-  ↓
-Vector DB
-  ↓
-LLM Foundation（应用工程深度）
-  ↓
-RAG
-  ↓
-Agent Harness / Runtime
-  ↓
-System Design
+→ FastAPI
+→ AI Backend Engineering
+→ MySQL
+→ Redis
+→ Vector DB
+→ LLM Foundation（应用工程深度）
+→ RAG
+→ Agent Harness / Runtime
+→ System Design
 ```
 
 `Coding / Debug / AI Coding` 只作为 `Question Type`，不作为一级板块。
@@ -77,50 +68,35 @@ Evidence outside baseline     0
 Source Count mismatch         0
 ```
 
-详细入口：
-
-- `schema.md`：数据规范与板块边界；
-- `module-index.md`：Ownership 与 Phase 3 状态；
-- `global-audit.md`：Global Merge / Split 决策；
-- `progress.md`：当前教材建设阶段；
-- `../analysis/`：Frequency / Coverage / Follow-up Chain / Knowledge Gap。
-
 ---
 
-## Phase 3 Curriculum Build / Granularity Remediation
+## Phase 3：Curriculum Build
 
 固定原则：
 
 > **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
 
-同时正式区分四层粒度：
+同时正式区分：
 
 ```text
-Canonical Question
-= 面试最小可独立追问单元
-
-Capability Primitive
-= 工程机制最小单元
-
-教材 Markdown
-= 一个完整知识小板块
-
-Section
-= 参数 / 变体 / Failure / 深挖追问
+Canonical Question = 面试最小可独立追问单元
+Capability Primitive = 工程机制最小单元
+教材 Markdown = 一个完整知识小板块
+Section = 参数 / 变体 / Failure / 深挖追问
 ```
 
-因此 **44 道 Agent Canonical 不等于 44 章；29 道 RAG Canonical 也不等于 29 章。** 教材粒度审计见 `../../roadmap/curriculum-granularity-audit.md`。
+因此 **44 道 Agent Canonical 不等于 44 章，29 道 RAG Canonical 也不等于 29 章。**
 
-当前状态：
+当前教材结构：
 
 ```text
-MySQL ✅ 23 章；Granularity PASS
-→ Redis 🟠 27 章内容完成；Minor Remediation
-→ Vector DB 🟠 23 章内容完成；Moderate Remediation
-→ LLM Foundation 🟠 29 章内容完成；Moderate Remediation
-→ RAG 🟠 34 章内容完成；Major Remediation
-→ Agent Harness / Runtime 🚧 47→23 已物理迁移；深度验收中
-→ System Design ⏸️ 颗粒度整改完成后启动
+MySQL ✅ 23 blocks
+Redis ✅ 24 blocks（27→24）
+Vector DB ✅ 16 blocks（23→16）
+LLM Foundation ✅ 14 blocks（29→14）
+RAG ✅ 14 blocks（34→14）
+Agent Harness / Runtime 🚧 23 blocks（47→23，结构完成；深度验收中）
+System Design ⏸️ Agent 验收后启动
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
@@ -129,7 +105,7 @@ Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程�
 
 ## Agent Harness 特殊证据规则
 
-Agent Harness 的市场证据仍只来自 Frozen HUMAN-A 44 道 Agent Canonical。
+Agent Harness 的市场证据仍只来自 Frozen HUMAN-A 的 44 道 Agent Canonical。
 
 正式教材另外使用：
 
@@ -145,8 +121,8 @@ Agent Harness 的市场证据仍只来自 Frozen HUMAN-A 44 道 Agent Canonical�
 固定源码快照：
 
 ```text
-Claude Code commit = 58231dcce408f805c645cfbc352d2876b517223b
-OpenAI Codex commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
+Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
+OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 ```
 
 课程使用原则：
@@ -159,3 +135,14 @@ HUMAN-A → 市场真实度 / 频率 / 追问
 ```
 
 源码与网上权威资料**不能**反向改变 HUMAN-A 面试频率，也不能因为源码中存在一个独立 class / primitive 就自动拆成一章。
+
+---
+
+## 主要入口
+
+- `schema.md`：Canonical 数据规范；
+- `module-index.md`：Ownership 与 Phase 3 状态；
+- `global-audit.md`：Global Merge / Split 决策；
+- `progress.md`：当前教材建设阶段；
+- `../analysis/`：Frequency / Coverage / Follow-up Chain / Knowledge Gap；
+- `../../roadmap/curriculum-granularity-audit.md`：教材粒度整改结果。
