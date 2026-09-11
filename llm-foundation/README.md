@@ -1,35 +1,36 @@
 # LLM Foundation（应用工程深度）｜AI 应用开发秋招系统手册
 
-> LLM Foundation 是这套 Handbook 的第 7 个正式一级模块。
+> **当前状态：✅ 第一版 0→1 系统教材已完成。**
 >
-> 它不是“训练算法岗 Transformer 八股大全”，也不是“会调一个 Chat API 就算懂 LLM”。目标是从 AI Application Engineer 的视角建立一条完整因果链：**文本怎样变成 Token → Token 怎样通过 Transformer 建模 → 模型怎样逐 Token 生成 → Context / KV Cache / Serving 为什么决定延迟与成本 → Model / Embedding / Reranker 怎样选 → Prompt / Hallucination 怎样治理 → 什么时候才值得 Fine-tuning。**
+> 已完成：**29 章正文 + 每章折叠自测 + Review 图解总览 + 30 道面试题 + 55 个易错点 + 面试前速查表。**
+>
+> LLM Foundation 是这套 Handbook 的第 7 个正式一级模块。目标不是训练算法岗 Transformer 八股大全，而是从 AI Application Engineer 的视角理解：**文本怎样变成 Token → Transformer 怎样计算 → 模型怎样逐 Token 生成 → Context / KV Cache / Serving 为什么决定延迟与成本 → Model / Embedding / Reranker 怎样选 → Prompt / Hallucination 怎样治理 → 什么时候才值得 Fine-tuning。**
 
-## 1. 最重要的课程原则
-
-继续固定遵守：
+## 1. 固定课程原则
 
 > **知识体系演进顺序优先，真实面经只用于调整复习权重、补充真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
-冻结 `S001–S279` HUMAN-A 中，Prompt Engineering 有 30 个独立来源，是本模块最强市场信号；但课程不会第一章就教“Prompt 模板”。
-
-因为你必须先知道：
+冻结 `S001–S279` HUMAN-A 中，Prompt Engineering 有 30 个独立来源，是本模块最强市场信号；但课程仍然先从 Token / Context / Transformer 建立前置因果链。
 
 ```text
-Token 是什么
-→ Context Window 为什么有限
-→ Transformer 怎样处理 Token
-→ Attention / QKV 在做什么
-→ 模型怎样自回归生成
-→ Sampling 怎样改变输出
-→ Context / KV Cache / Serving 怎样改变成本和延迟
-→ 才能真正理解 Prompt 为什么有效、为什么也会失效
+Token
+→ Context Window
+→ Transformer
+→ Attention / QKV
+→ Autoregressive Generation
+→ Sampling
+→ KV Cache / Serving
+→ Model Selection
+→ Embedding / Reranker
+→ Prompt / Factuality
+→ Fine-tuning Boundary
 ```
 
-面经决定 Prompt、Model Selection、Hallucination 这些章节需要更强的工程与 Evaluation 深度，但不决定教材顺序。
+面经决定某些章节讲到 L3 / L4，却不决定教材顺序。
 
 ---
 
-## 2. 本模块在整套体系中的边界
+## 2. 模块边界
 
 本模块负责：
 
@@ -39,10 +40,10 @@ Context Window / Long Context Limitation
 Transformer / Attention / FFN / RoPE
 Autoregressive Generation
 Sampling / Decoding
-KV Cache
-Prefill / Decode
+KV Cache / Prefill / Decode
 Batching / Serving Engine
 Inference Latency / Throughput / Cost
+Precision / Quantization
 Model API / Provider Boundary
 Model Selection
 Embedding Model Foundation
@@ -53,8 +54,6 @@ Hallucination / Factuality Boundary
 Fine-tuning / SFT / LoRA / Preference Optimization / Distillation Boundary
 ```
 
-明确不抢这些知识模型：
-
 | 问题 | Primary Module |
 |---|---|
 | Vector Index / HNSW / IVF / Metadata Filter | Vector DB |
@@ -63,17 +62,17 @@ Fine-tuning / SFT / LoRA / Preference Optimization / Distillation Boundary
 | Agent Context Assembly / Compaction / Memory | Agent Harness / Runtime |
 | Tool Calling Protocol / MCP / Permission | Agent Harness / Runtime |
 | LLM Provider Timeout / Retry / Circuit Breaker | AI Backend Engineering |
-| 完整 AI 系统中的模型路由与跨组件权衡 | System Design / Agent Harness |
+| 完整 AI 系统中的跨组件模型路由与权衡 | System Design / Agent Harness |
 
 一句话：
 
-> **LLM Foundation 解释“模型为什么这样工作和这样表现”；RAG / Agent / Backend 决定“怎样把模型可靠地放进系统”。**
+> **LLM Foundation 解释“模型为什么这样工作和这样表现”；RAG / Agent / Backend 负责“怎样把模型可靠地放进系统”。**
 
 ---
 
-## 3. 真人面经只校准重点
+## 3. 真人面经信号
 
-冻结研究中本模块当前有 **23 道 Primary Canonical、82 个独立 HUMAN-A 来源**覆盖。
+本模块有 **23 道 Primary Canonical、82 个独立 HUMAN-A 来源**覆盖。
 
 | Topic | HUMAN-A Sources | 深度 |
 |---|---:|---:|
@@ -96,115 +95,38 @@ Fine-tuning / SFT / LoRA / Preference Optimization / Distillation Boundary
 | Sampling Parameters | 3 | L2 |
 | Reranker Foundation | 3 | L3 |
 
-> **Interview Heat ≠ Knowledge Importance。** Causal Mask、Residual / Norm、Continuous Batching、Precision / Quantization、Model Evaluation 等即使当前没有独立高频 Canonical，也属于理解现代 LLM 应用行为的必要节点，因此保留。
+> **Interview Heat ≠ Knowledge Importance。** Causal Mask、Residual / Norm、Continuous Batching、Precision / Quantization 等即使没有独立高频 Canonical，也属于完整知识骨架。
 
 ---
 
-## 4. 事实与资料口径
-
-本模块优先讲跨模型 / 跨 Provider 稳定的机制，再用具体实现做映射，不把某一家 API 或某个版本写成永恒规则。
-
-推荐权威入口：
-
-- Transformer：<https://arxiv.org/abs/1706.03762>
-- RoPE：<https://arxiv.org/abs/2104.09864>
-- vLLM / PagedAttention：<https://arxiv.org/abs/2309.06180>
-- LoRA：<https://arxiv.org/abs/2106.09685>
-- DPO：<https://arxiv.org/abs/2305.18290>
-- Sentence-BERT：<https://arxiv.org/abs/1908.10084>
-- Lost in the Middle：<https://arxiv.org/abs/2307.03172>
-
-课程只讲到能支撑 AI Application / RAG / Agent 工程判断所需的数学与训练深度。
-
----
-
-## 5. 七条主线
-
-### 主线 A｜文本怎样进入模型
+## 4. 七条主线
 
 ```text
-Text
-→ Tokenizer
-→ Token ID
-→ Embedding
-→ Position
-→ Context Window
-→ Token Budget
-```
+A. Text → Tokenizer → Token ID → Embedding → Context Window
 
-### 主线 B｜Transformer 怎样计算
+B. Transformer Block → QKV → Attention → Causal Mask
+   → FFN → Residual / Norm → RoPE
 
-```text
-Transformer Block
-→ Q / K / V
-→ Self-Attention
-→ Multi-Head
-→ Causal Mask
-→ FFN
-→ Residual / Normalization
-→ RoPE / Position
-```
+C. Prompt → Logits → Decoding / Sampling
+   → Next Token → Autoregressive Loop
 
-### 主线 C｜模型怎样生成
+D. KV Cache → Prefill / Decode → Continuous Batching
+   → PagedAttention → TTFT / TPOT / Throughput / Cost
+   → Precision / Quantization
 
-```text
-Prompt Tokens
-→ Forward
-→ Logits
-→ Probability Distribution
-→ Decoding / Sampling
-→ Next Token
-→ Autoregressive Loop
-```
+E. Messages / Role → Model API → Provider Adapter → Model Selection
 
-### 主线 D｜推理系统为什么决定性能
+F. Embedding → Bi-Encoder → Cross-Encoder / Reranker → Multimodal
 
-```text
-KV Cache
-→ Prefill / Decode
-→ Dynamic / Continuous Batching
-→ PagedAttention
-→ Serving Engine
-→ TTFT / TPOT / Throughput
-→ Cost / Capacity
-→ Precision / Quantization
-```
-
-### 主线 E｜应用怎样调用与选择模型
-
-```text
-Messages / Roles
-→ Model API
-→ Provider Adapter
-→ Structured Output Boundary
-→ Model Selection
-→ Effect / Latency / Cost / Context / Risk
-```
-
-### 主线 F｜Embedding / Rerank / Multimodal
-
-```text
-Embedding Model
-→ Bi-Encoder
-→ Vector Representation
-→ Cross-Encoder / Reranker
-→ Multimodal Encoder / Alignment
-```
-
-### 主线 G｜Prompt、事实性与适配
-
-```text
-Prompt Engineering
-→ Evaluation / Regression
-→ Hallucination / Factuality
-→ Prompt vs RAG vs Fine-tuning
-→ SFT / LoRA
-→ DPO / RLHF / GRPO / Distillation Boundary
+G. Prompt Engineering → Evaluation / Regression
+   → Hallucination / Factuality
+   → Prompt vs RAG vs Fine-tuning
+   → SFT / LoRA / DPO / RLHF / GRPO / Distillation Boundary
 ```
 
 ---
 
-## 6. 完整 29 章
+## 5. 完整 29 章
 
 ### Part A｜Token、Context 与模型输入
 
@@ -258,73 +180,66 @@ Prompt Engineering
 
 ---
 
-## 7. 为什么加入面经之外的章节
+## 6. 配套复习与面试材料
 
-### Causal Mask / Residual / Normalization
+第二遍：
 
-只会背 QKV 并不能解释一个 Decoder-only LLM 为什么能自回归，也不能理解 Transformer Block 的稳定训练与信息流。
+- [Review 图解与综合自测](review/README.md)
 
-### Continuous Batching
+第三遍：
 
-AI Application 的高并发延迟问题不能只停在“加机器”。Serving Engine 为什么能提高 GPU 利用率，必须知道请求的 Prefill / Decode 长度不同，以及传统静态 Batch 为什么浪费。
+- [高频面试题](interview/高频面试题.md)
+- [面试易错点](interview/面试易错点.md)
+- [面试前速查表](interview/面试前速查表.md)
 
-### Precision / Quantization
-
-模型大小、显存、吞吐、精度与部署成本的关系，是 Model Selection 与自部署边界的自然组成部分。
-
-所以这些属于知识骨架，不因面经没有独立高频题就删除。
-
----
-
-## 8. 推荐三遍学习法
-
-第一遍严格按 `01 → 29`，目标是形成因果链，而不是一次记住公式。
-
-第二遍自己画：
-
-- Token → Embedding → Transformer Block；
-- Q / K / V Attention；
-- Autoregressive Generation Loop；
-- KV Cache；
-- Prefill / Decode；
-- Continuous Batching；
-- Embedding vs Reranker；
-- Prompt / RAG / Fine-tuning Decision Tree。
-
-第三遍进入：
-
-- `review/`
-- `interview/高频面试题.md`
-- `interview/面试易错点.md`
-- `interview/面试前速查表.md`
-
-顺序始终是：
+正确顺序始终是：
 
 ```text
 理解模型机制
 → 能解释应用行为
 → 能做工程 Trade-off
-→ 再练面试表达
+→ 能定位 Failure
+→ 再练 30 秒面试表达
 ```
 
 ---
 
-## 9. 下一环
+## 7. 事实与资料口径
 
-LLM Foundation 完成后进入 **RAG**。
+优先讲跨模型 / 跨 Provider 稳定机制，不把某家 API 或某个版本写成永恒规则。
 
-到那时：
+推荐权威入口：
+
+- Transformer：<https://arxiv.org/abs/1706.03762>
+- RoPE：<https://arxiv.org/abs/2104.09864>
+- vLLM / PagedAttention：<https://arxiv.org/abs/2309.06180>
+- LoRA：<https://arxiv.org/abs/2106.09685>
+- DPO：<https://arxiv.org/abs/2305.18290>
+- Sentence-BERT：<https://arxiv.org/abs/1908.10084>
+- Lost in the Middle：<https://arxiv.org/abs/2307.03172>
+
+课程只讲到支撑 AI Application / RAG / Agent 工程判断所需的数学与训练深度。
+
+---
+
+## 8. 下一环：RAG
+
+LLM Foundation 已完成，下一块正式进入 **RAG**：
 
 ```text
 Embedding / Reranker Model Foundation
         +
 Vector DB / ANN Infrastructure
         ↓
-RAG Retrieval Pipeline
+Document / Parse / Chunk
         ↓
-Chunk / Rewrite / Hybrid / RRF / Rerank
+Dense / Sparse / Hybrid / RRF / Rerank
+        ↓
+Context Build / Grounding
         ↓
 Evaluation / Bad Case / Freshness / Permission
+        ↓
+Agentic RAG
 ```
 
-这样 RAG 不需要再从“Embedding 是什么、向量库是什么”重新讲起，而能直接进入真正的 Retrieval Engineering。
+RAG 不再重复从“Embedding 是什么、HNSW 是什么”开始，而直接进入真正的 Retrieval Engineering 与 Production Governance。
