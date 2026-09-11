@@ -35,17 +35,10 @@ System Design
 ### 2. 研究粒度、能力粒度、教材粒度必须分开
 
 ```text
-HUMAN-A / Canonical Question
-= 可独立追问的面试能力
-
-Capability Primitive
-= 更细的工程机制
-
-教材 Markdown
-= 一个可独立学习、画图、解释 Failure / Trade-off 的知识小板块
-
-Section
-= 参数 / 变体 / Failure Case / 追问
+HUMAN-A / Canonical Question = 可独立追问的面试能力
+Capability Primitive = 更细的工程机制
+教材 Markdown = 可独立学习、画图、解释 Failure / Trade-off 的知识小板块
+Section = 参数 / 变体 / Failure Case / 追问
 ```
 
 因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
@@ -66,7 +59,7 @@ Section
 + ReAct / SWE-bench 等原始论文
 ```
 
-这些外部证据用于补齐成熟 Runtime 的知识边界，**不能改变 HUMAN-A Source Count**。
+外部证据用于补齐成熟 Runtime 的知识边界，**不能改变 HUMAN-A Source Count**。
 
 ---
 
@@ -109,9 +102,9 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 
 ## Agent Runtime
 
-- [Agent Harness / Runtime](agent-harness/README.md) 🚧 **23 个知识小板块**；47→23 的结构迁移已完成，正在做正文深度验收
+- [Agent Harness / Runtime](agent-harness/README.md) ✅ **23 个知识小板块**；已完成 47→23 结构整改和正文深度验收
 
-Agent 的正式主线：
+Agent 正式主线：
 
 ```text
 Agent / Workflow / Harness
@@ -137,15 +130,13 @@ Agent / Workflow / Harness
 
 ## Integration
 
-- System Design ⏸️ 暂缓；等 Agent 23-block 深度验收完成后启动
+- System Design ⏳ **下一正式模块**；开始前先按知识子系统确定教材粒度，再映射 24 道 System Design Canonical。
 
 ---
 
 # 为什么不同模块章节数不同
 
-章节数不是优化目标。
-
-例如：
+章节数不是优化目标：
 
 ```text
 MySQL 23
@@ -156,7 +147,7 @@ RAG 14
 Agent Harness 23
 ```
 
-这些数字来自各模块自己的认知闭环，而不是为了统一格式。MySQL 的 B+Tree、MVCC、Lock、Replication、Sharding 本来就有独立数据结构和 Failure Model，所以没有为了“缩章”而机械合并；RAG 和 LLM 原先则明显把机制切得过细，因此大幅收敛。
+这些数字来自各模块自己的认知闭环，而不是为了统一格式。MySQL 的 B+Tree、MVCC、Lock、Replication、Sharding 本来就有独立数据结构和 Failure Model；RAG 与 LLM 原先则明显把机制切得过细，因此大幅收敛。
 
 ---
 
@@ -195,6 +186,6 @@ Python
 | Vector DB | ✅ 16-block；整改完成 |
 | LLM Foundation | ✅ 14-block；整改完成 |
 | RAG | ✅ 14-block；整改完成 |
-| Agent Harness / Runtime | 🚧 23-block 结构完成；深度验收中 |
-| System Design | ⏸️ Agent 深度验收后启动 |
+| Agent Harness / Runtime | ✅ 23-block；结构整改 + 深度验收完成 |
+| System Design | ⏳ 下一正式模块 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
