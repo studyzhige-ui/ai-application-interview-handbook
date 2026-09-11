@@ -164,28 +164,36 @@ SQL / Execution
 → MySQL + Redis Integration Boundary
 ```
 
-### Redis ⏳
+### [Redis](redis/README.md) ✅
 
-下一块正式系统教材。
+第一版系统教材已完成：**27 章正文 + 每章折叠自测 + Review 总图 + 35 道面试题 + 45 个易错点 + 面试前速查。**
 
-计划从：
+主干继续按 0→1 认知依赖：
 
 ```text
-数据结构
-→ Thread / I/O Model
-→ TTL / Eviction
-→ Cache Failure
-→ Persistence / HA / Cluster
-→ Distributed Lock / Lua
-→ Session / Agent State / Rate Limit
-→ AI System Design
+Redis Role / Keyspace / Command
+→ Core + Specialized Data Structures
+→ Internal Encoding
+→ Thread Model / Event Loop / I/O Multiplexing
+→ TTL / Expiration / Eviction
+→ Cache Failure / BigKey / HotKey
+→ RDB / AOF
+→ Replication / Sentinel / Cluster
+→ MULTI / WATCH / Pipeline / Lua
+→ Distributed Lock / Lease / Fencing
+→ Pub/Sub / Streams
+→ Multi-level / Semantic Cache
+→ Session / Conversation / Agent State Store
+→ Rate Limit
+→ Security / Troubleshooting
+→ Redis in AI System Design
 ```
 
-自然演进，而不是按面经热度乱序。
+高频面经中的分布式锁、缓存故障会讲到更深，但不会被提前到数据结构、Runtime、TTL、Persistence 这些必要前置之前。
 
 ### Vector Database ⏳
 
-Primary 聚焦向量基础设施：
+下一块正式系统教材。Primary 聚焦向量基础设施：
 
 ```text
 Vector / Distance
@@ -316,8 +324,8 @@ System Design
 | FastAPI | 🟡 完整课程骨架 |
 | AI Backend Engineering | 🟡 完整课程骨架 |
 | MySQL | ✅ 第一版完整系统教材 |
-| Redis | ⏳ 下一块正式教材 |
-| Vector DB | ⏳ 待建设 |
+| Redis | ✅ 第一版完整系统教材 |
+| Vector DB | ⏳ 下一块正式系统教材 |
 | LLM Foundation | 🆕 已纳入一级体系 |
 | RAG | ⏳ 待建设 |
 | Agent Harness / Runtime | 🔬 源码 + 面经校准中 |
