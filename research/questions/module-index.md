@@ -48,7 +48,7 @@ System Design
 
 ---
 
-## 2. Phase 1 的主要迁移
+## 2. Phase 1 / 2A 的主要归属修正
 
 ### FastAPI → Python
 
@@ -78,7 +78,7 @@ System Design
 - `VDB-017` Top-K → `RAG-016`
 - `VDB-019` Retrieval Evaluation → `RAG-020` / `RAG-021`
 - `VDB-021` Multimodal Retrieval → `RAG-005`; 模型侧 → `LLM-010`
-- `VDB-023` Code Retrieval Boundary → 历史曾映射 `RAG-030` / `AGENT-037`；Global Audit 后统一到 `AGENT-037`
+- `VDB-023` Code Retrieval Boundary → Global Audit 后统一到 `AGENT-037`
 
 ### Agent Harness → LLM / AI Backend / System Design
 
@@ -87,9 +87,7 @@ System Design
 - `AGENT-039` Concurrency / Backpressure / Quota → `AIBE-013` / `AIBE-017`
 - `AGENT-040` Demo → Multi-instance Production Scale → `SD-021` + AI Backend Deployment
 
----
-
-## 3. Phase 2A Global Audit 的新增修正
+### Global Audit
 
 - `VDB-010` → `VDB-009`：向量存储架构 / 产品选型合并。
 - `RAG-030` → `AGENT-037`：Code RAG / Repo Search 统一到 Coding Agent Repository Understanding。
@@ -98,13 +96,11 @@ System Design
 - `MYSQL-022` Narrow：MySQL Bulk Write 与通用 Batch / Migration 分离。
 - `AGENT-028`：补入 `S254` Permission / Sandbox 安全证据。
 
-完整判断依据与 KEEP-SEPARATE 清单见 `global-audit.md`。
+完整判断依据见 `global-audit.md`。
 
 ---
 
-## 4. Phase 2B Coverage Gap Audit 新增 Canonical
-
-新增：
+## 3. Phase 2B Coverage Gap Audit 新增 Canonical
 
 | QID | Primary Module | Topic | Source Count |
 |---|---|---|---:|
@@ -133,7 +129,7 @@ System Design
 
 ---
 
-## 5. Primary Module 判断例子
+## 4. Primary Module 判断例子
 
 ```text
 “RRF 为什么不用线性加权？”
@@ -173,7 +169,7 @@ Related = RAG, Agent Harness / Runtime
 
 ---
 
-## 6. Coding / Debug / AI Coding 的位置
+## 5. Coding / Debug / AI Coding 的位置
 
 它们不是一级板块，而是 Question Type：
 
@@ -190,7 +186,7 @@ Related = RAG, Agent Harness / Runtime
 
 ---
 
-## 7. 当前验证状态
+## 6. 当前验证状态
 
 ```text
 Frozen HUMAN-A              279 / 279
@@ -204,7 +200,7 @@ Source Count mismatch         0
 
 ---
 
-## 8. Phase 3 Curriculum Build 状态
+## 7. Phase 3 Curriculum Build 状态
 
 Canonical Ownership 已稳定，当前工作重点已经从“题目归属”切换为“把研究结果反哺完整教材”。
 
@@ -218,12 +214,12 @@ Canonical Ownership 已稳定，当前工作重点已经从“题目归属”切
 MySQL ✅ 23 章 + Review + Interview
 → Redis ✅ 27 章 + Review + Interview
 → Vector DB ✅ 23 章 + Review + Interview
-→ LLM Foundation 🚧 当前建设
-→ RAG
+→ LLM Foundation ✅ 29 章 + Review + Interview
+→ RAG 🚧 当前建设
 → Agent Harness / Runtime
 → System Design
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有课程骨架，后续按项目与 Bridge Lab 补齐正文。
 
-每完成一个模块，必须同步根 `README.md`、`roadmap/knowledge-map.md`、`progress.md`、`research/analysis/README.md` 以及所有仍写着“下一块 / 待建设”的入口。
+每完成一个模块，必须同步：模块 README、根 `README.md`、`roadmap/knowledge-map.md`、`progress.md`、自动生成 Analysis 的源头/结果、`module-index.md`，以及所有仍写着“下一块 / 待建设”的入口。
