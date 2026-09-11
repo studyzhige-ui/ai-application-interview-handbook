@@ -1,92 +1,111 @@
-# 23｜Framework Mapping 与 Build-vs-Buy
+# 23. Framework Mapping 与 Build-vs-Buy
 
-> Framework 放在最后。目标不是教 LangChain / LangGraph / OpenAI Agents SDK API，而是把前 22 章的 Runtime Primitive 映射到不同框架，并判断什么时候应该自研、组合或直接购买平台能力。
+学完 Agent Harness 最后一章，才开始看框架。
 
-## 1. 为什么 Framework 不能作为课程起点
+这是刻意安排的。
 
-如果先学：
+如果一开始从：
 
 ```text
-Node
-Edge
-Graph
-Agent class
-Tool decorator
+LangChain class
+LangGraph node
+OpenAI Agents SDK agent
 ```
 
-很容易只会回答：
+出发，你很容易把：
 
-> “这个框架 API 怎么写？”
+> **某个 Framework 的 API 结构**
 
-却不知道：
+误认为：
+
+> **Agent Runtime 本身的知识结构。**
+
+正确顺序应该是：
 
 ```text
-Checkpoint 为什么存在？
-Tool Failure 谁负责？
-Context Compaction 放哪？
-Side Effect 怎么幂等？
-Permission 与 Sandbox 怎么分层？
+先知道 Runtime Problem
+→ 再知道需要哪些 Primitive
+→ 最后把 Primitive 映射到 Framework
 ```
 
-正确顺序：
+---
+
+## 1. 先写自己的 Requirement Matrix
+
+在选框架前列：
 
 ```text
-Runtime Problem
-→ Runtime Primitive
-→ Trade-off / Failure
-→ Framework Mapping
-```
-
-## 2. Framework 常提供哪些能力
-
-典型：
-
-```text
-agent loop
-workflow / graph
-state
-tool registration
-structured output
-handoff / subagent
-checkpoint / session
+Agent Loop
+Tool Contract
+Structured Output
+Streaming
+Session
+Checkpoint / Resume
+HITL
+Memory
 MCP
-tracing
-guardrail / HITL
+Sandbox
+Multi-Agent
+Trace
+Eval
+Provider Adapter
+Deployment
 ```
 
-但不同框架覆盖深度非常不同。
-
-## 3. LangChain / LangGraph 的工作边界
-
-不把具体版本 API 写成永恒规则，稳定理解：
+然后问：
 
 ```text
-LangChain
-→ model/tool/retrieval 等高层组件抽象
-
-LangGraph
-→ 更强调 stateful graph / node-edge control / durable execution
+哪些必须有？
+哪些自己已有？
+哪些希望交给框架？
 ```
 
-什么时候需要 Graph：
+否则“框架选型”会变成品牌偏好。
 
-- 业务状态和 transition 明确；
-- 需要 pause/resume；
-- 需要可视化控制流；
-- Agentic Step 与 deterministic Node 混合。
+---
 
-什么时候普通代码更好：
+# 2. Framework 提供的价值通常是什么
 
-- Loop 很简单；
-- State 很小；
-- 框架抽象反而增加 Debug 成本。
-
-## 4. OpenAI Agents SDK 等 Runtime SDK
-
-官方 SDK 当前会提供一组 Runtime primitives，例如：
+框架常帮你解决：
 
 ```text
-built-in loop
+boilerplate
+common integration
+state / graph abstraction
+tool binding
+streaming
+session persistence
+trace hooks
+MCP integration
+```
+
+好处：
+
+```text
+更快开发
+少造通用轮子
+生态多
+```
+
+代价：
+
+```text
+abstraction lock-in
+hidden runtime semantics
+upgrade cost
+debug difficulty
+```
+
+所以没有“永远用框架”或“永远自研”。
+
+---
+
+# 3. OpenAI Agents SDK 怎样映射
+
+Tier C 官方入口公开的 Runtime Primitive 包括：
+
+```text
+built-in agent loop
 function tools
 handoffs / agents-as-tools
 guardrails
@@ -94,111 +113,436 @@ sessions
 HITL
 MCP
 tracing
-sandbox-related capability
+sandbox agents
 ```
 
-课程使用方式是：
+映射到课程：
 
-> 用它验证 / 映射我们已经学过的 primitive，而不是让 SDK class hierarchy 决定整个知识体系。
+```text
+Loop           → 03
+Tool            → 04–07
+Handoff         → 18
+Guardrail       → 15
+Session / HITL  → 12–14
+MCP             → 16
+Trace           → 19
+Sandbox         → 14
+```
 
-## 5. Build vs Buy 的判断维度
+这正说明课程 Primitive 可以映射框架，而不需要反过来重建课程目录。
 
-| 维度 | 更倾向 Framework / Platform | 更倾向自研 Runtime |
+---
+
+# 4. LangGraph 适合解决什么类型问题
+
+当你的 Agent 明显需要：
+
+```text
+State Graph
+explicit node/edge
+branch
+pause/resume
+human approval
+workflow-like determinism
+```
+
+Graph abstraction 很有价值。
+
+例如：
+
+```text
+classify
+→ retrieve
+→ if low confidence ask user
+→ generate
+→ verify
+```
+
+用 State Graph 表达清楚。
+
+但如果只是：
+
+```text
+LLM ↔ Tool simple loop
+```
+
+不一定需要复杂 Graph。
+
+---
+
+# 5. LangChain 适合什么
+
+LangChain 长期价值更多在：
+
+```text
+model/tool/retriever integration
+common abstractions
+ecosystem
+```
+
+但生产 Runtime 的：
+
+```text
+state correctness
+permission
+sandbox
+checkpoint semantics
+idempotency
+```
+
+仍然需要你自己理解。
+
+不能回答：
+
+> “用了 LangChain，所以这些问题框架都处理了。”
+
+---
+
+# 6. 什么时候自研 Runtime
+
+可能适合自研：
+
+```text
+产品有独特 execution semantics
+严格 permission / sandbox
+极强 long-running state
+高性能 / 极低 overhead
+特殊 multi-agent scheduler
+强审计 / 合规
+现有平台已有很多基础设施
+```
+
+但“自研”也不等于：
+
+```text
+一切从 socket 开始写
+```
+
+可以：
+
+```text
+自研 control plane
++ 使用成熟 provider SDK
++ 使用 MCP
++ 使用标准 storage / tracing
+```
+
+---
+
+# 7. Build-vs-Buy Matrix
+
+| 维度 | 偏 Framework | 偏自研 |
 |---|---|---|
-| Time-to-market | 高优先 | 可投入长期建设 |
-| Workflow 标准化 | 高 | 高度定制 |
-| State / Resume | 框架已满足 | 需要特殊语义 |
-| Permission / Sandbox | 平台适配 | 强业务安全边界 |
-| Tool Ecosystem | 标准工具多 | 内部能力复杂 |
-| Observability | 通用即可 | 需要自定义 Trace/Eval |
-| Lock-in | 可接受 | 必须多 Provider / 多环境 |
-| Team Capability | 应用团队 | 有 Runtime/Infra 能力 |
+| 上线速度 | ✅ | |
+| 常见 Integration | ✅ | |
+| 特殊 Runtime Semantics | | ✅ |
+| 强权限/隔离 | 视框架 | ✅ |
+| Long-running Recovery | 看成熟度 | ✅/混合 |
+| 可观测性 | 生态可提供 | 自己控制 |
+| 团队维护能力 | 低 | 高 |
+| Lock-in 敏感 | | ✅ |
 
-## 6. 最常见的错误选择
-
-### 为了简历“用了 LangGraph”而引入 Graph
-
-如果系统只有：
+真实决策通常是：
 
 ```text
-LLM → one tool → answer
+Hybrid
 ```
 
-Graph 可能只是增加复杂度。
+---
 
-### 因为框架不完美就全部自研
+# 8. Framework Selection 的错误方法
 
-自研意味着你自己承担：
+## 8.1 只看 Star
 
 ```text
-state
-checkpoint
-stream
-tool protocol
+GitHub Star 多
+→ 选它
+```
+
+不能说明适合你的 Failure Model。
+
+## 8.2 只看 Demo
+
+Demo 很难暴露：
+
+```text
+checkpoint corruption
+provider failover
+permission
+multi-tenant state
+trace cost
+```
+
+## 8.3 只看 Feature Checklist
+
+两个框架都写：
+
+```text
+supports memory
+```
+
+但 Memory 的：
+
+```text
+write policy
+version
+correctness
+```
+
+可能完全不同。
+
+---
+
+# 9. Framework Evaluation 应该用真实 Workload
+
+建立一个小基准：
+
+```text
+1. Tool Calling Task
+2. Long-running Resume Task
+3. HITL Task
+4. Multi-agent Task
+5. Context Compaction Task
+6. Failure / Retry Task
+```
+
+对每个 Framework 看：
+
+```text
+实现复杂度
+可控性
+debuggability
+latency
+state persistence
 trace
-security
-version compatibility
+failure behavior
 ```
 
-成本很高。
+这样选型证据比“团队觉得 API 好看”强。
 
-### 把框架限制误认为 Agent 原理
+---
 
-例如某框架的 State Shape、Node 定义，不等于 Agent Runtime 的唯一正确模型。
+# 10. Escape Hatch 很重要
 
-## 7. 一个成熟策略：薄框架 + 自己的 Domain Runtime
+使用框架时要知道：
 
 ```text
-Domain Model / State / Policy
-        ↓
-Your Runtime Boundary
-        ↓
-Framework Adapter
-        ↓
-LLM / Tool / Checkpoint Provider
+能否获取 raw provider response?
+能否自定义 state store?
+能否接管 tool execution?
+能否覆盖 retry?
+能否插入 permission?
+能否导出 trace?
 ```
 
-这样可以让业务 invariant 不被框架类型绑定。
-
-## 8. HUMAN-A
-
-`AGENT-047 Framework Selection` 有 27 个独立来源。
-
-Verified Follow-up Chain 常见：
+如果所有关键路径都被封死：
 
 ```text
-为什么 LangGraph / LangChain？
-→ Graph / State 解决什么？
-→ State 怎样持久化？
-→ Failure 后怎样 Resume？
-→ Long-running 怎么稳定？
+未来 Production Requirement 出现时很难扩展
 ```
 
-所以面试回答不能停在“我熟悉 API”。
+---
 
-## 9. 🎯 面试回答
+# 11. Framework Upgrade 风险
 
-> 我会先按 Runtime Problem 选框架，而不是先定框架再套业务。简单 Loop 可以直接代码实现；需要显式 State Graph、pause/resume、checkpoint 或复杂 deterministic+agentic 混合流程时，LangGraph 一类框架更有价值。框架适合承担通用 primitive，但业务 State、Permission、Side-effect invariant、Eval 和 Provider Boundary 最好保留自己的抽象，避免深度锁定。是否自研要按 time-to-market、可靠性、安全、可观测和团队维护成本综合判断。
+Agent Framework 演进非常快。
 
-## 10. 全模块最终检查
-
-学完 23 个板块，应能不依赖框架名画出：
+升级可能改变：
 
 ```text
-Goal
-→ Runtime State
-→ Context
-→ Model
-→ Tool / Delegate
-→ Permission / Sandbox
-→ Event / Checkpoint
-→ Trace / Eval
-→ Stop / Resume
+message schema
+tool serialization
+checkpoint format
+state graph semantics
+provider adapter
 ```
 
-如果离开 LangGraph / LangChain API 就无法解释这张图，说明学到的是框架，不是 Harness。
+所以应用层应尽量隔离：
 
-<details><summary>自测：什么时候 State Graph 是真正的价值，而不是“为了用 LangGraph”？</summary>
+```text
+Domain State
+Tool Contract
+Eval Dataset
+```
 
-当业务本身存在显式状态、条件 transition、pause/resume、checkpoint、deterministic 与 agentic node 混合，并且这些控制语义需要被测试和恢复时，State Graph 才有独立价值。
+不要全部绑死框架内部对象。
+
+---
+
+# 12. 自研最小 Runtime 到底需要什么
+
+一个很小但完整的自研 Loop 可以只有：
+
+```text
+Run State
+Context Builder
+Model Adapter
+Tool Registry
+Tool Executor
+Stop Policy
+Event Log
+```
+
+然后逐步加入：
+
+```text
+checkpoint
+permission
+trace
+MCP
+multi-agent
+```
+
+这比一开始写“企业级 Agent Platform”更容易验证。
+
+---
+
+# 13. Anthropic `Building effective agents` 的重要启发
+
+官方文章强调：
+
+```text
+从简单、可组合 pattern 开始
+不要为了 Agent 标签过早引入复杂框架
+```
+
+这和本课程 Build-vs-Buy 原则一致：
+
+> **先证明任务需要复杂 Runtime，再引入复杂 Runtime。**
+
+---
+
+# 14. Framework 不会替你解决业务正确性
+
+即使框架提供：
+
+```text
+checkpoint
+memory
+retry
+```
+
+你仍然要决定：
+
+```text
+Tool 已成功但 checkpoint 失败怎么办？
+Memory 过期怎么办？
+哪个动作必须 approval？
+什么算任务成功？
+```
+
+这些是业务/Runtime Contract，不是一个 API 开关。
+
+---
+
+# 15. HUMAN-A 信号
+
+`AGENT-047 Agent Framework Selection` 有 27 个独立来源。
+
+真实面试常问：
+
+```text
+为什么 LangGraph？
+LangChain 和 LangGraph 区别？
+为什么不自研？
+State Graph 什么时候有价值？
+框架哪里不够？
+```
+
+高质量回答不应该是产品宣传，而应该回到 Runtime Requirement。
+
+---
+
+# 16. 一个选型回答模板
+
+假设面试官问：
+
+> 为什么用 LangGraph？
+
+不要只答：
+
+> “它适合 Agent。”
+
+更好：
+
+```text
+我们的任务需要：
+- 显式 state
+- branch
+- pause/resume
+- HITL
+- 可追踪 node transition
+
+因此 graph runtime 能自然表达这些 requirement。
+简单 tool loop 仍保持轻量，不全部塞 graph。
+```
+
+这样体现的是工程判断。
+
+---
+
+# 17. Framework Migration
+
+如果未来迁移框架，最重要的是把下面几层保持独立：
+
+```text
+Domain State
+Tool Contract
+Event / Trace Schema
+Eval Dataset
+Business Acceptance Criteria
+```
+
+如果这些都绑框架：
+
+```text
+迁移 = 重写整个 Agent 产品
+```
+
+反之可以：
+
+```text
+换 Orchestrator
+但 Tool / State / Eval 不全部推倒
+```
+
+---
+
+# 18. 面试怎么答
+
+## Q：LangChain / LangGraph / 自研怎么选？
+
+🎯 **30 秒回答**：
+
+> 我不会从框架名出发，而先列 Runtime Requirement。只是模型+Tool 循环可以保持轻；如果有显式状态图、复杂分支、pause/resume、HITL，LangGraph 类 graph runtime 更合适；LangChain 更偏通用模型、Tool、Retriever integration。若产品有特殊 permission/sandbox、long-running reliability 或调度语义，可以自研 control plane，同时复用 Provider SDK、MCP、storage 等成熟组件。最终用真实 workload 和 failure case 做 POC，而不是按 Star 选。
+
+---
+
+# 19. 高频易错点
+
+⚠️ **用了 Framework 就不用懂 Runtime。** 恰恰相反，Production 问题仍需要理解底层语义。
+
+⚠️ **自研 = 所有东西自己写。** 可以只自研关键控制面。
+
+⚠️ **LangGraph 更高级，所以所有 Agent 都用。** 简单任务可能过度设计。
+
+⚠️ **Feature Checklist 一样就等价。** Failure / State / Trace 语义可能完全不同。
+
+---
+
+# 20. 本章自测
+
+<details><summary>1. 为什么课程最后才讲 Framework Mapping？</summary>
+
+因为 Runtime Problem 和 Primitive 比框架 API 更稳定。先理解 Context、Tool、State、Checkpoint、Permission，再看框架怎样实现，才能避免把某个 class hierarchy 当成 Agent 原理。
+</details>
+
+<details><summary>2. 什么情况下 State Graph 特别有价值？</summary>
+
+当流程有显式状态、复杂 branch、pause/resume、HITL 或需要清晰可观测的 transition 时；简单 tool loop 不一定需要图模型。
+</details>
+
+<details><summary>3. Build-vs-Buy 最重要的评估方式是什么？</summary>
+
+用自己的真实 workload 和 failure case 做 POC，评估 state、recovery、permission、trace、latency、维护成本，而不是只看 Demo 或 feature list。
 </details>
