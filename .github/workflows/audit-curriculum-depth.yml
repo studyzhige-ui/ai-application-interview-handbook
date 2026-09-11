@@ -1,0 +1,22 @@
+name: Audit curriculum depth
+
+on:
+  push:
+    branches:
+      - canonicalize-questions
+    paths:
+      - tools/audit_curriculum_depth.py
+      - .github/workflows/audit-curriculum-depth.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonicalize-questions
+      - name: Audit curriculum depth signals
+        run: python tools/audit_curriculum_depth.py
