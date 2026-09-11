@@ -60,17 +60,29 @@ for path in ROOT.rglob("*.md"):
     new_text = text
     for old, new in RENAMES.items():
         new_text = new_text.replace(old, new)
+
     # These statements became false after continuous renumbering.
     new_text = re.sub(
-        r">?\s*为避免[^\n]*历史文件编号[^\n]*\n?",
+        r"^>?\s*为避免[^\n]*历史文件编号[^\n]*\n?",
         "",
         new_text,
+        flags=re.MULTILINE,
     )
     new_text = re.sub(
-        r">?\s*文件保留合并后最早历史编号；?正式学习顺序[^\n]*\n?",
+        r"^>?\s*文件保留合并后最早历史编号[^\n]*\n?",
         "",
         new_text,
+        flags=re.MULTILINE,
     )
+    new_text = new_text.replace(
+        "正式学习顺序以本 README 为准；文件数量已经物理收敛为 16。",
+        "当前 `docs/` 已连续编号为 `01–16`；正式学习顺序与文件编号一致。",
+    )
+    new_text = new_text.replace(
+        "正式顺序以下面的 14-block 为准。",
+        "当前 `docs/` 已连续编号为 `01–14`；正式学习顺序与文件编号一致。",
+    )
+
     if new_text != text:
         path.write_text(new_text, encoding="utf-8")
 
