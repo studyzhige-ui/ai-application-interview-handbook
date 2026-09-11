@@ -39,8 +39,6 @@ Agent Harness / Runtime
 System Design
 ```
 
-`Coding / Debug / AI Coding` 只作为 `Question Type`，不作为一级板块。
-
 ---
 
 ## Phase 1：十板块纵向 Canonicalization ✅
@@ -69,23 +67,7 @@ Phase 2A 结束：**229 ACTIVE / 24 MOVED**。
 | Evidence outside S001–S279 | ✅ 0 |
 | Source Count mismatch | ✅ 0 |
 
-最终 Ownership：
-
-| 顺序 | 一级板块 | ACTIVE |
-|---:|---|---:|
-| 1 | Python | 15 |
-| 2 | FastAPI | 4 |
-| 3 | AI Backend Engineering | 39 |
-| 4 | MySQL | 26 |
-| 5 | Redis | 19 |
-| 6 | Vector DB | 12 |
-| 7 | LLM Foundation（应用工程深度） | 23 |
-| 8 | RAG | 29 |
-| 9 | Agent Harness / Runtime | 44 |
-| 10 | System Design | 24 |
-|  | **合计** | **235** |
-
-分析产物见 `research/analysis/`。
+最终 Ownership：Python 15 / FastAPI 4 / AI Backend 39 / MySQL 26 / Redis 19 / Vector DB 12 / LLM Foundation 23 / RAG 29 / Agent Harness 44 / System Design 24 = **235**。
 
 ---
 
@@ -107,17 +89,6 @@ Phase 2A 结束：**229 ACTIVE / 24 MOVED**。
 + interview/ 面试前速查
 ```
 
-统一章节深度：
-
-```text
-Concept
-→ Mechanism
-→ Trade-off
-→ Failure
-→ Scale
-→ Evaluation / Verification
-```
-
 ### 当前正式建设状态
 
 | 模块 | Phase 3 状态 |
@@ -130,8 +101,8 @@ Concept
 | Vector DB | ✅ 第一版完成：23 章 + Review + Interview |
 | LLM Foundation | ✅ 第一版完成：29 章 + Review + Interview |
 | RAG | ✅ 第一版完成：34 章 + Review + Interview |
-| Agent Harness / Runtime | 🚧 **下一块正式系统教材；Claude Code / Codex + HUMAN-A 双重校准** |
-| System Design | ⏳ Agent 前置成熟后汇总 |
+| Agent Harness / Runtime | ✅ 第一版完成：47 章 + Review + Interview |
+| System Design | 🚧 **下一块正式系统教材** |
 
 正式顺序：
 
@@ -141,9 +112,69 @@ MySQL ✅
 → Vector DB ✅
 → LLM Foundation ✅
 → RAG ✅
-→ Agent Harness / Runtime 🚧
-→ System Design
+→ Agent Harness / Runtime ✅
+→ System Design 🚧
 ```
+
+---
+
+## Agent Harness / Runtime Phase 3 v1 ✅
+
+Agent 教材没有直接从 Framework API 起步，而先完成四层证据融合：
+
+```text
+Tier A  44 道 HUMAN-A Agent Canonical + Verified Follow-up Chains
+Tier B  Claude Code + OpenAI Codex 固定源码快照
+Tier C  Anthropic / OpenAI 官方工程资料 + MCP/A2A 规范 + 原始论文
+Tier D  Runtime Capability Map + beginner-first curriculum
+```
+
+已完成研究层：
+
+- `research/agent-sources/README.md`
+- `research/agent-sources/claude-code-source-index.md`
+- `research/agent-sources/codex-source-index.md`
+- `research/agent-sources/authoritative-web-sources.md`
+- `research/agent-sources/runtime-capability-map.md`
+- `roadmap/agent-authoritative-sources.md`
+
+源码固定快照：
+
+```text
+Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
+OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
+```
+
+教材已完成：
+
+```text
+agent-harness/README.md
++ docs/ 01–47
++ review/README.md
++ interview/高频面试题.md（56 道）
++ interview/面试易错点.md（86 个）
++ interview/面试前速查表.md
+```
+
+Agent 的核心顺序为：
+
+```text
+Agent / Workflow / Harness
+→ Loop / Run / Turn / Step / Event
+→ Tool Runtime
+→ Planning / Stop / Budget
+→ Context / Compaction
+→ Memory / State / Checkpoint / Resume
+→ Cancellation / Idempotency / Compensation
+→ Permission / Sandbox / Injection / Containment
+→ Discovery / MCP / Skills / Hooks / Routing
+→ Multi-Agent / A2A / Workspace
+→ Trace / Eval / Coding Verification
+→ Production Runtime
+→ Framework Mapping
+```
+
+源码与 Tier C 权威资料**不得**改变 HUMAN-A Source Count。
 
 ---
 
@@ -162,23 +193,19 @@ MySQL ✅
 
 ---
 
-## Agent Harness 特殊规则
+## 下一步：System Design
 
-Agent Harness 的**面经统计层**只反映 `S001–S279` HUMAN-A 市场证据。
-
-正式建设 Agent 教材时，必须额外研究：
-
-- `studyzhige-ui/claude-code-source-private`
-- `openai/codex`
-
-成熟源码属于课程权威实现证据，用于补齐完整 Harness / Runtime 知识边界；**不得**反向改变 HUMAN-A `Source Count`。
-
-Agent Harness 正式启动前，先完成：
+System Design 不再新增一套孤立八股，而要把已经完成的前置模块汇合成真实 Production Architecture：
 
 ```text
-最新 44 Agent Canonical 回读
-+ Verified Follow-up Chains
-+ Claude Code / Codex Source Index
-+ Runtime Capability Map
-→ 最终 Agent 课程目录
+Requirements / SLO
+→ Capacity / Traffic
+→ API / Streaming
+→ Data / State / Retrieval
+→ Agent Runtime
+→ Async / Queue / Backpressure
+→ Consistency / Reliability
+→ Tenant / Security
+→ Observability / Evaluation
+→ Scaling / Cost / Degradation
 ```
