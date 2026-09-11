@@ -54,50 +54,27 @@ Section = 参数、变体、Failure、追问
 ## MySQL ✅ — 23 blocks
 入口：[`../mysql/README.md`](../mysql/README.md)。
 
-Granularity Audit：PASS。查询性能、事务并发、生产扩展的章节均形成独立认知闭环。
-
 ## Redis ✅ — 24 blocks
-入口：[`../redis/README.md`](../redis/README.md)。
-
-已完成 **27 → 24** 的物理颗粒度整改：合并 Runtime/Performance、Cache Design/Failure、Distributed Lock Correctness；Transaction / Pipeline / Lua 因解决的问题和 Failure Model 不同，仍保持独立。
+入口：[`../redis/README.md`](../redis/README.md)。已完成 **27 → 24** 的物理颗粒度整改。
 
 ## Vector Database ✅ — 16 blocks
-入口：[`../vector-db/README.md`](../vector-db/README.md)。
-
-已完成 **23 → 16**：Vector Space & Similarity、Exact vs ANN、HNSW、Index Lifecycle、Performance Diagnosis 等连续机制已经按知识闭环收敛。
-
-Primary Boundary：Vector DB 负责向量基础设施；Dense/Sparse、Hybrid、RRF、Rerank、Retrieval Evaluation 归 RAG。
+入口：[`../vector-db/README.md`](../vector-db/README.md)。已完成 **23 → 16**。
 
 ---
 
 # 5. Model Foundation
 
 ## LLM Foundation（应用工程深度） ✅ — 14 blocks
-入口：[`../llm-foundation/README.md`](../llm-foundation/README.md)。
-
-已完成 **29 → 14**。正式主线：
-
-```text
-Token / Context
-→ Transformer Block
-→ Attention / Position
-→ Autoregressive Generation
-→ KV Cache / Prefill / Decode
-→ Serving Engine / Latency / Quantization
-→ Model API / Selection
-→ Embedding / Reranker / Multimodal
-→ Prompt / Factuality
-→ Fine-tuning / Alignment Boundary
-```
+入口：[`../llm-foundation/README.md`](../llm-foundation/README.md)。已完成 **29 → 14**。
 
 ---
 
 # 6. AI Application
 
 ## RAG ✅ — 14 blocks
-入口：[`../rag/README.md`](../rag/README.md)。
+入口：[`../rag/README.md`](../rag/README.md)。已完成 **34 → 14**。
 
-已完成 **34 → 14**。正式子系统：
+正式子系统：
 
 ```text
 RAG Role & Pipeline
@@ -120,11 +97,11 @@ RAG Role & Pipeline
 
 # 7. Agent Runtime
 
-## Agent Harness / Runtime 🚧 — 23 blocks
+## Agent Harness / Runtime ✅ — 23 blocks
 
 入口：[`../agent-harness/README.md`](../agent-harness/README.md)
 
-旧 47 章已经物理迁移为 **23 个连续知识小板块**。结构颗粒度已经稳定，当前任务不是继续合并，而是把部分由旧短稿合并来的章节提升到 MySQL / RAG 同级教学深度。
+旧 47 章已经物理迁移为 **23 个连续知识小板块**，并完成正文深度验收；旧碎片与 rewrite checkpoint 已清理。
 
 证据体系：
 
@@ -166,9 +143,20 @@ Agent / Workflow / Harness
 
 ---
 
-# 8. System Design ⏸️
+# 8. System Design ⏳
 
-System Design 是第 10 个正式一级模块，但当前继续暂缓：先完成 Agent 23-block 正文深度验收，再用已经验证过的教材粒度规则开始设计。
+System Design 是第 10 个正式一级模块，也是当前下一阶段。
+
+开始前直接应用已验证的教材粒度规则：
+
+```text
+先画知识依赖与系统子域
+→ 确定知识小板块
+→ 决定 Markdown 文件
+→ 最后映射 24 道 System Design Canonical 与真实追问
+```
+
+禁止再从“一题一章”开始。
 
 未来重点：企业知识库 RAG、大规模文档 RAG、多租户 AI Chat / Agent Platform、Coding Agent Backend、Long-running Agent Platform、Multi-Agent Workflow、AI Customer Service、Data / Analytical Agent。
 
@@ -206,10 +194,10 @@ VALID-UNMAPPED：1（S271）
 | FastAPI | 🟡 完整课程骨架 |
 | AI Backend Engineering | 🟡 完整课程骨架 |
 | MySQL | ✅ 23 blocks |
-| Redis | ✅ 24 blocks；整改完成 |
-| Vector DB | ✅ 16 blocks；整改完成 |
-| LLM Foundation | ✅ 14 blocks；整改完成 |
-| RAG | ✅ 14 blocks；整改完成 |
-| Agent Harness / Runtime | 🚧 23 blocks；深度验收中 |
-| System Design | ⏸️ Agent 验收后启动 |
+| Redis | ✅ 24 blocks |
+| Vector DB | ✅ 16 blocks |
+| LLM Foundation | ✅ 14 blocks |
+| RAG | ✅ 14 blocks |
+| Agent Harness / Runtime | ✅ 23 blocks；深度验收完成 |
+| System Design | ⏳ 下一正式模块 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
