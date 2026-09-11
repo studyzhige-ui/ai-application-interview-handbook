@@ -1,8 +1,10 @@
 # LLM Foundation（应用工程深度）｜AI 应用开发秋招系统手册
 
-> **当前状态：✅ 第一版 0→1 系统教材已完成。**
+> **当前状态：🟠 第一版内容已完成，进入 Moderate Granularity Remediation。**
 >
-> 已完成：**29 章正文 + 每章折叠自测 + Review 图解总览 + 30 道面试题 + 55 个易错点 + 面试前速查表。**
+> 已有：**29 章正文 + 每章折叠自测 + Review 图解总览 + 30 道面试题 + 55 个易错点 + 面试前速查表。**
+>
+> 知识演进顺序本身正确，但 Transformer / Generation / Serving 等部分更接近“一个 mechanism 一个文件”，教材层偏细。后续会在不删知识点的前提下重组为约 **14–17 个知识小板块**。重点组合：`Tokenization + Context Budget + Long Context`、`Transformer Block + FFN/Residual/Norm`、`Attention/QKV + Multi-head/Causal + RoPE`、`Autoregressive + Logits + Sampling`、`KV Cache + Prefill/Decode`、`Continuous Batching + PagedAttention + Latency/Cost + Precision` 等。完整审计见 [`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
 >
 > LLM Foundation 是这套 Handbook 的第 7 个正式一级模块。目标不是训练算法岗 Transformer 八股大全，而是从 AI Application Engineer 的视角理解：**文本怎样变成 Token → Transformer 怎样计算 → 模型怎样逐 Token 生成 → Context / KV Cache / Serving 为什么决定延迟与成本 → Model / Embedding / Reranker 怎样选 → Prompt / Hallucination 怎样治理 → 什么时候才值得 Fine-tuning。**
 
@@ -126,7 +128,9 @@ G. Prompt Engineering → Evaluation / Regression
 
 ---
 
-## 5. 完整 29 章
+## 5. 当前 29 章（内容完成，待 Moderate Granularity Remediation）
+
+> 当前文件仍可按顺序正常学习；后续只重新组合连续机制，不改变 0→1 知识依赖。
 
 ### Part A｜Token、Context 与模型输入
 
@@ -224,7 +228,7 @@ G. Prompt Engineering → Evaluation / Regression
 
 ## 8. 下一环：RAG
 
-LLM Foundation 已完成，下一块正式进入 **RAG**：
+LLM Foundation 的内容体系已经完整，后续粒度整改不改变下一环仍是 **RAG**：
 
 ```text
 Embedding / Reranker Model Foundation
