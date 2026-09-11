@@ -10,11 +10,20 @@ def replace(path: str, old: str, new: str) -> None:
     if new in text:
         return
     if old not in text:
-        raise RuntimeError(f"anchor not found in {path}: {old[:80]!r}")
+        raise RuntimeError(f"anchor not found in {path}: {old[:100]!r}")
     p.write_text(text.replace(old, new, 1), encoding="utf-8")
 
 
-# Root README: quick entrance + quality table.
+def insert_after(path: str, anchor: str, addition: str) -> None:
+    p = ROOT / path
+    text = p.read_text(encoding="utf-8")
+    if addition.strip() in text:
+        return
+    if anchor not in text:
+        raise RuntimeError(f"anchor not found in {path}: {anchor[:100]!r}")
+    p.write_text(text.replace(anchor, anchor + "\n\n" + addition, 1), encoding="utf-8")
+
+
 replace(
     "README.md",
     "[十板块知识地图](roadmap/knowledge-map.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)",
@@ -26,38 +35,35 @@ replace(
     "| [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |\n| [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |\n| [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |",
 )
 
-# Knowledge map top navigation and final note.
 replace(
     "roadmap/knowledge-map.md",
     "[← Handbook 总目录](../README.md) · [课程进度](../research/questions/progress.md) · [Canonical Index](../research/questions/module-index.md)",
     "[← Handbook 总目录](../README.md) · [v1.0 终局质量审计](final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md) · [Canonical Index](../research/questions/module-index.md)",
 )
-replace(
+insert_after(
     "roadmap/knowledge-map.md",
     "- 当前粒度与深度状态见 [Granularity Audit](curriculum-granularity-audit.md) 与 [Content Depth Audit](content-depth-audit.md)。",
-    "- 当前粒度与深度状态见 [Granularity Audit](curriculum-granularity-audit.md) 与 [Content Depth Audit](content-depth-audit.md)。\n- v1.0 全仓库最终结论见 [Final Quality Audit](final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。",
+    "- v1.0 全仓库最终结论见 [Final Quality Audit](final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。",
 )
 
-# Progress: explicit final gate.
-replace(
+insert_after(
     "research/questions/progress.md",
     "十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。",
-    "十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。\n\n**v1.0 Final Quality Audit：✅ PASS。** 184/184 Curriculum Markdown、235/235 Canonical、仓库内链接、Mermaid、跨模块 Ownership、术语与版本敏感事实风险审计均已完成；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。",
+    "**v1.0 Final Quality Audit：✅ PASS。** 184/184 Curriculum Markdown、235/235 Canonical、仓库内链接、Mermaid、跨模块 Ownership、术语与版本敏感事实风险审计均已完成；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。",
 )
 
-# Module index and Canonical README: connect research ownership to final curriculum acceptance.
-replace(
+insert_after(
     "research/questions/module-index.md",
-    "> **Foundation 实际完成度已单独核实。** 见 `../../roadmap/foundation-status-audit.md`。",
-    "> **Foundation 实际完成度已单独核实。** 见 `../../roadmap/foundation-status-audit.md`。\n> **v1.0 终局质量审计已通过。** 十板块跨模块 Ownership、术语边界与 184 个 Curriculum Markdown 的最终结论见 `../../roadmap/final-quality-audit.md`。",
-)
-replace(
-    "research/questions/README.md",
-    "当前 Python / FastAPI / AI Backend Engineering / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。",
-    "当前十个一级模块均已完成正式教材建设与质量验收；正文深度见 `../../roadmap/content-depth-audit.md`，v1.0 全仓库终局结论见 `../../roadmap/final-quality-audit.md`，跨模块术语边界见 `../../roadmap/terminology-glossary.md`。",
+    "> Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。",
+    "> **v1.0 Final Quality Audit：✅ PASS。** 十板块跨模块 Ownership、术语边界与 184 个 Curriculum Markdown 的最终结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。",
 )
 
-# Documentation maintenance rule.
+insert_after(
+    "research/questions/README.md",
+    "因此 235 道 Canonical 不等于 184 篇正文。",
+    "**v1.0 Final Quality Audit：✅ PASS。** 正文深度见 [`../../roadmap/content-depth-audit.md`](../../roadmap/content-depth-audit.md)，全仓库终局结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)，跨模块术语边界见 [`../../roadmap/terminology-glossary.md`](../../roadmap/terminology-glossary.md)。",
+)
+
 replace(
     "roadmap/documentation-style-guide.md",
     "[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Progress](../research/questions/progress.md)",
