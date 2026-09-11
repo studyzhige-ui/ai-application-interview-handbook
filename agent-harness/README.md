@@ -1,223 +1,268 @@
 # Agent Harness / Runtime｜AI 应用开发秋招系统手册
 
-> **当前状态：✅ 第一版 0→1 系统教材已完成。**
+> **当前状态：🚧 23 个知识小板块重组 + 深度重写中。**
 >
-> 这一模块不是 LangChain / LangGraph API 教程，而是从 0 建立成熟 Agent 产品真正需要的 Runtime 心智模型：**Agent 为什么需要自循环 → Harness 为什么要独立于 Model → 一次 Run / Turn / Step 怎样推进 → Tool 怎样被描述、校验、授权和执行 → Context 怎样组装与压缩 → State 怎样持久化并恢复 → Permission / Sandbox 怎样控制副作用 → MCP / Skill / Multi-Agent 怎样扩展能力 → Trace / Eval 怎样证明任务真的完成 → Production 怎样扩展。**
+> 本模块不再按 Canonical Question / Runtime Primitive 一题一文件。研究层仍保留 44 道 Agent Canonical 和更细 Capability Map；教材层改为 **23 个能够独立形成认知闭环的知识小板块**。
 
-## 1. 课程证据层
+## 1. 为什么从旧 47 章重组为 23 章
 
-本模块采用四层证据：
+旧 47 章的问题不是知识点错，而是粒度错：
+
+```text
+Canonical / Capability Primitive
+        ↓  旧版几乎直接映射
+Markdown File
+```
+
+这会导致：
+
+- 一个概念刚建立背景就切文件；
+- 相邻文件反复解释同一 Runtime；
+- 参数 / failure / variant 被误当成独立知识板块；
+- 学完容易得到“47 个名词”，而不是 Agent Runtime 心智模型。
+
+现在统一为：
+
+```text
+Canonical Question        = 可独立追问的面试能力
+Capability Primitive      = Runtime 最小机制
+教材文件                  = 一个完整知识小板块
+文件内 Section            = 参数 / 变体 / Failure / 追问
+```
+
+仓库级粒度规则见：[`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
+
+---
+
+## 2. 课程证据层
 
 ```text
 Tier A  44 道 Agent HUMAN-A Canonical + Verified Follow-up Chains
 Tier B  Claude Code + OpenAI Codex 固定源码快照
-Tier C  Anthropic / OpenAI 官方文章、MCP / A2A 规范、ReAct / SWE-bench
-Tier D  初学者 0→1 的课程抽象
+Tier C  Anthropic / OpenAI 官方工程资料 + MCP / A2A 规范 + 原始论文
+Tier D  Beginner-first Runtime Curriculum
 ```
 
-入口：[`../research/agent-sources/README.md`](../research/agent-sources/README.md)
+研究入口：[`../research/agent-sources/README.md`](../research/agent-sources/README.md)
 
-源码固定快照：
+固定源码快照：
 
 ```text
 Claude Code commit = 58231dcce408f805c645cfbc352d2876b517223b
 OpenAI Codex commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 ```
 
-**只有 Tier A 决定真人面经频率。源码和外部权威资料只补完整知识边界。**
+**只有 Tier A 决定市场频率。Tier B/C 负责课程完整性与实现证据，不改变 Source Count。**
 
-## 2. 最重要的课程原则
+---
+
+## 3. 课程顺序原则
 
 > **知识依赖决定顺序，面经热度决定复习权重。**
 
-虽然 Context Compaction、Memory、Agent Loop、Tool Calling、Multi-Agent 在真人面经里非常热，但不能第一章就背“Context 压缩策略”。必须先理解：
+正确顺序：
 
 ```text
-Agent 与 Workflow 的边界
-→ Harness 是什么
-→ Loop 怎样推进
-→ Run / Turn / Step 是什么
-→ Runtime Event 怎样记录
-→ Tool Runtime 怎样工作
-→ 才能理解 Context 为什么增长和怎样压缩
+Agent Boundary
+→ Loop / Runtime State
+→ Tool Runtime
+→ Planning / Control
+→ Context
+→ Memory / Durable State
+→ Long-running Reliability
+→ Security
+→ Capability Extension
+→ Routing / Multi-Agent
+→ Trace / Evaluation
+→ Coding Agent
+→ Production / Framework Mapping
 ```
 
-## 3. 这套课里的 Harness
+不会因为 Context Compaction 有 41 个真人来源，就在初学者理解 Context Assembly 之前先讲 Summary。
 
-Harness / Runtime 是模型之外、围绕模型建立的执行系统。一个实用抽象：
+---
 
-```text
-                  User / Goal
-                      │
-                      ▼
-              Agent Harness / Runtime
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-     Context        State         Policy
-        │             │             │
-        └──────┬──────┴──────┬──────┘
-               ▼             ▼
-             Model         Tools
-               │             │
-               └───── Loop ──┘
-                      │
-                      ▼
-          Event / Trace / Verification
-```
+# 4. 正式 23 个知识小板块
 
-Model 提供推理与决策能力；Harness 决定它看到什么、能做什么、如何循环、怎样失败、怎样恢复、怎样被审计。
-
-## 4. 与其它模块的边界
-
-| 问题 | Primary |
-|---|---|
-| Token / Context Window / KV Cache | LLM Foundation |
-| RAG Retrieval / Rerank / Eval | RAG |
-| Redis 作为状态存储的 TTL / HA | Redis |
-| HTTP / MQ / Backpressure 通用原理 | AI Backend Engineering |
-| Agent Context Assembly / Compaction | Agent Harness |
-| Tool Calling Runtime / Permission / Sandbox | Agent Harness |
-| Checkpoint / Resume / Side-effect correctness | Agent Harness |
-| Multi-Agent / A2A / Task Ownership | Agent Harness |
-| 整个平台跨组件架构 | System Design |
-
-## 5. 十二条主线
-
-```text
-A  Agent Boundary / Harness / Loop
-B  Run / Turn / Step / Event Model
-C  Tool Contract / Router / Executor / Failure
-D  Planning / Stop / Budget
-E  Context Assembly / Budget / Compaction / Correctness
-F  Memory / Session / State / Checkpoint / Resume
-G  Cancellation / Idempotency / Compensation
-H  Permission / Approval / Sandbox / Injection / Containment
-I  Discovery / MCP / Skills / Hooks / Routing
-J  Multi-Agent / Handoff / A2A / Workspace
-K  Trace / Replay / Evaluation / Coding Verification
-L  Production Architecture / Framework Mapping
-```
-
-## 6. 完整 47 章
-
-### Part A｜从 LLM Call 到 Agent Runtime
+## Part A｜Agent 与 Runtime 基础
 
 1. [Agent Harness 在 AI 应用中的职责](docs/01-AgentHarness在AI应用中的职责.md)
-2. [Agent vs Workflow：什么时候真的需要 Agent](docs/02-AgentVsWorkflow.md)
-3. [Harness / Runtime 与 Model 的边界](docs/03-HarnessRuntimeBoundary.md)
-4. [Minimal Agent Loop](docs/04-MinimalAgentLoop.md)
-5. [Run / Turn / Step 与状态机](docs/05-RunTurnStep.md)
-6. [Runtime Message / Event Model](docs/06-RuntimeMessageEvent.md)
+2. [Agent vs Workflow，以及 Harness / Runtime / Orchestrator 的边界](docs/02-AgentWorkflowHarnessBoundary.md)
+3. [Agent Loop、Run / Turn / Step 与 Runtime Event Model](docs/03-AgentLoopRuntimeState.md)
 
-### Part B｜Tool Runtime
+## Part B｜Tool Runtime
 
-7. [Tool Contract：不只是函数调用](docs/07-ToolContract.md)
-8. [Tool Schema、Validation 与 Structured Result](docs/08-ToolSchemaValidation.md)
-9. [Tool Registry、Router 与 Capability Catalog](docs/09-ToolRegistryRouter.md)
-10. [Tool Executor 与 Result 回填](docs/10-ToolExecutionResult.md)
-11. [Tool Failure、Timeout 与 Retry](docs/11-ToolFailureTimeoutRetry.md)
-12. [Side Effect、Concurrency Safety 与 Destructive Tool](docs/12-ToolSideEffectConcurrency.md)
-13. [Tool Cancellation、Progress 与 Streaming](docs/13-ToolCancellationProgress.md)
+4. [Tool Contract、Schema 与 Validation](docs/04-ToolContractSchemaValidation.md)
+5. [Tool Registry、Router 与 Progressive Discovery](docs/05-ToolRegistryRouterDiscovery.md)
+6. [Tool Execution、Result 与 Failure Semantics](docs/06-ToolExecutionFailure.md)
+7. [Tool Side Effect、Concurrency、Cancellation 与 Progress](docs/07-ToolSideEffectCancellation.md)
 
-### Part C｜Planning 与控制循环
+## Part C｜Planning 与控制循环
 
-14. [Planning、ReAct 与 Execute-Observe](docs/14-PlanningReAct.md)
-15. [Stop Condition、Loop Guard 与 Budget](docs/15-StopLoopGuardBudget.md)
+8. [Planning / ReAct、Goal Control、Stop Condition 与 Budget](docs/08-PlanningGoalStopBudget.md)
 
-### Part D｜Context Engineering
+## Part D｜Context Engineering
 
-16. [Context Assembly](docs/16-ContextAssembly.md)
-17. [Context Budget 与 Token Economics](docs/17-ContextBudget.md)
-18. [Large Tool Result、Offloading 与 Reference](docs/18-ToolResultOffloading.md)
-19. [Context Compaction](docs/19-ContextCompaction.md)
-20. [Compaction Correctness 与 Stale Context](docs/20-CompactionCorrectness.md)
+9. [Context Assembly、Budget、Cache 与 Tool Result Offloading](docs/09-ContextAssemblyBudget.md)
+10. [Context Compaction、Correctness 与 Stale Context](docs/10-ContextCompactionCorrectness.md)
 
-### Part E｜Memory、State 与长任务
+## Part E｜Memory、State 与长任务
 
-21. [Memory Architecture 与生命周期](docs/21-MemoryArchitecture.md)
-22. [Session、State、History 的区别](docs/22-SessionStateHistory.md)
-23. [State Persistence 与 Event Log](docs/23-StatePersistence.md)
-24. [Checkpoint 与 Resume](docs/24-CheckpointResume.md)
-25. [Fork、Branch 与 Replay](docs/25-ForkBranchReplay.md)
-26. [Runtime Cancellation](docs/26-RuntimeCancellation.md)
-27. [Idempotency、External Side Effect 与 Compensation](docs/27-IdempotencyCompensation.md)
+11. [Memory Architecture、Lifecycle 与 Correctness](docs/11-MemoryArchitectureLifecycle.md)
+12. [Session / State / History / Persistence 与 Tenant Isolation](docs/12-SessionStatePersistence.md)
+13. [Checkpoint / Resume / Fork / Replay 与 Long-running Reliability](docs/13-CheckpointResumeReliability.md)
 
-### Part F｜安全执行边界
+## Part F｜安全执行边界
 
-28. [Human-in-the-loop、Permission 与 Approval](docs/28-PermissionApproval.md)
-29. [Sandbox 与 Execution Environment](docs/29-SandboxEnvironment.md)
-30. [Guardrails 与 Runtime Validation](docs/30-GuardrailsValidation.md)
-31. [Prompt Injection 与 Untrusted Context](docs/31-PromptInjection.md)
-32. [Secrets、Data Exfiltration 与 Containment](docs/32-SecretsContainment.md)
+14. [Permission、Approval、HITL 与 Sandbox](docs/14-PermissionApprovalSandbox.md)
+15. [Guardrails、Prompt Injection、Secrets 与 Containment](docs/15-GuardrailsInjectionContainment.md)
 
-### Part G｜能力扩展
+## Part G｜能力扩展与路由
 
-33. [Tool Discovery 与 Progressive Loading](docs/33-ToolDiscovery.md)
-34. [MCP：Host / Client / Server / Tool / Resource / Prompt](docs/34-MCP.md)
-35. [Skills、Commands 与 Reusable Capability](docs/35-SkillsCapability.md)
-36. [Hooks、Plugins 与 Extensibility](docs/36-HooksPlugins.md)
-37. [Intent Recognition 与 Capability Routing](docs/37-IntentRouting.md)
-38. [Model Provider、Model Routing 与 Fallback](docs/38-ModelRouting.md)
+16. [MCP、Skills、Hooks 与 Capability Extension](docs/16-MCPSkillsHooks.md)
+17. [Intent / Model Routing、Provider Adapter 与 Runtime Resilience](docs/17-RoutingProviderResilience.md)
 
-### Part H｜Multi-Agent
+## Part H｜Multi-Agent Coordination
 
-39. [Multi-Agent：什么时候值得拆 Agent](docs/39-MultiAgentPatterns.md)
-40. [Subagent、Handoff、Context Isolation 与 Task Ownership](docs/40-SubagentHandoff.md)
-41. [A2A 与 Agent-to-Agent Protocol Boundary](docs/41-A2A.md)
-42. [Shared Workspace 与并发冲突](docs/42-WorkspaceConcurrency.md)
+18. [Multi-Agent、Subagent、Handoff、A2A 与 Workspace Concurrency](docs/18-MultiAgentA2AWorkspace.md)
 
-### Part I｜可观测、评测与 Coding Agent
+## Part I｜可观测、评测与 Coding Agent
 
-43. [Trace、Replay 与 Observability](docs/43-TraceReplayObservability.md)
-44. [Agent Evaluation、Benchmark 与 Outcome Verification](docs/44-AgentEvaluation.md)
-45. [Coding Agent：Repo Understanding → Patch → Test → Verify](docs/45-CodingAgentWorkflow.md)
+19. [Trace、Replay 与 Observability](docs/19-TraceReplayObservability.md)
+20. [Agent Evaluation、Benchmark 与 Data Flywheel](docs/20-AgentEvaluationBenchmark.md)
+21. [Coding Agent：Repo Understanding → Patch → Test → Verify](docs/21-CodingAgentWorkflow.md)
 
-### Part J｜Production 与框架映射
+## Part J｜Production 与框架映射
 
-46. [Production Agent Runtime Architecture](docs/46-ProductionArchitecture.md)
-47. [Framework Mapping 与 Build-vs-Buy](docs/47-FrameworkMapping.md)
+22. [Production Agent Runtime Architecture](docs/22-ProductionAgentRuntime.md)
+23. [Framework Mapping 与 Build-vs-Buy](docs/23-FrameworkMappingBuildVsBuy.md)
 
-## 7. Verified 真人追问主链
+---
 
-当前人工核验的高置信链包括：
+## 5. 旧 47 章怎样迁移
 
 ```text
-为什么 Agent
-→ Harness
-→ Loop
-→ Tool / Skill / MCP
-→ Context / Memory
-→ Failure / Evaluation
+旧 01                         → 新 01
+旧 02 + 03                    → 新 02
+旧 04 + 05 + 06               → 新 03
+旧 07 + 08                    → 新 04
+旧 09 + 33                    → 新 05
+旧 10 + 11                    → 新 06
+旧 12 + 13                    → 新 07
+旧 14 + 15 + Goal Drift/Steering → 新 08
+旧 16 + 17 + 18 + Context Cache → 新 09
+旧 19 + 20                    → 新 10
+旧 21 + Memory Lifecycle/Correctness → 新 11
+旧 22 + 23 + Tenant Isolation → 新 12
+旧 24 + 25 + 26 + 27          → 新 13
+旧 28 + 29                    → 新 14
+旧 30 + 31 + 32               → 新 15
+旧 34 + 35 + 36 + Progressive Loading → 新 16
+旧 37 + 38 + Runtime Resilience → 新 17
+旧 39 + 40 + 41 + 42          → 新 18
+旧 43                         → 新 19
+旧 44 + Benchmark + Flywheel  → 新 20
+旧 45 + Repo Understanding + AI-assisted Workflow → 新 21
+旧 46                         → 新 22
+旧 47                         → 新 23
 ```
 
-以及：
+这个 Merge **不改变**任何 Canonical、Source Count、Primary Ownership 或 Follow-up Chain。
+
+---
+
+## 6. 三个特别重要的边界
+
+### Prompt / Context / Harness
 
 ```text
-Context Assembly
-→ Compaction
-→ Correctness
-→ Memory Pollution
-→ Resume
+Prompt Engineering
+= 单次模型行为约束
+
+Context Engineering
+= 一次 inference 看见什么
+
+Harness Engineering
+= 跨多轮、多 Tool、多 State 的执行系统
 ```
+
+### Tool / MCP / Skill / Hook
 
 ```text
-Tool Lifecycle
-→ Discovery
-→ Failure
-→ Permission / Sandbox
+Tool   = 一次可执行能力
+MCP    = 外部能力 / Context 的标准连接协议
+Skill  = 可发现、可加载的程序性知识与资源包
+Hook   = Runtime 生命周期扩展点
 ```
 
-这会影响章节内部追问顺序，但不替代上面的 0→1 主干。
+### Context / Memory / State / History
 
-## 8. 配套
+```text
+Context    = 当前 Model Call 的输入视图
+Memory     = 可被未来再次取回的信息
+State      = Runtime 当前执行事实
+History    = 已发生事件 / Message 的记录
+Checkpoint = 可恢复执行点
+```
 
-完成正文后使用：
+---
 
-- [`review/README.md`](review/README.md)
-- [`interview/高频面试题.md`](interview/高频面试题.md)
-- [`interview/面试易错点.md`](interview/面试易错点.md)
-- [`interview/面试前速查表.md`](interview/面试前速查表.md)
+## 7. 每个文件的正式验收标准
 
-最终验收不是“会用框架”，而是：
+一个知识小板块至少应包含：
 
-> **能自己画出 Runtime、定义状态机、设计 Tool Contract、控制 Context、处理副作用、暂停恢复、做安全边界、追踪执行并用 Outcome 验证任务是否真的完成。**
+```text
+先讲人话
+→ 准确定义
+→ 为什么需要
+→ Runtime 图 / 状态机 / 数据流
+→ 最小实现 / 伪代码
+→ Failure Semantics
+→ Trade-off
+→ HUMAN-A 真实追问
+→ Claude Code / Codex 实现证据
+→ 官方 / 规范 / 原始论文证据
+→ AI 应用场景
+→ 30 秒回答
+→ 2–3 分钟回答
+→ 深挖追问
+→ 折叠自测
+```
+
+完成标准不是“文件存在”，而是能独立支撑学习和面试追问。
+
+---
+
+## 8. 当前迁移状态
+
+当前旧 47 章文件仍在迁移中，因此以本 README 的 **23 章目录**为目标口径。
+
+已经完成过深写的旧 01–18 内容不会丢失，会在 Merge 时去重并迁入对应新章；旧短稿 19–47 不再逐文件扩写。
+
+迁移 checkpoint 见：[` .rewrite-in-progress.md`](.rewrite-in-progress.md)。
+
+---
+
+## 9. 最终验收
+
+学完 Agent Harness，不是会背：
+
+> Agent = LLM + Tools。
+
+而是能够从零设计并解释：
+
+```text
+Run State Machine
+Tool Contract / Failure
+Context Assembly / Compaction
+Memory / Durable State
+Checkpoint / Resume
+Side-effect Correctness
+Permission / Sandbox
+Capability Discovery
+Multi-Agent Ownership
+Trace / Evaluation
+Production Runtime
+```
+
+并能说明：**为什么这个 Runtime 决策存在、失败时怎样恢复、怎样验证它真的工作。**
