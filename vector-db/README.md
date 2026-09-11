@@ -3,8 +3,10 @@
 > Vector DB 是这套 Handbook 的第 6 个正式一级模块。
 >
 > 目标不是从某个数据库 SDK 开始，而是从 0 建立：**Vector Space → Similarity → Exact Search → ANN → HNSW / IVF / Quantization → Data Model / Filter → Index Lifecycle → Distributed / Production → Product Boundary**。
-
-> **Granularity Audit：✅ 已完成。** 原 23 章内容经过知识闭环审计后收敛为 **16 个正式知识小板块**。教材文件减少不改变 Vector DB 的 12 道 Canonical、HUMAN-A Source Count 或与 RAG / LLM Foundation 的 Primary Boundary。
+>
+> **Granularity Audit：✅ 已完成。** 原 23 章按知识闭环收敛为 **16 个正式知识小板块**；当前 `docs/` 已重新连续编号为 `01–16`，文件编号与正式学习顺序一致。
+>
+> **Content Depth Audit：✅ 通过。** 已对 16 个正文文件做全量结构扫描，并人工复核 ANN 谱系、IVF、PQ、Schema、Metadata Filter、Tenant Isolation、Distributed Vector DB 等相对较短章节；它们虽比 HNSW / Lifecycle / Production Diagnosis 更短，但已经各自形成“机制 → Trade-off / Failure → Production 边界 → 面试 → 自测”的独立闭环，不为追求字数机械扩写。
 
 ---
 
@@ -28,7 +30,7 @@ Vector / Dimension
 
 > **Canonical / Capability 可以很细，但一个 Markdown 文件必须形成完整认知闭环。**
 
-所以这次把“Normalization”“HNSW 参数”“Compaction”等子机制重新并回它们所属的知识块。
+所以把 Normalization、HNSW 参数、Compaction 等子机制重新并回它们所属的知识块，而不是一机制一文件。
 
 ---
 
@@ -88,7 +90,7 @@ Quantization、Tombstone/Compaction、Shard/Replica 等即使面经直接频率�
 
 ---
 
-## 4. 这次 23 → 16 合并了什么
+## 4. 23 → 16 的结构调整
 
 ```text
 Vector + Dimension
@@ -114,10 +116,9 @@ Performance / Capacity
 → Performance, Capacity & Diagnosis
 ```
 
-这些合并后的主题共享同一个“为什么 → 机制 → Failure → Trade-off → 验证”闭环。
+这些主题共享同一个“为什么 → 机制 → Failure → Trade-off → 验证”闭环。
 
-IVF、PQ、Metadata Filter、Tenant Isolation、Distributed Vector DB 等仍保留独立文件，因为它们有自己不同的机制和 Failure Model。
-
+IVF、PQ、Metadata Filter、Tenant Isolation、Distributed Vector DB 等仍独立，因为它们有不同机制和 Failure Model。
 
 ---
 
@@ -199,7 +200,7 @@ vs Dedicated Vector DB
 
 ### 第一遍
 
-按上面的 **16-block 顺序**学习，不按文件编号大小猜顺序。
+按 `docs/01 → 16` 连续学习，重点理解下一章为什么自然出现。
 
 ### 第二遍
 
