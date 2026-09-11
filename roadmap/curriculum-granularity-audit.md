@@ -50,6 +50,22 @@ Python v1 原 12 章 beginner-first 主干保持不变，只新增一个真正�
 
 同时也没有因为 FastAPI 只有 4 道 Primary Canonical 就只写 4 章：Canonical 决定真实问法和深度，完整 Web/API 前置仍由知识体系保证。
 
+## AI Backend Engineering — COMPLETE：约 55 outline topics / 39 Canonical → 22
+
+AIBE 同时存在两种细粒度输入：旧 README 约 55 个 Topic，以及 39 道可独立追问的 HUMAN-A Canonical。正式建设时没有把它们一一落成 Markdown，而是按 Backend Production 因果链收敛为 **22 个知识块**。
+
+```text
+Network / Request
+→ Capacity / Pool / Backpressure
+→ Timeout / Retry / Idempotency
+→ MQ / Durable Task
+→ Consistency / State / Auth
+→ Operations / Deployment / Security
+→ Cross-language Runtime Mapping
+```
+
+Spring / JVM / Java / Go 的真人面试信号被统一放入最后一个跨语言映射块，因为它们主要是通用 DI / Concurrency / Memory / Scheduler Primitive 在不同生态中的实现，而不是 Python AI Backend 主线需要额外拆出的多个语言模块。
+
 ## MySQL — PASS：23 → 23
 
 B+Tree、Composite Index、MVCC、Lock、Replication、Sharding 等有独立数据结构、执行机制和 Failure Model，不为统一数字机械合并。
@@ -159,6 +175,7 @@ System Design 的 24 道 Canonical 全部是 L4 Scenario，但没有采用 `24 �
 |---|---:|---:|---|
 | Python | 12 | 13 | ✅ COMPLETE |
 | FastAPI | ~40 outline topics | 16 | ✅ COMPLETE |
+| AI Backend Engineering | ~55 outline topics / 39 Canonical | 22 | ✅ COMPLETE |
 | MySQL | 23 | 23 | ✅ PASS |
 | Redis | 27 | 24 | ✅ COMPLETE |
 | Vector DB | 23 | 16 | ✅ COMPLETE |

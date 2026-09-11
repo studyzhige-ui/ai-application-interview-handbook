@@ -72,37 +72,62 @@ Official Source Index 存在
 
 ---
 
-## 2. AI Backend Engineering — ⏳ 只有课程骨架，正式正文未写
+## 2. AI Backend Engineering — ✅ 22 blocks / Canonical Coverage / Depth PASS
 
 当前仓库实际结构：
 
 ```text
 backend-engineering/
-└── README.md
+├── README.md
+├── docs/       01–22 连续知识小板块
+├── review/     七张总图 + 24 个综合折叠自测
+└── interview/  60 道高频题 + 90 个易错点 + 速查表
 ```
 
-当前同样没有：
+并建立：
 
 ```text
-docs/
-review/
-interview/
+research/backend-sources/README.md
 ```
 
-README 已经规划 Network / Concurrency / Pool / Backpressure / Timeout / Retry / Idempotency / Consistency / MQ / Long-running Task / Observability 等完整 Production 主线，但它仍然只是目录与内容设计。
+用于记录 Google SRE、AWS Builders' Library、Stripe、Apache Kafka、Kubernetes、OpenTelemetry、OAuth/RFC 与 OWASP 等权威资料；这些资料只校准工程机制，不改变 HUMAN-A Source Count。
 
-这一块后续必须正式写成完整横向工程教材，因为它连接：
+原 README 规划约 55 个细粒度 Topic，研究层有 39 道 Canonical。正式教材没有按任一粒度机械建文件，而是收敛为 22 个认知闭环：
 
 ```text
-FastAPI
-→ MySQL / Redis / Vector DB
-→ LLM / RAG / Agent
-→ System Design
+Request / Network / Communication
+→ Concurrency / Pool / Backpressure
+→ Timeout / Retry / Idempotency
+→ MQ / Kafka / Reliable Long-running Task
+→ Consistency / State Ownership / Auth
+→ Discovery / Observability / Linux / K8s
+→ Config / Security
+→ Cross-language Runtime Mapping
 ```
 
-System Design 已经使用了这些概念做组合设计，但这不能替代 AI Backend Engineering 对机制本身的系统教学。
+特别处理了 Spring / JVM / Java Concurrency / Go Runtime 真人市场信号：这些内容保留在 `22-CrossLanguageRuntimeMapping.md`，用于把生态题映射回 DI、Lock、Memory、Scheduler、Context 等通用 Backend Primitive，而不是破坏 Python-first 主干。
 
-**结论：AI Backend Engineering Formal Curriculum = NOT WRITTEN。**
+完成后机械核验：
+
+```text
+docs = 01–22 连续
+22/22 正文 >= 6KB
+22/22 正文含 🎯 面试表达、⚠️ 易错点、<details> 折叠自测
+README 正文链接存在
+Review / Interview 三件套存在
+Backend Official Source Index 存在
+```
+
+人工重点复核了：
+
+- `06 Backpressure / Rate Limit`：Queue Deadline、Load Shedding、Multi-tenant Quota；
+- `08 Retry / Circuit / Failover`：Retry Amplification、Jitter、Budget、Fallback；
+- `12 Reliable Async Task`：Outbox、Lease、Heartbeat、Reclaim、Fencing；
+- `13 Consistency / Compensation`：DB+Cache Failure Window、CDC/Outbox、Saga/Reconciliation；
+- `19 Container/K8s`：Startup/Readiness/Liveness、Drain、Pool Multiplication；
+- `22 Cross-language Mapping`：明确 Concept Mapping ≠ Implementation Equivalence。
+
+**结论：AI Backend Engineering Formal Curriculum = COMPLETE；Content Depth / Canonical Coverage = PASS。**
 
 ---
 
@@ -190,9 +215,9 @@ README 正文链接存在
 
 ---
 
-## 4. 当前 Foundation 建设顺序
+## 4. Foundation 完成状态
 
-学习者仍然应该按：
+学习顺序仍然是：
 
 ```text
 Python
@@ -200,15 +225,9 @@ Python
 → AI Backend Engineering
 ```
 
-学习。
+当前三块均已达到：正文知识块 + Review + Interview + Canonical Coverage / Depth Audit，因此：
 
-但仓库当前的**建设工作顺序**只剩：
-
-```text
-1. AI Backend Engineering：从 README 骨架写成正式 docs / review / interview
-```
-
-Python 与 FastAPI 已完成，当前只剩 AI Backend Engineering 没有正式正文。
+> **Foundation：✅ COMPLETE。**
 
 ---
 
@@ -236,4 +255,4 @@ Python
 ✅ Review / Interview 同步
 ```
 
-只有三块都达到这个标准，Foundation 才能整体标记为 `✅`。
+三块当前都已达到这个标准，Foundation 已整体标记为 `✅`。
