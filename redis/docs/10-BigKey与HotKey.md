@@ -1,4 +1,4 @@
-# 12. BigKey 与 HotKey
+# 10｜BigKey 与 HotKey
 
 BigKey 和 HotKey 经常一起出现，但它们不是一个问题。
 

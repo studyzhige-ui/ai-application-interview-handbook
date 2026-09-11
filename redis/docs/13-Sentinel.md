@@ -1,4 +1,4 @@
-# 15. Sentinel 与自动 Failover
+# 13｜Sentinel 与自动 Failover
 
 上一章已经有：
 

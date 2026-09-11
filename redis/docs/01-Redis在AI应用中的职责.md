@@ -1,4 +1,4 @@
-# 01. Redis 在 AI Application 中负责什么
+# 01｜Redis 在 AI Application 中负责什么
 
 很多人第一次学 Redis，会把它理解成：
 

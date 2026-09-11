@@ -1,4 +1,4 @@
-# 09. Cache 设计与故障模式：Key、TTL、Cache Aside、穿透、击穿与雪崩
+# 09｜Cache 设计与故障模式：Key、TTL、Cache Aside、穿透、击穿与雪崩
 
 Redis 被放进业务架构后，最常见的角色之一就是 Cache。
 

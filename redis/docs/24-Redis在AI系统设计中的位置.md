@@ -1,4 +1,4 @@
-# 27. Redis in AI System Design
+# 24｜Redis in AI System Design
 
 前 26 章分别学了：
 

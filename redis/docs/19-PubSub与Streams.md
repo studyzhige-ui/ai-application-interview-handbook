@@ -1,4 +1,4 @@
-# 22. Pub/Sub、Streams 与消息边界
+# 19｜Pub/Sub、Streams 与消息边界
 
 Redis 不只做 Cache，也提供消息相关能力。
 

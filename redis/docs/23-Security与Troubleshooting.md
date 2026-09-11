@@ -1,4 +1,4 @@
-# 26. Security、Latency 与 Production Troubleshooting
+# 23｜Security、Latency 与 Production Troubleshooting
 
 学到这里，Redis 已经不只是“会用命令”。
 

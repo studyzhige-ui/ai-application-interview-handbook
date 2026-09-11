@@ -1,4 +1,4 @@
-# 24. Session、Conversation 与 Agent State Store 边界
+# 21｜Session、Conversation 与 Agent State Store 边界
 
 Redis 在 AI 应用里非常常见的一类用途是：
 

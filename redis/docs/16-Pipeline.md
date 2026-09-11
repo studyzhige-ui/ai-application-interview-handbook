@@ -1,4 +1,4 @@
-# 18. Pipeline：降低 RTT，不等于 Transaction
+# 16｜Pipeline：降低 RTT，不等于 Transaction
 
 很多 Redis 性能问题并不发生在服务器执行命令本身，而发生在：
 

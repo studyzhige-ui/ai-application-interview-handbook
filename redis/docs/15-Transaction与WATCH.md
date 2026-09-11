@@ -1,4 +1,4 @@
-# 17. Transaction：MULTI / EXEC / WATCH
+# 15｜Transaction：MULTI / EXEC / WATCH
 
 很多人知道 Redis 单个 Command 原子，就会自然问：
 

@@ -1,4 +1,4 @@
-# 06. Redis Runtime 与性能模型：为什么快、Event Loop 与阻塞边界
+# 06｜Redis Runtime 与性能模型：为什么快、Event Loop 与阻塞边界
 
 “Redis 为什么快？”不是一个可以只用“内存 + 单线程”回答的问题。
 

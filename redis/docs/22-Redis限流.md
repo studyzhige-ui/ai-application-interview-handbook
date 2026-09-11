@@ -1,4 +1,4 @@
-# 25. Redis 实现 Rate Limit
+# 22｜Redis 实现 Rate Limit
 
 Rate Limit 的**算法选择**属于 AI Backend Engineering；这一章只回答 Redis-specific 问题：
 

@@ -1,4 +1,4 @@
-# 16. Redis Cluster、Hash Slot 与 Reshard
+# 14｜Redis Cluster、Hash Slot 与 Reshard
 
 Sentinel 解决的是：
 

@@ -1,4 +1,4 @@
-# 14. Replication：Primary / Replica
+# 12｜Replication：Primary / Replica
 
 Persistence 解决：
 

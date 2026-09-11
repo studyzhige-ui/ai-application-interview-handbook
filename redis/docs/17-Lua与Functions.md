@@ -1,4 +1,4 @@
-# 19. Lua / Redis Functions 与服务器端原子逻辑
+# 17｜Lua / Redis Functions 与服务器端原子逻辑
 
 当一个业务动作需要多个 Redis 操作，而且：
 

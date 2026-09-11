@@ -1,4 +1,4 @@
-# 02. Keyspace、Command 与 Redis 基本执行模型
+# 02｜Keyspace、Command 与 Redis 基本执行模型
 
 学 Redis 时，最容易一上来就背：
 
