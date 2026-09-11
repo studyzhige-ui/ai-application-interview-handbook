@@ -2,7 +2,7 @@
 
 更新日期：2026-09-11
 
-> 本文件记录 Redis / Vector DB / LLM Foundation / RAG 的颗粒度整改后深度验收，以及 System Design 首版完成后的深度验收。目标不是让所有文件达到相同字数，而是确认每个知识小板块都能独立完成学习闭环。
+> 本文件记录 Python / Redis / Vector DB / LLM Foundation / RAG 的整改后深度验收，以及 System Design 首版完成后的深度验收。目标不是让所有文件达到相同字数，而是确认每个知识小板块都能独立完成学习闭环。
 
 ---
 
@@ -71,7 +71,7 @@ System Design 在第二轮建设中从一开始按当前标准撰写 19 个连�
 ---
 
 
-# Python — ✅ PASS after current-standard remediation
+# 3. Python — ✅ PASS after current-standard remediation
 
 当前：**13 个连续知识小板块，`docs/01 → 13`。**
 
@@ -94,7 +94,7 @@ System Design 在第二轮建设中从一开始按当前标准撰写 19 个连�
 
 ---
 
-# 3. Redis — ✅ PASS
+# 4. Redis — ✅ PASS
 
 当前：**24 个连续知识小板块，`docs/01 → 24`。**
 
@@ -156,7 +156,7 @@ interview / self-test
 
 ---
 
-# 4. Vector DB — ✅ PASS
+# 5. Vector DB — ✅ PASS
 
 当前：**16 个连续知识小板块，`docs/01 → 16`。**
 
@@ -216,7 +216,7 @@ hot tenant / capacity
 
 ---
 
-# 5. LLM Foundation — ✅ PASS after targeted remediation
+# 6. LLM Foundation — ✅ PASS after targeted remediation
 
 当前：**14 个连续知识小板块，`docs/01 → 14`。**
 
@@ -287,7 +287,7 @@ RAG / Agent module boundary
 
 ---
 
-# 6. RAG — ✅ PASS after targeted remediation
+# 7. RAG — ✅ PASS after targeted remediation
 
 当前：**14 个连续 Production RAG 子系统，`docs/01 → 14`。**
 
@@ -359,7 +359,7 @@ Production architecture
 
 ---
 
-# 7. System Design — ✅ PASS
+# 8. System Design — ✅ PASS
 
 当前：**19 个连续知识小板块，`docs/01 → 19`，并包含 Review + Interview 三件套。**
 
@@ -396,7 +396,7 @@ Why / Requirement
 
 ---
 
-# 8. 最终验收状态
+# 9. 最终验收状态
 
 | 模块 | Blocks | Numbering | Depth |
 |---|---:|---|---|
@@ -426,7 +426,7 @@ System Design 首版独立验收：     19 篇
 
 ---
 
-# 9. 后续规则
+# 10. 后续规则
 
 未来新增或整改模块继续使用同一标准：
 

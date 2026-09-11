@@ -42,8 +42,8 @@ Section = 参数 / 变体 / Failure Case / 追问
 ```
 
 因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
-Redis / Vector DB / LLM Foundation / RAG / System Design 的正文深度已完成 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
-Foundation 的真实完成度与 Python v1 质量核实见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。Python v1 定向整改已完成；Foundation 接下来的仓库补齐顺序是：**FastAPI → AI Backend Engineering**。
+Python / Redis / Vector DB / LLM Foundation / RAG / System Design 的正文深度已完成 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
+Foundation 的真实完成度见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。Python current-standard remediation 已完成；Foundation 剩余缺口只有：**FastAPI → AI Backend Engineering**。
 
 ### 3. 从 Demo 能力走到 Production 能力
 

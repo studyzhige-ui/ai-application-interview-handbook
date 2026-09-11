@@ -79,111 +79,87 @@ System Design 已经使用了这些概念做组合设计，但这不能替代 AI
 
 ---
 
-## 3. Python Foundation — ✅ v1 → current-standard Remediation 已完成
+## 3. Python Foundation — ✅ current-standard Remediation 已完成
 
-当前仓库不是空壳，实际已有：
+当前仓库实际结构：
 
 ```text
 python/
 ├── README.md
-├── docs/      12 章正文
-├── review/    逐章图解与自测
-└── interview/ 面试配套材料
+├── docs/       13 个连续知识小板块
+├── review/     13 个逐章图解与自测
+└── interview/  高频题 / Coding / 易错点 / 速查表
 ```
 
-所以 Python 与 FastAPI / AI Backend Engineering 的状态不同：**Python 已经有完整 v1 教材，可以学习；问题是它早于当前统一课程标准建立，需要重新对齐最新 Canonical 和深度要求。**
+Python 原 v1 的 12-block 主干本身合理，因此本轮没有推倒重写，也没有把 15 道 Canonical 机械变成 15 个文件。
 
-### 3.1 当前做得好的部分
-
-现有 12 章主干本身是合理的 0→1 顺序：
+### 3.1 保留的 beginner-first 主干
 
 ```text
-对象模型
-→ 容器
-→ 可变性 / 引用 / 深浅拷贝
-→ 函数 / 参数 / 作用域 / 闭包
-→ Pythonic 工具
+Object Model / Language Choice
+→ Containers / Hash / Slicing
+→ Mutability / Copy
+→ Function / Scope / Closure
+→ Pythonic Tools
 → Iterator / Generator
 → Decorator / Context Manager
-→ OOP
-→ Exception / File / Module
+→ OOP / Protocol
+→ Error / File / Import
+→ Structured Data / Validation
 → Memory / GC / GIL
 → Thread / Process / Coroutine / asyncio
 → Data Structure / Complexity
 ```
 
-尤其：
-
-- 对象 / 引用 / `del` / Copy 的教学链清楚；
-- Generator / Context Manager 能自然连接 Streaming 与资源生命周期；
-- GIL 章节能够区分 Python 语言语义与 CPython 实现，并避免“Python 永远只能用一个 CPU 核”这类过时绝对表达；
-- 并发章节已经解释 Process / Thread / Coroutine、Event Loop、`gather`、Blocking Call 等后续 FastAPI 必需前置；
-- 已有 Review 与 Interview 层，不需要推倒重建。
-
-### 3.2 与最新 15 道 Python Canonical 的差距
-
-当前研究层已经明确有 15 道 Python Canonical。v1 教材对传统 Python 主干覆盖不错，但以下市场信号还需要显式补齐或加深：
+### 3.2 15 道 Canonical 的实际映射
 
 ```text
-PY-001  Python vs Java / Go 的工程选型
-PY-003  dict Hash / collision / delete 的底层追问
-PY-005  Duck Typing / Protocol Thinking
-PY-009  Slicing 的时间 / 空间 /复制语义
-PY-012  asyncio gather / as_completed / timeout / fallback
-PY-013  Lock / RLock / Semaphore 的区别与场景
-PY-014  LLM JSON / Structured Output Parsing & Validation
+PY-001  Language Choice                  → 01
+PY-002  list / tuple                     → 02
+PY-003  dict Hash / collision / delete   → 02
+PY-004  Function Parameters              → 04
+PY-005  Duck Typing / Protocol           → 08
+PY-006  Iterator / Generator             → 06
+PY-007  Decorator                        → 07
+PY-008  Context Manager                  → 07
+PY-009  Slicing Cost                     → 02
+PY-010  GIL                              → 11
+PY-011  Thread / Process                 → 12
+PY-012  asyncio / as_completed / timeout → 12
+PY-013  Lock / RLock / Semaphore         → 12
+PY-014  Structured Output Validation     → 10（唯一新增独立知识块）
+PY-015  Closure                          → 04
 ```
 
-其中最明显的是：
+这体现当前固定原则：**知识体系决定章节；真人面经决定补哪些真实工程深度。**
 
-- 当前 asyncio 章已有 `gather` 和 Event Loop，但对 `as_completed`、Timeout / Fallback、取消与真实 AI I/O 聚合的深度还不足；
-- Structured Output Validation 已经成为 AI Application 的真实 Python 面试点，但目前没有形成清晰的教材闭环；
-- Duck Typing / Protocol Thinking 在现有 OOP 主线里没有得到与最新 Canonical 相匹配的显式表达。
+### 3.3 本轮实质补强
 
-### 3.3 与当前统一教材标准的差距
+- `01`：新增 Python vs Java / Go 的工程选型与 trade-off；
+- `02`：新增 dict Hash / Collision / Equality / Delete Probe Chain / Resize，并补内建序列 Slicing 的 O(k) 时间/空间语义；
+- `08`：把 Duck Typing 从一句定义扩展为 Protocol Thinking、`typing.Protocol` vs ABC、可替换性和失败边界；
+- `10`：新增 Structured Data / JSON / Schema / Business Validation 完整 trust-boundary 章节；
+- `11`：重新整理 CPython 引用计数 / 循环 GC / 逻辑内存泄漏 / GIL / free-threaded 边界；
+- `12`：补 `gather` vs `as_completed`、Timeout / Fallback / Cancellation、Lock / RLock / Semaphore、Thread/Process Pool 与 AI I/O 聚合；
+- `03–07`：补正文内 GitHub `<details>` 折叠自测；
+- Review / Interview / 速查表同步最新 AI Application 追问。
 
-后续 MySQL / Redis / RAG / Agent 已经统一要求知识块尽量形成：
+### 3.4 当前验收结论
+
+已经机械验证：
 
 ```text
-为什么需要
-→ 准确定义 / Mental Model
-→ 机制
-→ Failure / Trade-off
-→ AI / Production 场景
-→ 面试表达
-→ 易错点 / 追问
-→ 折叠自测
+docs   = 01–13 连续
+review = 01–13 连续
+13/13 正文均有折叠自测
+README 正文链接存在
+旧 10/11/12 历史路径已删除
+临时 remediation checkpoint 已删除
 ```
 
-Python v1 是较早期写法，很多正文主要负责讲知识本体，自测和图解集中到 `review/`；因此**可用，但尚未做一次与当前统一标准相同的 Granularity + Content Depth + Canonical Coverage 验收**。
-
-### 3.4 正确整改方式
-
-Python 不应该重写成 15 道 Canonical = 15 个文件，也不应该为了和后续模块统一而机械增章。
-
-应当：
-
-```text
-保留当前 12-block 0→1 主干
-→ 对照 15 Canonical 做 Coverage Audit
-→ 把缺口并入最自然的知识块
-→ 必要时只新增真正独立的知识闭环
-→ 补 Failure / AI 场景 / Interview Follow-up
-→ 再做 Review / Interview 同步
-```
+并已在 `content-depth-audit.md` 记录人工质量结论。
 
 **结论：Python Foundation = 13 blocks；Canonical Coverage / Depth Remediation = PASS。**
-
-
-
-### 3.5 本轮实际整改结果
-
-```text
-12-block v1
-→ 13-block current curriculum
-```
-
-新增的唯一独立知识块是 `10-结构化数据-JSON与校验.md`。其它最新 Canonical 均并入已有主干：Language Choice→01、dict/Slicing→02、Duck Typing/Protocol→08、asyncio/Sync Primitive→12。正文、Review、Interview 和项目级状态已经同步。
 
 ---
 

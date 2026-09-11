@@ -63,8 +63,8 @@ Source Count mismatch         0
 > **研究粒度、Capability 粒度和教材文件粒度必须分开。Canonical 可以很细，但一个 Markdown 文件应代表一个完整知识小板块。**
 
 详细规则：`../../roadmap/curriculum-granularity-audit.md`。
-内容深度验收：`../../roadmap/content-depth-audit.md`。Redis / Vector DB / LLM Foundation / RAG / System Design 已完成 QA 与人工复核并通过。
-Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。FastAPI / AI Backend Engineering 当前只有课程骨架；Python 是可用 v1，但需最新 Canonical / 当前统一深度标准的定向整改。
+内容深度验收：`../../roadmap/content-depth-audit.md`。Python / Redis / Vector DB / LLM Foundation / RAG / System Design 已完成 QA 与人工复核并通过。
+Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。Python current-standard remediation 已完成；FastAPI / AI Backend Engineering 当前仍只有课程骨架。
 
 ## 当前正式建设状态
 
@@ -84,6 +84,7 @@ Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。FastAP
 ### Granularity Remediation 最终结果
 
 ```text
+Python         12 → 13  COMPLETE
 MySQL          23 → 23  PASS
 Redis          27 → 24  COMPLETE
 Vector DB      23 → 16  COMPLETE

@@ -88,7 +88,7 @@ Agent Harness / Runtime ✅ 23 blocks；47→23 COMPLETE + depth validated
 System Design ✅ 19 blocks；24 Canonical → 19 curriculum blocks COMPLETE
 ```
 
-Python 已有可用 v1 教材但需当前标准定向整改；FastAPI / AI Backend Engineering 当前只有 README 课程骨架，正式正文尚未撰写。
+Python 已完成 13-block current-standard Canonical Coverage / Depth Remediation；FastAPI / AI Backend Engineering 当前仍只有 README 课程骨架，正式正文尚未撰写。
 
 ### 为什么教材文件数小于 Canonical 数量
 
