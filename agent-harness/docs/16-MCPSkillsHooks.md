@@ -1,151 +1,538 @@
-# 16｜MCP、Skills、Hooks 与 Capability Extension
+# 16. MCP、Skills、Hooks 与 Capability Extension
 
-> 本章合并旧 `MCP`、`SkillsCapability`、`HooksPlugins`，并纳入 Progressive Loading。目标是把几种经常被混成“插件”的机制真正分开。
+Agent 能力越来越多以后，会出现一个新问题：
 
-## 1. 四个概念先分清
+> **能力从哪里来？怎样发现？怎样按需加载？怎样扩展 Runtime，又不把所有东西都塞进 Context？**
+
+这时经常会同时出现几个词：
 
 ```text
 Tool
-= 一次可执行能力
-
 MCP
-= Host 与外部 Tool / Resource / Prompt 的标准连接协议
-
 Skill
-= 可发现、可按需加载的程序性知识 / 资源 / 脚本包
-
 Hook
-= Runtime 生命周期扩展点
+Plugin
+Prompt / Rule
 ```
 
-它们可以组合，但不是同一个抽象。
+如果不先分边界，很容易全部叫成“插件”。
 
-## 2. MCP 的 Host / Client / Server
+这一章把它们放在同一个知识小板块，是因为它们共同解决：
 
-```text
-Agent Host
-└─ MCP Client
-   ↔ MCP Server
-      ├─ Tools
-      ├─ Resources
-      └─ Prompts
-```
+> **Agent Runtime 怎样获得、发现、加载和扩展能力。**
 
-官方规范强调三类 Primitive 的控制边界：
+---
+
+## 1. 先给稳定边界
+
+### Tool
 
 ```text
-Prompt     user-controlled
-Resource   application-controlled
-Tool       model-controlled request
-```
-
-进入 Host 后，MCP Tool 仍然要经过本地：
-
-```text
-normalize
-→ registry
-→ permission
-→ approval
-→ sandbox
-→ trace
-```
-
-MCP 不绕过 Runtime Policy。
-
-## 3. Skill 是什么
-
-Skill 更像：
-
-```text
-instructions
-+ examples
-+ scripts
-+ references
-+ assets
-```
-
-它表达“怎样完成某类工作”的程序性能力。
-
-Skill 可以调用 Tool，也可以包含 Prompt/资源；但它不是 Tool Protocol。
-
-## 4. Progressive Disclosure
-
-大量 Skill / Tool 时：
-
-```text
-只加载名称 / summary
-→ 根据任务发现候选 capability
-→ 再加载详细 instructions / schema / asset
-```
-
-这能避免所有能力一次性占满 Context。
-
-## 5. Hook
-
-Hook 是：
-
-```text
-Runtime Event
-→ Extension Handler
+一次可执行能力
 ```
 
 例如：
 
 ```text
-pre_tool_use
-post_tool_use
+read_file
+run_tests
+create_ticket
+query_database
+```
+
+### MCP
+
+```text
+外部能力 / Resource / Prompt 的标准连接协议
+```
+
+它定义 Host / Client / Server 等协议边界，不等于 Agent Loop。
+
+### Skill
+
+```text
+可发现、可按需加载的程序性知识 / workflow / resource package
+```
+
+它通常描述“怎样完成某类任务”，可能引用 Tool，也可能包含 instruction / script / asset。
+
+### Hook
+
+```text
+Runtime 生命周期扩展点
+```
+
+例如：
+
+```text
+before_tool
+post_tool
 pre_compact
 post_compact
-run_started
 run_finished
 ```
 
-用途：
+Hook 不应该成为 Runtime 主循环本身。
 
-- audit；
-- policy；
-- telemetry；
-- input rewrite；
-- custom context；
-- integration。
+---
 
-Hook 不应该反过来成为主 Loop。
+# 2. 为什么 Tool 太多会出问题
 
-## 6. Plugin 是产品包装词
+假设有 500 个 Tool。
 
-Plugin 在不同产品里可能打包：
+如果每轮全部把：
 
 ```text
-Tool + MCP Server + Skill + Hook + UI
+name
+description
+JSON schema
+examples
 ```
 
-因此面试里不要把“Plugin”当稳定底层协议，而要拆出具体 primitive。
+塞进模型 Context：
 
-## 7. 源码证据
+```text
+Token Cost ↑
+Tool Selection Confusion ↑
+Prompt Cache Stability ↓
+Latency ↑
+```
 
-Claude Code 固定快照有 MCP connections、dynamic skill discovery、Tool `searchHint` 等；Codex 固定快照中 MCP catalog 与 Hook handler 可以进入 extension runtime，Hook handler kind 也不仅限于 command。
+因此 Capability Discovery 本身应该成为 Runtime 能力。
 
-稳定抽象是：
+HUMAN-A `AGENT-021` 有 20 个独立来源，直接追问 Dynamic Discovery / Progressive Loading。
+
+---
+
+# 3. Capability Catalog
+
+可以先维护一个轻量目录：
+
+```python
+CapabilitySummary(
+    id="github.search_code",
+    kind="tool",
+    short_description="Search code in a repository",
+    tags=["code", "search", "github"],
+    risk="read_only",
+    load_key="github-tool-pack",
+)
+```
+
+模型第一次只看到：
+
+```text
+少量 capability summary
+```
+
+真正需要时：
+
+```text
+select capability
+→ load full schema / skill instructions
+→ invoke
+```
+
+这就是 Progressive Disclosure。
+
+---
+
+# 4. Claude Code 源码侧的 Progressive Loading 证据
+
+固定 Source Index 已确认 `ToolUseContext` 中存在：
+
+```text
+dynamicSkillDirTriggers
+discoveredSkillNames
+```
+
+Tool 还存在：
+
+```text
+searchHint
+```
+
+用于 deferred tool discovery。
+
+这支持课程抽象：
 
 ```text
 Capability Catalog
 → Discovery
+→ Selection
 → Progressive Loading
-→ Runtime Policy
 → Invocation
 ```
 
-## 8. HUMAN-A
+而不是：
 
-- `AGENT-023` MCP：20 来源；
-- `AGENT-024` Skill / Tool / MCP / Workflow 边界：34 来源；
-- `AGENT-025` Skill Progressive Disclosure：10 来源。
+```text
+All Tool Schemas
+→ Every Context
+```
 
-## 9. 🎯 面试回答
+---
 
-> MCP 是 Host/Client/Server 协议，用于标准化 Tools、Resources、Prompts 的外部接入；Tool 是一次可执行能力；Skill 是可发现、可加载的程序性知识包；Hook 是 Runtime 生命周期扩展点。Tool/Skill 数量大时应做 Progressive Discovery/Loading，而不是全部注入 Context。外部 MCP Tool 进入 Host 后仍然必须经过本地 Permission、Sandbox 和 Trace。
+# 5. MCP 解决什么标准化问题
 
-<details><summary>自测：MCP Server 声明某 Tool 后，为什么 Host 仍需要 Permission？</summary>
+没有 MCP 时，Agent Host 接外部系统可能各写一套：
 
-因为 MCP 负责能力协议，不负责当前用户/tenant 是否有权执行，也不定义本地高风险动作审批和 Sandbox Policy。
+```text
+GitHubAdapter
+SlackAdapter
+DatabaseAdapter
+NotionAdapter
+```
+
+MCP 提供标准化协议边界。
+
+官方规范明确区分：
+
+```text
+Prompts
+Resources
+Tools
+```
+
+并强调不同控制边界。
+
+稳定心智模型：
+
+```text
+MCP Server
+→ exposes capability / resource
+
+MCP Client
+→ maintains connection / protocol
+
+MCP Host
+→ Agent application / runtime using clients
+```
+
+---
+
+# 6. Tool / Resource / Prompt 为什么要分开
+
+### Tool
+
+模型可以选择执行动作：
+
+```text
+query_database(...)
+```
+
+### Resource
+
+更接近可读取 Context：
+
+```text
+project://schema
+```
+
+### Prompt
+
+提供可复用 Prompt 模板 / interaction primitive。
+
+如果全部叫 Tool：
+
+```text
+读数据
+执行副作用
+加载模板
+```
+
+权限和生命周期都难表达。
+
+---
+
+# 7. Transport 不是 MCP 的核心价值
+
+面试常问：
+
+```text
+stdio / SSE / Streamable HTTP
+```
+
+需要知道它们是连接方式，但不要把答案讲成：
+
+> MCP 就是一种 HTTP 协议。
+
+真正稳定的价值是：
+
+```text
+Capability Discovery
+Schema / Resource Contract
+Client / Server Boundary
+Lifecycle
+Standard Interop
+```
+
+Transport 可以演进。
+
+---
+
+# 8. Skill 与 Tool 的区别
+
+Tool：
+
+```text
+“我能做什么动作？”
+```
+
+Skill：
+
+```text
+“完成这种任务时，应该怎样组织步骤和资源？”
+```
+
+例如：
+
+```text
+Tool:
+run_command
+read_file
+edit_file
+
+Skill:
+release-python-package
+  - read pyproject
+  - update version
+  - run tests
+  - build
+  - verify artifact
+```
+
+Skill 可以引用多个 Tool。
+
+Anthropic Agent Skills 官方资料正是把 procedural knowledge、scripts、resources 组织成可发现 / 可加载能力包。
+
+---
+
+# 9. Skill Progressive Disclosure
+
+一个 Skill 可能包含大量说明。
+
+错误：
+
+```text
+所有 Skill 全量注入 System Prompt
+```
+
+正确思路：
+
+```text
+skill catalog
+→ task match
+→ load selected skill
+→ use only needed resource
+```
+
+这与 Tool Progressive Loading 的动机相同：
+
+```text
+减少 Context 占用
+降低选择混乱
+提高可维护性
+```
+
+---
+
+# 10. Hook 是什么
+
+Hook 是 Runtime 在生命周期节点提供的扩展接口。
+
+例如：
+
+```text
+before_model
+before_tool
+post_tool
+pre_compact
+post_compact
+run_complete
+```
+
+使用场景：
+
+```text
+审计
+指标
+策略注入
+自定义验证
+通知
+Context enrichment
+```
+
+但 Hook 必须受控，否则会变成隐藏控制流。
+
+---
+
+# 11. Codex Hooks 的实现证据
+
+固定 Codex Source Index 已确认：
+
+- `codex-rs/hooks/src/engine/mod.rs`；
+- `codex-rs/config/src/hook_config.rs`；
+- Hook handler 可以包括 command、MCP tool、prompt、agent；
+- compaction 存在 pre/post hook。
+
+这支持：
+
+```text
+Core Runtime
+→ Lifecycle Event
+→ Hook Policy
+→ Extension Handler
+```
+
+Hook 是横切扩展点，不应该反过来定义整个 Runtime 生命周期。
+
+---
+
+# 12. Extension Failure 怎么处理
+
+如果 Hook / MCP / Skill 失败：
+
+```text
+是否阻断主任务？
+是否 retry？
+是否降级？
+是否只是记录 warning？
+```
+
+需要按 Extension 类型定义。
+
+例如：
+
+```text
+Audit Hook failure
+→ 可能 fail-closed
+
+Optional notification hook
+→ 可以 warning + continue
+```
+
+不能全部 `except Exception: pass`。
+
+---
+
+# 13. Capability Versioning
+
+Tool / Skill / MCP Server 都会升级。
+
+Runtime 应至少考虑：
+
+```text
+capability id
+schema version
+server version
+instruction version
+compatibility
+```
+
+否则 Session Resume 后可能出现：
+
+```text
+旧 Context 中看到 tool schema v1
+当前 Runtime 只有 v2
+```
+
+造成 invalid arguments 或行为漂移。
+
+---
+
+# 14. Security Boundary
+
+第三方 MCP Server / Skill 不是天然可信。
+
+需要：
+
+```text
+server allowlist
+capability allowlist
+schema validation
+permission
+sandbox
+secret scope
+network policy
+trace
+```
+
+尤其：
+
+```text
+MCP Tool 可以有副作用
+Skill 可以诱导调用高风险 Tool
+Resource 可能包含 Prompt Injection
+```
+
+所以 Capability Extension 必须和前两章的 Security 模型结合。
+
+---
+
+# 15. HUMAN-A 信号
+
+本章主要承接：
+
+- `AGENT-021` Dynamic Tool Discovery；
+- `AGENT-023` MCP Protocol：20 个来源；
+- `AGENT-024` Skill / Tool / Function / MCP / Rule / Workflow 边界：34 个来源；
+- `AGENT-025` Skill Progressive Disclosure：10 个来源。
+
+这说明企业已经不满足于问：
+
+> “MCP 是什么？”
+
+而会追：
+
+```text
+为什么需要标准化？
+Tool 太多怎么办？
+Skill 和 Tool 区别？
+按需加载怎么做？
+```
+
+---
+
+# 16. 面试怎么答
+
+## Q：Tool、MCP、Skill、Hook 有什么区别？
+
+🎯 **30 秒回答**：
+
+> Tool 是一次可执行能力；MCP 是 Host/Client/Server 之间标准化暴露 Tool、Resource、Prompt 等能力的协议；Skill 更像可发现、按需加载的程序性知识/资源包，通常会组织多个 Tool 完成一种任务；Hook 是 Runtime 生命周期扩展点，用于审计、验证或扩展。它们不是同一层抽象，也不能全部叫插件。
+
+## Q：Tool 太多怎么处理？
+
+> 不把所有完整 schema 永久塞进 Context，而是建立 capability catalog，让模型先看到轻量 summary，通过 intent/search 发现候选，再按需加载完整 Tool/Skill 定义，并用 eval 验证 discovery recall 和 tool selection accuracy。
+
+---
+
+# 17. 高频易错点
+
+⚠️ **MCP = Agent Framework。** MCP 不负责 Agent Loop。
+
+⚠️ **Skill = Tool。** Skill 更接近程序性任务包。
+
+⚠️ **Hook 可以随便改变 State。** 无约束 Hook 会制造隐藏控制流。
+
+⚠️ **所有 Tool Schema 全量注入更稳。** 规模大时会增加 Context 和选择混乱。
+
+---
+
+# 18. 本章自测
+
+<details><summary>1. 为什么 Progressive Loading 是 Context Engineering 问题？</summary>
+
+因为 Tool/Skill metadata 本身会占 Context；能力规模扩大后，需要只加载与当前任务相关的完整定义，避免成本和选择混乱。
+</details>
+
+<details><summary>2. MCP 的 Tool 与普通本地 Tool 最大差异是什么？</summary>
+
+MCP Tool 通过标准协议由外部 Server 暴露，涉及连接生命周期、远程信任和协议兼容；但进入 Runtime 后仍需要相同的 schema、permission、failure、trace 等 Tool Contract。
+</details>
+
+<details><summary>3. 为什么 Hook 不应该替代 Runtime 主循环？</summary>
+
+Hook 适合生命周期横切扩展；如果关键控制逻辑散落在 Hook 中，会让执行路径不可见、难恢复、难评测和难推理。
 </details>
