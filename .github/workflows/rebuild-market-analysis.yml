@@ -67,6 +67,35 @@ jobs:
       - name: Validate reviewed source coverage
         run: python tools/validate_source_coverage.py
 
+      - name: Normalize generated analysis status text
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          analysis = Path('research/analysis')
+
+          index_path = analysis / 'global-question-index.md'
+          if index_path.exists():
+              text = index_path.read_text(encoding='utf-8')
+              text = text.replace(
+                  '当前输入为冻结 `S001–S279` 与 Phase 2A 后的 **229 ACTIVE**。',
+                  '当前输入为冻结 `S001–S279` 与 Phase 2B 后的 **235 ACTIVE**。',
+              )
+              index_path.write_text(text, encoding='utf-8')
+
+          readme_path = analysis / 'README.md'
+          if readme_path.exists():
+              text = readme_path.read_text(encoding='utf-8')
+              old = ('下一步人工研究层：基于 `cooccurrence.md` 回到原始 Batch 核验真正的 Follow-up Chain，'
+                     '并将 `curriculum-evidence-matrix.md` 与最新 `roadmap/knowledge-map.md` 对照，形成 Knowledge Gap Analysis。')
+              new = ('Phase 2B 自动统计与人工核验层均已完成。Phase 3 教材建设的实时状态以 '
+                     '`research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；'
+                     '本自动生成文件不重复维护易过期的“下一模块”状态。')
+              text = text.replace(old, new)
+              readme_path.write_text(text, encoding='utf-8')
+          PY
+
       - name: Commit canonical and generated analysis
         shell: bash
         run: |
