@@ -1,0 +1,34 @@
+name: Remediate Python Foundation
+
+on:
+  push:
+    branches:
+      - canonicalize-questions
+    paths:
+      - tools/remediate_python_foundation.py
+      - .github/workflows/remediate-python-foundation.yml
+
+permissions:
+  contents: write
+
+jobs:
+  remediate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonicalize-questions
+          fetch-depth: 0
+      - name: Apply Python remediation and validate
+        run: python tools/remediate_python_foundation.py
+      - name: Commit remediation
+        run: |
+          if git diff --quiet; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add python roadmap research README.md
+          git commit -m "docs(python): complete current-standard remediation"
+          git push origin HEAD:canonicalize-questions
