@@ -1,6 +1,6 @@
 # Vector Database｜图解复习与自测
 
-> 这一层不是重新讲一遍正文，而是把 **16 个正式知识小板块**压缩成几条可以在脑中反复推演的执行路径。文件名保留了部分历史编号，正式学习顺序以 `../README.md` 为准。
+> 这一层不是重新讲一遍正文，而是把 **16 个正式知识小板块**压缩成几条可以在脑中反复推演的执行路径。当前正文已连续编号为 `docs/01 → 16`，与正式学习顺序一致。
 >
 > 推荐顺序：**先看图回忆 → 自己口述 → 再展开答案检查。**
 
@@ -31,360 +31,292 @@ flowchart LR
 
 ---
 
-# 2. Exact Search 为什么演化到 ANN
-
-```mermaid
-flowchart TD
-    Q["Query Vector"] --> S["扫描全部 N 个 Vector"]
-    S --> D["计算 Distance / Similarity"]
-    D --> T["维护 Top-K"]
-    T --> R["Exact Result"]
-    S --> C["N × Dimension 成本"]
-    C --> P["规模增大后 Latency / CPU 变贵"]
-    P --> A["ANN 只探索部分候选"]
-    A --> X["牺牲少量 Recall 换更低成本"]
-```
-
-记住：
+# 2. 总图：Exact Search → ANN
 
 ```text
-ANN 不是“另一种距离函数”
-ANN 是“怎样少看一部分候选仍尽量找到近邻”
+Exact Search
+= 全量比较
+= Ground Truth / 小规模简单可靠
+        ↓ 数据规模上升
+计算量 / Latency ↑
+        ↓
+ANN
+= 少搜索一部分候选
+= 用 Recall 换 Latency / Memory / Build Cost
+```
+
+你应该能解释：
+
+```text
+为什么 ANN 不是“更快但完全相同的 Exact Search”
+为什么 Benchmark 需要 Exact Ground Truth
+Recall@K 怎样定义
 ```
 
 ---
 
-# 3. HNSW 与 IVF 的核心直觉
+# 3. 总图：ANN Index 选择
 
-```mermaid
-flowchart LR
-    A["ANN"] --> H["HNSW"]
-    A --> I["IVF"]
-    H --> H1["Graph Navigation"]
-    H1 --> H2["Upper Layer 粗定位"]
-    H2 --> H3["Lower Layer 精搜索"]
-    I --> I1["Coarse Clustering"]
-    I1 --> I2["Query 找最近 Centroid"]
-    I2 --> I3["只扫 nprobe 个 List"]
+```text
+                  ANN
+       ┌──────────┼──────────┐
+       ▼          ▼          ▼
+     Graph     Partition   Quantization
+       │          │          │
+     HNSW        IVF       SQ / PQ
 ```
 
-### HNSW 主要记什么
+思考顺序：
+
+```text
+数据量 / 维度 / 内存
+→ Recall 目标
+→ P95 / P99 Latency
+→ 更新频率
+→ Filter Selectivity
+→ Build / Rebuild 成本
+→ Index Selection
+```
+
+不是：
+
+```text
+HNSW 看起来流行
+→ 就选 HNSW
+```
+
+---
+
+# 4. 总图：HNSW 参数
 
 ```text
 M
-→ 图连接度 / Memory / Build
+→ Graph Degree
+→ Memory / Build / Connectivity
 
 efConstruction
-→ Build 时搜索宽度 / Build Quality / Cost
+→ Build Search Breadth
+→ Build Time / Index Quality
 
 efSearch
-→ Query 时搜索宽度 / Recall / Latency
+→ Query Search Breadth
+→ Recall / Query Latency
 ```
 
-### IVF 主要记什么
+真正的调优方法：
 
 ```text
-nlist
-→ 分多少个桶
-
-nprobe
-→ Query 时扫多少个桶
-```
-
-参数不是口诀，本质都在控制：
-
-> **搜索候选范围有多大。**
-
----
-
-# 4. Metadata Filter 为什么会改变 ANN
-
-```mermaid
-flowchart TD
-    Q["Query + tenant_id + permission"] --> A["Filter"]
-    A --> P["Pre-filter"]
-    A --> O["Post-filter"]
-    P --> P1["先缩小候选集合"]
-    P1 --> P2["再做 ANN"]
-    O --> O1["先 ANN"]
-    O1 --> O2["结果再过滤"]
-    O2 --> O3["可能不够 Top-K"]
-```
-
-这张图要和“多租户安全”联系起来。
-
-如果权限条件只是应用层最后再过滤，很容易出现：
-
-```text
-ANN 先召回了无权限数据
-→ Post-filter 删除
-→ Top-K 不够
-```
-
-甚至更严重：
-
-```text
-权限边界设计不当
-→ 数据泄漏
+固定 Dataset + Query Set
+→ Exact Ground Truth
+→ Sweep Parameters
+→ Recall@K / P95 / Memory / QPS
+→ 找 Pareto Front
 ```
 
 ---
 
-# 5. Vector Index Lifecycle
-
-```mermaid
-flowchart LR
-    A["Source Document"] --> B["Chunk / Metadata"]
-    B --> C["Embedding Model v1"]
-    C --> D["Vector Index v1"]
-    D --> E["Model / Schema Change"]
-    E --> F["Re-embedding"]
-    F --> G["Vector Index v2"]
-    G --> H["Validation"]
-    H --> I["Traffic Switch"]
-    I --> J["Retire v1"]
-```
-
-生产环境不要把：
+# 5. 总图：Filter + ANN
 
 ```text
-Embedding Model 升级
+Query
+→ Metadata Constraint
+→ ANN Search
 ```
 
-理解成：
+但实现可能是：
 
 ```text
-改一个配置然后继续往旧 Index 写
+Pre-filter
+Post-filter
+Filter-aware ANN
+Iterative Expansion
+Partition Pruning
 ```
 
-它往往是一次数据迁移 / 索引版本升级。
-
----
-
-# 6. Product Selection 心智模型
-
-```mermaid
-flowchart TD
-    A["需要 Vector Search"] --> B["规模小 / 单机 / Library 足够？"]
-    B -->|"是"| F["FAISS 类 Library"]
-    B -->|"否"| C["现有 Relational DB 可承载？"]
-    C -->|"是"| P["pgvector 类 Extension"]
-    C -->|"否"| D["搜索 / Keyword 已在 Search Engine？"]
-    D -->|"是"| E["Elasticsearch Vector 类方案"]
-    D -->|"否"| V["Dedicated Vector DB"]
-```
-
-真正的选型维度还包括：
+排查召回问题时画四格：
 
 ```text
-Scale
-Update Rate
+Exact + No Filter
+Exact + Filter
+ANN   + No Filter
+ANN   + Filter
+```
+
+这样才能分清：
+
+```text
+Embedding / Corpus
 Filter
-Recall / Latency
-Memory
-HA
-Multi-tenancy
-Operational Complexity
-Existing Stack
+ANN
+ANN + Filter interaction
 ```
 
-不要把这张图当绝对规则，它只是决策入口。
-
 ---
 
-# 7. 五组综合自测
-
-## A. Vector / Similarity
-
-<details>
-<summary>1. Cosine、Dot Product、L2 分别在比较什么？</summary>
-
-Cosine 更关注方向夹角；Dot Product 同时受方向和模长影响；L2 衡量欧氏距离。归一化后，Cosine 与 Dot Product 的排序关系会更接近。具体选择必须与 Embedding Model 和索引配置一致。
-
-</details>
-
-<details>
-<summary>2. 为什么 Dimension 增大会带来系统成本？</summary>
-
-单条向量占用更多内存或磁盘，距离计算需要更多运算，网络传输、Index Build 和 Cache 工作集也会扩大。因此 Dimension 不只是模型参数，也是基础设施容量参数。
-
-</details>
-
-<details>
-<summary>3. Exact Search 的优势和问题分别是什么？</summary>
-
-优势是结果精确、逻辑简单，适合小数据集和 Ground Truth；问题是通常需要扫描大量候选，成本随数据规模和维度增长，因此大规模低延迟场景常需要 ANN。
-
-</details>
-
-<details>
-<summary>4. ANN 为什么不等于“结果随机”？</summary>
-
-ANN 使用结构化索引和启发式搜索缩小候选范围，目标仍然是尽可能找到真实近邻，只是为了效率允许一定 Recall 损失。
-
-</details>
-
-## B. HNSW / IVF / Quantization
-
-<details>
-<summary>5. HNSW 为什么要分层？</summary>
-
-高层图提供稀疏、长距离导航，帮助快速接近目标区域；低层图更密集，用于局部精细搜索，从而兼顾搜索速度和近邻质量。
-
-</details>
-
-<details>
-<summary>6. efSearch 增大通常会发生什么？</summary>
-
-Query 探索更多候选，Recall 往往提高，但 Latency 和 CPU 成本也会上升。它是典型 Query-time Recall / Latency knob。
-
-</details>
-
-<details>
-<summary>7. IVF 的 nprobe 为什么是重要参数？</summary>
-
-它控制 Query 搜索多少个 inverted lists。nprobe 增大通常扩大候选范围、提高 Recall，但查询成本也增加。
-
-</details>
-
-<details>
-<summary>8. PQ 解决什么问题？代价是什么？</summary>
-
-PQ 用子空间量化和 Codebook 将高维 float 向量压缩成短编码，显著降低 Memory / Storage，并可加速距离估算；代价是 Quantization Error，可能降低 Recall 或排序精度。
-
-</details>
-
-<details>
-<summary>9. HNSW 一定比 IVF 好吗？</summary>
-
-不是。要结合规模、Memory、Build Cost、Update Pattern、Latency、Recall、过滤能力和产品实现。选 Index 是多维 Trade-off，不是算法排名。
-
-</details>
-
-## C. Data Model / Filter
-
-<details>
-<summary>10. Vector DB 为什么还需要 Primary Key 和 Metadata？</summary>
-
-Vector 解决相似性搜索，但业务仍需要稳定 ID、文档来源、Tenant、权限、版本、时间等字段来定位、过滤、更新和追踪数据。
-
-</details>
-
-<details>
-<summary>11. Pre-filter 和 Post-filter 的风险分别是什么？</summary>
-
-Pre-filter 如果候选过少或与 Index 结合不好，可能降低 ANN 效率；Post-filter 可能在 ANN 返回后删掉大量结果，造成有效 Top-K 不足，也可能让权限边界设计更危险。
-
-</details>
-
-<details>
-<summary>12. Tenant Isolation 为什么不能只靠 metadata 字段“记得过滤”？</summary>
-
-因为忘记过滤就是安全事故。生产系统应通过统一 Query Layer、Namespace / Partition、权限验证、测试和审计等机制把隔离变成系统约束，而不是开发者习惯。
-
-</details>
-
-## D. Lifecycle / Production
-
-<details>
-<summary>13. Delete 为什么可能不是“立刻从 Index 里物理消失”？</summary>
-
-很多索引和存储系统会先做逻辑删除或 Tombstone，再在后台 Compaction / Rebuild 时清理。必须理解产品的可见性和回收语义。
-
-</details>
-
-<details>
-<summary>14. Embedding Model 升级为什么常需要新 Index？</summary>
-
-不同模型甚至不同版本可能产生不同向量空间。新旧向量混在同一个语义空间中未必可比较，因此通常需要 Version、Re-embedding、新 Index、验证和切流。
-
-</details>
-
-<details>
-<summary>15. Replica 和 Shard 分别解决什么？</summary>
-
-Shard 主要把数据水平拆分来扩容量和并行处理；Replica 保存副本，主要服务高可用和读扩展。二者不是同一个概念。
-
-</details>
-
-<details>
-<summary>16. Vector Search 变慢时先检查哪些方向？</summary>
-
-先拆 Query Path：Filter Selectivity、ANN 参数、候选规模、Shard Fan-out、Segment 数量、Cache / Memory、CPU、Disk / Network、并发和 Index 状态，而不是第一时间盲调 efSearch。
-
-</details>
-
-<details>
-<summary>17. Recall 掉了为什么不能直接怪 HNSW 参数？</summary>
-
-还可能是 Embedding Model、Normalization、Metric 不匹配、数据版本、Filter、Index Build、Delete / Update、Ground Truth 定义等问题。需要分层定位。
-
-</details>
-
-## E. Architecture / Boundary
-
-<details>
-<summary>18. FAISS 和专用 Vector DB 的本质边界是什么？</summary>
-
-FAISS 首先是向量相似性搜索 Library；专用 Vector DB 除 ANN 外还通常提供持久化、Schema / Metadata、Filter、更新、分片、副本、多租户和运维能力。是否需要 DB 取决于系统需求。
-
-</details>
-
-<details>
-<summary>19. Graph DB 和 Vector DB 最核心的区别是什么？</summary>
-
-Vector DB 优化语义空间中的近邻搜索；Graph DB 优化显式 Node / Edge 关系和图遍历。相似性不等于显式关系。
-
-</details>
-
-<details>
-<summary>20. Vector DB 在 RAG 里应该负责到哪里？</summary>
-
-负责 Vector Storage、Distance、ANN、Filter、Lifecycle 和 Scale；Query Rewrite、Dense/Sparse 组合、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation 属于 RAG Retrieval System。
-
-</details>
-
----
-
-# 8. 一页复习顺序
-
-第一次复习：
+# 6. 总图：Vector Index Lifecycle
 
 ```text
-Vector
-→ Similarity
+Source of Truth
+      ↓
+Chunk / Record
+      ↓
+Embedding v1
+      ↓
+Vector Index Generation A
+      ↓
+Insert / Update / Delete
+      ↓
+Tombstone / Compaction
+      ↓ model upgrade
+Embedding v2
+      ↓
+Generation B
+      ↓ validate / switch / rollback
+```
+
+必须能解释：
+
+```text
+为什么 Vector DB 往往是 Derived Index
+为什么 Delete 可能不是立即物理消失
+为什么 Re-embedding 需要 Version
+为什么 Rebuild 不能直接覆盖线上唯一 Index
+```
+
+---
+
+# 7. 总图：Distributed Vector Search
+
+```text
+Query
+├─ Shard A → Local Top-K
+├─ Shard B → Local Top-K
+└─ Shard C → Local Top-K
+        ↓
+Global Merge
+        ↓
+Final Top-K
+```
+
+重点：
+
+```text
+Shard ↑
+≠ Latency 一定 ↓
+
+Fan-out / Tail Latency / Hot Shard / Merge
+都会变重要
+```
+
+Partition / Tenant Routing 的价值之一就是减少无效 Fan-out。
+
+---
+
+# 综合自测
+
+<details><summary>1. 为什么 Vector DB 之前要先学 Embedding，但 Embedding Model 原理又不属于 Vector DB？</summary>
+
+Vector DB 的输入就是向量，所以必须知道向量从哪里来；但模型如何训练、怎样选择 Embedding Model 属于 LLM Foundation。Vector DB 从“给定向量后如何存、索引、检索和维护”开始负责。
+</details>
+
+<details><summary>2. Cosine 和 Dot Product 什么时候可能排序一致？</summary>
+
+当向量都做 L2 Normalization 时，Dot Product 等于 Cosine，因此排序一致。
+</details>
+
+<details><summary>3. 为什么 Exact Search 仍然重要？</summary>
+
+它是小规模可靠方案，也是 ANN Recall Benchmark 的 Ground Truth 来源。
+</details>
+
+<details><summary>4. ANN 的核心 Trade-off 是什么？</summary>
+
+减少搜索成本换取近似误差，因此要同时看 Recall、Latency、Memory、Build / Update Cost。
+</details>
+
+<details><summary>5. HNSW 的 efSearch 调大会发生什么？</summary>
+
+通常搜索候选更多，Recall 上升、Latency 增加；具体曲线必须 Benchmark。
+</details>
+
+<details><summary>6. IVF 的 nprobe 控制什么？</summary>
+
+控制 Query 搜索多少个倒排 Cell。更大 nprobe 通常提高 Recall，同时增加查询工作量。
+</details>
+
+<details><summary>7. PQ 和 IVF 有什么本质区别？</summary>
+
+IVF 主要减少搜索区域；PQ 主要压缩向量表示并近似距离，两者可以组合。
+</details>
+
+<details><summary>8. 为什么 Metadata Filter 可能影响 ANN Recall？</summary>
+
+Filter 会改变合法搜索空间；简单 Post-filter 可能删掉大量 Top Candidate，Pre/Filter-aware ANN 也会改变图或分区的搜索行为。
+</details>
+
+<details><summary>9. 为什么 Tenant Isolation 不能只依靠 Prompt？</summary>
+
+隔离必须由 Auth、Query Construction、Namespace / Filter、Result Audit 等系统边界保证，LLM Prompt 不是访问控制机制。
+</details>
+
+<details><summary>10. 为什么 Vector DB 常常不是 Source of Truth？</summary>
+
+向量和 Index 通常是由业务文档、Chunk、Embedding 派生，可在模型升级或损坏后重建；业务原始事实更适合保留在权威存储中。
+</details>
+
+<details><summary>11. Tombstone 为什么需要 Compaction？</summary>
+
+逻辑删除如果长期不回收，会造成存储膨胀、Segment 碎片和查询开销；Compaction 会清理废弃版本并重写有效数据。
+</details>
+
+<details><summary>12. Re-embedding 为什么不能直接把 v1 和 v2 混在同一检索空间？</summary>
+
+不同模型产生的向量空间可能不可比较；应版本化并通过新 Generation 验证后切换。
+</details>
+
+<details><summary>13. Shard 和 Partition 有什么区别？</summary>
+
+Shard 更偏底层物理水平扩展；Partition / Namespace 更偏逻辑组织和 Query Routing，具体映射取决于产品。
+</details>
+
+<details><summary>14. Replica 为什么不等于 Backup？</summary>
+
+错误写入或 Delete 也可能同步到 Replica；Backup / Source of Truth 解决的是历史恢复问题。
+</details>
+
+<details><summary>15. Vector DB 选型第一步是什么？</summary>
+
+先确定数据规模、过滤、更新、Recall、Latency、HA、运维等需求，再决定 FAISS / pgvector / Search Engine / Dedicated Vector DB，而不是先选产品再找理由。
+</details>
+
+<details><summary>16. Graph DB 和 Vector DB 的核心区别？</summary>
+
+Vector DB 主要解决相似性近邻搜索；Graph DB 主要解决显式实体关系、路径与邻接遍历。两者可以组合但不能互相简单替代。
+</details>
+
+---
+
+# Review 完成标准
+
+你应该能够从空白纸画出：
+
+```text
+Vector Space
 → Exact
 → ANN
-→ HNSW / IVF
-```
-
-第二次复习：
-
-```text
-Index Selection
-→ Filter
-→ Data Model
-→ Update / Delete
-→ Lifecycle
-```
-
-第三次复习：
-
-```text
-Shard / Replica
-→ Capacity
-→ Troubleshooting
+→ HNSW / IVF / PQ
+→ Metadata Filter
+→ Index Lifecycle
+→ Distributed Search
 → Product Selection
-→ Graph / RAG Boundary
 ```
 
-真正准备面试时，不要只背：
+并能回答每一步：
 
 ```text
-M = 16
-nprobe = 10
+为什么需要？
+优化了什么？
+牺牲了什么？
+怎么验证？
+哪里会坏？
 ```
-
-而应该能解释：
-
-> **如果 Recall 不够、Latency 太高、Memory 爆了、Filter 很重、Embedding Model 要升级，我会怎样定位并做 Trade-off。**
