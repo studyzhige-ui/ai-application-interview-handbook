@@ -1,128 +1,121 @@
 # LLM Foundation｜图解复习与综合自测
 
-> 第一遍按 `docs/01 → 29` 建体系；这里用于第二遍把 29 章压缩成几张因果图，再用问题检查你是否真的理解。
+> 第一遍按 `../README.md` 的 **14 个知识小板块**建立体系；这一层不再按文件逐章重复，而是把机制压缩成少数几条因果链。
+>
+> 教材是 14 个知识块，不代表自测只能有 14 题。这里仍保持更细的问题粒度，用来检查你是否真的掌握机制。
 
 ---
 
-## 图 1｜从文本到下一个 Token
+## 图 1｜Text → Token → Transformer → Next Token
 
 ```mermaid
 flowchart LR
     A["Raw Text"] --> B["Tokenizer"]
     B --> C["Token IDs"]
-    C --> D["Token Embedding + Position"]
+    C --> D["Embedding + Position"]
     D --> E["Transformer Blocks"]
     E --> F["Hidden State"]
     F --> G["LM Head"]
     G --> H["Logits"]
-    H --> I["Softmax / Decoding"]
+    H --> I["Decoding"]
     I --> J["Next Token"]
+    J --> E
 ```
 
-必须能解释：
-
-```text
-为什么字符数 != Token 数
-为什么模型最后输出 logits 而不是文字
-为什么生成一个 Token 后要继续循环
-```
+你应该能解释：Token 为什么是成本单位、Context Window 怎么被多个组件共享、为什么输出要逐 Token 生成。
 
 ---
 
-## 图 2｜一个 Transformer Block
+## 图 2｜Transformer Block
 
 ```mermaid
 flowchart LR
-    A["Input Hidden State"] --> B["Norm"]
-    B --> C["Self-Attention Q K V"]
-    C --> D["Residual Add"]
+    A["Hidden State"] --> B["Norm"]
+    B --> C["Self-Attention"]
+    C --> D["Residual"]
     D --> E["Norm"]
-    E --> F["FFN"]
-    F --> G["Residual Add"]
-    G --> H["Output Hidden State"]
-```
-
-不同模型的 Pre/Post Norm 和具体结构会变化，这张图只表达稳定概念。
-
-你必须能区分：
-
-```text
-Attention：跨 Token 聚合
-FFN：位置内非线性变换
-Residual：保留并叠加信息
-Norm：稳定激活尺度
-RoPE：让位置进入 Attention
-```
-
----
-
-## 图 3｜Q / K / V 与 Causal Attention
-
-```mermaid
-flowchart TD
-    X["Current Hidden State"] --> Q["Q"]
-    X --> K["K"]
-    X --> V["V"]
-    Q --> S["QK^T / sqrt(d)"]
-    K --> S
-    S --> M["Causal Mask"]
-    M --> P["Softmax Weights"]
-    P --> O["Weighted Sum"]
-    V --> O
-```
-
-核心追问：
-
-- 为什么除 `sqrt(d)`？
-- 为什么未来 Token 要 Mask？
-- 为什么 KV Cache 缓存 K/V？
-- MHA / MQA / GQA 对 KV Cache 有什么影响？
-
----
-
-## 图 4｜Prefill / Decode / KV Cache
-
-```mermaid
-flowchart LR
-    A["Prompt Tokens"] --> B["Prefill"]
-    B --> C["Historical KV Cache"]
-    C --> D["Decode New Token"]
-    D --> E["Append New K V"]
-    E --> C
-    D --> F["Stream Token"]
+    E --> F["FFN / MLP"]
+    F --> G["Residual"]
+    G --> H["Next Layer"]
 ```
 
 记住：
 
 ```text
-Input Length → Prefill / TTFT
-Output Length → Decode Steps / TPOT
-Context × Concurrency → KV Cache Memory
+Attention → 跨 Token 信息交互
+FFN       → 位置内非线性加工
+Residual  → 信息/梯度直通
+Norm      → 数值稳定
+RoPE      → Position 进入 Attention
 ```
 
 ---
 
-## 图 5｜Serving Engine
+## 图 3｜QKV、Causal 与 KV Cache
 
 ```mermaid
 flowchart TD
-    A["Incoming Requests"] --> B["Scheduler"]
-    B --> C["Continuous Batching"]
-    C --> D["GPU Model"]
-    D --> E["KV Cache Blocks"]
-    E --> F["PagedAttention-style Management"]
-    D --> G["Streaming Output"]
+    X["Hidden State"] --> Q["Q"]
+    X --> K["K"]
+    X --> V["V"]
+    Q --> S["QK Score"]
+    K --> S
+    S --> M["Causal Mask"]
+    M --> P["Softmax"]
+    P --> O["Weighted Values"]
+    V --> O
+    K --> C["KV Cache"]
+    V --> C
 ```
 
-重点不是背 vLLM API，而是理解：
+重点追问：为什么缓存 K/V、为什么 Context 越长 KV Cache 越大、GQA/MQA 为什么能降低缓存压力。
+
+---
+
+## 图 4｜Prefill / Decode / Serving
+
+```mermaid
+flowchart LR
+    A["Prompt"] --> B["Prefill"]
+    B --> C["KV Cache"]
+    C --> D["Decode Step"]
+    D --> E["Stream Token"]
+    D --> C
+    F["Many Requests"] --> G["Continuous Batching"]
+    G --> D
+    C --> H["Paged KV Management"]
+```
 
 ```text
-Batch
-KV Cache
-Memory Fragmentation
-Request Scheduling
-TTFT / TPOT / Throughput
+Input Length  → Prefill / TTFT / KV Memory
+Output Length → Decode Steps / TPOT / Cost
+Concurrency   → KV Cache / Scheduler Pressure
 ```
+
+---
+
+## 图 5｜Model Access & Selection
+
+```mermaid
+flowchart TD
+    A["Task Eval"] --> B["Model Candidates"]
+    B --> C["Quality"]
+    B --> D["Latency / Cost"]
+    B --> E["Context / Tool / JSON / Vision"]
+    B --> F["Provider Capacity / Reliability"]
+    C --> G["Provider Adapter / Model Routing"]
+    D --> G
+    E --> G
+    F --> G
+```
+
+最终看的是：
+
+```text
+Cost per Successful Task
+```
+
+而不是单纯排行榜或 Token 单价。
 
 ---
 
@@ -130,23 +123,17 @@ TTFT / TPOT / Throughput
 
 ```mermaid
 flowchart LR
-    Q["Query"] --> QE["Bi-Encoder"]
-    QE --> V["Query Vector"]
-    D["Documents"] --> DE["Bi-Encoder Offline"]
-    DE --> I["Vector Index"]
-    V --> I
-    I --> C["Candidate Top-K"]
-    C --> R["Cross-Encoder Reranker"]
-    R --> T["Final Top-N"]
+    Q["Query"] --> E["Bi-Encoder"]
+    E --> V["Query Vector"]
+    D["Documents"] --> I["Precomputed Embeddings"]
+    I --> R["Fast Retriever"]
+    V --> R
+    R --> C["Candidate Set"]
+    C --> X["Cross-Encoder Reranker"]
+    X --> T["Precise Ranking"]
 ```
 
-必须能说清：
-
-```text
-Bi-Encoder 为什么快
-Cross-Encoder 为什么准但贵
-Retriever 没召回时为什么 Reranker 无能为力
-```
+核心：Bi-Encoder 适合大规模召回；Cross-Encoder 更精细但每个 Pair 都要重新推理。
 
 ---
 
@@ -154,188 +141,91 @@ Retriever 没召回时为什么 Reranker 无能为力
 
 ```mermaid
 flowchart TD
-    A["效果不好"] --> B{"任务表达不清？"}
-    B -->|"是"| C["Prompt / Few-shot"]
-    B -->|"否"| D{"缺外部或实时知识？"}
+    A["效果不好"] --> B{"Instruction / format?"}
+    B -->|"是"| C["Prompt / Schema"]
+    B -->|"否"| D{"Missing dynamic/private knowledge?"}
     D -->|"是"| E["RAG / Tool"]
-    D -->|"否"| F{"Runtime / Permission 问题？"}
-    F -->|"是"| G["Backend / Agent Harness"]
-    F -->|"否"| H{"稳定行为能力差距？"}
-    H -->|"是"| I["Fine-tuning / SFT / LoRA"]
-    H -->|"否"| J["重新做 Failure Attribution"]
+    D -->|"否"| F{"Stable repeated behavior gap?"}
+    F -->|"是"| G["Fine-tuning / LoRA"]
+    F -->|"否"| H["Model / Context / Verification"]
 ```
 
 ---
 
 # 综合自测
 
-<details>
-<summary>1. Token 和字符有什么区别？</summary>
-
-Token 是具体 Tokenizer 词表中的离散单元；字符只是文本表面单位。不同语言、代码和 Tokenizer 下，一个字符可能对应不同数量 Token。
-
+<details><summary>1. Context Window 为什么不是免费容量？</summary>
+长输入会增加 Prefill、KV Cache、TTFT、成本和信息噪声；能放下不代表模型会稳定利用。
 </details>
 
-<details>
-<summary>2. Context Window 大为什么不等于 Memory？</summary>
-
-Context Window 是单次推理输入容量；Memory 是应用跨轮次保存、筛选并重新注入状态的系统能力。
-
+<details><summary>2. Attention 和 FFN 的核心分工是什么？</summary>
+Attention 负责跨 Token 聚合上下文；FFN 对每个位置的表示做非线性加工。
 </details>
 
-<details>
-<summary>3. Lost in the Middle 告诉我们什么？</summary>
-
-信息能被放进 Context 不等于模型会稳定利用；位置、噪声和上下文长度会影响利用率，因此 Long Context 不能替代 Retrieval / Context Engineering。
-
+<details><summary>3. Causal Mask 为什么必要？</summary>
+让当前位置不能在训练时看到未来 Token，使训练信息边界与真实自回归生成一致。
 </details>
 
-<details>
-<summary>4. Self-Attention 的 Q/K/V 分别可以怎样直观理解？</summary>
-
-Q 表示当前位置要查什么；K 表示每个位置可被匹配的特征；V 是匹配后真正聚合的内容。
-
+<details><summary>4. Temperature、Top-k、Top-p 分别控制什么？</summary>
+Temperature 调整分布尖锐程度；Top-k 固定保留前 k 个候选；Top-p 保留累计概率达到阈值的动态集合。
 </details>
 
-<details>
-<summary>5. 为什么 Decoder-only LLM 需要 Causal Mask？</summary>
-
-为了保证位置 i 只能看到自己和过去 Token，不能在训练时偷看未来答案，使训练目标与真实自回归生成一致。
-
+<details><summary>5. Temperature=0 是否保证事实正确？</summary>
+不保证。它降低随机性，但最高概率续写本身仍可能是错误事实。
 </details>
 
-<details>
-<summary>6. Attention 和 FFN 分别负责什么？</summary>
-
-Attention 主要负责跨 Token 信息交互；FFN 对每个位置的表示做非线性变换。
-
+<details><summary>6. KV Cache 为什么能加速？</summary>
+历史 Token 的 K/V 可以复用，新 Token 无需每步重新计算全部历史 K/V。
 </details>
 
-<details>
-<summary>7. RoPE 为什么和 Long Context 有关系？</summary>
-
-RoPE 把位置关系注入 Q/K；模型训练时的位置分布和推理时外推长度会影响长上下文稳定性，因此 Context 扩展不是简单修改最大长度。
-
+<details><summary>7. Prefill 与 Decode 最大区别是什么？</summary>
+Prefill 一次处理完整输入、并行度较高；Decode 逐 Token 串行生成并持续读取历史 KV。
 </details>
 
-<details>
-<summary>8. Logits 和 Probability 有什么区别？</summary>
-
-Logits 是未归一化分数；Softmax 后才得到下一 Token 的概率分布。
-
+<details><summary>8. Continuous Batching 为什么适合 LLM Serving？</summary>
+不同请求输出长度不同，完成请求可以动态退出、新请求立即加入，提高 GPU 利用率。
 </details>
 
-<details>
-<summary>9. Temperature=0 为什么仍不能保证事实正确？</summary>
-
-它只减少 Decoding 随机性；如果最高概率续写本身是错误事实，模型仍会稳定生成错误。
-
+<details><summary>9. PagedAttention 解决什么？</summary>
+主要解决动态 KV Cache 的内存分配与碎片问题，不是另一套 Attention 数学公式。
 </details>
 
-<details>
-<summary>10. KV Cache 缓存什么？为什么能加速？</summary>
-
-缓存历史 Token 在每层 Attention 中的 K/V，后续 Decode 不必重复计算整个前缀的 K/V。
-
+<details><summary>10. Quantization 为什么不一定更快？</summary>
+速度依赖硬件、Kernel、反量化和 Workload；Memory 更小不自动等于端到端更快。
 </details>
 
-<details>
-<summary>11. KV Cache 的主要代价是什么？</summary>
-
-显存与内存带宽。Context 越长、并发越高，KV Cache 越大。
-
+<details><summary>11. 为什么模型选型要看 Cost per Successful Task？</summary>
+便宜模型如果错误率高、反复重试，最终完成一个正确任务的成本可能更高。
 </details>
 
-<details>
-<summary>12. Prefill 和 Decode 最大区别是什么？</summary>
-
-Prefill 一次处理已有输入并建立 KV Cache，偏并行计算；Decode 每次生成一个新 Token，串行依赖更强并持续读取历史 KV。
-
+<details><summary>12. Bi-Encoder 与 Cross-Encoder 为什么组合？</summary>
+前者可预计算文档向量做大规模召回，后者对少量候选联合编码做更精细排序。
 </details>
 
-<details>
-<summary>13. Continuous Batching 为什么比 Static Batch 更适合 LLM？</summary>
-
-不同请求输出长度差异很大；Continuous Batching 可以让完成请求动态退出、新请求进入，减少空槽等待并提高 GPU 利用率。
-
+<details><summary>13. Prompt、RAG、Fine-tuning 的主要边界是什么？</summary>
+Prompt 解决任务表达/约束；RAG/Tool 提供动态或私有知识；Fine-tuning 稳定改变行为和特定任务能力。
 </details>
 
-<details>
-<summary>14. PagedAttention 主要解决什么？</summary>
-
-解决动态增长 KV Cache 的连续显存预留与碎片问题，通过固定 Block 和逻辑到物理映射提高内存利用率。
-
+<details><summary>14. 为什么 Fine-tuning 不适合存最新公司政策？</summary>
+知识会快速变化且需要权限/删除/引用，更适合外部 Retrieval/Tool 而不是反复写入模型参数。
 </details>
 
-<details>
-<summary>15. TTFT 和 TPOT 分别反映什么？</summary>
-
-TTFT 反映第一个 Token 等待，常受 Queue / Prefill 影响；TPOT 反映 Decode 每个输出 Token 的速度。
-
+<details><summary>15. LoRA 为什么参数高效？</summary>
+冻结 Base Weight，只训练低秩增量矩阵，大幅减少可训练参数和 Optimizer State。
 </details>
 
-<details>
-<summary>16. Quantization 为什么不一定更快？</summary>
-
-速度收益取决于硬件低精度 Kernel、反量化成本和 workload；显存更小不自动意味着端到端延迟更低。
-
-</details>
-
-<details>
-<summary>17. Bi-Encoder 和 Cross-Encoder 为什么经常组合？</summary>
-
-Bi-Encoder 可预计算文档向量做大规模高效召回；Cross-Encoder 对少量候选联合编码，相关性更精细但成本高。
-
-</details>
-
-<details>
-<summary>18. Prompt 优化为什么必须有 Evaluation Set？</summary>
-
-因为 Prompt 修改可能修复某些 Case 又让旧 Case 回归。没有固定数据集和指标无法证明净提升。
-
-</details>
-
-<details>
-<summary>19. RAG 能否完全消灭 Hallucination？</summary>
-
-不能。RAG 也会召回失败、Context 冲突，模型也可能不遵循证据；高风险系统仍需要 Grounding 与 Verification。
-
-</details>
-
-<details>
-<summary>20. Prompt、RAG、Fine-tuning 如何区分？</summary>
-
-Prompt 主要解决任务表达和行为约束；RAG / Tool 主要解决外部、实时和私有知识；Fine-tuning 主要解决稳定重复的模型行为能力差距。
-
-</details>
-
-<details>
-<summary>21. SFT 和 DPO 的训练信号有什么核心区别？</summary>
-
-SFT 学习目标示范答案；DPO 利用 chosen / rejected Pair 学习偏好关系。
-
-</details>
-
-<details>
-<summary>22. LoRA 为什么参数高效？</summary>
-
-冻结 Base Weight，只学习低秩增量矩阵 BA，使可训练参数远少于完整权重矩阵。
-
+<details><summary>16. 为什么必须记录 Model / Prompt / Adapter Version？</summary>
+没有版本就无法复现 Regression、比较 Eval 或安全回滚。
 </details>
 
 ---
 
-# 第二遍复习标准
-
-你应该能够不看文档独立画出：
+第二遍复习完成标准：你应该能不看文档画出：
 
 ```text
-Text → Token → Transformer → Logits → Decode
-QKV Attention
-Prefill / KV Cache / Decode
-Continuous Batching / Paged KV
-Embedding → ANN → Rerank
-Prompt / RAG / Fine-tuning Decision Tree
+Token → Transformer → Attention → Generation
+Prefill → KV Cache → Decode → Serving
+Model Selection
+Embedding → Reranker
+Prompt / RAG / Fine-tuning Boundary
 ```
-
-如果只能背定义而画不出因果链，就回到对应正文继续学。
