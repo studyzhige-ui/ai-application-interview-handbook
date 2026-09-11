@@ -52,4 +52,4 @@
 | Agent Harness / Runtime | 44 | 166 | 741 | 30 | 35 |
 | System Design | 24 | 71 | 81 | 3 | 24 |
 
-下一步人工研究层：基于 `cooccurrence.md` 回到原始 Batch 核验真正的 Follow-up Chain，并将 `curriculum-evidence-matrix.md` 与最新 `roadmap/knowledge-map.md` 对照，形成 Knowledge Gap Analysis。
+Phase 2B 自动统计与人工核验层均已完成。Phase 3 教材建设的实时状态以 `research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；本自动生成文件不重复维护易过期的“下一模块”状态。

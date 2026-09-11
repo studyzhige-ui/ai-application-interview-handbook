@@ -2,7 +2,7 @@
 
 更新日期：2026-09-11
 
-> 自动从十个正式 Canonical 文件生成；当前输入为冻结 `S001–S279` 与 Phase 2A 后的 **229 ACTIVE**。本文件不创建新证据，只提供全局可排序视图。
+> 自动从十个正式 Canonical 文件生成；当前输入为冻结 `S001–S279` 与 Phase 2B 后的 **235 ACTIVE**。本文件不创建新证据，只提供全局可排序视图。
 
 | QID | Module | Topic | Depth | Sources | Heat | Canonical Question |
 |---|---|---|---:|---:|---|---|
