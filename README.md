@@ -78,16 +78,7 @@ VALID-UNMAPPED：1（S271）
 主动采集：已暂停
 ```
 
-Phase 2B 已完成：
-
-- 全局 Canonical Index；
-- Frequency Ranking；
-- Company / Role / Round Coverage；
-- Depth / Question Type；
-- Co-occurrence；
-- Verified Follow-up Chains；
-- Curriculum Evidence Matrix；
-- Knowledge Gap Analysis。
+Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Depth / Question Type、Co-occurrence、Verified Follow-up Chains、Curriculum Evidence Matrix 与 Knowledge Gap Analysis。
 
 研究结果见 [`research/analysis/`](research/analysis/README.md)。
 
@@ -102,8 +93,6 @@ Phase 2B 已完成：
 ### [Python Foundation](python/README.md) ✅
 
 完整 12 章系统正文 + Review + Interview。
-
-承担：对象模型、容器、GIL、线程 / 进程 / 协程、asyncio、生成器、上下文管理等 AI Backend Runtime 基础。
 
 ### [FastAPI｜AI 应用服务层](fastapi/README.md) 🟡
 
@@ -146,8 +135,6 @@ Network / HTTP
 
 第一版系统教材已完成：**23 章正文 + 每章折叠自测 + Review + 高频面试题 + 易错点 + 面试前速查。**
 
-主干严格按知识依赖：
-
 ```text
 SQL / Execution
 → Index / B+Tree
@@ -156,9 +143,7 @@ SQL / Execution
 → ACID / Isolation / MVCC / Lock
 → Redo / Undo / Binlog / Recovery
 → Pagination / Schema
-→ Replication
-→ Sharding
-→ CDC
+→ Replication → Sharding → CDC
 → Bulk Write
 → AI Application Data Modeling
 → MySQL + Redis Integration Boundary
@@ -168,40 +153,29 @@ SQL / Execution
 
 第一版系统教材已完成：**27 章正文 + 每章折叠自测 + Review 总图 + 35 道面试题 + 45 个易错点 + 面试前速查。**
 
-主干继续按 0→1 认知依赖：
-
 ```text
 Redis Role / Keyspace / Command
-→ Core + Specialized Data Structures
-→ Internal Encoding
+→ Data Structures / Internal Encoding
 → Thread Model / Event Loop / I/O Multiplexing
-→ TTL / Expiration / Eviction
-→ Cache Failure / BigKey / HotKey
-→ RDB / AOF
-→ Replication / Sentinel / Cluster
+→ TTL / Eviction / Cache Failure / BigKey / HotKey
+→ RDB / AOF / Replication / Sentinel / Cluster
 → MULTI / WATCH / Pipeline / Lua
 → Distributed Lock / Lease / Fencing
 → Pub/Sub / Streams
 → Multi-level / Semantic Cache
 → Session / Conversation / Agent State Store
-→ Rate Limit
-→ Security / Troubleshooting
+→ Rate Limit / Security / Troubleshooting
 → Redis in AI System Design
 ```
-
-高频面经中的分布式锁、缓存故障会讲到更深，但不会被提前到数据结构、Runtime、TTL、Persistence 这些必要前置之前。
 
 ### [Vector Database](vector-db/README.md) ✅
 
 第一版系统教材已完成：**23 章正文 + 每章折叠自测 + Review 图解总览 + 31 道面试题 + 45 个易错点 + 面试前速查。**
 
-主干继续严格按知识依赖：
-
 ```text
 Vector / Dimension / Normalization
 → Cosine / Dot / L2
-→ Top-K Exact Search
-→ ANN
+→ Top-K Exact Search → ANN
 → HNSW / IVF / Quantization
 → Index Selection
 → Collection / Schema / Metadata
@@ -214,30 +188,41 @@ Vector / Dimension / Normalization
 → Graph DB / RAG Boundary
 ```
 
-Primary 只负责 Vector Infrastructure。Dense / Sparse、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation 统一留在 RAG。
+Dense / Sparse、Hybrid、RRF、Rerank、Top-K Strategy 与 Retrieval Evaluation 统一留在 RAG。
 
 ---
 
 ## Model Foundation
 
-### LLM Foundation（应用工程深度） ⏳
+### [LLM Foundation（应用工程深度）](llm-foundation/README.md) ✅
 
-下一块正式系统教材。
+第一版系统教材已完成：**29 章正文 + 每章折叠自测 + 7 张 Review 总图 + 30 道面试题 + 55 个易错点 + 面试前速查。**
+
+主干严格按应用工程师 0→1 认知依赖：
 
 ```text
-Tokenization
-→ Context Window
-→ Transformer / Attention
-→ KV Cache / Prefill / Decode
-→ Serving / Latency / Cost
-→ Model API / Sampling / Selection
-→ Embedding / Rerank
+Token / Tokenization
+→ Context Window / Long Context
+→ Transformer Architecture
+→ QKV / Self-Attention / Multi-Head / Causal Mask
+→ FFN / Residual / Norm / RoPE
+→ Autoregressive Generation
+→ Logits / Decoding / Sampling
+→ KV Cache
+→ Prefill / Decode
+→ Continuous Batching / PagedAttention
+→ TTFT / TPOT / Throughput / Cost
+→ Precision / Quantization
+→ Model API / Provider Adapter
+→ Model Selection
+→ Embedding / Reranker / Multimodal
 → Prompt Engineering
-→ Hallucination Boundary
-→ Fine-tuning / Alignment 使用边界
+→ Hallucination / Factuality
+→ Prompt vs RAG vs Fine-tuning
+→ SFT / LoRA / Preference Optimization / Distillation
 ```
 
-目标是理解会直接改变 AI Application / RAG / Agent 行为的模型机制，不扩展成训练 Infra 大全。
+这一层解释“模型为什么这样工作和这样表现”，不扩展成 CUDA / Distributed Training Infra 大全。
 
 ---
 
@@ -245,15 +230,20 @@ Tokenization
 
 ### RAG ⏳
 
+**下一块正式系统教材。**
+
 ```text
 Parse / OCR / Layout
-→ Chunk
+→ Corpus Audit
+→ Chunk Principles / Strategy / Parameters
 → Embedding / Index Boundary
-→ Query Rewrite
-→ Dense / Sparse / Hybrid
-→ RRF / Rerank / Top-K
-→ Context Build / Grounding
-→ Evaluation / Bad Case Attribution
+→ Query Rewrite / Decomposition / Clarification
+→ Dense / Sparse / BM25
+→ Hybrid Retrieval / RRF
+→ Rerank / Top-K
+→ Retrieval Evaluation
+→ Context Build / Grounding / Citation
+→ End-to-end Evaluation / Bad Case Attribution
 → Permission / Version / Freshness
 → Incremental Update
 → Agentic RAG
@@ -267,22 +257,7 @@ Parse / OCR / Layout
 
 ### Agent Harness / Runtime 🔬
 
-重点覆盖：
-
-- Agent Boundary / Loop / Planning / Routing；
-- Context Assembly / Compaction / Correctness；
-- Memory；
-- Tool Runtime / Discovery / Progressive Loading；
-- MCP / Skill / A2A；
-- Permission / Approval / Sandbox；
-- Prompt Injection / Untrusted Context；
-- State / Persistence / Checkpoint / Resume；
-- Cancellation / Retry / Idempotency / Compensation；
-- Multi-Agent；
-- Repository Understanding / Coding Verification；
-- AI-assisted Development Workflow；
-- Trace / Replay / Evaluation / Benchmark；
-- Model Routing / Cost / Latency / Production Reliability。
+重点覆盖 Agent Boundary / Loop / Planning / Routing、Context Assembly / Compaction、Memory、Tool Runtime、MCP / Skill / A2A、Permission / Sandbox、State / Checkpoint / Resume、Cancellation / Retry / Idempotency、Multi-Agent、Repository Understanding、Trace / Evaluation、Model Routing、Cost 与 Production Reliability。
 
 Framework（LangChain / LangGraph 等）作为 Runtime 理论之后的实现映射，不作为课程起点。
 
@@ -320,11 +295,11 @@ System Design
 
 所有正式教材尽量遵循：
 
-> **先讲人话 → 准确定义 → 代码 / SQL / 图解 → 原理 → 对比 → Failure Case → AI 实际场景 → 易错点 → 面试怎么答 → 深入追问 → 真人面经 → 折叠自测**
+> **先讲人话 → 准确定义 → 代码 / 数学 / 图解 → 原理 → 对比 → Failure Case → AI 实际场景 → 易错点 → 面试怎么答 → 深入追问 → 真人面经 → 折叠自测**
 
 最终让每个知识点达到：
 
-> **定义能说、代码能写、为什么能解释、工程边界能判断、真人追问能接。**
+> **定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
 
 ---
 
@@ -338,8 +313,8 @@ System Design
 | MySQL | ✅ 第一版完整系统教材 |
 | Redis | ✅ 第一版完整系统教材 |
 | Vector DB | ✅ 第一版完整系统教材 |
-| LLM Foundation | ⏳ 下一块正式系统教材 |
-| RAG | ⏳ 待建设 |
+| LLM Foundation | ✅ 第一版完整系统教材 |
+| RAG | ⏳ **下一块正式系统教材** |
 | Agent Harness / Runtime | 🔬 源码 + 面经校准中 |
 | System Design | ⏳ 随前置模块汇总 |
 | 真人面经研究 | ✅ Frozen Phase 2B 完成 |
