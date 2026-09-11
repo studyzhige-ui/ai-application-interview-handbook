@@ -22,6 +22,8 @@
 
 `235` 是 Phase 2A + Phase 2B 后的正式 Primary-owned ACTIVE Canonical 数量。
 
+> **注意：Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。教材粒度审计见 `../../roadmap/curriculum-granularity-audit.md`。
+
 ---
 
 ## 2. 主要跨模块迁移
@@ -95,27 +97,27 @@ Source Count mismatch         0
 
 ---
 
-## 6. Phase 3 Curriculum Build 状态
+## 6. Phase 3 Curriculum Build / Granularity Remediation
 
 固定原则：
 
-> **初学者 0→1 的知识依赖决定课程主干；真人面经只校准复习权重、真实问法和追问深度。**
+> **初学者 0→1 的知识依赖决定课程主干；真人面经只校准复习权重、真实问法和追问深度。研究 / Capability / 教材文件使用不同粒度。**
 
 当前建设状态：
 
 ```text
-MySQL ✅ 23 章 + Review + Interview
-→ Redis ✅ 27 章 + Review + Interview
-→ Vector DB ✅ 23 章 + Review + Interview
-→ LLM Foundation ✅ 29 章 + Review + Interview
-→ RAG ✅ 34 章 + Review + Interview
-→ Agent Harness / Runtime ✅ 47 章 + Review + Interview
-→ System Design 🚧 下一块
+MySQL ✅ 23 章 + Review + Interview；Granularity PASS
+→ Redis 🟠 27 章内容完成；Minor Remediation（目标约 23）
+→ Vector DB 🟠 23 章内容完成；Moderate Remediation（目标 16–18）
+→ LLM Foundation 🟠 29 章内容完成；Moderate Remediation（目标 14–17）
+→ RAG 🟠 34 章内容完成；Major Remediation（目标 14–16）
+→ Agent Harness / Runtime 🚧 已完成 47→23 物理迁移；深度验收中
+→ System Design ⏸️ 上述粒度整改后启动
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
 
-Agent Harness 的正式课程输入已扩展为：
+Agent Harness 的正式课程输入保持：
 
 ```text
 44 HUMAN-A Agent Canonical
@@ -129,3 +131,16 @@ Agent Harness 的正式课程输入已扩展为：
 这些 Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
 
 Agent 研究索引：`../agent-sources/`。
+
+### 当前教材粒度审计
+
+| 模块 | 审计结果 |
+|---|---|
+| MySQL | PASS |
+| Redis | Minor Remediation |
+| Vector DB | Moderate Remediation |
+| LLM Foundation | Moderate Remediation |
+| RAG | Major Remediation |
+| Agent Harness | Major Remediation，47→23 已完成结构迁移 |
+
+这份表描述的是**教材组织**，不会改变本文件上方的 235 道 Canonical Ownership。
