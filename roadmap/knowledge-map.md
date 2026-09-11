@@ -275,40 +275,65 @@ Network / HTTP
 
 # 8. 模块五：Redis
 
-计划主线：
+当前状态：**✅ 第一版 0→1 系统教材已完成。**
+
+入口：[`../redis/README.md`](../redis/README.md)
+
+Redis 也严格按知识依赖而不是面经热度组织。虽然 Distributed Lock 是当前最强面试信号之一，但仍然放在 Transaction / Lua / HA 之后。
 
 ```text
-01 Redis 为什么存在
-02 String / Hash / List / Set / ZSet
-03 Redis 为什么快
-04 Thread Model / IO Multiplexing
-05 TTL / Expiration
-06 Eviction
-07 Cache Penetration / Breakdown / Avalanche
-08 BigKey / HotKey
-09 RDB / AOF
-10 Primary / Replica / Sentinel
-11 Cluster / Hash Slot / Reshard
-12 Distributed Lock / Lease / WatchDog
-13 Lock Correctness / Owner / Lua Release
-14 Lua / Atomicity
-15 Cache Consistency Boundary
-16 Multi-level Cache
-17 Session / Conversation
-18 Semantic / Result Cache
-19 Agent Short-term State
-20 Rate Limit
-21 Security Boundary
-22 Redis in AI System Design
+01 Redis 在 AI Application 中负责什么
+02 Keyspace / Command Model
+03 String / Hash / List / Set / ZSet
+04 Bitmap / HLL / Geo / Stream
+05 Internal Encoding / Memory Model
+06 Why Redis is Fast / Thread Model
+07 I/O Multiplexing / Event Loop
+08 TTL / Expiration
+09 maxmemory / Eviction
+10 Cache / Key Design / Cache Aside Boundary
+11 Penetration / Breakdown / Avalanche
+12 BigKey / HotKey
+13 RDB / AOF
+14 Replication
+15 Sentinel
+16 Cluster / Hash Slot / Reshard
+17 MULTI / EXEC / WATCH
+18 Pipeline
+19 Lua / Redis Functions
+20 Distributed Lock Basics
+21 Lock Correctness / Renewal / Fencing
+22 Pub/Sub / Streams
+23 Multi-level / Semantic Cache
+24 Session / Conversation / Agent State Store Boundary
+25 Redis Rate Limit Implementation
+26 Security / Latency / Troubleshooting
+27 Redis in AI System Design
 ```
 
-Agent Checkpoint / Runtime State 的**执行语义**归 Agent Harness；Redis 这里只解释作为 State Store 时的数据结构、持久化与一致性能力。
+知识边界：
 
-Redis 也将遵循和 MySQL 相同的 0→1 原则：先建立数据结构和 Runtime 基础，再进入缓存、分布式锁、集群与 AI 场景；面经只校准重点，不打乱主干。
+- DB + Cache 最终一致性 Primary 在 AI Backend Engineering；
+- Redis vs Kafka / MQ 的通用选型 Primary 在 AI Backend Engineering；
+- Agent Checkpoint / Resume 的执行语义 Primary 在 Agent Harness；
+- Redis 负责解释这些场景中自己的 Data Structure / Persistence / HA / Atomicity / Failure Boundary。
+
+当前配套：
+
+```text
+27 章正文
++ 每章折叠自测
++ 5 张 Review 总图
++ 35 道高频面试题
++ 45 个面试易错点
++ 面试前速查表
+```
 
 ---
 
 # 9. 模块六：Vector Database
+
+下一块正式系统教材。
 
 计划从原理开始，而不是从 Milvus API 开始。最新 Primary Ownership 已明确把完整 Retrieval Strategy 归到 RAG，因此 Vector DB 只负责向量基础设施与 ANN Index：
 
@@ -612,12 +637,12 @@ Concept
 | FastAPI | 🟡 已建立完整课程地图，下一步写正文 |
 | AI Backend Engineering | 🟡 已建立完整课程地图，后续按项目穿插建设 |
 | MySQL | ✅ 第一版完整 23 章 + Review + Interview 已完成 |
-| Redis | ⏳ 下一块正式系统教材；课程边界已校准 |
-| Vector DB | ⏳ Redis 之后；已与 RAG 重划 Primary Boundary |
+| Redis | ✅ 第一版完整 27 章 + Review + Interview 已完成 |
+| Vector DB | ⏳ 下一块正式系统教材；已与 RAG 重划 Primary Boundary |
 | LLM Foundation | 🆕 已正式进入一级 Roadmap，后续建设应用工程深度教材 |
 | RAG | ⏳ LLM Foundation 之后；按 Evaluation / Failure 深度建设 |
 | Agent Harness / Runtime | 🔬 用 Claude Code / Codex + Frozen HUMAN-A 继续校准后建设 |
 | System Design | ⏳ 随各模块成熟逐步汇总 |
 | 真实面经研究 | ✅ `S001–S279` 已冻结；235 Canonical / Phase 2B 市场分析完成 |
 
-下一块正式系统教材进入 **Redis**。依然坚持：完整知识体系先按初学者 0→1 建立，再让真人面经校准复习权重和追问深度。
+下一块正式系统教材进入 **Vector DB**。依然坚持：完整知识体系先按初学者 0→1 建立，再让真人面经校准复习权重和追问深度。
