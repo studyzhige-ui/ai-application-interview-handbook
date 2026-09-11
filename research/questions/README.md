@@ -95,8 +95,8 @@ Redis ✅ 24 blocks（27→24）
 Vector DB ✅ 16 blocks（23→16）
 LLM Foundation ✅ 14 blocks（29→14）
 RAG ✅ 14 blocks（34→14）
-Agent Harness / Runtime 🚧 23 blocks（47→23，结构完成；深度验收中）
-System Design ⏸️ Agent 验收后启动
+Agent Harness / Runtime ✅ 23 blocks（47→23，结构 + 深度验收完成）
+System Design ⏳ 下一正式模块
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
@@ -134,7 +134,7 @@ HUMAN-A → 市场真实度 / 频率 / 追问
 课程体系 → beginner-first 0→1 演进
 ```
 
-源码与网上权威资料**不能**反向改变 HUMAN-A 面试频率，也不能因为源码中存在一个独立 class / primitive 就自动拆成一章。
+源码与权威资料**不能**反向改变 HUMAN-A 面试频率，也不能因为源码中存在一个独立 class / primitive 就自动拆成一章。
 
 ---
 
