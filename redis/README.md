@@ -4,6 +4,8 @@
 >
 > 目标不是背“Redis 五种数据结构 + 缓存三兄弟 + 分布式锁”，而是从 0 建立一条完整因果链：**Redis 为什么存在 → 数据怎样组织 → 为什么快 → 内存什么时候失效/淘汰 → 怎样持久化和高可用 → 怎样做原子并发操作 → 怎样安全地做缓存、锁、Session、限流与 AI Runtime 状态。**
 
+> **Granularity Audit：🟠 Minor Remediation。** 当前 27 章正文内容已经完成，知识顺序正确；但少量文件边界偏细，后续会把 `Redis 为什么快 + I/O Multiplexing/Event Loop`、`MULTI/WATCH + Pipeline + Lua/Functions`、`Distributed Lock Basics + Lock Correctness` 等连续知识重新组合，目标约 **23 个知识小板块**。这只改变教材文件粒度，不改变 Redis 19 道 Canonical、Source Count 或面经频率。完整审计见 [`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
+
 ## 1. 最重要的课程原则
 
 本模块继续固定遵守：
@@ -174,7 +176,9 @@ Pub/Sub / Streams
 
 ---
 
-## 6. 完整 27 章
+## 6. 当前 27 章（内容完成，待 Minor Granularity Remediation）
+
+> 下列文件目前仍可正常学习；后续合并只重新组织相邻内容，不删除知识点。
 
 ### Part A｜从 Key 到 Runtime
 
@@ -255,9 +259,9 @@ Pub/Sub / Streams
 
 ## 9. 推荐三遍学习法
 
-### 第一遍：严格按 01 → 27
+### 第一遍：当前先严格按 01 → 27
 
-先建立“为什么存在”和“上一章为什么推出下一章”。
+粒度整改前，现有顺序仍然保持完整 0→1 依赖；合并后不会改变知识顺序。
 
 ### 第二遍：画关键流程
 
