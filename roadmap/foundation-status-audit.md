@@ -60,7 +60,7 @@ FASTAPI-005  Agent Service Framework Boundary→ 05–16，重点 16
 ```text
 docs = 01–16 连续
 16/16 正文 >= 4.5KB
-16/16 正文含面试回答与折叠自测
+16/16 正文含面试表达与折叠自测
 README 正文链接存在
 Review / Interview 三件套存在
 Official Source Index 存在
@@ -190,7 +190,7 @@ README 正文链接存在
 
 ---
 
-## 4. System Design 完成后的 Foundation 建设顺序
+## 4. 当前 Foundation 建设顺序
 
 学习者仍然应该按：
 
@@ -202,15 +202,13 @@ Python
 
 学习。
 
-但仓库当前的**建设工作顺序**应按缺口大小：
+但仓库当前的**建设工作顺序**只剩：
 
 ```text
 1. AI Backend Engineering：从 README 骨架写成正式 docs / review / interview
-
-Python 与 FastAPI 已完成，不再列为待办。
 ```
 
-原因：Python 已经可用，而另外两块目前没有正式正文。
+Python 与 FastAPI 已完成，当前只剩 AI Backend Engineering 没有正式正文。
 
 ---
 
