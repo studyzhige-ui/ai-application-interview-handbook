@@ -1,4 +1,4 @@
-# 31. Production Governance：Freshness、Version、Permission、Tenant、Snapshot 与 Rollback
+# 12｜Production Governance：Freshness、Version、Permission、Tenant、Snapshot 与 Rollback
 
 RAG 从 Demo 走向 Production 后，最大的变化之一是：
 

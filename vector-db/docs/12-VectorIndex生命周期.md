@@ -1,4 +1,4 @@
-# 16. Vector Index Lifecycle：写入、删除、Tombstone、Compaction、Re-embedding 与 Rebuild
+# 12｜Vector Index Lifecycle：写入、删除、Tombstone、Compaction、Re-embedding 与 Rebuild
 
 Vector DB 在 Demo 里往往只有：
 

@@ -1,4 +1,4 @@
-# 10. Autoregressive Generation：Logits、Softmax、Sampling 与 Decoding
+# 05｜Autoregressive Generation：Logits、Softmax、Sampling 与 Decoding
 
 理解 LLM 输出最重要的一条链是：
 

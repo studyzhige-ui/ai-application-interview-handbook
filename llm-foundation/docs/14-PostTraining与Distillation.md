@@ -1,4 +1,4 @@
-# 29｜RLHF / DPO / GRPO / Distillation 的应用工程边界
+# 14｜RLHF / DPO / GRPO / Distillation 的应用工程边界
 
 > 这一章不把你训练成 RLHF 算法工程师，而是让你知道：**SFT 之后，为什么还需要偏好优化；不同 Post-training 方法在解决什么问题；什么时候应用团队应该关心，什么时候不该自己做。**
 

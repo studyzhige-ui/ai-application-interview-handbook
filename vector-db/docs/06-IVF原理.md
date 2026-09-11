@@ -1,4 +1,4 @@
-# 10. IVF：Coarse Quantizer、nlist 与 nprobe
+# 06｜IVF：Coarse Quantizer、nlist 与 nprobe
 
 IVF = Inverted File Index。
 

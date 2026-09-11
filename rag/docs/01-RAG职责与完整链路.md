@@ -1,4 +1,4 @@
-# 01. RAG 的职责与 Production End-to-End Pipeline
+# 01｜RAG 的职责与 Production End-to-End Pipeline
 
 RAG = Retrieval-Augmented Generation。
 

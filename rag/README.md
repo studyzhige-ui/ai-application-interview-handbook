@@ -117,26 +117,25 @@ Freshness/Version + Permission/Tenant
 
 Scale/Cost/Observability 与 GraphRAG/Agentic RAG 已经是独立 Production / Architecture 边界，继续保留。
 
-> 文件保留合并后最早历史编号，正式顺序以下面的 14-block 为准。
 
 ---
 
 ## 5. 正式 14 个知识小板块
 
 1. [RAG 的职责与 Production End-to-End Pipeline](docs/01-RAG职责与完整链路.md)
-2. [Corpus Governance：Audit、Identity、Lineage、Version、Source of Truth](docs/03-CorpusGovernance.md)
-3. [Document Processing：Parsing、OCR、Layout、Multimodal、Cleaning、Dedup](docs/05-DocumentProcessing.md)
-4. [Chunking Design：原则、Strategy、Size、Overlap](docs/08-ChunkingDesign.md)
-5. [Advanced Chunk Structure：Parent-child、Neighbor、Boundary、Data Model](docs/11-AdvancedChunkStructure.md)
-6. [Query Understanding & Retrieval Planning](docs/14-QueryPlanning.md)
-7. [Retrieval Stack：Dense、BM25、Hybrid、Fusion](docs/18-RetrievalStack.md)
-8. [Rerank 与 Candidate Budget](docs/22-Rerank与CandidateBudget.md)
-9. [Context Construction、Grounding 与 Citation](docs/24-EvidenceDelivery.md)
-10. [Retrieval Evaluation：Metrics、Ground Truth、Dataset、Judge](docs/26-RetrievalEvaluation.md)
-11. [End-to-End Evaluation、Ablation、Regression 与 Bad Case](docs/28-EndToEndQualityEngineering.md)
-12. [Production Governance：Freshness、Version、Permission、Tenant、Rollback](docs/31-ProductionGovernance.md)
-13. [Large-scale Ingestion、Latency / Cost、Cache 与 Observability](docs/33-ScaleCostObservability.md)
-14. [GraphRAG、Agentic RAG 与 Production Architecture](docs/34-GraphRAG与AgenticRAG.md)
+2. [Corpus Governance：Audit、Identity、Lineage、Version、Source of Truth](docs/02-CorpusGovernance.md)
+3. [Document Processing：Parsing、OCR、Layout、Multimodal、Cleaning、Dedup](docs/03-DocumentProcessing.md)
+4. [Chunking Design：原则、Strategy、Size、Overlap](docs/04-ChunkingDesign.md)
+5. [Advanced Chunk Structure：Parent-child、Neighbor、Boundary、Data Model](docs/05-AdvancedChunkStructure.md)
+6. [Query Understanding & Retrieval Planning](docs/06-QueryPlanning.md)
+7. [Retrieval Stack：Dense、BM25、Hybrid、Fusion](docs/07-RetrievalStack.md)
+8. [Rerank 与 Candidate Budget](docs/08-Rerank与CandidateBudget.md)
+9. [Context Construction、Grounding 与 Citation](docs/09-EvidenceDelivery.md)
+10. [Retrieval Evaluation：Metrics、Ground Truth、Dataset、Judge](docs/10-RetrievalEvaluation.md)
+11. [End-to-End Evaluation、Ablation、Regression 与 Bad Case](docs/11-EndToEndQualityEngineering.md)
+12. [Production Governance：Freshness、Version、Permission、Tenant、Rollback](docs/12-ProductionGovernance.md)
+13. [Large-scale Ingestion、Latency / Cost、Cache 与 Observability](docs/13-ScaleCostObservability.md)
+14. [GraphRAG、Agentic RAG 与 Production Architecture](docs/14-GraphRAG与AgenticRAG.md)
 
 ---
 

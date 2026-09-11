@@ -1,4 +1,4 @@
-# 19. Shard / Replica / Segment：分布式 Vector DB 基础
+# 13｜Shard / Replica / Segment：分布式 Vector DB 基础
 
 当一个 Vector Index 放不进单机内存，或者单机 QPS / 容量不够时，就会进入分布式问题。
 

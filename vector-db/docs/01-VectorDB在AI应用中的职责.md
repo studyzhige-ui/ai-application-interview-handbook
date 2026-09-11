@@ -1,4 +1,4 @@
-# 01. Vector DB 在 AI Application 中负责什么
+# 01｜Vector DB 在 AI Application 中负责什么
 
 很多初学者第一次接触 Vector DB，是从一句话开始：
 

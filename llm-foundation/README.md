@@ -95,7 +95,6 @@ SFT + LoRA/PEFT
 
 Multimodal、Prompt Engineering 和 Post-training/Distillation 各自有独立知识边界，因此继续单章。
 
-> 文件保留合并后最早历史编号；正式学习顺序以下面的 14-block 列表为准。
 
 ---
 
@@ -103,18 +102,18 @@ Multimodal、Prompt Engineering 和 Post-training/Distillation 各自有独立�
 
 1. [LLM Foundation 在 AI Application 中负责什么](docs/01-LLMFoundation在AI应用中的职责.md)
 2. [Token、Context Window 与 Long Context](docs/02-TokenContext与LongContext.md)
-3. [Transformer Block：Architecture、FFN、Residual、Norm](docs/05-TransformerBlock.md)
-4. [Attention 与 Position：QKV、Multi-Head、Causal Mask、RoPE](docs/06-Attention与Position.md)
-5. [Autoregressive Generation：Logits、Softmax、Sampling、Decoding](docs/10-Generation与Decoding.md)
-6. [KV Cache、Prefill 与 Decode](docs/13-KVCache与PrefillDecode.md)
-7. [LLM Serving Engine：Batching、PagedAttention、Latency、Cost、Quantization](docs/15-ServingEngine与性能.md)
-8. [Model API、Provider Adapter 与 Model Selection](docs/19-ModelAPI与Selection.md)
-9. [Embedding 与 Reranker：Bi-Encoder / Cross-Encoder](docs/21-Embedding与Reranker.md)
-10. [Multimodal Foundation](docs/23-MultimodalFoundation.md)
-11. [Prompt Engineering：从提示词到可评估工程](docs/24-PromptEngineering.md)
-12. [Hallucination、Factuality 与 Prompt / RAG / Fine-tuning 边界](docs/25-Hallucination与干预边界.md)
-13. [Fine-tuning、SFT 与 LoRA / PEFT](docs/27-FineTuning与LoRA.md)
-14. [RLHF / DPO / GRPO / Distillation 的应用工程边界](docs/29-PostTraining与Distillation.md)
+3. [Transformer Block：Architecture、FFN、Residual、Norm](docs/03-TransformerBlock.md)
+4. [Attention 与 Position：QKV、Multi-Head、Causal Mask、RoPE](docs/04-Attention与Position.md)
+5. [Autoregressive Generation：Logits、Softmax、Sampling、Decoding](docs/05-Generation与Decoding.md)
+6. [KV Cache、Prefill 与 Decode](docs/06-KVCache与PrefillDecode.md)
+7. [LLM Serving Engine：Batching、PagedAttention、Latency、Cost、Quantization](docs/07-ServingEngine与性能.md)
+8. [Model API、Provider Adapter 与 Model Selection](docs/08-ModelAPI与Selection.md)
+9. [Embedding 与 Reranker：Bi-Encoder / Cross-Encoder](docs/09-Embedding与Reranker.md)
+10. [Multimodal Foundation](docs/10-MultimodalFoundation.md)
+11. [Prompt Engineering：从提示词到可评估工程](docs/11-PromptEngineering.md)
+12. [Hallucination、Factuality 与 Prompt / RAG / Fine-tuning 边界](docs/12-Hallucination与干预边界.md)
+13. [Fine-tuning、SFT 与 LoRA / PEFT](docs/13-FineTuning与LoRA.md)
+14. [RLHF / DPO / GRPO / Distillation 的应用工程边界](docs/14-PostTraining与Distillation.md)
 
 ---
 

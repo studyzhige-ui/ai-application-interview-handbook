@@ -1,4 +1,4 @@
-# 21. Embedding 与 Reranker：Bi-Encoder / Cross-Encoder 的分工
+# 09｜Embedding 与 Reranker：Bi-Encoder / Cross-Encoder 的分工
 
 Embedding Model 和 Reranker 经常一起出现在 RAG，但它们解决的是两个不同阶段的问题：
 

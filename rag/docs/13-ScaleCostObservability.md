@@ -1,4 +1,4 @@
-# 33｜Large-scale Ingestion、Latency / Cost、Cache 与 Observability
+# 13｜Large-scale Ingestion、Latency / Cost、Cache 与 Observability
 
 ## 1. 先讲人话
 

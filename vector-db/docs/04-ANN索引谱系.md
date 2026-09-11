@@ -1,4 +1,4 @@
-# 07. ANN Index 谱系：Graph、Partition、Quantization
+# 04｜ANN Index 谱系：Graph、Partition、Quantization
 
 如果一上来只学 HNSW，很容易形成一个错觉：
 

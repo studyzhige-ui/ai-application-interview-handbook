@@ -1,4 +1,4 @@
-# 06. Attention 与 Position：QKV、Multi-Head、Causal Mask 与 RoPE
+# 04｜Attention 与 Position：QKV、Multi-Head、Causal Mask 与 RoPE
 
 这一章回答 Transformer 里最常被问的一组问题：
 

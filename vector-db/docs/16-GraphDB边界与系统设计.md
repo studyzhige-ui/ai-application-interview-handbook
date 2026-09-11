@@ -1,4 +1,4 @@
-# 23. Graph DB vs Vector DB，以及 Vector DB 在 AI 系统中的位置
+# 16｜Graph DB vs Vector DB，以及 Vector DB 在 AI 系统中的位置
 
 学到这里，我们已经知道 Vector DB 能做什么：
 

@@ -1,4 +1,4 @@
-# 11. Quantization：SQ / PQ 与压缩检索
+# 07｜Quantization：SQ / PQ 与压缩检索
 
 当向量数量非常大时，一个现实问题会变得明显：
 

@@ -1,4 +1,4 @@
-# 15. Partition / Namespace / Tenant Isolation
+# 11｜Partition / Namespace / Tenant Isolation
 
 Metadata Filter 解决“查询时筛选”，但当数据规模和租户数量继续增长时，还会自然出现另一个问题：
 

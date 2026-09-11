@@ -1,4 +1,4 @@
-# 13. Collection / Schema / Primary Key / Metadata
+# 09｜Collection / Schema / Primary Key / Metadata
 
 真正的 Vector DB 记录通常不是：
 

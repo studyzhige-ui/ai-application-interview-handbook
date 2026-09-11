@@ -1,4 +1,4 @@
-# 34｜GraphRAG、Agentic RAG 与 Production Architecture
+# 14｜GraphRAG、Agentic RAG 与 Production Architecture
 
 ## 1. 先讲人话
 

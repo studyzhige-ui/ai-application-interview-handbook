@@ -1,4 +1,4 @@
-# 19. Model API、Provider Adapter 与 Model Selection
+# 08｜Model API、Provider Adapter 与 Model Selection
 
 应用工程师实际使用 LLM 时，接触到的不是裸 Transformer，而是一层 Provider API：
 

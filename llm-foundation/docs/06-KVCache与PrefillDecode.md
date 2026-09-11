@@ -1,4 +1,4 @@
-# 13. KV Cache、Prefill 与 Decode：LLM 推理的两阶段模型
+# 06｜KV Cache、Prefill 与 Decode：LLM 推理的两阶段模型
 
 如果只懂 Transformer，却不懂推理时的 **KV Cache / Prefill / Decode**，就很难解释：
 

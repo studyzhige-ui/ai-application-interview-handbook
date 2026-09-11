@@ -1,4 +1,4 @@
-# 08. Chunking Design：原则、Strategy、Size、Overlap 与实验方法
+# 04｜Chunking Design：原则、Strategy、Size、Overlap 与实验方法
 
 Chunking 的本质不是“把文档切成 512 Token”，而是决定：
 

@@ -1,4 +1,4 @@
-# 02. Token、Context Window 与 Long Context：从输入单位到上下文预算
+# 02｜Token、Context Window 与 Long Context：从输入单位到上下文预算
 
 AI Application 里所有“上下文太长、成本太高、信息放不下”的问题，最前面都要先理解三个概念：
 

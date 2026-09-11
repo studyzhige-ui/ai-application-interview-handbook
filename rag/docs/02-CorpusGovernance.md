@@ -1,4 +1,4 @@
-# 03. Corpus Governance：Audit、Identity、Lineage、Version 与 Source of Truth
+# 02｜Corpus Governance：Audit、Identity、Lineage、Version 与 Source of Truth
 
 RAG 的第一份数据工程任务不是 Embedding，而是回答：
 

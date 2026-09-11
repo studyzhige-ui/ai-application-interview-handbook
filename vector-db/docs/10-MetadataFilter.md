@@ -1,4 +1,4 @@
-# 14. Metadata Filter、Pre-filter 与 Post-filter
+# 10｜Metadata Filter、Pre-filter 与 Post-filter
 
 真实 Vector Search 很少只有：
 

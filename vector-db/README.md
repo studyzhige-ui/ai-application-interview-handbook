@@ -118,7 +118,6 @@ Performance / Capacity
 
 IVF、PQ、Metadata Filter、Tenant Isolation、Distributed Vector DB 等仍保留独立文件，因为它们有自己不同的机制和 Failure Model。
 
-> 为避免纯编号重构造成大量成熟正文无意义改写，本轮保留合并后最早的历史文件编号。正式学习顺序以本 README 为准；文件数量已经物理收敛为 16。
 
 ---
 
@@ -126,20 +125,20 @@ IVF、PQ、Metadata Filter、Tenant Isolation、Distributed Vector DB 等仍保�
 
 1. [Vector DB 在 AI Application 中负责什么](docs/01-VectorDB在AI应用中的职责.md)
 2. [Vector Space & Similarity：Dimension、Normalization、Cosine / Dot / L2](docs/02-VectorSpace与Similarity.md)
-3. [Exact Search vs ANN：Top-K Ground Truth 与 Recall / Latency](docs/05-ExactSearch与ANN.md)
-4. [ANN Index 谱系：Graph、Partition、Quantization](docs/07-ANN索引谱系.md)
-5. [HNSW：机制、M、efConstruction、efSearch 与调优](docs/08-HNSW机制与调优.md)
-6. [IVF：Coarse Quantizer、nlist 与 nprobe](docs/10-IVF原理.md)
-7. [Quantization：SQ / PQ 与压缩检索](docs/11-Quantization与PQ.md)
-8. [HNSW vs IVF 与 Index Selection](docs/12-IndexSelection.md)
-9. [Collection / Schema / Primary Key / Metadata](docs/13-Vector数据建模.md)
-10. [Metadata Filter、Pre-filter 与 Post-filter](docs/14-MetadataFilter.md)
-11. [Partition / Namespace / Tenant Isolation](docs/15-Partition与TenantIsolation.md)
-12. [Vector Index Lifecycle：写入、删除、Compaction、Re-embedding 与 Rebuild](docs/16-VectorIndex生命周期.md)
-13. [Shard / Replica / Segment：分布式 Vector DB](docs/19-分布式VectorDB.md)
-14. [Performance、Capacity 与 Production Diagnosis](docs/20-性能容量与Production诊断.md)
-15. [FAISS / pgvector / Elasticsearch / Milvus / Qdrant 架构选型](docs/22-产品与架构选型.md)
-16. [Graph DB vs Vector DB 与系统位置](docs/23-GraphDB边界与系统设计.md)
+3. [Exact Search vs ANN：Top-K Ground Truth 与 Recall / Latency](docs/03-ExactSearch与ANN.md)
+4. [ANN Index 谱系：Graph、Partition、Quantization](docs/04-ANN索引谱系.md)
+5. [HNSW：机制、M、efConstruction、efSearch 与调优](docs/05-HNSW机制与调优.md)
+6. [IVF：Coarse Quantizer、nlist 与 nprobe](docs/06-IVF原理.md)
+7. [Quantization：SQ / PQ 与压缩检索](docs/07-Quantization与PQ.md)
+8. [HNSW vs IVF 与 Index Selection](docs/08-IndexSelection.md)
+9. [Collection / Schema / Primary Key / Metadata](docs/09-Vector数据建模.md)
+10. [Metadata Filter、Pre-filter 与 Post-filter](docs/10-MetadataFilter.md)
+11. [Partition / Namespace / Tenant Isolation](docs/11-Partition与TenantIsolation.md)
+12. [Vector Index Lifecycle：写入、删除、Compaction、Re-embedding 与 Rebuild](docs/12-VectorIndex生命周期.md)
+13. [Shard / Replica / Segment：分布式 Vector DB](docs/13-分布式VectorDB.md)
+14. [Performance、Capacity 与 Production Diagnosis](docs/14-性能容量与Production诊断.md)
+15. [FAISS / pgvector / Elasticsearch / Milvus / Qdrant 架构选型](docs/15-产品与架构选型.md)
+16. [Graph DB vs Vector DB 与系统位置](docs/16-GraphDB边界与系统设计.md)
 
 ---
 

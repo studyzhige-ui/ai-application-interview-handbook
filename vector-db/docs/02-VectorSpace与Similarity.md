@@ -1,4 +1,4 @@
-# 02. Vector Space & Similarity：Dimension、Normalization 与距离度量
+# 02｜Vector Space & Similarity：Dimension、Normalization 与距离度量
 
 这一章把三个原本分开的前置知识合成一个完整问题：
 

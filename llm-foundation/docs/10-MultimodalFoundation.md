@@ -1,4 +1,4 @@
-# 23｜Multimodal Foundation
+# 10｜Multimodal Foundation
 
 ## 1. 多模态模型解决什么
 

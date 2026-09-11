@@ -1,4 +1,4 @@
-# 18. Retrieval Stack：Dense、BM25、Hybrid 与 Fusion
+# 07｜Retrieval Stack：Dense、BM25、Hybrid 与 Fusion
 
 真正的 Retrieval System 很少只依赖一种信号。
 

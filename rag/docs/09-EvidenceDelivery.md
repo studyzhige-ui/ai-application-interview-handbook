@@ -1,4 +1,4 @@
-# 24. Context Construction、Grounding 与 Citation：从 Candidate 到可验证 Evidence
+# 09｜Context Construction、Grounding 与 Citation：从 Candidate 到可验证 Evidence
 
 检索完成后，系统手里只有 Candidate。
 

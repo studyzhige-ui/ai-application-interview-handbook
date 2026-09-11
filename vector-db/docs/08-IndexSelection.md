@@ -1,4 +1,4 @@
-# 12. HNSW vs IVF 与 Index Selection
+# 08｜HNSW vs IVF 与 Index Selection
 
 前面已经分别学了 HNSW、IVF 和 Quantization，现在才能认真回答面试里真正高频的问题：
 

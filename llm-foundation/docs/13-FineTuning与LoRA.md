@@ -1,4 +1,4 @@
-# 27. Fine-tuning、SFT 与 LoRA / PEFT：什么时候值得训练自己的适配层
+# 13｜Fine-tuning、SFT 与 LoRA / PEFT：什么时候值得训练自己的适配层
 
 Fine-tuning 很容易被理解成：
 

@@ -1,4 +1,4 @@
-# 05. Transformer Block：Architecture、FFN、Residual 与 Normalization
+# 03｜Transformer Block：Architecture、FFN、Residual 与 Normalization
 
 这一章先建立一个完整 Transformer Block，再把 Attention 的细节留给下一章。
 

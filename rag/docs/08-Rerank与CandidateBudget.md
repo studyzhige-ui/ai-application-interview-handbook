@@ -1,4 +1,4 @@
-# 22. Rerank 与 Candidate Budget：从高 Recall 候选到高 Precision Evidence
+# 08｜Rerank 与 Candidate Budget：从高 Recall 候选到高 Precision Evidence
 
 Retriever 的目标通常是：
 

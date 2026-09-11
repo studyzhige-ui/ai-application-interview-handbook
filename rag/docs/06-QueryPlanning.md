@@ -1,4 +1,4 @@
-# 14. Query Understanding & Retrieval Planning：Lifecycle、Rewrite、Clarification、Decomposition、HyDE 与 No-hit
+# 06｜Query Understanding & Retrieval Planning：Lifecycle、Rewrite、Clarification、Decomposition、HyDE 与 No-hit
 
 RAG 在线链路不能把用户原句直接当作唯一检索 Query。
 

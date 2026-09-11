@@ -1,4 +1,4 @@
-# 11. Advanced Chunk Structure：Parent-child、Neighbor、Semantic Boundary 与 Chunk Data Model
+# 05｜Advanced Chunk Structure：Parent-child、Neighbor、Semantic Boundary 与 Chunk Data Model
 
 基础 Chunking 决定“切多大”；这一章解决更难的问题：
 

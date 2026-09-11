@@ -1,4 +1,4 @@
-# 25. Hallucination、Factuality 与 Prompt / RAG / Fine-tuning 的干预边界
+# 12｜Hallucination、Factuality 与 Prompt / RAG / Fine-tuning 的干预边界
 
 “模型答错了怎么办？”不能直接跳到 Fine-tuning。
 

@@ -1,4 +1,4 @@
-# 08. HNSW：机制、M、efConstruction、efSearch 与调优
+# 05｜HNSW：机制、M、efConstruction、efSearch 与调优
 
 HNSW 是当前最常见的 ANN Index 之一。
 

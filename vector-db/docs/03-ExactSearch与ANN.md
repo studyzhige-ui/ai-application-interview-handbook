@@ -1,4 +1,4 @@
-# 05. Exact Search vs ANN：从 Top-K Ground Truth 到 Recall / Latency Trade-off
+# 03｜Exact Search vs ANN：从 Top-K Ground Truth 到 Recall / Latency Trade-off
 
 上一章定义了“什么叫近”，这一章解决真正的检索问题：
 
