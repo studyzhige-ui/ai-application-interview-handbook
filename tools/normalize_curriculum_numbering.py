@@ -1,9 +1,11 @@
 from pathlib import Path
+from urllib.parse import unquote
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
 
 MODULE_COUNTS = {
+    "redis": 24,
     "vector-db": 16,
     "llm-foundation": 14,
     "rag": 14,
@@ -86,7 +88,7 @@ for path in ROOT.rglob("*.md"):
     if new_text != text:
         path.write_text(new_text, encoding="utf-8")
 
-# Normalize H1 numbering to the actual filename number.
+# Normalize H1 numbering to the actual filename number and require continuous filenames.
 for module, count in MODULE_COUNTS.items():
     docs = ROOT / module / "docs"
     files = sorted(p for p in docs.glob("*.md") if re.match(r"^\d{2}-", p.name))
@@ -101,7 +103,6 @@ for module, count in MODULE_COUNTS.items():
         lines = text.splitlines()
         if not lines:
             raise SystemExit(f"{p}: empty file")
-        # Accept historical '# 05. title', '# 05｜title', '# 05 title'.
         title = re.sub(r"^#\s*\d{1,2}\s*(?:[.｜|:-]\s*)?", "", lines[0]).strip()
         if not title:
             raise SystemExit(f"{p}: cannot derive title from {lines[0]!r}")
@@ -110,8 +111,27 @@ for module, count in MODULE_COUNTS.items():
         if normalized != text:
             p.write_text(normalized, encoding="utf-8")
 
-# Final stale-reference checks.
+# Validate local Markdown links inside the four audited modules.
+link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+\.md(?:#[^)]+)?)\)")
 violations = []
+for module in MODULE_COUNTS:
+    base = ROOT / module
+    for path in base.rglob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        for raw_target in link_pattern.findall(text):
+            target = unquote(raw_target.split("#", 1)[0]).strip()
+            if not target or target.startswith(("http://", "https://")):
+                continue
+            resolved = (path.parent / target).resolve()
+            try:
+                resolved.relative_to(ROOT.resolve())
+            except ValueError:
+                violations.append(f"{path}: link escapes repo: {raw_target}")
+                continue
+            if not resolved.exists():
+                violations.append(f"{path}: broken local link: {raw_target}")
+
+# Final stale-reference checks.
 for path in ROOT.rglob("*.md"):
     text = path.read_text(encoding="utf-8")
     for old in RENAMES:
@@ -124,4 +144,4 @@ for path in ROOT.rglob("*.md"):
 if violations:
     raise SystemExit("\n".join(violations))
 
-print("Curriculum numbering normalized successfully.")
+print("Curriculum numbering and local Markdown links validated successfully.")
