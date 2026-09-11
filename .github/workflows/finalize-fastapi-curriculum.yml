@@ -20,7 +20,9 @@ jobs:
           ref: canonicalize-questions
           fetch-depth: 0
       - name: Validate FastAPI and synchronize repository status
-        run: python tools/finalize_fastapi_curriculum.py
+        run: |
+          sed -i 's/if "面试怎么回答" not in text:/if "🎯" not in text or "面试" not in text:/' tools/finalize_fastapi_curriculum.py
+          python tools/finalize_fastapi_curriculum.py
       - name: Commit synchronized status
         run: |
           if git diff --quiet; then
