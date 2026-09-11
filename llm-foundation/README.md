@@ -1,74 +1,51 @@
 # LLM Foundation（应用工程深度）｜AI 应用开发秋招系统手册
 
-> **当前状态：🟠 第一版内容已完成，进入 Moderate Granularity Remediation。**
+> **Granularity Audit：✅ 已完成。** 原 29 章在不删知识点的前提下收敛为 **14 个正式知识小板块**。研究层 23 道 LLM Canonical、HUMAN-A Source Count 与模块边界完全不变。
 >
-> 已有：**29 章正文 + 每章折叠自测 + Review 图解总览 + 30 道面试题 + 55 个易错点 + 面试前速查表。**
->
-> 知识演进顺序本身正确，但 Transformer / Generation / Serving 等部分更接近“一个 mechanism 一个文件”，教材层偏细。后续会在不删知识点的前提下重组为约 **14–17 个知识小板块**。重点组合：`Tokenization + Context Budget + Long Context`、`Transformer Block + FFN/Residual/Norm`、`Attention/QKV + Multi-head/Causal + RoPE`、`Autoregressive + Logits + Sampling`、`KV Cache + Prefill/Decode`、`Continuous Batching + PagedAttention + Latency/Cost + Precision` 等。完整审计见 [`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
->
-> LLM Foundation 是这套 Handbook 的第 7 个正式一级模块。目标不是训练算法岗 Transformer 八股大全，而是从 AI Application Engineer 的视角理解：**文本怎样变成 Token → Transformer 怎样计算 → 模型怎样逐 Token 生成 → Context / KV Cache / Serving 为什么决定延迟与成本 → Model / Embedding / Reranker 怎样选 → Prompt / Hallucination 怎样治理 → 什么时候才值得 Fine-tuning。**
+> 目标不是训练算法岗 Transformer 八股，而是让 AI Application Engineer 真正理解：**输入 Token 怎样占用 Context → Transformer 怎样处理 → 模型怎样逐 Token 生成 → KV Cache / Serving 为什么决定延迟与成本 → Model / Embedding / Reranker 怎样选 → Prompt / Factuality / Fine-tuning 应在什么边界使用。**
+
+---
 
 ## 1. 固定课程原则
 
-> **知识体系演进顺序优先，真实面经只用于调整复习权重、补充真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识体系演进顺序优先，真人面经只校准复习权重、追问深度与工程 Failure，不反过来打乱 0→1 主干。**
 
-冻结 `S001–S279` HUMAN-A 中，Prompt Engineering 有 30 个独立来源，是本模块最强市场信号；但课程仍然先从 Token / Context / Transformer 建立前置因果链。
+第二条原则：
 
-```text
-Token
-→ Context Window
-→ Transformer
-→ Attention / QKV
-→ Autoregressive Generation
-→ Sampling
-→ KV Cache / Serving
-→ Model Selection
-→ Embedding / Reranker
-→ Prompt / Factuality
-→ Fine-tuning Boundary
-```
+> **机制可以细讲，但教材文件应该代表完整认知闭环。**
 
-面经决定某些章节讲到 L3 / L4，却不决定教材顺序。
+因此这次不再让 `Logits`、`Temperature`、`Prefill`、`PagedAttention` 等子机制各自成为独立文件。
 
 ---
 
 ## 2. 模块边界
 
-本模块负责：
+LLM Foundation 负责：
 
 ```text
-Tokenization
-Context Window / Long Context Limitation
-Transformer / Attention / FFN / RoPE
-Autoregressive Generation
-Sampling / Decoding
+Token / Context
+Transformer / Attention / RoPE
+Autoregressive Generation / Sampling
 KV Cache / Prefill / Decode
-Batching / Serving Engine
-Inference Latency / Throughput / Cost
-Precision / Quantization
-Model API / Provider Boundary
-Model Selection
-Embedding Model Foundation
-Reranker / Cross-Encoder Foundation
-Multimodal Foundation
+Serving / Batching / PagedAttention / Quantization
+Model API / Model Selection
+Embedding / Reranker Foundation
+Multimodal
 Prompt Engineering
-Hallucination / Factuality Boundary
-Fine-tuning / SFT / LoRA / Preference Optimization / Distillation Boundary
+Hallucination / Factuality
+Fine-tuning / LoRA / Post-training Boundary
 ```
 
 | 问题 | Primary Module |
 |---|---|
-| Vector Index / HNSW / IVF / Metadata Filter | Vector DB |
-| Chunk / Dense-Sparse / Hybrid / RRF / Retrieval Top-K | RAG |
-| RAG End-to-end Evaluation / Bad Case Attribution | RAG |
-| Agent Context Assembly / Compaction / Memory | Agent Harness / Runtime |
-| Tool Calling Protocol / MCP / Permission | Agent Harness / Runtime |
-| LLM Provider Timeout / Retry / Circuit Breaker | AI Backend Engineering |
-| 完整 AI 系统中的跨组件模型路由与权衡 | System Design / Agent Harness |
+| HNSW / IVF / Vector Filter | Vector DB |
+| Chunk / Hybrid / RRF / Retrieval Evaluation | RAG |
+| Agent Context Compaction / Memory / Tool Protocol | Agent Harness |
+| Provider Retry / Circuit Breaker | AI Backend Engineering |
 
 一句话：
 
-> **LLM Foundation 解释“模型为什么这样工作和这样表现”；RAG / Agent / Backend 负责“怎样把模型可靠地放进系统”。**
+> **LLM Foundation 解释模型为什么这样表现；RAG / Agent / Backend 解释怎样把它可靠地变成系统。**
 
 ---
 
@@ -76,174 +53,124 @@ Fine-tuning / SFT / LoRA / Preference Optimization / Distillation Boundary
 
 本模块有 **23 道 Primary Canonical、82 个独立 HUMAN-A 来源**覆盖。
 
-| Topic | HUMAN-A Sources | 深度 |
-|---|---:|---:|
-| Prompt Engineering | 30 | L3 |
-| Transformer Architecture | 10 | L2 |
-| Model Selection | 10 | L4 |
-| Hallucination / Factuality | 10 | L3 |
-| Fine-tuning | 9 | L3 |
-| Post-training / Alignment | 8 | L3 |
-| Context Window | 7 | L3 |
-| QKV / Self-Attention | 7 | L2 |
-| Embedding Model | 6 | L2 |
-| Model API | 5 | L3 |
-| Multi-Head Attention | 5 | L2 |
-| Tokenization | 4 | L2 |
-| Multimodal Foundation | 4 | L2 |
-| Inference Engine | 4 | L3 |
-| KV Cache | 3 | L3 |
-| Inference Latency | 3 | L3 |
-| Sampling Parameters | 3 | L2 |
-| Reranker Foundation | 3 | L3 |
+强信号包括：Prompt Engineering、Transformer、Model Selection、Hallucination、Fine-tuning、Post-training、Context Window、QKV/Self-Attention、Embedding、Model API、KV Cache、Serving、Sampling、Reranker 等。
 
-> **Interview Heat ≠ Knowledge Importance。** Causal Mask、Residual / Norm、Continuous Batching、Precision / Quantization 等即使没有独立高频 Canonical，也属于完整知识骨架。
+面经没有单独高频问到的 Causal Mask、Residual/Norm、Continuous Batching、PagedAttention 等仍属于完整知识体系，不因频率低而删掉。
 
 ---
 
-## 4. 七条主线
+## 4. 为什么从 29 合并为 14
 
 ```text
-A. Text → Tokenizer → Token ID → Embedding → Context Window
+Tokenization + Context Budget + Long Context
+→ Token / Context Window
 
-B. Transformer Block → QKV → Attention → Causal Mask
-   → FFN → Residual / Norm → RoPE
+Transformer Architecture + FFN / Residual / Norm
+→ Transformer Block
 
-C. Prompt → Logits → Decoding / Sampling
-   → Next Token → Autoregressive Loop
+QKV + Multi-Head / Causal + RoPE
+→ Attention & Position
 
-D. KV Cache → Prefill / Decode → Continuous Batching
-   → PagedAttention → TTFT / TPOT / Throughput / Cost
-   → Precision / Quantization
+Autoregressive + Logits + Sampling
+→ Generation & Decoding
 
-E. Messages / Role → Model API → Provider Adapter → Model Selection
+KV Cache + Prefill / Decode
+→ LLM Inference Two-stage Model
 
-F. Embedding → Bi-Encoder → Cross-Encoder / Reranker → Multimodal
+Continuous Batching + PagedAttention + Latency/Cost + Precision
+→ Serving Engine
 
-G. Prompt Engineering → Evaluation / Regression
-   → Hallucination / Factuality
-   → Prompt vs RAG vs Fine-tuning
-   → SFT / LoRA / DPO / RLHF / GRPO / Distillation Boundary
+Model API + Model Selection
+→ Model Access & Selection
+
+Embedding + Cross-Encoder / Reranker
+→ Retrieval Model Foundation
+
+Hallucination + Prompt/RAG/Fine-tune Boundary
+→ Factuality & Intervention Boundary
+
+SFT + LoRA/PEFT
+→ Fine-tuning & Parameter-efficient Adaptation
 ```
+
+Multimodal、Prompt Engineering 和 Post-training/Distillation 各自有独立知识边界，因此继续单章。
+
+> 文件保留合并后最早历史编号；正式学习顺序以下面的 14-block 列表为准。
 
 ---
 
-## 5. 当前 29 章（内容完成，待 Moderate Granularity Remediation）
-
-> 当前文件仍可按顺序正常学习；后续只重新组合连续机制，不改变 0→1 知识依赖。
-
-### Part A｜Token、Context 与模型输入
+## 5. 正式 14 个知识小板块
 
 1. [LLM Foundation 在 AI Application 中负责什么](docs/01-LLMFoundation在AI应用中的职责.md)
-2. [Token 与 Tokenization](docs/02-Token与Tokenization.md)
-3. [Token Budget、Context Window 与输入成本](docs/03-ContextWindow与TokenBudget.md)
-4. [Long Context 与 Lost in the Middle](docs/04-LongContext与LostInTheMiddle.md)
-
-### Part B｜Transformer 从整体到细节
-
-5. [Transformer Architecture 总览](docs/05-TransformerArchitecture.md)
-6. [Self-Attention 与 Q / K / V](docs/06-SelfAttention与QKV.md)
-7. [Multi-Head Attention 与 Causal Mask](docs/07-MultiHead与CausalMask.md)
-8. [FFN、Residual 与 Normalization](docs/08-FFNResidualNorm.md)
-9. [Positional Encoding 与 RoPE](docs/09-RoPE与位置编码.md)
-
-### Part C｜从 Logits 到逐 Token 生成
-
-10. [Autoregressive Generation](docs/10-AutoregressiveGeneration.md)
-11. [Logits、Softmax 与 Decoding](docs/11-Logits与Decoding.md)
-12. [Temperature / Top-k / Top-p 与 Determinism](docs/12-Sampling参数.md)
-
-### Part D｜Inference / Serving
-
-13. [KV Cache](docs/13-KVCache.md)
-14. [Prefill 与 Decode](docs/14-Prefill与Decode.md)
-15. [Batching 与 Continuous Batching](docs/15-ContinuousBatching.md)
-16. [PagedAttention、vLLM 与 Serving Engine](docs/16-PagedAttention与ServingEngine.md)
-17. [TTFT / TPOT / Throughput / Cost](docs/17-推理延迟与成本.md)
-18. [Precision / Quantization 与部署边界](docs/18-Precision与Quantization.md)
-
-### Part E｜Model API 与模型选择
-
-19. [Messages、Role、Model API 与 Provider Adapter](docs/19-ModelAPI与ProviderAdapter.md)
-20. [Model Selection：效果、Latency、Cost、Context 与风险](docs/20-ModelSelection.md)
-
-### Part F｜Embedding、Rerank 与 Multimodal
-
-21. [Embedding Model 为什么能表示语义](docs/21-EmbeddingModel.md)
-22. [Bi-Encoder、Cross-Encoder 与 Reranker](docs/22-Reranker与CrossEncoder.md)
-23. [Multimodal Foundation](docs/23-MultimodalFoundation.md)
-
-### Part G｜Prompt、事实性与模型适配
-
-24. [Prompt Engineering：从写提示词到可评估工程](docs/24-PromptEngineering.md)
-25. [Hallucination、Factuality 与 Verification Boundary](docs/25-Hallucination与Factuality.md)
-26. [Prompt vs RAG vs Fine-tuning：什么时候该换手段](docs/26-PromptRAGFineTuning边界.md)
-27. [Fine-tuning 与 SFT 基础](docs/27-FineTuning与SFT.md)
-28. [LoRA / PEFT：低成本参数适配](docs/28-LoRA与PEFT.md)
-29. [RLHF / DPO / GRPO / Distillation 的应用工程边界](docs/29-PostTraining与Distillation.md)
+2. [Token、Context Window 与 Long Context](docs/02-TokenContext与LongContext.md)
+3. [Transformer Block：Architecture、FFN、Residual、Norm](docs/05-TransformerBlock.md)
+4. [Attention 与 Position：QKV、Multi-Head、Causal Mask、RoPE](docs/06-Attention与Position.md)
+5. [Autoregressive Generation：Logits、Softmax、Sampling、Decoding](docs/10-Generation与Decoding.md)
+6. [KV Cache、Prefill 与 Decode](docs/13-KVCache与PrefillDecode.md)
+7. [LLM Serving Engine：Batching、PagedAttention、Latency、Cost、Quantization](docs/15-ServingEngine与性能.md)
+8. [Model API、Provider Adapter 与 Model Selection](docs/19-ModelAPI与Selection.md)
+9. [Embedding 与 Reranker：Bi-Encoder / Cross-Encoder](docs/21-Embedding与Reranker.md)
+10. [Multimodal Foundation](docs/23-MultimodalFoundation.md)
+11. [Prompt Engineering：从提示词到可评估工程](docs/24-PromptEngineering.md)
+12. [Hallucination、Factuality 与 Prompt / RAG / Fine-tuning 边界](docs/25-Hallucination与干预边界.md)
+13. [Fine-tuning、SFT 与 LoRA / PEFT](docs/27-FineTuning与LoRA.md)
+14. [RLHF / DPO / GRPO / Distillation 的应用工程边界](docs/29-PostTraining与Distillation.md)
 
 ---
 
-## 6. 配套复习与面试材料
+## 6. 四条主线
 
-第二遍：
-
-- [Review 图解与综合自测](review/README.md)
-
-第三遍：
-
-- [高频面试题](interview/高频面试题.md)
-- [面试易错点](interview/面试易错点.md)
-- [面试前速查表](interview/面试前速查表.md)
-
-正确顺序始终是：
+### A｜模型输入与计算
 
 ```text
-理解模型机制
-→ 能解释应用行为
-→ 能做工程 Trade-off
-→ 能定位 Failure
-→ 再练 30 秒面试表达
+Token / Context
+→ Transformer Block
+→ Attention / Position
+```
+
+### B｜生成与 Serving
+
+```text
+Autoregressive Generation
+→ KV Cache / Prefill / Decode
+→ Serving Engine / Quantization
+```
+
+### C｜应用模型选择
+
+```text
+Provider API / Model Selection
+→ Embedding / Reranker
+→ Multimodal
+```
+
+### D｜行为与事实治理
+
+```text
+Prompt Engineering
+→ Hallucination / Factuality
+→ Prompt vs RAG vs Fine-tuning
+→ SFT / LoRA
+→ Post-training / Alignment / Distillation
 ```
 
 ---
 
-## 7. 事实与资料口径
+## 7. 推荐学习法
 
-优先讲跨模型 / 跨 Provider 稳定机制，不把某家 API 或某个版本写成永恒规则。
+第一遍按 14 个知识块建立机制链；第二遍进入 [`review/README.md`](review/README.md) 从空白画 Token→Transformer→Generation→Serving；第三遍使用：
 
-推荐权威入口：
+- [`interview/高频面试题.md`](interview/高频面试题.md)
+- [`interview/面试易错点.md`](interview/面试易错点.md)
+- [`interview/面试前速查表.md`](interview/面试前速查表.md)
 
-- Transformer：<https://arxiv.org/abs/1706.03762>
-- RoPE：<https://arxiv.org/abs/2104.09864>
-- vLLM / PagedAttention：<https://arxiv.org/abs/2309.06180>
-- LoRA：<https://arxiv.org/abs/2106.09685>
-- DPO：<https://arxiv.org/abs/2305.18290>
-- Sentence-BERT：<https://arxiv.org/abs/1908.10084>
-- Lost in the Middle：<https://arxiv.org/abs/2307.03172>
-
-课程只讲到支撑 AI Application / RAG / Agent 工程判断所需的数学与训练深度。
-
----
-
-## 8. 下一环：RAG
-
-LLM Foundation 的内容体系已经完整，后续粒度整改不改变下一环仍是 **RAG**：
+最终目标不是背公式，而是能解释：
 
 ```text
-Embedding / Reranker Model Foundation
-        +
-Vector DB / ANN Infrastructure
-        ↓
-Document / Parse / Chunk
-        ↓
-Dense / Sparse / Hybrid / RRF / Rerank
-        ↓
-Context Build / Grounding
-        ↓
-Evaluation / Bad Case / Freshness / Permission
-        ↓
-Agentic RAG
+为什么 Context 贵
+为什么 Output 慢
+为什么 KV Cache 吃显存
+为什么 Serving 需要动态调度
+为什么选这个模型
+为什么 RAG / Prompt / Fine-tuning 解决不同问题
 ```
-
-RAG 不再重复从“Embedding 是什么、HNSW 是什么”开始，而直接进入真正的 Retrieval Engineering 与 Production Governance。
