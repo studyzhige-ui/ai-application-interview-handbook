@@ -333,40 +333,64 @@ Redis 也严格按知识依赖而不是面经热度组织。虽然 Distributed L
 
 # 9. 模块六：Vector Database
 
-下一块正式系统教材。
+当前状态：**✅ 第一版 0→1 系统教材已完成。**
 
-计划从原理开始，而不是从 Milvus API 开始。最新 Primary Ownership 已明确把完整 Retrieval Strategy 归到 RAG，因此 Vector DB 只负责向量基础设施与 ANN Index：
+入口：[`../vector-db/README.md`](../vector-db/README.md)
+
+主线继续严格按“基础概念 → 算法 → 数据模型 → 生命周期 → Production → 系统边界”推进，而不是从 Milvus API 或 HNSW 参数起步：
 
 ```text
-Embedding Vector Storage Semantics
-→ Vector Space
-→ Cosine / IP / L2
-→ Exact Search vs ANN
-→ HNSW
-→ IVF
-→ Index Selection / Parameter Trade-off
-→ Metadata Filtering
-→ Vector Data Modeling
-→ Recall / Latency / Memory / QPS
-→ Index Lifecycle / Freshness
-→ Graph DB vs Vector DB
-→ Milvus / FAISS / pgvector / ES Vector Selection
+01 Vector DB 在 AI Application 中负责什么
+02 Vector / Dimension
+03 Normalization / Vector Space
+04 Cosine / Dot / L2
+05 Top-K / Exact Search
+06 ANN
+07 ANN Index Taxonomy
+08 HNSW 原理
+09 HNSW 参数
+10 IVF
+11 SQ / PQ / Quantization
+12 HNSW vs IVF / Index Selection
+13 Collection / Schema / Metadata
+14 Metadata Filter
+15 Partition / Tenant Isolation
+16 Insert / Upsert / Update / Delete
+17 Tombstone / Compaction / Index Maintenance
+18 Re-embedding / Version / Rebuild
+19 Shard / Replica / Segment
+20 Recall / Latency / Memory / QPS / Capacity
+21 Production Troubleshooting
+22 Product / Architecture Selection
+23 Graph DB Boundary / Vector DB in AI System
 ```
 
-以下内容**不再作为 Vector DB Primary**，统一在 RAG 讲完整 Retrieval Pipeline：
+Primary Boundary：
 
 ```text
-Dense vs Sparse / BM25
-Hybrid Retrieval
-RRF / Fusion
-Rerank Pipeline
-Top-K Strategy
-Retrieval Evaluation
+Vector DB
+→ Vector Storage / Similarity / ANN / Filter / Lifecycle / Scale
+
+RAG
+→ Dense / Sparse / Hybrid / RRF / Rerank / Top-K Strategy / Retrieval Evaluation
+```
+
+当前配套：
+
+```text
+23 章正文
++ 每章折叠自测
++ Review 图解总览
++ 31 道高频面试题
++ 45 个面试易错点
++ 面试前速查表
 ```
 
 ---
 
 # 10. 模块七：LLM Foundation（应用工程深度）
+
+当前状态：**⏳ 下一块正式系统教材。**
 
 这是 Phase 2B 对 Roadmap 补出的正式一级模块。目标不是学成训练算法工程师，而是理解会直接改变 AI Application / RAG / Agent 行为的模型机制。
 
@@ -638,11 +662,11 @@ Concept
 | AI Backend Engineering | 🟡 已建立完整课程地图，后续按项目穿插建设 |
 | MySQL | ✅ 第一版完整 23 章 + Review + Interview 已完成 |
 | Redis | ✅ 第一版完整 27 章 + Review + Interview 已完成 |
-| Vector DB | ⏳ 下一块正式系统教材；已与 RAG 重划 Primary Boundary |
-| LLM Foundation | 🆕 已正式进入一级 Roadmap，后续建设应用工程深度教材 |
+| Vector DB | ✅ 第一版完整 23 章 + Review + Interview 已完成 |
+| LLM Foundation | ⏳ 下一块正式系统教材 |
 | RAG | ⏳ LLM Foundation 之后；按 Evaluation / Failure 深度建设 |
 | Agent Harness / Runtime | 🔬 用 Claude Code / Codex + Frozen HUMAN-A 继续校准后建设 |
 | System Design | ⏳ 随各模块成熟逐步汇总 |
 | 真实面经研究 | ✅ `S001–S279` 已冻结；235 Canonical / Phase 2B 市场分析完成 |
 
-下一块正式系统教材进入 **Vector DB**。依然坚持：完整知识体系先按初学者 0→1 建立，再让真人面经校准复习权重和追问深度。
+下一块正式系统教材进入 **LLM Foundation（应用工程深度）**。依然坚持：完整知识体系先按初学者 0→1 建立，再让真人面经校准复习权重和追问深度。
