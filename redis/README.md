@@ -5,6 +5,7 @@
 > 目标不是背“Redis 五种数据结构 + 缓存三兄弟 + 分布式锁”，而是从 0 建立一条完整因果链：**Redis 为什么存在 → 数据怎样组织 → Runtime 为什么快 → 内存什么时候过期/淘汰 → 怎样持久化与高可用 → 怎样做原子并发控制 → 怎样把 Redis 放进 Cache、Session、Rate Limit 和 AI Runtime。**
 
 > **Granularity Audit：✅ 已完成。** 原 27 章经过教材粒度审计后收敛为 **24 个知识小板块**。合并依据不是章节数量，而是“一个文件是否形成完整认知闭环”。研究层的 19 道 Redis Canonical、Source Count 和真人面经频率没有变化。
+> **Content Depth Audit：✅ 通过。** `docs/01–24` 已完成全量结构扫描与人工复核；较短章节属于边界较窄的完整主题，不存在占位稿。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。
 
 ---
 

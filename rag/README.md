@@ -1,6 +1,7 @@
 # RAG｜AI 应用开发秋招系统手册
 
 > **Granularity Audit：✅ 已完成。** 原 34 章内容已按 Production RAG 子系统收敛为 **14 个正式知识小板块**；29 道 RAG Canonical、88 个 HUMAN-A 覆盖来源和所有 Source Count 保持不变。
+> **Content Depth Audit：✅ 通过。** `docs/01–14` 已连续编号并完成全量 QA；Scale/Cost/Observability 与 GraphRAG/Agentic RAG 两个原先偏薄的大主题已完成 Production 深度补强。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。
 >
 > 目标是从 0 建立一条真正可上线、可评估、可维护的 Retrieval-Augmented Generation 因果链：**Knowledge Source → Document Processing → Chunk → Query Planning → Retrieval → Rerank → Evidence → Grounded Generation → Evaluation → Production Governance。**
 

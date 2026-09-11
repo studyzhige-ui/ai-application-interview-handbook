@@ -1,6 +1,7 @@
 # LLM Foundation（应用工程深度）｜AI 应用开发秋招系统手册
 
 > **Granularity Audit：✅ 已完成。** 原 29 章在不删知识点的前提下收敛为 **14 个正式知识小板块**。研究层 23 道 LLM Canonical、HUMAN-A Source Count 与模块边界完全不变。
+> **Content Depth Audit：✅ 通过。** `docs/01–14` 已连续编号并完成全量 QA；Multimodal Foundation 已补强到 Production 级输入预算、Failure Attribution、Evaluation 与治理深度。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。
 >
 > 目标不是训练算法岗 Transformer 八股，而是让 AI Application Engineer 真正理解：**输入 Token 怎样占用 Context → Transformer 怎样处理 → 模型怎样逐 Token 生成 → KV Cache / Serving 为什么决定延迟与成本 → Model / Embedding / Reranker 怎样选 → Prompt / Factuality / Fine-tuning 应在什么边界使用。**
 

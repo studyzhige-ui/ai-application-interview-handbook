@@ -33,6 +33,7 @@ Section = 参数、变体、Failure、追问
 ```
 
 章节数不追求统一。审计记录：[`curriculum-granularity-audit.md`](curriculum-granularity-audit.md)。
+内容深度验收：[`content-depth-audit.md`](content-depth-audit.md)；Redis / Vector DB / LLM Foundation / RAG 均已通过。
 
 ---
 

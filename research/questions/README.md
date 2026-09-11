@@ -86,6 +86,7 @@ Section = 参数 / 变体 / Failure / 深挖追问
 ```
 
 因此 **44 道 Agent Canonical 不等于 44 章，29 道 RAG Canonical 也不等于 29 章。**
+当前 Redis / Vector DB / LLM Foundation / RAG 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。
 
 当前教材结构：
 

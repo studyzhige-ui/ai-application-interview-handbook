@@ -42,6 +42,7 @@ Section = 参数 / 变体 / Failure Case / 追问
 ```
 
 因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
+Redis / Vector DB / LLM Foundation / RAG 的正文深度也已完成全量 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
 
 ### 3. 从 Demo 能力走到 Production 能力
 

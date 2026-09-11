@@ -23,6 +23,7 @@
 `235` 是正式 Primary-owned ACTIVE Canonical 数量。
 
 > **Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。
+> **教材深度已独立验收。** Redis / Vector DB / LLM Foundation / RAG 的结果见 `../../roadmap/content-depth-audit.md`，不会以文件数量或字数替代人工质量判断。
 
 ---
 
