@@ -70,7 +70,7 @@ Foundation 完成度核实：`../../roadmap/foundation-status-audit.md`。FastAP
 
 | 模块 | Phase 3 状态 |
 |---|---|
-| Python | 🟠 v1 完整可用；最新 15 Canonical / 当前标准定向整改待完成 |
+| Python | ✅ **13 blocks**；15 Canonical Coverage / current-standard Depth Remediation 完成 |
 | FastAPI | ⏳ 只有 README 课程骨架；正式正文未写 |
 | AI Backend Engineering | ⏳ 只有 README 课程骨架；正式正文未写 |
 | MySQL | ✅ **23 blocks**；Granularity PASS |

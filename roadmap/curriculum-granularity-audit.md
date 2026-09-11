@@ -38,6 +38,12 @@ Capability Map = Runtime / Backend / Data System 的能力 primitive
 
 # 3. 最终整改结果
 
+
+## Python — COMPLETE：12 → 13
+
+Python v1 原 12 章 beginner-first 主干保持不变，只新增一个真正独立的 `Structured Data / JSON / Validation` 知识闭环；Language Choice、dict 底层、Slicing、Duck Typing、asyncio Failure / Synchronization 等最新 Canonical 通过加深原章节吸收。因此 **15 道 Canonical → 13 个教材知识块**，没有按题目机械增章。
+
+
 ## MySQL — PASS：23 → 23
 
 B+Tree、Composite Index、MVCC、Lock、Replication、Sharding 等有独立数据结构、执行机制和 Failure Model，不为统一数字机械合并。
@@ -145,6 +151,7 @@ System Design 的 24 道 Canonical 全部是 L4 Scenario，但没有采用 `24 �
 
 | 模块 | 原结构 | 当前结构 | 状态 |
 |---|---:|---:|---|
+| Python | 12 | 13 | ✅ COMPLETE |
 | MySQL | 23 | 23 | ✅ PASS |
 | Redis | 27 | 24 | ✅ COMPLETE |
 | Vector DB | 23 | 16 | ✅ COMPLETE |

@@ -1,6 +1,6 @@
 # Python Foundation｜秋招面试知识手册
 
-> **Status：🟠 v1 完整可用，但当前统一标准的二次整改尚未完成。** 现有 `12` 章正文 + Review + Interview 可以正常学习；后续不推倒重写，而是在 FastAPI / AI Backend Engineering 补齐后，对照最新 `15` 道 Python Canonical 做 Coverage / Depth Remediation。详见 [`../roadmap/foundation-status-audit.md`](../roadmap/foundation-status-audit.md)。
+> **Status：✅ Current-standard remediation 已完成。** 当前为 `13` 个连续知识小板块 + Review + Interview；最新 `15` 道 Python Canonical 已完成 Coverage / Depth 映射，只有 Structured Data / JSON Validation 因形成独立认知闭环新增一章，其余面经信号均并回原有 0→1 主干。
 
 > 本模块由原独立仓库 `python-interview-handbook` 迁入，现作为 **AI Application Interview Handbook** 的 Python 基础层继续维护。
 >
@@ -49,6 +49,7 @@
 | GIL | ⭐⭐⭐⭐⭐ |
 | 线程 / 进程 / 协程 | ⭐⭐⭐⭐⭐ |
 | `async` / `await` / Event Loop | ⭐⭐⭐⭐⭐ |
+| Structured Output / JSON Validation | ⭐⭐⭐⭐ |
 | 数据结构 / Top K | ⭐⭐⭐⭐ |
 | OOP / 魔术方法 | ⭐⭐⭐⭐ |
 | Lambda / Pythonic 工具 | ⭐⭐⭐ |
@@ -68,6 +69,7 @@
 | 装饰器与上下文 | decorator、`with`、context manager |
 | OOP | 类与对象、继承、多态、方法、魔术方法 |
 | 稳健代码 | 异常、文件、模块与导入 |
+| 结构化数据 | JSON、Schema、Runtime Validation、Structured Output |
 | 运行机制 | 内存、垃圾回收、GIL |
 | 并发 | 线程、进程、协程、`async`/`await` |
 | 数据结构 | 数组、链表、栈、队列、哈希、树、堆、Top K |
@@ -88,13 +90,14 @@
 - [07. 装饰器与上下文管理器](docs/07-装饰器-上下文管理器.md)
 - [08. 面向对象与魔术方法](docs/08-面向对象-魔术方法.md)
 - [09. 异常、文件、模块与导入](docs/09-异常-文件-模块与导入.md)
-- [10. 内存管理、垃圾回收与 GIL](docs/10-内存管理-垃圾回收-GIL.md)
-- [11. 线程、进程、协程与 async/await](docs/11-线程-进程-协程-async-await.md)
-- [12. 常见数据结构与复杂度](docs/12-常见数据结构与复杂度.md)
+- [10. 结构化数据、JSON 与校验](docs/10-结构化数据-JSON与校验.md)
+- [11. 内存管理、垃圾回收与 GIL](docs/11-内存管理-垃圾回收-GIL.md)
+- [12. 线程、进程、协程与 async/await](docs/12-线程-进程-协程-async-await.md)
+- [13. 常见数据结构与复杂度](docs/13-常见数据结构与复杂度.md)
 
 ### 图解与章节自测
 
-- [12 章图解复习与自测总入口](review/README.md)
+- [13 章图解复习与自测总入口](review/README.md)
 
 每章配有 Mermaid 图解和 GitHub `<details>` 折叠答案。建议先完整回答，再展开参考答案。
 
@@ -116,6 +119,31 @@
 - ⚠️ **易错点**：面试中容易说错或写错的地方；
 - 🎯 **面试怎么答**：适合口述的答案框架；
 - 🔍 **追问**：面试官可能继续深入的问题。
+
+
+## 2026 Canonical Coverage / Remediation 结果
+
+最新 15 道 Python Canonical 没有被机械转换成 15 个文件，而是映射到 13 个知识块：
+
+```text
+PY-001  Language Choice                 → 01
+PY-002  list / tuple                    → 02
+PY-003  dict Hash / collision / delete  → 02
+PY-004  Function Parameters             → 04
+PY-005  Duck Typing / Protocol          → 08
+PY-006  Iterator / Generator            → 06
+PY-007  Decorator                       → 07
+PY-008  Context Manager                 → 07
+PY-009  Slicing Cost                    → 02
+PY-010  GIL                             → 11
+PY-011  Thread / Process                → 12
+PY-012  asyncio / as_completed / timeout→ 12
+PY-013  Lock / RLock / Semaphore        → 12
+PY-014  Structured Output Validation    → 10（新增独立闭环）
+PY-015  Closure                         → 04
+```
+
+这次整改强化了：Language Choice、dict 底层、Slicing 成本、Duck Typing / Protocol、Structured Output、asyncio Failure / Timeout / Cancellation 与同步原语，但没有改变 beginner-first 顺序。
 
 ## Python 与后续模块如何衔接
 

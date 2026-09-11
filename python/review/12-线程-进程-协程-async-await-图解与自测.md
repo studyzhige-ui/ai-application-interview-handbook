@@ -1,6 +1,6 @@
-# 11. 线程、进程、协程与 async/await：图解与自测
+# 12. 线程、进程、协程与 async/await：图解与自测
 
-对应正文：[11. 线程、进程、协程与 async/await](../docs/11-线程-进程-协程-async-await.md)
+对应正文：[11. 线程、进程、协程与 async/await](../docs/12-线程-进程-协程-async-await.md)
 
 ## 图解 1：进程 / 线程 / 协程
 
@@ -119,3 +119,20 @@ GIL 不是业务逻辑级别的事务锁。多个线程对共享状态进行多�
 线程池常用于阻塞 I/O；进程池常用于传统 CPython 下的纯 Python CPU 密集计算。实际选择还要考虑数据传输成本、库是否释放 GIL、任务规模等。
 
 </details>
+
+### 新增追问：`gather` 与 `as_completed` 怎么选？
+
+<details><summary>查看参考答案</summary>
+
+需要一组任务全部结果时 `gather` 很自然；希望谁先完成先处理、渐进聚合或早停时 `as_completed` 更合适。二者都不会自动做并发限流。
+
+</details>
+
+### 新增追问：Lock / RLock / Semaphore 的区别？
+
+<details><summary>查看参考答案</summary>
+
+Lock 保护互斥临界区；RLock 允许同一线程重入同一把锁；Semaphore 允许最多 N 个并发执行者，更适合容量控制。
+
+</details>
+

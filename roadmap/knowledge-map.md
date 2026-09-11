@@ -40,8 +40,8 @@ Foundation 实际完成度：[`foundation-status-audit.md`](foundation-status-au
 
 # 3. Foundation
 
-## Python 🟠
-入口：[`../python/README.md`](../python/README.md) — v1 已有 12 章正文 + Review + Interview，可学习；最新 15 Canonical / 当前统一深度标准的定向整改待完成。
+## Python ✅ — 13 blocks
+入口：[`../python/README.md`](../python/README.md) — v1 已完成 current-standard Remediation；15 道 Python Canonical 已映射到 13 个 beginner-first 知识块，Review / Interview 同步完成。
 
 ## FastAPI ⏳
 入口：[`../fastapi/README.md`](../fastapi/README.md) — 当前只有 README 课程骨架，正式 `docs / review / interview` 尚未撰写。
@@ -199,7 +199,7 @@ VALID-UNMAPPED：1（S271）
 
 | 模块 | 当前状态 |
 |---|---|
-| Python | 🟠 v1 完整可用；定向整改待完成 |
+| Python | ✅ 13 blocks；Canonical Coverage / Depth PASS |
 | FastAPI | ⏳ 只有课程骨架；正式正文未写 |
 | AI Backend Engineering | ⏳ 只有课程骨架；正式正文未写 |
 | MySQL | ✅ 23 blocks |

@@ -103,3 +103,12 @@ Python 会对对象进行真值判断。空列表、空字典、空集合、空�
 右侧会先形成待赋给左侧的一组结果，再进行解包绑定，因此不需要手动创建临时变量。面试基础层面理解为“先计算右侧，再解包到左侧”即可。
 
 </details>
+
+### 新增追问：为什么 AI 工程常用 Python，但不能说所有 AI 服务都应该用 Python？
+
+<details><summary>查看参考答案</summary>
+
+Python 在 AI/ML/Data 生态和快速集成上很强，也适合大量 I/O 型 orchestration；但高吞吐基础设施、已有 Java/Go 体系、极端 CPU/内存约束等场景可能有更合适的语言。语言选择由 workload、生态与团队约束决定。
+
+</details>
+

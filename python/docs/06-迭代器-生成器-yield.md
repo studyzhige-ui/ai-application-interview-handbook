@@ -253,4 +253,20 @@ for x in Counter(3):
 
 产生一个值，并暂停当前生成器函数，保留执行现场；下一次请求值时从上次暂停的位置恢复执行。
 
+## 本章自测
+
+<details>
+<summary>1. Iterable 与 Iterator 的区别是什么？</summary>
+
+Iterable 能通过 `iter()` 获得迭代器；Iterator 保存当前迭代状态并实现 `next()` 语义。list 是 Iterable，但不是它自己的 Iterator。
+
+</details>
+
+<details>
+<summary>2. Generator 为什么适合流式处理大数据？</summary>
+
+生成器按需产出元素并保存执行状态，不必一次把所有结果保存在内存中，因此适合大文件、批处理和 Streaming 场景。
+
+</details>
+
 下一章：[07. 装饰器与上下文管理器](07-装饰器-上下文管理器.md)

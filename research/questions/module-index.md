@@ -78,6 +78,7 @@ Source Count mismatch         0
 当前教材结构：
 
 ```text
+Python ✅ 13 blocks；15 Canonical Coverage / Depth PASS
 MySQL ✅ 23 blocks；Granularity PASS
 Redis ✅ 24 blocks；27→24 COMPLETE
 Vector DB ✅ 16 blocks；23→16 COMPLETE

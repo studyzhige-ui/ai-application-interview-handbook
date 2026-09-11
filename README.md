@@ -43,7 +43,7 @@ Section = 参数 / 变体 / Failure Case / 追问
 
 因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。
 Redis / Vector DB / LLM Foundation / RAG / System Design 的正文深度已完成 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。
-Foundation 的真实完成度与 Python v1 质量核实见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。System Design 完成后的仓库补齐顺序是：**FastAPI → AI Backend Engineering → Python v1 定向整改**。
+Foundation 的真实完成度与 Python v1 质量核实见 [`roadmap/foundation-status-audit.md`](roadmap/foundation-status-audit.md)。Python v1 定向整改已完成；Foundation 接下来的仓库补齐顺序是：**FastAPI → AI Backend Engineering**。
 
 ### 3. 从 Demo 能力走到 Production 能力
 
@@ -84,7 +84,7 @@ Phase 2B 已完成：Global Canonical Index、Frequency、Market Coverage、Dept
 
 ## Foundation
 
-- [Python Foundation](python/README.md) 🟠 **v1 完整可用**；最新 15 Canonical / 当前统一深度标准的定向整改待完成
+- [Python Foundation](python/README.md) ✅ **13 个知识小板块**；v1 → current-standard Canonical Coverage / Depth Remediation 已完成
 - [FastAPI](fastapi/README.md) ⏳ **只有 README 课程骨架**；正式 `docs / review / interview` 尚未撰写
 - [AI Backend Engineering](backend-engineering/README.md) ⏳ **只有 README 课程骨架**；正式 `docs / review / interview` 尚未撰写
 
@@ -181,7 +181,7 @@ Python
 
 | 模块 | 状态 |
 |---|---|
-| Python | 🟠 v1 完整可用；最新 Canonical / 当前深度标准定向整改待完成 |
+| Python | ✅ 13-block；15 Canonical Coverage / Depth Remediation 完成 |
 | FastAPI | ⏳ README 课程骨架；正式正文未写 |
 | AI Backend Engineering | ⏳ README 课程骨架；正式正文未写 |
 | MySQL | ✅ 23-block；Granularity PASS |

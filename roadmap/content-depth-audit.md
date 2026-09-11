@@ -70,6 +70,30 @@ System Design 在第二轮建设中从一开始按当前标准撰写 19 个连�
 
 ---
 
+
+# Python — ✅ PASS after current-standard remediation
+
+当前：**13 个连续知识小板块，`docs/01 → 13`。**
+
+本轮不是按 15 道 Canonical 重建题库，而是保留原 0→1 主干并定向补强：
+
+```text
+01 Language Choice + Object Model
+02 dict Hash / Collision / Delete + Slicing Cost
+08 Duck Typing / Protocol Thinking
+10 Structured Data / JSON / Runtime Validation（新增独立闭环）
+11 Memory / GC / GIL
+12 Thread / Process / asyncio / Timeout / Cancellation / Lock / RLock / Semaphore
+```
+
+同时旧 03–07 补齐正文内折叠自测，Review 迁移为 13 章，Interview 增加最新 AI Application Canonical 追问。
+
+验收标准：13/13 正文连续、有 Interview 表达和折叠自测；README / Review 链接指向当前文件；旧 `10/11/12` 历史路径已删除。
+
+**最终结论：Python Content Depth / Canonical Coverage PASS。**
+
+---
+
 # 3. Redis — ✅ PASS
 
 当前：**24 个连续知识小板块，`docs/01 → 24`。**
@@ -385,10 +409,11 @@ Why / Requirement
 累计验收正文：
 
 ```text
-第一轮颗粒度整改后的四模块：68 篇
-System Design 首版独立验收：    19 篇
---------------------------------
-合计：                          87 篇
+Python current-standard remediation：13 篇
+第一轮颗粒度整改后的四模块： 68 篇
+System Design 首版独立验收：     19 篇
+---------------------------------
+合计：                          100 篇
 ```
 
 同时已验证：

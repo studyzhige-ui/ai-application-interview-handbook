@@ -79,7 +79,7 @@ System Design 已经使用了这些概念做组合设计，但这不能替代 AI
 
 ---
 
-## 3. Python Foundation — 🟠 v1 完整可用，但需要二次质量整改
+## 3. Python Foundation — ✅ v1 → current-standard Remediation 已完成
 
 当前仓库不是空壳，实际已有：
 
@@ -172,7 +172,18 @@ Python 不应该重写成 15 道 Canonical = 15 个文件，也不应该为了�
 → 再做 Review / Interview 同步
 ```
 
-**结论：Python v1 = COMPLETE & USABLE；Current-standard Remediation = PENDING。**
+**结论：Python Foundation = 13 blocks；Canonical Coverage / Depth Remediation = PASS。**
+
+
+
+### 3.5 本轮实际整改结果
+
+```text
+12-block v1
+→ 13-block current curriculum
+```
+
+新增的唯一独立知识块是 `10-结构化数据-JSON与校验.md`。其它最新 Canonical 均并入已有主干：Language Choice→01、dict/Slicing→02、Duck Typing/Protocol→08、asyncio/Sync Primitive→12。正文、Review、Interview 和项目级状态已经同步。
 
 ---
 
@@ -193,7 +204,8 @@ Python
 ```text
 1. FastAPI：从 README 骨架写成正式 docs / review / interview
 2. AI Backend Engineering：从 README 骨架写成正式 docs / review / interview
-3. Python：保留 v1 主体，做 Canonical Coverage + Depth Remediation
+
+Python 的 current-standard remediation 已提前完成，不再列为待办。
 ```
 
 原因：Python 已经可用，而另外两块目前没有正式正文。

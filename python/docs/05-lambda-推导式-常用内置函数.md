@@ -303,4 +303,20 @@ oldest = max(users, key=lambda x: x["age"])
 
 如果不需要一次保存全部结果，生成器表达式通常更节省内存。
 
+## 本章自测
+
+<details>
+<summary>1. 为什么复杂业务逻辑不应该为了“Pythonic”强塞进一条列表推导式？</summary>
+
+可读性和可调试性比行数更重要。包含多层条件、副作用或复杂异常处理时，普通循环通常更清晰。
+
+</details>
+
+<details>
+<summary>2. `sorted()` 与 `list.sort()` 的核心区别是什么？</summary>
+
+`sorted()` 接收任意可迭代对象并返回新 list；`list.sort()` 只作用于 list，原地排序并返回 `None`。
+
+</details>
+
 下一章：[06. 迭代器、生成器与 yield](06-迭代器-生成器-yield.md)
