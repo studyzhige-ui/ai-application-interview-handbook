@@ -1,0 +1,34 @@
+name: Finalize Python status cleanup
+
+on:
+  push:
+    branches:
+      - canonicalize-questions
+    paths:
+      - tools/finalize_python_status_cleanup.py
+      - .github/workflows/finalize-python-status-cleanup.yml
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonicalize-questions
+          fetch-depth: 0
+      - name: Apply final Python status cleanup
+        run: python tools/finalize_python_status_cleanup.py
+      - name: Commit cleanup
+        run: |
+          if git diff --quiet README.md roadmap research; then
+            echo "No changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md roadmap research
+          git commit -m "docs(python): finalize remediation status across repository"
+          git push origin HEAD:canonicalize-questions
