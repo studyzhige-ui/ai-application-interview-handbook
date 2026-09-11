@@ -20,11 +20,19 @@ jobs:
           ref: canonicalize-questions
           fetch-depth: 0
       - name: Apply Python remediation and validate
-        run: python tools/remediate_python_foundation.py
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('tools/remediate_python_foundation.py')
+          text = p.read_text(encoding='utf-8')
+          text = text.replace('append_before(path, "下一章:", block)', 'append_before(path, "下一章：", block)')
+          p.write_text(text, encoding='utf-8')
+          PY
+          python tools/remediate_python_foundation.py
       - name: Commit remediation
         run: |
-          if git diff --quiet; then
-            echo "No changes required."
+          if git diff --quiet python roadmap research README.md; then
+            echo "No content changes required."
             exit 0
           fi
           git config user.name "github-actions[bot]"
