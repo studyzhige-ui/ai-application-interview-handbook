@@ -4,29 +4,7 @@
 
 > **Repository-first：** 本文件与 `README.md`、`schema.md`、`progress.md`、各模块最新文件共同构成当前正式口径；历史聊天总结或旧分类不能覆盖这里的最新状态。
 
-## 1. 正式十板块
-
-```text
-Python
-  ↓
-FastAPI
-  ↓
-AI Backend Engineering
-  ↓
-MySQL
-  ↓
-Redis
-  ↓
-Vector DB
-  ↓
-LLM Foundation（应用工程深度）
-  ↓
-RAG
-  ↓
-Agent Harness / Runtime
-  ↓
-System Design
-```
+## 1. 正式十板块与 Phase 2B Ownership
 
 | 顺序 | 一级板块 | 文件 | ACTIVE | MOVED | 当前版本 |
 |---:|---|---|---:|---:|---|
@@ -42,65 +20,25 @@ System Design
 | 10 | System Design | `system-design.md` | 24 | 0 | v2 |
 |  | **合计** |  | **235** | **24** |  |
 
-`235` 是 Phase 2A Global Merge / Split Audit + Phase 2B Coverage Gap Audit 后的正式 Primary-owned ACTIVE Canonical 数量。
+`235` 是 Phase 2A + Phase 2B 后的正式 Primary-owned ACTIVE Canonical 数量。
 
 ---
 
 ## 2. 主要跨模块迁移
 
-### FastAPI → Python
+- FastAPI async runtime 本体 → Python；
+- MySQL / Redis 数据分层与 DB+Cache 一致性 → AI Backend Engineering；
+- Dense/Sparse、Hybrid、RRF、Rerank Pipeline、Top-K、Retrieval Eval → RAG；
+- Embedding / Reranker 模型内部原理 → LLM Foundation；
+- Code RAG / Repo Search → Agent Harness Repository Understanding；
+- SSE / WebSocket transport、通用 Concurrency / Backpressure → AI Backend；
+- Agent Demo → Multi-instance Production Scale → System Design。
 
-- `FASTAPI-003` `await` 期间 Event Loop / CPU / Thread 语义 → `PY-012`
-
-### MySQL → AI Backend Engineering
-
-- `MYSQL-001` 数据分层 → `AIBE-039`
-- `MYSQL-023` DB + Cache Consistency → `AIBE-020`
-
-### Redis → AI Backend / Agent / System Design
-
-- `REDIS-001` 数据分层 → `AIBE-039`
-- `REDIS-015` DB + Cache Consistency → `AIBE-020`
-- `REDIS-018` Agent Checkpoint → `AGENT-027` / `AGENT-029` / `SD-022`
-- `REDIS-020` Token Budget / Fair Queue → `AIBE-013` / `AIBE-017`
-- `REDIS-023` Redis vs MQ → `AIBE-014`
-
-### Vector DB → LLM Foundation / RAG / Agent
-
-- `VDB-001` Embedding Model → `LLM-018`
-- `VDB-012` Dense vs Sparse → `RAG-012`
-- `VDB-013` Hybrid Retrieval → `RAG-013`
-- `VDB-014` BM25 → `RAG-012` / `RAG-013`
-- `VDB-015` RRF → `RAG-014`
-- `VDB-016` Rerank Pipeline → `RAG-015`；模型原理 → `LLM-019`
-- `VDB-017` Top-K → `RAG-016`
-- `VDB-019` Retrieval Evaluation → `RAG-020` / `RAG-021`
-- `VDB-021` Multimodal Retrieval → `RAG-005`；模型侧 → `LLM-010`
-- `VDB-023` Code Retrieval Boundary → `AGENT-037`
-
-### Agent Harness → LLM / AI Backend / System Design
-
-- `AGENT-013` Long-context 模型本体限制 → `LLM-002` / `LLM-003`
-- `AGENT-033` SSE / WebSocket Transport → `AIBE-006` / `AIBE-007`；FastAPI 落地 → `FASTAPI-004`
-- `AGENT-039` Concurrency / Backpressure / Quota → `AIBE-013` / `AIBE-017`
-- `AGENT-040` Demo → Multi-instance Production Scale → `SD-021`
+完整历史判断见 `global-audit.md`。
 
 ---
 
-## 3. Global Audit 关键修正
-
-- `VDB-010` → `VDB-009`：向量存储架构 / 产品选型合并；
-- `RAG-030` → `AGENT-037`：Code RAG / Repo Search 统一到 Coding Agent Repository Understanding；
-- `AIBE-029` 拆出 `AGENT-043`：通用 Observability 与 Agent Execution Trace 分离；
-- `MYSQL-010` Narrow：单表 Deep Pagination 与跨 Shard Pagination 分离；
-- `MYSQL-022` Narrow：MySQL Bulk Write 与通用 Batch / Migration 分离；
-- `AGENT-028` 补入 `S254` Permission / Sandbox 证据。
-
-完整判断依据：`global-audit.md`。
-
----
-
-## 4. Phase 2B 新增 Canonical
+## 3. Phase 2B Coverage Gap Audit 新增 Canonical
 
 | QID | Primary Module | Topic | Source Count |
 |---|---|---|---:|
@@ -115,7 +53,7 @@ System Design
 
 ---
 
-## 5. Primary Module 判断例子
+## 4. Primary Module 判断例子
 
 ```text
 “RRF 为什么不用线性加权？”
@@ -141,15 +79,9 @@ Primary = AI Backend Engineering
 Related = MySQL, Redis
 ```
 
-```text
-“Prompt 怎样从 Goal / Constraint / Context / Example / Output Contract 组织并做 Regression？”
-Primary = LLM Foundation（应用工程深度）
-Related = RAG, Agent Harness / Runtime
-```
-
 ---
 
-## 6. 当前验证状态
+## 5. 当前验证状态
 
 ```text
 Frozen HUMAN-A              279 / 279
@@ -163,7 +95,7 @@ Source Count mismatch         0
 
 ---
 
-## 7. Phase 3 Curriculum Build 状态
+## 6. Phase 3 Curriculum Build 状态
 
 固定原则：
 
@@ -177,10 +109,23 @@ MySQL ✅ 23 章 + Review + Interview
 → Vector DB ✅ 23 章 + Review + Interview
 → LLM Foundation ✅ 29 章 + Review + Interview
 → RAG ✅ 34 章 + Review + Interview
-→ Agent Harness / Runtime 🚧 下一块
-→ System Design
+→ Agent Harness / Runtime ✅ 47 章 + Review + Interview
+→ System Design 🚧 下一块
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
 
-Agent Harness 开始前，必须重新读取最新 44 道 Agent Canonical，并把 Frozen HUMAN-A 与 Claude Code / Codex 源码能力图对齐；源码证据不得改变 HUMAN-A Source Count。
+Agent Harness 的正式课程输入已扩展为：
+
+```text
+44 HUMAN-A Agent Canonical
++ Verified Follow-up Chains
++ Claude Code / Codex pinned source snapshots
++ official Agent / Harness engineering articles
++ MCP / A2A specifications
++ primary papers
+```
+
+这些 Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
+
+Agent 研究索引：`../agent-sources/`。
