@@ -7,20 +7,11 @@
 ## 1. 四种粒度必须分开
 
 ```text
-HUMAN-A / Canonical Question
-= 面试能力最小可独立追问单元
-
-Capability Map
-= Runtime / Backend / Data System 的能力 primitive
-
-教材文件
-= 一个可以独立学习、复习、画图、解释 failure/trade-off 的知识小板块
-
-文件内 Section
-= 机制、参数、变体、failure case、追问等更细知识点
+HUMAN-A / Canonical Question = 面试能力最小可独立追问单元
+Capability Map = Runtime / Backend / Data System 的能力 primitive
+教材文件 = 一个可以独立学习、复习、画图、解释 failure/trade-off 的知识小板块
+文件内 Section = 机制、参数、变体、failure case、追问等更细知识点
 ```
-
-因此：
 
 > **Canonical 可以很细，Capability Map 可以更细，但教材文件必须按“认知闭环”组织。**
 
@@ -39,13 +30,7 @@ Capability Map
 5. 可以形成“为什么 → 怎么工作 → 哪里会坏 → 怎么验证”的闭环；
 6. 与相邻文件合并后不会只是机械变长，而会形成更自然的因果关系。
 
-优先合并的信号：
-
-- 一个文件只是另一个文件的参数或变体；
-- 必须读下一篇才能回答当前篇的“为什么”；
-- 大量重复相同背景；
-- 单文件长期只有短提纲；
-- 只是因为面试官可以分别追问而拆开。
+优先合并：只是参数/变体、背景大量重复、必须读下一篇才能解释当前篇、只有短提纲、或仅因面试官能分别追问而拆开。
 
 文件大小只是审计信号，不是硬指标。
 
@@ -55,91 +40,33 @@ Capability Map
 
 ## MySQL — PASS：23 → 23
 
-MySQL 的 B+Tree、Composite Index、MVCC、Lock、Replication、Sharding 等本身有独立数据结构、执行机制和 Failure Model，因此不为统一数字机械合并。
+B+Tree、Composite Index、MVCC、Lock、Replication、Sharding 等有独立数据结构、执行机制和 Failure Model，不为统一数字机械合并。
 
 ## Redis — COMPLETE：27 → 24
 
-实际阅读正文后，对最初审计做了修正。
-
-真正合并：
+合并：
 
 ```text
-Redis 为什么快
-+ I/O Multiplexing / Event Loop
-→ Redis Runtime & Performance Model
-
-Cache / Key Design
-+ Penetration / Breakdown / Avalanche
-→ Cache Design & Failure Patterns
-
-Distributed Lock Basics
-+ Lock Correctness
-→ Acquire / Owner / Lease / Renewal / Failover / Fencing
+Redis 为什么快 + Event Loop / I/O → Runtime & Performance Model
+Cache / Key Design + 穿透/击穿/雪崩 → Cache Design & Failure Patterns
+Distributed Lock Basics + Correctness → Acquire / Lease / Renewal / Failover / Fencing
 ```
 
-保留独立：
-
-```text
-MULTI / WATCH
-Pipeline
-Lua / Functions
-```
-
-因为三者分别解决执行连续性/乐观并发、网络 RTT、服务器端原子逻辑，Failure Model 不同。
-
-**结论：24 是比预估 23 更合理的结构。**
+保留 MULTI/WATCH、Pipeline、Lua / Functions 独立，因为三者解决执行连续性/乐观并发、网络 RTT、服务器端原子逻辑，Failure Model 不同。
 
 ## Vector DB — COMPLETE：23 → 16
 
-已完成核心合并：
-
 ```text
-Vector + Dimension
-+ Normalization
-+ Similarity / Distance
-→ Vector Space & Similarity
-
-Top-K Exact Search
-+ Why ANN
-→ Exact Search vs ANN
-
-HNSW Principle
-+ HNSW Parameters
-→ HNSW：Mechanism + Tuning
-
-Insert / Update / Delete
-+ Tombstone / Compaction
-+ Re-embedding / Rebuild
-→ Vector Index Lifecycle
-
-Performance Metrics / Capacity
-+ Production Troubleshooting
-→ Performance & Production Diagnosis
+Vector + Normalization + Similarity → Vector Space & Similarity
+Exact Search + Why ANN → Exact vs ANN
+HNSW Principle + Parameters → HNSW Mechanism & Tuning
+Write/Delete + Compaction + Re-embedding/Rebuild → Vector Index Lifecycle
+Performance/Capacity + Troubleshooting → Performance & Production Diagnosis
 ```
-
-保留 ANN Taxonomy、IVF、Quantization、Index Selection、Metadata Filter、Tenant Isolation、Distributed Vector DB、Product Selection 等独立闭环。
 
 ## LLM Foundation — COMPLETE：29 → 14
 
-已按机制链收敛：
-
-```text
-Tokenization + Context Budget + Long Context
-Transformer Architecture + FFN / Residual / Norm
-Attention / QKV + Multi-head / Causal + RoPE
-Autoregressive Generation + Logits + Sampling
-KV Cache + Prefill / Decode
-Continuous Batching + PagedAttention + Latency / Cost + Precision
-Model API + Model Selection
-Embedding + Reranker
-Multimodal
-Prompt Engineering
-Hallucination + Prompt/RAG/Fine-tuning Boundary
-SFT + LoRA / PEFT
-Post-training / Alignment / Distillation
-```
-
-课程不再把 Logits、Sampling、Prefill、PagedAttention 等子机制默认拆成独立文件。
+机制链按 Token/Context、Transformer、Attention/Position、Generation、KV/Prefill/Decode、Serving、Model API/Selection、Embedding/Reranker、Multimodal、Prompt、Factuality、Fine-tuning、Post-training 等完整闭环组织。
 
 ## RAG — COMPLETE：34 → 14
 
@@ -152,31 +79,42 @@ Post-training / Alignment / Distillation
 04 Chunking Design
 05 Advanced Chunk Structure & Data Model
 06 Query Understanding & Retrieval Planning
-07 Retrieval Stack: Dense / Sparse / Hybrid / Fusion
+07 Retrieval Stack
 08 Rerank & Candidate Budget
-09 Evidence Delivery: Context / Grounding / Citation
+09 Evidence Delivery
 10 Retrieval Evaluation
 11 End-to-End Quality Engineering
-12 Production Governance: Freshness / Version / Permission
+12 Production Governance
 13 Scale / Cost / Cache / Observability
 14 GraphRAG / Agentic RAG
 ```
 
-29 道 RAG Canonical 和 40 道面试题仍保持更细粒度，不跟教材文件数量绑定。
+## Agent Harness / Runtime — COMPLETE：47 → 23
 
-## Agent Harness / Runtime — STRUCTURE COMPLETE：47 → 23
+旧 47 章主要沿 Capability Primitive 切分，已经物理迁移为 23 个知识小板块；旧碎片文件和 rewrite checkpoint 已删除。
 
-旧 47 章主要沿 Capability Primitive 切分，已完成物理迁移为 23 个知识小板块；旧碎片文件删除。
+随后又完成第二轮**正文深度验收**：旧短稿合并形成的 08–23 已全部重写，01–07 抽查通过。正式正文要求：
 
-当前剩余任务不是继续缩章，而是**正文深度验收**：部分由旧短稿合并来的 08–23 仍需提升到 MySQL / RAG 同级教学深度。
+```text
+为什么存在
+→ Runtime Mental Model
+→ 正常执行路径
+→ State / Protocol / Data Structure
+→ Failure Timeline
+→ Recovery / Idempotency / Cancellation
+→ Security / Permission
+→ Observability / Evaluation
+→ HUMAN-A / Source Evidence
+→ 面试回答 / 自测
+```
 
 正式主线：
 
 ```text
 Agent / Workflow / Harness
-→ Loop / Run / Turn / Step / Event
+→ Loop / Event / State
 → Tool Runtime
-→ Planning / Goal / Stop / Budget
+→ Planning / Stop / Budget
 → Context Assembly / Compaction
 → Memory / State / Long-running Reliability
 → Permission / Sandbox / Injection / Containment
@@ -191,14 +129,14 @@ Agent / Workflow / Harness
 
 # 4. 当前教材结构总览
 
-| 模块 | 原结构 | 当前结构 | 粒度状态 |
+| 模块 | 原结构 | 当前结构 | 状态 |
 |---|---:|---:|---|
 | MySQL | 23 | 23 | ✅ PASS |
 | Redis | 27 | 24 | ✅ COMPLETE |
 | Vector DB | 23 | 16 | ✅ COMPLETE |
 | LLM Foundation | 29 | 14 | ✅ COMPLETE |
 | RAG | 34 | 14 | ✅ COMPLETE |
-| Agent Harness | 47 | 23 | ✅ STRUCTURE COMPLETE；🚧 深度验收 |
+| Agent Harness | 47 | 23 | ✅ COMPLETE（结构 + 深度） |
 
 这些数字是结果，不是目标。不同模块保留不同文件数量是正常现象。
 
@@ -215,15 +153,13 @@ Agent / Workflow / Harness
 - Verified Follow-up Chain；
 - Frequency Ranking。
 
-教材重组只回答：
-
-> **这些知识最适合放进几个教学文件？**
+教材重组只回答：**这些知识最适合放进几个教学文件。**
 
 ---
 
 # 6. System Design 的固定规则
 
-System Design 开始前直接使用这套方法：
+System Design 是下一模块，并直接使用本轮已经验证的粒度方法：
 
 ```text
 先画知识依赖与子系统边界
