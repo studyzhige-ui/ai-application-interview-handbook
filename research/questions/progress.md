@@ -33,32 +33,28 @@ Python
 ---
 
 ## Phase 1：十板块纵向 Canonicalization ✅
-
 完成 `S001–S279` 全库回读、十板块纵向扫描、唯一 Primary Module 与第一轮跨模块归属审计。
 
 ## Phase 2A：Global Merge / Split Audit ✅
-
 完成全局 Merge / Split / Narrow / Evidence Reassignment。
 
 ## Phase 2B：Global Index + Market Analysis ✅
 
-最终硬校验：
-
-| Check | Result |
-|---|---|
-| Frozen HUMAN-A | ✅ 279 / 279 |
-| ACTIVE Canonical | ✅ 235 / 235 |
-| Mapped to >=1 Canonical | ✅ 278 |
-| VALID-UNMAPPED | ✅ 1 (`S271`) |
-| Unexpected uncovered | ✅ 0 |
-| Evidence outside baseline | ✅ 0 |
-| Source Count mismatch | ✅ 0 |
+```text
+Frozen HUMAN-A              279 / 279
+ACTIVE Canonical            235 / 235
+Mapped to >=1 Canonical     278
+VALID-UNMAPPED                1
+Unexpected uncovered          0
+Evidence outside baseline     0
+Source Count mismatch         0
+```
 
 最终 Ownership：Python 15 / FastAPI 4 / AI Backend 39 / MySQL 26 / Redis 19 / Vector DB 12 / LLM Foundation 23 / RAG 29 / Agent Harness 44 / System Design 24 = **235**。
 
 ---
 
-# Phase 3：Curriculum Build / Granularity Remediation 🚧
+# Phase 3：Curriculum Build 🚧
 
 ## 固定课程原则
 
@@ -76,14 +72,14 @@ Python
 | FastAPI | 🟡 完整课程骨架，正文后续补齐 |
 | AI Backend Engineering | 🟡 完整课程骨架，按 Production 主线持续补齐 |
 | MySQL | ✅ **23 blocks**；Granularity PASS |
-| Redis | ✅ **24 blocks**；已完成 27→24 整改 |
-| Vector DB | ✅ **16 blocks**；已完成 23→16 整改 |
-| LLM Foundation | ✅ **14 blocks**；已完成 29→14 整改 |
-| RAG | ✅ **14 blocks**；已完成 34→14 整改 |
-| Agent Harness / Runtime | 🚧 **23 blocks**；47→23 结构迁移完成，正文深度验收中 |
-| System Design | ⏸️ Agent 深度验收完成后启动 |
+| Redis | ✅ **24 blocks**；27→24 整改完成 |
+| Vector DB | ✅ **16 blocks**；23→16 整改完成 |
+| LLM Foundation | ✅ **14 blocks**；29→14 整改完成 |
+| RAG | ✅ **14 blocks**；34→14 整改完成 |
+| Agent Harness / Runtime | ✅ **23 blocks**；47→23 结构整改 + 正文深度验收完成 |
+| System Design | ⏳ **下一正式模块** |
 
-### Granularity Remediation 已完成的结构调整
+### Granularity Remediation 最终结果
 
 ```text
 MySQL          23 → 23  PASS
@@ -91,16 +87,16 @@ Redis          27 → 24  COMPLETE
 Vector DB      23 → 16  COMPLETE
 LLM Foundation 29 → 14  COMPLETE
 RAG            34 → 14  COMPLETE
-Agent Harness  47 → 23  STRUCTURE COMPLETE
+Agent Harness  47 → 23  COMPLETE（结构 + 深度）
 ```
 
 不同数字是正常结果，不追求统一章数。
 
 ---
 
-## Agent Harness / Runtime 当前任务 🚧
+## Agent Harness / Runtime 完成状态 ✅
 
-Agent 课程继续使用四层证据：
+证据层保持：
 
 ```text
 Tier A  44 HUMAN-A Agent Canonical + Verified Follow-up Chains
@@ -116,7 +112,7 @@ Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
 OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 ```
 
-已经完成：
+完成内容：
 
 ```text
 47 章旧目录
@@ -124,26 +120,12 @@ OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 → docs/ 01–23 连续
 → 旧碎片文件删除
 → Review 切换到 23-block 口径
+→ 08–23 旧短稿全部深写
+→ 01–07 抽查通过
+→ rewrite / depth-validation checkpoint 清理
 ```
 
-当前不再继续缩章。下一任务是：
-
-> **逐章检查 23-block 是否达到 MySQL / RAG 同级教学深度，重点补强由旧短稿合并来的 08–23。**
-
-验收维度：
-
-```text
-为什么存在
-→ Runtime Mental Model
-→ 正常执行路径
-→ State / Protocol / Data Structure
-→ Failure Timeline
-→ Cancellation / Recovery / Idempotency
-→ Security / Permission Boundary
-→ Observability / Evaluation
-→ Claude Code / Codex 实现证据
-→ 面试回答 / 自测
-```
+当前 23-block 正文已经按：Why → Runtime Model → Execution → Failure → Recovery/Security/Observability → Evidence → Interview → Self-test 验收。
 
 ---
 
@@ -164,13 +146,8 @@ OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 
 ## 下一阶段
 
-当前顺序：
-
 ```text
-Agent Harness 23-block 深度验收
-→ Agent Review / Interview 最终校准
-→ 全仓库状态再验收
-→ System Design
+System Design
 ```
 
-System Design 开始时必须先按知识子系统划分文件，再映射 24 道 Canonical，禁止一题一章。
+开始时先画知识依赖与子系统边界，再确定教材文件粒度，最后映射 24 道 System Design Canonical 与真人追问；禁止一题一章。
