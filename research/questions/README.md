@@ -87,22 +87,40 @@ Source Count mismatch         0
 
 ---
 
-## Phase 3 Curriculum Build
+## Phase 3 Curriculum Build / Granularity Remediation
 
 固定原则：
 
 > **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
 
+同时正式区分四层粒度：
+
+```text
+Canonical Question
+= 面试最小可独立追问单元
+
+Capability Primitive
+= 工程机制最小单元
+
+教材 Markdown
+= 一个完整知识小板块
+
+Section
+= 参数 / 变体 / Failure / 深挖追问
+```
+
+因此 **44 道 Agent Canonical 不等于 44 章；29 道 RAG Canonical 也不等于 29 章。** 教材粒度审计见 `../../roadmap/curriculum-granularity-audit.md`。
+
 当前状态：
 
 ```text
-MySQL ✅ 23 章 + Review + Interview
-→ Redis ✅ 27 章 + Review + Interview
-→ Vector DB ✅ 23 章 + Review + Interview
-→ LLM Foundation ✅ 29 章 + Review + Interview
-→ RAG ✅ 34 章 + Review + Interview
-→ Agent Harness / Runtime ✅ 47 章 + Review + Interview
-→ System Design 🚧 下一块
+MySQL ✅ 23 章；Granularity PASS
+→ Redis 🟠 27 章内容完成；Minor Remediation
+→ Vector DB 🟠 23 章内容完成；Moderate Remediation
+→ LLM Foundation 🟠 29 章内容完成；Moderate Remediation
+→ RAG 🟠 34 章内容完成；Major Remediation
+→ Agent Harness / Runtime 🚧 47→23 已物理迁移；深度验收中
+→ System Design ⏸️ 颗粒度整改完成后启动
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
@@ -140,4 +158,4 @@ HUMAN-A → 市场真实度 / 频率 / 追问
 课程体系 → beginner-first 0→1 演进
 ```
 
-源码与网上权威资料**不能**反向改变 HUMAN-A 面试频率。
+源码与网上权威资料**不能**反向改变 HUMAN-A 面试频率，也不能因为源码中存在一个独立 class / primitive 就自动拆成一章。
