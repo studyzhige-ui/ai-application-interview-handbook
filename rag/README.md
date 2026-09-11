@@ -1,12 +1,10 @@
 # RAG｜AI 应用开发秋招系统手册
 
-> **当前状态：🚧 第一版系统教材建设中。**
+> **当前状态：✅ 第一版 0→1 系统教材已完成。**
 >
 > RAG 是这套 Handbook 的第 8 个正式一级模块。目标不是“会 LangChain Retriever + Vector DB”，而是从 0 建立一条可验证、可维护、可上线的 Retrieval-Augmented Generation 因果链：**为什么需要 RAG → 知识怎样进入系统 → 文档怎样解析 / 切分 → Query 怎样被理解 → 多路 Retrieval 怎样召回 → Fusion / Rerank 怎样收窄 → Evidence 怎样进入 Context → Answer 怎样 Ground → 质量怎样测 → Bad Case 怎样归因 → 知识怎样持续更新和安全运营。**
 
 ## 1. 固定课程原则
-
-继续固定遵守：
 
 > **知识体系演进顺序优先，真实面经只用于调整复习权重、补充真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
@@ -14,17 +12,15 @@
 
 ```text
 Why RAG
-→ Corpus
-→ Ingestion / Parse
+→ Corpus / Lineage
+→ Parse / Clean
 → Chunk
-→ Retrieval Data Model
 → Query Transformation
 → Dense / Sparse
 → Hybrid / Fusion
 → Rerank / Top-K
-→ Context Construction
-→ Grounding / Citation
-→ Evaluation
+→ Context / Grounding / Citation
+→ Evaluation / Regression
 → Bad Case Attribution
 → Freshness / Permission / Scale
 → GraphRAG / Agentic RAG
@@ -47,12 +43,12 @@ Vector DB
 
 所以 RAG 不重复讲 HNSW 内部结构，也不重新推导 Transformer。
 
-本模块负责的是：
+本模块负责：
 
 ```text
-Corpus / Ingestion / Parsing
-Chunking
-Query Transformation
+Corpus / Ingestion / Parsing / Cleaning
+Chunking / Chunk Data Model
+Query Transformation / Clarification
 Dense / Sparse Retrieval Strategy
 Hybrid / RRF / Fusion
 Rerank Pipeline
@@ -107,13 +103,8 @@ Agentic RAG Boundary
 | Chunk Parameters | 12 | L3 |
 | Fusion / RRF | 10 | L3 |
 | Top-K | 10 | L3 |
-| Evaluation Dataset / Judge | 9 | L4 |
-| Multimodal / Table Parsing | 9 | L4 |
-| Experiment Design | 8 | L4 |
-| Latency / Cost | 8 | L4 |
-| GraphRAG | 8 | L4 |
 
-> **Interview Heat ≠ Knowledge Importance。** Document Identity / Lineage、Cleaning / Dedup、Chunk Data Model、Trace / Observability、Rollback / Snapshot 等即使不是独立 Canonical，也属于 Production RAG 的必要骨架。
+> **Interview Heat ≠ Knowledge Importance。** Document Identity / Lineage、Cleaning / Dedup、Chunk Data Model、Trace / Observability、Rollback / Snapshot 等即使不是独立高频 Canonical，也属于 Production RAG 的必要骨架。
 
 ---
 
@@ -131,13 +122,13 @@ RAG Boundary
 → Cleaning / Dedup
 ```
 
-### B｜知识怎样被切成可检索单元
+### B｜知识怎样变成 Retrieval Unit
 
 ```text
 Chunk Principle
-→ Fixed / Recursive / Structure-aware / Semantic
+→ Strategy
 → Size / Overlap
-→ Parent-child / Neighbor Window
+→ Parent-child / Neighbor
 → Semantic Boundary Failure
 → Metadata / Lineage
 ```
@@ -145,14 +136,14 @@ Chunk Principle
 ### C｜Query 怎样变成 Retrieval Plan
 
 ```text
-Normalize
-→ Intent / Rewrite
+Request Lifecycle
+→ Normalize / Intent / Rewrite
 → Clarify
 → Decompose / Multi-query / HyDE
 → No-hit / Refusal
 ```
 
-### D｜怎样从候选中得到 Evidence
+### D｜候选怎样变成 Evidence
 
 ```text
 Dense
@@ -165,7 +156,7 @@ Dense
 → Grounding / Citation
 ```
 
-### E｜怎样证明“变好了”
+### E｜怎样证明系统变好了
 
 ```text
 Ground Truth
@@ -249,84 +240,69 @@ Incremental Update
 
 ---
 
-## 6. 为什么加入面经之外的章节
+## 6. 当前配套
+
+```text
+34 章系统正文
++ 每章折叠自测
++ review/README.md：6 张总图 + 20 个综合自测
++ interview/高频面试题.md：40 道
++ interview/面试易错点.md：60 个
++ interview/面试前速查表.md
+```
+
+推荐顺序仍然是：
+
+```text
+严格按 01 → 34 学正文
+→ Review 自己推演
+→ Interview 做表达训练
+```
+
+---
+
+## 7. 为什么加入面经之外的章节
 
 ### Document Identity / Lineage
 
-如果没有稳定 `document_id / version / source / chunk_id`：
-
-- Citation 无法回源；
-- 文档更新无法精确删除旧 Chunk；
-- Embedding Model 升级无法做 Blue-Green；
-- Bad Case 无法复现。
-
-它不是“数据库小细节”，而是 Production RAG 的生命线。
+没有稳定 `document_id / version / source / chunk_id`，Citation、增量删除、Blue-Green、Bad Case Replay 都会失去基础。
 
 ### Cleaning / Dedup
 
-Header、Footer、导航、重复 PDF、旧版本文档如果不清理，会污染 Chunk、Embedding 和 Retrieval。检索优化不能从脏 Corpus 上直接开始。
+Header、Footer、导航、重复 PDF、旧版本文档会污染 Chunk、Embedding 和 Retrieval。检索优化不能从脏 Corpus 上开始。
+
+### Chunk Data Model
+
+Parent-child、权限、Version、Citation 和 Debug 都依赖 Retrieval Unit 的稳定数据契约。
 
 ### Trace / Observability
 
-只有记录：
-
-```text
-query
-rewrite
-retrieved ids + scores
-fusion
-rerank
-final context
-prompt/model
-answer/citations
-latency/version
-```
-
-Bad Case 才能复现和归因。
+只有记录 Query、Rewrite、Candidates、Scores、Fusion、Rerank、Context、Version、Prompt/Model、Answer/Citation 和 Latency，Bad Case 才能复现。
 
 因此这些属于知识骨架，不因当前没有独立高频 Canonical 就删除。
 
 ---
 
-## 7. 推荐三遍学习法
-
-第一遍严格按 `01 → 34`，先建立因果链。
-
-第二遍进入 `review/`，自己画：
-
-- Ingestion → Index；
-- Chunk Hierarchy；
-- Dense / Sparse / Hybrid / RRF / Rerank；
-- Context Construction；
-- Retrieval / Generation Eval；
-- Freshness / Version / Permission；
-- Production Trace。
-
-第三遍进入 `interview/`，练：
-
-```text
-为什么这样设计？
-→ 指标怎么证明？
-→ 变差时怎么归因？
-→ 数据量扩大怎么办？
-→ 权限 / 新鲜度 / 成本怎么办？
-```
-
----
-
 ## 8. 下一环
 
-RAG 完成后进入 **Agent Harness / Runtime**。
+RAG 已完成，下一正式模块进入 **Agent Harness / Runtime**。
 
-到时会把 RAG 暴露为一种可调用能力：
+RAG 会在 Agent 中作为一种可调用能力：
 
 ```text
 Agent Loop
 → 判断是否需要 Retrieval
-→ Query / Retrieval Tool
+→ 调用 Retrieval Tool
 → Inspect Evidence
-→ 必要时改写 / 继续检索
+→ 必要时 Rewrite / Continue Retrieval
 → Stop / Answer
 ```
 
 RAG 负责检索与证据质量；Agent Harness 负责控制循环、Tool Runtime、Context、Memory、Checkpoint、Permission 与 Failure Recovery。
+
+Agent Harness 建设还必须额外结合：
+
+- `studyzhige-ui/claude-code-source-private`
+- `openai/codex`
+
+作为成熟 Harness / Runtime 的权威实现参考。
