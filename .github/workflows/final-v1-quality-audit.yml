@@ -6,6 +6,7 @@ on:
       - canonicalize-questions
     paths:
       - tools/final_v1_quality_audit.py
+      - tools/final_mermaid_audit.py
       - .github/workflows/final-v1-quality-audit.yml
 
 permissions:
@@ -20,3 +21,5 @@ jobs:
           ref: canonicalize-questions
       - name: Run mechanical final audit
         run: python tools/final_v1_quality_audit.py
+      - name: Run Mermaid compatibility scan
+        run: python tools/final_mermaid_audit.py
