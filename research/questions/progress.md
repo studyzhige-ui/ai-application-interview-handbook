@@ -71,13 +71,19 @@ Phase 2A 结束：**229 ACTIVE / 24 MOVED**。
 
 ---
 
-## Phase 3：Curriculum Build / Remediation 🚧
+# Phase 3：Curriculum Build / Granularity Remediation 🚧
 
-### 固定课程原则
+## 固定课程原则
 
 > **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度，不能反过来打乱模块本身的演进顺序。**
 
-统一建设形态：
+新增第二条正式原则：
+
+> **研究粒度、Capability 粒度和教材文件粒度必须分开。Canonical Question 可以很细，但一个 Markdown 文件应代表一个完整知识小板块，而不是默认一题一章。**
+
+详细规则：`../../roadmap/curriculum-granularity-audit.md`
+
+统一建设形态仍是：
 
 ```text
 模块 README
@@ -89,38 +95,41 @@ Phase 2A 结束：**229 ACTIVE / 24 MOVED**。
 + interview/ 面试前速查
 ```
 
-### 当前正式建设状态
+但 `docs/` 文件数现在由知识闭环决定，不再由 Canonical / Capability 数量隐式决定。
+
+## 当前正式建设状态
 
 | 模块 | Phase 3 状态 |
 |---|---|
 | Python | ✅ 既有完整系统教材 |
 | FastAPI | 🟡 完整课程骨架，正文后续补齐 |
 | AI Backend Engineering | 🟡 完整课程骨架，按 Bridge / Production 主线持续补齐 |
-| MySQL | ✅ 第一版完成：23 章 + Review + Interview |
-| Redis | ✅ 第一版完成：27 章 + Review + Interview |
-| Vector DB | ✅ 第一版完成：23 章 + Review + Interview |
-| LLM Foundation | ✅ 第一版完成：29 章 + Review + Interview |
-| RAG | ✅ 第一版完成：34 章 + Review + Interview |
-| Agent Harness / Runtime | ✅ 第一版完成：47 章 + Review + Interview |
-| System Design | 🚧 **下一块正式系统教材** |
+| MySQL | ✅ 23 章 + Review + Interview；Granularity Audit PASS |
+| Redis | 🟠 27 章内容完成；Minor Granularity Remediation，目标约 23 |
+| Vector DB | 🟠 23 章内容完成；Moderate Remediation，目标 16–18 |
+| LLM Foundation | 🟠 29 章内容完成；Moderate Remediation，目标 14–17 |
+| RAG | 🟠 34 章内容完成；Major Remediation，目标 14–16 |
+| Agent Harness / Runtime | 🚧 旧 47 已物理迁移为 23 个知识小板块；深度验收中 |
+| System Design | ⏸️ 当前粒度整改完成后启动 |
 
-正式顺序：
+当前正式顺序：
 
 ```text
-MySQL ✅
-→ Redis ✅
-→ Vector DB ✅
-→ LLM Foundation ✅
-→ RAG ✅
-→ Agent Harness / Runtime ✅
-→ System Design 🚧
+Agent 23-block 深度验收
+→ RAG 粒度整改
+→ LLM Foundation 粒度整改
+→ Vector DB 粒度整改
+→ Redis 轻度整改
+→ System Design
 ```
+
+MySQL 已通过审计，不为统一数字机械改章。
 
 ---
 
-## Agent Harness / Runtime Phase 3 v1 ✅
+## Agent Harness / Runtime 当前状态 🚧
 
-Agent 教材没有直接从 Framework API 起步，而先完成四层证据融合：
+Agent 教材继续使用四层证据：
 
 ```text
 Tier A  44 道 HUMAN-A Agent Canonical + Verified Follow-up Chains
@@ -129,7 +138,7 @@ Tier C  Anthropic / OpenAI 官方工程资料 + MCP/A2A 规范 + 原始论文
 Tier D  Runtime Capability Map + beginner-first curriculum
 ```
 
-已完成研究层：
+研究层已经完成：
 
 - `research/agent-sources/README.md`
 - `research/agent-sources/claude-code-source-index.md`
@@ -145,31 +154,29 @@ Claude Code = 58231dcce408f805c645cfbc352d2876b517223b
 OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 ```
 
-教材已完成：
+旧 47 章的问题不是知识点错误，而是教材文件几乎沿 Capability Primitive 拆分。当前已完成：
 
 ```text
-agent-harness/README.md
-+ docs/ 01–47
-+ review/README.md
-+ interview/高频面试题.md（56 道）
-+ interview/面试易错点.md（86 个）
-+ interview/面试前速查表.md
+47 章旧目录
+→ 23 个知识小板块
+→ docs/ 01–23 连续
+→ 旧碎片文件删除
+→ Review 切换到 23-block 口径
 ```
 
-Agent 的核心顺序为：
+当前 23-block 主线：
 
 ```text
 Agent / Workflow / Harness
 → Loop / Run / Turn / Step / Event
 → Tool Runtime
-→ Planning / Stop / Budget
-→ Context / Compaction
-→ Memory / State / Checkpoint / Resume
-→ Cancellation / Idempotency / Compensation
+→ Planning / Goal / Stop / Budget
+→ Context Assembly / Compaction
+→ Memory / State / Long-running Reliability
 → Permission / Sandbox / Injection / Containment
-→ Discovery / MCP / Skills / Hooks / Routing
+→ MCP / Skills / Hooks / Routing
 → Multi-Agent / A2A / Workspace
-→ Trace / Eval / Coding Verification
+→ Trace / Eval / Coding Agent
 → Production Runtime
 → Framework Mapping
 ```
@@ -178,9 +185,24 @@ Agent / Workflow / Harness
 
 ---
 
+## 已完成模块 Granularity Audit
+
+| 模块 | 结论 | 说明 |
+|---|---|---|
+| MySQL | PASS | 章节普遍形成独立索引 / 事务 / 扩展闭环 |
+| Redis | Minor | 少量 Runtime / Atomic / Lock 相邻章可合并 |
+| Vector DB | Moderate | Vector Space、ANN、HNSW、Lifecycle 等拆得偏细 |
+| LLM Foundation | Moderate | Transformer / Generation / Serving mechanism 粒度偏细 |
+| RAG | Major | Chunk / Query / Retrieval / Eval 明显接近 Canonical 粒度 |
+| Agent Harness | Major | 已完成 47→23 结构迁移 |
+
+完整判断：`../../roadmap/curriculum-granularity-audit.md`。
+
+---
+
 ## 模块完成后的强制同步清单
 
-每完成一个一级模块，必须同时检查并同步：
+每完成或重组一个一级模块，必须同时检查并同步：
 
 1. 模块自身 `README.md`；
 2. 根 `README.md`；
@@ -188,24 +210,23 @@ Agent / Workflow / Harness
 4. 本文件 `research/questions/progress.md`；
 5. `research/questions/module-index.md`；
 6. 自动生成的 `research/analysis/README.md` 与其生成 Workflow / Script 是否使用最新口径；
-7. 任何仍写着“下一块 / 待建设”的关联入口；
+7. 任何仍写着“下一块 / 待建设 / 旧章节数”的关联入口；
 8. 最后重新核验 `docs / review / interview` 文件数量、连续编号与链接。
 
 ---
 
-## 下一步：System Design
+## 下一阶段
 
-System Design 不再新增一套孤立八股，而要把已经完成的前置模块汇合成真实 Production Architecture：
+当前不直接进入 System Design。
+
+先完成：
 
 ```text
-Requirements / SLO
-→ Capacity / Traffic
-→ API / Streaming
-→ Data / State / Retrieval
-→ Agent Runtime
-→ Async / Queue / Backpressure
-→ Consistency / Reliability
-→ Tenant / Security
-→ Observability / Evaluation
-→ Scaling / Cost / Degradation
+Agent 23-block 深度验收
+        ↓
+RAG / LLM / Vector / Redis Granularity Remediation
+        ↓
+System Design
 ```
+
+System Design 开始时也必须先按知识子系统划分文件，再映射 24 道 System Design Canonical，不能反向一题一章。
