@@ -1,263 +1,205 @@
-# RAG Review｜图解总览与综合自测
+# RAG｜图解复习与综合自测
 
-> 本页用于学完 `docs/01–34` 后做第二遍复习。不要把它当成第一次学习的替代品。
-
-## 1. 总图一：完整 Production RAG
-
-```mermaid
-flowchart LR
-    A["Source"] --> B["Parse / OCR"]
-    B --> C["Clean / Dedup"]
-    C --> D["Chunk + Metadata"]
-    D --> E["Embedding / Sparse Index"]
-    E --> F["Vector / Search Index"]
-    Q["User Query"] --> R["Rewrite / Plan"]
-    R --> S["Dense + Sparse"]
-    F --> S
-    S --> T["Fusion / RRF"]
-    T --> U["Rerank"]
-    U --> V["Top-K / Context"]
-    V --> W["LLM"]
-    W --> X["Grounded Answer + Citation"]
-```
-
-一句话复述：
-
-> RAG 先把真实知识变成可追溯 Retrieval Unit，再把用户 Query 变成检索计划，经多路召回、融合、精排和 Context Construction，最后让模型基于 Evidence 生成并引用答案。
+> 第一遍按 `../README.md` 的 **14 个 Production RAG 子系统**学习；这里用于第二遍把它们压缩成少数几条 Pipeline，并用更细的自测题检查理解。
 
 ---
 
-## 2. 总图二：Chunking 的核心矛盾
+## 图 1｜完整 Production RAG
 
 ```mermaid
 flowchart LR
-    A["Chunk 太小"] --> B["检索更细"]
-    A --> C["语义可能不完整"]
-    D["Chunk 太大"] --> E["上下文更完整"]
-    D --> F["检索稀释 / Noise"]
-    B --> G["Parent-child / Neighbor"]
+    A["Source"] --> B["Corpus Governance"]
+    B --> C["Document Processing"]
+    C --> D["Chunking"]
+    D --> E["Index"]
+    Q["User Query"] --> F["Query Planning"]
+    F --> G["Retrieval Stack"]
     E --> G
+    G --> H["Rerank / Candidate Budget"]
+    H --> I["Context / Evidence"]
+    I --> J["Grounded Generation"]
+    J --> K["Citation"]
+    K --> L["Evaluation / Trace"]
 ```
 
-要记住：
-
-```text
-Retrieval Granularity
-≠
-Generation Context Granularity
-```
-
-小块可以负责“找”，大块 / Parent 可以负责“给模型看”。
+核心问题：每一层失败时，下一层能不能补救？大多数情况下不能完全补救，所以要分层 Attribution。
 
 ---
 
-## 3. 总图三：Retrieval Funnel
+## 图 2｜Chunking 的核心矛盾
+
+```mermaid
+flowchart TD
+    A["Chunk Too Large"] --> A1["Semantic Mixing"]
+    A --> A2["Context / Rerank Cost"]
+    B["Chunk Too Small"] --> B1["Lost Context"]
+    B --> B2["Boundary Failure"]
+    C["Design"] --> D["Strategy + Size + Overlap"]
+    D --> E["Parent / Neighbor / Hierarchy"]
+```
+
+不要背固定 512 Token；要用真实 Query/Eval 找 Operating Point。
+
+---
+
+## 图 3｜Query → Candidate Funnel
 
 ```mermaid
 flowchart LR
-    Q["Query"] --> D["Dense Top-N"]
-    Q --> S["Sparse Top-N"]
+    Q["Original Query"] --> P["Rewrite / Clarify / Decompose"]
+    P --> D["Dense"]
+    P --> S["BM25 / Sparse"]
     D --> F["Fusion / RRF"]
     S --> F
     F --> R["Rerank"]
-    R --> K["Final Evidence"]
+    R --> C["Candidate Budget"]
 ```
 
-理解每层目标：
-
-```text
-Candidate Generation：Recall
-Fusion：合并异构信号
-Rerank：Precision
-Final Context：Evidence Quality + Token Budget
-```
+必须能解释：Rewrite Drift、Dense/Sparse 互补、RRF 为什么不直接加 Score、Reranker 为什么救不回漏召回。
 
 ---
 
-## 4. 总图四：Evaluation 分层
+## 图 4｜Candidate → Evidence
 
 ```mermaid
-flowchart LR
-    A["Source / Ground Truth"] --> B["Retrieval Eval"]
-    B --> C["Recall / MRR / NDCG"]
-    C --> D["Context Eval"]
-    D --> E["Answer Eval"]
-    E --> F["Correctness / Faithfulness / Citation"]
-    F --> G["Online Feedback / Regression"]
+flowchart TD
+    A["Reranked Candidates"] --> B["Dedup / Merge"]
+    B --> C["Version / Permission Check"]
+    C --> D["Token Budget"]
+    D --> E["Evidence Coverage / Diversity"]
+    E --> F["Stable Source IDs"]
+    F --> G["LLM Context"]
+    G --> H["Citation Mapping"]
 ```
 
-不要说：
-
-> “Recall 上升，所以 RAG 变好了。”
-
-正确说法是：
-
-> Retrieval、Context、Generation 要分层测，最后再看 End-to-end。
+`retriever[:5]` 不是完整 Context Construction。
 
 ---
 
-## 5. 总图五：Bad Case Attribution
+## 图 5｜Evaluation 分层
 
 ```mermaid
-flowchart LR
-    A["Answer Wrong"] --> B["Source 有答案吗？"]
-    B --> C["Parse / Chunk 正确吗？"]
-    C --> D["Ground Truth 被召回吗？"]
-    D --> E["Rerank 排前了吗？"]
-    E --> F["最终 Context 有吗？"]
-    F --> G["Model 是否 Grounded 生成？"]
+flowchart TD
+    A["Eval Dataset"] --> B["Retrieval Metrics"]
+    A --> C["Answer Metrics"]
+    B --> D["Recall / MRR / NDCG"]
+    C --> E["Correctness / Faithfulness / Citation"]
+    D --> F["Baseline / Ablation"]
+    E --> F
+    F --> G["Regression"]
 ```
-
-这张图是面试中非常重要的 Troubleshooting 主线。
 
 ---
 
-## 6. 总图六：Production Governance
+## 图 6｜Bad Case Attribution
+
+```mermaid
+flowchart TD
+    A["Answer Wrong"] --> B{"Source 有答案？"}
+    B -->|"否"| B1["Corpus Coverage"]
+    B -->|"是"| C{"Parser 保留？"}
+    C -->|"否"| C1["Parsing"]
+    C -->|"是"| D{"Chunk 完整？"}
+    D -->|"否"| D1["Chunking"]
+    D -->|"是"| E{"Retriever 找到？"}
+    E -->|"否"| E1["Query / Retrieval"]
+    E -->|"是"| F{"Rerank/Context 保留？"}
+    F -->|"否"| F1["Ranking / Budget"]
+    F -->|"是"| G["Generation / Grounding"]
+```
+
+---
+
+# 综合自测
+
+<details><summary>1. 为什么 RAG 不等于 Vector DB？</summary>
+Vector DB 负责向量存储/ANN/Filter；RAG 还包含 Corpus、Parsing、Chunk、Query Planning、Hybrid/Rerank、Context、Citation、Eval 和 Freshness。
+</details>
+
+<details><summary>2. 为什么先做 Corpus Audit？</summary>
+因为 Source、格式、版本、重复、权限和更新频率会决定整个 Ingestion 与 Retrieval 设计，脏 Corpus 会污染后续所有组件。
+</details>
+
+<details><summary>3. Chunk Size 为什么没有通用答案？</summary>
+它受 Query 粒度、答案跨度、文档结构、Embedding/Reranker 长度、Context Budget 和指标共同影响。
+</details>
+
+<details><summary>4. Parent-child 解决什么矛盾？</summary>
+用小 Child 做精准召回，命中后扩展较大的 Parent/Neighbor 给模型更完整上下文。
+</details>
+
+<details><summary>5. Query Rewrite 最大风险是什么？</summary>
+Query Drift：改写后的 Query 偏离用户原意，所以要保留原 Query 并通过 Eval 对比。
+</details>
+
+<details><summary>6. Dense 与 BM25 为什么常组合？</summary>
+Dense 擅长语义/同义，BM25 擅长精确词、ID、稀有术语，两者 failure mode 互补。
+</details>
+
+<details><summary>7. RRF 为什么适合异构 Retriever？</summary>
+它主要基于各路 Rank，而不是不可直接比较的原始 Score Scale。
+</details>
+
+<details><summary>8. Reranker 为什么不能修复 Retriever 漏召回？</summary>
+它只能给 Candidate Set 里的文档重排，没进入候选的正确文档根本看不到。
+</details>
+
+<details><summary>9. Candidate Top-K 为什么不等于 Context Top-K？</summary>
+最终 Context 还受 Token Budget、Diversity、Evidence Coverage、Version、Permission 和去重约束。
+</details>
+
+<details><summary>10. Citation 为什么需要稳定 Source Mapping？</summary>
+防止模型自由编造引用，并支持从 Claim 追到 Chunk、Document Version 和原始 Source。
+</details>
+
+<details><summary>11. Recall@K、MRR、NDCG 分别更关注什么？</summary>
+Recall 看相关证据进入前 K 的覆盖；MRR 强调第一条相关结果位置；NDCG 适合多级相关性和整体排名质量。
+</details>
+
+<details><summary>12. LLM Judge 为什么不能直接当 Ground Truth？</summary>
+Judge 也有偏差、Prompt 敏感和版本漂移，需要人工标注集校准。
+</details>
+
+<details><summary>13. 为什么要做 Ablation？</summary>
+隔离 Query Rewrite、Hybrid、Rerank 等组件的独立贡献，避免多个改动同时发生后无法 Attribution。
+</details>
+
+<details><summary>14. RAG Bad Case 第一问是什么？</summary>
+权威 Source 中是否本来存在正确答案；不存在的话后续组件不可能召回。
+</details>
+
+<details><summary>15. Freshness 为什么不仅是正文更新？</summary>
+ACL、有效期、Tenant、状态变化也会改变“此刻允许检索的知识”。
+</details>
+
+<details><summary>16. 为什么大规模 Rebuild 需要 Snapshot + Delta Replay？</summary>
+构建期间 Source 继续变化，不追增量会让新 Generation 缺少构建开始之后的数据。
+</details>
+
+<details><summary>17. Permission 为什么不能等生成后再做？</summary>
+无权限内容一旦进入 Reranker/LLM Context 就已经发生敏感数据暴露风险。
+</details>
+
+<details><summary>18. GraphRAG 解决的主要问题是什么？</summary>
+显式实体/关系、多跳关系和全局结构问题；它不是所有 RAG 的默认替代方案。
+</details>
+
+<details><summary>19. Agentic RAG 与普通 RAG 最大区别？</summary>
+Agent Runtime 可以根据中间证据决定是否继续、改写、换路由或调用其它工具；控制面属于 Agent Harness，检索质量仍属于 RAG。
+</details>
+
+<details><summary>20. 怎样证明一次 RAG 优化真的有效？</summary>
+版本化 Baseline + 固定 Eval Dataset + Retrieval/Answer/Latency/Cost 指标 + Ablation + Regression，再进入 Canary/A-B，并把线上 Bad Case 回流测试集。
+</details>
+
+---
+
+第二遍完成标准：你应该能不看文档画出：
 
 ```text
-Document Identity / Lineage
-        ↓
-Version / Snapshot
-        ↓
-Incremental Update
-        ↓
-Freshness
-        ↓
-Permission / Tenant
-        ↓
-Trace / Observability
-        ↓
-Evaluation / Regression
-        ↓
-Rollback
+Source → Process → Chunk
+Query → Dense/Sparse → Fusion → Rerank
+Candidate → Context → Grounding/Citation
+Eval → Regression → Bad Case
+Freshness / Permission / Observability
 ```
-
-Production RAG 和 Demo RAG 最大差异之一就在这里。
-
----
-
-# 7. 20 个综合自测
-
-### 1. 为什么 RAG 不是 Vector DB 的同义词？
-<details><summary>查看参考答案</summary>
-Vector DB 负责向量存储与 ANN；RAG 还包括 Corpus、Parsing、Chunk、Query、Dense/Sparse、Fusion、Rerank、Context、Grounding、Evaluation、Freshness 和 Permission 等完整证据工程。
-</details>
-
-### 2. 为什么 Cleaning / Dedup 会影响 Retrieval？
-<details><summary>查看参考答案</summary>
-重复和 Boilerplate 会制造重复 Chunk、稀释候选 Coverage、增加 Context Noise，并污染 Embedding 和 Citation。
-</details>
-
-### 3. Chunk 太大和太小分别有什么问题？
-<details><summary>查看参考答案</summary>
-太大导致语义稀释、噪声和 Token Cost；太小会切断逻辑并增加索引规模。
-</details>
-
-### 4. Parent-child 为什么有用？
-<details><summary>查看参考答案</summary>
-小 Child 负责精准召回，命中后回较完整 Parent，分离 Retrieval 和 Generation 的粒度需求。
-</details>
-
-### 5. Semantic Boundary Failure 是什么？
-<details><summary>查看参考答案</summary>
-Chunk 把必须一起理解的条件、结论、例外、表头等关系切断，导致虽然召回相关文本但 Evidence 不完整。
-</details>
-
-### 6. Rewrite、Multi-query、Decomposition、HyDE 的区别？
-<details><summary>查看参考答案</summary>
-Rewrite 改表达；Multi-query 用多表达扩大同一意图召回；Decomposition 拆复杂子问题；HyDE 生成假想文档帮助映射到文档语义空间。
-</details>
-
-### 7. No-hit 为什么不能只看一个 Cosine 阈值？
-<details><summary>查看参考答案</summary>
-相似度不是正确概率，还要结合 Coverage、Version、Permission、Query Type 和 Rerank 等信息。
-</details>
-
-### 8. Dense 和 BM25 各擅长什么？
-<details><summary>查看参考答案</summary>
-Dense 擅长语义泛化；BM25/Sparse 擅长错误码、编号、专有名词和精确词项。
-</details>
-
-### 9. 为什么 Dense Score 和 BM25 Score 不能直接相加？
-<details><summary>查看参考答案</summary>
-二者数值含义、尺度和分布不同，通常需 RRF、归一化或 Reranker 做融合。
-</details>
-
-### 10. RRF 为什么常用于 Hybrid？
-<details><summary>查看参考答案</summary>
-它基于相对排名而非原始异构分数，简单、稳定、无需训练。
-</details>
-
-### 11. Rerank 加了以后为什么可能变差？
-<details><summary>查看参考答案</summary>
-正确候选没召回、Domain Mismatch、输入截断、Query Drift、排序配置错误或 Candidate Diversity 下降。
-</details>
-
-### 12. Top-K 为什么要分层？
-<details><summary>查看参考答案</summary>
-Retrieval 偏 Recall，Rerank 和最终 Context 逐层缩小，以控制 Precision、Latency、Noise 和 Token Cost。
-</details>
-
-### 13. Context Construction 为什么不是字符串拼接？
-<details><summary>查看参考答案</summary>
-还需去重、Source Diversity、Parent Expansion、Version/Permission 检查、排序和 Token Budget。
-</details>
-
-### 14. Correctness 和 Faithfulness 有什么区别？
-<details><summary>查看参考答案</summary>
-Correctness 看事实是否正确；Faithfulness 看答案是否由给定 Evidence 支持。两者可能不一致。
-</details>
-
-### 15. Recall@K 与 MRR 分别回答什么？
-<details><summary>查看参考答案</summary>
-Recall@K 看相关 Evidence 是否进入前 K；MRR 看第一个相关结果排得多靠前。
-</details>
-
-### 16. 为什么 Evaluation Dataset 必须包含 No-hit？
-<details><summary>查看参考答案</summary>
-否则系统只被训练成“尽量回答”，无法评估 Should-refuse 能力和 Unsafe Answer。
-</details>
-
-### 17. Bad Case 第一层应该先查什么？
-<details><summary>查看参考答案</summary>
-先确认 Source of Truth 是否真的有答案，再往 Parsing / Chunk / Retrieval / Generation 排查。
-</details>
-
-### 18. Embedding Model 升级为什么需要 Version / Blue-Green？
-<details><summary>查看参考答案</summary>
-新旧向量空间可能不兼容，Blue-Green 可以离线构建、评测后切换并保留回滚路径。
-</details>
-
-### 19. 企业 RAG 为什么必须在 Retrieval 阶段做权限？
-<details><summary>查看参考答案</summary>
-避免无权内容进入候选和 LLM Context，减少信息泄露和 Post-filter 候选不足风险。
-</details>
-
-### 20. Agentic RAG 什么时候不值得？
-<details><summary>查看参考答案</summary>
-当一次固定 Retrieval 已能稳定解决简单问题时，Agent Loop 只会增加延迟、成本和评估难度。
-</details>
-
----
-
-## 8. 面试前最后一条主线
-
-请能够不看材料完整说出：
-
-```text
-Source
-→ Parse / Clean
-→ Chunk / Lineage
-→ Query Transform
-→ Dense + Sparse
-→ RRF / Fusion
-→ Rerank
-→ Top-K / Context
-→ Ground / Citation
-→ Retrieval Eval
-→ End-to-end Eval
-→ Bad Case
-→ Freshness / Permission / Scale
-```
-
-如果这条主线能解释清楚，再进入 `interview/`。
