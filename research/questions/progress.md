@@ -49,16 +49,14 @@ System Design
 
 Phase 1 结束：**230 ACTIVE / 22 MOVED**。
 
----
-
 ## Phase 2A：Global Merge / Split Audit ✅
 
 完成全局问题级 Merge / Split / Narrow / Evidence Reassignment。
 
 主要修正：
 
-- `VDB-010` → MERGED 到 `VDB-009`；
-- `RAG-030` → MERGED 到 `AGENT-037`；
+- `VDB-010` → `VDB-009`；
+- `RAG-030` → `AGENT-037`；
 - `MYSQL-010` 拆清单表 Deep Pagination 与跨 Shard Pagination；
 - `MYSQL-022` 拆清 MySQL Bulk Write 与通用 Batch / Migration；
 - `AIBE-029` 拆出 `AGENT-043` Execution Trace；
@@ -66,13 +64,9 @@ Phase 1 结束：**230 ACTIVE / 22 MOVED**。
 
 Phase 2A 结束：**229 ACTIVE / 24 MOVED**。
 
----
-
 ## Phase 2B：Global Index + Market Analysis ✅
 
 自动统计层与人工核验层均完成。
-
-最终硬校验：
 
 | Check | Result |
 |---|---|
@@ -84,14 +78,7 @@ Phase 2A 结束：**229 ACTIVE / 24 MOVED**。
 | Evidence outside S001–S279 | ✅ 0 |
 | Source Count mismatch | ✅ 0 |
 
-Phase 2B Coverage Gap Audit 新增 6 道独立能力：
-
-- `LLM-023` Prompt Engineering
-- `AGENT-044` Prompt Injection / Untrusted Context Security
-- `AGENT-045` Intent Recognition / Routing
-- `AGENT-046` A2A / Agent Communication Protocol
-- `AGENT-047` Agent Framework Selection
-- `AGENT-048` AI-assisted Development Workflow
+Phase 2B Coverage Gap Audit 新增 6 道独立能力：`LLM-023`、`AGENT-044` ～ `AGENT-048`。
 
 最终 Ownership：
 
@@ -152,8 +139,8 @@ Concept
 | MySQL | ✅ 第一版完成：23 章 + Review + Interview |
 | Redis | ✅ 第一版完成：27 章 + Review + Interview |
 | Vector DB | ✅ 第一版完成：23 章 + Review + Interview |
-| LLM Foundation | 🚧 **当前下一块 / 正在建设** |
-| RAG | ⏳ LLM Foundation 后建设 |
+| LLM Foundation | ✅ 第一版完成：29 章 + Review + Interview |
+| RAG | 🚧 **当前下一块 / 正在建设** |
 | Agent Harness / Runtime | ⏳ RAG 后建设；额外结合 Claude Code / Codex 源码 |
 | System Design | ⏳ 随前置模块成熟汇总 |
 
@@ -163,8 +150,8 @@ Concept
 MySQL ✅
 → Redis ✅
 → Vector DB ✅
-→ LLM Foundation 🚧
-→ RAG
+→ LLM Foundation ✅
+→ RAG 🚧
 → Agent Harness / Runtime
 → System Design
 ```
@@ -177,11 +164,10 @@ MySQL ✅
 2. 根 `README.md`；
 3. `roadmap/knowledge-map.md`；
 4. 本文件 `research/questions/progress.md`；
-5. `research/analysis/README.md` 的 Phase 3 建设状态；
-6. 任何仍写着“下一块 / 待建设”的关联入口；
-7. 最后重新核验 `docs / review / interview` 文件数量与链接。
-
-这样避免“正文已经完成，但项目级状态仍停在旧阶段”。
+5. 自动生成的 `research/analysis/README.md` 与其生成 Workflow / Script 是否仍使用最新口径；
+6. `research/questions/module-index.md`；
+7. 任何仍写着“下一块 / 待建设”的关联入口；
+8. 最后重新核验 `docs / review / interview` 文件数量、连续编号与链接。
 
 ---
 
