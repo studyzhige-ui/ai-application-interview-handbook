@@ -1,568 +1,239 @@
 # FastAPI｜AI 应用服务层
 
-> **Status：⏳ 课程骨架已完成，正式教材尚未撰写。** 当前仓库只有本 README/课程蓝图，尚无 `docs/`、`review/`、`interview/`。System Design 完成后回到 Foundation，FastAPI 是第一项正式补齐工作。详见 [`../roadmap/foundation-status-audit.md`](../roadmap/foundation-status-audit.md)。
+> **Status：✅ 第一版完整系统教材已完成。** 当前为 `16` 个连续知识小板块 + Review + Interview 三件套；4 道 FastAPI HUMAN-A Canonical 已完成 Coverage / Depth 映射。课程主干由 beginner-first Web/API 知识依赖决定，真人面经只校准真实问法、边界和追问深度。
 
-> **FastAPI 在本手册中是一级模块，而不是 Python 的一个小附录。**
->
-> 原因很简单：对 AI 应用 / Agent 开发岗位来说，Python 解决“语言怎么运行”，FastAPI 解决“怎样把模型、RAG、Agent、数据库和外部工具真正做成一个可被用户调用的服务”。
+FastAPI 在本手册中是一级模块，而不是 Python 的附录。
 
-## 1. 这个模块到底要解决什么
-
-学完 Python 后，很多人会卡在这里：
+Python 解决：
 
 ```text
-会 Python
-  ↓
-会调 LLM API
-  ↓
-会写一个 RAG Demo
-  ↓
-？？？
-  ↓
-怎么做成真正的后端服务？
+对象 / 类型 / 函数 / GIL / asyncio 怎么工作
 ```
 
-FastAPI 模块就是填上这个空白。
-
-最终你应该能解释并实现：
+FastAPI 解决：
 
 ```text
-Client
-  ↓ HTTP / SSE / WebSocket
-FastAPI
-  ↓
-Request Validation
-  ↓
-Authentication / Dependency
-  ↓
-Service Layer
-  ├─ LLM Provider
-  ├─ RAG
-  ├─ Agent Runtime
-  ├─ MySQL
-  ├─ Redis
-  └─ Vector DB
-  ↓
-Streaming / JSON Response
+这些 Python Runtime 能力怎样变成一个可被客户端调用、可 Streaming、可验证、可部署的 AI Service
 ```
-
-但目标不是只背 FastAPI API，而是理解：
-
-> **HTTP 请求进入 Python AI 服务后，到底经历了什么？为什么这里应该 async？为什么那里不能直接 BackgroundTasks？数据库连接什么时候创建和释放？LLM 流式输出怎么传给前端？客户端断开时任务怎么办？**
 
 ---
 
-# 2. FastAPI 在总知识体系中的位置
+## 1. FastAPI 在总知识体系中的位置
 
 ```text
 Python Foundation
         ↓
-      FastAPI
+FastAPI
         ↓
 AI Backend Engineering
         ↓
-┌────────┼─────────┐
-↓        ↓         ↓
-MySQL   Redis   Vector DB
-│        │         │
-└────────┼─────────┘
-         ↓
-        RAG
-         ↓
-   Agent Harness
+MySQL / Redis / Vector DB
+        ↓
+LLM / RAG / Agent Harness
+        ↓
+System Design
 ```
 
-三个容易混淆的模块要分清：
+模块边界：
 
 | 模块 | 主要回答的问题 |
 |---|---|
-| Python | 语言、对象、GIL、线程/进程/协程如何工作？ |
-| FastAPI | 一个 Python HTTP/API 服务如何接收请求、校验、依赖注入、流式响应和部署？ |
-| Backend Engineering | Timeout、Retry、Idempotency、MQ、Backpressure、Observability 等生产工程问题如何跨框架解决？ |
-| Agent Harness | Agent Loop、Tool Runtime、Context、Memory、State、Permission、Checkpoint 等 Agent 专属运行时怎么设计？ |
+| Python | Event Loop、Thread/Process、对象与语言 Runtime 怎样工作？ |
+| **FastAPI** | HTTP/ASGI 请求怎样进入 Python Service；Validation、DI、Resource、Streaming 怎样组织？ |
+| AI Backend Engineering | Timeout、Retry、Idempotency、MQ、Backpressure、跨服务可靠性怎样系统解决？ |
+| Agent Harness | Loop、Tool、Context、Memory、Checkpoint、Permission 等 Agent Runtime 怎样工作？ |
 
 ---
 
-# 3. 学习原则
+## 2. 固定课程原则
 
-FastAPI 也沿用整套手册的写法：
+> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
-> **先讲人话 → HTTP/ASGI 原理 → 最小代码 → 请求生命周期 → 为什么 → AI 场景 → 生产边界 → 面试怎么答 → 真实面经 → 自测**
+FastAPI 当前只有 4 道 Primary Canonical，但不能因此只写四篇面试题；同样，旧 README 的 40 个小标题也不能机械变成 40 个文件。
 
-并坚持两个原则：
-
-1. **先学 Web/Runtime 原理，再学装饰器 API。** 不能只会 `@app.get()`。
-2. **FastAPI 只负责它该负责的层。** MQ、分布式任务、幂等、服务治理等问题会链接到 `backend-engineering/`，不强行说成 FastAPI 特性。
-
----
-
-# 4. 第一版完整章节地图
-
-## Part A｜从 Python 到 Web 服务
-
-### 01. FastAPI 在 AI Application 中负责什么 ⭐⭐⭐⭐⭐
-
-- API Service 是什么？
-- 为什么 AI Demo 和 AI Service 是两回事？
-- FastAPI、Starlette、ASGI Server 的关系先建立直觉
-- 一个 `/chat` 请求从用户到 LLM 再返回经历什么？
-- FastAPI 不负责什么？
-
-### 02. HTTP 基础：Request / Response / Method / Status Code ⭐⭐⭐⭐⭐
-
-- HTTP 请求结构
-- GET / POST / PUT / PATCH / DELETE
-- Header / Cookie / Body / Query / Path
-- JSON
-- 常见状态码
-- REST API 基本设计
-- AI 接口为什么常见 POST
-
-### 03. WSGI、ASGI、Uvicorn 与 FastAPI 的关系 ⭐⭐⭐⭐⭐
-
-- Web Server / Application / Protocol 分层
-- 为什么现代异步 Python Web 常讨论 ASGI
-- Uvicorn 做什么
-- FastAPI 与 Starlette 的关系
-- Request 生命周期的第一张总图
-
----
-
-## Part B｜FastAPI 基础能力
-
-### 04. App、Router 与 Path Operation ⭐⭐⭐⭐⭐
-
-- `FastAPI()`
-- `@app.get()` / `@app.post()`
-- Router 拆分
-- Path / Query / Header / Cookie
-- 路由匹配的基本理解
-- 大项目如何组织 Router
-
-### 05. Python Type Hint 到请求参数校验 ⭐⭐⭐⭐⭐
-
-- 类型注解为什么不只是 IDE 提示
-- 请求参数提取
-- Optional / Union / Annotated
-- 校验错误
-- OpenAPI / API Docs
-
-### 06. Pydantic：AI 后端 Schema 的核心 ⭐⭐⭐⭐⭐
-
-- `BaseModel`
-- Request Model / Response Model
-- Validation
-- Nested Model
-- 默认值与 Optional
-- 自定义校验
-- Serialization
-- Tool Schema / Structured Output 为什么也离不开数据模型思想
-
-### 07. Response Model 与序列化 ⭐⭐⭐⭐
-
-- Python 对象怎么变成 HTTP Response
-- response model 的意义
-- 数据过滤
-- JSON serialization
-- 自定义 Response 什么时候需要
-
-### 08. Exception Handling ⭐⭐⭐⭐
-
-- HTTPException
-- 业务异常与 HTTP 异常分层
-- 全局异常处理
-- Validation Error
-- 不要把 Python 异常栈直接暴露给客户端
-- AI Provider Error 如何映射成稳定 API Error
-
----
-
-## Part C｜依赖注入与资源生命周期
-
-### 09. Dependency Injection：`Depends` 到底解决什么 ⭐⭐⭐⭐⭐
-
-- 依赖是什么
-- Dependency Tree
-- Sub-dependency
-- Request-scoped resource
-- 认证、数据库 Session、Service 如何复用
-- 为什么 DI 不等于“为了高级而高级”
-
-### 10. `yield` Dependency 与资源清理 ⭐⭐⭐⭐⭐
-
-- 进入与退出
-- `try/finally`
-- 数据库 Session
-- HTTP Client
-- Trace Context
-- Python 上下文管理器知识如何在这里重新出现
-
-### 11. Application Lifespan ⭐⭐⭐⭐⭐
-
-- 启动时初始化哪些资源
-- 关闭时释放哪些资源
-- DB Pool / Redis Pool / HTTP Client / Model Client
-- 为什么不能每个 Request 都创建一个昂贵 Client
-- Graceful Shutdown 的接口层基础
-
----
-
-## Part D｜FastAPI 最重要的并发部分
-
-### 12. `def` vs `async def` ⭐⭐⭐⭐⭐
-
-这是 AI 应用岗非常重要的一章。
-
-- `async def` 不是“自动更快”
-- 可 await 的 I/O
-- 同步阻塞库
-- Thread Pool
-- Event Loop
-- FastAPI 中两种函数如何共存
-- 如何识别 Blocking Call
-
-### 13. asyncio Event Loop 再理解 ⭐⭐⭐⭐⭐
-
-把 Python 模块的 asyncio 知识真正落到 Web 请求：
+最终教材粒度是：
 
 ```text
-Request A → await LLM
-             ↓
-Event Loop → Request B → await Redis
-             ↓
-Event Loop → Request C ...
+4 Canonical Questions
++ 完整 Web Service 前置
++ 官方 FastAPI / Starlette / Pydantic / Uvicorn 机制
+↓
+16 个完整知识小板块
 ```
-
-- Task
-- `create_task`
-- `gather`
-- Structured Concurrency 思想
-- Exception Propagation
-- Cancellation
-
-### 14. Blocking I/O 与 CPU-bound 任务 ⭐⭐⭐⭐⭐
-
-- `time.sleep()` 为什么会卡住 async endpoint
-- 同步 SDK 怎么桥接
-- CPU 密集 PDF/OCR/解析为什么可能拖死 Event Loop
-- Thread Pool vs Process Pool
-- 什么应该下沉到 Worker / MQ
-
-### 15. 并发限制与资源保护 ⭐⭐⭐⭐⭐
-
-- Semaphore
-- Provider 并发限制
-- DB Pool Size
-- Redis / Vector DB Client Pool
-- 防止“一次并发调用 100 个 Tool”
-- Backpressure 的入口认识
 
 ---
 
-## Part E｜AI 应用必须掌握的 Streaming
+## 3. 真人面经怎样影响本模块
 
-### 16. StreamingResponse ⭐⭐⭐⭐⭐
-
-- 为什么不能等 LLM 全部生成后再返回
-- Iterable / AsyncIterable
-- `yield` 和流式 Response 的关系
-- Chunked Streaming 的直觉
-- 客户端断开
-- Cancellation
-
-### 17. Server-Sent Events（SSE）⭐⭐⭐⭐⭐
-
-- SSE 是什么
-- `text/event-stream`
-- event / data / id / retry
-- 为什么 AI Chat 特别适合 SSE
-- 心跳
-- 断线重连语义
-- POST Streaming
-- Token / Message / Tool Event 如何设计
-
-### 18. WebSocket ⭐⭐⭐⭐
-
-- 双向长连接
-- SSE vs WebSocket
-- Chat / Voice / Realtime / Agent Interaction
-- Connection State
-- Heartbeat
-- 多实例部署后连接状态问题
-
-### 19. AI Streaming Protocol Design ⭐⭐⭐⭐⭐
-
-不是只会返回字符串，而是设计稳定事件：
+冻结 `S001–S279` 中 FastAPI Primary Canonical：
 
 ```text
-message_start
-token_delta
-tool_call_start
-tool_call_delta
-tool_result
-state_update
-error
-message_end
+FASTAPI-001  ASGI / Request Lifecycle
+FASTAPI-002  Middleware vs Dependency
+FASTAPI-004  FastAPI + SSE / Agent Streaming
+FASTAPI-005  Framework Boundary / Agent Service
 ```
 
-这章会与 Agent Harness 的 Runtime Message Model 双向链接。
+它们没有决定教材顺序，但直接要求这些区域必须讲深：
+
+- `01` 必须能解释 Uvicorn / ASGI / FastAPI 请求链；
+- `04` 必须真正比较 Middleware / Dependency，而不是分别背定义；
+- `07` 必须把 SSE 写成稳定 Event Protocol，并讲中途错误 / Disconnect；
+- `16` 必须能解释为什么只会 CRUD 不足以承载 Production Agent Service。
+
+Python async 的底层语义仍归 `PY-012`，FastAPI 只讲框架如何执行 `def / async def`。
 
 ---
 
-## Part F｜安全与认证
+## 4. 权威技术资料怎样使用
 
-### 20. Middleware ⭐⭐⭐⭐
+正式教材同时参考当前官方资料：
 
-- Middleware 是什么
-- Request/Response 横切逻辑
-- Request ID
-- Timing
-- Access Log
-- CORS
-- Trace Context
+- FastAPI Tutorial / Advanced Guide / Reference；
+- Starlette Web/ASGI primitives；
+- Uvicorn ASGI / deployment docs；
+- Pydantic current docs。
 
-### 21. Authentication ⭐⭐⭐⭐
+它们只负责校准当前框架机制和版本事实，**不增加 HUMAN-A Source Count**。
 
-- Identity
-- Bearer Token
-- JWT 基础
-- Cookie Session 基础
-- Current User Dependency
+来源索引：[`../research/fastapi-sources/README.md`](../research/fastapi-sources/README.md)
 
-### 22. Authorization ⭐⭐⭐⭐⭐
-
-- Authentication ≠ Authorization
-- RBAC / Scope 基础
-- Endpoint 权限
-- Tenant Isolation
-- Agent Tool Permission 为什么不能只靠 Prompt
-
-### 23. CORS、输入安全与 Secret Boundary ⭐⭐⭐⭐
-
-- CORS 到底解决什么
-- 不可信输入
-- Upload
-- Secret / API Key
-- 错误响应信息泄漏
+特别提醒：FastAPI 的 `yield` Dependency cleanup timing、SSE API 等能力历史上有过版本演进，因此教材会区分“稳定概念”和“当前官方实现”。
 
 ---
 
-## Part G｜数据库与外部系统
+# 5. 正式 16 个知识小板块
 
-### 24. FastAPI + MySQL：Session / Pool / Transaction ⭐⭐⭐⭐⭐
+## Part A｜从 Python 到 ASGI Service
 
-这里不重复讲 B+Tree、MVCC；那些属于 `mysql/`。
+1. [FastAPI 的职责：HTTP → ASGI → Application Request Lifecycle](docs/01-FastAPI职责与ASGI请求链路.md)
+2. [Routing、Request / Response 与 OpenAPI Contract](docs/02-Routing与APIContract.md)
+3. [Pydantic、Validation、Serialization 与 Error Contract](docs/03-Pydantic与数据契约.md)
+4. [Dependency Injection 与 Middleware](docs/04-Dependency与Middleware.md)
+5. [Resource Lifecycle：yield Dependency、scope 与 Lifespan](docs/05-ResourceLifecycle.md)
+6. [Async Execution：def / async def、Blocking Boundary 与并发保护](docs/06-AsyncExecution与BlockingBoundary.md)
 
-这里只讲：
+## Part B｜AI Service Transport
 
-- Request 如何获得 DB Session
-- Session 生命周期
-- Connection Pool
-- Transaction Boundary
-- async DB Driver / sync Driver
-- Timeout
-- Rollback
+7. [Streaming Fundamentals 与 Server-Sent Events（SSE）](docs/07-Streaming与SSE.md)
+8. [WebSocket 与 AI Event Protocol](docs/08-WebSocket与EventProtocol.md)
+9. [Authentication、Authorization、CORS 与 Tenant Context](docs/09-Security与TenantContext.md)
 
-### 25. FastAPI + Redis ⭐⭐⭐⭐⭐
+## Part C｜外部系统、任务与可靠请求生命周期
 
-- Redis Client 生命周期
-- Cache
-- Session
-- Rate Limit
-- Agent State
-- Pub/Sub / Stream 的边界
-- Redis 细节跳转 `redis/`
+10. [DB、Redis、Vector DB 与 LLM Client 集成](docs/10-ExternalResourceIntegration.md)
+11. [BackgroundTasks、文件上传与 Long-running Task Boundary](docs/11-BackgroundTask与Upload.md)
+12. [Timeout、Cancellation、Client Disconnect 与 Cleanup](docs/12-TimeoutCancellation与Disconnect.md)
 
-### 26. FastAPI + Vector DB / RAG ⭐⭐⭐⭐⭐
+## Part D｜Production FastAPI
 
-- Knowledge Base API
-- Ingestion API
-- Query API
-- Retrieval Service
-- Async Client
-- Batch / Background Ingestion
-- 大文件不能塞进普通 request lifecycle 做完
-
-### 27. HTTP Client 与外部 LLM Provider ⭐⭐⭐⭐⭐
-
-- 长连接 / Connection Pool
-- Timeout
-- Retry
-- Streaming
-- Provider Adapter
-- API Key
-- Rate Limit
-- Client 生命周期
+13. [Testing：Dependency Override、Streaming、WebSocket 与错误路径](docs/13-Testing.md)
+14. [Logging、Trace、Metrics 与性能诊断](docs/14-Observability与Performance.md)
+15. [Deployment：Worker、Health Check 与 Graceful Shutdown](docs/15-Deployment与GracefulShutdown.md)
+16. [AI Service Patterns：Chat、RAG、Ingestion 与 Agent Run API](docs/16-AIServicePatterns.md)
 
 ---
 
-## Part H｜长任务、文件与生产边界
-
-### 28. BackgroundTasks：能做什么，不能做什么 ⭐⭐⭐⭐⭐
-
-- Response 后的小任务
-- 为什么“后台”不等于可靠分布式任务
-- 进程退出怎么办
-- 重 CPU 任务怎么办
-- 什么时候应该交给 MQ / Worker
-
-### 29. 大文件 Upload 与流式处理 ⭐⭐⭐⭐
-
-- Multipart
-- UploadFile
-- Streaming Read
-- 内存风险
-- 临时文件
-- 分片上传
-- RAG Ingestion
-
-### 30. Timeout / Cancellation / Client Disconnect ⭐⭐⭐⭐⭐
-
-- Request Timeout
-- Downstream Timeout
-- LLM Timeout
-- Cancel Propagation
-- Stream Disconnect
-- Tool 取消
-- 清理资源
-
-### 31. Testing ⭐⭐⭐⭐
-
-- API Test
-- Dependency Override
-- Mock Provider
-- Async Test
-- Streaming Test
-- 错误路径
-- Agent / RAG Integration Test
-
-### 32. Logging / Trace / Metrics ⭐⭐⭐⭐⭐
-
-- Access Log vs Application Log
-- Request ID / Trace ID
-- Structured Log
-- Latency Breakdown
-- LLM / RAG / Tool Span
-- Token / Cost
-- OpenTelemetry 思想
-
-### 33. Deployment：Process / Worker / Container ⭐⭐⭐⭐⭐
-
-- Development Server vs Production Server
-- Worker Process
-- 多核利用
-- 每进程内存
-- Docker
-- Kubernetes 下的进程/副本思路
-- Graceful Shutdown
-- Health Check
-
-### 34. FastAPI Performance Debugging ⭐⭐⭐⭐⭐
-
-- P50 / P95 / P99
-- Event Loop Block
-- Connection Pool Exhaustion
-- Thread Pool Exhaustion
-- DB / Redis / Provider Latency
-- Serialization Cost
-- Streaming 首 Token 延迟
-- Queueing Delay
-
----
-
-## Part I｜AI / Agent 综合实战
-
-### 35. 设计 `/chat` LLM Streaming API ⭐⭐⭐⭐⭐
-
-### 36. 设计 RAG Query API ⭐⭐⭐⭐⭐
-
-### 37. 设计知识库 Ingestion API ⭐⭐⭐⭐⭐
-
-### 38. 设计 Agent Run API ⭐⭐⭐⭐⭐
-
-### 39. 设计 Agent SSE Event Protocol ⭐⭐⭐⭐⭐
-
-### 40. 设计 Long-running Agent Task API ⭐⭐⭐⭐⭐
-
-最终把：
+## 6. 4 道 Canonical → 16-block 的映射
 
 ```text
-FastAPI
-+ MySQL
-+ Redis
-+ Vector DB
-+ RAG
-+ Agent Harness
+FASTAPI-001  ASGI / Request Lifecycle       → 01 / 02 / 05
+FASTAPI-002  Middleware vs Dependency       → 04 / 05 / 09
+FASTAPI-004  SSE / Agent Streaming          → 07 / 08 / 12 / 16
+FASTAPI-005  Agent Service Framework Boundary→ 05–16，重点 16
 ```
 
-真正串起来。
+这不是 Coverage 凑数。FastAPI 的 4 道真人问题是**市场校准信号**，完整教材还必须保留 HTTP Contract、Validation、Testing、Deployment 等低频但必要的基础。
 
 ---
 
-# 5. FastAPI 与真实面试怎么结合
+## 7. 三条最重要的知识主线
 
-研究库已经出现以下类型问题：
+### 主线 A｜Request / Resource Lifecycle
 
-- FastAPI URL Routing / Async Runtime；
-- Python async 与 CPU-bound 隔离；
-- SSE vs WebSocket；
-- Agent Streaming；
-- 多 Tool 并发；
-- Timeout / Retry / Cancellation；
-- Session / Message / State 持久化；
-- 大文件流式处理；
-- 多用户隔离；
-- 200ms 级 SLA；
-- LLM / Tool / RAG Trace。
+```text
+ASGI Server
+→ Middleware
+→ Router
+→ Validation / Dependency
+→ Handler
+→ Response
+→ Cleanup
+```
 
-因此 FastAPI 课程不会停在 CRUD Tutorial，而会一直走到 **AI Service Runtime**。
+### 主线 B｜Async / Streaming
+
+```text
+async def / def
+→ Event Loop / Thread Pool
+→ Blocking Boundary
+→ StreamingResponse
+→ SSE / WebSocket
+→ Cancellation / Disconnect
+```
+
+### 主线 C｜AI Service Boundary
+
+```text
+FastAPI API Layer
+→ Service Layer
+→ RAG / Agent Runtime / Provider Adapter
+→ Durable State / Queue / Worker
+```
 
 ---
 
-# 6. 官方资料基线
+## 8. 本模块必须会回答的问题
 
-后续正式写章节时，以官方文档作为当前版本事实基线，并结合真实面经决定讲解优先级：
+学完后至少能清晰解释：
 
-- FastAPI Tutorial: https://fastapi.tiangolo.com/tutorial/
-- Concurrency / async-await: https://fastapi.tiangolo.com/async/
-- Dependencies: https://fastapi.tiangolo.com/tutorial/dependencies/
-- Streaming: https://fastapi.tiangolo.com/advanced/stream-data/
-- SSE: https://fastapi.tiangolo.com/tutorial/server-sent-events/
-- Background Tasks: https://fastapi.tiangolo.com/tutorial/background-tasks/
-- Deployment / Workers: https://fastapi.tiangolo.com/deployment/server-workers/
-- Pydantic: https://docs.pydantic.dev/latest/
-
-> 具体 API 会随版本演进，因此教材正文不会把某个历史版本细节写成永久不变的框架规律。
+1. Uvicorn / Starlette / FastAPI / Pydantic 的职责边界；
+2. 一个请求为什么会经过 Middleware / Dependency；
+3. `yield` Dependency 和 Lifespan 管不同什么资源；
+4. `def` 与 `async def` 在 FastAPI 中怎样执行；
+5. 为什么同步 helper 会堵 async Endpoint；
+6. SSE / WebSocket 怎样选；
+7. Stream 中途失败和 Client Disconnect 怎么处理；
+8. 为什么 BackgroundTasks 不能做 Durable RAG Ingestion；
+9. DB/Redis/LLM Client 应该怎样管理生命周期；
+10. 多 Worker 后为什么不能依赖进程全局 State；
+11. 怎样测试 Dependency、Streaming 和 Provider Failure；
+12. `/agent/runs` 为什么比一个 `/chat` 更接近 Production Agent Service。
 
 ---
 
-# 7. 学完 FastAPI 后应该达到什么水平
+## 9. 推荐学习方式
 
-不是：
+第一遍：按 `01 → 16` 建立因果链。
 
-> “我会写 `@app.post('/chat')`。”
+第二遍：进入 [`review/README.md`](review/README.md)，不看正文重新画六张总图。
 
-而是能回答：
+第三遍：使用：
 
-1. 一个请求进入 FastAPI 后经历什么？
-2. `def` / `async def` 怎么选？
-3. 为什么同步阻塞 SDK 会拖慢异步服务？
-4. 如何做 LLM Streaming / SSE？
-5. 客户端断开后 Agent 应不应该继续执行？
-6. 数据库连接什么时候获取和释放？
-7. 为什么不能每个请求创建一个新 HTTP Client？
-8. BackgroundTasks 为什么不能代替可靠任务队列？
-9. 大文件 / OCR / Embedding 为什么不能无脑塞在请求线程里？
-10. 如何定位一个 FastAPI AI 服务 P99 突然变高？
-11. Agent Runtime 和 FastAPI 的职责边界是什么？
-12. 多用户 Agent 如何在 API、State、Redis、数据库层共同隔离？
+- [`interview/高频面试题.md`](interview/高频面试题.md)
+- [`interview/面试易错点.md`](interview/面试易错点.md)
+- [`interview/面试前速查表.md`](interview/面试前速查表.md)
 
-当这些问题都能从原理、代码和工程权衡三个层次回答时，FastAPI 才真正学完。
+目标不是“会写 FastAPI”，而是：
 
-## 下一层
+> **能把 Python Runtime 正确映射成 Production AI Service，同时知道哪些问题不属于 FastAPI。**
 
-FastAPI 学的是“服务框架”。接下来还需要：
+---
 
-> [AI Backend Engineering](../backend-engineering/README.md)
+## 10. 下一环：AI Backend Engineering
 
-把可靠任务、Timeout、Retry、Idempotency、MQ、Backpressure、Observability 等跨框架生产能力补齐。
+FastAPI 完成后，下一层正式进入：
+
+```text
+Timeout Budget
+Retry / Jitter
+Idempotency
+Backpressure
+Queue / Worker
+Cache Consistency
+Rate Limit
+Distributed Trace
+Deployment Reliability
+```
+
+入口：[`../backend-engineering/README.md`](../backend-engineering/README.md)
