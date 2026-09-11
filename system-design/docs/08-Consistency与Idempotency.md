@@ -1,5 +1,7 @@
 # 08｜Consistency、Idempotency、Transaction 与 Compensation
 
+> **本章定位：System Design 组合层。** 这里从业务 Invariant 出发选择 Transaction / CAS / Idempotency / Compensation。通用 Side-effect Safety 与跨系统一致性机制回到 [AIBE Idempotency](../../backend-engineering/docs/09-APIIdempotency与SideEffect.md) 和 [AIBE Consistency](../../backend-engineering/docs/13-Consistency与Compensation.md)；数据库事务内部机制回到 [MySQL](../../mysql/README.md)，Agent Tool 恢复语义回到 [Agent Checkpoint / Resume](../../agent-harness/docs/13-CheckpointResumeReliability.md)。
+
 分布式系统真正难的地方不是“写成功”，而是：
 
 > **一个操作跨越多个状态系统时，部分成功、重复执行、网络超时和故障恢复怎样不把业务 invariant 弄坏。**

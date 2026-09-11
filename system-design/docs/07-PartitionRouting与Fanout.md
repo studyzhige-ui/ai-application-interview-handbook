@@ -1,5 +1,7 @@
 # 07｜Partition、Routing、Fan-out 与 Rebalance
 
+> **本章定位：System Design 组合层。** 这里关注“什么时候分片、按什么 Key 路由、Fan-out 与 Rebalance 如何影响系统”。具体存储内部机制分别回到 [MySQL Sharding](../../mysql/docs/19-Sharding.md)、[Redis Cluster](../../redis/docs/14-Cluster与HashSlot.md) 与 [Distributed Vector DB](../../vector-db/docs/13-分布式VectorDB.md)。
+
 当单机容量、QPS 或故障域不够时，系统会自然进入分布式数据问题。
 
 但“分片”不是：

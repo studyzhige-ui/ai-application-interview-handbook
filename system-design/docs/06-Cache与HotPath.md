@@ -1,5 +1,7 @@
 # 06｜Cache、Hot Path 与 Read / Write Path
 
+> **本章定位：System Design 组合层。** 这里训练的是“何时把 Cache 放进架构、Read/Write Path 怎样组合、Hot Path 与降级怎样决策”。Redis 的 Cache/TTL/击穿/雪崩机制回到 [Redis Cache Design](../../redis/docs/09-Cache设计与缓存故障.md)；跨 MySQL + Redis 的一致性机制回到 [AIBE Consistency & Compensation](../../backend-engineering/docs/13-Consistency与Compensation.md)。
+
 Cache 不是“系统慢了就加 Redis”，而是对**访问路径和状态语义**的重新设计。
 
 真正的问题是：

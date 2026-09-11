@@ -1,5 +1,7 @@
 # 09｜Queue、Backpressure 与 Long-running Task
 
+> **本章定位：System Design 组合层。** 这里训练 Queue / Worker / Long-running Task 怎样进入整体架构。Backpressure、MQ Delivery 与 Durable Task 的完整机制分别回到 [AIBE Backpressure](../../backend-engineering/docs/06-Backpressure与RateLimit.md)、[AIBE MQ](../../backend-engineering/docs/10-MQ与DeliverySemantics.md) 和 [AIBE Reliable Async Task](../../backend-engineering/docs/12-ReliableAsyncTask.md)。
+
 异步系统最常见的误区是：
 
 > **有 MQ = 系统就能扛住高峰。**

@@ -1,5 +1,7 @@
 # 11｜Multi-tenancy、Security、Permission 与 Isolation
 
+> **本章定位：System Design 组合层。** 这里关注 Tenant / Permission / Security 怎样贯穿 State、Cache、Queue、Trace 与 Tool。HTTP/API 身份上下文回到 [FastAPI Security](../../fastapi/docs/09-Security与TenantContext.md)，通用 Auth / Backend Security 回到 [AIBE Auth](../../backend-engineering/docs/15-AuthSession与TenantBoundary.md) 与 [AIBE Security](../../backend-engineering/docs/21-BackendSecurity.md)，Agent 高风险动作回到 [Permission / Sandbox](../../agent-harness/docs/14-PermissionApprovalSandbox.md) 和 [Prompt Injection / Containment](../../agent-harness/docs/15-GuardrailsInjectionContainment.md)。
+
 多租户系统最危险的故障通常不是慢，而是：
 
 > **Tenant A 看到了 Tenant B 的数据，或者一个高风险 Agent Tool 越过了权限边界。**
