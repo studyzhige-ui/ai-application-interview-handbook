@@ -22,7 +22,7 @@
 
 `235` 是 Phase 2A + Phase 2B 后的正式 Primary-owned ACTIVE Canonical 数量。
 
-> **注意：Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。教材粒度审计见 `../../roadmap/curriculum-granularity-audit.md`。
+> **Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。
 
 ---
 
@@ -44,46 +44,18 @@
 
 | QID | Primary Module | Topic | Source Count |
 |---|---|---|---:|
-| `LLM-023` | LLM Foundation（应用工程深度） | Prompt Engineering | 30 |
-| `AGENT-044` | Agent Harness / Runtime | Prompt Injection / Untrusted Context Security | 8 |
-| `AGENT-045` | Agent Harness / Runtime | Intent Recognition / Routing | 11 |
-| `AGENT-046` | Agent Harness / Runtime | A2A / Agent Communication Protocol | 6 |
-| `AGENT-047` | Agent Harness / Runtime | Agent Framework Selection | 27 |
-| `AGENT-048` | Agent Harness / Runtime | AI-assisted Development Workflow | 37 |
+| `LLM-023` | LLM Foundation | Prompt Engineering | 30 |
+| `AGENT-044` | Agent Harness | Prompt Injection / Untrusted Context Security | 8 |
+| `AGENT-045` | Agent Harness | Intent Recognition / Routing | 11 |
+| `AGENT-046` | Agent Harness | A2A / Agent Communication Protocol | 6 |
+| `AGENT-047` | Agent Harness | Agent Framework Selection | 27 |
+| `AGENT-048` | Agent Harness | AI-assisted Development Workflow | 37 |
 
 `S271` 为唯一 `VALID-UNMAPPED`。
 
 ---
 
-## 4. Primary Module 判断例子
-
-```text
-“RRF 为什么不用线性加权？”
-Primary = RAG
-Related = Vector DB
-```
-
-```text
-“HNSW 为什么快，efSearch 怎样影响 Recall？”
-Primary = Vector DB
-Related = RAG
-```
-
-```text
-“Tool 已成功扣款，但 Checkpoint 写失败，恢复后怎么办？”
-Primary = Agent Harness / Runtime
-Related = AI Backend Engineering, System Design
-```
-
-```text
-“Redis + MySQL 双写一致性怎样保证？”
-Primary = AI Backend Engineering
-Related = MySQL, Redis
-```
-
----
-
-## 5. 当前验证状态
+## 4. Phase 2B 验证状态
 
 ```text
 Frozen HUMAN-A              279 / 279
@@ -97,27 +69,41 @@ Source Count mismatch         0
 
 ---
 
-## 6. Phase 3 Curriculum Build / Granularity Remediation
+## 5. Phase 3 Curriculum Build
 
 固定原则：
 
 > **初学者 0→1 的知识依赖决定课程主干；真人面经只校准复习权重、真实问法和追问深度。研究 / Capability / 教材文件使用不同粒度。**
 
-当前建设状态：
+当前教材结构：
 
 ```text
-MySQL ✅ 23 章 + Review + Interview；Granularity PASS
-→ Redis 🟠 27 章内容完成；Minor Remediation（目标约 23）
-→ Vector DB 🟠 23 章内容完成；Moderate Remediation（目标 16–18）
-→ LLM Foundation 🟠 29 章内容完成；Moderate Remediation（目标 14–17）
-→ RAG 🟠 34 章内容完成；Major Remediation（目标 14–16）
-→ Agent Harness / Runtime 🚧 已完成 47→23 物理迁移；深度验收中
-→ System Design ⏸️ 上述粒度整改后启动
+MySQL ✅ 23 blocks；Granularity PASS
+Redis ✅ 24 blocks；27→24 COMPLETE
+Vector DB ✅ 16 blocks；23→16 COMPLETE
+LLM Foundation ✅ 14 blocks；29→14 COMPLETE
+RAG ✅ 14 blocks；34→14 COMPLETE
+Agent Harness / Runtime 🚧 23 blocks；47→23 STRUCTURE COMPLETE，深度验收中
+System Design ⏸️ Agent 深度验收后启动
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
 
-Agent Harness 的正式课程输入保持：
+### 为什么教材文件数小于 Canonical 数量
+
+例如：
+
+```text
+Agent Canonical = 44
+Agent 教材 = 23 blocks
+
+RAG Canonical = 29
+RAG 教材 = 14 blocks
+```
+
+因为多个可独立追问能力可能属于同一个认知闭环。教材章节不应机械跟随题目数量。
+
+### Agent Harness 的证据输入
 
 ```text
 44 HUMAN-A Agent Canonical
@@ -128,19 +114,4 @@ Agent Harness 的正式课程输入保持：
 + primary papers
 ```
 
-这些 Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
-
-Agent 研究索引：`../agent-sources/`。
-
-### 当前教材粒度审计
-
-| 模块 | 审计结果 |
-|---|---|
-| MySQL | PASS |
-| Redis | Minor Remediation |
-| Vector DB | Moderate Remediation |
-| LLM Foundation | Moderate Remediation |
-| RAG | Major Remediation |
-| Agent Harness | Major Remediation，47→23 已完成结构迁移 |
-
-这份表描述的是**教材组织**，不会改变本文件上方的 235 道 Canonical Ownership。
+Tier B/C 证据只用于课程完整性，**不改变 HUMAN-A Source Count**。
