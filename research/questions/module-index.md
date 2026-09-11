@@ -4,6 +4,8 @@
 
 > Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。
 
+> **v1.0 Final Quality Audit：✅ PASS。** 十板块跨模块 Ownership、术语边界与 184 个 Curriculum Markdown 的最终结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
+
 | # | Module | Canonical File | ACTIVE | Curriculum | Curriculum Entry | Status |
 |---:|---|---|---:|---:|---|---|
 | 01 | Python Foundation | [python.md](python.md) | 15 | 13 | [README](../../python/README.md) | ✅ |

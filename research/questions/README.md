@@ -39,6 +39,8 @@ Interview Drill    = 训练时可以再次细分的真实问法
 
 因此 235 道 Canonical 不等于 184 篇正文。
 
+**v1.0 Final Quality Audit：✅ PASS。** 正文深度见 [`../../roadmap/content-depth-audit.md`](../../roadmap/content-depth-audit.md)，全仓库终局结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)，跨模块术语边界见 [`../../roadmap/terminology-glossary.md`](../../roadmap/terminology-glossary.md)。
+
 ## 主要入口
 
 - [schema.md](schema.md)：Canonical 字段与证据规则；

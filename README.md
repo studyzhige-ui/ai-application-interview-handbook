@@ -7,7 +7,7 @@
 
 ## 快速入口
 
-[十板块知识地图](roadmap/knowledge-map.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
+[十板块知识地图](roadmap/knowledge-map.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
 
 ---
 
@@ -133,6 +133,8 @@ Source Count mismatch         0
 | 文档 | 作用 |
 |---|---|
 | [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
+| [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
+| [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
 | [Documentation Style Guide](roadmap/documentation-style-guide.md) | README / 描述文件统一规范 |
 | [Granularity Audit](roadmap/curriculum-granularity-audit.md) | 研究粒度与教材粒度为什么分开 |
 | [Content Depth Audit](roadmap/content-depth-audit.md) | 正文深度与完成状态 |

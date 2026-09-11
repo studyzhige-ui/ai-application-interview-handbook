@@ -1,6 +1,6 @@
 # AI Application Engineer｜十板块知识地图
 
-[← Handbook 总目录](../README.md) · [课程进度](../research/questions/progress.md) · [Canonical Index](../research/questions/module-index.md)
+[← Handbook 总目录](../README.md) · [v1.0 终局质量审计](final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md) · [Canonical Index](../research/questions/module-index.md)
 
 > 十个一级模块已经全部完成第一版系统教材。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README。
 
@@ -134,3 +134,5 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - 跨模块问题只在 Primary Module 维护完整机制；
 - 章节数是认知闭环的结果，不是统一 KPI；
 - 当前粒度与深度状态见 [Granularity Audit](curriculum-granularity-audit.md) 与 [Content Depth Audit](content-depth-audit.md)。
+
+- v1.0 全仓库最终结论见 [Final Quality Audit](final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
