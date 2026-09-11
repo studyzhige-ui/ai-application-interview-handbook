@@ -56,6 +56,17 @@ RENAMES = {
     "34-GraphRAG与AgenticRAG.md": "14-GraphRAG与AgenticRAG.md",
 }
 
+
+def add_after(path: Path, anchor: str, line: str) -> None:
+    text = path.read_text(encoding="utf-8")
+    if line in text:
+        return
+    if anchor not in text:
+        raise SystemExit(f"{path}: sync anchor not found: {anchor!r}")
+    text = text.replace(anchor, anchor + "\n" + line, 1)
+    path.write_text(text, encoding="utf-8")
+
+
 # Replace stale references throughout Markdown files.
 for path in ROOT.rglob("*.md"):
     text = path.read_text(encoding="utf-8")
@@ -63,7 +74,6 @@ for path in ROOT.rglob("*.md"):
     for old, new in RENAMES.items():
         new_text = new_text.replace(old, new)
 
-    # These statements became false after continuous renumbering.
     new_text = re.sub(
         r"^>?\s*为避免[^\n]*历史文件编号[^\n]*\n?",
         "",
@@ -84,11 +94,15 @@ for path in ROOT.rglob("*.md"):
         "正式顺序以下面的 14-block 为准。",
         "当前 `docs/` 已连续编号为 `01–14`；正式学习顺序与文件编号一致。",
     )
+    new_text = new_text.replace(
+        "文件名保留了部分历史编号，正式学习顺序以 `../README.md` 为准。",
+        "当前正文已连续编号，正式学习顺序与 `../README.md` 一致。",
+    )
 
     if new_text != text:
         path.write_text(new_text, encoding="utf-8")
 
-# Normalize H1 numbering to the actual filename number and require continuous filenames.
+# Normalize H1 numbering and require continuous filenames.
 for module, count in MODULE_COUNTS.items():
     docs = ROOT / module / "docs"
     files = sorted(p for p in docs.glob("*.md") if re.match(r"^\d{2}-", p.name))
@@ -111,6 +125,49 @@ for module, count in MODULE_COUNTS.items():
         if normalized != text:
             p.write_text(normalized, encoding="utf-8")
 
+# Synchronize current depth-audit status into module/project entry points.
+add_after(
+    ROOT / "redis" / "README.md",
+    "> **Granularity Audit：✅ 已完成。** 原 27 章经过教材粒度审计后收敛为 **24 个知识小板块**。合并依据不是章节数量，而是“一个文件是否形成完整认知闭环”。研究层的 19 道 Redis Canonical、Source Count 和真人面经频率没有变化。",
+    "> **Content Depth Audit：✅ 通过。** `docs/01–24` 已完成全量结构扫描与人工复核；较短章节属于边界较窄的完整主题，不存在占位稿。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。",
+)
+add_after(
+    ROOT / "llm-foundation" / "README.md",
+    "> **Granularity Audit：✅ 已完成。** 原 29 章在不删知识点的前提下收敛为 **14 个正式知识小板块**。研究层 23 道 LLM Canonical、HUMAN-A Source Count 与模块边界完全不变。",
+    "> **Content Depth Audit：✅ 通过。** `docs/01–14` 已连续编号并完成全量 QA；Multimodal Foundation 已补强到 Production 级输入预算、Failure Attribution、Evaluation 与治理深度。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。",
+)
+add_after(
+    ROOT / "rag" / "README.md",
+    "> **Granularity Audit：✅ 已完成。** 原 34 章内容已按 Production RAG 子系统收敛为 **14 个正式知识小板块**；29 道 RAG Canonical、88 个 HUMAN-A 覆盖来源和所有 Source Count 保持不变。",
+    "> **Content Depth Audit：✅ 通过。** `docs/01–14` 已连续编号并完成全量 QA；Scale/Cost/Observability 与 GraphRAG/Agentic RAG 两个原先偏薄的大主题已完成 Production 深度补强。详细记录见 [`../roadmap/content-depth-audit.md`](../roadmap/content-depth-audit.md)。",
+)
+
+add_after(
+    ROOT / "README.md",
+    "因此不再默认 `1 Canonical ≈ 1 Markdown`。完整审计见 [`roadmap/curriculum-granularity-audit.md`](roadmap/curriculum-granularity-audit.md)。",
+    "Redis / Vector DB / LLM Foundation / RAG 的正文深度也已完成全量 QA 与人工复核，记录见 [`roadmap/content-depth-audit.md`](roadmap/content-depth-audit.md)。",
+)
+add_after(
+    ROOT / "roadmap" / "knowledge-map.md",
+    "章节数不追求统一。审计记录：[`curriculum-granularity-audit.md`](curriculum-granularity-audit.md)。",
+    "内容深度验收：[`content-depth-audit.md`](content-depth-audit.md)；Redis / Vector DB / LLM Foundation / RAG 均已通过。",
+)
+add_after(
+    ROOT / "research" / "questions" / "progress.md",
+    "详细规则：`../../roadmap/curriculum-granularity-audit.md`。",
+    "内容深度验收：`../../roadmap/content-depth-audit.md`。Redis / Vector DB / LLM Foundation / RAG 已完成全量 QA 与人工复核并通过。",
+)
+add_after(
+    ROOT / "research" / "questions" / "module-index.md",
+    "> **Canonical 数量不等于教材章节数。** Canonical 是可独立追问能力；教材文件按完整知识小板块组织。",
+    "> **教材深度已独立验收。** Redis / Vector DB / LLM Foundation / RAG 的结果见 `../../roadmap/content-depth-audit.md`，不会以文件数量或字数替代人工质量判断。",
+)
+add_after(
+    ROOT / "research" / "questions" / "README.md",
+    "因此 **44 道 Agent Canonical 不等于 44 章，29 道 RAG Canonical 也不等于 29 章。**",
+    "当前 Redis / Vector DB / LLM Foundation / RAG 已完成独立内容深度验收；详见 `../../roadmap/content-depth-audit.md`。",
+)
+
 # Validate local Markdown links inside the four audited modules.
 link_pattern = re.compile(r"\[[^\]]*\]\(([^)]+\.md(?:#[^)]+)?)\)")
 violations = []
@@ -131,17 +188,20 @@ for module in MODULE_COUNTS:
             if not resolved.exists():
                 violations.append(f"{path}: broken local link: {raw_target}")
 
-# Final stale-reference checks.
+# Final stale-reference and stale-wording checks.
 for path in ROOT.rglob("*.md"):
     text = path.read_text(encoding="utf-8")
     for old in RENAMES:
         if old in text:
             violations.append(f"{path}: stale reference {old}")
-    if path.name == "README.md" and path.parent.name in MODULE_COUNTS:
-        if "保留合并后最早" in text or "历史文件编号" in text:
+
+for module in MODULE_COUNTS:
+    for path in (ROOT / module).rglob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        if "文件名保留了部分历史编号" in text or "文件保留合并后最早历史编号" in text:
             violations.append(f"{path}: stale historical-number wording")
 
 if violations:
     raise SystemExit("\n".join(violations))
 
-print("Curriculum numbering and local Markdown links validated successfully.")
+print("Curriculum numbering, links, status wording and depth-audit references validated successfully.")
