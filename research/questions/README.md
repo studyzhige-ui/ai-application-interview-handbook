@@ -8,23 +8,7 @@
 
 ## 唯一证据原则
 
-Canonical Question 只允许由 **HUMAN-A 真人高质量第一人称面经**产生市场证据：
-
-```text
-真人面试官
-+
-候选人本人第一人称
-+
-高信息密度
-+
-AI Application / Agent 目标岗位
-+
-可稳定核验
-+
-非转载重复
-```
-
-任何不满足上述标准的来源都不能创建新的 Canonical Question、提高某题的面试频率或伪装成课程学习优先级。
+Canonical Question 只允许由 **HUMAN-A 真人高质量第一人称面经**产生市场证据。源码、官方文章、规范、论文可以补齐课程知识边界，但不能创建真人面试频率或提高 Source Count。
 
 ## 正式一级板块
 
@@ -50,19 +34,6 @@ Agent Harness / Runtime
 System Design
 ```
 
-对应文件：
-
-- `python.md`
-- `fastapi.md`
-- `ai-backend-engineering.md`
-- `mysql.md`
-- `redis.md`
-- `vector-db.md`
-- `llm-foundation.md`
-- `rag.md`
-- `agent-harness.md`
-- `system-design.md`
-
 `Coding / Debug / AI Coding` 只作为 `Question Type`，不作为一级板块。
 
 ---
@@ -70,17 +41,15 @@ System Design
 ## 当前冻结基线与研究状态
 
 - HUMAN-A：`S001–S279`
-- Batch：`batch-01.md` ～ `batch-26.md`
+- Batch：26
 - 主动采集：已冻结
-- Phase 1 十板块纵向 Canonicalization：✅
+- Phase 1 Canonicalization：✅
 - Phase 2A Global Merge / Split Audit：✅
 - Phase 2B Global Index + Market Analysis：✅
 - Primary-owned ACTIVE Canonical：**235**
-- Legacy MOVED 映射：**24**
+- Legacy MOVED：**24**
 - Mapped HUMAN-A：**278**
 - VALID-UNMAPPED：**1（S271）**
-
-当前十板块数量：
 
 | 一级板块 | ACTIVE |
 |---|---:|
@@ -108,12 +77,12 @@ Evidence outside baseline     0
 Source Count mismatch         0
 ```
 
-详细状态：
+详细入口：
 
 - `schema.md`：数据规范与板块边界；
-- `module-index.md`：Ownership、迁移映射和 Phase 3 状态；
-- `global-audit.md`：Global Merge / Split / Evidence Audit；
-- `progress.md`：研究与教材建设的当前阶段；
+- `module-index.md`：Ownership 与 Phase 3 状态；
+- `global-audit.md`：Global Merge / Split 决策；
+- `progress.md`：当前教材建设阶段；
 - `../analysis/`：Frequency / Coverage / Follow-up Chain / Knowledge Gap。
 
 ---
@@ -132,34 +101,43 @@ MySQL ✅ 23 章 + Review + Interview
 → Vector DB ✅ 23 章 + Review + Interview
 → LLM Foundation ✅ 29 章 + Review + Interview
 → RAG ✅ 34 章 + Review + Interview
-→ Agent Harness / Runtime 🚧 下一块
-→ System Design
+→ Agent Harness / Runtime ✅ 47 章 + Review + Interview
+→ System Design 🚧 下一块
 ```
 
 Python 已有完整教材；FastAPI / AI Backend Engineering 已有完整课程骨架。
 
 ---
 
-## 与完整知识体系的关系
+## Agent Harness 特殊证据规则
 
-完整课程体系负责决定“应该学什么”；真人高质量面经只负责提供：
+Agent Harness 的市场证据仍只来自 Frozen HUMAN-A 44 道 Agent Canonical。
 
-- 真实问法；
-- 真实追问深度；
-- 公司 / 岗位 / 轮次信号；
-- 学习优先级校准。
+正式教材另外使用：
 
-因此不会为了扩充问题库，把二次创作、题库、标准答案、合集或无法核验的内容转化成额外学习任务。
-
----
-
-## Agent Harness 特殊规则
-
-Agent Harness 正式课程必须同时使用：
-
-- Frozen HUMAN-A 44 道 Agent Canonical；
 - `research/analysis/follow-up-chains.md`；
 - `studyzhige-ui/claude-code-source-private`；
-- `openai/codex`。
+- `openai/codex`；
+- Anthropic / OpenAI 官方 Agent / Harness 工程资料；
+- MCP / A2A 官方规范；
+- ReAct / SWE-bench 等原始论文。
 
-源码用于补齐成熟 Harness / Runtime 的实现事实和知识边界；源码证据**不能**反向改变 HUMAN-A 面试频率。
+完整索引：[`../agent-sources/README.md`](../agent-sources/README.md)
+
+固定源码快照：
+
+```text
+Claude Code commit = 58231dcce408f805c645cfbc352d2876b517223b
+OpenAI Codex commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
+```
+
+课程使用原则：
+
+```text
+HUMAN-A → 市场真实度 / 频率 / 追问
+源码     → 成熟实现事实
+官方资料 → 跨产品稳定设计原则
+课程体系 → beginner-first 0→1 演进
+```
+
+源码与网上权威资料**不能**反向改变 HUMAN-A 面试频率。
