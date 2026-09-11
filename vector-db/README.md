@@ -4,6 +4,8 @@
 >
 > 目标不是从 Milvus / pgvector API 开始，而是从 0 建立一条完整因果链：**为什么语义信息能变成向量 → 向量怎样比较 → Exact Search 为什么会变贵 → ANN 用什么换什么 → HNSW / IVF / Quantization 怎样工作 → Vector DB 怎样组织、过滤、更新和扩展 → 最后才讨论产品选型。**
 
+> **Granularity Audit：🟠 Moderate Remediation。** 当前 23 章内容与顺序本身完整，但 `Vector/Dimension → Normalization → Similarity`、`Exact Search → ANN`、`HNSW 原理 → 参数`、`Write/Delete → Compaction → Re-embedding/Rebuild` 等连续机制被拆得偏细。后续会在不删知识点的前提下重组为约 **16–18 个知识小板块**。这不会改变 Vector DB 的 12 道 Canonical、Source Count 或 RAG/LLM 的 Primary Boundary。审计见 [`../roadmap/curriculum-granularity-audit.md`](../roadmap/curriculum-granularity-audit.md)。
+
 ## 1. 最重要的课程原则
 
 本模块继续固定遵守：
@@ -182,7 +184,9 @@ Dedicated Vector DB
 
 ---
 
-## 6. 完整 23 章
+## 6. 当前 23 章（内容完成，待 Moderate Granularity Remediation）
+
+> 现有文件可以继续正常学习；后续会把连续机制合并为更大的知识小板块，知识顺序不变。
 
 ### Part A｜从向量到最近邻
 
@@ -262,9 +266,9 @@ Filter 与 Partition 怎样影响路由
 
 ## 8. 推荐三遍学习法
 
-### 第一遍：严格按 01 → 23
+### 第一遍：当前严格按 01 → 23
 
-先形成因果链，不追求一次背参数。
+整改前仍然保持现有顺序学习；后续 Merge 不改变知识依赖。
 
 尤其不要直接跳到：
 
