@@ -1,6 +1,6 @@
 # Vector Database｜图解复习与自测
 
-> 这一层不是重新讲一遍正文，而是把 23 章压缩成几条可以在脑中反复推演的执行路径。
+> 这一层不是重新讲一遍正文，而是把 **16 个正式知识小板块**压缩成几条可以在脑中反复推演的执行路径。文件名保留了部分历史编号，正式学习顺序以 `../README.md` 为准。
 >
 > 推荐顺序：**先看图回忆 → 自己口述 → 再展开答案检查。**
 
@@ -224,8 +224,6 @@ ANN 使用结构化索引和启发式搜索缩小候选范围，目标仍然是�
 
 </details>
 
----
-
 ## B. HNSW / IVF / Quantization
 
 <details>
@@ -263,8 +261,6 @@ PQ 用子空间量化和 Codebook 将高维 float 向量压缩成短编码，显
 
 </details>
 
----
-
 ## C. Data Model / Filter
 
 <details>
@@ -287,8 +283,6 @@ Pre-filter 如果候选过少或与 Index 结合不好，可能降低 ANN 效率
 因为忘记过滤就是安全事故。生产系统应通过统一 Query Layer、Namespace / Partition、权限验证、测试和审计等机制把隔离变成系统约束，而不是开发者习惯。
 
 </details>
-
----
 
 ## D. Lifecycle / Production
 
@@ -326,8 +320,6 @@ Shard 主要把数据水平拆分来扩容量和并行处理；Replica 保存副
 还可能是 Embedding Model、Normalization、Metric 不匹配、数据版本、Filter、Index Build、Delete / Update、Ground Truth 定义等问题。需要分层定位。
 
 </details>
-
----
 
 ## E. Architecture / Boundary
 
