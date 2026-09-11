@@ -1,0 +1,38 @@
+name: Unify README system
+
+on:
+  push:
+    branches:
+      - canonicalize-questions
+    paths:
+      - tools/unify_readme_system.py
+      - .github/workflows/unify-readme-system.yml
+
+permissions:
+  contents: write
+
+jobs:
+  unify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonicalize-questions
+          fetch-depth: 0
+
+      - name: Rewrite and validate README system
+        run: python tools/unify_readme_system.py
+
+      - name: Commit unified documentation
+        run: |
+          if git diff --quiet; then
+            echo "No README changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md \
+            python fastapi backend-engineering mysql redis vector-db llm-foundation rag agent-harness system-design \
+            research roadmap tools/build_market_analysis.py
+          git commit -m "docs: unify README information architecture and navigation"
+          git push origin HEAD:canonicalize-questions
