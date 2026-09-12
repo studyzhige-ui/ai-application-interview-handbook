@@ -5,6 +5,8 @@
 > **状态：✅ 第一版正式学习路线完成。** 这份路线解决“184 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
 > **固定原则不变：知识体系演进顺序优先。** HUMAN-A 真人面经只影响第二遍 / 第三遍的复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的课程主干。
+>
+> **这是一套推荐执行节奏，不是唯一课表。** 模块 README / Review 只把本页作为可选入口；不同基础、时间预算或教学场景可以自行调整速度，但第一次系统学习仍建议保持知识依赖顺序。
 
 ---
 
@@ -22,6 +24,8 @@
 → [System Design](../system-design/README.md)
 
 不要因为 Agent / RAG 高频就从中间开始，也不要因为某个基础题真人频率低就跳过必要前置。
+
+Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent-harness/review/README.md) · [System Design](../system-design/review/README.md)
 
 ---
 

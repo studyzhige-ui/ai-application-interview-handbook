@@ -1,6 +1,6 @@
 # MySQL｜关系型数据、事务与查询工程
 
-[← AI Backend Engineering](../backend-engineering/README.md) · [↑ Handbook 总目录](../README.md) · [Redis →](../redis/README.md)
+[← AI Backend Engineering](../backend-engineering/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [Redis →](../redis/README.md)
 
 > **状态：✅ 第一版系统教材完成**  
 > **教材：23 个连续知识小板块** · **HUMAN-A Canonical：26** · **独立来源覆盖：55**  
@@ -148,6 +148,8 @@ SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolati
 ---
 
 ## 9. 推荐学习方式
+
+> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../roadmap/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 23` 连续阅读，不按高频题跳章。
 2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。

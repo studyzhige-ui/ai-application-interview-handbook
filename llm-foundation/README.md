@@ -1,6 +1,6 @@
 # LLM Foundation（应用工程深度）｜模型机制与推理基础
 
-[← Vector Database](../vector-db/README.md) · [↑ Handbook 总目录](../README.md) · [RAG →](../rag/README.md)
+[← Vector Database](../vector-db/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [RAG →](../rag/README.md)
 
 > **状态：✅ 第一版系统教材完成**  
 > **教材：14 个连续知识小板块** · **HUMAN-A Canonical：23** · **独立来源覆盖：82**  
@@ -139,6 +139,8 @@ Token / Context → Transformer / Attention / Position → Generation / Decoding
 ---
 
 ## 9. 推荐学习方式
+
+> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../roadmap/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 14` 连续阅读，不按高频题跳章。
 2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。

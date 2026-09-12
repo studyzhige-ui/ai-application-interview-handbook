@@ -8,7 +8,7 @@
 
 ```text
 # Module｜一句话角色
-上一模块 · Handbook 总目录 · 下一模块
+上一模块 · Handbook 总目录 · Learning Path · 下一模块
 状态 / Blocks / Canonical / Source Coverage
 
 1. 这个模块解决什么
@@ -23,9 +23,12 @@
 10. 完成状态
 ```
 
+- Learning Path 是推荐使用方式，不是模块元数据；一级模块 README / Review README 只保留简洁入口，不写死 Week / Session，避免绑定某一种学习节奏。
+
 ## Review README 固定结构
 
 - 顶部必须能返回模块主页和 Handbook；
+- 可提供 Learning Path 作为可选入口，但不在 Review 中写死 Week / Session；
 - 明确它属于第二遍复习，不重复正文；
 - 自测答案默认使用 `<details>` 折叠；
 - 图解优先使用保守 GitHub Mermaid。
