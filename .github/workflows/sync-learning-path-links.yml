@@ -1,0 +1,43 @@
+name: Sync Learning Path links
+
+on:
+  push:
+    branches:
+      - canonicalize-questions
+    paths:
+      - tools/sync_learning_path_links.py
+      - .github/workflows/sync-learning-path-links.yml
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: canonicalize-questions
+      - name: Synchronize optional Learning Path links
+        run: python tools/sync_learning_path_links.py
+      - name: Commit synchronized README entrypoints
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add python/README.md python/review/README.md \
+                  fastapi/README.md fastapi/review/README.md \
+                  backend-engineering/README.md backend-engineering/review/README.md \
+                  mysql/README.md mysql/review/README.md \
+                  redis/README.md redis/review/README.md \
+                  vector-db/README.md vector-db/review/README.md \
+                  llm-foundation/README.md llm-foundation/review/README.md \
+                  rag/README.md rag/review/README.md \
+                  agent-harness/README.md agent-harness/review/README.md \
+                  system-design/README.md system-design/review/README.md \
+                  roadmap/learning-path.md roadmap/documentation-style-guide.md
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "docs: connect module and review pages to learning path"
+            git push origin HEAD:canonicalize-questions
+          fi
