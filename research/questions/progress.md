@@ -1,6 +1,6 @@
 # Curriculum & Research Progress｜当前正式状态
 
-[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../roadmap/knowledge-map.md)
+[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../roadmap/knowledge-map.md) · [Learning Path](../../roadmap/learning-path.md)
 
 > **Repository-first：仓库当前文件高于历史聊天总结。**
 
@@ -36,6 +36,16 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 
 **v1.0 Final Quality Audit：✅ PASS。** 184/184 Curriculum Markdown、235/235 Canonical、仓库内链接、Mermaid、跨模块 Ownership、术语与版本敏感事实风险审计均已完成；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
 
+## Phase 4 Learning & Interview Usage Layer
+
+| Layer | Status | Entry |
+|---|---|---|
+| 正式学习路线 | ✅ | [13 周标准 / 8 周加速 / 14 天冲刺](../../roadmap/learning-path.md) |
+| Bridge Labs | ⏳ | 下一阶段：把多个模块组合成真实工程任务 |
+| Cross-module Mock Interview | ⏳ | 下一阶段：用真实连续追问训练跨模块迁移 |
+
+学习路线仍遵守：第一次学习 100% 按 Curriculum 顺序；HUMAN-A Heat 只进入 Review / Interview 权重。
+
 ## 固定课程原则
 
 > **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
@@ -56,4 +66,4 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 8. `roadmap/documentation-style-guide.md` 的统一格式；
 9. README 本地链接、章节数量与旧状态描述。
 
-后续工作进入**全仓库质量维护、复习路线与面试训练**，不再存在未撰写的一级模块。
+后续工作进入**使用层建设与质量维护**；不再存在未撰写的一级模块。

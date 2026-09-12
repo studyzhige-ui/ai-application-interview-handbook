@@ -7,7 +7,7 @@
 
 ## 快速入口
 
-[十板块知识地图](roadmap/knowledge-map.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
+[十板块知识地图](roadmap/knowledge-map.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
 
 ---
 
@@ -117,10 +117,15 @@ Source Count mismatch         0
 
 ## 6. 统一学习方法
 
-1. **正文第一遍：** 按模块和章节顺序建立完整因果链。
-2. **Review 第二遍：** 从空白纸重新画机制 / 数据流 / Failure，而不是重新抄正文。
-3. **Interview 第三遍：** 练真实问法、30 秒回答、深挖与易错边界。
-4. **项目复盘：** 把自己的项目沿 `为什么 → 机制 → Trade-off → Failure → Scale → Verification` 重新讲一遍。
+完整执行版见：[Learning Path｜十板块正式学习路线](roadmap/learning-path.md)。
+
+统一采用三遍：
+
+1. **Curriculum Pass：** 184 个正文知识块按知识依赖完整学习，不按面经频率跳章。
+2. **Review Pass：** 每个模块完成后从空白纸重画机制 / 数据流 / Failure，并完成折叠自测。
+3. **Interview Pass：** 再用 HUMAN-A Heat 与 L1–L4 Depth 调整口述次数和追问深度。
+
+标准第一次完整学习建议使用 **13 周 / 78 Session** 路线；已有基础可以压缩为 8 周，但不改变章节顺序；14 天路线只用于完成第一遍后的面试冲刺。
 
 正式教材统一追求：
 
@@ -128,18 +133,19 @@ Source Count mismatch         0
 
 ---
 
-## 7. 项目质量与维护入口
+## 7. 项目使用与质量入口
 
 | 文档 | 作用 |
 |---|---|
 | [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
+| [Learning Path](roadmap/learning-path.md) | 13 周标准路线、8 周加速、14 天冲刺与 Module Exit Gate |
 | [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
 | [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
 | [Documentation Style Guide](roadmap/documentation-style-guide.md) | README / 描述文件统一规范 |
 | [Granularity Audit](roadmap/curriculum-granularity-audit.md) | 研究粒度与教材粒度为什么分开 |
 | [Content Depth Audit](roadmap/content-depth-audit.md) | 正文深度与完成状态 |
 | [Foundation Status](roadmap/foundation-status-audit.md) | Python / FastAPI / AIBE 完成状态 |
-| [Progress](research/questions/progress.md) | Phase 1–3 当前正式状态 |
+| [Progress](research/questions/progress.md) | Curriculum 与使用层当前正式状态 |
 | [Module Index](research/questions/module-index.md) | Canonical Ownership ↔ Curriculum 映射 |
 
 ---
@@ -153,8 +159,8 @@ llm-foundation/      rag/                 agent-harness/
 system-design/
 
 research/            # HUMAN-A / Canonical / Analysis / Source Index
-roadmap/             # Knowledge Map / Audits / Documentation Rules
+roadmap/             # Knowledge Map / Learning Path / Audits / Documentation Rules
 tools/               # Research validation / reproducible analysis
 ```
 
-> 仓库最新 README、Knowledge Map、Progress 与 Module Index 是当前状态的正式来源；历史聊天和旧摘要不能覆盖仓库当前描述。
+> 仓库最新 README、Knowledge Map、Learning Path、Progress 与 Module Index 是当前状态的正式来源；历史聊天和旧摘要不能覆盖仓库当前描述。
