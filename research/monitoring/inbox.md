@@ -120,4 +120,32 @@ URL 精确去重
 
 ## 当前 Inbox
 
-暂无待归档 HUMAN-A。
+> 2026-09-16 10:00 Morning Search：**3 个候选已通过 HUMAN-A + Role Scope + 全历史去重 Gate**。这里只暂存候选，不分配 `Sxxx`；22:00 仍需重新回读全历史做最终去重。
+
+### 美团｜AI 后端｜一面 + 二面（同一候选人同一流程，待晚间合并归档）
+
+- 作者：`SOLDIER_627`（同济大学，个人求职 Timeline 可核验）
+- 一面来源：https://api-cdn.nowcoder.com/discuss/927579574932705280?sourceSSR=post
+- 二面来源：https://www.nowcoder.com/discuss/929087871779110912
+- 一面明确日期：2026-09-10；二面帖子在本次最近 3 天发现窗口内发布。
+- HUMAN-A 证据：候选人连续发布本人招聘流程；一面约 76 分钟、二面约 59 分钟，问题围绕本人实习项目连续深挖，不是答案帖或内容账号。
+- 代表性题序：云服务器故障诊断 Skill → 错误路由 / 幻觉兜底 → 渐进式开放 Tool 与校验门禁 → 分层取证 / Evaluation → Workflow 迁移 Skill → 多 Skill 路由冲突 → Skill 增长导致 Context 膨胀 → 历史 Case 回放 / 故障注入 → PI Agent / DeepSeek Harness → Agent Loop 停止条件 → AI 代码生成速度超过人工 Review 的治理 → 云服务器 Region / AZ 容灾 → Coding。
+- 去重：已直接回读 `batch-01.md`～`batch-26.md`。历史 `S228` 是**同一候选人的快手 AI 全栈独立招聘流程**，公司与招聘流程不同，因此不能误合并；当前美团两条 URL、公司流程与连续题序均未在历史正式库出现。当前一 / 二面必须合并为一个未来来源，不能按轮次拆号。
+
+### 科大讯飞｜Agent 研发工程师 · Harness 方向｜线下一面 + 二面 + HR
+
+- 作者：`Tale2229`（北京邮电大学，个人主页当前仅该本人求职帖）
+- 来源：https://www.nowcoder.com/feed/main/detail/671d2fa1d7c04322837ee1f5788dd69d
+- 面试：2026-09-11 武汉线下半天完成三场；帖子在本次最近 3 天发现窗口内发布。
+- HUMAN-A 证据：作者明确记录从北京到武汉参加线下面试，一面多个问题答不上、意外进入二面、二面 / HR 自评以及等待结果；项目、基础、算法、HR 问题按真实顺序保留。
+- 代表性题序：即时通信架构 → 多节点消息处理 / 负载均衡 → Agent 项目是否真实使用 → Short / Long-term Memory → 知识库增量更新 → Agent Loop 停止条件 → Harness → LangGraph Node 划分 → 项目代码量与 AI Coding 参与度 → HTTP / Python Decorator / IPC / Deadlock / RWLock / User-Kernel → AVL vs Red-Black → Memory Fragmentation → Algorithm；二面继续问 Agent 最新进展。
+- 去重：已直接回读全历史。历史科大讯飞 `S178 / S179` 为不同作者、不同月份与不同项目 / 题序；当前 URL、作者、9/11 招聘流程与长题序均未在历史库出现。
+
+### 快手｜AI 全栈｜秋招一面
+
+- 作者：`明天会有好天气`（个人秋招进度与其它本人面试 Timeline 可核验）
+- 来源：https://www.nowcoder.com/feed/main/detail/60d833cbae7f4a668a0bed9e18a428f1
+- 发布：2026-09-15 左右（页面显示“昨天 23:03”，属于本次最近 3 天窗口）。
+- HUMAN-A 证据：岗位标题明确 AI 全栈；作者保留“八股好久没看、很多说不上来”的现场状态，其个人 Timeline 还可核验 9 月多家公司笔面进度，不是批量内容号。
+- 代表性题序：实习 → MySQL Insert 执行过程 → 两阶段事务提交 → GC / ZGC → Slow SQL → AI Coding 流程 → AI Coding 上线代码遗漏 Bad Case 如何处理 → Object Creation → Repeatable Read → Coding（最大岛屿面积）。
+- 去重：已直接回读全历史；当前 URL / 作者未收录，历史快手 AI 全栈 / Agent 样本均为其它候选人和不同招聘流程。虽然 AI 专项问题数量不多，但岗位本身通过 Role Scope，因此整场真实 Backend + AI Coding 问题应保留。
