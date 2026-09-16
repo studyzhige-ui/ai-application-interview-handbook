@@ -47,7 +47,7 @@
 - FastAPI / AIBE / System Design：首版即按当前粒度和深度标准建设；
 - Redis / Vector DB / LLM / RAG：完成旧结构颗粒度整改后重新做深度复核；
 - MySQL：原 23-block 结构本身健康，机制与 correctness 边界审阅通过；
-- Agent Harness：47→23 后对旧短稿区域做第二轮深写与源码 / 官方证据验收。
+- Agent 历史版本：47→23 时完成旧短稿深写与证据验收；当前16章分层重构的检查范围见顶部更新说明。
 
 ## 后续规则
 

@@ -30,7 +30,7 @@
 - DB + Cache 一致性 / 通用 Rate Limit / Retry / MQ → AI Backend Engineering；
 - Dense / Sparse / Hybrid / RRF / Rerank / Retrieval Eval → RAG；
 - Embedding / Reranker 模型内部原理 → LLM Foundation；
-- Agent Tool / Context / Memory / Checkpoint → Agent Harness；
+- Agent Tool / Context / Memory / Checkpoint → Agent；
 - 端到端组合与 Scenario Trade-off → System Design。
 
 ## 研究事实不随教材重组改变

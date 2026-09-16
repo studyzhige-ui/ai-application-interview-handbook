@@ -345,7 +345,7 @@ Mental Model
 | 4 | Redis + Vector DB |
 | 5 | LLM + RAG |
 | 6 | Agent 01–12 |
-| 7 | Agent 13–23 + System Design 01–08 |
+| 7 | Agent 13–16 + System Design 01–08 |
 | 8 | System Design 09–19 + 全局 Review / Interview |
 
 如果发现连续两天 Exit / Self-test 大量失败，就退回 13 周节奏，不要继续用时长换“看完速度”。

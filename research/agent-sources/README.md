@@ -1,4 +1,4 @@
-# Agent Harness｜源码与权威资料索引
+# Agent｜源码与权威资料索引
 
 [← Agent](../../agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../README.md)
 
