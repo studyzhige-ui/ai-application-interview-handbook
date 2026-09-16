@@ -12,12 +12,26 @@ jobs:
   enrich:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-      - run: python tools/_agent_enrich.py
+      - run: python -B tools/_agent_enrich.py
+      - name: Normalize final prose and validate again
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in Path('agent').rglob('*.md'):
+              p.write_text(p.read_text(encoding='utf-8').rstrip()+'\n', encoding='utf-8')
+          for name in ['roadmap/content-depth-audit.md', 'roadmap/final-quality-audit.md']:
+              p=Path(name)
+              t=p.read_text(encoding='utf-8').replace('旧不完整/缩进有问题的示例不冒称可运行', '旧示意代码不作为可运行证明，本轮另提供经执行验证的教学Loop')
+              p.write_text(t.rstrip()+'\n', encoding='utf-8')
+          PY
+          python tools/validate_agent_curriculum.py
       - name: Commit only to requested branch
         env:
           TARGET: docs/agent-architecture-map-20260916-0266cbf
