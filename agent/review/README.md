@@ -1,6 +1,6 @@
 # Agent 复习｜用同一条主线重建系统
 
-[← Agent](../README.md) · [Handbook](../../README.md) · [面试训练](../interview/README.md)
+[← Agent](../README.md) · [Handbook](../../README.md) · [可选学习路线](../../roadmap/learning-path.md) · [面试训练](../interview/README.md)
 
 这是第二遍复习，不是另一套教材。先闭卷回答，遇到缺口只回对应章节。
 
@@ -196,3 +196,53 @@ Trace 记录过程及关联事实；Eval 依据任务和约束判断结果、过
 能区分应用流程与 Agent Loop，能解释静态四层和动态状态如何对应；能把 Memory、RAG、Tool、Sandbox 等放回职责；能说明为什么某任务不需要某组件；能定位一次失败的责任边界，并提出验证而不是只换模型。
 
 不要只检查能否复述术语。每个机制都应能回答：为什么存在、输入输出是什么、何时失效、如何测试。
+
+## 综合推演｜把main的机制复习接回四层图
+
+以下是教学压力测试，不是声称已发生的真人面试或已运行的真实系统实验。每题先画时间线，再说明责任、未知事实、下一步动作及如何验证。
+
+<details>
+<summary>1. 报告任务读不到一个关键文件：该加工具、扩大权限，还是请求澄清？</summary>
+
+先回契约看缺口是否阻碍验收。L3报告拒绝，L2保留未决证据，L1请求澄清或按约定部分交付；不能通过新工具绕开资源权限。回到[01](../docs/01-AgentSystemAndTaskContract.md)、[03](../docs/03-ApplicationAndInteraction.md)、[14](../docs/14-IdentityPermissionsAndSafety.md)。
+
+</details>
+
+<details>
+<summary>2. 50K token工具结果挤掉“不改原件”，压缩后模型提出写操作，故障在哪？</summary>
+
+先查来源选择、预算、外部化和压缩不变量，再检查真实授权门是否拒绝；安全不应仅依赖这句话仍在Context。回到[05](../docs/05-ContextEngineering.md)、[11](../docs/11-ToolExecutionAndEffects.md)、[14](../docs/14-IdentityPermissionsAndSafety.md)。
+
+</details>
+
+<details>
+<summary>3. 产物已经保存，检查点失败，用户同时取消，worker又重启，先做什么？</summary>
+
+载入契约、状态和稳定动作身份，核对产物及迟到回执，补齐事实并停止后续动作。取消不是回滚；无法确认结果时保留UNKNOWN，不重复创建新动作。回到[07](../docs/07-StateAndRecovery.md)、[11](../docs/11-ToolExecutionAndEffects.md)、[13](../docs/13-ResourcesAndEnvironments.md)。
+
+</details>
+
+<details>
+<summary>4. 两个子Agent给出冲突结论并同时更新一个文件，为什么“不同Context”没解决？</summary>
+
+信息隔离与资源并发不同。用来源/版本判定结论冲突，writer所有权或隔离工作区处理写冲突，父级按验收汇聚而不是拼transcript。回到[06](../docs/06-MemoryLifecycle.md)、[08](../docs/08-MultiAgentCoordination.md)。
+
+</details>
+
+<details>
+<summary>5. 模型切换后更便宜，但工具调用变错、总体完成率下降，应改哪一层？</summary>
+
+先查L2能力要求、L3协议/schema兼容与上下文处理，再固定数据/工具/评分做回归；保留已有副作用，不因Provider故障重跑整个任务。回到[09](../docs/09-ModelAccessAndRouting.md)、[10](../docs/10-ToolContractAndDiscovery.md)、[15](../docs/15-ObservabilityAndEvaluation.md)。
+
+</details>
+
+<details>
+<summary>6. Agent说代码改完、测试通过，但改了他人文件或测试没覆盖需求，怎样拒绝交付？</summary>
+
+核对工作区基线、最小diff、真实测试回执及独立验收，区分“执行某项检查通过”和“任务完成”。回到[13](../docs/13-ResourcesAndEnvironments.md)、[15](../docs/15-ObservabilityAndEvaluation.md)、[16](../docs/16-ProductionArchitectureAndEvolution.md)。
+
+</details>
+
+## 自行验收，不绑定固定周数
+
+能从契约画到四层并说明未采用组件的理由；能解释Context/Memory/State/History的不同生命周期；随机选上面的一个失败窗口，说明已知、未知、核对动作、停止/恢复和验证。薄弱处只回对应章，再用面试页的具体追问训练，不以“读过文件”代替掌握。

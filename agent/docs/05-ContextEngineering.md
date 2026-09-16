@@ -6,6 +6,9 @@
 >
 > 本章产物：**上下文编译、预算与压缩的正常/失败路径**。
 
+<!-- enrichment: reading-guide -->
+> **阅读提示：** 依次学输入组装、预算与外部化、压缩切换、正确性验证。可以分段学习，但不要只读压缩而跳过前面的选择和预算；源码对照用于第二遍核验，不是另一条课程。
+
 [Context Manager 管的是当前模型可见信息](#part-1) → [从来源到可调用的上下文](#part-2) → [先处理增长，再考虑压缩](#part-3) → [Compaction 是上下文管理机制](#part-4) → [验证继续执行是否仍然正确](#part-5)
 
 <a id="part-1"></a>
@@ -130,12 +133,14 @@ Instructions      10k
 Goal / State       8k
 Recent History    20k
 Memory / RAG      30k
-Tool Definitions  20k
+Tool Definitions  16k
 Tool Results      20k
-Reserve Output    20k
+Reserve Output    16k
+Safety Headroom    8k
+Total             128k
 ```
 
-数字只是示意，真正值要结合模型和任务。
+数字只是示意，真正值要结合模型和任务。输入上限应同时扣除输出预留与安全余量，并使用供应商兼容的计数方式校验；未发生的未来Tool结果不提前算入当前输入，但需预留下一步增长空间。
 
 重要思想：
 
@@ -258,49 +263,18 @@ load relevant section
 
 这就是可恢复的 Context Offloading。
 
-### Prompt / Context Cache 应该缓存什么
+### 区分前缀计算缓存与应用层信息缓存
 
-`AGENT-012` 关注 Prompt / Context Cache。
+| 对象 | 复用什么 | 不能替代什么 |
+|---|---|---|
+| Provider Prompt Cache | 符合供应商条件的相同输入前缀计算 | 不复用整个最终答案，不保证应用资料新鲜 |
+| 应用Context投影/模板缓存 | 已组装片段、指令或schema视图 | 仍需版本、权限和当前任务边界 |
+| Tool/检索结果缓存 | 某次查询的派生结果 | 要按来源更新、租户和权限失效 |
+| Artifact外部化 | 可寻址的完整结果 | 是保存/按需读取，不等于缓存命中 |
 
-缓存最适合：
+[OpenAI Prompt Caching官方说明](https://platform.openai.com/docs/guides/prompt-caching)说明前缀匹配与计算复用。具体支持条件依模型/API版本，不在本章硬编码价格或保留时间。稳定指令和工具定义放在可复用前缀有助于命中；当前目标与新证据仍必须正确传入。
 
-```text
-稳定、重复、可版本化的 Prefix
-```
-
-例如：
-
-```text
-System Instructions
-Stable Tool Schema Set
-Stable Policy
-Repository Instruction Snapshot
-```
-
-不适合长期缓存：
-
-```text
-Current User Request
-Latest Tool Result
-Mutable Runtime State
-Short-lived Permission
-```
-
-缓存 Key 至少需要考虑：
-
-```text
-model/provider
-instruction version
-tool schema version
-policy version
-tenant / workspace boundary
-```
-
-否则可能发生：
-
-```text
-旧 Context 被错误复用
-```
+所谓“旧Context被错误复用”，首先要查应用自己缓存了过期材料或省略了新版本，而不能把Provider前缀命中本身等同于读到旧答案。应用缓存需考虑身份/租户、来源版本、工具schema、策略、模型/供应商兼容性；命中率是性能指标，不是事实正确性指标。
 
 <a id="part-4"></a>
 
@@ -506,6 +480,19 @@ Stable Instructions
 形成新的 Replacement View。
 
 这也解释了为什么 Codex `compact.rs` 会专门处理 replacement history，而不是只生成一个文本字段。
+
+### 固定源码对照：压缩不只是新增一个summary字段
+
+这里恢复 `main` 原09–10章的实现阅读线索，依据仓库既有固定快照索引，**不是本轮重新遍历两个产品全部源码**。
+
+| 实现记录 | 支持的观察 | 本课程据此保留的责任 |
+|---|---|---|
+| Codex `compact.rs`：manual/auto、pre-turn/mid-turn/standalone、replacement history | 压缩存在触发阶段和替换对象 | 触发、构建候选、验证与切换应分清 |
+| 同文件：initial-context重新注入、live/persisted history、usage recomputation | 替换涉及状态与预算 | 检查关键上下文恢复、持久记录一致及新预算 |
+| 同文件：hooks、analytics和准确率风险提示 | 压缩自己可失败、可观测 | 不把节省token当唯一成功标准 |
+| Claude Code `QueryEngine.ts`、compact/snip与ToolUseContext记录 | 记忆注入、工具结果替换、投影有关联 | 压缩需与选择、外部化、去重一起设计 |
+
+固定版本和已读/待读边界见[Codex索引](../../research/agent-sources/codex-source-index.md)、[Claude Code索引](../../research/agent-sources/claude-code-source-index.md)。源码支持某产品的具体观察；下文候选验证/回滚流程是教学设计，不等于源码逐行实现。
 
 <a id="part-5"></a>
 
@@ -729,6 +716,21 @@ Assembly / Budget / Offloading 没设计好
 <summary>怎样验证压缩有效？</summary>
 
 同时检查结构不变量、关键语义、后续执行表现、错误恢复和回归指标，而不只看节约 token。
+
+</details>
+
+<!-- enrichment: scenario-checks -->
+<details>
+<summary>Prompt Cache命中是否说明模型看到的资料没有过期？</summary>
+
+不说明；前缀计算复用与应用选择了什么资料是不同问题，后者仍需source/version/freshness校验。
+
+</details>
+
+<details>
+<summary>压缩候选生成失败时能先删除原History吗？</summary>
+
+不能；候选验证和保存成功前保留旧活动视图，切换时维持可恢复性，失败明确回退或停止。
 
 </details>
 

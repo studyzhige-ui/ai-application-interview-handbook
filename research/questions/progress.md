@@ -1,6 +1,6 @@
 # Curriculum & Research Progress｜当前正式状态
 
-> **2026-09-16更新：** Agent为16章分层重构版，全仓库177篇正文。旧版深度与终局审计为历史记录；本次验证范围为结构、链接、迁移覆盖和证据不变性，详见既有质量记录。
+> **2026-09-16更新：** Agent为16章分层增强版，全仓库177篇正文；机制迁移、通用推导示例、64道细粒度训练及结构检查已完成，详见质量记录。真实模型与外部工具集成测试不在本轮范围。
 
 
 [← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../roadmap/knowledge-map.md) · [Learning Path](../../roadmap/learning-path.md)
@@ -37,7 +37,7 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 
 十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。
 
-**v1.0 Final Quality Audit：✅ PASS。** 177/184 Curriculum Markdown、235/235 Canonical、仓库内链接、Mermaid、跨模块 Ownership、术语与版本敏感事实风险审计均已完成；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
+**历史v1.0 Final Quality Audit：PASS，仅适用于旧版184篇审计。** 当前Agent16章增强的机制迁移、例子和训练检查另见[质量记录](../../roadmap/final-quality-audit.md)，不以历史PASS代替新版本验证。
 
 ## Phase 4 Learning & Interview Usage Layer
 

@@ -6,6 +6,9 @@
 >
 > 本章产物：**工具契约、目录、可见集合与版本策略**。
 
+<!-- enrichment: reading-guide -->
+> **阅读提示：** 先建立输入输出契约，再区分完整 Registry 与本轮可见集合，最后看发现、加载和版本。Schema、目录与权限是三个不同检查，不要合成一个“能调用”标志。
+
 [工具是模型与执行系统之间的正式契约](#part-1) → [注册目录与本轮可见集合](#part-2) → [发现、加载与版本生命周期](#part-3)
 
 <a id="part-1"></a>
@@ -535,6 +538,14 @@ runtime_version
 
 并在 Resume / Replay 时明确兼容策略。
 
+## 源码对照与一个失配场景
+
+旧版Tool章节保留的关键观察是：Claude Code `Tool.ts` 不只有输入schema和call，还暴露只读/破坏性/并发安全、interrupt、permission、progress与context影响；Codex工具层把schema、ToolCall、ToolExecutor、ToolOutput作为明确对象。出处与固定版本见[Claude Code索引](../../research/agent-sources/claude-code-source-index.md)、[Codex工具索引](../../research/agent-sources/codex-source-index.md)。
+
+**教学失配场景：** 模型看到工具v1，执行端已升级到v2且参数语义变了。即使JSON仍可解析，也不能按新含义执行旧请求。Registry应解析稳定身份/版本，冻结或重载当前可见契约；无法兼容时把具体差异反馈给运行层，再决定修复参数或停止。
+
+`model_visible_specs`表达的关键是“完整目录”和“当前模型可见投影”分离；曝光不是授权，发现召回率也不是执行正确率。测试需分别覆盖正确工具是否被发现、是否选对、版本是否匹配、权限是否被执行端拒绝。
+
 ## 本章自测
 
 <details>
@@ -548,6 +559,21 @@ Schema 主要检验形状，还需语义、身份、租户、权限、风险和�
 <summary>Registry 与可见工具集合是什么关系？</summary>
 
 Registry 是完整目录；可见集合是经过策略、环境和任务筛选后提供给当前模型的视图。
+
+</details>
+
+<!-- enrichment: scenario-checks -->
+<details>
+<summary>Registry找到handler是否足以执行？</summary>
+
+不够；还需匹配版本、schema、业务语义、身份权限与资源前置条件。
+
+</details>
+
+<details>
+<summary>发现系统漏掉正确工具，换更强模型一定解决吗？</summary>
+
+不一定；先测catalog覆盖和candidate recall，再分离选择错误与执行错误。
 
 </details>
 

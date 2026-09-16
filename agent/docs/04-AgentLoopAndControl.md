@@ -6,6 +6,9 @@
 >
 > 本章产物：**一次执行的闭环、对象与停止语义**。
 
+<!-- enrichment: reading-guide -->
+> **阅读提示：** 先走完一次观察—行动—反馈，再理解对象和事件。模型适配与受控工具执行暂作黑盒：前者返回候选决策，后者返回成功、失败或结果未知；09–11章再展开内部实现。
+
 [先把执行对象说清楚](#part-1) → [循环推进：模型提出候选，运行时决定怎样兑现](#part-2) → [用计划管理进度，而不是把计划当成功证明](#part-3) → [停止、预算、重复与方向修正](#part-4) → [事件把循环变成可解释的执行](#part-5)
 
 <a id="part-1"></a>
@@ -543,6 +546,72 @@ ToolResult(c17)
 
 `call_id` 是 Tool protocol 的相关性键。
 
+## 将黑盒接到状态机：一次失败不等于整个任务失败
+
+最小执行状态可用 `RUNNING / WAITING_TOOL / WAITING_INPUT / STOPPED` 表达；STOPPED还要携带成功、失败、取消或预算耗尽的原因。名称是工作定义，关键是允许的状态转换、谁持有执行权、恢复后如何确定唯一下一步。
+
+`call_id`关联模型的一次调用及结果；`operation_id`标识需要核对的逻辑动作；`attempt_id`区分重试尝试。一个逻辑动作可以有多次尝试，不能因为超时就把它伪装成新动作。07章打开恢复语义，11章打开工具执行语义。
+
+<details>
+<summary>动手：一个可运行的最小控制循环（Python 3.11+，无网络、无真实副作用）</summary>
+
+这是对旧版最小Loop的教学重写，不是Codex或Claude Code源码。模型用预设决策序列替代，文件用字典替代；它只测试调度、白名单、相关性与引用可解析，**不证明报告语义真实，也不提供生产级幂等或持久化**。
+
+<!-- runnable: report-loop -->
+```python
+from dataclasses import dataclass
+from typing import Iterable
+
+@dataclass(frozen=True)
+class Decision:
+    kind: str
+    value: str = ""
+    citations: tuple[str, ...] = ()
+
+def run_report(decisions: Iterable[Decision], max_steps: int = 4):
+    sources = {"intro.txt": "范围说明", "notes.txt": "已确认的记录"}
+    observations: dict[str, str] = {}
+    events: list[tuple[str, str, str]] = []
+    iterator = iter(decisions)
+    for step in range(1, max_steps + 1):
+        decision = next(iterator, None)
+        if decision is None:
+            return "incomplete", events
+        if decision.kind == "read":
+            call_id = f"call-{step}"
+            if decision.value not in sources:
+                events.append((call_id, "denied", decision.value))
+                return "blocked", events
+            observations[decision.value] = sources[decision.value]
+            events.append((call_id, "tool_result", decision.value))
+        elif decision.kind == "final":
+            refs = decision.citations
+            resolvable = bool(refs) and all(r in observations for r in refs)
+            if not decision.value or not resolvable:
+                events.append((f"step-{step}", "verification_failed", "citations"))
+                return "unverified", events
+            events.append((f"step-{step}", "draft_verified", "reference-check-only"))
+            return "completed_reference_check", events
+        else:
+            return "invalid_decision", events
+    return "budget_exhausted", events
+
+ok = [Decision("read", "intro.txt"), Decision("read", "notes.txt"),
+      Decision("final", "报告草稿", ("intro.txt", "notes.txt"))]
+status, events = run_report(ok)
+assert status == "completed_reference_check"
+assert [e[0] for e in events[:2]] == ["call-1", "call-2"]
+assert run_report([Decision("read", "secret.txt")])[0] == "blocked"
+assert run_report([Decision("final", "草稿", ("intro.txt",))])[0] == "unverified"
+assert run_report([Decision("read", "intro.txt")] * 5)[0] == "budget_exhausted"
+assert run_report([Decision("delete", "intro.txt")])[0] == "invalid_decision"
+print("report-loop: 5 cases passed")
+```
+
+下一步不是增加更多模型，而是逐一打开Context、持久状态和Tool Executor黑盒。本例返回的完成状态特意叫 `completed_reference_check`：通过有限检查不能夸称整个报告质量已被证明。
+
+</details>
+
 ## 本章自测
 
 <details>
@@ -556,6 +625,21 @@ ToolResult(c17)
 <summary>final 文本能否直接触发成功状态？</summary>
 
 应先按契约验证完成证据；结束回复、达到预算和完成任务是不同语义。
+
+</details>
+
+<!-- enrichment: scenario-checks -->
+<details>
+<summary>同一工具再次调用是否一定是死循环？</summary>
+
+不一定；分页、合法重试和新输入查询都可重复。结合动作签名、状态进展和同类错误判断。
+
+</details>
+
+<details>
+<summary>教学Loop的引用检查通过，能证明自然语言结论真实吗？</summary>
+
+不能；它只证明示例校验覆盖的有限属性，语义真实性需要更强证据核验。
 
 </details>
 

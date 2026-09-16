@@ -27,7 +27,7 @@ Section                       = 参数 / 变体 / Failure / 深挖追问
 | Vector DB | 23 old blocks / 12 Canonical | 16 | ✅ |
 | LLM Foundation | 29 old blocks / 23 Canonical | 14 | ✅ |
 | RAG | 34 old blocks / 29 Canonical | 14 | ✅ |
-| Agent | 23章旧课程 / 44 Canonical | 16 | 分层重构 |
+| Agent | 23章旧课程 / 44 Canonical | 16 | 分层增强与迁移复核完成 |
 | System Design | 24 Scenario Canonical | 19 | ✅ |
 
 这些数字是结果，不是目标。教材重组永远不能改变 HUMAN-A、Source Count、Primary Ownership 或 Verified Follow-up Chain。

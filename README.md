@@ -78,7 +78,7 @@ interview/
 └─ 面试前速查表
 ```
 
-Python 额外保留 Coding 小题；Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
+Python 额外保留 Coding 小题；Agent把高频练习、易错点与速查合并在一个 `interview/README.md`，不增加平行教材。Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
 
 ---
 

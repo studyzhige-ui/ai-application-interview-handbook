@@ -6,6 +6,9 @@
 >
 > 本章产物：**检索/存取契约与 MCP、Skill、Hook 的责任边界**。
 
+<!-- enrichment: reading-guide -->
+> **阅读提示：** 先学信息与状态存取接口，再区分 MCP / Skill / Hook，最后用代码搜索作接口对照。协议、程序性知识和生命周期扩展不属于同一种抽象。
+
 [把信息需求连接到可信来源](#part-1) → [工具、协议、技能与钩子各负责什么](#part-2) → [能力扩展的失败、版本和安全](#part-3) → [用代码资源检索检查接口是否足够表达需求](#part-4)
 
 <a id="part-1"></a>
@@ -440,6 +443,14 @@ impact analysis
 
 Context Engineering 原则同样适用。
 
+## 能力目录也有生命周期
+
+目录可以保存稳定身份、版本、摘要、参数schema位置、来源/租户、可见条件、运行时handler及风险元数据；模型先拿少量候选，再按需加载完整契约。Skill可以先加载说明，真正需要脚本/资产时再读取，不等于永远全量塞入Prompt。
+
+Claude Code索引里的 `searchHint`、`dynamicSkillDirTriggers`、`discoveredSkillNames`支持这种渐进加载观察；Codex索引记录了command、MCP tool、prompt、agent等Hook handler形式。**协议/扩展提供什么**和**运行层何时允许用它**仍是不同责任，详情见两个[固定源码索引](../../research/agent-sources/README.md)。
+
+版本变化或插件卸载后，要让旧可见集合与当前执行目录一致。不要将安全门仅做成可被关闭的Hook；Hook失败策略依责任区分：诊断Hook可以受控降级，安全校验失败应拒绝或升级，而不能按普通日志错误忽略。
+
 ## 本章自测
 
 <details>
@@ -453,6 +464,21 @@ Context Engineering 原则同样适用。
 <summary>为什么记忆策略与 Memory Store 接口分章？</summary>
 
 前者决定保存和使用什么，后者兑现受控读写；分清职责能独立更换存储而保持运行语义。
+
+</details>
+
+<!-- enrichment: scenario-checks -->
+<details>
+<summary>Hook失败可以统一忽略吗？</summary>
+
+不可以；诊断与安全责任不同，安全关键检查失败应拒绝或升级，不能开放执行。
+
+</details>
+
+<details>
+<summary>Skill包含脚本是否等于脚本自动获得执行许可？</summary>
+
+不是；加载知识、读取资产、执行脚本是不同动作，各自受到权限与环境限制。
 
 </details>
 

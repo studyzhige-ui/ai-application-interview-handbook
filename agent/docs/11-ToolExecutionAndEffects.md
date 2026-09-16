@@ -6,6 +6,9 @@
 >
 > 本章产物：**调用生命周期、错误、并发、副作用与取消语义**。
 
+<!-- enrichment: reading-guide -->
+> **阅读提示：** 按 Invocation→结果→失败→并发/取消分段读。把07章的稳定逻辑动作标识带进来：一次重试可以有新 attempt_id，但不能因此变成新的业务操作。
+
 [从调用请求到可接受结果](#part-1) → [错误分类与有限恢复](#part-2) → [并发必须围绕资源与副作用](#part-3) → [取消、进度和最终结果](#part-4)
 
 <a id="part-1"></a>
@@ -100,7 +103,7 @@ trace_fields
   "error_kind": "timeout",
   "summary": "tests exceeded 60s",
   "artifact_ref": "logs/test-call-31.txt",
-  "retryable": true
+  "retry_hint": "requires_action_reconciliation"
 }
 ```
 
@@ -620,6 +623,14 @@ reconciliation required
 
 这会在 Checkpoint / Idempotency 章节进一步展开。
 
+## 把执行结果分成事实、建议与展示
+
+响应里的 `retryable`只能是错误处理提示，不能独自授权重放。是否重试还取决于动作类型、是否已开始、可核对性、幂等保证与剩余预算；Tool返回的文字也不能覆盖可信权限策略。
+
+旧版Codex对照明确区分 `FunctionCallError::RespondToModel` 与 `Fatal`，以及 `ToolOutput` 的日志/模型/Host表示。这里吸收的是“可向模型反馈的局部错误”与“必须停止/上报的运行时错误”不能混为一谈；名字和具体分支仍属于固定快照，不是所有框架标准。对照入口：[Codex工具层索引](../../research/agent-sources/codex-source-index.md)。
+
+取消测试必须覆盖：提交前取消、等待执行时取消、执行中合作式取消、客户端断线但任务继续、取消后迟到成功回执。最后一种要回到07章核对动作，而不是丢弃事件并宣称没有发生。只读工具也可能泄露数据；可并发性由具体资源和输入决定，不由 `async` 关键字决定。
+
 ## 本章自测
 
 <details>
@@ -633,6 +644,21 @@ reconciliation required
 <summary>取消请求得到确认是否说明副作用已回滚？</summary>
 
 不是。取消传播、真正终止与外部结果核对是独立步骤，已完成动作可能需要补偿且不一定可逆。
+
+</details>
+
+<!-- enrichment: scenario-checks -->
+<details>
+<summary>Timeout回包写了retryable=true就能重试吗？</summary>
+
+不能；提示不是授权，仍需判断动作副作用、执行阶段、幂等/核对能力和预算。
+
+</details>
+
+<details>
+<summary>取消后远程动作成功回执晚到，应该丢弃吗？</summary>
+
+不能；记录并核对外部结果，停止后续动作，必要时补偿或转人工。
 
 </details>
 

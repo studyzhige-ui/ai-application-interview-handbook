@@ -6,6 +6,9 @@
 >
 > 本章产物：**记忆读写、来源、更新与失效策略**。
 
+<!-- enrichment: reading-guide -->
+> **阅读提示：** 按选择→写入→召回→纠错→失效走完生命周期。暂把 Memory Store 当成带作用域和版本的存取接口；12章讲接口，13章讲实际存储，不能把三个责任混成一个数据库。
+
 [记忆策略属于运行层，记忆数据库不属于运行层](#part-1) → [选择、提取、写入与按需召回](#part-2) → [纠错、冲突与失效是核心机制](#part-3) → [记忆的安全与验收](#part-4)
 
 <a id="part-1"></a>
@@ -410,6 +413,21 @@ agent_scope
 
 ⚠️ **Memory 召回结果默认可信。** 高风险事实应重新验证 Source of Truth。
 
+## 用一个记录推演纠错，而不是“再加一句忽略之前”
+
+文件报告任务里，`目录A只读`是当前授权约束，应来自契约/策略，不应只存成可以被召回排名改变的Memory。`用户偏好按主题组织报告`则可能是未来可复用的记忆候选。
+
+```text
+m1: preference=按日期组织, source=用户此前确认, version=1
+m2: preference=按主题组织, source=用户本次纠正, supersedes=m1
+```
+
+写入m2后，读取路径必须排除已失效的m1，缓存/向量索引也要最终对齐有效版本。只在新Prompt里说“忽略旧偏好”不能阻止下一次检索再次召回m1。
+
+检验要覆盖错误偏好纠正、租户隔离、删除后不再召回和冲突未决；来源权威性及适用范围优先于单个相似度或模型置信度。与真实业务系统冲突时回查权威事实。
+
+既有Claude Code索引记录了 `memdir/memdir.ts` 的memory prompt和 `loadedNestedMemoryPaths` 去重线索；它支持“Memory是Context来源之一”，**不支持凭空断言其完整写入、合并或TTL算法**。详见[已核验与待读范围](../../research/agent-sources/claude-code-source-index.md)。
+
 ## 本章自测
 
 <details>
@@ -423,6 +441,21 @@ Memory 是为未来复用选择并维护的信息，具有来源、作用域、�
 <summary>模型召回的记忆与真实系统冲突怎么办？</summary>
 
 核对来源、版本和适用范围，必要时重新查询权威系统、保留未决状态并纠正过期记忆。
+
+</details>
+
+<!-- enrichment: scenario-checks -->
+<details>
+<summary>更新Memory但检索索引未更新会怎样？</summary>
+
+旧记录可能继续被召回；读取端须核对有效版本/失效标记，并使派生索引和缓存最终对齐。
+
+</details>
+
+<details>
+<summary>相似度最高的Memory可以覆盖当前审批吗？</summary>
+
+不能；权限来自可信契约与执行策略，Memory不能产生授权。
 
 </details>
 
