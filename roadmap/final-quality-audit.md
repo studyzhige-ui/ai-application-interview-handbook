@@ -466,14 +466,17 @@ PASS: sequence, navigation, collapsed quizzes, fences, file links, counts and ca
 **范围限制：** 这是一轮教材结构/机制迁移、例子与训练质量复核，不等于177篇逐句事实重审，也不等于真实模型、外部工具、沙箱或多worker生产故障测试。其余代码明确作为骨架/伪代码，产品版本细节仍按引用快照与官方资料核验。
 
 
+
+
 ### 本轮增强最终检查输出
 
 ```text
 Agent: 16 chapters; curriculum: 177; Canonical: 44; drills: 64; pitfalls: 86
-Local file links: 1170; broken: 0; bad explicit anchors: 0
+Local file links: 1183; broken: 0; bad explicit anchors: 0
 PASS: structural regression only; semantic review and production tests are separate
 report-loop: 5 cases passed
+Review local diagrams: 7, default collapsed; 16 chapter checks and 6 scenario drills retained.
 Research content diff: only progress.md changed; questions/sources/analysis/source-index unchanged.
 ```
 
-上述输出来自本分支实际checkout的检查；文件链接检查与显式锚点检查不等于对所有外部站点可用性或所有Markdown渲染器的验证。
+上述输出来自本分支实际checkout的检查；文件链接与显式锚点检查不等于所有外部站点可用性或所有Markdown渲染器的验证。main原Review的七种机制图已按新四层责任重绘，不恢复含混的Memory即事实、另一套安全层级或固定部署组件清单。

@@ -125,7 +125,7 @@ RAG 负责证据获取与回答质量的完整工程链；这里讲何时需要�
 
 ## 8. 复习、面试与资料入口
 
-[复习与综合自测](review/README.md) · [面试训练](interview/README.md) · [官方资料](../roadmap/agent-authoritative-sources.md) · [源码索引](../research/agent-sources/README.md)。复习和面试页不复制正式教材：Review提供16章回忆检查与6个综合失败推演；Interview按同一主线保留main的56个细粒度练习，新增8个系统推导题，并在同一页提供86个易错辨析与速查。练习数量不等于真人Canonical数量。
+[复习与综合自测](review/README.md) · [面试训练](interview/README.md) · [官方资料](../roadmap/agent-authoritative-sources.md) · [源码索引](../research/agent-sources/README.md)。复习和面试页不复制正式教材：Review提供7张折叠机制局部图、16章回忆检查与6个综合失败推演；Interview按同一主线保留main的56个细粒度练习，新增8个系统推导题，并在同一页提供86个易错辨析与速查。练习数量不等于真人Canonical数量。
 
 ## 9. 推荐学习方式
 
