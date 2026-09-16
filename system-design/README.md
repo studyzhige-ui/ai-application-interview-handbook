@@ -103,6 +103,7 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - Flash Sale / Inventory
 - Enterprise RAG
 - Multi-tenant AI Platform
+- Large-scale Data / Migration
 - Vertical AI Agent Scenarios
 
 这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
