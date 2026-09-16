@@ -2,7 +2,7 @@
 
 [↑ Handbook 总目录](../README.md) · [Canonical Questions](questions/README.md) · [Market Analysis](analysis/README.md) · [Curriculum Knowledge Map](../roadmap/knowledge-map.md)
 
-> **状态：🟢 Continuous Monitoring。** 历史冻结基线为 `S001–S279` 共 279 个 HUMAN-A 独立招聘流程；自 2026-09-16 起恢复持续增量监测。每天 10:00 / 17:00 / 22:00 检索最近 3 天的新面经，当天三次检索合并为一个日批次；质量优先，不为数量降低 HUMAN-A 门槛。
+> **状态：🟢 Continuous Monitoring。** 当前正式库为 `S001–S286` 共 **286** 个 HUMAN-A 独立招聘流程、**27** 个正式 Batch；自 2026-09-16 起按“最近 3 天发现窗口 + 全历史去重”持续增量监测。每天三次检索合并为一个日批次；质量优先，不为数量降低 HUMAN-A 门槛。
 
 ## 1. 研究目的
 
@@ -29,25 +29,25 @@
 
 > **完整知识体系决定应该学什么；HUMAN-A 面经告诉我们市场最近怎么问、问多深。**
 
-日常采集不会因为某一天出现新词就直接改 Curriculum；新增信号先进入 Research 层，经过独立来源累积与人工判断后再影响 Canonical / Curriculum。
+日常采集不会因为某一天出现新词就直接改 Curriculum；新增信号先进入 Research 层，经过独立来源累积与周期性审查后再影响 Canonical / Curriculum。
 
-## 2. 当前基线与持续监测
+## 2. 当前正式状态
 
 | 项目 | 当前值 |
 |---|---:|
-| 历史 HUMAN-A 基线 | 279 |
-| 历史 Source IDs | `S001–S279` |
-| 历史正式 Batch | 26 |
-| 下一保留 Source ID | `S280` |
+| HUMAN-A 来源 | **286** |
+| Source IDs | `S001–S286` |
+| 正式 Batch | **27** |
+| 下一 Source ID | **`S287`** |
 | ACTIVE Canonical | 235 |
-| 历史 Mapped Sources | 278 |
-| 历史 VALID-UNMAPPED | 1（S271） |
+| 既有映射基线 | `S001–S279` 中 278 Mapped + 1 VALID-UNMAPPED（S271） |
+| 新增映射状态 | `S280–S286` 待 periodic review / Canonical mapping |
 | 当前采集状态 | Continuous Monitoring |
-| 检索窗口 | 最近 3 天 |
+| 主动发现窗口 | 运行时最近 3 天 |
 | 每日检索 | 10:00 / 17:00 / 22:00 |
 | Batch 规则 | 当天三次检索 = 一个日批次 |
 
-所有数字在自动维护时必须以 `main` 的实际最新状态重新计算，不能把本段历史基线当成永远不变的固定值。
+所有数字在自动维护时必须以 `main` 的实际最新状态重新计算，不能把任何旧聊天或历史表格当成永远不变的固定值。
 
 ## 3. HUMAN-A Gate
 
@@ -55,7 +55,7 @@
 
 ```text
 候选人本人第一人称
-+ 真实招聘流程 / 面试官痕迹
++ 真实招聘流程 / 真人面试官痕迹
 + 高信息密度
 + 目标 AI Application / Agent Role Scope
 + 正文稳定可核验
@@ -69,11 +69,11 @@
 
 ## 4. 去重原则
 
-任何新增在分配 `Sxxx` 前都必须直接回读全历史，并同时检查 URL、作者、公司、岗位、日期/轮次、项目语义、连续题序与复制链。Search / Code Search 的“0 命中”不能证明未收录。
+任何新增在分配 `Sxxx` 前都必须直接回读全历史，并同时检查 URL、作者、公司、岗位、日期 / 轮次、项目语义、连续题序、招聘 Timeline 与复制链。Search / Code Search 的“0 命中”不能证明未收录。
 
-同一候选人、同一公司、同一招聘流程的多轮面试合并为一个 `Sxxx`；不同候选人的独立流程即使问到同样问题，仍分别计数。
+同一候选人、同一公司、同一招聘流程的多轮面试合并为一个 `Sxxx`；不同候选人的独立流程即使问到相同问题，仍分别计数。
 
-最近 3 天窗口只限制“主动发现范围”，不降低全历史去重要求；新帖子若实际是旧面经搬运 / 重发 / 同流程补发，仍然零贡献。
+最近 3 天窗口只限制“主动发现范围”，不降低全历史去重要求；新帖子若实际是旧面经搬运、重发或同流程补发，仍然零贡献。
 
 ## 5. 每日维护节奏
 
@@ -94,7 +94,7 @@
 
 ```text
 research/
-├── interviews/          # 正式 HUMAN-A Batch
+├── interviews/          # S001–S286 正式 HUMAN-A / Batch 01–27
 ├── quality/             # Source / Role Scope Gate
 ├── monitoring/          # Inbox + 当日三次检索日志
 ├── questions/           # Canonical Ownership
@@ -111,6 +111,8 @@ research/
 - Curriculum → beginner-first 的完整知识演进。
 
 研究层永远不能因为教材 Merge / Rename 而修改 Source Count；反过来，每日新增 HUMAN-A 也不能未经周期性审查就直接打乱 Curriculum。
+
+新增来源优先进入 Research 证据层。若可映射已有 Canonical，进入后续周期性映射；若出现疑似新能力，也先累积独立真人证据，再决定是否新增 Canonical 或修改 Curriculum。
 
 ## 8. 持续维护的固定原则
 

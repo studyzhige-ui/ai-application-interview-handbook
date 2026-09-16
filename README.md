@@ -3,7 +3,7 @@
 > 面向 **AI Application / AI Agent Engineer** 求职的一套 beginner-first 系统教材、真人面经研究库与面试训练体系。
 
 > **当前状态：✅ 十个正式一级模块第一版教材全部完成** · **Phase 3 Curriculum Build ✅**  
-> **研究基线：279 个 HUMAN-A 招聘流程（S001–S279，Frozen）** · **235 ACTIVE Canonical**
+> **研究状态：🟢 Continuous Monitoring · 286 个 HUMAN-A 招聘流程（S001–S286）** · **235 ACTIVE Canonical**
 
 ## 快速入口
 
@@ -90,7 +90,7 @@ Capability Primitive          = 更细的工程机制
 Section                       = 参数 / 变体 / Failure / 追问
 ```
 
-因此不会默认 `1 Canonical = 1 Markdown`。当前 10 个模块共 **184 个正文知识块**，但研究层仍保持 **235 道 ACTIVE Canonical**。
+因此不会默认 `1 Canonical = 1 Markdown`。当前 10 个模块共 **184 个正文知识块**，研究层当前保持 **235 道 ACTIVE Canonical**。
 
 详见：[Curriculum Granularity Audit](roadmap/curriculum-granularity-audit.md)。
 
@@ -101,13 +101,14 @@ Section                       = 参数 / 变体 / Failure / 追问
 正式市场证据只允许来自 **HUMAN-A：候选人本人第一人称、高信息密度、可核验的真实招聘流程**。
 
 ```text
-Frozen HUMAN-A              279
+Current HUMAN-A             286（S001–S286）
+Formal Batch                 27
 ACTIVE Canonical            235
-Mapped Sources              278
-VALID-UNMAPPED                1（S271）
-Unexpected uncovered          0
-Source Count mismatch         0
+Historical mapping baseline 278 Mapped + 1 VALID-UNMAPPED（S271）
+Latest S280–S286            pending periodic Canonical mapping / review
 ```
+
+从 2026-09-16 起，Research 层进入 **Continuous Monitoring**：每天滚动发现最近 3 天的新面经，但任何新来源分配 `Sxxx` 前仍必须回读全部历史 Batch 做严格去重。新增市场信号先进入 Research 层，不因单日热点直接修改 Curriculum。
 
 源码、官方文章、规范和论文可以帮助我们补齐知识边界，但**不能创建面试频率，也不能提高 Source Count**。
 
@@ -117,7 +118,7 @@ Source Count mismatch         0
 
 ## 6. 统一学习方法
 
-完整执行版见：[Learning Path｜十板块正式学习路线](roadmap/learning-path.md)。
+完整执行版见：[Learning Path｜十板块正式学习路线](roadmap/learning-path.md)。Learning Path 是推荐节奏，不是唯一课表；可以按个人基础、目标和时间预算调整速度。
 
 统一采用三遍：
 
@@ -125,7 +126,7 @@ Source Count mismatch         0
 2. **Review Pass：** 每个模块完成后从空白纸重画机制 / 数据流 / Failure，并完成折叠自测。
 3. **Interview Pass：** 再用 HUMAN-A Heat 与 L1–L4 Depth 调整口述次数和追问深度。
 
-标准第一次完整学习建议使用 **13 周 / 78 Session** 路线；已有基础可以压缩为 8 周，但不改变章节顺序；14 天路线只用于完成第一遍后的面试冲刺。
+仓库提供 13 周标准、8 周加速与 14 天冲刺参考；它们只作为可选执行模板，不改变模块知识依赖和正文职责。
 
 正式教材统一追求：
 
@@ -138,7 +139,7 @@ Source Count mismatch         0
 | 文档 | 作用 |
 |---|---|
 | [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
-| [Learning Path](roadmap/learning-path.md) | 13 周标准路线、8 周加速、14 天冲刺与 Module Exit Gate |
+| [Learning Path](roadmap/learning-path.md) | 可选的标准 / 加速 / 冲刺学习节奏与 Module Exit Gate |
 | [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
 | [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
 | [Documentation Style Guide](roadmap/documentation-style-guide.md) | README / 描述文件统一规范 |
