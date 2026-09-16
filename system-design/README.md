@@ -8,6 +8,8 @@
 
 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
 
+> **Agent 专题前导：** [任务契约与四层架构总纲](../agent-harness/architecture/README.md) · [设计、讲解与自测](../agent-harness/architecture/design-and-review.md)。先建立跨模块职责视图，再进入下方系统设计机制与场景。
+
 ---
 
 ## 1. 这个模块解决什么
@@ -101,7 +103,6 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - Flash Sale / Inventory
 - Enterprise RAG
 - Multi-tenant AI Platform
-- Large-scale Data / Migration
 - Vertical AI Agent Scenarios
 
 这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。

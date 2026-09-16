@@ -8,6 +8,8 @@
 
 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。
 
+> **先建立整体框架：** [Agent 系统架构总纲](architecture/README.md) → [执行与状态](architecture/lifecycle-and-state.md) → [概念归位表](architecture/concept-atlas.md)。这是跨模块前导视图；下方 23 章继续负责具体机制。
+
 ---
 
 ## 1. 这个模块解决什么
@@ -37,7 +39,7 @@
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法、追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 

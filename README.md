@@ -7,6 +7,8 @@
 
 ## 快速入口
 
+**Agent 架构前导：** [系统架构总纲](agent-harness/architecture/README.md) · [概念归位表](agent-harness/architecture/concept-atlas.md) · [执行与状态](agent-harness/architecture/lifecycle-and-state.md)
+
 [十板块知识地图](roadmap/knowledge-map.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
 
 ---
