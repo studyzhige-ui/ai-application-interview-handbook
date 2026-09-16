@@ -1,0 +1,15 @@
+name: Agent curriculum refactor (temporary)
+on:
+  push:
+    branches: [docs/agent-architecture-map-20260916-0266cbf]
+    paths: [tools/_agent_refactor.py, .github/workflows/_agent_refactor.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect curriculum and references
+        run: python3 tools/_agent_refactor.py
