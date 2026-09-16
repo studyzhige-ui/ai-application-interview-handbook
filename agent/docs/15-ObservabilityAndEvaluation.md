@@ -834,6 +834,8 @@ Trace 记录过程及关联事实；Eval 依据任务和约束判断结果、过
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-15) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：可观测执行与评测驱动的改进闭环。下一章：[系统收口：部署、成本、选型与演进](16-ProductionArchitectureAndEvolution.md)。

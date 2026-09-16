@@ -10,7 +10,15 @@
 
 练习分三步：先用约30秒说明核心区别，再沿具体追问解释机制与失败，最后对照“掌握标准”检查证据。不是背完整答案；不懂的机制只回对应正文。
 
+## 快速定位
+
+[01](#chapter-01) · [02](#chapter-02) · [03](#chapter-03) · [04](#chapter-04) · [05](#chapter-05) · [06](#chapter-06) · [07](#chapter-07) · [08](#chapter-08) · [09](#chapter-09) · [10](#chapter-10) · [11](#chapter-11) · [12](#chapter-12) · [13](#chapter-13) · [14](#chapter-14) · [15](#chapter-15) · [16](#chapter-16)
+
+编号与正式16章一致，按薄弱机制查找，不必一次刷完所有题。
+
 ## 按16章展开的64道训练题
+
+<a id="chapter-01"></a>
 
 ### 01｜Agent 系统与任务契约
 
@@ -47,6 +55,8 @@
 回到[第01章：Agent 系统与任务契约](../docs/01-AgentSystemAndTaskContract.md)。
 
 </details>
+
+<a id="chapter-02"></a>
 
 ### 02｜能力设计与自主权分配
 
@@ -101,6 +111,8 @@
 
 </details>
 
+<a id="chapter-03"></a>
+
 ### 03｜L1 应用层：任务、流程与用户交互
 
 <a id="q-06"></a>
@@ -136,6 +148,8 @@
 回到[第03章：L1 应用层：任务、流程与用户交互](../docs/03-ApplicationAndInteraction.md)。
 
 </details>
+
+<a id="chapter-04"></a>
 
 ### 04｜L2 运行层：执行循环与控制
 
@@ -240,6 +254,8 @@
 回到[第04章：L2 运行层：执行循环与控制](../docs/04-AgentLoopAndControl.md)。
 
 </details>
+
+<a id="chapter-05"></a>
 
 ### 05｜L2 运行层：上下文组装、预算与压缩
 
@@ -362,6 +378,8 @@
 
 </details>
 
+<a id="chapter-06"></a>
+
 ### 06｜L2 运行层：记忆的选择、使用与维护
 
 <a id="q-21"></a>
@@ -431,6 +449,8 @@
 回到[第06章：L2 运行层：记忆的选择、使用与维护](../docs/06-MemoryLifecycle.md)。
 
 </details>
+
+<a id="chapter-07"></a>
 
 ### 07｜L2 运行层：执行状态、持久化与恢复
 
@@ -536,6 +556,8 @@
 
 </details>
 
+<a id="chapter-08"></a>
+
 ### 08｜L2 运行层：多 Agent 协作与调度
 
 <a id="q-31"></a>
@@ -623,6 +645,8 @@
 
 </details>
 
+<a id="chapter-09"></a>
+
 ### 09｜L3 接入层：模型适配、路由与容错
 
 <a id="q-36"></a>
@@ -641,6 +665,8 @@
 回到[第09章：L3 接入层：模型适配、路由与容错](../docs/09-ModelAccessAndRouting.md)。
 
 </details>
+
+<a id="chapter-10"></a>
 
 ### 10｜L3 接入层：工具契约、注册与发现
 
@@ -711,6 +737,8 @@
 回到[第10章：L3 接入层：工具契约、注册与发现](../docs/10-ToolContractAndDiscovery.md)。
 
 </details>
+
+<a id="chapter-11"></a>
 
 ### 11｜L3 接入层：工具执行、副作用与取消
 
@@ -799,6 +827,8 @@
 
 </details>
 
+<a id="chapter-12"></a>
+
 ### 12｜L3 接入层：知识、记忆与扩展能力接入
 
 <a id="q-46"></a>
@@ -869,6 +899,8 @@
 
 </details>
 
+<a id="chapter-13"></a>
+
 ### 13｜L4 资源层：模型、数据与执行环境
 
 <a id="q-50"></a>
@@ -887,6 +919,8 @@
 回到[第13章：L4 资源层：模型、数据与执行环境](../docs/13-ResourcesAndEnvironments.md)。
 
 </details>
+
+<a id="chapter-14"></a>
 
 ### 14｜横切治理：身份、权限、审批与安全
 
@@ -992,6 +1026,8 @@
 
 </details>
 
+<a id="chapter-15"></a>
+
 ### 15｜横切治理：观测、评测与持续改进
 
 <a id="q-57"></a>
@@ -1078,6 +1114,8 @@
 回到[第15章：横切治理：观测、评测与持续改进](../docs/15-ObservabilityAndEvaluation.md)。
 
 </details>
+
+<a id="chapter-16"></a>
 
 ### 16｜系统收口：部署、成本、选型与演进
 

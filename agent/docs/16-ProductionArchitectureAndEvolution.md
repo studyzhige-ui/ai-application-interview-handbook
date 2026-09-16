@@ -1104,6 +1104,8 @@ Repo Understanding + Acceptance Verification 不完整
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-16) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：完整设计、选型理由与验证方案。接下来闭卷重建总图，再进入面试训练。

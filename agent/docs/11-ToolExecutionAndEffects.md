@@ -662,6 +662,8 @@ reconciliation required
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-11) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：调用生命周期、错误、并发、副作用与取消语义。下一章：[L3 接入层：知识、记忆与扩展能力接入](12-KnowledgeAndCapabilityAccess.md)。

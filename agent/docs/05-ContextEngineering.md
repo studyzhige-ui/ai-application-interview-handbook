@@ -734,6 +734,8 @@ Assembly / Budget / Offloading 没设计好
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-05) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：上下文编译、预算与压缩的正常/失败路径。下一章：[L2 运行层：记忆的选择、使用与维护](06-MemoryLifecycle.md)。

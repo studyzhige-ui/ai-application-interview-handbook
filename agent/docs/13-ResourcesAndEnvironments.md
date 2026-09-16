@@ -358,6 +358,8 @@ artifact / patch id
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-13) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：资源所有权、环境生命周期与隔离方式。下一章：[横切治理：身份、权限、审批与安全](14-IdentityPermissionsAndSafety.md)。

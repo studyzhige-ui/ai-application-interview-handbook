@@ -482,6 +482,8 @@ Claude Code索引里的 `searchHint`、`dynamicSkillDirTriggers`、`discoveredSk
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-12) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：检索/存取契约与 MCP、Skill、Hook 的责任边界。下一章：[L4 资源层：模型、数据与执行环境](13-ResourcesAndEnvironments.md)。

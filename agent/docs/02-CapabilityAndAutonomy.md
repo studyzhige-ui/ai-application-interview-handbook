@@ -119,6 +119,8 @@ Harness负责兑现循环、状态、工具与约束；Orchestrator描述任务/
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-02) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：能力、控制权与最小方案的决策表。下一章：[L1 应用层：任务、流程与用户交互](03-ApplicationAndInteraction.md)。

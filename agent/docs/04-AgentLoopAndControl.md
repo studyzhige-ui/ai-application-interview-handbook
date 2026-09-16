@@ -643,6 +643,8 @@ print("report-loop: 5 cases passed")
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-04) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：一次执行的闭环、对象与停止语义。下一章：[L2 运行层：上下文组装、预算与压缩](05-ContextEngineering.md)。

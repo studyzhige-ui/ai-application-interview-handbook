@@ -691,6 +691,8 @@ Trace
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-14) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：威胁模型与分层实施的安全控制链。下一章：[横切治理：观测、评测与持续改进](15-ObservabilityAndEvaluation.md)。

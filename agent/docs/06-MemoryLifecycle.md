@@ -459,6 +459,8 @@ Memory 是为未来复用选择并维护的信息，具有来源、作用域、�
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-06) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：记忆读写、来源、更新与失效策略。下一章：[L2 运行层：执行状态、持久化与恢复](07-StateAndRecovery.md)。

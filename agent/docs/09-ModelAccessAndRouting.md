@@ -349,6 +349,8 @@ Claude Code既有索引中的 `fallbackModel`、usage和budget配置可作为运
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-09) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：模型能力矩阵、适配边界与恢复策略。下一章：[L3 接入层：工具契约、注册与发现](10-ToolContractAndDiscovery.md)。

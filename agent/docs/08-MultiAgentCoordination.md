@@ -505,6 +505,8 @@ security
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-08) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：委派、汇聚、共享资源与取消协议。下一章：[L3 接入层：模型适配、路由与容错](09-ModelAccessAndRouting.md)。

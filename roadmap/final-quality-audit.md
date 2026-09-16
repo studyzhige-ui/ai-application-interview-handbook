@@ -1,7 +1,7 @@
 # Final Quality Audit｜v1.0 终局质量审计
 
 
-> **版本说明（2026-09-16）：** 下文184篇/Agent23章的v1.0结论是历史审计，不覆盖新的章节排列。当前Agent已按任务→四层→治理重构为16章，全仓库正文177篇。本次结构、链接、计数与研究证据不变性检查记录见本文末尾；不将历史PASS伪装为一次新的逐项技术复审。
+> **版本说明（2026-09-16）：** 下文184篇/Agent23章的v1.0结论是历史审计，不覆盖新的章节排列。当前Agent为任务→四层→治理的16章增强版，全仓库177篇；机制迁移、教学示例、细粒度训练和检查范围见文末。历史全仓库PASS不等于新版本逐句技术复审。
 
 [← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [术语表](terminology-glossary.md) · [正文深度审计](content-depth-audit.md)
 
@@ -431,6 +431,8 @@ PASS: sequence, navigation, collapsed quizzes, fences, file links, counts and ca
 ```
 
 
+<a id="agent-enrichment-20260916"></a>
+
 ## 2026-09-16｜Agent 分层增强：吸收 main 的机制与训练优势
 
 对照来源：main `0266cbfa131ff4157cad9f4c18b75fe153c0b846`；增强前分支 `2fbd42e65940b961e6c2edb17bc87940feb028ff`。保留任务→四层→治理16章主线，不恢复旧23章目录或另一套架构课程。
@@ -462,3 +464,16 @@ PASS: sequence, navigation, collapsed quizzes, fences, file links, counts and ca
 **实际检查：** 16章连续、177篇全仓库正文计数；每章阅读提示和至少4个折叠自测；56个旧练习标识完整、64题和86辨析计数；旧目录/平行架构课程不存在；相对文件链接与Agent显式锚点；研究问题、面经、统计与固定源码索引本轮逐文件摘要不变。第04章唯一标记的纯Python教学Loop实际执行5个断言场景通过（正常、越界、未读引用、预算、未知决策）。
 
 **范围限制：** 这是一轮教材结构/机制迁移、例子与训练质量复核，不等于177篇逐句事实重审，也不等于真实模型、外部工具、沙箱或多worker生产故障测试。其余代码明确作为骨架/伪代码，产品版本细节仍按引用快照与官方资料核验。
+
+
+### 本轮增强最终检查输出
+
+```text
+Agent: 16 chapters; curriculum: 177; Canonical: 44; drills: 64; pitfalls: 86
+Local file links: 1170; broken: 0; bad explicit anchors: 0
+PASS: structural regression only; semantic review and production tests are separate
+report-loop: 5 cases passed
+Research content diff: only progress.md changed; questions/sources/analysis/source-index unchanged.
+```
+
+上述输出来自本分支实际checkout的检查；文件链接检查与显式锚点检查不等于对所有外部站点可用性或所有Markdown渲染器的验证。

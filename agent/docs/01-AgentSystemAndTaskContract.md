@@ -169,6 +169,8 @@ limits:
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-01) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：任务契约与职责图。下一章：[能力设计与自主权分配](02-CapabilityAndAutonomy.md)。

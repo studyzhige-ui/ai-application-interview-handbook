@@ -577,6 +577,8 @@ Registry 是完整目录；可见集合是经过策略、环境和任务筛选�
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-10) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：工具契约、目录、可见集合与版本策略。下一章：[L3 接入层：工具执行、副作用与取消](11-ToolExecutionAndEffects.md)。

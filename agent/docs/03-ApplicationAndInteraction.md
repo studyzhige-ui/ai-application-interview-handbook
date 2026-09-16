@@ -215,6 +215,8 @@ task_created(contract_v1)
 
 </details>
 
+[本章面试练习与具体追问](../interview/README.md#chapter-03) · [综合复习](../review/README.md)
+
 ## 回到主线
 
 现在应能独立说明：任务流程与交互契约。下一章：[L2 运行层：执行循环与控制](04-AgentLoopAndControl.md)。
