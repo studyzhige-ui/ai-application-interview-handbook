@@ -2,92 +2,100 @@
 
 本文件是每天三次持续检索的滚动工作日志，不是正式 HUMAN-A 来源库。
 
-用途：
-
-- 记录 10:00 / 17:00 / 22:00 三次检索覆盖；
-- 记录已核验候选、典型排除、平台 / 公司 / Query 盲区；
-- 让晚间 22:00 能把三次检索合并为当天一个 Batch；
-- 防止同一天三次任务重复劳动。
+用途：记录 10:00 / 17:00 / 22:00 三次检索覆盖、已核验候选、典型排除和平台 / 公司 / Query 盲区，让 22:00 把三次检索合并为当天一个 Batch，并避免重复劳动。
 
 固定规则：
 
-1. 只记录最近 3 天主动发现结果；
-2. 普通搜索线索可以记录为“已排除 / 待追源”，但只有完整通过 HUMAN-A + Role Scope + 全历史去重的候选才允许同步进入 `inbox.md`；
-3. 10:00 / 17:00 不分配 `Sxxx`；
+1. 主动发现只看运行时最近 3 天；
+2. 普通线索可以记录为“已排除 / 待追源”，但只有完整通过 HUMAN-A + Role Scope + 全历史去重的候选才进入 `inbox.md`；
+3. 10:00 / 17:00 不分配 `Sxxx`、不创建 Batch；
 4. 22:00 完成第三次搜索和最终全库去重后，统一生成当天唯一正式 Batch；
-5. 当天 0 个正式新增也必须记录搜索覆盖与主要排除原因，不允许为凑数降低质量门槛；
-6. 新的一天开始时保留上一日 Final Summary，并新建当日日期段；不要删除历史运行摘要。
+5. 0 正式新增也是合法结果，不允许为凑数降低门槛。
 
 ---
 
 ## 2026-09-16
 
-### 10:00
+### 10:00 Morning Search
 
 - Status: completed
-- Discovery window：运行时最近 3 天（重点 2026-09-13 ～ 2026-09-16 最新发布 / 更新）。
-- Baseline：已重新读取当前 `main`、Research README、Inbox、Daily Log、两份 Quality Policy、最新 Batch，并**直接回读 `batch-01.md`～`batch-26.md` 全历史**。当前正式基线确认：26 个 Batch、`S001–S279` 共 279 个 HUMAN-A、最大 `S279`、下一保留编号 `S280`。
-- Search effort：完成至少 38 组定向 Query（另有公司 / 平台泛搜），覆盖字节 / 抖音、阿里 / 淘宝闪购 / 飞猪、腾讯、美团、快手、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米、科大讯飞及中小型 AI 应用岗位；岗位词覆盖 AI Application、Agent、RAG、AI Backend、AI Full-stack、Coding Agent、Harness / Runtime 等。
-- Verification effort：实际尝试打开 / 核验 20+ 个近期原始候选链接、作者页或可追源条目；对打不开、只能停留在话题聚合页、只有摘要或来源链不清的结果，不视为“已核验”。
-- Platform coverage：牛客本轮能稳定提供最多最新原帖；同时检索小红书 / 知乎 / 脉脉 / CSDN / 独立博客等，但本轮尚未找到可同时满足最近 3 天、原文稳定、第一人称、目标 Role Scope 的非牛客 HUMAN-A。下午需继续补这一盲区。
-- Passed HUMAN-A → Inbox：**3 个候选流程**：① 美团 AI 后端（同一候选人一面 + 二面合并候选）；② 科大讯飞 Agent 研发工程师 · Harness 方向（三轮同流程）；③ 快手 AI 全栈一面。Morning 不分配 `Sxxx`。
+- Discovery window：2026-09-13 ～ 2026-09-16 的最新发布 / 更新。
+- Baseline：重新读取 `main`、Research README、Inbox、Daily Log、两份 Quality Policy、最新 Batch，并直接回读 `batch-01.md`～`batch-26.md` 全历史。确认 26 个正式 Batch、`S001–S279` 共 279 个 HUMAN-A、下一编号 `S280`。
+- Search effort：至少 38 组定向 Query，覆盖字节 / 抖音、阿里 / 淘宝闪购、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米、科大讯飞及中小型 AI Application / Agent 岗位。
+- Verification effort：实际尝试打开 / 核验 20+ 个近期原始候选、作者页或可追源条目；打不开、只停留聚合页、只有摘要或复制链不清的结果不计 HUMAN-A。
+- Passed → Inbox：3 个流程：① 美团 AI 后端 `SOLDIER_627` 一面 + 二面；② 科大讯飞 Agent 研发 · Harness 三轮；③ 快手 AI 全栈一面。
+- Platform：牛客稳定原帖最多；小红书 / 知乎 / 脉脉 / CSDN / 独立博客没有找到同时满足最近 3 天、稳定原文、第一人称、Role Scope 的非牛客 HUMAN-A。
 
-#### 通过候选摘要
+Morning 主要信号：Skill / Harness 开始进入 Routing Conflict、Context Bloat、Case Replay / Fault Injection；AI Coding 开始追 Production Bad Case 与 Review Bottleneck；Backend / OS Foundation 仍与 Agent 同场。Morning 不改 Canonical / Curriculum。
 
-1. **美团 AI 后端｜`SOLDIER_627`｜一面 + 二面同流程**
-   - 一面：https://api-cdn.nowcoder.com/discuss/927579574932705280?sourceSSR=post
-   - 二面：https://www.nowcoder.com/discuss/929087871779110912
-   - 核心信号：故障诊断 Skill、Workflow→Skill、Skill Routing Conflict、Context Bloat、历史 Case 回放 / 故障注入、PI Agent / DeepSeek Harness、Agent Loop、AI Code Review Bottleneck、Cloud DR。
-   - 去重关键：历史 `S228` 是同一候选人的**快手**流程；公司与招聘流程独立，因此当前美团流程可以作为独立真人命中，但一 / 二面必须合并为一个来源。
+Morning 待追源：新旦智能、淘宝闪购、望尘科技；快手 9/14 二面 Role Scope 待确认。典型排除包括批量内容账号、AI 自动面试、纯搜推 / 纯推理训练 Infra、普通后端仅顺带问 AI。
 
-2. **科大讯飞｜Agent 研发工程师 · Harness 方向｜`Tale2229`**
-   - 来源：https://www.nowcoder.com/feed/main/detail/671d2fa1d7c04322837ee1f5788dd69d
-   - 核心信号：9/11 武汉线下三轮；即时通信项目验真、Memory、知识库增量更新、Agent Loop、Harness、LangGraph Node、AI Coding 参与度，以及 IPC / Deadlock / RWLock / OS / Data Structure 等基础。
-   - 真实性：作者记录一面答不上、意外进入二面、二面 / HR 状态和等待结果；个人主页非批量面经账号。
+### 17:00 Afternoon Search
 
-3. **快手｜AI 全栈｜`明天会有好天气`**
-   - 来源：https://www.nowcoder.com/feed/main/detail/60d833cbae7f4a668a0bed9e18a428f1
-   - 核心信号：MySQL Insert / 两阶段提交、GC / ZGC、Slow SQL、AI Coding Workflow、Production Bad Case、Object Creation、Repeatable Read、Coding。
-   - 真实性：作者个人秋招 Timeline 可核验，帖子保留“很多八股说不上来”的现场状态；岗位标题明确 AI 全栈。
+- Status: completed
+- Discovery window：继续只看最近 3 天；优先补 Morning 未充分覆盖的平台、公司和岗位叫法。
+- Baseline：再次读取当前 `main`、Research README、Inbox、Daily Log、两份 Quality Policy、最新 Batch，并再次**直接回读 `batch-01.md`～`batch-26.md` 全历史**。当前正式基线仍为 26 Batch / 279 HUMAN-A / 最大 `S279` / 下一 `S280`。
+- Search effort：本轮新增完成至少 **31 组定向 Query**，覆盖最近 3 天的 Agent / AI Application / AI Backend / AI Full-stack / AI Native / Harness，以及美团、小红书、字节、智谱、淘宝闪购、快手、百度、腾讯、蚂蚁、京东、滴滴、B站、OPPO / vivo / 小米等；同时专门搜索小红书 / 知乎 / 脉脉 / CSDN / 独立站。
+- Verification effort：实际打开、稳定读取或追源 **22+ 个**候选原帖 / 作者记录 / 平台聚合入口；对稳定原帖缺失、正文 Cache Miss、内容账号、AI 自动面试、Role Scope 模糊和历史流程重合的结果均未放宽 Gate。
+- Passed HUMAN-A → Inbox：**4 个新增流程**：① 美团 AI Agent 一面；② 美团 AI 后端开发工程师一面；③ 智谱 AI Native Builder 实习一面；④ 小红书 AI 应用研发一面。加上 Morning 3 个，当前 Inbox 共 **7 个候选流程**。Afternoon 仍不分配 `Sxxx`。
 
-#### 待追源 / 暂不进入 Inbox
+#### Afternoon 通过候选
 
-- **新旦智能 AI 应用开发一面**：最近发布，19 道题覆盖 LangChain 1.0、Hermes Self-evolution / Memory、Context、Harness、Agent Eval、Codex 质量控制，技术价值很高；搜索结果能定位 `/feed/main/detail/81ff321675cc41e18513a3fcbcfe4506`，但本轮直接打开仍出现缓存失败，且作者 Timeline 尚未补齐。下午继续追原页与作者，当前不进 Inbox。
-- **淘宝闪购 AI 一面**：9/14 发布，第一人称和 Agent / Memory / QPS / Scale 问题都较强，但当前只稳定取得话题聚合页，未拿到可稳定回读的原帖 URL / 作者 Timeline；暂不进 Inbox。
-- **望尘科技 AI 全栈转正实习**：9/14 发布，30min、面试官引导、Java 基础 + AI Coding 质量，Role Scope 明确；当前仅能从其它页面的最新条目完整读取，原帖直链尚未可靠定位，暂不进 Inbox。
-- **快手 9/14 二面**：真人痕迹强，题目包含 Agent 三引擎、RAG Evaluation、Memory 与 AI Coding 日志排查，但岗位本身的 AI Role Scope 尚未从当前页面 / Timeline 明确确认，暂缓。
-- **字节抖音电商二面**：Take-home AI 工具 + Agent 对话验真非常有价值，但当前标题 / 流程只明确普通后端 / 抖音电商，尚不能证明岗位主体属于 AI Application / Agent；按 Role Scope 保守排除候选池。
+1. **美团｜AI Agent｜`会收到的打工人`**
+   - https://www.nowcoder.com/feed/main/detail/50bcdc47e7754aa7be59b6318fea514b?sourceSSR=subject
+   - 9/15 发布；Agent 项目连续追到 Long-task Hallucination、置信度 / 二次确认、Multi-Agent Context Bloat、Framework vs Raw Agent、Knowledge Freshness。
+   - 与 Morning 美团候选作者 / 项目 / 流程不同；全历史未发现同场。
 
-#### 典型排除
+2. **美团｜AI 后端开发工程师｜`纯牛马🐮🐴`**
+   - https://www.nowcoder.com/feed/main/detail/b3b11822cef24f689c9600e4415f4043
+   - 9/15 发布；作者同日还有本人百度网盘二面和求职状态，个人候选人身份明确。
+   - 连续追问 Model Comparison / Elo Eval / Prompt Test Set、On-call Agent Context Compression 80% 阈值依据、Redis Cache Fields / Image URL Refresh、MySQL 与 Coding；反问确认团队为小象超市物流供应链，传统 Backend + Agent。
+   - 全历史未发现同 URL / 作者 / 题序。
 
-- **美团 AI Agent 校招一面 / 蚂蚁 AI Agent 等 `AIGC小白入门记` 链**：题目高度完整但账号呈连续多公司“标准化面经” / 专刊内容化特征，缺少候选人本人现场状态；不因题目漂亮降低 Gate。
-- **PDD / 米哈游 `面试经验地图` 系列**：同一账号批量整理多场、包含旧日期 / 多场拼接，属于整理型内容，零贡献。
-- **北京网梯科技 AI 面**：明确 AI 自动面试式长问题，不属于真人面试官 HUMAN-A。
-- **飞猪 Agent 算法一面**：原帖稳定且第一人称，但业务明确偏搜索 / 推荐算法，未通过 AI Application / Agent Engineering Role Scope。
-- **字节 / 阿里云 AI Infra 推理训练性能优化场次**：即使出现 Agent / MCP / Skill 名词，岗位主体是纯推理 / 算子 / Training Infra，按 Role Scope 排除。
-- **乐元素普通后端一面**：候选人有 Agent 项目且被追问，但岗位主体仍为普通游戏后端，不能用来抬高目标岗位频率。
+3. **智谱｜AI Native Builder 实习｜`牛客671002402号`**
+   - https://www.nowcoder.com/discuss/929419257438302208?sourceSSR=%E5%85%B6%E4%BB%96
+   - 9/16 17:00 发布；出生年份、住址、论文压力、可实习时长等强招聘现场信号。
+   - 项目从 Architecture / Team Ownership 追到 Intent Routing、Agent 敏感数据导出防护、Crash / Restart Recovery，再进入 10 万人抢 100 张票 / Anti-bot / Redis Power-loss 和 AI Native Teaching Assistant 设计。
+   - 全历史未发现同场。
 
-#### Morning 信号
+4. **小红书｜AI 应用研发（社区搜索 / Agent）｜`Florentino_73`**
+   - https://www.nowcoder.com/discuss/929475914579136512?sourceSSR=post&weFlow=true
+   - 9/15 面试 / 发布；`5min 自我介绍 → 30min 项目 → 20min 手撕 → 反问业务`，结构清晰。
+   - 金融 Agent / RAG Eval / Skill / Claude Code CLI / 蚂蚁 Agent Group Chat / 是否落地 → 平方根 Coding；反问确认岗位主要做社区搜索 Agent。
+   - 作者有长期个人求职记录，2026 年已记录 C++ / AI Agent 实习投递与面试，不是批量内容账号；全历史未发现同场。
 
-- **Skill / Harness 已从名词进入真实工程追问。** 美团开始问多 Skill 路由冲突、Context 膨胀、历史 Case 回放 / 故障注入、PI Agent / DeepSeek Harness；科大讯飞直接以 Harness 方向招聘，但仍同时考察系统基础。
-- **AI Coding 的考法继续向质量保障下沉。** 快手直接问上线代码遗漏 Bad Case 怎么处理；美团继续问“AI 生成速度超过人工 Review 速度”时工程师如何建立质量边界。
-- **Backend / OS Foundation 仍与 Agent 同场。** MySQL、GC / ZGC、IPC、锁、用户态 / 内核态、云容灾继续出现；不能因为岗位叫 Agent / AI Full-stack 就削弱基础工程准备。
-- 以上只作为 Market Observation；**Morning 不修改 Canonical / Curriculum**。
+#### Afternoon 关键排除 / 待追源
 
-#### 17:00 补盲计划
+- **字节 Agent 开发 9/15 一面｜`小妞脂`**：当前原帖技术密度和现场痕迹都强，但直接回读历史发现同作者已经有 `S076` 字节 Agent 9/3 一面。属于**同候选人 + 同公司 + 同方向 + 同一秋招季**，目前无法证明是独立 BU / 新招聘流程；GitHub Search 0 命中不能推翻历史作者 Timeline。当前不进 Inbox，22:00 继续判断是 `S076` 后续轮次还是独立流程。
+- **去哪儿 AI 全栈 AI 面**：9/14 原帖可读，问题覆盖 Function Calling / Context / AI Coding；但历史 Batch 13 已确认去哪儿该类流程属于 AI 自动面试，违反 Human Interviewer Gate，明确排除。
+- **新旦智能 AI 应用开发**：19 道题非常强，包含 LangChain 1.0、Hermes Self-evolution / Memory、Harness、Eval、Codex Quality；但原始 `/feed/main/detail/81ff...` 仍出现直接回读 Cache Miss，不满足“原正文稳定可核验”，继续待追源。
+- **淘宝闪购 AI 一面 9/14**：聚合页能读到完整第一人称与 Agent / Memory / QPS / Scale 问题，但仍缺稳定可回读的原帖直链 / 作者链，暂不进 Inbox。
+- **望尘科技 AI 全栈 9/14**：可在其它页面的最新条目读到 30min、面试官引导、Java + AI Coding Quality，但原帖直链未稳定定位，继续待追源。
+- **快手 9/14 二面**：原帖可访问但正文抓取不稳定，且岗位主体 AI Role Scope 尚未确认；暂缓。
+- **PDD Agent 二面 / 200+ 面经账号链**：作者账号存在大型多公司面经合集属性，难以确认单篇是否候选人本人原场；按内容账号风险排除。
+- **北京网梯科技 AI 面**：长问题看起来技术密度高，但属于 AI 自动面试，不收。
+- **字节 9/14 AI Infra**：虽出现 Agent / MCP / Skill，但主体是 GPU / MPI / Profiling / Serving Infra，属于 Role Scope 外纯 AI Infra，不收。
+- **携程后端 Agent 9/11**：真实原帖可读，但发布时间 / 面试已在本轮最近 3 天窗口外，不用旧内容补数量。
 
-- 优先补：新旦智能 / 淘宝闪购 / 望尘科技的原帖与作者 Timeline；
-- 扩大非牛客渠道：小红书、知乎、脉脉、技术博客 / 独立站，重点找可稳定回读的第一人称原文；
-- 补公司盲区：百度、腾讯、蚂蚁、京东、滴滴、B站、OPPO / vivo / 小米最近 3 天的 AI Application / Agent 原场；
-- 对 Morning Inbox 三个候选继续检查跨平台镜像 / 后发复制链，不因为已进 Inbox 就停止追源。
+#### Afternoon 平台 / 公司盲区
 
-### 17:00
+- 小红书 / 知乎 / 脉脉 / CSDN 本轮继续没有产出可稳定核验的非牛客 HUMAN-A；CSDN 近期主要是 Agent / Harness 教学与源码解读，不是候选人面经。
+- 百度 / 腾讯 / 蚂蚁 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米最近 3 天的目标岗位高质量原场仍稀缺；搜索结果大量是旧来源、普通后端、纯算法 / Infra、聚合 / 答案化内容。
+- 22:00 应继续补这些公司，同时重点追新旦 / 淘宝闪购 / 望尘的稳定原帖，并处理 `小妞脂` 字节流程是否与历史 `S076` 合并。
+
+#### Afternoon 新信号
+
+1. **Agent Reliability 正从抽象“防幻觉”变成确定性门禁。** 美团直接问长流程如何保证每一步按预期、置信度怎么定义、何时必须二次确认用户。
+2. **Evaluation 参数本身开始被验真。** 美团 AI 后端会追 Elo 怎么 PK、Prompt Test Set 多大、Context 到 80% 为什么压缩；“用了评测 / 压缩”已经不够，必须解释阈值和实验依据。
+3. **Agent Security 与 Data Governance 进入应用工程面试。** 智谱直接问如何阻止 Agent 执行“导出所有供应商及员工敏感数据”，安全边界开始与 Tool / 权限设计融合。
+4. **AI Application 仍要求传统 System Design / Failure Recovery。** 智谱同场追 10 万人抢 100 张票、Anti-bot、Redis 掉电和服务重启恢复；美团继续追 Redis / MySQL / Coding。
+5. **Skill / Claude Code 已进入热门公司项目验真。** 小红书会问 Good Skill、Claude Code CLI，以及 Agent Group Chat 是否真正落地；不是只问工具名。
+6. 这些只记为 Market Observation；**Afternoon 不新增 Canonical、不修改 Curriculum**。
+
+### 22:00 Evening Search + Finalize
 
 - Status: pending
-
-### 22:00
-
-- Status: pending
+- 必做：第三轮最近 3 天搜索 → 读取 Morning / Afternoon Inbox → 再次直接回读全部历史 Batch → 最终去重 → 当天只生成一个 Batch；即使 0 新增也要记录完整搜索与排除。
 
 ### Final Summary
 
