@@ -1,5 +1,5 @@
 from pathlib import Path
-import re, subprocess, difflib
+import re, subprocess
 ROOT=Path(__file__).resolve().parents[1]
 BASE='0266cbfa131ff4157cad9f4c18b75fe153c0b846'
 def show(path):
@@ -12,15 +12,13 @@ def sections(text):
         if re.match(r'^\s*(```|~~~)',l): fence=not fence
         if not fence and re.match(r'^#{1,3}\s',l): heads.append((i,l))
     return [(h,'\n'.join(lines[i+1:(heads[k+1][0] if k+1<len(heads) else len(lines))])) for k,(i,h) in enumerate(heads)]
-paths=subprocess.check_output(['git','ls-tree','-r','--name-only',BASE,'agent-harness'],cwd=ROOT).decode().splitlines()
+paths=subprocess.check_output(['git','ls-tree','-r','-z','--name-only',BASE,'agent-harness'],cwd=ROOT).decode().rstrip('\0').split('\0')
 new=list(sorted((ROOT/'agent/docs').glob('*.md')))
-allnew='\n'.join(p.read_text() for p in new)
-ns=norm(allnew)
+ns=norm('\n'.join(p.read_text() for p in new))
 out=['# Temporary source comparison (not a quality verdict)',f'Main: {BASE}', '## New chapter outline']
 for p in new:
     txt=p.read_text(); out += [f'### {p.name} ({len(txt.splitlines())} lines)', '\n'.join(h for h,b in sections(txt))]
-out += ['## Main mechanism retention candidates']
-missing=[]
+out += ['## Main mechanism retention candidates']; missing=[]
 for path in paths:
     if '/docs/' not in path: continue
     txt=show(path); out += ['### '+path]
