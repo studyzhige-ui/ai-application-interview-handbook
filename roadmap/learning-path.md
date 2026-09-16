@@ -366,9 +366,9 @@ Mental Model
 | 6 | LLM：context / attention / decoding / KV / serving / prompt |
 | 7 | RAG：pipeline / parse / chunk / hybrid / rerank |
 | 8 | RAG：evaluation / bad case / freshness / production |
-| 9 | Agent：boundary / loop / tool runtime / planning |
-| 10 | Agent：context / compaction / memory / checkpoint |
-| 11 | Agent：security / MCP / multi-agent / trace / eval |
+| 9 | Agent：任务契约、自主权、四层职责、应用交互与执行循环 |
+| 10 | Agent：运行层的上下文、记忆、状态恢复与协作；接入层的模型和工具契约 |
+| 11 | Agent：工具执行、知识接入、资源环境、安全质量与生产演进 |
 | 12 | System Design：Requirement / Capacity / State / Reliability |
 | 13 | System Design Cases + 跨模块连续追问 |
 | 14 | 只清 Error Log + 30 秒回答，不再大面积读新内容 |

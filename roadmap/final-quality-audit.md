@@ -418,3 +418,14 @@ Bridge Labs
 Agent chapters: 16; curriculum total: 177; Agent canonical: 44; local links checked: 1042; broken: 0
 PASS: sequence, navigation, collapsed quizzes, fences, file links, counts and canonical map
 ```
+
+### 同轮内容与证据复核
+
+已修正跨模块术语表中旧 Turn 定义，与新课程的 Codex Thread / Turn / Item 一致；学习路线与模块名同步。
+
+以重构前 main 提交 `0266cbfa131ff4157cad9f4c18b75fe153c0b846` 比较，十个研究题库的问题正文、ID、Depth、Source Count、Evidence Sources及归属元数据仅发生模块展示名变更；原始 interviews 与 monitoring 未改。既有分析解析器通过235题/44道Agent题及Source Count一致性检查，既有 source coverage 校验器通过。章内显式锚点、章节顺序、导航、折叠自测、代码围栏和仓库本地文件链接再次通过检查。
+
+```text
+Agent chapters: 16; curriculum total: 177; Agent canonical: 44; local links checked: 1044; broken: 0
+PASS: sequence, navigation, collapsed quizzes, fences, file links, counts and canonical map
+```

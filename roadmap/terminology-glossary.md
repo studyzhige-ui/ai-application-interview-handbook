@@ -12,11 +12,11 @@
 
 | 术语 | 本仓库工作定义 | Primary Module |
 |---|---|---|
-| **Context** | 当前一次 Model Call 实际可见的输入视图；受 Token Budget 约束。 | LLM Foundation / Agent Harness |
-| **Memory** | 为未来调用保存、选择并重新取回的信息；不等于当前 Context。 | Agent Harness |
-| **Runtime State** | 当前执行事实：Run 到哪一步、哪些动作已发生、接下来允许什么 Transition。 | Agent Harness |
-| **History** | 已经发生过的 Message / Event / Action 记录；历史不自动等于当前 State。 | Agent Harness |
-| **Checkpoint** | 足以从明确恢复点继续正确执行的持久化快照 / 状态集合。 | Agent Harness |
+| **Context** | 当前一次 Model Call 实际可见的输入视图；受 Token Budget 约束。 | LLM Foundation / Agent |
+| **Memory** | 为未来调用保存、选择并重新取回的信息；不等于当前 Context。 | Agent |
+| **Runtime State** | 当前执行事实：Run 到哪一步、哪些动作已发生、接下来允许什么 Transition。 | Agent |
+| **History** | 已经发生过的 Message / Event / Action 记录；历史不自动等于当前 State。 | Agent |
+| **Checkpoint** | 足以从明确恢复点继续正确执行的持久化快照 / 状态集合。 | Agent |
 
 固定边界：
 
@@ -28,21 +28,23 @@ Messages Snapshot ≠ Complete Checkpoint
 
 ---
 
-## 2. Session / Thread / Run / Turn / Step / Task / Job
+## 2. Session / Thread / Run / Turn / Item / Step / Task / Job
 
-这些词在不同 Framework 中命名不完全一致，所以教材使用层级语义而不是绑定某个产品名。
+先说明语境，再定义对象关系。以下保留 Codex 的交互对象，并区分教材采用的任务/执行工作定义；不把 Session→Run→Turn 规定为行业统一层级。
 
 | 术语 | 本仓库工作定义 | 备注 |
 |---|---|---|
-| **Session / Thread** | 跨多个交互持续存在的长期交互容器。 | Agent 语境；不要和 DB Session 混用 |
-| **Run** | 围绕一个 Goal 启动的一次可追踪 Agent 执行。 | Agent Harness |
-| **Turn** | 一次用户输入或一轮可归因模型交互周期。 | Agent Harness |
-| **Step** | Run 内更细的执行动作，如 model call / tool call / checkpoint。 | Agent Harness |
-| **Task / Job** | Backend 中可排队、领取、重试、恢复的工作单元。 | AI Backend Engineering |
+| **Agent Session / Thread** | 跨多个交互持续存在的会话容器。 | Codex Thread 是会话，不是操作系统线程 |
+| **Run** | 围绕目标的一次受管理执行，可以暂停与恢复。 | 教材工作定义；与 Thread / Turn 的关联由应用协议决定 |
+| **Turn** | Codex 中一次用户请求及其后续 Agent 工作。 | 可以包含多次模型推理与工具交互，不等于一次模型调用 |
+| **Item** | Codex 中有类型的输入输出单元，例如消息、工具执行、文件修改。 | 一个 Item 可以产生多个生命周期 Event |
+| **Step** | 运行时自行定义的可记录推进单位。 | 不同框架可能采用不同粒度 |
+| **Agent Task** | 有目标、范围、权限边界和验收条件的工作对象。 | 应用层管理；可以关联多个 Run |
+| **Backend Task / Job** | 可以排队、领取、重试或恢复的后台工作单元。 | AI Backend Engineering；不默认等于用户任务 |
 | **DB Session** | 数据库连接/事务使用语境中的 Session。 | MySQL / FastAPI Integration |
 | **Login Session** | 用户认证登录态。 | FastAPI / AI Backend Engineering |
 
-写作规则：出现 `Session` 时，如果上下文不能唯一确定含义，应写成 `Agent Session`、`DB Session` 或 `Login Session`。
+写作规则：不能唯一确定含义时，写明 Agent Session、DB Session 或 Login Session。执行实例、进程、会话和业务任务也不是同一个实体。详细机制见 [Agent 执行循环](../agent/docs/04-AgentLoopAndControl.md)与[执行状态](../agent/docs/07-StateAndRecovery.md)。
 
 ---
 
@@ -52,9 +54,9 @@ Messages Snapshot ≠ Complete Checkpoint
 |---|---|---|
 | **Timeout** | 某个等待/操作最多愿意等待多久。 | AIBE；FastAPI/Python 讲本层执行语义 |
 | **Deadline** | 整条业务请求必须在某个时间点前完成的端到端预算。 | AIBE |
-| **Cancellation** | 对某个执行单元发出停止推进的控制信号。 | Python / FastAPI / Agent Harness 按层解释 |
+| **Cancellation** | 对某个执行单元发出停止推进的控制信号。 | Python / FastAPI / Agent 按层解释 |
 | **Client Disconnect** | Transport 连接断开。 | FastAPI |
-| **Business Cancel** | 业务层取消一个 Durable Task / Agent Run。 | AIBE / Agent Harness |
+| **Business Cancel** | 业务层取消一个 Durable Task / Agent Run。 | AIBE / Agent |
 
 固定边界：
 
@@ -108,8 +110,8 @@ Lease / Hot Progress = Ephemeral
 |---|---|---|
 | **Idempotency** | 同一个逻辑操作被重复提交时，不产生额外重复副作用。 | AIBE |
 | **Retry** | 在允许的失败语义下再次尝试操作。 | AIBE |
-| **Replay** | 重放 Event / Evidence / History 以重建状态、调试或评估；不默认等于再次触发真实副作用。 | Agent Harness |
-| **Resume** | 从持久化状态继续同一执行 lineage。 | Agent Harness |
+| **Replay** | 重放 Event / Evidence / History 以重建状态、调试或评估；不默认等于再次触发真实副作用。 | Agent |
+| **Resume** | 从持久化状态继续同一执行 lineage。 | Agent |
 | **Reconciliation** | 比对 SoT 与派生/外部状态，发现长期不一致并修复。 | AIBE |
 | **Compensation** | 对已经发生、无法物理 Rollback 的业务副作用执行新的补偿动作。 | AIBE / System Design |
 
@@ -128,9 +130,9 @@ Compensation ≠ Database Rollback
 | 术语 | 定义 | Primary Module |
 |---|---|---|
 | **Lock** | 协调并发访问的互斥/同步机制。 | Python / MySQL / Redis 按层解释 |
-| **Lease** | 有过期时间的临时执行/资源所有权。 | AIBE / Agent Harness |
-| **Ownership** | 当前谁被允许推进或修改某个 Task / Run / Resource。 | AIBE / Agent Harness |
-| **Fencing Token / Generation** | 单调递增的所有权版本，用于阻止过期 Owner 在恢复后继续写新状态。 | Redis / AIBE / Agent Harness |
+| **Lease** | 有过期时间的临时执行/资源所有权。 | AIBE / Agent |
+| **Ownership** | 当前谁被允许推进或修改某个 Task / Run / Resource。 | AIBE / Agent |
+| **Fencing Token / Generation** | 单调递增的所有权版本，用于阻止过期 Owner 在恢复后继续写新状态。 | Redis / AIBE / Agent |
 
 `Redis Lock`、`MySQL Lock`、`Python Lock` 不应因为都叫 Lock 就被视为同一抽象层。
 
@@ -186,7 +188,7 @@ Harness Engineering
 = 管理跨多轮、多 Tool、多 State 的执行、权限、恢复、Trace 与 Eval
 ```
 
-Primary ownership：Prompt → LLM Foundation；Context / Harness Runtime → Agent Harness。
+Primary ownership：Prompt → LLM Foundation；Context / Harness Runtime → Agent。
 
 ---
 
@@ -244,16 +246,10 @@ tests_passed?          → Verification
 
 最终要求：**同词先分层，再谈机制；产品名先映射到稳定概念，再讨论实现差异。**
 
-## Agent 分层课程的统一约定（2026-09-16）
+## 14. Agent 系统、层与 Harness 的边界
 
-| 名称 | 本课程约定 |
-|---|---|
-| Agent 模块 | 覆盖任务设计、四层职责、安全质量与生产演进；不是只讲 Harness |
-| L1 / L2 / L3 / L4 | 应用 / 运行 / 接入 / 资源；与研究题库的 Depth 编号无关 |
-| Harness / Runtime | 以运行层为核心的执行系统，实现可包含接入代码，不等于完整产品 |
-| Task / Run | 任务目标与验收对象 / 一次受管理执行；关联由应用协议定义 |
-| Thread / Turn / Item | Codex中的持续会话 / 单次请求及其后续工作 / 有类型输入输出单元 |
-| Step / Event / Operation | 运行时推进单位 / 已发生的生命周期事实 / 可识别核对的外部逻辑动作 |
-| Memory / State / Context | 未来复用的信息 / 程序执行事实 / 当前模型可见信息；不可互相替代 |
+Agent 模块覆盖任务设计、四层职责、安全质量与生产演进；Harness / Runtime 只指以运行层为核心的执行系统，实现可以包含接入代码，不等于完整产品。
 
-不把 Session→Run→Turn 宣称为通用固定层级。概念的完整解释回到[Agent](../agent/README.md)对应章节。
+架构 L1 / L2 / L3 / L4 分别是应用 / 运行 / 接入 / 资源，与研究题库的 Depth 编号无关。层表示职责，模块承担职责，机制实现职责，协议连接对象，资源承载真实能力和事实。
+
+完整解释只维护在[Agent 正式课程](../agent/README.md)。新增术语先说明类型、主责、动机与边界，不另增一套分类或学习路线。

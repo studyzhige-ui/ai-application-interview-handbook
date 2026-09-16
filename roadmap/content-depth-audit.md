@@ -36,7 +36,7 @@
 | [Vector Database](../vector-db/README.md) | 16 | ✅ `01–16` | ✅ PASS |
 | [LLM Foundation（应用工程深度）](../llm-foundation/README.md) | 14 | ✅ `01–14` | ✅ PASS |
 | [RAG](../rag/README.md) | 14 | ✅ `01–14` | ✅ PASS |
-| [Agent](../agent/README.md) | 16 | ✅ `01–16` | ✅ PASS |
+| [Agent](../agent/README.md) | 16 | ✅ `01–16` | 结构迁移已验证；深度为原版记录 |
 | [System Design](../system-design/README.md) | 19 | ✅ `01–19` | ✅ PASS |
 
 **当前正文总量：177 blocks。**
