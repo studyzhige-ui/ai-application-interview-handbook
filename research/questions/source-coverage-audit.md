@@ -16,11 +16,11 @@
 | QID | Module | Topic | HUMAN-A Sources |
 |---|---|---|---:|
 | `LLM-023` | LLM Foundation（应用工程深度） | Prompt Engineering | 30 |
-| `AGENT-044` | Agent Harness / Runtime | Prompt Injection / Untrusted Context Security | 8 |
-| `AGENT-045` | Agent Harness / Runtime | Intent Recognition / Routing | 11 |
-| `AGENT-046` | Agent Harness / Runtime | A2A / Agent Communication Protocol | 6 |
-| `AGENT-047` | Agent Harness / Runtime | Agent Framework Selection | 24 |
-| `AGENT-048` | Agent Harness / Runtime | AI-assisted Development Workflow | 36 |
+| `AGENT-044` | Agent | Prompt Injection / Untrusted Context Security | 8 |
+| `AGENT-045` | Agent | Intent Recognition / Routing | 11 |
+| `AGENT-046` | Agent | A2A / Agent Communication Protocol | 6 |
+| `AGENT-047` | Agent | Agent Framework Selection | 24 |
+| `AGENT-048` | Agent | AI-assisted Development Workflow | 36 |
 
 ## 原零映射来源处理
 

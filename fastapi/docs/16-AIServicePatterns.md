@@ -257,7 +257,7 @@ Run
 flowchart LR
     A["Client"] --> B["FastAPI API / SSE"]
     B --> C["Agent Service Adapter"]
-    C --> D["Agent Harness / Runtime"]
+    C --> D["Agent"]
     D --> E["Tool / Model / State"]
     D --> C
     C --> B

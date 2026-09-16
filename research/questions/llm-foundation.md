@@ -4,7 +4,7 @@
 
 > 一级板块：**LLM Foundation（应用工程深度）**。本文件只保留 AI Application Engineer 真正被问到的模型基础深度。目标不是训练算法岗题库，而是让应用工程师理解 Token、Transformer、Inference、Model API、Embedding / Rerank 与 Post-training 到足够解释系统行为和工程取舍的程度。
 >
-> 本文件所有条目的 `Primary Module = LLM Foundation（应用工程深度）`。RAG Pipeline 的 Chunk / Retrieval / Fusion / Evaluation 归 `RAG`；ANN Index / Vector Storage 归 `Vector DB`；Context Assembly / Memory / Tool Runtime 归 `Agent Harness / Runtime`。
+> 本文件所有条目的 `Primary Module = LLM Foundation（应用工程深度）`。RAG Pipeline 的 Chunk / Retrieval / Fusion / Evaluation 归 `RAG`；ANN Index / Vector Storage 归 `Vector DB`；Context Assembly / Memory / Tool Runtime 归 `Agent`。
 
 ## 1. 当前扫描结论
 
@@ -32,7 +32,7 @@
 ### LLM-002 · Context Window 的能力边界由什么决定？为什么 Context 变大仍不能把所有信息无差别塞进去？
 
 - **Primary Module**：LLM Foundation（应用工程深度）
-- **Related Modules**：Agent Harness / Runtime, RAG
+- **Related Modules**：Agent, RAG
 - **Topic**：Context Window
 - **Question Type**：Why / Trade-off
 - **Depth**：L3
@@ -43,7 +43,7 @@
 ### LLM-003 · Lost in the Middle 为什么发生？长 Context 中信息位置会怎样影响模型利用率？
 
 - **Primary Module**：LLM Foundation（应用工程深度）
-- **Related Modules**：Agent Harness / Runtime, RAG
+- **Related Modules**：Agent, RAG
 - **Topic**：Long-context Limitation
 - **Question Type**：Why
 - **Depth**：L2
@@ -188,7 +188,7 @@
 ### LLM-016 · Chat / Model API 中 Messages、Role、Model 与其它常见字段怎样组织？应用层如何适配不同 Provider？
 
 - **Primary Module**：LLM Foundation（应用工程深度）
-- **Related Modules**：Agent Harness / Runtime
+- **Related Modules**：Agent
 - **Topic**：Model API
 - **Question Type**：Concept / System Design
 - **Depth**：L3
@@ -260,7 +260,7 @@
 ### LLM-022 · Hallucination / Factuality 问题为什么出现？哪些属于模型本身局限，哪些应由 RAG / Agent / Verification 层治理？
 
 - **Primary Module**：LLM Foundation（应用工程深度）
-- **Related Modules**：RAG, Agent Harness / Runtime
+- **Related Modules**：RAG, Agent
 - **Topic**：Hallucination / Factuality
 - **Question Type**：Why / Troubleshoot
 - **Depth**：L3
@@ -274,7 +274,7 @@
 
 ### LLM-023 · Prompt Engineering 应怎样从目标、角色、约束、Context、Example、Tool 与 Output Contract 组织并迭代？怎样用真实 Case / Evaluation 证明 Prompt 优化有效？
 - **Primary Module**：LLM Foundation（应用工程深度）
-- **Related Modules**：RAG, Agent Harness / Runtime
+- **Related Modules**：RAG, Agent
 - **Topic**：Prompt Engineering
 - **Question Type**：Concept / Project / Evaluation
 - **Depth**：L3
@@ -291,7 +291,7 @@
 - Embedding / Rerank **模型原理**保留在 `LLM-018` / `LLM-019`；
 - Embedding Vector 的存储、ANN / HNSW / IVF 归 `Vector DB`；
 - Dense / Sparse、Hybrid、RRF、Rerank Pipeline、Top-K 与 Retrieval Evaluation 归 `RAG`；
-- Long-context 的**模型本体限制**保留在 `LLM-002` / `LLM-003`，而 Context Assembly / Compaction / Memory 属于 `Agent Harness / Runtime`；
+- Long-context 的**模型本体限制**保留在 `LLM-002` / `LLM-003`，而 Context Assembly / Compaction / Memory 属于 `Agent`；
 - Serving Engine / KV Cache / Prefill-Decode 属于模型推理基础，不迁入通用 AI Backend。
 
 本轮没有需要迁出的 ACTIVE Canonical；22 道均保持唯一 Primary Ownership。

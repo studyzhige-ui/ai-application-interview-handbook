@@ -1,4 +1,4 @@
-# Claude Code Source Index — Agent Harness / Runtime
+# Claude Code Source Index — Agent
 
 更新日期：2026-09-11
 

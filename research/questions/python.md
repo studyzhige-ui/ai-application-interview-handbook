@@ -22,7 +22,7 @@
 ### PY-001 · 为什么 AI Application / Agent 工程常使用 Python？与 Java / Go 相比，语言选择应依据什么？
 
 - **Primary Module**：Python
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, Agent
 - **Topic**：Language Choice
 - **Question Type**：Comparison / Trade-off
 - **Language / Ecosystem**：Python / Java / Go
@@ -196,7 +196,7 @@
 ### PY-014 · Python 中怎样解析、校验并约束 LLM 产生的 JSON / Structured Output？
 
 - **Primary Module**：Python
-- **Related Modules**：FastAPI, Agent Harness / Runtime
+- **Related Modules**：FastAPI, Agent
 - **Topic**：Structured Data Validation
 - **Question Type**：Coding / Reliability
 - **Language / Ecosystem**：Python

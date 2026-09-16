@@ -25,7 +25,7 @@ VALID-UNMAPPED       1（S271）
 | [Vector Database](vector-db.md) | 12 | 16 | [教材 README](../../vector-db/README.md) |
 | [LLM Foundation（应用工程深度）](llm-foundation.md) | 23 | 14 | [教材 README](../../llm-foundation/README.md) |
 | [RAG](rag.md) | 29 | 14 | [教材 README](../../rag/README.md) |
-| [Agent Harness / Runtime](agent-harness.md) | 44 | 23 | [教材 README](../../agent-harness/README.md) |
+| [Agent](agent-harness.md) | 44 | 16 | [教材 README](../../agent/README.md) |
 | [System Design](system-design.md) | 24 | 19 | [教材 README](../../system-design/README.md) |
 
 ## 四种粒度
@@ -37,7 +37,7 @@ Curriculum Block   = 完整教材认知闭环
 Interview Drill    = 训练时可以再次细分的真实问法
 ```
 
-因此 235 道 Canonical 不等于 184 篇正文。
+因此 235 道 Canonical 不等于 177 篇正文。
 
 **v1.0 Final Quality Audit：✅ PASS。** 正文深度见 [`../../roadmap/content-depth-audit.md`](../../roadmap/content-depth-audit.md)，全仓库终局结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)，跨模块术语边界见 [`../../roadmap/terminology-glossary.md`](../../roadmap/terminology-glossary.md)。
 

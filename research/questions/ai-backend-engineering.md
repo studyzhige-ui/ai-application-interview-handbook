@@ -69,7 +69,7 @@
 - **Depth**：L3
 - **Source Count**：**13**
 - **Evidence Sources**：`S033`, `S035`, `S066`, `S083`, `S087`, `S098`, `S156`, `S164`, `S170`, `S171`, `S181`, `S214`, `S240`
-- **Related Modules**：FastAPI, Agent Harness / Runtime
+- **Related Modules**：FastAPI, Agent
 
 ### AIBE-007 · Streaming Connection 断开后怎样做 Heartbeat、Reconnect、Resume 与状态补偿？
 - **Topic**：Streaming Reliability
@@ -77,7 +77,7 @@
 - **Depth**：L4
 - **Source Count**：**3**
 - **Evidence Sources**：`S035`, `S089`, `S156`
-- **Related Modules**：Agent Harness / Runtime
+- **Related Modules**：Agent
 
 ### AIBE-008 · HTTP、RPC / gRPC 和 MQ 在跨服务通信中怎样选择？延迟、耦合、Schema、可靠性与演进成本分别是什么？
 - **Topic**：Service Communication
@@ -118,7 +118,7 @@
 - **Depth**：L3
 - **Source Count**：**7**
 - **Evidence Sources**：`S075`, `S086`, `S184`, `S205`, `S214`, `S241`, `S256`
-- **Related Modules**：Python, FastAPI, Agent Harness / Runtime
+- **Related Modules**：Python, FastAPI, Agent
 
 ### AIBE-013 · 如何限制并发调用外部 API，避免 Connection Pool、Downstream 或模型服务被打满？
 - **Topic**：Concurrency Control
@@ -158,7 +158,7 @@
 - **Depth**：L4
 - **Source Count**：**10**
 - **Evidence Sources**：`S069`, `S079`, `S084`, `S198`, `S201`, `S209`, `S247`, `S270`, `S274`, `S276`
-- **Related Modules**：Redis, Agent Harness / Runtime
+- **Related Modules**：Redis, Agent
 
 ### AIBE-018 · Retry、Circuit Breaker、Degradation 与 Fallback 分别解决什么问题？怎样避免重试风暴和级联故障？
 - **Topic**：Resilience
@@ -166,7 +166,7 @@
 - **Depth**：L4
 - **Source Count**：**10**
 - **Evidence Sources**：`S075`, `S079`, `S092`, `S109`, `S113`, `S144`, `S154`, `S174`, `S198`, `S276`
-- **Related Modules**：Agent Harness / Runtime
+- **Related Modules**：Agent
 
 ### AIBE-019 · 有副作用的请求怎样设计 Idempotency？Retry / Timeout / Crash 后怎样避免重复扣款、下单或执行？
 - **Topic**：Idempotency
@@ -174,7 +174,7 @@
 - **Depth**：L4
 - **Source Count**：**8**
 - **Evidence Sources**：`S035`, `S091`, `S093`, `S147`, `S158`, `S165`, `S262`, `S279`
-- **Related Modules**：MySQL, Redis, Agent Harness / Runtime
+- **Related Modules**：MySQL, Redis, Agent
 
 ### AIBE-020 · Database + Cache 双写怎样保证最终一致性？Cache Aside、删除缓存、补偿和 Failure Window 怎样理解？
 - **Topic**：Data Consistency / Cache Architecture
@@ -201,7 +201,7 @@
 - **Depth**：L4
 - **Source Count**：**8**
 - **Evidence Sources**：`S035`, `S105`, `S119`, `S171`, `S183`, `S206`, `S254`, `S268`
-- **Related Modules**：Redis, Agent Harness / Runtime
+- **Related Modules**：Redis, Agent
 
 ### AIBE-023 · 多实例 Session / Token 状态怎样共享与路由？服务无状态化与 Sticky Session 怎样取舍？
 - **Topic**：Session / Routing
@@ -209,7 +209,7 @@
 - **Depth**：L4
 - **Source Count**：**3**
 - **Evidence Sources**：`S171`, `S181`, `S229`
-- **Related Modules**：Redis, Agent Harness / Runtime
+- **Related Modules**：Redis, Agent
 
 ### AIBE-024 · Service Discovery 与 Load Balancing 怎样工作？DNS / Nginx / Registry / Heartbeat 的边界是什么？
 - **Topic**：Service Discovery / Load Balancing
@@ -257,7 +257,7 @@
 - **Depth**：L4
 - **Source Count**：**6**
 - **Evidence Sources**：`S066`, `S108`, `S109`, `S156`, `S183`, `S221`
-- **Related Modules**：Agent Harness / Runtime
+- **Related Modules**：Agent
 
 ### AIBE-030 · Configuration Center / Dynamic Config 怎样实现优先级、热更新、监听、失败回退与版本治理？
 - **Topic**：Configuration Management
@@ -331,7 +331,7 @@
 - **Depth**：L4
 - **Source Count**：**4**
 - **Evidence Sources**：`S089`, `S221`, `S254`, `S270`
-- **Related Modules**：Agent Harness / Runtime
+- **Related Modules**：Agent
 
 ### AIBE-039 · 结构化业务事实、Cache、Session 与 Runtime State 应怎样在 MySQL / Redis 等存储之间分层？
 - **Topic**：Data Layering
@@ -339,7 +339,7 @@
 - **Depth**：L4
 - **Source Count**：**11**
 - **Evidence Sources**：`S090`, `S092`, `S097`, `S118`, `S160`, `S178`, `S181`, `S194`, `S212`, `S214`, `S273`
-- **Related Modules**：MySQL, Redis, Agent Harness / Runtime
+- **Related Modules**：MySQL, Redis, Agent
 
 ---
 

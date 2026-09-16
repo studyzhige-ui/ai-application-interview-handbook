@@ -1,5 +1,8 @@
 # Final Quality Audit｜v1.0 终局质量审计
 
+
+> **版本说明（2026-09-16）：** 下文184篇/Agent23章的v1.0结论是历史审计，不覆盖新的章节排列。当前Agent已按任务→四层→治理重构为16章，全仓库正文177篇。本次结构、链接、计数与研究证据不变性检查记录见本文末尾；不将历史PASS伪装为一次新的逐项技术复审。
+
 [← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [术语表](terminology-glossary.md) · [正文深度审计](content-depth-audit.md)
 
 更新日期：2026-09-12
@@ -32,7 +35,7 @@ Python 13
 → Vector DB 16
 → LLM Foundation 14
 → RAG 14
-→ Agent Harness / Runtime 23
+→ Agent 23
 → System Design 19
 ```
 
@@ -53,7 +56,7 @@ Redis                   docs 24/24   canonical 19/19
 Vector Database         docs 16/16   canonical 12/12
 LLM Foundation          docs 14/14   canonical 23/23
 RAG                     docs 14/14   canonical 29/29
-Agent Harness / Runtime docs 23/23   canonical 44/44
+Agent docs 23/23   canonical 44/44
 System Design           docs 19/19   canonical 24/24
 ----------------------------------------------------
 TOTAL                    docs 184     canonical 235
@@ -398,3 +401,20 @@ Bridge Labs
 ```
 
 在进入这些工作前，不需要继续新增一级知识模块或为了“更完整”无边界扩写正文。
+
+## 2026-09-16｜Agent分层重构检查
+
+此次替换原课程，不新增架构学习支线。检查命令：`python3 tools/validate_agent_curriculum.py`。
+
+- Agent正文16章连续，首页唯一目录、上下章导航、折叠自测及代码围栏通过检查。
+- 旧agent-harness学习目录与独立architecture目录已移除。
+- 全仓库正文177篇；44道ACTIVE Agent Canonical均有新章节位置。
+- 旧23章的机制归属见既有粒度记录；原始interviews目录在迁移前后逐文件SHA-256相同。
+- 本次为课程结构与内容编排重构，未宣称重新执行全部产品API实验或重做全仓库技术深度评级。
+
+执行输出：
+
+```text
+Agent chapters: 16; curriculum total: 177; Agent canonical: 44; local links checked: 1042; broken: 0
+PASS: sequence, navigation, collapsed quizzes, fences, file links, counts and canonical map
+```

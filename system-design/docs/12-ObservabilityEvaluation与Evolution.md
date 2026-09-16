@@ -1,6 +1,6 @@
 # 12｜Observability、Evaluation、Cost 与 Evolution
 
-> **本章定位：System Design 组合层。** 这里负责把 Observability、Evaluation、Cost 与 Evolution 组合成系统闭环。通用 Metrics/Logs/Trace 回到 [AIBE Observability](../../backend-engineering/docs/17-Observability与PerformanceDiagnosis.md)；Retrieval / End-to-end Quality 回到 [RAG Evaluation](../../rag/docs/10-RetrievalEvaluation.md) 与 [RAG Quality Engineering](../../rag/docs/11-EndToEndQualityEngineering.md)；Agent Trace / Eval 回到 [Agent Trace](../../agent-harness/docs/19-TraceReplayObservability.md) 与 [Agent Evaluation](../../agent-harness/docs/20-AgentEvaluationBenchmark.md)。
+> **本章定位：System Design 组合层。** 这里负责把 Observability、Evaluation、Cost 与 Evolution 组合成系统闭环。通用 Metrics/Logs/Trace 回到 [AIBE Observability](../../backend-engineering/docs/17-Observability与PerformanceDiagnosis.md)；Retrieval / End-to-end Quality 回到 [RAG Evaluation](../../rag/docs/10-RetrievalEvaluation.md) 与 [RAG Quality Engineering](../../rag/docs/11-EndToEndQualityEngineering.md)；Agent Trace / Eval 回到 [Agent Trace](../../agent/docs/15-ObservabilityAndEvaluation.md) 与 [Agent Evaluation](../../agent/docs/15-ObservabilityAndEvaluation.md)。
 
 系统设计最后一环不是“架构图画完”，而是：
 

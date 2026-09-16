@@ -1,4 +1,4 @@
-# Agent Harness / Runtime Capability Map
+# Agent Capability Map
 
 更新日期：2026-09-11
 

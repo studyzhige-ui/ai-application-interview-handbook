@@ -1,5 +1,8 @@
 # Curriculum & Research Progress｜当前正式状态
 
+> **2026-09-16更新：** Agent为16章分层重构版，全仓库177篇正文。旧版深度与终局审计为历史记录；本次验证范围为结构、链接、迁移覆盖和证据不变性，详见既有质量记录。
+
+
 [← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../roadmap/knowledge-map.md) · [Learning Path](../../roadmap/learning-path.md)
 
 > **Repository-first：仓库当前文件高于历史聊天总结。**
@@ -29,12 +32,12 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 | 06 | [Vector Database](../../vector-db/README.md) | 16 | 12 | ✅ |
 | 07 | [LLM Foundation（应用工程深度）](../../llm-foundation/README.md) | 14 | 23 | ✅ |
 | 08 | [RAG](../../rag/README.md) | 14 | 29 | ✅ |
-| 09 | [Agent Harness / Runtime](../../agent-harness/README.md) | 23 | 44 | ✅ |
+| 09 | [Agent](../../agent/README.md) | 16 | 44 | ✅ |
 | 10 | [System Design](../../system-design/README.md) | 19 | 24 | ✅ |
 
 十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。
 
-**v1.0 Final Quality Audit：✅ PASS。** 184/184 Curriculum Markdown、235/235 Canonical、仓库内链接、Mermaid、跨模块 Ownership、术语与版本敏感事实风险审计均已完成；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
+**v1.0 Final Quality Audit：✅ PASS。** 177/184 Curriculum Markdown、235/235 Canonical、仓库内链接、Mermaid、跨模块 Ownership、术语与版本敏感事实风险审计均已完成；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
 
 ## Phase 4 Learning & Interview Usage Layer
 

@@ -2,7 +2,7 @@
 
 [← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md)
 
-> **状态：✅ 第一版正式学习路线完成。** 这份路线解决“184 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
+> **状态：✅ 第一版正式学习路线完成。** 这份路线解决“177 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
 > **固定原则不变：知识体系演进顺序优先。** HUMAN-A 真人面经只影响第二遍 / 第三遍的复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的课程主干。
 >
@@ -20,12 +20,12 @@
 → [Vector Database](../vector-db/README.md)
 → [LLM Foundation](../llm-foundation/README.md)
 → [RAG](../rag/README.md)
-→ [Agent Harness / Runtime](../agent-harness/README.md)
+→ [Agent](../agent/README.md)
 → [System Design](../system-design/README.md)
 
 不要因为 Agent / RAG 高频就从中间开始，也不要因为某个基础题真人频率低就跳过必要前置。
 
-Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent-harness/review/README.md) · [System Design](../system-design/review/README.md)
+Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent/review/README.md) · [System Design](../system-design/review/README.md)
 
 ---
 
@@ -78,7 +78,7 @@ Read
 → 知道最关键 Failure / Trade-off
 ```
 
-这一遍 **184 个 Curriculum Markdown 全部要过**，不根据面经频率删减。
+这一遍 **177 个 Curriculum Markdown 全部要过**，不根据面经频率删减。
 
 ### Pass 2｜Review Pass：从“看懂”变成“能重建”
 
@@ -233,23 +233,23 @@ Data 阶段结束时，应能回答：
 - S5：`13–14`
 - S6：RAG Review + Interview + Exit Gate
 
-## Week 11｜Agent Harness 前半
+## Week 11｜Agent：从任务到运行与接入
 
-- S1：`01–03`
-- S2：`04–06`
-- S3：`07–09`
-- S4：`10–12`
-- S5：`13–15`
-- S6：`16–18`
+- S1：`01–02`，任务契约与自主权。
+- S2：`03–04`，应用交互与执行循环。
+- S3：`05–06`，上下文与记忆。
+- S4：`07–08`，状态恢复与多 Agent 协作。
+- S5：`09–10`，模型接入与工具契约。
+- S6：`11–12`，工具执行与知识/扩展能力接入。
 
 ## Week 12｜Agent 收口 + System Design 起步
 
-- S1：Agent `19–21`
-- S2：Agent `22–23`
-- S3：Agent Review + Interview + Exit Gate
-- S4：System Design `01–03`
-- S5：System Design `04–06`
-- S6：System Design `07–09`
+- S1：Agent `13–14`，资源环境与安全治理。
+- S2：Agent `15–16`，观测评测与生产演进。
+- S3：Agent Review + Interview + Exit Gate。
+- S4：System Design `01–03`。
+- S5：System Design `04–06`。
+- S6：System Design `07–09`。
 
 ## Week 13｜System Design 收口 + 全局复盘
 
@@ -269,7 +269,7 @@ Python
 → MySQL / Redis / Vector DB
 → LLM
 → RAG
-→ Agent Runtime
+→ Agent
 → System Design
 ```
 
@@ -289,7 +289,7 @@ Python
 | Vector DB | 解释 Similarity、Exact vs ANN、HNSW / IVF / PQ、Filter / Tenant、Index Lifecycle、Distributed / Product Selection。 |
 | LLM | 解释 Token / Context、Transformer / Attention、Generation、KV Cache / Prefill / Decode、Serving、Embedding/Reranker、Prompt / Hallucination 边界。 |
 | RAG | 从 Source 画完整 Pipeline；解释 Parse / Chunk、Hybrid / RRF / Rerank、Evidence / Citation、Retrieval / E2E Eval、Bad Case Attribution。 |
-| Agent | 画 Agent Loop / Tool Runtime；区分 Context / Memory / State；解释 Compaction、Checkpoint / Resume、Permission / Sandbox、Multi-Agent、Trace / Eval。 |
+| Agent | 从任务契约与自主权画出四层职责，走通输入到交付；区分上下文、记忆、状态与外部事实；解释工具副作用、恢复、安全与评测；说明组件取舍和部署边界。 |
 | System Design | 面对陌生题能按 Requirement → Capacity → State → Flow → Consistency → Reliability → Security → Observability / Evaluation 走完整设计，而不是套模板。 |
 
 ### Exit Gate 的建议通过线

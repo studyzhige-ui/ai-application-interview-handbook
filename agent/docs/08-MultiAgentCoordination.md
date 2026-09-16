@@ -1,30 +1,20 @@
-# 18. Multi-Agent、Subagent、Handoff、A2A 与 Workspace Concurrency
+# 08. L2 运行层：多 Agent 协作与调度
 
-Multi-Agent 是 Agent 面试里非常容易“概念先行”的部分。
+[← 07](07-StateAndRecovery.md) · [Agent 主线](../README.md) · [09 →](09-ModelAccessAndRouting.md)
 
-很多回答会变成：
+> 主线位置：**L2 运行层**。先有一个可控执行单元，再讨论如何把工作分给多个执行单元。
+>
+> 本章产物：**委派、汇聚、共享资源与取消协议**。
 
-> “任务复杂就拆多个 Agent，提高并行度。”
+[多 Agent 是运行拓扑，不是新的架构层](#part-1) → [隔离上下文并协调共享资源](#part-2) → [调度、取消、预算与死锁](#part-3) → [跨系统协作与内部子 Agent 不同](#part-4)
 
-但真实 Production 问题更难：
+<a id="part-1"></a>
 
-```text
-什么时候值得拆？
-谁拥有任务？
-上下文怎样隔离？
-如何避免重复工作？
-多个 Agent 同时改一个 Workspace 怎么办？
-失败一个如何收敛？
-A2A 和 MCP 到底什么关系？
-```
+## 1. 多 Agent 是运行拓扑，不是新的架构层
 
-这一章的目标是把 Multi-Agent 从“角色扮演”还原成：
+先有单 Agent 的目标、状态、工具与恢复语义，再判断是否值得分工。增加执行角色不能修复一个不清晰的任务契约。
 
-> **任务所有权、能力委托、上下文隔离、共享资源并发和结果聚合问题。**
-
----
-
-## 1. 什么时候真的值得 Multi-Agent
+### 什么时候真的值得 Multi-Agent
 
 常见适合条件：
 
@@ -63,9 +53,7 @@ Failure Surface
 
 Anthropic Multi-Agent Research 官方工程文章也强调：Multi-Agent 适合高并行、开放探索，但会显著增加 token 与协调成本，不是默认优于 Single Agent。
 
----
-
-# 2. Subagent as Tool
+### Subagent as Tool
 
 最简单模式：
 
@@ -94,9 +82,7 @@ independent analysis
 parallel search
 ```
 
----
-
-# 3. Handoff 模式
+### Handoff 模式
 
 另一种模式：
 
@@ -117,9 +103,7 @@ State 共享还是 snapshot？
 
 所以 Handoff 是 Ownership Transition，而不只是函数调用。
 
----
-
-# 4. Manager / Worker 模式
+### Manager / Worker 模式
 
 ```text
 Manager
@@ -147,9 +131,7 @@ Worker 不应该都认为：
 
 否则容易重复执行。
 
----
-
-# 5. Task Ownership 必须显式
+### Task Ownership 必须显式
 
 可以给每个 Task：
 
@@ -173,9 +155,13 @@ workspace_scope
 
 这和 Backend Queue 的 competing consumer 问题类似，但 Agent 还多了模型自主决策的不确定性。
 
----
+<a id="part-2"></a>
 
-# 6. Context Isolation 为什么很重要
+## 2. 隔离上下文并协调共享资源
+
+子任务可以并行，但共享写入不能默认安全。权限、预算、上下文与资源所有权要随委派明确。
+
+### Context Isolation 为什么很重要
 
 错误：
 
@@ -206,38 +192,7 @@ Subtask Goal
 
 > **传 Task Contract，不是复制整个脑子。**
 
----
-
-# 7. Claude Code `Task.ts` 提供的实现信号
-
-固定源码索引确认 Task 类型明确区分：
-
-```text
-local_bash
-local_agent
-remote_agent
-in_process_teammate
-local_workflow
-monitor_mcp
-dream
-```
-
-并且 Task state 包含：
-
-```text
-pending / running / completed / failed / killed
-start/end time
-output file + offset
-abort / kill semantics
-```
-
-这直接支持课程抽象：
-
-> Subagent / Background Task 应是有身份、状态机、输出位置、取消语义的一等 Runtime 对象。
-
----
-
-# 8. Workspace Concurrency 是 Coding Agent 的高风险点
+### Workspace Concurrency 是 Coding Agent 的高风险点
 
 两个 Agent 同时：
 
@@ -257,11 +212,9 @@ Test 在错误中间状态执行
 
 HUMAN-A `AGENT-031` 专门追问多 Agent 并行修改同一文件 / Workspace。
 
----
+### 共享 Workspace 的几种策略
 
-# 9. 共享 Workspace 的几种策略
-
-## 9.1 单 Writer
+#### 单 Writer
 
 ```text
 多个 Agent 研究
@@ -270,7 +223,7 @@ HUMAN-A `AGENT-031` 专门追问多 Agent 并行修改同一文件 / Workspace�
 
 最简单可靠。
 
-## 9.2 Isolated Branch / Worktree
+#### Isolated Branch / Worktree
 
 ```text
 Agent A → branch A
@@ -280,7 +233,7 @@ Agent B → branch B
 
 适合 Coding Agent。
 
-## 9.3 Fine-grained Ownership
+#### Fine-grained Ownership
 
 ```text
 Agent A owns frontend/
@@ -289,7 +242,7 @@ Agent B owns backend/
 
 但要处理跨目录依赖。
 
-## 9.4 Optimistic Merge
+#### Optimistic Merge
 
 各自产生 Patch：
 
@@ -300,9 +253,7 @@ patch
 
 合并时检测冲突。
 
----
-
-# 10. Shared State 也会 Race
+### Shared State 也会 Race
 
 不只是文件。
 
@@ -324,9 +275,13 @@ compare-and-set
 
 不要让多个 Agent 随意覆盖共享 JSON。
 
----
+<a id="part-3"></a>
 
-# 11. Multi-Agent Failure
+## 3. 调度、取消、预算与死锁
+
+委派关系必须有界。父任务结束、子任务超时或部分失败时，运行时应有可解释的汇聚与清理行为。
+
+### Multi-Agent Failure
 
 假设：
 
@@ -353,9 +308,7 @@ stop all?
 Partial Failure
 ```
 
----
-
-# 12. Budget Explosion
+### Budget Explosion
 
 如果 Parent 每轮产生 5 个 Subagent，每个又产生 5 个：
 
@@ -381,9 +334,7 @@ timeout
 parent-child relation
 ```
 
----
-
-# 13. Recursive Delegation / Deadlock
+### Recursive Delegation / Deadlock
 
 Agent A：
 
@@ -414,9 +365,37 @@ timeout
 ownership rule
 ```
 
----
+### Result Aggregation 不是“把所有答案拼起来”
 
-# 14. A2A 解决什么
+Manager 要判断：
+
+```text
+结果是否互相冲突？
+哪些有证据？
+哪个更新？
+是否重复？
+是否达到 Acceptance Criteria？
+```
+
+可以要求 Subagent Output Contract：
+
+```text
+summary
+evidence
+artifacts
+open_questions
+confidence
+```
+
+而不是自由文本。
+
+<a id="part-4"></a>
+
+## 4. 跨系统协作与内部子 Agent 不同
+
+A2A 讨论跨 Agent 系统的发现、任务和消息交互；协议连接不会自动提供正确分工、可信结果或业务一致性。
+
+### A2A 解决什么
 
 A2A 面向：
 
@@ -444,9 +423,7 @@ A2A
 
 二者不是互相替代。
 
----
-
-# 15. A2A 和内部 Subagent 有什么区别
+### A2A 和内部 Subagent 有什么区别
 
 内部 Subagent：
 
@@ -484,93 +461,28 @@ error
 security
 ```
 
----
+## 本章自测
 
-# 16. Result Aggregation 不是“把所有答案拼起来”
+<details>
+<summary>子 Agent 分开上下文后，共享文件写入就安全了吗？</summary>
 
-Manager 要判断：
+没有。信息隔离与资源并发是两件事，需要写入所有权、隔离工作区、锁或版本化合并。
 
-```text
-结果是否互相冲突？
-哪些有证据？
-哪个更新？
-是否重复？
-是否达到 Acceptance Criteria？
-```
-
-可以要求 Subagent Output Contract：
-
-```text
-summary
-evidence
-artifacts
-open_questions
-confidence
-```
-
-而不是自由文本。
-
----
-
-# 17. HUMAN-A 信号
-
-本章主要承接：
-
-- `AGENT-030` Multi-Agent Architecture：29 个独立来源；
-- `AGENT-031` Workspace / Shared-resource Concurrency：7 个；
-- `AGENT-046` A2A Protocol：6 个。
-
-真实面试深度已经进入：
-
-```text
-怎样分工？
-Context 共享吗？
-文件冲突怎么办？
-A2A 和 MCP 区别？
-如何避免递归互调？
-```
-
----
-
-# 18. 面试怎么答
-
-## Q：什么时候用 Multi-Agent？
-
-🎯 **30 秒回答**：
-
-> 我只在任务可并行拆分、不同子任务需要明显不同 Context/能力，或者单 Agent Context 已经过载时考虑 Multi-Agent。设计重点不是“多少角色”，而是 task ownership、context isolation、budget、partial failure、result aggregation 和 shared-resource concurrency。Coding 场景最好给不同 Agent 独立 branch/worktree 或单 writer，避免并行覆盖同一 workspace。
-
-## Q：MCP 和 A2A 区别？
-
-> MCP 主要标准化 Agent Host 与 Tool/Resource/Prompt Server 的连接；A2A 面向独立 Agent System 之间的 capability discovery、task collaboration 和 artifact/status exchange。内部 Subagent 一般仍在同一 Runtime 控制域，和 A2A 对端的信任边界不同。
-
----
-
-# 19. 高频易错点
-
-⚠️ **复杂任务就应该 Multi-Agent。** 线性依赖任务常得不偿失。
-
-⚠️ **Subagent 拿完整 Parent Context 最简单。** 会增加 Token、泄漏和噪声。
-
-⚠️ **并行写同一个 Repo 只需要 Git 自动 merge。** 语义冲突和测试中间态仍然存在。
-
-⚠️ **A2A = MCP for agents。** 两者连接对象和任务语义不同。
-
----
-
-# 20. 本章自测
-
-<details><summary>1. 为什么 Task Ownership 是 Multi-Agent 的核心？</summary>
-
-没有明确 owner，多个 Agent 可能重复执行相同任务、同时产生副作用或互相覆盖状态；ownership 是协调和恢复的基础。
 </details>
 
-<details><summary>2. 为什么 Workspace 隔离常比“约定不要冲突”可靠？</summary>
+<details>
+<summary>A2A 是否自动解决多 Agent 分工？</summary>
 
-模型约定不能防止并发写；独立 branch/worktree、单 writer 或 versioned patch 可以在执行层检测和限制冲突。
+不解决。互操作协议不代替目标分解、权限、预算、调度、汇聚和最终验收。
+
 </details>
 
-<details><summary>3. Multi-Agent 最大的新成本是什么？</summary>
+## 回到主线
 
-除了 Token 成本，还增加 task decomposition、ownership、context transfer、partial failure、shared-state concurrency、aggregation、trace 和 eval 复杂度。
-</details>
+现在应能独立说明：委派、汇聚、共享资源与取消协议。下一章：[L3 接入层：模型适配、路由与容错](09-ModelAccessAndRouting.md)。
+
+对应真人问题：`AGENT-030`、`AGENT-031`、`AGENT-046`。频率与完整问法只在[研究题库](../../research/questions/agent-harness.md)维护，不决定本章学习顺序。
+
+资料核对入口：[官方资料](../../roadmap/agent-authoritative-sources.md) · [源码索引](../../research/agent-sources/README.md)。四层归位与工作定义是教材抽象，产品 API、默认行为与源码路径以标注版本为准。
+
+[← 07](07-StateAndRecovery.md) · [Agent 主线](../README.md) · [09 →](09-ModelAccessAndRouting.md)

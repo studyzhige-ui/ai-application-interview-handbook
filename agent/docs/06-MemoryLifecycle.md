@@ -1,29 +1,20 @@
-# 11. Memory Architecture、Lifecycle 与 Correctness
+# 06. L2 运行层：记忆的选择、使用与维护
 
-Agent 一旦跨多轮、多任务运行，就会遇到一个经典问题：
+[← 05](05-ContextEngineering.md) · [Agent 主线](../README.md) · [07 →](07-StateAndRecovery.md)
 
-> **哪些信息应该被“记住”，记多久，什么时候再取回来？**
+> 主线位置：**L2 运行层**。当前上下文清楚后，再决定哪些信息值得跨步骤、跨任务复用。
+>
+> 本章产物：**记忆读写、来源、更新与失效策略**。
 
-如果回答只是：
+[记忆策略属于运行层，记忆数据库不属于运行层](#part-1) → [选择、提取、写入与按需召回](#part-2) → [纠错、冲突与失效是核心机制](#part-3) → [记忆的安全与验收](#part-4)
 
-> “把聊天记录存进 Vector DB。”
+<a id="part-1"></a>
 
-那还没有真正进入 Agent Memory Engineering。
+## 1. 记忆策略属于运行层，记忆数据库不属于运行层
 
-Memory 的核心不是“有个数据库”，而是：
+这一章回答哪些信息值得未来再次使用。L2 决定何时写、何时读、如何更新和失效；L3 提供受控存取接口；L4 保存记录及索引。这是一项跨层能力的职责分解，不是三个互相重复的 Memory 模块。
 
-```text
-什么值得写？
-写成什么形式？
-什么时候召回？
-怎样更新？
-什么时候过期？
-错误 Memory 怎么纠正？
-```
-
----
-
-## 1. 先把 Context / Memory / State / History 分开
+### 先把 Context / Memory / State / History 分开
 
 这是整个 Agent Runtime 最重要的边界之一：
 
@@ -54,9 +45,7 @@ State ≠ Context
 
 它们可以互相投影，但不是一个概念。
 
----
-
-# 2. Memory 为什么不能“什么都存”
+### Memory 为什么不能“什么都存”
 
 如果所有历史都永久保存：
 
@@ -84,13 +73,11 @@ Observe
 → Expire / Correct / Delete
 ```
 
----
-
-# 3. Memory 可以怎样分层
+### Memory 可以怎样分层
 
 课程层常见的实用划分：
 
-## 3.1 Working Memory
+#### Working Memory
 
 当前任务正在使用的信息：
 
@@ -103,7 +90,7 @@ recent tool evidence
 
 它通常更接近 Runtime State / Current Context。
 
-## 3.2 Episodic Memory
+#### Episodic Memory
 
 发生过的事件：
 
@@ -113,7 +100,7 @@ recent tool evidence
 某次 incident 的处理结果
 ```
 
-## 3.3 Semantic Memory
+#### Semantic Memory
 
 较稳定事实：
 
@@ -124,7 +111,7 @@ recent tool evidence
 领域知识摘要
 ```
 
-## 3.4 Procedural Memory
+#### Procedural Memory
 
 “怎么做”的程序性知识：
 
@@ -138,9 +125,13 @@ recent tool evidence
 
 这只是课程抽象，不声称 Claude Code / Codex 使用完全相同的四类命名。
 
----
+<a id="part-2"></a>
 
-# 4. 什么时候应该写 Memory
+## 2. 选择、提取、写入与按需召回
+
+把长期记忆作为有来源、作用域和生命周期的信息资产，不把所有聊天自动永久存入向量库。
+
+### 什么时候应该写 Memory
 
 不建议：
 
@@ -177,9 +168,7 @@ expires?
 
 可能更适合持久化。
 
----
-
-# 5. Extraction：从对话变成 Memory Record
+### Extraction：从对话变成 Memory Record
 
 不要直接把自然语言聊天原文当长期 Memory 唯一结构。
 
@@ -210,9 +199,7 @@ MemoryRecord(
 审计来源
 ```
 
----
-
-# 6. Retrieval-on-demand 为什么比“全量注入”更重要
+### Retrieval-on-demand 为什么比“全量注入”更重要
 
 Memory Store 可能有十万条记录。
 
@@ -240,9 +227,7 @@ Memory 主要检索 Agent / User / Task 历史沉淀
 
 二者的权限、更新和正确性标准也可能不同。
 
----
-
-# 7. Memory Consolidation 是什么
+### Memory Consolidation 是什么
 
 随着时间推移可能出现：
 
@@ -266,9 +251,13 @@ response_style = concise / conclusion-first
 derived_from = [mem1, mem2, mem3]
 ```
 
----
+<a id="part-3"></a>
 
-# 8. Memory Correctness：错误事实比“没有记住”更危险
+## 3. 纠错、冲突与失效是核心机制
+
+记忆是一份可被纠正的历史表示，不是现实世界的最终权威。
+
+### Memory Correctness：错误事实比“没有记住”更危险
 
 `AGENT-016` 直接追问过期摘要、错误事实和冲突信息。
 
@@ -297,9 +286,7 @@ confidence
 
 对于高风险事实，最好优先从 Source of Truth 重新验证，而不是只信长期 Memory。
 
----
-
-# 9. Memory Conflict 怎么处理
+### Memory Conflict 怎么处理
 
 假设：
 
@@ -328,9 +315,7 @@ conflict unresolved
 
 而不是强行“总结成一个答案”。
 
----
-
-# 10. Memory Staleness / Expiration
+### Memory Staleness / Expiration
 
 有些 Memory 天生有 TTL：
 
@@ -359,9 +344,37 @@ Low confidence decay
 Manual correction
 ```
 
----
+### Memory Failure Timeline
 
-# 11. Privacy / Tenant Boundary
+```text
+T0  User 说：部署用 branch=main
+T1  Runtime 写长期 Memory
+T2  项目迁移到 release branch
+T3  Source of Truth 更新
+T4  Memory 没失效
+T5  两周后 Agent 召回旧 Memory
+T6  Agent 尝试操作 main
+```
+
+根因不是：
+
+```text
+Vector DB 召回不准
+```
+
+而是：
+
+```text
+Memory Lifecycle 缺少 Version / Invalidation
+```
+
+<a id="part-4"></a>
+
+## 4. 记忆的安全与验收
+
+保存和使用信息都要满足用户、租户与项目边界；召回后仍需依据任务风险验证其适用性。
+
+### Privacy / Tenant Boundary
 
 Memory 往往包含高敏感上下文：
 
@@ -387,92 +400,7 @@ agent_scope
 
 真正的隔离要在存储 / Query 层 enforce。
 
-多租户 State 下一章继续。
-
----
-
-# 12. Claude Code 固定源码侧的证据
-
-Claude Code Source Index 已确认：
-
-- `QueryEngine` 会加载 `memdir/memdir.ts` 的 memory prompt；
-- Tool context 维护 `loadedNestedMemoryPaths`，避免 nested memory 重复注入；
-- session / context / memory 是不同 Runtime 路径。
-
-这支持：
-
-> **Memory 是 Context Source，但不等于整个 Context。**
-
-索引还明确建议后续阅读 `memdir/*` 继续研究具体生命周期；因此本章不会凭空宣称 Claude Code 的具体写入算法。
-
----
-
-# 13. HUMAN-A 信号
-
-本章主要承接：
-
-- `AGENT-014` Memory Architecture：36 个独立来源；
-- `AGENT-015` Memory Lifecycle：8 个；
-- `AGENT-016` Memory Correctness / Staleness：6 个。
-
-真人面试已经从：
-
-```text
-“Memory 怎么做？”
-```
-
-深入到：
-
-```text
-什么时候晋升长期？
-怎么更新？
-错了怎么办？
-过期怎么办？
-```
-
----
-
-# 14. Memory Failure Timeline
-
-```text
-T0  User 说：部署用 branch=main
-T1  Runtime 写长期 Memory
-T2  项目迁移到 release branch
-T3  Source of Truth 更新
-T4  Memory 没失效
-T5  两周后 Agent 召回旧 Memory
-T6  Agent 尝试操作 main
-```
-
-根因不是：
-
-```text
-Vector DB 召回不准
-```
-
-而是：
-
-```text
-Memory Lifecycle 缺少 Version / Invalidation
-```
-
----
-
-# 15. 面试怎么答
-
-## Q：Agent Memory 怎么设计？
-
-🎯 **30 秒回答**：
-
-> 我会先把 Memory 和 Context、State、History 分开。Memory 不是全量聊天记录，而是经过 write policy 选出的、未来有价值的信息。写入时做 extraction、去重、来源和版本记录；使用时按当前任务 retrieval-on-demand；长期还要支持 consolidation、TTL、supersede、conflict 和人工 correction。高风险事实不能只信 Memory，要能回 Source of Truth 验证。多用户场景还要在存储与查询层绑定 tenant/user/workspace 隔离。
-
-## Q：Memory 错了怎么办？
-
-> Memory Record 要有 source、version、confidence、validity 和 superseded-by 之类元数据；发生冲突时按来源权威性和版本验证，必要时查询 Source of Truth 或让用户确认，并把旧 Memory 显式失效，而不是只在 Prompt 里追加一句“忽略之前的内容”。
-
----
-
-# 16. 高频易错点
+### 高频易错点
 
 ⚠️ **Memory = Vector DB。** Vector DB 只是可能的存储/检索组件。
 
@@ -482,21 +410,28 @@ Memory Lifecycle 缺少 Version / Invalidation
 
 ⚠️ **Memory 召回结果默认可信。** 高风险事实应重新验证 Source of Truth。
 
----
+## 本章自测
 
-# 17. 本章自测
+<details>
+<summary>Memory 为什么不是把 History 全部存起来？</summary>
 
-<details><summary>1. 为什么 Memory 不应该等于完整 History？</summary>
+Memory 是为未来复用选择并维护的信息，具有来源、作用域、版本和失效策略；History 是发生过的记录。
 
-History 是发生过的事件记录；Memory 是为未来价值而选择、提取、维护的信息。两者生命周期和检索目标不同。
 </details>
 
-<details><summary>2. Memory Consolidation 为什么必须保留来源？</summary>
+<details>
+<summary>模型召回的记忆与真实系统冲突怎么办？</summary>
 
-因为 higher-level memory 可能总结错误。保留 derived_from/source 才能审计、纠错和重新计算。
+核对来源、版本和适用范围，必要时重新查询权威系统、保留未决状态并纠正过期记忆。
+
 </details>
 
-<details><summary>3. 为什么高风险事实不应该只依赖 Memory？</summary>
+## 回到主线
 
-Memory 可能过期或错误；生产数据库、权限、付款状态等高风险事实应尽量回 Source of Truth 做实时验证。
-</details>
+现在应能独立说明：记忆读写、来源、更新与失效策略。下一章：[L2 运行层：执行状态、持久化与恢复](07-StateAndRecovery.md)。
+
+对应真人问题：`AGENT-014`、`AGENT-015`、`AGENT-016`。频率与完整问法只在[研究题库](../../research/questions/agent-harness.md)维护，不决定本章学习顺序。
+
+资料核对入口：[官方资料](../../roadmap/agent-authoritative-sources.md) · [源码索引](../../research/agent-sources/README.md)。四层归位与工作定义是教材抽象，产品 API、默认行为与源码路径以标注版本为准。
+
+[← 05](05-ContextEngineering.md) · [Agent 主线](../README.md) · [07 →](07-StateAndRecovery.md)

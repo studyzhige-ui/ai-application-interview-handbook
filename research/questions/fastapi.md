@@ -2,7 +2,7 @@
 
 更新日期：2026-09-10
 
-> 一级板块：**FastAPI**。本文件只记录 FastAPI / ASGI 框架层真人问题。HTTP / SSE / WebSocket 协议原理归 `AI Backend Engineering`；Python `asyncio` 语言与 Runtime 语义归 `Python`；Agent State / Tool / Checkpoint 归 `Agent Harness / Runtime`。
+> 一级板块：**FastAPI**。本文件只记录 FastAPI / ASGI 框架层真人问题。HTTP / SSE / WebSocket 协议原理归 `AI Backend Engineering`；Python `asyncio` 语言与 Runtime 语义归 `Python`；Agent State / Tool / Checkpoint 归 `Agent`。
 >
 > 本文件所有 ACTIVE 条目的 `Primary Module = FastAPI`。
 
@@ -51,7 +51,7 @@ FastAPI 在冻结面经中的独立出现频率不高，但出现时并不是只
 ### FASTAPI-004 · FastAPI + SSE 怎样把 Agent / LangGraph 的中间事件实时推送到前端？
 
 - **Primary Module**：FastAPI
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, Agent
 - **Topic**：Streaming Endpoint
 - **Question Type**：System Design / Implementation
 - **Language / Ecosystem**：FastAPI / SSE / LangGraph
@@ -63,7 +63,7 @@ FastAPI 在冻结面经中的独立出现频率不高，但出现时并不是只
 ### FASTAPI-005 · 只会 FastAPI GET / POST 为什么不足以构建 Claude Code 类 Agent Service？FastAPI 层还需要怎样承接 Streaming、Session 与 Runtime 状态？
 
 - **Primary Module**：FastAPI
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime, System Design
+- **Related Modules**：AI Backend Engineering, Agent, System Design
 - **Topic**：Framework Boundary
 - **Question Type**：Comparison / System Design
 - **Language / Ecosystem**：FastAPI

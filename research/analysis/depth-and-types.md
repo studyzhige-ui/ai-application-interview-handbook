@@ -51,5 +51,5 @@
 | Vector DB | 0 | 2 | 5 | 5 |
 | LLM Foundation（应用工程深度） | 0 | 11 | 11 | 1 |
 | RAG | 0 | 0 | 9 | 20 |
-| Agent Harness / Runtime | 0 | 0 | 9 | 35 |
+| Agent | 0 | 0 | 9 | 35 |
 | System Design | 0 | 0 | 0 | 24 |

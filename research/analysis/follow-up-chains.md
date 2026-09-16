@@ -319,11 +319,11 @@ MySQL 应从“**一个查询为什么从快变慢**”作为贯穿 Case，把 I
 
 自动共现里最高的跨模块组合是：
 
-- RAG ↔ Agent Harness / Runtime：59 个独立流程；
-- AI Backend Engineering ↔ Agent Harness / Runtime：54；
+- RAG ↔ Agent：59 个独立流程；
+- AI Backend Engineering ↔ Agent：54；
 - AI Backend Engineering ↔ Redis：53；
 - AI Backend Engineering ↔ MySQL：46；
-- LLM Foundation ↔ Agent Harness / Runtime：45。
+- LLM Foundation ↔ Agent：45。
 
 结合上面的原始顺序核验，真正值得课程采用的不是“同时学两个模块”，而是下面几条桥：
 

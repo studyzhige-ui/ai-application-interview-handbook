@@ -1,10 +1,10 @@
-# Agent Harness / Runtime Canonical Questions — S001–S279 全库纵向扫描 v3
+# Agent Canonical Questions — S001–S279 全库纵向扫描 v3
 
 更新日期：2026-09-10
 
-> 一级板块：**Agent Harness / Runtime**。本文件只保留 Agent 控制面与执行运行时：Loop、State、Context Assembly / Compaction、Memory、Tool / MCP / Skill、Checkpoint / Resume、Permission / Sandbox、Multi-Agent、Execution Trace、Evaluation、Coding Agent Runtime 等。通用 Network / Streaming Transport、Rate Limit / Backpressure、服务扩容与普通 Backend Observability 归 `AI Backend Engineering`；Long-context 模型本体限制归 `LLM Foundation`；端到端 Agent Backend 架构题归 `System Design`。
+> 一级板块：**Agent**。本文件只保留 Agent 控制面与执行运行时：Loop、State、Context Assembly / Compaction、Memory、Tool / MCP / Skill、Checkpoint / Resume、Permission / Sandbox、Multi-Agent、Execution Trace、Evaluation、Coding Agent Runtime 等。通用 Network / Streaming Transport、Rate Limit / Backpressure、服务扩容与普通 Backend Observability 归 `AI Backend Engineering`；Long-context 模型本体限制归 `LLM Foundation`；端到端 Agent Backend 架构题归 `System Design`。
 >
-> 本文件所有 ACTIVE 条目的 `Primary Module = Agent Harness / Runtime`。正式课程还要额外研究 Claude Code / Codex 源码，但源码不能反向改变 HUMAN-A Source Count。
+> 本文件所有 ACTIVE 条目的 `Primary Module = Agent`。正式课程还要额外研究 Claude Code / Codex 源码，但源码不能反向改变 HUMAN-A Source Count。
 
 ## 1. 当前扫描结论
 
@@ -319,7 +319,7 @@
 ---
 
 ### AGENT-044 · Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？
-- **Primary Module**：Agent Harness / Runtime
+- **Primary Module**：Agent
 - **Related Modules**：AI Backend Engineering, RAG
 - **Topic**：Prompt Injection / Untrusted Context Security
 - **Question Type**：Security / Failure Analysis / System Design
@@ -329,7 +329,7 @@
 - **Evidence Sources**：`S027`, `S079`, `S084`, `S103`, `S159`, `S207`, `S228`, `S276`
 
 ### AGENT-045 · Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？
-- **Primary Module**：Agent Harness / Runtime
+- **Primary Module**：Agent
 - **Related Modules**：LLM Foundation（应用工程深度）
 - **Topic**：Intent Recognition / Routing
 - **Question Type**：Comparison / System Design / Evaluation
@@ -339,7 +339,7 @@
 - **Evidence Sources**：`S008`, `S010`, `S012`, `S024`, `S057`, `S122`, `S139`, `S248`, `S255`, `S260`, `S276`
 
 ### AGENT-046 · A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？
-- **Primary Module**：Agent Harness / Runtime
+- **Primary Module**：Agent
 - **Related Modules**：AI Backend Engineering
 - **Topic**：A2A / Agent Communication Protocol
 - **Question Type**：Concept / Comparison / System Design
@@ -349,7 +349,7 @@
 - **Evidence Sources**：`S021`, `S048`, `S064`, `S114`, `S227`, `S238`
 
 ### AGENT-047 · LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？
-- **Primary Module**：Agent Harness / Runtime
+- **Primary Module**：Agent
 - **Related Modules**：FastAPI, AI Backend Engineering
 - **Topic**：Agent Framework Selection
 - **Question Type**：Comparison / Trade-off / Project
@@ -359,7 +359,7 @@
 - **Evidence Sources**：`S004`, `S027`, `S049`, `S054`, `S065`, `S071`, `S074`, `S077`, `S078`, `S087`, `S118`, `S121`, `S124`, `S126`, `S136`, `S155`, `S164`, `S165`, `S179`, `S182`, `S186`, `S221`, `S223`, `S227`, `S269`, `S275`, `S278`
 
 ### AGENT-048 · AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？
-- **Primary Module**：Agent Harness / Runtime
+- **Primary Module**：Agent
 - **Related Modules**：Python, AI Backend Engineering
 - **Topic**：AI-assisted Development Workflow
 - **Question Type**：AI Coding / Project / Verification
@@ -411,7 +411,7 @@
 
 ## 5. Agent 课程的特殊证据规则
 
-本文件的 Source Count 只代表 `S001–S279` HUMAN-A 市场证据。后续正式建设 Agent Harness / Runtime 教材时，还必须研究：
+本文件的 Source Count 只代表 `S001–S279` HUMAN-A 市场证据。后续正式建设 Agent 教材时，还必须研究：
 
 - `studyzhige-ui/claude-code-source-private`
 - `openai/codex`

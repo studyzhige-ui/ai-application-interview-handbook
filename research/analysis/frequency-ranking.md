@@ -15,43 +15,43 @@
 
 | Rank | QID | Module | Sources | Depth | Heat | Question |
 |---:|---|---|---:|---:|---|---|
-| 1 | `AGENT-009` | Agent Harness / Runtime | 41 | L4 | 🔥🔥🔥 | Context Window 接近上限时，怎样 Trim / Summarize / Compact，同时保留当前任务关键状态？ |
+| 1 | `AGENT-009` | Agent | 41 | L4 | 🔥🔥🔥 | Context Window 接近上限时，怎样 Trim / Summarize / Compact，同时保留当前任务关键状态？ |
 | 2 | `RAG-002` | RAG | 38 | L3 | 🔥🔥🔥 | Production RAG 从 Ingestion / Parse / Chunk / Embedding / Index 到 Retrieve / Rerank / Context / LLM 的完整链路是什么？ |
-| 3 | `AGENT-048` | Agent Harness / Runtime | 37 | L4 | 🔥🔥🔥 | AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？ |
-| 4 | `AGENT-003` | Agent Harness / Runtime | 36 | L3 | 🔥🔥🔥 | 一个完整 Agent Loop / Runtime 从 User Input 到 Final Answer 怎样执行？Model、Tool、State、Context 各在哪一层？ |
-| 5 | `AGENT-014` | Agent Harness / Runtime | 36 | L4 | 🔥🔥🔥 | Short-term / Working / Long-term Memory 怎样分层、写入、召回、更新与失效？ |
-| 6 | `AGENT-024` | Agent Harness / Runtime | 34 | L4 | 🔥🔥🔥 | Skill、Tool、Function Calling、MCP、Rule / Prompt / Workflow 的职责边界是什么？ |
-| 7 | `AGENT-005` | Agent Harness / Runtime | 31 | L3 | 🔥🔥🔥 | ReAct、Plan-Execute-Replan、Planner / Executor / Critic 等执行范式怎样选择？ |
+| 3 | `AGENT-048` | Agent | 37 | L4 | 🔥🔥🔥 | AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？ |
+| 4 | `AGENT-003` | Agent | 36 | L3 | 🔥🔥🔥 | 一个完整 Agent Loop / Runtime 从 User Input 到 Final Answer 怎样执行？Model、Tool、State、Context 各在哪一层？ |
+| 5 | `AGENT-014` | Agent | 36 | L4 | 🔥🔥🔥 | Short-term / Working / Long-term Memory 怎样分层、写入、召回、更新与失效？ |
+| 6 | `AGENT-024` | Agent | 34 | L4 | 🔥🔥🔥 | Skill、Tool、Function Calling、MCP、Rule / Prompt / Workflow 的职责边界是什么？ |
+| 7 | `AGENT-005` | Agent | 31 | L3 | 🔥🔥🔥 | ReAct、Plan-Execute-Replan、Planner / Executor / Critic 等执行范式怎样选择？ |
 | 8 | `LLM-023` | LLM Foundation（应用工程深度） | 30 | L3 | 🔥🔥🔥 | Prompt Engineering 应怎样从目标、角色、约束、Context、Example、Tool 与 Output Contract 组织并迭代？怎样用真实 Case / Evaluation 证明 Prompt 优化有效？ |
 | 9 | `RAG-007` | RAG | 30 | L3 | 🔥🔥🔥 | Chunk Strategy 怎样选择？Fixed、Recursive、Semantic、Parent-child、Structure-aware 分别适合什么数据？ |
-| 10 | `AGENT-001` | Agent Harness / Runtime | 30 | L3 | 🔥🔥🔥 | Agent 与普通 LLM Call / Chatbot / 固定 Workflow 的本质区别是什么？什么任务真正值得 Agent 化？ |
-| 11 | `AGENT-018` | Agent Harness / Runtime | 29 | L3 | 🔥🔥🔥 | Tool / Function Calling 从 Schema 暴露、模型选择、Structured Call、Runtime 执行到 Result 回填的完整链路是什么？ |
-| 12 | `AGENT-030` | Agent Harness / Runtime | 29 | L4 | 🔥🔥🔥 | 什么时候使用 Multi-Agent / Sub-agent？怎样分工、通信、共享或隔离 Context / State？ |
-| 13 | `AGENT-020` | Agent Harness / Runtime | 27 | L4 | 🔥🔥🔥 | 单次 Tool Call 出现 Invalid Arguments / Invalid Schema / Permission / Execution / Timeout 等失败时，Runtime 怎样归一化错误、反馈给模型并决定 Repair / Retry / Fail？ |
-| 14 | `AGENT-034` | Agent Harness / Runtime | 27 | L4 | 🔥🔥🔥 | Agent / Harness 怎样做 Evaluation？如何把 Final Result、Process、Tool、Routing、Cost 与 Regression 分层验证？ |
-| 15 | `AGENT-047` | Agent Harness / Runtime | 27 | L3 | 🔥🔥🔥 | LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？ |
+| 10 | `AGENT-001` | Agent | 30 | L3 | 🔥🔥🔥 | Agent 与普通 LLM Call / Chatbot / 固定 Workflow 的本质区别是什么？什么任务真正值得 Agent 化？ |
+| 11 | `AGENT-018` | Agent | 29 | L3 | 🔥🔥🔥 | Tool / Function Calling 从 Schema 暴露、模型选择、Structured Call、Runtime 执行到 Result 回填的完整链路是什么？ |
+| 12 | `AGENT-030` | Agent | 29 | L4 | 🔥🔥🔥 | 什么时候使用 Multi-Agent / Sub-agent？怎样分工、通信、共享或隔离 Context / State？ |
+| 13 | `AGENT-020` | Agent | 27 | L4 | 🔥🔥🔥 | 单次 Tool Call 出现 Invalid Arguments / Invalid Schema / Permission / Execution / Timeout 等失败时，Runtime 怎样归一化错误、反馈给模型并决定 Repair / Retry / Fail？ |
+| 14 | `AGENT-034` | Agent | 27 | L4 | 🔥🔥🔥 | Agent / Harness 怎样做 Evaluation？如何把 Final Result、Process、Tool、Routing、Cost 与 Regression 分层验证？ |
+| 15 | `AGENT-047` | Agent | 27 | L3 | 🔥🔥🔥 | LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？ |
 | 16 | `REDIS-012` | Redis | 25 | L2 | 🔥🔥🔥 | Redis 分布式锁的基本实现是什么？正确性需要满足哪些条件？ |
 | 17 | `RAG-013` | RAG | 25 | L4 | 🔥🔥🔥 | 为什么要做 Hybrid Retrieval？Dense / Sparse / Multi-way Retrieval 的结果怎样融合并验证收益？ |
-| 18 | `AGENT-002` | Agent Harness / Runtime | 25 | L3 | 🔥🔥🔥 | Harness、Runtime、Orchestrator / Workflow Engine 分别解决什么问题？为什么“模型 + API”还不够？ |
-| 19 | `AGENT-036` | Agent Harness / Runtime | 24 | L4 | 🔥🔥🔥 | AI / Coding Agent 生成代码后，怎样用 Test、Diff、Regression、Review、Rollback 证明结果可交付？ |
+| 18 | `AGENT-002` | Agent | 25 | L3 | 🔥🔥🔥 | Harness、Runtime、Orchestrator / Workflow Engine 分别解决什么问题？为什么“模型 + API”还不够？ |
+| 19 | `AGENT-036` | Agent | 24 | L4 | 🔥🔥🔥 | AI / Coding Agent 生成代码后，怎样用 Test、Diff、Regression、Review、Rollback 证明结果可交付？ |
 | 20 | `RAG-015` | RAG | 22 | L4 | 🔥🔥🔥 | 为什么需要 Rerank？如何平衡 Precision、Latency、Cost，并定位“Rerank 反而变差”？ |
 | 21 | `RAG-021` | RAG | 21 | L4 | 🔥🔥🔥 | RAG 质量怎样做 End-to-end Evaluation？Retrieval、Faithfulness、Answer Relevance / Correctness 怎样分层？ |
 | 22 | `AIBE-020` | AI Backend Engineering | 20 | L4 | 🔥🔥🔥 | Database + Cache 双写怎样保证最终一致性？Cache Aside、删除缓存、补偿和 Failure Window 怎样理解？ |
 | 23 | `REDIS-007` | Redis | 20 | L3 | 🔥🔥🔥 | Cache Penetration、Breakdown / Stampede、Avalanche 分别是什么？怎样用 Bloom Filter、互斥、随机 TTL 等治理？ |
 | 24 | `VDB-009` | Vector DB | 20 | L4 | 🔥🔥🔥 | 为什么需要独立 Vector DB？Milvus、FAISS、pgvector、Elasticsearch Vector 等方案在 Library、DB Extension、Search Engine、专用 Vector DB 之间怎样选？ |
-| 25 | `AGENT-021` | Agent Harness / Runtime | 20 | L4 | 🔥🔥🔥 | Tool 数量持续增长时怎样 Dynamic Discovery / Progressive Loading，避免所有 Schema 一次性挤占 Context？ |
-| 26 | `AGENT-023` | Agent Harness / Runtime | 20 | L3 | 🔥🔥🔥 | MCP 解决什么标准化问题？Client / Server、Tools / Resources / Prompts 与 stdio / SSE / Streamable HTTP 怎样理解？ |
-| 27 | `AGENT-028` | Agent Harness / Runtime | 20 | L4 | 🔥🔥🔥 | Permission、Approval、HITL、Sandbox 如何限制 Agent 的写操作、代码执行和高风险外部副作用？ |
+| 25 | `AGENT-021` | Agent | 20 | L4 | 🔥🔥🔥 | Tool 数量持续增长时怎样 Dynamic Discovery / Progressive Loading，避免所有 Schema 一次性挤占 Context？ |
+| 26 | `AGENT-023` | Agent | 20 | L3 | 🔥🔥🔥 | MCP 解决什么标准化问题？Client / Server、Tools / Resources / Prompts 与 stdio / SSE / Streamable HTTP 怎样理解？ |
+| 27 | `AGENT-028` | Agent | 20 | L4 | 🔥🔥🔥 | Permission、Approval、HITL、Sandbox 如何限制 Agent 的写操作、代码执行和高风险外部副作用？ |
 | 28 | `RAG-019` | RAG | 19 | L4 | 🔥🔥🔥 | RAG Bad Case / Hallucination 出现时，怎样区分 Parsing、Chunk、Embedding、Retrieval、Rerank、Prompt、Generation、Runtime 问题？ |
 | 29 | `REDIS-002` | Redis | 18 | L2 | 🔥🔥🔥 | Redis 常见数据结构 String / Hash / List / Set / ZSet 各自适合什么场景，底层特性怎样影响选型？ |
 | 30 | `RAG-010` | RAG | 18 | L4 | 🔥🔥🔥 | Query Rewrite / Decomposition / Multi-query / Intent / Clarification 怎样改善 Retrieval？什么时候应该先向用户追问？ |
 | 31 | `RAG-020` | RAG | 16 | L3 | 🔥🔥🔥 | 怎样定义 Retrieval Quality：Recall、Precision、Hit Rate、MRR / NDCG 等指标分别回答什么问题？ |
-| 32 | `AGENT-008` | Agent Harness / Runtime | 16 | L4 | 🔥🔥🔥 | 一次 Agent Context 包含什么？System / User、History、Memory、Retrieval、Tool Schema、Tool Result 怎样排序与组装？ |
+| 32 | `AGENT-008` | Agent | 16 | L4 | 🔥🔥🔥 | 一次 Agent Context 包含什么？System / User、History、Memory、Retrieval、Tool Schema、Tool Result 怎样排序与组装？ |
 | 33 | `RAG-006` | RAG | 15 | L3 | 🔥🔥🔥 | 文档切分为什么是 RAG 核心环节？Chunk Granularity 怎样影响 Recall、Precision、Context Noise 与 Generation？ |
 | 34 | `RAG-012` | RAG | 15 | L3 | 🔥🔥🔥 | Dense Retrieval 与 Keyword / BM25 Sparse Retrieval 各擅长什么？为什么专有名词、短 Query、精确条款会暴露纯向量短板？ |
-| 35 | `AGENT-006` | Agent Harness / Runtime | 15 | L4 | 🔥🔥🔥 | Agent 怎样判断任务已经完成并可靠停止？Max Step、Stop Condition、Dead Loop / Oscillation 如何检测？ |
-| 36 | `AGENT-010` | Agent Harness / Runtime | 15 | L4 | 🔥🔥🔥 | Compaction / Summary 后如何验证信息没有丢坏？哪些状态必须保留，错误摘要如何纠正？ |
-| 37 | `AGENT-038` | Agent Harness / Runtime | 15 | L4 | 🔥🔥🔥 | Agent Runtime 如何制定跨 Model / Tool / Provider 的 Resilience Policy？Retry Eligibility、Backoff、Circuit Breaker、Fallback / Model Failover 应怎样组合？ |
+| 35 | `AGENT-006` | Agent | 15 | L4 | 🔥🔥🔥 | Agent 怎样判断任务已经完成并可靠停止？Max Step、Stop Condition、Dead Loop / Oscillation 如何检测？ |
+| 36 | `AGENT-010` | Agent | 15 | L4 | 🔥🔥🔥 | Compaction / Summary 后如何验证信息没有丢坏？哪些状态必须保留，错误摘要如何纠正？ |
+| 37 | `AGENT-038` | Agent | 15 | L4 | 🔥🔥🔥 | Agent Runtime 如何制定跨 Model / Tool / Provider 的 Resilience Policy？Retry Eligibility、Backoff、Circuit Breaker、Fallback / Model Failover 应怎样组合？ |
 | 38 | `MYSQL-012` | MySQL | 14 | L3 | 🔥🔥🔥 | 四种事务隔离级别怎样比较？Dirty Read、Non-repeatable Read、Phantom Read 如何产生和治理？ |
 | 39 | `REDIS-013` | Redis | 14 | L4 | 🔥🔥🔥 | Redis Lock 的 Expire、Renewal / WatchDog、Owner 校验、Lua Release、RedLock 与故障窗口怎样处理？ |
 | 40 | `AIBE-006` | AI Backend Engineering | 13 | L3 | 🔥🔥🔥 | SSE 与 WebSocket 的通信模型、方向、连接维护和适用场景有什么差异？ |
@@ -67,8 +67,8 @@
 | 50 | `AIBE-034` | AI Backend Engineering | 12 | L3 | 🔥🔥🔥 | JVM Memory Area、Class Loading 与 GC 怎样工作？OOM / Memory Leak 出现时如何定位？ |
 | 51 | `RAG-001` | RAG | 12 | L4 | 🔥🔥🔥 | 为什么需要 RAG？什么时候 Long Context、文件搜索、更强模型或 Fine-tuning 更合适？ |
 | 52 | `RAG-008` | RAG | 12 | L3 | 🔥🔥🔥 | Chunk Size / Overlap 如何设置？参数怎样通过 Dataset / Experiment 验证，而不是照抄默认值？ |
-| 53 | `AGENT-027` | Agent Harness / Runtime | 12 | L4 | 🔥🔥🔥 | Checkpoint / Persistence / Resume 应保存哪些 Runtime State？Crash 后怎样恢复到可继续执行状态？ |
-| 54 | `AGENT-035` | Agent Harness / Runtime | 12 | L4 | 🔥🔥🔥 | Agent Benchmark / Eval Dataset / Ground Truth 怎样构建？如何让 Offline Case 代表真实线上任务并用于 Regression？ |
+| 53 | `AGENT-027` | Agent | 12 | L4 | 🔥🔥🔥 | Checkpoint / Persistence / Resume 应保存哪些 Runtime State？Crash 后怎样恢复到可继续执行状态？ |
+| 54 | `AGENT-035` | Agent | 12 | L4 | 🔥🔥🔥 | Agent Benchmark / Eval Dataset / Ground Truth 怎样构建？如何让 Offline Case 代表真实线上任务并用于 Regression？ |
 | 55 | `AIBE-014` | AI Backend Engineering | 11 | L3 | 🔥🔥🔥 | MQ 在 AI Backend / Agent 异步链路中为什么存在？相比数据库传状态或同步 RPC，它解决什么问题？ |
 | 56 | `AIBE-039` | AI Backend Engineering | 11 | L4 | 🔥🔥🔥 | 结构化业务事实、Cache、Session 与 Runtime State 应怎样在 MySQL / Redis 等存储之间分层？ |
 | 57 | `MYSQL-003` | MySQL | 11 | L3 | 🔥🔥🔥 | 线上出现 Slow SQL 时，怎样用 EXPLAIN、索引命中与执行计划系统定位并优化？ |
@@ -76,9 +76,9 @@
 | 59 | `REDIS-008` | Redis | 11 | L4 | 🔥🔥🔥 | BigKey 与 HotKey 怎样发现、治理和拆分？迁移 / 删除过程中怎样避免阻塞与一致性问题？ |
 | 60 | `REDIS-017` | Redis | 11 | L4 | 🔥🔥🔥 | Redis 如何承载 Session / Conversation / Auth Cache？多实例下怎样处理过期、隔离与共享？ |
 | 61 | `VDB-005` | Vector DB | 11 | L3 | 🔥🔥🔥 | HNSW 的基本图搜索机制是什么？为什么能在高维空间做近似最近邻搜索？ |
-| 62 | `AGENT-011` | Agent Harness / Runtime | 11 | L4 | 🔥🔥🔥 | Tool Result / 文件 / 日志过大时怎样压缩、引用、延迟加载或外部化，而不是全部塞进 Context？ |
-| 63 | `AGENT-022` | Agent Harness / Runtime | 11 | L4 | 🔥🔥🔥 | Structured Output / Tool Arguments 如何做 Schema Validation、Repair 与 Hallucination Handling？ |
-| 64 | `AGENT-045` | Agent Harness / Runtime | 11 | L4 | 🔥🔥🔥 | Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？ |
+| 62 | `AGENT-011` | Agent | 11 | L4 | 🔥🔥🔥 | Tool Result / 文件 / 日志过大时怎样压缩、引用、延迟加载或外部化，而不是全部塞进 Context？ |
+| 63 | `AGENT-022` | Agent | 11 | L4 | 🔥🔥🔥 | Structured Output / Tool Arguments 如何做 Schema Validation、Repair 与 Hallucination Handling？ |
+| 64 | `AGENT-045` | Agent | 11 | L4 | 🔥🔥🔥 | Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？ |
 | 65 | `AIBE-017` | AI Backend Engineering | 10 | L4 | 🔥🔥🔥 | Rate Limit 常见算法怎样比较？Single-node、Distributed、User / Tenant / Token Budget 限流怎样设计？ |
 | 66 | `AIBE-018` | AI Backend Engineering | 10 | L4 | 🔥🔥🔥 | Retry、Circuit Breaker、Degradation 与 Fallback 分别解决什么问题？怎样避免重试风暴和级联故障？ |
 | 67 | `MYSQL-006` | MySQL | 10 | L3 | 🔥🔥🔥 | 联合索引如何工作？最左匹配、范围条件与列顺序怎样影响索引利用？ |
@@ -91,10 +91,10 @@
 | 74 | `LLM-022` | LLM Foundation（应用工程深度） | 10 | L3 | 🔥🔥🔥 | Hallucination / Factuality 问题为什么出现？哪些属于模型本身局限，哪些应由 RAG / Agent / Verification 层治理？ |
 | 75 | `RAG-014` | RAG | 10 | L3 | 🔥🔥🔥 | RRF / Fusion 为什么常用于多路召回？为什么不简单线性加权，参数怎样调？ |
 | 76 | `RAG-016` | RAG | 10 | L3 | 🔥🔥🔥 | Retrieval / Rerank Top-K 怎样设置？K 在 Recall、Context Noise、Latency 与 Token Cost 之间如何取舍？ |
-| 77 | `AGENT-017` | Agent Harness / Runtime | 10 | L4 | 🔥🔥🔥 | 多用户 / 多角色 / 多 Tenant 的 Memory、Context、Session 和权限怎样隔离？ |
-| 78 | `AGENT-019` | Agent Harness / Runtime | 10 | L4 | 🔥🔥🔥 | 一个新 Tool 从定义、注册、Discovery、Schema Validation、调用到版本升级的生命周期怎样设计？ |
-| 79 | `AGENT-025` | Agent Harness / Runtime | 10 | L4 | 🔥🔥🔥 | Skill 怎样做 Progressive Disclosure / Resource Loading？为什么不把所有 Instructions / Assets 一次性注入 Context？ |
-| 80 | `AGENT-026` | Agent Harness / Runtime | 10 | L4 | 🔥🔥🔥 | Agent 长耗时任务怎样 Timeout、Cancel、Interrupt、Resume？取消传播和资源清理怎样保证？ |
+| 77 | `AGENT-017` | Agent | 10 | L4 | 🔥🔥🔥 | 多用户 / 多角色 / 多 Tenant 的 Memory、Context、Session 和权限怎样隔离？ |
+| 78 | `AGENT-019` | Agent | 10 | L4 | 🔥🔥🔥 | 一个新 Tool 从定义、注册、Discovery、Schema Validation、调用到版本升级的生命周期怎样设计？ |
+| 79 | `AGENT-025` | Agent | 10 | L4 | 🔥🔥🔥 | Skill 怎样做 Progressive Disclosure / Resource Loading？为什么不把所有 Instructions / Assets 一次性注入 Context？ |
+| 80 | `AGENT-026` | Agent | 10 | L4 | 🔥🔥🔥 | Agent 长耗时任务怎样 Timeout、Cancel、Interrupt、Resume？取消传播和资源清理怎样保证？ |
 | 81 | `SD-001` | System Design | 10 | L4 | 🔥🔥🔥 | 设计秒杀 / 抢购 / 库存系统：怎样防止 Oversell / Undersell，并处理 Redis、DB、订单和补偿的一致性？ |
 | 82 | `SD-022` | System Design | 10 | L4 | 🔥🔥🔥 | 设计 Long-running Agent Runtime：数小时 / 数天任务怎样做 Checkpoint、Resume、Cancel、Idempotency、外部副作用和状态迁移？ |
 | 83 | `AIBE-002` | AI Backend Engineering | 9 | L3 | 🔥🔥 | HTTP 与 HTTPS 的核心差异是什么？TLS 握手、证书信任链、对称 / 非对称加密怎样协作？ |
@@ -103,8 +103,8 @@
 | 86 | `LLM-020` | LLM Foundation（应用工程深度） | 9 | L3 | 🔥🔥 | Fine-tuning 的基本流程是什么？应用工程师在 Dataset、Training、Evaluation 与 Deployment 上需要理解到什么深度？ |
 | 87 | `RAG-005` | RAG | 9 | L4 | 🔥🔥 | 表格、图片与多模态内容怎样保留结构和引用关系？Cross-page Table 被切断时如何恢复语义？ |
 | 88 | `RAG-022` | RAG | 9 | L4 | 🔥🔥 | Evaluation Dataset / Ground Truth 从哪里来？怎样代表线上真实 Query，并避免 LLM Judge 自身不可靠？ |
-| 89 | `AGENT-032` | Agent Harness / Runtime | 9 | L4 | 🔥🔥 | Agent Runtime 怎样做 Model Routing？不同 Provider 的 Tool Protocol、Context 与错误语义如何适配？ |
-| 90 | `AGENT-037` | Agent Harness / Runtime | 9 | L4 | 🔥🔥 | Coding Agent 怎样理解大型 Repository？Vector RAG、AST / LSP、ripgrep / Filesystem Search、Dependency Graph 各适合什么？ |
+| 89 | `AGENT-032` | Agent | 9 | L4 | 🔥🔥 | Agent Runtime 怎样做 Model Routing？不同 Provider 的 Tool Protocol、Context 与错误语义如何适配？ |
+| 90 | `AGENT-037` | Agent | 9 | L4 | 🔥🔥 | Coding Agent 怎样理解大型 Repository？Vector RAG、AST / LSP、ripgrep / Filesystem Search、Dependency Graph 各适合什么？ |
 | 91 | `AIBE-001` | AI Backend Engineering | 8 | L2 | 🔥🔥 | 从输入 URL 到服务返回，一次 HTTP 请求的 DNS、连接、协议与服务端处理链路怎样发生？ |
 | 92 | `AIBE-019` | AI Backend Engineering | 8 | L4 | 🔥🔥 | 有副作用的请求怎样设计 Idempotency？Retry / Timeout / Crash 后怎样避免重复扣款、下单或执行？ |
 | 93 | `AIBE-022` | AI Backend Engineering | 8 | L4 | 🔥🔥 | Authentication 与 Authorization 怎样区分？Access Token / Refresh Token、Session、OAuth2 和服务端权限边界怎样设计？ |
@@ -118,9 +118,9 @@
 | 101 | `RAG-023` | RAG | 8 | L4 | 🔥🔥 | 怎样用 Baseline / Ablation / A-B Experiment 证明 Chunk、Hybrid、Rerank、GraphRAG 等优化的真实收益？ |
 | 102 | `RAG-027` | RAG | 8 | L4 | 🔥🔥 | RAG Latency / Cost 的主要瓶颈在哪里？Parse、Embedding、Retrieve、Rerank、LLM、Cache 各层怎样优化？ |
 | 103 | `RAG-028` | RAG | 8 | L4 | 🔥🔥 | GraphRAG / Knowledge Graph Retrieval 相比普通 Vector RAG 解决什么问题？Triple / Community / Graph Update 怎样保证质量？ |
-| 104 | `AGENT-004` | Agent Harness / Runtime | 8 | L3 | 🔥🔥 | Agent Message / Event Model 应怎样设计？Assistant Text、Tool Call、Tool Result、System / User Message 为什么需要不同结构？ |
-| 105 | `AGENT-015` | Agent Harness / Runtime | 8 | L4 | 🔥🔥 | Memory 什么时候从短期晋升长期？怎样做 Extraction / Consolidation / Retrieval-on-demand，而不是无限堆历史？ |
-| 106 | `AGENT-044` | Agent Harness / Runtime | 8 | L4 | 🔥🔥 | Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？ |
+| 104 | `AGENT-004` | Agent | 8 | L3 | 🔥🔥 | Agent Message / Event Model 应怎样设计？Assistant Text、Tool Call、Tool Result、System / User Message 为什么需要不同结构？ |
+| 105 | `AGENT-015` | Agent | 8 | L4 | 🔥🔥 | Memory 什么时候从短期晋升长期？怎样做 Extraction / Consolidation / Retrieval-on-demand，而不是无限堆历史？ |
+| 106 | `AGENT-044` | Agent | 8 | L4 | 🔥🔥 | Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？ |
 | 107 | `AIBE-012` | AI Backend Engineering | 7 | L3 | 🔥🔥 | AI / LLM I/O 为什么适合异步非阻塞调用？同步 / 异步、Event Loop 与 Long-running Task 怎样取舍？ |
 | 108 | `AIBE-016` | AI Backend Engineering | 7 | L4 | 🔥🔥 | Kafka Partition、Consumer Group、顺序性与 Backlog 怎样理解？积压时如何定位流量、分区和消费能力瓶颈？ |
 | 109 | `AIBE-027` | AI Backend Engineering | 7 | L3 | 🔥🔥 | Docker / Container 解决什么问题？Container 与 Host 的 Process、Network、Filesystem、Resource Isolation 有什么边界？ |
@@ -133,8 +133,8 @@
 | 116 | `RAG-003` | RAG | 7 | L4 | 🔥🔥 | 建 RAG 前怎样审计 Corpus：数据来源、质量、重复、版本、权限和真实规模如何影响方案？ |
 | 117 | `RAG-009` | RAG | 7 | L4 | 🔥🔥 | Chunk 把强逻辑关系、充分必要条件或跨块上下文切断时，怎样修复 Semantic Boundary Failure？ |
 | 118 | `RAG-017` | RAG | 7 | L4 | 🔥🔥 | Retrieval Evidence 怎样组装进 LLM Context？标题、Metadata、邻居块、来源与排序怎样影响回答？ |
-| 119 | `AGENT-031` | Agent Harness / Runtime | 7 | L4 | 🔥🔥 | 多 Agent 并行修改同一文件 / Workspace 或共享资源时，如何避免 Conflict、Race、Lost Update？ |
-| 120 | `AGENT-043` | Agent Harness / Runtime | 7 | L4 | 🔥🔥 | Agent Runtime 怎样建立 step / model / tool / state 级 Trace 与 Observability？如何用执行轨迹定位卡住、失败、延迟和 Token 异常，并支持 Replay / Debug？ |
+| 119 | `AGENT-031` | Agent | 7 | L4 | 🔥🔥 | 多 Agent 并行修改同一文件 / Workspace 或共享资源时，如何避免 Conflict、Race、Lost Update？ |
+| 120 | `AGENT-043` | Agent | 7 | L4 | 🔥🔥 | Agent Runtime 怎样建立 step / model / tool / state 级 Trace 与 Observability？如何用执行轨迹定位卡住、失败、延迟和 Token 异常，并支持 Replay / Debug？ |
 | 121 | `AIBE-026` | AI Backend Engineering | 6 | L3 | 🔥🔥 | Linux 线上服务出现 CPU、Memory、Disk、Port / Process 异常时怎样系统排查？ |
 | 122 | `AIBE-029` | AI Backend Engineering | 6 | L4 | 🔥🔥 | Production Backend Observability 应如何组织 Metrics、Log、Trace，并从一次请求定位到具体服务 / 进程 /依赖故障？ |
 | 123 | `AIBE-032` | AI Backend Engineering | 6 | L2 | 🔥🔥 | Spring / Spring Boot 的 Bean Lifecycle、Dependency Injection、AOP / Proxy 与 MVC Request Flow 怎样工作？ |
@@ -145,10 +145,10 @@
 | 128 | `LLM-018` | LLM Foundation（应用工程深度） | 6 | L2 | 🔥🔥 | Embedding 为什么能表示语义？Embedding Model 怎样训练，Dimension / Backbone 变化带来什么权衡？ |
 | 129 | `RAG-011` | RAG | 6 | L3 | 🔥🔥 | Retrieval Miss / No-hit 如何定义？阈值怎样设置，何时拒答、澄清或走 Fallback？ |
 | 130 | `RAG-029` | RAG | 6 | L4 | 🔥🔥 | Agentic RAG 与固定 One-shot RAG 有什么区别？什么时候让 Agent 主动决定检索、重写、继续检索或停止？ |
-| 131 | `AGENT-016` | Agent Harness / Runtime | 6 | L4 | 🔥🔥 | Long-term Memory 中过期摘要、错误事实或冲突信息如何发现、修正、版本化并避免污染后续决策？ |
-| 132 | `AGENT-029` | Agent Harness / Runtime | 6 | L4 | 🔥🔥 | Tool 已成功产生外部副作用，但 Checkpoint / DB 写失败或服务崩溃时，如何避免 Resume 后重复执行？ |
-| 133 | `AGENT-041` | Agent Harness / Runtime | 6 | L4 | 🔥🔥 | Agent Self-evolution / Data Flywheel 怎样闭环？Bad Case、数据采集、Metric、上线验证与 Rollback 如何设计？ |
-| 134 | `AGENT-046` | Agent Harness / Runtime | 6 | L3 | 🔥🔥 | A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？ |
+| 131 | `AGENT-016` | Agent | 6 | L4 | 🔥🔥 | Long-term Memory 中过期摘要、错误事实或冲突信息如何发现、修正、版本化并避免污染后续决策？ |
+| 132 | `AGENT-029` | Agent | 6 | L4 | 🔥🔥 | Tool 已成功产生外部副作用，但 Checkpoint / DB 写失败或服务崩溃时，如何避免 Resume 后重复执行？ |
+| 133 | `AGENT-041` | Agent | 6 | L4 | 🔥🔥 | Agent Self-evolution / Data Flywheel 怎样闭环？Bad Case、数据采集、Metric、上线验证与 Rollback 如何设计？ |
+| 134 | `AGENT-046` | Agent | 6 | L3 | 🔥🔥 | A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？ |
 | 135 | `SD-016` | System Design | 6 | L4 | 🔥🔥 | 从零设计 Enterprise Knowledge-base QA / RAG Service：Ingestion、Permission、Retrieval、Generation、Evaluation 与 Update 怎样组织？ |
 | 136 | `AIBE-008` | AI Backend Engineering | 5 | L3 | 🔥🔥 | HTTP、RPC / gRPC 和 MQ 在跨服务通信中怎样选择？延迟、耦合、Schema、可靠性与演进成本分别是什么？ |
 | 137 | `AIBE-024` | AI Backend Engineering | 5 | L3 | 🔥🔥 | Service Discovery 与 Load Balancing 怎样工作？DNS / Nginx / Registry / Heartbeat 的边界是什么？ |
@@ -160,7 +160,7 @@
 | 143 | `VDB-006` | Vector DB | 5 | L3 | 🔥🔥 | IVF / IVF_FLAT 的基本思想是什么？Cluster / List 划分与候选范围怎样影响 Recall 和 Latency？ |
 | 144 | `LLM-007` | LLM Foundation（应用工程深度） | 5 | L2 | 🔥🔥 | Multi-Head Attention 为什么需要多个 Head？不同 Head 带来什么表达能力？ |
 | 145 | `LLM-016` | LLM Foundation（应用工程深度） | 5 | L3 | 🔥🔥 | Chat / Model API 中 Messages、Role、Model 与其它常见字段怎样组织？应用层如何适配不同 Provider？ |
-| 146 | `AGENT-012` | Agent Harness / Runtime | 5 | L4 | 🔥🔥 | Prompt Cache / Context Cache 如何降低重复 Token 成本？缓存哪些层，何时失效？ |
+| 146 | `AGENT-012` | Agent | 5 | L4 | 🔥🔥 | Prompt Cache / Context Cache 如何降低重复 Token 成本？缓存哪些层，何时失效？ |
 | 147 | `SD-014` | System Design | 5 | L4 | 🔥🔥 | 设计多租户 AI / Agent Platform：用户、Workspace、Permission、Resource Isolation、Usage / Cost 与 Agent Routing 怎样治理？ |
 | 148 | `PY-001` | Python | 4 | L3 | 🔥🔥 | 为什么 AI Application / Agent 工程常使用 Python？与 Java / Go 相比，语言选择应依据什么？ |
 | 149 | `AIBE-003` | AI Backend Engineering | 4 | L2 | 🔥🔥 | HTTP/1.1、HTTP/2、HTTP/3 与 QUIC 的核心差异是什么？AI Streaming Service 为什么关心这些差异？ |
@@ -177,7 +177,7 @@
 | 160 | `LLM-010` | LLM Foundation（应用工程深度） | 4 | L2 | 🔥🔥 | Transformer 为什么能够扩展到多模态？Visual Encoder 与 Language Model 怎样连接 / 对齐？ |
 | 161 | `LLM-013` | LLM Foundation（应用工程深度） | 4 | L3 | 🔥🔥 | PagedAttention 的核心思想是什么？vLLM / SGLang 等 Serving Engine 主要优化什么？ |
 | 162 | `RAG-026` | RAG | 4 | L4 | 🔥🔥 | 百 GB / TB 级语料怎样做 Ingestion、Embedding、Index Build、并行处理与成本控制？ |
-| 163 | `AGENT-007` | Agent Harness / Runtime | 4 | L4 | 🔥🔥 | Agent Goal Drift / 执行方向偏离原始需求时，怎样发现并拉回主任务？ |
+| 163 | `AGENT-007` | Agent | 4 | L4 | 🔥🔥 | Agent Goal Drift / 执行方向偏离原始需求时，怎样发现并拉回主任务？ |
 | 164 | `SD-007` | System Design | 4 | L4 | 🔥🔥 | 设计大规模批处理 / 数据迁移：数千万行或 20 万行 Excel 怎样分页、流式、并发、断点恢复并限制 DB 压力？ |
 | 165 | `SD-019` | System Design | 4 | L4 | 🔥🔥 | 设计 AI Customer Service Agent：Intent、RAG、订单 / 业务 Tool、Memory、Human Handoff 与高风险操作怎样分层？ |
 | 166 | `PY-007` | Python | 3 | L3 | 🔥 | Python Decorator 怎样工作？如何用它实现 Logging、Tracing 或横切逻辑？ |
@@ -241,7 +241,7 @@
 | 224 | `LLM-008` | LLM Foundation（应用工程深度） | 1 | L2 | 单点真实信号 | FFN 在 Transformer 中承担什么作用？Attention 与 FFN 为什么都需要？ |
 | 225 | `LLM-009` | LLM Foundation（应用工程深度） | 1 | L2 | 单点真实信号 | RoPE / Rotary Positional Embedding 的核心思想是什么，位置关系怎样进入 Attention？ |
 | 226 | `LLM-012` | LLM Foundation（应用工程深度） | 1 | L3 | 单点真实信号 | Prefill 与 Decode 分别是什么？为什么 Serving 会关注 Prefill / Decode 分离？ |
-| 227 | `AGENT-042` | Agent Harness / Runtime | 1 | L4 | 单点真实信号 | Agent 正在执行时用户追加 / 修改需求，新指令怎样进入当前 State，并安全影响后续 Planning / Execution？ |
+| 227 | `AGENT-042` | Agent | 1 | L4 | 单点真实信号 | Agent 正在执行时用户追加 / 修改需求，新指令怎样进入当前 State，并安全影响后续 Planning / Execution？ |
 | 228 | `SD-004` | System Design | 1 | L4 | 单点真实信号 | 设计 Feed / 关注流：如何让用户快速看到关注对象的新内容，并处理 Fan-out、热点和分页？ |
 | 229 | `SD-005` | System Design | 1 | L4 | 单点真实信号 | 设计 Notification Platform：怎样处理可靠投递、Retry、Dedup、状态与多通道扩展？ |
 | 230 | `SD-006` | System Design | 1 | L4 | 单点真实信号 | 设计每天约 10TB 数据的 Storage + Time-range Query Service：Hot / Cold Data、Index、API 与容量怎样组织？ |

@@ -1,6 +1,6 @@
 # Agent Harness｜Authoritative Source Strategy
 
-[← Agent Harness](../agent-harness/README.md) · [↑ Handbook 总目录](../README.md) · [Agent Source Index](../research/agent-sources/README.md)
+[← Agent](../agent/README.md) · [↑ Handbook 总目录](../README.md) · [Agent Source Index](../research/agent-sources/README.md)
 
 > **用途：技术证据策略。** HUMAN-A 决定市场频率；源码 / 官方资料只补成熟 Runtime 事实与工程边界。
 
@@ -191,3 +191,18 @@ Agent Harness 最终必须能回答：
 > Context 满了怎么办？Tool 失败怎么办？Tool 已成功产生外部副作用但 Checkpoint 失败怎么办？用户取消时正在运行的命令怎么办？Agent 怎样暂停等待审批再恢复？Subagent 抢同一个文件怎么办？怎样证明任务真的完成？
 
 这才是 Runtime 教材，而不是 Agent Demo 教程。
+
+## 2026-09-16｜分层课程的参考边界
+
+四层划分为教材综合抽象，不是厂商标准。Thread / Turn / Item 保留 Codex 语境；Task / Run / Step 采用教材工作定义。产品默认权限、API字段、模型能力和源码布局需要按使用版本重新核验。
+
+| 参考 | 本课程使用范围 |
+|---|---|
+| [Codex App Server](https://developers.openai.com/codex/app-server) | 会话、轮次、输入输出与事件交互 |
+| [Codex 固定源码快照](https://github.com/openai/codex/tree/5bf132cd527311eb61bbec46562e3890eb49df80/codex-rs) | 运行核心、工具协调、上下文与环境的职责对照 |
+| [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) | Workflow与动态控制、从简单模式演进 |
+| [Effective context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) | 信息选择、上下文与长任务机制 |
+| [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) | 执行过程、最终结果与评测驱动改进 |
+| [MCP Architecture](https://modelcontextprotocol.io/docs/learn/architecture) | Host、Client、Server 与互操作边界 |
+
+学习入口统一为[Agent正式课程](../agent/README.md)，不再维护一份独立架构正文。

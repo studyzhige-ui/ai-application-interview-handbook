@@ -2,7 +2,7 @@
 
 更新日期：2026-09-10
 
-> 一级板块：**RAG**。本文件负责完整 Retrieval-Augmented Generation 工程链：Corpus → Parse → Chunk → Query Transformation → Retrieval → Fusion → Rerank → Context → Generate → Evaluate → Operate。Vector DB 的 ANN / Index / Storage 归 `Vector DB`；Embedding / Rerank 模型内部原理归 `LLM Foundation`；Agentic orchestration 控制面归 `Agent Harness / Runtime`。
+> 一级板块：**RAG**。本文件负责完整 Retrieval-Augmented Generation 工程链：Corpus → Parse → Chunk → Query Transformation → Retrieval → Fusion → Rerank → Context → Generate → Evaluate → Operate。Vector DB 的 ANN / Index / Storage 归 `Vector DB`；Embedding / Rerank 模型内部原理归 `LLM Foundation`；Agentic orchestration 控制面归 `Agent`。
 >
 > 本文件所有 ACTIVE 条目的 `Primary Module = RAG`。
 
@@ -35,7 +35,7 @@
 - **Depth**：L4
 - **Source Count**：**12**
 - **Evidence Sources**：`S023`, `S031`, `S045`, `S068`, `S141`, `S145`, `S218`, `S222`, `S249`, `S257`, `S267`, `S275`
-- **Related Modules**：LLM Foundation（应用工程深度）, Agent Harness / Runtime
+- **Related Modules**：LLM Foundation（应用工程深度）, Agent
 
 ### RAG-002 · Production RAG 从 Ingestion / Parse / Chunk / Embedding / Index 到 Retrieve / Rerank / Context / LLM 的完整链路是什么？
 - **Topic**：End-to-end Pipeline
@@ -226,7 +226,7 @@
 - **Depth**：L4
 - **Source Count**：**3**
 - **Evidence Sources**：`S059`, `S254`, `S275`
-- **Related Modules**：Vector DB, Agent Harness / Runtime
+- **Related Modules**：Vector DB, Agent
 
 ### RAG-026 · 百 GB / TB 级语料怎样做 Ingestion、Embedding、Index Build、并行处理与成本控制？
 - **Topic**：Large-scale RAG
@@ -258,7 +258,7 @@
 - **Depth**：L4
 - **Source Count**：**6**
 - **Evidence Sources**：`S045`, `S081`, `S109`, `S150`, `S222`, `S277`
-- **Related Modules**：Agent Harness / Runtime
+- **Related Modules**：Agent
 
 ---
 
@@ -266,7 +266,7 @@
 
 | Legacy QID | 原问题 | 新 Primary Canonical |
 |---|---|---|
-| `RAG-030` | Code RAG / Repository QA 与 AST、LSP、ripgrep、Filesystem Search 等 Tool-based Search 怎样分工？ | **MERGED → `AGENT-037`**（Agent Harness / Runtime） |
+| `RAG-030` | Code RAG / Repository QA 与 AST、LSP、ripgrep、Filesystem Search 等 Tool-based Search 怎样分工？ | **MERGED → `AGENT-037`**（Agent） |
 
 `RAG-030` 的全部证据 `S038`, `S059`, `S132`, `S145`, `S218` 都已经包含在 `AGENT-037` 的证据集合中，而且两题共享完全相同的核心知识模型：Coding Agent 如何理解 / 检索大型 Repository，以及 Vector RAG、AST/LSP、ripgrep / Filesystem Search 等机制如何分工。继续保留两题会重复计频，因此以 Agent Runtime 的 Repository Understanding 作为唯一 Primary。
 
@@ -292,4 +292,4 @@ Freshness / Permission / Scale / Cost
 GraphRAG / Agentic RAG
 ```
 
-Codebase Retrieval / Repository Understanding 的 Primary 已统一归 `Agent Harness / Runtime`，RAG 只作为其中的 Related Module。
+Codebase Retrieval / Repository Understanding 的 Primary 已统一归 `Agent`，RAG 只作为其中的 Related Module。

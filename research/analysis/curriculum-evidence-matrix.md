@@ -211,7 +211,7 @@
 | Grounding / Citation | 1 | 3 | 3 | L4 | `RAG-018` |
 | Permission / Security | 1 | 3 | 3 | L4 | `RAG-025` |
 
-## Agent Harness / Runtime
+## Agent
 
 | Topic | Canonical | Unique Sources | Max Q Frequency | Max Depth | QIDs |
 |---|---:|---:|---:|---:|---|
@@ -288,4 +288,3 @@
 | Notification Platform | 1 | 1 | 1 | L4 | `SD-005` |
 | Secure Multi-tenant Compute | 1 | 1 | 1 | L4 | `SD-015` |
 | Token Refresh Coordination | 1 | 1 | 1 | L4 | `SD-010` |
-

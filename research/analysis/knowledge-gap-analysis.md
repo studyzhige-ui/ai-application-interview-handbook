@@ -31,7 +31,7 @@
 | Vector DB | 12 | 37 | 4 | 5 |
 | LLM Foundation（应用工程深度） | 23 | 82 | 4 | 1 |
 | RAG | 29 | 88 | 16 | 20 |
-| Agent Harness / Runtime | 44 | 166 | 30 | 35 |
+| Agent | 44 | 166 | 30 | 35 |
 | System Design | 24 | 71 | 3 | 24 |
 
 ---
@@ -50,7 +50,7 @@ Python
 → Redis
 → Vector Database
 → RAG
-→ Agent Harness / Runtime
+→ Agent
 → System Design
 ```
 
@@ -65,7 +65,7 @@ Python
 → Vector DB
 → LLM Foundation（应用工程深度）
 → RAG
-→ Agent Harness / Runtime
+→ Agent
 → System Design
 ```
 
@@ -101,7 +101,7 @@ Prompt 为什么需要 Evaluation？
 ```text
 07 LLM Foundation（应用工程深度）
 08 RAG
-09 Agent Harness / Runtime
+09 Agent
 10 Production System Design
 ```
 
@@ -585,7 +585,7 @@ Bridge D：RAG + Agent Harness + Long-running Runtime
         ↓
 08 RAG Engineering
         ↓
-09 Agent Harness / Runtime
+09 Agent
         ↓
 10 Production System Design
 ```

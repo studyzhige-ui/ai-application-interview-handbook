@@ -18,25 +18,25 @@
 
 | Rank | QID | Module | Sources | Topic |
 |---:|---|---|---:|---|
-| 1 | `AGENT-009` | Agent Harness / Runtime | 41 | Context Compaction |
+| 1 | `AGENT-009` | Agent | 41 | Context Compaction |
 | 2 | `RAG-002` | RAG | 38 | End-to-end Pipeline |
-| 3 | `AGENT-048` | Agent Harness / Runtime | 37 | AI-assisted Development Workflow |
-| 4 | `AGENT-003` | Agent Harness / Runtime | 36 | Agent Loop |
-| 5 | `AGENT-014` | Agent Harness / Runtime | 36 | Memory Architecture |
-| 6 | `AGENT-024` | Agent Harness / Runtime | 34 | Capability Abstraction Boundary |
-| 7 | `AGENT-005` | Agent Harness / Runtime | 31 | Agent Paradigm |
+| 3 | `AGENT-048` | Agent | 37 | AI-assisted Development Workflow |
+| 4 | `AGENT-003` | Agent | 36 | Agent Loop |
+| 5 | `AGENT-014` | Agent | 36 | Memory Architecture |
+| 6 | `AGENT-024` | Agent | 34 | Capability Abstraction Boundary |
+| 7 | `AGENT-005` | Agent | 31 | Agent Paradigm |
 | 8 | `LLM-023` | LLM Foundation（应用工程深度） | 30 | Prompt Engineering |
 | 9 | `RAG-007` | RAG | 30 | Chunk Strategy |
-| 10 | `AGENT-001` | Agent Harness / Runtime | 30 | Agent Boundary |
-| 11 | `AGENT-018` | Agent Harness / Runtime | 29 | Tool Calling Protocol |
-| 12 | `AGENT-030` | Agent Harness / Runtime | 29 | Multi-Agent Architecture |
-| 13 | `AGENT-020` | Agent Harness / Runtime | 27 | Tool Call Failure Semantics |
-| 14 | `AGENT-034` | Agent Harness / Runtime | 27 | Agent Evaluation |
-| 15 | `AGENT-047` | Agent Harness / Runtime | 27 | Agent Framework Selection |
+| 10 | `AGENT-001` | Agent | 30 | Agent Boundary |
+| 11 | `AGENT-018` | Agent | 29 | Tool Calling Protocol |
+| 12 | `AGENT-030` | Agent | 29 | Multi-Agent Architecture |
+| 13 | `AGENT-020` | Agent | 27 | Tool Call Failure Semantics |
+| 14 | `AGENT-034` | Agent | 27 | Agent Evaluation |
+| 15 | `AGENT-047` | Agent | 27 | Agent Framework Selection |
 | 16 | `REDIS-012` | Redis | 25 | Distributed Lock Basics |
 | 17 | `RAG-013` | RAG | 25 | Hybrid Retrieval |
-| 18 | `AGENT-002` | Agent Harness / Runtime | 25 | Harness / Runtime Boundary |
-| 19 | `AGENT-036` | Agent Harness / Runtime | 24 | Code Verification |
+| 18 | `AGENT-002` | Agent | 25 | Harness / Runtime Boundary |
+| 19 | `AGENT-036` | Agent | 24 | Code Verification |
 | 20 | `RAG-015` | RAG | 22 | Reranking |
 
 ## Module evidence footprint
@@ -51,7 +51,7 @@
 | Vector DB | 12 | 37 | 94 | 4 | 5 |
 | LLM Foundation（应用工程深度） | 23 | 82 | 138 | 4 | 1 |
 | RAG | 29 | 88 | 374 | 16 | 20 |
-| Agent Harness / Runtime | 44 | 166 | 741 | 30 | 35 |
+| Agent | 44 | 166 | 741 | 30 | 35 |
 | System Design | 24 | 71 | 81 | 3 | 24 |
 
 Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。

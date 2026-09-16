@@ -134,7 +134,7 @@
 - **Depth**：L4
 - **Source Count**：**11**
 - **Evidence Sources**：`S033`, `S035`, `S081`, `S091`, `S105`, `S119`, `S171`, `S178`, `S194`, `S207`, `S262`
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, Agent
 
 ### REDIS-019 · Redis 如何具体实现 Sliding Window / Token Bucket 等限流？ZSet / Counter / Lua / TTL 怎样保证原子性与性能？
 - **Topic**：Redis Rate Limit Implementation
@@ -150,7 +150,7 @@
 - **Depth**：L4
 - **Source Count**：**2**
 - **Evidence Sources**：`S081`, `S250`
-- **Related Modules**：RAG, Agent Harness / Runtime
+- **Related Modules**：RAG, Agent
 
 ### REDIS-022 · Redis 有哪些安全风险？无密码实例、越权访问与敏感状态怎样防护？
 - **Topic**：Security

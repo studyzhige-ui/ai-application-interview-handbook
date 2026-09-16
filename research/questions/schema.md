@@ -29,7 +29,7 @@ LLM Foundation（应用工程深度）
   ↓
 RAG
   ↓
-Agent Harness / Runtime
+Agent
   ↓
 System Design
 ```
@@ -46,7 +46,7 @@ System Design
 | Vector DB | `vector-db.md` | `VDB-` |
 | LLM Foundation（应用工程深度） | `llm-foundation.md` | `LLM-` |
 | RAG | `rag.md` | `RAG-` |
-| Agent Harness / Runtime | `agent-harness.md` | `AGENT-` |
+| Agent | `agent-harness.md` | `AGENT-` |
 | System Design | `system-design.md` | `SD-` |
 
 `Coding / Debug / AI Coding` 不再作为一级板块，而是 `Question Type`。例如：
@@ -54,7 +54,7 @@ System Design
 - Python 装饰器现场编码 → `Python`；
 - FastAPI 异步接口 Debug → `FastAPI`；
 - MQ / ThreadPool / Network 故障排查 → `AI Backend Engineering`；
-- Agent 现场 AI Coding / Repo 修改 → `Agent Harness / Runtime`；
+- Agent 现场 AI Coding / Repo 修改 → `Agent`；
 - 端到端架构设计 → `System Design`。
 
 ---
@@ -142,7 +142,7 @@ SQL 执行、索引、B+Tree、事务、MVCC、锁、日志、复制、Sharding 
 
 从 Ingestion / Parsing / Chunking 到 Retrieval / Fusion / Rerank / Evaluation / Freshness / Permission / Bad-case Attribution 的完整 Retrieval-Augmented Generation 工程链路。Vector DB 只负责底层向量基础设施，不把完整 RAG 检索策略重复放入 Vector DB。
 
-### Agent Harness / Runtime
+### Agent
 
 Agent Loop、Planning、Context Assembly / Compaction、Memory、Tool / Function Calling、MCP、Skill、Checkpoint / Resume / Cancel、Retry / Fallback、Permission / Sandbox、Multi-Agent、Trace / Observability、Agent Evaluation / Benchmark、Coding Agent / AI Coding Runtime 等。
 

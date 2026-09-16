@@ -132,7 +132,7 @@
 
 ## Top Company × Module：出现过该模块问题的独立流程数
 
-| Company | Python | FastAPI | AI Backend Engineering | MySQL | Redis | Vector DB | LLM Foundation（应用工程深度） | RAG | Agent Harness / Runtime | System Design |
+| Company | Python | FastAPI | AI Backend Engineering | MySQL | Redis | Vector DB | LLM Foundation（应用工程深度） | RAG | Agent | System Design |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | 字节跳动 | 5 | 1 | 28 | 13 | 10 | 8 | 21 | 16 | 27 | 9 |
 | 阿里巴巴 | 1 | 1 | 18 | 6 | 6 | 6 | 13 | 17 | 29 | 10 |
@@ -152,7 +152,7 @@
 
 ## Primary Role × Module：出现过该模块问题的独立流程数
 
-| Role | Python | FastAPI | AI Backend Engineering | MySQL | Redis | Vector DB | LLM Foundation（应用工程深度） | RAG | Agent Harness / Runtime | System Design |
+| Role | Python | FastAPI | AI Backend Engineering | MySQL | Redis | Vector DB | LLM Foundation（应用工程深度） | RAG | Agent | System Design |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | Agent Development | 7 | 1 | 49 | 19 | 30 | 11 | 42 | 44 | 88 | 37 |
 | AI Application | 3 | 1 | 24 | 5 | 8 | 11 | 15 | 21 | 35 | 8 |

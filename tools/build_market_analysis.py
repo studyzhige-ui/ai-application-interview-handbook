@@ -32,7 +32,7 @@ MODULE_FILES = [
     ("Vector DB", "vector-db.md"),
     ("LLM Foundation（应用工程深度）", "llm-foundation.md"),
     ("RAG", "rag.md"),
-    ("Agent Harness / Runtime", "agent-harness.md"),
+    ("Agent", "agent-harness.md"),
     ("System Design", "system-design.md"),
 ]
 MODULE_ORDER = {name: i for i, (name, _) in enumerate(MODULE_FILES)}

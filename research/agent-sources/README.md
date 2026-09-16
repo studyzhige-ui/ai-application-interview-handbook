@@ -1,6 +1,6 @@
 # Agent Harness｜源码与权威资料索引
 
-[← Agent Harness](../../agent-harness/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../README.md)
+[← Agent](../../agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../README.md)
 
 > **用途：Tier B/C 技术证据。** 只补 Runtime 实现与工程原则，不改变 HUMAN-A Source Count。
 
@@ -8,7 +8,7 @@
 
 更新日期：2026-09-11
 
-> 本目录是 **已完成的 Agent Harness / Runtime 23-block 教材**的证据底座，也服务后续版本维护。它不创建新的 HUMAN-A 面试证据，也不改变 `research/questions/agent-harness.md` 中任何 Source Count。
+> 本目录是 **已完成的 Agent 16-chapter 教材**的证据底座，也服务后续版本维护。它不创建新的 HUMAN-A 面试证据，也不改变 `research/questions/agent-harness.md` 中任何 Source Count。
 
 ## 1. 四层证据体系
 
@@ -28,7 +28,7 @@
 → 常见追问怎样递进？
 ```
 
-当前冻结口径：**44 道 Agent Harness / Runtime Primary Canonical**。频率只能由 Tier A 决定。
+当前冻结口径：**44 道 Agent Primary Canonical**。频率只能由 Tier A 决定。
 
 ### Tier B｜成熟产品源码
 
@@ -58,7 +58,7 @@ Tier D 不是新的事实来源，而是把 A+B+C 抽象成适合初学者的稳
 
 能力入口：[`runtime-capability-map.md`](runtime-capability-map.md)
 
-正式教材：[`../../agent-harness/README.md`](../../agent-harness/README.md)
+正式教材：[`../../agent/README.md`](../../agent/README.md)
 
 ---
 

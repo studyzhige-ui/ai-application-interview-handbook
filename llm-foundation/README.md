@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → **LLM Foundation（应用工程深度）** → [RAG](../rag/README.md) → [Agent Harness / Runtime](../agent-harness/README.md) → [System Design](../system-design/README.md)
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → **LLM Foundation（应用工程深度）** → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
 
 当前模块角色：**Model Foundation / 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。**
 

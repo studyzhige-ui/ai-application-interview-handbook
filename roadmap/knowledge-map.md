@@ -6,7 +6,7 @@
 
 ## 总路线
 
-[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent Harness / Runtime](../agent-harness/README.md) → [System Design](../system-design/README.md)
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
 
 ## 总览
 
@@ -20,7 +20,7 @@
 | 06 | [Vector Database](../vector-db/README.md) | 16 | 12 | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 |
 | 07 | [LLM Foundation（应用工程深度）](../llm-foundation/README.md) | 14 | 23 | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 |
 | 08 | [RAG](../rag/README.md) | 14 | 29 | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 |
-| 09 | [Agent Harness / Runtime](../agent-harness/README.md) | 23 | 44 | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 |
+| 09 | [Agent](../agent/README.md) | 16 | 44 | 从任务契约与自主权出发，沿应用、运行、接入、资源四层组织 Agent，并贯通安全、质量与生产演进。 |
 | 10 | [System Design](../system-design/README.md) | 19 | 24 | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 |
 
 ---
@@ -105,15 +105,13 @@ Corpus Governance → Document Processing → Chunk Design → Query Planning �
 
 市场校准：**29 Canonical / 88 independent HUMAN-A flows**。
 
-## 09. [Agent Harness / Runtime](../agent-harness/README.md) ✅ — 23 blocks
+## 09. [Agent](../agent/README.md) — 16 章
 
-从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。
+任务契约与自主权 → L1 应用 → L2 运行 → L3 接入 → L4 资源 → 安全与质量 → 系统演进。
 
-```text
-Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assembly / Compaction → Memory / Session / Checkpoint → Permission / Sandbox / Injection → MCP / Skills / Hooks / Routing → Multi-Agent / A2A → Trace / Eval / Coding Agent → Production Runtime / Framework Mapping
-```
+01–02 定义任务与控制权；03 承接交互；04–08 建立循环、上下文、记忆、状态恢复和协作；09–12 连接模型、工具、知识及扩展；13 明确资源与执行环境；14–15 贯穿安全与质量；16 组合部署与选型。
 
-市场校准：**44 Canonical / 166 independent HUMAN-A flows**。
+这就是正式教材顺序，不另设 architecture 导读。Harness 是运行层概念，不是整个模块的名字。
 
 ## 10. [System Design](../system-design/README.md) ✅ — 19 blocks
 

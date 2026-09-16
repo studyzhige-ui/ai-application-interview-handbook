@@ -147,7 +147,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-012 · 设计大文件 / 长视频上传与处理系统：分片、断点续传、异步任务、状态查询和失败恢复怎样实现？
 
 - **Primary Module**：System Design
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, Agent
 - **Topic**：Large-file Processing
 - **Question Type**：System Design
 - **Depth**：L4
@@ -158,7 +158,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-013 · 设计统一 Model / LLM Gateway：多 Provider Schema、Routing、Streaming、Rate Limit、Cost、Failover 和 Observability 怎样组织？
 
 - **Primary Module**：System Design
-- **Related Modules**：AI Backend Engineering, LLM Foundation（应用工程深度）, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, LLM Foundation（应用工程深度）, Agent
 - **Topic**：LLM Gateway
 - **Question Type**：System Design
 - **Depth**：L4
@@ -169,7 +169,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-014 · 设计多租户 AI / Agent Platform：用户、Workspace、Permission、Resource Isolation、Usage / Cost 与 Agent Routing 怎样治理？
 
 - **Primary Module**：System Design
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, Agent
 - **Topic**：Multi-tenant Agent Platform
 - **Question Type**：System Design
 - **Depth**：L4
@@ -217,7 +217,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-018 · 设计 Financial / Data Analysis Agent：从自然语言问题到检索、计算、结论 Verification 与 Citation 怎样闭环？
 
 - **Primary Module**：System Design
-- **Related Modules**：RAG, Agent Harness / Runtime, LLM Foundation（应用工程深度）
+- **Related Modules**：RAG, Agent, LLM Foundation（应用工程深度）
 - **Topic**：Analytical Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -228,7 +228,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-019 · 设计 AI Customer Service Agent：Intent、RAG、订单 / 业务 Tool、Memory、Human Handoff 与高风险操作怎样分层？
 
 - **Primary Module**：System Design
-- **Related Modules**：RAG, Agent Harness / Runtime, AI Backend Engineering
+- **Related Modules**：RAG, Agent, AI Backend Engineering
 - **Topic**：Customer Service Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -239,7 +239,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-020 · 设计 Multi-modal Document / PDF → HTML Agent Workflow：文字、图片、表格、知识核对与图文输出怎样保持可追溯？
 
 - **Primary Module**：System Design
-- **Related Modules**：RAG, Agent Harness / Runtime
+- **Related Modules**：RAG, Agent
 - **Topic**：Multimodal Document Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -254,7 +254,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-021 · 从零设计 Production Agent Backend：Loop、State、Tool、Memory、Checkpoint、Streaming、Auth、Observability 与 Scale 怎样组合？
 
 - **Primary Module**：System Design
-- **Related Modules**：AI Backend Engineering, Agent Harness / Runtime
+- **Related Modules**：AI Backend Engineering, Agent
 - **Topic**：Agent Backend
 - **Question Type**：System Design
 - **Depth**：L4
@@ -265,7 +265,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-022 · 设计 Long-running Agent Runtime：数小时 / 数天任务怎样做 Checkpoint、Resume、Cancel、Idempotency、外部副作用和状态迁移？
 
 - **Primary Module**：System Design
-- **Related Modules**：Agent Harness / Runtime, AI Backend Engineering, Redis
+- **Related Modules**：Agent, AI Backend Engineering, Redis
 - **Topic**：Long-running Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -276,7 +276,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-023 · 设计 Game / Interactive Agent：Goal、State、Action / Tool、Memory、Evaluation 与安全边界怎样映射具体游戏业务？
 
 - **Primary Module**：System Design
-- **Related Modules**：Agent Harness / Runtime, LLM Foundation（应用工程深度）
+- **Related Modules**：Agent, LLM Foundation（应用工程深度）
 - **Topic**：Game Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -287,7 +287,7 @@ System Design 是新十板块路径的最后一层，因为它本质上是在检
 ### SD-024 · 设计 AI 自动内容创作 / 视频编辑 Agent：Planning、SubAgent、素材状态、人物一致性、长任务和 Evaluation 怎样闭环？
 
 - **Primary Module**：System Design
-- **Related Modules**：Agent Harness / Runtime, RAG
+- **Related Modules**：Agent, RAG
 - **Topic**：Content Creation Agent
 - **Question Type**：System Design
 - **Depth**：L4
@@ -306,7 +306,7 @@ System Design 与前九块的关系不是“再复制一遍底层知识”，而
 - `Rate Limit 算法 / Token Bucket / Sliding Window` → `AI Backend Engineering`；完整 Distributed Rate Limiter 的容量、一致性、故障设计 → `SD-009`。
 - `DB + Cache Consistency` 原理 → `AIBE-020`；完整秒杀库存链路 → `SD-001`。
 - `RAG Parse / Chunk / Rerank` → `RAG`；Enterprise / TB-scale RAG 的端到端架构 → `SD-016` / `SD-017`。
-- `Checkpoint / Resume / External Side Effect` Runtime 语义 → `Agent Harness / Runtime`；数小时 / 数天 Long-running Agent 的完整系统设计 → `SD-022`。
+- `Checkpoint / Resume / External Side Effect` Runtime 语义 → `Agent`；数小时 / 数天 Long-running Agent 的完整系统设计 → `SD-022`。
 
 本轮没有需要迁出的 ACTIVE Canonical。
 

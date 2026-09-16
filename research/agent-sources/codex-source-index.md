@@ -1,4 +1,4 @@
-# OpenAI Codex Source Index — Agent Harness / Runtime
+# OpenAI Codex Source Index — Agent
 
 更新日期：2026-09-11
 

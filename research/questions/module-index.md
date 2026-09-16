@@ -1,10 +1,13 @@
 # Canonical Ownership & Curriculum Module Index
 
+> **2026-09-16更新：** Agent为16章分层重构版，全仓库177篇正文。旧版深度与终局审计为历史记录；本次验证范围为结构、链接、迁移覆盖和证据不变性，详见既有质量记录。
+
+
 [← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Progress](progress.md)
 
 > Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。
 
-> **v1.0 Final Quality Audit：✅ PASS。** 十板块跨模块 Ownership、术语边界与 184 个 Curriculum Markdown 的最终结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
+> **v1.0 Final Quality Audit：✅ PASS。** 十板块跨模块 Ownership、术语边界与 177 个 Curriculum Markdown 的最终结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
 
 | # | Module | Canonical File | ACTIVE | Curriculum | Curriculum Entry | Status |
 |---:|---|---|---:|---:|---|---|
@@ -16,7 +19,7 @@
 | 06 | Vector Database | [vector-db.md](vector-db.md) | 12 | 16 | [README](../../vector-db/README.md) | ✅ |
 | 07 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | 14 | [README](../../llm-foundation/README.md) | ✅ |
 | 08 | RAG | [rag.md](rag.md) | 29 | 14 | [README](../../rag/README.md) | ✅ |
-| 09 | Agent Harness / Runtime | [agent-harness.md](agent-harness.md) | 44 | 23 | [README](../../agent-harness/README.md) | ✅ |
+| 09 | Agent | [agent-harness.md](agent-harness.md) | 44 | 16 | [README](../../agent/README.md) | ✅ |
 | 10 | System Design | [system-design.md](system-design.md) | 24 | 19 | [README](../../system-design/README.md) | ✅ |
 
 **ACTIVE total = 235. Legacy MOVED = 24.**

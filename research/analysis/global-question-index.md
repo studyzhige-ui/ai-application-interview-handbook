@@ -173,50 +173,50 @@
 | `RAG-027` | RAG | Latency / Cost | L4 | 8 | 🔥🔥 | RAG Latency / Cost 的主要瓶颈在哪里？Parse、Embedding、Retrieve、Rerank、LLM、Cache 各层怎样优化？ |
 | `RAG-028` | RAG | GraphRAG | L4 | 8 | 🔥🔥 | GraphRAG / Knowledge Graph Retrieval 相比普通 Vector RAG 解决什么问题？Triple / Community / Graph Update 怎样保证质量？ |
 | `RAG-029` | RAG | Agentic RAG | L4 | 6 | 🔥🔥 | Agentic RAG 与固定 One-shot RAG 有什么区别？什么时候让 Agent 主动决定检索、重写、继续检索或停止？ |
-| `AGENT-001` | Agent Harness / Runtime | Agent Boundary | L3 | 30 | 🔥🔥🔥 | Agent 与普通 LLM Call / Chatbot / 固定 Workflow 的本质区别是什么？什么任务真正值得 Agent 化？ |
-| `AGENT-002` | Agent Harness / Runtime | Harness / Runtime Boundary | L3 | 25 | 🔥🔥🔥 | Harness、Runtime、Orchestrator / Workflow Engine 分别解决什么问题？为什么“模型 + API”还不够？ |
-| `AGENT-003` | Agent Harness / Runtime | Agent Loop | L3 | 36 | 🔥🔥🔥 | 一个完整 Agent Loop / Runtime 从 User Input 到 Final Answer 怎样执行？Model、Tool、State、Context 各在哪一层？ |
-| `AGENT-004` | Agent Harness / Runtime | Message / Event Model | L3 | 8 | 🔥🔥 | Agent Message / Event Model 应怎样设计？Assistant Text、Tool Call、Tool Result、System / User Message 为什么需要不同结构？ |
-| `AGENT-005` | Agent Harness / Runtime | Agent Paradigm | L3 | 31 | 🔥🔥🔥 | ReAct、Plan-Execute-Replan、Planner / Executor / Critic 等执行范式怎样选择？ |
-| `AGENT-006` | Agent Harness / Runtime | Termination / Loop Detection | L4 | 15 | 🔥🔥🔥 | Agent 怎样判断任务已经完成并可靠停止？Max Step、Stop Condition、Dead Loop / Oscillation 如何检测？ |
-| `AGENT-007` | Agent Harness / Runtime | Goal Control | L4 | 4 | 🔥🔥 | Agent Goal Drift / 执行方向偏离原始需求时，怎样发现并拉回主任务？ |
-| `AGENT-008` | Agent Harness / Runtime | Context Assembly | L4 | 16 | 🔥🔥🔥 | 一次 Agent Context 包含什么？System / User、History、Memory、Retrieval、Tool Schema、Tool Result 怎样排序与组装？ |
-| `AGENT-009` | Agent Harness / Runtime | Context Compaction | L4 | 41 | 🔥🔥🔥 | Context Window 接近上限时，怎样 Trim / Summarize / Compact，同时保留当前任务关键状态？ |
-| `AGENT-010` | Agent Harness / Runtime | Compaction Correctness | L4 | 15 | 🔥🔥🔥 | Compaction / Summary 后如何验证信息没有丢坏？哪些状态必须保留，错误摘要如何纠正？ |
-| `AGENT-011` | Agent Harness / Runtime | Large Tool Result / Context Offloading | L4 | 11 | 🔥🔥🔥 | Tool Result / 文件 / 日志过大时怎样压缩、引用、延迟加载或外部化，而不是全部塞进 Context？ |
-| `AGENT-012` | Agent Harness / Runtime | Prompt / Context Cache | L4 | 5 | 🔥🔥 | Prompt Cache / Context Cache 如何降低重复 Token 成本？缓存哪些层，何时失效？ |
-| `AGENT-014` | Agent Harness / Runtime | Memory Architecture | L4 | 36 | 🔥🔥🔥 | Short-term / Working / Long-term Memory 怎样分层、写入、召回、更新与失效？ |
-| `AGENT-015` | Agent Harness / Runtime | Memory Lifecycle | L4 | 8 | 🔥🔥 | Memory 什么时候从短期晋升长期？怎样做 Extraction / Consolidation / Retrieval-on-demand，而不是无限堆历史？ |
-| `AGENT-016` | Agent Harness / Runtime | Memory Correctness / Staleness | L4 | 6 | 🔥🔥 | Long-term Memory 中过期摘要、错误事实或冲突信息如何发现、修正、版本化并避免污染后续决策？ |
-| `AGENT-017` | Agent Harness / Runtime | Multi-tenant State Isolation | L4 | 10 | 🔥🔥🔥 | 多用户 / 多角色 / 多 Tenant 的 Memory、Context、Session 和权限怎样隔离？ |
-| `AGENT-018` | Agent Harness / Runtime | Tool Calling Protocol | L3 | 29 | 🔥🔥🔥 | Tool / Function Calling 从 Schema 暴露、模型选择、Structured Call、Runtime 执行到 Result 回填的完整链路是什么？ |
-| `AGENT-019` | Agent Harness / Runtime | Tool Lifecycle | L4 | 10 | 🔥🔥🔥 | 一个新 Tool 从定义、注册、Discovery、Schema Validation、调用到版本升级的生命周期怎样设计？ |
-| `AGENT-020` | Agent Harness / Runtime | Tool Call Failure Semantics | L4 | 27 | 🔥🔥🔥 | 单次 Tool Call 出现 Invalid Arguments / Invalid Schema / Permission / Execution / Timeout 等失败时，Runtime 怎样归一化错误、反馈给模型并决定 Repair / Retry / Fail？ |
-| `AGENT-021` | Agent Harness / Runtime | Tool Discovery / Progressive Loading | L4 | 20 | 🔥🔥🔥 | Tool 数量持续增长时怎样 Dynamic Discovery / Progressive Loading，避免所有 Schema 一次性挤占 Context？ |
-| `AGENT-022` | Agent Harness / Runtime | Structured Output / Validation | L4 | 11 | 🔥🔥🔥 | Structured Output / Tool Arguments 如何做 Schema Validation、Repair 与 Hallucination Handling？ |
-| `AGENT-023` | Agent Harness / Runtime | MCP Protocol | L3 | 20 | 🔥🔥🔥 | MCP 解决什么标准化问题？Client / Server、Tools / Resources / Prompts 与 stdio / SSE / Streamable HTTP 怎样理解？ |
-| `AGENT-024` | Agent Harness / Runtime | Capability Abstraction Boundary | L4 | 34 | 🔥🔥🔥 | Skill、Tool、Function Calling、MCP、Rule / Prompt / Workflow 的职责边界是什么？ |
-| `AGENT-025` | Agent Harness / Runtime | Skill Progressive Disclosure | L4 | 10 | 🔥🔥🔥 | Skill 怎样做 Progressive Disclosure / Resource Loading？为什么不把所有 Instructions / Assets 一次性注入 Context？ |
-| `AGENT-026` | Agent Harness / Runtime | Cancellation / Long-running Task | L4 | 10 | 🔥🔥🔥 | Agent 长耗时任务怎样 Timeout、Cancel、Interrupt、Resume？取消传播和资源清理怎样保证？ |
-| `AGENT-027` | Agent Harness / Runtime | Checkpoint / Resume | L4 | 12 | 🔥🔥🔥 | Checkpoint / Persistence / Resume 应保存哪些 Runtime State？Crash 后怎样恢复到可继续执行状态？ |
-| `AGENT-028` | Agent Harness / Runtime | Permission / Approval / Sandbox | L4 | 20 | 🔥🔥🔥 | Permission、Approval、HITL、Sandbox 如何限制 Agent 的写操作、代码执行和高风险外部副作用？ |
-| `AGENT-029` | Agent Harness / Runtime | Idempotency / External Side Effect | L4 | 6 | 🔥🔥 | Tool 已成功产生外部副作用，但 Checkpoint / DB 写失败或服务崩溃时，如何避免 Resume 后重复执行？ |
-| `AGENT-030` | Agent Harness / Runtime | Multi-Agent Architecture | L4 | 29 | 🔥🔥🔥 | 什么时候使用 Multi-Agent / Sub-agent？怎样分工、通信、共享或隔离 Context / State？ |
-| `AGENT-031` | Agent Harness / Runtime | Workspace / Shared-resource Concurrency | L4 | 7 | 🔥🔥 | 多 Agent 并行修改同一文件 / Workspace 或共享资源时，如何避免 Conflict、Race、Lost Update？ |
-| `AGENT-032` | Agent Harness / Runtime | Model Routing / Runtime Adapter | L4 | 9 | 🔥🔥 | Agent Runtime 怎样做 Model Routing？不同 Provider 的 Tool Protocol、Context 与错误语义如何适配？ |
-| `AGENT-034` | Agent Harness / Runtime | Agent Evaluation | L4 | 27 | 🔥🔥🔥 | Agent / Harness 怎样做 Evaluation？如何把 Final Result、Process、Tool、Routing、Cost 与 Regression 分层验证？ |
-| `AGENT-035` | Agent Harness / Runtime | Benchmark Engineering | L4 | 12 | 🔥🔥🔥 | Agent Benchmark / Eval Dataset / Ground Truth 怎样构建？如何让 Offline Case 代表真实线上任务并用于 Regression？ |
-| `AGENT-036` | Agent Harness / Runtime | Code Verification | L4 | 24 | 🔥🔥🔥 | AI / Coding Agent 生成代码后，怎样用 Test、Diff、Regression、Review、Rollback 证明结果可交付？ |
-| `AGENT-037` | Agent Harness / Runtime | Repository Understanding | L4 | 9 | 🔥🔥 | Coding Agent 怎样理解大型 Repository？Vector RAG、AST / LSP、ripgrep / Filesystem Search、Dependency Graph 各适合什么？ |
-| `AGENT-038` | Agent Harness / Runtime | Agent Runtime Resilience Policy | L4 | 15 | 🔥🔥🔥 | Agent Runtime 如何制定跨 Model / Tool / Provider 的 Resilience Policy？Retry Eligibility、Backoff、Circuit Breaker、Fallback / Model Failover 应怎样组合？ |
-| `AGENT-041` | Agent Harness / Runtime | Self-evolution / Data Flywheel | L4 | 6 | 🔥🔥 | Agent Self-evolution / Data Flywheel 怎样闭环？Bad Case、数据采集、Metric、上线验证与 Rollback 如何设计？ |
-| `AGENT-042` | Agent Harness / Runtime | Dynamic Instruction / Steering | L4 | 1 | 单点真实信号 | Agent 正在执行时用户追加 / 修改需求，新指令怎样进入当前 State，并安全影响后续 Planning / Execution？ |
-| `AGENT-043` | Agent Harness / Runtime | Execution Trace / Observability | L4 | 7 | 🔥🔥 | Agent Runtime 怎样建立 step / model / tool / state 级 Trace 与 Observability？如何用执行轨迹定位卡住、失败、延迟和 Token 异常，并支持 Replay / Debug？ |
-| `AGENT-044` | Agent Harness / Runtime | Prompt Injection / Untrusted Context Security | L4 | 8 | 🔥🔥 | Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？ |
-| `AGENT-045` | Agent Harness / Runtime | Intent Recognition / Routing | L4 | 11 | 🔥🔥🔥 | Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？ |
-| `AGENT-046` | Agent Harness / Runtime | A2A / Agent Communication Protocol | L3 | 6 | 🔥🔥 | A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？ |
-| `AGENT-047` | Agent Harness / Runtime | Agent Framework Selection | L3 | 27 | 🔥🔥🔥 | LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？ |
-| `AGENT-048` | Agent Harness / Runtime | AI-assisted Development Workflow | L4 | 37 | 🔥🔥🔥 | AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？ |
+| `AGENT-001` | Agent | Agent Boundary | L3 | 30 | 🔥🔥🔥 | Agent 与普通 LLM Call / Chatbot / 固定 Workflow 的本质区别是什么？什么任务真正值得 Agent 化？ |
+| `AGENT-002` | Agent | Harness / Runtime Boundary | L3 | 25 | 🔥🔥🔥 | Harness、Runtime、Orchestrator / Workflow Engine 分别解决什么问题？为什么“模型 + API”还不够？ |
+| `AGENT-003` | Agent | Agent Loop | L3 | 36 | 🔥🔥🔥 | 一个完整 Agent Loop / Runtime 从 User Input 到 Final Answer 怎样执行？Model、Tool、State、Context 各在哪一层？ |
+| `AGENT-004` | Agent | Message / Event Model | L3 | 8 | 🔥🔥 | Agent Message / Event Model 应怎样设计？Assistant Text、Tool Call、Tool Result、System / User Message 为什么需要不同结构？ |
+| `AGENT-005` | Agent | Agent Paradigm | L3 | 31 | 🔥🔥🔥 | ReAct、Plan-Execute-Replan、Planner / Executor / Critic 等执行范式怎样选择？ |
+| `AGENT-006` | Agent | Termination / Loop Detection | L4 | 15 | 🔥🔥🔥 | Agent 怎样判断任务已经完成并可靠停止？Max Step、Stop Condition、Dead Loop / Oscillation 如何检测？ |
+| `AGENT-007` | Agent | Goal Control | L4 | 4 | 🔥🔥 | Agent Goal Drift / 执行方向偏离原始需求时，怎样发现并拉回主任务？ |
+| `AGENT-008` | Agent | Context Assembly | L4 | 16 | 🔥🔥🔥 | 一次 Agent Context 包含什么？System / User、History、Memory、Retrieval、Tool Schema、Tool Result 怎样排序与组装？ |
+| `AGENT-009` | Agent | Context Compaction | L4 | 41 | 🔥🔥🔥 | Context Window 接近上限时，怎样 Trim / Summarize / Compact，同时保留当前任务关键状态？ |
+| `AGENT-010` | Agent | Compaction Correctness | L4 | 15 | 🔥🔥🔥 | Compaction / Summary 后如何验证信息没有丢坏？哪些状态必须保留，错误摘要如何纠正？ |
+| `AGENT-011` | Agent | Large Tool Result / Context Offloading | L4 | 11 | 🔥🔥🔥 | Tool Result / 文件 / 日志过大时怎样压缩、引用、延迟加载或外部化，而不是全部塞进 Context？ |
+| `AGENT-012` | Agent | Prompt / Context Cache | L4 | 5 | 🔥🔥 | Prompt Cache / Context Cache 如何降低重复 Token 成本？缓存哪些层，何时失效？ |
+| `AGENT-014` | Agent | Memory Architecture | L4 | 36 | 🔥🔥🔥 | Short-term / Working / Long-term Memory 怎样分层、写入、召回、更新与失效？ |
+| `AGENT-015` | Agent | Memory Lifecycle | L4 | 8 | 🔥🔥 | Memory 什么时候从短期晋升长期？怎样做 Extraction / Consolidation / Retrieval-on-demand，而不是无限堆历史？ |
+| `AGENT-016` | Agent | Memory Correctness / Staleness | L4 | 6 | 🔥🔥 | Long-term Memory 中过期摘要、错误事实或冲突信息如何发现、修正、版本化并避免污染后续决策？ |
+| `AGENT-017` | Agent | Multi-tenant State Isolation | L4 | 10 | 🔥🔥🔥 | 多用户 / 多角色 / 多 Tenant 的 Memory、Context、Session 和权限怎样隔离？ |
+| `AGENT-018` | Agent | Tool Calling Protocol | L3 | 29 | 🔥🔥🔥 | Tool / Function Calling 从 Schema 暴露、模型选择、Structured Call、Runtime 执行到 Result 回填的完整链路是什么？ |
+| `AGENT-019` | Agent | Tool Lifecycle | L4 | 10 | 🔥🔥🔥 | 一个新 Tool 从定义、注册、Discovery、Schema Validation、调用到版本升级的生命周期怎样设计？ |
+| `AGENT-020` | Agent | Tool Call Failure Semantics | L4 | 27 | 🔥🔥🔥 | 单次 Tool Call 出现 Invalid Arguments / Invalid Schema / Permission / Execution / Timeout 等失败时，Runtime 怎样归一化错误、反馈给模型并决定 Repair / Retry / Fail？ |
+| `AGENT-021` | Agent | Tool Discovery / Progressive Loading | L4 | 20 | 🔥🔥🔥 | Tool 数量持续增长时怎样 Dynamic Discovery / Progressive Loading，避免所有 Schema 一次性挤占 Context？ |
+| `AGENT-022` | Agent | Structured Output / Validation | L4 | 11 | 🔥🔥🔥 | Structured Output / Tool Arguments 如何做 Schema Validation、Repair 与 Hallucination Handling？ |
+| `AGENT-023` | Agent | MCP Protocol | L3 | 20 | 🔥🔥🔥 | MCP 解决什么标准化问题？Client / Server、Tools / Resources / Prompts 与 stdio / SSE / Streamable HTTP 怎样理解？ |
+| `AGENT-024` | Agent | Capability Abstraction Boundary | L4 | 34 | 🔥🔥🔥 | Skill、Tool、Function Calling、MCP、Rule / Prompt / Workflow 的职责边界是什么？ |
+| `AGENT-025` | Agent | Skill Progressive Disclosure | L4 | 10 | 🔥🔥🔥 | Skill 怎样做 Progressive Disclosure / Resource Loading？为什么不把所有 Instructions / Assets 一次性注入 Context？ |
+| `AGENT-026` | Agent | Cancellation / Long-running Task | L4 | 10 | 🔥🔥🔥 | Agent 长耗时任务怎样 Timeout、Cancel、Interrupt、Resume？取消传播和资源清理怎样保证？ |
+| `AGENT-027` | Agent | Checkpoint / Resume | L4 | 12 | 🔥🔥🔥 | Checkpoint / Persistence / Resume 应保存哪些 Runtime State？Crash 后怎样恢复到可继续执行状态？ |
+| `AGENT-028` | Agent | Permission / Approval / Sandbox | L4 | 20 | 🔥🔥🔥 | Permission、Approval、HITL、Sandbox 如何限制 Agent 的写操作、代码执行和高风险外部副作用？ |
+| `AGENT-029` | Agent | Idempotency / External Side Effect | L4 | 6 | 🔥🔥 | Tool 已成功产生外部副作用，但 Checkpoint / DB 写失败或服务崩溃时，如何避免 Resume 后重复执行？ |
+| `AGENT-030` | Agent | Multi-Agent Architecture | L4 | 29 | 🔥🔥🔥 | 什么时候使用 Multi-Agent / Sub-agent？怎样分工、通信、共享或隔离 Context / State？ |
+| `AGENT-031` | Agent | Workspace / Shared-resource Concurrency | L4 | 7 | 🔥🔥 | 多 Agent 并行修改同一文件 / Workspace 或共享资源时，如何避免 Conflict、Race、Lost Update？ |
+| `AGENT-032` | Agent | Model Routing / Runtime Adapter | L4 | 9 | 🔥🔥 | Agent Runtime 怎样做 Model Routing？不同 Provider 的 Tool Protocol、Context 与错误语义如何适配？ |
+| `AGENT-034` | Agent | Agent Evaluation | L4 | 27 | 🔥🔥🔥 | Agent / Harness 怎样做 Evaluation？如何把 Final Result、Process、Tool、Routing、Cost 与 Regression 分层验证？ |
+| `AGENT-035` | Agent | Benchmark Engineering | L4 | 12 | 🔥🔥🔥 | Agent Benchmark / Eval Dataset / Ground Truth 怎样构建？如何让 Offline Case 代表真实线上任务并用于 Regression？ |
+| `AGENT-036` | Agent | Code Verification | L4 | 24 | 🔥🔥🔥 | AI / Coding Agent 生成代码后，怎样用 Test、Diff、Regression、Review、Rollback 证明结果可交付？ |
+| `AGENT-037` | Agent | Repository Understanding | L4 | 9 | 🔥🔥 | Coding Agent 怎样理解大型 Repository？Vector RAG、AST / LSP、ripgrep / Filesystem Search、Dependency Graph 各适合什么？ |
+| `AGENT-038` | Agent | Agent Runtime Resilience Policy | L4 | 15 | 🔥🔥🔥 | Agent Runtime 如何制定跨 Model / Tool / Provider 的 Resilience Policy？Retry Eligibility、Backoff、Circuit Breaker、Fallback / Model Failover 应怎样组合？ |
+| `AGENT-041` | Agent | Self-evolution / Data Flywheel | L4 | 6 | 🔥🔥 | Agent Self-evolution / Data Flywheel 怎样闭环？Bad Case、数据采集、Metric、上线验证与 Rollback 如何设计？ |
+| `AGENT-042` | Agent | Dynamic Instruction / Steering | L4 | 1 | 单点真实信号 | Agent 正在执行时用户追加 / 修改需求，新指令怎样进入当前 State，并安全影响后续 Planning / Execution？ |
+| `AGENT-043` | Agent | Execution Trace / Observability | L4 | 7 | 🔥🔥 | Agent Runtime 怎样建立 step / model / tool / state 级 Trace 与 Observability？如何用执行轨迹定位卡住、失败、延迟和 Token 异常，并支持 Replay / Debug？ |
+| `AGENT-044` | Agent | Prompt Injection / Untrusted Context Security | L4 | 8 | 🔥🔥 | Agent 如何防 Prompt Injection / Prompt Attack 与 Untrusted Context 污染？System Prompt 泄露、Tool 诱导、敏感数据外泄和高风险写操作应怎样分层防护？ |
+| `AGENT-045` | Agent | Intent Recognition / Routing | L4 | 11 | 🔥🔥🔥 | Agent 的 Intent Recognition / Router 怎样设计？Rule、Small Model、LLM Classification 与 Tool-schema 自主选择如何取舍，准确率低和标注数据少时怎样优化？ |
+| `AGENT-046` | Agent | A2A / Agent Communication Protocol | L3 | 6 | 🔥🔥 | A2A / Agent-to-Agent Protocol 解决什么问题？它与 MCP、Sub-agent 内部调用和普通服务通信有什么边界，怎样避免递归互调与失控？ |
+| `AGENT-047` | Agent | Agent Framework Selection | L3 | 27 | 🔥🔥🔥 | LangChain、LangGraph、Spring AI 等 Agent / Orchestration Framework 分别提供什么能力？什么时候需要 State Graph，什么时候应部分或完全自研 Runtime？ |
+| `AGENT-048` | Agent | AI-assisted Development Workflow | L4 | 37 | 🔥🔥🔥 | AI-assisted / Vibe Coding 应怎样进入真实软件研发流程？从 Requirement、Context、生成与迭代到 Test、Review、Diff、验收和交付，人和 Coding Agent 的责任边界怎样划分？ |
 | `SD-001` | System Design | Flash Sale / Inventory | L4 | 10 | 🔥🔥🔥 | 设计秒杀 / 抢购 / 库存系统：怎样防止 Oversell / Undersell，并处理 Redis、DB、订单和补偿的一致性？ |
 | `SD-002` | System Design | Realtime Ranking | L4 | 2 | 🔥 | 设计高并发排行榜 / 热榜：实时更新、HotKey、排序、读取热点与持久化怎样拆？ |
 | `SD-003` | System Design | Autocomplete / Fuzzy Search | L4 | 2 | 🔥 | 设计搜索框实时联想 / 模糊搜索：如何同时支持代码、名称、拼音 / Prefix / Infix，并控制实时交互成本？ |

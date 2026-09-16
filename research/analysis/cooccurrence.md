@@ -8,24 +8,24 @@
 
 | Module A | Module B | Shared Source Flows |
 |---|---|---:|
-| RAG | Agent Harness / Runtime | 59 |
-| AI Backend Engineering | Agent Harness / Runtime | 54 |
+| RAG | Agent | 59 |
+| AI Backend Engineering | Agent | 54 |
 | AI Backend Engineering | Redis | 53 |
 | AI Backend Engineering | MySQL | 46 |
-| LLM Foundation（应用工程深度） | Agent Harness / Runtime | 45 |
+| LLM Foundation（应用工程深度） | Agent | 45 |
 | AI Backend Engineering | System Design | 39 |
-| Agent Harness / Runtime | System Design | 37 |
+| Agent | System Design | 37 |
 | LLM Foundation（应用工程深度） | RAG | 35 |
-| Redis | Agent Harness / Runtime | 32 |
+| Redis | Agent | 32 |
 | AI Backend Engineering | LLM Foundation（应用工程深度） | 31 |
 | AI Backend Engineering | RAG | 30 |
 | Vector DB | RAG | 28 |
 | MySQL | Redis | 25 |
 | Redis | System Design | 22 |
-| MySQL | Agent Harness / Runtime | 19 |
+| MySQL | Agent | 19 |
 | MySQL | System Design | 19 |
 | Vector DB | LLM Foundation（应用工程深度） | 17 |
-| Vector DB | Agent Harness / Runtime | 17 |
+| Vector DB | Agent | 17 |
 | LLM Foundation（应用工程深度） | System Design | 17 |
 | AI Backend Engineering | Vector DB | 16 |
 | Redis | RAG | 16 |
@@ -33,7 +33,7 @@
 | Redis | LLM Foundation（应用工程深度） | 14 |
 | MySQL | RAG | 14 |
 | MySQL | LLM Foundation（应用工程深度） | 12 |
-| Python | Agent Harness / Runtime | 11 |
+| Python | Agent | 11 |
 | Python | LLM Foundation（应用工程深度） | 8 |
 | Vector DB | System Design | 7 |
 | Python | RAG | 6 |
@@ -41,7 +41,7 @@
 | Python | AI Backend Engineering | 5 |
 | Redis | Vector DB | 5 |
 | MySQL | Vector DB | 5 |
-| FastAPI | Agent Harness / Runtime | 3 |
+| FastAPI | Agent | 3 |
 | Python | System Design | 2 |
 | Python | FastAPI | 2 |
 | FastAPI | LLM Foundation（应用工程深度） | 2 |
