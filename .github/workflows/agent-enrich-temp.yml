@@ -1,0 +1,32 @@
+name: Temporary Agent curriculum enrichment
+on:
+  push:
+    branches: ['docs/agent-architecture-map-20260916-0266cbf']
+    paths: ['tools/_agent_enrich.py', 'tools/_agent_edits.json', '.github/workflows/agent-enrich-temp.yml']
+permissions:
+  contents: write
+concurrency:
+  group: agent-enrich-temp
+  cancel-in-progress: false
+jobs:
+  enrich:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - run: python tools/_agent_enrich.py
+      - name: Commit only to requested branch
+        env:
+          TARGET: docs/agent-architecture-map-20260916-0266cbf
+        run: |
+          test "${GITHUB_REF_NAME}" = "$TARGET"
+          git diff --check
+          if [ -z "$(git status --porcelain)" ]; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add agent README.md roadmap research/questions/progress.md tools
+          git commit -m 'docs: apply reviewed Agent curriculum enrichment'
+          git push origin HEAD:"$TARGET"
