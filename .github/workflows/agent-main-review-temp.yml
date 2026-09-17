@@ -1,0 +1,22 @@
+name: Temporary main Agent teaching review
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/agent-main-review-temp.yml']
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 8d8bec6405769f8e2b5cfaaf4497bba4a2f30dbc
+          persist-credentials: false
+      - name: Export tracked teaching source only
+        run: git archive --format=tar.gz -o /tmp/handbook-main-source.tar.gz HEAD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: handbook-main-source
+          path: /tmp/handbook-main-source.tar.gz
+          retention-days: 1
