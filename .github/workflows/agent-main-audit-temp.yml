@@ -2,7 +2,7 @@ name: Temporary main Agent teaching audit
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/agent-main-audit-temp.yml', 'tools/_agent_main_apply.py', 'tools/_agent_main_changes.json']
+    paths: ['.github/workflows/agent-main-audit-temp.yml', 'tools/_agent_main_apply.py']
 permissions:
   contents: read
 jobs:
@@ -10,12 +10,12 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Read public pinned Codex source (no private repository credentials)
-        run: |
-          mkdir -p /tmp/codex-source
-          curl --fail --location --retry 2 https://codeload.github.com/openai/codex/tar.gz/fc948f8c473e5d11e780ffcf1fd7f812a2020932 | tar -xz -C /tmp/codex-source --strip-components=1
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
       - uses: actions/upload-artifact@v4
         with:
-          name: public-codex-pinned
-          path: /tmp/codex-source/
+          name: agent-main-staged-payload
+          path: tools/_agent_main_bundle/
           retention-days: 1
