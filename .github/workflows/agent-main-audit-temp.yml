@@ -1,0 +1,25 @@
+name: Temporary main Agent teaching audit
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/agent-main-audit-temp.yml', 'tools/_agent_main_apply.py', 'tools/_agent_main_changes.json']
+permissions:
+  contents: read
+jobs:
+  audit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: Export pinned documentation without git configuration or credentials
+        run: |
+          mkdir -p /tmp/agent-main-export
+          git archive 37cbfd2b152c6a0aa5bbd8ca0c19820debc632b8 | tar -x -C /tmp/agent-main-export
+      - uses: actions/upload-artifact@v4
+        with:
+          name: agent-main-source
+          path: /tmp/agent-main-export/
+          retention-days: 1
