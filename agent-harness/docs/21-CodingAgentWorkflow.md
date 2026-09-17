@@ -1,541 +1,175 @@
-# 21. Coding Agent：Repo Understanding → Patch → Test → Verify
+# 21. Coding Agent：读懂仓库、最小修改与可验证交付
 
-Coding Agent 不是：
+[← 上一章](20-AgentEvaluationBenchmark.md) · [模块目录](../README.md) · [下一章 →](22-ProductionAgentRuntime.md)
 
-> “让 LLM 写代码。”
+> 本章要解决：把代码生成放回完整工作过程，区分“生成Patch”和“完成需求”。
 
-真正的工程闭环是：
+## 1. 为什么生成正确语法还不够
 
-```text
-Understand Repository
-→ Understand Task
-→ Locate Relevant Code
-→ Plan Minimal Change
-→ Edit / Patch
-→ Run Test / Lint / Typecheck
-→ Inspect Diff
-→ Fix Regression
-→ Verify Acceptance Criteria
-→ Deliver
-```
+用户说“修复登录超时”，模型可能写出可编译的代码，却改错位置、遗漏调用方、破坏配置或只让测试表面通过。Coding Agent（代码智能体）需要理解仓库、操作文件、执行检查、解释证据和交付差异，而不是只返回一段代码。
 
-HUMAN-A 中 `AGENT-048 AI-assisted Development Workflow` 有 37 个独立来源，说明企业已经把“AI Coding 怎么真正进入研发流程”当成核心能力，而不只是 Copilot 使用技巧。
+任务契约仍然先行：允许改哪些范围，如何复现问题，哪些检查可运行，不能碰哪些数据。阅读仓库中的指令可以帮助遵守项目习惯，但文件内容不自动增加真实系统权限。
 
----
+## 2. Repository Understanding不是一定做Vector RAG
 
-## 1. Coding Agent 最大的问题不是生成，而是理解和验证
+Repository understanding（仓库理解）是找到相关入口、定义、调用与测试。
 
-模型很容易生成：
+| 手段 | 适合问题 | 局限 |
+|---|---|---|
+| 文件目录和README | 项目结构、运行入口 | 文档可能过期 |
+| 文本搜索 | 已知符号、报错、配置键 | 不直接知道类型和调用语义 |
+| AST/LSP（语法树/语言服务） | 定义、引用、类型关系 | 依赖解析和项目配置 |
+| 语义/向量检索 | 不知道具体名称的概念定位 | 召回需核对真实代码 |
+| 依赖/调用图 | 影响面与模块关系 | 动态调用不一定完整 |
 
-```text
-看起来合理的 patch
-```
+先从目标相关的入口查起，再缩小到调用路径、配置与测试。找到候选文件以后要读实际内容，不把检索片段当全部上下文。
 
-但它可能：
+## 3. 先记录工作区基线，再做最小Patch
 
-```text
-改错文件
-漏掉调用方
-破坏接口
-测试没跑
-只修表面症状
-```
+Patch（补丁）应该尽量只改变解决任务所需的内容。先看当前分支、未提交修改和相关文件，避免覆盖用户已有工作；读取后文件可能被另一个进程修改，应用补丁前需检查适当基线。
 
-所以 Harness 要提供的不只是 `edit_file`，还要有：
+这不意味着每次给所有文件建立永久版本库。Git本身和必要差异检查通常提供足够信息。对共享工作区的并发修改，参考第07/18章的资源所有权，不重新发明全套Trace备份。
+
+## 4. 验证是由近及远的证据链
 
 ```text
-repo discovery
-search
-navigation
-workspace state
-command execution
-diff
-test
-verification
+能复现原问题或有明确失败条件
+→ 最小修改
+→ 相关单元/回归测试
+→ 必要的类型、Lint、构建与更广测试
+→ 审查最终Diff与需求范围
+→ 交付变更、实际验证结果与未验证风险
 ```
 
----
+不是每个仓库都有全部工具，也不是无论成本都跑全量测试。先说明本次实际跑了什么、为何选这些检查、什么没有验证。退出码0只证明该命令报告成功，弱测试或漏测不代表业务必正确。
 
-# 2. Repository Understanding 不等于 Vector RAG
+如果测试失败，先区分补丁问题、已有失败、缺环境和外部依赖。可以修复自己的错误，不能为了让分数变绿删除断言或修改测试去迎合错误实现。任务要求合理修改测试时，也必须解释为何新测试表达了正确需求。
 
-HUMAN-A `AGENT-037` 直接比较：
+## 5. 回滚不等于清空工作区
 
-```text
-Vector RAG
-AST / LSP
-ripgrep / Filesystem Search
-Dependency Graph
-```
+Rollback（回退）应只回退本次明确拥有的变更，避免`reset --hard`之类动作抹掉用户内容。外部安装、数据库迁移和网络写入可能无法随Git回退，需单独说明。最终交付需要具体diff/文件路径及可核对结果，不是“已经修好了”的空结论。
 
-它们解决不同问题。
+<details>
+<summary>产品落地点：Codex与Claude把读取、执行和验证接成循环</summary>
 
-## ripgrep / Text Search
+Codex固定ToolRouter将模型候选接到文件/命令等处理器；Claude用户快照的基本工具目录提供读取、编辑、写入、Shell以及可选搜索工具。工具结果回填后，模型可以观察编译或测试失败并调整下一步。这构成“读→改→测→观察→继续”的具体执行循环。
 
-适合：
+两者允许的执行环境由实际策略配置决定。不能仅因某产品支持Shell就说本轮已运行测试，也不能从最终自然语言声明推断命令输出。调用/产物记录可作证据，但验证覆盖仍需任务本身定义。
 
-```text
-符号名
-错误字符串
-配置项
-调用痕迹
-```
-
-优点：快、精确、成本低。
-
-## Filesystem Navigation
-
-适合：
-
-```text
-项目结构
-模块边界
-配置文件位置
-```
-
-## AST / LSP
-
-适合：
-
-```text
-definition
-reference
-type
-symbol relationship
-```
-
-## Vector / Semantic Search
-
-适合：
-
-```text
-不知道具体关键词
-按语义找相关实现
-```
-
-## Dependency Graph
-
-适合：
-
-```text
-impact analysis
-跨模块依赖
-```
-
-成熟 Coding Agent 通常组合，而不是只靠一种检索。
-
----
-
-# 3. Repo Understanding 的搜索漏斗
-
-建议：
-
-```text
-1. Read task / issue
-2. Inspect repo tree
-3. Exact text / symbol search
-4. Read local neighborhood
-5. Follow references / dependency
-6. Semantic search only when useful
-7. Build small working set
-```
-
-不要一开始：
-
-```text
-把整个 repo 全塞 Context
-```
-
-Context Engineering 原则同样适用。
-
----
-
-# 4. Patch 应尽量小
-
-目标：
-
-```text
-minimal sufficient change
-```
-
-而不是：
-
-```text
-顺手重构全项目
-```
-
-小 Patch 的优势：
-
-- Review 容易；
-- Regression Surface 小；
-- 失败更容易归因；
-- Rollback 简单；
-- Test 范围更明确。
-
-Planning 时可以显式限制：
-
-```text
-Non-goal: 不做无关重构
-```
-
----
-
-# 5. Workspace State 必须可控
-
-Coding Agent 需要知道：
-
-```text
-base commit
-current branch
-modified files
-untracked files
-running processes
-```
-
-如果没有清晰 workspace boundary：
-
-```text
-上一次任务残留修改
-→ 被下一次任务误认为原始代码
-```
-
-所以每个 Run 最好有：
-
-```text
-workspace identity / snapshot
-```
-
----
-
-# 6. Patch Application 要有前置版本
-
-如果 Agent 读到：
-
-```text
-file version A
-```
-
-准备 Patch。
-
-但期间文件变成 B：
-
-```text
-直接覆盖
-→ Lost Update
-```
-
-更安全：
-
-```text
-base hash / line context
-→ apply patch
-→ conflict if base changed
-```
-
-Multi-Agent 场景尤其重要。
-
----
-
-# 7. Test 是 Outcome Verification，不是装饰
-
-HUMAN-A `AGENT-036 Code Verification` 有 24 个独立来源。
-
-最低验证层：
-
-```text
-syntax / compile
-unit test
-typecheck
-lint
-integration test
-```
-
-具体跑哪些取决于 Repository。
-
-Agent 不能只说：
-
-> “修改应该能工作。”
-
-必须尽量执行可以独立验证的检查。
-
----
-
-# 8. Test Failure 怎么处理
-
-不是：
-
-```text
-Test fail
-→ 修改到 test 变绿
-```
-
-因为 Agent 可能“修测试”来掩盖 bug。
-
-需要先分类：
-
-```text
-existing failure?
-caused by patch?
-flaky?
-environment issue?
-expectation changed legitimately?
-```
-
-如果要修改 Test：
-
-```text
-必须说明为什么 expectation 应改变
-```
-
----
-
-# 9. Diff Review 是另一道防线
-
-Tests 全过也可能出现：
-
-```text
-删除日志
-放宽权限
-绕过验证
-加入 hardcoded secret
-```
-
-所以最终要：
-
-```text
-git diff
-→ inspect changed files
-→ check scope
-→ check unexpected deletion
-→ check security
-```
-
-Human Review 可以建立在 Diff 上，而不是重新读整个仓库。
-
----
-
-# 10. Acceptance Criteria 必须独立于 Agent 自评
-
-例如 Issue：
-
-```text
-修复 retry 时重复扣款
-```
-
-完成标准应该是：
-
-```text
-new regression test reproduces old bug
-patch makes test pass
-existing tests pass
-no duplicate external call
-```
-
-而不是：
-
-```text
-Agent: “我已解决重复扣款问题。”
-```
-
-SWE-bench 的重要启发正是：
-
-> 用真实 repository environment 和测试结果判断问题是否真正解决。
-
----
-
-# 11. Verification Pyramid
-
-可以从便宜到贵：
-
-```text
-Parse / Compile
-→ Static Analysis / Typecheck
-→ Targeted Unit Test
-→ Related Test Suite
-→ Integration / E2E
-→ Full Regression
-```
-
-不是每次都跑完整 E2E，但高风险修改应该逐层提高验证强度。
-
----
-
-# 12. Command Execution 的风险
-
-Coding Agent 需要 shell：
-
-```text
-pytest
-npm test
-git diff
-```
-
-但 shell 也是高风险 Tool。
-
-必须结合：
-
-```text
-Permission
-Sandbox
-Network Policy
-Timeout
-Output Offloading
-```
-
-例如不允许测试脚本：
-
-```text
-访问 production DB
-```
-
----
-
-# 13. AI-assisted Development 中人的责任
-
-健康流程：
-
-```text
-Human owns requirement / acceptance / risk
-Agent accelerates discovery / patch / test
-Runtime records evidence
-Human reviews high-impact decision
-```
-
-不是：
-
-```text
-Agent 写代码
-→ Human 只点 Merge
-```
-
-也不是：
-
-```text
-Agent 只能补全几行代码
-```
-
-责任边界取决于可验证性和风险。
-
----
-
-# 14. Rollback / Delivery
-
-交付前至少保留：
-
-```text
-base commit
-final diff
-test evidence
-run trace
-artifact / patch id
-```
-
-如果上线后有问题：
-
-```text
-能定位这次 Agent 修改
-→ revert / rollback
-```
-
-这也是 Agent Trace 与普通开发审计连接的地方。
-
----
-
-# 15. Claude Code / Codex 为什么是重要实现参考
-
-这两个产品本身就是成熟 Coding Agent，因此我们从源码索引中抽象：
-
-```text
-filesystem / search / tool runtime
-workspace / session
-permission / sandbox
-cancellation
-trace
-context management
-```
-
-但课程不复制某一产品 UI 或类名。
-
-真正要学的是：
-
-> **一个 Coding Agent 要完成可交付代码修改，Runtime 必须提供哪些闭环能力。**
-
----
-
-# 16. Coding Agent Failure Timeline
-
-```text
-T0  Agent 搜到相似函数 A
-T1  未继续查真实调用方 B
-T2  修改 A
-T3  只跑了单个 unit test
-T4  Test pass
-T5  上线后 B 仍走另一条路径
-T6  Bug 仍存在
-```
-
-根因：
-
-```text
-Repo Understanding + Acceptance Verification 不完整
-```
-
-不是“模型代码能力差”。
-
----
-
-# 17. HUMAN-A 信号
-
-本章主要承接：
-
-- `AGENT-036` Code Verification：24 个来源；
-- `AGENT-037` Repository Understanding：9 个；
-- `AGENT-048` AI-assisted Development Workflow：37 个。
-
-真实面试很可能直接问：
-
-```text
-你用 AI Coding 怎么保证代码质量？
-为什么不用纯 Vector RAG 理解 Repo？
-AI 写完代码你怎么验收？
-```
-
----
-
-# 18. 面试怎么答
-
-## Q：AI Coding 怎么保证质量？
-
-🎯 **30 秒回答**：
-
-> 我把 Coding Agent 看成完整工程循环，不是代码生成器。先通过 tree/ripgrep/symbol/AST/LSP/语义搜索建立最小相关工作集；Patch 尽量小并绑定 base version；修改后跑 compile/typecheck/targeted tests，再看 diff 和影响范围，必要时跑 integration/regression；最终按独立 Acceptance Criteria 验证，而不是相信 Agent 说“完成”。高风险命令还必须经过 sandbox/permission，所有 test/diff 证据进入 trace 方便 review 和 rollback。
-
----
-
-# 19. 高频易错点
-
-⚠️ **Repo Understanding = Vector RAG。** 代码有强 symbol / dependency / filesystem 结构。
-
-⚠️ **Test 过了就一定正确。** Test coverage 可能不足，还要看 Diff / Acceptance。
-
-⚠️ **Agent 可以直接改测试让它通过。** 必须验证 expectation 是否合理变化。
-
-⚠️ **AI-assisted Development = 人不再 Review。** 责任边界没有消失。
-
----
-
-# 20. 本章自测
-
-<details><summary>1. 为什么 Coding Agent 不应该一开始把全仓库塞进 Context？</summary>
-
-成本和噪声都高，而且代码导航有更强的结构化信号。应先用 tree、exact search、symbol/reference 等缩小工作集，再按需读文件。
 </details>
 
-<details><summary>2. 为什么 Test 和 Diff 都需要？</summary>
+## 面试怎么答
 
-Test 验证行为，Diff 验证修改范围与潜在风险；两者能发现不同类型问题。
+这些是依据本章机制设计的训练问法，不新增真人来源；先用自己的话回答，再看参考答案。
+
+### 1. Coding Agent怎样证明Patch可交付？
+
+<details>
+<summary>参考答案</summary>
+
+先定位需求与失败条件，读真实仓库和调用路径，做最小修改，运行相关测试及必要构建/类型检查，再审查Diff与用户已有修改。交付时列出实际验证和未验证范围，不能只看代码语法或模型自评。
+
 </details>
 
-<details><summary>3. SWE-bench 对 Coding Agent Evaluation 最大启发是什么？</summary>
+### 2. 为什么仓库理解不等于Vector RAG？
 
-最终应该在真实 repository environment 中验证 issue 是否被解决，而不是只评价生成代码文本看起来是否合理。
+<details>
+<summary>参考答案</summary>
+
+代码问题常能通过符号、错误文本、AST/LSP和调用关系定位，向量检索只是候选发现手段之一。无论怎么检索，都需读实际代码和影响面，不能只凭片段改文件。
+
 </details>
+
+### 3. 测试全绿为什么还可能错？
+
+<details>
+<summary>参考答案</summary>
+
+测试可能覆盖不足、环境不代表生产、需求未表达或断言被错误修改。应审查需求与Diff，并明确测试证明的范围；不能用退出码0替代所有语义验收。
+
+</details>
+
+### 4. 多Agent改同一仓库怎样控制？
+
+<details>
+<summary>参考答案</summary>
+
+明确文件/任务所有权，优先独立工作区或单写者，合并时做基线与冲突检查并验证最终结果。不同Context不能避免共享文件覆盖，失败回退也不能删掉他人的修改。
+
+</details>
+
+## 高频易错点
+
+| 容易混淆的说法 | 为什么不对，应怎样理解 |
+|---|---|
+| 代码生成器就是完整Coding Agent | 还需要资源理解、实际执行与交付验证。 |
+| 检索到了片段就能直接修改 | 要读实际上下文和影响面。 |
+| 测试过了就是全部正确 | 仅证明相应检查范围。 |
+| 失败就清空整个Git工作区 | 可能破坏用户修改，应限本次所有权。 |
+| 为了通过测试可以随便删断言 | 测试应表达需求，不应掩盖错误实现。 |
+
+## 章节自测
+
+先闭卷作答。答案不仅给结论，也解释判断依据；答不出时回到本章相应过程，不必从整套课程开头重读。
+
+### 自测 1：修改前发现用户已有未提交文件，怎么办？
+
+<details>
+<summary>查看参考答案</summary>
+
+先识别其范围，避免覆盖或误纳入自己的补丁；必要时澄清，并仅修改任务所需部分。
+
+</details>
+
+### 自测 2：能从错误字符串搜到函数，是否还需要向量库？
+
+<details>
+<summary>查看参考答案</summary>
+
+不一定。使用最简单有效的定位方式，读调用与测试验证；向量检索不是代码Agent必选组件。
+
+</details>
+
+### 自测 3：测试命令因缺数据库失败，能写“测试通过”吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能。说明环境缺失及未完成验证，区分无法执行与断言失败。
+
+</details>
+
+### 自测 4：修复时改了10个无关文件有何风险？
+
+<details>
+<summary>查看参考答案</summary>
+
+扩大回归与审查范围，掩盖真正原因，也可能影响他人工作。优先最小必要修改。
+
+</details>
+
+### 自测 5：Git回退能否撤销已执行的外部迁移？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能默认。Git只管理相应文件状态，外部数据库/网络动作需自己的回退或补偿策略。
+
+</details>
+
+### 自测 6：最终回答应提供哪些最有用的信息？
+
+<details>
+<summary>查看参考答案</summary>
+
+改动目的、涉及文件和差异、实际检查结果、未验证范围与需要用户处理的事项，不必倾倒全部日志。
+
+</details>
+
+## 资料与下一步
+
+固定源码：[codex-rs/core/src/tools/router.rs](https://github.com/openai/codex/blob/fc948f8c473e5d11e780ffcf1fd7f812a2020932/codex-rs/core/src/tools/router.rs)、[tools.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools.ts)；官方：[Claude Code工作过程](https://code.claude.com/docs/en/how-claude-code-works)、[SWE-bench](https://arxiv.org/abs/2310.06770)。下一章把单机工作过程扩展到需要长期运行的服务。
+
+本章对应研究能力：`AGENT-036`、`AGENT-037`、`AGENT-048`。频次与原始证据以[研究题库](../../research/questions/agent-harness.md)为准。源码案例采用固定快照，官方文档采用明确版本；[核验范围](../../research/agent-sources/README.md#reader-revision-20260917)。
+
+[← 上一章](20-AgentEvaluationBenchmark.md) · [模块目录](../README.md) · [下一章 →](22-ProductionAgentRuntime.md)

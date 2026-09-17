@@ -1,353 +1,180 @@
-# 07｜Tool Side Effect、Concurrency、Cancellation 与 Progress
+# 07. 副作用、并发与取消传播
 
-> 本章合并旧 `12-ToolSideEffectConcurrency` 与 `13-ToolCancellationProgress`。它们本来属于同一个执行控制问题：**Tool 在真实世界里会占资源、产生副作用、彼此冲突，还可能需要中途取消。**
+[← 上一章](06-ToolExecutionFailure.md) · [模块目录](../README.md) · [下一章 →](08-PlanningGoalStopBudget.md)
 
-## 1. 为什么 Tool 不能默认并发
+> 本章要解决：为什么关掉页面或取消一个协程，不等于所有工作已经停下？
 
-模型一次可能给出多个 Tool Call：
+## 1. 先识别动作有没有改变外部世界
 
-```text
-read_file(A)
-read_file(B)
-run_tests()
-```
+Side effect（副作用）指调用除了返回值，还改变外部状态。例如读取A通常不修改文档；创建报告、改文件、发邮件会留下变化。“副作用”不是坏事，完成任务经常必须写入；关键是知道变化在哪里、是否可撤回、结果怎样确认。
 
-看起来可以并发。
+Concurrency（并发）是多项工作在重叠时间内推进。两个文件读取可考虑并发，但两项修改同一文件可能互相覆盖。`async`只描述执行方式，不证明动作之间没有冲突。
 
-但如果是：
+## 2. 按资源判定冲突，不只按工具名
 
-```text
-edit_file(A)
-run_tests()
-```
+同一个`edit_file`修改A和B可能独立；不同名字的`format_file`和`replace_text`修改A则可能冲突。运行时应关注 Resource key（资源身份），例如工作区和文件路径，或订单ID。
 
-并发可能产生：
+| 动作 | 是否适合并发 | 应关注的边界 |
+|---|---|---|
+| 读取不同的静态资料 | 常可并发 | 权限、请求配额、结果匹配 |
+| 同时读取与修改同一文件 | 视一致性要求 | 是否读取旧版本，是否允许 |
+| 两个操作修改同一文件 | 需协调 | 单写者、锁或版本冲突检测 |
+| 两次发送同一份邮件 | 不应仅因async而并发 | 逻辑去重、业务幂等与回执 |
 
-```text
-测试读取旧文件
-测试读取写到一半的文件
-结果对应未知版本
-```
+可以先用单写者避免复杂并发，再根据实际瓶颈加入更细控制。细锁增加吞吐，也增加死锁与实现成本；工作区隔离减少相互覆盖，但最后合并仍要验证。
 
-所以并发不是“async gather 全开”。
+## 3. 取消为什么需要传播
 
-## 2. Tool Side Effect 分类
-
-至少可以分：
-
-### Pure / Read-only
+假设用户取消报告任务，此时运行时正在等模型，模型阶段之后还有文件读取，某个工具又启动了子进程。仅把页面按钮改成“已取消”，不会通知这些活动。
 
 ```text
-search
-read_file
-query snapshot
+用户取消 → Run控制器：不再派发新动作
+                 ↓
+           模型请求 / 正在等待的工具
+                 ↓
+           子协程 / 子进程 / 子Agent
+                 ↓
+            各自清理与结果核对
 ```
 
-### Local Mutable
+Cancellation（取消）首先是停止意图。每层需要感知这个意图，并在自己有控制权的范围停止。例如取消HTTP等待可以中断本地连接，但远端服务器可能仍在执行；取消协程不能自动杀掉独立子进程，也不能撤销已发送邮件。传播是为了避免“父任务结束了，孩子还在花钱、占资源或写数据”。
 
-```text
-edit workspace
-write temp file
-modify local cache
-```
+## 4. 完整的取消生命周期
 
-### External Reversible
+先把运行标成取消中并阻止新动作；向可取消的子任务发信号；等待或超时处理清理；收集已经结束或迟到的结果；最后按业务语义标记取消完成或需要人工核对。这里的“取消完成”必须说明是本地执行已停止，还是外部动作也确认结束。
 
-```text
-create draft issue
-upload temporary artifact
-```
+已经发生的写入可能需要 Compensation（补偿动作），例如删除刚创建的临时报告；但补偿是新的业务动作，不是时间倒流，也可能失败。邮件通常不能可靠撤回，必须如实告知。
 
-### External Irreversible / High Risk
+## 5. 执行中追加消息与取消如何配合
 
-```text
-send email
-publish
-charge
-production delete
-```
+用户发“继续下一份”可以排队；发“不要再改原件”可能要求立刻停止新的写入并中断当前可中断操作。不要把每条新消息都当取消，也不要让它们直接并发改同一Run状态。
 
-不同等级决定：
+若工具声明不可中断，运行时至少停止后续派发并告知正在等待安全结束。若可中断，仍要定义资源释放与迟到回执处理。下游不支持终止时，最诚实的状态是“已停止本地等待，远端结果待确认”，不是“全部撤销”。
 
-- 是否可并发；
-- 是否需 Approval；
-- 是否能 Retry；
-- 是否需要 Compensation / Ledger。
+## 6. 进度事件与最终结果分开
 
-## 3. Concurrency Safety 应是 Tool Contract 的一部分
+Progress（进度）告诉用户当前阶段或已有产物，不等于最终成功。一个工具可以多次报告进度，最后只确认一次终态；重连后以权威状态校正漏掉的进度消息。不要把日志里“正在保存”当作文件已经耐久保存。
 
-不要让 Scheduler 猜。
+<details>
+<summary>实际实现线索：Claude Code 的可中断工具与 Codex 的取消令牌</summary>
 
-可以有：
+Claude Code用户快照的`Tool.ts`提供`isConcurrencySafe(input)`、`isReadOnly(input)`和`interruptBehavior()`等契约。其意义不是把这些函数发给模型，而是供宿主决定是否并发或中断。`query.ts`把`abortController.signal`传入模型调用，并对中断后的工具结果关联做处理。
 
-```python
-class ToolRuntime:
-    def is_read_only(self, args) -> bool: ...
-    def is_concurrency_safe(self, args) -> bool: ...
-    def resource_keys(self, args) -> list[str]: ...
-```
+Codex固定源码的调用路径携带`CancellationToken`，工具Invocation还携带Session与StepContext。App Server把中断当前Turn做成显式接口。令牌让内部工作感知取消，但不自动给予远端业务系统可撤销能力；实际是否能终止子进程或远程调用，仍由对应执行后端兑现。
 
-例如：
-
-```text
-read_file(a.py) + read_file(b.py)
-→ parallel okay
-
-edit_file(a.py) + edit_file(a.py)
-→ conflict
-
-edit_file(a.py) + run_tests(repo)
-→ ordering required
-```
-
-## 4. Resource Key 比“Tool Name”更准确
-
-两个不同 Tool 也可能操作同一资源：
-
-```text
-apply_patch(path=a.py)
-format_file(path=a.py)
-```
-
-因此冲突判断可以基于：
-
-```text
-workspace:file:a.py
-repo:working-tree
-customer:123
-order:789
-```
-
-建立资源锁 / 调度约束。
-
-## 5. 用户取消为什么必须传播
-
-用户点击 Stop 时，不能只停止下一次模型调用。
-
-取消应该沿执行树传播：
-
-```text
-Run Cancel
-   ↓
-Turn / Step Cancel
-   ↓
-Tool Invocation Cancel
-   ↓
-Subprocess / Network / Subagent Cancel
-   ↓
-Resource Cleanup
-```
-
-否则会出现：
-
-```text
-UI 显示 cancelled
-但后台 shell 还在跑
-```
-
-## 6. Cancellation 是协议，不是一个布尔值
-
-需要定义：
-
-```text
-谁发起？
-什么时候可中断？
-子任务是否继承？
-正在执行副作用怎么办？
-怎样清理？
-结果还能否回填？
-取消是否可 Resume？
-```
-
-某些 Tool 可以即时取消：
-
-```text
-search
-read
-```
-
-某些操作进入 Commit Phase 后不能安全撤销：
-
-```text
-publish_release
-```
-
-这时 Runtime 更应该：
-
-```text
-mark cancel requested
-→ wait for commit outcome
-→ reconcile state
-```
-
-而不是假装强制取消成功。
-
-## 7. Parent / Child Cancellation
-
-长任务里常有：
-
-```text
-Run
-└─ Subagent
-   └─ Tool
-      └─ subprocess
-```
-
-理想行为：
-
-```text
-Parent Abort
-→ Child Abort
-```
-
-但：
-
-```text
-Child Abort
-≠ 自动取消 Parent
-```
-
-否则一个局部 Tool 失败可能杀死整个 Run。
-
-## 8. Progress 为什么是 Runtime Primitive
-
-长 Tool 如果 5 分钟没有任何 Event，用户无法区分：
-
-```text
-正在工作
-卡住
-网络断了
-worker 死了
-```
-
-所以长 Tool 可以输出：
-
-```json
-{
-  "type": "tool_progress",
-  "call_id": "c_17",
-  "phase": "running_tests",
-  "percent": 60,
-  "message": "312/520 tests completed"
-}
-```
-
-Progress 不一定全部进入 Model Context。
-
-可以同时投影到：
-
-```text
-UI
-Trace
-Metrics
-Model（必要时）
-```
-
-## 9. Streaming Result 与 Final Result 要分开
-
-例如 Shell：
-
-```text
-stdout chunks
-stderr chunks
-exit code
-final summary
-```
-
-不要把所有 streaming chunk 都永久写入 Model History。
-
-更合理：
-
-```text
-live stream → UI / artifact
-final compact result → model
-full output → external artifact
-```
-
-这会在 Context Offloading 章节继续使用。
-
-## 10. 源码证据：Claude Code
-
-固定快照的 `Tool.ts` 有：
-
-- `isConcurrencySafe()`；
-- `isReadOnly()`；
-- `isDestructive()`；
-- `interruptBehavior(): cancel | block`；
-- progress callback。
-
-`utils/abortController.ts` 还实现 Parent → Child AbortController 传播，并处理 listener 清理。
-
-这些实现直接说明：
-
-> Concurrency / Cancellation 属于 Tool Runtime Contract，而不是 UI 细节。
-
-## 11. 源码证据：Codex
-
-固定快照的 `ToolRouter` / Invocation 会携带 `CancellationToken`，Registry 还能查询 Tool 是否支持 parallel calls。
-
-这支持同样的稳定抽象：
-
-```text
-Tool Scheduler
-需要知道 parallel capability + cancellation token
-```
-
-## 12. Side Effect + Cancellation 的危险窗口
-
-最经典情况：
-
-```text
-Tool 开始写外部系统
-→ 用户 Cancel
-→ 外部系统提交成功
-→ Runtime 没拿到结果
-```
-
-此时不能记录：
-
-```text
-cancelled = no effect
-```
-
-需要保存：
-
-```text
-operation_id
-unknown outcome
-reconciliation required
-```
-
-这会在 Checkpoint / Idempotency 章节进一步展开。
-
-## 13. HUMAN-A 对应
-
-- `AGENT-026` Timeout / Cancel / Interrupt / Resume：10 来源；
-- `AGENT-029` 外部副作用 + Resume 重复执行：6 来源；
-- `AGENT-031` 多 Agent 共享 Workspace 并发：7 来源。
-
-真人面试通常不是单问 `asyncio.cancel()`，而是继续追：
-
-```text
-取消怎样传播？
-Tool 正在写怎么办？
-Worker 死了怎么办？
-Resume 会不会重复写？
-```
-
-## 14. 🎯 30 秒回答
-
-> Tool Runtime 要显式管理副作用、并发和取消。并发不能只看 Tool Name，而应看 read/write semantics 和资源冲突；用户取消要从 Run 向 Tool、Subprocess、Subagent 传播，但副作用进入提交阶段后可能无法真正撤销，需要记录 unknown outcome 并做 reconcile。长 Tool 还应该产生结构化 progress，UI/Trace 和 Model Context 可以使用不同 projection。
-
-## 15. ⚠️ 易错点
-
-- 所有只读 Tool 都绝对安全并发——仍可能依赖 shared mutable environment；
-- `cancelled` = 没发生副作用——错；
-- progress chunk 全塞 Chat History——会污染 Context；
-- 子 Tool cancel 自动 kill 整个 Run——不一定；
-- `async gather` = Agent concurrency strategy——远远不够。
-
-<details><summary>自测：为什么 Resource Key 比 Tool Name 更适合并发冲突检测？</summary>
-
-因为不同 Tool 可能修改同一个文件、Workspace 或业务对象；冲突来自共享资源，而不是来自函数名字是否相同。
 </details>
+
+## 面试怎么答
+
+这些是依据本章机制设计的训练问法，不新增真人来源；先用自己的话回答，再看参考答案。
+
+### 1. 用户取消为什么必须传播？
+
+<details>
+<summary>参考答案</summary>
+
+一个任务通常还拥有模型请求、工具协程、子进程或子Agent。父任务不再等待并不会自动停止这些工作。运行时要停止新派发、把取消意图传给子工作、等待清理并核对迟到结果。远端动作是否真正停止需看下游能力，不能把协程取消等同于外部回滚。
+
+</details>
+
+### 2. 哪些工具可以并发？
+
+<details>
+<summary>参考答案</summary>
+
+按真实资源和副作用判断，而不是按async或工具名称。读取不同静态资料通常容易并发；不同工具修改同一文件也会冲突。可以用单写者、工作区隔离或版本检查控制写入，并在并行完成后按调用ID关联结果、验证合并效果。
+
+</details>
+
+### 3. 用户取消后工具又返回成功怎么办？
+
+<details>
+<summary>参考答案</summary>
+
+不能丢掉这条事实。应把迟到回执关联原操作，更新实际结果，同时禁止后续动作。若副作用已发生，按业务规则决定保留、补偿或请人处理，并准确告知用户取消的范围，而不是改成失败来掩盖成功写入。
+
+</details>
+
+### 4. 运行中用户改了约束，怎么生效？
+
+<details>
+<summary>参考答案</summary>
+
+先把新输入绑定正确Run，区分补充、替换目标和取消；在下一安全决策点更新输入与控制状态。对可能违反新约束的活动停止派发并按可中断性处理，已发生动作需核对。不能修改已发出的模型请求来假装新约束早已生效。
+
+</details>
+
+## 高频易错点
+
+| 容易混淆的说法 | 为什么不对，应怎样理解 |
+|---|---|
+| 取消本地请求等于远端动作停止 | 只能确认本地停止等待，远端需单独核对。 |
+| 只读工具没有任何风险 | 可能泄露敏感数据、消耗配额或导致过载。 |
+| 同名工具互斥，不同名就独立 | 冲突取决于共享资源。 |
+| 进度显示100%就是业务成功 | 仍要等待结果契约及业务验收。 |
+
+## 章节自测
+
+先闭卷作答。答案不仅给结论，也解释判断依据；答不出时回到本章相应过程，不必从整套课程开头重读。
+
+### 自测 1：父协程被取消，独立子进程一定退出吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不一定。独立进程需要显式信号、等待和必要的强制终止策略；还需处理输出与文件清理。不能把语言协程生命周期推广到整个操作系统。
+
+</details>
+
+### 自测 2：取消邮件发送后发现已送达，应怎样处理？
+
+<details>
+<summary>查看参考答案</summary>
+
+记录送达事实，停止进一步发送，向用户说明取消未能撤回已有邮件。可行补救依赖邮件业务，不能自动再发一封或假装没有发生。
+
+</details>
+
+### 自测 3：格式化和替换文本两个工具为什么会冲突？
+
+<details>
+<summary>查看参考答案</summary>
+
+它们名字不同但可能同时写同一文件，后写覆盖前写。资源身份与基线版本才是并发判定的依据。
+
+</details>
+
+### 自测 4：用户只是补充一个日期，也应停止所有工具吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+未必。若不影响当前动作安全性，可排队到下一决策点。需要先解释输入意图和生效时机，而不是统一取消策略。
+
+</details>
+
+### 自测 5：取消完成前为什么还要处理结果？
+
+<details>
+<summary>查看参考答案</summary>
+
+已经提交的动作可能稍后成功，忽略结果会留下未知副作用，恢复或再次执行时可能重复。处理结果不是重新启动任务，而是核对已有事实。
+
+</details>
+
+### 自测 6：先采用串行执行是不是不专业？
+
+<details>
+<summary>查看参考答案</summary>
+
+不是。若任务规模小且写入冲突多，串行是降低正确性复杂度的合理基线。只有测得可并行独立工作与收益后，才承担协调成本。
+
+</details>
+
+## 资料与下一步
+
+固定源码：[Tool.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts)、[query.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts)、[codex-rs/core/src/tools/router.rs](https://github.com/openai/codex/blob/fc948f8c473e5d11e780ffcf1fd7f812a2020932/codex-rs/core/src/tools/router.rs)、[codex-rs/core/src/session/turn.rs](https://github.com/openai/codex/blob/fc948f8c473e5d11e780ffcf1fd7f812a2020932/codex-rs/core/src/session/turn.rs)。下一章学习模型如何在这些执行边界内维护计划和停止条件。
+
+本章对应研究能力：`AGENT-006`、`AGENT-020`、`AGENT-026`、`AGENT-042`。频次与原始证据以[研究题库](../../research/questions/agent-harness.md)为准。源码案例采用固定快照，官方文档采用明确版本；[核验范围](../../research/agent-sources/README.md#reader-revision-20260917)。
+
+[← 上一章](06-ToolExecutionFailure.md) · [模块目录](../README.md) · [下一章 →](08-PlanningGoalStopBudget.md)

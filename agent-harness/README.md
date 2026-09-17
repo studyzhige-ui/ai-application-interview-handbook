@@ -2,17 +2,17 @@
 
 [← RAG](../rag/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [System Design →](../system-design/README.md)
 
-> **状态：✅ 第一版系统教材完成**  
-> **教材：23 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **状态：✅ 第一版系统教材完成**
+> **教材：23 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**
+> **质量：结构与研究基线保留；2026-09-17已按读者反馈逐章重写讲解与训练，核验范围见阅读修订记录**
 
-从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。
+从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。
 
 ---
 
 ## 1. 这个模块解决什么
 
-从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。
+从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。
 
 学习目标不是记住一组名词，而是能稳定回答：
 
@@ -31,7 +31,7 @@
 
 [Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → **Agent Harness / Runtime** → [System Design](../system-design/README.md)
 
-当前模块角色：**Agent Runtime / 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。**
+当前模块角色：**Agent Runtime / 从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。**
 
 ---
 
@@ -66,44 +66,44 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ### Part A｜Agent 与 Runtime 基础
 
-1. [Agent Harness 在 AI 应用中的职责](docs/01-AgentHarness在AI应用中的职责.md)
-2. [Agent vs Workflow，以及 Harness / Runtime / Orchestrator 的边界](docs/02-AgentWorkflowHarnessBoundary.md)
-3. [Agent Loop、Run / Turn / Step 与 Runtime Event Model](docs/03-AgentLoopRuntimeState.md)
+1. [Agent 系统的全貌：先知道谁在做什么](docs/01-AgentHarness在AI应用中的职责.md)
+2. [Workflow、Agent 与 Harness 的边界](docs/02-AgentWorkflowHarnessBoundary.md)
+3. [Agent 循环、执行层级与新消息](docs/03-AgentLoopRuntimeState.md)
 
 ### Part B｜Tool Runtime
 
-4. [Tool Contract、Schema 与 Validation](docs/04-ToolContractSchemaValidation.md)
-5. [Tool Registry、Router 与 Progressive Discovery](docs/05-ToolRegistryRouterDiscovery.md)
-6. [Tool Execution、Result 与 Failure Semantics](docs/06-ToolExecutionFailure.md)
-7. [Tool Side Effect、Concurrency、Cancellation 与 Progress](docs/07-ToolSideEffectCancellation.md)
+4. [工具契约：模型可以请求什么，程序必须检查什么](docs/04-ToolContractSchemaValidation.md)
+5. [工具注册、模型可见说明与按需发现](docs/05-ToolRegistryRouterDiscovery.md)
+6. [工具结果与错误：哪些告诉模型，哪些由程序处理](docs/06-ToolExecutionFailure.md)
+7. [副作用、并发与取消传播](docs/07-ToolSideEffectCancellation.md)
 
 ### Part C｜Planning 与 Context
 
-8. [Planning / ReAct、Goal Control、Stop Condition 与 Budget](docs/08-PlanningGoalStopBudget.md)
-9. [Context Assembly、Budget、Cache 与 Tool Result Offloading](docs/09-ContextAssemblyBudget.md)
-10. [Context Compaction、Correctness 与 Stale Context](docs/10-ContextCompactionCorrectness.md)
+8. [计划、ReAct 与停止：怎样让每一步朝目标推进](docs/08-PlanningGoalStopBudget.md)
+9. [上下文编排：模型这一刻到底收到什么](docs/09-ContextAssemblyBudget.md)
+10. [上下文压缩：什么时候压、压什么、怎样继续](docs/10-ContextCompactionCorrectness.md)
 
 ### Part D｜Memory、State 与 Long-running Reliability
 
-11. [Memory Architecture、Lifecycle 与 Correctness](docs/11-MemoryArchitectureLifecycle.md)
-12. [Session / State / History / Persistence 与 Tenant Isolation](docs/12-SessionStatePersistence.md)
-13. [Checkpoint / Resume / Fork / Replay 与 Long-running Reliability](docs/13-CheckpointResumeReliability.md)
+11. [记忆生命周期：怎样记得有用，又能忘掉错误](docs/11-MemoryArchitectureLifecycle.md)
+12. [状态与持久化：程序怎样记得工作做到哪里](docs/12-SessionStatePersistence.md)
+13. [检查点与恢复：两次保存之间崩溃怎么办](docs/13-CheckpointResumeReliability.md)
 
 ### Part E｜Security、Capability 与 Multi-Agent
 
-14. [Permission、Approval、HITL 与 Sandbox](docs/14-PermissionApprovalSandbox.md)
-15. [Guardrails、Prompt Injection、Secrets 与 Containment](docs/15-GuardrailsInjectionContainment.md)
-16. [MCP、Skills、Hooks 与 Capability Extension](docs/16-MCPSkillsHooks.md)
-17. [Intent / Model Routing、Provider Adapter 与 Runtime Resilience](docs/17-RoutingProviderResilience.md)
-18. [Multi-Agent、Subagent、Handoff、A2A 与 Workspace Concurrency](docs/18-MultiAgentA2AWorkspace.md)
+14. [权限、批准与沙箱：三道不同的问题](docs/14-PermissionApprovalSandbox.md)
+15. [注入与信息保护：数据为什么不能变成命令](docs/15-GuardrailsInjectionContainment.md)
+16. [MCP、Skill与Hook：外部能力怎样接进来](docs/16-MCPSkillsHooks.md)
+17. [意图、模型与能力路由：把请求交给合适的对象](docs/17-RoutingProviderResilience.md)
+18. [多Agent与A2A：分工、交接和跨系统任务](docs/18-MultiAgentA2AWorkspace.md)
 
 ### Part F｜Observability、Evaluation 与 Production
 
-19. [Trace、Replay 与 Observability](docs/19-TraceReplayObservability.md)
-20. [Agent Evaluation、Benchmark 与 Data Flywheel](docs/20-AgentEvaluationBenchmark.md)
-21. [Coding Agent：Repo Understanding → Patch → Test → Verify](docs/21-CodingAgentWorkflow.md)
-22. [Production Agent Runtime Architecture](docs/22-ProductionAgentRuntime.md)
-23. [Framework Mapping 与 Build-vs-Buy](docs/23-FrameworkMappingBuildVsBuy.md)
+19. [Trace与排障：记录够用的信息，而不是保存整个世界](docs/19-TraceReplayObservability.md)
+20. [Agent评测：从“跑完了”到“有证据说明做好了”](docs/20-AgentEvaluationBenchmark.md)
+21. [Coding Agent：读懂仓库、最小修改与可验证交付](docs/21-CodingAgentWorkflow.md)
+22. [生产Agent架构：从一个进程到可运营服务](docs/22-ProductionAgentRuntime.md)
+23. [框架与自研怎么选：按官方核心语义做比较](docs/23-FrameworkMappingBuildVsBuy.md)
 
 ---
 
@@ -157,6 +157,8 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ## 9. 推荐学习方式
 
+每章先用中文和例子解释概念，再展开机制；产品实现放在可选折叠中。章末保留**面试怎么答、易错点、章节自测**，不是只链接到另一页。源码案例以固定提交为准，MCP/A2A与框架按明确官方版本讲解。
+
 > 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../roadmap/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 23` 连续阅读，不按高频题跳章。
@@ -173,7 +175,10 @@ docs/      ✅ 01–23 连续
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
-Content Depth       ✅
+Reader Revision     ✅ 已完成讲解与训练修订
+Technical Validation 见限定范围，不替代真实产品集成测试
 ```
+
+阅读修订：[本轮问题归类、对应章节与实际测试](../roadmap/agent-reader-revision.md)。
 
 下一环：[System Design](../system-design/README.md)。

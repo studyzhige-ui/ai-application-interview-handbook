@@ -2,12 +2,12 @@
 
 > 面向 **AI Application / AI Agent Engineer** 求职的一套 beginner-first 系统教材、真人面经研究库与面试训练体系。
 
-> **当前状态：✅ 十个正式一级模块第一版教材全部完成** · **Phase 3 Curriculum Build ✅**  
+> **当前状态：✅ 十个正式一级模块第一版教材全部完成** · **Phase 3 Curriculum Build ✅**
 > **研究状态：🟢 Continuous Monitoring · 286 个 HUMAN-A 招聘流程（S001–S286）** · **235 ACTIVE Canonical**
 
 ## 快速入口
 
-[十板块知识地图](roadmap/knowledge-map.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md)
+[十板块知识地图](roadmap/knowledge-map.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md) · [Agent阅读修订](roadmap/agent-reader-revision.md)
 
 ---
 

@@ -1,5 +1,6 @@
 # Claude Code Source Index — Agent Harness / Runtime
 
+> 阅读提示：本文件保留早期固定快照研究记录，不能把所有旧抽象当产品协议。最新的直接核验路径、教学/产品语义区分和版本范围见[2026-09-17读者修订核验](README.md#reader-revision-20260917)。
 更新日期：2026-09-11
 
 固定快照：

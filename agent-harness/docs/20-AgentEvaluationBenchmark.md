@@ -1,507 +1,180 @@
-# 20. Agent Evaluation、Benchmark 与 Data Flywheel
+# 20. Agent评测：从“跑完了”到“有证据说明做好了”
 
-Agent 很容易出现一种假进步：
+[← 上一章](19-TraceReplayObservability.md) · [模块目录](../README.md) · [下一章 →](21-CodingAgentWorkflow.md)
 
-> Demo 看起来更聪明了，但没有人能证明整体任务成功率真的提高。
+> 本章要解决：怎样定义成功、构造测试、定位坏例子，并证明某次修改真正改善任务？
 
-因为 Agent 的输出不是单一文本，它还包含：
+## 1. Evaluation不是只让另一个模型打分
 
-```text
-是否选对 Tool
-是否调用成功
-是否走对 Route
-是否满足最终任务
-是否产生错误副作用
-用了多少 Token / Cost / Time
-```
+Evaluation（评测）根据任务目标和约束检查表现。Agent说“报告完成”，你需要核验引用、事实覆盖、未决问题、是否修改原件，以及费用和耗时。一次文本评分不能同时代表这些结果。
 
-所以 Agent Evaluation 必须分层。
+Agent Harness是执行被测任务的系统；Eval Harness（评测运行框架）是组织测试输入、隔离环境、运行任务、调用评分器并汇总结果的测试系统。名字相似但角色不同，不要把“提供评测脚本”理解成“实现了Agent Runtime”。
 
----
+## 2. 从验收条件推导评分对象
 
-## 1. 先分清 Agent Harness 和 Eval Harness
+| 视角 | 报告任务如何验证 | 合适方法 |
+|---|---|---|
+| Outcome（最终结果） | 关键事实是否覆盖，引用是否支持结论 | 确定性检查加人工/校准Judge |
+| Process（执行过程） | 是否重复读取失败工具，是否遵守取消 | 事件和状态断言 |
+| Component（组件） | 工具选择、参数、上下文压缩是否正确 | 固定输入的局部测试 |
+| Resource/Safety（资源与安全） | 原件是否未改，是否泄露、费用是否超限 | 环境检查与预算统计 |
 
-Anthropic Agent Evals 官方资料明确强调区分：
+Deterministic verifier（确定性检查器）适合可明确判定的结果，例如文件存在、引用能打开、测试命令退出值；LLM Judge（模型评审）适合开放文本的某些质量判断，但需给评分标准并和人工校准。二者都不是完美真相：测试可能弱，Judge可能偏好某种风格。
 
-```text
-Agent Harness
-= 让 Agent 真正执行任务的 Runtime
+## 3. 先建立小而有代表性的测试集
 
-Evaluation Harness
-= 给 Agent 提供任务环境、收集结果、运行 grader、计算 metric 的系统
-```
+数据来自经过授权的任务、脱敏生产坏例子和明确标注的构造场景。至少包括正常路径、缺资料、权限拒绝、工具超时、用户取消、上下文很长和恢复窗口；不需要一开始生成几千条难以维护的题。
 
-这两个 Harness 不能混。
+Ground truth（参考真值）可以是结果条件，不一定是唯一标准答案。例如报告措辞可不同，但不得引用未读文件；修改代码的实现可不同，但必须满足需求与相关回归。每个样本应说明输入条件、允许动作、验收方法和期望处理的失败。
 
-如果 Eval Harness 有 bug：
+模型随机性较大时要重复运行并报告分布；固定或记录必要模型/配置、数据与工具环境，不能拿今天不同资料与昨天不同模型的单次结果证明某机制更好。
+
+## 4. 一个坏例子怎样推动真正改进
+
+假设加入Rerank后Agent成本增加、成功率没提高。先定位是候选里没有证据、排序问题、上下文丢证据还是模型忽略，不要直接说“再加一个Critic”。修改其中一个责任点，固定其他条件，做Ablation（消融对比），再在回归集确认没有伤害其他任务。
 
 ```text
-Agent 可能没变
-但分数变了
+坏例子 → 关联有限诊断证据 → 找到失败阶段
+→ 构造可重复条件 → 修改对应机制
+→ 局部验证 + 整体回归 → 小范围上线与回退
 ```
 
----
+Data flywheel（数据改进循环）指这样的持续过程，不是把全部用户对话无条件拿去训练。收集、脱敏、授权、分布变化和隐私删除都要控制。
 
-# 2. 最终结果比“模型说完成了”更重要
+## 5. 协议与恢复也需要可执行验收
 
-错误评价：
+| 实验 | 故意注入的条件 | 应看到什么 |
+|---|---|---|
+| 参数修复 | 必填参数缺失 | 有限修复，无直接执行 |
+| 压缩 | 长日志挤占目标 | 关键约束保留，后续任务仍正确 |
+| 恢复 | 外部成功后本地未存回执 | 核对原操作，不新建重复动作 |
+| 取消 | 子工具迟到成功 | 不派发新动作，记录真实结果 |
+| 记忆纠错 | 旧偏好已撤销 | 不再以旧记忆覆盖新指令 |
+| 安全 | 文档伪造批准 | 真实授权门拒绝 |
 
-```text
-Agent final answer:
-“任务已经完成。”
-→ pass
-```
+表格是测试设计，不意味着本仓库已运行全部真实系统测试。教学代码的单元断言、框架集成测试和生产故障演练应分开报告。
 
-模型可能只是声称成功。
+<details>
+<summary>官方框架与Benchmark提供什么，不提供什么</summary>
 
-更好的 Outcome Verification：
+OpenAI Agents SDK提供Tracing等执行证据入口，评测仍需自己定义任务验收。SWE-bench原论文及基准用真实仓库问题检验代码修复，强调运行环境与测试结果；分数受数据、环境、工具与评测流程影响，不能直接外推到你的企业报告Agent。
 
-```text
-代码任务 → tests pass?
-数据任务 → target rows correct?
-浏览任务 → expected state exists?
-客服任务 → policy + resolution satisfied?
-```
+Codex/Claude的工具、工作区和测试调用能形成验证链，但“使用了同一个产品”不等于本项目已经通过相同评测。引用固定源码是解释实现，声称质量提升必须有自己的数据与实验。
 
-原则：
-
-> **优先评价 Environment Outcome，而不是自我报告。**
-
----
-
-# 3. Eval 分四层
-
-## 3.1 Final Outcome
-
-```text
-task_success
-correctness
-acceptance_criteria
-```
-
-## 3.2 Process / Runtime
-
-```text
-loop length
-unnecessary steps
-repeated action
-recovery behavior
-```
-
-## 3.3 Component
-
-```text
-tool selection
-argument validity
-intent route
-memory retrieval
-compaction correctness
-```
-
-## 3.4 Resource / Safety
-
-```text
-latency
-cost
-token
-tool calls
-permission violation
-unsafe side effect
-```
-
-最终不能只看一个总分。
-
----
-
-# 4. Eval Dataset 从哪里来
-
-HUMAN-A `AGENT-035` 直接问 Benchmark / Ground Truth。
-
-数据集来源可以是：
-
-```text
-真实线上任务抽样
-线上 Bad Case
-人工设计核心能力 Case
-历史 Incident
-安全 / adversarial Case
-边界输入
-长任务 / 大 Context Case
-```
-
-最危险的做法：
-
-```text
-只用开发者自己写的 20 个 Happy Path
-```
-
-这种 Benchmark 很容易被系统“学会”。
-
----
-
-# 5. Dataset 要分层采样
-
-例如：
-
-```text
-simple 30%
-medium 40%
-long-horizon 20%
-safety / adversarial 10%
-```
-
-还可以按：
-
-```text
-tenant
-domain
-tool type
-repository size
-language
-provider
-```
-
-分桶。
-
-如果只看 aggregate score：
-
-```text
-某个少数关键场景可能退化
-```
-
----
-
-# 6. Ground Truth 不一定是一个字符串
-
-对于 Agent，Ground Truth 可能是：
-
-```text
-expected environment state
-required files changed
-forbidden files untouched
-required API called once
-final database rows
-artifact exists
-```
-
-所以常见 grader：
-
-```text
-unit test
-script
-SQL query
-filesystem diff
-HTTP state check
-```
-
-往往比 LLM Judge 更可靠。
-
----
-
-# 7. LLM Judge 什么时候适合
-
-适合：
-
-```text
-开放文本质量
-helpfulness
-reasoning artifact quality
-summary quality
-```
-
-但需要：
-
-```text
-rubric
-calibration
-human spot check
-judge version pinning
-```
-
-不要：
-
-```text
-Agent Model
-和 Judge Model
-完全同源偏差
-→ 就当绝对真值
-```
-
----
-
-# 8. Process Metric 为什么也重要
-
-两个 Agent 最终都成功：
-
-```text
-A: 4 tool calls, $0.05, 8s
-B: 37 tool calls, $1.20, 90s
-```
-
-Outcome 一样，但 Production 质量不同。
-
-所以要看：
-
-```text
-steps
-cost
-latency
-retries
-subagents
-compactions
-permission prompts
-```
-
----
-
-# 9. Tool / Routing Eval
-
-Tool Runtime 可以独立评：
-
-```text
-Tool selection accuracy
-Argument validity
-Permission correctness
-Repair success rate
-Timeout recovery
-```
-
-Router 可以评：
-
-```text
-intent confusion matrix
-model route success
-fallback rate
-cost-quality frontier
-```
-
-这样 Bad Case 才能定位到组件。
-
----
-
-# 10. Agent Eval 与 Trace 的关系
-
-上一章 Trace 保存：
-
-```text
-model
-context
-tool
-state
-cost
-```
-
-Eval Harness 可以读取 Trace：
-
-```text
-Final failed
-→ Tool selection correct?
-→ Tool execution failed?
-→ Context lost constraint?
-→ Route wrong?
-```
-
-所以：
-
-```text
-Trace = evidence
-Eval = judgment
-```
-
----
-
-# 11. Regression 为什么必须自动化
-
-Agent 调 Prompt / Tool / Model / Compaction 任一处，都可能：
-
-```text
-修一个 Case
-坏十个旧 Case
-```
-
-因此每次发布：
-
-```text
-Baseline
-→ Candidate
-→ Same Eval Suite
-→ compare per bucket
-→ block regression
-```
-
-不要只看平均分。
-
----
-
-# 12. SWE-bench 为什么是重要参考
-
-SWE-bench 用真实 GitHub Issue + Repository Environment 验证代码修改是否真正解决问题。
-
-课程借鉴的是：
-
-> **Coding Agent 的评价应该看 Repository / Test 环境真实结果，而不是只判断生成 Patch 看起来合理。**
-
-这会在下一章 Coding Agent 继续展开。
-
----
-
-# 13. Benchmark Contamination / Overfitting
-
-如果团队天天盯同一批 Case 改 Prompt：
-
-```text
-Benchmark 变成训练集
-```
-
-需要：
-
-```text
-train/dev/test split
-hidden holdout
-rotating production sample
-new bad cases
-```
-
-尤其 LLM Judge rubric 也可能被针对性优化。
-
----
-
-# 14. Data Flywheel
-
-HUMAN-A `AGENT-041` 追问 Self-evolution / Data Flywheel。
-
-健康闭环：
-
-```text
-Production Trace
-→ Failure / Bad Case
-→ Attribution
-→ Curated Eval Case
-→ Fix Prompt / Tool / Runtime / Model
-→ Offline Regression
-→ Canary
-→ Production Metrics
-→ New Evidence
-```
-
-不是：
-
-```text
-收集所有用户数据
-→ 自动训练
-→ 自动上线
-```
-
-Data Flywheel 的核心是：
-
-> **把真实失败转成可重复验证的工程资产。**
-
----
-
-# 15. Online Validation
-
-Offline 过了也要：
-
-```text
-shadow
-canary
-A/B
-rollback threshold
-```
-
-观察：
-
-```text
-task success
-user correction
-cost
-latency
-safety incident
-fallback
-```
-
-因为真实流量分布永远比离线 Dataset 更复杂。
-
----
-
-# 16. Evaluation Failure Timeline
-
-```text
-T0  团队改 Prompt
-T1  Demo 5 个 Case 全部变好
-T2  没跑 Regression
-T3  上线
-T4  高频 Tool 选择准确率下降
-T5  成本上涨 2x
-T6  用户只看到“回答变慢”
-```
-
-根因：
-
-```text
-没有 Component + Resource Eval
-```
-
----
-
-# 17. HUMAN-A 信号
-
-本章主要承接：
-
-- `AGENT-034` Agent Evaluation：27 个独立来源；
-- `AGENT-035` Benchmark Engineering：12 个；
-- `AGENT-041` Data Flywheel：6 个。
-
-真实面试已经会要求：
-
-```text
-Final Result 怎么测？
-Process 怎么测？
-Dataset 怎么来？
-线上 Bad Case 怎么回流？
-```
-
----
-
-# 18. 面试怎么答
-
-## Q：Agent 应该怎么评估？
-
-🎯 **30 秒回答**：
-
-> 我会把 eval 分成最终 outcome、process/runtime、component 和 resource/safety 四层。最终优先验证真实环境状态，例如测试、DB、文件或 API，而不是相信 Agent 自报成功；再看 tool selection、routing、compaction、cost、latency 等过程指标。Dataset 来自真实线上任务、Bad Case 和 adversarial case，并做 bucket/holdout。每次 Prompt/Tool/Model 改动都跑同一 regression suite，再用 canary 验证线上分布。
-
-## Q：Data Flywheel 怎么做？
-
-> Production trace 先做 failure attribution，把代表性失败人工/半自动整理成新的 eval case，修复后离线 regression，再灰度上线；重点是把真实失败转成可重复测试，而不是自动把所有用户数据拿去训练。
-
----
-
-# 19. 高频易错点
-
-⚠️ **Agent 自己说完成就算成功。** 必须验证 environment outcome。
-
-⚠️ **只看 final accuracy。** 成本、步骤、Tool、Safety 也可能退化。
-
-⚠️ **LLM Judge 就是真值。** 需要 rubric 和校准。
-
-⚠️ **Eval Dataset 一次建好永久使用。** 会过拟合且生产分布变化。
-
----
-
-# 20. 本章自测
-
-<details><summary>1. Agent Harness 和 Eval Harness 有什么区别？</summary>
-
-前者负责真正执行 Agent；后者负责提供任务环境、采集执行结果、运行 grader 和计算指标。Eval Harness 的正确性本身也需要验证。
 </details>
 
-<details><summary>2. 为什么 Environment Outcome 通常比 Final Text 更可靠？</summary>
+## 面试怎么答
 
-Agent 可能声称已经完成，但实际文件、测试、数据库或外部系统状态并未达到目标；环境状态可以独立验证。
+这些是依据本章机制设计的训练问法，不新增真人来源；先用自己的话回答，再看参考答案。
+
+### 1. Agent评测和普通文本生成评测有何不同？
+
+<details>
+<summary>参考答案</summary>
+
+除了最终文本，还要检查行动过程、工具选择与参数、环境产物、恢复和安全预算。可确定性验证的优先用程序检查，开放语义再用校准Judge或人工；结果不以模型自称完成为准。
+
 </details>
 
-<details><summary>3. Data Flywheel 的核心产物是什么？</summary>
+### 2. 如何根据评测改善Agent？
 
-不是“更多日志”，而是经过归因、去重和标注后可重复运行的 Evaluation / Regression Case，以及对应修复和线上验证证据。
+<details>
+<summary>参考答案</summary>
+
+先从坏例子定位失败责任，构造可重复输入与环境，修改对应组件，固定其他条件做消融，再做整体回归和小范围上线。不要看到总分低就随意换模型或堆多Agent。
+
 </details>
+
+### 3. LLM Judge可以做唯一评分器吗？
+
+<details>
+<summary>参考答案</summary>
+
+通常不合适。它对开放语义有价值，但可能偏好风格、受提示和模型影响；文件、测试、权限与实际副作用应由相应程序或环境证据验证，Judge需和人工校准并报告局限。
+
+</details>
+
+### 4. Benchmark高分能证明生产可用吗？
+
+<details>
+<summary>参考答案</summary>
+
+不能直接。任务分布、工具环境、数据污染和评测条件都可能不同，需要本业务代表样本、失败路径和线上受控验证。基准可作对照，不替代任务契约。
+
+</details>
+
+## 高频易错点
+
+| 容易混淆的说法 | 为什么不对，应怎样理解 |
+|---|---|
+| 模型说完成就算成功 | 完成需要外部验收证据。 |
+| 只看平均成功率 | 长尾、风险类别和成本分布可能被掩盖。 |
+| 有Trace就已经评测 | Trace提供过程，评测依据标准判断好坏。 |
+| 所有坏例子都靠更长Prompt修复 | 可能是权限、数据、工具或恢复机制问题。 |
+| 收集所有对话就是数据飞轮 | 需要授权、归因、回归与治理。 |
+
+## 章节自测
+
+先闭卷作答。答案不仅给结论，也解释判断依据；答不出时回到本章相应过程，不必从整套课程开头重读。
+
+### 自测 1：报告引用存在但不支持结论，哪种检查不足？
+
+<details>
+<summary>查看参考答案</summary>
+
+引用可解析属于结构检查，仍需语义支持验证。不能把链接存在当作事实正确。
+
+</details>
+
+### 自测 2：修改压缩算法后如何比较？
+
+<details>
+<summary>查看参考答案</summary>
+
+固定代表长任务、输入/工具与评分标准，重复运行比较约束遗漏、任务成功、费用与时延，并检查非长任务回归。
+
+</details>
+
+### 自测 3：为何可以没有唯一标准文本答案？
+
+<details>
+<summary>查看参考答案</summary>
+
+许多任务允许不同表达和实现，验收可用事实、约束和行为条件，而不是逐字比对。
+
+</details>
+
+### 自测 4：新模型只跑一次更快，是否可以宣布优化？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能充分证明。需代表样本与多次测量，控制环境变化并比较质量与风险。
+
+</details>
+
+### 自测 5：故障测试表已经写好，能标记全部通过吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能。测试设计与实际执行证据不同，需明确哪些是单元断言、集成验证或未运行的演练。
+
+</details>
+
+### 自测 6：怎么防止记住测试题而误判质量？
+
+<details>
+<summary>查看参考答案</summary>
+
+保留独立评估集，避免把答案混入提示或训练，并检测分布变化。基准和线上任务要分开报告。
+
+</details>
+
+## 资料与下一步
+
+参考：[SWE-bench原论文](https://arxiv.org/abs/2310.06770)、[OpenAI Agents SDK Tracing](https://openai.github.io/openai-agents-python/tracing/)。本章表格为教学构造的验收设计。下一章以代码任务展示具体产物验证。
+
+本章对应研究能力：`AGENT-034`、`AGENT-035`、`AGENT-041`、`AGENT-043`。频次与原始证据以[研究题库](../../research/questions/agent-harness.md)为准。源码案例采用固定快照，官方文档采用明确版本；[核验范围](../../research/agent-sources/README.md#reader-revision-20260917)。
+
+[← 上一章](19-TraceReplayObservability.md) · [模块目录](../README.md) · [下一章 →](21-CodingAgentWorkflow.md)

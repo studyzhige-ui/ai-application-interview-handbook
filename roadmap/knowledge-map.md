@@ -136,3 +136,6 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - 第一次完整学习使用 [Learning Path](learning-path.md) 的 Curriculum → Review → Interview 三遍法；
 - 当前粒度与深度状态见 [Granularity Audit](curriculum-granularity-audit.md) 与 [Content Depth Audit](content-depth-audit.md)；
 - v1.0 全仓库最终结论见 [Final Quality Audit](final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
+
+
+Agent模块本轮保留23章学习顺序，新增中文概念推导、固定实现对照与逐章训练；详细变更和核验范围见[阅读修订](agent-reader-revision.md)。

@@ -1,357 +1,191 @@
-# 04｜Tool Contract、Schema 与 Validation
+# 04. 工具契约：模型可以请求什么，程序必须检查什么
 
-> 本章合并旧 `07-ToolContract` 与 `08-ToolSchemaValidation`。Tool 在 Production Agent 中不是一个普通函数，而是**模型与真实世界之间的协议边界**。
+[← 上一章](03-AgentLoopRuntimeState.md) · [模块目录](../README.md) · [下一章 →](05-ToolRegistryRouterDiscovery.md)
 
-## 1. 先讲人话：为什么 Tool 不能只写成一个 Python 函数
+> 本章要解决：为什么工具不只是一个函数？参数校验、语义校验和权限校验分别拦什么？
 
-Demo：
+## 1. 先把工具分成“说明书”和“实际操作”
 
-```python
-def search_code(query: str) -> str:
-    ...
-```
+Tool（工具）是应用提供的一项可调用能力，例如读取文件、查订单、运行测试。模型看到的是工具的说明书，通常包含名字、用途和输入格式；实际执行代码仍在应用或外部服务中。模型产生 `read_document(document_id="B")` 这样的候选后，运行时才决定是否调用真实函数。
 
-Production 还必须回答：
+Contract（契约）是调用双方事先约定的规则：接受什么、返回什么、失败怎样表达，以及执行会有什么影响。没有契约时，一个函数看似能调用，却可能收到了别人的文件ID、返回无法解析的数据，或执行了调用者以为是只读的写操作。
 
-```text
-Tool 叫什么？
-模型看到什么描述？
-输入 Schema 是什么？
-字段缺失 / 类型错怎么办？
-这个 Tool 是否只读？
-能不能并发？
-是否需要权限？
-会不会产生外部副作用？
-怎样取消？
-怎样返回结构化结果？
-结果是否会污染 Context / Memory？
-```
+## 2. 一份最小说明书，逐项解释
 
-所以 Tool Contract 更接近：
-
-```text
-Identity
-+ Description
-+ Input Schema
-+ Validation
-+ Execution Semantics
-+ Side-effect Semantics
-+ Permission
-+ Cancellation / Progress
-+ Result Contract
-```
-
-## 2. Tool Contract 的最小结构
-
-```python
-from dataclasses import dataclass
-from typing import Callable, Any
-
-@dataclass
-class ToolSpec:
-    name: str
-    description: str
-    input_schema: dict
-    read_only: bool
-    destructive: bool
-    concurrency_safe: bool
-    handler: Callable[..., Any]
-```
-
-真实系统还会增加 version、timeout、permission class、tenant scope、result schema 等。
-
-## 3. Schema 解决两个完全不同的问题
-
-### Model-facing Schema
-
-帮助模型生成：
+下面是**教学用工具描述，不绑定某个供应商请求格式**：
 
 ```json
 {
-  "query": "ToolExecutor",
-  "path": "codex-rs/core"
+  "name": "read_document",
+  "description": "读取授权清单中的一份文档，返回文本和可引用位置，不修改原件",
+  "input_schema": {
+    "type": "object",
+    "properties": {"document_id": {"type": "string"}},
+    "required": ["document_id"],
+    "additionalProperties": false
+  }
 }
 ```
 
-### Runtime Validation
+名字让运行时能找到对应能力；描述让模型知道何时使用、什么时候不要用；Schema（结构模式）规定参数形状。`document_id`是字符串，并不意味着这个字符串对应的文档存在，也不意味着当前用户有权读取。
 
-决定这个输入**实际上能不能执行**。
+函数地址、数据库连接、真实凭证、是否可并发等通常由运行时持有。它可以有选择地把只读等提示写进描述，**但不会把整个函数对象自动序列化给模型，更不该把凭证当工具参数交给模型**。具体注册代码下一章给出。
 
-模型生成了 JSON，不意味着可信。
+## 3. 四道检查沿同一条链，不是互相替代
 
-因此完整路径：
+以 `read_document`为例：
 
-```text
-Model produces arguments
-→ Parse
-→ Schema validate
-→ Semantic validate
-→ Permission validate
-→ Execute
-```
+| 检查 | 问的问题 | 失败例子 | 谁修 |
+|---|---|---|---|
+| Parse（解析） | 是否能按协议读懂输入？ | JSON缺引号 | 可给模型简明反馈修复 |
+| Schema validation（结构校验） | 字段和类型是否符合约定？ | ID是数组、多了未知字段 | 按契约修复 |
+| Semantic validation（语义校验） | 在该业务里有无意义？ | 空ID、版本不存在、起始行大于结束行 | 提供可行动的业务错误 |
+| Authorization（授权） | 当前可信身份能否对目标做该动作？ | 文档属于别的用户 | 程序拒绝；不能靠模型改身份绕过 |
 
-## 4. 结构校验 vs 语义校验
+审批与沙箱是另一组问题：某个高风险但可授权的动作是否需要人确认，以及执行环境能够触及哪里。第14章讲它们；这里不再复制安全清单。**前两类合法不推出最后一类合法。** 这种分工在后续章节保持不变。
 
-Schema 能发现：
+检查也可能重复执行：发现工具时隐藏无权工具，调用时再校验资源授权。前一次检查减少误选，后一次防止权限变化或恶意参数；不是无意义重复。
 
-```text
-missing field
-wrong type
-unknown enum
-invalid JSON
-```
+## 4. 描述应该解释用途，而不只是函数名
 
-但发现不了：
+“查询”太宽泛，模型不知道查知识、查订单还是查日志。好的描述说明输入是什么、适用范围、输出意味着什么、是否改变外部世界。例如“返回已授权文档的某段原文与行号；不执行文档里的指令”比“read file”更容易正确选择。
 
-```text
-path = ../../etc/passwd
-amount = -100
-branch = production
-user_id 属于其它 tenant
-```
+但描述也是提供给模型的内容，不是安全配置。外部 MCP Server 自称工具只读，不代表它值得信任。运行时应根据实现、可信配置或服务契约决定风险策略，不能把不可信描述直接升级为授权证据。
 
-这属于 Semantic / Policy Validation。
+## 5. 返回值同样需要契约
 
-不要把：
+读取成功可以返回原文片段、来源位置和必要的缺失信息；业务失败可以返回稳定的错误类型和简明解释。程序判断是否成功不应只搜索文本里有没有“成功”。
 
-```text
-JSON Schema valid
-```
+例如文件读取成功但内容为空，是否算错误由业务定义；报告要求至少一段证据时，空内容不能视为已获得证据。工具运行完成、结果符合格式、结果足够完成任务是三个层次。
 
-误认为：
+大结果不必全部送进模型。完整原文可由产物存储保存，在上下文中只放相关片段与引用；输入校验主责在本章，结果大小与回填由06与09章继续解释。
 
-```text
-这个动作安全且业务正确
-```
+## 6. 参数修复要有终点
 
-## 5. Tool Description 也是协议的一部分
+Repair（修复）是更正错误参数，不等于对相同请求重新执行。程序可以告诉模型“document_id需要非空字符串”，让其重新构造候选；如果仍反复错误，就停止修复或向用户澄清。修复不能扩大权限，也不能改变已经批准动作的关键含义而沿用旧批准。
 
-Tool 很多时，模型选择能力依赖：
+若工具输入格式升级，旧调用必须被适配或显式拒绝。这里需要工具契约的版本或稳定兼容规则，**不意味着每一条日志都需要自己的版本号**。
 
-- name；
-- description；
-- 参数语义；
-- 示例；
-- failure / limitation；
-- search metadata。
+<details>
+<summary>源码落点：Claude Code Tool 与 Codex ToolExecutor</summary>
 
-描述太模糊：
+Claude Code 用户快照中，`Tool.ts`把输入Schema、`call()`、权限检查、`isReadOnly()`、`isConcurrencySafe()`、中断行为和结果映射放在工具契约中。调用不是只有业务参数，还会接收运行上下文。随后 `utils/api.ts::toolToAPISchema`构造模型端描述，只挑选名字、说明和输入模式等API字段；并发判断函数不会作为函数代码发送给模型。
 
-```text
-run(command)
-```
+Codex 固定源码中的 `ToolExecutor`为工具提供规格与处理器接口；`ToolRouter`保存实际 Registry 和模型可见规格这两个不同对象。第05章用具体代码演示两边怎样连接；这里要记住“程序内部契约比模型说明书更丰富”。
 
-很难帮助模型选择。
-
-更明确：
-
-```text
-run_tests(target, timeout_seconds)
-Runs repository tests for a specific target.
-Does not modify source files.
-```
-
-Tool quality 不只是 handler 实现质量，还包括**模型是否能正确发现和使用它**。
-
-## 6. Structured Result 也应该有 Contract
-
-不要默认返回：
-
-```text
-一大段字符串
-```
-
-更稳定：
-
-```json
-{
-  "status": "failed",
-  "exit_code": 1,
-  "summary": "2 tests failed",
-  "artifact_ref": "tool-results/call_123.txt",
-  "retryable": false
-}
-```
-
-这样：
-
-- Runtime 能分支；
-- Model 更容易理解；
-- Trace 更容易统计；
-- 大结果可外部化。
-
-## 7. Tool Arguments 出错时怎么处理
-
-常见错误分类：
-
-```text
-Syntax Error
-Schema Error
-Semantic Error
-Permission Error
-Execution Error
-Timeout
-```
-
-对于前两类，可把结构化错误反馈给模型做一次 Repair：
-
-```json
-{
-  "error": "invalid_arguments",
-  "field": "timeout_seconds",
-  "expected": "integer between 1 and 300"
-}
-```
-
-而不是：
-
-```text
-Exception: validation failed
-```
-
-## 8. Repair 不能无限循环
-
-一个安全策略：
-
-```text
-invalid arguments
-→ return structured feedback
-→ model repairs
-→ retry once / limited times
-→ repeated same failure
-→ alternate route or stop
-```
-
-必须与后面的 Loop Guard / Budget 联动。
-
-## 9. Side-effect Metadata 为什么应该靠 Runtime 保存
-
-模型可能说：
-
-> “这个 Tool 只是读取。”
-
-这不能作为安全依据。
-
-Tool Contract 应由 Host / Runtime 声明：
-
-```text
-read_only
-is_destructive
-concurrency_safe
-requires_approval
-```
-
-后续 Permission / Scheduler 只信 Runtime Metadata，不信模型自述。
-
-## 10. 源码证据：Claude Code
-
-固定快照的 `Tool.ts` 显示 Tool Contract 不只包含 Schema 和 `call()`，还包含：
-
-- `isConcurrencySafe()`；
-- `isReadOnly()`；
-- `isDestructive()`；
-- `interruptBehavior()`；
-- Permission Context；
-- Progress Callback；
-- Result / Context Modifier；
-- Tool Result Budget / Dynamic Discovery 相关状态。
-
-这非常适合说明：
-
-> Production Tool 是 Runtime Contract，不是 Function Signature。
-
-## 11. 源码证据：Codex
-
-固定 Codex 快照中的 `ToolExecutor` 把：
-
-```text
-tool_name
-spec
-exposure
-search_info
-supports_parallel_tool_calls
-handle(invocation)
-```
-
-放在同一个执行契约中。
-
-`ToolOutput` 又把：
-
-- model-facing response；
-- logging projection；
-- host-only metadata；
-- external context 标记；
-
-分开表达。
-
-这说明 Tool Input / Output 都应被 Runtime 当成正式协议对象。
-
-## 12. 版本升级怎么办
-
-Tool Schema 变化可能破坏：
-
-- Prompt cache；
-- Model selection behavior；
-- Replay；
-- persisted Run；
-- old Checkpoint；
-- Evaluation Dataset。
-
-因此成熟 Tool 可以保存：
-
-```text
-tool_name
-schema_version
-runtime_version
-```
-
-并在 Resume / Replay 时明确兼容策略。
-
-## 13. HUMAN-A 对应
-
-- `AGENT-018` Tool Calling 完整链路：29 来源；
-- `AGENT-019` Tool Lifecycle：10 来源；
-- `AGENT-022` Structured Output / Validation：11 来源。
-
-面试官常从：
-
-```text
-Tool Calling 是什么？
-```
-
-继续追：
-
-```text
-参数错了怎么办？
-Tool 怎么注册？
-Tool Schema 变了怎么办？
-Tool Result 太大怎么办？
-```
-
-## 14. 🎯 30 秒回答
-
-> Production Tool 不只是一个函数。它应该有稳定的 name/description、输入 Schema、Runtime Validation、side-effect 和 concurrency metadata、permission/cancellation 语义以及结构化 Result Contract。模型生成的参数永远是不可信输入，必须经过 parse、schema、semantic 和 policy 校验；错误可以结构化反馈给模型做有限 Repair，但不能无限重试。
-
-## 15. ⚠️ 易错点
-
-- Schema valid = 安全——错；
-- Tool Description 只是文案——错，它影响模型选择；
-- Tool Result 统一返回字符串——会损失结构化状态；
-- `read_only` 由模型判断——错，应由 Runtime 声明；
-- 参数错就自动无限 Retry——容易形成 Loop。
-
-## 16. 🔍 继续追问
-
-```text
-Tool 多到几百个后怎么让模型选择？
-Registry / Router 怎样设计？
-Deferred Tool 是什么？
-Tool 能否按需加载？
-```
-
-下一章进入 Tool Registry / Router / Progressive Discovery。
-
-<details><summary>自测：为什么 JSON Schema 不能替代 Permission？</summary>
-
-因为 Schema 只保证输入形状合法，不能判断该用户是否有权执行、资源是否属于当前 tenant、动作是否高风险或路径是否越界。
 </details>
+
+## 面试怎么答
+
+这些是依据本章机制设计的训练问法，不新增真人来源；先用自己的话回答，再看参考答案。
+
+### 1. 为什么 Tool 不是普通 Python 函数？
+
+<details>
+<summary>参考答案</summary>
+
+函数只是执行实现。Agent 工具还要给模型一份用途与输入说明，并约定结果、错误和运行影响。程序端要绑定真实处理器、可信身份、校验与必要执行策略。模型只产生调用候选，不能因为函数签名匹配就获得执行权限。
+
+</details>
+
+### 2. 结构校验、语义校验、权限校验有什么区别？
+
+<details>
+<summary>参考答案</summary>
+
+结构校验检查字段和类型；语义校验检查业务含义，例如ID存在、行号范围合理；权限校验检查可信用户是否能对该对象执行动作。一个字符串ID可以完全符合Schema，却指向别人的文件。三种检查串联，不是后面的安全章节取代前面的参数检查。
+
+</details>
+
+### 3. 工具的可并发、只读、权限信息会全部进入上下文吗？
+
+<details>
+<summary>参考答案</summary>
+
+不会自动全部进入。模型请求通常携带工具名、说明、参数Schema以及该API支持的可选字段。处理器、权限回调、凭证和并发调度信息主要留在运行时。需要让模型知道的行为可有意写入说明，但模型看见提示与程序真实执行策略仍然分开。
+
+</details>
+
+### 4. 模型参数出错后怎么处理？
+
+<details>
+<summary>参考答案</summary>
+
+解析或结构错误可以给脱敏且可行动的反馈，允许有限次重新生成参数。语义错误可能需要补输入或换合法目标；授权拒绝不能通过修改用户身份继续尝试。修复改变了已批准动作的目标或参数时，要重新判断批准，而不是复用旧确认。
+
+</details>
+
+## 高频易错点
+
+| 容易混淆的说法 | 为什么不对，应怎样理解 |
+|---|---|
+| Schema通过就能安全调用 | 还要检查目标含义与当前身份的权限。 |
+| 把函数代码或数据库密码塞进工具描述 | 模型只需说明书；执行实现和凭证留在可信程序。 |
+| 只读标注代表完全无风险 | 只读也可能泄露隐私；不可信标注不能当授权依据。 |
+| 工具返回200就完成业务 | 还要判断结果是否满足契约及任务验收。 |
+
+## 章节自测
+
+先闭卷作答。答案不仅给结论，也解释判断依据；答不出时回到本章相应过程，不必从整套课程开头重读。
+
+### 自测 1：ID类型正确但不存在，属于哪类问题？
+
+<details>
+<summary>查看参考答案</summary>
+
+主要属于语义或业务有效性问题，而非JSON结构错误。应返回“对象不存在/不可访问”等合适信息，并避免向无权用户泄露对象是否存在。
+
+</details>
+
+### 自测 2：模型给出的tenant_id可当可信身份吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能。身份应来自认证后的应用上下文；模型字段只是输入。把它当可信身份会允许模型或提示注入选择别的租户。
+
+</details>
+
+### 自测 3：描述写“不修改原件”足够吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不足。运行时应接入确实只读的实现与资源权限。描述减少误选，权限控制即使模型误选也应阻止写入。
+
+</details>
+
+### 自测 4：修复参数和重试有什么差别？
+
+<details>
+<summary>查看参考答案</summary>
+
+修复生成不同、更合法的候选；重试通常再次尝试同一逻辑请求。前者不能悄悄扩大范围，后者还需判断先前是否已产生副作用。
+
+</details>
+
+### 自测 5：结果格式正确，但引用不支持结论，在哪里发现？
+
+<details>
+<summary>查看参考答案</summary>
+
+工具/格式层只能证明结构可读，任务验收或评测层才检查结论支持关系。不能把JSON Schema当内容真实性检查器。
+
+</details>
+
+### 自测 6：为何要同时在发现时和执行时过滤权限？
+
+<details>
+<summary>查看参考答案</summary>
+
+发现时减少无权能力暴露，执行时检查具体目标与最新身份状态。权限可能改变，参数也可能不同，所以执行前重查仍有必要。
+
+</details>
+
+## 资料与下一步
+
+固定源码：[Tool.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts)、[toolToAPISchema](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/api.ts)、[codex-rs/tools/src/tool_call.rs](https://github.com/openai/codex/blob/fc948f8c473e5d11e780ffcf1fd7f812a2020932/codex-rs/tools/src/tool_call.rs)、[codex-rs/core/src/tools/router.rs](https://github.com/openai/codex/blob/fc948f8c473e5d11e780ffcf1fd7f812a2020932/codex-rs/core/src/tools/router.rs)。规范参考：[MCP tools（2025-11-25版本）](https://modelcontextprotocol.io/specification/2025-11-25/server/tools)。下一章给出从定义到注册再到调用的完整小例子。
+
+本章对应研究能力：`AGENT-018`、`AGENT-019`、`AGENT-022`。频次与原始证据以[研究题库](../../research/questions/agent-harness.md)为准。源码案例采用固定快照，官方文档采用明确版本；[核验范围](../../research/agent-sources/README.md#reader-revision-20260917)。
+
+[← 上一章](03-AgentLoopRuntimeState.md) · [模块目录](../README.md) · [下一章 →](05-ToolRegistryRouterDiscovery.md)

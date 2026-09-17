@@ -1,5 +1,7 @@
 # Curriculum Content Depth Audit｜正文深度最终口径
 
+> **2026-09-17读者修订说明：** 先前的完成/深度结论不足以证明初学者可理解性。main的Agent23章已依据实际读者反馈重写，保留章末三件套并补官方/源码过程；本轮验收范围见[阅读修订](agent-reader-revision.md)。历史PASS保留为记录，不替代新的学习效果测试。
+
 [← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Granularity Audit](curriculum-granularity-audit.md)
 
 > 当前十个一级模块共 **184 个正文知识块**。本文件统一记录完成状态；文件大小只用于发现异常，不作为质量结论。

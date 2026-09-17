@@ -14,9 +14,9 @@
 |---|---|---|
 | **Context** | 当前一次 Model Call 实际可见的输入视图；受 Token Budget 约束。 | LLM Foundation / Agent Harness |
 | **Memory** | 为未来调用保存、选择并重新取回的信息；不等于当前 Context。 | Agent Harness |
-| **Runtime State** | 当前执行事实：Run 到哪一步、哪些动作已发生、接下来允许什么 Transition。 | Agent Harness |
+| **Runtime State** | 程序为了继续/停止需要知道的当前情况，例如A已读、B待结果、用户已取消、报告未验收；Plan只是其中一部分。 | Agent Harness |
 | **History** | 已经发生过的 Message / Event / Action 记录；历史不自动等于当前 State。 | Agent Harness |
-| **Checkpoint** | 足以从明确恢复点继续正确执行的持久化快照 / 状态集合。 | Agent Harness |
+| **Checkpoint** | 可恢复位置的状态快照及必要引用；不回滚外部世界，两次快照间未知写入仍需核对。 | Agent Harness |
 
 固定边界：
 
@@ -30,13 +30,13 @@ Messages Snapshot ≠ Complete Checkpoint
 
 ## 2. Session / Thread / Run / Turn / Step / Task / Job
 
-这些词在不同 Framework 中命名不完全一致，所以教材使用层级语义而不是绑定某个产品名。
+这些词在不同Framework中不完全一致。教学`Session→Run→Turn→Step`只在声明了Turn含义后使用；不能强制映射Codex的`Thread→Turn→Item`，Item与生命周期事件也不是一一对应。
 
 | 术语 | 本仓库工作定义 | 备注 |
 |---|---|---|
 | **Session / Thread** | 跨多个交互持续存在的长期交互容器。 | Agent 语境；不要和 DB Session 混用 |
 | **Run** | 围绕一个 Goal 启动的一次可追踪 Agent 执行。 | Agent Harness |
-| **Turn** | 一次用户输入或一轮可归因模型交互周期。 | Agent Harness |
+| **Turn** | 必须声明口径。Agent教学树中可指一次决策—行动—观察周期；Codex Turn则是一段用户请求及后续工作，可跨多次模型调用。 | Agent Harness |
 | **Step** | Run 内更细的执行动作，如 model call / tool call / checkpoint。 | Agent Harness |
 | **Task / Job** | Backend 中可排队、领取、重试、恢复的工作单元。 | AI Backend Engineering |
 | **DB Session** | 数据库连接/事务使用语境中的 Session。 | MySQL / FastAPI Integration |
@@ -243,3 +243,10 @@ tests_passed?          → Verification
 而不是只抛一个术语。
 
 最终要求：**同词先分层，再谈机制；产品名先映射到稳定概念，再讨论实现差异。**
+
+
+## 本轮补充：恢复与诊断的数据最小化
+
+Persistence（持久化）是让选定信息活过进程重启，不是把全部内存写入存储。Resume（恢复执行）不是Summary（摘要）；Compaction（上下文压缩）只管理模型输入规模。Trace（执行追踪）用于定位阶段、耗时与失败，不是默认的恢复账本。
+
+关键操作身份与回执按业务可靠性保存；产物按交付需要保存；诊断可采样、脱敏和到期删除。版本用于确实发生的并发、变更或兼容问题，ID用于标识；不要求每个事件复制完整Prompt、工具定义和所有版本。见[状态与持久化](../agent-harness/docs/12-SessionStatePersistence.md)、[检查点与恢复](../agent-harness/docs/13-CheckpointResumeReliability.md)、[Trace](../agent-harness/docs/19-TraceReplayObservability.md)。

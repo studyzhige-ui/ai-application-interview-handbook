@@ -1,5 +1,6 @@
 # OpenAI Codex Source Index — Agent Harness / Runtime
 
+> 阅读提示：本文件保留早期固定快照研究记录，不能把所有旧抽象当产品协议。最新的直接核验路径、教学/产品语义区分和版本范围见[2026-09-17读者修订核验](README.md#reader-revision-20260917)。
 更新日期：2026-09-11
 
 固定快照：
@@ -25,7 +26,7 @@ tree   = 346154dca409158a441d2afe05604f6fa6bed5d6
 - persisted history / compacted item
 - inference trace context
 
-这支持一个很重要的 Runtime 分层：
+下面只作为早期内部对象关系的阅读线索；不由类名推导通用用户层级，Codex交互应明确Thread / Turn / Item：
 
 ```text
 Session
@@ -35,7 +36,7 @@ Session
 
 Agent 教材需要把这些执行层次讲清楚，不能把所有 state 都叫“memory”。
 
-## 2. Context Compaction 是 Runtime Transaction
+## 2. Context Compaction 是受管理的上下文状态转换
 
 ### `codex-rs/core/src/compact.rs`
 

@@ -1,372 +1,178 @@
-# 02｜Agent vs Workflow，以及 Harness / Runtime / Orchestrator 的边界
+# 02. Workflow、Agent 与 Harness 的边界
 
-> 本章合并旧 `02-AgentVsWorkflow` 与 `03-HarnessRuntimeBoundary`。目标不是背术语，而是先建立 Agent 系统最重要的边界：**什么任务值得把下一步决策交给模型，以及模型之外为什么还必须有 Harness。**
+[← 上一章](01-AgentHarness在AI应用中的职责.md) · [模块目录](../README.md) · [下一章 →](03-AgentLoopRuntimeState.md)
 
-## 1. 先讲人话：Agent 化的本质是什么
+> 本章要解决：为什么有时应该写固定流程，有时才让模型决定下一步？怎样比较系统、运行时、编排器和框架？
 
-不是“用了 LLM”就叫 Agent。
+## 1. 先问“谁决定下一步”
 
-```text
-固定 Pipeline
-上传 → OCR → Chunk → Embedding → 入库
-```
+Workflow（工作流）是预先规定主要控制路径的程序。它可以有条件分支、循环、模型分类节点，甚至运行很久；“有条件判断”不自动等于 Agent。Agent 则在被允许的动作空间内，让模型根据当前观察选择下一步动作或调查方向。两者之间可以混合，不是一条从落后到先进的排名。
 
-这是 Workflow。
+例如处理报告：固定流程可以规定按 A、B、C 顺序读取，然后摘要、校验、交付。Agent 可以先看目录，读 A 后发现需要核对 B 的某个日期，于是临时选择下一步。但即使采用 Agent，登录认证、权限检查和提交报告的规则仍可由确定性程序负责。
 
-```text
-固定 Workflow + LLM 节点
-输入 → LLM 分类 → 固定 Branch → 固定动作
-```
+## 2. 同一个任务，比较三种实现
 
-依然主要是 Workflow。
+| 维度 | 单次模型调用 | 含模型节点的工作流 | 受控 Agent 循环 |
+|---|---|---|---|
+| 输入与路径 | 输入就绪，一次生成 | 主要阶段预定义 | 路径随观察调整 |
+| 适合任务 | 已给材料的摘要、分类 | 固定审核/抽取流水线 | 调查、探索、反复试验 |
+| 主要测试对象 | 输出质量与格式 | 节点、分支和整个流程 | 动作选择、工具结果、停止及结果 |
+| 新增代价 | 相对有限 | 更多流程状态 | 不确定路径、累积成本与动作风险 |
+| 完成依据 | 输出契约 | 流程与结果契约 | 同样需要结果契约，不能只信自评 |
 
-真正的 Agent 更接近：
+选择方式是先用简单方案建立基线，再看它具体失败在哪里。固定方案找不到未知位置的资料，可能需要动态检索；只是模型漏了一个字段，先改输出校验，不要立刻升级为多 Agent。
 
-```text
-Goal
- ↓
-Model 根据当前 Context / State 决定下一步
- ↓
-Tool / Delegate / Answer
- ↓
-Observation
- ↓
-再次决定
-```
+## 3. Harness / Runtime / Orchestrator / Workflow Engine 放在同一维度比较
 
-核心差异是：
+**Runtime（运行时）**回答执行正在怎样发生；**Harness（执行支撑系统）**回答用哪些支撑能力约束并兑现模型行为；**Orchestrator（编排器）**回答步骤、模型或角色之间怎样协调；**Workflow Engine（工作流引擎）**通常提供预定义图或流程的执行、调度和状态能力。
 
-> **Workflow 的主要控制流由开发者预先编码；Agent 允许模型在运行时根据 Observation 动态决定下一步 Action。**
-
-它不是二元开关，而是一条连续谱：
-
-```text
-Deterministic Program
-→ Workflow + LLM Node
-→ Dynamic Router
-→ Agent Loop + Tools
-→ Long-running Autonomous Agent
-```
-
-## 2. 为什么“更 Agent”不等于“更高级”
-
-把控制权交给模型，会换来动态性，也会引入：
-
-- 非确定性；
-- 更高 Token / Latency / Cost；
-- Tool 选择错误；
-- Dead Loop / Goal Drift；
-- Side Effect 风险；
-- 更难测试；
-- 更复杂的 Trace / Eval / Recovery。
-
-因此第一条工程原则是：
-
-> **能用普通程序解决，不先上 Agent；能用固定 Workflow 解决，不先上开放 Loop。**
-
-Anthropic `Building effective agents` 也强调从简单、可组合的模式开始，再按任务需要增加 autonomy。
-
-## 3. 什么任务更值得 Agent 化
-
-一个实用判断矩阵：
-
-| 维度 | Workflow 更合适 | Agent 更合适 |
+| 概念 | 典型输入和输出 | 不保证的事情 |
 |---|---|---|
-| 控制流 | 稳定、可预定义 | 中间 Observation 决定下一步 |
-| 输入 | 结构化 | 非结构化 / 开放 |
-| Tool 选择 | 固定 | 动态 |
-| 任务 | 短、重复 | 探索、多步、长任务 |
-| 错误成本 | 极高且不可容错 | 可隔离、可验证、可回退 |
-| 验证 | 单测 / 状态机 | Outcome Eval / Trace / Verification |
+| Model（模型） | 当前上下文 → 文本或动作候选 | 不自动取得授权，不替程序执行 |
+| Orchestrator（编排器） | 当前进展 → 下一节点/角色/停止决策 | 不天然提供数据库、工具隔离 |
+| Runtime（运行时） | 执行配置和输入 → 事件、动作结果及终态 | 不替用户决定业务验收标准 |
+| Harness（执行支撑系统） | 模型与能力配置 → 可受控完成任务的执行组合 | 名称本身不代表完善或安全 |
+| Workflow Engine（工作流引擎） | 图/流程和状态 → 执行推进 | 不保证每个节点都是 Agent |
+| Framework（框架） | 开发者配置与扩展代码 → 上述能力的实现 | 不保证业务正确性或供应商兼容 |
 
-例如：
+一个框架可以同时提供编排和运行能力，一个 Harness 也可以内部使用工作流引擎。因此这些不是必须互斥的六层。不应把产品用词硬改成我们偏好的层次；需要先识别它的实际控制职责。
 
-```text
-CRUD / 支付主链路
-→ Workflow
+## 4. Prompt、Context、Harness 不是三种更高级的提示词
 
-未知线上故障排查
-→ Agent-assisted Investigation
+Prompt engineering（提示词设计）主要调整给模型的指令和例子。Context engineering（上下文工程）还要选择本次输入中的历史、检索证据、工具描述和观察。Harness engineering（执行支撑工程）则负责跨调用的执行、约束和状态。
 
-大型仓库 Bug 修复
-→ Coding Agent
+如果模型不知道报告格式，先改提示与输出契约；如果它一直引用过期资料，先检查上下文来源与新旧内容；如果它调用了没有授权的写工具，则不能只靠更长的提示，必须修工具调用的执行边界。这样才不会每个问题都归结为“Prompt 不够好”。
 
-高风险退款 / 删除
-→ Workflow + HITL，不应让 Agent 自由提交副作用
-```
+## 5. 什么时候选混合模式
 
-## 4. Production 往往是 Hybrid
+混合模式最容易落地：固定程序负责接收需求、认证和提交；中间允许 Agent 在明确范围内调查；关键提交前要求必要确认；交付时检查结果。自主权可以按阶段分配，而不是一个全局“全自动”开关。
 
-真实系统通常不是“全 Agent”：
+例子中允许模型任意选择三份授权文件的读取顺序，但不允许修改原件或联网找替代资料。这不矛盾：探索权与资源写入权是不同权限。成本超限或缺少决定性证据时，可以返回部分结果及待办，而不是假装成功。
 
-```text
-API / Auth / Validation / Transaction
-            ↓
-     Deterministic Boundary
-            ↓
-       Agentic Region
-   Understand / Search / Plan
-            ↓
-  High-risk Action Boundary
-            ↓
-   Approval + Deterministic Commit
-```
+## 6. 官方资料怎样使用
 
-这意味着 Agent 是系统中的一种执行模式，而不是系统的全部。
+<details>
+<summary>阅读对照：官方定义支持什么，不支持什么</summary>
 
-## 5. 为什么 Model + API 还不够
+Anthropic 的 Building effective agents 区分预定义代码路径的 workflows 与由模型动态引导过程和工具使用的 agents，并建议从简单、可组合的模式起步。本章三方案比较由此展开，不把工作流说成低级 Agent。
 
-假设只有：
+Claude Code 官方工作过程强调模型、工具与反馈循环。Codex App Server 则是现有 Agent 运行能力的产品接口。两者可作为“运行机制如何对外暴露”的实例，但官方页面并未颁布统一的 Harness/Runtime/Orchestrator 类型系统。
 
-```python
-response = llm(prompt)
-```
+因此，面试时可以说“我在这个项目把 Harness 指作……”，但不要说“行业规定 Harness 必须包含八层”。旧章节中的多个工程平面可以用作检查清单，不应再作为另一张要死记的架构图。
 
-它可以生成文本，但没有稳定机制回答：
-
-```text
-这一轮属于哪个 Run？
-当前已经完成哪些 Step？
-有哪些 Tool 可用？
-Tool 参数谁校验？
-高风险动作谁授权？
-Context 超限怎么办？
-任务中途 Crash 怎么恢复？
-如何取消正在运行的 Tool？
-怎样证明任务完成？
-```
-
-这些都不是“模型更聪明”就自动解决的问题。
-
-所以需要 Harness / Runtime。
-
-## 6. Harness / Runtime 到底是什么
-
-一个稳定抽象：
-
-```text
-                    Goal / User
-                        │
-                        ▼
-                Harness / Runtime
-       ┌────────────────┼────────────────┐
-       ▼                ▼                ▼
-    Context           State            Policy
-       │                │                │
-       └─────────┬──────┴──────┬─────────┘
-                 ▼             ▼
-               Model         Tools
-                 │             │
-                 └──── Loop ───┘
-                        │
-                        ▼
-               Event / Trace / Eval
-```
-
-Model 负责推理与生成候选决策。
-
-Harness 负责：
-
-- Model 看见什么；
-- 可以调用什么；
-- Tool 如何验证、授权和执行；
-- State 怎样变化；
-- Loop 何时继续 / 暂停 / 停止；
-- Failure 怎样恢复；
-- 执行怎样被 Trace 和 Eval。
-
-一句话：
-
-> **Model 提供智能，Harness 把智能约束成可执行、可恢复、可审计的系统。**
-
-## 7. Harness、Runtime、Orchestrator、Workflow Engine 怎么区分
-
-这些词在业界并没有唯一标准，但课程使用下面的工作定义：
-
-### Harness / Runtime
-
-关注 Agent 执行本身：
-
-```text
-Loop
-Tool Runtime
-Context
-State
-Permission
-Cancellation
-Checkpoint
-Trace
-```
-
-### Orchestrator
-
-更强调“谁调用谁、任务怎样编排”：
-
-```text
-Agent A
-→ Agent B
-→ Tool C
-→ Human Review
-```
-
-Orchestration 可以是 Harness 的一部分，也可以是平台外层。
-
-### Workflow Engine
-
-更强调预定义 State / Node / Edge 与可靠推进：
-
-```text
-Node A → Node B → Conditional Node C
-```
-
-它可以承载 Agent Step，但不等于 Agent Harness。
-
-## 8. 三个经常混淆的边界
-
-### Prompt Engineering
-
-```text
-解决：单次 Model Call 如何被指令约束
-```
-
-### Context Engineering
-
-```text
-解决：这一轮 inference 到底给模型哪些信息
-```
-
-### Harness Engineering
-
-```text
-解决：跨多轮、多 Tool、多 State 的任务怎样运行
-```
-
-因此：
-
-```text
-Prompt ⊂ Context
-Context 是 Harness 的一个 Plane
-Harness 不等于“更长的 Prompt”
-```
-
-## 9. 源码证据：为什么成熟产品一定有 Runtime Layer
-
-固定 Claude Code 快照中，`QueryEngine` 持有 Conversation / Turn 生命周期，并管理 Tools、Agents、MCP Clients、Permission、Budget、Abort、Usage、Memory Prompt 与 Compact 相关能力。
-
-固定 Codex 快照中能看到：
-
-- Session / Turn / Step；
-- Tool Router / Registry；
-- Sandbox Policy；
-- Context Compaction；
-- Rollout Trace。
-
-这些实现共同说明一个稳定事实：
-
-> **成熟 Agent 产品的复杂度主要来自 Runtime，而不是一次 LLM API 调用。**
-
-注意：这些源码是实现证据，不代表所有产品必须同构。
-
-## 10. Agent 化之后立刻新增哪些工程问题
-
-一旦从：
-
-```text
-step1 → step2 → step3
-```
-
-变成：
-
-```text
-Model → Action → Observation → Model → ...
-```
-
-就必须继续回答：
-
-```text
-选错 Tool 怎么办？
-Schema 错怎么办？
-Tool 有副作用怎么办？
-Context 膨胀怎么办？
-Goal Drift 怎么发现？
-中途 Crash 怎么 Resume？
-怎样限制权限？
-怎样证明 Final Result 真的正确？
-```
-
-后续 21 个知识板块，本质上都在回答这些问题。
-
-## 11. HUMAN-A 为什么高频追这个边界
-
-当前 Agent Canonical 中：
-
-- `AGENT-001`：Agent vs LLM / Chatbot / Workflow，30 个独立来源；
-- `AGENT-002`：Harness / Runtime Boundary，25 个独立来源；
-- `AGENT-003`：完整 Agent Loop，36 个独立来源。
-
-真人追问常见方向是：
-
-```text
-为什么需要 Agent？
-→ Harness 为什么独立？
-→ Loop 怎么跑？
-→ Tool / Context / Memory 怎么进来？
-→ Failure / Evaluation 怎么办？
-```
-
-所以本章不是术语前言，而是整个 Agent Runtime 的第一道架构判断题。
-
-## 12. 🎯 30 秒回答
-
-> Workflow 的主要控制流由程序预先定义；Agent 把部分下一步决策交给模型，根据当前 Context、State 和 Observation 动态选择 Tool 或 Action。Agent 适合步骤无法提前写死、需要探索和多轮环境反馈的任务，但会引入非确定性、成本、安全和恢复问题。Harness / Runtime 就是模型之外负责 Loop、Tool、Context、State、Permission、Recovery 和 Trace 的执行系统，因此 Model + API 本身并不足以构成 Production Agent。
-
-## 13. 🎯 2–3 分钟回答框架
-
-按四层展开：
-
-```text
-1. 控制权：Workflow vs Agent
-2. 适用场景：动态探索 vs 确定性流程
-3. 新成本：Failure / Cost / Security / Eval
-4. Harness：把模型决策变成可控 Runtime
-```
-
-最后补一句：
-
-> Production 通常是 Hybrid，把不确定性限制在真正需要 Agent 的区域，高风险提交仍由确定性系统和 Approval 控制。
-
-## 14. ⚠️ 易错点
-
-- “用了 LLM 就是 Agent”——错。
-- “Agent 一定比 Workflow 高级”——错。
-- “Harness = Prompt Template”——错。
-- “Orchestrator = Agent Runtime 的唯一标准名称”——错，术语需先给工作定义。
-- “模型足够强就不需要 Runtime”——错，副作用、权限、持久化和恢复属于系统问题。
-
-## 15. 🔍 面试官继续追问
-
-```text
-一个 Agent Loop 到底怎样推进？
-Run / Turn / Step 为什么要分层？
-Tool Calling 为什么不只是函数调用？
-Context 与 Memory 有什么区别？
-什么时候需要 Checkpoint？
-怎样定义完成条件？
-```
-
-这些直接进入下一章。
-
-<details><summary>自测 1：一个固定 DAG 中每个 Node 都调用 LLM，它一定是 Agent 吗？</summary>
-
-不一定。关键不是有没有 LLM，而是谁拥有运行时控制流。如果 Node / Edge 基本由程序预定义，它仍然更接近 LLM-enhanced Workflow。
 </details>
 
-<details><summary>自测 2：为什么支付主链路通常不应该完全 Agent 化？</summary>
+## 面试怎么答
 
-因为步骤稳定、错误成本高、事务与权限要求强，确定性状态机更容易验证和约束。可以让 Agent 负责理解、建议或异常诊断，但关键提交应保留确定性边界。
+这些是依据本章机制设计的训练问法，不新增真人来源；先用自己的话回答，再看参考答案。
+
+### 1. Workflow 和 Agent 的本质差异是什么？
+
+<details>
+<summary>参考答案</summary>
+
+核心是主要控制路径由谁决定。工作流按程序预定义的阶段与分支推进，可以包含模型节点；Agent 允许模型根据观察动态选择行动。实际应用常混合：外围固定控制身份、提交和验收，中间授权有限探索。应根据质量收益、成本、风险和可验证性选型，而不是按步骤多少分类。
+
 </details>
 
-<details><summary>自测 3：Harness 最核心的一句话定义是什么？</summary>
+### 2. Runtime 与编排器是同一个东西吗？
 
-模型之外、围绕模型建立的执行系统：控制它看见什么、能做什么、怎样循环、怎样失败和恢复，以及怎样被审计与评估。
+<details>
+<summary>参考答案</summary>
+
+不必相同。编排器关注下一步、依赖和委派，运行时还要兑现调用、管理活动状态和取消等执行语义。框架可能把它们放在同一 Runner 或图引擎里，但这不消除职责差别。Harness 是围绕模型把这些支撑能力组织起来的系统名称，具体边界随产品而异。
+
 </details>
+
+### 3. 什么时候不该用 Agent？
+
+<details>
+<summary>参考答案</summary>
+
+输入和路径已经稳定、错误代价高且输出能用固定规则完成时，先用确定性流程或单次模型调用。例如已知三份小资料的摘要不一定需要循环。只有基线暴露了动态调查或反馈决策的必要性，再增加相应能力，并用同一任务集比较收益与额外成本。
+
+</details>
+
+### 4. 上下文工程和 Harness 工程各解决什么？
+
+<details>
+<summary>参考答案</summary>
+
+上下文工程决定这一轮模型看见什么，包括指令、历史、证据和工具说明；Harness 工程还负责模型给出候选后如何调用、怎样保存进展、如何限制副作用与恢复。上下文中写“不能修改”是沟通，真正禁止写入必须由工具或底层授权兑现。
+
+</details>
+
+## 高频易错点
+
+| 容易混淆的说法 | 为什么不对，应怎样理解 |
+|---|---|
+| 固定流程含一次 LLM 分类就是自主 Agent | 主要控制路径仍可能完全由程序决定。 |
+| Orchestrator、Runtime、Harness 必须是独立服务 | 是职责词，不是强制部署单元。 |
+| 模型能力强，程序就可以少做权限检查 | 更强推理不建立真实权限。 |
+| 复杂框架等于生产成熟度 | 要测试任务状态、恢复、可观测性与退出能力，而非只看功能表。 |
+
+## 章节自测
+
+先闭卷作答。答案不仅给结论，也解释判断依据；答不出时回到本章相应过程，不必从整套课程开头重读。
+
+### 自测 1：审批流程里有20个步骤，它必然是 Agent 吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不是。20步都预先编排依然是工作流。关键在于是否把某段下一步选择交给模型，以及这种选择是否依据中间观察。
+
+</details>
+
+### 自测 2：报告总是漏引用，应先加规划器吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+先定位缺陷。若资料已齐全，是输出契约或校验问题，就补引用生成与检查；只有证据获取方向需要动态调整时才考虑规划能力。
+
+</details>
+
+### 自测 3：允许自主读取，不允许自主提交合理吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+合理。权限按动作分配。读取授权清单内资料的风险通常不同于修改原件或发送报告，探索阶段与提交阶段可以采用不同确认要求。
+
+</details>
+
+### 自测 4：框架提供 checkpoint，是不是自动保证外部写入不重复？
+
+<details>
+<summary>查看参考答案</summary>
+
+不是。框架保存的流程状态与外部系统写入未必原子，仍需业务操作标识、核对和幂等。第13章会用两个检查点之间的故障解释。
+
+</details>
+
+### 自测 5：请用一句话分别解释三个 engineering。
+
+<details>
+<summary>查看参考答案</summary>
+
+提示词设计改善指令；上下文工程选择当前模型输入；执行支撑工程把模型候选变成受控、可持续的行动。它们互相配合，不是只改名称的同一技能。
+
+</details>
+
+### 自测 6：怎样避免自己的工作定义和产品术语冲突？
+
+<details>
+<summary>查看参考答案</summary>
+
+先说明项目采用什么定义，再给产品映射。不要拿教材的 Run/Turn 分类替代 Codex 或 SDK 官方对象；名称相近时应核对作用域和生命周期。
+
+</details>
+
+## 资料与下一步
+
+官方依据：[Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)、[Claude Code 工作过程](https://code.claude.com/docs/en/how-claude-code-works)。下一章用时间线把运行对象和循环具体化。
+
+本章对应研究能力：`AGENT-001`、`AGENT-002`。频次与原始证据以[研究题库](../../research/questions/agent-harness.md)为准。源码案例采用固定快照，官方文档采用明确版本；[核验范围](../../research/agent-sources/README.md#reader-revision-20260917)。
+
+[← 上一章](01-AgentHarness在AI应用中的职责.md) · [模块目录](../README.md) · [下一章 →](03-AgentLoopRuntimeState.md)
