@@ -10,16 +10,12 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-          fetch-depth: 0
-      - name: Export pinned documentation without git configuration or credentials
+      - name: Read public pinned Codex source (no private repository credentials)
         run: |
-          mkdir -p /tmp/agent-main-export
-          git archive 37cbfd2b152c6a0aa5bbd8ca0c19820debc632b8 | tar -x -C /tmp/agent-main-export
+          mkdir -p /tmp/codex-source
+          curl --fail --location --retry 2 https://codeload.github.com/openai/codex/tar.gz/fc948f8c473e5d11e780ffcf1fd7f812a2020932 | tar -xz -C /tmp/codex-source --strip-components=1
       - uses: actions/upload-artifact@v4
         with:
-          name: agent-main-source
-          path: /tmp/agent-main-export/
+          name: public-codex-pinned
+          path: /tmp/codex-source/
           retention-days: 1
