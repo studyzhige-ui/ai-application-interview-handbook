@@ -4,7 +4,10 @@ on:
     branches: [main]
     paths: ['.github/workflows/agent-main-audit-temp.yml', 'tools/_agent_main_apply.py']
 permissions:
-  contents: read
+  contents: write
+concurrency:
+  group: agent-main-reader-revision
+  cancel-in-progress: false
 jobs:
   audit:
     if: github.actor != 'github-actions[bot]'
@@ -14,8 +17,13 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-      - uses: actions/upload-artifact@v4
-        with:
-          name: agent-main-staged-payload
-          path: tools/_agent_main_bundle/
-          retention-days: 1
+      - name: Apply checksum-verified documents and execute limited teaching tests
+        run: python -B tools/_agent_main_apply.py
+      - name: Commit only verified changes to requested main branch
+        run: |
+          test "$GITHUB_REF_NAME" = main
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'docs(agent): rebuild all 23 main chapters for beginner comprehension and source-grounded training'
+          git push origin HEAD:main
