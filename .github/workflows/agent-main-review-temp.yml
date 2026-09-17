@@ -11,13 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: openai/codex
-          ref: fc948f8c473e5d11e780ffcf1fd7f812a2020932
+          ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Export pinned public code without executing it
-        run: git archive --format=tar.gz -o /tmp/codex-pinned-source.tar.gz HEAD
+      - name: Export current main and staged text without git credentials
+        run: git archive --format=tar.gz -o /tmp/handbook-review.tar.gz HEAD
       - uses: actions/upload-artifact@v4
         with:
-          name: codex-pinned-source
-          path: /tmp/codex-pinned-source.tar.gz
+          name: handbook-review
+          path: /tmp/handbook-review.tar.gz
           retention-days: 1
