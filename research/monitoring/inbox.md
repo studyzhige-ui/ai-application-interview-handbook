@@ -1,6 +1,6 @@
 # HUMAN-A Monitoring Inbox
 
-更新日期：2026-09-16
+更新日期：2026-09-17
 
 本文件只保存**已经满足 HUMAN-A、但尚未归入当天正式 Batch** 的候选。普通搜索线索、摘要、低质量面经、答案型文章、Role Scope 外来源和待核验复制链都不进入 Inbox。
 
@@ -39,12 +39,36 @@
 - HUMAN-A：`S001–S286`，共 **286** 个；
 - 最大编号：`S286`；
 - 下一保留编号：**`S287`**；
-- 当日正式新增：`S280–S286`，共 **7** 个；
+- 最近正式新增：`S280–S286`，共 **7** 个；
 - `S280–S286` 的 Canonical 映射留待 periodic review，不因单日热点修改 Curriculum。
 
 ## 当前 Inbox
 
-暂无待归档 HUMAN-A。
+### 2026-09-17 Afternoon — 字节｜Agent｜秋招一面｜发布 2026-09-16 15:09
+
+来源：https://www.nowcoder.com/discuss/929731481189044224
+
+作者：`吃饱了撑的容器`。原帖页面显示作者当前身份为“小红书 Agent 开发（实习员工）”，正文明确记录“当天下午已约二面”，并写出与真人面试官讨论 Computer Use、Pi Agent、DeepSeek Harness 的现场感受；属于候选人本人第一人称招聘流程，不是答案帖 / 合集。
+
+Role Scope：标题直接为“字节 Agent 秋招一面”，整场围绕企业 AI 助手、Agent Harness、Computer Use、AI Coding 展开，明确通过目标岗位 Gate。
+
+高密度连续题序：
+
+1. 实习项目深挖；
+2. 企业 AI 助手的滑动窗口 + 摘要压缩记忆怎样实现；滑动窗口大小如何决定、什么场景改用摘要压缩；
+3. 文档在线自动更新怎样保证并发幂等、避免任务覆盖；RocketMQ 放在更新链路哪里；为什么使用 MQ 而不是定时任务直接处理；
+4. 对 Agent / Agent Harness 的理解；DeepSeek Harness、Pi Agent；如果接入当前实习 Agent 应怎样改、是否值得替换；
+5. 其它厂商 Agent 产品；Claude Code Context Compression；
+6. Computer Use 的本地电脑 / 云端电脑执行机制；
+7. AI Coding 工具真实使用问题与完整开发工作流；
+8. 数据库类型、MySQL B+ Tree；
+9. Coding：二叉树子结构；
+10. Coding：两个有序 List 交集，并继续追无限序列、Bitmap 大值域与分批流式处理；
+11. 反问 Agent 垂类业务与团队 AI Coding 文化，面试官反向追问是否存在更 AI Native 的开发工作流。
+
+去重：本轮已逐个直接回读 `batch-01.md`～`batch-27.md` 全历史。当前 URL、作者以及“滑动窗口/摘要记忆 → 文档并发幂等 + RocketMQ → DeepSeek Harness / Pi Agent → Computer Use → AI Coding Workflow → 无限序列交集”连续链均未在历史正式来源形成同场重复；GitHub Search 对 URL / 作者 / 罕见组合的 0 命中只作为辅助，不作为未收录证明。22:00 仍需重新直接回读全历史后做最终去重，届时才允许分配 `Sxxx`。
+
+---
 
 2026-09-16 Morning / Afternoon 暂存的 7 个候选已经在 22:00 再次直接回读全部历史 Batch 并完成最终去重，统一归入 `batch-27.md`：
 
