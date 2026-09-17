@@ -1,0 +1,38 @@
+name: Agent publication preview
+on:
+  push:
+    branches: ['maintenance/agent-style-restoration-20260917']
+    paths: ['tools/_agent_publish*.py', '.github/workflows/agent-publication-preview.yml']
+permissions:
+  contents: read
+concurrency:
+  group: agent-publication-preview
+  cancel-in-progress: false
+jobs:
+  preview:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Build source-preserving candidate
+        run: |
+          python -B tools/_agent_publish_apply.py
+          cp tools/_agent_publish_validate.py tools/validate_agent_readability.py
+          python -B tools/validate_agent_readability.py --run-examples
+          git diff --check
+      - name: Export candidate without git or credentials
+        if: always()
+        run: |
+          mkdir -p /tmp/agent-publication
+          cp -r agent roadmap research tools README.md /tmp/agent-publication/ || true
+          find /tmp/agent-publication -name '__pycache__' -type d -prune -exec rm -rf '{}' +
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: agent-publication-candidate
+          path: /tmp/agent-publication/
+          retention-days: 1
