@@ -2,7 +2,7 @@
 
 [↑ Handbook 总目录](../README.md) · [Canonical Questions](questions/README.md) · [Market Analysis](analysis/README.md) · [Curriculum Knowledge Map](../roadmap/knowledge-map.md)
 
-> **状态：🟢 Continuous Monitoring。** 当前正式库为 `S001–S286` 共 **286** 个 HUMAN-A 独立招聘流程、**27** 个正式 Batch；自 2026-09-16 起按“最近 3 天发现窗口 + 全历史去重”持续增量监测。每天三次检索合并为一个日批次；质量优先，不为数量降低 HUMAN-A 门槛。
+> **状态：🟢 Continuous Monitoring。** 当前正式库为 `S001–S287` 共 **287** 个 HUMAN-A 独立招聘流程、**28** 个正式 Batch；自 2026-09-16 起按“最近 3 天发现窗口 + 全历史去重”持续增量监测。每天三次检索合并为一个日批次；质量优先，不为数量降低 HUMAN-A 门槛。
 
 ## 1. 研究目的
 
@@ -35,13 +35,13 @@
 
 | 项目 | 当前值 |
 |---|---:|
-| HUMAN-A 来源 | **286** |
-| Source IDs | `S001–S286` |
-| 正式 Batch | **27** |
-| 下一 Source ID | **`S287`** |
+| HUMAN-A 来源 | **287** |
+| Source IDs | `S001–S287` |
+| 正式 Batch | **28** |
+| 下一 Source ID | **`S288`** |
 | ACTIVE Canonical | 235 |
 | 既有映射基线 | `S001–S279` 中 278 Mapped + 1 VALID-UNMAPPED（S271） |
-| 新增映射状态 | `S280–S286` 待 periodic review / Canonical mapping |
+| 新增映射状态 | `S280–S287` 待 periodic review / Canonical mapping |
 | 当前采集状态 | Continuous Monitoring |
 | 主动发现窗口 | 运行时最近 3 天 |
 | 每日检索 | 10:00 / 17:00 / 22:00 |
@@ -94,7 +94,7 @@
 
 ```text
 research/
-├── interviews/          # S001–S286 正式 HUMAN-A / Batch 01–27
+├── interviews/          # S001–S287 正式 HUMAN-A / Batch 01–28
 ├── quality/             # Source / Role Scope Gate
 ├── monitoring/          # Inbox + 当日三次检索日志
 ├── questions/           # Canonical Ownership

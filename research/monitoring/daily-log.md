@@ -149,3 +149,44 @@ Afternoon 重点排除 / 待追源：
 Afternoon 主要信号：**前沿 Agent 名词正在从“定义题”进入集成验真**。本轮新增候选不是单独问 Harness / Computer Use，而是继续追“是否值得替换当前方案、怎样与现有 Agent 集成、文档并发更新如何幂等、MQ 为什么放在这个位置、AI Coding 工作流是否足够 AI Native”。同时数据库与算法照常同场出现，说明目标 Agent 岗仍然要求把前沿能力落回 Production Engineering。该信号只记 Market Observation，不新增 Canonical、不修改 Curriculum。
 
 Afternoon 盲区：百度 / 腾讯 / 京东 / B站 / OPPO / vivo 在最近 3 天仍缺可稳定核验的目标岗第一人称高密度样本；非牛客平台仍以摘要 / 聚合 / 登录墙为主。22:00 应继续补这些盲区，并重新回读全历史后再对当前 Inbox 做最终去重。
+
+### 22:00 Evening Search + Finalize
+
+- Status: completed
+- Discovery window：严格限定运行时最近 3 天 / 72 小时；继续补 Afternoon 的公司、平台和岗位别名盲区。
+- Baseline / full-history dedup：重新读取当前 `main`、Research README、Inbox、Daily Log、两份 Quality Policy 与最新 `batch-27.md`；随后再次**逐个直接回读 `batch-01.md`～`batch-27.md` 全历史**。确认正式基线为 **27 Batch / 286 HUMAN-A / `S001–S286` / 下一 `S287`** 后才执行最终编号。
+- Search effort：第三轮新增 **60+ 组定向 Query / 变体**，继续覆盖字节 / 抖音、阿里 / 千问 / 淘宝、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，并补 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `Coding Agent` / `Harness` / `Runtime` / `Computer Use` 等组合及非牛客来源。
+- Verification effort：第三轮显式打开、回读或追源 **20+** 个近期原帖、作者页、企业聚合入口或 provenance 线索；不使用旧面经或低质量页面补数量。
+- New HUMAN-A after Evening search：**0 个**。第三轮没有发现新的、同时满足最近 72 小时、稳定原帖、候选人第一人称、目标 Role Scope、高技术密度和全历史去重的独立流程。
+- Final dedup：Afternoon Inbox 的字节 Agent 候选再次通过最终 Gate；未发现与 `S001–S286` 同场重复。
+- Final Batch：创建 `batch-28.md`，统一分配 **`S287`**。
+
+Evening 重点复核：
+
+1. **千问技术部 9/16 一面**：真人第一人称和技术密度很高，出现 Agent Plan / Replan、Context、Tool Calling、Reconnect、Evaluation、Regression 等连续追问；但岗位主体无法稳定确认属于本库目标 AI Application / Agent Role Scope，不因为题目高级扩大范围。
+2. **小红书 Agentic 端侧推理优化 9/14**：正文稳定且第一人称，但后半技术主体明显转入端侧模型推理、量化 / 压缩、蒸馏 / SFT 等 Model / Training / Inference Optimization 边界，按 Role Scope 保守排除。
+3. **京东 AI Agent 9/14**：题序高度相关，但作者为历史已识别的 `AIGC小白入门记` 内容账号链；继续零贡献。
+4. **去哪儿旅行 9/16 AI 应用开发（全栈）**：Role Scope 与招聘现场成立，但公开可稳定读取的正文仍只有流程级摘要，技术问题细节不足 A-grade Gate；不为数量降低标准。
+5. **百度网络研发 / B站测开等近期 Agent 深挖**：出现 LangGraph、OpenClaw、Skill / MCP / Evaluation 等，但岗位主体是网络研发 / 测试开发，Role Scope 外。
+6. **聚合页 / 二次整理 / 标准答案 / JD / 内推 / 新闻 / Search Snippet**：只用于发现与旁证，不贡献 HUMAN-A。
+
+### Final Summary
+
+- Three-round search effort：**至少 217 组 Query / Query 变体**（Morning ≥97 + Afternoon ≥60 + Evening ≥60）。
+- Three-round verification effort：**至少 60 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试；这是工作量次数，不等于 60 个唯一 URL。
+- Final additions：**1 个 HUMAN-A，`S287`**。
+- Current formal library：**28 Batch / 287 HUMAN-A / `S001–S287`**。
+- Next ID：**`S288`**。
+- Inbox：归档后清空。
+- Canonical / Curriculum：**本日不修改**；`S287` 进入后续 periodic mapping / review。
+
+当日主要市场信号：
+
+1. Harness 已从定义题进入“是否值得替换现有架构、怎样迁移”的工程判断；
+2. Context / Memory 继续向窗口大小、切换条件、Compression Mechanism 等可验证细节下沉；
+3. Agent Backend 与并发幂等、MQ 位置、在线更新可靠性继续合流；
+4. Computer Use 的本地 / 云端执行机制开始进入真实目标岗位面试；
+5. AI Coding 越来越要求说明完整研发 Workflow 与是否真正 AI Native，而不只是工具清单；
+6. MySQL / Coding 等 Foundation 继续与最新 Agent 能力同场，不能弱化。
+
+饱和度 / 盲区：当前最近 3 天公开热门结果层仍呈**局部饱和 + 高 provenance 成本**：内容账号、聚合页、Role Scope 模糊、普通岗位 Agent 深挖与正文不可稳定回读占比较高。牛客仍是最容易稳定核验的公开原帖来源；百度 / 腾讯 / 京东 / 滴滴 / B站 / OPPO / vivo 等目标公司及小红书 / 知乎 / 脉脉 / 独立博客等非牛客平台，当前窗口内仍缺新的高质量可核验目标岗第一人称样本。下一轮继续补这些盲区与作者 Timeline，但不降低 HUMAN-A Gate。
