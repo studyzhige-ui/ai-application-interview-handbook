@@ -11,12 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 8d8bec6405769f8e2b5cfaaf4497bba4a2f30dbc
+          repository: openai/codex
+          ref: fc948f8c473e5d11e780ffcf1fd7f812a2020932
           persist-credentials: false
-      - name: Export tracked teaching source only
-        run: git archive --format=tar.gz -o /tmp/handbook-main-source.tar.gz HEAD
+      - name: Export pinned public code without executing it
+        run: git archive --format=tar.gz -o /tmp/codex-pinned-source.tar.gz HEAD
       - uses: actions/upload-artifact@v4
         with:
-          name: handbook-main-source
-          path: /tmp/handbook-main-source.tar.gz
+          name: codex-pinned-source
+          path: /tmp/codex-pinned-source.tar.gz
           retention-days: 1
