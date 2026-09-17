@@ -1,6 +1,6 @@
 # RAG｜检索增强生成工程
 
-[← LLM Foundation（应用工程深度）](../llm-foundation/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [Agent Harness / Runtime →](../agent-harness/README.md)
+[← LLM Foundation（应用工程深度）](../llm-foundation/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [Agent Harness / Runtime →](../agent/README.md)
 
 > **状态：✅ 第一版系统教材完成**  
 > **教材：14 个连续知识小板块** · **HUMAN-A Canonical：29** · **独立来源覆盖：88**  
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → **RAG** → [Agent Harness / Runtime](../agent-harness/README.md) → [System Design](../system-design/README.md)
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → **RAG** → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
 
 当前模块角色：**AI Application / 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。**
 
@@ -163,4 +163,4 @@ Canonical Coverage ✅
 Content Depth       ✅
 ```
 
-下一环：[Agent Harness / Runtime](../agent-harness/README.md)。
+下一环：[Agent](../agent/README.md)。

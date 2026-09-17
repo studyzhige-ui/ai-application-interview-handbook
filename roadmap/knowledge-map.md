@@ -6,7 +6,7 @@
 
 ## 总路线
 
-[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent Harness / Runtime](../agent-harness/README.md) → [System Design](../system-design/README.md)
+[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
 
 ## 总览
 
@@ -20,7 +20,7 @@
 | 06 | [Vector Database](../vector-db/README.md) | 16 | 12 | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 |
 | 07 | [LLM Foundation（应用工程深度）](../llm-foundation/README.md) | 14 | 23 | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 |
 | 08 | [RAG](../rag/README.md) | 14 | 29 | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 |
-| 09 | [Agent Harness / Runtime](../agent-harness/README.md) | 23 | 44 | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 |
+| 09 | [Agent](../agent/README.md) | 24 | 44 | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 |
 | 10 | [System Design](../system-design/README.md) | 19 | 24 | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 |
 
 ---
@@ -55,7 +55,7 @@ Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Id
 
 市场校准：**39 Canonical / 125 independent HUMAN-A flows**。
 
-## 04. [MySQL](../mysql/README.md) ✅ — 23 blocks
+## 04. [MySQL](../mysql/README.md) ✅ — 24 blocks
 
 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
 
@@ -105,7 +105,7 @@ Corpus Governance → Document Processing → Chunk Design → Query Planning �
 
 市场校准：**29 Canonical / 88 independent HUMAN-A flows**。
 
-## 09. [Agent Harness / Runtime](../agent-harness/README.md) ✅ — 23 blocks
+## 09. [Agent](../agent/README.md) ✅ — 24 blocks
 
 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。
 
@@ -138,4 +138,4 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - v1.0 全仓库最终结论见 [Final Quality Audit](final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
 
 
-Agent模块本轮保留23章学习顺序，新增中文概念推导、固定实现对照与逐章训练；详细变更和核验范围见[阅读修订](agent-reader-revision.md)。
+Agent模块本轮保留24章学习顺序，新增中文概念推导、固定实现对照与逐章训练；详细变更和核验范围见[阅读修订](agent-reader-revision.md)。

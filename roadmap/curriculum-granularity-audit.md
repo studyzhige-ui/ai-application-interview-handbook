@@ -27,7 +27,7 @@ Section                       = 参数 / 变体 / Failure / 深挖追问
 | Vector DB | 23 old blocks / 12 Canonical | 16 | ✅ |
 | LLM Foundation | 29 old blocks / 23 Canonical | 14 | ✅ |
 | RAG | 34 old blocks / 29 Canonical | 14 | ✅ |
-| Agent Harness | 47 old blocks / 44 Canonical | 23 | ✅ |
+| [Agent](../agent/README.md) | 原23章丰富版 / 44 Canonical；协议与扩展生命周期分别闭环 | 24 | 已重组并核对内容去向 |
 | System Design | 24 Scenario Canonical | 19 | ✅ |
 
 这些数字是结果，不是目标。教材重组永远不能改变 HUMAN-A、Source Count、Primary Ownership 或 Verified Follow-up Chain。

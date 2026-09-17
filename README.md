@@ -42,12 +42,12 @@ HUMAN-A 真人面经
 | 06 | [Vector Database](vector-db/README.md) | Data | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 | 16 | 12 | ✅ |
 | 07 | [LLM Foundation（应用工程深度）](llm-foundation/README.md) | Model Foundation | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 | 14 | 23 | ✅ |
 | 08 | [RAG](rag/README.md) | AI Application | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 | 14 | 29 | ✅ |
-| 09 | [Agent Harness / Runtime](agent-harness/README.md) | Agent Runtime | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 | 23 | 44 | ✅ |
+| 09 | [Agent](agent/README.md) | Agent System | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 | 24 | 44 | ✅ |
 | 10 | [System Design](system-design/README.md) | Integration | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 | 19 | 24 | ✅ |
 
 ### 正式学习顺序
 
-[Python Foundation](python/README.md) → [FastAPI](fastapi/README.md) → [AI Backend Engineering](backend-engineering/README.md) → [MySQL](mysql/README.md) → [Redis](redis/README.md) → [Vector Database](vector-db/README.md) → [LLM Foundation（应用工程深度）](llm-foundation/README.md) → [RAG](rag/README.md) → [Agent Harness / Runtime](agent-harness/README.md) → [System Design](system-design/README.md)
+[Python Foundation](python/README.md) → [FastAPI](fastapi/README.md) → [AI Backend Engineering](backend-engineering/README.md) → [MySQL](mysql/README.md) → [Redis](redis/README.md) → [Vector Database](vector-db/README.md) → [LLM Foundation（应用工程深度）](llm-foundation/README.md) → [RAG](rag/README.md) → [Agent](agent/README.md) → [System Design](system-design/README.md)
 
 所有模块标题和名称都可以直接点击进入对应 README。
 
@@ -90,7 +90,7 @@ Capability Primitive          = 更细的工程机制
 Section                       = 参数 / 变体 / Failure / 追问
 ```
 
-因此不会默认 `1 Canonical = 1 Markdown`。当前 10 个模块共 **184 个正文知识块**，研究层当前保持 **235 道 ACTIVE Canonical**。
+因此不会默认 `1 Canonical = 1 Markdown`。当前 10 个模块共 **185 个正文知识块**，研究层当前保持 **235 道 ACTIVE Canonical**。
 
 详见：[Curriculum Granularity Audit](roadmap/curriculum-granularity-audit.md)。
 
@@ -122,7 +122,7 @@ Latest S280–S286            pending periodic Canonical mapping / review
 
 统一采用三遍：
 
-1. **Curriculum Pass：** 184 个正文知识块按知识依赖完整学习，不按面经频率跳章。
+1. **Curriculum Pass：** 185 个正文知识块按知识依赖完整学习，不按面经频率跳章。
 2. **Review Pass：** 每个模块完成后从空白纸重画机制 / 数据流 / Failure，并完成折叠自测。
 3. **Interview Pass：** 再用 HUMAN-A Heat 与 L1–L4 Depth 调整口述次数和追问深度。
 
@@ -156,7 +156,7 @@ Latest S280–S286            pending periodic Canonical mapping / review
 ```text
 python/              fastapi/             backend-engineering/
 mysql/               redis/               vector-db/
-llm-foundation/      rag/                 agent-harness/
+llm-foundation/      rag/                 agent/
 system-design/
 
 research/            # HUMAN-A / Canonical / Analysis / Source Index
