@@ -2,7 +2,7 @@
 
 [← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md)
 
-> **状态：✅ 第一版正式学习路线完成。** 这份路线解决“184 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
+> **状态：✅ 第一版正式学习路线完成。** 这份路线解决“185 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
 > **固定原则不变：知识体系演进顺序优先。** HUMAN-A 真人面经只影响第二遍 / 第三遍的复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的课程主干。
 >
@@ -20,12 +20,12 @@
 → [Vector Database](../vector-db/README.md)
 → [LLM Foundation](../llm-foundation/README.md)
 → [RAG](../rag/README.md)
-→ [Agent Harness / Runtime](../agent-harness/README.md)
+→ [Agent](../agent/README.md)
 → [System Design](../system-design/README.md)
 
 不要因为 Agent / RAG 高频就从中间开始，也不要因为某个基础题真人频率低就跳过必要前置。
 
-Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent-harness/review/README.md) · [System Design](../system-design/review/README.md)
+Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent/review/README.md) · [System Design](../system-design/review/README.md)
 
 ---
 
@@ -78,7 +78,7 @@ Read
 → 知道最关键 Failure / Trade-off
 ```
 
-这一遍 **184 个 Curriculum Markdown 全部要过**，不根据面经频率删减。
+这一遍 **185 个 Curriculum Markdown 全部要过**，不根据面经频率删减。
 
 ### Pass 2｜Review Pass：从“看懂”变成“能重建”
 
@@ -233,7 +233,7 @@ Data 阶段结束时，应能回答：
 - S5：`13–14`
 - S6：RAG Review + Interview + Exit Gate
 
-## Week 11｜Agent Harness 前半
+## Week 11｜Agent 前半
 
 - S1：`01–03`
 - S2：`04–06`
@@ -245,7 +245,7 @@ Data 阶段结束时，应能回答：
 ## Week 12｜Agent 收口 + System Design 起步
 
 - S1：Agent `19–21`
-- S2：Agent `22–23`
+- S2：Agent `22–24`
 - S3：Agent Review + Interview + Exit Gate
 - S4：System Design `01–03`
 - S5：System Design `04–06`
@@ -345,7 +345,7 @@ Mental Model
 | 4 | Redis + Vector DB |
 | 5 | LLM + RAG |
 | 6 | Agent 01–12 |
-| 7 | Agent 13–23 + System Design 01–08 |
+| 7 | Agent 13–24 + System Design 01–08 |
 | 8 | System Design 09–19 + 全局 Review / Interview |
 
 如果发现连续两天 Exit / Self-test 大量失败，就退回 13 周节奏，不要继续用时长换“看完速度”。

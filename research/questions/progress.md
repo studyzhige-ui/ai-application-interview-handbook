@@ -29,12 +29,12 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 | 06 | [Vector Database](../../vector-db/README.md) | 16 | 12 | ✅ |
 | 07 | [LLM Foundation（应用工程深度）](../../llm-foundation/README.md) | 14 | 23 | ✅ |
 | 08 | [RAG](../../rag/README.md) | 14 | 29 | ✅ |
-| 09 | [Agent Harness / Runtime](../../agent-harness/README.md) | 23 | 44 | ✅ |
+| 09 | [Agent](../../agent/README.md) | 24 | 44 | ✅ |
 | 10 | [System Design](../../system-design/README.md) | 19 | 24 | ✅ |
 
 十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。
 
-**历史v1.0终审：PASS（历史检查范围）。** 上述历史检查不等于当前全部教学内容重新验收。2026-09-17已针对main的Agent23章完成读者反馈修订，正文讲解、章末训练、工具/上下文/恢复/协议与官方对照已补强；本轮实际验证与局限见[阅读修订](../../roadmap/agent-reader-revision.md)。研究235题与章节总数184保持不变；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
+**历史v1.0终审：PASS（历史检查范围）。** 上述历史检查不等于当前全部教学内容重新验收。2026-09-17已针对main的Agent23章完成读者反馈修订，正文讲解、章末训练、工具/上下文/恢复/协议与官方对照已补强；本轮实际验证与局限见[阅读修订](../../roadmap/agent-reader-revision.md)。研究235题与章节总数185保持不变；详见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
 
 ## Phase 4 Learning & Interview Usage Layer
 

@@ -4,7 +4,7 @@
 
 > Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。
 
-> **v1.0 Final Quality Audit：✅ PASS。** 十板块跨模块 Ownership、术语边界与 184 个 Curriculum Markdown 的最终结论见 [`../../roadmap/final-quality-audit.md`](../../roadmap/final-quality-audit.md)。
+> 旧184篇终审为历史记录；当前185篇中Agent24章的保留核对与实际检查见[修订记录](../../roadmap/agent-reader-revision.md)。研究兼容标识与题目频次保持不变。
 
 | # | Module | Canonical File | ACTIVE | Curriculum | Curriculum Entry | Status |
 |---:|---|---|---:|---:|---|---|
@@ -16,7 +16,7 @@
 | 06 | Vector Database | [vector-db.md](vector-db.md) | 12 | 16 | [README](../../vector-db/README.md) | ✅ |
 | 07 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | 14 | [README](../../llm-foundation/README.md) | ✅ |
 | 08 | RAG | [rag.md](rag.md) | 29 | 14 | [README](../../rag/README.md) | ✅ |
-| 09 | Agent Harness / Runtime | [agent-harness.md](agent-harness.md) | 44 | 23 | [README](../../agent-harness/README.md) | ✅ |
+| 09 | Agent | [agent-harness.md](agent-harness.md) | 44 | 24 | [README](../../agent/README.md) | ✅ |
 | 10 | System Design | [system-design.md](system-design.md) | 24 | 19 | [README](../../system-design/README.md) | ✅ |
 
 **ACTIVE total = 235. Legacy MOVED = 24.**
@@ -27,7 +27,7 @@
 - DB + Cache 一致性 / 通用 Rate Limit / Retry / MQ → AI Backend Engineering；
 - Dense / Sparse / Hybrid / RRF / Rerank / Retrieval Eval → RAG；
 - Embedding / Reranker 模型内部原理 → LLM Foundation；
-- Agent Tool / Context / Memory / Checkpoint → Agent Harness；
+- Agent Tool / Context / Memory / Checkpoint → Agent；
 - 端到端组合与 Scenario Trade-off → System Design。
 
 ## 研究事实不随教材重组改变

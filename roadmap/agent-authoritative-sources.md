@@ -1,6 +1,6 @@
 # Agent Harness｜Authoritative Source Strategy
 
-[← Agent Harness](../agent-harness/README.md) · [↑ Handbook 总目录](../README.md) · [Agent Source Index](../research/agent-sources/README.md)
+[← Agent Harness](../agent/README.md) · [↑ Handbook 总目录](../README.md) · [Agent Source Index](../research/agent-sources/README.md)
 
 > **用途：技术证据策略。** HUMAN-A 决定市场频率；源码 / 官方资料只补成熟 Runtime 事实与工程边界。
 
