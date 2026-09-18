@@ -1,12 +1,22 @@
 # AI Application Engineer｜十板块知识地图
 
-[← Handbook 总目录](../README.md) · [正式学习路线](learning-path.md) · [v1.0 终局质量审计](final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md) · [Canonical Index](../research/questions/module-index.md)
+[← Handbook 总目录](../README.md) · [Coding & Problem Solving](../coding/README.md) · [正式学习路线](learning-path.md) · [v1.0 终局质量审计](final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md) · [Canonical Index](../research/questions/module-index.md)
 
 > 十个一级模块已经全部完成第一版系统教材。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
 
 ## 总路线
 
 [Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
+
+### 横向实践轨道（不计入十模块）
+
+[Coding & Problem Solving](../coding/README.md) 与知识主线并行：
+
+```text
+Programming Fundamentals → Python Coding → ACM → Data Structures → Problem Solving → Hot100 → OA → AI Coding
+```
+
+它不改变十模块的 Primary Ownership / Canonical 统计，只负责把“知道”转成“能写、能跑、能调试、能交付”。Hot100 不是孤立终点，而是从基础阶段按依赖逐步嵌入；见 [Hot100 Curriculum Map](../coding/hot100-map.md)。
 
 ## 总览
 
@@ -130,6 +140,7 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 ## 使用规则
 
 - 学习顺序由知识依赖决定，不按面经频率重排；
+- Coding 是并行实践轨道，不作为第 11 个知识模块制造新的 Canonical Ownership；
 - 真人面经只调整复习权重、真实问法和追问深度；
 - 跨模块问题只在 Primary Module 维护完整机制；
 - 章节数是认知闭环的结果，不是统一 KPI；

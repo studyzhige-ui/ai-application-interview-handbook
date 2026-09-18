@@ -1,6 +1,6 @@
 # Learning Path｜十板块正式学习路线
 
-[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md)
+[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [Coding & Problem Solving](../coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md)
 
 > **状态：✅ 第一版正式学习路线完成。** 这份路线解决“185 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
@@ -24,6 +24,30 @@
 → [System Design](../system-design/README.md)
 
 不要因为 Agent / RAG 高频就从中间开始，也不要因为某个基础题真人频率低就跳过必要前置。
+
+### 并行的 Coding Track
+
+十模块的知识顺序不变，但 Coding 不应该等到 System Design 结束才开始。推荐并行推进：
+
+```text
+学习 Python Foundation 前半
+↕
+Coding 01–03：程序执行 / Python Coding / 基础手写
+↓
+Coding 04：ACM 输入输出
+↓
+Coding 05–06：数据结构 / Problem Solving，与 Python 数据结构知识互相连接
+↓
+Hot100 按前置知识持续解锁
+↓
+Coding 07：Hot100 收口
+↓
+Coding 08：真实 OA
+↓
+Coding 09：AI Coding
+```
+
+原则：**学一点 → 写一点 → 关掉答案重写 → 再进入下一层。** Hot100 适合当前知识点时优先使用，不适合时先用更小的例子；完整映射见 [Hot100 Curriculum Map](../coding/hot100-map.md)。
 
 Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent/review/README.md) · [System Design](../system-design/review/README.md)
 
@@ -62,6 +86,10 @@ Read
 6. **10 min｜Error Log**：只记“刚才真正答错、混淆或说不清”的东西。
 
 时间不足时可以把一个 Session 拆成两天；时间充足时可以连续做两个 Session，但**不能改变章节顺序**。
+
+### Coding Block（建议并行，不计入十模块 Session 数）
+
+完成当天知识学习后，可追加 30–60 分钟 Coding：先从当前章节的小程序 / Hot100 锚点中挑 1–2 个，执行 `Read → Trace → Run → Modify → Rebuild → Explain`。如果基础代码仍无法从空白写出，不用靠增加题量硬冲进度。
 
 ---
 
@@ -260,7 +288,7 @@ Data 阶段结束时，应能回答：
 - S5：System Design Review + Interview + Exit Gate
 - S6：十板块全局白板复盘 + Error Log 清算
 
-最终闭环：
+最终知识闭环：
 
 ```text
 Python
@@ -271,6 +299,17 @@ Python
 → RAG
 → Agent Runtime
 → System Design
+```
+
+并行实践闭环：
+
+```text
+Python Coding
+→ ACM
+→ DSA / Problem Solving
+→ Hot100
+→ OA
+→ AI Coding
 ```
 
 ---
@@ -416,6 +455,9 @@ Interview
 
 Transfer
 = 陌生问题能找到正确 Primary Module，并把多个模块组合起来
+
+Coding
+= 能从空白程序一路完成 ACM / Hot100 / OA，并在陌生代码库中使用 AI 完成可验证修改
 ```
 
 学习路线结束后，下一层才是：

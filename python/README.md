@@ -1,6 +1,6 @@
 # Python Foundation｜Python 语言与运行时基础
 
-[↑ Handbook 总目录](../README.md) · [Learning Path（学习路线）](../roadmap/learning-path.md) · [FastAPI →](../fastapi/README.md)
+[↑ Handbook 总目录](../README.md) · [Coding & Problem Solving（并行实践）](../coding/README.md) · [Learning Path（学习路线）](../roadmap/learning-path.md) · [FastAPI →](../fastapi/README.md)
 
 > **状态：13 章正文已按初学者阅读顺序重写，等待再次通读验收。**  
 > **教材：13 个连续章节，沿用原文件路径** · **冻结研究基线：15 道 HUMAN-A Canonical、15 个独立来源覆盖**  
