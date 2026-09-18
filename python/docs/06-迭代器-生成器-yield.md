@@ -1,241 +1,238 @@
 # 06. 迭代器、生成器与 yield
 
-这组概念经常连着考：**可迭代对象 → 迭代器 → 生成器 → `yield` → 惰性求值**。
+[← 上一章：数据处理工具](05-lambda-推导式-常用内置函数.md) · [模块主页](../README.md) · [下一章：包装行为与资源生命周期 →](07-装饰器-上下文管理器.md)
 
-## 1. 可迭代对象 Iterable
+列表、字符串、字典的存储不同，为什么都能交给 `for`？生成器没有先保存所有结果，为什么也能放进循环？共同点不是它们“长得像列表”，而是它们能参与一个**逐项取值的约定**。
 
-💡 **新手理解**：能放进 `for` 循环里逐个取元素的对象，通常就是可迭代对象。
+本章先从取一次值开始，再解释循环，最后理解一个函数怎样暂停和继续。
 
-常见例子：
-
-- list
-- tuple
-- str
-- dict
-- set
-- range
-- generator
-
-```python
-for x in [1, 2, 3]:
-    print(x)
+```text
+能提供遍历入口的对象：Iterable（可迭代对象）
+→ 保存当前遍历进度的对象：Iterator（迭代器）
+→ iter 获取入口，next 推进一次
+→ for 自动重复这一过程
+→ Generator（生成器）自动保存函数执行进度
+→ yield 产出并暂停，下一次请求再继续
 ```
 
-`iter(obj)` 会尝试获取该对象的迭代器。
+## 1. 可迭代对象与迭代器：数据来源与取值进度
+
+### 1.1 可迭代对象提供“开始遍历”的能力
+
+💡 **新手理解**：能交给 `for` 逐项取值的对象，可以先当作可迭代对象。常见例子是 `list`、`tuple`、`str`、`dict`、`set`、`range` 和生成器。
 
 ```python
-lst = [1, 2, 3]
-it = iter(lst)
+items = [10, 20, 30]          # 列表保存元素，本身不等于“当前读到第几项”的进度
+it = iter(items)             # iter 获取一个用于遍历 items 的迭代器
+print(next(it))             # 10：取出下一项，并推进迭代器的位置
+print(next(it))             # 20：从上次位置继续，而不是重新开始
+print(next(it))             # 30：取完最后一项
 ```
 
----
-
-## 2. 迭代器 Iterator
-
-迭代器提供“一个一个取值”的能力。
+**Iterator（迭代器）** 保存当前取值状态，`next(it)` 请求下一项。没有更多元素时，按协议抛出 **StopIteration（迭代结束异常）**。
 
 ```python
-lst = [10, 20, 30]
-it = iter(lst)
-
-print(next(it))  # 10
-print(next(it))  # 20
-print(next(it))  # 30
+items = [10]                 # 准备一个只有一项的列表
+it = iter(items)             # 取得新的迭代器
+print(next(it))             # 10
+print(next(it, "结束"))     # 结束：第二个参数指定耗尽时的默认返回值
+# next(it)                  # 不给默认值时，耗尽会抛 StopIteration
 ```
 
-再继续：
+这里的结束信号是正常的遍历控制信息，不必把它当成业务故障。
+
+### 1.2 同一个列表可以有两份独立的遍历进度
 
 ```python
-next(it)  # StopIteration
+items = [10, 20, 30]          # 同一份数据
+left = iter(items)            # 第一份进度
+right = iter(items)           # 第二份进度
+print(next(left))            # 10
+print(next(left))            # 20
+print(next(right))           # 10：right 没有跟着 left 前进
 ```
 
-🎯 **面试表达**：迭代器对象支持 `__iter__()` 和 `__next__()` 协议；`next()` 每次取下一个值，没有值时抛出 `StopIteration`。
-
-## 3. `for` 循环背后发生了什么
-
-可以把：
-
-```python
-for x in data:
-    print(x)
+```text
+列表 items [10, 20, 30]
+    ↑              ↑
+迭代器 left     迭代器 right
+进度：已取两项   进度：刚取一项
 ```
 
-近似理解成：
+遍历进度在迭代器里，而不是由一个全局“列表当前下标”控制。对 list，可以再次 `iter(items)` 开始新一轮；这不意味着所有可迭代对象都能重新开始。
 
-```python
-it = iter(data)
-while True:
-    try:
-        x = next(it)
-    except StopIteration:
-        break
-    print(x)
-```
+### 1.3 谁支持 next，谁支持 iter
 
-所以 `for` 能遍历对象，本质上依赖的是迭代协议，而不是必须知道对象内部如何存储。
-
----
-
-## 4. 可迭代对象和迭代器的区别
-
-| 对比 | Iterable | Iterator |
+| 问题 | 可迭代对象 Iterable | 迭代器 Iterator |
 |---|---|---|
-| 能否用于 `for` | ✅ | ✅ |
-| `iter(obj)` | 返回迭代器 | 通常返回自身 |
-| `next(obj)` | 不一定支持 | ✅ |
-| 是否保存遍历状态 | 通常不是重点 | ✅ |
+| 可用于 for 吗 | 可以 | 可以 |
+| `iter(obj)` 做什么 | 获得一个迭代器 | 符合迭代器协议时返回自身 |
+| 能直接 `next(obj)` 吗 | 不一定 | 可以 |
+| 重点职责 | 提供遍历入口 | 提供下一项并保存进度 |
 
 ```python
-lst = [1, 2, 3]
-# next(lst)  # TypeError
-
-it = iter(lst)
-next(it)     # 可以
+items = [1, 2]               # list 是可迭代对象，但不是迭代器
+# next(items)               # 错误：list 本身没有 next 取值协议
+it = iter(items)             # 正确：先拿到迭代器
+print(next(it))             # 1
+print(iter(it) is it)        # True：迭代器的 iter 返回自身，不会重置进度
 ```
+
+因此“每个迭代器都可迭代”成立；“每个可迭代对象都是迭代器”不成立。
+
+## 2. for 做的是协议调度，不关心底层布局
+
+### 2.1 将一段循环拆成几步
+
+```python
+data = [1, 2, 3]             # 数据来源
+for x in data:               # 获取迭代器，反复请求下一项
+    print(x)                 # 对每一项执行循环体
+```
+
+其核心效果可以近似写成：
+
+```python
+data = [1, 2, 3]             # 与上例相同的数据
+it = iter(data)              # 循环开始前获取一次迭代器
+while True:                  # 持续请求下一项
+    try:                     # 只把“取下一项”放进这个异常处理范围
+        x = next(it)         # 成功时把下一项绑定到 x
+    except StopIteration:    # 如果数据源报告已经结束
+        break                # 退出循环
+    print(x)                 # 正常取得元素后执行循环体
+```
+
+`try` 表示尝试执行一段代码，`except 某异常` 表示仅在发生该异常时走处理分支。这里先认识这一个用法，第 09 章再系统讲异常传播。循环体自己的错误不应该被误当作“数据正常结束”，所以把 `print(x)` 放在这个 `try` 之外。
+
+### 2.2 为什么不同对象都能用同一套 for
+
+**Protocol（协议）** 在这里不是网络通信协议，而是一组对象需要遵守的行为约定。迭代器需要提供 `__iter__()` 与 `__next__()`：前者返回自身，后者给出下一项或报告结束。
+
+```text
+for 不直接访问列表内部指针，也不直接解析字符串内存
+→ 它通过 iter / next 请求对象提供的遍历行为
+→ 不同类型在内部用自己的方式产生下一项
+```
+
+字典默认遍历键，字典的 `items()` 提供键值对；集合提供成员但不承诺业务可依赖的顺序。`range` 表示整数范围，不必先保存范围里的每个整数。
+
+某些类型还通过从索引 0 开始的 `__getitem__` 序列协议支持迭代，所以“能遍历”不应简单等同于“源码里必定写了一个 `__iter__`”。入门先掌握 `iter(obj)` 是否能够取得迭代器这一行为。
+
+## 3. 生成器：把函数的执行进度交给解释器保存
+
+### 3.1 普通函数与生成器函数有什么不同
+
+普通函数被调用后执行到 `return`，把一个结果交回。包含 `yield` 的普通函数定义则创建生成器函数：调用它先返回一个生成器对象，函数体在请求下一项时才开始运行。
+
+```python
+def count_up_to(n):          # 定义生成器函数；n 是计数上限
+    i = 1                    # 第一次请求下一项时才执行这一行
+    while i <= n:            # 只要还没超过上限就继续
+        yield i              # 产出当前值并暂停，保存 i 和暂停位置
+        i += 1               # 下一次恢复时从这里继续，让 i 加一
+
+g = count_up_to(3)           # 创建生成器对象，没有一次性运行完函数体
+print(next(g))               # 1：运行到第一次 yield
+print(next(g))               # 2：从暂停位置继续，运行到第二次 yield
+print(next(g))               # 3：再次推进
+print(next(g, "结束"))       # 结束：循环条件不再满足，生成器结束
+```
+
+**Generator（生成器）是迭代器的一种**。你不用自己管理一个类的 `current` 属性，解释器会替生成器保存局部变量、暂停位置等执行状态。
+
+### 3.2 按时间线理解 yield，不把它当成特殊 return
+
+```text
+g = count_up_to(3)  → 只有生成器对象，尚未执行 i = 1
+第一次 next(g)     → i = 1 → yield 1 → 暂停
+第二次 next(g)     → i += 1 → yield 2 → 暂停
+第三次 next(g)     → i += 1 → yield 3 → 暂停
+第四次 next(g)     → i += 1 → 条件不满足 → StopIteration
+```
+
+`yield` 做两件事：**把这一项交给调用者，并保留现场暂停**。`return` 则结束当前函数／生成器的执行。生成器函数里也可以写 `return` 来提前结束；它不是又产出了一项。
+
+```python
+def one_item():              # 因为含 yield，所以是生成器函数
+    yield 1                  # 唯一一个可迭代取得的元素
+    return 99                # 结束生成器；99 不会作为第二个元素被 for 取到
+
+print(list(one_item()))      # [1]，不是 [1, 99]
+```
+
+进阶边界：生成器的 `return` 值可出现在结束异常的 `value` 中，普通 `for` 不把它作为元素消费。首次学习先区分“产出一项”和“整个过程结束”。
+
+### 3.3 用生成器表达式创建相同类型的按需过程
+
+```python
+g = (x * x for x in range(5))  # 创建生成器；需要下一项时才计算对应平方
+print(next(g))                 # 0
+print(next(g))                 # 1
+print(list(g))                 # [4, 9, 16]：只收集尚未消费的剩余项
+```
+
+函数式写法适合有多步逻辑的生产过程，表达式写法适合短小转换。两者都不是“自动保存所有历史结果的列表”。
+
+## 4. 惰性求值：节省的是哪里，代价又在哪里
+
+### 4.1 不保存全部结果，适合流水线
+
+```python
+all_squares = [x * x for x in range(1_000_000)]  # 立即计算并保存所有平方值
+lazy_squares = (x * x for x in range(1_000_000)) # 保存按需计算的过程
+```
+
+**Lazy Evaluation（惰性求值）** 在需要结果时才推进计算。大文件逐行处理、数据流、无限序列和管道式处理，不必为每个阶段都建立一个巨大的中间列表。
+
+```python
+def double_values(values):   # 输入可以是可迭代数据源，不要求必须是 list
+    for value in values:     # 每次只取得一项
+        yield value * 2      # 转换后立刻交给下游
+
+stream = double_values(range(3))  # 构造一个简单的数据处理流水线
+for result in stream:             # 下游按需推动上游
+    print(result)                 # 0、2、4
+```
+
+### 4.2 惰性不代表零内存，也不代表自动更快
+
+生成器仍保存自身状态，并可能持有输入、局部变量或资源引用；若它在内部先读取了整个文件，外面有 `yield` 也不会让那份文件内容自动消失。将生成器转为 `list` 又会保存全部结果。
+
+惰性还意味着一些错误直到消费到相应元素时才出现，而不是创建生成器时就出现。需要反复随机访问结果，就应该评估“存下来”还是“重算”的成本。
+
+### 4.3 耗尽以后不能从头重播同一个生成器
+
+```python
+g = (x for x in range(3))    # 创建一次遍历过程
+print(list(g))               # [0, 1, 2]：已经消费到末尾
+print(list(g))               # []：同一个生成器不会自动重置
+
+fresh = (x for x in range(3)) # 重新创建一份生成器，才获得新的遍历过程
+print(list(fresh))           # [0, 1, 2]
+```
+
+如果只是中途暂停，当然可以继续消费剩余项；“只能消费一次”说的是同一个迭代进度不会自动回到开头，不是说只能调用一次 `next`。
+
+## 5. 从使用协议，到自己实现协议
+
+原来的手写 `Counter` 迭代器知识仍然保留，但具体类实现集中在[第 08 章：面向对象与魔术方法](08-面向对象-魔术方法.md)的“把协议实现出来”部分。这样可以先学清楚 `class`、实例、`self`，再看如何手动保存 `current` 与 `limit`，不必在本章突然猜类语法。
+
+现在先明确手写迭代器必须完成的三件事：
+
+```text
+创建对象时：保存当前位置与终点
+iter(对象)：返回这个迭代器自身
+next(对象)：推进一次；未到终点返回一项，到终点抛 StopIteration
+```
+
+生成器自动完成了大部分状态保存工作。将来的选择不是“哪个名词更高级”，而是：简单按需产出，用生成器最直接；对象需要更多可显式管理的状态和接口时，再考虑手写类。
+
+本章依据：[迭代器与生成器教程](https://docs.python.org/3.14/tutorial/classes.html#iterators)、[迭代器类型协议](https://docs.python.org/3.14/library/stdtypes.html#iterator-types)、[yield 表达式](https://docs.python.org/3.14/reference/expressions.html#yield-expressions)。
 
 ---
 
-## 5. 生成器 Generator
-
-生成器是一种特殊的迭代器。
-
-最常见创建方式有两种：
-
-### 方式一：生成器函数
-
-```python
-def count_up_to(n):
-    i = 1
-    while i <= n:
-        yield i
-        i += 1
-```
-
-调用：
-
-```python
-g = count_up_to(3)
-print(g)          # generator object
-print(next(g))    # 1
-print(next(g))    # 2
-```
-
-### 方式二：生成器表达式
-
-```python
-g = (x * x for x in range(5))
-```
-
----
-
-## 6. `yield` 和 `return` 的区别
-
-### `return`
-
-函数执行到 `return` 就结束：
-
-```python
-def f():
-    return 1
-```
-
-### `yield`
-
-```python
-def f():
-    yield 1
-    yield 2
-    yield 3
-```
-
-每次取值时，函数运行到 `yield` 暂停，并保存当前执行状态；下一次 `next()` 时从暂停的位置继续。
-
-💡 可以把生成器想成“可以暂停和继续的函数”。
-
-| 对比 | `return` | `yield` |
-|---|---|---|
-| 是否结束函数 | ✅ | 暂停 |
-| 是否保存状态 | 不需要 | ✅ |
-| 是否适合连续产出多个值 | ❌ | ✅ |
-| 结果 | 普通返回值 | 生成器迭代过程 |
-
----
-
-## 7. 为什么生成器省内存
-
-列表：
-
-```python
-nums = [x * x for x in range(1_000_000)]
-```
-
-通常会一次构造并保存大量元素。
-
-生成器：
-
-```python
-nums = (x * x for x in range(1_000_000))
-```
-
-结果按需产生，不需要一次保存全部结果。
-
-这叫**惰性求值 / lazy evaluation**。
-
-适合：
-
-- 大文件逐行读取；
-- 大数据流；
-- 流式处理；
-- 无限序列；
-- 管道式处理。
-
----
-
-## 8. 生成器只能消费一次吗？
-
-很多情况下是的。
-
-```python
-g = (x for x in range(3))
-
-print(list(g))  # [0, 1, 2]
-print(list(g))  # []
-```
-
-因为迭代状态已经走到末尾。
-
-⚠️ 这和 list 不同：list 可以重复调用 `iter(list)` 得到新的迭代器。
-
----
-
-## 9. 自定义迭代器
-
-```python
-class Counter:
-    def __init__(self, limit):
-        self.current = 0
-        self.limit = limit
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.current >= self.limit:
-            raise StopIteration
-        self.current += 1
-        return self.current
-```
-
-使用：
-
-```python
-for x in Counter(3):
-    print(x)
-```
-
----
-
-## 10. 高频面试题
+## 6. 🎯 高频面试题
 
 ### Q1：Iterable 和 Iterator 区别？
 
@@ -253,7 +250,16 @@ for x in Counter(3):
 
 产生一个值，并暂停当前生成器函数，保留执行现场；下一次请求值时从上次暂停的位置恢复执行。
 
-## 本章自测
+## 7. ⚠️ 易错点
+
+- 错误：list 既能 for，就能直接 next。正确：先通过 `iter(list对象)` 获得独立迭代器。
+- 错误：`iter(it)` 会让迭代器重新开始。正确：迭代器返回自身，不会自动重置进度。
+- 错误：调用生成器函数就运行完函数体。正确：先得到生成器对象，实际取值才逐步推进。
+- 错误：yield 和 return 都是“返回一个元素”。正确：yield 产出并暂停，return 结束本次生成过程。
+- 错误：生成器第二次 list 还能得到第一次的结果。正确：耗尽后得到空结果，需要重建生成器或自行保存结果。
+- 错误：流式代码永远低内存。正确：检查输入、局部状态与下游是否仍保存大量对象。
+
+## 8. 本章自测
 
 <details>
 <summary>1. Iterable 与 Iterator 的区别是什么？</summary>
