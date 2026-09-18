@@ -7,7 +7,7 @@
 
 ## 快速入口
 
-[十板块知识地图](roadmap/knowledge-map.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md) · [Agent阅读修订](roadmap/agent-reader-revision.md)
+[十板块知识地图](roadmap/knowledge-map.md) · [Coding & Problem Solving](coding/README.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md) · [Agent阅读修订](roadmap/agent-reader-revision.md)
 
 ---
 
@@ -51,6 +51,24 @@ HUMAN-A 真人面经
 
 所有模块标题和名称都可以直接点击进入对应 README。
 
+### 横向实践轨道｜[Coding & Problem Solving](coding/README.md)
+
+Coding 不作为第 11 个同类知识模块计入上表。它与十模块并行，专门训练“把知识真正写成代码”的能力：
+
+```text
+Programming Fundamentals
+→ Python Coding Basics
+→ Basic Coding Exercises
+→ ACM Input / Output
+→ Data Structures
+→ Problem Solving & Algorithms
+→ Hot100 收口
+→ Online Assessment
+→ AI Coding
+```
+
+Hot100 从基础阶段开始按前置知识逐步解锁，而不是等所有理论学完才开始；完整 100 题课程映射见 [Hot100 Curriculum Map](coding/hot100-map.md)。
+
 ---
 
 ## 3. 每个模块现在都使用同一套结构
@@ -77,7 +95,7 @@ interview/
 └─ 面试前速查表
 ```
 
-Python 额外保留 Coding 小题；Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
+Python 额外保留历史 Coding 小题入口；系统化编码训练统一进入 [Coding & Problem Solving](coding/README.md)。Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
 
 ---
 
@@ -128,6 +146,8 @@ Latest S280–S287            pending periodic Canonical mapping / review
 
 仓库提供 13 周标准、8 周加速与 14 天冲刺参考；它们只作为可选执行模板，不改变模块知识依赖和正文职责。
 
+Coding 使用另一条并行实践线：学习 Python 基础的同时开始写小程序，随后进入 ACM、数据结构、算法与 Hot100，再迁移到真实 OA 和 AI Coding；不要等十模块全部学完才第一次认真写代码。
+
 正式教材统一追求：
 
 > **定义能说、机制能解释、工程边界能判断、失败能定位、真人追问能接。**
@@ -139,6 +159,7 @@ Latest S280–S287            pending periodic Canonical mapping / review
 | 文档 | 作用 |
 |---|---|
 | [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
+| [Coding & Problem Solving](coding/README.md) | Python3 编程基本功、ACM、DSA、Hot100、OA 与 AI Coding 横向实践轨道 |
 | [Learning Path](roadmap/learning-path.md) | 可选的标准 / 加速 / 冲刺学习节奏与 Module Exit Gate |
 | [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
 | [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
@@ -158,6 +179,8 @@ python/              fastapi/             backend-engineering/
 mysql/               redis/               vector-db/
 llm-foundation/      rag/                 agent/
 system-design/
+
+coding/              # Programming / ACM / DSA / Hot100 / OA / AI Coding
 
 research/            # HUMAN-A / Canonical / Analysis / Source Index
 roadmap/             # Knowledge Map / Learning Path / Audits / Documentation Rules
