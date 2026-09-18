@@ -3,7 +3,7 @@
 > 面向 **AI Application / AI Agent Engineer** 求职的一套 beginner-first 系统教材、真人面经研究库与面试训练体系。
 
 > **当前状态：✅ 十个正式一级模块第一版教材全部完成** · **Phase 3 Curriculum Build ✅**
-> **研究状态：🟢 Continuous Monitoring · 287 个 HUMAN-A 招聘流程（S001–S287）** · **235 ACTIVE Canonical**
+> **研究状态：🟢 Continuous Monitoring · 288 个 HUMAN-A 招聘流程（S001–S288）** · **235 ACTIVE Canonical**
 
 ## 快速入口
 
@@ -119,11 +119,11 @@ Section                       = 参数 / 变体 / Failure / 追问
 正式市场证据只允许来自 **HUMAN-A：候选人本人第一人称、高信息密度、可核验的真实招聘流程**。
 
 ```text
-Current HUMAN-A             287（S001–S287）
-Formal Batch                 28
+Current HUMAN-A             288（S001–S288）
+Formal Batch                 29
 ACTIVE Canonical            235
 Historical mapping baseline 278 Mapped + 1 VALID-UNMAPPED（S271）
-Latest S280–S287            pending periodic Canonical mapping / review
+Latest S280–S288            pending periodic Canonical mapping / review
 ```
 
 从 2026-09-16 起，Research 层进入 **Continuous Monitoring**：每天滚动发现最近 3 天的新面经，但任何新来源分配 `Sxxx` 前仍必须回读全部历史 Batch 做严格去重。新增市场信号先进入 Research 层，不因单日热点直接修改 Curriculum。

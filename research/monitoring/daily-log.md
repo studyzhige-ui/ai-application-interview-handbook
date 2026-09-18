@@ -246,3 +246,44 @@ Afternoon 重点排除 / 待追源：
 Afternoon 主要观察：**目标 Agent 面试正在把“模型会不会做”进一步压到“副作用与平台契约能否被确定性治理”**。本轮蚂蚁候选连续追写操作风险、Long-task Harness、Framework Kernel vs Extension、AI Native API、参数 / 业务语义错误、Eval Gate 与 Review Agent，说明平台级 Agent Engineering 已把 Safety / Side Effect、API Contract、Validation、Evaluation Gate 和 Framework Extensibility 放在同一条项目验真链上。这个信号目前只来自单日新增证据，先作为 Market Observation；不新增 Canonical、不修改 Curriculum。
 
 Afternoon 盲区：22:00 应优先再次追快手 9/17 AI 应用一 / 二面的稳定原帖与作者 Timeline，并继续补携程 / 顺丰 / 米哈游以及腾讯 / 京东 / 滴滴 / B站 / OPPO / vivo 的目标岗原始第一人称来源；同时对当前蚂蚁 Inbox 候选重新执行最终全历史去重后再决定是否分配 `S288`。
+
+### 22:00 Evening Search + Finalize
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-15 22:00 ～ 2026-09-18 22:00**；主动发现只使用窗口内新发布 / 更新，历史页面仅用于 provenance、作者 Timeline 与全库去重。
+- Baseline / full-history dedup：重新读取当前 `main`、Research README、Inbox、Daily Log、两份 Quality Policy 和最新 `batch-28.md`；随后再次**逐个直接回读 `batch-01.md`～`batch-28.md` 全历史**。确认正式基线为 **28 Batch / 287 HUMAN-A / `S001–S287` / 下一 `S288`** 后才执行最终编号。`main` 在 Afternoon 后由 Coding & Problem Solving 更新前进，晚间以最新 HEAD 为父提交，保留并发教材改动。
+- Search effort：第三轮完成至少 **100 组定向 Query / Query 变体**，重点补快手 9/17 AI 应用一 / 二面、携程 / 顺丰 / 米哈游、腾讯 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米 / 百度，以及 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `AI Native` / `Coding Agent` / `Harness` / `Runtime` / `RAG` 等岗位别名，并继续追作者 Timeline 和原始正文。
+- Verification effort：第三轮实际打开、回读或追源 **25+ 次**近期候选原帖、作者页、企业面经页、职位页或 provenance 入口；搜索摘要、JD、聚合页、笔试和打不开的原帖不替代 HUMAN-A 原始证据。
+- New HUMAN-A after Evening search：**0 个**。第三轮没有发现新的、同时满足最近 72 小时 + 真人面试官 + 候选人第一人称 + 高技术密度 + 目标 Role Scope + 稳定原文 + 全历史去重的独立流程。
+- Final dedup：Afternoon Inbox 的蚂蚁候选重新直接与 `S001–S287` 全历史核对，再次通过最终 Gate；未发现同 URL、同作者、同流程或 5–10+ 连续独特题序的历史重复。
+- Final Batch：创建 `batch-29.md`，将当前唯一通过者分配为 **`S288`**。
+
+Evening 重点复核：
+
+1. **蚂蚁 9/15 一面｜`Decadeqqq`**：稳定原帖保持可直接回读，24 个连续问题和“发面经攒人品 / 被问穿了”现场痕迹完整；作者 Timeline 可继续串起 Shopee、得物、PDD 等本人求职记录。写操作风险 → 完整写链路 → Long-task Harness / Backend API → Framework Kernel vs Hooks / Plugins / Extensions → AI Native API / Zod / 业务语义错误 → Eval Gate / Review Agent 的连续题序仍未在历史库出现。最终归档 `S288`。
+2. **千问技术部 9/16 一面｜同作者 `Decadeqqq`**：原帖稳定、1h15min、Plan / Replan、Tool Calling、Context、Reconnect、Evaluation、Review Agent 等技术密度很高；但本仓库前一日已因岗位主体无法稳定确认属于 AI Application / Agent Role Scope 而排除。晚间未获得新的职位 / 招聘主体证据，因此维持原判断，不因同作者已有合格蚂蚁流程而顺带放行。
+3. **4399 Agent 开发 9/18｜`AAA野生原子弹批发`**：搜索结果与作者主页能确认当天确有 `agent开发` 面试和个人求职 Timeline，但当前稳定入口只暴露前几道问题及“14 道真题”提示，直接原帖详情仍无法稳定回读，无法完整核验 A-grade 技术链；保留为后续 provenance / 正文补齐线索，零贡献。
+4. **快手 9/17 AI 应用一 / 二面**：继续没有补到稳定可直接回读的候选人原帖；企业页 / 搜索片段不能替代原始正文，零贡献。
+5. **水滴 9/17 AI 全栈**：当前可核验的是笔试，不是 Human Interviewer，排除。
+6. **百度 9/17 后端一面**：真人第一人称且问到 AI 应用平台、Agent 与 Workflow，但岗位主体仍是普通后端，Role Scope 排除。
+7. **JD / 企业页 / 聚合 / 题库 / 面经索引 / 标准答案页**：只作为市场旁证或 Recall，不贡献 HUMAN-A。
+
+### Final Summary
+
+- Three-round search effort：**至少 245 组 Query / Query 变体**（Morning ≥60 + Afternoon ≥85 + Evening ≥100）。
+- Three-round verification effort：**至少 70 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试；这是工作量次数，不代表 70 个唯一 URL。
+- Final additions：**1 个 HUMAN-A，`S288`**。
+- Current formal library：**29 Batch / 288 HUMAN-A / `S001–S288`**。
+- Next ID：**`S289`**。
+- Inbox：归档后清空。
+- Canonical / Curriculum：**本日不修改**；`S288` 进入后续 periodic mapping / review。
+
+当日主要市场信号：
+
+1. Agent 安全正在从“输出会不会幻觉”继续下沉到**有副作用写操作、权限、Tool / API Contract 与业务语义 Validation**；
+2. Long-task / Harness 不只考 Loop，而开始与 Backend API、恢复、扩展机制和 Framework Kernel Trade-off 联动；
+3. Eval 从“做过评测”进入 Gate / Metric / Review Agent 可靠性；
+4. Agent / Skill / AI Coding 已明显向普通 Backend、Data、Test 岗扩散，因此 Role Scope Gate 必须比过去更严格；
+5. Foundation / Production Engineering 仍是最新 Agent 能力的承载层，不能被新名词替代。
+
+饱和度 / 盲区：最近 72 小时公开热门层继续表现为**局部饱和 + provenance 成本高**。牛客仍最容易拿到可核验原帖，但新结果大量落在笔试、聚合、内容账号、普通岗位 AI 项目追问或原帖不可稳定回读；腾讯 / 京东 / 滴滴 / B站 / OPPO / vivo 等目标公司以及小红书 / 知乎 / 脉脉 / 独立博客，在严格 Gate 下仍缺新的目标岗高密度第一人称样本。下一轮继续追 4399 9/18 Agent、快手 9/17 AI 应用一 / 二面及跨平台作者源，不降低 Gate。
