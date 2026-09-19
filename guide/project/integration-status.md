@@ -1,12 +1,12 @@
 # Repository Integration Status｜当前仓库整合状态
 
-[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Progress](../research/questions/progress.md)
+[← Handbook 总目录](../../README.md) · [Knowledge Map](../knowledge-map.md) · [Progress](../../interview/canonical/progress.md)
 
 > **状态：✅ 十个一级模块已完成整合与第一版系统教材建设。** 本文件不再作为“Python 迁移进度”日志，而记录当前仓库的一体化状态。
 
 ## 当前十板块
 
-[Python](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector DB](../vector-db/README.md) → [LLM Foundation](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
+[Python](../../curriculum/01-curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-curriculum/02-fastapi/README.md) → [AI Backend Engineering](../../curriculum/03-curriculum/03-backend-engineering/README.md) → [MySQL](../../curriculum/04-curriculum/04-mysql/README.md) → [Redis](../../curriculum/05-curriculum/05-redis/README.md) → [Vector DB](../../curriculum/06-curriculum/06-vector-db/README.md) → [LLM Foundation](../../curriculum/07-curriculum/07-llm-foundation/README.md) → [RAG](../../curriculum/08-curriculum/08-rag/README.md) → [Agent](../../curriculum/09-curriculum/09-agent/README.md) → [System Design](../../curriculum/10-curriculum/10-system-design/README.md)
 
 ## Integration 已完成的内容
 

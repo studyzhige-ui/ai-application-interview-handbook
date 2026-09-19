@@ -1,6 +1,6 @@
 # Documentation Style Guide｜README 与状态描述规范
 
-[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Final Quality Audit](final-quality-audit.md) · [Terminology Glossary](terminology-glossary.md) · [Progress](../research/questions/progress.md)
+[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Final Quality Audit](audits/final-quality-audit.md) · [Terminology Glossary](terminology-glossary.md) · [Progress](../interview/canonical/progress.md)
 
 > 目标：让任何人打开任意一级模块或核心状态页，都能使用同一种信息架构理解“这是什么、现在是什么状态、从哪里来、接下来去哪里”。
 

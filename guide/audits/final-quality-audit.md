@@ -1,10 +1,10 @@
 # Final Quality Audit｜v1.0 终局质量审计
 
-> **当前Agent为24章。** 旧23章/184篇结论为历史记录；本轮185篇结构及Agent保留检查见[修订记录](agent-reader-revision.md)，不以历史PASS替代新版本教学判断。
+> **当前Agent为24章。** 旧23章/184篇结论为历史记录；本轮185篇结构及Agent保留检查见[修订记录](../project/agent-reader-revision.md)，不以历史PASS替代新版本教学判断。
 
-> **2026-09-17读者修订说明：** 先前的完成/深度结论不足以证明初学者可理解性。main的Agent23章已依据实际读者反馈重写，保留章末三件套并补官方/源码过程；本轮验收范围见[阅读修订](agent-reader-revision.md)。历史PASS保留为记录，不替代新的学习效果测试。
+> **2026-09-17读者修订说明：** 先前的完成/深度结论不足以证明初学者可理解性。main的Agent23章已依据实际读者反馈重写，保留章末三件套并补官方/源码过程；本轮验收范围见[阅读修订](../project/agent-reader-revision.md)。历史PASS保留为记录，不替代新的学习效果测试。
 
-[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [术语表](terminology-glossary.md) · [正文深度审计](content-depth-audit.md)
+[← Handbook 总目录](../../README.md) · [十板块知识地图](../knowledge-map.md) · [术语表](../terminology-glossary.md) · [正文深度审计](content-depth-audit.md)
 
 更新日期：2026-09-12
 
@@ -70,7 +70,7 @@ TOTAL                    docs 184     canonical 235
 - 184 篇正文不存在短占位稿被误标完成；
 - 当前状态页不存在 `NOT WRITTEN / 只有骨架 / 正文未写` 等历史口径；
 - Root README / Knowledge Map 的十板块名称全部可点击；
-- 自动生成 `research/analysis/README.md` 的生成源已同步当前导航和“只维护 Research 状态”的边界；
+- 自动生成 `market/analysis/README.md` 的生成源已同步当前导航和“只维护 Research 状态”的边界；
 - System Design 边界补强后重新检查 **729 个仓库内 Markdown 相对链接：0 broken link**。
 
 ### QA Warning 的处理
@@ -258,7 +258,7 @@ System Design
 
 终审发现仓库虽然局部用词已经稳定，但缺少一个跨十板块的正式冲突消解入口。
 
-已新增：[`terminology-glossary.md`](terminology-glossary.md)。
+已新增：[`terminology-glossary.md`](../terminology-glossary.md)。
 
 统一的高风险术语包括：
 
@@ -345,7 +345,7 @@ OpenAI Codex = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 - Review README 明确属于第二遍复习，不重复正文；
 - Interview 层保持比教材更细的问答粒度；
 - Research Home / Canonical / Analysis / Source Index 使用统一状态语言；
-- `research/analysis/README.md` 的生成器源已同步，避免 CI 回滚旧描述；
+- `market/analysis/README.md` 的生成器源已同步，避免 CI 回滚旧描述；
 - `documentation-style-guide.md` 作为后续维护规范。
 
 **PASS。**

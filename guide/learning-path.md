@@ -1,6 +1,6 @@
 # Learning Path｜十板块正式学习路线
 
-[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [Coding & Problem Solving](../coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../research/questions/progress.md)
+[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [Coding & Problem Solving](../practice/practice/coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md)
 
 > **状态：✅ 第一版正式学习路线完成。** 这份路线解决“185 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
@@ -12,16 +12,16 @@
 
 ## 1. 正式学习顺序永远不变
 
-[Python Foundation](../python/README.md)
-→ [FastAPI](../fastapi/README.md)
-→ [AI Backend Engineering](../backend-engineering/README.md)
-→ [MySQL](../mysql/README.md)
-→ [Redis](../redis/README.md)
-→ [Vector Database](../vector-db/README.md)
-→ [LLM Foundation](../llm-foundation/README.md)
-→ [RAG](../rag/README.md)
-→ [Agent](../agent/README.md)
-→ [System Design](../system-design/README.md)
+[Python Foundation](../curriculum/01-curriculum/01-python/README.md)
+→ [FastAPI](../curriculum/02-curriculum/02-fastapi/README.md)
+→ [AI Backend Engineering](../curriculum/03-curriculum/03-backend-engineering/README.md)
+→ [MySQL](../curriculum/04-curriculum/04-mysql/README.md)
+→ [Redis](../curriculum/05-curriculum/05-redis/README.md)
+→ [Vector Database](../curriculum/06-curriculum/06-vector-db/README.md)
+→ [LLM Foundation](../curriculum/07-curriculum/07-llm-foundation/README.md)
+→ [RAG](../curriculum/08-curriculum/08-rag/README.md)
+→ [Agent](../curriculum/09-curriculum/09-agent/README.md)
+→ [System Design](../curriculum/10-curriculum/10-system-design/README.md)
 
 不要因为 Agent / RAG 高频就从中间开始，也不要因为某个基础题真人频率低就跳过必要前置。
 
@@ -47,9 +47,9 @@ Coding 08：真实 OA
 Coding 09：AI Coding
 ```
 
-原则：**学一点 → 写一点 → 关掉答案重写 → 再进入下一层。** Hot100 适合当前知识点时优先使用，不适合时先用更小的例子；完整映射见 [Hot100 Curriculum Map](../coding/hot100-map.md)。
+原则：**学一点 → 写一点 → 关掉答案重写 → 再进入下一层。** Hot100 适合当前知识点时优先使用，不适合时先用更小的例子；完整映射见 [Hot100 Curriculum Map](../practice/coding/hot100-map.md)。
 
-Review 快速入口：[Python](../python/review/README.md) · [FastAPI](../fastapi/review/README.md) · [AIBE](../backend-engineering/review/README.md) · [MySQL](../mysql/review/README.md) · [Redis](../redis/review/README.md) · [Vector DB](../vector-db/review/README.md) · [LLM](../llm-foundation/review/README.md) · [RAG](../rag/review/README.md) · [Agent](../agent/review/README.md) · [System Design](../system-design/review/README.md)
+Review 快速入口：[Python](../curriculum/01-python/review/README.md) · [FastAPI](../curriculum/02-fastapi/review/README.md) · [AIBE](../curriculum/03-backend-engineering/review/README.md) · [MySQL](../curriculum/04-mysql/review/README.md) · [Redis](../curriculum/05-redis/review/README.md) · [Vector DB](../curriculum/06-vector-db/review/README.md) · [LLM](../curriculum/07-llm-foundation/review/README.md) · [RAG](../curriculum/08-rag/review/README.md) · [Agent](../curriculum/09-agent/review/README.md) · [System Design](../curriculum/10-system-design/review/README.md)
 
 ---
 
