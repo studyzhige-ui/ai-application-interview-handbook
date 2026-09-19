@@ -1,6 +1,6 @@
 # FastAPI｜官方技术资料索引
 
-[← FastAPI](../../curriculum/02-fastapi/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../../market/README.md)
+[← FastAPI](../../curriculum/02-curriculum/02-fastapi/README.md) · [↑ Handbook 总目录](../../README.md) · [Market 首页](../../market/README.md)
 
 > **用途：技术事实校准。** 官方资料只说明当前框架机制，不改变 HUMAN-A 面试频率。
 

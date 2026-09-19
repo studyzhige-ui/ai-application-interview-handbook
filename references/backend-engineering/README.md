@@ -1,6 +1,6 @@
 # AI Backend Engineering｜权威工程资料索引
 
-[← AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../../market/README.md)
+[← AI Backend Engineering](../../curriculum/03-curriculum/03-backend-engineering/README.md) · [↑ Handbook 总目录](../../README.md) · [Market 首页](../../market/README.md)
 
 > **用途：Production Engineering 技术事实校准。** Google SRE / AWS / Kafka / K8s / OTel / OAuth / OWASP 等不计入 HUMAN-A Source Count。
 

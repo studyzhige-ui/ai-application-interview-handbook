@@ -6,9 +6,9 @@
 
 当前索引：
 
-- [Agent Runtime / Harness](agent/README.md)
-- [FastAPI](fastapi/README.md)
-- [AI Backend Engineering](backend-engineering/README.md)
+- [Agent Runtime / Harness](curriculum/09-agent/README.md)
+- [FastAPI](curriculum/02-fastapi/README.md)
+- [AI Backend Engineering](curriculum/03-backend-engineering/README.md)
 
 证据来源可以包括：
 

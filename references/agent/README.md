@@ -1,6 +1,6 @@
 # Agent｜源码与权威资料索引
 
-[← Agent Harness](../../curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../../market/README.md)
+[← Agent Harness](../../curriculum/09-curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Market 首页](../../market/README.md)
 
 > **用途：Tier B/C 技术证据。** 只补 Runtime 实现与工程原则，不改变 HUMAN-A Source Count。
 
@@ -8,7 +8,7 @@
 
 更新日期：2026-09-11
 
-> 本目录是 **已完成的 Agent Harness / Runtime 24章教材**的证据底座，也服务后续版本维护。它不创建新的 HUMAN-A 面试证据，也不改变 `research/questions/agent-harness.md` 中任何 Source Count。
+> 本目录是 **已完成的 Agent Harness / Runtime 24章教材**的证据底座，也服务后续版本维护。它不创建新的 HUMAN-A 面试证据，也不改变 `interview/canonical/agent-harness.md` 中任何 Source Count。
 
 ## 1. 四层证据体系
 
@@ -16,9 +16,9 @@
 
 来源：
 
-- `research/questions/agent-harness.md`
-- `research/analysis/follow-up-chains.md`
-- `research/interviews/batch-01.md` ～ `batch-26.md`
+- `interview/canonical/agent-harness.md`
+- `market/analysis/follow-up-chains.md`
+- `market/interviews/batch-01.md` ～ `batch-26.md`
 
 负责回答：
 
@@ -58,7 +58,7 @@ Tier D 不是新的事实来源，而是把 A+B+C 抽象成适合初学者的稳
 
 能力入口：[`runtime-capability-map.md`](runtime-capability-map.md)
 
-正式教材：[Agent教材](../../curriculum/09-agent/README.md)
+正式教材：[Agent教材](../../curriculum/09-curriculum/09-agent/README.md)
 
 ---
 
