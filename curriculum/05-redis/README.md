@@ -2,9 +2,9 @@
 
 [← MySQL](../04-mysql/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Vector Database →](../06-vector-db/README.md)
 
-> **状态：✅ 第一版系统教材完成**  
+> **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：24 个连续知识小板块** · **HUMAN-A Canonical：19** · **独立来源覆盖：69**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **质量门：✅ Granularity / Coverage / Content Depth**
 
 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → **Redis** → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
-当前模块角色：**Data / 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。**
+模块角色：**Data / 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -107,7 +107,7 @@ Key / Data Structure / Encoding → Runtime / TTL / Eviction → Cache Failure /
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **19 道 Primary Canonical、69 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **19 道 Primary Canonical、69 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -128,7 +128,7 @@ Key / Data Structure / Encoding → Runtime / TTL / Eviction → Cache Failure /
 - DB + Cache 一致性、通用 Rate Limit 与 MQ 选型归 AI Backend Engineering。
 - Agent Checkpoint / Resume 的执行语义归 Agent Harness。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -162,7 +162,7 @@ Key / Data Structure / Encoding → Runtime / TTL / Eviction → Cache Failure /
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–24 连续

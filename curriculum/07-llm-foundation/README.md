@@ -2,9 +2,9 @@
 
 [← Vector Database](../06-vector-db/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [RAG →](../08-rag/README.md)
 
-> **状态：✅ 第一版系统教材完成**  
+> **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：14 个连续知识小板块** · **HUMAN-A Canonical：23** · **独立来源覆盖：82**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **质量门：✅ Granularity / Coverage / Content Depth**
 
 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → **LLM Foundation（应用工程深度）** → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
-当前模块角色：**Model Foundation / 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。**
+模块角色：**Model Foundation / 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -94,7 +94,7 @@ Token / Context → Transformer / Attention / Position → Generation / Decoding
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **23 道 Primary Canonical、82 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **23 道 Primary Canonical、82 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -115,7 +115,7 @@ Token / Context → Transformer / Attention / Position → Generation / Decoding
 - Chunk / Hybrid / RRF / Retrieval Evaluation 归 RAG。
 - Context Compaction / Memory / Tool Protocol 归 Agent Harness；Provider Retry 归 AIBE。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -149,7 +149,7 @@ Token / Context → Transformer / Attention / Position → Generation / Decoding
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–14 连续

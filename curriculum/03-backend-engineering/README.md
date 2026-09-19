@@ -2,9 +2,9 @@
 
 [← FastAPI](../02-fastapi/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [MySQL →](../04-mysql/README.md)
 
-> **状态：✅ 第一版系统教材完成**  
+> **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：22 个连续知识小板块** · **HUMAN-A Canonical：39** · **独立来源覆盖：125**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **质量门：✅ Granularity / Coverage / Content Depth**
 
 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → **AI Backend Engineering** → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
-当前模块角色：**Foundation / 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。**
+模块角色：**Foundation / 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -111,7 +111,7 @@ Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Id
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **39 道 Primary Canonical、125 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **39 道 Primary Canonical、125 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -132,7 +132,7 @@ Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Id
 - MySQL / Redis / Vector DB 的内部机制仍归各自数据模块。
 - 完整端到端架构组合与容量方案进入 System Design。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -167,7 +167,7 @@ Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Id
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–22 连续

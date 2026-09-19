@@ -2,9 +2,9 @@
 
 [← AI Backend Engineering](../03-backend-engineering/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Redis →](../05-redis/README.md)
 
-> **状态：✅ 第一版系统教材完成**  
+> **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：23 个连续知识小板块** · **HUMAN-A Canonical：26** · **独立来源覆盖：55**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **质量门：✅ Granularity / Coverage / Content Depth**
 
 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → **MySQL** → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
-当前模块角色：**Data / 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。**
+模块角色：**Data / 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -103,7 +103,7 @@ SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolati
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **26 道 Primary Canonical、55 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **26 道 Primary Canonical、55 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -124,7 +124,7 @@ SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolati
 - DB + Cache 最终一致性的完整机制归 AI Backend Engineering。
 - Redis Lock、TTL、Cluster 归 Redis；跨组件架构选择归 System Design。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -158,7 +158,7 @@ SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolati
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–23 连续

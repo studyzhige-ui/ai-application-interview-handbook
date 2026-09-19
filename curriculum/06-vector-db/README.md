@@ -2,9 +2,9 @@
 
 [← Redis](../05-redis/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [LLM Foundation（应用工程深度） →](../07-llm-foundation/README.md)
 
-> **状态：✅ 第一版系统教材完成**  
+> **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：16 个连续知识小板块** · **HUMAN-A Canonical：12** · **独立来源覆盖：37**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **质量门：✅ Granularity / Coverage / Content Depth**
 
 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → **Vector Database** → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
-当前模块角色：**Data / 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。**
+模块角色：**Data / 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -96,7 +96,7 @@ Vector Space / Similarity → Exact vs ANN → HNSW / IVF / Quantization / Index
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **12 道 Primary Canonical、37 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **12 道 Primary Canonical、37 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -117,7 +117,7 @@ Vector Space / Similarity → Exact vs ANN → HNSW / IVF / Quantization / Index
 - Dense / Sparse / Hybrid / RRF / Retrieval Eval 归 RAG。
 - Vector DB 负责高效可靠地存和找向量，不负责完整 Retrieval Pipeline。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -151,7 +151,7 @@ Vector Space / Similarity → Exact vs ANN → HNSW / IVF / Quantization / Index
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–16 连续
