@@ -548,19 +548,6 @@
       "career_watch_url": "https://www.manus.im/"
     },
     {
-      "company": "LiblibAI",
-      "mode": "portal_only",
-      "portal": "https://www.liblib.art/us/joinus",
-      "official_root": "https://www.liblib.art/us/joinus",
-      "browser_probe": true,
-      "job_list_url": "https://www.liblib.art/us/joinus",
-      "no_public_campus_when_empty": true,
-      "current_campus_board": false,
-      "campus_entry_status": "NO_PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": null,
-      "career_watch_url": "https://www.liblib.art/us/joinus"
-    },
-    {
       "company": "无问芯穹/Infini-AI",
       "mode": "feishu_direct",
       "portal": "https://infinigence.jobs.feishu.cn/088717",
