@@ -9,7 +9,7 @@ on:
     paths:
       - 'tools/sync_official_2027_agent_jobs.py'
       - 'tools/fetch_xiaomi_2027.mjs'
-      - 'tools/fetch_bytedance_2027.mjs'
+      - 'tools/fetch_bytedance_2027.mjs'\n      - 'tools/fetch_dynamic_official_jobs.mjs'
       - 'market/jobs/official-2027-campus-sources.json'
       - '.github/workflows/sync-official-2027-agent-jobs.yml'
 
@@ -34,7 +34,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependency
-        run: python -m pip install --disable-pip-version-check requests
+        run: python -m pip install --disable-pip-version-check requests\n          npm install --no-save playwright@1.55.0\n          npx playwright install chromium --with-deps
 
       - name: Pull Xiaomi official campus ATSX
         run: node tools/fetch_xiaomi_2027.mjs /tmp/xiaomi-2027-campus.json
