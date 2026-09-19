@@ -84,24 +84,6 @@
       "status": "BROWSER_OK"
     },
     {
-      "company": "LiblibAI",
-      "root_portal": "https://www.liblib.art/us/joinus",
-      "seed_portal": "https://www.liblib.art/us/joinus",
-      "pages": [
-        {
-          "page_url": "https://www.liblib.art/us/joinus",
-          "final_url": "https://www.liblib.art/us/joinus",
-          "has2027": false,
-          "cycle_evidence": [],
-          "next": []
-        }
-      ],
-      "endpoints": [],
-      "jobs": [],
-      "has2027": false,
-      "status": "BROWSER_NO_2027_EVIDENCE"
-    },
-    {
       "company": "Manus",
       "root_portal": "https://www.manus.im/",
       "seed_portal": "https://www.manus.im/",
@@ -7070,5 +7052,7 @@
       "has2027": false,
       "status": "BROWSER_NO_2027_EVIDENCE"
     }
-  ]
+  ],
+  "source_count": 41,
+  "note": "Historical browser snapshot retained for first-party evidence; LiblibAI removed from target company set."
 }
