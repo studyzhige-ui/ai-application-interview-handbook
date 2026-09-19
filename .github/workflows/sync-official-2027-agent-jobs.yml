@@ -14,6 +14,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: official-2027-agent-campus-sync
+  cancel-in-progress: true
+
 jobs:
   sync:
     if: github.actor != 'github-actions[bot]'
@@ -43,4 +47,5 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json
           git commit -m 'market: sync official 2027 Agent campus discovery'
+          git pull --rebase origin ${{ github.ref_name }}
           git push origin HEAD:${{ github.ref_name }}
