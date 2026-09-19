@@ -367,16 +367,20 @@ async function processSource(browser,src){
     const allJobs=uniqueJobs(collector);
     const registryVerified=src.verified_2027_project===true;
     const has2027=registryVerified || pageResults.some(x=>x.has2027) || allJobs.some(j=>/2027/.test(j.cycle_evidence||""));
-    const jobs=allJobs.filter(j=>registryVerified || /2027/.test(j.cycle_evidence||""));
+    // Retrieval and cohort proof are independent. Always preserve every job
+    // obtained from the first-party board; the downstream 2027 filter decides
+    // whether a job may enter the formal 2027 library.
+    const jobs=allJobs;
     const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
     const listScanComplete=pageResults.some(x=>x.list_scan_complete===true);
     const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k)) || listScanComplete;
     const pageErrors=pageResults.filter(x=>x.error).length;
     let status;
-    if(has2027 && fullKeywordSearch && jobs.length) status="BROWSER_ENUMERATED";
-    else if(has2027 && fullKeywordSearch && !jobs.length) status="BROWSER_ENUMERATED_ZERO";
+    if(fullKeywordSearch && jobs.length) status="BROWSER_ENUMERATED";
+    else if(fullKeywordSearch && !jobs.length && has2027) status="BROWSER_ENUMERATED_ZERO";
+    else if(fullKeywordSearch && !jobs.length && pageErrors===0) status="BROWSER_NO_PUBLIC_2027";
     else if(has2027) status="BROWSER_2027_NEEDS_ADAPTER";
-    else if(pageErrors===0) status="BROWSER_NO_PUBLIC_2027";
+    else if(pageErrors===0) status="BROWSER_NO_2027_EVIDENCE";
     else status="BROWSER_NO_2027_EVIDENCE";
     console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
     return {
