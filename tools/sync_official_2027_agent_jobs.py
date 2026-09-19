@@ -156,8 +156,16 @@ def is_hard_excluded(job: Job, excludes: list[str]) -> bool:
 
 
 def campusish(job: Job) -> bool:
-    s = f"{job.category} {job.cycle_evidence} {job.title}".lower()
-    return any(k in s for k in ["校招", "校园", "graduate", "campus", "2027", "应届"])
+    s = " ".join([
+        job.category, job.cycle_evidence, job.title,
+        job.description, job.requirements,
+    ]).lower()
+    return any(k in s for k in [
+        "校招", "校园", "应届", "毕业生", "毕业", "2027",
+        "graduate", "campus", "new grad", "new-grad", "new graduate",
+        "fresh grad", "fresh graduate", "graduates welcome",
+        "new graduates welcome", "应届生优先", "欢迎应届",
+    ])
 
 
 def clean(s: str, limit: int = 1600) -> str:
@@ -1419,10 +1427,10 @@ def main() -> int:
         ]
 
     def target_matches(jobs: list[Job], src: dict) -> list[Job]:
-        # Current-campus policy:
-        # - on an explicit official campus/new-grad board, the live board itself is the time gate;
-        # - on a mixed/general Careers board, each job must still carry campus/new-grad evidence.
-        # Graduation year text is metadata only and is never required.
+        # Official recruiting policy:
+        # - on an explicit campus/new-grad board, the live board itself is the time gate;
+        # - on a mixed official Careers/ATS board, the JD itself must carry new-grad/campus evidence.
+        # This lets every company be enumerated without turning senior social roles into campus JDs.
         explicit_campus_board = bool(src.get("current_campus_board"))
         matches = [
             j for j in jobs
@@ -1512,7 +1520,7 @@ def main() -> int:
                 (bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete")))
                 and txt(dyn.get("status")) == "BROWSER_ENUMERATED"
             )
-            if raw_jobs and browser_terminal:
+            if browser_terminal:
                 browser_jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
                 matches = target_matches(browser_jobs, src)
                 return SourceResult(
@@ -1553,11 +1561,11 @@ def main() -> int:
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     lines = [
-        "# 当前校招｜官方 Agent / AI 应用工程岗位自动发现结果",
+        "# 官方招聘｜Agent / AI 应用工程岗位自动发现结果",
         "",
         f"> Generated: **{now}**",
         ">",
-        "> 仅调用公司官方招聘接口 / 官方招聘入口。对于动态站，浏览器从 registry 中记录的 **official_root** 出发，跟随官网自己的当前校招职位入口并监听第一手 XHR/JSON。该文件是 discovery layer；年份只作备注，不作为筛选 Gate，最终 Active JD 只需确认官方校招链接当前有效且职责主体不是算法/模型训练。",
+        "> 仅调用公司官方招聘接口 / 官方招聘入口。campus 类型直接枚举校园职位池；official_recruiting 类型枚举公司当前官方职位池，再以 JD 中的校招/应届/欢迎应届证据筛入正式候选。动态站监听第一手 XHR/JSON，二手来源不贡献 JD。",
         "",
         "## 官方源执行状态",
         "",
