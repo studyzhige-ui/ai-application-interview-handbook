@@ -2,6 +2,9 @@ name: Sync official 2027 Agent campus jobs
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Discover official 2027 recruitment portals"]
+    types: [completed]
   schedule:
     - cron: '0 1 * * 2,5'
   push:
@@ -24,23 +27,21 @@ concurrency:
 
 jobs:
   sync:
-    if: github.actor != 'github-actions[bot]'
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: main
 
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          python -m pip install --disable-pip-version-check requests
-          npm install --no-save playwright@1.55.0
-          npx playwright install chromium --with-deps
+        run: python -m pip install --disable-pip-version-check requests
 
       - name: Pull Xiaomi official campus ATSX
         continue-on-error: true
@@ -69,8 +70,8 @@ jobs:
           cp market/jobs/official-2027-feishu-discovery.generated.json /tmp/official-2027-feishu-discovery.generated.json
           cp market/jobs/official-2027-moka-discovery.generated.json /tmp/official-2027-moka-discovery.generated.json
 
-          git fetch origin ${{ github.ref_name }}
-          git reset --hard origin/${{ github.ref_name }}
+          git fetch origin main
+          git reset --hard origin/main
 
           cp /tmp/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.md
           cp /tmp/official-2027-agent-jobs.generated.json market/jobs/official-2027-agent-jobs.generated.json
@@ -87,4 +88,4 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json market/jobs/official-2027-moka-discovery.generated.json
           git commit -m 'market: sync official 2027 Agent campus discovery'
-          git push origin HEAD:${{ github.ref_name }}
+          git push origin HEAD:main
