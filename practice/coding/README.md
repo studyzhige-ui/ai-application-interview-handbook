@@ -1,6 +1,6 @@
 # Coding & Problem Solving｜从会看代码到能独立完成笔试与 AI Coding
 
-[← Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [Hot100 映射表](hot100-map.md) · [Python Foundation](../python/README.md)
+[← Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Hot100 映射表](hot100-map.md) · [Python Foundation](../../curriculum/01-python/README.md)
 
 > **状态：V1 ✅**
 >
@@ -146,7 +146,7 @@ Hot100 的前置知识明显超出当前阶段
 
 两个目录会互相引用，但职责不同。
 
-### [python/](../python/README.md) 负责“语言是什么”
+### [python/](../../curriculum/01-python/README.md) 负责“语言是什么”
 
 例如：
 
