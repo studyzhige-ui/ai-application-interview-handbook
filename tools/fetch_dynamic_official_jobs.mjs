@@ -350,7 +350,8 @@ async function processSource(browser,src){
   const endpointLog=[];
   const visited=new Set();
   const root=src.official_root || src.portal;
-  const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : []), ...(src.extra_portals||[])];
+  const jobList=src.job_list_url || src.portal;
+  const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
   try{
     while(queue.length && visited.size<6){
@@ -358,7 +359,9 @@ async function processSource(browser,src){
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog);
       if(pr){
         pageResults.push(pr);
-        for(const n of pr.next||[]) if(!visited.has(n)) queue.push(n);
+        // Do not crawl arbitrary site navigation during recurring collection.
+        // The fixed job_list_url is the contract; pagination/search stays inside runPage().
+        // Additional official lists must be declared explicitly in extra_job_list_urls.
       }
     }
     const allJobs=uniqueJobs(collector);
@@ -377,7 +380,7 @@ async function processSource(browser,src){
     else status="BROWSER_NO_2027_EVIDENCE";
     console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
     return {
-      company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,
+      company:src.company,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,
       endpoints:endpointLog.slice(0,120),jobs,has2027,status,
       search_terms_attempted:[...searched],search_terms_expected:SEARCH_TERMS,
       full_keyword_search:fullKeywordSearch,list_scan_complete:listScanComplete,
