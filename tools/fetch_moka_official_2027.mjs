@@ -1,111 +1,204 @@
 #!/usr/bin/env node
 /**
- * Replay first-party Moka/outer ATS request contracts captured from official
- * company career pages. Contracts come only from official browser discovery.
+ * Enumerate first-party Moka-family ATS tenants discovered from official company career pages.
+ *
+ * The public jobs/v2 and website/job endpoints return an AES-CBC envelope.
+ * We bootstrap aesIv + cookies from the official portal HTML, decrypt the
+ * complete job pool, then fetch full detail for each job. No third-party job
+ * data is ever imported.
  */
 import fs from "node:fs";
+import { createDecipheriv } from "node:crypto";
 
 const CFG=JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.json","utf8"));
 const BROWSER=JSON.parse(fs.readFileSync("market/jobs/official-2027-browser-discovery.generated.json","utf8"));
 const OUT=process.argv[2]||"market/jobs/official-2027-moka-discovery.generated.json";
-const TERMS=CFG.strong_agent_keywords||CFG.agent_keywords||[];
 
-function text(v){
-  if(v==null)return "";
-  if(typeof v==="string"||typeof v==="number")return String(v).trim();
-  if(Array.isArray(v))return v.map(text).filter(Boolean).join(" / ");
-  if(typeof v==="object")return Object.values(v).map(text).filter(Boolean).join(" / ");
-  return "";
+function htmlDecode(s){
+  return (s||"")
+    .replace(/&quot;/g,'"').replace(/&lt;/g,"<").replace(/&gt;/g,">")
+    .replace(/&#x27;/g,"'").replace(/&#39;/g,"'").replace(/&amp;/g,"&");
 }
-function findArray(node,depth=0){
-  if(depth>8||node==null)return [];
-  if(Array.isArray(node)){
-    if(node.some(x=>x&&typeof x==="object"&&(x.id||x.jobId||x.name||x.title)))return node;
-    for(const x of node){const a=findArray(x,depth+1);if(a.length)return a;}
-    return [];
+function htmlToText(s){
+  return htmlDecode(s||"")
+    .replace(/<br\s*\/?>/gi,"\n")
+    .replace(/<\/(p|div|li|h[1-6]|tr|td|th|ul|ol|section)>/gi,"\n")
+    .replace(/<[^>]+>/g,"").replace(/&nbsp;/gi," ")
+    .replace(/\u00a0/g," ").replace(/[ \t]+\n/g,"\n")
+    .replace(/\n{3,}/g,"\n\n").trim();
+}
+function parseInit(html){
+  const m=html.match(/<input[^>]*id=["']init-data["'][^>]*value=["']([^"']+)["']/i)
+       || html.match(/<input[^>]*value=["']([^"']+)["'][^>]*id=["']init-data["']/i);
+  if(!m)return null;
+  try{return JSON.parse(htmlDecode(m[1]));}catch{return null;}
+}
+function splitJD(text){
+  const t=htmlToText(text);
+  const m=t.match(/\n\s*(?:任职要求|岗位要求|职位要求|Requirements?\s*[:：]?)/i);
+  if(!m)return {description:t,requirements:""};
+  const i=m.index||0;
+  return {description:t.slice(0,i).trim(),requirements:t.slice(i).trim()};
+}
+function decryptEnvelope(env,aesIv){
+  if(!env?.data||!env?.necromancer||!aesIv)return null;
+  try{
+    const key=Buffer.from(env.necromancer,"utf8");
+    const iv=Buffer.from(aesIv,"utf8");
+    const d=createDecipheriv("aes-128-cbc",key,iv);
+    const plain=Buffer.concat([d.update(Buffer.from(env.data,"base64")),d.final()]).toString("utf8");
+    return JSON.parse(plain);
+  }catch{return null;}
+}
+function endpointContract(result){
+  const eps=(result.endpoints||[]).filter(e=>
+    e.status===200 && e.method==="POST" && /\/api\/outer\/ats-apply\/website\/jobs\/v2/.test(e.url)
+  );
+  if(!eps.length)return null;
+  for(const e of eps){
+    try{
+      const body=JSON.parse(e.post_data||"{}");
+      if(body.orgId&&body.siteId)return {endpoint:e.url,body};
+    }catch{}
   }
-  if(typeof node==="object"){
-    for(const k of ["jobs","jobList","list","items","data","rows","records","result"]){
-      if(k in node){const a=findArray(node[k],depth+1);if(a.length)return a;}
-    }
-    for(const v of Object.values(node)){const a=findArray(v,depth+1);if(a.length)return a;}
-  }
+  return null;
+}
+function officialPage(result,endpoint){
+  const origin=new URL(endpoint).origin;
+  const pages=(result.pages||[]).map(p=>p.final_url||p.page_url).filter(Boolean);
+  return pages.find(u=>{try{return new URL(u).origin===origin && /job|campus|apply|recruit/i.test(u);}catch{return false;}})
+      || pages.find(u=>{try{return new URL(u).origin===origin;}catch{return false;}})
+      || result.seed_portal || result.root_portal;
+}
+async function bootstrap(url){
+  const headers={
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36",
+    "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language":"zh-CN,zh;q=0.9,en;q=0.8"
+  };
+  let r=await fetch(url,{headers,redirect:"manual"});
+  const cookies=[];
+  const raw=r.headers.get("set-cookie");
+  if(raw)cookies.push(...raw.split(/,(?=[^;,]+=)/).map(x=>x.split(";")[0].trim()).filter(Boolean));
+  const cookie=cookies.join("; ");
+  r=await fetch(url,{headers:{...headers,Cookie:cookie},redirect:"follow"});
+  if(!r.ok)throw new Error("portal HTTP "+r.status);
+  const html=await r.text();
+  const init=parseInit(html);
+  if(!init?.aesIv)throw new Error("Moka init-data/aesIv missing");
+  return {init,cookie,finalUrl:r.url};
+}
+async function apiCall(url,body,boot,referer){
+  const origin=new URL(url).origin;
+  const r=await fetch(url,{method:"POST",headers:{
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36",
+    "Accept":"application/json,*/*","Content-Type":"application/json",
+    "Origin":origin,"Referer":referer,"Cookie":boot.cookie
+  },body:JSON.stringify(body)});
+  if(!r.ok)throw new Error("HTTP "+r.status+" "+url);
+  const env=await r.json();
+  const decoded=decryptEnvelope(env,boot.init.aesIv);
+  if(!decoded)throw new Error("cannot decrypt "+url);
+  if(decoded.code!==undefined && decoded.code!==0)throw new Error("upstream code="+decoded.code+" "+(decoded.msg||""));
+  return decoded;
+}
+function jobsFromDecoded(x){
+  const d=x?.data||x||{};
+  if(Array.isArray(d.jobs))return d.jobs;
+  if(Array.isArray(d.list))return d.list;
+  if(Array.isArray(d.items))return d.items;
   return [];
 }
-function getTitle(j){return text(j.name||j.title||j.jobName||j.positionName||j.jobTitle);}
-function getId(j){return text(j.id||j.jobId||j.positionId||j.uuid);}
-function normalize(company,base,j,keyword,cycle){
-  const id=getId(j);
-  const url=text(j.jobUrl||j.detailUrl||j.url||j.shareUrl) || (id ? base+"#/job/"+id : base);
+function totalFromDecoded(x){
+  const d=x?.data||x||{};
+  return Number(d?.jobStats?.total ?? d?.total ?? d?.count ?? 0);
+}
+function cityText(j){
+  const xs=j?.locations||[];
+  const out=[];
+  for(const x of xs){
+    const v=x?.cityName||x?.country||x?.address||"";
+    if(v&&!out.includes(v))out.push(v);
+  }
+  return out.join(" / ");
+}
+function normalize(company,j,api,portal,cycle){
+  const id=String(j?.id||j?.jobId||"");
+  const jd=splitJD(j?.jobDescription||j?.description||"");
   return {
-    company,title:getTitle(j),job_id:id,
-    location:text(j.location||j.locations||j.city||j.cityName||j.workLocation),
-    category:text(j.recruitType||j.jobType||j.type)||"官方校招",
-    department:text(j.department||j.departmentName||j.category||j.jobCategory),
-    description:text(j.description||j.jobDescription||j.desc||j.responsibility||j.jobDuty),
-    requirements:text(j.requirement||j.requirements||j.qualification||j.jobRequirement),
-    official_url:url,official_api:"",cycle_evidence:cycle||"",matched_keywords:[keyword]
+    company,title:j?.title||j?.name||"",job_id:id,location:cityText(j),
+    category:j?.commitment||(j?.hireMode===1?"全职":j?.hireMode===2?"实习":""),
+    department:j?.department?.name||j?.zhineng?.name||"",
+    description:jd.description,requirements:jd.requirements,
+    official_url:portal,official_api:api,cycle_evidence:cycle||"",
+    matched_keywords:[]
   };
 }
-function mergeJobs(jobs){
+function merge(existing,incoming){
   const m=new Map();
-  for(const j of jobs){
-    const key=j.job_id || (j.title+"|"+j.location);
-    if(!key)continue;
-    if(!m.has(key))m.set(key,j);
-    else{
-      const o=m.get(key);
-      for(const k of j.matched_keywords||[])if(!o.matched_keywords.includes(k))o.matched_keywords.push(k);
-      if((j.description.length+j.requirements.length)>(o.description.length+o.requirements.length)){
-        j.matched_keywords=o.matched_keywords;m.set(key,j);
-      }
-    }
+  for(const j of [...existing,...incoming]){
+    const k=j.job_id||j.title+"|"+j.location;
+    if(!k)continue;
+    const old=m.get(k);
+    if(!old||(j.description.length+j.requirements.length)>(old.description.length+old.requirements.length))m.set(k,j);
   }
   return [...m.values()];
 }
-async function replay(company,result){
-  const eps=(result.endpoints||[]).filter(e=>e.status===200 && /\/api\/outer\/ats-apply\/website\/jobs\/v2/.test(e.url) && e.method==="POST");
-  if(!eps.length)return null;
-  let template;
-  try{template=JSON.parse(eps[0].post_data||"{}");}catch{return null;}
-  const api=new URL(eps[0].url); api.search="";
-  const base=(result.pages||[]).map(p=>p.final_url||p.page_url).find(u=>u&&/jobs|campus|apply|recruit/i.test(u)) || result.seed_portal || result.root_portal;
+async function enumerateOne(result){
+  const contract=endpointContract(result);
+  if(!contract)return null;
+  const listUrl=new URL(contract.endpoint); listUrl.search="";
+  const portal=officialPage(result,listUrl.href);
+  const boot=await bootstrap(portal);
+  const template={...contract.body};
+  const orgId=template.orgId;
+  const siteId=String(template.siteId);
+  const locale=template.locale||"zh-CN";
+  const site=template.site||(/campus/i.test(portal)?"campus":"social");
   const cycle=[...new Set((result.pages||[]).flatMap(p=>p.cycle_evidence||[]))].join(" / ");
-  const jobs=[];
-  let requests=0;
-  for(const keyword of TERMS){
-    let offset=0;
-    for(let page=0;page<50;page++){
-      const body={...template,keyword,offset,limit:100,needStat:true};
-      const res=await fetch(api,{method:"POST",headers:{
-        "User-Agent":"Mozilla/5.0 Chrome/126 Safari/537.36",
-        "Accept":"application/json, text/plain, */*","Content-Type":"application/json;charset=UTF-8",
-        "Origin":api.origin,"Referer":base
-      },body:JSON.stringify(body)});
-      requests++;
-      if(!res.ok)throw new Error(company+" Moka HTTP "+res.status);
-      const payload=await res.json();
-      const rows=findArray(payload);
-      for(const j of rows){
-        const n=normalize(company,base,j,keyword,cycle);n.official_api=api.href;jobs.push(n);
-      }
-      let total=0;
-      const candidates=[payload?.data?.total,payload?.data?.count,payload?.total,payload?.count,payload?.data?.pagination?.total];
-      for(const v of candidates){const n=Number(v||0);if(n>total)total=n;}
-      offset+=rows.length;
-      if(!rows.length||rows.length<100||(total&&offset>=total))break;
-    }
+  let offset=0,total=0,jobs=[];
+  for(let page=0;page<100;page++){
+    const body={...template,orgId,siteId,limit:50,offset,needStat:true,jobIdTopList:[],keyword:"",customFields:template.customFields||{},site,locale};
+    const decoded=await apiCall(listUrl.href,body,boot,portal);
+    const rows=jobsFromDecoded(decoded);
+    if(page===0)total=totalFromDecoded(decoded);
+    jobs=merge(jobs,rows.map(j=>normalize(result.company,j,listUrl.href,portal,cycle)));
+    offset+=rows.length;
+    if(!rows.length||rows.length<50||(total&&offset>=total))break;
   }
-  return {company,status:"OK",api:api.href,base,requests,jobs:mergeJobs(jobs),cycle_evidence:cycle};
+  const detailUrl=listUrl.origin+"/api/outer/ats-apply/website/job";
+  const enriched=[];
+  for(let i=0;i<jobs.length;i+=8){
+    const chunk=jobs.slice(i,i+8);
+    const vals=await Promise.all(chunk.map(async j=>{
+      if(!j.job_id)return j;
+      try{
+        const dec=await apiCall(detailUrl,{orgId,siteId,jobId:j.job_id,locale},boot,portal);
+        const raw=dec?.data?.job||dec?.data||dec?.job||null;
+        if(!raw||typeof raw!=="object")return j;
+        return normalize(result.company,raw,detailUrl,portal,cycle);
+      }catch{return j;}
+    }));
+    enriched.push(...vals);
+  }
+  return {
+    company:result.company,status:"OK",portal,api:listUrl.href,detail_api:detailUrl,
+    fetched:jobs.length,total:total||jobs.length,cycle_evidence:cycle,jobs:merge([],enriched)
+  };
 }
+
 const results=[];
 for(const r of BROWSER.results||[]){
   try{
-    const x=await replay(r.company,r);
-    if(x){results.push(x);console.log("moka "+x.company+": jobs="+x.jobs.length+" requests="+x.requests);}
+    const x=await enumerateOne(r);
+    if(!x)continue;
+    results.push(x);
+    console.log("moka "+x.company+": jobs="+x.jobs.length+" total="+x.total);
   }catch(e){
-    results.push({company:r.company,status:"BLOCKED",jobs:[],error:String(e).slice(0,400)});
-    console.log("moka "+r.company+": ERROR "+e);
+    if(endpointContract(r)){
+      results.push({company:r.company,status:"BLOCKED",jobs:[],error:String(e).slice(0,500)});
+      console.log("moka "+r.company+": ERROR "+e);
+    }
   }
 }
-fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),keywords:TERMS,results},null,2)+"\n","utf8");
+fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),results},null,2)+"\n","utf8");
