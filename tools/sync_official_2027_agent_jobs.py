@@ -25,7 +25,9 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "market/jobs/official-2027-campus-sources.json"
 OUT_MD = ROOT / "market/jobs/official-2027-agent-jobs.generated.md"
-OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"\nBROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
+OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
+BROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
+FEISHU_CACHE = ROOT / "market/jobs/official-2027-feishu-discovery.generated.json"
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36"
 HEADERS = {
@@ -832,72 +834,111 @@ def main() -> int:
     all_matches: list[Job] = []
     results: list[SourceResult] = []
 
+    dynamic_by_company: dict[str, dict] = {}
+    if BROWSER_CACHE.exists():
+        try:
+            browser_payload = json.loads(BROWSER_CACHE.read_text(encoding="utf-8"))
+            dynamic_by_company = {
+                x.get("company"): x
+                for x in (browser_payload.get("results") or [])
+                if x.get("company")
+            }
+        except Exception as e:
+            print(f"browser discovery cache parse warning: {e}", file=sys.stderr)
+
+    feishu_by_company: dict[str, dict] = {}
+    if FEISHU_CACHE.exists():
+        try:
+            feishu_payload = json.loads(FEISHU_CACHE.read_text(encoding="utf-8"))
+            feishu_by_company = {
+                x.get("company"): x
+                for x in (feishu_payload.get("results") or [])
+                if x.get("company")
+            }
+        except Exception as e:
+            print(f"feishu discovery cache parse warning: {e}", file=sys.stderr)
+
+    def to_jobs(company: str, raw_jobs: list[dict], fallback_url: str, fallback_api: str) -> list[Job]:
+        return [
+            Job(
+                company,
+                txt(j.get("title")),
+                txt(j.get("job_id")),
+                txt(j.get("location")),
+                txt(j.get("category") or "官方动态招聘"),
+                txt(j.get("department")),
+                txt(j.get("description")),
+                txt(j.get("requirements")),
+                txt(j.get("official_url") or fallback_url),
+                txt(j.get("official_api") or fallback_api),
+                txt(j.get("cycle_evidence")),
+            )
+            for j in raw_jobs
+        ]
+
+    def target_matches(jobs: list[Job]) -> list[Job]:
+        matches = [
+            j for j in jobs
+            if campusish(j)
+            and is_agent_related(j, keywords)
+            and (not engineering_signals or looks_engineering(j, engineering_signals))
+            and not is_hard_excluded(j, excludes)
+        ]
+        seen = set()
+        uniq: list[Job] = []
+        for j in matches:
+            key = (j.company, j.job_id or j.title, j.location)
+            if key in seen:
+                continue
+            seen.add(key)
+            uniq.append(j)
+        return uniq
+
     def collect(src: dict) -> tuple[SourceResult, list[Job]]:
         company = src["company"]
         mode = src["mode"]
+
+        feishu = feishu_by_company.get(company) or {}
+        if feishu.get("status") == "OK" and (feishu.get("jobs") or []):
+            jobs = to_jobs(company, feishu.get("jobs") or [], src["portal"], "FEISHU:" + src["portal"])
+            matches = target_matches(jobs)
+            return SourceResult(
+                company, "feishu_official", src["portal"],
+                "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
+                len(jobs), len(matches)
+            ), matches
+
         if mode == "portal_only":
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
-            jobs = [
-                Job(
-                    company,
-                    txt(j.get("title")),
-                    txt(j.get("job_id")),
-                    txt(j.get("location")),
-                    txt(j.get("category") or "官方动态校招"),
-                    txt(j.get("department")),
-                    txt(j.get("description")),
-                    txt(j.get("requirements")),
-                    txt(j.get("official_url") or src["portal"]),
-                    txt(j.get("official_api") or ("BROWSER:" + src["portal"])),
-                    txt(j.get("cycle_evidence")),
-                )
-                for j in raw_jobs
-            ]
-            matches = [
-                j for j in jobs
-                if campusish(j)
-                and is_agent_related(j, keywords)
-                and (not engineering_signals or looks_engineering(j, engineering_signals))
-                and not is_hard_excluded(j, excludes)
-            ]
-            seen = set()
-            uniq = []
-            for j in matches:
-                key = (j.company, j.job_id or j.title, j.location)
-                if key in seen:
-                    continue
-                seen.add(key)
-                uniq.append(j)
-            status = txt(dyn.get("status")) or "BROWSER_NOT_RUN"
-            fetched = len(raw_jobs)
-            error = ""
-            if status == "BROWSER_NO_2027_EVIDENCE":
-                error = "官方页面已浏览，但未取得可验证的2027项目/岗位证据；不能解释为0岗位"
-            elif status == "BROWSER_OK_0_MATCH":
-                error = "官方2027页面已浏览，但通用解析器未提取到目标岗位；需人工/专用适配复核后才可判0"
-            return SourceResult(company, "browser_dynamic", src["portal"], status, fetched, len(uniq), error), uniq
+            jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
+            matches = target_matches(jobs)
+            raw_status = txt(dyn.get("status"))
+            has_2027 = bool(dyn.get("has2027"))
+            if raw_jobs:
+                status = "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES"
+                error = ""
+            elif raw_status == "BROWSER_NO_2027_EVIDENCE":
+                status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
+                error = "官方根站未取得公开2027项目证据" if status == "NO_PUBLIC_2027_PROJECT" else "官网浏览完成但未能证明无公开2027项目；继续适配"
+            elif raw_status in ("BROWSER_OK_0_MATCH",):
+                status = "BLOCKED"
+                error = "发现2027官方页面，但通用解析器未能完整枚举岗位池；不能判0"
+            elif raw_status == "BROWSER_ERROR":
+                status = "BLOCKED"
+                error = txt(dyn.get("error")) or "浏览器枚举失败"
+            else:
+                status = "BLOCKED"
+                error = "官方根入口存在，但尚未完成可靠的2027岗位池枚举"
+            return SourceResult(company, "browser_dynamic", src["portal"], status, len(raw_jobs), len(matches), error), matches
         fetcher = FETCHERS.get(mode)
         if not fetcher:
             return SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0), []
         try:
             jobs = fetcher(src)
-            matches = [
-                j for j in jobs
-                if campusish(j)
-                and is_agent_related(j, keywords)
-                and (not engineering_signals or looks_engineering(j, engineering_signals))
-                and not is_hard_excluded(j, excludes)
-            ]
-            seen = set()
-            uniq = []
-            for j in matches:
-                key = (j.company, j.job_id or j.title, j.location)
-                if key in seen:
-                    continue
-                seen.add(key)
-                uniq.append(j)
-            return SourceResult(company, mode, src["portal"], "OK", len(jobs), len(uniq)), uniq
+            uniq = target_matches(jobs)
+            status = "ENUMERATED_WITH_MATCHES" if uniq else "ENUMERATED_ZERO_MATCHES"
+            return SourceResult(company, mode, src["portal"], status, len(jobs), len(uniq)), uniq
         except Exception as e:
             # Dedicated adapter failure never means "0 jobs". If browser discovery
             # succeeded from the company's official root / ATS chain, use it as a
@@ -905,33 +946,13 @@ def main() -> int:
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
             if raw_jobs:
-                browser_jobs = [
-                    Job(
-                        company,
-                        txt(j.get("title")),
-                        txt(j.get("job_id")),
-                        txt(j.get("location")),
-                        txt(j.get("category") or "官方动态校招"),
-                        txt(j.get("department")),
-                        txt(j.get("description")),
-                        txt(j.get("requirements")),
-                        txt(j.get("official_url") or src["portal"]),
-                        txt(j.get("official_api") or ("BROWSER:" + src["portal"])),
-                        txt(j.get("cycle_evidence")),
-                    )
-                    for j in raw_jobs
-                ]
-                matches = [
-                    j for j in browser_jobs
-                    if campusish(j)
-                    and is_agent_related(j, keywords)
-                    and (not engineering_signals or looks_engineering(j, engineering_signals))
-                    and not is_hard_excluded(j, excludes)
-                ]
+                browser_jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
+                matches = target_matches(browser_jobs)
                 return SourceResult(
                     company, "browser_fallback", src["portal"],
-                    "BROWSER_FALLBACK_OK", len(raw_jobs), len(matches),
-                    f"dedicated adapter failed: {type(e).__name__}: {e}"[:700],
+                    "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
+                    len(raw_jobs), len(matches),
+                    f"dedicated adapter failed; official browser fallback used: {type(e).__name__}: {e}"[:700],
                 ), matches
             discovered = discover_api_candidates(src["portal"])
             diagnostic = f"{type(e).__name__}: {e}"
