@@ -124,17 +124,19 @@
     {
       "company": "华为",
       "mode": "huawei_api",
-      "portal": "https://career.huawei.com/cn/",
+      "portal": "https://career.huawei.com/cn/campus-recruitment",
       "api": "https://career.huawei.com/reccampportal/portal5/position/api/position/queryPositions",
-      "official_root": "https://career.huawei.com/cn/",
-      "browser_probe": true
+      "official_root": "https://career.huawei.com/cn/campus-recruitment",
+      "browser_probe": true,
+      "note": "华为官方校园招聘页明确 2027 届应届生毕业窗口及 2027 招聘启动；现有专用 API 若失效必须由浏览器从此根页重新发现。"
     },
     {
       "company": "小红书",
       "mode": "portal_only",
-      "portal": "https://job.xiaohongshu.com/campus",
+      "portal": "https://campus.xiaohongshu.com/",
       "official_root": "https://job.xiaohongshu.com/campus",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "小红书官方校园页明确 2027 校招毕业窗口 2026-09~2027-08，并给出 campus.xiaohongshu.com PC 投递入口。"
     },
     {
       "company": "字节跳动",
@@ -197,9 +199,10 @@
     {
       "company": "荣耀",
       "mode": "portal_only",
-      "portal": "https://career.hihonor.com/",
-      "official_root": "https://career.hihonor.com/",
-      "browser_probe": true
+      "portal": "https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html",
+      "official_root": "https://www.honor.com/cn/career/",
+      "browser_probe": true,
+      "note": "荣耀官网 career 页面明确 2027 校招全球启动；应届生入口由官网直接跳转 career.honor.com。"
     },
     {
       "company": "科大讯飞",
@@ -236,8 +239,9 @@
       "company": "DeepSeek",
       "mode": "portal_only",
       "portal": "https://talent.deepseek.com/",
-      "official_root": "https://talent.deepseek.com/",
-      "browser_probe": true
+      "official_root": "https://www.deepseek.com/",
+      "browser_probe": true,
+      "note": "DeepSeek 公司官网 Join Us/Careers 指向 talent.deepseek.com；从公司官网验证 provenance 后枚举人才站。"
     },
     {
       "company": "月之暗面/Kimi",
@@ -267,15 +271,16 @@
       "mode": "portal_only",
       "portal": "https://www.stepfun.com/",
       "official_root": "https://www.stepfun.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "官方主站当前未公开稳定招聘入口；只有从官网重新发现并验证后才能升级 ATS，不能使用二手 Moka 线索。"
     },
     {
       "company": "百川智能",
       "mode": "portal_only",
-      "portal": "https://careers.baichuan-inc.com/",
-      "official_root": "https://careers.baichuan-inc.com/",
+      "portal": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
+      "official_root": "https://careers.baichuan-inc.com/origin-program",
       "browser_probe": true,
-      "note": "百川智能官方 Careers 站，含“源点计划”校园人才项目。"
+      "note": "百川官方“源点计划”页面覆盖 2025-2027 应届毕业生，并直接跳转该飞书招聘应届项目。"
     },
     {
       "company": "零一万物/01.AI",
@@ -288,9 +293,10 @@
     {
       "company": "商汤科技",
       "mode": "portal_only",
-      "portal": "https://www.sensetime.com/cn/join-us",
-      "official_root": "https://www.sensetime.com/cn/join-us",
-      "browser_probe": true
+      "portal": "https://hr-jobs.sensetime.com/edu/",
+      "official_root": "https://hr.sensetime.com/campus/",
+      "browser_probe": true,
+      "note": "商汤官方 2027 校招页 hr.sensetime.com/campus/，官方投递进入 hr-jobs.sensetime.com/edu/；项目参数由浏览器运行时重新发现。"
     },
     {
       "company": "生数科技",
@@ -302,23 +308,26 @@
     {
       "company": "硅基流动",
       "mode": "portal_only",
-      "portal": "https://siliconflow.cn/",
-      "official_root": "https://siliconflow.cn/",
-      "browser_probe": true
+      "portal": "https://www.siliconflow.cn/",
+      "official_root": "https://www.siliconflow.cn/",
+      "browser_probe": true,
+      "note": "官方主站当前未发现公开 Career/Campus 职位入口；由官网巡检判定是否开放 2027 项目。"
     },
     {
       "company": "面壁智能",
       "mode": "portal_only",
       "portal": "https://www.modelbest.cn/",
       "official_root": "https://www.modelbest.cn/",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "官网当前公开 career@modelbest.cn；若无公开 2027 职位项目，应归类 NO_PUBLIC_2027_PROJECT，不从二手源补录。"
     },
     {
       "company": "Manus",
       "mode": "portal_only",
-      "portal": "https://manus.im/",
-      "official_root": "https://manus.im/",
-      "browser_probe": true
+      "portal": "https://www.manus.im/",
+      "official_root": "https://www.manus.im/",
+      "browser_probe": true,
+      "note": "官方站当前未发现公开 2027 招聘项目入口；由官网巡检判定，禁止二手招聘页补录。"
     },
     {
       "company": "LiblibAI",
@@ -330,9 +339,10 @@
     {
       "company": "无问芯穹/Infini-AI",
       "mode": "portal_only",
-      "portal": "https://www.infini-ai.com/",
-      "official_root": "https://www.infini-ai.com/",
-      "browser_probe": true
+      "portal": "https://www.infinigence-ai.com/",
+      "official_root": "https://www.infinigence-ai.com/",
+      "browser_probe": true,
+      "note": "修正公司官网为 infinigence-ai.com。官网当前公开 HR 联系方式；是否存在公开 2027 项目由浏览器/官网内容判定。"
     },
     {
       "company": "昆仑万维/天工",
