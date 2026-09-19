@@ -109,7 +109,7 @@
       "company": "哔哩哔哩",
       "mode": "bilibili_api",
       "portal": "https://jobs.bilibili.com/campus/positions",
-      "api": "https://jobs.bilibili.com/api/positions",
+      "api": "https://jobs.bilibili.com/api/campus/position/positionList",
       "official_root": "https://jobs.bilibili.com/campus/positions",
       "browser_probe": true
     },
@@ -136,7 +136,7 @@
       "company": "华为",
       "mode": "huawei_api",
       "portal": "https://career.huawei.com/cn/campus-recruitment",
-      "api": "https://career.huawei.com/reccampportal/portal5/position/api/position/queryPositions",
+      "api": "https://career.huawei.com/reccampportal/services/portal/portalpub/getJob/newHr/page/{pageSize}/{page}",
       "official_root": "https://career.huawei.com/cn/campus-recruitment",
       "browser_probe": true,
       "note": "华为官方校园招聘页明确 2027 届应届生毕业窗口及 2027 招聘启动；现有专用 API 若失效必须由浏览器从此根页重新发现。 官方校园招聘根页已确认2027项目。",
@@ -144,12 +144,13 @@
     },
     {
       "company": "小红书",
-      "mode": "portal_only",
-      "portal": "https://campus.xiaohongshu.com/",
+      "mode": "xiaohongshu_2027_api",
+      "portal": "https://job.xiaohongshu.com/campus",
       "official_root": "https://job.xiaohongshu.com/campus",
       "browser_probe": true,
       "note": "小红书官方校园页明确 2027 校招毕业窗口 2026-09~2027-08，并给出 campus.xiaohongshu.com PC 投递入口。 官方校园页明确2027校园招聘/毕业时间窗口。",
-      "verified_2027_project": true
+      "verified_2027_project": true,
+      "api": "https://job.xiaohongshu.com/websiterecruit/position/pageQueryPosition"
     },
     {
       "company": "字节跳动",
@@ -174,14 +175,15 @@
     },
     {
       "company": "蚂蚁集团",
-      "mode": "portal_only",
+      "mode": "ant_2027_api",
       "portal": "https://talent.antgroup.com/campus-full-list",
       "official_root": "https://talent.antgroup.com/campus-full-list",
       "browser_probe": true,
       "extra_portals": [
         "https://talent.antgroup.com/campus",
         "https://talent.antgroup.com/campus-list"
-      ]
+      ],
+      "api": "https://hrcareersweb.antgroup.com/api/campus/position/search"
     },
     {
       "company": "京东",
@@ -205,11 +207,12 @@
     },
     {
       "company": "vivo",
-      "mode": "portal_only",
+      "mode": "vivo_2027_api",
       "portal": "https://hr-campus.vivo.com/campus/jobs",
       "official_root": "https://hr-campus.vivo.com/",
       "browser_probe": true,
-      "note": "vivo 官方校园招聘独立站 hr-campus.vivo.com；2027 届岗位必须从 campus/jobs 站内枚举。"
+      "note": "vivo 官方校园招聘独立站 hr-campus.vivo.com；2027 届岗位必须从 campus/jobs 站内枚举。",
+      "api": "https://hr-campus.vivo.com/api/Jobad/GetJobAdPageList"
     },
     {
       "company": "金山办公/WPS",
@@ -222,35 +225,38 @@
     },
     {
       "company": "荣耀",
-      "mode": "portal_only",
+      "mode": "honor_2027_api",
       "portal": "https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html",
       "official_root": "https://www.honor.com/cn/career/",
       "browser_probe": true,
       "note": "荣耀官网 career 页面明确 2027 校招全球启动；应届生入口由官网直接跳转 career.honor.com。 官方 career 页面明确荣耀2027校招。",
-      "verified_2027_project": true
+      "verified_2027_project": true,
+      "api": "https://career.honor.com/wecruit/positionInfo/listPosition/SU60eea919bef57c1023f6fe78"
     },
     {
       "company": "科大讯飞",
-      "mode": "portal_only",
+      "mode": "iflytek_2027_api",
       "portal": "https://iflytek.zhiye.com/",
       "official_root": "https://campus.iflytek.com/",
       "browser_probe": true,
       "note": "campus.iflytek.com 官方校招入口当前重定向至 iflytek.zhiye.com 官方招聘站。 campus.iflytek.com 官方入口重定向到 iflytek.zhiye.com；额外扫描官方职位列表 /5/jobs。",
       "extra_portals": [
         "https://iflytek.zhiye.com/5/jobs"
-      ]
+      ],
+      "api": "https://iflytek.zhiye.com/api/Jobad/GetJobAdPageList"
     },
     {
       "company": "携程",
-      "mode": "portal_only",
-      "portal": "https://careers.ctrip.com/",
+      "mode": "ctrip_2027_api",
+      "portal": "https://careers.ctrip.com/#/campus",
       "official_root": "https://campus.ctrip.com/",
       "browser_probe": true,
       "note": "campus.ctrip.com 官方入口当前重定向至 careers.ctrip.com。 官方 campus 页面明确携程集团2027届应届校招生。",
       "extra_portals": [
         "https://careers.ctrip.com/#/campus"
       ],
-      "verified_2027_project": true
+      "verified_2027_project": true,
+      "api": "https://careers.ctrip.com/api/hrrecruit/getJobAd"
     },
     {
       "company": "360",
