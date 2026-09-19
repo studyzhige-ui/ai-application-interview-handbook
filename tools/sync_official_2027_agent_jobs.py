@@ -1396,12 +1396,16 @@ def main() -> int:
             for j in raw_jobs
         ]
 
-    def target_matches(jobs: list[Job]) -> list[Job]:
-        # Current-campus policy: the registered live first-party campus/new-grad
-        # pool itself is the time gate. Year text is metadata only.
+    def target_matches(jobs: list[Job], src: dict) -> list[Job]:
+        # Current-campus policy:
+        # - on an explicit official campus/new-grad board, the live board itself is the time gate;
+        # - on a mixed/general Careers board, each job must still carry campus/new-grad evidence.
+        # Graduation year text is metadata only and is never required.
+        explicit_campus_board = bool(src.get("current_campus_board"))
         matches = [
             j for j in jobs
-            if is_agent_related(j, keywords)
+            if (explicit_campus_board or campusish(j))
+            and is_agent_related(j, keywords)
             and (not engineering_signals or looks_engineering(j, engineering_signals))
             and not is_hard_excluded(j, excludes)
             and "实习" not in (j.title + " " + j.category).lower()
@@ -1424,7 +1428,7 @@ def main() -> int:
         feishu = feishu_by_company.get(company) or {}
         if feishu.get("status") == "OK":
             jobs = to_jobs(company, feishu.get("jobs") or [], src["portal"], "FEISHU:" + src["portal"])
-            matches = target_matches(jobs)
+            matches = target_matches(jobs, src)
             return SourceResult(
                 company, "feishu_official", src["portal"],
                 "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
@@ -1434,7 +1438,7 @@ def main() -> int:
         moka = moka_by_company.get(company) or {}
         if moka.get("status") == "OK":
             jobs = to_jobs(company, moka.get("jobs") or [], src["portal"], txt(moka.get("api")) or ("MOKA:" + src["portal"]))
-            matches = target_matches(jobs)
+            matches = target_matches(jobs, src)
             return SourceResult(
                 company, "moka_official", src["portal"],
                 "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
@@ -1445,7 +1449,7 @@ def main() -> int:
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
             jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
-            matches = target_matches(jobs)
+            matches = target_matches(jobs, src)
             raw_status = txt(dyn.get("status"))
             full_search = bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete"))
             if raw_status == "BROWSER_ENUMERATED":
@@ -1472,7 +1476,7 @@ def main() -> int:
             return SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0), []
         try:
             jobs = fetcher(src)
-            uniq = target_matches(jobs)
+            uniq = target_matches(jobs, src)
             status = "ENUMERATED_WITH_MATCHES" if uniq else "ENUMERATED_ZERO_MATCHES"
             return SourceResult(company, mode, src["portal"], status, len(jobs), len(uniq)), uniq
         except Exception as e:
@@ -1487,7 +1491,7 @@ def main() -> int:
             )
             if raw_jobs and browser_terminal:
                 browser_jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
-                matches = target_matches(browser_jobs)
+                matches = target_matches(browser_jobs, src)
                 return SourceResult(
                     company, "browser_fallback", src["portal"],
                     "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
