@@ -95,6 +95,7 @@
 ```text
 research/
 ├── interviews/          # S001–S288 正式 HUMAN-A / Batch 01–29
+├── jobs/                # AI Application / Agent 非算法岗位 JD 市场库
 ├── quality/             # Source / Role Scope Gate
 ├── monitoring/          # Inbox + 当日三次检索日志
 ├── questions/           # Canonical Ownership
@@ -106,6 +107,7 @@ research/
 
 ## 7. 研究与教材的边界
 
+- Jobs JD Market → 市场正在招聘什么、岗位边界、技能栈与职位变化；
 - HUMAN-A → 市场频率 / 真实问法 / 追问深度 / 新趋势；
 - 官方资料 / 源码 → 技术事实 / Production 边界；
 - Curriculum → beginner-first 的完整知识演进。
