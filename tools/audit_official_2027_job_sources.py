@@ -35,66 +35,61 @@ def main() -> int:
     for src in reg.get("sources", []):
         company = src["company"]
         n, b, f, m = ns.get(company, {}), bs.get(company, {}), fs.get(company, {}), ms.get(company, {})
-        state = src.get("campus_entry_status", "")
+        scope = src.get("board_scope") or ("campus" if src.get("current_campus_board") else "official_recruiting")
+        search_url = src.get("search_url") or src.get("job_list_url") or ""
+        contract = "READY" if src.get("official_root") and search_url and src.get("job_list_url") == search_url else "BROKEN"
         browser_jobs = len(b.get("jobs") or [])
         ats_jobs = max(len(f.get("jobs") or []), len(m.get("jobs") or []))
         raw = b.get("status", "")
+        full_search = bool(b.get("full_keyword_search")) or bool(b.get("list_scan_complete"))
 
-        if state == "NO_PUBLIC_CAMPUS_BOARD":
-            contract = "WATCH_ONLY"
-            retrieval = "NO_PUBLIC_CAMPUS_BOARD"
+        if n.get("status") in terminal:
+            retrieval = "ENUMERATED"
+        elif raw in {"BROWSER_ENUMERATED", "BROWSER_ENUMERATED_ZERO"} and full_search:
+            retrieval = "ENUMERATED"
+        elif (browser_jobs or ats_jobs) and full_search:
+            retrieval = "ENUMERATED"
+        elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []) and full_search:
+            retrieval = "ENUMERATED"
+        elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []):
+            retrieval = "LIST_REACHABLE"
         else:
-            contract = "READY" if src.get("official_root") and src.get("campus_search_url") and src.get("job_list_url") else "BROKEN"
-            if n.get("status") in terminal:
-                retrieval = "ENUMERATED"
-            elif raw in {"BROWSER_ENUMERATED","BROWSER_ENUMERATED_ZERO","BROWSER_OK","BROWSER_OK_0_MATCH"}:
-                retrieval = "ENUMERATED"
-            elif browser_jobs or ats_jobs:
-                retrieval = "ENUMERATED"
-            elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []):
-                retrieval = "LIST_REACHABLE"
-            else:
-                retrieval = "BLOCKED"
+            retrieval = "BLOCKED"
 
         rows.append(dict(
-            company=company, state=state, contract=contract, retrieval=retrieval,
+            company=company, scope=scope, contract=contract, retrieval=retrieval,
             fetched=int(n.get("fetched") or 0), matched=int(n.get("matched") or 0),
-            root=src.get("official_root") or "",
-            jobs=src.get("campus_search_url") or src.get("career_watch_url") or "",
+            root=src.get("official_root") or "", jobs=search_url,
         ))
 
     cc = Counter(r["contract"] for r in rows)
     cr = Counter(r["retrieval"] for r in rows)
-    public = [r for r in rows if r["state"] == "PUBLIC_CAMPUS_BOARD"]
-    enumerated_public = sum(r["retrieval"] == "ENUMERATED" for r in public)
-    incomplete_public = [r for r in public if r["retrieval"] != "ENUMERATED"]
+    incomplete = [r for r in rows if r["contract"] != "READY" or r["retrieval"] != "ENUMERATED"]
 
     out = [
-        "# 当前校招官方岗位源覆盖审计","",
-        "> READY 不再等于“配置里有两个 URL”。公开校招公司只有在存在真实 campus_search_url 时才算路径 READY；没有公开校招的公司单列 WATCH_ONLY，不能用官网首页冒充校招职位列表。","",
+        "# 官方招聘岗位源全覆盖审计", "",
+        "> 完成标准：每家公司必须有可枚举的第一方招聘职位池，并完成完整分页/站内关键词穷举。公司首页、页面可达、接口存在都不算完成。", "",
         f"- 固定公司：**{len(rows)}**",
-        f"- 有公开校招职位池：**{len(public)}**",
-        f"- 公开校招路径 READY：**{sum(r['contract']=='READY' for r in public)}/{len(public)}**",
-        f"- 已稳定枚举公开校招池：**{enumerated_public}/{len(public)}**",
-        f"- 仍需完整枚举：**{len(incomplete_public)}**",
-        f"- 官网已核验但无公开校招池：**{cr.get('NO_PUBLIC_CAMPUS_BOARD',0)}**","",
-        "## 逐公司","",
-        "| 公司 | 校招入口状态 | 路径契约 | Retrieval | 上次拉取 | 目标候选 | 官方根入口 | 校招搜索/巡检入口 |",
+        f"- 可枚举路径 READY：**{cc.get('READY',0)}/{len(rows)}**",
+        f"- 已完成职位池枚举：**{cr.get('ENUMERATED',0)}/{len(rows)}**",
+        f"- 仍未打通：**{len(incomplete)}**", "",
+        "## 逐公司", "",
+        "| 公司 | 招聘池范围 | 路径契约 | Retrieval | 上次拉取 | 目标候选 | 官方根入口 | 固定职位池 |",
         "|---|---|:---:|---|---:|---:|---|---|",
     ]
     for r in rows:
-        out.append("| {company} | {state} | {contract} | {retrieval} | {fetched} | {matched} | {root} | {jobs} |".format(**r))
+        out.append("| {company} | {scope} | {contract} | {retrieval} | {fetched} | {matched} | {root} | {jobs} |".format(**r))
 
-    out += ["","## 验收规则","",
-        "- PUBLIC_CAMPUS_BOARD：必须存在明确的校招/应届职位页或官方 ATS，并完成完整分页/关键词穷举后才能成为 ENUMERATED。",
-        "- LIST_REACHABLE：只证明页面能打开，不代表岗位已获取完整。",
-        "- BLOCKED：公开校招入口存在，但采集链路没有闭环；这是必须继续修复的真实失败。",
-        "- NO_PUBLIC_CAMPUS_BOARD：官网已核验但当前没有公开校招职位池；只巡检 career_watch_url，不把社会招聘/公司首页伪装成校招。",
-        "- 0 个目标岗位只有在公开校招职位池已 ENUMERATED 后才有意义；未枚举完成时绝不能把 0 当结论。",
+    out += ["", "## 验收规则", "",
+        "- ENUMERATED：已经对固定第一方职位池完成站内关键词搜索或完整列表分页，并能明确得出目标岗位集合（包括合法的 0 个）。",
+        "- LIST_REACHABLE：页面能打开但搜索/分页未跑完；仍属于未完成。",
+        "- BLOCKED：职位池或采集链路没有闭环；必须继续修复，不能解释为 0 岗位。",
+        "- campus：独立校园招聘职位池；official_recruiting：公司官方混合招聘池，入库时只保留应届/校招/明确欢迎应届生的相关工程 JD。",
+        "- 只有 41/41 ENUMERATED 才算官方招聘源真正全覆盖。",
     ]
     OUT.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"public_campus={len(public)} enumerated={enumerated_public} incomplete={len(incomplete_public)} watch_only={cr.get('NO_PUBLIC_CAMPUS_BOARD',0)}")
-    return 1 if any(r["contract"] == "BROKEN" or r["retrieval"] == "BLOCKED" for r in public) else 0
+    print(f"contracts={cc.get('READY',0)}/{len(rows)} enumerated={cr.get('ENUMERATED',0)}/{len(rows)} incomplete={len(incomplete)}")
+    return 1 if incomplete else 0
 
 if __name__ == "__main__":
     raise SystemExit(main())
