@@ -1445,6 +1445,12 @@ def main() -> int:
                     "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
                     len(jobs), len(matches)
                 ), matches
+            if src.get("allow_no_public_2027"):
+                return SourceResult(
+                    company, "feishu_official", src["portal"],
+                    "NO_PUBLIC_2027_PROJECT", len(jobs), 0,
+                    "官方 Feishu 职位池已完整枚举，未发现公开 2027 校招证据"
+                ), []
 
         moka = moka_by_company.get(company) or {}
         if moka.get("status") == "OK":
@@ -1464,6 +1470,12 @@ def main() -> int:
                     "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
                     len(jobs), len(matches)
                 ), matches
+            if src.get("allow_no_public_2027"):
+                return SourceResult(
+                    company, "moka_official", src["portal"],
+                    "NO_PUBLIC_2027_PROJECT", len(jobs), 0,
+                    "官方 Moka 职位池已完整枚举，未发现公开 2027 校招证据"
+                ), []
 
         if mode == "portal_only":
             dyn = dynamic_by_company.get(company) or {}
@@ -1514,6 +1526,11 @@ def main() -> int:
                 for j in jobs
             )
             if not explicit_2027:
+                if src.get("allow_no_public_2027"):
+                    return SourceResult(
+                        company, mode, src["portal"], "NO_PUBLIC_2027_PROJECT", len(jobs), 0,
+                        "官方公开职位池已完整枚举，未发现 2027 校招项目/职位证据"
+                    ), []
                 return SourceResult(
                     company, mode, src["portal"], "BLOCKED", len(jobs), len(uniq),
                     "官方职位池已取回，但尚未证明当前枚举范围属于2027；不能判定0岗位"
