@@ -1169,12 +1169,7 @@ def fetch_honor_2027(src: dict) -> list[Job]:
     page = 1
     while page <= 100:
         params = {"iSaJAx": "isAjax", "request_locale": "zh_CN", "t": int(time.time() * 1000)}
-        data = post_form(
-            list_api,
-            data={"isFrompb": "true", "recruitType": 1, "pageSize": 100, "currentPage": page},
-            headers=headers | {"Referer": f"{host}/{su}/pb/school.html"},
-        ) if False else None
-        # post_form does not accept query params; call the official endpoint directly.
+        # Official Wecruit list endpoint is form-urlencoded with query params.
         rr = requests.post(
             list_api,
             params=params,
@@ -1350,14 +1345,22 @@ def main() -> int:
         mode = src["mode"]
 
         feishu = feishu_by_company.get(company) or {}
-        if feishu.get("status") == "OK" and (feishu.get("jobs") or []):
+        if feishu.get("status") == "OK":
             jobs = to_jobs(company, feishu.get("jobs") or [], src["portal"], "FEISHU:" + src["portal"])
             matches = target_matches(jobs, bool(src.get("verified_2027_project")))
-            return SourceResult(
-                company, "feishu_official", src["portal"],
-                "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
-                len(jobs), len(matches)
-            ), matches
+            feishu_has_2027 = bool(src.get("verified_2027_project")) or any(
+                "2027" in " ".join([
+                    j.title or "", j.category or "", j.cycle_evidence or "",
+                    j.description or "", j.requirements or ""
+                ])
+                for j in jobs
+            )
+            if feishu_has_2027:
+                return SourceResult(
+                    company, "feishu_official", src["portal"],
+                    "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
+                    len(jobs), len(matches)
+                ), matches
 
         moka = moka_by_company.get(company) or {}
         if moka.get("status") == "OK":
