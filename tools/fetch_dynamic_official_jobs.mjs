@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Generic first-party browser discovery for dynamic campus recruitment portals.
+ * Generic first-party browser discovery for current official campus recruitment portals.
  *
  * It starts from the official company recruitment/career URL in the registry,
- * follows official campus/2027/student links, observes JSON/XHR issued by the
+ * follows official campus/student/job links, observes JSON/XHR issued by the
  * official site itself, and extracts job-like objects. No aggregator/search
  * result content is imported.
  */
@@ -365,11 +365,9 @@ async function processSource(browser,src){
       }
     }
     const allJobs=uniqueJobs(collector);
-    const registryVerified=src.verified_2027_project===true;
-    const has2027=registryVerified || pageResults.some(x=>x.has2027) || allJobs.some(j=>/2027/.test(j.cycle_evidence||""));
-    // Retrieval and cohort proof are independent. Always preserve every job
-    // obtained from the first-party board; the downstream 2027 filter decides
-    // whether a job may enter the formal 2027 library.
+    // The live first-party campus/new-grad board itself is the time gate.
+    // Graduation year / project label is metadata only and must never decide
+    // whether an otherwise live official job pool is enumerable.
     const jobs=allJobs;
     const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
     const listScanComplete=pageResults.some(x=>x.list_scan_complete===true);
@@ -377,22 +375,19 @@ async function processSource(browser,src){
     const pageErrors=pageResults.filter(x=>x.error).length;
     let status;
     if(fullKeywordSearch && jobs.length) status="BROWSER_ENUMERATED";
-    else if(fullKeywordSearch && !jobs.length && has2027) status="BROWSER_ENUMERATED_ZERO";
-    else if(fullKeywordSearch && !jobs.length && pageErrors===0) status="BROWSER_NO_PUBLIC_2027";
-    else if(has2027) status="BROWSER_2027_NEEDS_ADAPTER";
-    else if(pageErrors===0) status="BROWSER_NO_2027_EVIDENCE";
-    else status="BROWSER_NO_2027_EVIDENCE";
-    console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
+    else if(fullKeywordSearch && !jobs.length && pageErrors===0) status="BROWSER_ENUMERATED_ZERO";
+    else if(pageErrors===0) status="BROWSER_CAMPUS_NEEDS_ADAPTER";
+    else status="BROWSER_ERROR";
+    console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
     return {
       company:src.company,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,
-      endpoints:endpointLog.slice(0,120),jobs,has2027,status,
+      endpoints:endpointLog.slice(0,120),jobs,status,
       search_terms_attempted:[...searched],search_terms_expected:SEARCH_TERMS,
-      full_keyword_search:fullKeywordSearch,list_scan_complete:listScanComplete,
-      registry_verified_2027:registryVerified
+      full_keyword_search:fullKeywordSearch,list_scan_complete:listScanComplete
     };
   }catch(e){
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
-    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs:uniqueJobs(collector),has2027:false,status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
+    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs:uniqueJobs(collector),status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
   }finally{
     await context.close().catch(()=>{});
   }
