@@ -516,12 +516,341 @@ def fetch_huawei(src: dict) -> list[Job]:
     return out
 
 
+def fetch_tencent_campus(src: dict) -> list[Job]:
+    api = "https://join.qq.com/api/v1/position/searchPosition"
+    detail_api = "https://join.qq.com/api/v1/jobDetails/getJobDetailsByPostId"
+    headers = {**HEADERS, "Content-Type": "application/json", "Referer": "https://join.qq.com/post.html"}
+    out, seen = [], set()
+    page = 1
+    while page <= 50:
+        body = {
+            "keyword": "", "pageIndex": page, "pageSize": 50,
+            "recruitType": "40003", "bgIds": [], "productIds": [],
+            "categoryIds": [], "workLocations": [], "timestamp": "",
+        }
+        r = requests.post(api, json=body, headers=headers, timeout=TIMEOUT)
+        r.raise_for_status()
+        d = (r.json().get("data") or {})
+        rows = d.get("positionList") or []
+        if not rows:
+            break
+        for row in rows:
+            pid = txt(row.get("postId") or row.get("id"))
+            if not pid or pid in seen:
+                continue
+            seen.add(pid)
+            project = txt(row.get("recruitLabelName") or row.get("projectName") or "校招")
+            if "实习" in project:
+                continue
+            try:
+                detail = get_json(
+                    detail_api,
+                    params={"timestamp": int(time.time() * 1000), "postId": pid},
+                    headers={"Referer": "https://join.qq.com/post.html"},
+                )
+                dd = detail.get("data") or {}
+            except Exception:
+                dd = {}
+            desc = txt(dd.get("desc") or dd.get("topicDetail") or dd.get("introduction"))
+            req = txt(dd.get("request") or dd.get("topicRequirement"))
+            out.append(Job(
+                src["company"], txt(row.get("positionTitle")), pid,
+                txt(row.get("workCities")), project, txt(row.get("bgs")),
+                desc, req,
+                f"https://join.qq.com/post_detail.html?postId={pid}", api,
+                project or "腾讯官方校园招聘",
+            ))
+        if page * 50 >= int(d.get("count") or 0):
+            break
+        page += 1
+    return out
+
+
+def fetch_meituan_campus(src: dict) -> list[Job]:
+    api = "https://zhaopin.meituan.com/api/official/job/getJobList"
+    headers = {
+        **HEADERS, "Content-Type": "application/json",
+        "Referer": "https://zhaopin.meituan.com/web/campus",
+        "Origin": "https://zhaopin.meituan.com",
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    out, seen = [], set()
+    for page in range(1, 30):
+        body = {
+            "page": {"pageNo": page, "pageSize": 100},
+            "jobShareType": "1", "keywords": "", "cityList": [],
+            "department": [], "jfJgList": [],
+            "jobType": [{"code": "1", "subCode": []}],
+            "typeCode": [], "specialCode": [],
+        }
+        r = requests.post(api, json=body, headers=headers, timeout=TIMEOUT)
+        r.raise_for_status()
+        d = r.json().get("data") or {}
+        rows = d.get("list") or []
+        if not rows:
+            break
+        for j in rows:
+            if str(j.get("jobType") or "") not in ("", "1"):
+                continue
+            jid = txt(j.get("jobUnionId"))
+            if not jid or jid in seen:
+                continue
+            seen.add(jid)
+            city = " / ".join(
+                txt(x.get("name")) for x in (j.get("cityList") or [])
+                if isinstance(x, dict) and x.get("name")
+            )
+            out.append(Job(
+                src["company"], txt(j.get("name")), jid, city,
+                "校招正式", txt(j.get("departmentName") or j.get("jobCategoryName")),
+                txt(j.get("jobDuty") or j.get("desc")), txt(j.get("jobRequirement")),
+                f"https://zhaopin.meituan.com/web/position/detail?jobUnionId={jid}&highlightType=campus",
+                api, "美团官方当前校园招聘正式岗（届别需主库复核）",
+            ))
+        p = d.get("page") or {}
+        if page >= int(p.get("totalPage") or page):
+            break
+    return out
+
+
+def fetch_jd_campus(src: dict) -> list[Job]:
+    api = "https://campus.jd.com/api/wx/position/page"
+    headers = {**HEADERS, "Content-Type": "application/json", "Referer": "https://campus.jd.com/"}
+    out = []
+    for recruit_type in ("present", "talent"):
+        page, seen = 0, set()
+        while page < 30:
+            payload = {
+                "pageSize": 50, "pageIndex": page,
+                "parameter": {
+                    "positionName": "", "planIdList": [], "jobDirectionCodeList": [],
+                    "workCityCodeList": [], "positionDeptList": [],
+                },
+            }
+            r = requests.post(f"{api}?type={recruit_type}", json=payload, headers=headers, timeout=TIMEOUT)
+            r.raise_for_status()
+            d = r.json().get("body") or {}
+            rows = d.get("items") or []
+            if not rows:
+                break
+            for j in rows:
+                pid = txt(j.get("publishId") or j.get("reqId"))
+                key = f"{recruit_type}:{pid}"
+                if not pid or key in seen:
+                    continue
+                seen.add(key)
+                cities = []
+                for req in j.get("requirementVoList") or []:
+                    city = txt(req.get("workCity"))
+                    if city and city not in cities:
+                        cities.append(city)
+                out.append(Job(
+                    src["company"], txt(j.get("positionName")), key,
+                    " / ".join(cities), "校招正式", txt(j.get("positionDept")),
+                    txt(j.get("workContent")), txt(j.get("qualification")),
+                    f"https://campus.jd.com/#/details?type={recruit_type}&id={pid}",
+                    api, f"京东官方校园招聘 {recruit_type}（届别需主库复核）",
+                ))
+            total = int(d.get("totalNumber") or 0)
+            page += 1
+            if page * 50 >= total:
+                break
+    return out
+
+
+def fetch_pdd_campus(src: dict) -> list[Job]:
+    root = "https://careers.pddglobalhr.com/api/careers/api/recruit/position"
+    list_api, detail_api = root + "/list", root + "/detail"
+    headers = {
+        **HEADERS, "Content-Type": "application/json;charset=UTF-8",
+        "Referer": "https://careers.pddglobalhr.com/campus/grad",
+    }
+    session = requests.Session()
+    session.headers.update(headers)
+    rows, page = [], 1
+    while page <= 30:
+        r = session.post(list_api, json={"page": page, "pageSize": 100, "t": None}, timeout=TIMEOUT)
+        r.raise_for_status()
+        body = r.json()
+        if not body.get("success"):
+            raise RuntimeError(body.get("errorMsg") or "PDD official API success=false")
+        d = body.get("result") or {}
+        got = d.get("list") or []
+        if not got:
+            break
+        rows.extend(got)
+        if len(rows) >= int(d.get("total") or len(rows)):
+            break
+        page += 1
+
+    out = []
+    for row in rows:
+        pid = txt(row.get("id"))
+        if not pid:
+            continue
+        try:
+            r = session.post(detail_api, json={"id": pid, "t": None}, timeout=TIMEOUT)
+            r.raise_for_status()
+            body = r.json()
+            detail = (body.get("result") or {}) if body.get("success") else {}
+        except Exception:
+            detail = {}
+        year = txt(detail.get("graduationYear") or row.get("graduationYear"))
+        recruit_type = txt(detail.get("recruitTypeName") or row.get("recruitTypeName"))
+        out.append(Job(
+            src["company"], txt(row.get("name")), pid,
+            txt(detail.get("workLocationName") or row.get("workLocationName") or row.get("workLocation")),
+            "校招正式" + (f" {year}届" if year else ""), txt(row.get("departmentName")),
+            txt(detail.get("jobDuty") or row.get("jobDuty")),
+            txt(detail.get("serveRequirement") or row.get("serveRequirement")),
+            txt(detail.get("shareUrl")) or f"https://careers.pddglobalhr.com/campus/grad/detail?positionId={pid}",
+            list_api, f"拼多多官方校招 {year + '届' if year else '届别待复核'} {recruit_type}",
+        ))
+    return out
+
+
+def fetch_oppo_campus(src: dict) -> list[Job]:
+    api = "https://careers.oppo.com/openapi/position/pageNew"
+    headers = {
+        **HEADERS, "Content-Type": "application/json", "Tenant-Id": "1000",
+        "Referer": "https://careers.oppo.com/university/oppo/recruitment/post",
+    }
+    out, page = [], 1
+    while page <= 20:
+        payload = {
+            "pageNum": page, "pageSize": 100, "positionName": "",
+            "projectList": [], "positionTypeList": [], "workCityCodeList": [],
+        }
+        r = requests.post(api, json=payload, headers=headers, timeout=TIMEOUT)
+        r.raise_for_status()
+        d = r.json().get("data") or {}
+        rows = d.get("records") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("idProjPosition") or j.get("idRecruitPosition"))
+            project = txt(j.get("projectName"))
+            out.append(Job(
+                src["company"], txt(j.get("positionName") or j.get("projectPositionName")), jid,
+                txt(j.get("workCityName")), txt(j.get("positionTypeName") or "校招"),
+                project, txt(j.get("positionDesc")), txt(j.get("positionRequire")),
+                f"https://careers.oppo.com/university/oppo/campus/post/{jid}",
+                api, project or "OPPO官方校园招聘（届别待复核）",
+            ))
+        total = int(d.get("total") or len(rows))
+        if page * 100 >= total:
+            break
+        page += 1
+    return out
+
+
+def fetch_lenovo(src: dict) -> list[Job]:
+    api = "https://talent.lenovo.com.cn/gateway/jobBase/list"
+    headers = {
+        **HEADERS, "Referer": "https://talent.lenovo.com.cn/position",
+        "portal-type": "PC",
+    }
+    out, page = [], 1
+    while page <= 30:
+        data = get_json(api, params={"pageNum": page, "pageSize": 50}, headers=headers)
+        d = data.get("result") or {}
+        rows = d.get("rows") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id"))
+            out.append(Job(
+                src["company"], txt(j.get("jobName")), jid, txt(j.get("workPlace")),
+                txt(j.get("recruitType") or j.get("jobType") or "校招待复核"),
+                txt(j.get("jobCategory")), txt(j.get("cont") or j.get("jobDesc")),
+                txt(j.get("requirement")),
+                f"https://talent.lenovo.com.cn/position/detail?id={jid}",
+                api, "联想官方招聘（2027归属需复核）",
+            ))
+        if page * 50 >= int(d.get("total") or 0):
+            break
+        page += 1
+    return out
+
+
+def fetch_sf(src: dict) -> list[Job]:
+    api = "https://campus.sf-express.com/api/web/position/query"
+    out, page = [], 1
+    while page <= 20:
+        data = get_json(api, params={"pageNum": page, "pageSize": 50}, headers={"Referer": "https://campus.sf-express.com/positionList"})
+        rows = data.get("list") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id"))
+            out.append(Job(
+                src["company"], txt(j.get("positionName")), jid,
+                txt(j.get("demandCity")), "校招", txt(j.get("positionTypeName") or j.get("orgSourceName")),
+                txt(j.get("postDuty")), txt(j.get("jobRequirement")),
+                f"https://campus.sf-express.com/#/postDetail/{jid}",
+                api, "顺丰官方校园招聘（届别待复核）",
+            ))
+        if page * 50 >= int(data.get("total") or 0):
+            break
+        page += 1
+    return out
+
+
+def fetch_alibaba_campus(src: dict) -> list[Job]:
+    origin = "https://campus-talent.alibaba.com"
+    batch_id = int(src.get("batch_id") or 100000540002)
+    page_url = f"{origin}/campus/position?batchId={batch_id}"
+    session = requests.Session()
+    session.headers.update({**HEADERS, "Referer": page_url, "Content-Type": "application/json"})
+    warm = session.get(page_url, timeout=TIMEOUT)
+    warm.raise_for_status()
+    csrf = session.cookies.get("XSRF-TOKEN")
+    if not csrf:
+        raise RuntimeError("Alibaba campus XSRF-TOKEN missing")
+    out, page = [], 1
+    while page <= 30:
+        payload = {
+            "batchId": batch_id, "pageIndex": page, "pageSize": 50,
+            "channel": "campus_group_official_site", "language": "zh",
+        }
+        r = session.post(f"{origin}/position/search?_csrf={csrf}", json=payload, timeout=TIMEOUT)
+        r.raise_for_status()
+        content = r.json().get("content") or {}
+        rows = content.get("datas") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id"))
+            out.append(Job(
+                src["company"], txt(j.get("name")), jid,
+                " / ".join(txt(x) for x in (j.get("workLocations") or [])),
+                "校招", txt(j.get("departmentName") or j.get("categoryName")),
+                txt(j.get("description")), txt(j.get("requirement")),
+                f"{origin}/campus/position-detail?positionId={jid}",
+                f"{origin}/position/search",
+                f"阿里官方校园招聘 batchId={batch_id}（2027归属需复核）",
+            ))
+        total = int(content.get("totalCount") or content.get("total") or 0)
+        if page * 50 >= total:
+            break
+        page += 1
+    return out
+
+
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
     "kuaishou_api": fetch_kuaishou,
     "baidu_api": fetch_baidu,
     "tencent_api": fetch_tencent,
+    "tencent_campus_api": fetch_tencent_campus,
     "meituan_api": fetch_meituan,
+    "meituan_campus_api": fetch_meituan_campus,
+    "jd_campus_api": fetch_jd_campus,
+    "pdd_campus_api": fetch_pdd_campus,
+    "oppo_campus_api": fetch_oppo_campus,
+    "lenovo_api": fetch_lenovo,
+    "sf_campus_api": fetch_sf,
+    "alibaba_campus_api": fetch_alibaba_campus,
     "netease_api": fetch_netease,
     "bilibili_api": fetch_bilibili,
     "didi_api": fetch_didi,
