@@ -322,8 +322,11 @@
       "portal": "https://app.mokahr.com/apply/moonshot/148506",
       "official_root": "https://careers.kimi.com/campus",
       "browser_probe": true,
-      "note": "Kimi 官方校园招聘页直接提供“加入我们”并跳转 Moonshot 官方 Moka ATS。",
-      "job_list_url": "https://app.mokahr.com/apply/moonshot/148506"
+      "note": "Kimi 官方 careers/campus 为 provenance 根；官方校园 ATS 固定入口为 Moka campus-recruitment/moonshot/148507，apply/moonshot/148506 作为官方通用/社招入口补充。",
+      "job_list_url": "https://app.mokahr.com/apply/moonshot/148506",
+      "extra_job_list_urls": [
+        "https://app.mokahr.com/campus-recruitment/moonshot/148507"
+      ]
     },
     {
       "company": "MiniMax",
@@ -345,10 +348,14 @@
     {
       "company": "智谱/Z.ai",
       "mode": "portal_only",
-      "portal": "https://www.zhipuai.cn/zh/joinus",
+      "portal": "https://app.mokahr.com/campus-recruitment/zphz/148984",
       "official_root": "https://www.zhipuai.cn/zh/joinus",
       "browser_probe": true,
-      "job_list_url": "https://www.zhipuai.cn/zh/joinus"
+      "job_list_url": "https://app.mokahr.com/campus-recruitment/zphz/148984",
+      "extra_job_list_urls": [
+        "https://app.mokahr.com/social-recruitment/zphz/148983"
+      ],
+      "note": "智谱官网 Join Us 为 provenance 根；Campus/社会招聘按钮进入官方 Moka ATS。校园固定入口 zphz/148984，社招 zphz/148983。"
     },
     {
       "company": "阶跃星辰",
