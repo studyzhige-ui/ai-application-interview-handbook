@@ -12,6 +12,7 @@ REG = ROOT / "market/jobs/official-2027-campus-sources.json"
 NORM = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
 BROWSER = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
 FEISHU = ROOT / "market/jobs/official-2027-feishu-discovery.generated.json"
+MOKA = ROOT / "market/jobs/official-2027-moka-discovery.generated.json"
 OUT = ROOT / "market/jobs/official-2027-coverage-audit.generated.md"
 
 TERMINAL = {"ENUMERATED_WITH_MATCHES", "ENUMERATED_ZERO_MATCHES", "NO_PUBLIC_2027_PROJECT"}
@@ -29,35 +30,63 @@ def main() -> int:
     norm = read(NORM)
     browser = read(BROWSER)
     feishu = read(FEISHU)
+    moka = read(MOKA)
     sources = {x.get("company"): x for x in reg.get("sources", []) if x.get("company")}
     normalized = {x.get("company"): x for x in norm.get("sources", []) if x.get("company")}
     browsed = {x.get("company"): x for x in browser.get("results", []) if x.get("company")}
     fei = {x.get("company"): x for x in feishu.get("results", []) if x.get("company")}
+    mok = {x.get("company"): x for x in moka.get("results", []) if x.get("company")}
     rows = []
     for company, src in sources.items():
         n = normalized.get(company, {})
         b = browsed.get(company, {})
         f = fei.get(company, {})
+        m = mok.get(company, {})
         status = n.get("status") or "BLOCKED"
         reason = n.get("error") or ""
+        fetched = int(n.get("fetched") or 0)
+        matched = int(n.get("matched") or 0)
+
+        # A browser run is a valid first-party enumerator when it both proves
+        # the 2027 project and completes the full configured keyword search.
+        b_status = b.get("status")
+        b_has_2027 = bool(b.get("has2027"))
+        b_full = bool(b.get("full_keyword_search"))
+        b_jobs = b.get("jobs") or []
+        if b_status == "BROWSER_ENUMERATED" and b_has_2027 and b_full:
+            status = "ENUMERATED_WITH_MATCHES" if b_jobs else "ENUMERATED_ZERO_MATCHES"
+            fetched = max(fetched, len(b_jobs))
+            matched = max(matched, len(b_jobs))
+            reason = "official browser completed full 2027 keyword enumeration"
+        elif b_status == "BROWSER_ENUMERATED_ZERO" and b_has_2027 and b_full:
+            status = "ENUMERATED_ZERO_MATCHES"
+            reason = "official browser completed full 2027 keyword enumeration; 0 target jobs"
+        elif b_status == "BROWSER_NO_2027_EVIDENCE" and src.get("allow_no_public_2027"):
+            status = "NO_PUBLIC_2027_PROJECT"
+            reason = "official root exhaustively checked; no public 2027 project exposed"
+
         if status not in TERMINAL:
-            if f.get("status") == "OK" and f.get("jobs"):
+            if f.get("status") == "OK" and f.get("jobs") and src.get("verified_2027_project"):
                 status = "DISCOVERED_NEEDS_NORMALIZATION"
-                reason = "official Feishu pool discovered: %s jobs" % len(f.get("jobs") or [])
-            elif b.get("jobs"):
+                reason = "official Feishu 2027 pool discovered: %s jobs" % len(f.get("jobs") or [])
+            elif m.get("status") == "OK" and m.get("jobs") and src.get("verified_2027_project"):
+                status = "DISCOVERED_NEEDS_NORMALIZATION"
+                reason = "official Moka 2027 pool discovered: %s jobs" % len(m.get("jobs") or [])
+            elif b_jobs:
                 status = "DISCOVERED_NEEDS_ADAPTER"
-                reason = "official browser extracted: %s target-shaped records" % len(b.get("jobs") or [])
-            elif b.get("has2027"):
+                reason = "official browser extracted %s target-shaped records; exhaustive 2027 enumeration not yet proven" % len(b_jobs)
+            elif b_has_2027:
                 status = "BLOCKED"
-                reason = reason or "official 2027 project found, but full job pool is not reliably enumerated"
+                reason = reason or "official 2027 project found, but full keyword/job-detail enumeration is incomplete"
             else:
                 status = "BLOCKED"
                 reason = reason or "official root exists, but public 2027 job pool is not yet proven"
+
         rows.append({
             "company": company, "status": status,
             "root": src.get("official_root") or src.get("portal") or "",
             "portal": src.get("portal") or "",
-            "fetched": n.get("fetched", 0), "matched": n.get("matched", 0),
+            "fetched": fetched, "matched": matched,
             "reason": reason.replace("|", "/").replace("\\n", " ")[:240],
         })
     counts = Counter(r["status"] for r in rows)
