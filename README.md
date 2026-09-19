@@ -160,6 +160,7 @@ Coding 使用另一条并行实践线：学习 Python 基础的同时开始写�
 |---|---|
 | [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
 | [Coding & Problem Solving](coding/README.md) | Python3 编程基本功、ACM、DSA、Hot100、OA 与 AI Coding 横向实践轨道 |
+| [Git + GitHub Desktop Guide](roadmap/git-github-desktop-guide.md) | 初学者 Git 心智模型、GitHub Desktop 日常工作流、Commit 规范、Branch / PR / Conflict / 撤销与安全注意事项 |
 | [Learning Path](roadmap/learning-path.md) | 可选的标准 / 加速 / 冲刺学习节奏与 Module Exit Gate |
 | [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
 | [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
