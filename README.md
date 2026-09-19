@@ -7,7 +7,7 @@
 
 ## 快速入口
 
-[十板块知识地图](roadmap/knowledge-map.md) · [Coding & Problem Solving](coding/README.md) · [正式学习路线](roadmap/learning-path.md) · [v1.0 终局质量审计](roadmap/final-quality-audit.md) · [跨模块术语表](roadmap/terminology-glossary.md) · [课程建设进度](research/questions/progress.md) · [真人面经研究库](research/README.md) · [Canonical Questions](research/questions/README.md) · [粒度审计](roadmap/curriculum-granularity-audit.md) · [深度审计](roadmap/content-depth-audit.md) · [Agent阅读修订](roadmap/agent-reader-revision.md)
+[十板块知识地图](guide/knowledge-map.md) · [Coding & Problem Solving](practice/coding/README.md) · [正式学习路线](guide/learning-path.md) · [v1.0 终局质量审计](guide/audits/final-quality-audit.md) · [跨模块术语表](guide/terminology-glossary.md) · [课程建设进度](interview/canonical/progress.md) · [真人面经研究库](market/README.md) · [Canonical Questions](interview/canonical/README.md) · [粒度审计](guide/audits/curriculum-granularity-audit.md) · [深度审计](guide/audits/content-depth-audit.md) · [Agent阅读修订](guide/project/agent-reader-revision.md)
 
 ---
 
@@ -34,24 +34,24 @@ HUMAN-A 真人面经
 
 | # | 一级模块 | 层级 | 一句话职责 | 教材 | Canonical | 状态 |
 |---:|---|---|---|---:|---:|---|
-| 01 | [Python Foundation](python/README.md) | Foundation | 建立 AI Application / Agent Engineer 所需的 Python 语言、对象模型、结构化数据与并发 Runtime 基础。 | 13 | 15 | ✅ |
-| 02 | [FastAPI](fastapi/README.md) | Foundation | 把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。 | 16 | 4 | ✅ |
-| 03 | [AI Backend Engineering](backend-engineering/README.md) | Foundation | 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。 | 22 | 39 | ✅ |
-| 04 | [MySQL](mysql/README.md) | Data | 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。 | 23 | 26 | ✅ |
-| 05 | [Redis](redis/README.md) | Data | 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。 | 24 | 19 | ✅ |
-| 06 | [Vector Database](vector-db/README.md) | Data | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 | 16 | 12 | ✅ |
-| 07 | [LLM Foundation（应用工程深度）](llm-foundation/README.md) | Model Foundation | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 | 14 | 23 | ✅ |
-| 08 | [RAG](rag/README.md) | AI Application | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 | 14 | 29 | ✅ |
-| 09 | [Agent](agent/README.md) | Agent System | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 | 24 | 44 | ✅ |
-| 10 | [System Design](system-design/README.md) | Integration | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 | 19 | 24 | ✅ |
+| 01 | [Python Foundation](curriculum/01-python/README.md) | Foundation | 建立 AI Application / Agent Engineer 所需的 Python 语言、对象模型、结构化数据与并发 Runtime 基础。 | 13 | 15 | ✅ |
+| 02 | [FastAPI](curriculum/02-fastapi/README.md) | Foundation | 把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。 | 16 | 4 | ✅ |
+| 03 | [AI Backend Engineering](curriculum/03-backend-engineering/README.md) | Foundation | 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。 | 22 | 39 | ✅ |
+| 04 | [MySQL](curriculum/04-mysql/README.md) | Data | 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。 | 23 | 26 | ✅ |
+| 05 | [Redis](curriculum/05-redis/README.md) | Data | 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。 | 24 | 19 | ✅ |
+| 06 | [Vector Database](curriculum/06-vector-db/README.md) | Data | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 | 16 | 12 | ✅ |
+| 07 | [LLM Foundation（应用工程深度）](curriculum/07-llm-foundation/README.md) | Model Foundation | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 | 14 | 23 | ✅ |
+| 08 | [RAG](curriculum/08-rag/README.md) | AI Application | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 | 14 | 29 | ✅ |
+| 09 | [Agent](curriculum/09-agent/README.md) | Agent System | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 | 24 | 44 | ✅ |
+| 10 | [System Design](curriculum/10-system-design/README.md) | Integration | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 | 19 | 24 | ✅ |
 
 ### 正式学习顺序
 
-[Python Foundation](python/README.md) → [FastAPI](fastapi/README.md) → [AI Backend Engineering](backend-engineering/README.md) → [MySQL](mysql/README.md) → [Redis](redis/README.md) → [Vector Database](vector-db/README.md) → [LLM Foundation（应用工程深度）](llm-foundation/README.md) → [RAG](rag/README.md) → [Agent](agent/README.md) → [System Design](system-design/README.md)
+[Python Foundation](curriculum/01-python/README.md) → [FastAPI](curriculum/02-fastapi/README.md) → [AI Backend Engineering](curriculum/03-backend-engineering/README.md) → [MySQL](curriculum/04-mysql/README.md) → [Redis](curriculum/05-redis/README.md) → [Vector Database](curriculum/06-vector-db/README.md) → [LLM Foundation（应用工程深度）](curriculum/07-llm-foundation/README.md) → [RAG](curriculum/08-rag/README.md) → [Agent](curriculum/09-agent/README.md) → [System Design](curriculum/10-system-design/README.md)
 
 所有模块标题和名称都可以直接点击进入对应 README。
 
-### 横向实践轨道｜[Coding & Problem Solving](coding/README.md)
+### 横向实践轨道｜[Coding & Problem Solving](practice/coding/README.md)
 
 Coding 不作为第 11 个同类知识模块计入上表。它与十模块并行，专门训练“把知识真正写成代码”的能力：
 
@@ -67,7 +67,7 @@ Programming Fundamentals
 → AI Coding
 ```
 
-Hot100 从基础阶段开始按前置知识逐步解锁，而不是等所有理论学完才开始；完整 100 题课程映射见 [Hot100 Curriculum Map](coding/hot100-map.md)。
+Hot100 从基础阶段开始按前置知识逐步解锁，而不是等所有理论学完才开始；完整 100 题课程映射见 [Hot100 Curriculum Map](practice/coding/hot100-map.md)。
 
 ---
 
@@ -95,7 +95,7 @@ interview/
 └─ 面试前速查表
 ```
 
-Python 额外保留历史 Coding 小题入口；系统化编码训练统一进入 [Coding & Problem Solving](coding/README.md)。Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
+Python 额外保留历史 Coding 小题入口；系统化编码训练统一进入 [Coding & Problem Solving](practice/coding/README.md)。Agent / FastAPI / AIBE 还维护专门的权威资料或源码索引。
 
 ---
 
@@ -110,7 +110,7 @@ Section                       = 参数 / 变体 / Failure / 追问
 
 因此不会默认 `1 Canonical = 1 Markdown`。当前 10 个模块共 **185 个正文知识块**，研究层当前保持 **235 道 ACTIVE Canonical**。
 
-详见：[Curriculum Granularity Audit](roadmap/curriculum-granularity-audit.md)。
+详见：[Curriculum Granularity Audit](guide/audits/curriculum-granularity-audit.md)。
 
 ---
 
@@ -130,13 +130,13 @@ Latest S280–S288            pending periodic Canonical mapping / review
 
 源码、官方文章、规范和论文可以帮助我们补齐知识边界，但**不能创建面试频率，也不能提高 Source Count**。
 
-入口：[Research Home](research/README.md) · [Market Analysis](research/analysis/README.md) · [Verified Follow-up Chains](research/analysis/follow-up-chains.md)
+入口：[Research Home](market/README.md) · [Market Analysis](market/analysis/README.md) · [Verified Follow-up Chains](market/analysis/follow-up-chains.md)
 
 ---
 
 ## 6. 统一学习方法
 
-完整执行版见：[Learning Path｜十板块正式学习路线](roadmap/learning-path.md)。Learning Path 是推荐节奏，不是唯一课表；可以按个人基础、目标和时间预算调整速度。
+完整执行版见：[Learning Path｜十板块正式学习路线](guide/learning-path.md)。Learning Path 是推荐节奏，不是唯一课表；可以按个人基础、目标和时间预算调整速度。
 
 统一采用三遍：
 
@@ -158,18 +158,18 @@ Coding 使用另一条并行实践线：学习 Python 基础的同时开始写�
 
 | 文档 | 作用 |
 |---|---|
-| [Knowledge Map](roadmap/knowledge-map.md) | 十板块职责、主线与依赖关系 |
-| [Coding & Problem Solving](coding/README.md) | Python3 编程基本功、ACM、DSA、Hot100、OA 与 AI Coding 横向实践轨道 |
-| [Git + GitHub Desktop Guide](roadmap/git-github-desktop-guide.md) | 初学者 Git 心智模型、GitHub Desktop 日常工作流、Commit 规范、Branch / PR / Conflict / 撤销与安全注意事项 |
-| [Learning Path](roadmap/learning-path.md) | 可选的标准 / 加速 / 冲刺学习节奏与 Module Exit Gate |
-| [Final Quality Audit](roadmap/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
-| [Terminology Glossary](roadmap/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
-| [Documentation Style Guide](roadmap/documentation-style-guide.md) | README / 描述文件统一规范 |
-| [Granularity Audit](roadmap/curriculum-granularity-audit.md) | 研究粒度与教材粒度为什么分开 |
-| [Content Depth Audit](roadmap/content-depth-audit.md) | 正文深度与完成状态 |
-| [Foundation Status](roadmap/foundation-status-audit.md) | Python / FastAPI / AIBE 完成状态 |
-| [Progress](research/questions/progress.md) | Curriculum 与使用层当前正式状态 |
-| [Module Index](research/questions/module-index.md) | Canonical Ownership ↔ Curriculum 映射 |
+| [Knowledge Map](guide/knowledge-map.md) | 十板块职责、主线与依赖关系 |
+| [Coding & Problem Solving](practice/coding/README.md) | Python3 编程基本功、ACM、DSA、Hot100、OA 与 AI Coding 横向实践轨道 |
+| [Git + GitHub Desktop Guide](practice/tooling/git-github-desktop-guide.md) | 初学者 Git 心智模型、GitHub Desktop 日常工作流、Commit 规范、Branch / PR / Conflict / 撤销与安全注意事项 |
+| [Learning Path](guide/learning-path.md) | 可选的标准 / 加速 / 冲刺学习节奏与 Module Exit Gate |
+| [Final Quality Audit](guide/audits/final-quality-audit.md) | v1.0 前全仓库结构、边界、术语、版本与链接终审 |
+| [Terminology Glossary](guide/terminology-glossary.md) | 跨模块同名概念的稳定工作定义与 Primary Ownership |
+| [Documentation Style Guide](guide/documentation-style-guide.md) | README / 描述文件统一规范 |
+| [Granularity Audit](guide/audits/curriculum-granularity-audit.md) | 研究粒度与教材粒度为什么分开 |
+| [Content Depth Audit](guide/audits/content-depth-audit.md) | 正文深度与完成状态 |
+| [Foundation Status](guide/audits/foundation-status-audit.md) | Python / FastAPI / AIBE 完成状态 |
+| [Progress](interview/canonical/progress.md) | Curriculum 与使用层当前正式状态 |
+| [Module Index](interview/canonical/module-index.md) | Canonical Ownership ↔ Curriculum 映射 |
 
 ---
 
