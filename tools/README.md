@@ -31,6 +31,10 @@ references/
 脚本输出不能替代人工 provenance / Role Scope / Source Quality 审核。
 
 
+## GitHub Actions Runner
+
+仓库 CI 与岗位同步统一运行在 **Linux self-hosted Runner** 上（`runs-on: [self-hosted, linux]`），不依赖 GitHub-hosted minutes。Runner 需要能够执行 Git、Python 3.12、Node.js 22 与 Playwright Chromium；workflow 会通过 `actions/setup-python` / `actions/setup-node` 初始化语言环境，并在岗位同步时安装 Playwright。自托管 Runner 离线时，workflow 会排队等待，不应把 Runner 未执行误判成岗位采集失败。
+
 ## 生成文件一致性
 
 `market/analysis/` 中由脚本生成的索引、覆盖、统计与 README 以 `tools/` 生成源为权威。CI 会重新运行 Canonical Audit、Gap Candidate、Market Analysis 与 Source Coverage，并要求生成后 `git diff --exit-code`；如果手工改了生成结果却没有同步生成器，验证会失败。
