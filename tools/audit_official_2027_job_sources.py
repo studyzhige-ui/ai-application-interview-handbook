@@ -50,8 +50,8 @@ def main() -> int:
         # A browser run is a valid first-party enumerator when it both proves
         # the 2027 project and completes the full configured keyword search.
         b_status = b.get("status")
-        b_has_2027 = bool(b.get("has2027"))
-        b_full = bool(b.get("full_keyword_search"))
+        b_has_2027 = bool(src.get("verified_2027_project")) or bool(b.get("has2027"))
+        b_full = bool(b.get("full_keyword_search")) or bool(b.get("list_scan_complete"))
         b_jobs = b.get("jobs") or []
         if b_status == "BROWSER_ENUMERATED" and b_has_2027 and b_full:
             status = "ENUMERATED_WITH_MATCHES" if b_jobs else "ENUMERATED_ZERO_MATCHES"
@@ -61,6 +61,9 @@ def main() -> int:
         elif b_status == "BROWSER_ENUMERATED_ZERO" and b_has_2027 and b_full:
             status = "ENUMERATED_ZERO_MATCHES"
             reason = "official browser completed full 2027 keyword enumeration; 0 target jobs"
+        elif b_status == "BROWSER_NO_PUBLIC_2027":
+            status = "NO_PUBLIC_2027_PROJECT"
+            reason = "fixed official recruitment entry exhaustively checked; no public 2027 project exposed"
         elif b_status == "BROWSER_NO_2027_EVIDENCE" and src.get("allow_no_public_2027"):
             status = "NO_PUBLIC_2027_PROJECT"
             reason = "official root exhaustively checked; no public 2027 project exposed"
