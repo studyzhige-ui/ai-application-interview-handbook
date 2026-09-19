@@ -79,7 +79,7 @@ function uniqueJobs(jobs){
   return [...m.values()];
 }
 async function scroll(page){
-  for(let i=0;i<4;i++){
+  for(let i=0;i<2;i++){
     await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
     await page.waitForTimeout(500);
   }
@@ -96,7 +96,7 @@ async function searchInputs(page){
       try{
         await el.fill(q);
         await el.press("Enter");
-        await page.waitForTimeout(800);
+        await page.waitForTimeout(500);
         await scroll(page);
       }catch{}
     }
@@ -136,8 +136,8 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     responseTasks.push(task);
   });
   try{
-    await page.goto(url,{waitUntil:"domcontentloaded",timeout:30000});
-    await page.waitForTimeout(1800);
+    await page.goto(url,{waitUntil:"domcontentloaded",timeout:12000});
+    await page.waitForTimeout(1000);
     await scroll(page);
     await searchInputs(page);
     await Promise.allSettled(responseTasks);
@@ -177,7 +177,7 @@ async function processSource(browser,src){
   const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
   const pageResults=[];
   try{
-    while(queue.length && visited.size<6){
+    while(queue.length && visited.size<3){
       const u=queue.shift();
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog);
       if(pr){
