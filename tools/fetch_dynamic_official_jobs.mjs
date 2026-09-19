@@ -101,6 +101,32 @@ async function jobLinksOnPage(page,keyword){
     .filter(a=>a.href && jobLinkLike(a.href))
     .map(a=>({href:a.href,title:(a.text||"").slice(0,240),keyword}));
 }
+async function openJobSearchSurface(page){
+  const patterns=[
+    /职位|岗位|招聘职位|职位列表|岗位投递|应届生招聘|校园招聘|校招岗位/i,
+    /jobs?|positions?|openings?|campus recruitment|graduates?/i
+  ];
+  const selectors=["a","button","[role=button]","li","[class*=nav]","[class*=menu]","[class*=tab]"];
+  for(const sel of selectors){
+    const loc=page.locator(sel);
+    const n=Math.min(await loc.count().catch(()=>0),80);
+    for(let i=0;i<n;i++){
+      const el=loc.nth(i);
+      let txt="";
+      try{txt=((await el.innerText())||"").trim();}catch{}
+      if(!txt||txt.length>40||!patterns.some(p=>p.test(txt)))continue;
+      try{
+        await el.click({timeout:1200});
+        await page.waitForTimeout(800);
+        const url=page.url();
+        const body=(await page.locator("body").innerText().catch(()=>"")).slice(0,12000);
+        if(/职位|岗位|job|position|投递/i.test(body+" "+url)) return {clicked:true,text:txt,url};
+      }catch{}
+    }
+  }
+  return {clicked:false};
+}
+
 async function searchInputs(page){
   const inputs=page.locator("input");
   const n=Math.min(await inputs.count(),40);
@@ -201,9 +227,18 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     await page.goto(url,{waitUntil:"domcontentloaded",timeout:12000});
     await page.waitForTimeout(900);
     await scroll(page);
-    const beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
-    const beforeCycle=cycleSnippets(beforeBody);
-    const search=await searchInputs(page);
+    let beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+    let beforeCycle=cycleSnippets(beforeBody);
+    let search=await searchInputs(page);
+    let navAction={clicked:false};
+    if(!search.found){
+      navAction=await openJobSearchSurface(page);
+      if(navAction.clicked){
+        beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+        beforeCycle=[...new Set([...beforeCycle,...cycleSnippets(beforeBody)])];
+        search=await searchInputs(page);
+      }
+    }
     await Promise.allSettled(responseTasks);
 
     const body=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
@@ -236,6 +271,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       page_url:url,final_url:finalUrl,has2027,cycle_evidence:cycleMatches,
       next:[...new Set(next)].slice(0,10),
       search_control_found:search.found,
+      navigation_action:navAction,
       search_terms_attempted:search.terms,
       search_hit_links:uniqueHits.length
     };
