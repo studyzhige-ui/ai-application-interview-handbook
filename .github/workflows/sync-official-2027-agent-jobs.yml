@@ -11,6 +11,7 @@ on:
       - 'tools/fetch_xiaomi_2027.mjs'
       - 'tools/fetch_bytedance_2027.mjs'
       - 'tools/fetch_dynamic_official_jobs.mjs'
+      - 'tools/fetch_feishu_official_2027.mjs'
       - 'market/jobs/official-2027-campus-sources.json'
       - '.github/workflows/sync-official-2027-agent-jobs.yml'
 
@@ -47,6 +48,9 @@ jobs:
       - name: Pull ByteDance official campus ATSX
         run: node tools/fetch_bytedance_2027.mjs /tmp/bytedance-campus.json
 
+      - name: Pull company-proven official Feishu ATS tenants
+        run: node tools/fetch_feishu_official_2027.mjs market/jobs/official-2027-feishu-discovery.generated.json
+
       - name: Discover dynamic official campus portals
         run: node tools/fetch_dynamic_official_jobs.mjs market/jobs/official-2027-browser-discovery.generated.json
 
@@ -58,6 +62,7 @@ jobs:
           cp market/jobs/official-2027-agent-jobs.generated.md /tmp/official-2027-agent-jobs.generated.md
           cp market/jobs/official-2027-agent-jobs.generated.json /tmp/official-2027-agent-jobs.generated.json
           cp market/jobs/official-2027-browser-discovery.generated.json /tmp/official-2027-browser-discovery.generated.json
+          cp market/jobs/official-2027-feishu-discovery.generated.json /tmp/official-2027-feishu-discovery.generated.json
 
           git fetch origin ${{ github.ref_name }}
           git reset --hard origin/${{ github.ref_name }}
@@ -65,14 +70,15 @@ jobs:
           cp /tmp/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.md
           cp /tmp/official-2027-agent-jobs.generated.json market/jobs/official-2027-agent-jobs.generated.json
           cp /tmp/official-2027-browser-discovery.generated.json market/jobs/official-2027-browser-discovery.generated.json
+          cp /tmp/official-2027-feishu-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json
 
-          if [ -z "$(git status --porcelain -- market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json)" ]; then
+          if [ -z "$(git status --porcelain -- market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json)" ]; then
             echo "No discovery changes."
             exit 0
           fi
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json
+          git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json
           git commit -m 'market: sync official 2027 Agent campus discovery'
           git push origin HEAD:${{ github.ref_name }}
