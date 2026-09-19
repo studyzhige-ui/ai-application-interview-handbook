@@ -12,7 +12,7 @@ import { chromium } from "playwright";
 
 const ROOT = process.cwd();
 const CONFIG = JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.json","utf8"));
-const OUT = process.argv[2] || "/tmp/dynamic-official-campus.json";
+const OUT = process.argv[2] || "market/jobs/official-2027-browser-discovery.generated.json";
 
 const STRONG = (CONFIG.strong_agent_keywords || CONFIG.agent_keywords || []).map(x=>x.toLowerCase());
 const TITLE_KEYS = ["positionName","jobName","jobTitle","positionTitle","recruitPostName","postName","title","name"];
@@ -35,7 +35,7 @@ function sameOfficialFamily(a,b){
   try{
     const ha=new URL(a).hostname.replace(/^www\./,"");
     const hb=new URL(b).hostname.replace(/^www\./,"");
-    const suffixes=["mokahr.com","mioffice.cn","feishu.cn","myworkdayjobs.com","workdayjobs.com","liepin.com"];
+    const suffixes=["mokahr.com","mioffice.cn","feishu.cn","myworkdayjobs.com","workdayjobs.com"];
     if(ha===hb||ha.endsWith("."+hb)||hb.endsWith("."+ha)) return true;
     // ATS hosts are accepted only because navigation originated from the official page.
     return suffixes.some(s=>ha.endsWith(s));
