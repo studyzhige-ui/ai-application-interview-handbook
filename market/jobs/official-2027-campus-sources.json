@@ -44,82 +44,97 @@
     {
       "company": "小米",
       "mode": "xiaomi_api",
-      "portal": "https://hr.xiaomi.com/website/opportunities.html?project=%E6%A0%A1%E6%8B%9B&q=agent",
+      "portal": "https://xiaomi.jobs.f.mioffice.cn/campus/",
       "api": "https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts",
-      "note": "当前官方 campus ATSX：portal-channel=campus，正式岗 recruitment_id=201；用户提供 hr.xiaomi.com 校招入口作为中文导航。",
-      "official_campus_portal": "https://xiaomi.jobs.f.mioffice.cn/campus/"
+      "note": "官方根入口为 hr.xiaomi.com/website/campus.html；职位系统由官方校招页进入 xiaomi.jobs.f.mioffice.cn/campus/。API 仅在实际 Runner 成功枚举后保留。",
+      "official_campus_portal": "https://xiaomi.jobs.f.mioffice.cn/campus/",
+      "official_root": "https://hr.xiaomi.com/website/campus.html",
+      "browser_probe": true
     },
     {
       "company": "快手",
       "mode": "kuaishou_api",
-      "portal": "https://campus.kuaishou.cn/recruit/campus/e/#/campus/jobs?recruitSubProjectCodes=20271779425607",
+      "portal": "https://campus.kuaishou.cn/recruit/campus/e/",
       "api": "https://campus.kuaishou.cn/recruit/campus/e/api/v1/open/positions/simple",
       "project_code": "20271779425607",
-      "note": "固定 2027 项目 recruitSubProjectCodes=20271779425607；列表与详情均为 campus.kuaishou.cn 官方公开 API。",
-      "detail_api": "https://campus.kuaishou.cn/recruit/campus/e/api/v1/open/positions/find"
+      "note": "官方根入口 campus.kuaishou.cn；2027 project code 必须由官方站运行时/项目页重新发现并核验，不能把外部提供的筛选 URL 当根源。",
+      "detail_api": "https://campus.kuaishou.cn/recruit/campus/e/api/v1/open/positions/find",
+      "official_root": "https://campus.kuaishou.cn/",
+      "browser_probe": true
     },
     {
       "company": "百度",
       "mode": "baidu_api",
       "portal": "https://talent.baidu.com/jobs/list?projectType=1",
-      "api": "https://talent.baidu.com/httservice/getPostListNew"
+      "api": "https://talent.baidu.com/httservice/getPostListNew",
+      "official_root": "https://talent.baidu.com/jobs/list?projectType=1"
     },
     {
       "company": "腾讯",
       "mode": "tencent_campus_api",
       "portal": "https://join.qq.com/",
       "note": "官方 join.qq 校招 API，recruitType=40003；排除实习，项目标签需复核 2027。",
-      "api": "https://join.qq.com/api/v1/position/searchPosition"
+      "api": "https://join.qq.com/api/v1/position/searchPosition",
+      "official_root": "https://join.qq.com/"
     },
     {
       "company": "美团",
       "mode": "meituan_campus_api",
       "portal": "https://zhaopin.meituan.com/web/campus",
       "api": "https://zhaopin.meituan.com/api/official/job/getJobList",
-      "note": "官方 campus API，jobType=1 正式校招；届别需主库复核。"
+      "note": "官方 campus API，jobType=1 正式校招；届别需主库复核。",
+      "official_root": "https://zhaopin.meituan.com/web/campus"
     },
     {
       "company": "网易",
       "mode": "netease_api",
       "portal": "https://campus.163.com/",
-      "api": "https://hr.163.com/api/hr163/position/queryPage"
+      "api": "https://hr.163.com/api/hr163/position/queryPage",
+      "official_root": "https://campus.163.com/"
     },
     {
       "company": "哔哩哔哩",
       "mode": "bilibili_api",
       "portal": "https://jobs.bilibili.com/campus/positions",
-      "api": "https://jobs.bilibili.com/api/positions"
+      "api": "https://jobs.bilibili.com/api/positions",
+      "official_root": "https://jobs.bilibili.com/campus/positions"
     },
     {
       "company": "滴滴",
       "mode": "didi_api",
       "portal": "https://campus.didiglobal.com/",
-      "api": "https://talent.didiglobal.com/api/jobList"
+      "api": "https://talent.didiglobal.com/api/jobList",
+      "official_root": "https://campus.didiglobal.com/"
     },
     {
       "company": "拼多多",
       "mode": "pdd_campus_api",
       "portal": "https://careers.pddglobalhr.com/campus/grad",
       "api": "https://careers.pddglobalhr.com/api/careers/api/recruit/position/list",
-      "note": "官方 PDD campus API，详情返回 graduationYear；只在 2027 届证据成立时正式入库。"
+      "note": "官方 PDD campus API，详情返回 graduationYear；只在 2027 届证据成立时正式入库。",
+      "official_root": "https://careers.pddglobalhr.com/campus/grad"
     },
     {
       "company": "华为",
       "mode": "huawei_api",
       "portal": "https://career.huawei.com/cn/",
-      "api": "https://career.huawei.com/reccampportal/portal5/position/api/position/queryPositions"
+      "api": "https://career.huawei.com/reccampportal/portal5/position/api/position/queryPositions",
+      "official_root": "https://career.huawei.com/cn/"
     },
     {
       "company": "小红书",
       "mode": "portal_only",
-      "portal": "https://job.xiaohongshu.com/campus"
+      "portal": "https://job.xiaohongshu.com/campus",
+      "official_root": "https://job.xiaohongshu.com/campus",
+      "browser_probe": true
     },
     {
       "company": "字节跳动",
       "mode": "bytedance_api",
       "portal": "https://jobs.bytedance.com/campus/position",
       "api": "https://jobs.bytedance.com/api/v1/search/job/posts",
-      "note": "官方 ATSX campus pool 通过 Node fetch 全量枚举；job subject/recruit type 用于 2027 项目归属复核。"
+      "note": "官方 ATSX campus pool 通过 Node fetch 全量枚举；job subject/recruit type 用于 2027 项目归属复核。",
+      "official_root": "https://jobs.bytedance.com/campus/position"
     },
     {
       "company": "阿里巴巴",
@@ -127,166 +142,222 @@
       "portal": "https://campus-talent.alibaba.com/campus/position?batchId=100000540002",
       "batch_id": 100000540002,
       "api": "https://campus-talent.alibaba.com/position/search",
-      "note": "官方 campus-talent API；batchId 固定当前校招批次，需核验该 batch 是否 2027。"
+      "note": "官方 campus-talent API；batchId 固定当前校招批次，需核验该 batch 是否 2027。",
+      "official_root": "https://campus-talent.alibaba.com/campus/position?batchId=100000540002"
     },
     {
       "company": "蚂蚁集团",
       "mode": "portal_only",
-      "portal": "https://talent.antgroup.com/campus-full-list"
+      "portal": "https://talent.antgroup.com/campus-full-list",
+      "official_root": "https://talent.antgroup.com/campus-full-list",
+      "browser_probe": true
     },
     {
       "company": "京东",
       "mode": "jd_campus_api",
       "portal": "https://campus.jd.com/",
       "api": "https://campus.jd.com/api/wx/position/page",
-      "note": "官方 campus API，present/talent 正式校招轨道；届别需主库复核。"
+      "note": "官方 campus API，present/talent 正式校招轨道；届别需主库复核。",
+      "official_root": "https://campus.jd.com/"
     },
     {
       "company": "OPPO",
       "mode": "oppo_campus_api",
       "portal": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate",
       "api": "https://careers.oppo.com/openapi/position/pageNew",
-      "note": "官方 OPPO campus openapi；projectName/positionType 用于校招届别复核。"
+      "note": "官方 OPPO campus openapi；projectName/positionType 用于校招届别复核。",
+      "official_root": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate"
     },
     {
       "company": "vivo",
       "mode": "portal_only",
-      "portal": "https://hr.vivo.com/"
+      "portal": "https://hr.vivo.com/",
+      "official_root": "https://hr.vivo.com/",
+      "browser_probe": true
     },
     {
       "company": "金山办公/WPS",
       "mode": "portal_only",
-      "portal": "https://join.wps.cn/"
+      "portal": "https://join.wps.cn/",
+      "official_root": "https://join.wps.cn/",
+      "browser_probe": true
     },
     {
       "company": "荣耀",
       "mode": "portal_only",
-      "portal": "https://career.hihonor.com/"
+      "portal": "https://career.hihonor.com/",
+      "official_root": "https://career.hihonor.com/",
+      "browser_probe": true
     },
     {
       "company": "科大讯飞",
       "mode": "portal_only",
-      "portal": "https://campus.iflytek.com/official-pc/jobList"
+      "portal": "https://campus.iflytek.com/official-pc/jobList",
+      "official_root": "https://campus.iflytek.com/official-pc/jobList",
+      "browser_probe": true
     },
     {
       "company": "携程",
       "mode": "portal_only",
-      "portal": "https://campus.ctrip.com/"
+      "portal": "https://campus.ctrip.com/",
+      "official_root": "https://campus.ctrip.com/",
+      "browser_probe": true
     },
     {
       "company": "360",
       "mode": "portal_only",
-      "portal": "https://hr.360.cn/"
+      "portal": "https://hr.360.cn/",
+      "official_root": "https://hr.360.cn/",
+      "browser_probe": true
     },
     {
       "company": "得物",
       "mode": "portal_only",
-      "portal": "https://www.dewu.com/"
+      "portal": "https://www.dewu.com/",
+      "official_root": "https://www.dewu.com/",
+      "browser_probe": true
     },
     {
       "company": "DeepSeek",
       "mode": "portal_only",
-      "portal": "https://talent.deepseek.com/"
+      "portal": "https://talent.deepseek.com/",
+      "official_root": "https://talent.deepseek.com/",
+      "browser_probe": true
     },
     {
       "company": "月之暗面/Kimi",
       "mode": "portal_only",
-      "portal": "https://careers.kimi.com/"
+      "portal": "https://careers.kimi.com/",
+      "official_root": "https://careers.kimi.com/",
+      "browser_probe": true
     },
     {
       "company": "MiniMax",
       "mode": "portal_only",
-      "portal": "https://www.minimax.cn/careers"
+      "portal": "https://www.minimax.cn/careers",
+      "official_root": "https://www.minimax.cn/careers",
+      "browser_probe": true
     },
     {
       "company": "智谱/Z.ai",
       "mode": "portal_only",
-      "portal": "https://www.zhipuai.cn/zh/joinus"
+      "portal": "https://www.zhipuai.cn/zh/joinus",
+      "official_root": "https://www.zhipuai.cn/zh/joinus",
+      "browser_probe": true
     },
     {
       "company": "阶跃星辰",
       "mode": "portal_only",
-      "portal": "https://www.stepfun.com/"
+      "portal": "https://www.stepfun.com/",
+      "official_root": "https://www.stepfun.com/",
+      "browser_probe": true
     },
     {
       "company": "百川智能",
       "mode": "portal_only",
-      "portal": "https://www.baichuan-ai.com/"
+      "portal": "https://www.baichuan-ai.com/",
+      "official_root": "https://www.baichuan-ai.com/",
+      "browser_probe": true
     },
     {
       "company": "零一万物/01.AI",
       "mode": "portal_only",
-      "portal": "https://www.01.ai/"
+      "portal": "https://www.01.ai/",
+      "official_root": "https://www.01.ai/",
+      "browser_probe": true
     },
     {
       "company": "商汤科技",
       "mode": "portal_only",
-      "portal": "https://www.sensetime.com/cn/join-us"
+      "portal": "https://www.sensetime.com/cn/join-us",
+      "official_root": "https://www.sensetime.com/cn/join-us",
+      "browser_probe": true
     },
     {
       "company": "生数科技",
       "mode": "portal_only",
-      "portal": "https://www.shengshu-ai.com/"
+      "portal": "https://www.shengshu-ai.com/",
+      "official_root": "https://www.shengshu-ai.com/",
+      "browser_probe": true
     },
     {
       "company": "硅基流动",
       "mode": "portal_only",
-      "portal": "https://siliconflow.cn/"
+      "portal": "https://siliconflow.cn/",
+      "official_root": "https://siliconflow.cn/",
+      "browser_probe": true
     },
     {
       "company": "面壁智能",
       "mode": "portal_only",
-      "portal": "https://www.modelbest.cn/"
+      "portal": "https://www.modelbest.cn/",
+      "official_root": "https://www.modelbest.cn/",
+      "browser_probe": true
     },
     {
       "company": "Manus",
       "mode": "portal_only",
-      "portal": "https://manus.im/"
+      "portal": "https://manus.im/",
+      "official_root": "https://manus.im/",
+      "browser_probe": true
     },
     {
       "company": "LiblibAI",
       "mode": "portal_only",
-      "portal": "https://www.liblib.art/us/joinus"
+      "portal": "https://www.liblib.art/us/joinus",
+      "official_root": "https://www.liblib.art/us/joinus",
+      "browser_probe": true
     },
     {
       "company": "无问芯穹/Infini-AI",
       "mode": "portal_only",
-      "portal": "https://www.infini-ai.com/"
+      "portal": "https://www.infini-ai.com/",
+      "official_root": "https://www.infini-ai.com/",
+      "browser_probe": true
     },
     {
       "company": "昆仑万维/天工",
       "mode": "portal_only",
-      "portal": "https://www.kunlun.com/"
+      "portal": "https://www.kunlun.com/",
+      "official_root": "https://www.kunlun.com/",
+      "browser_probe": true
     },
     {
       "company": "Shopee",
       "mode": "portal_only",
-      "portal": "https://careers.shopee.cn/"
+      "portal": "https://careers.shopee.cn/",
+      "official_root": "https://careers.shopee.cn/",
+      "browser_probe": true
     },
     {
       "company": "联想",
       "mode": "lenovo_api",
       "portal": "https://talent.lenovo.com.cn/",
       "api": "https://talent.lenovo.com.cn/gateway/jobBase/list",
-      "note": "官方 Lenovo gateway；2027 项目归属需从官方字段/项目页复核。"
+      "note": "官方 Lenovo gateway；2027 项目归属需从官方字段/项目页复核。",
+      "official_root": "https://talent.lenovo.com.cn/"
     },
     {
       "company": "蔚来",
       "mode": "portal_only",
-      "portal": "https://www.nio.cn/careers"
+      "portal": "https://www.nio.cn/careers",
+      "official_root": "https://www.nio.cn/careers",
+      "browser_probe": true
     },
     {
       "company": "顺丰",
       "mode": "sf_campus_api",
       "portal": "https://campus.sf-express.com/positionList",
       "api": "https://campus.sf-express.com/api/web/position/query",
-      "note": "官方校园招聘 API；届别需复核。"
+      "note": "官方校园招聘 API；届别需复核。",
+      "official_root": "https://campus.sf-express.com/positionList"
     }
   ],
   "notes": [
-    "2027-campus discovery must enumerate official campus project portals/APIs; search-engine indexing is never evidence of absence.",
-    "Dynamic JS portals (e.g. Xiaomi/Kuaishou) must be checked through their official recruitment API/project scope where possible.",
-    "Portal-only means official entry confirmed but automated enumerator not yet implemented; it does NOT mean no matching jobs."
+    "Every company starts from an official company/campus career root. Filter URLs supplied externally are never treated as the root source.",
+    "A company is marked enumerated only after GitHub Runner/browser or a verified first-party API successfully returns its official job pool.",
+    "Dynamic official portals are browser-probed from their official root; runtime XHR/JSON endpoints may be promoted into dedicated adapters only after a successful run.",
+    "Search-engine indexing is never evidence of absence."
   ],
   "engineering_title_signals": [
     "开发",
