@@ -18,6 +18,7 @@ MOKA = ROOT / "market/jobs/official-2027-moka-discovery.generated.json"
 OUT = ROOT / "market/jobs/official-2027-coverage-audit.generated.md"
 
 TERMINAL = {"ENUMERATED_WITH_MATCHES", "ENUMERATED_ZERO_MATCHES"}
+EXPECTED_COMPANIES = 41
 
 
 def read(path: Path):
@@ -109,6 +110,11 @@ def main() -> int:
             }
         )
 
+    if len(rows) != EXPECTED_COMPANIES:
+        hard_errors.append(
+            f"official source registry must contain exactly {EXPECTED_COMPANIES} companies; got {len(rows)}"
+        )
+
     runtime_counts = Counter(x["runtime"] for x in rows)
     counts = norm.get("counts") or {}
     role_families = int(counts.get("role_families") or 0)
@@ -145,7 +151,7 @@ def main() -> int:
         f"- LIST_REACHABLE：**{runtime_counts.get('LIST_REACHABLE',0)}**",
         f"- BLOCKED：**{runtime_counts.get('BLOCKED',0)}**",
         "",
-        "> Runtime 不是岗位存在性 Gate。自动化恢复后继续把它推进到 41/41 ENUMERATED，但中途结果必须允许提交，不能形成审计死锁。",
+        f"> Runtime 不是岗位存在性 Gate。自动化恢复后继续把它推进到 {EXPECTED_COMPANIES}/{EXPECTED_COMPANIES} ENUMERATED，但中途结果必须允许提交，不能形成审计死锁。",
         "",
         "## 逐公司",
         "",
@@ -162,7 +168,7 @@ def main() -> int:
         "",
         "## 验收规则",
         "",
-        "- 41/41 公司必须同时有固定第一方招聘入口和至少一个 VERIFIED_ROLE；这是硬失败条件。",
+        f"- {EXPECTED_COMPANIES}/{EXPECTED_COMPANIES} 公司必须同时有固定第一方招聘入口和至少一个 VERIFIED_ROLE；这是硬失败条件。",
         "- Runtime ENUMERATED 表示自动采集已完成分页 / 关键词穷举；LIST_REACHABLE / BLOCKED 需要继续修复，但不会删除已核验岗位。",
         "- 自动同步可以新增、刷新或把岗位升级成第一方完整 JD；不得仅因为一次抓取 0 命中而把 VERIFIED_ROLE 降级成无岗位。",
         "- 第一方正文未补齐的岗位必须保持证据等级标注，不把外部摘要伪装成公司原文。",

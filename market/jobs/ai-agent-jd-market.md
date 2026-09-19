@@ -882,12 +882,10 @@ ai-agent-jd-market.md
 - 将 Agent 作为模型与用户交互、行动和反馈的真实环境，联合产品体验与系统能力持续迭代；
 - 要求优秀的代码、系统设计和跨技术栈复杂问题解决能力，Agent 实践 / 开源贡献为加分项。
 
-## 7. 相关工程岗 / 边界岗 / 待届别确认
+## 7. 相关工程岗 / 边界岗 / 待完整 JD 确认
 
 | 公司 | 官方岗位/通道 | 为什么不计核心 | 官方入口 |
 |---|---|---|---|
-| 腾讯 | Agent开发工程师 / AI应用工程师 / AI全栈工程师 | 当前官方 campus 已发现，但 2027 届别未闭环 | https://join.qq.com/ |
-| 联想 | AI Agent开发工程师 / AI应用开发工程师 | 官方应届生 AI开发类已发现，2027 届别/完整 JD 待闭环 | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 |
 | 京东 | 技术方向-全栈开发（可定岗 Agent 开发） | 2027 毕业窗口明确，但岗位是宽口径技术通道，不计核心 Agent JD | https://campus.jd.com/#/details?type=present&id=9197 |
 | 顺丰 | AI全栈研发工程师（顺丰科技） | 2027 明确，但职责主体为全栈 + AI Coding，不计核心 Agent/AI应用系统 JD | https://campus.sf-express.com/#/postDetail/2246 |
 | 快手 | AI测试开发工程师 | 2027 明确，包含测试 Agent / Agent Eval，但主责是测试 | https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13046?recruitSubProjectCodes=20271779425607 |
@@ -901,7 +899,7 @@ ai-agent-jd-market.md
 - “Agent”只是研究/训练对象，岗位主体仍是模型算法；
 - 测试/安全/数据/芯片/传统 Infra 等岗位仅局部使用 Agent，而不是 Agent / AI应用工程主责；
 - 产品、运营、市场、销售；
-- 日常实习、社招（本主库只统计当前有效正式校招）。
+- 与应届 / 校园人才计划无关的日常实习，以及不接受应届生的纯社招；若公司没有独立校园职位池，只保留官方招聘池中明确允许应届生申请的岗位。
 
 ## 9. 可重复官方发现
 
@@ -923,7 +921,8 @@ ai-agent-jd-market.md
 
 ## 10. 维护日志
 
-- **2026-09-19｜固定职位页模型收口**：42 家公司全部维护 `official_root + job_list_url`；日常采集统一从固定官方职位列表页穷举，专用 API/ATS 仅作为加速器。
+- **2026-09-20｜41 家覆盖收口**：修复官方源合同校验器的 `INDEX` 未定义错误；注册表与核验索引改为严格的固定 41 家集合，缺失、重复或额外公司都会触发 CI 失败；覆盖事实与 Runtime Certification 继续分离。
+- **2026-09-19｜固定职位页模型收口**：41 家公司全部维护 `official_root + job_list_url`；日常采集统一从固定官方职位列表页穷举，专用 API/ATS 仅作为加速器。
 - **2026-09-19｜官方 JD 扩容**：从已经保存的官方招聘页面/XHR 中新增阿里巴巴 2、小红书 6、商汤科技 4、MiniMax 1，共 13 个非算法 2027 Role Family；正式库由 25 增至 38。
 
 - **2026-09-19**：正式切换为“2027 校招 + 第一手官方 + 非算法工程”专库。

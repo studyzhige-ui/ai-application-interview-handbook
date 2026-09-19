@@ -9,6 +9,7 @@ from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 REG = ROOT / "market/jobs/official-2027-campus-sources.json"
+INDEX = ROOT / "market/jobs/official-company-role-index.json"
 SYNC = ROOT / "tools/sync_official_2027_agent_jobs.py"
 
 BANNED = {
@@ -37,9 +38,15 @@ def main() -> int:
 
     if len(names) != len(set(names)):
         errors.append("duplicate company in official source registry")
-    missing = REQUIRED - set(names)
+    registered = set(names)
+    missing = REQUIRED - registered
+    extra = registered - REQUIRED
     if missing:
         errors.append("missing fixed companies: " + ", ".join(sorted(missing)))
+    if extra:
+        errors.append("unexpected companies outside fixed corpus: " + ", ".join(sorted(extra)))
+    if len(names) != len(REQUIRED):
+        errors.append(f"official source registry must contain exactly {len(REQUIRED)} companies; got {len(names)}")
 
     index_rows = index.get("companies") or []
     index_names = [x.get("company") for x in index_rows]
