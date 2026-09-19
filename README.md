@@ -79,7 +79,7 @@ Practice 与十个正式 Curriculum 模块并行，作为横向实践轨道，�
 
 [Market 首页](market/README.md)维护两类互补证据：
 
-- [非算法 AI Application / Agent 岗位 JD](market/jobs/ai-agent-jd-market.md)：回答“公司招什么、要求什么”。
+- [官方非算法 AI Application / Agent 岗位 JD](market/jobs/ai-agent-jd-market.md)：回答“公司招什么、要求什么”。
 - [HUMAN-A 真人面经](market/interviews/)：回答“真实面试官问什么、追到多深”。
 
 市场分析、持续监控与来源质量规则统一维护在 `market/`；官方技术资料与源码证据维护在 `references/`。
