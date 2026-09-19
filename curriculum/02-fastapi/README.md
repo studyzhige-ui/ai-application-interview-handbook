@@ -1,6 +1,6 @@
 # FastAPI｜AI 应用服务层
 
-[← Python Foundation](../python/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [AI Backend Engineering →](../backend-engineering/README.md)
+[← Python Foundation](../01-python/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [AI Backend Engineering →](../03-backend-engineering/README.md)
 
 > **状态：✅ 第一版系统教材完成**  
 > **教材：16 个连续知识小板块** · **HUMAN-A Canonical：4** · **独立来源覆盖：3**  
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../python/README.md) → **FastAPI** → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
+[Python Foundation](../01-python/README.md) → **FastAPI** → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
 当前模块角色：**Foundation / 把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。**
 
@@ -130,18 +130,18 @@ ASGI Request Lifecycle → API Contract / Validation → DI / Middleware / Resou
 
 研究与质量证据：
 
-- [Canonical Questions](../research/questions/fastapi.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../research/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../research/analysis/frequency-ranking.md)：复习热度参考；
-- [权威技术 / 源码资料索引](../research/fastapi-sources/README.md)：只校准技术事实，不改变 HUMAN-A 频率；
-- [Curriculum Granularity Audit](../roadmap/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../roadmap/content-depth-audit.md)：完成与深度验收口径。
+- [Canonical Questions](../../interview/canonical/fastapi.md)：市场真实问法与 Source Count；
+- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
+- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
+- [权威技术 / 源码资料索引](../../references/fastapi/README.md)：只校准技术事实，不改变 HUMAN-A 频率；
+- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
+- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
 
 ---
 
 ## 9. 推荐学习方式
 
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../roadmap/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
+> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 16` 连续阅读，不按高频题跳章。
 2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
@@ -160,4 +160,4 @@ Canonical Coverage ✅
 Content Depth       ✅
 ```
 
-下一环：[AI Backend Engineering](../backend-engineering/README.md)。
+下一环：[AI Backend Engineering](../03-backend-engineering/README.md)。
