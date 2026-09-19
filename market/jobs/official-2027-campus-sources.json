@@ -582,8 +582,7 @@
     "infra",
     "runtime",
     "harness",
-    "coding",
-    "测试"
+    "coding"
   ],
   "strong_agent_keywords": [
     "agent",
@@ -601,5 +600,49 @@
     "agent runtime",
     "agent harness"
   ],
-  "scope_note": "当前有效官方校园招聘/应届生职位池；年份仅作备注，不作为入库 Gate。"
+  "scope_note": "当前有效官方校园招聘/应届生职位池；年份仅作备注，不作为入库 Gate。",
+  "body_agent_signals": [
+    "agent",
+    "智能体",
+    "rag",
+    "mcp",
+    "function calling",
+    "tool calling",
+    "工具调用",
+    "langchain",
+    "langgraph",
+    "llamaindex",
+    "autogen",
+    "multi-agent",
+    "multiagent",
+    "多智能体",
+    "memory",
+    "记忆",
+    "workflow",
+    "工作流",
+    "prompt engineering",
+    "上下文",
+    "context engineering",
+    "agent runtime",
+    "agent harness",
+    "agent infra",
+    "skill"
+  ],
+  "training_heavy_signals": [
+    "预训练",
+    "pretrain",
+    "pre-training",
+    "后训练",
+    "post-training",
+    "sft",
+    "dpo",
+    "rlhf",
+    "reward model",
+    "模型训练",
+    "强化学习",
+    "agentic rl",
+    "ppo",
+    "grpo",
+    "训练框架"
+  ]
 }
