@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "cycle": "current-campus",
   "agent_keywords": [
     "agent",
@@ -564,10 +564,9 @@
     }
   ],
   "notes": [
-    "Each company is adapted by data, not bespoke code: official_root proves first-party provenance; job_list_url is the fixed page used for recurring enumeration.",
-    "Recurring discovery opens job_list_url directly, exhausts all configured Agent/AI-application keywords and pagination, then opens matching job details.",
-    "Dedicated APIs are optional accelerators only. Failure of an API never makes a company unavailable because the fixed official job-list browser path remains the universal fallback.",
-    "Search engines are used only to discover/verify official_root and job_list_url, never to prove zero jobs."
+    "正式时间 Gate 是当前公司官方校园招聘职位链接仍有效；毕业年份、项目批次、届别只作元数据，不作为筛选条件。",
+    "所有职位发现只使用公司官方招聘站或由公司官网直接链接的官方 ATS；二手来源零贡献。",
+    "每家公司必须保留固定 official_root 与 job_list_url；动态 API/ATS 只是加速器，失败时回退固定官网职位页。"
   ],
   "engineering_title_signals": [
     "开发",
@@ -644,5 +643,6 @@
     "ppo",
     "grpo",
     "训练框架"
-  ]
+  ],
+  "year_is_metadata_only": true
 }

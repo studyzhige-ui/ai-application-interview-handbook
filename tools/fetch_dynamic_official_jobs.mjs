@@ -90,7 +90,10 @@ function jobLinkLike(href){
   return /(?:\/job\/|\/jobs\/|\/position\/|job-info|postdetail|positionid=|jobid=|#\/job\/|#\/position\/)/i.test(href||"");
 }
 function cycleSnippets(body){
-  return (body.match(/2027[^\n]{0,100}|[^\n]{0,100}2027/g)||[]).slice(0,8);
+  // Current-campus evidence: year labels are metadata only. A live first-party
+  // campus/new-grad board is valid even when it does not print a graduation year.
+  const lines=(body||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
+  return lines.filter(x=>/(校园招聘|校招|应届|毕业生|campus|graduate|new\s*grad|student|university)/i.test(x)).slice(0,8);
 }
 async function jobLinksOnPage(page,keyword){
   const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>({
@@ -305,12 +308,12 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
 
     const body=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
     const cycleMatches=[...new Set([...beforeCycle,...cycleSnippets(body)])].slice(0,10);
-    const has2027=cycleMatches.length>0;
+    const hasCampusEvidence=cycleMatches.length>0;
     const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>({href:a.href,text:(a.innerText||a.textContent||"").trim()})));
     const next=[];
     for(const a of links){
       if(!a.href||!sameOfficialFamily(a.href,url)) continue;
-      if(/2027|校园|校招|应届|招聘|人才|加入我们|加入|campus|graduate|student|position|职位|岗位|join us|career|jobs?/i.test(a.text+" "+a.href)) next.push(a.href);
+      if(/校园|校招|应届|招聘|人才|加入我们|加入|campus|graduate|student|position|职位|岗位|join us|career|jobs?/i.test(a.text+" "+a.href)) next.push(a.href);
     }
 
     const uniqueHits=[];
@@ -330,7 +333,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     const finalUrl=page.url();
     await page.close();
     return {
-      page_url:url,final_url:finalUrl,has2027,cycle_evidence:cycleMatches,
+      page_url:url,final_url:finalUrl,hasCampusEvidence,cycle_evidence:cycleMatches,
       next:[...new Set(next)].slice(0,10),
       search_control_found:search.found,
       navigation_action:navAction,
@@ -341,7 +344,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     };
   }catch(e){
     await page.close().catch(()=>{});
-    return {page_url:url,error:String(e).slice(0,400),has2027:false,next:[],search_control_found:false,search_terms_attempted:[]};
+    return {page_url:url,error:String(e).slice(0,400),hasCampusEvidence:false,next:[],search_control_found:false,search_terms_attempted:[]};
   }
 }
 async function processSource(browser,src){
