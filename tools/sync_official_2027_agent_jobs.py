@@ -1576,60 +1576,176 @@ def main() -> int:
             all_matches.extend(matches)
 
     results.sort(key=lambda r: r.company)
-
     all_matches.sort(key=lambda j: (j.company, j.title, j.location, j.job_id))
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
+    def family_title(title: str) -> str:
+        first = (title or "").splitlines()[0].strip()
+        return re.sub(r"\\s+-\\s+.+$", "", re.sub(r"\\s+", " ", first)).strip()
+
+    family_map: dict[tuple[str, str], dict[str, Any]] = {}
+    for j in all_matches:
+        family = family_title(j.title)
+        key = (j.company, family)
+        item = family_map.setdefault(key, {
+            "company": j.company,
+            "role_family": family,
+            "representative_title": (j.title or "").splitlines()[0].strip(),
+            "locations": set(),
+            "description": "",
+            "requirements": "",
+            "cycle_evidence": "",
+            "requisitions": [],
+            "detail_status": "TITLE_ONLY_OFFICIAL",
+        })
+        for loc in re.split(r"\\s*/\\s*|,\\s*", j.location or ""):
+            if loc:
+                item["locations"].add(loc)
+        old_score = len(item["description"]) + len(item["requirements"])
+        new_score = len(j.description or "") + len(j.requirements or "")
+        if new_score > old_score:
+            item["description"] = j.description or ""
+            item["requirements"] = j.requirements or ""
+            item["representative_title"] = (j.title or "").splitlines()[0].strip()
+            item["cycle_evidence"] = j.cycle_evidence or ""
+        if item["description"] or item["requirements"]:
+            item["detail_status"] = "FULL_JD"
+        req = {
+            "job_id": j.job_id,
+            "title": (j.title or "").splitlines()[0].strip(),
+            "location": j.location,
+            "official_url": j.official_url,
+            "official_api": j.official_api,
+        }
+        if not any(
+            (req["job_id"] and x.get("job_id") == req["job_id"])
+            or (
+                not req["job_id"]
+                and x.get("official_url") == req["official_url"]
+                and x.get("title") == req["title"]
+            )
+            for x in item["requisitions"]
+        ):
+            item["requisitions"].append(req)
+
+    role_families = []
+    for item in family_map.values():
+        role_families.append({
+            **item,
+            "locations": sorted(item["locations"]),
+        })
+    role_families.sort(key=lambda x: (x["company"], x["role_family"]))
+
+    result_map = {r.company: r for r in results}
+    family_counts: dict[str, list[dict[str, Any]]] = {}
+    for f in role_families:
+        family_counts.setdefault(f["company"], []).append(f)
+
+    source_rows = []
+    for src in cfg["sources"]:
+        company = src["company"]
+        r = result_map.get(company)
+        fams = family_counts.get(company, [])
+        source_rows.append({
+            "company": company,
+            "mode": r.mode if r else src.get("mode", ""),
+            "retrieval_status": r.status if r else "MISSING_RESULT",
+            "fetched": r.fetched if r else 0,
+            "matched_requisitions": r.matched if r else 0,
+            "error": r.error if r else "source returned no result",
+            "official_root": src.get("official_root", ""),
+            "search_url": src.get("search_url") or src.get("job_list_url") or "",
+            "board_scope": src.get("board_scope") or ("campus" if src.get("current_campus_board") else "official_recruiting"),
+            "result_status": "HAS_TARGET_JDS" if fams else "ZERO_TARGET_JDS",
+            "role_family_count": len(fams),
+            "full_jd_count": sum(f["detail_status"] == "FULL_JD" for f in fams),
+            "title_only_count": sum(f["detail_status"] != "FULL_JD" for f in fams),
+        })
+
+    counts = {
+        "companies": len(source_rows),
+        "companies_with_targets": sum(bool(x["role_family_count"]) for x in source_rows),
+        "role_families": len(role_families),
+        "full_jd_families": sum(f["detail_status"] == "FULL_JD" for f in role_families),
+        "title_only_families": sum(f["detail_status"] != "FULL_JD" for f in role_families),
+        "raw_requisitions": len(all_matches),
+    }
     payload = {
+        "schema_version": 1,
         "generated_at": now,
         "cycle": cfg["cycle"],
-        "jobs": [asdict(j) for j in all_matches],
-        "sources": [asdict(x) for x in results],
+        "scope": "current official campus/new-grad non-algorithm AI application & Agent engineering",
+        "methodology": {
+            "inclusion": "First-party official source + current campus/new-grad eligibility + explicit engineering title materially about Agent/AI application/RAG/Harness/Runtime/Infra/Coding Agent.",
+            "exclusion": "Algorithm/model-training/research, product, sales, operations, marketing, internship-only and generic engineering jobs that merely mention AI tooling.",
+            "role_family": "Same-company near-identical titles are grouped while every official requisition remains attached.",
+            "detail_status": "FULL_JD = first-party duties/requirements captured; TITLE_ONLY_OFFICIAL = current first-party listing exposed only the title.",
+        },
+        "counts": counts,
+        "sources": source_rows,
+        "role_families": role_families,
     }
-    OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
 
     lines = [
-        "# 官方招聘｜Agent / AI 应用工程岗位自动发现结果",
+        "# 当前官方校招 / 应届｜非算法 AI 应用 & Agent 工程 JD 全量结果",
         "",
         f"> Generated: **{now}**",
-        ">",
-        "> 仅调用公司官方招聘接口 / 官方招聘入口。campus 类型直接枚举校园职位池；official_recruiting 类型枚举公司当前官方职位池，再以 JD 中的校招/应届/欢迎应届证据筛入正式候选。动态站监听第一手 XHR/JSON，二手来源不贡献 JD。",
+        f"> 固定公司 **{counts['companies']}** 家；命中目标岗位 **{counts['companies_with_targets']}** 家；严格 Role Family **{counts['role_families']}** 个。",
+        f"> 其中 **{counts['full_jd_families']}** 个抓到第一方 JD 正文，**{counts['title_only_families']}** 个仅能确认第一方职位标题。",
         "",
-        "## 官方源执行状态",
+        "## 1. 公司结果总表",
         "",
-        "| 公司 | 模式 | 状态 | 拉取岗位 | Agent相关非算法候选 | 官方入口 |",
-        "|---|---|---:|---:|---:|---|",
+        "| 公司 | Retrieval | 官方职位池 | 结果 | Role Family | 完整 JD | 仅标题 |",
+        "|---|---|---|---|---:|---:|---:|",
     ]
-    for r in results:
-        err = ("；" + r.error.replace("|", "\\|")) if r.error else ""
-        lines.append(f"| {r.company} | {r.mode} | {r.status}{err} | {r.fetched} | {r.matched} | {r.portal} |")
+    for s in source_rows:
+        status = s["retrieval_status"]
+        if s["error"]:
+            status += "；" + s["error"].replace("|", "\\|")
+        lines.append(
+            f"| {s['company']} | {status} | {s['search_url']} | {s['result_status']} | "
+            f"{s['role_family_count']} | {s['full_jd_count']} | {s['title_only_count']} |"
+        )
 
-    lines += ["", "## 自动发现候选", ""]
-    if not all_matches:
-        lines.append("> 本轮官方 API 未返回匹配候选；请查看上方 ERROR / PORTAL_ONLY 状态，并继续从官方校园招聘入口人工核验。")
-    for j in all_matches:
+    lines += ["", "## 2. 严格 Role Family", ""]
+    last_company = ""
+    for f in role_families:
+        if f["company"] != last_company:
+            last_company = f["company"]
+            lines += [f"## {last_company}", ""]
         lines += [
-            f"### {j.company}｜{j.title}" + (f"（{j.job_id}）" if j.job_id else ""),
+            f"### {f['role_family']}",
             "",
-            f"- 地点：{j.location or '官方未提供'}",
-            f"- 招聘类型：{j.category or '官方未提供'}",
-            f"- 部门/方向：{j.department or '官方未提供'}",
-            f"- 校招/项目备注：{j.cycle_evidence or '官方当前校招职位池'}",
-            f"- 官方职位页：{j.official_url}",
-            f"- 官方接口：{j.official_api}",
-            "",
-            "**职责（官方接口）**",
-            "",
-            clean(j.description) or "官方接口未返回职责正文。",
-            "",
-            "**要求（官方接口）**",
-            "",
-            clean(j.requirements) or "官方接口未返回任职要求正文。",
-            "",
+            f"- **证据状态**：{f['detail_status']}",
+            f"- **地点**：{' / '.join(f['locations']) or '官方未提供'}",
+            f"- **项目 / 届别**：{f['cycle_evidence'] or '当前官方招聘池 / 校招池'}",
+            f"- **官方 Requisition**：{len(f['requisitions'])} 个",
         ]
+        for req in f["requisitions"]:
+            prefix = (f"\`{req['job_id']}\` · " if req.get("job_id") else "")
+            loc = (f" · {req['location']}" if req.get("location") else "")
+            url = (f" · {req['official_url']}" if req.get("official_url") else "")
+            lines.append(f"  - {prefix}{req['title']}{loc}{url}")
+        lines += ["", "**官方职责**", ""]
+        lines.append(
+            clean(f["description"], 6000)
+            if f["description"]
+            else "> 当前第一方职位列表只暴露岗位标题 / 列表项，未返回可稳定保存的职责正文；不使用二手来源补写。"
+        )
+        lines += ["", "**官方要求**", ""]
+        lines.append(
+            clean(f["requirements"], 6000)
+            if f["requirements"]
+            else "> 当前第一方职位列表只暴露岗位标题 / 列表项，未返回可稳定保存的要求正文；不使用二手来源补写。"
+        )
+        lines.append("")
 
-    OUT_MD.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
-    print(f"official sources={len(results)}, candidates={len(all_matches)}")
+    OUT_MD.write_text("\\n".join(lines).rstrip() + "\\n", encoding="utf-8")
+    print(
+        f"official sources={len(results)}, requisitions={len(all_matches)}, "
+        f"role_families={len(role_families)}"
+    )
     for r in results:
         print(f"{r.company}: {r.status}, fetched={r.fetched}, matched={r.matched}, error={r.error}")
     return 0
