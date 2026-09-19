@@ -1,13 +1,33 @@
-# Curriculum & Research Progress｜当前正式状态
+# Curriculum & Canonical Progress｜正式状态
 
-[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../guide/knowledge-map.md) · [Learning Path](../../guide/learning-path.md)
+[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../guide/knowledge-map.md) · [Learning Path](../../guide/learning-path.md) · [Market](../../market/README.md)
 
-> **Repository-first：仓库当前文件高于历史聊天总结。**
+> **Repository-first：当前仓库文件高于历史聊天、旧 PR 描述与阶段性摘要。**
 
-## Frozen Research Baseline ✅
+## 1. Market 与 Canonical 使用不同时间口径
 
 ```text
-HUMAN-A                    279 / 279
+Market HUMAN-A
+= Continuous Monitoring
+= 当前总量与下一 Source ID 以 market/README.md / monitoring/inbox.md 为准
+
+Frozen Canonical Baseline
+= S001–S279
+= 235 ACTIVE Canonical
+= 278 Mapped + 1 VALID-UNMAPPED（S271）
+
+S280+
+= 合法 Market Evidence
+= 等待 periodic Canonical review
+= 在 review 完成前不改变 Frozen Source Count / Frequency
+```
+
+截至 2026-09-19，Market 正式库已到 `S001–S288 / 29 Batch`；这一数字用于描述当前证据库，不等于 Canonical 已扩展到 S288。
+
+## 2. Frozen Canonical Baseline ✅
+
+```text
+HUMAN-A in baseline        279 / 279
 ACTIVE Canonical          235 / 235
 Mapped Sources            278
 VALID-UNMAPPED              1（S271）
@@ -15,9 +35,9 @@ Unexpected uncovered        0
 Source Count mismatch       0
 ```
 
-Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Market Analysis ✅
+Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Frozen Market Analysis ✅
 
-## Phase 3 Curriculum Build ✅
+## 3. Curriculum Build ✅
 
 | # | Module | Curriculum | Canonical | Status |
 |---:|---|---:|---:|---|
@@ -32,38 +52,37 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 | 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | 44 | ✅ |
 | 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 24 | ✅ |
 
-十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。
+**Curriculum total：185 blocks。**
 
-**历史v1.0终审：PASS（历史检查范围）。** 上述历史检查不等于当前全部教学内容重新验收。2026-09-17已针对main的Agent23章完成读者反馈修订，正文讲解、章末训练、工具/上下文/恢复/协议与官方对照已补强；本轮实际验证与局限见[阅读修订](../../guide/project/agent-reader-revision.md)。研究235题与章节总数185保持不变；详见 [`../../guide/audits/final-quality-audit.md`](../../guide/audits/final-quality-audit.md)。
+历史 v1.0 审计快照保留在 [Audits History](../../guide/audits/history/README.md)；当前质量状态以 [Final Quality Audit](../../guide/audits/final-quality-audit.md) 为准。Agent 23→24 的修订与核验范围见 [Agent Reader Revision](../../guide/project/agent-reader-revision.md)。
 
-## Phase 4 Learning & Interview Usage Layer
+## 4. Learning & Interview Usage Layer
 
 | Layer | Status | Entry |
 |---|---|---|
 | 正式学习路线 | ✅ | [13 周标准 / 8 周加速 / 14 天冲刺](../../guide/learning-path.md) |
-| Bridge Labs | ⏳ | 下一阶段：把多个模块组合成真实工程任务 |
-| Cross-module Mock Interview | ⏳ | 下一阶段：用真实连续追问训练跨模块迁移 |
+| Coding / Tooling Practice | ✅ | [Practice](../../practice/README.md) |
+| Bridge Labs | ⏳ | 待建设：把多个模块组合成真实工程任务 |
+| Cross-module Mock Interview | ⏳ | 待建设：用真实连续追问训练跨模块迁移 |
 
-学习路线仍遵守：第一次学习 100% 按 Curriculum 顺序；HUMAN-A Heat 只进入 Review / Interview 权重。
+第一次系统学习按 Curriculum 知识依赖顺序进行；HUMAN-A Heat 只调整 Review / Interview 权重。
 
-## 固定课程原则
+## 5. 固定课程原则
 
 > **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
 
 > **Canonical / Capability / Curriculum Markdown 使用不同粒度。**
 
-## 模块完成后的强制同步清单
+## 6. 强制同步清单
 
-每次新增、重组或更新一个一级模块，都必须同步核验：
+每次新增、重组或更新一个一级模块，至少核验：
 
-1. 模块 `README.md`；
-2. 模块 `review/README.md` 与 Interview 入口；
-3. 根 `README.md`；
-4. `guide/knowledge-map.md`；
-5. 本文件与 `module-index.md`；
-6. `interview/canonical/README.md`；
-7. 自动生成 `market/analysis/README.md` 的生成源；
-8. `roadmap/documentation-style-guide.md` 的统一格式；
-9. README 本地链接、章节数量与旧状态描述。
+1. 模块 `README.md`、`review/README.md` 与模块 Interview；
+2. 根 `README.md`、`guide/knowledge-map.md`、`guide/learning-path.md`；
+3. 本文件、`module-index.md`、`interview/canonical/README.md`；
+4. `guide/documentation-style-guide.md` 与相关 Audits / Project Records；
+5. 自动生成 `market/analysis/` 文件的**生成源**；
+6. 本地 Markdown 链接、实际章节数量、Frozen / Current / Historical 时间语义；
+7. 运行中的自动任务是否仍引用有效目录。
 
-后续工作进入**使用层建设与质量维护**；不再存在未撰写的一级模块。
+后续工作重点是使用层建设、Market 持续监测、periodic Canonical review 与质量维护；不存在未撰写的正式一级 Curriculum 模块。

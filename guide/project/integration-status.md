@@ -14,7 +14,8 @@
 - FastAPI 与 AI Backend Engineering 已从课程骨架补成正式教材；
 - Data / LLM / RAG / Agent 模块完成粒度与深度统一；
 - System Design 作为最终 Integration 模块完成；
-- 279 个 HUMAN-A 与 235 Canonical 的研究层保持独立，不因教材重组改变；
+- Market HUMAN-A 持续监测；当前总量以 [`market/README.md`](../../market/README.md) 为准；
+- Canonical Frequency 使用冻结 `S001–S279 / 235 ACTIVE` 基线，不因教材重组或单日新增自动改变；
 - README / Knowledge Map / Progress / Module Index 使用统一状态口径。
 
 历史 Python 独立仓库可以继续作为历史版本，但本仓库是当前 AI Application Interview Handbook 的主维护入口。

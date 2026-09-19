@@ -1,6 +1,6 @@
 # AI Application Engineer｜十板块知识地图
 
-[← Handbook 总目录](../README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [v1.0 终局质量审计](audits/final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
+[← Handbook 总目录](../README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [当前质量审计](audits/final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
 
 > 十个一级模块已经全部完成第一版系统教材。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
 
@@ -65,7 +65,7 @@ Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Id
 
 市场校准：**39 Canonical / 125 independent HUMAN-A flows**。
 
-## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 24 blocks
+## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 23 blocks
 
 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
 
@@ -149,4 +149,4 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - v1.0 全仓库最终结论见 [Final Quality Audit](audits/final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
 
 
-Agent模块本轮保留24章学习顺序，新增中文概念推导、固定实现对照与逐章训练；详细变更和核验范围见[阅读修订](project/agent-reader-revision.md)。
+Agent 模块使用 24 章正式学习顺序；历史重组、固定实现对照与核验范围见 [Agent Reader Revision](project/agent-reader-revision.md)。

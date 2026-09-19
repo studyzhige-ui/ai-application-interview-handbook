@@ -133,3 +133,31 @@ README 采用稳定陈述式语言，优先写：
 ## Agent 章末固定形式
 
 HUMAN-A 信号提供来源关联；面试回答以 Q 和 🎯 可见引用块展示；高频易错点用 ⚠️ 逐条提醒；自测以题目本身作为折叠标题。不能把四者统一成“查看参考答案”按钮。正文保留引入、分层解释、例子和失败推演；源码对照可选折叠，不用来源清单代替讲解。
+
+
+## 时间语义与生成文件
+
+仓库中的数字和状态必须先区分时间语义，再决定是否同步：
+
+```text
+Current State
+= 运行中的当前事实，例如 Market HUMAN-A 总数、当前目录结构
+
+Frozen Baseline
+= 明确冻结的统计口径，例如 Canonical S001–S279 / 235 ACTIVE
+
+Historical Snapshot
+= 某次审计、迁移或阶段分析在当时的真实结论
+
+Rolling Log
+= Daily Log / Batch 等按时间追加的过程记录
+```
+
+规则：
+
+- Current State 发生变化时同步当前入口文件；
+- Frozen Baseline 只在正式 periodic review 后更新，不能因为 Market 新增来源机械扩展；
+- Historical Snapshot 不改写旧数字，应归档到 `history/` 或 Project Records 并明确日期；
+- Rolling Log 保留当时事实，不使用今天的总量回写过去。
+
+自动生成文件以生成源为权威。修改 `market/analysis/README.md`、Global Index、Coverage / Validation 等生成结果时，必须同步修改对应 `tools/*.py`；CI 通过“重新生成后无 diff”检查防止人工文案被下一次 Action 覆盖。

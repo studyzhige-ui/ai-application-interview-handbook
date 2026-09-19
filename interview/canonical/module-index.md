@@ -30,6 +30,6 @@
 - Agent Tool / Context / Memory / Checkpoint → Agent；
 - 端到端组合与 Scenario Trade-off → System Design。
 
-## 研究事实不随教材重组改变
+## Frozen Canonical 事实不随教材重组改变
 
-HUMAN-A、Source Count、Primary Ownership、Verified Follow-up Chain 与 Frequency Ranking 均保持 Frozen Research 层独立维护。
+`S001–S279` 的 HUMAN-A Evidence、Source Count、Primary Ownership、Verified Follow-up Chain 与 Frequency Ranking 由 Frozen Canonical Evidence Layer 独立维护；Market 的 `S280+` 在 periodic review 前不改变这些统计。

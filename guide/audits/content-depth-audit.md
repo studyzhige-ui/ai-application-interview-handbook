@@ -46,7 +46,7 @@
 - FastAPI / AIBE / System Design：首版即按当前粒度和深度标准建设；
 - Redis / Vector DB / LLM / RAG：完成旧结构颗粒度整改后重新做深度复核；
 - MySQL：原 23-block 结构本身健康，机制与 correctness 边界审阅通过；
-- Agent Harness：47→23 后对旧短稿区域做第二轮深写与源码 / 官方证据验收。
+- Agent Harness：47→23 完成粒度收敛与深写；随后为分离 MCP 协议生命周期与 Skills / Hooks / Extensions 扩展生命周期调整为 24 章，并重新核对内容去向与证据。
 
 ## 后续规则
 

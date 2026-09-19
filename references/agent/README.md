@@ -14,11 +14,13 @@
 
 ### Tier A｜HUMAN-A 真人面试证据
 
-来源：
+Frozen Canonical Tier A 来源（`S001–S279`）：
 
 - `interview/canonical/agent-harness.md`
 - `market/analysis/follow-up-chains.md`
 - `market/interviews/batch-01.md` ～ `batch-26.md`
+
+Market 在 `S279` 之后仍持续采集；新来源在 periodic Canonical review 前不进入本页频率统计。
 
 负责回答：
 
@@ -101,7 +103,7 @@ commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
 
 ## 4. 教材映射
 
-研究层 Capability 粒度更细，教材层组织为 24 个知识小板块：
+Canonical / Evidence Layer 的 Capability 粒度更细，教材层组织为 24 个知识小板块：
 
 ```text
 Agent / Workflow / Harness

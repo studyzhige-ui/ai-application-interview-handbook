@@ -1,8 +1,8 @@
 # Canonical Question 数据规范
 
-更新日期：2026-09-10
+更新日期：2026-09-19
 
-本目录把 `market/interviews/batch-01.md` ～ `batch-26.md` 中冻结的 `S001–S279` HUMAN-A 来源，归一化为可统计、可回溯、可反哺课程设计的 Canonical Question 数据集。
+本目录维护 **Frozen Canonical Baseline**：将 `market/interviews/batch-01.md` ～ `batch-26.md` 中的 `S001–S279` HUMAN-A 来源归一化为可统计、可回溯、可反哺课程设计的 Canonical Question 数据集。Market 的 HUMAN-A 采集仍持续进行；`S280+` 先进入 Market Evidence，只有经过 periodic Canonical review 后才会进入新的统计基线。
 
 > 完整知识体系决定“应该学什么”；Canonical Question 只负责记录真实市场“怎么问、问多深、在哪些场景追问”。
 
@@ -59,12 +59,12 @@ System Design
 
 ---
 
-## 2. 为什么仍然按模块做“全库纵向扫描”
+## 2. 为什么 Canonical 不随每个新 Batch 即时增长
 
-采集阶段已经结束，因此不再按 Batch 增量生成 `canonical-batch-xx.md`。现在改为：
+Market 采集与 Canonical 统计是两个不同节奏。Market 持续接收新的 HUMAN-A；Canonical 使用经过完整去重、Merge / Split、Primary Ownership 与覆盖审计后的冻结基线，因此不按每个新 Batch 即时生成 `canonical-batch-xx.md`。当前冻结扫描流程为：
 
 ```text
-S001–S279 全历史
+S001–S279 Frozen Canonical Evidence
       ↓
 按十个正式一级板块分别纵向扫描全部来源
       ↓
@@ -79,7 +79,7 @@ Primary Module 归属审计
 全局频率 / 深度 / 课程覆盖分析
 ```
 
-第一阶段只有在 **十个一级板块都完成全库纵向扫描，并完成 Primary Module 归属复核** 后才算完成。
+当前 `S001–S279` 基线已完成十个一级板块纵向扫描与 Primary Module 归属复核。`S280+` 保持在 Market 层，等待 periodic review；在 review 正式完成前，不改变既有 Source Count 与 Frequency。
 
 ---
 
@@ -257,6 +257,6 @@ Interview Heat
 
 ## 10. 证据边界
 
-Canonical Question 只能由正式 `S001–S279` HUMAN-A 产生证据。搜索摘要、转载 / 二次整理、标准答案 / 题库、付费内容包装、自动 AI 面试、Role Scope 外场次和已删除的重复来源都不能贡献 Source Count。
+Canonical Question 的**当前冻结统计基线**只使用正式 `S001–S279` HUMAN-A。`S280+` 仍是合法 Market Evidence，但在 periodic Canonical review 完成前不贡献当前 Canonical Source Count。搜索摘要、转载 / 二次整理、标准答案 / 题库、付费内容包装、自动 AI 面试、Role Scope 外场次和已删除的重复来源始终不能贡献 Source Count。
 
 Canonical Question 可以被教材进一步扩展，但扩展内容必须明确属于“知识体系补全”，不能伪装成“2026 真实面试高频”。
