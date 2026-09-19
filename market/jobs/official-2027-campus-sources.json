@@ -157,6 +157,106 @@
       "company": "得物",
       "mode": "portal_only",
       "portal": "https://www.dewu.com/"
+    },
+    {
+      "company": "DeepSeek",
+      "mode": "portal_only",
+      "portal": "https://talent.deepseek.com/"
+    },
+    {
+      "company": "月之暗面/Kimi",
+      "mode": "portal_only",
+      "portal": "https://careers.kimi.com/"
+    },
+    {
+      "company": "MiniMax",
+      "mode": "portal_only",
+      "portal": "https://www.minimax.cn/careers"
+    },
+    {
+      "company": "智谱/Z.ai",
+      "mode": "portal_only",
+      "portal": "https://www.zhipuai.cn/zh/joinus"
+    },
+    {
+      "company": "阶跃星辰",
+      "mode": "portal_only",
+      "portal": "https://www.stepfun.com/"
+    },
+    {
+      "company": "百川智能",
+      "mode": "portal_only",
+      "portal": "https://www.baichuan-ai.com/"
+    },
+    {
+      "company": "零一万物/01.AI",
+      "mode": "portal_only",
+      "portal": "https://www.01.ai/"
+    },
+    {
+      "company": "商汤科技",
+      "mode": "portal_only",
+      "portal": "https://www.sensetime.com/cn/join-us"
+    },
+    {
+      "company": "生数科技",
+      "mode": "portal_only",
+      "portal": "https://www.shengshu-ai.com/"
+    },
+    {
+      "company": "硅基流动",
+      "mode": "portal_only",
+      "portal": "https://siliconflow.cn/"
+    },
+    {
+      "company": "面壁智能",
+      "mode": "portal_only",
+      "portal": "https://www.modelbest.cn/"
+    },
+    {
+      "company": "Manus",
+      "mode": "portal_only",
+      "portal": "https://manus.im/"
+    },
+    {
+      "company": "LiblibAI",
+      "mode": "portal_only",
+      "portal": "https://www.liblib.art/us/joinus"
+    },
+    {
+      "company": "无问芯穹/Infini-AI",
+      "mode": "portal_only",
+      "portal": "https://www.infini-ai.com/"
+    },
+    {
+      "company": "昆仑万维/天工",
+      "mode": "portal_only",
+      "portal": "https://www.kunlun.com/"
+    },
+    {
+      "company": "Shopee",
+      "mode": "portal_only",
+      "portal": "https://careers.shopee.cn/"
+    },
+    {
+      "company": "联想",
+      "mode": "portal_only",
+      "portal": "https://talent.lenovo.com.cn/"
+    },
+    {
+      "company": "蔚来",
+      "mode": "portal_only",
+      "portal": "https://www.nio.cn/careers"
+    },
+    {
+      "company": "顺丰",
+      "mode": "portal_only",
+      "portal": "https://hr.sf-express.com/"
     }
+  ],
+  "notes": [
+    "2027-campus discovery must enumerate official campus project portals/APIs; search-engine indexing is never evidence of absence.",
+    "Dynamic JS portals (e.g. Xiaomi/Kuaishou) must be checked through their official recruitment API/project scope where possible.",
+    "Portal-only means official entry confirmed but automated enumerator not yet implemented; it does NOT mean no matching jobs."
   ]
 }
