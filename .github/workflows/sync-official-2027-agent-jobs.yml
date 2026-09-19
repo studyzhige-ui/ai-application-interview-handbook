@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'market/jobs/official-2027-campus-sources.json'
+      - 'market/jobs/official-company-role-index.json'
       - 'tools/fetch_dynamic_official_jobs.mjs'
       - 'tools/fetch_feishu_official_2027.mjs'
       - 'tools/fetch_moka_official_2027.mjs'
@@ -42,6 +43,9 @@ jobs:
           npm install --no-save playwright@1.55.0
           npx playwright install chromium --with-deps
           node --check tools/fetch_dynamic_official_jobs.mjs
+
+      - name: Validate persistent official source and role contracts
+        run: python tools/validate_official_2027_source_contracts.py
 
       - name: Exhaust fixed official current-campus job-list pages
         run: node tools/fetch_dynamic_official_jobs.mjs market/jobs/official-2027-browser-discovery.generated.json
