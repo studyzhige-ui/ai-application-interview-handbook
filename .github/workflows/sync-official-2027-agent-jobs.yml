@@ -2,6 +2,15 @@ name: Sync official 2027 Agent campus jobs
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'market/jobs/official-2027-campus-sources.json'
+      - 'tools/fetch_dynamic_official_jobs.mjs'
+      - 'tools/fetch_feishu_official_2027.mjs'
+      - 'tools/fetch_moka_official_2027.mjs'
+      - 'tools/sync_official_2027_agent_jobs.py'
+      - 'tools/audit_official_2027_job_sources.py'
   schedule:
     - cron: '0 1 * * 2,5'
 
