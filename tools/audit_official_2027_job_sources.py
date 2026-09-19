@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Audit first-party recruiting-board coverage and strict JD-result closure."""
+"""Audit verified company-role coverage separately from recurring runtime health."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REG = ROOT / "market/jobs/official-2027-campus-sources.json"
+INDEX = ROOT / "market/jobs/official-company-role-index.json"
 NORM = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
 BROWSER = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
 FEISHU = ROOT / "market/jobs/official-2027-feishu-discovery.generated.json"
@@ -29,23 +30,41 @@ def read(path: Path):
 
 
 def main() -> int:
-    reg, norm, browser, feishu, moka = map(read, (REG, NORM, BROWSER, FEISHU, MOKA))
+    reg, index, norm, browser, feishu, moka = map(
+        read, (REG, INDEX, NORM, BROWSER, FEISHU, MOKA)
+    )
     ns = {x.get("company"): x for x in norm.get("sources", []) if x.get("company")}
+    ix = {x.get("company"): x for x in index.get("companies", []) if x.get("company")}
     bs = {x.get("company"): x for x in browser.get("results", []) if x.get("company")}
     fs = {x.get("company"): x for x in feishu.get("results", []) if x.get("company")}
     ms = {x.get("company"): x for x in moka.get("results", []) if x.get("company")}
 
     rows = []
+    hard_errors: list[str] = []
     for src in reg.get("sources", []):
         company = src["company"]
-        n, b, f, m = ns.get(company, {}), bs.get(company, {}), fs.get(company, {}), ms.get(company, {})
-        scope = src.get("board_scope") or ("campus" if src.get("current_campus_board") else "official_recruiting")
+        n, i, b, f, m = (
+            ns.get(company, {}),
+            ix.get(company, {}),
+            bs.get(company, {}),
+            fs.get(company, {}),
+            ms.get(company, {}),
+        )
+        scope = src.get("board_scope") or (
+            "campus" if src.get("current_campus_board") else "official_recruiting"
+        )
         search_url = src.get("search_url") or src.get("job_list_url") or ""
         contract = (
             "READY"
-            if src.get("official_root") and search_url and src.get("job_list_url") == search_url
+            if src.get("official_root")
+            and search_url
+            and src.get("job_list_url") == search_url
             else "BROKEN"
         )
+
+        roles = i.get("representative_roles") or []
+        representative = roles[0].get("title", "") if roles else ""
+        role_verified = i.get("status") == "VERIFIED_ROLE" and bool(representative)
 
         raw_norm = (
             n.get("retrieval_status")
@@ -53,13 +72,6 @@ def main() -> int:
             or n.get("status")
             or ""
         )
-        result_status = n.get("result_status") or ""
-        family_count = int(n.get("role_family_count") or 0)
-        full_jd = int(n.get("full_jd_count") or 0)
-        title_only = int(n.get("title_only_count") or 0)
-        fetched = int(n.get("fetched") or 0)
-        matched = int(n.get("matched_requisitions") or n.get("matched") or 0)
-
         b_full = bool(b.get("full_keyword_search")) or bool(b.get("list_scan_complete"))
         b_status = b.get("status") or ""
         ats_ok = (f.get("status") == "OK") or (m.get("status") == "OK")
@@ -69,8 +81,7 @@ def main() -> int:
         elif b_status in {"BROWSER_ENUMERATED", "BROWSER_ENUMERATED_ZERO"} and b_full:
             runtime = "ENUMERATED"
         elif ats_ok and (
-            int(f.get("requests") or 0) > 0
-            or int(m.get("requests") or 0) > 0
+            int(f.get("requests") or 0) > 0 or int(m.get("requests") or 0) > 0
         ):
             runtime = "ENUMERATED"
         elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []) and b_full:
@@ -80,92 +91,91 @@ def main() -> int:
         else:
             runtime = "BLOCKED"
 
-        result_closed = result_status in {"HAS_TARGET_JDS", "ZERO_TARGET_JDS"}
+        if contract != "READY":
+            hard_errors.append(f"{company}: official source contract is broken")
+        if not role_verified:
+            hard_errors.append(f"{company}: verified representative engineering role missing")
+
         rows.append(
-            dict(
-                company=company,
-                scope=scope,
-                contract=contract,
-                runtime=runtime,
-                result_status=result_status or "MISSING_RESULT",
-                result_closed=result_closed,
-                families=family_count,
-                full_jd=full_jd,
-                title_only=title_only,
-                fetched=fetched,
-                matched=matched,
-                root=src.get("official_root") or "",
-                jobs=search_url,
-            )
+            {
+                "company": company,
+                "scope": scope,
+                "contract": contract,
+                "role_verified": role_verified,
+                "representative": representative,
+                "evidence_type": (roles[0].get("evidence_type", "") if roles else ""),
+                "runtime": runtime,
+                "jobs": search_url,
+            }
         )
 
-    cc = Counter(r["contract"] for r in rows)
-    runtime_counts = Counter(r["runtime"] for r in rows)
-    result_closed_count = sum(r["result_closed"] for r in rows)
-    incomplete_runtime = [
-        r for r in rows
-        if r["contract"] != "READY" or r["runtime"] != "ENUMERATED"
-    ]
-    missing_results = [r for r in rows if not r["result_closed"]]
-
+    runtime_counts = Counter(x["runtime"] for x in rows)
     counts = norm.get("counts") or {}
-    family_total = int(counts.get("role_families") or sum(r["families"] for r in rows))
-    full_total = int(counts.get("full_jd_families") or sum(r["full_jd"] for r in rows))
-    title_total = int(counts.get("title_only_families") or sum(r["title_only"] for r in rows))
+    role_families = int(counts.get("role_families") or 0)
+    full_jd = int(
+        counts.get("full_first_party_jd_families")
+        or counts.get("full_jd_families")
+        or 0
+    )
+    title_only = int(
+        counts.get("title_only_first_party_families")
+        or counts.get("title_only_families")
+        or 0
+    )
+    verified_summary = int(counts.get("role_verified_current_source_families") or 0)
 
     out = [
-        "# 官方招聘岗位源全覆盖审计",
+        "# 官方 AI / Agent 工程岗位覆盖审计",
         "",
-        "> 审计分成两条轴：Current Result Closure 与 Recurring Runtime Certification。前者回答“41 家当前是否都有明确岗位结论”；后者回答“自动维护链路是否已经由一次完整运行重新证明”。两者不能混为一谈。",
+        "> 岗位事实与自动抓取运行状态分开：crawler miss / WAF / API 失败不能把已核验岗位回写成 0。",
         "",
-        "## 当前结果闭环",
+        "## 覆盖事实",
         "",
         f"- 固定公司：**{len(rows)}**",
-        f"- 可枚举固定路径 READY：**{cc.get('READY',0)}/{len(rows)}**",
-        f"- 严格结果已闭环：**{result_closed_count}/{len(rows)}**",
-        f"- 严格 Role Family：**{family_total}**",
-        f"- 抓到第一方 JD 正文：**{full_total}**",
-        f"- 第一方仅标题：**{title_total}**",
-        f"- 结果缺失：**{len(missing_results)}**",
+        f"- 官方招聘 / 校招入口 READY：**{sum(x['contract']=='READY' for x in rows)}/{len(rows)}**",
+        f"- 至少一个相关工程岗位已核验：**{sum(x['role_verified'] for x in rows)}/{len(rows)}**",
+        f"- Role Family：**{role_families}**",
+        f"- 第一方完整 JD：**{full_jd}**",
+        f"- 第一方仅标题：**{title_only}**",
+        f"- 已核验岗位、待补第一方正文：**{verified_summary}**",
         "",
-        "## 自动维护运行证明",
+        "## Runtime 诊断",
         "",
-        f"- 已由历史/当前完整运行证明 ENUMERATED：**{runtime_counts.get('ENUMERATED',0)}/{len(rows)}**",
-        f"- 页面可达但旧快照没有完整穷举证明：**{runtime_counts.get('LIST_REACHABLE',0)}**",
-        f"- 仍需 Runner/适配器重新完整执行：**{runtime_counts.get('BLOCKED',0)}**",
+        f"- ENUMERATED：**{runtime_counts.get('ENUMERATED',0)}/{len(rows)}**",
+        f"- LIST_REACHABLE：**{runtime_counts.get('LIST_REACHABLE',0)}**",
+        f"- BLOCKED：**{runtime_counts.get('BLOCKED',0)}**",
         "",
-        "> 自动运行证明不足不会把当前严格结果改成未知；但在自动任务恢复并完成 41/41 之前，也不能把 Runtime Certification 写成 41/41。",
+        "> Runtime 不是岗位存在性 Gate。自动化恢复后继续把它推进到 41/41 ENUMERATED，但中途结果必须允许提交，不能形成审计死锁。",
         "",
         "## 逐公司",
         "",
-        "| 公司 | 招聘池范围 | 路径 | 当前严格结果 | Role Family | 完整 JD | 仅标题 | Runtime | 固定职位池 |",
-        "|---|---|:---:|---|---:|---:|---:|---|---|",
+        "| 公司 | 官方职位池 | 代表岗位 | 岗位覆盖 | Runtime |",
+        "|---|---|---|:---:|---|",
     ]
     for r in rows:
+        mark = "✅" if r["role_verified"] else "❌"
         out.append(
-            "| {company} | {scope} | {contract} | {result_status} | {families} | {full_jd} | "
-            "{title_only} | {runtime} | {jobs} |".format(**r)
+            f"| {r['company']} | {r['jobs']} | {r['representative']} | {mark} | {r['runtime']} |"
         )
 
     out += [
         "",
         "## 验收规则",
         "",
-        "- HAS_TARGET_JDS：当前第一方招聘池中保留了至少一个严格非算法 AI 应用 / Agent 工程 Role Family。",
-        "- ZERO_TARGET_JDS：当前公司仍保留在官方搜索矩阵中，但本轮严格 Role Scope 后没有岗位进入正式库；这不等于公司没有其他招聘。",
-        "- FULL_JD：已保存第一方岗位职责 / 任职要求正文；TITLE_ONLY_OFFICIAL：只确认到第一方当前职位标题，不用二手来源补写 JD。",
-        "- ENUMERATED：自动采集器已完成完整分页或全部关键词穷举；LIST_REACHABLE 只代表页面能打开；BLOCKED 代表自动链路仍需修复/重跑。",
-        "- 未来自动维护的最终目标仍是 41/41 ENUMERATED；审计脚本因此在 Runtime 未全绿时返回非零，防止假绿灯。",
+        "- 41/41 公司必须同时有固定第一方招聘入口和至少一个 VERIFIED_ROLE；这是硬失败条件。",
+        "- Runtime ENUMERATED 表示自动采集已完成分页 / 关键词穷举；LIST_REACHABLE / BLOCKED 需要继续修复，但不会删除已核验岗位。",
+        "- 自动同步可以新增、刷新或把岗位升级成第一方完整 JD；不得仅因为一次抓取 0 命中而把 VERIFIED_ROLE 降级成无岗位。",
+        "- 第一方正文未补齐的岗位必须保持证据等级标注，不把外部摘要伪装成公司原文。",
     ]
     OUT.write_text("\n".join(out) + "\n", encoding="utf-8")
 
     print(
-        f"contracts={cc.get('READY',0)}/{len(rows)} "
-        f"results={result_closed_count}/{len(rows)} "
-        f"runtime={runtime_counts.get('ENUMERATED',0)}/{len(rows)} "
-        f"families={family_total}"
+        f"companies={len(rows)} verified_roles={sum(x['role_verified'] for x in rows)}/{len(rows)} "
+        f"runtime={runtime_counts.get('ENUMERATED',0)}/{len(rows)} hard_errors={len(hard_errors)}"
     )
-    return 1 if missing_results or incomplete_runtime else 0
+    for error in hard_errors:
+        print("ERROR:", error)
+    return 1 if hard_errors else 0
 
 
 if __name__ == "__main__":
