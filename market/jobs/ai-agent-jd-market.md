@@ -28,66 +28,69 @@ ai-agent-jd-market.md
 
 ## 3. 当前快照｜2026-09-19
 
-- **正式 2027 Role Family：25**
-- **AI 应用开发：9**
-- **Agent / 智能体研发：16**
-- 小米官方 ATSX campus 正式岗池：**785 岗位 → 34 个 Agent/AI 工程候选 → 7 个核心 Role Family**。
-- 快手官方 2027 project：**269 岗位 → 23 个候选 → 7 个核心 Role Family**。
-- 百度官方 2027 GRADUATE：**158 岗位 → 23 个候选 → 4 个核心 Role Family**。
-- OPPO、美团、顺丰等官方校园招聘源也已进入可重复枚举链路。
-- 字节官方 ATSX campus pool 已接入，等待本轮 2027 项目标识复核。
+- **正式 2027 Role Family：38**
+- **AI 应用开发：13**
+- **Agent / 智能体研发：25**
+- **已进入正式库的公司：10 家**：小米、快手、百度、OPPO、美团、顺丰、阿里巴巴、小红书、商汤科技、MiniMax。
+- **固定官方公司覆盖：42 家**；每家公司都维护 `official_root` 与固定 `job_list_url`。
+- 日常采集不再依赖搜索引擎索引：直接打开固定官方职位页，穷举 Agent / 智能体 / AI 应用 / 大模型应用 / Coding Agent / RAG / Harness / Runtime / MCP / Skill / Tool 等关键词并翻完分页。
+- 专用 API / Feishu / Moka 只作为加速器；失败时必须回退固定 `job_list_url`，不能把接口失败解释成“0 岗位”。
 
 ## 4. 公司 2027 官方覆盖矩阵
 
-- ✅：完成 2027 官方项目枚举且有核心目标岗；
-- △：完成 2027 官方项目枚举并确认 0 个核心目标岗；
-- ⟳：官方校招入口已确认，但 2027 届别或动态枚举仍未闭环（未知 ≠ 0）；
-- ?：尚未确认稳定 2027 官方项目入口。
+这里把两个问题分开：
 
-| 公司 | 状态 | 核验说明 |
-|---|:---:|---|
-| 小米 | ✅ | 官方 ATSX campus 正式岗池已跑通：785 岗位，34 个 Agent/AI 工程候选；二次审核后主库收 7 个核心 Role Family。 |
-| 快手 | ✅ | 官方 2027 项目 20271779425607 已全量枚举；269 岗位，主库收 7 个核心 Role Family。 |
-| 百度 | ✅ | 官方 2027 GRADUATE 已全量枚举；158 岗位，主库收 4 个核心 Role Family。 |
-| 腾讯 | ⟳ | 官方 current campus 已枚举出 Agent开发/AI应用/AI全栈；职位字段只写“应届毕业生”，2027 项目口径待官方确认。 |
-| 美团 | ✅ | 官方 campus 已枚举；仅收 JD 内直接写 2027届 / 2026/2027届 的 2 个核心 Role Family。 |
-| 网易 | ⟳ | 官方招聘数据可枚举，但当前适配尚未可靠限制到 2027 项目。 |
-| 哔哩哔哩 | ⟳ | 官方前端已暴露新的 campus position API，适配中。 |
-| 滴滴 | ⟳ | 官方前端已暴露新的 ATS website jobs API，适配中。 |
-| 拼多多 | ⟳ | 官方 campus API 已枚举；需从 graduationYear 完成 2027 归属复核。 |
-| 华为 | ⟳ | 官方校招入口已确认；当前接口协议需要重新适配。 |
-| 小红书 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 字节跳动 | ⟳ | 官方 ATSX campus pool 已接入 Node 全量枚举；等待本轮 2027 job-subject 证据后再计入正式库。 |
-| 阿里巴巴 | ⟳ | 官方 campus-talent API 已接入；当前 batchId 返回 0，需要确认 2027 正确批次。 |
-| 蚂蚁集团 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 京东 | △ | 官方 2027 正式岗毕业窗口为 2026-10-01～2027-09-30；已枚举，当前仅发现可定岗 Agent 的宽口径技术通道，暂无核心专门 JD。 |
-| OPPO | ✅ | 官方岗位直接标注 2027届应届生校园招聘；主库收 4 个核心 Role Family。 |
-| vivo | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 金山办公/WPS | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 荣耀 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 科大讯飞 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 携程 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 360 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 得物 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| DeepSeek | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 月之暗面/Kimi | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| MiniMax | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 智谱/Z.ai | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 阶跃星辰 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 百川智能 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 零一万物/01.AI | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 商汤科技 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 生数科技 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 硅基流动 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 面壁智能 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| Manus | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| LiblibAI | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 无问芯穹/Infini-AI | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 昆仑万维/天工 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| Shopee | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 联想 | ⟳ | 官方应届生 AI开发类已确认 AI Agent开发/AI应用开发；2027 届别与完整 JD 字段待闭环。 |
-| 蔚来 | ? | 2027 官方校招项目入口尚未确认或尚未完成站内枚举。 |
-| 顺丰 | ✅ | 官方 JD 任职要求直接写 2027届；主库收 1 个核心 Agent Role Family。 |
+1. **能否获取岗位**：由固定官方职位列表页 + 通用浏览器穷举保证；
+2. **能否计入 2027 主库**：必须再有官方 2027 项目 / JD / 毕业窗口证据。
+
+> “职位可获取但届别未确认”不等于“抓不到”；这类职位可以持续监测，但在官方年份证据出现前不计入 2027 正式 Role Family。
+
+| 公司 | 固定官方职位列表页 | 获取方式 | 2027 证据状态 |
+|---|---|---|---|
+| 小米 | https://xiaomi.jobs.f.mioffice.cn/campus/ | xiaomi_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 快手 | https://campus.kuaishou.cn/recruit/campus/e/ | kuaishou_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 百度 | https://talent.baidu.com/jobs/list?projectType=1 | baidu_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 腾讯 | https://join.qq.com/post.html | tencent_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 美团 | https://zhaopin.meituan.com/web/campus | meituan_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 网易 | https://campus.163.com/ | netease_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 哔哩哔哩 | https://jobs.bilibili.com/campus/positions | bilibili_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 滴滴 | https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs | 固定职位页 → 通用浏览器穷举 | ✅ 2027 已确认 |
+| 拼多多 | https://careers.pddglobalhr.com/campus/grad | pdd_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 华为 | https://career.huawei.com/cn/campus-recruitment | huawei_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 小红书 | https://job.xiaohongshu.com/campus/position | xiaohongshu_2027_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 字节跳动 | https://jobs.bytedance.com/campus/position | bytedance_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 阿里巴巴 | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | alibaba_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 蚂蚁集团 | https://talent.antgroup.com/campus-full-list | ant_2027_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 京东 | https://campus.jd.com/ | jd_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| OPPO | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | oppo_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| vivo | https://hr-campus.vivo.com/campus/jobs | vivo_2027_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 金山办公/WPS | https://join.wps.cn/ | 固定职位页 → 通用浏览器穷举 | ✅ 2027 已确认 |
+| 荣耀 | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | honor_2027_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 科大讯飞 | https://iflytek.zhiye.com/5/jobs | iflytek_2027_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 携程 | https://careers.ctrip.com/#/campus | ctrip_2027_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 360 | https://hr.360.cn/hr/list | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| 得物 | https://poizon.jobs.feishu.cn/578078/ | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| DeepSeek | https://talent.deepseek.com/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| 月之暗面/Kimi | https://app.mokahr.com/apply/moonshot/148506 | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
+| MiniMax | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 智谱/Z.ai | https://www.zhipuai.cn/zh/joinus | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 阶跃星辰 | https://app.mokahr.com/campus-recruitment/step/94905 | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 百川智能 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 零一万物/01.AI | https://01ai.jobs.feishu.cn/index/ | feishu_direct 加速 → 固定职位页浏览器兜底 | — 官网当前未公开 2027 项目 |
+| 商汤科技 | https://hr-jobs.sensetime.com/edu/ | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 生数科技 | https://www.shengshu-ai.com/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| 硅基流动 | https://www.siliconflow.cn/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| 面壁智能 | https://www.modelbest.cn/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| Manus | https://www.manus.im/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| LiblibAI | https://www.liblib.art/us/joinus | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| 无问芯穹/Infini-AI | https://infinigence.jobs.feishu.cn/088717 | feishu_direct 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 昆仑万维/天工 | https://jobs.kunlun.com/459522/position/list | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
+| Shopee | https://careers.shopee.cn/jobs?limit=50&offset=0 | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
+| 联想 | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | lenovo_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+| 蔚来 | https://nio.jobs.feishu.cn/campus/ | feishu_direct 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
+| 顺丰 | https://campus.sf-express.com/positionList | sf_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+
+> 公司没有公开 2027 项目时仍保留在矩阵；后续官方项目启动后直接在同一个固定入口继续枚举。
 
 ## 5. AI 应用开发｜2027 Active 官方 JD
 
@@ -308,6 +311,60 @@ ai-agent-jd-market.md
 - 3. 理解工程业务流程，能够将业务需求转化为技术方案；
 - 4. 具备数据处理与分析能力，包括数据清洗、可视化、报表生成；
 - 5. 具备快速学习能力，能跟进AI前沿技术并评估落地可行性；
+
+
+### 阿里巴巴｜AI应用研发工程师
+
+- **2027 证据**：阿里巴巴官方 2027 校招批次
+- **官方职位 / ID**：AI应用研发工程师 / `199907620013`
+- **官方职位页**：https://campus-talent.alibaba.com/campus/position/199907620013?deptCodes=
+
+**官方 JD 要点**
+
+- 面向真实业务设计 AI Native 系统，将 Agent 的记忆、推理、工具编排、RAG 与现有业务系统连接；
+- 落地意图识别、任务拆解、反思纠错、SDK/API 与 Agent 可观测体系；
+- 建设自动评测 / 回测、Case 分析和高并发稳定性治理，推动 AI 从单点验证走向规模化应用；
+- 要求具备扎实的软件工程能力，理解 Context / Prompt Engineering、Agent、Tool / Function Calling，并能使用主流编程语言完成生产级开发。
+
+### 小红书｜Product Engineer（社区内容 AI Native）
+
+- **2027 证据**：小红书官方 2027 校园招聘 / REDstar
+- **官方职位 / ID**：Product Engineer-产品工程师-社区内容方向 / `21861`
+- **官方职位页**：https://job.xiaohongshu.com/campus/position/21861
+
+**官方 JD 要点**
+
+- 在创作发布、评论互动等核心内容场景建设 Agent 系统，负责 Context、Tool Use、Workflow、Memory / State、Eval 与 Observability；
+- 探索生成式 UI、AI 原生内容分发 / 消费以及端到端 AI 应用架构；
+- 强调全栈工程、复杂系统交付和 AI Native 产品从原型到规模化上线的能力。
+
+### 小红书｜搜广推 × AI 应用工程师
+
+- **2027 证据**：小红书官方 2027 校园招聘 / REDstar
+- **官方职位 / ID**：搜广推 × AI 应用工程师 / `21820`
+- **官方职位页**：https://job.xiaohongshu.com/campus/position/21820
+
+**官方 JD 要点**
+
+- 负责搜索、推荐、广告、电商引擎与业务架构，并将 LLM / 多模态能力工程化为 AI 原生应用；
+- 承担 AI 应用服务开发、链路性能优化和公共底层能力沉淀；
+- 要求 Java / C++ 等工程能力，以及 RAG、Agent、Prompt / AI 链路系统化落地经验。
+
+### 商汤科技｜FDE 工程师（企业级 AI 应用）
+
+- **2027 证据**：官方职位标题明确“27届校招”
+- **官方职位 / ID**：FDE工程师-亚太业务事业群 / `7659254488749951258`、`7659255237010508078`
+- **官方职位页**：
+  - https://hr-jobs.sensetime.com/edu/position/7659254488749951258/detail
+  - https://hr-jobs.sensetime.com/edu/position/7659255237010508078/detail
+
+> 两个 Requisition 职责高度一致，按一个 Role Family 计数。
+
+**官方 JD 要点**
+
+- 面向客户项目开发和交付企业级 AI 应用，完成后端服务、系统集成、部署和问题排查；
+- 集成大模型服务、RAG、Agent、知识库与 Workflow，并沉淀可复用工程组件；
+- 要求 Python / Java / Go 等后端开发能力，熟悉 Web、数据库、缓存、Linux / Docker；Agent / RAG 实践为加分项。
 
 ## 6. Agent / 智能体研发｜2027 Active 官方 JD
 
@@ -725,6 +782,115 @@ ai-agent-jd-market.md
 - - 了解 Transformer 架构与大模型基本原理,有端侧模型部署经验（TFLite / ONNX / MNN）
 - - 有编译原理基础,了解 DSL 设计、Parser、AST 构建等概念
 
+
+### 阿里巴巴｜Agent Infra工程师
+
+- **2027 证据**：阿里巴巴官方 2027 校招批次
+- **官方职位 / ID**：Agent Infra工程师 / `199907640058`
+- **官方职位页**：https://campus-talent.alibaba.com/campus/position/199907640058?deptCodes=
+
+**官方 JD 要点**
+
+- 建设 Agent 全生命周期基础设施，包括沙箱、容器编排、任务调度、状态管理、长任务恢复与多租户安全；
+- 提供 Context / Retrieval、SDK/API、CLI / Skills、可观测和 AgentOps 等平台能力；
+- 要求扎实的 OS / Network / DB / Distributed Systems 基础，熟悉 Go / Python / Java / C++ / Rust / TypeScript、云原生与 Agent 框架。
+
+### 小红书｜大模型 Agent 开发工程师（AI Coding）
+
+- **2027 证据**：小红书官方 2027 校园招聘 / REDstar
+- **官方职位 / ID**：大模型 Agent 开发工程师（AI Coding方向） / `20960`
+- **官方职位页**：https://job.xiaohongshu.com/campus/position/20960
+
+**官方 JD 要点**
+
+- 建设客户端 Coding Harness、Agent 编排、Context Engineering、Loop Engine 与工程级代码上下文；
+- 打通 Coding Agent 在真实构建 / 测试环境中的执行—验证—修正闭环；
+- 建设复杂工程代码质量 Eval，要求优秀的软件工程、程序分析和大型代码库处理能力。
+
+### 小红书｜AI Agent 工程师（AI Coding / 质效研发）
+
+- **2027 证据**：小红书官方 2027 校园招聘 / REDstar
+- **官方职位 / ID**：AI Agent 工程师（大模型 AI Coding方向）-质效研发 / `21828`
+- **官方职位页**：https://job.xiaohongshu.com/campus/position/21828
+
+**官方 JD 要点**
+
+- 建设公司级 AI Agent / Coding Agent / AI 个人助理，使 Agent 能完成规划、编码、测试、发布和诊断；
+- 核心方向包括 Agent Harness、代码与业务 Context、Tool / Skill、Memory、Eval 与数据飞轮；
+- 强调生产级工程、MCP / Function Calling / 流式交互、Agent Harness 与高并发系统能力。
+
+### 小红书｜点点 Agent研发工程师
+
+- **2027 证据**：小红书官方 2027 校园招聘 / REDstar
+- **官方职位 / ID**：点点 Agent研发工程师 / `21822`
+- **官方职位页**：https://job.xiaohongshu.com/campus/position/21822
+
+**官方 JD 要点**
+
+- 负责任务理解 / 拆解、Planning、Multi-turn Context、长期 Memory、Tool 选择执行、State 与 Failure Recovery；
+- 连接小红书内容与结构化信息，持续优化 Tool Retrieval、多工具协同与真实任务成功率；
+- 建设端到端 Agent Eval、专项评测和真实 Tool 实验环境，并探索 Generative UI。
+
+### 小红书｜AI Agent Infra 工程师
+
+- **2027 证据**：小红书官方 2027 校园招聘 / REDstar
+- **官方职位 / ID**：AI Agent Infra 工程师 / `21899`
+- **官方职位页**：https://job.xiaohongshu.com/campus/position/21899
+
+**官方 JD 要点**
+
+- 建设 AgentSphere 生产与进化基础设施，覆盖 Harness Kernel、Managed Runtime、Context / Memory、Tool / Sandbox、Control Plane、Eval / Evolution；
+- 解决长任务可靠执行、状态恢复、异构 Agent 治理、工具安全、非确定性系统评测等生产级问题；
+- 要求 Python / C++ / Rust / Go 等系统工程能力，并理解 Runtime / Execution Environment / Control Plane / Data Plane 等架构边界。
+
+### 商汤科技｜Agent开发工程师
+
+- **2027 证据**：官方职位标题明确“27届校招”
+- **官方职位 / ID**：Agent开发工程师 / `7659330461617178916`
+- **官方职位页**：https://hr-jobs.sensetime.com/edu/position/7659330461617178916/detail
+
+**官方 JD 要点**
+
+- 开发 Tool Calling、Workflow、Memory 等 Agent 核心模块；
+- 设计 Multi-Agent 协同与调度，并把 Agent 能力封装成 SDK / API；
+- 建设 Prompt 管理、效果评测和工程文档；要求 Python 与实际 Agent 框架 / 项目经验。
+
+### 商汤科技｜Agent全栈开发工程师（大装置）
+
+- **2027 证据**：官方职位标题明确“27届校招”
+- **官方职位 / ID**：Agent全栈开发工程师-大装置 / `7659616422645369139`
+- **官方职位页**：https://hr-jobs.sensetime.com/edu/position/7659616422645369139/detail
+
+**官方 JD 要点**
+
+- 基于主流大模型建设可复用 AI Agent 应用与服务；
+- 负责 Planning、Tool/API Calling、Memory / RAG、结果校验、Single / Multi-Agent Workflow；
+- 将 Agent 封装为 API / Service，并在效果、成本与时延之间做工程权衡。
+
+### 商汤科技｜智能体研发（亚太业务事业群）
+
+- **2027 证据**：官方职位标题明确“27届校招”
+- **官方职位 / ID**：智能体研发-亚太业务事业群 / `7659253281403078975`
+- **官方职位页**：https://hr-jobs.sensetime.com/edu/position/7659253281403078975/detail
+
+**官方 JD 要点**
+
+- 建设 Planning、Tool Calling、Workflow、Knowledge Retrieval、Memory 等智能体平台能力；
+- 落地 RAG、Function Calling、MCP、Tools / Skills，并从 Demo 推到产品化；
+- 建设 Prompt / Retrieval / Tool 调优、异常分析、效果评测和复用组件。
+
+### MiniMax｜AGI产品研发工程师（应届生 TOP Talent）
+
+- **2027 证据**：MiniMax 官方 Careers 明确 2027 届校园招聘
+- **官方职位 / ID**：AGI产品研发工程师-应届生-TOP Talent / `7546180826527893810`
+- **官方职位页**：https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7546180826527893810/detail
+
+**官方 JD 要点**
+
+- 负责 AI 产品 / Agent 的创新研发，参与 Agent Environment / Runtime / Infra 的定义、实现和优化；
+- 将 Agent 作为模型与用户交互、行动和反馈的真实环境，联合产品体验与系统能力持续迭代；
+- 要求优秀的代码、系统设计和跨技术栈复杂问题解决能力，Agent 实践 / 开源贡献为加分项。
+
 ## 7. 相关工程岗 / 边界岗 / 待届别确认
 
 | 公司 | 官方岗位/通道 | 为什么不计核心 | 官方入口 |
@@ -765,6 +931,9 @@ ai-agent-jd-market.md
 ```
 
 ## 10. 维护日志
+
+- **2026-09-19｜固定职位页模型收口**：42 家公司全部维护 `official_root + job_list_url`；日常采集统一从固定官方职位列表页穷举，专用 API/ATS 仅作为加速器。
+- **2026-09-19｜官方 JD 扩容**：从已经保存的官方招聘页面/XHR 中新增阿里巴巴 2、小红书 6、商汤科技 4、MiniMax 1，共 13 个非算法 2027 Role Family；正式库由 25 增至 38。
 
 - **2026-09-19**：正式切换为“2027 校招 + 第一手官方 + 非算法工程”专库。
 - **2026-09-19**：修复“动态站抓不到就误判无岗位”的采集缺陷；快手、百度、OPPO、美团、京东、顺丰、腾讯、联想等官方招聘接口进入自动枚举链路。

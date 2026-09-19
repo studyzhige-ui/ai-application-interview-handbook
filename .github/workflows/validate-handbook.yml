@@ -8,6 +8,8 @@ on:
       - '**/*.md'
       - 'tools/**/*.py'
       - 'tools/**/*.json'
+      - 'tools/**/*.mjs'
+      - 'market/jobs/official-2027-campus-sources.json'
       - '.github/workflows/*.yml'
   pull_request:
     branches:
@@ -34,7 +36,14 @@ jobs:
           python-version: '3.12'
 
       - name: Compile repository tools
-        run: python -m py_compile tools/*.py
+        run: |
+          python -m py_compile tools/*.py
+          node --check tools/fetch_dynamic_official_jobs.mjs
+          node --check tools/fetch_xiaomi_2027.mjs
+          node --check tools/fetch_bytedance_2027.mjs
+
+      - name: Validate official 2027 job source contracts
+        run: python tools/validate_official_2027_source_contracts.py
 
       - name: Validate handbook structure and local links
         run: python tools/validate_agent_readability.py
