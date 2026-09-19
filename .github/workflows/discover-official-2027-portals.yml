@@ -1,32 +1,15 @@
-name: Discover official 2027 recruitment portals
+name: Debug official 2027 recruitment portals
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 0 * * 2,5'
-  push:
-    branches: [main]
-    paths:
-      - 'tools/fetch_dynamic_official_jobs.mjs'
-      - 'tools/audit_official_2027_job_sources.py'
-      - 'market/jobs/official-2027-campus-sources.json'
-      - '.github/workflows/discover-official-2027-portals.yml'
 
 permissions:
-  contents: write
-
-concurrency:
-  group: official-2027-portal-discovery
-  cancel-in-progress: true
+  contents: read
 
 jobs:
-  discover:
+  debug:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
-    strategy:
-      fail-fast: false
-      matrix:
-        shard: [0, 1, 2, 3]
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
 
@@ -34,92 +17,13 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install chromium --with-deps
+          node --check tools/fetch_dynamic_official_jobs.mjs
 
-      - name: Discover official roots for shard
-        env:
-          SHARD_INDEX: ${{ matrix.shard }}
-          SHARD_COUNT: 4
-        run: node tools/fetch_dynamic_official_jobs.mjs /tmp/browser-${{ matrix.shard }}.json
+      - name: Exhaust fixed official job-list pages
+        run: node tools/fetch_dynamic_official_jobs.mjs /tmp/official-2027-browser-debug.json
 
       - uses: actions/upload-artifact@v4
         with:
-          name: official-browser-shard-${{ matrix.shard }}
-          path: /tmp/browser-${{ matrix.shard }}.json
+          name: official-2027-browser-debug
+          path: /tmp/official-2027-browser-debug.json
           retention-days: 2
-
-  aggregate:
-    needs: discover
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: official-browser-shard-*
-          path: /tmp/browser-shards
-          merge-multiple: true
-
-      - name: Merge shard outputs
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          from datetime import datetime, timezone
-
-          results = []
-          shard_files = sorted(Path('/tmp/browser-shards').glob('browser-*.json'))
-          for path in shard_files:
-              try:
-                  payload = json.loads(path.read_text(encoding='utf-8'))
-                  results.extend(payload.get('results') or [])
-              except Exception as exc:
-                  results.append({
-                      'company': f'__SHARD_ERROR__:{path.name}',
-                      'status': 'BROWSER_ERROR',
-                      'error': str(exc),
-                      'jobs': [],
-                      'pages': [],
-                      'endpoints': [],
-                  })
-          if len(shard_files) != 4:
-              raise SystemExit(f"incomplete browser discovery: expected 4 shards, got {len(shard_files)}; keep previous committed snapshot")
-
-          results.sort(key=lambda x: x.get('company',''))
-          out = {
-              'generated_at': datetime.now(timezone.utc).isoformat(),
-              'shards_expected': 4,
-              'shards_received': len(shard_files),
-              'results': results,
-          }
-          Path('market/jobs/official-2027-browser-discovery.generated.json').write_text(
-              json.dumps(out, ensure_ascii=False, indent=2) + '\n',
-              encoding='utf-8',
-          )
-          print(f"merged shards={len(shard_files)}, companies={len(results)}")
-          PY
-
-      - name: Rebuild per-company coverage audit
-        run: python tools/audit_official_2027_job_sources.py || true
-
-      - name: Commit discovery diagnostics safely
-        run: |
-          cp market/jobs/official-2027-browser-discovery.generated.json /tmp/official-browser.json
-          cp market/jobs/official-2027-coverage-audit.generated.md /tmp/official-coverage-audit.md
-          git fetch origin ${{ github.ref_name }}
-          git reset --hard origin/${{ github.ref_name }}
-          cp /tmp/official-browser.json market/jobs/official-2027-browser-discovery.generated.json
-          cp /tmp/official-coverage-audit.md market/jobs/official-2027-coverage-audit.generated.md
-
-          if [ -z "$(git status --porcelain -- market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-coverage-audit.generated.md)" ]; then
-            echo "No portal discovery changes."
-            exit 0
-          fi
-
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-coverage-audit.generated.md
-          git commit -m 'market: discover official 2027 recruitment portals'
-          git push origin HEAD:${{ github.ref_name }}

@@ -2,34 +2,20 @@ name: Sync official 2027 Agent campus jobs
 
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Discover official 2027 recruitment portals"]
-    types: [completed]
   schedule:
     - cron: '0 1 * * 2,5'
-  push:
-    branches: [main]
-    paths:
-      - 'tools/sync_official_2027_agent_jobs.py'
-      - 'tools/fetch_xiaomi_2027.mjs'
-      - 'tools/fetch_bytedance_2027.mjs'
-      - 'tools/fetch_feishu_official_2027.mjs'
-      - 'tools/fetch_moka_official_2027.mjs'
-      - 'market/jobs/official-2027-campus-sources.json'
-      - '.github/workflows/sync-official-2027-agent-jobs.yml'
 
 permissions:
   contents: write
 
 concurrency:
   group: official-2027-agent-campus-sync
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   sync:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,57 +27,60 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: python -m pip install --disable-pip-version-check requests
+        run: |
+          python -m pip install --disable-pip-version-check requests
+          npm install --no-save playwright@1.55.0
+          npx playwright install chromium --with-deps
+          node --check tools/fetch_dynamic_official_jobs.mjs
 
-      - name: Pull Xiaomi official campus ATSX
+      - name: Exhaust fixed official 2027 job-list pages
+        run: node tools/fetch_dynamic_official_jobs.mjs market/jobs/official-2027-browser-discovery.generated.json
+
+      - name: Pull Xiaomi official campus ATSX accelerator
         continue-on-error: true
         run: node tools/fetch_xiaomi_2027.mjs /tmp/xiaomi-2027-campus.json
 
-      - name: Pull ByteDance official campus ATSX
+      - name: Pull ByteDance official campus ATSX accelerator
         continue-on-error: true
         run: node tools/fetch_bytedance_2027.mjs /tmp/bytedance-campus.json
 
-      - name: Pull company-proven official Feishu ATS tenants
+      - name: Pull verified official Feishu ATS accelerators
         continue-on-error: true
         run: node tools/fetch_feishu_official_2027.mjs market/jobs/official-2027-feishu-discovery.generated.json
 
-      - name: Replay company-proven official Moka ATS contracts
+      - name: Pull verified official Moka ATS accelerators
         continue-on-error: true
         run: node tools/fetch_moka_official_2027.mjs market/jobs/official-2027-moka-discovery.generated.json
 
-      - name: Pull and normalize official recruitment sources
+      - name: Normalize and filter official 2027 jobs
         run: python tools/sync_official_2027_agent_jobs.py
 
-      - name: Build per-company coverage audit
-        continue-on-error: true
-        run: python tools/audit_official_2027_job_sources.py
-
-      - name: Commit generated discovery output safely
+      - name: Audit every registered company
         run: |
-          cp market/jobs/official-2027-agent-jobs.generated.md /tmp/official-2027-agent-jobs.generated.md
-          cp market/jobs/official-2027-agent-jobs.generated.json /tmp/official-2027-agent-jobs.generated.json
-          cp market/jobs/official-2027-browser-discovery.generated.json /tmp/official-2027-browser-discovery.generated.json
-          cp market/jobs/official-2027-feishu-discovery.generated.json /tmp/official-2027-feishu-discovery.generated.json
-          cp market/jobs/official-2027-moka-discovery.generated.json /tmp/official-2027-moka-discovery.generated.json
-          cp market/jobs/official-2027-coverage-audit.generated.md /tmp/official-2027-coverage-audit.generated.md
+          python tools/audit_official_2027_job_sources.py || true
+          cat market/jobs/official-2027-coverage-audit.generated.md
+
+      - name: Commit generated output safely
+        run: |
+          mkdir -p /tmp/job-sync
+          for f in market/jobs/official-2027-*.generated.*; do
+            cp "$f" "/tmp/job-sync/$(basename "$f")"
+          done
 
           git fetch origin main
           git reset --hard origin/main
 
-          cp /tmp/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.md
-          cp /tmp/official-2027-agent-jobs.generated.json market/jobs/official-2027-agent-jobs.generated.json
-          cp /tmp/official-2027-browser-discovery.generated.json market/jobs/official-2027-browser-discovery.generated.json
-          cp /tmp/official-2027-feishu-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json
-          cp /tmp/official-2027-moka-discovery.generated.json market/jobs/official-2027-moka-discovery.generated.json
-          cp /tmp/official-2027-coverage-audit.generated.md market/jobs/official-2027-coverage-audit.generated.md
+          for f in /tmp/job-sync/*; do
+            cp "$f" "market/jobs/$(basename "$f")"
+          done
 
-          if [ -z "$(git status --porcelain -- market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json market/jobs/official-2027-moka-discovery.generated.json market/jobs/official-2027-coverage-audit.generated.md)" ]; then
+          if [ -z "$(git status --porcelain -- market/jobs/official-2027-*.generated.*)" ]; then
             echo "No discovery changes."
             exit 0
           fi
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-feishu-discovery.generated.json market/jobs/official-2027-moka-discovery.generated.json market/jobs/official-2027-coverage-audit.generated.md
+          git add market/jobs/official-2027-*.generated.*
           git commit -m 'market: sync official 2027 Agent campus discovery'
           git push origin HEAD:main

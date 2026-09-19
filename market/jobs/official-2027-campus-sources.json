@@ -508,7 +508,7 @@
       "official_root": "https://campus.nio.com/",
       "browser_probe": true,
       "note": "蔚来官方校园招聘入口 campus.nio.com；从该官方入口继续跟随公司 ATS，禁止使用社会招聘页替代校招。 公司官方校园入口进入 nio.jobs.feishu.cn/campus；仅枚举正式校招 recruitment_id=201。",
-      "job_list_url": "https://campus.nio.com/",
+      "job_list_url": "https://nio.jobs.feishu.cn/campus/",
       "feishu_host": "nio.jobs.feishu.cn",
       "feishu_channel": "campus",
       "feishu_recruitment_ids": [
