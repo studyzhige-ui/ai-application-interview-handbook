@@ -1,0 +1,38 @@
+name: Validate handbook
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.md'
+      - 'tools/**/*.py'
+      - '.github/workflows/validate-handbook.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.md'
+      - 'tools/**/*.py'
+      - '.github/workflows/validate-handbook.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile repository tools
+        run: python -m py_compile tools/*.py
+
+      - name: Validate handbook structure and local links
+        run: python tools/validate_agent_readability.py
