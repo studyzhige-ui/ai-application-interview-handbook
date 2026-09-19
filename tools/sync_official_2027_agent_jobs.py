@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Sync 2027-campus Agent/AI-application engineering candidates from first-party recruitment endpoints.
+"""Sync current-campus Agent/AI-application engineering candidates from first-party recruitment endpoints.
 
 This tool is discovery-only: it only calls company-owned recruitment APIs/portals listed in
 market/jobs/official-2027-campus-sources.json. It never imports JD text from aggregators.
@@ -1396,15 +1396,16 @@ def main() -> int:
             for j in raw_jobs
         ]
 
-    def target_matches(jobs: list[Job], source_verified_2027: bool = False) -> list[Job]:
+    def target_matches(jobs: list[Job]) -> list[Job]:
         # Current-campus policy: the registered live first-party campus/new-grad
         # pool itself is the time gate. Year text is metadata only.
         matches = [
             j for j in jobs
-            if campusish(j)
-            and is_agent_related(j, keywords)
+            if is_agent_related(j, keywords)
             and (not engineering_signals or looks_engineering(j, engineering_signals))
             and not is_hard_excluded(j, excludes)
+            and "实习" not in (j.title + " " + j.category).lower()
+            and "intern" not in (j.title + " " + j.category).lower()
         ]
         seen = set()
         uniq: list[Job] = []
@@ -1464,7 +1465,7 @@ def main() -> int:
                 error = txt(dyn.get("error")) or "浏览器枚举失败"
             else:
                 status = "BLOCKED"
-                error = "官方根入口存在，但尚未完成可靠的2027岗位池枚举"
+                error = "官方根入口存在，但尚未完成可靠的当前校招岗位池枚举"
             return SourceResult(company, "browser_dynamic", src["portal"], status, len(raw_jobs), len(matches), error), matches
         fetcher = FETCHERS.get(mode)
         if not fetcher:
@@ -1491,7 +1492,7 @@ def main() -> int:
                     company, "browser_fallback", src["portal"],
                     "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
                     len(raw_jobs), len(matches),
-                    f"dedicated adapter failed; exhaustive official 2027 browser fallback used: {type(e).__name__}: {e}"[:700],
+                    f"dedicated adapter failed; exhaustive official current-campus browser fallback used: {type(e).__name__}: {e}"[:700],
                 ), matches
             discovered = discover_api_candidates(src["portal"])
             diagnostic = f"{type(e).__name__}: {e}"
@@ -1525,11 +1526,11 @@ def main() -> int:
     OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     lines = [
-        "# 2027 校招｜官方 Agent / AI 应用工程岗位自动发现结果",
+        "# 当前校招｜官方 Agent / AI 应用工程岗位自动发现结果",
         "",
         f"> Generated: **{now}**",
         ">",
-        "> 仅调用公司官方招聘接口 / 官方招聘入口。对于动态站，浏览器从 registry 中记录的 **official_root** 出发，跟随官网自己的校招链接并监听第一手 XHR/JSON。该文件是 discovery layer；最终 Active JD 仍需确认岗位属于 2027 校招且职责主体不是算法/模型训练。",
+        "> 仅调用公司官方招聘接口 / 官方招聘入口。对于动态站，浏览器从 registry 中记录的 **official_root** 出发，跟随官网自己的当前校招职位入口并监听第一手 XHR/JSON。该文件是 discovery layer；年份只作备注，不作为筛选 Gate，最终 Active JD 只需确认官方校招链接当前有效且职责主体不是算法/模型训练。",
         "",
         "## 官方源执行状态",
         "",
@@ -1550,7 +1551,7 @@ def main() -> int:
             f"- 地点：{j.location or '官方未提供'}",
             f"- 招聘类型：{j.category or '官方未提供'}",
             f"- 部门/方向：{j.department or '官方未提供'}",
-            f"- 2027/校招证据：{j.cycle_evidence or '需人工确认'}",
+            f"- 校招/项目备注：{j.cycle_evidence or '官方当前校招职位池'}",
             f"- 官方职位页：{j.official_url}",
             f"- 官方接口：{j.official_api}",
             "",
