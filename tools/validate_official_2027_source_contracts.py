@@ -29,6 +29,7 @@ def host(url: str) -> str:
 
 def main() -> int:
     cfg = json.loads(REG.read_text(encoding="utf-8"))
+    index = json.loads(INDEX.read_text(encoding="utf-8"))
     sources = cfg.get("sources") or []
     sync = SYNC.read_text(encoding="utf-8")
     errors: list[str] = []
@@ -39,6 +40,21 @@ def main() -> int:
     missing = REQUIRED - set(names)
     if missing:
         errors.append("missing fixed companies: " + ", ".join(sorted(missing)))
+
+    index_rows = index.get("companies") or []
+    index_names = [x.get("company") for x in index_rows]
+    if set(index_names) != REQUIRED or len(index_names) != len(REQUIRED):
+        errors.append("verified role index must contain exactly the fixed 41 companies")
+    index_by_company = {x.get("company"): x for x in index_rows if x.get("company")}
+    for company in sorted(REQUIRED):
+        row = index_by_company.get(company) or {}
+        roles = row.get("representative_roles") or []
+        if row.get("status") != "VERIFIED_ROLE":
+            errors.append(f"{company}: verified role index status must be VERIFIED_ROLE")
+        if not (row.get("official_search_url") or "").startswith("https://"):
+            errors.append(f"{company}: verified role index official_search_url missing/invalid")
+        if not roles or not (roles[0].get("title") or "").strip():
+            errors.append(f"{company}: verified role index representative role missing")
 
     for s in sources:
         company = s.get("company") or "<unknown>"
@@ -74,6 +90,10 @@ def main() -> int:
             errors.append(f"{company}: campus board requires current_campus_board=true")
         if board_scope == "official_recruiting" and s.get("current_campus_board") is not False:
             errors.append(f"{company}: official recruiting board requires current_campus_board=false")
+
+        idx = index_by_company.get(company) or {}
+        if idx.get("official_search_url") != search_url:
+            errors.append(f"{company}: registry search_url and verified role index official_search_url diverge")
 
         if mode != "portal_only":
             token = f'"{mode}":'
