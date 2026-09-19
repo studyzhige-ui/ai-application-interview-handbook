@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-09-19T10:05:36.358Z",
+  "keywords": [
+    "Agent",
+    "AI Agent",
+    "智能体",
+    "AI应用",
+    "AI 应用",
+    "大模型应用",
+    "LLM应用",
+    "AI Native",
+    "Coding Agent",
+    "Code Agent",
+    "RAG",
+    "Harness",
+    "Runtime",
+    "Agent Infra",
+    "MCP",
+    "Skill"
+  ],
+  "results": [
+    {
+      "company": "得物",
+      "portal": "https://poizon.jobs.feishu.cn/578078/",
+      "status": "BLOCKED",
+      "requests": 0,
+      "jobs": [],
+      "error": "campus: Error: 得物 campus HTTP 405 | social: Error: 得物 social HTTP 405"
+    },
+    {
+      "company": "MiniMax",
+      "portal": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
+      "status": "BLOCKED",
+      "requests": 0,
+      "jobs": [],
+      "error": "campus: Error: MiniMax campus HTTP 405 | social: Error: MiniMax social HTTP 405"
+    },
+    {
+      "company": "百川智能",
+      "portal": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
+      "status": "BLOCKED",
+      "requests": 0,
+      "jobs": [],
+      "error": "campus: Error: 百川智能 campus HTTP 405 | social: Error: 百川智能 social HTTP 405"
+    },
+    {
+      "company": "零一万物/01.AI",
+      "portal": "https://01ai.jobs.feishu.cn/index/",
+      "status": "BLOCKED",
+      "requests": 0,
+      "jobs": [],
+      "error": "campus: Error: 零一万物/01.AI campus HTTP 405 | social: Error: 零一万物/01.AI social HTTP 405"
+    }
+  ]
+}
