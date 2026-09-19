@@ -383,7 +383,7 @@ def build() -> None:
         "",
         "更新日期：2026-09-11",
         "",
-        "> 自动从十个正式 Canonical 文件生成；当前输入为冻结 `S001–S279` 与 Phase 2A 后的 **229 ACTIVE**。本文件不创建新证据，只提供全局可排序视图。",
+        "> 自动从十个正式 Canonical 文件生成；统计范围为 Frozen Canonical Baseline `S001–S279 / 235 ACTIVE`。本文件不创建新证据，只提供全局可排序视图。",
         "",
         "| QID | Module | Topic | Depth | Sources | Heat | Canonical Question |",
         "|---|---|---|---:|---:|---|---|",
@@ -716,15 +716,15 @@ def build() -> None:
     # Concise summary generated only from repository-derived statistics.
     top20 = frequency_sorted[:20]
     summary_lines = [
-        "# Market Analysis｜Phase 2B Market Analysis",
+        "# Market Analysis｜Frozen Canonical Baseline",
         "",
         "[← Market 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../../interview/canonical/README.md)",
         "",
-        "> **状态：✅ Frozen Analysis。** 自动统计层只描述冻结 HUMAN-A 市场数据，不承担课程知识补全，也不维护易过期的 Curriculum 下一步状态。",
+        "> **数据范围：Frozen Canonical Baseline。** 本页只统计 `S001–S279 / 235 ACTIVE Canonical`；Market 的持续监测总量与 `S280+` 状态以 `market/README.md` 为准。",
         "",
-        "更新日期：2026-09-11",
+        "统计快照日期：2026-09-11",
         "",
-        "## Baseline",
+        "## Frozen Baseline",
         "",
         f"- HUMAN-A：**{len(sources)}**",
         f"- ACTIVE Canonical：**{len(questions)}**",
@@ -753,7 +753,7 @@ def build() -> None:
         )
     summary_lines += [
         "",
-        "Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。",
+        "当前 Curriculum 状态以 `interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；当前 Gap 见 `market/analysis/knowledge-gap-analysis.md`，Phase 2B 历史 Gap 见 `market/analysis/history/`。本自动生成 README 不重复维护易过期的 Market 总量或课程下一步。",
     ]
     (ANALYSIS_DIR / "README.md").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
 

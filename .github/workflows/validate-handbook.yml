@@ -7,14 +7,16 @@ on:
     paths:
       - '**/*.md'
       - 'tools/**/*.py'
-      - '.github/workflows/validate-handbook.yml'
+      - 'tools/**/*.json'
+      - '.github/workflows/*.yml'
   pull_request:
     branches:
       - main
     paths:
       - '**/*.md'
       - 'tools/**/*.py'
-      - '.github/workflows/validate-handbook.yml'
+      - 'tools/**/*.json'
+      - '.github/workflows/*.yml'
 
 permissions:
   contents: read
@@ -36,3 +38,18 @@ jobs:
 
       - name: Validate handbook structure and local links
         run: python tools/validate_agent_readability.py
+
+      - name: Validate repository semantics
+        run: python tools/validate_repository_semantics.py
+
+      - name: Verify canonical audit is reproducible
+        run: |
+          python tools/apply_canonical_audit.py
+          git diff --exit-code -- interview/canonical
+
+      - name: Verify generated market analysis is reproducible
+        run: |
+          python tools/build_gap_candidates.py
+          python tools/build_market_analysis.py
+          python tools/validate_source_coverage.py
+          git diff --exit-code -- market/analysis

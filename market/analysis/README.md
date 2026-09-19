@@ -1,12 +1,12 @@
-# Market Analysis｜Phase 2B Market Analysis
+# Market Analysis｜Frozen Canonical Baseline
 
 [← Market 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../../interview/canonical/README.md)
 
-> **状态：✅ Frozen Analysis。** 自动统计层只描述冻结 HUMAN-A 市场数据，不承担课程知识补全，也不维护易过期的 Curriculum 下一步状态。
+> **数据范围：Frozen Canonical Baseline。** 本页只统计 `S001–S279 / 235 ACTIVE Canonical`；Market 的持续监测总量与 `S280+` 状态以 `market/README.md` 为准。
 
-更新日期：2026-09-11
+统计快照日期：2026-09-11
 
-## Baseline
+## Frozen Baseline
 
 - HUMAN-A：**279**
 - ACTIVE Canonical：**235**
@@ -54,4 +54,4 @@
 | Agent Harness / Runtime | 44 | 166 | 741 | 30 | 35 |
 | System Design | 24 | 71 | 81 | 3 | 24 |
 
-Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。
+当前 Curriculum 状态以 `interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；当前 Gap 见 `market/analysis/knowledge-gap-analysis.md`，Phase 2B 历史 Gap 见 `market/analysis/history/`。本自动生成 README 不重复维护易过期的 Market 总量或课程下一步。

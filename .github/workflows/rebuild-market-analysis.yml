@@ -61,40 +61,12 @@ jobs:
       - name: Build raw gap candidates
         run: python tools/build_gap_candidates.py
 
-      - name: Build and validate Phase 2B analysis
+      - name: Build frozen Canonical analysis
         run: python tools/build_market_analysis.py
 
       - name: Validate reviewed source coverage
         run: python tools/validate_source_coverage.py
 
-      - name: Normalize generated analysis status text
-        shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          analysis = Path('market/analysis')
-
-          index_path = analysis / 'global-question-index.md'
-          if index_path.exists():
-              text = index_path.read_text(encoding='utf-8')
-              text = text.replace(
-                  '当前输入为冻结 `S001–S279` 与 Phase 2A 后的 **229 ACTIVE**。',
-                  '当前输入为冻结 `S001–S279` 与 Phase 2B 后的 **235 ACTIVE**。',
-              )
-              index_path.write_text(text, encoding='utf-8')
-
-          readme_path = analysis / 'README.md'
-          if readme_path.exists():
-              text = readme_path.read_text(encoding='utf-8')
-              old = ('下一步人工研究层：基于 `cooccurrence.md` 回到原始 Batch 核验真正的 Follow-up Chain，'
-                     '并将 `curriculum-evidence-matrix.md` 与最新 `guide/knowledge-map.md` 对照，形成 Knowledge Gap Analysis。')
-              new = ('Phase 2B 自动统计与人工核验层均已完成。Phase 3 教材建设的实时状态以 '
-                     '`interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；'
-                     '本自动生成文件不重复维护易过期的“下一模块”状态。')
-              text = text.replace(old, new)
-              readme_path.write_text(text, encoding='utf-8')
-          PY
 
       - name: Commit canonical and generated analysis
         shell: bash
@@ -106,5 +78,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add interview/canonical market/analysis tools/build_market_analysis.py
-          git commit -m 'market: apply phase 2B canonical coverage audit'
+          git commit -m 'market: rebuild frozen canonical analysis'
           git push origin HEAD:${{ github.ref_name }}

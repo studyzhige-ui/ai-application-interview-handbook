@@ -122,7 +122,7 @@ Read
 
 ### Pass 3｜Interview Pass：真人面经只在这一层加权
 
-当前 Frozen HUMAN-A Frequency：
+Frozen Canonical HUMAN-A Frequency（S001–S279）：
 
 ```text
 🔥🔥🔥 >=10 sources   82 Canonical
