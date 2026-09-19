@@ -21,16 +21,16 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Mark
 
 | # | Module | Curriculum | Canonical | Status |
 |---:|---|---:|---:|---|
-| 01 | [Python Foundation](../../curriculum/01-curriculum/01-python/README.md) | 13 | 15 | ✅ |
-| 02 | [FastAPI](../../curriculum/02-curriculum/02-fastapi/README.md) | 16 | 4 | ✅ |
-| 03 | [AI Backend Engineering](../../curriculum/03-curriculum/03-backend-engineering/README.md) | 22 | 39 | ✅ |
-| 04 | [MySQL](../../curriculum/04-curriculum/04-mysql/README.md) | 23 | 26 | ✅ |
-| 05 | [Redis](../../curriculum/05-curriculum/05-redis/README.md) | 24 | 19 | ✅ |
-| 06 | [Vector Database](../../curriculum/06-curriculum/06-vector-db/README.md) | 16 | 12 | ✅ |
-| 07 | [LLM Foundation（应用工程深度）](../../curriculum/07-curriculum/07-llm-foundation/README.md) | 14 | 23 | ✅ |
-| 08 | [RAG](../../curriculum/08-curriculum/08-rag/README.md) | 14 | 29 | ✅ |
-| 09 | [Agent](../../curriculum/09-curriculum/09-agent/README.md) | 24 | 44 | ✅ |
-| 10 | [System Design](../../curriculum/10-curriculum/10-system-design/README.md) | 19 | 24 | ✅ |
+| 01 | [Python Foundation](../../curriculum/01-python/README.md) | 13 | 15 | ✅ |
+| 02 | [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | 4 | ✅ |
+| 03 | [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) | 22 | 39 | ✅ |
+| 04 | [MySQL](../../curriculum/04-mysql/README.md) | 23 | 26 | ✅ |
+| 05 | [Redis](../../curriculum/05-redis/README.md) | 24 | 19 | ✅ |
+| 06 | [Vector Database](../../curriculum/06-vector-db/README.md) | 16 | 12 | ✅ |
+| 07 | [LLM Foundation（应用工程深度）](../../curriculum/07-llm-foundation/README.md) | 14 | 23 | ✅ |
+| 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | 29 | ✅ |
+| 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | 44 | ✅ |
+| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 24 | ✅ |
 
 十个正式一级模块第一版系统教材全部完成；Foundation 也已完成。
 
