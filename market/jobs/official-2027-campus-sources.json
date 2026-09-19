@@ -19,8 +19,7 @@
     "skill"
   ],
   "hard_exclude_title_keywords": [
-    "算法工程师",
-    "算法研究",
+    "算法",
     "研究员",
     "research scientist",
     "scientist",
@@ -28,22 +27,34 @@
     "后训练",
     "post-training",
     "sft",
+    "dpo",
     "rlhf",
-    "reward model"
+    "reward model",
+    "产品经理",
+    "策略产品",
+    "市场经理",
+    "marketing manager",
+    "商务",
+    "采购",
+    "导演",
+    "销售",
+    "运营"
   ],
   "sources": [
     {
       "company": "小米",
       "mode": "xiaomi_api",
       "portal": "https://hr.xiaomi.com/website/opportunities.html?project=%E6%A0%A1%E6%8B%9B&q=agent",
-      "api": "https://hr.xiaomi.com/api/position/list"
+      "api": "https://hr.xiaomi.com/api/position/list",
+      "note": "必须从当前官方 2027/校招动态页面枚举；旧 /api/position/list 已 404，需自动发现新版接口。"
     },
     {
       "company": "快手",
       "mode": "kuaishou_api",
       "portal": "https://campus.kuaishou.cn/recruit/campus/e/#/campus/jobs?recruitSubProjectCodes=20271779425607",
       "api": "https://zhaopin.kuaishou.cn/recruit/api/job/list",
-      "project_code": "20271779425607"
+      "project_code": "20271779425607",
+      "note": "必须限定 recruitSubProjectCodes=20271779425607；旧 zhaopin API 已 404，需从当前 campus 前端发现新版接口。"
     },
     {
       "company": "百度",
@@ -53,9 +64,9 @@
     },
     {
       "company": "腾讯",
-      "mode": "tencent_api",
+      "mode": "portal_only",
       "portal": "https://join.qq.com/",
-      "api": "https://careers.tencent.com/tencentcareer/api/post/Query"
+      "note": "腾讯通用 careers API 会混入社招/海外岗位；在找到可验证的 2027 国内校招接口前，不自动入库。"
     },
     {
       "company": "美团",
@@ -258,5 +269,37 @@
     "2027-campus discovery must enumerate official campus project portals/APIs; search-engine indexing is never evidence of absence.",
     "Dynamic JS portals (e.g. Xiaomi/Kuaishou) must be checked through their official recruitment API/project scope where possible.",
     "Portal-only means official entry confirmed but automated enumerator not yet implemented; it does NOT mean no matching jobs."
+  ],
+  "engineering_title_signals": [
+    "开发",
+    "研发",
+    "工程师",
+    "后端",
+    "前端",
+    "全栈",
+    "客户端",
+    "平台",
+    "架构",
+    "infra",
+    "runtime",
+    "harness",
+    "coding",
+    "测试"
+  ],
+  "strong_agent_keywords": [
+    "agent",
+    "智能体",
+    "ai应用",
+    "ai 应用",
+    "大模型应用",
+    "llm应用",
+    "llm 应用",
+    "ai native",
+    "coding agent",
+    "code agent",
+    "rag",
+    "agent infra",
+    "agent runtime",
+    "agent harness"
   ]
 }
