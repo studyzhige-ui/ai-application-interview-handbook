@@ -192,16 +192,18 @@
     {
       "company": "科大讯飞",
       "mode": "portal_only",
-      "portal": "https://campus.iflytek.com/official-pc/jobList",
-      "official_root": "https://campus.iflytek.com/official-pc/jobList",
-      "browser_probe": true
+      "portal": "https://iflytek.zhiye.com/",
+      "official_root": "https://campus.iflytek.com/",
+      "browser_probe": true,
+      "note": "campus.iflytek.com 官方校招入口当前重定向至 iflytek.zhiye.com 官方招聘站。"
     },
     {
       "company": "携程",
       "mode": "portal_only",
-      "portal": "https://campus.ctrip.com/",
+      "portal": "https://careers.ctrip.com/",
       "official_root": "https://campus.ctrip.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "campus.ctrip.com 官方入口当前重定向至 careers.ctrip.com。"
     },
     {
       "company": "360",
@@ -213,9 +215,10 @@
     {
       "company": "得物",
       "mode": "portal_only",
-      "portal": "https://www.dewu.com/",
+      "portal": "https://poizon.jobs.feishu.cn/index",
       "official_root": "https://www.dewu.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "得物官网 footer 的“加入得物/加入我们”直接跳转 poizon.jobs.feishu.cn；以官网→飞书 ATS 链为第一手 provenance。"
     },
     {
       "company": "DeepSeek",
@@ -227,16 +230,18 @@
     {
       "company": "月之暗面/Kimi",
       "mode": "portal_only",
-      "portal": "https://careers.kimi.com/",
-      "official_root": "https://careers.kimi.com/",
-      "browser_probe": true
+      "portal": "https://app.mokahr.com/apply/moonshot/148506",
+      "official_root": "https://careers.kimi.com/campus",
+      "browser_probe": true,
+      "note": "Kimi 官方校园招聘页直接提供“加入我们”并跳转 Moonshot 官方 Moka ATS。"
     },
     {
       "company": "MiniMax",
       "mode": "portal_only",
-      "portal": "https://www.minimax.cn/careers",
+      "portal": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
       "official_root": "https://www.minimax.cn/careers",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "MiniMax 官方 Careers 明确写 2027 届校园招聘，并直接跳转该飞书招聘 project。"
     },
     {
       "company": "智谱/Z.ai",
@@ -255,16 +260,18 @@
     {
       "company": "百川智能",
       "mode": "portal_only",
-      "portal": "https://www.baichuan-ai.com/",
-      "official_root": "https://www.baichuan-ai.com/",
-      "browser_probe": true
+      "portal": "https://careers.baichuan-inc.com/",
+      "official_root": "https://careers.baichuan-inc.com/",
+      "browser_probe": true,
+      "note": "百川智能官方 Careers 站，含“源点计划”校园人才项目。"
     },
     {
       "company": "零一万物/01.AI",
       "mode": "portal_only",
-      "portal": "https://www.01.ai/",
+      "portal": "https://01ai.jobs.feishu.cn/index/",
       "official_root": "https://www.01.ai/",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "01.AI 官网 footer“加入我们”直接跳转 01ai.jobs.feishu.cn。"
     },
     {
       "company": "商汤科技",
@@ -318,9 +325,10 @@
     {
       "company": "昆仑万维/天工",
       "mode": "portal_only",
-      "portal": "https://www.kunlun.com/",
+      "portal": "https://jobs.kunlun.com/459522",
       "official_root": "https://www.kunlun.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "note": "昆仑万维官网“加入我们→校园招聘”直接跳转 jobs.kunlun.com。"
     },
     {
       "company": "Shopee",
