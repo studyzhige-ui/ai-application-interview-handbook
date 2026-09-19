@@ -36,7 +36,7 @@ function sameOfficialFamily(a,b){
   try{
     const ha=new URL(a).hostname.replace(/^www\./,"");
     const hb=new URL(b).hostname.replace(/^www\./,"");
-    const suffixes=["mokahr.com","mioffice.cn","feishu.cn","myworkdayjobs.com","workdayjobs.com","zhiye.com"];
+    const suffixes=["mokahr.com","mioffice.cn","feishu.cn","myworkdayjobs.com","workdayjobs.com","zhiye.com","ashbyhq.com"];
     if(ha===hb||ha.endsWith("."+hb)||hb.endsWith("."+ha)) return true;
     // ATS hosts are accepted only because navigation originated from the official page.
     return suffixes.some(s=>ha.endsWith(s));
@@ -87,7 +87,7 @@ async function scroll(page){
   await page.evaluate(()=>window.scrollTo(0,0));
 }
 function jobLinkLike(href){
-  return /(?:\/job\/|\/jobs\/|\/position\/|job-info|postdetail|positionid=|jobid=|#\/job\/|#\/position\/)/i.test(href||"");
+  return /(?:\/job\/|\/jobs\/|\/position\/|job-info|postdetail|positionid=|jobid=|#\/job\/|#\/position\/|jobs\.ashbyhq\.com\/[^/]+\/[0-9a-f-]{20,})/i.test(href||"");
 }
 function cycleSnippets(body){
   // Current-campus evidence: year labels are metadata only. A live first-party
@@ -227,7 +227,7 @@ function splitJobText(body,title){
   if(title && description.startsWith(title)) description=description.slice(title.length).trim();
   return {description:description.slice(0,12000),requirements:requirements.slice(0,8000)};
 }
-async function scrapeSearchHit(context,company,hit,parentCycle){
+async function scrapeSearchHit(context,company,hit,parentCycle,boardScope){
   const p=await context.newPage();
   try{
     await p.goto(hit.href,{waitUntil:"domcontentloaded",timeout:12000});
@@ -239,7 +239,7 @@ async function scrapeSearchHit(context,company,hit,parentCycle){
     const {description,requirements}=splitJobText(body,title);
     const cycle=[...new Set([...(parentCycle||[]),...cycleSnippets(body)])].slice(0,8).join(" / ");
     return {
-      company,title:title.slice(0,240),job_id:"",location:"",category:"官方校招搜索结果",
+      company,title:title.slice(0,240),job_id:"",location:"",category:boardScope==="campus"?"官方校园招聘搜索结果":"官方招聘搜索结果",
       department:"",description,requirements,official_url:p.url(),
       official_api:"DOM-DETAIL:"+hit.href,cycle_evidence:cycle,
       extraction_path:"official UI keyword search:"+hit.keyword,
@@ -247,7 +247,7 @@ async function scrapeSearchHit(context,company,hit,parentCycle){
     };
   }catch{return null;}finally{await p.close().catch(()=>{});}
 }
-async function runPage(context,company,url,rootHost,collector,visited,endpointLog){
+async function runPage(context,company,url,rootHost,collector,visited,endpointLog,boardScope){
   if(visited.has(url)||visited.size>10) return;
   visited.add(url);
   const page=await context.newPage();
@@ -270,7 +270,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
         const pageText=(await page.locator("body").innerText().catch(()=>"")).slice(0,50000);
         const cycle=cycleSnippets(pageText).join(" / ");
-        recursiveJobs(data,{company,page_url:page.url(),response_url:ru,cycle_evidence:cycle},collector);
+        recursiveJobs(data,{company,page_url:page.url(),response_url:ru,cycle_evidence:cycle,category:boardScope==="campus"?"官方校园招聘":"官方招聘"},collector);
       }catch{}
     })();
     responseTasks.push(task);
@@ -326,7 +326,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     }
     const detailHits=uniqueHits.slice(0,30);
     for(let i=0;i<detailHits.length;i+=4){
-      const batch=await Promise.all(detailHits.slice(i,i+4).map(h=>scrapeSearchHit(context,company,h,cycleMatches)));
+      const batch=await Promise.all(detailHits.slice(i,i+4).map(h=>scrapeSearchHit(context,company,h,cycleMatches,boardScope)));
       for(const j of batch) if(j) collector.push(j);
     }
 
@@ -353,13 +353,14 @@ async function processSource(browser,src){
   const endpointLog=[];
   const visited=new Set();
   const root=src.official_root || src.portal;
-  const jobList=src.job_list_url || src.portal;
+  const jobList=src.search_url || src.job_list_url || src.portal;
+  const boardScope=src.board_scope || (src.current_campus_board?"campus":"official_recruiting");
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
   try{
     while(queue.length && visited.size<6){
       const u=queue.shift();
-      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog);
+      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog,boardScope);
       if(pr){
         pageResults.push(pr);
         // Do not crawl arbitrary site navigation during recurring collection.
@@ -383,7 +384,7 @@ async function processSource(browser,src){
     else status="BROWSER_ERROR";
     console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
     return {
-      company:src.company,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,
+      company:src.company,board_scope:boardScope,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,
       endpoints:endpointLog.slice(0,120),jobs,status,
       search_terms_attempted:[...searched],search_terms_expected:SEARCH_TERMS,
       full_keyword_search:fullKeywordSearch,list_scan_complete:listScanComplete
