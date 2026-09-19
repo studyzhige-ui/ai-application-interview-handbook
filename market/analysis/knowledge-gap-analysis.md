@@ -2,7 +2,7 @@
 
 更新日期：2026-09-11
 
-> 本文件把冻结 `S001–S279` 真人面经形成的 **235 ACTIVE Canonical** 与 `roadmap/knowledge-map.md` 对照。目标不是让课程变成题库，而是区分四类情况：
+> 本文件把冻结 `S001–S279` 真人面经形成的 **235 ACTIVE Canonical** 与 `guide/knowledge-map.md` 对照。目标不是让课程变成题库，而是区分四类情况：
 >
 > 1. **市场高频但课程缺失 / 表述过弱**：需要补；
 > 2. **课程已有但模块边界与 Canonical 不一致**：需要重排；
@@ -13,7 +13,7 @@
 
 当前课程主方向是对的，但存在一个 **P0 结构缺口** 和若干 **P1 内容缺口**：
 
-- `roadmap/knowledge-map.md` 的正式主学习路线里**缺少 LLM Foundation（应用工程深度）一级模块**；
+- `guide/knowledge-map.md` 的正式主学习路线里**缺少 LLM Foundation（应用工程深度）一级模块**；
 - Vector DB 路线仍把 Dense/Sparse、BM25、Hybrid、RRF、Rerank 混在 Vector DB 中，与最新 Primary Ownership 不一致；
 - Agent Harness 路线尚未显式吸收 Phase 2B 新增的 Prompt Injection、Intent Routing、A2A、Framework Selection、AI-assisted Development Workflow；
 - MySQL / Redis / RAG 的完整课程骨架已经覆盖大多数核心方向，但若按真人面试深度，需要强化 Failure / Scale / Evaluation；
@@ -40,7 +40,7 @@
 
 ### 当前问题
 
-`roadmap/knowledge-map.md` 当前总结构和推荐路线是：
+`guide/knowledge-map.md` 当前总结构和推荐路线是：
 
 ```text
 Python
