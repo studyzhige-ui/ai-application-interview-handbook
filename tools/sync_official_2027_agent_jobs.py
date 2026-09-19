@@ -1367,7 +1367,13 @@ def main() -> int:
             jobs = to_jobs(company, moka.get("jobs") or [], src["portal"], txt(moka.get("api")) or ("MOKA:" + src["portal"]))
             matches = target_matches(jobs, bool(src.get("verified_2027_project")))
             cycle = txt(moka.get("cycle_evidence"))
-            has_2027 = "2027" in cycle or any("2027" in (j.cycle_evidence or "") for j in jobs)
+            has_2027 = bool(src.get("verified_2027_project")) or "2027" in cycle or any(
+                "2027" in " ".join([
+                    j.title or "", j.category or "", j.cycle_evidence or "",
+                    j.description or "", j.requirements or ""
+                ])
+                for j in jobs
+            )
             if has_2027:
                 return SourceResult(
                     company, "moka_official", src["portal"],
