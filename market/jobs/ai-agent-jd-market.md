@@ -16,8 +16,8 @@ ai-agent-jd-market.md
 当前正式 Agent / AI应用工程 JD
 ```
 
-- [机器发现候选池](official-2027-agent-jobs.generated.md)：尽可能全量抓官方动态校招站，允许边界岗。
-- 本文件：二次审核后的正式核心库。
+- [严格全量 JD 层](official-2027-agent-jobs.generated.md)：41 家官方招聘池统一搜索后，只保留非算法 AI 应用 / Agent 工程 Role Family；这是逐岗位穷举层。
+- 本文件：阅读与研究层，保留代表性完整 JD、市场结构和高价值案例；不再承担把 196 个 Role Family 全部重复铺开。
 - `⟳` 表示未知/待闭环，不等于“暂无岗位”。
 
 ## 2. 正式纳入 Gate
@@ -28,62 +28,63 @@ ai-agent-jd-market.md
 
 ## 3. 当前快照｜2026-09-19
 
-- **正式当前校招 Role Family：38**
-- **AI 应用开发：13**
-- **Agent / 智能体研发：25**
-- **已进入正式库的公司：10 家**：小米、快手、百度、OPPO、美团、顺丰、阿里巴巴、小红书、商汤科技、MiniMax。
-- **固定官方公司覆盖：42 家**；每家公司都维护 `official_root` 与固定 `job_list_url`。
-- 日常采集不再依赖搜索引擎索引：直接打开固定官方职位页，穷举 Agent / 智能体 / AI 应用 / 大模型应用 / Coding Agent / RAG / Harness / Runtime / MCP / Skill / Tool 等关键词并翻完分页。
-- 专用 API / Feishu / Moka 只作为加速器；失败时必须回退固定 `job_list_url`，不能把接口失败解释成“0 岗位”。
+- **固定官方公司：41 家**，LiblibAI 已移出目标公司集。
+- **严格目标 Role Family：196**
+- **抓到第一方职责 / 要求正文：189**
+- **仅能从第一方职位列表确认标题：7**，不使用二手来源补写正文。
+- **命中目标岗位公司：15 家**：小米、快手、百度、美团、哔哩哔哩、小红书、字节跳动、阿里巴巴、OPPO、荣耀、MiniMax、商汤科技、Manus、联想、顺丰。
+- **其余 26 家**：固定官方招聘池已纳入搜索矩阵，本轮严格 Gate 后没有保留非算法 AI 应用 / Agent 工程 Role Family。
+- 全量逐岗位结果以 [official-2027-agent-jobs.generated.md](official-2027-agent-jobs.generated.md) / [JSON](official-2027-agent-jobs.generated.json) 为准；本文件保留适合阅读和面试研究的代表性 JD。
 
-## 4. 公司当前校招官方覆盖矩阵
+## 4. 公司官方招聘池与严格结果
 
-这里现在只回答一个问题：**当前官网校招职位池能否稳定获取并完整枚举**。年份、毕业窗口和项目名只作为备注，不参与筛选。\n\n| 公司 | 固定官方职位列表页 | 获取方式 | 当前校招状态 |
-|---|---|---|---|
-| 小米 | https://xiaomi.jobs.f.mioffice.cn/campus/ | xiaomi_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 快手 | https://campus.kuaishou.cn/recruit/campus/e/ | kuaishou_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 百度 | https://talent.baidu.com/jobs/list?projectType=1 | baidu_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 腾讯 | https://join.qq.com/post.html | tencent_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 美团 | https://zhaopin.meituan.com/web/campus | meituan_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 网易 | https://campus.163.com/ | netease_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 哔哩哔哩 | https://jobs.bilibili.com/campus/positions | bilibili_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 滴滴 | https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs | 固定职位页 → 通用浏览器穷举 | ✅ 2027 已确认 |
-| 拼多多 | https://careers.pddglobalhr.com/campus/grad | pdd_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 华为 | https://career.huawei.com/cn/campus-recruitment | huawei_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 小红书 | https://job.xiaohongshu.com/campus/position | xiaohongshu_2027_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 字节跳动 | https://jobs.bytedance.com/campus/position | bytedance_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 阿里巴巴 | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | alibaba_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 蚂蚁集团 | https://talent.antgroup.com/campus-full-list | ant_2027_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 京东 | https://campus.jd.com/ | jd_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| OPPO | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | oppo_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| vivo | https://hr-campus.vivo.com/campus/jobs | vivo_2027_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 金山办公/WPS | https://join.wps.cn/ | 固定职位页 → 通用浏览器穷举 | ✅ 2027 已确认 |
-| 荣耀 | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | honor_2027_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 科大讯飞 | https://iflytek.zhiye.com/5/jobs | iflytek_2027_api 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 携程 | https://careers.ctrip.com/#/campus | ctrip_2027_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 360 | https://hr.360.cn/hr/list | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| 得物 | https://poizon.jobs.feishu.cn/578078/ | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| DeepSeek | https://talent.deepseek.com/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| 月之暗面/Kimi | https://app.mokahr.com/apply/moonshot/148506 | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
-| MiniMax | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 智谱/Z.ai | https://www.zhipuai.cn/zh/joinus | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 阶跃星辰 | https://app.mokahr.com/campus-recruitment/step/94905 | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 百川智能 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 零一万物/01.AI | https://01ai.jobs.feishu.cn/index/ | feishu_direct 加速 → 固定职位页浏览器兜底 | — 官网当前未公开 2027 项目 |
-| 商汤科技 | https://hr-jobs.sensetime.com/edu/ | feishu_direct 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 生数科技 | https://www.shengshu-ai.com/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| 硅基流动 | https://www.siliconflow.cn/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| 面壁智能 | https://www.modelbest.cn/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| Manus | https://www.manus.im/ | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| LiblibAI | https://www.liblib.art/us/joinus | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| 无问芯穹/Infini-AI | https://infinigence.jobs.feishu.cn/088717 | feishu_direct 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 昆仑万维/天工 | https://jobs.kunlun.com/459522/position/list | 固定职位页 → 通用浏览器穷举 | △ 职位可获取；届别需官方 JD/项目证据 |
-| Shopee | https://careers.shopee.cn/jobs?limit=50&offset=0 | 固定职位页 → 通用浏览器穷举 | — 官网当前未公开 2027 项目 |
-| 联想 | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | lenovo_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
-| 蔚来 | https://nio.jobs.feishu.cn/campus/ | feishu_direct 加速 → 固定职位页浏览器兜底 | △ 职位可获取；届别需官方 JD/项目证据 |
-| 顺丰 | https://campus.sf-express.com/positionList | sf_campus_api 加速 → 固定职位页浏览器兜底 | ✅ 2027 已确认 |
+这里回答两个问题：**去哪里持续搜**，以及 **严格非算法 AI / Agent 工程 Gate 后当前留下多少 Role Family**。公司官网首页不能替代职位池。
 
-> 公司当前没有公开校招职位池时仍保留在矩阵；官方校招入口重新开放后直接在同一个固定入口继续枚举。
+| 公司 | 固定官方职位池 | 范围 | 严格结果 | JD 正文 |
+|---|---|---|---:|---|
+| 小米 | https://xiaomi.jobs.f.mioffice.cn/campus/ | 校园招聘 | ✅ 7 | 7 完整 |
+| 快手 | https://campus.kuaishou.cn/recruit/campus/e/ | 校园招聘 | ✅ 8 | 8 完整 |
+| 百度 | https://talent.baidu.com/jobs/list?projectType=1 | 校园招聘 | ✅ 5 | 5 完整 |
+| 腾讯 | https://join.qq.com/post.html | 校园招聘 | 0 | — |
+| 美团 | https://zhaopin.meituan.com/web/campus | 校园招聘 | ✅ 2 | 2 完整 |
+| 网易 | https://campus.163.com/ | 校园招聘 | 0 | — |
+| 哔哩哔哩 | https://jobs.bilibili.com/campus/positions | 校园招聘 | ✅ 1 | 0 完整 / 1 仅标题 |
+| 滴滴 | https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs | 校园招聘 | 0 | — |
+| 拼多多 | https://careers.pddglobalhr.com/campus/grad | 校园招聘 | 0 | — |
+| 华为 | https://career.huawei.com/cn/campus-recruitment | 校园招聘 | 0 | — |
+| 小红书 | https://job.xiaohongshu.com/campus/position | 校园招聘 | ✅ 6 | 6 完整 |
+| 字节跳动 | https://jobs.bytedance.com/campus/position | 校园招聘 | ✅ 130 | 130 完整 |
+| 阿里巴巴 | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | 校园招聘 | ✅ 18 | 18 完整 |
+| 蚂蚁集团 | https://talent.antgroup.com/campus-full-list | 校园招聘 | 0 | — |
+| 京东 | https://campus.jd.com/ | 校园招聘 | 0 | — |
+| OPPO | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | 校园招聘 | ✅ 5 | 5 完整 |
+| vivo | https://hr-campus.vivo.com/campus/jobs | 校园招聘 | 0 | — |
+| 金山办公/WPS | https://join.wps.cn/ | 校园招聘 | 0 | — |
+| 荣耀 | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | 校园招聘 | ✅ 3 | 0 完整 / 3 仅标题 |
+| 科大讯飞 | https://iflytek.zhiye.com/5/jobs | 校园招聘 | 0 | — |
+| 携程 | https://careers.ctrip.com/#/campus | 校园招聘 | 0 | — |
+| 360 | https://360campus.zhiye.com/campus/jobs | 校园招聘 | 0 | — |
+| 得物 | https://poizon.jobs.feishu.cn/578078/ | 校园招聘 | 0 | — |
+| DeepSeek | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | 官方招聘池 | 0 | — |
+| 月之暗面/Kimi | https://app.mokahr.com/campus-recruitment/moonshot/148507 | 校园招聘 | 0 | — |
+| MiniMax | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | 校园招聘 | ✅ 1 | 1 完整 |
+| 智谱/Z.ai | https://app.mokahr.com/campus-recruitment/zphz/148984 | 校园招聘 | 0 | — |
+| 阶跃星辰 | https://app.mokahr.com/campus-recruitment/step/94905 | 校园招聘 | 0 | — |
+| 百川智能 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | 校园招聘 | 0 | — |
+| 零一万物/01.AI | https://01ai.jobs.feishu.cn/index/ | 官方招聘池 | 0 | — |
+| 商汤科技 | https://hr-jobs.sensetime.com/edu/ | 校园招聘 | ✅ 5 | 5 完整 |
+| 生数科技 | https://shengshu.jobs.feishu.cn/index/ | 官方招聘池 | 0 | — |
+| 硅基流动 | https://app.mokahr.com/su/Idzsq | 官方招聘池 | 0 | — |
+| 面壁智能 | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | 校园招聘 | 0 | — |
+| Manus | https://jobs.ashbyhq.com/manusai | 官方招聘池 | ✅ 1 | 1 完整 |
+| 无问芯穹/Infini-AI | https://infinigence.jobs.feishu.cn/088717 | 校园招聘 | 0 | — |
+| 昆仑万维/天工 | https://jobs.kunlun.com/459522/position/list | 官方招聘池 | 0 | — |
+| Shopee | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | 校园招聘 | 0 | — |
+| 联想 | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | 校园招聘 | ✅ 3 | 0 完整 / 3 仅标题 |
+| 蔚来 | https://nio.jobs.feishu.cn/campus/ | 校园招聘 | 0 | — |
+| 顺丰 | https://campus.sf-express.com/positionList | 校园招聘 | ✅ 1 | 1 完整 |
+
+> `0` 只表示当前严格 Role Scope 下没有保留岗位，不表示公司没有招聘。算法/训练/研究、产品、销售、运营、纯实习以及“普通工程岗仅在 JD 中提到使用 AI 工具”的岗位均被排除。
 
 ## 5. AI 应用开发｜当前校招 Active 官方 JD
 
