@@ -9,6 +9,7 @@ on:
     paths:
       - 'tools/sync_official_2027_agent_jobs.py'
       - 'tools/fetch_xiaomi_2027.mjs'
+      - 'tools/fetch_bytedance_2027.mjs'
       - 'market/jobs/official-2027-campus-sources.json'
       - '.github/workflows/sync-official-2027-agent-jobs.yml'
 
@@ -37,6 +38,9 @@ jobs:
 
       - name: Pull Xiaomi official campus ATSX
         run: node tools/fetch_xiaomi_2027.mjs /tmp/xiaomi-2027-campus.json
+
+      - name: Pull ByteDance official campus ATSX
+        run: node tools/fetch_bytedance_2027.mjs /tmp/bytedance-campus.json
 
       - name: Pull official recruitment APIs
         run: python tools/sync_official_2027_agent_jobs.py
