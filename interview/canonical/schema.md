@@ -2,7 +2,7 @@
 
 更新日期：2026-09-10
 
-本目录把 `research/interviews/batch-01.md` ～ `batch-26.md` 中冻结的 `S001–S279` HUMAN-A 来源，归一化为可统计、可回溯、可反哺课程设计的 Canonical Question 数据集。
+本目录把 `market/interviews/batch-01.md` ～ `batch-26.md` 中冻结的 `S001–S279` HUMAN-A 来源，归一化为可统计、可回溯、可反哺课程设计的 Canonical Question 数据集。
 
 > 完整知识体系决定“应该学什么”；Canonical Question 只负责记录真实市场“怎么问、问多深、在哪些场景追问”。
 

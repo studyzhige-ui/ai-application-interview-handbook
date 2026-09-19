@@ -4,20 +4,20 @@
 
 > Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。
 
-> 旧184篇终审为历史记录；当前185篇中Agent24章的保留核对与实际检查见[修订记录](../../roadmap/agent-reader-revision.md)。研究兼容标识与题目频次保持不变。
+> 旧184篇终审为历史记录；当前185篇中Agent24章的保留核对与实际检查见[修订记录](../../guide/project/agent-reader-revision.md)。研究兼容标识与题目频次保持不变。
 
 | # | Module | Canonical File | ACTIVE | Curriculum | Curriculum Entry | Status |
 |---:|---|---|---:|---:|---|---|
-| 01 | Python Foundation | [python.md](python.md) | 15 | 13 | [README](../../python/README.md) | ✅ |
-| 02 | FastAPI | [fastapi.md](fastapi.md) | 4 | 16 | [README](../../fastapi/README.md) | ✅ |
-| 03 | AI Backend Engineering | [ai-backend-engineering.md](ai-backend-engineering.md) | 39 | 22 | [README](../../backend-engineering/README.md) | ✅ |
-| 04 | MySQL | [mysql.md](mysql.md) | 26 | 23 | [README](../../mysql/README.md) | ✅ |
-| 05 | Redis | [redis.md](redis.md) | 19 | 24 | [README](../../redis/README.md) | ✅ |
-| 06 | Vector Database | [vector-db.md](vector-db.md) | 12 | 16 | [README](../../vector-db/README.md) | ✅ |
-| 07 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | 14 | [README](../../llm-foundation/README.md) | ✅ |
-| 08 | RAG | [rag.md](rag.md) | 29 | 14 | [README](../../rag/README.md) | ✅ |
-| 09 | Agent | [agent-harness.md](agent-harness.md) | 44 | 24 | [README](../../agent/README.md) | ✅ |
-| 10 | System Design | [system-design.md](system-design.md) | 24 | 19 | [README](../../system-design/README.md) | ✅ |
+| 01 | Python Foundation | [python.md](python.md) | 15 | 13 | [README](../../curriculum/01-curriculum/01-python/README.md) | ✅ |
+| 02 | FastAPI | [fastapi.md](fastapi.md) | 4 | 16 | [README](../../curriculum/02-curriculum/02-fastapi/README.md) | ✅ |
+| 03 | AI Backend Engineering | [ai-backend-engineering.md](ai-backend-engineering.md) | 39 | 22 | [README](../../curriculum/03-curriculum/03-backend-engineering/README.md) | ✅ |
+| 04 | MySQL | [mysql.md](mysql.md) | 26 | 23 | [README](../../curriculum/04-curriculum/04-mysql/README.md) | ✅ |
+| 05 | Redis | [redis.md](redis.md) | 19 | 24 | [README](../../curriculum/05-curriculum/05-redis/README.md) | ✅ |
+| 06 | Vector Database | [vector-db.md](vector-db.md) | 12 | 16 | [README](../../curriculum/06-curriculum/06-vector-db/README.md) | ✅ |
+| 07 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | 14 | [README](../../curriculum/07-curriculum/07-llm-foundation/README.md) | ✅ |
+| 08 | RAG | [rag.md](rag.md) | 29 | 14 | [README](../../curriculum/08-curriculum/08-rag/README.md) | ✅ |
+| 09 | Agent | [agent-harness.md](agent-harness.md) | 44 | 24 | [README](../../curriculum/09-curriculum/09-agent/README.md) | ✅ |
+| 10 | System Design | [system-design.md](system-design.md) | 24 | 19 | [README](../../curriculum/10-curriculum/10-system-design/README.md) | ✅ |
 
 **ACTIVE total = 235. Legacy MOVED = 24.**
 
