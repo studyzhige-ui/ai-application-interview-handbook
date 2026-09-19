@@ -164,7 +164,7 @@ MCP目录只提供能力说明。模型候选仍由宿主校验与授权，通�
 
 ## 8. HUMAN-A 信号
 
-本章主要承接`AGENT-023` MCP协议（20个来源）与`AGENT-024`能力边界；工具发现还对应`AGENT-021`。完整问法和频次见[研究题库](../../research/questions/agent-harness.md)。新增协议解释不新增真人来源。
+本章主要承接`AGENT-023` MCP协议（20个来源）与`AGENT-024`能力边界；工具发现还对应`AGENT-021`。完整问法和频次见[研究题库](../../../interview/canonical/agent-harness.md)。新增协议解释不新增真人来源。
 
 ---
 
