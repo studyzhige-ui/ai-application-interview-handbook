@@ -1,12 +1,13 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-19",
+  "generated_at": "2026-09-20",
   "scope": "41家公司：官方招聘入口 + 至少一个非算法 AI/Agent 工程相关岗位",
   "rules": [
     "每家公司必须有第一方 official_root 与 official_search_url。",
     "每家公司至少一个 VERIFIED_ROLE；旧抓取器未命中不能解释为 0 岗位。",
-    "优先校招/应届岗位；若公司当前相关岗位只在官方混合招聘池中公开，则保留并明确标注招聘类型。",
-    "算法/研究/产品/销售/运营岗位不作为本索引的代表工程岗位；个别公司校园项目仅能核验到方向时，会在 recruitment_type/evidence_type 中明确说明。"
+    "岗位事实与JD正文完整度分开：动态官网未暴露正文时保留岗位名+官方投递入口，并明确证据等级。",
+    "优先校招/应届岗位；若公司当前相关岗位只在官方混合招聘池中公开，则保留并明确招聘类型。",
+    "算法/研究/产品/销售/运营岗位不作为代表工程岗位。"
   ],
   "companies": [
     {
@@ -28,7 +29,7 @@
           "source_role_family": "Agent Harness 研发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "快手",
@@ -49,7 +50,7 @@
           "source_role_family": "AI应用开发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "百度",
@@ -70,7 +71,7 @@
           "source_role_family": "2027AIDU-Agent应用全栈工程师(J99974)"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "腾讯",
@@ -90,7 +91,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "美团",
@@ -111,7 +112,7 @@
           "source_role_family": "AI应用开发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "网易",
@@ -131,7 +132,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "哔哩哔哩",
@@ -152,7 +153,7 @@
           "source_role_family": "【B-UP】多模态智能体工程师（校招）"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "滴滴",
@@ -172,7 +173,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "拼多多",
@@ -192,7 +193,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "华为",
@@ -212,7 +213,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "小红书",
@@ -233,7 +234,7 @@
           "source_role_family": "【REDstar】AI Agent Infra 工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "字节跳动",
@@ -254,7 +255,7 @@
           "source_role_family": "AI Agent开发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "阿里巴巴",
@@ -275,7 +276,7 @@
           "source_role_family": "AI Agent应用开发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "蚂蚁集团",
@@ -285,17 +286,17 @@
       "board_scope": "campus",
       "representative_roles": [
         {
-          "title": "智能体与大模型应用工程",
-          "recruitment_type": "2027校园全职",
-          "role_scope": "智能体与大模型应用工程",
-          "evidence_url": "https://www.mianshima.com/job/5/260721011006030",
-          "evidence_type": "CURRENT_CAMPUS_JD_EVIDENCE",
-          "jd_summary": "面向2027应届生的AI应用工程方向，强调Context/Prompt Engineering、Agent、工具调用与生产级工程能力。",
+          "title": "Agent研发工程师",
+          "recruitment_type": "2027届实习 / 校园人才池",
+          "role_scope": "Agent系统架构 / Memory / 推理 / Tool编排",
           "official_apply_url": "https://talent.antgroup.com/campus-full-list",
-          "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
+          "evidence_url": "https://www.nowcoder.com/jobs/detail/445290?urlSource=sitemap",
+          "evidence_type": "CURRENT_2027_CAMPUS_JD_EVIDENCE",
+          "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY",
+          "jd_summary": "面向核心业务建设AI原生Agent系统，覆盖需求理解、记忆管理、推理策略、工具编排与工程落地，强调从场景识别到系统构建的完整闭环。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "京东",
@@ -305,17 +306,17 @@
       "board_scope": "campus",
       "representative_roles": [
         {
-          "title": "SRE开发工程师",
-          "recruitment_type": "2027实习/校招通道",
-          "role_scope": "AI Agent / Skills / 智能化运维",
-          "evidence_url": "https://www.shixiseng.com/intern/inn_ehllotnfncv2",
-          "evidence_type": "CURRENT_NEW_GRAD_JD_EVIDENCE",
-          "jd_summary": "参与SRE场景下AI Agent、Skills与智能化运维产品研发，包括故障诊断、根因分析和自动化处置。",
-          "official_apply_url": "https://campus.jd.com/",
-          "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
+          "title": "Agent开发工程师",
+          "recruitment_type": "当前官方招聘",
+          "role_scope": "大模型应用工程 / Agent系统 / O2O智能化",
+          "official_apply_url": "https://zhaopin.jd.com/web/job-info-detail?requementId=219990",
+          "evidence_url": "https://zhaopin.jd.com/web/job-info-detail?requementId=219990",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "负责O2O核心系统研发与架构设计，并把大模型能力用于智能匹配、画像、方案生成和风险识别；要求扎实的软件工程能力，以及大模型应用落地、系统设计和性能优化能力。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "OPPO",
@@ -336,7 +337,7 @@
           "source_role_family": "AI Agent 研发工程师（研发效能方向）"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "vivo",
@@ -346,17 +347,17 @@
       "board_scope": "campus",
       "representative_roles": [
         {
-          "title": "Agent工程师",
-          "recruitment_type": "2027蓝极星/提前批岗位证据；27届主校招入口开放",
-          "role_scope": "Agent工程 / 大模型",
-          "evidence_url": "https://hicv.cn/xiaozhao/vivo-product-general-manager-reserve-plan-early-bat-11788-4276ca",
-          "evidence_type": "CURRENT_2027_ROLE_EVIDENCE",
-          "jd_summary": "vivo 2027人才计划包含Agent工程师，同时27届校园招聘持续开放人工智能与大模型方向。",
+          "title": "Agent技术工程师-27届秋招",
+          "recruitment_type": "2027校园招聘",
+          "role_scope": "蓝心小V / Agent模块 / AI平台架构",
           "official_apply_url": "https://hr-campus.vivo.com/campus/jobs",
-          "jd_status": "ROLE_VERIFIED"
+          "evidence_url": "https://www.wondercv.com/xiaozhao/vivo-2027-global-campus-recruitment-12423-6d860e/",
+          "evidence_type": "CURRENT_2027_CAMPUS_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "负责蓝心小V等Agent相关技术模块研发，参与AI平台产品架构设计，并推进LLM驱动的AI Agent技术研究与应用落地。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "金山办公/WPS",
@@ -366,17 +367,17 @@
       "board_scope": "campus",
       "representative_roles": [
         {
-          "title": "精英C++开发工程师（全栈发展）",
-          "recruitment_type": "2027校园招聘",
-          "role_scope": "AI客户端应用落地 / 全栈工程",
-          "evidence_url": "https://career.nankai.edu.cn/company/index/id/23796.html",
-          "evidence_type": "CURRENT_CAMPUS_JD_EVIDENCE",
-          "jd_summary": "负责WPS客户端研发，并要求具备AI客户端应用落地能力，将大模型、OCR、语音等AI能力集成到办公产品。",
+          "title": "AI应用开发工程师",
+          "recruitment_type": "当前官方招聘 / 2027校招池",
+          "role_scope": "WPS办公场景大模型应用 / RAG / Agent",
           "official_apply_url": "https://join.wps.cn/",
-          "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
+          "evidence_url": "https://www.qfskill.com/wh/c/wh-20260826-scan-031.html",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY",
+          "jd_summary": "围绕WPS办公场景把大模型能力工程化到文档、表格和演示等产品，侧重应用层开发、API与性能优化；RAG、Agent开发经验属于核心相关能力。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "荣耀",
@@ -397,7 +398,7 @@
           "source_role_family": "AI软件开发工程师 （AI Coding / Agent方向）"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "科大讯飞",
@@ -417,7 +418,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "携程",
@@ -437,7 +438,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "360",
@@ -457,7 +458,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "得物",
@@ -477,7 +478,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "DeepSeek",
@@ -497,7 +498,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "月之暗面/Kimi",
@@ -506,6 +507,16 @@
       "official_search_url": "https://app.mokahr.com/campus-recruitment/moonshot/148507",
       "board_scope": "campus",
       "representative_roles": [
+        {
+          "title": "Agent Development Engineer（实习）",
+          "recruitment_type": "2027/2028校园招聘与实习",
+          "role_scope": "Agent应用研发",
+          "official_apply_url": "https://careers.kimi.com/campus",
+          "evidence_url": "https://www.shushuqiuzhi.com/article/239414",
+          "evidence_type": "CURRENT_CAMPUS_ROLE_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engineer；用于Agent产品与工程能力建设。"
+        },
         {
           "title": "Coding Agent 研发工程师（Agent Infra）",
           "recruitment_type": "社招 / 校招 / 实习均可",
@@ -517,7 +528,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "MiniMax",
@@ -538,7 +549,7 @@
           "source_role_family": "AGI产品研发工程师-应届生-TOP Talent"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "智谱/Z.ai",
@@ -548,17 +559,37 @@
       "board_scope": "campus",
       "representative_roles": [
         {
+          "title": "AI研发工程师-Agent Tools/大模型应用方向",
+          "recruitment_type": "当前官方招聘（非算法工程）",
+          "role_scope": "Agent系统 / Tools / Skills / 大模型应用",
+          "official_apply_url": "https://app.mokahr.com/social-recruitment/zphz/148983",
+          "evidence_url": "https://www.jobui.com/company/23885440/jobs/shuoshi/",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "面向复杂任务研发LLM Agent系统，建设通用Tool/Skill抽象、多工具协同、Planning/Memory/Execution/Reflection等核心执行能力。"
+        },
+        {
+          "title": "Agent全栈工程师",
+          "recruitment_type": "当前官方招聘（非算法工程）",
+          "role_scope": "Agent产品全栈工程",
+          "official_apply_url": "https://app.mokahr.com/social-recruitment/zphz/148983",
+          "evidence_url": "https://www.jobui.com/company/23885440/jobs/",
+          "evidence_type": "CURRENT_ROLE_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "当前智谱招聘池中的Agent全栈工程岗位，面向Agent产品和工程系统的端到端开发。"
+        },
+        {
           "title": "Agent Infra开发工程师",
           "recruitment_type": "当前官方招聘（非算法工程）",
-          "role_scope": "Agent Infra / 平台后端",
+          "role_scope": "Agent训练/评测基础设施 / 后端平台",
           "official_apply_url": "https://app.mokahr.com/social-recruitment/zphz/148983",
-          "evidence_url": "https://mqjob.cn/",
-          "evidence_type": "CURRENT_ROLE_EVIDENCE",
-          "jd_summary": "建设面向Agent训练、评测与迭代的基础设施，强调Golang/Rust/TypeScript后端工程与可维护系统模块。",
-          "jd_status": "ROLE_VERIFIED"
+          "evidence_url": "https://mqjob.cn/?city=%E5%8C%97%E4%BA%AC&city=%E5%8D%97%E4%BA%AC&city=%E5%A4%A9%E6%B4%A5&city=%E6%9D%AD%E5%B7%9E&city=%E8%8B%8F%E5%B7%9E&city=%E8%A5%BF%E5%AE%89&city=%E9%87%8D%E5%BA%86&industryType=%E4%BA%92%E8%81%94%E7%BD%91+%2F+AI+%2F+%E8%BD%AF%E4%BB%B6&industryType=%E5%BF%AB%E6%B6%88+%2F+%E9%9B%B6%E5%94%AE+%2F+%E6%9C%8D%E8%A3%85&jobTypeMain=%E6%8A%80%E6%9C%AF%2F%E7%A0%94%E5%8F%91&jobTypeSub=%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91&page=1&pageSize=10&recruitmentType=%E6%A0%A1%E5%9B%AD%E6%8B%9B%E8%81%98&recruitmentType=%E7%A4%BE%E4%BC%9A%E6%8B%9B%E8%81%98&sort=lastSeenDesc",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "构建大模型训练、评测与RL流程的Agent基础设施，强调后端系统、并发、可维护性和规模化验证。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "阶跃星辰",
@@ -570,15 +601,25 @@
         {
           "title": "Coding Agent 全栈工程师",
           "recruitment_type": "当前官方招聘；公司同时开放2027校园招聘",
-          "role_scope": "Coding Agent / 全栈开发",
-          "evidence_url": "https://map.go2ready.com/team/stepfun",
-          "evidence_type": "CURRENT_ROLE_EVIDENCE",
-          "jd_summary": "负责AI Coding/Coding Agent产品与全栈开发，定义真实研发场景Workflow、交互与任务执行逻辑。",
+          "role_scope": "AI Coding / Coding Agent全栈",
           "official_apply_url": "https://app.mokahr.com/campus-recruitment/step/94905",
-          "jd_status": "ROLE_VERIFIED"
+          "evidence_url": "https://mqjob.cn/?city=%E4%B8%8A%E6%B5%B7&city=%E5%8C%97%E4%BA%AC&city=%E5%8D%97%E4%BA%AC&city=%E5%A4%A9%E6%B4%A5&city=%E6%88%90%E9%83%BD&city=%E6%9D%AD%E5%B7%9E&city=%E6%AD%A6%E6%B1%89&city=%E6%B7%B1%E5%9C%B3&city=%E8%8B%8F%E5%B7%9E&city=%E9%87%8D%E5%BA%86&companyTag=%E7%8B%AC%E8%A7%92%E5%85%BD%E4%BC%81%E4%B8%9A&industryType=%E4%BA%92%E8%81%94%E7%BD%91+%2F+AI+%2F+%E8%BD%AF%E4%BB%B6&industryType=%E5%BF%AB%E6%B6%88+%2F+%E9%9B%B6%E5%94%AE+%2F+%E6%9C%8D%E8%A3%85&jobTypeMain=%E6%8A%80%E6%9C%AF%2F%E7%A0%94%E5%8F%91&jobTypeSub=%E5%90%8E%E7%AB%AF%E5%BC%80%E5%8F%91&page=1&pageSize=10&sort=lastSeenDesc&workExperienceLevel=%E6%97%A0%E6%98%8E%E7%A1%AE%E8%A6%81%E6%B1%82",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "负责AI Coding/Coding Agent产品的全栈开发，定义真实研发场景中的Workflow、交互与任务执行逻辑，并推动模型能力产品化。"
+        },
+        {
+          "title": "Agent基建工程师",
+          "recruitment_type": "当前官方招聘；公司同时开放2027校园招聘",
+          "role_scope": "Agent Runtime / Sandbox / 训推基建",
+          "official_apply_url": "https://app.mokahr.com/campus-recruitment/step/94905",
+          "evidence_url": "https://mqjob.cn/jobs/16483",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "建设Agent训练与推理框架、执行沙箱和实验平台，覆盖代码执行、工具调用、调度、网络、存储、数据流水线和评测基础设施。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "百川智能",
@@ -598,7 +639,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "零一万物/01.AI",
@@ -608,17 +649,17 @@
       "board_scope": "official_recruiting",
       "representative_roles": [
         {
-          "title": "大模型应用开发专家",
+          "title": "AI 测试工程师",
           "recruitment_type": "当前官方招聘",
-          "role_scope": "大模型应用 / RAG / Agent 工程",
-          "official_apply_url": "https://01ai.jobs.feishu.cn/index/position/7611016949842135338/detail",
-          "evidence_url": "https://01ai.jobs.feishu.cn/",
-          "evidence_type": "FIRST_PARTY_SNAPSHOT_AND_OFFICIAL_PORTAL",
-          "jd_summary": "负责大模型复杂应用系统架构、Python/Java后端、LangChain/LlamaIndex集成与AI工程化落地。",
-          "jd_status": "ROLE_VERIFIED"
+          "role_scope": "Agent评测 / Harness / 企业级Agent交付",
+          "official_apply_url": "https://01ai.jobs.feishu.cn/index/position/7686751993624807722/detail",
+          "evidence_url": "https://01ai.jobs.feishu.cn/index/position/7686751993624807722/detail",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "负责企业Agent项目的测试与评测交付，主导B端评测体系建设，并参与评测Harness和通用评测平台建设，强调测试策略、验收标准与平台化沉淀。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "商汤科技",
@@ -639,7 +680,7 @@
           "source_role_family": "【27届校招】Agent开发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "生数科技",
@@ -649,17 +690,17 @@
       "board_scope": "official_recruiting",
       "representative_roles": [
         {
-          "title": "大模型Infra工程师/专家",
-          "recruitment_type": "当前官方招聘",
-          "role_scope": "大模型 Infra / 训练推理系统",
-          "evidence_url": "https://m.zhipin.com/companys/e702cce69d0d7aaf03R509i6ElM~.html",
-          "evidence_type": "CURRENT_ROLE_EVIDENCE",
-          "jd_summary": "参与多模态/视频生成大模型基础设施，负责大规模集群训练推理性能、稳定性、可运维性和可观测性。",
+          "title": "流式视频 Agent 工程师",
+          "recruitment_type": "当前官方招聘（正式/实习）",
+          "role_scope": "实时交互视频Agent / Context / Tool Calling",
           "official_apply_url": "https://shengshu.jobs.feishu.cn/index/",
-          "jd_status": "ROLE_VERIFIED"
+          "evidence_url": "https://offerdao.ai/j/agent_dxsv97wstj9yst",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "设计实时交互视频生成Agent，建设多轮对话、意图理解、上下文管理、工具调用与Agent编排链路，并与视频生成系统协同落地。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "硅基流动",
@@ -669,17 +710,17 @@
       "board_scope": "official_recruiting",
       "representative_roles": [
         {
-          "title": "后端研发工程师（私有化 MaaS）",
+          "title": "端侧AI Agent工程师(A24765)",
           "recruitment_type": "当前官方招聘",
-          "role_scope": "MaaS后端 / LLM服务 / Agent-RAG优先",
+          "role_scope": "端侧Agent架构 / 感知规划决策 / Memory",
           "official_apply_url": "https://app.mokahr.com/su/Idzsq",
-          "evidence_url": "https://www.nowcoder.com/discuss/902188526157033472",
-          "evidence_type": "OFFICIAL_MOKA_DIRECT_LINK_CORROBORATED",
-          "jd_summary": "研发私有化大模型API/MaaS平台后端；岗位对LLM、RAG、Agent相关经验有明确偏好。",
-          "jd_status": "ROLE_VERIFIED"
+          "evidence_url": "https://www.zhipin.com/zhaopin/ca2ff239824529580nd83NS9FA~~/",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "负责端侧AI Agent软件架构，建设感知、规划、决策与记忆管理等核心模块，并面向端侧硬件完成模型与Agent系统的工程化部署。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "面壁智能",
@@ -691,15 +732,25 @@
         {
           "title": "Agentic Engineering",
           "recruitment_type": "2027/2028/2029顶尖人才实习",
-          "role_scope": "Agentic Engineering",
-          "evidence_url": "https://www.shushuqiuzhi.com/article/239697",
-          "evidence_type": "CURRENT_CAMPUS_EVIDENCE",
-          "jd_summary": "面壁智能顶尖人才招聘中的Agentic Engineering工程方向，官方校园飞书入口持续维护。",
+          "role_scope": "Agent工程 / 大模型应用",
           "official_apply_url": "https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH",
-          "jd_status": "ROLE_VERIFIED"
+          "evidence_url": "https://www.shushuqiuzhi.com/article/239697",
+          "evidence_type": "CURRENT_CAMPUS_ROLE_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "面壁智能顶尖人才项目中的Agentic Engineering方向，面向2027-2029届硕博，属于当前校园/实习招聘池。"
+        },
+        {
+          "title": "大模型Agent应用开发工程师",
+          "recruitment_type": "当前官方招聘",
+          "role_scope": "Agent/Multi-Agent / RAG / 垂直场景工程落地",
+          "official_apply_url": "https://www.modelbest.cn/",
+          "evidence_url": "https://datahub.ac.cn/ai-jobs/topics/ai-application-engineer-jobs.html",
+          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "面向垂直领域研发大模型应用，基于Agent/Multi-Agent与RAG构建代码框架并推动真实场景落地。"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "Manus",
@@ -720,7 +771,7 @@
           "source_role_family": "AI Agent Engineer"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -740,7 +791,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "昆仑万维/天工",
@@ -760,7 +811,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "Shopee",
@@ -780,7 +831,7 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "联想",
@@ -801,7 +852,7 @@
           "source_role_family": "AI Agent开发工程师"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "蔚来",
@@ -821,7 +872,7 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     },
     {
       "company": "顺丰",
@@ -842,7 +893,7 @@
           "source_role_family": "AI开发工程师（顺丰科技）"
         }
       ],
-      "last_verified": "2026-09-19"
+      "last_verified": "2026-09-20"
     }
   ]
 }
