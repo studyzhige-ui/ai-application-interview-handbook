@@ -24,6 +24,7 @@ import requests
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "market/jobs/official-2027-campus-sources.json"
+VERIFIED_INDEX = ROOT / "market/jobs/official-company-role-index.json"
 OUT_MD = ROOT / "market/jobs/official-2027-agent-jobs.generated.md"
 OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
 BROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
@@ -1363,6 +1364,23 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
 
 def main() -> int:
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
+
+    # Persistent facts are deliberately separate from runtime discovery.
+    # A transient WAF/API/browser failure must never turn a previously verified
+    # company role into "0 jobs".
+    verified_index = {"companies": []}
+    if VERIFIED_INDEX.exists():
+        try:
+            verified_index = json.loads(VERIFIED_INDEX.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"verified role index parse warning: {e}", file=sys.stderr)
+
+    previous_payload: dict[str, Any] = {}
+    if OUT_JSON.exists():
+        try:
+            previous_payload = json.loads(OUT_JSON.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"previous generated job payload parse warning: {e}", file=sys.stderr)
     keywords = [x.lower() for x in cfg.get("strong_agent_keywords", cfg["agent_keywords"])]
     excludes = [x.lower() for x in cfg["hard_exclude_title_keywords"]]
     engineering_signals = [x.lower() for x in cfg.get("engineering_title_signals", [])]
@@ -1636,7 +1654,72 @@ def main() -> int:
         })
     role_families.sort(key=lambda x: (x["company"], x["role_family"]))
 
+    # Preserve the last verified role families whenever this run did not
+    # successfully enumerate matching roles for that company. This prevents
+    # an incomplete/blocked/zero-result crawl from erasing known-good data.
+    current_keys = {(x["company"], x["role_family"]) for x in role_families}
     result_map = {r.company: r for r in results}
+    live_match_companies = {
+        r.company for r in results if r.status == "ENUMERATED_WITH_MATCHES"
+    }
+    for old in previous_payload.get("role_families") or []:
+        company = old.get("company")
+        family = old.get("role_family")
+        if not company or not family or company in live_match_companies:
+            continue
+        key = (company, family)
+        if key not in current_keys:
+            carried = dict(old)
+            carried["carried_forward"] = True
+            carried["carry_reason"] = (
+                result_map.get(company).status
+                if result_map.get(company)
+                else "NO_RUNTIME_RESULT"
+            )
+            role_families.append(carried)
+            current_keys.add(key)
+
+    # The verified 41-company index is the minimum role-presence invariant.
+    # Runtime discovery may upgrade these entries to first-party full JDs, but
+    # may never delete them merely because the crawler missed the role.
+    for company_row in verified_index.get("companies") or []:
+        company = company_row.get("company")
+        roles = company_row.get("representative_roles") or []
+        if not company or not roles:
+            continue
+        role = roles[0]
+        family = txt(role.get("title"))
+        if not family:
+            continue
+        key = (company, family)
+        if key in current_keys:
+            continue
+        official_url = txt(role.get("official_apply_url") or company_row.get("official_search_url"))
+        role_families.append({
+            "company": company,
+            "role_family": family,
+            "representative_title": family,
+            "locations": [],
+            "description": "",
+            "requirements": "",
+            "evidence_summary": txt(role.get("jd_summary")),
+            "cycle_evidence": txt(role.get("recruitment_type")),
+            "requisitions": [{
+                "job_id": "",
+                "title": family,
+                "location": "",
+                "official_url": official_url,
+                "official_api": "",
+            }],
+            "source_evidence": [txt(role.get("evidence_type") or "VERIFIED_ROLE_INDEX")],
+            "evidence_url": txt(role.get("evidence_url")),
+            "detail_status": "ROLE_VERIFIED_CURRENT_SOURCE",
+            "persistent_verified_role": True,
+        })
+        current_keys.add(key)
+
+    role_families.sort(key=lambda x: (x["company"], x["role_family"]))
+
     family_counts: dict[str, list[dict[str, Any]]] = {}
     for f in role_families:
         family_counts.setdefault(f["company"], []).append(f)
@@ -1656,18 +1739,32 @@ def main() -> int:
             "official_root": src.get("official_root", ""),
             "search_url": src.get("search_url") or src.get("job_list_url") or "",
             "board_scope": src.get("board_scope") or ("campus" if src.get("current_campus_board") else "official_recruiting"),
-            "result_status": "HAS_TARGET_JDS" if fams else "ZERO_TARGET_JDS",
+            "result_status": "HAS_TARGET_JDS" if fams else "ROLE_PRESENCE_BROKEN",
             "role_family_count": len(fams),
-            "full_jd_count": sum(f["detail_status"] == "FULL_JD" for f in fams),
-            "title_only_count": sum(f["detail_status"] != "FULL_JD" for f in fams),
+            "full_jd_count": sum(f.get("detail_status") == "FULL_JD" for f in fams),
+            "title_only_count": sum(f.get("detail_status") == "TITLE_ONLY_OFFICIAL" for f in fams),
+            "role_verified_current_source_count": sum(
+                f.get("detail_status") == "ROLE_VERIFIED_CURRENT_SOURCE" for f in fams
+            ),
+            "verified_representative_role": next(
+                (
+                    txt((x.get("representative_roles") or [{}])[0].get("title"))
+                    for x in verified_index.get("companies") or []
+                    if x.get("company") == company
+                ),
+                "",
+            ),
         })
 
     counts = {
         "companies": len(source_rows),
         "companies_with_targets": sum(bool(x["role_family_count"]) for x in source_rows),
         "role_families": len(role_families),
-        "full_jd_families": sum(f["detail_status"] == "FULL_JD" for f in role_families),
-        "title_only_families": sum(f["detail_status"] != "FULL_JD" for f in role_families),
+        "full_jd_families": sum(f.get("detail_status") == "FULL_JD" for f in role_families),
+        "title_only_families": sum(f.get("detail_status") == "TITLE_ONLY_OFFICIAL" for f in role_families),
+        "role_verified_current_source_families": sum(
+            f.get("detail_status") == "ROLE_VERIFIED_CURRENT_SOURCE" for f in role_families
+        ),
         "raw_requisitions": len(all_matches),
     }
     payload = {
@@ -1679,7 +1776,8 @@ def main() -> int:
             "inclusion": "First-party official source + current campus/new-grad eligibility + explicit engineering title materially about Agent/AI application/RAG/Harness/Runtime/Infra/Coding Agent.",
             "exclusion": "Algorithm/model-training/research, product, sales, operations, marketing, internship-only and generic engineering jobs that merely mention AI tooling.",
             "role_family": "Same-company near-identical titles are grouped while every official requisition remains attached.",
-            "detail_status": "FULL_JD = first-party duties/requirements captured; TITLE_ONLY_OFFICIAL = current first-party listing exposed only the title.",
+            "detail_status": "FULL_JD = first-party duties/requirements captured; TITLE_ONLY_OFFICIAL = first-party title only; ROLE_VERIFIED_CURRENT_SOURCE = current role presence verified and official application/search entry fixed, first-party body still being backfilled.",
+            "zero_miss_policy": "Crawler miss/failure may not erase persistent verified role presence. Previous verified families are carried forward until a successful matching enumeration refreshes them.",
         },
         "counts": counts,
         "sources": source_rows,
@@ -1692,7 +1790,7 @@ def main() -> int:
         "",
         f"> Generated: **{now}**",
         f"> 固定公司 **{counts['companies']}** 家；命中目标岗位 **{counts['companies_with_targets']}** 家；严格 Role Family **{counts['role_families']}** 个。",
-        f"> 其中 **{counts['full_jd_families']}** 个抓到第一方 JD 正文，**{counts['title_only_families']}** 个仅能确认第一方职位标题。",
+        f"> 其中 **{counts['full_jd_families']}** 个抓到第一方 JD 正文，**{counts['title_only_families']}** 个仅能确认第一方职位标题，**{counts['role_verified_current_source_families']}** 个已核验岗位存在并固定官方入口、正文仍待补齐。",
         "",
         "## 1. 公司结果总表",
         "",
@@ -1727,18 +1825,16 @@ def main() -> int:
             loc = (f" · {req['location']}" if req.get("location") else "")
             url = (f" · {req['official_url']}" if req.get("official_url") else "")
             lines.append(f"  - {prefix}{req['title']}{loc}{url}")
-        lines += ["", "**官方职责**", ""]
-        lines.append(
-            clean(f["description"], 6000)
-            if f["description"]
-            else "> 当前第一方职位列表只暴露岗位标题 / 列表项，未返回可稳定保存的职责正文；不使用二手来源补写。"
-        )
-        lines += ["", "**官方要求**", ""]
-        lines.append(
-            clean(f["requirements"], 6000)
-            if f["requirements"]
-            else "> 当前第一方职位列表只暴露岗位标题 / 列表项，未返回可稳定保存的要求正文；不使用二手来源补写。"
-        )
+        if f.get("evidence_url"):
+            lines.append(f"- **岗位核验证据**：{f['evidence_url']}")
+        if f.get("detail_status") == "FULL_JD":
+            lines += ["", "**官方职责**", "", clean(f.get("description", ""), 6000) or "官方未返回职责正文。"]
+            lines += ["", "**官方要求**", "", clean(f.get("requirements", ""), 6000) or "官方未返回任职要求。"]
+        elif f.get("detail_status") == "ROLE_VERIFIED_CURRENT_SOURCE":
+            lines += ["", "**已核验岗位摘要**", "", clean(f.get("evidence_summary", ""), 3000) or "岗位存在与官方投递入口已核验。"]
+            lines += ["", "**JD 完整度**", "", "> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。"]
+        else:
+            lines += ["", "**JD 完整度**", "", "> 第一方当前职位列表已确认岗位标题；职责 / 要求正文尚未稳定取得，不用二手来源补写。"]
         lines.append("")
 
     OUT_MD.write_text("\\n".join(lines).rstrip() + "\\n", encoding="utf-8")
