@@ -1,6 +1,6 @@
 # Agent Harness｜Authoritative Source Strategy
 
-[← Agent Harness](../../curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Agent Source Index](../../roadmap/README.md)
+[← Agent Harness](../../curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Agent References](README.md)
 
 > **用途：技术证据策略。** HUMAN-A 决定市场频率；源码 / 官方资料只补成熟 Runtime 事实与工程边界。
 
@@ -17,7 +17,7 @@ Tier C  官方工程文章 / 协议 / SDK 文档 / 原始论文
 Tier D  基于 A+B+C 的课程抽象
 ```
 
-完整 Evidence Base：[`../references/curriculum/09-agent/README.md`](../../roadmap/README.md)
+完整 Evidence Base：[`references/agent/README.md`](README.md)
 
 > **只有 Tier A 可以贡献真人面试 Source Count。源码和网上权威文章用于补齐完整 Runtime 知识边界，绝不反向虚增面经频率。**
 
@@ -50,7 +50,7 @@ commit = 58231dcce408f805c645cfbc352d2876b517223b
 - `utils/sessionStorage.ts`：Transcript / Session persistence；
 - `utils/toolResultStorage.ts`：Tool result context budget。
 
-详细索引：[`../references/agent/claude-code-source-index.md`](../../roadmap/claude-code-source-index.md)
+详细索引：[`claude-code-source-index.md`](claude-code-source-index.md)
 
 ### OpenAI Codex
 
@@ -76,7 +76,7 @@ tree   = 346154dca409158a441d2afe05604f6fa6bed5d6
 - `codex-rs/rollout-trace/README.md`：Conversation / Tool / Terminal / Interaction trace evidence；
 - `codex-rs/core/src/session/`：Session / Turn / Step 导航。
 
-详细索引：[`../references/agent/codex-source-index.md`](../../roadmap/codex-source-index.md)
+详细索引：[`codex-source-index.md`](codex-source-index.md)
 
 ---
 
@@ -112,7 +112,7 @@ tree   = 346154dca409158a441d2afe05604f6fa6bed5d6
 - ReAct original paper
 - SWE-bench original paper
 
-完整 URL 与课程影响：[`../references/agent/authoritative-web-sources.md`](../../roadmap/authoritative-web-sources.md)
+完整 URL 与课程影响：[`authoritative-web-sources.md`](authoritative-web-sources.md)
 
 ---
 
@@ -146,7 +146,7 @@ tree   = 346154dca409158a441d2afe05604f6fa6bed5d6
 24. Production Deployment / Tenant / Queue / Backpressure / Cost
 25. Framework Mapping / Build-vs-Buy
 
-详细映射：[`../references/agent/runtime-capability-map.md`](../../roadmap/runtime-capability-map.md)
+详细映射：[`runtime-capability-map.md`](runtime-capability-map.md)
 
 ---
 

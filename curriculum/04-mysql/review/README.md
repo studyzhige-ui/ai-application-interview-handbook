@@ -189,7 +189,7 @@ Redo 是 InnoDB Crash Recovery / WAL 基础；Binlog 属于 Server 层，面向 
 
 > **频率决定“多练几遍”，不决定“删掉低频前置”。**
 
-完整证据见：[`../../research/questions/mysql.md`](../../../interview/canonical/mysql.md)。
+完整证据见：[`interview/canonical/mysql.md`](../../../interview/canonical/mysql.md)。
 
 ---
 

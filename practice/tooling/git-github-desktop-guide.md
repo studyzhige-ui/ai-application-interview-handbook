@@ -1,6 +1,6 @@
 # Git + GitHub Desktop｜初学者完整工作流指南
 
-[← Handbook 总目录](../../README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](../../guide/learning-path.md)
+[← Handbook 总目录](../../README.md) · [Coding & Problem Solving](../coding/README.md) · [正式学习路线](../../guide/learning-path.md)
 
 > 目标：让第一次接触 Git 的开发者，从“本地项目已经有了、GitHub Desktop 也装好了”开始，建立一套不会混乱、可长期复用的 Git 工作流。  
 > 适用环境：Windows + GitHub Desktop + VS Code；命令行示例以 PowerShell / Git Bash 为主。
