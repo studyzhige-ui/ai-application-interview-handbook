@@ -103,7 +103,7 @@ async function searchInputs(page){
     break;
   }
 }
-async function runPage(context,company,url,rootHost,collector,visited){
+async function runPage(context,company,url,rootHost,collector,visited,endpointLog){
   if(visited.has(url)||visited.size>10) return;
   visited.add(url);
   const page=await context.newPage();
@@ -118,6 +118,16 @@ async function runPage(context,company,url,rootHost,collector,visited){
         const data=await resp.json();
         const bodyText=JSON.stringify(data).slice(0,200000).toLowerCase();
         if(!/(job|position|recruit|career|岗位|职位)/i.test(ru+" "+bodyText)) return;
+        const req=resp.request();
+        const entry={
+          url:ru,
+          method:req.method(),
+          post_data:(req.postData()||"").slice(0,4000),
+          status:resp.status(),
+          content_type:ct,
+          resource_type:req.resourceType()
+        };
+        if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
         const pageText=(await page.locator("body").innerText().catch(()=>'' )).slice(0,50000);
         const cycle=(pageText.match(/2027[^\n]{0,50}|[^\n]{0,50}2027/g)||[]).slice(0,3).join(" / ");
         recursiveJobs(data,{company,page_url:page.url(),response_url:ru,cycle_evidence:cycle},collector);
@@ -161,6 +171,7 @@ async function runPage(context,company,url,rootHost,collector,visited){
 async function processSource(browser,src){
   const context=await browser.newContext({userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"});
   const collector=[];
+  const endpointLog=[];
   const visited=new Set();
   const root=src.official_root || src.portal;
   const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
@@ -168,7 +179,7 @@ async function processSource(browser,src){
   try{
     while(queue.length && visited.size<6){
       const u=queue.shift();
-      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited);
+      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog);
       if(pr){
         pageResults.push(pr);
         for(const n of pr.next||[]) if(!visited.has(n)) queue.push(n);
@@ -178,10 +189,10 @@ async function processSource(browser,src){
     const has2027=pageResults.some(x=>x.has2027) || jobs.some(j=>/2027/.test(j.cycle_evidence));
     const status=jobs.length?"BROWSER_OK":(has2027?"BROWSER_OK_0_MATCH":"BROWSER_NO_2027_EVIDENCE");
     console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, status=${status}`);
-    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,jobs,has2027,status};
+    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,80),jobs,has2027,status};
   }catch(e){
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
-    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,jobs:uniqueJobs(collector),has2027:false,status:"BROWSER_ERROR",error:String(e).slice(0,500)};
+    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,80),jobs:uniqueJobs(collector),has2027:false,status:"BROWSER_ERROR",error:String(e).slice(0,500)};
   }finally{
     await context.close().catch(()=>{});
   }
