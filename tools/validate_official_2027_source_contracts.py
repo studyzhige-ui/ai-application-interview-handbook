@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Static contract validation for official 2027 campus job sources."""
+"""Static contract validation for official current-campus job sources."""
 
 from __future__ import annotations
 import json
@@ -61,7 +61,7 @@ def main() -> int:
         if not s.get("job_list_url"):
             errors.append(f"{company}: recurring collection must use explicit job_list_url")
 
-    print(f"Official 2027 source contracts: companies={len(sources)}, errors={len(errors)}")
+    print(f"Official current-campus source contracts: companies={len(sources)}, errors={len(errors)}")
     for e in errors:
         print("ERROR:", e)
     return 1 if errors else 0
