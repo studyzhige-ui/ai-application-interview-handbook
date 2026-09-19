@@ -976,7 +976,20 @@ def main() -> int:
             return SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0), []
         try:
             jobs = fetcher(src)
-            uniq = target_matches(jobs, bool(src.get("verified_2027_project")))
+            source_verified = bool(src.get("verified_2027_project"))
+            uniq = target_matches(jobs, source_verified)
+            explicit_2027 = source_verified or any(
+                "2027" in " ".join([
+                    j.title or "", j.category or "", j.cycle_evidence or "",
+                    j.description or "", j.requirements or ""
+                ])
+                for j in jobs
+            )
+            if not explicit_2027:
+                return SourceResult(
+                    company, mode, src["portal"], "BLOCKED", len(jobs), len(uniq),
+                    "官方职位池已取回，但尚未证明当前枚举范围属于2027；不能判定0岗位"
+                ), uniq
             status = "ENUMERATED_WITH_MATCHES" if uniq else "ENUMERATED_ZERO_MATCHES"
             return SourceResult(company, mode, src["portal"], status, len(jobs), len(uniq)), uniq
         except Exception as e:
