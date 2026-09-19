@@ -196,6 +196,23 @@ def fetch_xiaomi(src: dict) -> list[Job]:
     return out
 
 
+def fetch_bytedance(src: dict) -> list[Job]:
+    cache = Path("/tmp/bytedance-campus.json")
+    if not cache.exists():
+        raise RuntimeError("ByteDance official Node adapter output missing")
+    payload = json.loads(cache.read_text(encoding="utf-8"))
+    out: list[Job] = []
+    for j in payload.get("jobs") or []:
+        out.append(Job(
+            src["company"], txt(j.get("title")), txt(j.get("job_id")),
+            txt(j.get("location")), txt(j.get("category")), txt(j.get("department")),
+            txt(j.get("description")), txt(j.get("requirements")),
+            txt(j.get("official_url")), txt(j.get("official_api")),
+            txt(j.get("cycle_evidence")),
+        ))
+    return out
+
+
 def fetch_kuaishou(src: dict) -> list[Job]:
     """Enumerate Kuaishou's official 2027 project; list API already returns full JD."""
     base = "https://campus.kuaishou.cn"
@@ -785,6 +802,7 @@ def fetch_alibaba_campus(src: dict) -> list[Job]:
 
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
+    "bytedance_api": fetch_bytedance,
     "kuaishou_api": fetch_kuaishou,
     "baidu_api": fetch_baidu,
     "tencent_api": fetch_tencent,
