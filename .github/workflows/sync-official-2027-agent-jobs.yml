@@ -39,13 +39,23 @@ jobs:
 
       - name: Commit discovery output
         run: |
+          cp market/jobs/official-2027-agent-jobs.generated.md /tmp/official-2027-agent-jobs.generated.md
+          cp market/jobs/official-2027-agent-jobs.generated.json /tmp/official-2027-agent-jobs.generated.json
+
+          # Generated artifacts are disposable. Rebase/merge conflicts on them are
+          # meaningless, so always re-anchor on the newest main and restore the
+          # freshly generated output before committing.
+          git fetch origin ${{ github.ref_name }}
+          git reset --hard origin/${{ github.ref_name }}
+          cp /tmp/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.md
+          cp /tmp/official-2027-agent-jobs.generated.json market/jobs/official-2027-agent-jobs.generated.json
+
           if [ -z "$(git status --porcelain market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json)" ]; then
             echo "No discovery changes."
             exit 0
           fi
           git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git config user.email '4189828+github-actions[bot]@users.noreply.github.com'
           git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json
           git commit -m 'market: sync official 2027 Agent campus discovery'
-          git pull --rebase origin ${{ github.ref_name }}
           git push origin HEAD:${{ github.ref_name }}
