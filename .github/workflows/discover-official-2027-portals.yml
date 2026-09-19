@@ -1,4 +1,4 @@
-name: Debug official 2027 recruitment portals
+name: Debug official current-campus recruitment portals
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
           npx playwright install chromium --with-deps
           node --check tools/fetch_dynamic_official_jobs.mjs
 
-      - name: Exhaust fixed official job-list pages
+      - name: Exhaust fixed official current-campus job-list pages
         run: node tools/fetch_dynamic_official_jobs.mjs /tmp/official-2027-browser-debug.json
 
       - uses: actions/upload-artifact@v4
