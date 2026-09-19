@@ -218,7 +218,7 @@ Schema 只确认结构/类型；Authorization 需要结合身份、资源和策�
 
 <details><summary>查看参考答案</summary>
 
-不是。当前官方 SSE 支持可以用于不同 HTTP 方法，包括 POST。
+不是。在教材核验的官方版本中，SSE 可以用于不同 HTTP 方法，包括 POST。
 
 </details>
 
@@ -250,7 +250,7 @@ Status/Headers 通常已发出，需要在流协议内发送 error/terminal even
 
 <details><summary>查看参考答案</summary>
 
-它是当前应用进程内响应后的任务，不具备完整持久化、跨进程调度、Lease/Heartbeat、Worker Recovery 等 Durable Task 语义。
+它是应用进程内响应后的任务，不具备完整持久化、跨进程调度、Lease/Heartbeat、Worker Recovery 等 Durable Task 语义。
 
 </details>
 

@@ -124,14 +124,14 @@ Capability 到教材的正式映射见 [`runtime-capability-map.md`](runtime-cap
 
 ## 5. 维护规则
 
-如果未来：
+维护触发条件：
 
-- Claude Code / Codex Runtime 演进；
-- MCP / A2A 规范更新；
-- HUMAN-A 新阶段重新开放采集；
-- Agent Framework 出现新的稳定 Runtime Primitive；
+- Claude Code / Codex Runtime 版本变化；
+- MCP / A2A 规范版本变化；
+- HUMAN-A 采集范围或统计基线变化；
+- Agent Framework 出现新的稳定 Runtime Primitive。
 
-先更新对应证据索引，再判断：
+发生上述变化时，先更新对应证据索引，再判断：
 
 ```text
 只是章节内新 Section？

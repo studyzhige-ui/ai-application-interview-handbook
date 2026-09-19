@@ -10,7 +10,7 @@
 - [Module Index](canonical/module-index.md)
 - [Progress](canonical/progress.md)
 
-## 两种“面试资料”不要混淆
+## 中央 Canonical 与模块 Interview 的职责边界
 
 `interview/canonical/`：
 

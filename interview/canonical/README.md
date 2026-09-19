@@ -25,7 +25,7 @@ VALID-UNMAPPED       1（S271）
 | [Vector Database](vector-db.md) | 12 | 16 | [教材 README](../../curriculum/06-vector-db/README.md) |
 | [LLM Foundation（应用工程深度）](llm-foundation.md) | 23 | 14 | [教材 README](../../curriculum/07-llm-foundation/README.md) |
 | [RAG](rag.md) | 29 | 14 | [教材 README](../../curriculum/08-rag/README.md) |
-| [Agent](agent-harness.md) | 44 | 23 | [教材 README](../../curriculum/09-agent/README.md) |
+| [Agent](agent-harness.md) | 44 | 24 | [教材 README](../../curriculum/09-agent/README.md) |
 | [System Design](system-design.md) | 24 | 19 | [教材 README](../../curriculum/10-system-design/README.md) |
 
 ## 四种粒度
@@ -37,7 +37,7 @@ Curriculum Block   = 完整教材认知闭环
 Interview Drill    = 训练时可以再次细分的真实问法
 ```
 
-因此 235 道 Canonical 不等于 184 篇正文。
+因此 235 道 Canonical 不等于 185 篇正文。
 
 ## 质量与结构入口
 

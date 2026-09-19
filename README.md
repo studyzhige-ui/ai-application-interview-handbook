@@ -64,7 +64,7 @@ tools/        研究与质量分析怎样自动化
 
 ## 3. Practice｜横向实践轨道
 
-Practice 不是第 11 个知识模块。
+Practice 与十个正式 Curriculum 模块并行，作为横向实践轨道，不计入 Curriculum 编号。
 
 - [Coding & Problem Solving](practice/coding/README.md)：Programming Fundamentals → ACM → DSA → Hot100 → OA → AI Coding。
 - [Git + GitHub Desktop](practice/tooling/git-github-desktop-guide.md)：Pull → 开发 → Diff → Commit → Push → Branch / Conflict / .gitignore 的完整初学者工作流。
