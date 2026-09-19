@@ -139,10 +139,10 @@ AI Backend / Full-stack / Client / Platform Engineering
 
 ## 3. 当前 Active 官方 JD 快照
 
-**官方 Active JD：16 个 Role Family**
+**官方 Active JD：18 个 Role Family**
 
-- AI 应用开发：**3**
-- Agent / 智能体研发：**13**
+- AI 应用开发：**4**
+- Agent / 智能体研发：**14**
 - 有合格 Active JD 的公司：**4**（百度、腾讯、京东、LiblibAI）
 
 旧基线的 47 条岗位不再沿用：凡来源不是第一手官方职位页的记录均已从 Active 主清单删除。
@@ -214,6 +214,28 @@ AI Backend / Full-stack / Client / Platform Engineering
 
 ---
 
+## 百度｜后端研发工程师（智能体 / AIGC 业务）（J94546）
+
+- 分类：AI 应用开发
+- 地点：北京
+- 官方来源：https://talent.baidu.com/jobs/detail/SOCIAL/a2876e5d-b3f5-4a50-bdbd-7eb0cef0e356
+
+**官方职责要点**
+
+- 负责智能体在 B/C 端、AIGC、数字人等业务的后端架构设计与实现；
+- 持续优化框架架构、性能与可靠性；
+- 保障线上系统稳定并沉淀工程最佳实践；
+- 与产品、策略、设计团队协同，把 AI 能力落到业务系统。
+
+**官方要求要点**
+
+- 本科及以上，计算机相关专业；
+- 具备多年后端研发经验，熟练 Golang；
+- 熟悉数据库、消息队列、缓存和分布式系统；
+- 大模型应用开发经验优先。
+
+---
+
 # Agent / 智能体研发
 
 ## 百度｜2027 AIDU - Agent应用全栈工程师（J99974）
@@ -257,6 +279,26 @@ AI Backend / Full-stack / Client / Platform Engineering
 - 熟悉 Kubernetes、容器 / 沙箱与分布式系统；
 - 理解 Agent 执行、工具调用、上下文、Skill / MCP / Plugin；
 - 有生产级 Agent / Agentic Workflow 经验优先。
+
+## 百度｜客户端研发工程师（PC + Mobile，DuMate Agent）（J103883）
+
+- 分类：Agent / 智能体研发
+- 地点：北京
+- 官方来源：https://talent.baidu.com/jobs/detail/SOCIAL/3b07fd0b-8dc0-419a-b804-f3c94d709e18
+
+**官方职责要点**
+
+- 开发百度搭子 DuMate 的 PC 与 Mobile 下一代通用智能体客户端；
+- 覆盖 Windows / macOS / Linux、Android / iOS / 鸿蒙等多端；
+- 调研和落地 Agent Harness 等前沿 Agent 技术；
+- 参与需求、系统设计、研发、集成测试、部署和运行维护。
+
+**官方要求要点**
+
+- 具备桌面端或移动端软件开发经验；
+- 多端 / 全栈经验优先；
+- 熟悉 Go / TypeScript，或 Swift / Kotlin；
+- 掌握大模型与 Agent 应用开发相关技术。
 
 ## 百度｜智能体客户端研发工程师（J103289）
 
@@ -377,25 +419,28 @@ AI Backend / Full-stack / Client / Platform Engineering
 - MySQL、Redis、Kafka；
 - 熟悉 Agent 开发、大模型应用、云原生或 CI/CD 优先。
 
-## 百度｜上海-Agent Harness 研发工程师（J100779）
+## 百度｜Agent Harness 研发工程师（北京 J100815 / 上海 J100779）
 
 - 分类：Agent / 智能体研发
-- 地点：上海
-- 官方来源：https://talent.baidu.com/jobs/detail/GRADUATE/74d83772-1bd0-42b9-8cc5-69eb45696b62
+- 地点：北京 / 上海
+- 官方来源（北京）：https://talent.baidu.com/jobs/detail/GRADUATE/8683fc23-9bff-4d25-84b2-f5ddce782c5a
+- 官方来源（上海）：https://talent.baidu.com/jobs/detail/GRADUATE/74d83772-1bd0-42b9-8cc5-69eb45696b62
+
+> 两个官方 Requisition 的职责主体高度一致，按一个 Role Family 计数。
 
 **官方职责要点**
 
-- 设计 Agent Harness 产品技术架构；
-- 建设状态管理、沙箱、反馈闭环、执行约束、上下文交接与 compaction；
-- 从 Harness 视角联合优化 LLM 与系统行为；
-- 建设 Human-Agent 协作与反馈闭环。
+- 设计和开发 Agent Harness 产品技术架构；
+- 建设状态管理、沙箱、反馈闭环、执行约束、上下文交接与关键信息 compaction；
+- 从 Harness 视角联合优化 LLM 与系统行为，并验证不同 Harness 设计的真实影响；
+- 建设 Human-Agent 协作与反馈闭环，提升长时间复杂任务的稳定性与可控性。
 
 **官方要求要点**
 
-- 理解 ReAct、CoT、Plan-and-Execute；
-- 熟悉 Agent 框架和复杂任务工程；
-- 能分析长任务、文件操作、环境反馈等 Harness Failure；
-- 有 Agent / Harness 工程落地经验优先。
+- 理解 ReAct、CoT、Plan-and-Execute 等 Agent 机制；
+- 熟悉 Agent 框架以及复杂文件读写、环境反馈、长任务执行等工程问题；
+- 能分析并改良 Harness Failure；
+- Agent / Harness 工程落地、开源贡献等经验优先。
 
 ## 腾讯｜Agent开发工程师（R108051）
 
@@ -501,6 +546,6 @@ AI Backend / Full-stack / Client / Platform Engineering
 - 将来源政策从“官方优先、二手可补 Recall/正式库”收紧为：**正式库 100% 第一手官方 JD**；
 - 删除旧 47 条基线中所有二手 / 未完成官方 provenance 的 Active 记录；
 - 使用公司官网与官网直连 ATS 重新建立 Active 清单；
-- 当前官方 Active JD：**16 个 Role Family**；
+- 当前官方 Active JD：**18 个 Role Family**；
 - 建立固定公司覆盖矩阵，互联网大厂与头部 AI 公司即使 0 岗位也持续逐公司核验；
 - 二手站以后只可作为 Recall 线索，永远不能进入正式 JD 证据。
