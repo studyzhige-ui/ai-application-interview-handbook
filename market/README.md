@@ -36,7 +36,7 @@
 + 非转载 / 非答案帖 / 非重复
 ```
 
-**HUMAN-A 正式库：S001–S288 / 29 Batch。** 候选来源先进入 Market 证据层并完成质量与去重检查；单日热点不直接改变 Curriculum。
+**HUMAN-A 正式库：S001–S289 / 30 Batch。** 候选来源先进入 Market 证据层并完成质量与去重检查；单日热点不直接改变 Curriculum。
 
 ## 2. Market 内部结构
 

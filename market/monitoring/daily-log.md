@@ -343,3 +343,44 @@ Afternoon 主要观察：**AI Application 面试的工程验真继续从“会�
 Afternoon 盲区：22:00 优先继续追 **4399 9/18 Agent 开发** 的 post-specific 原帖、**快手 9/17 AI 应用一 / 二面** 的稳定正文，并继续补 9/18～9/19 字节 / 阿里 / 腾讯 / 美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米以及非牛客候选人原帖。对当前阳光电源 Inbox 候选，22:00 必须再次直接回读全部历史 Batch 后再决定是否分配当前真实下一 `Sxxx`。
 
 Afternoon 不新增 Canonical，不修改 Curriculum，也不写入 `interview/canonical/`、`market/analysis/` 或任何 Curriculum 正文。
+
+### 22:00 Evening Search + Finalize
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-16 22:00 ～ 2026-09-19 22:00**；主动发现只使用窗口内新发布 / 更新，历史页面仅用于 provenance、作者 Timeline 与全库去重。
+- Baseline / full-history dedup：重新读取最新 `main`、`market/README.md`、Inbox、Daily Log、两份 Market Policy 与最新 `batch-29.md`，随后再次**逐个直接回读 `batch-01.md`～`batch-29.md` 全历史**。确认正式基线为 **29 Batch / 288 HUMAN-A / `S001–S288` / 最大 `S288` / 下一 `S289`** 后才执行最终编号。晚间运行中 `main` 相对开始时前进 5 个提交；compare 确认这些并发变更只涉及 `market/jobs/` 与 `tools/`，没有修改 `market/monitoring/` 或 `market/interviews/`，因此基于最新 HEAD 安全重放。根目录复核仍**没有 `research/` 一级目录**。
+- Search effort：Evening 新增至少 **100 组定向 Query / Query 变体**，继续覆盖字节 / 抖音、阿里 / 千问、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，以及 4399、阳光电源等近端线索；岗位别名继续覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `AI Native` / `Coding Agent` / `Harness` / `Runtime` / `RAG` / `大模型应用开发` / `智能体开发`，同时继续追牛客原帖、作者 Timeline 与非牛客可核验公开来源。
+- Verification effort：第三轮显式打开、回读或追源 **20+ 次**近期原帖、作者页、企业页、推荐入口、职位页或 provenance 线索；这是验证工作量，不等于 20 个唯一原始 HUMAN-A 页面。Search Snippet、企业聚合、JD、答案化展示与打不开的原帖均不替代稳定候选人原始证据。
+- New HUMAN-A after Evening search：**0 个**。第三轮没有发现新的、同时满足最近 72 小时 + 真人面试官 + 候选人第一人称 + 高技术密度 + 目标 Role Scope + 稳定原文 + 全历史去重的独立流程。
+- Final dedup：Afternoon Inbox 的阳光电源候选再次与 `S001–S288` 全历史核对，仍通过最终 Gate；未发现同 URL、同作者、同公司同流程或连续独特题序的历史重复。GitHub Code Search 对 exact URL、作者和独特组合的 0 命中仅作辅助证据。
+- Final Batch：创建 `batch-30.md`，将当前唯一最终通过者分配为 **`S289`**；归档后 Inbox 清空。
+
+Evening 重点复核：
+
+1. **阳光电源 AI 应用开发工程师一面｜9/18 10:00｜`小红不是绿`**：post-specific 原始详情页晚间仍可稳定直接回读，明确显示公司、时间、岗位以及 10 个现场问题；原文第 6 题仍写作 `MPC和Function Calling的区别`，不自行修正。最终归档 `S289`。
+2. **4399 Agent 开发 9/18｜`AAA野生原子弹批发`**：作者 Timeline、Role Scope 与 14 道连续题序仍然很强，涉及 Harness Architecture、10 万级日志、Agent 生成 SQL 错误检测、90% 测试通过率来源以及“如何证明不是只依赖 AI 工具”；但晚间仍没有稳定拿到 post-specific 原始详情页。作者索引 / Search Snippet 不能替代 Stable Original，继续待追源、零贡献。
+3. **快手 9/17 AI 应用开发一 / 二面**：相关推荐 / 企业入口继续暴露长任务服务崩溃恢复、并发修改会话记忆等高价值问题，但候选人原始详情正文与作者 provenance 仍不够稳定，且部分展示片段混入明显解释 / 答案式展开；不升级 HUMAN-A。
+4. **PDD / B站 / 腾讯等合集、完整答案和 Agent 面经总结**：近期结果中继续出现“面经 06/07/08”“含完整答案”“Agent 面经总结”等整理型页面，不是候选人本人单一招聘流程原始证据；全部零贡献。
+5. **OPPO 9/18 线下面、普通 Data / Backend / Test 岗近期 AI 深挖**：真人面试中已经出现 AI Memory、AI Development Flow、Agent / AI Coding 等内容，但岗位主体并非 AI Application / Agent；继续按 Role Scope 排除。
+6. **小红书近期多模态算法 / 端侧推理等结果**：岗位主体落在模型 / 算法 / 推理优化边界；同平台 9/15 AI 应用研发则已是历史 `S286`，不重复计数。
+7. **JD / 企业页 / 内推 / 题库 / 聚合 / 新闻**：只用于发现和市场旁证，不贡献 HUMAN-A。
+
+### Final Summary
+
+- Three-round search effort：**至少 300 组 Query / Query 变体**（Morning ≥90 + Afternoon ≥110 + Evening ≥100）。
+- Three-round verification effort：**至少 65 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试（Morning 20+ + Afternoon 25+ + Evening 20+）；这是工作量次数，不代表 65 个唯一 URL。
+- Final additions：**1 个 HUMAN-A，`S289`**。
+- Current formal Market library：**30 Batch / 289 HUMAN-A / `S001–S289`**。
+- Next ID：**`S290`**。
+- Inbox：归档后清空。
+- Frozen Canonical / Curriculum：**本日不修改**；`S289` 只进入后续 periodic canonical mapping / review candidate。
+
+当日主要市场信号：
+
+1. **AI Application 项目验真继续落到 Production Diagnosis。** 面试官不只问 RAG / Function Calling 名词，而是要求从线上支付失败完整链路解释系统如何定位问题，并追 Network 为什么存在。
+2. **Retrieval Failure Attribution 与异构文档处理仍是稳定工程问题。** RAG 低召回要能分层定位原因；PDF 表格 / 图片需要给出实际解析链路，而不是只报 Parser 名称。
+3. **End-to-end Ownership 被直接验证。** 候选人会被问更偏局部 Component 还是全链路参与，以及资源充分时下一步怎样演进系统。
+4. **Harness + AI-assisted Engineering Authenticity Verification 是值得继续追的弱信号。** 4399 线索已经把 Harness、SQL 验错、测试指标和“AI 帮你完成后是否真正掌握”放在一起，但 provenance 尚未闭环，因此当前只作为观察，不进入正式频率。
+5. **Agent / AI 术语继续向普通 Backend / Data / Test 岗扩散。** 这使 Role Scope Gate 更重要，而不是更宽松；出现 Memory / Agent / AI Coding 不能替代目标岗位证据。
+
+饱和度 / 盲区：最近 72 小时公开结果层继续呈现**局部饱和 + provenance 成本高**。牛客仍是最容易拿到稳定第一人称原帖的平台，但内容合集、答案化页面、普通岗位 AI 深挖与原帖不稳定占比较高；4399 9/18 Agent、快手 9/17 AI 应用一 / 二面仍是最值得继续补 provenance 的近端线索。腾讯 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米等目标公司，以及小红书 / 知乎 / 脉脉 / 独立博客等非牛客平台，在当前窗口内仍缺新的高质量、稳定可核验目标岗第一人称来源。继续补盲，但不降低 Gate。
