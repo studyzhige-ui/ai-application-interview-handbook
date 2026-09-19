@@ -1368,6 +1368,7 @@ def main() -> int:
     engineering_signals = [x.lower() for x in cfg.get("engineering_title_signals", [])]
     body_agent_signals = [x.lower() for x in cfg.get("body_agent_signals", [])]
     training_signals = [x.lower() for x in cfg.get("training_heavy_signals", [])]
+    strict_title_allowlist = {x.lower() for x in cfg.get("strict_title_allowlist", [])}
 
     all_matches: list[Job] = []
     results: list[SourceResult] = []
@@ -1426,18 +1427,45 @@ def main() -> int:
             for j in raw_jobs
         ]
 
+    def strict_role_title(job: Job) -> bool:
+        title = job.title.splitlines()[0].strip().lower()
+        body = " ".join([job.category, job.department, job.description, job.requirements]).lower()
+
+        if title in strict_title_allowlist:
+            return True
+
+        # Formal library requires the job itself to be an engineering role whose
+        # title explicitly names the Agent / AI-application system being built.
+        explicit = (
+            any(k in title for k in keywords)
+            and any(s in title for s in engineering_signals)
+        )
+        if explicit:
+            return True
+
+        # FDE and generic "large-model R&D/development engineer" titles are admitted
+        # only when their first-party JD clearly describes Agent/RAG/application work.
+        body_hits = {k for k in body_agent_signals if k in body}
+        if "fde" in title and len(body_hits) >= 2:
+            return True
+        if any(k in title for k in ("大模型研发工程师", "大模型开发工程师")) and any(
+            k in body for k in ("agent", "智能体", "rag", "function calling", "工具调用")
+        ):
+            return True
+        return False
+
     def target_matches(jobs: list[Job], src: dict) -> list[Job]:
         # Official recruiting policy:
-        # - on an explicit campus/new-grad board, the live board itself is the time gate;
-        # - on a mixed official Careers/ATS board, the JD itself must carry new-grad/campus evidence.
-        # This lets every company be enumerated without turning senior social roles into campus JDs.
+        # - campus board: the live board itself is the time gate;
+        # - mixed official Careers/ATS board: the JD must explicitly allow new grads.
+        # Role scope is intentionally title-first so generic software jobs that merely
+        # mention "using AI tools" in boilerplate never enter the formal library.
         explicit_campus_board = bool(src.get("current_campus_board"))
         matches = [
             j for j in jobs
             if (explicit_campus_board or campusish(j))
-            and is_agent_related(j, keywords, body_agent_signals)
+            and strict_role_title(j)
             and not training_heavy(j, training_signals)
-            and (not engineering_signals or looks_engineering(j, engineering_signals))
             and not is_hard_excluded(j, excludes)
             and "实习" not in (j.title + " " + j.category).lower()
             and "intern" not in (j.title + " " + j.category).lower()
