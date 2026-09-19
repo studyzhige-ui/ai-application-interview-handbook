@@ -116,8 +116,10 @@
     },
     {
       "company": "字节跳动",
-      "mode": "portal_only",
-      "portal": "https://jobs.bytedance.com/campus/position"
+      "mode": "bytedance_api",
+      "portal": "https://jobs.bytedance.com/campus/position",
+      "api": "https://jobs.bytedance.com/api/v1/search/job/posts",
+      "note": "官方 ATSX campus pool 通过 Node fetch 全量枚举；job subject/recruit type 用于 2027 项目归属复核。"
     },
     {
       "company": "阿里巴巴",
