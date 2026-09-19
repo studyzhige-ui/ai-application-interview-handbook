@@ -3,7 +3,7 @@ name: Rebuild market analysis
 on:
   push:
     branches:
-      - canonicalize-questions
+      - main
     paths:
       - 'interview/canonical/**'
       - 'market/interviews/**'

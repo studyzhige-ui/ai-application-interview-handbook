@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import unquote
 import argparse, ast, re, subprocess, sys, tempfile
 ROOT=Path(__file__).resolve().parents[1]
-MODULES={'python':13,'fastapi':16,'backend-engineering':22,'mysql':23,'redis':24,'vector-db':16,'llm-foundation':14,'rag':14,'agent':24,'system-design':19}
+MODULES={'01-python':13,'02-fastapi':16,'03-backend-engineering':22,'04-mysql':23,'05-redis':24,'06-vector-db':16,'07-llm-foundation':14,'08-rag':14,'09-agent':24,'10-system-design':19}
 ALLOWED_EXAMPLES={'feedback_loop','registry_projection'}
 
 def split_fences(text):
@@ -67,7 +67,7 @@ def main():
     if set(examples)!=ALLOWED_EXAMPLES:errors.append('missing named teaching examples')
     total=0
     for module,count in MODULES.items():
-        actual=len(list((ROOT/module/'docs').glob('*.md')));total+=actual
+        actual=len(list((ROOT/'curriculum'/module/'docs').glob('*.md')));total+=actual
         if actual!=count:errors.append(f'{module}: expected {count}, got {actual}')
     checked=0;anchor_checks=0
     for p in ROOT.rglob('*.md'):

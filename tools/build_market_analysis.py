@@ -227,6 +227,10 @@ def parse_sources() -> dict[str, Source]:
         text = batch.read_text(encoding="utf-8")
         for m in SOURCE_HEADING_RE.finditer(text):
             source_id, payload = m.group(1), m.group(2).strip()
+            # Phase 2B analysis is intentionally frozen to S001–S279.
+            # Newer HUMAN-A sources may coexist in market/interviews while awaiting periodic Canonical mapping.
+            if source_id not in EXPECTED_SOURCE_IDS:
+                continue
             parts = [p.strip() for p in payload.split("｜")]
             company_raw = parts[0] if parts else ""
             role_raw = parts[1] if len(parts) >= 2 else ""
@@ -252,9 +256,8 @@ def parse_sources() -> dict[str, Source]:
 
     ids = set(sources)
     missing = sorted(EXPECTED_SOURCE_IDS - ids)
-    extra = sorted(ids - EXPECTED_SOURCE_IDS)
-    if missing or extra:
-        raise ValueError(f"source ID baseline mismatch: missing={missing}, extra={extra}")
+    if missing:
+        raise ValueError(f"frozen source baseline mismatch: missing={missing}")
     return sources
 
 
