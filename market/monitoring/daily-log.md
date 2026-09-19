@@ -313,3 +313,33 @@ Morning 重点复核 / 待追源：
 Morning 主要观察：**“Harness + AI 开发真实性验证”开始出现在目标 Agent 面试的同一条追问链里**。4399 线索不只问 Harness，还追“AI 工具帮你完成后，怎样证明自己真正会”“大规模日志怎样处理”“Agent SQL 如何检测错误”“测试用例 90% 通过率怎样得到”，更接近对 AI-assisted Engineering 的可验证工程能力检查；但由于该来源的 post-specific provenance 尚未闭环，这一信号目前只记作 Recall / Market Observation，不新增 Canonical、不修改 Curriculum。
 
 Morning 盲区：Afternoon 优先继续追 **4399 9/18 Agent 开发** 与 **阳光电源 9/18 AI 应用开发** 的稳定原帖详情；继续补快手 9/17 AI 应用一 / 二面、9/18～9/19 字节 / 阿里 / 腾讯 / 美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米的新发布目标岗原帖，以及非牛客平台的候选人本人正文。质量门槛不变。
+
+### 17:00 Afternoon Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-16 17:00 ～ 2026-09-19 17:00**；主动发现只使用窗口内新发布 / 更新，历史页面仅用于 provenance、作者 Timeline 与全库去重。
+- Baseline / full-history dedup：重新读取当前 `main`、`market/README.md`、Inbox、Daily Log、两份 Market Policy 与最新 `batch-29.md`，随后**逐个直接回读 `batch-01.md`～`batch-29.md` 全历史**。正式基线确认仍为 **29 Batch / 288 HUMAN-A / `S001–S288` / 最大 `S288` / 下一 `S289`**。本轮运行中 `main` 从上午基线继续前进到官方 2027 岗位同步相关提交；compare 确认并发变更只涉及 `.github/workflows/`、`market/jobs/` 和 `tools/`，未改动 monitoring / interviews，因此本轮以最新 HEAD 安全重放，不覆盖并发更新。当前根目录仍无 `research/` 一级目录。
+- Search effort：Afternoon 新增至少 **110 组定向 Query / Query 变体**，重点补 Morning 的 4399 / 阳光电源 / 快手 9/17 AI 应用一二面，以及字节 / 抖音、阿里 / 千问、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米等；岗位别名继续覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `AI Native` / `Coding Agent` / `Harness` / `Runtime` / `RAG` / `大模型应用开发` / `智能体开发`，并继续追牛客作者 Timeline 与小红书 / 知乎 / 脉脉 / 博客 / 技术社区可核验原文。
+- Verification effort：实际打开、回读或追源 **25+ 次**近期原帖、作者页、企业页和 provenance 入口；Cache Miss / Search Snippet / 企业聚合只计验证工作量，不替代正式 HUMAN-A 原始证据。
+- Passed HUMAN-A → Inbox：**1 个新流程：阳光电源 AI 应用开发工程师一面（作者 `小红不是绿`，面试 2026-09-18 10:00）**。当前 Inbox 共 **1** 个候选；Afternoon 不分配 `Sxxx`、不创建 Batch。
+
+Afternoon 通过项：
+
+1. **阳光电源｜AI 应用开发工程师｜一面｜9/18 10:00**：本轮补齐了 Morning 缺失的 post-specific 原始详情 URL：`https://www.nowcoder.com/feed/main/detail/122fd928ee824ed99c8f834233d1ac23?sourceSSR=enterprise`。Exact URL 检索能够完整回读原始正文，作者 `小红不是绿`，正文以 `#发面经攒人品 #秋招面试记录` 发布。作者主页显示为大连大学 2027 Java 候选人，并连续记录 BIGO、上海华力、阳光电源等本人招聘 Timeline，不是批量内容账号。
+2. **整场问题**：自我介绍；线上支付失败时整个执行 / 诊断链路如何走；为什么需要 Network 这一步；RAG 召回低可能原因与解决；PDF 同时含表格 / 图片时怎样解析；原文第 6 题写作“`MPC和Function Calling的区别`”；客户端实习而项目偏 AI 应用 / 后端的选择与职业规划；更喜欢局部 Component 还是端到端参与；如果资源更充足下一步怎样改进当前实习 / 项目；反问。当前不自行把原文 `MPC` 改写为 `MCP`。
+3. **全历史去重**：在写入 Inbox 前已逐个直接回读 `batch-01.md`～`batch-29.md`。未发现同 URL、作者、公司 / 日期 / 岗位，或“支付失败全链路 → Network → RAG 低召回 → 异构 PDF → Function Calling 边界 → 端到端 Ownership”连续题序的历史同场来源。GitHub 对 exact URL 的 0 命中只作辅助证据。
+
+Afternoon 重点排除 / 待追源：
+
+1. **4399 Agent 开发 9/18｜`AAA野生原子弹批发`**：作者个人 Timeline、目标 Role Scope 与 14 道连续题序都很强，已能看到“如何证明自己真正掌握而不是依赖 AI”“10 万级日志处理”“Harness Architecture”“Agent 生成 SQL 的错误检测”“90% 测试通过率如何得到”等内容；但仍没有稳定解析到 post-specific 原帖详情 URL。按 Stable Original Gate，作者索引 / 搜索结果即使完整也不能替代原帖，继续待追源、不进 Inbox。
+2. **快手 9/17 AI 应用开发一 / 二面**：继续无法稳定回读候选人原始详情正文；企业页 / Search Snippet 不能替代原帖，零贡献。
+3. **快手 AI 全栈 `明天会有好天气`**：重新回读全历史确认该场就是 `batch-27.md` 的 `S282`，属于正式历史精确重复；不因近期再次命中重新进入 Inbox。
+4. **OPPO 9/18 线下面 `鹤逸123`**：真人第一人称、两轮技术 + HR，传统 Backend 问题后确实追到 AI Memory / AI Development Flow；但页面无法证明目标岗位主体属于 AI Application / Agent，作者 Timeline 也更偏通用 Java 求职。按 Role Scope Gate 排除，不能因为问到 AI 就升级。
+5. **去哪儿 9/16 AI 应用开发（全栈）**：Role Scope 和真人现场仍成立，但稳定正文依旧主要是流程摘要，连续技术题不足，维持既有排除。
+6. **非牛客平台 / 聚合 / JD**：本轮继续覆盖小红书、知乎、脉脉、CSDN、掘金、博客园、Bilibili 与职位页；最新高曝光结果仍主要是课程、答案、整理、职位或转载，未形成新的可核验候选人本人 HUMAN-A。
+
+Afternoon 主要观察：**AI Application 面试的工程验真继续从“会不会 Agent 名词”转向 Production Diagnosis + Retrieval Failure Attribution + Heterogeneous Document Processing + End-to-end Ownership。** 阳光电源直接让候选人解释线上支付失败的完整链路、Network 为什么存在、RAG 低召回怎样分层定位、PDF 表格 / 图片怎样处理，并继续问候选人偏好局部模块还是端到端参与。这与既有“Production Engineering + Agent”趋势一致，但仍只作为 Market Observation，不新增 Canonical、不修改 Curriculum。与此同时，4399 待追源线索持续强化 Harness + AI-assisted Engineering Authenticity Verification；OPPO 普通 Java 流程也开始问 AI Memory / Development Flow，进一步说明 Role Scope Gate 不能放松。
+
+Afternoon 盲区：22:00 优先继续追 **4399 9/18 Agent 开发** 的 post-specific 原帖、**快手 9/17 AI 应用一 / 二面** 的稳定正文，并继续补 9/18～9/19 字节 / 阿里 / 腾讯 / 美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米以及非牛客候选人原帖。对当前阳光电源 Inbox 候选，22:00 必须再次直接回读全部历史 Batch 后再决定是否分配当前真实下一 `Sxxx`。
+
+Afternoon 不新增 Canonical，不修改 Curriculum，也不写入 `interview/canonical/`、`market/analysis/` 或任何 Curriculum 正文。
