@@ -15,10 +15,23 @@ const headers={
   "Origin":"https://jobs.bytedance.com","Referer":"https://jobs.bytedance.com/campus/position"
 };
 const limit=100;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+async function fetchWithRetry(url,options,label){
+  let last;
+  for(let attempt=1;attempt<=4;attempt++){
+    try{
+      const res=await fetch(url,options);
+      if(res.ok || res.status<500) return res;
+      last=new Error(`${label} HTTP ${res.status} ${res.statusText}`);
+    }catch(e){ last=e; }
+    if(attempt<4) await sleep(800*attempt);
+  }
+  throw last;
+}
 async function fetchPage(offset){
   const body={keyword:"",limit,offset,portal_type:3,portal_entrance:1,language:"zh",
     job_category_id_list:[],location_code_list:[],subject_id_list:[],recruitment_id_list:[]};
-  const res=await fetch(API,{method:"POST",headers,body:JSON.stringify(body)});
+  const res=await fetchWithRetry(API,{method:"POST",headers,body:JSON.stringify(body)},"ByteDance"+" offset="+offset);
   if(!res.ok) throw new Error(`ByteDance HTTP ${res.status} ${res.statusText} offset=${offset}`);
   const payload=await res.json();
   if(payload.code!==0) throw new Error(`ByteDance code=${payload.code}: ${payload.message||""}`);
