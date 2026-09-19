@@ -998,14 +998,19 @@ def main() -> int:
             # first-party fallback; otherwise keep the source explicitly BLOCKED.
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
-            if raw_jobs:
+            browser_terminal = (
+                bool(dyn.get("has2027"))
+                and bool(dyn.get("full_keyword_search"))
+                and txt(dyn.get("status")) == "BROWSER_ENUMERATED"
+            )
+            if raw_jobs and browser_terminal:
                 browser_jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
                 matches = target_matches(browser_jobs, bool(src.get("verified_2027_project")))
                 return SourceResult(
                     company, "browser_fallback", src["portal"],
                     "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
                     len(raw_jobs), len(matches),
-                    f"dedicated adapter failed; official browser fallback used: {type(e).__name__}: {e}"[:700],
+                    f"dedicated adapter failed; exhaustive official 2027 browser fallback used: {type(e).__name__}: {e}"[:700],
                 ), matches
             discovered = discover_api_candidates(src["portal"])
             diagnostic = f"{type(e).__name__}: {e}"
