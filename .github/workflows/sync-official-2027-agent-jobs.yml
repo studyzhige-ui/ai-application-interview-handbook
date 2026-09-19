@@ -43,15 +43,19 @@ jobs:
           npx playwright install chromium --with-deps
 
       - name: Pull Xiaomi official campus ATSX
+        continue-on-error: true
         run: node tools/fetch_xiaomi_2027.mjs /tmp/xiaomi-2027-campus.json
 
       - name: Pull ByteDance official campus ATSX
+        continue-on-error: true
         run: node tools/fetch_bytedance_2027.mjs /tmp/bytedance-campus.json
 
       - name: Pull company-proven official Feishu ATS tenants
+        continue-on-error: true
         run: node tools/fetch_feishu_official_2027.mjs market/jobs/official-2027-feishu-discovery.generated.json
 
       - name: Discover dynamic official campus portals
+        continue-on-error: true
         run: node tools/fetch_dynamic_official_jobs.mjs market/jobs/official-2027-browser-discovery.generated.json
 
       - name: Pull and normalize official recruitment sources
