@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "cycle": "2027-campus",
+  "agent_keywords": [
+    "agent",
+    "智能体",
+    "ai应用",
+    "ai 应用",
+    "大模型应用",
+    "llm应用",
+    "llm 应用",
+    "ai native",
+    "coding agent",
+    "code agent",
+    "rag",
+    "harness",
+    "runtime",
+    "mcp",
+    "skill"
+  ],
+  "hard_exclude_title_keywords": [
+    "算法工程师",
+    "算法研究",
+    "研究员",
+    "research scientist",
+    "scientist",
+    "预训练",
+    "后训练",
+    "post-training",
+    "sft",
+    "rlhf",
+    "reward model"
+  ],
+  "sources": [
+    {
+      "company": "小米",
+      "mode": "xiaomi_api",
+      "portal": "https://hr.xiaomi.com/website/opportunities.html?project=%E6%A0%A1%E6%8B%9B&q=agent",
+      "api": "https://hr.xiaomi.com/api/position/list"
+    },
+    {
+      "company": "快手",
+      "mode": "kuaishou_api",
+      "portal": "https://campus.kuaishou.cn/recruit/campus/e/#/campus/jobs?recruitSubProjectCodes=20271779425607",
+      "api": "https://zhaopin.kuaishou.cn/recruit/api/job/list",
+      "project_code": "20271779425607"
+    },
+    {
+      "company": "百度",
+      "mode": "baidu_api",
+      "portal": "https://talent.baidu.com/jobs/list?projectType=1",
+      "api": "https://talent.baidu.com/httservice/getPostListNew"
+    },
+    {
+      "company": "腾讯",
+      "mode": "tencent_api",
+      "portal": "https://join.qq.com/",
+      "api": "https://careers.tencent.com/tencentcareer/api/post/Query"
+    },
+    {
+      "company": "美团",
+      "mode": "meituan_api",
+      "portal": "https://zhaopin.meituan.com/web/campus",
+      "api": "https://zhaopin.meituan.com/api/recruitment/v2/jobs"
+    },
+    {
+      "company": "网易",
+      "mode": "netease_api",
+      "portal": "https://campus.163.com/",
+      "api": "https://hr.163.com/api/hr163/position/queryPage"
+    },
+    {
+      "company": "哔哩哔哩",
+      "mode": "bilibili_api",
+      "portal": "https://jobs.bilibili.com/campus/positions",
+      "api": "https://jobs.bilibili.com/api/positions"
+    },
+    {
+      "company": "滴滴",
+      "mode": "didi_api",
+      "portal": "https://campus.didiglobal.com/",
+      "api": "https://talent.didiglobal.com/api/jobList"
+    },
+    {
+      "company": "拼多多",
+      "mode": "pdd_api",
+      "portal": "https://careers.pinduoduo.com/campus",
+      "api": "https://careers.pinduoduo.com/api/position/list"
+    },
+    {
+      "company": "华为",
+      "mode": "huawei_api",
+      "portal": "https://career.huawei.com/cn/",
+      "api": "https://career.huawei.com/reccampportal/portal5/position/api/position/queryPositions"
+    },
+    {
+      "company": "小红书",
+      "mode": "portal_only",
+      "portal": "https://job.xiaohongshu.com/campus"
+    },
+    {
+      "company": "字节跳动",
+      "mode": "portal_only",
+      "portal": "https://jobs.bytedance.com/campus/position"
+    },
+    {
+      "company": "阿里巴巴",
+      "mode": "portal_only",
+      "portal": "https://talent.alibaba.com/campus/position-list"
+    },
+    {
+      "company": "蚂蚁集团",
+      "mode": "portal_only",
+      "portal": "https://talent.antgroup.com/campus-full-list"
+    },
+    {
+      "company": "京东",
+      "mode": "portal_only",
+      "portal": "https://campus.jd.com/"
+    },
+    {
+      "company": "OPPO",
+      "mode": "portal_only",
+      "portal": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate"
+    },
+    {
+      "company": "vivo",
+      "mode": "portal_only",
+      "portal": "https://hr.vivo.com/"
+    },
+    {
+      "company": "金山办公/WPS",
+      "mode": "portal_only",
+      "portal": "https://join.wps.cn/"
+    },
+    {
+      "company": "荣耀",
+      "mode": "portal_only",
+      "portal": "https://career.hihonor.com/"
+    },
+    {
+      "company": "科大讯飞",
+      "mode": "portal_only",
+      "portal": "https://campus.iflytek.com/official-pc/jobList"
+    },
+    {
+      "company": "携程",
+      "mode": "portal_only",
+      "portal": "https://campus.ctrip.com/"
+    },
+    {
+      "company": "360",
+      "mode": "portal_only",
+      "portal": "https://hr.360.cn/"
+    },
+    {
+      "company": "得物",
+      "mode": "portal_only",
+      "portal": "https://www.dewu.com/"
+    }
+  ]
+}
