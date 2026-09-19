@@ -11,6 +11,7 @@ on:
       - 'tools/fetch_moka_official_2027.mjs'
       - 'tools/sync_official_2027_agent_jobs.py'
       - 'tools/audit_official_2027_job_sources.py'
+      - 'tools/validate_official_2027_source_contracts.py'
   schedule:
     - cron: '0 1 * * 2,5'
 
@@ -66,7 +67,7 @@ jobs:
 
       - name: Audit every registered company
         run: |
-          python tools/audit_official_2027_job_sources.py || true
+          python tools/audit_official_2027_job_sources.py
           cat market/jobs/official-2027-coverage-audit.generated.md
 
       - name: Commit generated output safely
