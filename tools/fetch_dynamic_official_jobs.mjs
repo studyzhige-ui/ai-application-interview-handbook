@@ -138,7 +138,7 @@ async function runPage(context,company,url,rootHost,collector,visited){
     const next=[];
     for(const a of links){
       if(!a.href||!sameOfficialFamily(a.href,url)) continue;
-      if(/2027|校园|校招|应届|campus|graduate|student|position|职位|岗位|join us|career/i.test(a.text+" "+a.href)) next.push(a.href);
+      if(/2027|校园|校招|应届|招聘|人才|加入我们|加入|campus|graduate|student|position|职位|岗位|join us|career|jobs?/i.test(a.text+" "+a.href)) next.push(a.href);
     }
     // DOM fallback: official links/cards whose visible text itself matches target keywords.
     for(const a of links){
@@ -167,9 +167,9 @@ async function main(){
     const collector=[];
     const visited=new Set();
     const root=src.official_root || src.portal;
-    const queue=[root];
+    const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
     const pageResults=[];
-    while(queue.length && visited.size<8){
+    while(queue.length && visited.size<6){
       const u=queue.shift();
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited);
       if(pr){
