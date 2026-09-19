@@ -312,7 +312,7 @@ def fetch_baidu(src: dict) -> list[Job]:
     while page <= 30:
         data = post_form(
             src["api"],
-            data={"recruitType": "CAMPUS", "pageSize": 100, "curPage": page, "projectType": ""},
+            data={"recruitType": "GRADUATE", "pageSize": 20, "curPage": page, "projectType": "", "keyWord": ""},
             headers={"Referer": "https://talent.baidu.com/jobs/list?projectType=1"},
         )
         d = data.get("data") or {}
@@ -329,7 +329,7 @@ def fetch_baidu(src: dict) -> list[Job]:
                 "百度当前校园招聘=2027届",
             ))
         total = int(d.get("total") or 0)
-        if page * 100 >= total:
+        if page * 20 >= total:
             break
         page += 1
     return out
