@@ -79,9 +79,9 @@ function uniqueJobs(jobs){
   return [...m.values()];
 }
 async function scroll(page){
-  for(let i=0;i<8;i++){
+  for(let i=0;i<4;i++){
     await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
-    await page.waitForTimeout(700);
+    await page.waitForTimeout(500);
   }
   await page.evaluate(()=>window.scrollTo(0,0));
 }
@@ -96,7 +96,7 @@ async function searchInputs(page){
       try{
         await el.fill(q);
         await el.press("Enter");
-        await page.waitForTimeout(1200);
+        await page.waitForTimeout(800);
         await scroll(page);
       }catch{}
     }
@@ -127,7 +127,7 @@ async function runPage(context,company,url,rootHost,collector,visited){
   });
   try{
     await page.goto(url,{waitUntil:"domcontentloaded",timeout:30000});
-    await page.waitForTimeout(2500);
+    await page.waitForTimeout(1800);
     await scroll(page);
     await searchInputs(page);
     await Promise.allSettled(responseTasks);
@@ -158,17 +158,14 @@ async function runPage(context,company,url,rootHost,collector,visited){
     return {page_url:url,error:String(e).slice(0,400),has2027:false,next:[]};
   }
 }
-async function main(){
-  const sources=CONFIG.sources.filter(s=>s.mode==="portal_only" || s.browser_probe===true);
-  const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
-  const results=[];
-  for(const src of sources){
-    const context=await browser.newContext({userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"});
-    const collector=[];
-    const visited=new Set();
-    const root=src.official_root || src.portal;
-    const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
-    const pageResults=[];
+async function processSource(browser,src){
+  const context=await browser.newContext({userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"});
+  const collector=[];
+  const visited=new Set();
+  const root=src.official_root || src.portal;
+  const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
+  const pageResults=[];
+  try{
     while(queue.length && visited.size<6){
       const u=queue.shift();
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited);
@@ -179,11 +176,28 @@ async function main(){
     }
     const jobs=uniqueJobs(collector);
     const has2027=pageResults.some(x=>x.has2027) || jobs.some(j=>/2027/.test(j.cycle_evidence));
-    results.push({company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,jobs,has2027,status:jobs.length?"BROWSER_OK":(has2027?"BROWSER_OK_0_MATCH":"BROWSER_NO_2027_EVIDENCE")});
-    console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}`);
-    await context.close();
+    const status=jobs.length?"BROWSER_OK":(has2027?"BROWSER_OK_0_MATCH":"BROWSER_NO_2027_EVIDENCE");
+    console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, status=${status}`);
+    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,jobs,has2027,status};
+  }catch(e){
+    console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
+    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,jobs:uniqueJobs(collector),has2027:false,status:"BROWSER_ERROR",error:String(e).slice(0,500)};
+  }finally{
+    await context.close().catch(()=>{});
+  }
+}
+
+async function main(){
+  const sources=CONFIG.sources.filter(s=>s.mode==="portal_only" || s.browser_probe===true);
+  const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
+  const results=[];
+  const concurrency=4;
+  for(let i=0;i<sources.length;i+=concurrency){
+    const chunk=sources.slice(i,i+concurrency);
+    results.push(...await Promise.all(chunk.map(src=>processSource(browser,src))));
   }
   await browser.close();
-  fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),results},null,2)+"\n","utf8");
+  results.sort((a,b)=>a.company.localeCompare(b.company,"zh-CN"));
+  fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),concurrency,results},null,2)+"\n","utf8");
 }
 await main();
