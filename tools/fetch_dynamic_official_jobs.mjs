@@ -35,7 +35,7 @@ function sameOfficialFamily(a,b){
   try{
     const ha=new URL(a).hostname.replace(/^www\./,"");
     const hb=new URL(b).hostname.replace(/^www\./,"");
-    const suffixes=["mokahr.com","mioffice.cn","feishu.cn","myworkdayjobs.com","workdayjobs.com"];
+    const suffixes=["mokahr.com","mioffice.cn","feishu.cn","myworkdayjobs.com","workdayjobs.com","zhiye.com"];
     if(ha===hb||ha.endsWith("."+hb)||hb.endsWith("."+ha)) return true;
     // ATS hosts are accepted only because navigation originated from the official page.
     return suffixes.some(s=>ha.endsWith(s));
