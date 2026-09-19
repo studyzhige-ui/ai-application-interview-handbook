@@ -1,6 +1,6 @@
 # Agent Harness｜Authoritative Source Strategy
 
-[← Agent Harness](../../curriculum/09-curriculum/09-curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Agent Source Index](../../roadmap/README.md)
+[← Agent Harness](../../curriculum/09-curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Agent Source Index](../../roadmap/README.md)
 
 > **用途：技术证据策略。** HUMAN-A 决定市场频率；源码 / 官方资料只补成熟 Runtime 事实与工程边界。
 
@@ -17,7 +17,7 @@ Tier C  官方工程文章 / 协议 / SDK 文档 / 原始论文
 Tier D  基于 A+B+C 的课程抽象
 ```
 
-完整 Evidence Base：[`../references/curriculum/09-curriculum/09-agent/README.md`](../../roadmap/README.md)
+完整 Evidence Base：[`../references/curriculum/09-agent/README.md`](../../roadmap/README.md)
 
 > **只有 Tier A 可以贡献真人面试 Source Count。源码和网上权威文章用于补齐完整 Runtime 知识边界，绝不反向虚增面经频率。**
 
