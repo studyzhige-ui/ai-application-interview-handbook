@@ -915,15 +915,19 @@ def main() -> int:
             matches = target_matches(jobs)
             raw_status = txt(dyn.get("status"))
             has_2027 = bool(dyn.get("has2027"))
-            if raw_jobs:
+            full_search = bool(dyn.get("full_keyword_search"))
+            if raw_status == "BROWSER_ENUMERATED":
                 status = "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES"
+                error = ""
+            elif raw_status == "BROWSER_ENUMERATED_ZERO" and has_2027 and full_search:
+                status = "ENUMERATED_ZERO_MATCHES"
                 error = ""
             elif raw_status == "BROWSER_NO_2027_EVIDENCE":
                 status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
                 error = "官方根站未取得公开2027项目证据" if status == "NO_PUBLIC_2027_PROJECT" else "官网浏览完成但未能证明无公开2027项目；继续适配"
-            elif raw_status in ("BROWSER_OK_0_MATCH",):
+            elif raw_status in ("BROWSER_2027_NEEDS_ADAPTER","BROWSER_OK_0_MATCH"):
                 status = "BLOCKED"
-                error = "发现2027官方页面，但通用解析器未能完整枚举岗位池；不能判0"
+                error = "发现2027官方项目，但尚未完成全关键词/职位详情枚举；不能判0"
             elif raw_status == "BROWSER_ERROR":
                 status = "BLOCKED"
                 error = txt(dyn.get("error")) or "浏览器枚举失败"
