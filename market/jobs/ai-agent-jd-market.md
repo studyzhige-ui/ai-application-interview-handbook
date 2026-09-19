@@ -26,14 +26,14 @@ ai-agent-jd-market.md
 
 同公司、职责高度一致但城市 / 职位 ID 不同的岗位按 Role Family 合并；所有已知官方 Requisition 仍保留在全量层。
 
-## 3. 当前快照｜2026-09-19
+## 3. 当前快照｜2026-09-20
 
 - **固定公司：41 家**。
-- **官方招聘/校招入口：41/41。**
+- **官方招聘 / 校招入口：41/41。**
 - **至少一个相关工程岗位已核验：41/41。**
-- **严格 Role Family：222。**
-- **第一方完整 JD：189 个 Role Family。**
-- **第一方仅标题：7 个；当前岗位已核验、待补第一方正文：26 个。**
+- **严格 Role Family：230。**
+- **第一方完整 JD：190 个 Role Family。**
+- **第一方仅标题：7 个；当前岗位已核验、待补第一方正文：33 个。**
 - 旧抓取器的 0 命中已废止为岗位结论：它只能表示“本次自动枚举没有抓到”，不能表示“公司没有相关岗位”。
 
 ## 4. 41 家公司官方入口与代表岗位
@@ -53,26 +53,26 @@ ai-agent-jd-market.md
 | 小红书 | https://job.xiaohongshu.com/campus/position | 【REDstar】AI Agent Infra 工程师 | 当前校园招聘 | FULL_FIRST_PARTY_JD |
 | 字节跳动 | https://jobs.bytedance.com/campus/position | AI Agent开发工程师 - 抖音研发 | 当前校园招聘 | FULL_FIRST_PARTY_JD |
 | 阿里巴巴 | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | AI Agent应用开发工程师 | 当前校园招聘 | FULL_FIRST_PARTY_JD |
-| 蚂蚁集团 | https://talent.antgroup.com/campus-full-list | 智能体与大模型应用工程 | 2027校园全职 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
-| 京东 | https://campus.jd.com/ | SRE开发工程师 | 2027实习/校招通道 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
+| 蚂蚁集团 | https://talent.antgroup.com/campus-full-list | Agent研发工程师 | 2027届实习 / 校园人才池 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
+| 京东 | https://campus.jd.com/ | Agent开发工程师 | 当前官方招聘 | FULL_FIRST_PARTY_JD |
 | OPPO | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | AI Agent 研发工程师（研发效能方向） | 当前校园招聘 | FULL_FIRST_PARTY_JD |
-| vivo | https://hr-campus.vivo.com/campus/jobs | Agent工程师 | 2027蓝极星/提前批岗位证据；27届主校招入口开放 | ROLE_VERIFIED |
-| 金山办公/WPS | https://join.wps.cn/ | 精英C++开发工程师（全栈发展） | 2027校园招聘 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
+| vivo | https://hr-campus.vivo.com/campus/jobs | Agent技术工程师-27届秋招 | 2027校园招聘 | ROLE_VERIFIED |
+| 金山办公/WPS | https://join.wps.cn/ | AI应用开发工程师 | 当前官方招聘 / 2027校招池 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
 | 荣耀 | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | AI软件开发工程师 （AI Coding / Agent方向） | 当前校园招聘 | TITLE_ONLY_FIRST_PARTY |
 | 科大讯飞 | https://iflytek.zhiye.com/5/jobs | Agent研发工程师-Harness方向 | 2027秋季校园招聘 | ROLE_VERIFIED |
 | 携程 | https://careers.ctrip.com/#/campus | Agent开发工程师（2027届秋招） | 2027秋季校园招聘 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
 | 360 | https://360campus.zhiye.com/campus/jobs | AI应用工程师——AI系统软件 | 2027届实习招聘 | ROLE_VERIFIED |
 | 得物 | https://poizon.jobs.feishu.cn/578078/ | 【27届校招】中间件AI开发工程师（Golang方向） | 2027秋季校园招聘 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
 | DeepSeek | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | Agent Harness 研发工程师 | 当前官方招聘 | ROLE_VERIFIED |
-| 月之暗面/Kimi | https://app.mokahr.com/campus-recruitment/moonshot/148507 | Coding Agent 研发工程师（Agent Infra） | 社招 / 校招 / 实习均可 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
+| 月之暗面/Kimi | https://app.mokahr.com/campus-recruitment/moonshot/148507 | Agent Development Engineer（实习） | 2027/2028校园招聘与实习 | ROLE_VERIFIED |
 | MiniMax | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | AGI产品研发工程师-应届生-TOP Talent | 当前校园招聘 | FULL_FIRST_PARTY_JD |
-| 智谱/Z.ai | https://app.mokahr.com/campus-recruitment/zphz/148984 | Agent Infra开发工程师 | 当前官方招聘（非算法工程） | ROLE_VERIFIED |
+| 智谱/Z.ai | https://app.mokahr.com/campus-recruitment/zphz/148984 | AI研发工程师-Agent Tools/大模型应用方向 | 当前官方招聘（非算法工程） | ROLE_VERIFIED |
 | 阶跃星辰 | https://app.mokahr.com/campus-recruitment/step/94905 | Coding Agent 全栈工程师 | 当前官方招聘；公司同时开放2027校园招聘 | ROLE_VERIFIED |
 | 百川智能 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | 【源点顶尖人才计划】AI Infra工程师-推理方向实习生 | 2027及以后在校生/可转正 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
-| 零一万物/01.AI | https://01ai.jobs.feishu.cn/index/ | 大模型应用开发专家 | 当前官方招聘 | ROLE_VERIFIED |
+| 零一万物/01.AI | https://01ai.jobs.feishu.cn/index/ | AI 测试工程师 | 当前官方招聘 | FULL_FIRST_PARTY_JD |
 | 商汤科技 | https://hr-jobs.sensetime.com/edu/ | 【27届校招】Agent开发工程师 | 当前校园招聘 | FULL_FIRST_PARTY_JD |
-| 生数科技 | https://shengshu.jobs.feishu.cn/index/ | 大模型Infra工程师/专家 | 当前官方招聘 | ROLE_VERIFIED |
-| 硅基流动 | https://app.mokahr.com/su/Idzsq | 后端研发工程师（私有化 MaaS） | 当前官方招聘 | ROLE_VERIFIED |
+| 生数科技 | https://shengshu.jobs.feishu.cn/index/ | 流式视频 Agent 工程师 | 当前官方招聘（正式/实习） | ROLE_VERIFIED |
+| 硅基流动 | https://app.mokahr.com/su/Idzsq | 端侧AI Agent工程师(A24765) | 当前官方招聘 | ROLE_VERIFIED |
 | 面壁智能 | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | Agentic Engineering | 2027/2028/2029顶尖人才实习 | ROLE_VERIFIED |
 | Manus | https://jobs.ashbyhq.com/manusai | AI Agent Engineer | 当前官方招聘 | FULL_FIRST_PARTY_JD |
 | 无问芯穹/Infini-AI | https://infinigence.jobs.feishu.cn/088717 | 推理框架开发工程师 | 2027秋季校园招聘 | ROLE_VERIFIED |
@@ -82,7 +82,7 @@ ai-agent-jd-market.md
 | 蔚来 | https://nio.jobs.feishu.cn/campus/ | Super Sparks-校招-车端智能体框架和应用工程师 | 2027校园招聘 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
 | 顺丰 | https://campus.sf-express.com/positionList | AI开发工程师（顺丰科技） | 当前校园招聘 | FULL_FIRST_PARTY_JD |
 
-> 这张表是“每家公司去哪里搜、至少有什么相关岗”的入口索引。完整职位族和 JD 见 [official-2027-agent-jobs.generated.md](official-2027-agent-jobs.generated.md)；证据等级与自动维护状态见 [official-2027-coverage-audit.generated.md](official-2027-coverage-audit.generated.md)。
+> 这张表回答“每家公司去哪里搜、至少有什么相关岗”。完整职位族和 JD 见 [official-2027-agent-jobs.generated.md](official-2027-agent-jobs.generated.md)；更多已核验代表岗位见 [official-company-role-index.md](official-company-role-index.md)。
 ## 5. AI 应用开发｜当前校招 Active 官方 JD
 
 ### 快手｜AI应用开发工程师
