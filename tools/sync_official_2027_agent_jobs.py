@@ -1387,17 +1387,20 @@ def main() -> int:
             jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
             matches = target_matches(jobs, bool(src.get("verified_2027_project")))
             raw_status = txt(dyn.get("status"))
-            has_2027 = bool(dyn.get("has2027"))
-            full_search = bool(dyn.get("full_keyword_search"))
+            has_2027 = bool(src.get("verified_2027_project")) or bool(dyn.get("has2027"))
+            full_search = bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete"))
             if raw_status == "BROWSER_ENUMERATED":
                 status = "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES"
                 error = ""
             elif raw_status == "BROWSER_ENUMERATED_ZERO" and has_2027 and full_search:
                 status = "ENUMERATED_ZERO_MATCHES"
                 error = ""
+            elif raw_status == "BROWSER_NO_PUBLIC_2027":
+                status = "NO_PUBLIC_2027_PROJECT"
+                error = "固定官方招聘入口已完整巡检，未公开2027校园招聘项目"
             elif raw_status == "BROWSER_NO_2027_EVIDENCE":
                 status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
-                error = "官方根站未取得公开2027项目证据" if status == "NO_PUBLIC_2027_PROJECT" else "官网浏览完成但未能证明无公开2027项目；继续适配"
+                error = "官方根站未取得公开2027项目证据" if status == "NO_PUBLIC_2027_PROJECT" else "官网存在访问异常，尚不能判断2027项目状态"
             elif raw_status in ("BROWSER_2027_NEEDS_ADAPTER","BROWSER_OK_0_MATCH"):
                 status = "BLOCKED"
                 error = "发现2027官方项目，但尚未完成全关键词/职位详情枚举；不能判0"
@@ -1436,8 +1439,8 @@ def main() -> int:
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
             browser_terminal = (
-                bool(dyn.get("has2027"))
-                and bool(dyn.get("full_keyword_search"))
+                (bool(src.get("verified_2027_project")) or bool(dyn.get("has2027")))
+                and (bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete")))
                 and txt(dyn.get("status")) == "BROWSER_ENUMERATED"
             )
             if raw_jobs and browser_terminal:
