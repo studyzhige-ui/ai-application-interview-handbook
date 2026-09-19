@@ -1396,8 +1396,12 @@ def main() -> int:
                 status = "ENUMERATED_ZERO_MATCHES"
                 error = ""
             elif raw_status == "BROWSER_NO_PUBLIC_2027":
-                status = "NO_PUBLIC_2027_PROJECT"
-                error = "固定官方招聘入口已完整巡检，未公开2027校园招聘项目"
+                status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
+                error = (
+                    "固定官方招聘入口已完整巡检，未公开2027校园招聘项目"
+                    if status == "NO_PUBLIC_2027_PROJECT"
+                    else "官网未发现2027证据，但该公司仍有校园/招聘入口，不能直接判定无公开2027项目"
+                )
             elif raw_status == "BROWSER_NO_2027_EVIDENCE":
                 status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
                 error = "官方根站未取得公开2027项目证据" if status == "NO_PUBLIC_2027_PROJECT" else "官网存在访问异常，尚不能判断2027项目状态"
