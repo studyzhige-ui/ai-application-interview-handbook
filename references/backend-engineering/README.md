@@ -6,9 +6,9 @@
 
 ---
 
-更新日期：2026-09-11
+资料核验日期：2026-09-11
 
-> 本目录只用于校准通用后端工程机制与当前平台语义，**不计入 HUMAN-A Source Count**。市场频率仍然只来自冻结 `S001–S279`。
+> 本目录用于校准通用后端工程机制与平台版本语义，**不计入 HUMAN-A Source Count**。HUMAN-A 频率统计基线为 `S001–S279`。
 
 ## 1. Reliability / Overload / Retry
 
@@ -99,7 +99,7 @@
 
 课程使用：Authentication / Authorization 边界、Authorization Code + PKCE、Refresh Token 安全边界。
 
-> OAuth 2.1 仍是规范演进工作，教材不会把草案状态写成已经取代所有 OAuth 2.0 部署的绝对事实。
+> OAuth 2.1 仍处于规范整合与演进阶段；教材不将其表述为对所有 OAuth 2.0 部署的统一替代。
 
 ---
 
@@ -129,7 +129,7 @@ Tier A：S001–S279 HUMAN-A Canonical
 → 市场频率 / 真实问法 / 追问深度
 
 Tier B：官方标准 / 官方工程资料
-→ 稳定机制 / 当前平台事实 / Failure Principle
+→ 稳定机制 / 版本化平台事实 / Failure Principle
 
 Tier C：课程抽象
 → beginner-first 的 0→1 知识顺序

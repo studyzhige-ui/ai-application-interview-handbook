@@ -13,7 +13,7 @@
 | `validate_agent_readability.py` | 校验 Agent 教材可读性与结构 |
 | `phase2b_canonical_audit.json` | Phase 2B Canonical 审计数据 |
 
-路径基线已经统一到：
+脚本使用的仓库路径基线：
 
 ```text
 market/

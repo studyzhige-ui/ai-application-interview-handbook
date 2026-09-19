@@ -2,13 +2,13 @@
 
 [← FastAPI](../../curriculum/02-fastapi/README.md) · [↑ Handbook 总目录](../../README.md) · [Market 首页](../../market/README.md)
 
-> **用途：技术事实校准。** 官方资料只说明当前框架机制，不改变 HUMAN-A 面试频率。
+> **用途：技术事实与版本校准。** 官方资料说明框架机制与版本边界，不改变 HUMAN-A 面试频率。
 
 ---
 
-更新日期：2026-09-11
+资料核验日期：2026-09-11
 
-> 本索引只负责 FastAPI 教材的**技术事实与版本校准**。市场频率仍只来自冻结 `S001–S279` HUMAN-A；官方文档不会创建 Canonical，也不会增加 Source Count。
+> 本索引负责 FastAPI 教材的**技术事实与版本校准**。HUMAN-A 频率统计基线为 `S001–S279`；官方文档不会创建 Canonical，也不会增加 Source Count。
 
 ---
 
@@ -37,11 +37,11 @@ RequestValidationError
 - Advanced Dependencies：https://fastapi.tiangolo.com/advanced/advanced-dependencies/
 - Lifespan Events：https://fastapi.tiangolo.com/advanced/events/
 
-当前需要特别注意的版本事实：
+版本敏感事实：
 
-- 带 `yield` 的 Dependency 当前支持 `scope="function"` 与 `scope="request"`；
+- 在核验版本中，带 `yield` 的 Dependency 支持 `scope="function"` 与 `scope="request"`；
 - 默认 request scope 围绕 Request/Response 生命周期；
-- 相关 cleanup timing 历史上多次演进，因此教材不把旧版本行为写成永久规律。
+- cleanup timing 属于版本敏感行为，教材不把单一版本行为写成永久规律。
 
 ### Async
 
@@ -61,7 +61,7 @@ ordinary sync helper directly called inside async def → not automatically offl
 - SSE Reference：https://fastapi.tiangolo.com/reference/sse/
 - WebSockets：https://fastapi.tiangolo.com/advanced/websockets/
 
-当前官方 SSE 能力：
+核验版本的官方 SSE 能力：
 
 - `fastapi.sse.EventSourceResponse`
 - `fastapi.sse.ServerSentEvent`
@@ -125,7 +125,7 @@ ASGI Web primitives
 ## 3. Uvicorn
 
 - Documentation：https://www.uvicorn.org/
-- ASGI concepts / server docs 以官方当前页面为准。
+- ASGI concepts / server 行为以对应版本的官方文档为准。
 
 用于校准：
 
@@ -139,7 +139,7 @@ Network ↔ ASGI Application
 
 ## 4. Pydantic
 
-- Current Docs：https://docs.pydantic.dev/latest/
+- Documentation：https://docs.pydantic.dev/latest/
 
 教材使用现代 Pydantic 心智模型：
 
@@ -151,7 +151,7 @@ Serialization
 JSON Schema
 ```
 
-历史 Pydantic v1 API 只在兼容性语境出现，不作为当前唯一写法。
+Pydantic v1 API 只在兼容性语境出现，不作为默认教学写法。
 
 ---
 
@@ -162,7 +162,7 @@ HUMAN-A FastAPI Canonical
 → 市场真实问法 / 追问深度
 
 FastAPI / Starlette / Uvicorn / Pydantic Official Docs
-→ 当前框架机制 / 版本事实
+→ 框架机制 / 版本事实
 
 Curriculum
 → beginner-first 0→1 知识主干
