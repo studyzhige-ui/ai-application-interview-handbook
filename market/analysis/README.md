@@ -1,6 +1,6 @@
 # Research Analysis｜Phase 2B Market Analysis
 
-[← Research 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../questions/README.md)
+[← Research 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../../interview/canonical/README.md)
 
 > **状态：✅ Frozen Analysis。** 自动统计层只描述冻结 HUMAN-A 市场数据，不承担课程知识补全，也不维护易过期的 Curriculum 下一步状态。
 

@@ -1,6 +1,6 @@
 # Research｜2026 AI Application / Agent 真人面经研究库
 
-[↑ Handbook 总目录](../README.md) · [Canonical Questions](questions/README.md) · [Market Analysis](analysis/README.md) · [Curriculum Knowledge Map](../roadmap/knowledge-map.md)
+[↑ Handbook 总目录](../README.md) · [Canonical Questions](../interview/canonical/README.md) · [Market Analysis](analysis/README.md) · [Curriculum Knowledge Map](../guide/knowledge-map.md)
 
 > **状态：🟢 Continuous Monitoring。** 当前正式库为 `S001–S288` 共 **288** 个 HUMAN-A 独立招聘流程、**29** 个正式 Batch；自 2026-09-16 起按“最近 3 天发现窗口 + 全历史去重”持续增量监测。每天三次检索合并为一个日批次；质量优先，不为数量降低 HUMAN-A 门槛。
 
@@ -64,8 +64,8 @@
 
 详细规则：
 
-- [Source Quality Policy](quality/source-quality-policy.md)
-- [Role Scope Policy](quality/role-scope-policy.md)
+- [Source Quality Policy](policies/source-quality-policy.md)
+- [Role Scope Policy](policies/role-scope-policy.md)
 
 ## 4. 去重原则
 

@@ -1,6 +1,6 @@
 # Agent｜源码与权威资料索引
 
-[← Agent Harness](../../agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../README.md)
+[← Agent Harness](../../curriculum/09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Research 首页](../../market/README.md)
 
 > **用途：Tier B/C 技术证据。** 只补 Runtime 实现与工程原则，不改变 HUMAN-A Source Count。
 
@@ -58,7 +58,7 @@ Tier D 不是新的事实来源，而是把 A+B+C 抽象成适合初学者的稳
 
 能力入口：[`runtime-capability-map.md`](runtime-capability-map.md)
 
-正式教材：[Agent教材](../../agent/README.md)
+正式教材：[Agent教材](../../curriculum/09-agent/README.md)
 
 ---
 
@@ -194,4 +194,4 @@ Capability 到教材的正式映射见 [`runtime-capability-map.md`](runtime-cap
 - [Agents SDK Runner](https://openai.github.io/openai-agents-python/running_agents/)、[Sessions](https://openai.github.io/openai-agents-python/sessions/)、[Handoffs](https://openai.github.io/openai-agents-python/handoffs/)、[Tracing](https://openai.github.io/openai-agents-python/tracing/)：执行、会话、交接和诊断不同责任。
 - [LangGraph Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)、[Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts)、[LangChain Agents](https://docs.langchain.com/oss/python/langchain/agents)：Checkpointer/Store、恢复单位与create_agent的真实关系。
 
-官方可变页面以本次查阅日期为界；后续升级需要重新核对，不把官方当前页与固定源码拼成同一个不存在的版本。详见[读者修订记录](../../roadmap/agent-reader-revision.md)。
+官方可变页面以本次查阅日期为界；后续升级需要重新核对，不把官方当前页与固定源码拼成同一个不存在的版本。详见[读者修订记录](../../guide/project/agent-reader-revision.md)。
