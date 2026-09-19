@@ -6,13 +6,13 @@
 
 | 模块 | Curriculum | Canonical | 状态 | 入口 |
 |---|---:|---:|---|---|
-| Python Foundation | 13 | 15 | ✅ | [README](../../curriculum/01-curriculum/01-python/README.md) |
-| FastAPI | 16 | 4 | ✅ | [README](../../curriculum/02-curriculum/02-fastapi/README.md) |
-| AI Backend Engineering | 22 | 39 | ✅ | [README](../../curriculum/03-curriculum/03-backend-engineering/README.md) |
+| Python Foundation | 13 | 15 | ✅ | [README](../../curriculum/01-python/README.md) |
+| FastAPI | 16 | 4 | ✅ | [README](../../curriculum/02-fastapi/README.md) |
+| AI Backend Engineering | 22 | 39 | ✅ | [README](../../curriculum/03-backend-engineering/README.md) |
 
 ## 正式学习顺序
 
-[Python Foundation](../../curriculum/01-curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-curriculum/02-fastapi/README.md) → [AI Backend Engineering](../../curriculum/03-curriculum/03-backend-engineering/README.md)
+[Python Foundation](../../curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-fastapi/README.md) → [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md)
 
 ```text
 Python

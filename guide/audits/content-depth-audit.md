@@ -27,16 +27,16 @@
 
 | 模块 | Blocks | Numbering | Quality Status |
 |---|---:|---|---|
-| [Python Foundation](../../curriculum/01-curriculum/01-python/README.md) | 13 | ✅ `01–13` | ✅ PASS |
-| [FastAPI](../../curriculum/02-curriculum/02-fastapi/README.md) | 16 | ✅ `01–16` | ✅ PASS |
-| [AI Backend Engineering](../../curriculum/03-curriculum/03-backend-engineering/README.md) | 22 | ✅ `01–22` | ✅ PASS |
-| [MySQL](../../curriculum/04-curriculum/04-mysql/README.md) | 23 | ✅ `01–23` | ✅ PASS |
-| [Redis](../../curriculum/05-curriculum/05-redis/README.md) | 24 | ✅ `01–24` | ✅ PASS |
-| [Vector Database](../../curriculum/06-curriculum/06-vector-db/README.md) | 16 | ✅ `01–16` | ✅ PASS |
-| [LLM Foundation（应用工程深度）](../../curriculum/07-curriculum/07-llm-foundation/README.md) | 14 | ✅ `01–14` | ✅ PASS |
-| [RAG](../../curriculum/08-curriculum/08-rag/README.md) | 14 | ✅ `01–14` | ✅ PASS |
-| [Agent](../../curriculum/09-curriculum/09-agent/README.md) | 24 | ✅ `01–24` | ✅ PASS |
-| [System Design](../../curriculum/10-curriculum/10-system-design/README.md) | 19 | ✅ `01–19` | ✅ PASS |
+| [Python Foundation](../../curriculum/01-python/README.md) | 13 | ✅ `01–13` | ✅ PASS |
+| [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | ✅ `01–16` | ✅ PASS |
+| [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) | 22 | ✅ `01–22` | ✅ PASS |
+| [MySQL](../../curriculum/04-mysql/README.md) | 23 | ✅ `01–23` | ✅ PASS |
+| [Redis](../../curriculum/05-redis/README.md) | 24 | ✅ `01–24` | ✅ PASS |
+| [Vector Database](../../curriculum/06-vector-db/README.md) | 16 | ✅ `01–16` | ✅ PASS |
+| [LLM Foundation（应用工程深度）](../../curriculum/07-llm-foundation/README.md) | 14 | ✅ `01–14` | ✅ PASS |
+| [RAG](../../curriculum/08-rag/README.md) | 14 | ✅ `01–14` | ✅ PASS |
+| [Agent](../../curriculum/09-agent/README.md) | 24 | ✅ `01–24` | ✅ PASS |
+| [System Design](../../curriculum/10-system-design/README.md) | 19 | ✅ `01–19` | ✅ PASS |
 
 **当前正文总量：185 blocks。**
 

@@ -249,4 +249,4 @@ tests_passed?          → Verification
 
 Persistence（持久化）是让选定信息活过进程重启，不是把全部内存写入存储。Resume（恢复执行）不是Summary（摘要）；Compaction（上下文压缩）只管理模型输入规模。Trace（执行追踪）用于定位阶段、耗时与失败，不是默认的恢复账本。
 
-关键操作身份与回执按业务可靠性保存；产物按交付需要保存；诊断可采样、脱敏和到期删除。版本用于确实发生的并发、变更或兼容问题，ID用于标识；不要求每个事件复制完整Prompt、工具定义和所有版本。见[状态与持久化](../curriculum/09-curriculum/09-agent/docs/12-StateHistoryAndPersistence.md)、[检查点与恢复](../curriculum/09-curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md)、[Trace](../curriculum/09-curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md)。
+关键操作身份与回执按业务可靠性保存；产物按交付需要保存；诊断可采样、脱敏和到期删除。版本用于确实发生的并发、变更或兼容问题，ID用于标识；不要求每个事件复制完整Prompt、工具定义和所有版本。见[状态与持久化](../curriculum/09-agent/docs/12-StateHistoryAndPersistence.md)、[检查点与恢复](../curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md)、[Trace](../curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md)。

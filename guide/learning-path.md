@@ -1,6 +1,6 @@
 # Learning Path｜十板块正式学习路线
 
-[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [Coding & Problem Solving](../practice/practice/coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md)
+[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [Coding & Problem Solving](../practice/coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md)
 
 > **状态：✅ 第一版正式学习路线完成。** 这份路线解决“185 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
@@ -12,16 +12,16 @@
 
 ## 1. 正式学习顺序永远不变
 
-[Python Foundation](../curriculum/01-curriculum/01-python/README.md)
-→ [FastAPI](../curriculum/02-curriculum/02-fastapi/README.md)
-→ [AI Backend Engineering](../curriculum/03-curriculum/03-backend-engineering/README.md)
-→ [MySQL](../curriculum/04-curriculum/04-mysql/README.md)
-→ [Redis](../curriculum/05-curriculum/05-redis/README.md)
-→ [Vector Database](../curriculum/06-curriculum/06-vector-db/README.md)
-→ [LLM Foundation](../curriculum/07-curriculum/07-llm-foundation/README.md)
-→ [RAG](../curriculum/08-curriculum/08-rag/README.md)
-→ [Agent](../curriculum/09-curriculum/09-agent/README.md)
-→ [System Design](../curriculum/10-curriculum/10-system-design/README.md)
+[Python Foundation](../curriculum/01-python/README.md)
+→ [FastAPI](../curriculum/02-fastapi/README.md)
+→ [AI Backend Engineering](../curriculum/03-backend-engineering/README.md)
+→ [MySQL](../curriculum/04-mysql/README.md)
+→ [Redis](../curriculum/05-redis/README.md)
+→ [Vector Database](../curriculum/06-vector-db/README.md)
+→ [LLM Foundation](../curriculum/07-llm-foundation/README.md)
+→ [RAG](../curriculum/08-rag/README.md)
+→ [Agent](../curriculum/09-agent/README.md)
+→ [System Design](../curriculum/10-system-design/README.md)
 
 不要因为 Agent / RAG 高频就从中间开始，也不要因为某个基础题真人频率低就跳过必要前置。
 
