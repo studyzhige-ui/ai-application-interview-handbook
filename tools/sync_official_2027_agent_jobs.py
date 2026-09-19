@@ -28,6 +28,7 @@ OUT_MD = ROOT / "market/jobs/official-2027-agent-jobs.generated.md"
 OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
 BROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
 FEISHU_CACHE = ROOT / "market/jobs/official-2027-feishu-discovery.generated.json"
+MOKA_CACHE = ROOT / "market/jobs/official-2027-moka-discovery.generated.json"
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36"
 HEADERS = {
@@ -858,6 +859,18 @@ def main() -> int:
         except Exception as e:
             print(f"feishu discovery cache parse warning: {e}", file=sys.stderr)
 
+    moka_by_company: dict[str, dict] = {}
+    if MOKA_CACHE.exists():
+        try:
+            moka_payload = json.loads(MOKA_CACHE.read_text(encoding="utf-8"))
+            moka_by_company = {
+                x.get("company"): x
+                for x in (moka_payload.get("results") or [])
+                if x.get("company")
+            }
+        except Exception as e:
+            print(f"moka discovery cache parse warning: {e}", file=sys.stderr)
+
     def to_jobs(company: str, raw_jobs: list[dict], fallback_url: str, fallback_api: str) -> list[Job]:
         return [
             Job(
@@ -907,6 +920,19 @@ def main() -> int:
                 "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
                 len(jobs), len(matches)
             ), matches
+
+        moka = moka_by_company.get(company) or {}
+        if moka.get("status") == "OK":
+            jobs = to_jobs(company, moka.get("jobs") or [], src["portal"], txt(moka.get("api")) or ("MOKA:" + src["portal"]))
+            matches = target_matches(jobs)
+            cycle = txt(moka.get("cycle_evidence"))
+            has_2027 = "2027" in cycle or any("2027" in (j.cycle_evidence or "") for j in jobs)
+            if has_2027:
+                return SourceResult(
+                    company, "moka_official", src["portal"],
+                    "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
+                    len(jobs), len(matches)
+                ), matches
 
         if mode == "portal_only":
             dyn = dynamic_by_company.get(company) or {}
