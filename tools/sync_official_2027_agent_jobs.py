@@ -1397,19 +1397,11 @@ def main() -> int:
         ]
 
     def target_matches(jobs: list[Job], source_verified_2027: bool = False) -> list[Job]:
-        def is_2027(j: Job) -> bool:
-            if source_verified_2027:
-                return True
-            evidence = " ".join([
-                j.title or "", j.category or "", j.cycle_evidence or "",
-                j.description or "", j.requirements or ""
-            ]).lower()
-            return "2027" in evidence
-
+        # Current-campus policy: the registered live first-party campus/new-grad
+        # pool itself is the time gate. Year text is metadata only.
         matches = [
             j for j in jobs
             if campusish(j)
-            and is_2027(j)
             and is_agent_related(j, keywords)
             and (not engineering_signals or looks_engineering(j, engineering_signals))
             and not is_hard_excluded(j, excludes)
@@ -1431,79 +1423,42 @@ def main() -> int:
         feishu = feishu_by_company.get(company) or {}
         if feishu.get("status") == "OK":
             jobs = to_jobs(company, feishu.get("jobs") or [], src["portal"], "FEISHU:" + src["portal"])
-            matches = target_matches(jobs, bool(src.get("verified_2027_project")))
-            feishu_has_2027 = bool(src.get("verified_2027_project")) or any(
-                "2027" in " ".join([
-                    j.title or "", j.category or "", j.cycle_evidence or "",
-                    j.description or "", j.requirements or ""
-                ])
-                for j in jobs
-            )
-            if feishu_has_2027:
-                return SourceResult(
-                    company, "feishu_official", src["portal"],
-                    "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
-                    len(jobs), len(matches)
-                ), matches
-            if src.get("allow_no_public_2027"):
-                return SourceResult(
-                    company, "feishu_official", src["portal"],
-                    "NO_PUBLIC_2027_PROJECT", len(jobs), 0,
-                    "官方 Feishu 职位池已完整枚举，未发现公开 2027 校招证据"
-                ), []
+            matches = target_matches(jobs)
+            return SourceResult(
+                company, "feishu_official", src["portal"],
+                "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
+                len(jobs), len(matches)
+            ), matches
 
         moka = moka_by_company.get(company) or {}
         if moka.get("status") == "OK":
             jobs = to_jobs(company, moka.get("jobs") or [], src["portal"], txt(moka.get("api")) or ("MOKA:" + src["portal"]))
-            matches = target_matches(jobs, bool(src.get("verified_2027_project")))
-            cycle = txt(moka.get("cycle_evidence"))
-            has_2027 = bool(src.get("verified_2027_project")) or "2027" in cycle or any(
-                "2027" in " ".join([
-                    j.title or "", j.category or "", j.cycle_evidence or "",
-                    j.description or "", j.requirements or ""
-                ])
-                for j in jobs
-            )
-            if has_2027:
-                return SourceResult(
-                    company, "moka_official", src["portal"],
-                    "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
-                    len(jobs), len(matches)
-                ), matches
-            if src.get("allow_no_public_2027"):
-                return SourceResult(
-                    company, "moka_official", src["portal"],
-                    "NO_PUBLIC_2027_PROJECT", len(jobs), 0,
-                    "官方 Moka 职位池已完整枚举，未发现公开 2027 校招证据"
-                ), []
+            matches = target_matches(jobs)
+            return SourceResult(
+                company, "moka_official", src["portal"],
+                "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
+                len(jobs), len(matches)
+            ), matches
 
         if mode == "portal_only":
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
             jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
-            matches = target_matches(jobs, bool(src.get("verified_2027_project")))
+            matches = target_matches(jobs)
             raw_status = txt(dyn.get("status"))
-            has_2027 = bool(src.get("verified_2027_project")) or bool(dyn.get("has2027"))
             full_search = bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete"))
             if raw_status == "BROWSER_ENUMERATED":
                 status = "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES"
                 error = ""
-            elif raw_status == "BROWSER_ENUMERATED_ZERO" and has_2027 and full_search:
+            elif raw_status in ("BROWSER_ENUMERATED_ZERO","BROWSER_OK_0_MATCH") and full_search:
                 status = "ENUMERATED_ZERO_MATCHES"
                 error = ""
-            elif raw_status == "BROWSER_NO_PUBLIC_2027":
-                status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
-                error = (
-                    "固定官方招聘入口已完整巡检，未公开2027校园招聘项目"
-                    if status == "NO_PUBLIC_2027_PROJECT"
-                    else "官网未发现2027证据，但该公司仍有校园/招聘入口，不能直接判定无公开2027项目"
-                )
-            elif raw_status == "BROWSER_NO_2027_EVIDENCE":
-                status = "NO_PUBLIC_2027_PROJECT" if src.get("allow_no_public_2027") else "BLOCKED"
-                error = "官方根站未取得公开2027项目证据" if status == "NO_PUBLIC_2027_PROJECT" else "官网存在访问异常，尚不能判断2027项目状态"
-            elif raw_status in ("BROWSER_2027_NEEDS_ADAPTER","BROWSER_OK_0_MATCH"):
+            elif raw_status in ("BROWSER_NO_PUBLIC_CAMPUS","BROWSER_NO_PUBLIC_2027"):
+                status = "NO_PUBLIC_CAMPUS_PROJECT"
+                error = "官网当前未公开校园招聘职位池"
+            elif raw_status in ("BROWSER_NO_CAMPUS_EVIDENCE","BROWSER_NO_2027_EVIDENCE","BROWSER_CAMPUS_NEEDS_ADAPTER","BROWSER_2027_NEEDS_ADAPTER"):
                 status = "BLOCKED"
-                error = "发现2027官方项目，但尚未完成全关键词/职位详情枚举；不能判0"
+                error = "官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位"
             elif raw_status == "BROWSER_ERROR":
                 status = "BLOCKED"
                 error = txt(dyn.get("error")) or "浏览器枚举失败"
@@ -1516,25 +1471,7 @@ def main() -> int:
             return SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0), []
         try:
             jobs = fetcher(src)
-            source_verified = bool(src.get("verified_2027_project"))
-            uniq = target_matches(jobs, source_verified)
-            explicit_2027 = source_verified or any(
-                "2027" in " ".join([
-                    j.title or "", j.category or "", j.cycle_evidence or "",
-                    j.description or "", j.requirements or ""
-                ])
-                for j in jobs
-            )
-            if not explicit_2027:
-                if src.get("allow_no_public_2027"):
-                    return SourceResult(
-                        company, mode, src["portal"], "NO_PUBLIC_2027_PROJECT", len(jobs), 0,
-                        "官方公开职位池已完整枚举，未发现 2027 校招项目/职位证据"
-                    ), []
-                return SourceResult(
-                    company, mode, src["portal"], "BLOCKED", len(jobs), len(uniq),
-                    "官方职位池已取回，但尚未证明当前枚举范围属于2027；不能判定0岗位"
-                ), uniq
+            uniq = target_matches(jobs)
             status = "ENUMERATED_WITH_MATCHES" if uniq else "ENUMERATED_ZERO_MATCHES"
             return SourceResult(company, mode, src["portal"], status, len(jobs), len(uniq)), uniq
         except Exception as e:
@@ -1544,13 +1481,12 @@ def main() -> int:
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
             browser_terminal = (
-                (bool(src.get("verified_2027_project")) or bool(dyn.get("has2027")))
-                and (bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete")))
+                (bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete")))
                 and txt(dyn.get("status")) == "BROWSER_ENUMERATED"
             )
             if raw_jobs and browser_terminal:
                 browser_jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
-                matches = target_matches(browser_jobs, bool(src.get("verified_2027_project")))
+                matches = target_matches(browser_jobs)
                 return SourceResult(
                     company, "browser_fallback", src["portal"],
                     "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES",
