@@ -46,14 +46,13 @@ def main() -> int:
         jobs = s.get("job_list_url") or ""
         mode = s.get("mode") or ""
         state = s.get("campus_entry_status")
-        campus_search = s.get("campus_search_url")
-        career_watch = s.get("career_watch_url")
+        search_url = s.get("search_url") or s.get("job_list_url") or ""
+        board_scope = s.get("board_scope") or ("campus" if s.get("current_campus_board") else "official_recruiting")
 
         if not root.startswith("https://"):
             errors.append(f"{company}: official_root missing/invalid")
         for label, url in (("official_root", root), ("job_list_url", jobs),
-                           ("campus_search_url", campus_search or ""),
-                           ("career_watch_url", career_watch or "")):
+                           ("search_url", search_url)):
             if not url:
                 continue
             if not url.startswith("https://"):
@@ -63,22 +62,18 @@ def main() -> int:
             if any(h == b or h.endswith("." + b) for b in BANNED):
                 errors.append(f"{company}: {label} uses banned second-hand domain {h}")
 
-        if state == "PUBLIC_CAMPUS_BOARD":
-            if not campus_search:
-                errors.append(f"{company}: public campus board must define campus_search_url")
-            if campus_search != jobs:
-                errors.append(f"{company}: job_list_url must equal campus_search_url for public campus board")
-            if s.get("current_campus_board") is not True:
-                errors.append(f"{company}: PUBLIC_CAMPUS_BOARD requires current_campus_board=true")
-        elif state == "NO_PUBLIC_CAMPUS_BOARD":
-            if campus_search:
-                errors.append(f"{company}: no-public-campus company must not expose campus_search_url")
-            if not career_watch:
-                errors.append(f"{company}: no-public-campus company must define career_watch_url")
-            if s.get("current_campus_board") is not False:
-                errors.append(f"{company}: NO_PUBLIC_CAMPUS_BOARD requires current_campus_board=false")
-        else:
+        if state not in {"PUBLIC_CAMPUS_BOARD", "PUBLIC_OFFICIAL_BOARD"}:
             errors.append(f"{company}: invalid/missing campus_entry_status")
+        if board_scope not in {"campus", "official_recruiting"}:
+            errors.append(f"{company}: invalid/missing board_scope")
+        if not search_url:
+            errors.append(f"{company}: every company must define enumerable search_url")
+        if search_url != jobs:
+            errors.append(f"{company}: job_list_url must equal search_url")
+        if board_scope == "campus" and s.get("current_campus_board") is not True:
+            errors.append(f"{company}: campus board requires current_campus_board=true")
+        if board_scope == "official_recruiting" and s.get("current_campus_board") is not False:
+            errors.append(f"{company}: official recruiting board requires current_campus_board=false")
 
         if mode != "portal_only":
             token = f'"{mode}":'
