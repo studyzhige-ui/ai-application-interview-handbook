@@ -249,11 +249,11 @@ def fetch_xiaomi(src: dict) -> list[Job]:
     return out
 
 
+
 def fetch_kuaishou(src: dict) -> list[Job]:
-    """Enumerate Kuaishou 2027 campus project through its public official API."""
+    """Enumerate Kuaishou's official 2027 project; list API already returns full JD."""
     base = "https://campus.kuaishou.cn"
     list_api = base + "/recruit/campus/e/api/v1/open/positions/simple"
-    detail_api = base + "/recruit/campus/e/api/v1/open/positions/find"
     project = str(src.get("project_code") or "20271779425607")
     headers = {
         **HEADERS,
@@ -262,45 +262,35 @@ def fetch_kuaishou(src: dict) -> list[Job]:
     }
     out: list[Job] = []
     page = 1
-    while page <= 200:
+    while page <= 20:
         payload = {
             "recruitSubProjectCodes": [project],
-            "pageSize": 20,
+            "pageSize": 500,
             "pageNum": page,
+            "positionNatureCode": "fulltime",
         }
         r = requests.post(list_api, json=payload, headers=headers, timeout=TIMEOUT)
         r.raise_for_status()
         body = r.json()
+        if body.get("code") not in (None, 0):
+            raise RuntimeError(f"Kuaishou API code={body.get('code')} message={body.get('message')}")
         result = body.get("result") or {}
         rows = result.get("list") or []
         if not rows:
             break
-        for row in rows:
-            jid = txt(row.get("id"))
-            if not jid:
-                continue
-            detail = requests.get(
-                detail_api,
-                params={"id": jid, "positionStatus": "Release"},
-                headers=HEADERS,
-                timeout=TIMEOUT,
-            )
-            detail.raise_for_status()
-            dbody = detail.json()
-            j = dbody.get("result") or row
+        for j in rows:
+            jid = txt(j.get("id"))
+            code = txt(j.get("code"))
             locations = j.get("workLocationDicts") or []
             city = " / ".join(
                 txt(x.get("name")) for x in locations if isinstance(x, dict) and x.get("name")
             )
-            nature = txt(j.get("positionNatureCode"))
-            title = txt(j.get("name"))
-            code = txt(j.get("code"))
             out.append(Job(
                 src["company"],
-                title,
+                txt(j.get("name")),
                 jid,
                 city,
-                "实习" if nature == "intern" else "2027校招正式",
+                "2027校招正式",
                 txt(j.get("departmentName") or j.get("positionCategoryName")),
                 txt(j.get("description")),
                 txt(j.get("positionDemand")),
@@ -308,10 +298,9 @@ def fetch_kuaishou(src: dict) -> list[Job]:
                 list_api,
                 f"快手官方2027项目 {project}",
             ))
-        total = int(result.get("total") or result.get("totalCount") or 0)
-        if total and page * 20 >= total:
-            break
-        if len(rows) < 20:
+        pages = int(result.get("pages") or 0)
+        total = int(result.get("total") or 0)
+        if (pages and page >= pages) or (total and page * 500 >= total) or len(rows) < 500:
             break
         page += 1
     return out
