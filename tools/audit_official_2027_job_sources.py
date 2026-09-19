@@ -82,7 +82,7 @@ def main() -> int:
             out.append("- **%s** — %s：%s" % (r["company"], r["status"], r["reason"]))
     else:
         out.append("- 无。固定覆盖矩阵已全部闭环。")
-    OUT.write_text("\\n".join(out) + "\\n", encoding="utf-8")
+    OUT.write_text("\n".join(out) + "\n", encoding="utf-8")
     print("companies=%d terminal=%d blocked=%d" % (len(rows), len(rows)-len(blocked), len(blocked)))
     for r in blocked:
         print("BLOCKED %s: %s %s" % (r["company"], r["status"], r["reason"]))
