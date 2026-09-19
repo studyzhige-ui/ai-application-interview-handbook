@@ -81,14 +81,34 @@ def blob(job: Job) -> str:
     ]).lower()
 
 
-def is_agent_related(job: Job, keywords: list[str]) -> bool:
-    s = blob(job)
-    return any(k.lower() in s for k in keywords)
+def is_agent_related(job: Job, keywords: list[str], body_signals: list[str]) -> bool:
+    title = job.title.lower()
+    body = " ".join([job.category, job.department, job.description, job.requirements]).lower()
+    # A strong signal in the title is sufficient. In the body, require multiple
+    # Agent/application mechanisms so generic "AI应用探索/AI工具" boilerplate
+    # on ordinary engineering jobs does not become a false positive.
+    if any(k.lower() in title for k in keywords):
+        return True
+    hits = {k.lower() for k in body_signals if k.lower() in body}
+    return len(hits) >= 2
 
 
 def looks_engineering(job: Job, signals: list[str]) -> bool:
     title = job.title.lower()
     return any(s.lower() in title for s in signals)
+
+
+def training_heavy(job: Job, signals: list[str]) -> bool:
+    title = job.title.lower()
+    if any(k in title for k in ["算法", "研究员", "research scientist", "scientist"]):
+        return True
+    body = " ".join([job.description, job.requirements]).lower()
+    hits = {s.lower() for s in signals if s.lower() in body}
+    # Protect explicit Agent systems/infra roles that mention training only as
+    # surrounding context; generic R&D roles dominated by 2+ training signals
+    # are outside this engineering JD library.
+    protected = any(k in title for k in ["agent", "智能体", "harness", "runtime", "infra", "ai应用", "ai 应用", "大模型应用", "coding"])
+    return (not protected) and len(hits) >= 2
 
 
 def discover_api_candidates(portal: str) -> list[str]:
@@ -1338,6 +1358,8 @@ def main() -> int:
     keywords = [x.lower() for x in cfg.get("strong_agent_keywords", cfg["agent_keywords"])]
     excludes = [x.lower() for x in cfg["hard_exclude_title_keywords"]]
     engineering_signals = [x.lower() for x in cfg.get("engineering_title_signals", [])]
+    body_agent_signals = [x.lower() for x in cfg.get("body_agent_signals", [])]
+    training_signals = [x.lower() for x in cfg.get("training_heavy_signals", [])]
 
     all_matches: list[Job] = []
     results: list[SourceResult] = []
@@ -1405,7 +1427,8 @@ def main() -> int:
         matches = [
             j for j in jobs
             if (explicit_campus_board or campusish(j))
-            and is_agent_related(j, keywords)
+            and is_agent_related(j, keywords, body_agent_signals)
+            and not training_heavy(j, training_signals)
             and (not engineering_signals or looks_engineering(j, engineering_signals))
             and not is_hard_excluded(j, excludes)
             and "实习" not in (j.title + " " + j.category).lower()
