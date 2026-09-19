@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 from collections import Counter
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -19,6 +20,7 @@ OUT = ROOT / "market/jobs/official-2027-coverage-audit.generated.md"
 
 TERMINAL = {"ENUMERATED_WITH_MATCHES", "ENUMERATED_ZERO_MATCHES"}
 EXPECTED_COMPANIES = 41
+CACHE_MAX_AGE_SECONDS = 6 * 60 * 60
 
 
 def read(path: Path):
@@ -30,6 +32,20 @@ def read(path: Path):
         return {}
 
 
+def cache_is_fresh(payload: dict) -> bool:
+    raw = str(payload.get("generated_at") or "").strip()
+    if not raw:
+        return False
+    try:
+        stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    if stamp.tzinfo is None:
+        stamp = stamp.replace(tzinfo=timezone.utc)
+    age = (datetime.now(timezone.utc) - stamp.astimezone(timezone.utc)).total_seconds()
+    return -300 <= age <= CACHE_MAX_AGE_SECONDS
+
+
 def main() -> int:
     reg, index, norm, browser, feishu, moka = map(
         read, (REG, INDEX, NORM, BROWSER, FEISHU, MOKA)
@@ -39,6 +55,9 @@ def main() -> int:
     bs = {x.get("company"): x for x in browser.get("results", []) if x.get("company")}
     fs = {x.get("company"): x for x in feishu.get("results", []) if x.get("company")}
     ms = {x.get("company"): x for x in moka.get("results", []) if x.get("company")}
+    browser_fresh = cache_is_fresh(browser)
+    feishu_fresh = cache_is_fresh(feishu)
+    moka_fresh = cache_is_fresh(moka)
 
     rows = []
     hard_errors: list[str] = []
@@ -73,9 +92,14 @@ def main() -> int:
             or n.get("status")
             or ""
         )
-        b_full = bool(b.get("full_keyword_search")) or bool(b.get("list_scan_complete"))
-        b_status = b.get("status") or ""
-        ats_ok = (f.get("status") == "OK") or (m.get("status") == "OK")
+        b_full = browser_fresh and (
+            bool(b.get("full_keyword_search")) or bool(b.get("list_scan_complete"))
+        )
+        b_status = (b.get("status") or "") if browser_fresh else ""
+        ats_ok = (
+            (feishu_fresh and f.get("status") == "OK")
+            or (moka_fresh and m.get("status") == "OK")
+        )
 
         if raw_norm in TERMINAL:
             runtime = "ENUMERATED"
@@ -85,9 +109,9 @@ def main() -> int:
             int(f.get("requests") or 0) > 0 or int(m.get("requests") or 0) > 0
         ):
             runtime = "ENUMERATED"
-        elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []) and b_full:
+        elif browser_fresh and b.get("pages") and not any(p.get("error") for p in b.get("pages") or []) and b_full:
             runtime = "ENUMERATED"
-        elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []):
+        elif browser_fresh and b.get("pages") and not any(p.get("error") for p in b.get("pages") or []):
             runtime = "LIST_REACHABLE"
         else:
             runtime = "BLOCKED"
@@ -150,6 +174,9 @@ def main() -> int:
         f"- ENUMERATED：**{runtime_counts.get('ENUMERATED',0)}/{len(rows)}**",
         f"- LIST_REACHABLE：**{runtime_counts.get('LIST_REACHABLE',0)}**",
         f"- BLOCKED：**{runtime_counts.get('BLOCKED',0)}**",
+        f"- Browser cache fresh：**{'YES' if browser_fresh else 'NO'}**",
+        f"- Feishu cache fresh：**{'YES' if feishu_fresh else 'NO'}**",
+        f"- Moka cache fresh：**{'YES' if moka_fresh else 'NO'}**",
         "",
         f"> Runtime 不是岗位存在性 Gate。自动化恢复后继续把它推进到 {EXPECTED_COMPANIES}/{EXPECTED_COMPANIES} ENUMERATED，但中途结果必须允许提交，不能形成审计死锁。",
         "",

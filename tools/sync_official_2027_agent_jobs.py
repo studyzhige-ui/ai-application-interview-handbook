@@ -38,6 +38,7 @@ HEADERS = {
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
 }
 TIMEOUT = 12
+CACHE_MAX_AGE_SECONDS = 6 * 60 * 60
 
 
 @dataclass
@@ -172,6 +173,20 @@ def campusish(job: Job) -> bool:
 def clean(s: str, limit: int = 1600) -> str:
     s = re.sub(r"\s+", " ", s or "").strip()
     return s[:limit]
+
+
+def cache_is_fresh(payload: dict) -> bool:
+    raw = txt(payload.get("generated_at"))
+    if not raw:
+        return False
+    try:
+        stamp = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+    except ValueError:
+        return False
+    if stamp.tzinfo is None:
+        stamp = stamp.replace(tzinfo=timezone.utc)
+    age = (datetime.now(timezone.utc) - stamp.astimezone(timezone.utc)).total_seconds()
+    return -300 <= age <= CACHE_MAX_AGE_SECONDS
 
 
 def get_json(url: str, *, params=None, headers=None) -> Any:
@@ -1395,11 +1410,14 @@ def main() -> int:
     if BROWSER_CACHE.exists():
         try:
             browser_payload = json.loads(BROWSER_CACHE.read_text(encoding="utf-8"))
-            dynamic_by_company = {
-                x.get("company"): x
-                for x in (browser_payload.get("results") or [])
-                if x.get("company")
-            }
+            if cache_is_fresh(browser_payload):
+                dynamic_by_company = {
+                    x.get("company"): x
+                    for x in (browser_payload.get("results") or [])
+                    if x.get("company")
+                }
+            else:
+                print("browser discovery cache is stale; ignoring it for this runtime", file=sys.stderr)
         except Exception as e:
             print(f"browser discovery cache parse warning: {e}", file=sys.stderr)
 
@@ -1407,11 +1425,14 @@ def main() -> int:
     if FEISHU_CACHE.exists():
         try:
             feishu_payload = json.loads(FEISHU_CACHE.read_text(encoding="utf-8"))
-            feishu_by_company = {
-                x.get("company"): x
-                for x in (feishu_payload.get("results") or [])
-                if x.get("company")
-            }
+            if cache_is_fresh(feishu_payload):
+                feishu_by_company = {
+                    x.get("company"): x
+                    for x in (feishu_payload.get("results") or [])
+                    if x.get("company")
+                }
+            else:
+                print("feishu discovery cache is stale; ignoring it for this runtime", file=sys.stderr)
         except Exception as e:
             print(f"feishu discovery cache parse warning: {e}", file=sys.stderr)
 
@@ -1419,11 +1440,14 @@ def main() -> int:
     if MOKA_CACHE.exists():
         try:
             moka_payload = json.loads(MOKA_CACHE.read_text(encoding="utf-8"))
-            moka_by_company = {
-                x.get("company"): x
-                for x in (moka_payload.get("results") or [])
-                if x.get("company")
-            }
+            if cache_is_fresh(moka_payload):
+                moka_by_company = {
+                    x.get("company"): x
+                    for x in (moka_payload.get("results") or [])
+                    if x.get("company")
+                }
+            else:
+                print("moka discovery cache is stale; ignoring it for this runtime", file=sys.stderr)
         except Exception as e:
             print(f"moka discovery cache parse warning: {e}", file=sys.stderr)
 
