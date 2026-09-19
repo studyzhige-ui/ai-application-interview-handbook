@@ -147,8 +147,7 @@ async function searchInputs(page){
     try{
       await target.fill(q);
       await target.press("Enter").catch(()=>{});
-      await page.waitForTimeout(650);
-      await scroll(page);
+      await page.waitForTimeout(450);
       terms.push(q);
       hits.push(...await jobLinksOnPage(page,q));
     }catch{}
@@ -259,7 +258,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       if(seenHits.has(key)) continue;
       seenHits.add(key); uniqueHits.push(hit);
     }
-    const detailHits=uniqueHits.slice(0,60);
+    const detailHits=uniqueHits.slice(0,30);
     for(let i=0;i<detailHits.length;i+=4){
       const batch=await Promise.all(detailHits.slice(i,i+4).map(h=>scrapeSearchHit(context,company,h,cycleMatches)));
       for(const j of batch) if(j) collector.push(j);
@@ -286,10 +285,10 @@ async function processSource(browser,src){
   const endpointLog=[];
   const visited=new Set();
   const root=src.official_root || src.portal;
-  const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
+  const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : []), ...(src.extra_portals||[])];
   const pageResults=[];
   try{
-    while(queue.length && visited.size<5){
+    while(queue.length && visited.size<6){
       const u=queue.shift();
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog);
       if(pr){
