@@ -803,6 +803,428 @@ def fetch_alibaba_campus(src: dict) -> list[Job]:
     return out
 
 
+def _strip_html(value: Any) -> str:
+    s = txt(value)
+    s = re.sub(r"<br\s*/?>", "\n", s, flags=re.I)
+    s = re.sub(r"</(?:p|div|li|h[1-6]|tr|td|th|ul|ol|section)>", "\n", s, flags=re.I)
+    s = re.sub(r"<[^>]+>", "", s)
+    return (
+        s.replace("&nbsp;", " ").replace("&amp;", "&")
+        .replace("&lt;", "<").replace("&gt;", ">")
+        .replace("&quot;", '"').replace("&#39;", "'")
+        .strip()
+    )
+
+
+def fetch_xiaohongshu_2027(src: dict) -> list[Job]:
+    api = "https://job.xiaohongshu.com/websiterecruit/position/pageQueryPosition"
+    detail_api = "https://job.xiaohongshu.com/websiterecruit/position/queryPositionDetail"
+    headers = {**HEADERS, "Origin": "https://job.xiaohongshu.com", "Referer": "https://job.xiaohongshu.com/campus"}
+    out: list[Job] = []
+    page = 1
+    while page <= 30:
+        data = post_json(
+            api,
+            payload={
+                "positionName": "", "pageNum": page, "pageSize": 100,
+                "recruitType": "campus", "jobProjects": ["red_star_27"],
+            },
+            headers=headers,
+        )
+        d = data.get("data") or {}
+        rows = d.get("list") or []
+        if not rows:
+            break
+        for row in rows:
+            pid = txt(row.get("positionId"))
+            detail = {}
+            if pid:
+                try:
+                    detail_payload = get_json(detail_api, params={"positionId": pid}, headers=headers)
+                    detail = detail_payload.get("data") or {}
+                except Exception:
+                    detail = {}
+            title = txt(detail.get("positionName") or row.get("positionName"))
+            out.append(Job(
+                src["company"], title, pid,
+                txt(detail.get("workplace") or row.get("workplace")),
+                "2027校园招聘", txt(detail.get("positionType") or row.get("jobType")),
+                txt(detail.get("duty") or row.get("duty")),
+                txt(detail.get("qualification") or row.get("qualification")),
+                f"https://job.xiaohongshu.com/campus/position/{pid}" if pid else src["portal"],
+                api,
+                "小红书2027校园招聘 / red_star_27",
+            ))
+        total_pages = int(d.get("totalPage") or 0)
+        if total_pages and page >= total_pages:
+            break
+        if len(rows) < 100:
+            break
+        page += 1
+    return out
+
+
+def fetch_bilibili_2027(src: dict) -> list[Job]:
+    root = "https://jobs.bilibili.com"
+    token_url = root + "/api/auth/v1/csrf/token"
+    list_api = root + "/api/campus/position/positionList"
+    base_headers = {
+        **HEADERS,
+        "Content-Type": "application/json",
+        "X-AppKey": "ops.ehr-api.auth",
+        "X-UserType": "2",
+        "Referer": root + "/campus/positions",
+    }
+    token_payload = get_json(token_url, headers=base_headers)
+    token = txt(token_payload.get("data"))
+    if not token:
+        raise RuntimeError("Bilibili official CSRF token missing")
+    headers = {**base_headers, "X-CSRF": token, "Cookie": f"X-CSRF={token}"}
+    out: list[Job] = []
+    page = 1
+    while page <= 50:
+        data = post_json(
+            list_api,
+            payload={
+                "pageSize": 100, "pageNum": page, "positionName": "",
+                "postCode": [], "postCodeList": [], "workLocationList": [],
+                "workTypeList": [3], "positionTypeList": [],
+                "deptCodeList": [], "recruitType": 1,
+                "practiceTypes": [], "onlyHotRecruit": 0,
+            },
+            headers=headers,
+        )
+        if data.get("code") != 0:
+            raise RuntimeError(f"Bilibili code={data.get('code')}: {data.get('message')}")
+        d = data.get("data") or {}
+        rows = d.get("list") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id"))
+            jd = txt(j.get("positionDescription"))
+            out.append(Job(
+                src["company"], txt(j.get("positionName")), jid,
+                txt(j.get("workLocation")), txt(j.get("positionTypeName") or "校招全职"),
+                txt(j.get("postCodeName")), jd, "",
+                f"{root}/campus/positions/{jid}" if jid else src["portal"],
+                list_api,
+                "哔哩哔哩官方校园招聘全职项目" + (" / 2027" if "2027" in jd else ""),
+            ))
+        total = int(d.get("total") or 0)
+        if page * 100 >= total or len(rows) < 100:
+            break
+        page += 1
+    return out
+
+
+def fetch_huawei_2027(src: dict) -> list[Job]:
+    portal_root = "https://career.huawei.com/reccampportal"
+    pub = portal_root + "/services/portal/portalpub"
+    user_api = portal_root + "/services/portal/portaluser"
+    page_url = portal_root + "/portal5/campus-recruitment.html"
+    session = requests.Session()
+    session.headers.update({**HEADERS, "Referer": page_url})
+    try:
+        session.get(portal_root + "/", timeout=TIMEOUT)
+    except Exception:
+        pass
+
+    out: list[Job] = []
+    page = 1
+    while page <= 50:
+        params = {
+            "jobType": "0", "jobTypes": "2", "language": "zh_CN",
+            "reqTime": int(time.time() * 1000),
+            "orderBy": "ISS_STARTDATE_DESC_AND_IS_HOT_JOB",
+        }
+        url = f"{pub}/getJob/newHr/page/50/{page}"
+        r = session.get(url, params=params, timeout=TIMEOUT)
+        r.raise_for_status()
+        payload = r.json()
+        rows = payload.get("result") or []
+        if not rows:
+            break
+        for row in rows:
+            jid = txt(row.get("jobId"))
+            ds = txt(row.get("dataSource") or "1")
+            detail = {}
+            if jid:
+                try:
+                    dr = session.get(
+                        f"{pub}/getJobDetail/newHr",
+                        params={"jobId": jid, "dataSource": ds, "language": "zh_CN"},
+                        timeout=TIMEOUT,
+                    )
+                    dr.raise_for_status()
+                    detail = dr.json() or {}
+                except Exception:
+                    detail = {}
+            desc = txt(detail.get("mainBusiness") or row.get("mainBusiness"))
+            req = txt(detail.get("jobRequire") or row.get("jobRequire"))
+            req_id = txt(detail.get("jobRequirementId") or row.get("jobRequirementId"))
+            if req_id and (not desc or "详见岗位意向" in desc or not req or "详见岗位意向" in req):
+                try:
+                    ir = session.get(
+                        f"{user_api}/findIntentListByJobRequirementId/newHr/zh_CN/{req_id}/null",
+                        params={"dataSource": ds, "jobId": jid},
+                        timeout=TIMEOUT,
+                    )
+                    ir.raise_for_status()
+                    intents = ir.json() or []
+                    if isinstance(intents, list) and intents:
+                        desc = "\n\n".join(
+                            f"【{txt(i.get('positionIntention'))}】\n{_strip_html(i.get('jobResponsibilities'))}"
+                            for i in intents
+                        )
+                        req = "\n\n".join(
+                            f"【{txt(i.get('positionIntention'))}】\n{_strip_html(i.get('jobDemand'))}"
+                            for i in intents
+                        )
+                except Exception:
+                    pass
+            out.append(Job(
+                src["company"], txt(detail.get("jobname") or row.get("jobname")), jid,
+                txt(detail.get("jobArea") or row.get("jobArea") or row.get("jobAddress")),
+                "2027应届生", txt(detail.get("jobFamilyName") or row.get("jobFamilyName")),
+                _strip_html(desc), _strip_html(req),
+                f"{page_url.replace('campus-recruitment.html','campus-recruitment-detail.html')}?jobId={jid}&dataSource={ds}",
+                f"{pub}/getJob/newHr/page/50/{{page}}",
+                "华为2027届应届生招聘",
+            ))
+        pvo = payload.get("pageVO") or {}
+        total_pages = int(pvo.get("totalPages") or 0)
+        if total_pages and page >= total_pages:
+            break
+        if len(rows) < 50:
+            break
+        page += 1
+    return out
+
+
+def fetch_ant_2027(src: dict) -> list[Job]:
+    api = "https://hrcareersweb.antgroup.com/api/campus/position/search"
+    headers = {
+        **HEADERS, "Content-Type": "application/json",
+        "Origin": "https://talent.antgroup.com",
+        "Referer": "https://talent.antgroup.com/campus-list",
+    }
+    out: list[Job] = []
+    page = 1
+    while page <= 80:
+        data = post_json(
+            api,
+            payload={"key": "", "pageIndex": page, "pageSize": 49, "language": "zh"},
+            headers=headers,
+        )
+        if data.get("success") is not True:
+            raise RuntimeError(data.get("errorMsg") or f"Ant success={data.get('success')}")
+        rows = data.get("content") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id") or j.get("code"))
+            graduation = txt(j.get("graduationTime"))
+            out.append(Job(
+                src["company"], txt(j.get("name")), jid,
+                txt(j.get("workLocations")), txt(j.get("positionType") or "校招"),
+                txt(j.get("department") or j.get("project") or j.get("categoryName")),
+                _strip_html(j.get("description")), _strip_html(j.get("requirement")),
+                f"https://talent.antgroup.com/campus-position?positionId={jid}" if jid else src["portal"],
+                api,
+                "蚂蚁集团官方校园招聘" + (f" / {graduation}" if graduation else ""),
+            ))
+        total = int(data.get("totalCount") or 0)
+        if page * 49 >= total or len(rows) < 49:
+            break
+        page += 1
+    return out
+
+
+def _beisen_fetch_all(
+    *,
+    company: str,
+    root: str,
+    portal_id: str,
+    categories: list[str] | None,
+    cycle_evidence: str,
+    source_url: str,
+) -> list[Job]:
+    api = root.rstrip("/") + "/api/Jobad/GetJobAdPageList"
+    headers = {
+        **HEADERS,
+        "Content-Type": "application/json",
+        "Origin": root.rstrip("/"),
+        "Referer": source_url,
+        "x-requested-with": "xmlhttprequest",
+        "langtype": "zh_CN",
+    }
+    out: list[Job] = []
+    page = 0
+    while page < 50:
+        body: dict[str, Any] = {
+            "PageIndex": page, "PageSize": 100, "KeyWords": "",
+            "SpecialType": 0, "PortalId": portal_id,
+            "DisplayFields": ["Category", "Kind", "LocId", "Org", "HeadCount", "PostDate", "Salary"],
+        }
+        if categories:
+            body["Category"] = categories
+        data = post_json(api, payload=body, headers=headers)
+        if data.get("Code") != 200:
+            raise RuntimeError(data.get("Message") or f"Beisen code={data.get('Code')}")
+        rows = data.get("Data") or []
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("JobAdId") or j.get("Id"))
+            out.append(Job(
+                company, txt(j.get("JobAdName")), jid,
+                txt(j.get("LocNames")), txt(j.get("Category") or "校园招聘"),
+                txt(j.get("Org")), _strip_html(j.get("Duty")), _strip_html(j.get("Require")),
+                f"{root.rstrip('/')}/campus/detail?jobAdId={jid}" if jid else source_url,
+                api, cycle_evidence,
+            ))
+        total = int(data.get("Count") or data.get("Total") or 0)
+        page += 1
+        if page * 100 >= total or len(rows) < 100:
+            break
+    return out
+
+
+def fetch_vivo_2027(src: dict) -> list[Job]:
+    return _beisen_fetch_all(
+        company=src["company"], root="https://hr-campus.vivo.com",
+        portal_id="903cbcbf-4898-46e1-817c-da522a9752b1",
+        categories=["2"], cycle_evidence="vivo官方校园招聘（2027届别由职位/项目正文复核）",
+        source_url="https://hr-campus.vivo.com/campus/jobs",
+    )
+
+
+def fetch_iflytek_2027(src: dict) -> list[Job]:
+    root = "https://iflytek.zhiye.com"
+    cond_api = root + "/api/Jobad/GetJobAdSearchConditions"
+    headers = {
+        **HEADERS, "Content-Type": "application/json", "Origin": root,
+        "Referer": root + "/jobs", "x-requested-with": "xmlhttprequest", "langtype": "zh_CN",
+    }
+    categories: list[str] = []
+    try:
+        conditions = post_json(cond_api, payload={"displayFilters": ["Category"]}, headers=headers)
+        if conditions.get("Code") == 200:
+            for axis in conditions.get("Data") or []:
+                if txt(axis.get("Value")) != "Category":
+                    continue
+                for item in axis.get("Data") or []:
+                    label = txt(item.get("Text"))
+                    cid = txt(item.get("StrValue") or item.get("Value"))
+                    if cid and not re.search(r"社会|社招|实习", label):
+                        categories.append(cid)
+    except Exception:
+        pass
+    if not categories:
+        categories = ["4", "5", "6"]
+    return _beisen_fetch_all(
+        company=src["company"], root=root, portal_id="", categories=categories,
+        cycle_evidence="科大讯飞官方校园招聘（2027届别由职位/项目正文复核）",
+        source_url=root + "/jobs",
+    )
+
+
+def fetch_ctrip_2027(src: dict) -> list[Job]:
+    api = "https://careers.ctrip.com/api/hrrecruit/getJobAd"
+    headers = {
+        **HEADERS, "Content-Type": "application/json",
+        "Origin": "https://careers.ctrip.com", "Referer": "https://careers.ctrip.com/#/campus",
+    }
+    data = post_json(api, payload={"condition": {"pageIndex": 1, "pageSize": 100, "category": "2"}}, headers=headers)
+    if txt(data.get("retCode")) != "201":
+        raise RuntimeError(data.get("retMessage") or f"Ctrip retCode={data.get('retCode')}")
+    d = data.get("retValue") or {}
+    out: list[Job] = []
+    for j in d.get("recruitJobAdList") or []:
+        jid = txt(j.get("id") or j.get("jobId"))
+        mj = txt(j.get("fromId"))
+        out.append(Job(
+            src["company"], txt(j.get("jobTitle")), jid,
+            txt(j.get("cityName")), "2027届应届校招",
+            txt(j.get("buName") or j.get("jobFamilyGroupName")),
+            _strip_html(j.get("duty")), _strip_html(j.get("requirements")),
+            f"https://careers.ctrip.com/campus#/experienced/job-detail/{mj}" if mj else "https://careers.ctrip.com/#/campus",
+            api, "携程集团2027届应届校招生",
+        ))
+    return out
+
+
+def fetch_honor_2027(src: dict) -> list[Job]:
+    host = "https://career.honor.com"
+    su = "SU60eea919bef57c1023f6fe78"
+    list_api = f"{host}/wecruit/positionInfo/listPosition/{su}"
+    detail_api = f"{host}/wecruit/positionInfo/listPositionDetail/{su}"
+    headers = {
+        **HEADERS, "Content-Type": "application/x-www-form-urlencoded",
+        "Origin": host, "Referer": f"{host}/{su}/pb/school.html",
+        "X-Requested-With": "XMLHttpRequest",
+    }
+    out: list[Job] = []
+    page = 1
+    while page <= 100:
+        params = {"iSaJAx": "isAjax", "request_locale": "zh_CN", "t": int(time.time() * 1000)}
+        data = post_form(
+            list_api,
+            data={"isFrompb": "true", "recruitType": 1, "pageSize": 100, "currentPage": page},
+            headers=headers | {"Referer": f"{host}/{su}/pb/school.html"},
+        ) if False else None
+        # post_form does not accept query params; call the official endpoint directly.
+        rr = requests.post(
+            list_api,
+            params=params,
+            data={"isFrompb": "true", "recruitType": 1, "pageSize": 100, "currentPage": page},
+            headers=headers, timeout=TIMEOUT,
+        )
+        rr.raise_for_status()
+        data = rr.json()
+        if txt(data.get("state")) != "200":
+            raise RuntimeError(data.get("msg") or f"Honor state={data.get('state')}")
+        pf = ((data.get("data") or {}).get("pageForm") or {})
+        rows = pf.get("pageData") or []
+        if not rows:
+            break
+        for row in rows:
+            pid = txt(row.get("postId"))
+            detail: dict[str, Any] = {}
+            if pid:
+                try:
+                    dr = requests.post(
+                        detail_api,
+                        params={"iSaJAx": "isAjax", "request_locale": "zh_CN", "t": int(time.time() * 1000)},
+                        data={"postId": pid, "recruitType": 1},
+                        headers=headers | {"Referer": f"{host}/{su}/pb/posDetail.html"},
+                        timeout=TIMEOUT,
+                    )
+                    dr.raise_for_status()
+                    dp = dr.json()
+                    if txt(dp.get("state")) == "200":
+                        detail = dp.get("data") or {}
+                except Exception:
+                    detail = {}
+            out.append(Job(
+                src["company"], txt(detail.get("postName") or row.get("postName")), pid,
+                txt(detail.get("workPlaceStr") or row.get("workPlaceStr")),
+                "荣耀2027校招", txt(detail.get("orgName") or row.get("department") or row.get("postTypeName")),
+                _strip_html(detail.get("workContent") or row.get("description") or row.get("duty")),
+                _strip_html(detail.get("serviceCondition") or row.get("require") or row.get("requirement")),
+                f"{host}/{su}/pb/school.html#/postDetail?postId={pid}" if pid else src["portal"],
+                list_api, "荣耀2027校招",
+            ))
+        total_pages = int(pf.get("totalPage") or 0)
+        if total_pages and page >= total_pages:
+            break
+        if len(rows) < 100:
+            break
+        page += 1
+    return out
+
+
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
     "bytedance_api": fetch_bytedance,
@@ -819,10 +1241,16 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "sf_campus_api": fetch_sf,
     "alibaba_campus_api": fetch_alibaba_campus,
     "netease_api": fetch_netease,
-    "bilibili_api": fetch_bilibili,
+    "bilibili_api": fetch_bilibili_2027,
+    "xiaohongshu_2027_api": fetch_xiaohongshu_2027,
+    "ant_2027_api": fetch_ant_2027,
+    "vivo_2027_api": fetch_vivo_2027,
+    "iflytek_2027_api": fetch_iflytek_2027,
+    "ctrip_2027_api": fetch_ctrip_2027,
+    "honor_2027_api": fetch_honor_2027,
     "didi_api": fetch_didi,
     "pdd_api": fetch_pdd,
-    "huawei_api": fetch_huawei,
+    "huawei_api": fetch_huawei_2027,
 }
 
 
