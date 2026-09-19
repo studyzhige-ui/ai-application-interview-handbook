@@ -199,7 +199,10 @@ async function processSource(browser,src){
 }
 
 async function main(){
-  const sources=CONFIG.sources.filter(s=>s.mode==="portal_only" || s.browser_probe===true);
+  const allSources=CONFIG.sources.filter(s=>s.mode==="portal_only" || s.browser_probe===true);
+  const shardCount=Math.max(1,Number(process.env.SHARD_COUNT||"1"));
+  const shardIndex=Math.max(0,Number(process.env.SHARD_INDEX||"0"));
+  const sources=allSources.filter((_,i)=>i % shardCount === shardIndex);
   const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
   const results=[];
   const concurrency=4;
@@ -209,6 +212,6 @@ async function main(){
   }
   await browser.close();
   results.sort((a,b)=>a.company.localeCompare(b.company,"zh-CN"));
-  fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),concurrency,results},null,2)+"\n","utf8");
+  fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),shard_index:shardIndex,shard_count:shardCount,source_count:sources.length,concurrency,results},null,2)+"\n","utf8");
 }
 await main();
