@@ -26,7 +26,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [0, 1, 2, 3, 4, 5]
+        shard: [0, 1, 2, 3]
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +38,7 @@ jobs:
       - name: Discover official roots for shard
         env:
           SHARD_INDEX: ${{ matrix.shard }}
-          SHARD_COUNT: 6
+          SHARD_COUNT: 4
         run: node tools/fetch_dynamic_official_jobs.mjs /tmp/browser-${{ matrix.shard }}.json
 
       - uses: actions/upload-artifact@v4
@@ -84,13 +84,13 @@ jobs:
                       'pages': [],
                       'endpoints': [],
                   })
-          if len(shard_files) != 6:
-              raise SystemExit(f"incomplete browser discovery: expected 6 shards, got {len(shard_files)}; keep previous committed snapshot")
+          if len(shard_files) != 4:
+              raise SystemExit(f"incomplete browser discovery: expected 4 shards, got {len(shard_files)}; keep previous committed snapshot")
 
           results.sort(key=lambda x: x.get('company',''))
           out = {
               'generated_at': datetime.now(timezone.utc).isoformat(),
-              'shards_expected': 6,
+              'shards_expected': 4,
               'shards_received': len(shard_files),
               'results': results,
           }
