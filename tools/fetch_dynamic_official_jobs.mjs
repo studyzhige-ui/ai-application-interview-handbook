@@ -280,12 +280,25 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     let beforeCycle=cycleSnippets(beforeBody);
     let search=await searchInputs(page);
     let navAction={clicked:false};
+    let listScanComplete=false;
+    let listHits=[];
     if(!search.found){
       navAction=await openJobSearchSurface(page);
       if(navAction.clicked){
         beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
         beforeCycle=[...new Set([...beforeCycle,...cycleSnippets(beforeBody)])];
         search=await searchInputs(page);
+      }
+    }
+    // A fixed official job-list page is enough. If the site has no search input,
+    // exhaustively paginate the visible official list and let captured XHR/JSON
+    // provide full JD fields; title-matching links are opened as an additional fallback.
+    if(!search.found){
+      listHits=await collectSearchPages(page,"__FULL_LIST__");
+      listScanComplete=true;
+      for(const h of listHits){
+        const low=(h.title||"").toLowerCase();
+        if(STRONG.some(k=>low.includes(k))) search.hits.push(h);
       }
     }
     await Promise.allSettled(responseTasks);
@@ -322,7 +335,9 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       search_control_found:search.found,
       navigation_action:navAction,
       search_terms_attempted:search.terms,
-      search_hit_links:uniqueHits.length
+      search_hit_links:uniqueHits.length,
+      list_scan_complete:listScanComplete,
+      list_links_seen:listHits.length
     };
   }catch(e){
     await page.close().catch(()=>{});
@@ -347,21 +362,26 @@ async function processSource(browser,src){
       }
     }
     const allJobs=uniqueJobs(collector);
-    const has2027=pageResults.some(x=>x.has2027) || allJobs.some(j=>/2027/.test(j.cycle_evidence||""));
-    const jobs=allJobs.filter(j=>has2027 || /2027/.test(j.cycle_evidence||""));
+    const registryVerified=src.verified_2027_project===true;
+    const has2027=registryVerified || pageResults.some(x=>x.has2027) || allJobs.some(j=>/2027/.test(j.cycle_evidence||""));
+    const jobs=allJobs.filter(j=>registryVerified || /2027/.test(j.cycle_evidence||""));
     const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
-    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k));
+    const listScanComplete=pageResults.some(x=>x.list_scan_complete===true);
+    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k)) || listScanComplete;
+    const pageErrors=pageResults.filter(x=>x.error).length;
     let status;
-    if(jobs.length) status="BROWSER_ENUMERATED";
-    else if(has2027 && fullKeywordSearch) status="BROWSER_ENUMERATED_ZERO";
+    if(has2027 && fullKeywordSearch && jobs.length) status="BROWSER_ENUMERATED";
+    else if(has2027 && fullKeywordSearch && !jobs.length) status="BROWSER_ENUMERATED_ZERO";
     else if(has2027) status="BROWSER_2027_NEEDS_ADAPTER";
+    else if(pageErrors===0) status="BROWSER_NO_PUBLIC_2027";
     else status="BROWSER_NO_2027_EVIDENCE";
     console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
     return {
       company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,
       endpoints:endpointLog.slice(0,120),jobs,has2027,status,
       search_terms_attempted:[...searched],search_terms_expected:SEARCH_TERMS,
-      full_keyword_search:fullKeywordSearch
+      full_keyword_search:fullKeywordSearch,list_scan_complete:listScanComplete,
+      registry_verified_2027:registryVerified
     };
   }catch(e){
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
