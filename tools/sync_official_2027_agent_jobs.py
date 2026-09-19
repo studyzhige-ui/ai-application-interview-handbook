@@ -25,7 +25,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "market/jobs/official-2027-campus-sources.json"
 OUT_MD = ROOT / "market/jobs/official-2027-agent-jobs.generated.md"
-OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
+OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"\nBROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36"
 HEADERS = {
@@ -836,7 +836,47 @@ def main() -> int:
         company = src["company"]
         mode = src["mode"]
         if mode == "portal_only":
-            return SourceResult(company, mode, src["portal"], "PORTAL_ONLY", 0, 0), []
+            dyn = dynamic_by_company.get(company) or {}
+            raw_jobs = dyn.get("jobs") or []
+            jobs = [
+                Job(
+                    company,
+                    txt(j.get("title")),
+                    txt(j.get("job_id")),
+                    txt(j.get("location")),
+                    txt(j.get("category") or "官方动态校招"),
+                    txt(j.get("department")),
+                    txt(j.get("description")),
+                    txt(j.get("requirements")),
+                    txt(j.get("official_url") or src["portal"]),
+                    txt(j.get("official_api") or ("BROWSER:" + src["portal"])),
+                    txt(j.get("cycle_evidence")),
+                )
+                for j in raw_jobs
+            ]
+            matches = [
+                j for j in jobs
+                if campusish(j)
+                and is_agent_related(j, keywords)
+                and (not engineering_signals or looks_engineering(j, engineering_signals))
+                and not is_hard_excluded(j, excludes)
+            ]
+            seen = set()
+            uniq = []
+            for j in matches:
+                key = (j.company, j.job_id or j.title, j.location)
+                if key in seen:
+                    continue
+                seen.add(key)
+                uniq.append(j)
+            status = txt(dyn.get("status")) or "BROWSER_NOT_RUN"
+            fetched = len(raw_jobs)
+            error = ""
+            if status == "BROWSER_NO_2027_EVIDENCE":
+                error = "官方页面已浏览，但未取得可验证的2027项目/岗位证据；不能解释为0岗位"
+            elif status == "BROWSER_OK_0_MATCH":
+                error = "官方2027页面已浏览，但通用解析器未提取到目标岗位；需人工/专用适配复核后才可判0"
+            return SourceResult(company, "browser_dynamic", src["portal"], status, fetched, len(uniq), error), uniq
         fetcher = FETCHERS.get(mode)
         if not fetcher:
             return SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0), []
@@ -895,7 +935,7 @@ def main() -> int:
         "",
         f"> Generated: **{now}**",
         ">",
-        "> 仅调用公司官方招聘接口 / 官方招聘入口。该文件是 discovery layer；最终 Active JD 仍需确认岗位属于 2027 校招且职责主体不是算法/模型训练。",
+        "> 仅调用公司官方招聘接口 / 官方招聘入口。对于动态站，浏览器从 registry 中记录的 **official_root** 出发，跟随官网自己的校招链接并监听第一手 XHR/JSON。该文件是 discovery layer；最终 Active JD 仍需确认岗位属于 2027 校招且职责主体不是算法/模型训练。",
         "",
         "## 官方源执行状态",
         "",
