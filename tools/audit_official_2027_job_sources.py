@@ -61,7 +61,7 @@ def main() -> int:
         elif b_status == "BROWSER_ENUMERATED_ZERO" and b_has_2027 and b_full:
             status = "ENUMERATED_ZERO_MATCHES"
             reason = "official browser completed full 2027 keyword enumeration; 0 target jobs"
-        elif b_status == "BROWSER_NO_PUBLIC_2027":
+        elif b_status == "BROWSER_NO_PUBLIC_2027" and src.get("allow_no_public_2027"):
             status = "NO_PUBLIC_2027_PROJECT"
             reason = "fixed official recruitment entry exhaustively checked; no public 2027 project exposed"
         elif b_status == "BROWSER_NO_2027_EVIDENCE" and src.get("allow_no_public_2027"):
