@@ -13,9 +13,9 @@
 | `validate_agent_readability.py` | 校验全仓库 Markdown 链接、Agent 教材可读性与结构 |
 | `validate_repository_semantics.py` | 校验 185-block 结构、Market / Canonical 时间边界、旧路径与章节语义漂移 |
 | `fetch_dynamic_official_jobs.mjs` | 从每家公司固定第一手 `job_list_url` 统一搜索、翻页并读取官方职位详情 |
-| `sync_official_2027_agent_jobs.py` | 汇总浏览器与官方 ATS/API，加工 2027 Agent / AI 应用候选池 |
-| `audit_official_2027_job_sources.py` | 分离审计“职位是否可获取”与“是否有 2027 届官方证据” |
-| `validate_official_2027_source_contracts.py` | 强制每家公司都有 `official_root + job_list_url`，且不得使用二手招聘域名 |
+| `sync_official_2027_agent_jobs.py` | 汇总浏览器与官方 ATS/API，应用严格非算法工程 Gate，并生成 Role Family 全量 JD 层 |
+| `audit_official_2027_job_sources.py` | 分离审计“当前严格结果是否闭环”与“自动维护链路是否已完整枚举” |
+| `validate_official_2027_source_contracts.py` | 强制 41 家公司都有 `official_root + search_url`，并校验第一方招聘域与招聘池范围 |
 | `phase2b_canonical_audit.json` | Phase 2B Canonical 审计数据 |
 
 脚本使用的仓库路径基线：
@@ -37,20 +37,28 @@ references/
 
 **生成文件必须可复现，当前状态文本必须可验证。**
 
-## 2027 官方岗位采集原则
+## 官方岗位采集原则
 
-岗位采集不按公司手工维护一套抓取逻辑。固定模型是：
+岗位采集使用统一的第一方招聘池契约：
 
 ```text
-official_root        # 证明招聘入口来自公司第一手官网
+official_root        # 证明来源属于公司官网 / 官方招聘体系
        ↓
-job_list_url         # 日常固定打开的官方职位列表页 / 官方 ATS
+search_url           # 可重复进入并枚举的固定第一方职位池
        ↓
-统一浏览器穷举关键词 + 翻页 / 无限滚动
+board_scope
+  ├─ campus              # 当前校园招聘 / 应届职位池
+  └─ official_recruiting # 当前官方混合招聘池，JD 必须明确允许应届生
        ↓
-打开命中职位详情读取官方 JD
+完整分页 + 全关键词穷举 / 官方 API 全量枚举
        ↓
-2027 届别 Gate + 非算法工程 Role Scope
+严格 Role Scope：Agent / AI应用 / RAG / Harness / Runtime / Infra / Coding Agent 工程
+       ↓
+排除算法、模型训练/研究、产品、销售、运营、纯实习与普通岗位 AI 工具套话
+       ↓
+Role Family 去重 + 第一方 JD 正文
 ```
 
-专用 API / Feishu / Moka 适配器只用于提速；它们失败时必须回退到固定 `job_list_url`，不能把接口失败解释为“0 岗位”。
+专用 API / Feishu / Moka / ATS 适配器用于提高稳定性和效率；失败时必须回退到固定 `search_url`。只有完整枚举后的 0 才是有效结论。
+
+审计同时保留两种状态：**Current Result Closure** 表示 41 家都有 `HAS_TARGET_JDS / ZERO_TARGET_JDS` 明确结果；**Recurring Runtime Certification** 表示定时采集器已经实际完成该公司的完整枚举。两者不能互相冒充。
