@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 import json
-import re
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -46,20 +45,45 @@ def main() -> int:
         root = s.get("official_root") or ""
         jobs = s.get("job_list_url") or ""
         mode = s.get("mode") or ""
+        state = s.get("campus_entry_status")
+        campus_search = s.get("campus_search_url")
+        career_watch = s.get("career_watch_url")
+
         if not root.startswith("https://"):
             errors.append(f"{company}: official_root missing/invalid")
-        if not jobs.startswith("https://"):
-            errors.append(f"{company}: job_list_url missing/invalid")
-        for label, url in (("official_root", root), ("job_list_url", jobs)):
+        for label, url in (("official_root", root), ("job_list_url", jobs),
+                           ("campus_search_url", campus_search or ""),
+                           ("career_watch_url", career_watch or "")):
+            if not url:
+                continue
+            if not url.startswith("https://"):
+                errors.append(f"{company}: {label} missing/invalid")
+                continue
             h = host(url)
             if any(h == b or h.endswith("." + b) for b in BANNED):
                 errors.append(f"{company}: {label} uses banned second-hand domain {h}")
+
+        if state == "PUBLIC_CAMPUS_BOARD":
+            if not campus_search:
+                errors.append(f"{company}: public campus board must define campus_search_url")
+            if campus_search != jobs:
+                errors.append(f"{company}: job_list_url must equal campus_search_url for public campus board")
+            if s.get("current_campus_board") is not True:
+                errors.append(f"{company}: PUBLIC_CAMPUS_BOARD requires current_campus_board=true")
+        elif state == "NO_PUBLIC_CAMPUS_BOARD":
+            if campus_search:
+                errors.append(f"{company}: no-public-campus company must not expose campus_search_url")
+            if not career_watch:
+                errors.append(f"{company}: no-public-campus company must define career_watch_url")
+            if s.get("current_campus_board") is not False:
+                errors.append(f"{company}: NO_PUBLIC_CAMPUS_BOARD requires current_campus_board=false")
+        else:
+            errors.append(f"{company}: invalid/missing campus_entry_status")
+
         if mode != "portal_only":
             token = f'"{mode}":'
             if token not in sync:
                 errors.append(f"{company}: mode {mode} has no sync fetcher")
-        if not s.get("job_list_url"):
-            errors.append(f"{company}: recurring collection must use explicit job_list_url")
 
     print(f"Official current-campus source contracts: companies={len(sources)}, errors={len(errors)}")
     for e in errors:
