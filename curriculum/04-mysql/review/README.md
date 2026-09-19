@@ -172,7 +172,7 @@ Redo 是 InnoDB Crash Recovery / WAL 基础；Binlog 属于 Server 层，面向 
 
 ## 4. 第三轮复习：用真实面试深度验收
 
-根据冻结 `S001–S279` 市场证据，MySQL 高频 Topic 包括：
+在 Canonical 统计基线（`S001–S279`）中，MySQL 高频 Topic 包括：
 
 | Topic | HUMAN-A Sources |
 |---|---:|

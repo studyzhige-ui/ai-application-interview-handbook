@@ -2,9 +2,9 @@
 
 [← Agent Harness / Runtime](../09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md)
 
-> **状态：✅ 第一版系统教材完成**  
+> **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：19 个连续知识小板块** · **HUMAN-A Canonical：24** · **独立来源覆盖：71**  
-> **质量：Granularity / Coverage / Content Depth 已验收**
+> **质量门：✅ Granularity / Coverage / Content Depth**
 
 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → **System Design**
 
-当前模块角色：**Integration / 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。**
+模块角色：**Integration / 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -93,7 +93,7 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **24 道 Primary Canonical、71 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **24 道 Primary Canonical、71 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -114,7 +114,7 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - Timeout / Retry / Queue / Backpressure 的机制归 AIBE。
 - MySQL / Redis / Vector / RAG / Agent 的内部机制回到对应 Primary Module。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -148,7 +148,7 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–19 连续

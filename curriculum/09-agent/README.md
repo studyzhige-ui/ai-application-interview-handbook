@@ -2,9 +2,9 @@
 
 [← RAG](../08-rag/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [System Design →](../10-system-design/README.md)
 
-> **状态：✅ 第一版系统教材完成**
-> **教材：24 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**
-> **质量：以丰富旧版为底稿保留机制、例子和失败处理，恢复展开式教学与章末四部分；本轮检查范围见修订记录。**
+> **课程版本：V1** · **教材状态：✅ 完整**  
+> **教材：24 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**  
+> **教学结构：展开式解释 + 过程图 + 连续例子 + Failure 边界 + 章末四部分训练。**
 
 从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。
 
@@ -31,13 +31,13 @@
 
 [Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → **Agent** → [System Design](../10-system-design/README.md)
 
-当前模块角色：**Agent Runtime / 从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。**
+模块角色：**Agent Runtime / 从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。**
 
 ---
 
 ## 3. 固定课程原则
 
-> **知识体系演进顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
 
 同时固定区分：
 
@@ -64,7 +64,7 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ## 5. 正式课程目录
 
-章节数由认知依赖与内容边界决定，不以另一个分支的16章为目标。MCP独立讲清协议往返；Skill/Hook/Plugin另讲扩展生命周期。其余主题保留完整机制，在章内调整定义、过程、失败与实现对照的顺序。
+章节按认知依赖与内容边界组织。MCP 独立讲清协议往返；Skill / Hook / Plugin 单独讲扩展生命周期；其余主题在章内依次说明定义、过程、失败边界与实现对照。
 
 ### A｜先认识任务与执行系统
 
@@ -94,7 +94,7 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 11. [Memory：提取、召回、更新、纠错与遗忘](docs/11-MemoryLifecycle.md)
 
-### D｜当前状态与跨中断恢复
+### D｜执行状态与跨中断恢复
 
 12. [State / Persistence：程序怎样记住当前工作](docs/12-StateHistoryAndPersistence.md)
 
@@ -130,7 +130,7 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ## 6. 真人面经怎样影响本模块
 
-冻结基线 `S001–S279` 中，本模块有 **44 道 Primary Canonical、166 个独立 HUMAN-A 招聘流程覆盖**。
+Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canonical、166 个独立 HUMAN-A 招聘流程覆盖**。
 
 重点市场信号包括：
 
@@ -152,7 +152,7 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 - RAG 负责 Evidence Quality；Agent Harness 决定何时检索、如何继续执行。
 - 通用 MQ / Retry / Idempotency 归 AIBE；Agent 只讲其 Runtime 特化语义。
 
-遇到跨模块问题时，正文会保留必要桥梁，但完整机制只在 Primary Module 维护一份。
+跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
 
 ---
 
@@ -178,7 +178,7 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ## 9. 推荐学习方式
 
-每章保留轻松引入、逐层解释、过程图、例子与失败边界，不压成结论提纲。章末固定**HUMAN-A信号 → 面试怎么答 → 高频易错点 → 本章自测**：🎯面试答案直接显示，⚠️易错点逐条提醒，只有自测答案和可选产品实现折叠。代码只用于明确的教学目的，并有注释及适用边界。
+每章采用轻松引入、逐层解释、过程图、例子与失败边界，不压成结论提纲。章末固定**HUMAN-A信号 → 面试怎么答 → 高频易错点 → 本章自测**：🎯面试答案直接显示，⚠️易错点逐条提醒，只有自测答案和可选产品实现折叠。代码只用于明确的教学目的，并有注释及适用边界。
 
 > 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
@@ -189,17 +189,16 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ---
 
-## 10. 完成状态
+## 10. 教材状态
 
 ```text
 docs/      ✅ 01–24 连续
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
-Reader Revision     已完成本轮保留式教学修订
-Technical Validation 见限定范围，不替代真实产品集成测试
+Technical Validation 以证据索引标注的固定源码快照与官方版本为准
 ```
 
-阅读修订：[本轮问题归类、对应章节与实际测试](../../guide/project/agent-reader-revision.md)。
+读者可理解性专项记录：[Agent Reader Revision](../../guide/project/agent-reader-revision.md)。
 
 下一环：[System Design](../10-system-design/README.md)。
