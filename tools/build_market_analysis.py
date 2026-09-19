@@ -2,8 +2,8 @@
 """Build reproducible Phase 2B market-analysis views from the frozen HUMAN-A corpus.
 
 This script deliberately treats repository files as the source of truth:
-- research/questions/*.md: canonical questions and evidence mapping
-- research/interviews/batch-*.md: source metadata
+- interview/canonical/*.md: canonical questions and evidence mapping
+- market/interviews/batch-*.md: source metadata
 
 It never adds external evidence and never changes Source Count based on web/search popularity.
 """
@@ -19,9 +19,9 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-QUESTIONS_DIR = ROOT / "research" / "questions"
-INTERVIEWS_DIR = ROOT / "research" / "interviews"
-ANALYSIS_DIR = ROOT / "research" / "analysis"
+QUESTIONS_DIR = ROOT / "interview" / "canonical"
+INTERVIEWS_DIR = ROOT / "market" / "interviews"
+ANALYSIS_DIR = ROOT / "market" / "analysis"
 
 MODULE_FILES = [
     ("Python", "python.md"),
@@ -713,9 +713,9 @@ def build() -> None:
     # Concise summary generated only from repository-derived statistics.
     top20 = frequency_sorted[:20]
     summary_lines = [
-        "# Research Analysis｜Phase 2B Market Analysis",
+        "# Market Analysis｜Phase 2B Market Analysis",
         "",
-        "[← Research 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../questions/README.md)",
+        "[← Market 首页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Canonical Questions →](../../interview/canonical/README.md)",
         "",
         "> **状态：✅ Frozen Analysis。** 自动统计层只描述冻结 HUMAN-A 市场数据，不承担课程知识补全，也不维护易过期的 Curriculum 下一步状态。",
         "",
@@ -750,7 +750,7 @@ def build() -> None:
         )
     summary_lines += [
         "",
-        "Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `research/questions/progress.md` 与 `roadmap/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。",
+        "Phase 2B 自动统计与人工核验层均已完成。Curriculum 的实时状态以 `interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；本自动生成 README 不重复维护课程状态。",
     ]
     (ANALYSIS_DIR / "README.md").write_text("\n".join(summary_lines) + "\n", encoding="utf-8")
 

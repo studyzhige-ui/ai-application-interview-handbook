@@ -2,7 +2,7 @@
 """Generate a conservative raw-corpus keyword candidate list for manual gap review.
 
 This is a recall aid only. A keyword hit is NOT Canonical evidence until the source section
-is manually reviewed under research/questions/schema.md.
+is manually reviewed under interview/canonical/schema.md.
 """
 from __future__ import annotations
 
@@ -10,8 +10,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-INTERVIEWS = ROOT / "research" / "interviews"
-OUT = ROOT / "research" / "analysis" / "raw-term-candidates.md"
+INTERVIEWS = ROOT / "market" / "interviews"
+OUT = ROOT / "market" / "analysis" / "raw-term-candidates.md"
 
 TERMS = {
     "Prompt / Prompt Engineering": [r"\bPrompt\b", r"Prompt Engineering", r"Prompt Optimization", r"Prompt 调"],

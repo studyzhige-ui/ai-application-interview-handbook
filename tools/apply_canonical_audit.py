@@ -17,7 +17,7 @@ from collections import defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-QUESTIONS_DIR = ROOT / "research" / "questions"
+QUESTIONS_DIR = ROOT / "interview" / "canonical"
 AUDIT_PATH = ROOT / "tools" / "phase2b_canonical_audit.json"
 
 MODULE_FILES = [

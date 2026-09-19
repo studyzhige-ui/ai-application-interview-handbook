@@ -13,9 +13,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-QDIR = ROOT / "research" / "questions"
-IDIR = ROOT / "research" / "interviews"
-OUT = ROOT / "research" / "analysis" / "source-coverage-validation.md"
+QDIR = ROOT / "interview" / "canonical"
+IDIR = ROOT / "market" / "interviews"
+OUT = ROOT / "market" / "analysis" / "source-coverage-validation.md"
 AUDIT = json.loads((ROOT / "tools" / "phase2b_canonical_audit.json").read_text(encoding="utf-8"))
 
 MODULE_FILES = [
