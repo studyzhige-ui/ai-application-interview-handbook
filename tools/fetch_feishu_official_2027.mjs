@@ -17,10 +17,12 @@ function tenantHost(url){
   try{
     const u=new URL(url);
     if(!u.hostname.endsWith(".jobs.feishu.cn")) return null;
-    return {host:u.origin,pathname:u.pathname,search:u.search};
+    const first=u.pathname.replace(/^\//,"").split("/").filter(Boolean)[0]||"campus";
+    const projects=(u.searchParams.get("project")||"").split(",").filter(Boolean);
+    return {host:u.origin,pathname:u.pathname,search:u.search,websitePath:first,projects};
   }catch{return null;}
 }
-function normalizeJob(company,host,j,keyword){
+function normalizeJob(company,host,websitePath,j,keyword,sourceCycle){
   const subjects=[];
   const rawSubjects=j.job_subject_list || (j.job_subject ? [j.job_subject] : []);
   for(const s of rawSubjects){
@@ -36,13 +38,13 @@ function normalizeJob(company,host,j,keyword){
     department:j.job_category?.name || j.job_function?.name || "",
     description:j.description||"",
     requirements:j.requirement||"",
-    official_url:`${host}/campus/position/${j.id}/detail`,
-    official_api:`${host}/api/v1/search/job/posts`,
-    cycle_evidence:[...subjects,j.recruit_type?.name].filter(Boolean).join(" / "),
+    official_url:host+"/"+websitePath+"/position/"+j.id+"/detail",
+    official_api:host+"/api/v1/search/job/posts",
+    cycle_evidence:[sourceCycle,...subjects,j.recruit_type?.name].filter(Boolean).join(" / "),
     matched_keywords:[keyword]
   };
 }
-async function oneKeyword(company,portal,keyword,channel){
+async function oneKeyword(company,portal,keyword,channel,sourceCycle){
   const t=tenantHost(portal);
   if(!t) throw new Error("not a feishu jobs tenant");
   const api=`${t.host}/api/v1/search/job/posts`;
@@ -61,7 +63,7 @@ async function oneKeyword(company,portal,keyword,channel){
   for(let page=0;page<30;page++){
     const body={
       keyword,limit:100,offset,portal_type:3,portal_entrance:1,language:"zh",
-      job_category_id_list:[],location_code_list:[],subject_id_list:[],recruitment_id_list:[]
+      job_category_id_list:[],location_code_list:[],subject_id_list:t.projects,recruitment_id_list:[]
     };
     const res=await fetch(api,{method:"POST",headers,body:JSON.stringify(body)});
     requests++;
@@ -70,7 +72,7 @@ async function oneKeyword(company,portal,keyword,channel){
     if(payload.code!==0) throw new Error(`${company} ${channel} code=${payload.code}`);
     const d=payload.data||{};
     const rows=d.job_post_list||[];
-    for(const j of rows) jobs.push(normalizeJob(company,t.host,j,keyword));
+    for(const j of rows) jobs.push(normalizeJob(company,t.host,t.websitePath,j,keyword,sourceCycle));
     const total=Number(d.count||0);
     offset+=rows.length;
     if(!rows.length || offset>=total || rows.length<100) break;
@@ -82,11 +84,12 @@ async function enumerateSource(src){
   if(!t) return null;
   const channels=["campus","social"];
   let best=null, errors=[];
+  const sourceCycle=(src.verified_2027_project || /2027/.test(src.note||"")) ? "官方2027项目" : "";
   for(const channel of channels){
     try{
       const batches=[];
       for(let i=0;i<keywords.length;i+=4){
-        batches.push(...await Promise.all(keywords.slice(i,i+4).map(k=>oneKeyword(src.company,src.portal,k,channel))));
+        batches.push(...await Promise.all(keywords.slice(i,i+4).map(k=>oneKeyword(src.company,src.portal,k,channel,sourceCycle))));
       }
       const seen=new Map(); let requests=0;
       for(const b of batches){
