@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - 'tools/fetch_dynamic_official_jobs.mjs'
+      - 'tools/audit_official_2027_job_sources.py'
       - 'market/jobs/official-2027-campus-sources.json'
       - '.github/workflows/discover-official-2027-portals.yml'
 
@@ -100,20 +101,25 @@ jobs:
           print(f"merged shards={len(shard_files)}, companies={len(results)}")
           PY
 
+      - name: Rebuild per-company coverage audit
+        run: python tools/audit_official_2027_job_sources.py || true
+
       - name: Commit discovery diagnostics safely
         run: |
           cp market/jobs/official-2027-browser-discovery.generated.json /tmp/official-browser.json
+          cp market/jobs/official-2027-coverage-audit.generated.md /tmp/official-coverage-audit.md
           git fetch origin ${{ github.ref_name }}
           git reset --hard origin/${{ github.ref_name }}
           cp /tmp/official-browser.json market/jobs/official-2027-browser-discovery.generated.json
+          cp /tmp/official-coverage-audit.md market/jobs/official-2027-coverage-audit.generated.md
 
-          if [ -z "$(git status --porcelain -- market/jobs/official-2027-browser-discovery.generated.json)" ]; then
+          if [ -z "$(git status --porcelain -- market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-coverage-audit.generated.md)" ]; then
             echo "No portal discovery changes."
             exit 0
           fi
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add market/jobs/official-2027-browser-discovery.generated.json
+          git add market/jobs/official-2027-browser-discovery.generated.json market/jobs/official-2027-coverage-audit.generated.md
           git commit -m 'market: discover official 2027 recruitment portals'
           git push origin HEAD:${{ github.ref_name }}
