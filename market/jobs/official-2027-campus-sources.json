@@ -45,16 +45,18 @@
       "company": "小米",
       "mode": "xiaomi_api",
       "portal": "https://hr.xiaomi.com/website/opportunities.html?project=%E6%A0%A1%E6%8B%9B&q=agent",
-      "api": "https://hr.xiaomi.com/api/position/list",
-      "note": "必须从当前官方 2027/校招动态页面枚举；旧 /api/position/list 已 404，需自动发现新版接口。"
+      "api": "https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts",
+      "note": "当前官方 campus ATSX：portal-channel=campus，正式岗 recruitment_id=201；用户提供 hr.xiaomi.com 校招入口作为中文导航。",
+      "official_campus_portal": "https://xiaomi.jobs.f.mioffice.cn/campus/"
     },
     {
       "company": "快手",
       "mode": "kuaishou_api",
       "portal": "https://campus.kuaishou.cn/recruit/campus/e/#/campus/jobs?recruitSubProjectCodes=20271779425607",
-      "api": "https://zhaopin.kuaishou.cn/recruit/api/job/list",
+      "api": "https://campus.kuaishou.cn/recruit/campus/e/api/v1/open/positions/simple",
       "project_code": "20271779425607",
-      "note": "必须限定 recruitSubProjectCodes=20271779425607；旧 zhaopin API 已 404，需从当前 campus 前端发现新版接口。"
+      "note": "固定 2027 项目 recruitSubProjectCodes=20271779425607；列表与详情均为 campus.kuaishou.cn 官方公开 API。",
+      "detail_api": "https://campus.kuaishou.cn/recruit/campus/e/api/v1/open/positions/find"
     },
     {
       "company": "百度",
