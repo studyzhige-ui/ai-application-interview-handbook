@@ -1,6 +1,6 @@
 # LLM Foundation（应用工程深度）｜模型机制与推理基础
 
-[← Vector Database](../vector-db/README.md) · [↑ Handbook 总目录](../README.md) · [Learning Path](../roadmap/learning-path.md) · [RAG →](../rag/README.md)
+[← Vector Database](../06-vector-db/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [RAG →](../08-rag/README.md)
 
 > **状态：✅ 第一版系统教材完成**  
 > **教材：14 个连续知识小板块** · **HUMAN-A Canonical：23** · **独立来源覆盖：82**  
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../python/README.md) → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → **LLM Foundation（应用工程深度）** → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
+[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → **LLM Foundation（应用工程深度）** → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
 当前模块角色：**Model Foundation / 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。**
 
@@ -130,17 +130,17 @@ Token / Context → Transformer / Attention / Position → Generation / Decoding
 
 研究与质量证据：
 
-- [Canonical Questions](../research/questions/llm-foundation.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../research/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../research/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../roadmap/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../roadmap/content-depth-audit.md)：完成与深度验收口径。
+- [Canonical Questions](../../interview/canonical/llm-foundation.md)：市场真实问法与 Source Count；
+- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
+- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
+- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
+- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
 
 ---
 
 ## 9. 推荐学习方式
 
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../roadmap/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
+> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 14` 连续阅读，不按高频题跳章。
 2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
@@ -159,4 +159,4 @@ Canonical Coverage ✅
 Content Depth       ✅
 ```
 
-下一环：[RAG](../rag/README.md)。
+下一环：[RAG](../08-rag/README.md)。

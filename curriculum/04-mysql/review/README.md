@@ -1,10 +1,10 @@
 # MySQL｜Review 与综合自测
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../roadmap/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
 
 > **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
 >
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../roadmap/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
 
 ---
 
@@ -189,7 +189,7 @@ Redo 是 InnoDB Crash Recovery / WAL 基础；Binlog 属于 Server 层，面向 
 
 > **频率决定“多练几遍”，不决定“删掉低频前置”。**
 
-完整证据见：[`../../research/questions/mysql.md`](../../research/questions/mysql.md)。
+完整证据见：[`../../research/questions/mysql.md`](../../../interview/canonical/mysql.md)。
 
 ---
 

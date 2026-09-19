@@ -1,6 +1,6 @@
 # Python Foundation｜Python 语言与运行时基础
 
-[↑ Handbook 总目录](../README.md) · [Coding & Problem Solving（并行实践）](../coding/README.md) · [Learning Path（学习路线）](../roadmap/learning-path.md) · [FastAPI →](../fastapi/README.md)
+[↑ Handbook 总目录](../../README.md) · [Coding & Problem Solving（并行实践）](../../practice/coding/README.md) · [Learning Path（学习路线）](../../guide/learning-path.md) · [FastAPI →](../02-fastapi/README.md)
 
 > **状态：13 章正文已按初学者阅读顺序重写，等待再次通读验收。**  
 > **教材：13 个连续章节，沿用原文件路径** · **冻结研究基线：15 道 HUMAN-A Canonical、15 个独立来源覆盖**  
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-**Python Foundation** → [FastAPI](../fastapi/README.md) → [AI Backend Engineering](../backend-engineering/README.md) → [MySQL](../mysql/README.md) → [Redis](../redis/README.md) → [Vector Database](../vector-db/README.md) → [LLM Foundation（应用工程深度）](../llm-foundation/README.md) → [RAG](../rag/README.md) → [Agent](../agent/README.md) → [System Design](../system-design/README.md)
+**Python Foundation** → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
 Python 是后续模块的语言与运行时基础。前几章用数字、文本、名单等小例子解释规则；学会规则后，再连接检索、模型接口、工具参数等工程场景，不把后续模块知识作为第一章的隐藏门槛。
 
@@ -147,13 +147,13 @@ Python 是后续模块的语言与运行时基础。前几章用数字、文本�
 
 主要研究信号仍包括 dict／哈希／切片成本、GIL 与线程／进程、asyncio 超时与取消、Lock／RLock／Semaphore、结构化输出与 JSON 校验。它们决定哪里需要更深的解释和追问，不决定第一章就跳入哪道高频题。
 
-完整来源、计数与问法见 [Python Canonical Questions](../research/questions/python.md)。
+完整来源、计数与问法见 [Python Canonical Questions](../../interview/canonical/python.md)。
 
 ---
 
 ## 7. 模块边界
 
-Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI](../fastapi/README.md)。跨服务超时预算、重试、消息队列、背压、持久后台任务等完整机制进入 [AI Backend Engineering](../backend-engineering/README.md)。Agent 循环、工具权限、记忆、检查点与恢复进入 [Agent](../agent/README.md)。
+Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI](../02-fastapi/README.md)。跨服务超时预算、重试、消息队列、背压、持久后台任务等完整机制进入 [AI Backend Engineering](../03-backend-engineering/README.md)。Agent 循环、工具权限、记忆、检查点与恢复进入 [Agent](../09-agent/README.md)。
 
 本模块会保留读懂这些问题所需的桥梁，但不把 Python 示例冒充成完整的生产业务系统。完整机制在主责模块维护，避免同一问题在多个模块各写一套互相冲突的结论。
 
@@ -169,7 +169,7 @@ Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI]
 | 面试前速查 | [进入](interview/面试前速查表.md) | 最后阶段快速回忆，不作为零基础教材 |
 | Python 高频 Coding 小题 | [进入](interview/Python高频Coding小题.md) | 额外编码专项训练 |
 
-研究与历史审计入口保留：[Canonical Questions](../research/questions/python.md)、[真实追问链](../research/analysis/follow-up-chains.md)、[复习频率参考](../research/analysis/frequency-ranking.md)、[课程粒度审计](../roadmap/curriculum-granularity-audit.md)、[内容深度审计](../roadmap/content-depth-audit.md)。审计反映对应时点与口径，不替代你对本轮可理解性的实际阅读。
+研究与历史审计入口保留：[Canonical Questions](../../interview/canonical/python.md)、[真实追问链](../../market/analysis/follow-up-chains.md)、[复习频率参考](../../market/analysis/frequency-ranking.md)、[课程粒度审计](../../guide/audits/curriculum-granularity-audit.md)、[内容深度审计](../../guide/audits/content-depth-audit.md)。审计反映对应时点与口径，不替代你对本轮可理解性的实际阅读。
 
 ---
 
@@ -181,7 +181,7 @@ Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI]
 
 **第三遍训练面试。** 用章末 🎯 回答建立简洁表达，再用自测和集中题库追问“为什么、前提是什么、什么时候不成立”。项目复盘再映射自己的真实工作，不虚构经历。
 
-整体学习节奏可参考 [Learning Path](../roadmap/learning-path.md)，不绑定固定天数。普通代码示例以 Python 3.11+ 为基础；当前参考文档主要为 Python／CPython 3.14，Pydantic 示例明确使用 v2。实现与构建差异在对应章节就地说明。
+整体学习节奏可参考 [Learning Path](../../guide/learning-path.md)，不绑定固定天数。普通代码示例以 Python 3.11+ 为基础；当前参考文档主要为 Python／CPython 3.14，Pydantic 示例明确使用 v2。实现与构建差异在对应章节就地说明。
 
 ---
 
@@ -197,4 +197,4 @@ Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI]
 
 **仍待验收：** 初学者连续阅读时是否还存在术语跳跃、隐含前提、解释不足或重复负担，需要实际再次通读验证。本页不将这一项预先标为完成。
 
-下一环：[FastAPI](../fastapi/README.md)。
+下一环：[FastAPI](../02-fastapi/README.md)。
