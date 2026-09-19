@@ -98,7 +98,12 @@
       "portal": "https://campus.163.com/",
       "api": "https://hr.163.com/api/hr163/position/queryPage",
       "official_root": "https://campus.163.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "extra_portals": [
+        "https://game.campus.163.com/",
+        "https://leihuo.163.com/campus/"
+      ],
+      "note": " 同时穷举网易主校招、游戏校招和雷火校招官方入口。"
     },
     {
       "company": "哔哩哔哩",
@@ -172,7 +177,11 @@
       "mode": "portal_only",
       "portal": "https://talent.antgroup.com/campus-full-list",
       "official_root": "https://talent.antgroup.com/campus-full-list",
-      "browser_probe": true
+      "browser_probe": true,
+      "extra_portals": [
+        "https://talent.antgroup.com/campus",
+        "https://talent.antgroup.com/campus-list"
+      ]
     },
     {
       "company": "京东",
@@ -226,7 +235,10 @@
       "portal": "https://iflytek.zhiye.com/",
       "official_root": "https://campus.iflytek.com/",
       "browser_probe": true,
-      "note": "campus.iflytek.com 官方校招入口当前重定向至 iflytek.zhiye.com 官方招聘站。"
+      "note": "campus.iflytek.com 官方校招入口当前重定向至 iflytek.zhiye.com 官方招聘站。 campus.iflytek.com 官方入口重定向到 iflytek.zhiye.com；额外扫描官方职位列表 /5/jobs。",
+      "extra_portals": [
+        "https://iflytek.zhiye.com/5/jobs"
+      ]
     },
     {
       "company": "携程",
@@ -234,14 +246,19 @@
       "portal": "https://careers.ctrip.com/",
       "official_root": "https://campus.ctrip.com/",
       "browser_probe": true,
-      "note": "campus.ctrip.com 官方入口当前重定向至 careers.ctrip.com。"
+      "note": "campus.ctrip.com 官方入口当前重定向至 careers.ctrip.com。 官方 campus 页面明确携程集团2027届应届校招生。",
+      "extra_portals": [
+        "https://careers.ctrip.com/#/campus"
+      ],
+      "verified_2027_project": true
     },
     {
       "company": "360",
       "mode": "portal_only",
       "portal": "https://hr.360.cn/",
       "official_root": "https://hr.360.cn/",
-      "browser_probe": true
+      "browser_probe": true,
+      "allow_no_public_2027": true
     },
     {
       "company": "得物",
@@ -258,7 +275,8 @@
       "portal": "https://talent.deepseek.com/",
       "official_root": "https://www.deepseek.com/",
       "browser_probe": true,
-      "note": "DeepSeek 公司官网 Join Us/Careers 指向 talent.deepseek.com；从公司官网验证 provenance 后枚举人才站。"
+      "note": "DeepSeek 公司官网 Join Us/Careers 指向 talent.deepseek.com；从公司官网验证 provenance 后枚举人才站。",
+      "allow_no_public_2027": true
     },
     {
       "company": "月之暗面/Kimi",
@@ -287,10 +305,13 @@
     {
       "company": "阶跃星辰",
       "mode": "portal_only",
-      "portal": "https://www.stepfun.com/",
+      "portal": "https://app.mokahr.com/campus-recruitment/step/94905",
       "official_root": "https://www.stepfun.com/",
       "browser_probe": true,
-      "note": "官方主站当前未公开稳定招聘入口；只有从官网重新发现并验证后才能升级 ATS，不能使用二手 Moka 线索。"
+      "note": "阶跃星辰公司官网运行时导航直接暴露该官方 Moka campus tenant；从公司官网 provenance 闭环。",
+      "extra_portals": [
+        "https://app.mokahr.com/campus-recruitment/step/94905"
+      ]
     },
     {
       "company": "百川智能",
@@ -307,7 +328,8 @@
       "portal": "https://01ai.jobs.feishu.cn/index/",
       "official_root": "https://www.01.ai/",
       "browser_probe": true,
-      "note": "01.AI 官网 footer“加入我们”直接跳转 01ai.jobs.feishu.cn。"
+      "note": "01.AI 官网 footer“加入我们”直接跳转 01ai.jobs.feishu.cn。",
+      "allow_no_public_2027": true
     },
     {
       "company": "商汤科技",
@@ -323,7 +345,8 @@
       "mode": "portal_only",
       "portal": "https://www.shengshu-ai.com/",
       "official_root": "https://www.shengshu-ai.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "allow_no_public_2027": true
     },
     {
       "company": "硅基流动",
@@ -331,7 +354,8 @@
       "portal": "https://www.siliconflow.cn/",
       "official_root": "https://www.siliconflow.cn/",
       "browser_probe": true,
-      "note": "官方主站当前未发现公开 Career/Campus 职位入口；由官网巡检判定是否开放 2027 项目。"
+      "note": "官方主站当前未发现公开 Career/Campus 职位入口；由官网巡检判定是否开放 2027 项目。",
+      "allow_no_public_2027": true
     },
     {
       "company": "面壁智能",
@@ -339,7 +363,8 @@
       "portal": "https://www.modelbest.cn/",
       "official_root": "https://www.modelbest.cn/",
       "browser_probe": true,
-      "note": "官网当前公开 career@modelbest.cn；若无公开 2027 职位项目，应归类 NO_PUBLIC_2027_PROJECT，不从二手源补录。"
+      "note": "官网当前公开 career@modelbest.cn；若无公开 2027 职位项目，应归类 NO_PUBLIC_2027_PROJECT，不从二手源补录。",
+      "allow_no_public_2027": true
     },
     {
       "company": "Manus",
@@ -347,22 +372,27 @@
       "portal": "https://www.manus.im/",
       "official_root": "https://www.manus.im/",
       "browser_probe": true,
-      "note": "官方站当前未发现公开 2027 招聘项目入口；由官网巡检判定，禁止二手招聘页补录。"
+      "note": "官方站当前未发现公开 2027 招聘项目入口；由官网巡检判定，禁止二手招聘页补录。",
+      "allow_no_public_2027": true
     },
     {
       "company": "LiblibAI",
       "mode": "portal_only",
       "portal": "https://www.liblib.art/us/joinus",
       "official_root": "https://www.liblib.art/us/joinus",
-      "browser_probe": true
+      "browser_probe": true,
+      "allow_no_public_2027": true
     },
     {
       "company": "无问芯穹/Infini-AI",
       "mode": "portal_only",
-      "portal": "https://www.infinigence-ai.com/",
+      "portal": "https://infinigence.jobs.feishu.cn/088717",
       "official_root": "https://www.infinigence-ai.com/",
       "browser_probe": true,
-      "note": "修正公司官网为 infinigence-ai.com。官网当前公开 HR 联系方式；是否存在公开 2027 项目由浏览器/官网内容判定。"
+      "note": "infinigence-ai.com 官方加入我们页面直接链接该 Feishu 招聘租户。",
+      "extra_portals": [
+        "https://infinigence.jobs.feishu.cn/088717"
+      ]
     },
     {
       "company": "昆仑万维/天工",
@@ -370,14 +400,19 @@
       "portal": "https://jobs.kunlun.com/459522",
       "official_root": "https://www.kunlun.com/",
       "browser_probe": true,
-      "note": "昆仑万维官网“加入我们→校园招聘”直接跳转 jobs.kunlun.com。"
+      "note": "昆仑万维官网加入我们页面直接链接 jobs.kunlun.com 官方招聘租户。",
+      "extra_portals": [
+        "https://jobs.kunlun.com/459522",
+        "https://jobs.kunlun.com/index"
+      ]
     },
     {
       "company": "Shopee",
       "mode": "portal_only",
       "portal": "https://careers.shopee.cn/",
       "official_root": "https://careers.shopee.cn/",
-      "browser_probe": true
+      "browser_probe": true,
+      "allow_no_public_2027": true
     },
     {
       "company": "联想",
