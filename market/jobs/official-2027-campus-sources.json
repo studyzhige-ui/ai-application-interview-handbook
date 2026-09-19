@@ -114,7 +114,9 @@
       "portal": "https://campus.didiglobal.com/",
       "api": "https://talent.didiglobal.com/api/jobList",
       "official_root": "https://campus.didiglobal.com/",
-      "browser_probe": true
+      "browser_probe": true,
+      "verified_2027_project": true,
+      "note": " 官方 campus 页面运行时直接显示“2027届-秋招”。"
     },
     {
       "company": "拼多多",
@@ -132,7 +134,8 @@
       "api": "https://career.huawei.com/reccampportal/portal5/position/api/position/queryPositions",
       "official_root": "https://career.huawei.com/cn/campus-recruitment",
       "browser_probe": true,
-      "note": "华为官方校园招聘页明确 2027 届应届生毕业窗口及 2027 招聘启动；现有专用 API 若失效必须由浏览器从此根页重新发现。"
+      "note": "华为官方校园招聘页明确 2027 届应届生毕业窗口及 2027 招聘启动；现有专用 API 若失效必须由浏览器从此根页重新发现。 官方校园招聘根页已确认2027项目。",
+      "verified_2027_project": true
     },
     {
       "company": "小红书",
@@ -140,7 +143,8 @@
       "portal": "https://campus.xiaohongshu.com/",
       "official_root": "https://job.xiaohongshu.com/campus",
       "browser_probe": true,
-      "note": "小红书官方校园页明确 2027 校招毕业窗口 2026-09~2027-08，并给出 campus.xiaohongshu.com PC 投递入口。"
+      "note": "小红书官方校园页明确 2027 校招毕业窗口 2026-09~2027-08，并给出 campus.xiaohongshu.com PC 投递入口。 官方校园页明确2027校园招聘/毕业时间窗口。",
+      "verified_2027_project": true
     },
     {
       "company": "字节跳动",
@@ -203,7 +207,9 @@
       "mode": "portal_only",
       "portal": "https://join.wps.cn/",
       "official_root": "https://join.wps.cn/",
-      "browser_probe": true
+      "browser_probe": true,
+      "verified_2027_project": true,
+      "note": " 官方 campus ATS 职位标题直接标注“面向2027”。"
     },
     {
       "company": "荣耀",
@@ -211,7 +217,8 @@
       "portal": "https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html",
       "official_root": "https://www.honor.com/cn/career/",
       "browser_probe": true,
-      "note": "荣耀官网 career 页面明确 2027 校招全球启动；应届生入口由官网直接跳转 career.honor.com。"
+      "note": "荣耀官网 career 页面明确 2027 校招全球启动；应届生入口由官网直接跳转 career.honor.com。 官方 career 页面明确荣耀2027校招。",
+      "verified_2027_project": true
     },
     {
       "company": "科大讯飞",
@@ -242,7 +249,8 @@
       "portal": "https://poizon.jobs.feishu.cn/578078/",
       "official_root": "https://www.dewu.com/",
       "browser_probe": true,
-      "note": "得物官网为 provenance 根；官方 2027 校园招聘职位页位于 poizon.jobs.feishu.cn/578078/，职位正文明确 2027届秋季校园招聘项目。"
+      "note": "得物官网为 provenance 根；官方 2027 校园招聘职位页位于 poizon.jobs.feishu.cn/578078/，职位正文明确 2027届秋季校园招聘项目。 官方飞书校园项目职位正文直接标注2027届秋季校园招聘。",
+      "verified_2027_project": true
     },
     {
       "company": "DeepSeek",
@@ -266,7 +274,8 @@
       "portal": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
       "official_root": "https://www.minimax.cn/careers",
       "browser_probe": true,
-      "note": "MiniMax 官方 Careers 明确写 2027 届校园招聘，并直接跳转该飞书招聘 project。"
+      "note": "MiniMax 官方 Careers 明确写 2027 届校园招聘，并直接跳转该飞书招聘 project。",
+      "verified_2027_project": true
     },
     {
       "company": "智谱/Z.ai",
@@ -289,7 +298,8 @@
       "portal": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
       "official_root": "https://careers.baichuan-inc.com/origin-program",
       "browser_probe": true,
-      "note": "百川官方“源点计划”页面覆盖 2025-2027 应届毕业生，并直接跳转该飞书招聘应届项目。"
+      "note": "百川官方“源点计划”页面覆盖 2025-2027 应届毕业生，并直接跳转该飞书招聘应届项目。",
+      "verified_2027_project": true
     },
     {
       "company": "零一万物/01.AI",
@@ -305,7 +315,8 @@
       "portal": "https://hr-jobs.sensetime.com/edu/",
       "official_root": "https://hr.sensetime.com/campus/",
       "browser_probe": true,
-      "note": "商汤官方 2027 校招页 hr.sensetime.com/campus/，官方投递进入 hr-jobs.sensetime.com/edu/；项目参数由浏览器运行时重新发现。"
+      "note": "商汤官方 2027 校招页 hr.sensetime.com/campus/，官方投递进入 hr-jobs.sensetime.com/edu/；项目参数由浏览器运行时重新发现。 官方校园根页明确2027届毕业窗口。",
+      "verified_2027_project": true
     },
     {
       "company": "生数科技",
