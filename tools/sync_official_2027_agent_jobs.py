@@ -17,7 +17,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse, parse_qs
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
@@ -1220,6 +1220,89 @@ def fetch_honor_2027(src: dict) -> list[Job]:
     return out
 
 
+def fetch_feishu_direct(src: dict) -> list[Job]:
+    """Enumerate a company-proven Feishu Recruiting tenant directly.
+
+    Feishu's public job search is anonymous. Portal scope is selected by the
+    official portal-channel / website-path header; optional subject/project and
+    recruitment filters come only from the company's official career URL.
+    """
+    host = txt(src.get("feishu_host"))
+    channel = txt(src.get("feishu_channel"))
+    if not host:
+        host = urlparse(src["portal"]).hostname or ""
+    if not channel:
+        path = urlparse(src["portal"]).path.strip("/")
+        channel = path.split("/")[0] if path else ""
+    if not host:
+        raise RuntimeError("Feishu host missing")
+
+    api = f"https://{host}/api/v1/search/job/posts"
+    apply_prefix = txt(src.get("feishu_apply_prefix")) or f"https://{host}/{channel}/position"
+    headers = {
+        **HEADERS,
+        "Content-Type": "application/json",
+        "portal-channel": channel,
+        "portal-platform": "pc",
+        "website-path": channel,
+        "Origin": f"https://{host}",
+        "Referer": src["portal"],
+    }
+    subject_ids = [str(x) for x in (src.get("feishu_subject_ids") or [])]
+    recruitment_ids = [str(x) for x in (src.get("feishu_recruitment_ids") or [])]
+    out: list[Job] = []
+    offset = 0
+    total = None
+    for _ in range(100):
+        body: dict[str, Any] = {
+            "keyword": "", "limit": 100, "offset": offset,
+            "portal_type": 3, "portal_entrance": 1, "language": "zh",
+            "job_category_id_list": [], "location_code_list": [],
+        }
+        if subject_ids:
+            body["subject_id_list"] = subject_ids
+        if recruitment_ids:
+            body["recruitment_id_list"] = recruitment_ids
+        data = post_json(api, payload=body, headers=headers)
+        if data.get("code") != 0:
+            raise RuntimeError(f"Feishu {host}/{channel} code={data.get('code')}: {data.get('message')}")
+        d = data.get("data") or {}
+        rows = d.get("job_post_list") or []
+        if total is None:
+            total = int(d.get("count") or 0)
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id"))
+            cities = " / ".join(
+                txt(x.get("name")) for x in (j.get("city_list") or [])
+                if isinstance(x, dict) and x.get("name")
+            ) or txt((j.get("city_info") or {}).get("name"))
+            category = txt((j.get("recruit_type") or {}).get("name"))
+            department = txt((j.get("job_category") or {}).get("name")) or txt((j.get("job_function") or {}).get("name"))
+            subjects = []
+            raw_subjects = j.get("job_subject_list") or ([j.get("job_subject")] if j.get("job_subject") else [])
+            for s in raw_subjects:
+                if not isinstance(s, dict):
+                    continue
+                name = s.get("name")
+                if isinstance(name, dict):
+                    name = name.get("zh_cn") or name.get("i18n") or name.get("en_us")
+                if name:
+                    subjects.append(txt(name))
+            cycle = " / ".join(subjects + ([category] if category else []))
+            out.append(Job(
+                src["company"], txt(j.get("title")), jid, cities, category, department,
+                txt(j.get("description")), txt(j.get("requirement")),
+                f"{apply_prefix.rstrip('/')}/{jid}/detail" if jid else src["portal"],
+                api, cycle,
+            ))
+        offset += len(rows)
+        if len(rows) < 100 or (total is not None and offset >= total):
+            break
+    return out
+
+
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
     "bytedance_api": fetch_bytedance,
@@ -1243,6 +1326,7 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "iflytek_2027_api": fetch_iflytek_2027,
     "ctrip_2027_api": fetch_ctrip_2027,
     "honor_2027_api": fetch_honor_2027,
+    "feishu_direct": fetch_feishu_direct,
     "didi_api": fetch_didi,
     "pdd_api": fetch_pdd,
     "huawei_api": fetch_huawei_2027,
