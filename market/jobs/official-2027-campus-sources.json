@@ -38,7 +38,11 @@
     "采购",
     "导演",
     "销售",
-    "运营"
+    "运营",
+    "研究",
+    "探索",
+    "产品设计",
+    "训练/"
   ],
   "sources": [
     {
@@ -733,8 +737,7 @@
     "架构",
     "infra",
     "runtime",
-    "harness",
-    "coding"
+    "harness"
   ],
   "strong_agent_keywords": [
     "agent",
@@ -752,7 +755,7 @@
     "agent runtime",
     "agent harness"
   ],
-  "scope_note": "当前有效官方校园招聘/应届生职位池；年份仅作备注，不作为入库 Gate。",
+  "scope_note": "当前有效官方校园招聘/应届可投职位池；只保留明确非算法 AI 应用 / Agent 软件工程角色。混合官方招聘池必须在 JD 中出现应届/毕业生/new graduate 等资格证据。",
   "body_agent_signals": [
     "agent",
     "智能体",
@@ -797,5 +800,9 @@
     "grpo",
     "训练框架"
   ],
-  "year_is_metadata_only": true
+  "year_is_metadata_only": true,
+  "strict_title_allowlist": [
+    "AGI产品研发工程师-应届生-TOP Talent",
+    "AI开发工程师（顺丰科技）"
+  ]
 }
