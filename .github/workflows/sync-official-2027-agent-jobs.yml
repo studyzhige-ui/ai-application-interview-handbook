@@ -9,7 +9,8 @@ on:
     paths:
       - 'tools/sync_official_2027_agent_jobs.py'
       - 'tools/fetch_xiaomi_2027.mjs'
-      - 'tools/fetch_bytedance_2027.mjs'\n      - 'tools/fetch_dynamic_official_jobs.mjs'
+      - 'tools/fetch_bytedance_2027.mjs'
+      - 'tools/fetch_dynamic_official_jobs.mjs'
       - 'market/jobs/official-2027-campus-sources.json'
       - '.github/workflows/sync-official-2027-agent-jobs.yml'
 
@@ -24,6 +25,7 @@ jobs:
   sync:
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,8 +35,11 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install dependency
-        run: python -m pip install --disable-pip-version-check requests\n          npm install --no-save playwright@1.55.0\n          npx playwright install chromium --with-deps
+      - name: Install dependencies
+        run: |
+          python -m pip install --disable-pip-version-check requests
+          npm install --no-save playwright@1.55.0
+          npx playwright install chromium --with-deps
 
       - name: Pull Xiaomi official campus ATSX
         run: node tools/fetch_xiaomi_2027.mjs /tmp/xiaomi-2027-campus.json
@@ -42,30 +47,32 @@ jobs:
       - name: Pull ByteDance official campus ATSX
         run: node tools/fetch_bytedance_2027.mjs /tmp/bytedance-campus.json
 
-      - name: Pull official recruitment APIs
+      - name: Discover dynamic official campus portals
+        run: node tools/fetch_dynamic_official_jobs.mjs market/jobs/official-2027-browser-discovery.generated.json
+
+      - name: Pull and normalize official recruitment sources
         run: python tools/sync_official_2027_agent_jobs.py
 
-      - name: Commit discovery output
+      - name: Commit generated discovery output safely
         run: |
           cp market/jobs/official-2027-agent-jobs.generated.md /tmp/official-2027-agent-jobs.generated.md
           cp market/jobs/official-2027-agent-jobs.generated.json /tmp/official-2027-agent-jobs.generated.json
           cp market/jobs/official-2027-browser-discovery.generated.json /tmp/official-2027-browser-discovery.generated.json
 
-          # Generated artifacts are disposable. Rebase/merge conflicts on them are
-          # meaningless, so always re-anchor on the newest main and restore the
-          # freshly generated output before committing.
           git fetch origin ${{ github.ref_name }}
           git reset --hard origin/${{ github.ref_name }}
+
           cp /tmp/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.md
           cp /tmp/official-2027-agent-jobs.generated.json market/jobs/official-2027-agent-jobs.generated.json
           cp /tmp/official-2027-browser-discovery.generated.json market/jobs/official-2027-browser-discovery.generated.json
 
-          if [ -z "$(git status --porcelain market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json)" ]; then
+          if [ -z "$(git status --porcelain -- market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json)" ]; then
             echo "No discovery changes."
             exit 0
           fi
+
           git config user.name 'github-actions[bot]'
-          git config user.email '4189828+github-actions[bot]@users.noreply.github.com'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add market/jobs/official-2027-agent-jobs.generated.md market/jobs/official-2027-agent-jobs.generated.json market/jobs/official-2027-browser-discovery.generated.json
           git commit -m 'market: sync official 2027 Agent campus discovery'
           git push origin HEAD:${{ github.ref_name }}
