@@ -72,6 +72,9 @@ def main():
     checked=0;anchor_checks=0
     for p in ROOT.rglob('*.md'):
         if '.git' in p.parts:continue
+        # Historical snapshots are intentionally preserved at a new archive path;
+        # their old relative links describe the original location and are not rewritten.
+        if 'history' in p.parts and p.name != 'README.md':continue
         try:prose,_=split_fences(p.read_text())
         except ValueError as exc:errors.append(str(p.relative_to(ROOT))+': '+str(exc));continue
         for target in re.findall(r'(?<!!)\[[^\]\n]*\]\(([^)\n]+)\)',prose):
