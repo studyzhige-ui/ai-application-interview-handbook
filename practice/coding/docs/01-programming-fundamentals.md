@@ -78,7 +78,7 @@ print(x)
 → 它可能返回结果，也可能产生副作用，例如打印
 ```
 
-更完整的 Python 对象模型在 [Python Foundation 01](../../python/docs/01-python基础与对象模型.md) 学；这里先确保你能追踪程序。
+更完整的 Python 对象模型在 [Python Foundation 01](../../../curriculum/01-python/docs/01-python基础与对象模型.md) 学；这里先确保你能追踪程序。
 
 ---
 

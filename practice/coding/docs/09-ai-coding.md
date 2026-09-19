@@ -480,7 +480,7 @@ AI 哪个假设是错的？
 
 ## 14. AI Coding 与 Agent 模块的关系
 
-[Agent](../../agent/README.md) 研究的是 Coding Agent 背后的系统：Context、Tool、Permission、Sandbox、Planning、Checkpoint、Trace、Eval 等。
+[Agent](../../../curriculum/09-agent/README.md) 研究的是 Coding Agent 背后的系统：Context、Tool、Permission、Sandbox、Planning、Checkpoint、Trace、Eval 等。
 
 本章关注使用者能力：
 

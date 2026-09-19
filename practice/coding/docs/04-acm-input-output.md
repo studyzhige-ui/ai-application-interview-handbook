@@ -504,7 +504,7 @@ if __name__ == "__main__":
 → 这个文件被直接运行时调用 solve()
 ```
 
-更完整的模块语义回 [Python Foundation 09](../../python/docs/09-异常-文件-模块与导入.md) 学。
+更完整的模块语义回 [Python Foundation 09](../../../curriculum/01-python/docs/09-异常-文件-模块与导入.md) 学。
 
 ---
 

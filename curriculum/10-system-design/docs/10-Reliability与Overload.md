@@ -1,6 +1,6 @@
 # 10｜Timeout、Retry、Failover、Degradation 与 Load Shedding
 
-> **本章定位：System Design 组合层。** 这里把 Deadline、Retry、Failover、Degradation、Load Shedding 组合成系统级 Failure Strategy；这些 Primitive 的完整机制与错误语义回到 [AIBE Timeout / Deadline](../../backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md) 和 [AIBE Retry / Circuit Breaker / Failover](../../backend-engineering/docs/08-RetryCircuitBreaker与Failover.md)。
+> **本章定位：System Design 组合层。** 这里把 Deadline、Retry、Failover、Degradation、Load Shedding 组合成系统级 Failure Strategy；这些 Primitive 的完整机制与错误语义回到 [AIBE Timeout / Deadline](../../03-backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md) 和 [AIBE Retry / Circuit Breaker / Failover](../../03-backend-engineering/docs/08-RetryCircuitBreaker与Failover.md)。
 
 可靠系统不是“所有请求都成功”，而是：
 

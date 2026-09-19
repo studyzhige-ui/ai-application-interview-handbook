@@ -39,7 +39,7 @@ Python 常见容器不是一堆孤立语法，而是在回答：
 → tuple
 ```
 
-更深的底层机制见 [Python Foundation 02](../../python/docs/02-核心数据类型与容器.md)。这里先练使用。
+更深的底层机制见 [Python Foundation 02](../../../curriculum/01-python/docs/02-核心数据类型与容器.md)。这里先练使用。
 
 ---
 
