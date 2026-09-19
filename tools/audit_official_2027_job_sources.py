@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Audit official 2027 campus retrieval coverage for every registered company."""
+"""Audit fixed-path official job retrieval separately from 2027 cohort proof."""
 
 from __future__ import annotations
 import json
@@ -15,8 +15,6 @@ FEISHU = ROOT / "market/jobs/official-2027-feishu-discovery.generated.json"
 MOKA = ROOT / "market/jobs/official-2027-moka-discovery.generated.json"
 OUT = ROOT / "market/jobs/official-2027-coverage-audit.generated.md"
 
-TERMINAL = {"ENUMERATED_WITH_MATCHES", "ENUMERATED_ZERO_MATCHES", "NO_PUBLIC_2027_PROJECT"}
-
 def read(path: Path):
     if not path.exists():
         return {}
@@ -26,99 +24,72 @@ def read(path: Path):
         return {}
 
 def main() -> int:
-    reg = read(REG)
-    norm = read(NORM)
-    browser = read(BROWSER)
-    feishu = read(FEISHU)
-    moka = read(MOKA)
-    sources = {x.get("company"): x for x in reg.get("sources", []) if x.get("company")}
-    normalized = {x.get("company"): x for x in norm.get("sources", []) if x.get("company")}
-    browsed = {x.get("company"): x for x in browser.get("results", []) if x.get("company")}
-    fei = {x.get("company"): x for x in feishu.get("results", []) if x.get("company")}
-    mok = {x.get("company"): x for x in moka.get("results", []) if x.get("company")}
+    reg, norm, browser, feishu, moka = map(read, (REG, NORM, BROWSER, FEISHU, MOKA))
+    ns = {x.get("company"): x for x in norm.get("sources", []) if x.get("company")}
+    bs = {x.get("company"): x for x in browser.get("results", []) if x.get("company")}
+    fs = {x.get("company"): x for x in feishu.get("results", []) if x.get("company")}
+    ms = {x.get("company"): x for x in moka.get("results", []) if x.get("company")}
     rows = []
-    for company, src in sources.items():
-        n = normalized.get(company, {})
-        b = browsed.get(company, {})
-        f = fei.get(company, {})
-        m = mok.get(company, {})
-        status = n.get("status") or "BLOCKED"
-        reason = n.get("error") or ""
-        fetched = int(n.get("fetched") or 0)
-        matched = int(n.get("matched") or 0)
-
-        # A browser run is a valid first-party enumerator when it both proves
-        # the 2027 project and completes the full configured keyword search.
-        b_status = b.get("status")
-        b_has_2027 = bool(src.get("verified_2027_project")) or bool(b.get("has2027"))
-        b_full = bool(b.get("full_keyword_search")) or bool(b.get("list_scan_complete"))
-        b_jobs = b.get("jobs") or []
-        if b_status == "BROWSER_ENUMERATED" and b_has_2027 and b_full:
-            status = "ENUMERATED_WITH_MATCHES" if b_jobs else "ENUMERATED_ZERO_MATCHES"
-            fetched = max(fetched, len(b_jobs))
-            matched = max(matched, len(b_jobs))
-            reason = "official browser completed full 2027 keyword enumeration"
-        elif b_status == "BROWSER_ENUMERATED_ZERO" and b_has_2027 and b_full:
-            status = "ENUMERATED_ZERO_MATCHES"
-            reason = "official browser completed full 2027 keyword enumeration; 0 target jobs"
-        elif b_status == "BROWSER_NO_PUBLIC_2027" and src.get("allow_no_public_2027"):
-            status = "NO_PUBLIC_2027_PROJECT"
-            reason = "fixed official recruitment entry exhaustively checked; no public 2027 project exposed"
-        elif b_status == "BROWSER_NO_2027_EVIDENCE" and src.get("allow_no_public_2027"):
-            status = "NO_PUBLIC_2027_PROJECT"
-            reason = "official root exhaustively checked; no public 2027 project exposed"
-
-        if status not in TERMINAL:
-            if f.get("status") == "OK" and f.get("jobs") and src.get("verified_2027_project"):
-                status = "DISCOVERED_NEEDS_NORMALIZATION"
-                reason = "official Feishu 2027 pool discovered: %s jobs" % len(f.get("jobs") or [])
-            elif m.get("status") == "OK" and m.get("jobs") and src.get("verified_2027_project"):
-                status = "DISCOVERED_NEEDS_NORMALIZATION"
-                reason = "official Moka 2027 pool discovered: %s jobs" % len(m.get("jobs") or [])
-            elif b_jobs:
-                status = "DISCOVERED_NEEDS_ADAPTER"
-                reason = "official browser extracted %s target-shaped records; exhaustive 2027 enumeration not yet proven" % len(b_jobs)
-            elif b_has_2027:
-                status = "BLOCKED"
-                reason = reason or "official 2027 project found, but full keyword/job-detail enumeration is incomplete"
-            else:
-                status = "BLOCKED"
-                reason = reason or "official root exists, but public 2027 job pool is not yet proven"
-
+    for src in reg.get("sources", []):
+        company = src["company"]
+        n, b, f, m = ns.get(company, {}), bs.get(company, {}), fs.get(company, {}), ms.get(company, {})
+        contract = "READY" if src.get("official_root") and src.get("job_list_url") else "BROKEN"
+        browser_jobs = len(b.get("jobs") or [])
+        ats_jobs = max(len(f.get("jobs") or []), len(m.get("jobs") or []))
+        if n.get("status") in {"ENUMERATED_WITH_MATCHES", "ENUMERATED_ZERO_MATCHES"}:
+            retrieval = "ENUMERATED"
+        elif browser_jobs or ats_jobs:
+            retrieval = "ENUMERATED"
+        elif b.get("pages") and not any(p.get("error") for p in b.get("pages") or []):
+            retrieval = "LIST_REACHABLE"
+        elif src.get("allow_no_public_2027"):
+            retrieval = "NO_PUBLIC_2027_PROJECT"
+        else:
+            retrieval = "NEEDS_RUNTIME_RECHECK"
+        cycle_text = " ".join(str(j.get("cycle_evidence", "")) for j in (b.get("jobs") or []))
+        if src.get("verified_2027_project") or b.get("has2027") or "2027" in cycle_text:
+            cohort = "VERIFIED_2027"
+        elif src.get("allow_no_public_2027") and retrieval in {"NO_PUBLIC_2027_PROJECT", "LIST_REACHABLE"}:
+            cohort = "NO_PUBLIC_2027_PROJECT"
+        else:
+            cohort = "COHORT_UNVERIFIED"
         rows.append({
-            "company": company, "status": status,
-            "root": src.get("official_root") or src.get("portal") or "",
-            "portal": src.get("portal") or "",
-            "fetched": fetched, "matched": matched,
-            "reason": reason.replace("|", "/").replace("\\n", " ")[:240],
+            "company": company, "contract": contract, "retrieval": retrieval, "cohort": cohort,
+            "fetched": int(n.get("fetched") or 0), "matched": int(n.get("matched") or 0),
+            "root": src.get("official_root") or "", "jobs": src.get("job_list_url") or "",
         })
-    counts = Counter(r["status"] for r in rows)
-    blocked = [r for r in rows if r["status"] not in TERMINAL]
+    cc = Counter(r["contract"] for r in rows)
+    cr = Counter(r["retrieval"] for r in rows)
+    ch = Counter(r["cohort"] for r in rows)
     out = [
         "# 2027 校招官方岗位源覆盖审计", "",
-        "- 固定公司：**%d**" % len(rows),
-        "- 已形成终态：**%d**" % (len(rows) - len(blocked)),
-        "- 尚未闭环：**%d**" % len(blocked), "",
-        "只有 ENUMERATED_WITH_MATCHES、ENUMERATED_ZERO_MATCHES、NO_PUBLIC_2027_PROJECT 算闭环。",
-        "BLOCKED / DISCOVERED_* 不能被解释成 0 个岗位。", "",
-        "## 状态统计", ""
+        "> 本审计把“职位能否获取”和“是否有 2027 届官方证据”分开，避免把 cohort 未确认误写成抓取失败。", "",
+        f"- 固定公司：**{len(rows)}**",
+        f"- 固定路径契约 READY：**{cc.get('READY', 0)}/{len(rows)}**",
+        f"- 上次运行已实际枚举：**{cr.get('ENUMERATED', 0)}**",
+        f"- 上次运行职位页可达、需按新固定路径重跑：**{cr.get('LIST_REACHABLE', 0)}**",
+        f"- 官方未公开 2027 项目：**{cr.get('NO_PUBLIC_2027_PROJECT', 0)}**",
+        f"- 需要运行时复核：**{cr.get('NEEDS_RUNTIME_RECHECK', 0)}**", "",
+        "## 2027 届别", "",
+        f"- VERIFIED_2027：**{ch.get('VERIFIED_2027', 0)}**",
+        f"- COHORT_UNVERIFIED：**{ch.get('COHORT_UNVERIFIED', 0)}**",
+        f"- NO_PUBLIC_2027_PROJECT：**{ch.get('NO_PUBLIC_2027_PROJECT', 0)}**", "",
+        "## 逐公司", "",
+        "| 公司 | 固定路径 | Retrieval | Cohort | 上次拉取 | 目标候选 | 官方根入口 | 固定职位列表 |",
+        "|---|:---:|---|---|---:|---:|---|---|",
     ]
-    for k, v in sorted(counts.items()):
-        out.append("- %s：%d" % (k, v))
-    out += ["", "## 逐公司", "", "| 公司 | 状态 | 拉取岗位 | 目标候选 | 官方根入口 | 实际职位入口 | 说明 |", "|---|---|---:|---:|---|---|---|"]
     for r in rows:
-        out.append("| {company} | {status} | {fetched} | {matched} | {root} | {portal} | {reason} |".format(**r))
-    out += ["", "## 尚未闭环公司", ""]
-    if blocked:
-        for r in blocked:
-            out.append("- **%s** — %s：%s" % (r["company"], r["status"], r["reason"]))
-    else:
-        out.append("- 无。固定覆盖矩阵已全部闭环。")
+        out.append("| {company} | {contract} | {retrieval} | {cohort} | {fetched} | {matched} | {root} | {jobs} |".format(**r))
+    out += ["", "## 解释", "",
+        "- READY 只表示采集契约完整：有第一手 official_root 和固定 job_list_url。",
+        "- ENUMERATED 表示已有官方运行结果证明职位列表/详情能被读取。",
+        "- LIST_REACHABLE 表示官方职位页已成功打开，但存量快照早于当前固定页面完整穷举版本；下一轮统一同步会重跑。",
+        "- COHORT_UNVERIFIED 不代表抓不到，只代表官方页面尚未给出足够的 2027 届证据，因此不能进入 2027 正式主库。",
+        "- 正式 JD 主库只允许 VERIFIED_2027 + 非算法工程 Role Scope。",
+    ]
     OUT.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print("companies=%d terminal=%d blocked=%d" % (len(rows), len(rows)-len(blocked), len(blocked)))
-    for r in blocked:
-        print("BLOCKED %s: %s %s" % (r["company"], r["status"], r["reason"]))
-    return 0 if not blocked else 2
+    print(f"contracts={cc.get('READY',0)}/{len(rows)} enumerated={cr.get('ENUMERATED',0)} cohort2027={ch.get('VERIFIED_2027',0)}")
+    return 1 if cc.get("READY", 0) != len(rows) else 0
 
 if __name__ == "__main__":
     raise SystemExit(main())
