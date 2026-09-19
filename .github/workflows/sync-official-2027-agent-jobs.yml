@@ -1,4 +1,4 @@
-name: Sync official 2027 Agent campus jobs
+name: Sync official current-campus Agent jobs
 
 on:
   workflow_dispatch:
@@ -18,7 +18,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: official-2027-agent-campus-sync
+  group: official-current-campus-agent-sync
   cancel-in-progress: false
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
           npx playwright install chromium --with-deps
           node --check tools/fetch_dynamic_official_jobs.mjs
 
-      - name: Exhaust fixed official 2027 job-list pages
+      - name: Exhaust fixed official current-campus job-list pages
         run: node tools/fetch_dynamic_official_jobs.mjs market/jobs/official-2027-browser-discovery.generated.json
 
       - name: Pull Xiaomi official campus ATSX accelerator
@@ -61,7 +61,7 @@ jobs:
         continue-on-error: true
         run: node tools/fetch_moka_official_2027.mjs market/jobs/official-2027-moka-discovery.generated.json
 
-      - name: Normalize and filter official 2027 jobs
+      - name: Normalize and filter official current-campus jobs
         run: python tools/sync_official_2027_agent_jobs.py
 
       - name: Audit every registered company
@@ -91,5 +91,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add market/jobs/official-2027-*.generated.*
-          git commit -m 'market: sync official 2027 Agent campus discovery'
+          git commit -m 'market: sync official current-campus Agent discovery'
           git push origin HEAD:main
