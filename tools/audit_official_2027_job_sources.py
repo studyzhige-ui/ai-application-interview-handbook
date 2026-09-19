@@ -36,7 +36,10 @@ def main() -> int:
         contract = "READY" if src.get("official_root") and src.get("job_list_url") else "BROKEN"
         browser_jobs = len(b.get("jobs") or [])
         ats_jobs = max(len(f.get("jobs") or []), len(m.get("jobs") or []))
+        browser_status = b.get("status", "")
         if n.get("status") in {"ENUMERATED_WITH_MATCHES", "ENUMERATED_ZERO_MATCHES"}:
+            retrieval = "ENUMERATED"
+        elif browser_status in {"BROWSER_ENUMERATED", "BROWSER_ENUMERATED_ZERO", "BROWSER_OK", "BROWSER_OK_0_MATCH"}:
             retrieval = "ENUMERATED"
         elif browser_jobs or ats_jobs:
             retrieval = "ENUMERATED"
