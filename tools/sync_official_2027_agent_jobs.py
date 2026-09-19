@@ -17,6 +17,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
+from urllib.parse import urljoin
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
@@ -80,6 +81,50 @@ def blob(job: Job) -> str:
 def is_agent_related(job: Job, keywords: list[str]) -> bool:
     s = blob(job)
     return any(k.lower() in s for k in keywords)
+
+
+def looks_engineering(job: Job, signals: list[str]) -> bool:
+    title = job.title.lower()
+    return any(s.lower() in title for s in signals)
+
+
+def discover_api_candidates(portal: str) -> list[str]:
+    """Best-effort discovery of current API paths from an official JS recruitment portal.
+
+    This is diagnostic only. A discovered endpoint is never treated as a JD until
+    a company adapter explicitly understands its request/response contract.
+    """
+    base = portal.split("#", 1)[0]
+    try:
+        r = requests.get(base, headers=HEADERS, timeout=TIMEOUT)
+        r.raise_for_status()
+    except Exception:
+        return []
+
+    bodies = [r.text]
+    scripts = re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', r.text, flags=re.I)
+    for src in scripts[:16]:
+        try:
+            js = requests.get(urljoin(base, src), headers=HEADERS, timeout=TIMEOUT)
+            if js.ok:
+                bodies.append(js.text[:5_000_000])
+        except Exception:
+            continue
+
+    candidates: set[str] = set()
+    patterns = [
+        r'https?://[^"\'\s]{1,240}',
+        r'["\']([^"\']{0,80}(?:/api/|api/|/recruit/)[^"\']{0,180})["\']',
+    ]
+    for body in bodies:
+        for pattern in patterns:
+            for m in re.finditer(pattern, body, flags=re.I):
+                raw = m.group(1) if m.lastindex else m.group(0)
+                raw = raw.replace("\\/", "/")
+                low = raw.lower()
+                if any(k in low for k in ("job", "position", "recruit", "opportun")):
+                    candidates.add(raw[:260])
+    return sorted(candidates)[:30]
 
 
 def is_hard_excluded(job: Job, excludes: list[str]) -> bool:
@@ -404,8 +449,9 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
 
 def main() -> int:
     cfg = json.loads(CONFIG.read_text(encoding="utf-8"))
-    keywords = [x.lower() for x in cfg["agent_keywords"]]
+    keywords = [x.lower() for x in cfg.get("strong_agent_keywords", cfg["agent_keywords"])]
     excludes = [x.lower() for x in cfg["hard_exclude_title_keywords"]]
+    engineering_signals = [x.lower() for x in cfg.get("engineering_title_signals", [])]
 
     all_matches: list[Job] = []
     results: list[SourceResult] = []
@@ -422,7 +468,10 @@ def main() -> int:
             jobs = fetcher(src)
             matches = [
                 j for j in jobs
-                if campusish(j) and is_agent_related(j, keywords) and not is_hard_excluded(j, excludes)
+                if campusish(j)
+                and is_agent_related(j, keywords)
+                and (not engineering_signals or looks_engineering(j, engineering_signals))
+                and not is_hard_excluded(j, excludes)
             ]
             seen = set()
             uniq = []
@@ -434,9 +483,13 @@ def main() -> int:
                 uniq.append(j)
             return SourceResult(company, mode, src["portal"], "OK", len(jobs), len(uniq)), uniq
         except Exception as e:
+            discovered = discover_api_candidates(src["portal"])
+            diagnostic = f"{type(e).__name__}: {e}"
+            if discovered:
+                diagnostic += " | discovered: " + " ; ".join(discovered[:8])
             return SourceResult(
                 company, mode, src["portal"], "ERROR", 0, 0,
-                f"{type(e).__name__}: {e}"[:300],
+                diagnostic[:1600],
             ), []
 
     # Company sources are independent. Run official API adapters concurrently so one
