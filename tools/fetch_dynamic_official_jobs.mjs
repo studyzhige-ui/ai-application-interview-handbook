@@ -127,6 +127,46 @@ async function openJobSearchSurface(page){
   return {clicked:false};
 }
 
+async function collectSearchPages(page,keyword){
+  const hits=[];
+  const seenSignatures=new Set();
+  for(let step=0;step<30;step++){
+    await page.waitForTimeout(step===0?650:350);
+    await scroll(page);
+    const pageHits=await jobLinksOnPage(page,keyword);
+    const signature=pageHits.map(x=>x.href).sort().join("|");
+    if(signature && seenSignatures.has(signature)) break;
+    if(signature) seenSignatures.add(signature);
+    hits.push(...pageHits);
+
+    const candidates=[
+      page.getByRole("button",{name:/下一页|下页|Next/i}).last(),
+      page.getByRole("link",{name:/下一页|下页|Next/i}).last(),
+      page.locator("button").filter({hasText:/下一页|下页|Next/i}).last(),
+      page.locator("[class*=next]").last(),
+      page.locator("[aria-label*=next i]").last()
+    ];
+    let moved=false;
+    for(const next of candidates){
+      try{
+        if(await next.count()===0) continue;
+        if(!(await next.isVisible())) continue;
+        const disabled=(await next.isDisabled().catch(()=>false)) ||
+          (await next.getAttribute("aria-disabled"))==="true" ||
+          /disabled/i.test((await next.getAttribute("class"))||"");
+        if(disabled) continue;
+        const before=page.url()+"|"+signature;
+        await next.click({timeout:1200});
+        await page.waitForTimeout(500);
+        const afterHits=await jobLinksOnPage(page,keyword);
+        const after=page.url()+"|"+afterHits.map(x=>x.href).sort().join("|");
+        if(after!==before){ moved=true; break; }
+      }catch{}
+    }
+    if(!moved) break;
+  }
+  return hits;
+}
 async function searchInputs(page){
   const inputs=page.locator("input");
   const n=Math.min(await inputs.count(),40);
@@ -147,9 +187,19 @@ async function searchInputs(page){
     try{
       await target.fill(q);
       await target.press("Enter").catch(()=>{});
-      await page.waitForTimeout(450);
+      await page.waitForTimeout(500);
       terms.push(q);
-      hits.push(...await jobLinksOnPage(page,q));
+      hits.push(...await collectSearchPages(page,q));
+      // Some SPAs replace the search input after navigation/pagination.
+      const refreshed=page.locator("input");
+      const count=Math.min(await refreshed.count(),40);
+      for(let i=0;i<count;i++){
+        const el=refreshed.nth(i);
+        const ph=((await el.getAttribute("placeholder"))||"").toLowerCase();
+        const aria=((await el.getAttribute("aria-label"))||"").toLowerCase();
+        const type=((await el.getAttribute("type"))||"").toLowerCase();
+        if(/(搜索|职位|岗位|keyword|search)/i.test(ph+" "+aria) || type==="search"){ target=el; break; }
+      }
     }catch{}
   }
   try{ await target.fill(""); await target.press("Enter").catch(()=>{}); }catch{}
