@@ -8,15 +8,10 @@ permissions:
 
 jobs:
   debug:
-    runs-on: [self-hosted, linux]
+    runs-on: ubuntu-latest
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
 
       - name: Install Playwright
         run: |
