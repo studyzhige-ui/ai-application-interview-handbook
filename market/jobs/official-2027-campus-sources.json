@@ -290,13 +290,19 @@
     },
     {
       "company": "得物",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://poizon.jobs.feishu.cn/578078/",
       "official_root": "https://www.dewu.com/",
       "browser_probe": true,
       "note": "得物官网为 provenance 根；官方 2027 校园招聘职位页位于 poizon.jobs.feishu.cn/578078/，职位正文明确 2027届秋季校园招聘项目。 官方飞书校园项目职位正文直接标注2027届秋季校园招聘。",
       "verified_2027_project": true,
-      "job_list_url": "https://poizon.jobs.feishu.cn/578078/"
+      "job_list_url": "https://poizon.jobs.feishu.cn/578078/",
+      "feishu_host": "poizon.jobs.feishu.cn",
+      "feishu_channel": "578078",
+      "feishu_recruitment_ids": [
+        "201"
+      ],
+      "feishu_apply_prefix": "https://poizon.jobs.feishu.cn/578078/position"
     },
     {
       "company": "DeepSeek",
@@ -319,13 +325,20 @@
     },
     {
       "company": "MiniMax",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
       "official_root": "https://www.minimax.cn/careers",
       "browser_probe": true,
       "note": "MiniMax 官方 Careers 明确写 2027 届校园招聘，并直接跳转该飞书招聘 project。",
       "verified_2027_project": true,
-      "job_list_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415"
+      "job_list_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
+      "feishu_host": "vrfi1sk8a0.jobs.feishu.cn",
+      "feishu_channel": "379481",
+      "feishu_subject_ids": [
+        "7495675705720965415",
+        "7496820276634634537"
+      ],
+      "feishu_apply_prefix": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position"
     },
     {
       "company": "智谱/Z.ai",
@@ -349,33 +362,48 @@
     },
     {
       "company": "百川智能",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
       "official_root": "https://careers.baichuan-inc.com/origin-program",
       "browser_probe": true,
       "note": "百川官方“源点计划”页面覆盖 2025-2027 应届毕业生，并直接跳转该飞书招聘应届项目。",
       "verified_2027_project": true,
-      "job_list_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987"
+      "job_list_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
+      "feishu_host": "cq6qe6bvfr6.jobs.feishu.cn",
+      "feishu_channel": "646926",
+      "feishu_subject_ids": [
+        "7676396828845639987"
+      ],
+      "feishu_apply_prefix": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position"
     },
     {
       "company": "零一万物/01.AI",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://01ai.jobs.feishu.cn/index/",
       "official_root": "https://www.01.ai/",
       "browser_probe": true,
       "note": "01.AI 官网 footer“加入我们”直接跳转 01ai.jobs.feishu.cn。",
       "allow_no_public_2027": true,
-      "job_list_url": "https://01ai.jobs.feishu.cn/index/"
+      "job_list_url": "https://01ai.jobs.feishu.cn/index/",
+      "feishu_host": "01ai.jobs.feishu.cn",
+      "feishu_channel": "index",
+      "feishu_apply_prefix": "https://01ai.jobs.feishu.cn/index/position"
     },
     {
       "company": "商汤科技",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://hr-jobs.sensetime.com/edu/",
       "official_root": "https://hr.sensetime.com/campus/",
       "browser_probe": true,
       "note": "商汤官方 2027 校招页 hr.sensetime.com/campus/，官方投递进入 hr-jobs.sensetime.com/edu/；项目参数由浏览器运行时重新发现。 官方校园根页明确2027届毕业窗口。",
       "verified_2027_project": true,
-      "job_list_url": "https://hr-jobs.sensetime.com/edu/"
+      "job_list_url": "https://hr-jobs.sensetime.com/edu/",
+      "feishu_host": "hr-jobs.sensetime.com",
+      "feishu_channel": "edu",
+      "feishu_recruitment_ids": [
+        "201"
+      ],
+      "feishu_apply_prefix": "https://hr-jobs.sensetime.com/edu/position"
     },
     {
       "company": "生数科技",
@@ -427,7 +455,7 @@
     },
     {
       "company": "无问芯穹/Infini-AI",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://infinigence.jobs.feishu.cn/088717",
       "official_root": "https://www.infinigence-ai.com/",
       "browser_probe": true,
@@ -435,7 +463,10 @@
       "extra_portals": [
         "https://infinigence.jobs.feishu.cn/088717"
       ],
-      "job_list_url": "https://infinigence.jobs.feishu.cn/088717"
+      "job_list_url": "https://infinigence.jobs.feishu.cn/088717",
+      "feishu_host": "infinigence.jobs.feishu.cn",
+      "feishu_channel": "088717",
+      "feishu_apply_prefix": "https://infinigence.jobs.feishu.cn/088717/position"
     },
     {
       "company": "昆仑万维/天工",
@@ -472,12 +503,18 @@
     },
     {
       "company": "蔚来",
-      "mode": "portal_only",
-      "portal": "https://campus.nio.com/",
+      "mode": "feishu_direct",
+      "portal": "https://nio.jobs.feishu.cn/campus/",
       "official_root": "https://campus.nio.com/",
       "browser_probe": true,
-      "note": "蔚来官方校园招聘入口 campus.nio.com；从该官方入口继续跟随公司 ATS，禁止使用社会招聘页替代校招。",
-      "job_list_url": "https://campus.nio.com/"
+      "note": "蔚来官方校园招聘入口 campus.nio.com；从该官方入口继续跟随公司 ATS，禁止使用社会招聘页替代校招。 公司官方校园入口进入 nio.jobs.feishu.cn/campus；仅枚举正式校招 recruitment_id=201。",
+      "job_list_url": "https://campus.nio.com/",
+      "feishu_host": "nio.jobs.feishu.cn",
+      "feishu_channel": "campus",
+      "feishu_recruitment_ids": [
+        "201"
+      ],
+      "feishu_apply_prefix": "https://nio.jobs.feishu.cn/campus/position"
     },
     {
       "company": "顺丰",
