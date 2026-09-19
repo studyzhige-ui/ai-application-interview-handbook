@@ -2,7 +2,7 @@
 
 > 面向 **AI Application / AI Agent Engineer** 求职的一套 beginner-first 学习、实践、市场研究与面试训练系统。
 
-> **当前状态：✅ 十个正式 Curriculum 模块 V1 完成** · **🟢 招聘市场持续监测** · **🟢 HUMAN-A 真人面经持续监测**
+> **课程：✅ 10 个正式 Curriculum 模块 / V1** · **市场：🟢 JD + HUMAN-A 持续监测** · **面试能力层：235 ACTIVE Canonical（统计基线见 Interview）**
 
 ## 快速入口
 
@@ -10,14 +10,14 @@
 
 ---
 
-## 1. 这个仓库现在是什么
+## 1. 仓库定位与信息架构
 
-仓库不再把“教材、面经、岗位、官方资料、项目治理”平铺在同一级。当前信息架构按职责拆成七层：
+本仓库将学习内容按职责组织为七个层级。每一层只承担一种主要职责，课程、实践、市场证据、面试能力、技术证据、导航治理和自动化工具彼此分离：
 
 ```text
 curriculum/   应该系统学什么
 practice/     怎样把知识写成代码、落实到开发工作流
-market/       市场正在招什么、真实面试正在问什么
+market/       市场招什么、真实面试问什么
 interview/    如何把市场证据归一化成可训练的面试能力
 references/   技术事实与 Production 边界依据什么
 guide/        整个学习系统怎样导航、审计和维护
@@ -77,12 +77,12 @@ Practice 不是第 11 个知识模块。
 
 ## 4. Market｜招聘市场证据层
 
-[Market 首页](market/README.md) 现在包含两种互补证据：
+[Market 首页](market/README.md)维护两类互补证据：
 
-- [非算法 AI Application / Agent 岗位 JD](market/jobs/ai-agent-jd-market.md)：回答“公司正在招什么、要求什么”。
-- [HUMAN-A 真人面经](market/interviews/)：回答“真实面试官最近在问什么、追到多深”。
+- [非算法 AI Application / Agent 岗位 JD](market/jobs/ai-agent-jd-market.md)：回答“公司招什么、要求什么”。
+- [HUMAN-A 真人面经](market/interviews/)：回答“真实面试官问什么、追到多深”。
 
-市场分析、持续监控与来源质量规则也全部归在 `market/`，不再和技术权威资料混在同一个 `research/` 目录。
+市场分析、持续监控与来源质量规则统一维护在 `market/`；官方技术资料与源码证据维护在 `references/`。
 
 ---
 
@@ -98,15 +98,13 @@ Market 原始证据
 → 回到 Curriculum 校准复习深度
 ```
 
-各 Curriculum 模块自己的 `interview/` 目录仍负责“该模块怎么复习和口述”；中央 `interview/canonical/` 负责市场证据归一化，两者职责不同。
+各 Curriculum 模块自己的 `interview/` 目录负责“该模块怎么复习和口述”；中央 `interview/canonical/` 负责市场证据归一化，两者职责不同。
 
 ---
 
 ## 6. References｜技术事实证据层
 
-[References 首页](references/README.md) 用于存放官方文档、规范、论文与成熟源码索引。
-
-当前包括：
+[References 首页](references/README.md)收录官方文档、规范、论文与成熟源码索引，包括：
 
 - [Agent Runtime / Harness 证据](references/agent/README.md)
 - [FastAPI 官方资料](references/fastapi/README.md)
@@ -118,18 +116,18 @@ Market 原始证据
 
 ## 7. Guide｜导航、规范与质量治理
 
-[Guide 首页](guide/README.md) 包含：
+[Guide 首页](guide/README.md)提供：
 
 - [Knowledge Map](guide/knowledge-map.md)
 - [Learning Path](guide/learning-path.md)
 - [Terminology Glossary](guide/terminology-glossary.md)
 - [Documentation Style Guide](guide/documentation-style-guide.md)
 - [Quality Audits](guide/audits/README.md)
-- [Project / Migration Records](guide/project/README.md)
+- [Project Records](guide/project/README.md)
 
 ---
 
-## 8. 当前目录
+## 8. 目录结构
 
 ```text
 .
@@ -144,4 +142,4 @@ Market 原始证据
 └── README.md
 ```
 
-这套目录结构本身就是知识模型：**课程、实践、市场、面试、证据、导航、工具彼此分层，不再互相充当“杂物间”。**
+目录结构本身体现知识模型：**课程负责知识主干，实践负责能力落地，市场负责招聘证据，Interview 负责能力归一化，References 负责技术事实，Guide 负责导航与治理，Tools 负责自动化。**

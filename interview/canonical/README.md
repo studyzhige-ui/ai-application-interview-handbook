@@ -4,7 +4,7 @@
 
 > Canonical Question 只允许由 **HUMAN-A 真人高质量第一人称面经**产生市场证据。官方资料、源码、论文可以校准课程技术边界，但不能创建频率或提高 Source Count。
 
-## Frozen Baseline
+## 统计基线（Frozen Baseline）
 
 ```text
 HUMAN-A            S001–S279
@@ -39,13 +39,17 @@ Interview Drill    = 训练时可以再次细分的真实问法
 
 因此 235 道 Canonical 不等于 184 篇正文。
 
-**v1.0 Final Quality Audit：✅ PASS。** 正文深度见 [`../../guide/audits/content-depth-audit.md`](../../guide/audits/content-depth-audit.md)，全仓库终局结论见 [`../../guide/audits/final-quality-audit.md`](../../guide/audits/final-quality-audit.md)，跨模块术语边界见 [`../../guide/terminology-glossary.md`](../../guide/terminology-glossary.md)。
+## 质量与结构入口
+
+- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：正文深度与验收口径；
+- [Final Quality Audit](../../guide/audits/final-quality-audit.md)：全仓库质量审计；
+- [Terminology Glossary](../../guide/terminology-glossary.md)：跨模块术语与边界。
 
 ## 主要入口
 
 - [schema.md](schema.md)：Canonical 字段与证据规则；
 - [module-index.md](module-index.md)：Ownership ↔ Curriculum；
-- [progress.md](progress.md)：当前研究 / 教材状态；
+- [progress.md](progress.md)：研究 / 教材状态；
 - [global-audit.md](global-audit.md)：Merge / Split / Reassignment；
 - [Market Analysis](../../market/analysis/README.md)：自动统计层；
 - [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：人工回读原始流程后的追问链。

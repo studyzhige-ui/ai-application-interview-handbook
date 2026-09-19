@@ -2,7 +2,7 @@
 
 [↑ Handbook 总目录](../README.md)
 
-Guide 负责跨模块导航与整个知识系统的长期一致性，而不是承载某个技术模块正文。
+Guide 负责跨模块导航与整个知识系统的一致性，不承载具体技术模块正文。
 
 ## 学习入口
 
@@ -14,6 +14,6 @@ Guide 负责跨模块导航与整个知识系统的长期一致性，而不是�
 ## 质量治理
 
 - [Audits](audits/README.md)：粒度、深度、Foundation 与全仓库质量审计。
-- [Project Records](project/README.md)：历史迁移、专项重构和集成记录。
+- [Project Records](project/README.md)：迁移、专项修订和集成等项目演进记录。
 
-开发工作流指南已经从旧 `roadmap/` 移入 [Practice / Tooling](../practice/tooling/README.md)，因为它是实践能力，而不是项目路线图。
+开发工作流与版本管理实践统一维护在 [Practice / Tooling](../practice/tooling/README.md)。
