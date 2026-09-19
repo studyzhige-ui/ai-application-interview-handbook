@@ -14,7 +14,8 @@ const ROOT = process.cwd();
 const CONFIG = JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.json","utf8"));
 const OUT = process.argv[2] || "market/jobs/official-2027-browser-discovery.generated.json";
 
-const STRONG = (CONFIG.strong_agent_keywords || CONFIG.agent_keywords || []).map(x=>x.toLowerCase());
+const SEARCH_TERMS = CONFIG.strong_agent_keywords || CONFIG.agent_keywords || [];
+const STRONG = SEARCH_TERMS.map(x=>x.toLowerCase());
 const TITLE_KEYS = ["positionName","jobName","jobTitle","positionTitle","recruitPostName","postName","title","name"];
 const ID_KEYS = ["positionId","jobId","postId","publishId","reqId","id","code"];
 const DESC_KEYS = ["description","jobDescription","jobDesc","positionDesc","responsibility","responsibilities","jobDuty","duty","workContent","desc","postDuty"];
@@ -85,23 +86,88 @@ async function scroll(page){
   }
   await page.evaluate(()=>window.scrollTo(0,0));
 }
+function jobLinkLike(href){
+  return /(?:\/job\/|\/jobs\/|\/position\/|job-info|postdetail|positionid=|jobid=|#\/job\/|#\/position\/)/i.test(href||"");
+}
+function cycleSnippets(body){
+  return (body.match(/2027[^\n]{0,100}|[^\n]{0,100}2027/g)||[]).slice(0,8);
+}
+async function jobLinksOnPage(page,keyword){
+  const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>({
+    href:a.href,
+    text:(a.innerText||a.textContent||"").trim()
+  })));
+  return links
+    .filter(a=>a.href && jobLinkLike(a.href))
+    .map(a=>({href:a.href,title:(a.text||"").slice(0,240),keyword}));
+}
 async function searchInputs(page){
-  const inputs=page.locator('input');
-  const n=Math.min(await inputs.count(),20);
+  const inputs=page.locator("input");
+  const n=Math.min(await inputs.count(),40);
+  let target=null;
   for(let i=0;i<n;i++){
     const el=inputs.nth(i);
     const ph=((await el.getAttribute("placeholder"))||"").toLowerCase();
-    if(!/(搜索|职位|岗位|keyword|search)/i.test(ph)) continue;
-    for(const q of ["Agent","智能体","AI应用","大模型应用"]){
-      try{
-        await el.fill(q);
-        await el.press("Enter");
-        await page.waitForTimeout(500);
-        await scroll(page);
-      }catch{}
+    const aria=((await el.getAttribute("aria-label"))||"").toLowerCase();
+    const type=((await el.getAttribute("type"))||"").toLowerCase();
+    if(/(搜索|职位|岗位|keyword|search)/i.test(ph+" "+aria) || type==="search"){
+      target=el; break;
     }
-    break;
   }
+  if(!target) return {found:false,terms:[],hits:[]};
+  const hits=[];
+  const terms=[];
+  for(const q of SEARCH_TERMS){
+    try{
+      await target.fill(q);
+      await target.press("Enter").catch(()=>{});
+      await page.waitForTimeout(650);
+      await scroll(page);
+      terms.push(q);
+      hits.push(...await jobLinksOnPage(page,q));
+    }catch{}
+  }
+  try{ await target.fill(""); await target.press("Enter").catch(()=>{}); }catch{}
+  return {found:true,terms,hits};
+}
+function splitJobText(body,title){
+  const text=(body||"").replace(/\r/g,"").replace(/\n{3,}/g,"\n\n").trim();
+  const descRe=/(职位描述|岗位职责|工作职责|工作内容|岗位描述|Responsibilities|Job Description)/i;
+  const reqRe=/(职位要求|岗位要求|任职要求|任职资格|Qualifications|Requirements)/i;
+  const di=text.search(descRe);
+  const ri=text.search(reqRe);
+  let description="",requirements="";
+  if(di>=0 && ri>di){
+    description=text.slice(di,ri).trim();
+    requirements=text.slice(ri).trim();
+  }else if(ri>=0){
+    description=text.slice(0,ri).trim();
+    requirements=text.slice(ri).trim();
+  }else{
+    description=text;
+  }
+  if(title && description.startsWith(title)) description=description.slice(title.length).trim();
+  return {description:description.slice(0,12000),requirements:requirements.slice(0,8000)};
+}
+async function scrapeSearchHit(context,company,hit,parentCycle){
+  const p=await context.newPage();
+  try{
+    await p.goto(hit.href,{waitUntil:"domcontentloaded",timeout:12000});
+    await p.waitForTimeout(700);
+    const body=(await p.locator("body").innerText().catch(()=>"")).slice(0,40000);
+    let title=(await p.locator("h1").first().innerText().catch(()=>"")).trim();
+    if(!title) title=(await p.locator("h2").first().innerText().catch(()=>"")).trim();
+    if(!title) title=hit.title||"";
+    const {description,requirements}=splitJobText(body,title);
+    const cycle=[...new Set([...(parentCycle||[]),...cycleSnippets(body)])].slice(0,8).join(" / ");
+    return {
+      company,title:title.slice(0,240),job_id:"",location:"",category:"官方校招搜索结果",
+      department:"",description,requirements,official_url:p.url(),
+      official_api:"DOM-DETAIL:"+hit.href,cycle_evidence:cycle,
+      extraction_path:"official UI keyword search:"+hit.keyword,
+      matched_keyword:hit.keyword
+    };
+  }catch{return null;}finally{await p.close().catch(()=>{});}
 }
 async function runPage(context,company,url,rootHost,collector,visited,endpointLog){
   if(visited.has(url)||visited.size>10) return;
@@ -120,16 +186,12 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         if(!/(job|position|recruit|career|岗位|职位)/i.test(ru+" "+bodyText)) return;
         const req=resp.request();
         const entry={
-          url:ru,
-          method:req.method(),
-          post_data:(req.postData()||"").slice(0,4000),
-          status:resp.status(),
-          content_type:ct,
-          resource_type:req.resourceType()
+          url:ru,method:req.method(),post_data:(req.postData()||"").slice(0,4000),
+          status:resp.status(),content_type:ct,resource_type:req.resourceType()
         };
         if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
-        const pageText=(await page.locator("body").innerText().catch(()=>'' )).slice(0,50000);
-        const cycle=(pageText.match(/2027[^\n]{0,50}|[^\n]{0,50}2027/g)||[]).slice(0,3).join(" / ");
+        const pageText=(await page.locator("body").innerText().catch(()=>"")).slice(0,50000);
+        const cycle=cycleSnippets(pageText).join(" / ");
         recursiveJobs(data,{company,page_url:page.url(),response_url:ru,cycle_evidence:cycle},collector);
       }catch{}
     })();
@@ -137,35 +199,49 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
   });
   try{
     await page.goto(url,{waitUntil:"domcontentloaded",timeout:12000});
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(900);
     await scroll(page);
-    await searchInputs(page);
+    const beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+    const beforeCycle=cycleSnippets(beforeBody);
+    const search=await searchInputs(page);
     await Promise.allSettled(responseTasks);
-    const body=(await page.locator("body").innerText().catch(()=>'' )).slice(0,80000);
-    const cycleMatches=(body.match(/2027[^\n]{0,80}|[^\n]{0,80}2027/g)||[]);
+
+    const body=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+    const cycleMatches=[...new Set([...beforeCycle,...cycleSnippets(body)])].slice(0,10);
     const has2027=cycleMatches.length>0;
-    const links=await page.locator("a").evaluateAll(as=>as.map(a=>({href:a.href,text:(a.innerText||a.textContent||"").trim()})));
+    const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>({href:a.href,text:(a.innerText||a.textContent||"").trim()})));
     const next=[];
     for(const a of links){
       if(!a.href||!sameOfficialFamily(a.href,url)) continue;
       if(/2027|校园|校招|应届|招聘|人才|加入我们|加入|campus|graduate|student|position|职位|岗位|join us|career|jobs?/i.test(a.text+" "+a.href)) next.push(a.href);
     }
-    // DOM fallback: official links/cards whose visible text itself matches target keywords.
-    for(const a of links){
-      const low=(a.text||"").toLowerCase();
-      if(!STRONG.some(k=>low.includes(k))) continue;
-      collector.push({
-        company,title:a.text.trim().slice(0,200),job_id:"",location:"",category:"官方页面候选",
-        department:"",description:"",requirements:"",official_url:a.href||page.url(),
-        official_api:"DOM:"+page.url(),cycle_evidence:has2027?cycleMatches.slice(0,2).join(" / "):"",
-        extraction_path:"DOM anchor"
-      });
+
+    const uniqueHits=[];
+    const seenHits=new Set();
+    for(const hit of search.hits){
+      if(!hit.href||!sameOfficialFamily(hit.href,page.url())) continue;
+      const key=hit.href+"|"+hit.keyword;
+      if(seenHits.has(key)) continue;
+      seenHits.add(key); uniqueHits.push(hit);
     }
+    const detailHits=uniqueHits.slice(0,60);
+    for(let i=0;i<detailHits.length;i+=4){
+      const batch=await Promise.all(detailHits.slice(i,i+4).map(h=>scrapeSearchHit(context,company,h,cycleMatches)));
+      for(const j of batch) if(j) collector.push(j);
+    }
+
+    const finalUrl=page.url();
     await page.close();
-    return {page_url:url,final_url:page.url(),has2027,cycle_evidence:cycleMatches.slice(0,5),next:[...new Set(next)].slice(0,6)};
+    return {
+      page_url:url,final_url:finalUrl,has2027,cycle_evidence:cycleMatches,
+      next:[...new Set(next)].slice(0,10),
+      search_control_found:search.found,
+      search_terms_attempted:search.terms,
+      search_hit_links:uniqueHits.length
+    };
   }catch(e){
     await page.close().catch(()=>{});
-    return {page_url:url,error:String(e).slice(0,400),has2027:false,next:[]};
+    return {page_url:url,error:String(e).slice(0,400),has2027:false,next:[],search_control_found:false,search_terms_attempted:[]};
   }
 }
 async function processSource(browser,src){
@@ -177,7 +253,7 @@ async function processSource(browser,src){
   const queue=[root, ...(src.portal && src.portal!==root ? [src.portal] : [])];
   const pageResults=[];
   try{
-    while(queue.length && visited.size<3){
+    while(queue.length && visited.size<5){
       const u=queue.shift();
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog);
       if(pr){
@@ -185,14 +261,26 @@ async function processSource(browser,src){
         for(const n of pr.next||[]) if(!visited.has(n)) queue.push(n);
       }
     }
-    const jobs=uniqueJobs(collector);
-    const has2027=pageResults.some(x=>x.has2027) || jobs.some(j=>/2027/.test(j.cycle_evidence));
-    const status=jobs.length?"BROWSER_OK":(has2027?"BROWSER_OK_0_MATCH":"BROWSER_NO_2027_EVIDENCE");
-    console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, status=${status}`);
-    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,80),jobs,has2027,status};
+    const allJobs=uniqueJobs(collector);
+    const has2027=pageResults.some(x=>x.has2027) || allJobs.some(j=>/2027/.test(j.cycle_evidence||""));
+    const jobs=allJobs.filter(j=>has2027 || /2027/.test(j.cycle_evidence||""));
+    const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
+    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k));
+    let status;
+    if(jobs.length) status="BROWSER_ENUMERATED";
+    else if(has2027 && fullKeywordSearch) status="BROWSER_ENUMERATED_ZERO";
+    else if(has2027) status="BROWSER_2027_NEEDS_ADAPTER";
+    else status="BROWSER_NO_2027_EVIDENCE";
+    console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, 2027=${has2027}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
+    return {
+      company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,
+      endpoints:endpointLog.slice(0,120),jobs,has2027,status,
+      search_terms_attempted:[...searched],search_terms_expected:SEARCH_TERMS,
+      full_keyword_search:fullKeywordSearch
+    };
   }catch(e){
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
-    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,80),jobs:uniqueJobs(collector),has2027:false,status:"BROWSER_ERROR",error:String(e).slice(0,500)};
+    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs:uniqueJobs(collector),has2027:false,status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
   }finally{
     await context.close().catch(()=>{});
   }
