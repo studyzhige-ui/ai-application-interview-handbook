@@ -1,0 +1,51 @@
+{
+  "generated_at": "2026-09-19T10:17:51.983Z",
+  "keywords": [
+    "agent",
+    "智能体",
+    "ai应用",
+    "ai 应用",
+    "大模型应用",
+    "llm应用",
+    "llm 应用",
+    "ai native",
+    "coding agent",
+    "code agent",
+    "rag",
+    "agent infra",
+    "agent runtime",
+    "agent harness"
+  ],
+  "results": [
+    {
+      "company": "月之暗面/Kimi",
+      "status": "BLOCKED",
+      "jobs": [],
+      "error": "TypeError: fetch failed"
+    },
+    {
+      "company": "滴滴",
+      "status": "OK",
+      "api": "https://campus.didiglobal.com/api/outer/ats-apply/website/jobs/v2",
+      "base": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs?keyword=%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8",
+      "requests": 14,
+      "jobs": [],
+      "cycle_evidence": "2027届-秋招"
+    },
+    {
+      "company": "金山办公/WPS",
+      "status": "OK",
+      "api": "https://join.wps.cn/api/outer/ats-apply/website/jobs/v2",
+      "base": "https://join.wps.cn/campus-recruitment/wps/41436?sourceToken=8379ee777457c4d22fc65d4439f660b3#/jobs?keyword=%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%BA%94%E7%94%A8",
+      "requests": 14,
+      "jobs": [],
+      "cycle_evidence": "海外市场运营专员-面向2027 / 精英算法研发工程师（全栈发展）-面向2027 / 精英服务端开发工程师（全栈发展）-面向2027"
+    },
+    {
+      "company": "阶跃星辰",
+      "status": "BLOCKED",
+      "jobs": [],
+      "error": "TypeError: fetch failed"
+    }
+  ]
+}
