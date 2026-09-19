@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "cycle": "2027-campus",
+  "cycle": "current-campus",
   "agent_keywords": [
     "agent",
     "智能体",
@@ -50,7 +50,6 @@
       "official_campus_portal": "https://xiaomi.jobs.f.mioffice.cn/campus/",
       "official_root": "https://hr.xiaomi.com/website/campus.html",
       "browser_probe": true,
-      "verified_2027_project": true,
       "job_list_url": "https://xiaomi.jobs.f.mioffice.cn/campus/"
     },
     {
@@ -63,7 +62,6 @@
       "detail_api": "https://campus.kuaishou.cn/recruit/campus/e/api/v1/open/positions/find",
       "official_root": "https://campus.kuaishou.cn/",
       "browser_probe": true,
-      "verified_2027_project": true,
       "project_discovery_evidence": "官方根页 https://campus.kuaishou.cn/ 自身导航暴露 #/campus/jobs?recruitSubProjectCodes=20271779425607；project code 由官网根页独立发现。",
       "job_list_url": "https://campus.kuaishou.cn/recruit/campus/e/"
     },
@@ -74,7 +72,6 @@
       "api": "https://talent.baidu.com/httservice/getPostListNew",
       "official_root": "https://talent.baidu.com/jobs/list?projectType=1",
       "browser_probe": true,
-      "verified_2027_project": true,
       "job_list_url": "https://talent.baidu.com/jobs/list?projectType=1"
     },
     {
@@ -85,8 +82,7 @@
       "api": "https://join.qq.com/api/v1/position/searchPosition",
       "official_root": "https://join.qq.com/",
       "browser_probe": true,
-      "job_list_url": "https://join.qq.com/post.html",
-      "verified_2027_project": true
+      "job_list_url": "https://join.qq.com/post.html"
     },
     {
       "company": "美团",
@@ -96,8 +92,7 @@
       "note": "官方 campus API，jobType=1 正式校招；届别需主库复核。 当前官方校园AI应用JD任职资格直接覆盖2026/2027届，故当前campus池包含2027届。",
       "official_root": "https://zhaopin.meituan.com/web/campus",
       "browser_probe": true,
-      "job_list_url": "https://zhaopin.meituan.com/web/campus",
-      "verified_2027_project": true
+      "job_list_url": "https://zhaopin.meituan.com/web/campus"
     },
     {
       "company": "网易",
@@ -128,7 +123,6 @@
       "portal": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs",
       "official_root": "https://campus.didiglobal.com/",
       "browser_probe": true,
-      "verified_2027_project": true,
       "note": "官方 campus 页面明确 2027届-秋招；职位池使用官网运行时 Moka/ATS website jobs/v2 协议完整枚举。",
       "job_list_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs"
     },
@@ -140,8 +134,7 @@
       "note": "官方 PDD campus API，详情返回 graduationYear；只在 2027 届证据成立时正式入库。",
       "official_root": "https://careers.pddglobalhr.com/campus/grad",
       "browser_probe": true,
-      "job_list_url": "https://careers.pddglobalhr.com/campus/grad",
-      "verified_2027_project": true
+      "job_list_url": "https://careers.pddglobalhr.com/campus/grad"
     },
     {
       "company": "华为",
@@ -151,7 +144,6 @@
       "official_root": "https://career.huawei.com/cn/campus-recruitment",
       "browser_probe": true,
       "note": "华为官方校园招聘页明确 2027 届应届生毕业窗口及 2027 招聘启动；现有专用 API 若失效必须由浏览器从此根页重新发现。 官方校园招聘根页已确认2027项目。",
-      "verified_2027_project": true,
       "job_list_url": "https://career.huawei.com/cn/campus-recruitment"
     },
     {
@@ -161,7 +153,6 @@
       "official_root": "https://job.xiaohongshu.com/campus",
       "browser_probe": true,
       "note": "小红书官方校园页明确 2027 校招毕业窗口 2026-09~2027-08，并给出 campus.xiaohongshu.com PC 投递入口。 官方校园页明确2027校园招聘/毕业时间窗口。",
-      "verified_2027_project": true,
       "api": "https://job.xiaohongshu.com/websiterecruit/position/pageQueryPosition",
       "job_list_url": "https://job.xiaohongshu.com/campus/position"
     },
@@ -173,7 +164,6 @@
       "note": "官方 ATSX campus pool 通过 Node fetch 全量枚举；job subject/recruit type 用于 2027 项目归属复核。",
       "official_root": "https://jobs.bytedance.com/campus/position",
       "browser_probe": true,
-      "verified_2027_project": true,
       "job_list_url": "https://jobs.bytedance.com/campus/position"
     },
     {
@@ -185,7 +175,6 @@
       "note": "从阿里官方 campus-talent 页面运行时确认当前 batchId=100000760001，页面直接标注“阿里巴巴2027”；禁止回退到旧 batch。",
       "official_root": "https://campus-talent.alibaba.com/campus/position?batchId=100000760001",
       "browser_probe": true,
-      "verified_2027_project": true,
       "job_list_url": "https://campus-talent.alibaba.com/campus/position?batchId=100000760001"
     },
     {
@@ -209,7 +198,6 @@
       "note": "官方 campus API，present/talent 正式校招轨道；届别需主库复核。",
       "official_root": "https://campus.jd.com/",
       "browser_probe": true,
-      "verified_2027_project": true,
       "job_list_url": "https://campus.jd.com/"
     },
     {
@@ -220,7 +208,6 @@
       "note": "官方 OPPO campus openapi；projectName/positionType 用于校招届别复核。",
       "official_root": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate",
       "browser_probe": true,
-      "verified_2027_project": true,
       "job_list_url": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate"
     },
     {
@@ -239,7 +226,6 @@
       "portal": "https://join.wps.cn/",
       "official_root": "https://join.wps.cn/",
       "browser_probe": true,
-      "verified_2027_project": true,
       "note": " 官方 campus ATS 职位标题直接标注“面向2027”。",
       "job_list_url": "https://join.wps.cn/"
     },
@@ -250,7 +236,6 @@
       "official_root": "https://www.honor.com/cn/career/",
       "browser_probe": true,
       "note": "荣耀官网 career 页面明确 2027 校招全球启动；应届生入口由官网直接跳转 career.honor.com。 官方 career 页面明确荣耀2027校招。",
-      "verified_2027_project": true,
       "api": "https://career.honor.com/wecruit/positionInfo/listPosition/SU60eea919bef57c1023f6fe78",
       "job_list_url": "https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html"
     },
@@ -277,7 +262,6 @@
       "extra_portals": [
         "https://careers.ctrip.com/#/campus"
       ],
-      "verified_2027_project": true,
       "api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
       "job_list_url": "https://careers.ctrip.com/#/campus"
     },
@@ -287,8 +271,8 @@
       "portal": "https://hr.360.cn/",
       "official_root": "https://hr.360.cn/",
       "browser_probe": true,
-      "allow_no_public_2027": true,
-      "job_list_url": "https://hr.360.cn/hr/list"
+      "job_list_url": "https://hr.360.cn/hr/list",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "得物",
@@ -297,7 +281,6 @@
       "official_root": "https://www.dewu.com/",
       "browser_probe": true,
       "note": "得物官网为 provenance 根；官方 2027 校园招聘职位页位于 poizon.jobs.feishu.cn/578078/，职位正文明确 2027届秋季校园招聘项目。 官方飞书校园项目职位正文直接标注2027届秋季校园招聘。",
-      "verified_2027_project": true,
       "job_list_url": "https://poizon.jobs.feishu.cn/578078/",
       "feishu_host": "poizon.jobs.feishu.cn",
       "feishu_channel": "578078",
@@ -313,19 +296,20 @@
       "official_root": "https://www.deepseek.com/",
       "browser_probe": true,
       "note": "DeepSeek 公司官网 Join Us/Careers 指向 talent.deepseek.com；从公司官网验证 provenance 后枚举人才站。",
-      "allow_no_public_2027": true,
-      "job_list_url": "https://talent.deepseek.com/"
+      "job_list_url": "https://talent.deepseek.com/",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "月之暗面/Kimi",
       "mode": "portal_only",
-      "portal": "https://app.mokahr.com/apply/moonshot/148506",
+      "portal": "https://careers.kimi.com/campus",
       "official_root": "https://careers.kimi.com/campus",
       "browser_probe": true,
-      "note": "Kimi 官方 careers/campus 为 provenance 根；官方校园 ATS 固定入口为 Moka campus-recruitment/moonshot/148507，apply/moonshot/148506 作为官方通用/社招入口补充。",
-      "job_list_url": "https://app.mokahr.com/apply/moonshot/148506",
+      "note": "Kimi 官方 Campus 页面为固定根入口；页面当前有效即可视为当前校招，Moka 为官网直连官方 ATS。",
+      "job_list_url": "https://careers.kimi.com/campus",
       "extra_job_list_urls": [
-        "https://app.mokahr.com/campus-recruitment/moonshot/148507"
+        "https://app.mokahr.com/campus-recruitment/moonshot/148507",
+        "https://app.mokahr.com/apply/moonshot/148506"
       ]
     },
     {
@@ -335,7 +319,6 @@
       "official_root": "https://www.minimax.cn/careers",
       "browser_probe": true,
       "note": "MiniMax 官方 Careers 明确写 2027 届校园招聘，并直接跳转该飞书招聘 project。",
-      "verified_2027_project": true,
       "job_list_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
       "feishu_host": "vrfi1sk8a0.jobs.feishu.cn",
       "feishu_channel": "379481",
@@ -348,14 +331,15 @@
     {
       "company": "智谱/Z.ai",
       "mode": "portal_only",
-      "portal": "https://app.mokahr.com/campus-recruitment/zphz/148984",
+      "portal": "https://www.zhipuai.cn/zh/joinus",
       "official_root": "https://www.zhipuai.cn/zh/joinus",
       "browser_probe": true,
-      "job_list_url": "https://app.mokahr.com/campus-recruitment/zphz/148984",
+      "job_list_url": "https://www.zhipuai.cn/zh/joinus",
       "extra_job_list_urls": [
-        "https://app.mokahr.com/social-recruitment/zphz/148983"
+        "https://app.mokahr.com/social-recruitment/zphz/148983",
+        "https://app.mokahr.com/campus-recruitment/zphz/148984"
       ],
-      "note": "智谱官网 Join Us 为 provenance 根；Campus/社会招聘按钮进入官方 Moka ATS。校园固定入口 zphz/148984，社招 zphz/148983。"
+      "note": "智谱官网 Join Us 明确提供校园招聘入口；官网当前校招页/官方 Moka ATS 均属于当前校招池。"
     },
     {
       "company": "阶跃星辰",
@@ -376,7 +360,6 @@
       "official_root": "https://careers.baichuan-inc.com/origin-program",
       "browser_probe": true,
       "note": "百川官方“源点计划”页面覆盖 2025-2027 应届毕业生，并直接跳转该飞书招聘应届项目。",
-      "verified_2027_project": true,
       "job_list_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
       "feishu_host": "cq6qe6bvfr6.jobs.feishu.cn",
       "feishu_channel": "646926",
@@ -392,11 +375,11 @@
       "official_root": "https://www.01.ai/",
       "browser_probe": true,
       "note": "01.AI 官网 footer“加入我们”直接跳转 01ai.jobs.feishu.cn。",
-      "allow_no_public_2027": true,
       "job_list_url": "https://01ai.jobs.feishu.cn/index/",
       "feishu_host": "01ai.jobs.feishu.cn",
       "feishu_channel": "index",
-      "feishu_apply_prefix": "https://01ai.jobs.feishu.cn/index/position"
+      "feishu_apply_prefix": "https://01ai.jobs.feishu.cn/index/position",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "商汤科技",
@@ -405,7 +388,6 @@
       "official_root": "https://hr.sensetime.com/campus/",
       "browser_probe": true,
       "note": "商汤官方 2027 校招页 hr.sensetime.com/campus/，官方投递进入 hr-jobs.sensetime.com/edu/；项目参数由浏览器运行时重新发现。 官方校园根页明确2027届毕业窗口。",
-      "verified_2027_project": true,
       "job_list_url": "https://hr-jobs.sensetime.com/edu/",
       "feishu_host": "hr-jobs.sensetime.com",
       "feishu_channel": "edu",
@@ -420,8 +402,8 @@
       "portal": "https://www.shengshu-ai.com/",
       "official_root": "https://www.shengshu-ai.com/",
       "browser_probe": true,
-      "allow_no_public_2027": true,
-      "job_list_url": "https://www.shengshu-ai.com/"
+      "job_list_url": "https://www.shengshu-ai.com/",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "硅基流动",
@@ -430,8 +412,8 @@
       "official_root": "https://www.siliconflow.cn/",
       "browser_probe": true,
       "note": "官方主站当前未发现公开 Career/Campus 职位入口；由官网巡检判定是否开放 2027 项目。",
-      "allow_no_public_2027": true,
-      "job_list_url": "https://www.siliconflow.cn/"
+      "job_list_url": "https://www.siliconflow.cn/",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "面壁智能",
@@ -440,8 +422,8 @@
       "official_root": "https://www.modelbest.cn/",
       "browser_probe": true,
       "note": "官网当前公开 career@modelbest.cn；若无公开 2027 职位项目，应归类 NO_PUBLIC_2027_PROJECT，不从二手源补录。",
-      "allow_no_public_2027": true,
-      "job_list_url": "https://www.modelbest.cn/"
+      "job_list_url": "https://www.modelbest.cn/",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "Manus",
@@ -450,8 +432,8 @@
       "official_root": "https://www.manus.im/",
       "browser_probe": true,
       "note": "官方站当前未发现公开 2027 招聘项目入口；由官网巡检判定，禁止二手招聘页补录。",
-      "allow_no_public_2027": true,
-      "job_list_url": "https://www.manus.im/"
+      "job_list_url": "https://www.manus.im/",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "LiblibAI",
@@ -459,8 +441,8 @@
       "portal": "https://www.liblib.art/us/joinus",
       "official_root": "https://www.liblib.art/us/joinus",
       "browser_probe": true,
-      "allow_no_public_2027": true,
-      "job_list_url": "https://www.liblib.art/us/joinus"
+      "job_list_url": "https://www.liblib.art/us/joinus",
+      "no_public_campus_when_empty": true
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -493,11 +475,15 @@
     {
       "company": "Shopee",
       "mode": "portal_only",
-      "portal": "https://careers.shopee.cn/",
+      "portal": "https://app.mokahr.com/campus_apply/shopee/2962",
       "official_root": "https://careers.shopee.cn/",
       "browser_probe": true,
-      "allow_no_public_2027": true,
-      "job_list_url": "https://careers.shopee.cn/jobs?limit=50&offset=0"
+      "job_list_url": "https://app.mokahr.com/campus_apply/shopee/2962#/jobs",
+      "no_public_campus_when_empty": false,
+      "extra_job_list_urls": [
+        "https://careers.shopee.cn/"
+      ],
+      "note": "Shopee 中国校园招聘通过官方 Moka campus_apply/shopee/2962 投递；年份不作 Gate。"
     },
     {
       "company": "联想",
@@ -507,8 +493,7 @@
       "note": "官方 Lenovo gateway；2027 项目归属需从官方字段/项目页复核。",
       "official_root": "https://talent.lenovo.com.cn/",
       "browser_probe": true,
-      "job_list_url": "https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1",
-      "verified_2027_project": true
+      "job_list_url": "https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1"
     },
     {
       "company": "蔚来",
@@ -533,8 +518,7 @@
       "note": "官方校园招聘 API；届别需复核。",
       "official_root": "https://campus.sf-express.com/positionList",
       "browser_probe": true,
-      "job_list_url": "https://campus.sf-express.com/positionList",
-      "verified_2027_project": true
+      "job_list_url": "https://campus.sf-express.com/positionList"
     }
   ],
   "notes": [
@@ -574,5 +558,6 @@
     "agent infra",
     "agent runtime",
     "agent harness"
-  ]
+  ],
+  "scope_note": "当前有效官方校园招聘/应届生职位池；年份仅作备注，不作为入库 Gate。"
 }
