@@ -899,12 +899,46 @@ def main() -> int:
                 uniq.append(j)
             return SourceResult(company, mode, src["portal"], "OK", len(jobs), len(uniq)), uniq
         except Exception as e:
+            # Dedicated adapter failure never means "0 jobs". If browser discovery
+            # succeeded from the company's official root / ATS chain, use it as a
+            # first-party fallback; otherwise keep the source explicitly BLOCKED.
+            dyn = dynamic_by_company.get(company) or {}
+            raw_jobs = dyn.get("jobs") or []
+            if raw_jobs:
+                browser_jobs = [
+                    Job(
+                        company,
+                        txt(j.get("title")),
+                        txt(j.get("job_id")),
+                        txt(j.get("location")),
+                        txt(j.get("category") or "官方动态校招"),
+                        txt(j.get("department")),
+                        txt(j.get("description")),
+                        txt(j.get("requirements")),
+                        txt(j.get("official_url") or src["portal"]),
+                        txt(j.get("official_api") or ("BROWSER:" + src["portal"])),
+                        txt(j.get("cycle_evidence")),
+                    )
+                    for j in raw_jobs
+                ]
+                matches = [
+                    j for j in browser_jobs
+                    if campusish(j)
+                    and is_agent_related(j, keywords)
+                    and (not engineering_signals or looks_engineering(j, engineering_signals))
+                    and not is_hard_excluded(j, excludes)
+                ]
+                return SourceResult(
+                    company, "browser_fallback", src["portal"],
+                    "BROWSER_FALLBACK_OK", len(raw_jobs), len(matches),
+                    f"dedicated adapter failed: {type(e).__name__}: {e}"[:700],
+                ), matches
             discovered = discover_api_candidates(src["portal"])
             diagnostic = f"{type(e).__name__}: {e}"
             if discovered:
                 diagnostic += " | discovered: " + " ; ".join(discovered[:8])
             return SourceResult(
-                company, mode, src["portal"], "ERROR", 0, 0,
+                company, mode, src["portal"], "BLOCKED", 0, 0,
                 diagnostic[:1600],
             ), []
 
