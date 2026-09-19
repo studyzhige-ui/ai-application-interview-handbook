@@ -172,82 +172,28 @@ def post_form(url: str, *, data=None, headers=None) -> Any:
 
 
 
+
 def fetch_xiaomi(src: dict) -> list[Job]:
-    """Enumerate Xiaomi's official campus pool from its ATSX/Feishu fork."""
-    api = "https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts"
-    campus_page = "https://xiaomi.jobs.f.mioffice.cn/campus/"
-    session = requests.Session()
-    session.headers.update(HEADERS)
-    # Warm the official campus portal so ATSX can set CSRF cookies when required.
-    warm = session.get(campus_page, timeout=TIMEOUT)
-    warm.raise_for_status()
-    csrf = session.cookies.get("atsx-csrf-token")
-    headers = {
-        "Origin": "https://xiaomi.jobs.f.mioffice.cn",
-        "Referer": campus_page,
-        "portal-channel": "campus",
-        "portal-platform": "pc",
-        "website-path": "campus",
-        "Content-Type": "application/json",
-    }
-    if csrf:
-        from urllib.parse import unquote
-        headers["x-csrf-token"] = unquote(csrf)
+    """Read Xiaomi campus jobs fetched by the official Node ATSX adapter.
 
+    Xiaomi's official ATSX endpoint is first-party but its WAF currently treats
+    Python requests differently from browser/Node fetch on GitHub runners.
+    The workflow therefore runs tools/fetch_xiaomi_2027.mjs first.
+    """
+    cache = Path("/tmp/xiaomi-2027-campus.json")
+    if not cache.exists():
+        raise RuntimeError("Xiaomi official Node adapter output missing")
+    payload = json.loads(cache.read_text(encoding="utf-8"))
     out: list[Job] = []
-    offset = 0
-    limit = 100
-    while offset < 10000:
-        payload = {
-            "keyword": "",
-            "limit": limit,
-            "offset": offset,
-            "portal_type": 3,
-            "portal_entrance": 1,
-            "language": "zh",
-            "recruitment_id_list": ["201"],
-            "job_function_id_list": [],
-            "location_code_list": [],
-            "subject_id_list": [],
-            "tag_id_list": [],
-        }
-        r = session.post(api, json=payload, headers=headers, timeout=TIMEOUT)
-        r.raise_for_status()
-        body = r.json()
-        if body.get("code") not in (None, 0):
-            raise RuntimeError(f"Xiaomi API code={body.get('code')} message={body.get('message')}")
-        d = body.get("data") or {}
-        rows = d.get("job_post_list") or []
-        if not rows:
-            break
-        for j in rows:
-            jid = txt(j.get("id"))
-            cities = j.get("city_list") or []
-            city = " / ".join(
-                txt(x.get("name")) for x in cities if isinstance(x, dict) and x.get("name")
-            ) or txt((j.get("city_info") or {}).get("name"))
-            recruit_type = j.get("recruit_type") or {}
-            subject = j.get("job_subject") or {}
-            jf = j.get("job_function") or {}
-            out.append(Job(
-                src["company"],
-                txt(j.get("title")),
-                jid,
-                city,
-                txt(recruit_type.get("name")) or "校招正式",
-                txt(jf.get("name")),
-                txt(j.get("description")),
-                txt(j.get("requirement")),
-                f"https://xiaomi.jobs.f.mioffice.cn/campus/position/{jid}/detail",
-                api,
-                txt(subject.get("name")) or "小米官方 campus 正式岗池（recruitment_id=201）",
-            ))
-        total = int(d.get("count") or len(rows))
-        offset += len(rows)
-        if offset >= total:
-            break
+    for j in payload.get("jobs") or []:
+        out.append(Job(
+            src["company"], txt(j.get("title")), txt(j.get("job_id")),
+            txt(j.get("location")), txt(j.get("category")), txt(j.get("department")),
+            txt(j.get("description")), txt(j.get("requirements")),
+            txt(j.get("official_url")), txt(j.get("official_api")),
+            txt(j.get("cycle_evidence")),
+        ))
     return out
-
 
 
 def fetch_kuaishou(src: dict) -> list[Job]:
