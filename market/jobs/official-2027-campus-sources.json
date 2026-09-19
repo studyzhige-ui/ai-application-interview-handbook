@@ -115,13 +115,12 @@
     },
     {
       "company": "滴滴",
-      "mode": "didi_api",
-      "portal": "https://campus.didiglobal.com/",
-      "api": "https://talent.didiglobal.com/api/jobList",
+      "mode": "portal_only",
+      "portal": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs",
       "official_root": "https://campus.didiglobal.com/",
       "browser_probe": true,
       "verified_2027_project": true,
-      "note": " 官方 campus 页面运行时直接显示“2027届-秋招”。"
+      "note": "官方 campus 页面明确 2027届-秋招；职位池使用官网运行时 Moka/ATS website jobs/v2 协议完整枚举。"
     },
     {
       "company": "拼多多",
