@@ -171,53 +171,147 @@ def post_form(url: str, *, data=None, headers=None) -> Any:
     return r.json()
 
 
+
 def fetch_xiaomi(src: dict) -> list[Job]:
-    out = []
-    page = 1
-    while page <= 50:
-        data = get_json(src["api"], params={"pageNum": page, "pageSize": 100})
-        rows = (data.get("data") or {}).get("rows") or []
+    """Enumerate Xiaomi's official campus pool from its ATSX/Feishu fork."""
+    api = "https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts"
+    campus_page = "https://xiaomi.jobs.f.mioffice.cn/campus/"
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    # Warm the official campus portal so ATSX can set CSRF cookies when required.
+    warm = session.get(campus_page, timeout=TIMEOUT)
+    warm.raise_for_status()
+    csrf = session.cookies.get("atsx-csrf-token")
+    headers = {
+        "Origin": "https://xiaomi.jobs.f.mioffice.cn",
+        "Referer": campus_page,
+        "portal-channel": "campus",
+        "portal-platform": "pc",
+        "website-path": "campus",
+        "Content-Type": "application/json",
+    }
+    if csrf:
+        from urllib.parse import unquote
+        headers["x-csrf-token"] = unquote(csrf)
+
+    out: list[Job] = []
+    offset = 0
+    limit = 100
+    while offset < 10000:
+        payload = {
+            "keyword": "",
+            "limit": limit,
+            "offset": offset,
+            "portal_type": 3,
+            "portal_entrance": 1,
+            "language": "zh",
+            "recruitment_id_list": ["201"],
+            "job_function_id_list": [],
+            "location_code_list": [],
+            "subject_id_list": [],
+            "tag_id_list": [],
+        }
+        r = session.post(api, json=payload, headers=headers, timeout=TIMEOUT)
+        r.raise_for_status()
+        body = r.json()
+        if body.get("code") not in (None, 0):
+            raise RuntimeError(f"Xiaomi API code={body.get('code')} message={body.get('message')}")
+        d = body.get("data") or {}
+        rows = d.get("job_post_list") or []
         if not rows:
             break
         for j in rows:
+            jid = txt(j.get("id"))
+            cities = j.get("city_list") or []
+            city = " / ".join(
+                txt(x.get("name")) for x in cities if isinstance(x, dict) and x.get("name")
+            ) or txt((j.get("city_info") or {}).get("name"))
+            recruit_type = j.get("recruit_type") or {}
+            subject = j.get("job_subject") or {}
+            jf = j.get("job_function") or {}
             out.append(Job(
-                src["company"], txt(j.get("positionName")), txt(j.get("id")),
-                txt(j.get("workCity")), txt(j.get("recruitType")), txt(j.get("deptName")),
-                txt(j.get("requirement")), txt(j.get("description")),
-                f"https://hr.xiaomi.com/position/{txt(j.get('id'))}", src["api"],
-                txt(j.get("recruitType")),
+                src["company"],
+                txt(j.get("title")),
+                jid,
+                city,
+                txt(recruit_type.get("name")) or "校招正式",
+                txt(jf.get("name")),
+                txt(j.get("description")),
+                txt(j.get("requirement")),
+                f"https://xiaomi.jobs.f.mioffice.cn/campus/position/{jid}/detail",
+                api,
+                txt(subject.get("name")) or "小米官方 campus 正式岗池（recruitment_id=201）",
             ))
-        total = int((data.get("data") or {}).get("total") or 0)
-        if page * 100 >= total:
+        total = int(d.get("count") or len(rows))
+        offset += len(rows)
+        if offset >= total:
             break
-        page += 1
     return out
 
 
 def fetch_kuaishou(src: dict) -> list[Job]:
-    out = []
+    """Enumerate Kuaishou 2027 campus project through its public official API."""
+    base = "https://campus.kuaishou.cn"
+    list_api = base + "/recruit/campus/e/api/v1/open/positions/simple"
+    detail_api = base + "/recruit/campus/e/api/v1/open/positions/find"
+    project = str(src.get("project_code") or "20271779425607")
+    headers = {
+        **HEADERS,
+        "Referer": src["portal"],
+        "Content-Type": "application/json",
+    }
+    out: list[Job] = []
     page = 1
-    while page <= 50:
-        params = {
-            "page": page, "pageSize": 50, "workCity": "", "jobType": "",
-            "recruitSubProjectCodes": src.get("project_code", ""),
+    while page <= 200:
+        payload = {
+            "recruitSubProjectCodes": [project],
+            "pageSize": 20,
+            "pageNum": page,
         }
-        data = get_json(src["api"], params=params)
-        d = data.get("data") or {}
-        rows = d.get("jobList") or []
+        r = requests.post(list_api, json=payload, headers=headers, timeout=TIMEOUT)
+        r.raise_for_status()
+        body = r.json()
+        result = body.get("result") or {}
+        rows = result.get("list") or []
         if not rows:
             break
-        for j in rows:
-            jid = txt(j.get("jobId"))
+        for row in rows:
+            jid = txt(row.get("id"))
+            if not jid:
+                continue
+            detail = requests.get(
+                detail_api,
+                params={"id": jid, "positionStatus": "Release"},
+                headers=HEADERS,
+                timeout=TIMEOUT,
+            )
+            detail.raise_for_status()
+            dbody = detail.json()
+            j = dbody.get("result") or row
+            locations = j.get("workLocationDicts") or []
+            city = " / ".join(
+                txt(x.get("name")) for x in locations if isinstance(x, dict) and x.get("name")
+            )
+            nature = txt(j.get("positionNatureCode"))
+            title = txt(j.get("name"))
+            code = txt(j.get("code"))
             out.append(Job(
-                src["company"], txt(j.get("jobName")), jid,
-                txt(j.get("workCity")), txt(j.get("jobType")), txt(j.get("deptName")),
-                txt(j.get("jobResponsibility")), txt(j.get("jobRequirements")),
-                src["portal"] + f"&jobId={jid}", src["api"],
-                "2027 project=" + txt(src.get("project_code")),
+                src["company"],
+                title,
+                jid,
+                city,
+                "实习" if nature == "intern" else "2027校招正式",
+                txt(j.get("departmentName") or j.get("positionCategoryName")),
+                txt(j.get("description")),
+                txt(j.get("positionDemand")),
+                f"{base}/recruit/campus/e/#/campus/job-info/{jid}?code={code}&recruitSubProjectCodes={project}",
+                list_api,
+                f"快手官方2027项目 {project}",
             ))
-        total = int(d.get("total") or 0)
-        if page * 50 >= total:
+        total = int(result.get("total") or result.get("totalCount") or 0)
+        if total and page * 20 >= total:
+            break
+        if len(rows) < 20:
             break
         page += 1
     return out
