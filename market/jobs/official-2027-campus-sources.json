@@ -81,21 +81,23 @@
       "company": "腾讯",
       "mode": "tencent_campus_api",
       "portal": "https://join.qq.com/",
-      "note": "官方 join.qq 校招 API，recruitType=40003；排除实习，项目标签需复核 2027。",
+      "note": "官方 join.qq 校招 API，recruitType=40003；排除实习，项目标签需复核 2027。 腾讯官方2026-08公告明确启动2027全球校园招聘，中国大陆岗位通过join.qq.com投递。",
       "api": "https://join.qq.com/api/v1/position/searchPosition",
       "official_root": "https://join.qq.com/",
       "browser_probe": true,
-      "job_list_url": "https://join.qq.com/post.html"
+      "job_list_url": "https://join.qq.com/post.html",
+      "verified_2027_project": true
     },
     {
       "company": "美团",
       "mode": "meituan_campus_api",
       "portal": "https://zhaopin.meituan.com/web/campus",
       "api": "https://zhaopin.meituan.com/api/official/job/getJobList",
-      "note": "官方 campus API，jobType=1 正式校招；届别需主库复核。",
+      "note": "官方 campus API，jobType=1 正式校招；届别需主库复核。 当前官方校园AI应用JD任职资格直接覆盖2026/2027届，故当前campus池包含2027届。",
       "official_root": "https://zhaopin.meituan.com/web/campus",
       "browser_probe": true,
-      "job_list_url": "https://zhaopin.meituan.com/web/campus"
+      "job_list_url": "https://zhaopin.meituan.com/web/campus",
+      "verified_2027_project": true
     },
     {
       "company": "网易",

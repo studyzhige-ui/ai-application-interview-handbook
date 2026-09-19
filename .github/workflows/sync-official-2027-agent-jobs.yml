@@ -2,10 +2,6 @@ name: Sync official 2027 Agent campus jobs
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/sync-official-2027-agent-jobs.yml'
   schedule:
     - cron: '0 1 * * 2,5'
 
