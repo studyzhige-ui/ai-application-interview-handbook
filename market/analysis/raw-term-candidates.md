@@ -6,7 +6,7 @@
 
 ## Prompt / Prompt Engineering
 
-候选来源：**69**
+候选来源：**71**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -79,6 +79,8 @@
 | `S263` | 小红书｜AI 全栈开发｜暑期二面｜发布 2026-04-09｜HUMAN-A | 8. Prompt 日常怎样写，哪些细节最影响稳定性？ / 10. 强制下游需要 JSON 时，怎样设计 Prompt / Structured Output Contract？ / 去重：URL 未入库；作者虽已在别家公司出现，但本场为独立小红书流程。“NL2SQL → Entity Mapping → MCP Update Security → Prompt Constraint / JSON → Redis Lazy Refresh → Nested-if Refactor”题序与历史小红书样本不同。 |
 | `S276` | 蚂蚁国际｜AI 应用开发｜一面｜发布 2026-04-21｜HUMAN-A | 真人 / 第一人称证据：作者 `想奋斗的柠檬精天天摸鱼` 是长期个人求职账号，历史上持续记录本人不同公司的招聘流程和普通社区互动，不是订阅 / 题库内容账号。本帖明确以“给我面没招了，发点面经攒攒人品”发布；问题围绕自己的检索、会话、限流与缓存工程连续追问，包含针对恶意用户压垮模型、恶意 Prompt 和双层缓存的具体场景，Role Scope 明确为 AI 应用开发。 / 8. 用户用恶意 Prompt 请求模型私密信息时如何防护？ / 去重：已直接回读全部历史 Batch。当前 URL、4/21 蚂蚁国际流程和“Multi-way Retrieval → Conversation Memory → User-level Fair Queue / 恶意洪泛 → Prompt Security → Circuit Breaker → Cache Aside / L2 Cache”长链未在历史正式来源出现。作者次日存在阿里云另一独立招聘流程，组织、岗位与题序完全不同，按规则分别计数。 |
 | `S277` | 快手杭州电商｜大模型应用 Java｜一面 + 二面（同一候选人同流程合并）｜面试 2026-03-05 / 03-09，发布 03-15，二面后当晚 OC｜HUMAN-A | 9. Prompt Engineering 有哪些真实实践原则？ |
+| `S284` | 美团｜AI 后端开发工程师｜一面｜发布 2026-09-15｜HUMAN-A | 4. Prompt Test Set 多大才有代表性，怎样构建和回归？ / 去重：全历史未出现当前 URL、作者和“Elo → Prompt Test Set → Context Compression 参数验真 → Redis Cache Refresh”连续题序。 |
+| `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | 3. **Evaluation 开始验参数而不是验名词。** Elo 怎样比较、Prompt Test Set 多大、Context 为什么 80% 压缩、Offline Case 是否代表线上故障，都要求解释实验依据。 |
 
 ## Prompt Injection / Prompt Attack
 
@@ -97,7 +99,7 @@
 
 ## Intent Recognition
 
-候选来源：**11**
+候选来源：**12**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -112,10 +114,11 @@
 | `S255` | 百度｜AI 应用开发｜实习一面｜发布 2026-05-03｜HUMAN-A | 真人 / 第一人称证据：作者 `静息狂想` 以本人“27实习百度 AI应用开发面经分享”发布，开头自评“面完人都通透了，还是太菜了，下去沉淀一下”。题目从实习 / 项目验真进入 Intent Recognition、Base Model Selection、FAISS、Evaluation、4-GPU Distributed Deployment、PagedAttention、Rerank、Load Test / Bad Case 与现场 Coding，实际 Role Scope 清晰。 / 2. Intent Recognition 怎样实现？ |
 | `S260` | 阿里灵犀互娱｜AI 应用开发｜暑期二面｜发布 2026-04-10｜HUMAN-A | 3. Intent Recognition Small Model 怎样训练，Dataset 怎样构造？ |
 | `S276` | 蚂蚁国际｜AI 应用开发｜一面｜发布 2026-04-21｜HUMAN-A | 3. Intent Recognition 怎样实现，多路检索相比单路的 Recall 提升如何证明？ |
+| `S285` | 智谱｜AI Native Builder 实习｜一面｜发布 2026-09-16｜HUMAN-A | 5. Intent Recognition / Routing 怎样实现？ |
 
 ## LangGraph / LangChain
 
-候选来源：**44**
+候选来源：**48**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -163,6 +166,10 @@
 | `S269` | 字节跳动抖音电商 / 中国交易与广告｜AI 开发 / 全栈开发｜一面 50min｜面试 2026-08-24｜HUMAN-A | 3. 为什么不用 LangChain 等现成 Framework，而选择当前实现？ |
 | `S275` | 百度｜AI 应用工程师｜社招一面｜发布 2026-07-17，视频面，已挂｜HUMAN-A | 3. 从零独立开发 Agent 时为什么选择 LangChain？ |
 | `S278` | 快手｜AI 应用服务端开发｜二面｜面试 2026-04-09，发布 04-11｜HUMAN-A | 5. Spring AI Alibaba、LangChain4j、Spring AI 怎样比较，Framework Selection 依据是什么？ / 去重：已直接回读全部历史快手来源。当前 URL、作者和“到岗时间导致流程暂停 → Redis Cluster → Spring AI Alibaba / LangChain4j / Spring AI 选型 → Agent DAG → OpenClaw → RabbitMQ → Merge K Lists”连续题序未在 `S001–S274` 形成同场重复。未找到可稳定核验的同作者快手一面原帖，因此不猜测、不补写，只收当前二面。 |
+| `S281` | 科大讯飞｜Agent 研发工程师 · Harness 方向｜线下一面 + 二面 + HR｜2026-09-11｜HUMAN-A | 6. LangGraph Node / State 怎样设计？ |
+| `S283` | 美团｜AI Agent｜一面｜发布 2026-09-15｜HUMAN-A | 6. LangChain / LangGraph / Raw Agent 怎样取舍？ |
+| `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | - **新旦智能 AI 应用开发**：LangChain 1.0、Hermes Self-evolution / Memory、Harness、Eval、Codex Quality 等题很强，但原始正文持续 Cache Miss，不满足 Verifiable Gate。 |
+| `S287` | 字节跳动｜Agent 开发｜秋招一面｜发布 2026-09-16 15:09｜HUMAN-A | - **百度网络研发 / B站测开等近期 Agent 深挖**：面试中虽出现 LangGraph、OpenClaw、Skill、MCP 或 Agent Evaluation，但岗位主体分别是网络研发 / 测试开发等 Role Scope 外方向。 |
 
 ## A2A
 
@@ -180,7 +187,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**92**
+候选来源：**97**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -276,6 +283,11 @@
 | `S273` | 腾讯｜AI 后台开发｜暑期实习一面｜发布 2026-04-02｜HUMAN-A | 19. 如何看待 AI 与程序员的关系，AI Coding 会怎样改变日常研发？ |
 | `S277` | 快手杭州电商｜大模型应用 Java｜一面 + 二面（同一候选人同流程合并）｜面试 2026-03-05 / 03-09，发布 03-15，二面后当晚 OC｜HUMAN-A | 27. 如何看待 Vibe Coding，AI-assisted Coding 有哪些局限？ |
 | `S279` | 快手｜大模型应用 Java 实习｜一面｜面试 2026-08-17，发布 08-19｜HUMAN-A | 真人 / 第一人称证据：作者 `Wang_PD` 的个人 Timeline 可串起 3 月得物安全开发入职讨论、8 月快手面试和 9 月知乎全栈一面，账号持续记录本人求职 / 实习而非批量搬运。本帖明确写“8.17 日面”，约 30 分钟全问项目，随后约 30 分钟 Vibe Coding，要求用 AI 现场做出一个浏览器插件并给了 Mock Data；这种现场交付比普通题单具有更强真人验证。岗位标题明确为“大模型应用 Java 实习”。 / 9. Vibe Coding：约 30 分钟内使用 AI 做出浏览器插件，支持 Tab Management、Browsing-history Storage 和 Next-action Recommendation，并基于给定 Mock Data 完成交付。 / 去重：已直接回读 `S001–S274`。当前 URL、作者、8/17 流程和“Agent Project → Tool Integration Metric → Redis Lock + Kafka → SkillHub Compliance → Agent 自动运营 Benchmark → 30min Browser Plugin Vibe Coding”连续链均未在历史来源出现。外部按罕见题序检索仅定位到当前原帖及站内话题 / 评论镜像，未发现更早独立来源。 |
+| `S281` | 科大讯飞｜Agent 研发工程师 · Harness 方向｜线下一面 + 二面 + HR｜2026-09-11｜HUMAN-A | 7. AI Coding 在真实项目中的参与度如何证明，生成代码由谁验证？ |
+| `S282` | 快手｜AI 全栈｜秋招一面｜发布 2026-09-15｜HUMAN-A | 真人 / 第一人称证据：岗位标题明确 AI 全栈；作者按本人秋招流程发布，并保留“很多八股说不上来”等现场状态。整场不是只问 AI 名词，而是把 Backend Foundation 与 AI Coding 生产实践混合考察。 / 6. 日常 AI Coding Workflow 怎样组织？ / 去重：全历史未发现当前 URL、作者和“Backend Foundation → AI Coding Production Bad Case”连续流程的同场来源；历史快手 AI 全栈 / Agent 来源均为其他候选人或不同流程。 |
+| `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | - **望尘科技 AI 全栈 9/14**：能从关联页面看到面试时长、Java 与 AI Coding Quality，但原帖直链没有稳定定位，继续零贡献。 / 4. **AI Coding 已进入 Production Verification。** 面试官关心 Bad Case 漏检、Review Bottleneck、真实落地和人类 Review / Test，而不是只问使用了哪个工具。 |
+| `S287` | 字节跳动｜Agent 开发｜秋招一面｜发布 2026-09-16 15:09｜HUMAN-A | 真人 / 第一人称证据：作者页面显示当前身份为“小红书 Agent 开发（实习员工）”；正文明确记录本人字节 Agent 秋招一面，并写“当天下午已约二面”。面试过程中保留与真人面试官讨论 Computer Use、Pi Agent、DeepSeek Harness、AI Coding 方式与团队业务的现场互动，属于候选人本人第一人称招聘流程，不是答案帖、合集或内容账号整理。 / Role Scope：标题直接为“字节 Agent 秋招一面”，技术主体围绕企业 AI 助手、Memory / Context、Agent Harness、Computer Use、AI Coding 与 Agent 工程集成展开，明确通过 AI Application / Agent Role Scope Gate。 / 10. 日常怎样真正使用 AI Coding，从需求、理解代码、修改、验证到 Review 的完整 Workflow 是什么？ |
+| `S288` | 蚂蚁｜AI Native / Agent 应用方向｜一面｜面试 2026-09-15 · 发布 2026-09-17｜HUMAN-A | 4. Agent / Skill / AI Coding 已明显向普通 Backend、Data、Test 岗扩散，因此 Role Scope Gate 必须比过去更严格； |
 
 ## Spec-driven Development
 
