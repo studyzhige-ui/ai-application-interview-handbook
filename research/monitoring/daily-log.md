@@ -287,3 +287,29 @@ Evening 重点复核：
 5. Foundation / Production Engineering 仍是最新 Agent 能力的承载层，不能被新名词替代。
 
 饱和度 / 盲区：最近 72 小时公开热门层继续表现为**局部饱和 + provenance 成本高**。牛客仍最容易拿到可核验原帖，但新结果大量落在笔试、聚合、内容账号、普通岗位 AI 项目追问或原帖不可稳定回读；腾讯 / 京东 / 滴滴 / B站 / OPPO / vivo 等目标公司以及小红书 / 知乎 / 脉脉 / 独立博客，在严格 Gate 下仍缺新的目标岗高密度第一人称样本。下一轮继续追 4399 9/18 Agent、快手 9/17 AI 应用一 / 二面及跨平台作者源，不降低 Gate。
+
+---
+
+## 2026-09-19
+
+### 10:00 Morning Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-16 10:07 ～ 2026-09-19 10:07**；主动发现只使用窗口内新发布 / 更新，历史页面仅用于 provenance、作者 Timeline 与去重参考。
+- Baseline：重新读取当前 `main`、Research README、Inbox、Daily Log、两份 Quality Policy 和最新 `batch-29.md`。确认当前正式基线为 **29 Batch / 288 HUMAN-A / `S001–S288` / 下一 `S289`**，本轮开始时 Inbox 为空。由于本轮没有候选进入 Inbox、也不分配 ID，因此没有触发“入 Inbox / 分配 ID 前”的全历史 Batch 回读；若 Afternoon 出现达到准入的候选，必须先直接回读 `batch-01.md`～`batch-29.md` 再写入 Inbox。
+- Search effort：至少 **90 组定向 Query / Query 变体**。逐公司覆盖字节 / 抖音、阿里 / 千问 / 淘宝、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，并继续补 4399、阳光电源、携程、去哪儿、米哈游、顺丰等近期线索；岗位别名覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `AI Native` / `Coding Agent` / `Harness` / `Runtime` / `RAG` / `大模型应用开发` / `智能体开发`。另外单独搜索小红书、知乎、脉脉、CSDN、博客园、掘金、Bilibili 等非牛客公开来源。
+- Verification effort：显式打开、回读或追源 **20+ 次**近期候选原帖、作者页、企业页、职位页或 provenance 入口；Search Snippet、JD、聚合页、课程 / 面经宝典和打不开的原帖均不替代 HUMAN-A 原始证据。
+- Passed HUMAN-A → Inbox：**0 个**。本轮没有新的流程同时满足真人面试官 + 候选人第一人称 + 高技术密度 + 目标 Role Scope + 稳定原始正文 / URL + 全历史去重；Inbox 继续为空，不分配 `Sxxx`，不创建 Batch。
+
+Morning 重点复核 / 待追源：
+
+1. **4399 Agent 开发 9/18｜`AAA野生原子弹批发`**：相比昨晚有实质进展——最新作者索引已能完整暴露 14 道连续问题，包含“如何判断自己真正掌握而不是依赖 AI 工具”、10 万级日志如何处理、Harness 架构、Agent 场景与效果、Agent 生成 SQL 的错误检测、项目 90% 测试用例通过率如何统计 / 失败原因、从数据开发转 AI 的能力缺口，以及反问中面试官说明团队是约 20+ 人的内部业务 AI 研发团队、独立构建内部 AI Agent。技术密度、真人互动、Role Scope 和作者个人求职 Timeline 都很强；但**仍未稳定解析 / 打开这篇面经的 post-specific 原帖详情 URL**，普通作者页直读还是旧快照，没有可靠地包含该新帖。按照 Verifiable Gate，搜索索引里的完整正文仍不能替代稳定原始详情页，因此 Morning 继续不进 Inbox。Afternoon 优先追该帖 direct detail / 可稳定作者正文。
+2. **阳光电源 AI 应用开发工程师一面｜面试 9/18 10:00｜`小红不是绿`**：最新企业 / 索引结果可见 10 个连续问题，包含线上支付失败全链路诊断、RAG 召回低的原因与改进、PDF 表格 / 图片解析、MPC / Function Calling 区别、客户端实习与 AI 应用 / 后端职业选择、局部组件 vs 端到端参与等；目标岗位和真人现场都很清楚。但 direct detail 当前仍 Cache Miss，企业页直读也存在索引 / 快照不一致，未形成稳定原始正文闭环；继续待追源，不进 Inbox。
+3. **去哪儿旅行 9/16 AI 应用开发（全栈）**：可稳定读取的仍是 46 分钟真人面试流程摘要，Role Scope 清楚，但具体技术问题链没有形成可直接核验的高密度正文；维持既有排除。
+4. **普通 Data / Backend / Test 岗 AI 深挖**：`AAA野生原子弹批发` 同期海信大数据开发面试也会问 AI 平台、AI 能做什么、未来规划，但岗位主体仍是数据开发；水滴近期 AI 测试结果是笔试。继续按 Role Scope / Human Interviewer Gate 排除，不能因为 Agent / AI 话题扩散就污染目标岗位统计。
+5. **非牛客平台补盲**：小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客园 / Bilibili 当前窗口主要返回课程、面试宝典、标准答案、旧复盘或 AI 新闻，未找到新的、稳定可核验的目标岗位第一人称 HUMAN-A。
+6. **招聘 JD / 企业职位页**：近期快手 AI 应用、小米 Agent / 智能风控、中国电子云 AI Coding 等岗位继续强调 Context / Tool / Multi-Agent、权限与审计、Agent Loop、代码检索 / Evaluation 等，只作为市场旁证，不贡献 HUMAN-A。
+
+Morning 主要观察：**“Harness + AI 开发真实性验证”开始出现在目标 Agent 面试的同一条追问链里**。4399 线索不只问 Harness，还追“AI 工具帮你完成后，怎样证明自己真正会”“大规模日志怎样处理”“Agent SQL 如何检测错误”“测试用例 90% 通过率怎样得到”，更接近对 AI-assisted Engineering 的可验证工程能力检查；但由于该来源的 post-specific provenance 尚未闭环，这一信号目前只记作 Recall / Market Observation，不新增 Canonical、不修改 Curriculum。
+
+Morning 盲区：Afternoon 优先继续追 **4399 9/18 Agent 开发** 与 **阳光电源 9/18 AI 应用开发** 的稳定原帖详情；继续补快手 9/17 AI 应用一 / 二面、9/18～9/19 字节 / 阿里 / 腾讯 / 美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米的新发布目标岗原帖，以及非牛客平台的候选人本人正文。质量门槛不变。
