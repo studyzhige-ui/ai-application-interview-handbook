@@ -17,6 +17,7 @@ from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
 
@@ -31,7 +32,7 @@ HEADERS = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8",
 }
-TIMEOUT = 30
+TIMEOUT = 12
 
 
 @dataclass
@@ -115,6 +116,16 @@ def post_json(url: str, *, payload=None, headers=None) -> Any:
     return r.json()
 
 
+def post_form(url: str, *, data=None, headers=None) -> Any:
+    h = dict(HEADERS)
+    h["Content-Type"] = "application/x-www-form-urlencoded;charset=UTF-8"
+    if headers:
+        h.update(headers)
+    r = requests.post(url, data=data or {}, headers=h, timeout=TIMEOUT)
+    r.raise_for_status()
+    return r.json()
+
+
 def fetch_xiaomi(src: dict) -> list[Job]:
     out = []
     page = 1
@@ -143,7 +154,7 @@ def fetch_kuaishou(src: dict) -> list[Job]:
     page = 1
     while page <= 50:
         params = {
-            "page": page, "pageSize": 100, "workCity": "", "jobType": "",
+            "page": page, "pageSize": 50, "workCity": "", "jobType": "",
             "recruitSubProjectCodes": src.get("project_code", ""),
         }
         data = get_json(src["api"], params=params)
@@ -161,7 +172,7 @@ def fetch_kuaishou(src: dict) -> list[Job]:
                 "2027 project=" + txt(src.get("project_code")),
             ))
         total = int(d.get("total") or 0)
-        if page * 100 >= total:
+        if page * 50 >= total:
             break
         page += 1
     return out
@@ -171,13 +182,17 @@ def fetch_baidu(src: dict) -> list[Job]:
     out = []
     page = 1
     while page <= 30:
-        data = post_json(src["api"], payload={"recruitType": "CAMPUS", "pageSize": 100, "curPage": page})
+        data = post_form(
+            src["api"],
+            data={"recruitType": "CAMPUS", "pageSize": 100, "curPage": page, "projectType": ""},
+            headers={"Referer": "https://talent.baidu.com/jobs/list?projectType=1"},
+        )
         d = data.get("data") or {}
         rows = d.get("list") or []
         if not rows:
             break
         for j in rows:
-            pid = txt(j.get("postId"))
+            pid = txt(j.get("jobId") or j.get("postId"))
             out.append(Job(
                 src["company"], txt(j.get("name")), pid,
                 txt(j.get("workPlace")), "校招", txt(j.get("serviceType")),
@@ -395,23 +410,20 @@ def main() -> int:
     all_matches: list[Job] = []
     results: list[SourceResult] = []
 
-    for src in cfg["sources"]:
+    def collect(src: dict) -> tuple[SourceResult, list[Job]]:
         company = src["company"]
         mode = src["mode"]
         if mode == "portal_only":
-            results.append(SourceResult(company, mode, src["portal"], "PORTAL_ONLY", 0, 0))
-            continue
+            return SourceResult(company, mode, src["portal"], "PORTAL_ONLY", 0, 0), []
         fetcher = FETCHERS.get(mode)
         if not fetcher:
-            results.append(SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0))
-            continue
+            return SourceResult(company, mode, src["portal"], "NO_FETCHER", 0, 0), []
         try:
             jobs = fetcher(src)
             matches = [
                 j for j in jobs
                 if campusish(j) and is_agent_related(j, keywords) and not is_hard_excluded(j, excludes)
             ]
-            # semantic de-dup by company/title/location/job id fallback
             seen = set()
             uniq = []
             for j in matches:
@@ -420,10 +432,23 @@ def main() -> int:
                     continue
                 seen.add(key)
                 uniq.append(j)
-            all_matches.extend(uniq)
-            results.append(SourceResult(company, mode, src["portal"], "OK", len(jobs), len(uniq)))
+            return SourceResult(company, mode, src["portal"], "OK", len(jobs), len(uniq)), uniq
         except Exception as e:
-            results.append(SourceResult(company, mode, src["portal"], "ERROR", 0, 0, f"{type(e).__name__}: {e}"[:300]))
+            return SourceResult(
+                company, mode, src["portal"], "ERROR", 0, 0,
+                f"{type(e).__name__}: {e}"[:300],
+            ), []
+
+    # Company sources are independent. Run official API adapters concurrently so one
+    # slow/blocked dynamic recruitment site cannot stall the whole discovery cycle.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        futures = {pool.submit(collect, src): src for src in cfg["sources"]}
+        for future in as_completed(futures):
+            result, matches = future.result()
+            results.append(result)
+            all_matches.extend(matches)
+
+    results.sort(key=lambda r: r.company)
 
     all_matches.sort(key=lambda j: (j.company, j.title, j.location, j.job_id))
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
