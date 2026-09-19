@@ -144,7 +144,7 @@ async function collectSearchPages(page,keyword){
       page.getByRole("link",{name:/下一页|下页|Next/i}).last(),
       page.locator("button").filter({hasText:/下一页|下页|Next/i}).last(),
       page.locator("[class*=next]").last(),
-      page.locator("[aria-label*=next i]").last()
+      page.locator('[aria-label*="next" i]').last()
     ];
     let moved=false;
     for(const next of candidates){
