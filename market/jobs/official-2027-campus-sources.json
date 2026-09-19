@@ -185,9 +185,10 @@
     {
       "company": "vivo",
       "mode": "portal_only",
-      "portal": "https://hr.vivo.com/",
-      "official_root": "https://hr.vivo.com/",
-      "browser_probe": true
+      "portal": "https://hr-campus.vivo.com/campus/jobs",
+      "official_root": "https://hr-campus.vivo.com/",
+      "browser_probe": true,
+      "note": "vivo 官方校园招聘独立站 hr-campus.vivo.com；2027 届岗位必须从 campus/jobs 站内枚举。"
     },
     {
       "company": "金山办公/WPS",
@@ -230,10 +231,10 @@
     {
       "company": "得物",
       "mode": "portal_only",
-      "portal": "https://poizon.jobs.feishu.cn/index",
+      "portal": "https://poizon.jobs.feishu.cn/578078/",
       "official_root": "https://www.dewu.com/",
       "browser_probe": true,
-      "note": "得物官网 footer 的“加入得物/加入我们”直接跳转 poizon.jobs.feishu.cn；以官网→飞书 ATS 链为第一手 provenance。"
+      "note": "得物官网为 provenance 根；官方 2027 校园招聘职位页位于 poizon.jobs.feishu.cn/578078/，职位正文明确 2027届秋季校园招聘项目。"
     },
     {
       "company": "DeepSeek",
@@ -371,9 +372,10 @@
     {
       "company": "蔚来",
       "mode": "portal_only",
-      "portal": "https://www.nio.cn/careers",
-      "official_root": "https://www.nio.cn/careers",
-      "browser_probe": true
+      "portal": "https://campus.nio.com/",
+      "official_root": "https://campus.nio.com/",
+      "browser_probe": true,
+      "note": "蔚来官方校园招聘入口 campus.nio.com；从该官方入口继续跟随公司 ATS，禁止使用社会招聘页替代校招。"
     },
     {
       "company": "顺丰",
@@ -387,8 +389,8 @@
   ],
   "notes": [
     "Every company starts from an official company/campus career root. Filter URLs supplied externally are never treated as the root source.",
-    "A company is marked enumerated only after GitHub Runner/browser or a verified first-party API successfully returns its official job pool.",
-    "Dynamic official portals are browser-probed from their official root; runtime XHR/JSON endpoints may be promoted into dedicated adapters only after a successful run.",
+    "A company is terminal only after a verified official API/browser run enumerates its 2027 target search space, or the official root proves there is no public 2027 project.",
+    "Dynamic official portals must exhaust the full Agent/AI-application keyword set and read official job detail pages before zero-match is accepted.",
     "Search-engine indexing is never evidence of absence."
   ],
   "engineering_title_signals": [
