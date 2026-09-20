@@ -23,7 +23,9 @@
 
 ---
 
-## 1. JSONL 不是“聊天导出格式”，而是 Session Event Store
+## 1. Session 为什么能在 Crash 后继续
+
+### 1. JSONL 不是“聊天导出格式”，而是 Session Event Store
 
 默认持久化实现：
 
@@ -50,7 +52,7 @@ Base bundle 默认挂载：
 
 > 很多运行时状态只能重新猜。
 
-### Session File 为什么采用不可变 Format Generation
+#### Session File 为什么采用不可变 Format Generation
 
 当前格式使用类似：
 
@@ -70,7 +72,7 @@ session.v3.jsonl.zstd
 
 如果原地升级时写到一半 crash，一个原本可读的 Session 可能直接变成不可读。Immutable generation（不可变代际）让升级更像“发布一个新版本”，而不是给原文件做手术。
 
-### 为什么最高版本不可读时不能偷偷回退旧版本
+#### 为什么最高版本不可读时不能偷偷回退旧版本
 
 Persistence 会选择 numerically highest canonical generation（编号最高的规范代）。
 
@@ -90,7 +92,7 @@ Silent stale fallback
 
 ---
 
-## 2. 持久化正确性从“一个 Writer”开始
+### 2. 持久化正确性从“一个 Writer”开始
 
 Persistence Service 对 write handle 做 single-writer ownership（单写者所有权）。
 
@@ -114,7 +116,7 @@ Event Seq 和协议配对会失去单一真源。
 
 Read-only Observer 可以并发读取，但 authoritative write path（权威写路径）必须唯一。
 
-### 每次 append 为什么要有明确 Durability Barrier
+#### 每次 append 为什么要有明确 Durability Barrier
 
 JSONL backend 会按 batch append、`fsync`，成功后才 resolve append。如果 write / sync 失败，会尽量回滚到 append 前的文件长度。
 
@@ -138,11 +140,11 @@ Persistence API 对这个差异有明确 contract。
 
 ---
 
-## 3. Crash Recovery 必须先区分“文件坏了”还是“协议没闭合”
+### 3. Crash Recovery 必须先区分“文件坏了”还是“协议没闭合”
 
 这是 Persistence 设计里很容易混淆的一点。
 
-### Torn Physical Tail
+#### Torn Physical Tail
 
 例如写 JSONL / Zstd frame 时进程突然没了。
 
@@ -157,7 +159,7 @@ JSONL backend 会：
 - 对 torn Zstd frame 尽量恢复完整 decoded records；
 - Write Handle 在首次新 append 前修正物理尾部。
 
-### Interrupted Semantic Turn
+#### Interrupted Semantic Turn
 
 但也可能所有 Event 都已经完整落盘：
 
@@ -179,7 +181,7 @@ tool/call
 
 ---
 
-## 4. Resume 怎样修复 Interrupted Turn
+### 4. Resume 怎样修复 Interrupted Turn
 
 核心函数：
 
@@ -199,7 +201,7 @@ Agent Loop Resume 时会：
 - `step/end`；
 - `turn/end { interrupted }`。
 
-### 为什么 Tool Repair 有两种不同错误
+#### 为什么 Tool Repair 有两种不同错误
 
 源码定义：
 
@@ -222,7 +224,9 @@ Agent Loop Resume 时会：
 
 ---
 
-## 5. LLM Retry 也遵守“durable before wait”
+## 2. Retry 为什么必须建立在 durable progress 上
+
+### 5. LLM Retry 也遵守“durable before wait”
 
 默认 Base bundle 安装：
 
@@ -254,7 +258,7 @@ Wait 完成以后再 append：
 
 如果先 sleep 30 秒、然后才记录 retry，第 10 秒 crash 时日志完全不知道 Runtime 当时在等什么。当前顺序让待重试状态成为可解释的 Session Fact。
 
-### Retry 为什么放在 Agent Step Boundary，而不是包住任意 LLM Stream
+#### Retry 为什么放在 Agent Step Boundary，而不是包住任意 LLM Stream
 
 `llm-retry` 的 README 很明确：
 
@@ -270,7 +274,7 @@ Agent Loop 有明确 Step boundary。失败 Assistant Attempt 先 settlement，�
 
 不是任意 Promise。
 
-### Retry Policy 为什么属于 Provider，而 Executor 独立
+#### Retry Policy 为什么属于 Provider，而 Executor 独立
 
 `dsh-llm-retry` 自己没有 retry config。
 
@@ -282,7 +286,7 @@ Executor 只负责在正确 lifecycle seam 上执行、读 durable retry history
 
 ---
 
-## 6. Context Overflow Recovery 不是普通 Retry
+### 6. Context Overflow Recovery 不是普通 Retry
 
 LLM 返回 Context Window Exceeded 时，不应该：
 
@@ -312,7 +316,9 @@ Basic Compaction 同样监听：
 
 ---
 
-## 7. Subagent 的两种 Context Contract：Spawn 与 Fork
+## 3. Subagent 怎样继承 Context、隔离 Authority 并长期运行
+
+### 7. Subagent 的两种 Context Contract：Spawn 与 Fork
 
 默认 Base bundle 同时提供：
 
@@ -321,13 +327,13 @@ Basic Compaction 同样监听：
 
 两种 in-process provider。
 
-### Spawn：全新会话
+#### Spawn：全新会话
 
 Spawn Child 继承 cwd、lineage、默认 provider / model / effort 等 creation option，但**不继承 Parent Conversation**。
 
 所以 Delegation Prompt 必须自包含。
 
-### Fork：继承已完成的 Parent 历史
+#### Fork：继承已完成的 Parent 历史
 
 Fork Child 的 Session seed 是：
 
@@ -343,7 +349,7 @@ Fork Child 的 Session seed 是：
 
 > **已经 durable 完成的 Turn Prefix。**
 
-### Fork 为什么只捕获一次，不做 Live Shared Context
+#### Fork 为什么只捕获一次，不做 Live Shared Context
 
 Fork 发生时计算一次 completed-turn prefix。
 
@@ -359,7 +365,7 @@ Fork 是：
 
 ---
 
-## 8. Subagent 不继承 Parent Tool Authority
+### 8. Subagent 不继承 Parent Tool Authority
 
 Spawn / Fork in-process README 都强调：
 
@@ -379,7 +385,7 @@ Delegated Subagent 的 runtime context 还明确告诉模型：Child scope 在�
 
 ---
 
-## 9. Continuable Subagent 为什么远比“一次性 Agent Tool”复杂
+### 9. Continuable Subagent 为什么远比“一次性 Agent Tool”复杂
 
 `ctx.subagents` 支持两种 child shape：
 
@@ -388,7 +394,7 @@ Delegated Subagent 的 runtime context 还明确告诉模型：Child scope 在�
 
 Continuable Child 有 durable Session、stable child id、process-local Activation、Inbox、cold resume、send message、interrupt 和 descendant discovery。
 
-### 消息仍然复用 Agent Inbox
+#### 消息仍然复用 Agent Inbox
 
 Subagent Service 没有再造第二套 Mailbox。
 
@@ -400,7 +406,7 @@ Parent 向 direct continuable child 发消息时：
 
 同一套 next-turn / next-step 语义继续成立。
 
-### 为什么需要 Activation Capacity
+#### 为什么需要 Activation Capacity
 
 默认 `maxActiveSubagents` 有有限值。
 
@@ -418,7 +424,7 @@ Continuable Child 会占 Live Agent、Inbox、Ownership graph、可能的 Descen
 
 ---
 
-## 10. Multi-Agent 拓扑为什么也要持久化
+### 10. Multi-Agent 拓扑为什么也要持久化
 
 成功创建本地 Child 后，Parent Session 会得到：
 
@@ -440,7 +446,9 @@ Child Session Header 也会记录：
 
 ---
 
-## 11. Cordis Plugin Lifecycle 为什么也是可靠性的一部分
+## 4. Plugin 生命周期与默认 Bundle 为什么决定真实产品
+
+### 11. Cordis Plugin Lifecycle 为什么也是可靠性的一部分
 
 DeepSeek Harness 的大多数注册——Tool、Prompt Section、Event Listener、Provider——都是 Cordis effect-scoped（生命周期作用域绑定）的。
 
@@ -464,7 +472,7 @@ Subagent Service 就明确区分 Provider Registration Lifetime 和 Accepted Run
 
 ---
 
-## 12. 为什么真正的产品架构要回到 Base Bundle
+### 12. 为什么真正的产品架构要回到 Base Bundle
 
 DeepSeek Harness 仓库 Package 很多。
 
@@ -508,7 +516,9 @@ subagent
 
 ---
 
-## 13. 测试体系为什么特别适合这种 Plugin Harness
+## 5. 验证体系：从 Invariant 到真实 Provider E2E
+
+### 13. 测试体系为什么特别适合这种 Plugin Harness
 
 根 `package.json` 不只提供普通 Unit Test。
 
@@ -541,7 +551,7 @@ subagent
 
 不是某一个函数返回值对不对。
 
-### Invariant Companion 比普通单测多验证什么
+#### Invariant Companion 比普通单测多验证什么
 
 很多 Package 有：
 
@@ -565,7 +575,7 @@ Invariant 更像：
 
 这对 Event-sourced Agent Runtime 特别重要。
 
-### Contract Suite 防 Provider 漂移
+#### Contract Suite 防 Provider 漂移
 
 例如 Persistence Provider 有共享 contract tests。
 
@@ -573,7 +583,7 @@ Invariant 更像：
 
 新增 Backend 不能只证明“看起来能存”。
 
-### Catalog Verifier 防公开能力面和源码脱节
+#### Catalog Verifier 防公开能力面和源码脱节
 
 DeepSeek Harness 自动生成：
 
@@ -588,9 +598,9 @@ Verifier 会检查这些输出是否和源码同步。
 
 ---
 
-## 14. Snapshot、Replay 与 With-key E2E 各自证明不同东西
+### 14. Snapshot、Replay 与 With-key E2E 各自证明不同东西
 
-### Snapshot / Replay
+#### Snapshot / Replay
 
 Agent 系统常见 Bug 是：
 
@@ -609,7 +619,7 @@ Agent 系统常见 Bug 是：
 
 仓库中的 LLM Replay / Session Snapshot 一类 test-support package，目的就是把 nondeterministic model runtime（非确定模型运行）尽量转成 deterministic runtime contract test（确定性运行时契约测试）。
 
-### With-key E2E
+#### With-key E2E
 
 Mock Model 可以稳定测试 Event Order、Compaction Bracket、Tool Pipeline、Retry、Resume。
 
@@ -623,9 +633,11 @@ Compaction 的实现记录明确提到 with-key e2e：用真实模型 + Bash，�
 
 ---
 
-## 15. 三个场景把恢复逻辑真正串起来
+## 6. 用故障场景检验系统是否真正闭环
 
-### 场景一：Resume 后 Tool 又被执行了一次
+### 15. 三个场景把恢复逻辑真正串起来
+
+#### 场景一：Resume 后 Tool 又被执行了一次
 
 按源码边界查：
 
@@ -652,7 +664,7 @@ Tool 本身是否非幂等？
 
 问题不是“Resume 太保守”，而是外部系统缺少 idempotency / status check。
 
-### 场景二：Context Overflow 一直重试
+#### 场景二：Context Overflow 一直重试
 
 正确路径应该是：
 
@@ -676,7 +688,7 @@ session.surface.replaceGeneration 是否增加
 
 增加 retry count 不是根因修复。
 
-### 场景三：Fork Subagent “没看到刚才 Parent 讨论的内容”
+#### 场景三：Fork Subagent “没看到刚才 Parent 讨论的内容”
 
 先确认：
 
@@ -700,9 +712,9 @@ Assistant
 
 ---
 
-## 16. 应该怎样评价这个 Harness，而不只是评价模型
+### 16. 应该怎样评价这个 Harness，而不只是评价模型
 
-### Protocol Correctness
+#### Protocol Correctness
 
 检查：
 
@@ -713,11 +725,11 @@ Assistant
 - Compaction bracket；
 - Resume repair。
 
-### Capability Correctness
+#### Capability Correctness
 
 检查 Tool、MCP、Skill、Sandbox、Subagent Provider 是否符合各自 Service Contract。
 
-### Runtime Reliability
+#### Runtime Reliability
 
 做故障注入：
 
@@ -731,7 +743,7 @@ Assistant
 
 看系统是否 fail closed、可 Resume、无孤儿 Tool Call、无 silent history corruption（静默历史损坏）。
 
-### Task Utility
+#### Task Utility
 
 最终仍然要回答：
 
@@ -751,7 +763,7 @@ Runtime Contract 全绿，但模型任务失败，也不能叫优秀 Agent Produ
 
 ---
 
-## 17. 从源码能抽出的系统设计原则
+### 17. 从源码能抽出的系统设计原则
 
 **第一，持久化不是最后 dump state，而应该参与运行时语义。** Retry、Approval、Compaction、Subagent identity 都先考虑怎样留下 durable evidence。
 
@@ -767,7 +779,7 @@ Runtime Contract 全绿，但模型任务失败，也不能叫优秀 Agent Produ
 
 ---
 
-## 18. 源码锚点
+## 7. 源码锚点
 
 1. [`packages/session/session-persistence-jsonl/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/session/session-persistence-jsonl/README.md)：物理持久化、generation、crash tail。
 2. [`docs/subsystems/persistence.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/subsystems/persistence.md)：Backend-neutral persistence contract。
