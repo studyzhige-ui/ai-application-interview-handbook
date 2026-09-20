@@ -300,7 +300,10 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     // provide full JD fields; title-matching links are opened as an additional fallback.
     if(!search.found){
       listHits=await collectSearchPages(page,"__FULL_LIST__");
-      listScanComplete=true;
+      // An empty page without a search control is not proof that the official
+      // job pool has zero jobs. Require actual job-list evidence before
+      // certifying a full-list scan.
+      listScanComplete=listHits.length>0;
       for(const h of listHits){
         const low=(h.title||"").toLowerCase();
         if(STRONG.some(k=>low.includes(k))) search.hits.push(h);
@@ -374,6 +377,12 @@ async function processSource(browser,src){
       }
     }
     const allJobs=uniqueJobs(collector);
+    // Captured first-party XHR may prove the list even when the DOM exposes no links.
+    if(!pageResults.some(x=>x.search_control_found) && allJobs.length>0){
+      for(const pr of pageResults){
+        if(!pr.search_control_found) pr.list_scan_complete=true;
+      }
+    }
     // The live first-party campus/new-grad board itself is the time gate.
     // Graduation year / project label is metadata only and must never decide
     // whether an otherwise live official job pool is enumerable.
