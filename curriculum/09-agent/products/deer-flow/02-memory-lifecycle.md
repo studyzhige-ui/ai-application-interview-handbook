@@ -3,7 +3,7 @@
 
 [← Context](01-context-lifecycle.md) · [DeerFlow 总览](README.md) · [Tool →](03-tool-lifecycle.md)
 
-> **源码基线：** bytedance/deer-flow@1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe
+> **源码基线：** bytedance/deer-flow@e545c28ac301e6f9feae247c513d8ea8f83df294
 
 DeerFlow 2.0 当前确实有完整的内建 Long-term Memory（长期记忆）子系统。
 
@@ -929,17 +929,17 @@ Memory 存得越来越多，不等于系统越来越好。
 
 ## 6. 源码锚点
 
-1. [MemoryManager](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/manager.py)
-2. [Memory backends contract](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/backends/README.md)
-3. [MemoryMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py)
-4. [DeerMem facade](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py)
-5. [MemoryUpdateQueue](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/queue.py)
-6. [MemoryUpdater](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py)
-7. [DeerMem retrieval](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/retrieval.py)
-8. [DeerMem eviction](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/eviction.py)
-9. [Memory tools](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/tools.py)
-10. [Memory injection](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/lead_agent/prompt.py)
-11. [Emergency summarization flush](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/memory/summarization_hook.py)
-12. [Memory scope-isolation benchmark](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/tests/test_bench_deermem_scope_isolation.py)
+1. [MemoryManager](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/manager.py)
+2. [Memory backends contract](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/backends/README.md)
+3. [MemoryMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py)
+4. [DeerMem facade](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py)
+5. [MemoryUpdateQueue](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/queue.py)
+6. [MemoryUpdater](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py)
+7. [DeerMem retrieval](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/retrieval.py)
+8. [DeerMem eviction](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/eviction.py)
+9. [Memory tools](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/tools.py)
+10. [Memory injection](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/lead_agent/prompt.py)
+11. [Emergency summarization flush](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/summarization_hook.py)
+12. [Memory scope-isolation benchmark](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/tests/test_bench_deermem_scope_isolation.py)
 
 下一篇：[DeerFlow Tool Lifecycle →](03-tool-lifecycle.md)
