@@ -2030,7 +2030,7 @@ def main() -> int:
             jobs = to_jobs(company, raw_jobs, src["portal"], "BROWSER:" + src["portal"])
             matches = target_matches(jobs, src)
             raw_status = txt(dyn.get("status"))
-            full_search = bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete"))
+            full_search = bool(dyn.get("list_scan_complete"))
             if raw_status == "BROWSER_ENUMERATED":
                 status = "ENUMERATED_WITH_MATCHES" if matches else "ENUMERATED_ZERO_MATCHES"
                 error = ""
@@ -2065,7 +2065,7 @@ def main() -> int:
             dyn = dynamic_by_company.get(company) or {}
             raw_jobs = dyn.get("jobs") or []
             browser_terminal = (
-                (bool(dyn.get("full_keyword_search")) or bool(dyn.get("list_scan_complete")))
+                bool(dyn.get("list_scan_complete"))
                 and txt(dyn.get("status")) == "BROWSER_ENUMERATED"
             )
             if browser_terminal:

@@ -837,14 +837,19 @@
       "portal": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "official_root": "https://careers.dji.com/zh-CN/campus",
       "browser_probe": true,
-      "note": "大疆官方 2027 拓疆者校园招聘热招职位页，当前明确包含 AI DevOps、AI 全栈等软件工程岗位。",
+      "note": "大疆2027校园招聘；官方 campus 页面进入 apply.careers.dji.com/campus-recruitment/dji/143359，固定 Moka tenant 完整枚举全职位池。",
       "job_list_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
       "campus_search_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "search_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "board_scope": "campus",
-      "business_summary": "无人机、影像设备、行业机器人与智能硬件"
+      "business_summary": "无人机、影像设备、行业机器人与智能硬件",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "dji",
+      "moka_site_id": "143359",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "度小满",
@@ -863,11 +868,11 @@
     },
     {
       "company": "海康威视",
-      "mode": "hikvision_campus_api",
+      "mode": "portal_only",
       "portal": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "official_root": "https://www.hikvision.com/cn/",
       "browser_probe": true,
-      "note": "海康威视官方 2027 应届生职位池；直接使用官网 crsBatch + crsPositionSearch 分页 API 完整枚举，不再依赖 SPA 搜索超时。",
+      "note": "海康威视官方2027应届生职位池；由官网浏览器会话重放 crsPositionSearch 空关键词分页至终点，避免独立 requests 适配器响应结构差异。",
       "job_list_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -875,11 +880,9 @@
       "search_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "board_scope": "campus",
       "business_summary": "智慧物联、视频技术、企业数字化与 AIoT",
-      "extra_job_list_urls": [
-        "https://campushr.hikvision.com/JobList.html"
-      ],
+      "extra_job_list_urls": [],
       "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000,
+      "browser_company_budget_ms": 120000,
       "hikvision_batch_id": "e198653730e14820b9e95b29fbc2223f"
     },
     {
@@ -1210,19 +1213,19 @@
     {
       "company": "BOSS直聘/看准科技",
       "mode": "portal_only",
-      "portal": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "portal": "https://www.zhipin.com/campus/pc/",
       "official_root": "https://www.zhipin.com/",
       "browser_probe": true,
-      "note": "BOSS直聘自有校园招聘职位页；使用公司自身第一方 BOSS 职位集合，浏览器需容忍移动站重定向并完整分页。",
-      "job_list_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "note": "BOSS直聘自身2027届官方校园招聘项目页；从 zhipin.com/campus/pc/ 固定枚举公司自身校招职位池，保留第一方大模型应用工程师岗位事实。",
+      "job_list_url": "https://www.zhipin.com/campus/pc/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
-      "search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "campus_search_url": "https://www.zhipin.com/campus/pc/",
+      "search_url": "https://www.zhipin.com/campus/pc/",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
       "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000
+      "browser_company_budget_ms": 150000
     },
     {
       "company": "作业帮",

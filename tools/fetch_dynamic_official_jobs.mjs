@@ -80,6 +80,196 @@ function uniqueJobs(jobs){
   }
   return [...m.values()];
 }
+
+function jobishObject(o){
+  if(!o||typeof o!=="object"||Array.isArray(o)) return false;
+  const title=pick(o,TITLE_KEYS);
+  const id=pick(o,ID_KEYS);
+  return Boolean(title && (id || pick(o,DESC_KEYS) || pick(o,REQ_KEYS)));
+}
+function responseListStats(root){
+  let best=null;
+  const totalKeys=["total","totalCount","count","recordsTotal","totalNum","totalSize","totalElements"];
+  function nearbyTotal(parent){
+    if(!parent||typeof parent!=="object"||Array.isArray(parent)) return null;
+    for(const k of totalKeys){
+      const n=Number(parent[k]);
+      if(Number.isFinite(n)&&n>=0) return n;
+    }
+    for(const k of ["page","pageInfo","pageForm","pagination","info"]){
+      const x=parent[k];
+      if(x&&typeof x==="object"&&!Array.isArray(x)){
+        for(const tk of totalKeys){
+          const n=Number(x[tk]);
+          if(Number.isFinite(n)&&n>=0) return n;
+        }
+      }
+    }
+    return null;
+  }
+  function walk(node,path,parent,depth){
+    if(depth>10||node==null)return;
+    if(Array.isArray(node)){
+      const objs=node.filter(x=>x&&typeof x==="object"&&!Array.isArray(x));
+      if(objs.length && objs.some(jobishObject)){
+        const cand={rows:objs.length,total:nearbyTotal(parent),path};
+        if(!best || cand.rows>best.rows || (cand.total!=null && best.total==null)) best=cand;
+      }
+      for(let i=0;i<node.length;i++)walk(node[i],path+"["+i+"]",node,depth+1);
+      return;
+    }
+    if(typeof node!=="object")return;
+    for(const [k,v] of Object.entries(node))walk(v,path+"."+k,node,depth+1);
+  }
+  walk(root,"$",null,0);
+  return best||{rows:0,total:null,path:""};
+}
+function parseRequestContract(entry){
+  const raw=entry?.post_data||"";
+  let bodyType="none",body=null;
+  if(raw){
+    try{body=JSON.parse(raw);bodyType="json";}catch{
+      body=Object.fromEntries(new URLSearchParams(raw));bodyType="form";
+    }
+  }
+  return {bodyType,body};
+}
+const PAGE_KEYS=["current","currentPage","pageNum","pageIndex","pageNo","page"];
+const OFFSET_KEYS=["offset"];
+const SIZE_KEYS=["size","pageSize","limit"];
+const KEYWORD_KEYS=["keyword","keyWord","key","postName","jobTitle","positionName","kw","keywords"];
+function deepGetContainer(obj,keys,depth=0){
+  if(!obj||typeof obj!=="object"||Array.isArray(obj)||depth>5)return null;
+  for(const k of keys)if(Object.prototype.hasOwnProperty.call(obj,k))return {obj,key:k};
+  for(const v of Object.values(obj)){
+    const got=deepGetContainer(v,keys,depth+1);
+    if(got)return got;
+  }
+  return null;
+}
+function blankListRequest(entry){
+  if(!entry||entry.status!==200||entry.response_list_path===undefined)return false;
+  if(/(?:detail|info|filter|condition|category|config|count)(?:\/|\?|$)/i.test(entry.url||""))return false;
+  if(!/(?:job|position|post|recruit|career)/i.test(entry.url||""))return false;
+  const {body}=parseRequestContract(entry);
+  if(body&&typeof body==="object"){
+    const kw=deepGetContainer(body,KEYWORD_KEYS);
+    if(kw && String(kw.obj[kw.key]??"").trim()!=="")return false;
+  }
+  try{
+    const u=new URL(entry.url);
+    for(const k of KEYWORD_KEYS){
+      if(u.searchParams.has(k)&&String(u.searchParams.get(k)||"").trim()!=="")return false;
+    }
+  }catch{}
+  return true;
+}
+function cloneObject(v){return v==null?v:JSON.parse(JSON.stringify(v));}
+function setKeywordBlank(obj){
+  if(!obj||typeof obj!=="object")return;
+  for(const k of KEYWORD_KEYS){
+    const hit=deepGetContainer(obj,[k]);
+    if(hit)hit.obj[hit.key]="";
+  }
+}
+function pagingContract(entry){
+  const parsed=parseRequestContract(entry);
+  const body=cloneObject(parsed.body);
+  const pageHit=body?deepGetContainer(body,PAGE_KEYS):null;
+  const offsetHit=body?deepGetContainer(body,OFFSET_KEYS):null;
+  const sizeHit=body?deepGetContainer(body,SIZE_KEYS):null;
+  let urlPage=null,urlOffset=null,urlSize=null;
+  let parsedUrl=null;
+  try{
+    parsedUrl=new URL(entry.url);
+    urlPage=PAGE_KEYS.find(k=>parsedUrl.searchParams.has(k))||null;
+    urlOffset=OFFSET_KEYS.find(k=>parsedUrl.searchParams.has(k))||null;
+    urlSize=SIZE_KEYS.find(k=>parsedUrl.searchParams.has(k))||null;
+  }catch{}
+  const size=Math.max(1,Number(
+    sizeHit?sizeHit.obj[sizeHit.key]:(urlSize&&parsedUrl?parsedUrl.searchParams.get(urlSize):entry.response_rows||50)
+  )||50);
+  return {parsed,body,pageHit,offsetHit,sizeHit,urlPage,urlOffset,urlSize,size};
+}
+async function replayCapturedFullPool(page,company,endpointLog,collector,cycle,category){
+  const candidates=(endpointLog||[]).filter(blankListRequest);
+  if(!candidates.length)return {complete:false};
+  candidates.sort((a,b)=>{
+    const at=a.response_count==null?-1:Number(a.response_count);
+    const bt=b.response_count==null?-1:Number(b.response_count);
+    if((bt>=0)!==(at>=0))return bt>=0?-1:1;
+    return Number(b.response_rows||0)-Number(a.response_rows||0);
+  });
+  for(const seed of candidates){
+    if(/\/api\/v1\/search\/job\/posts/i.test(seed.url))continue;
+    if(/\/api\/outer\/ats-apply\/website\/jobs\/v2/i.test(seed.url))continue;
+    if(/\/api\/api\/Jobs/i.test(seed.url))continue;
+    const pc=pagingContract(seed);
+    const hasPaging=Boolean(pc.pageHit||pc.offsetHit||pc.urlPage||pc.urlOffset);
+    const observedRows=Math.max(0,Number(seed.response_rows||0));
+    const observedTotal=seed.response_count==null?null:Math.max(0,Number(seed.response_count||0));
+    if(!hasPaging){
+      if(seed.response_list_path!==undefined){
+        return {complete:true,total:observedTotal??observedRows,covered:observedRows,endpoint:seed.url,one_shot:true};
+      }
+      continue;
+    }
+    let covered=0,total=observedTotal,terminal=false,lastSignature="";
+    for(let step=0;step<200;step++){
+      const body=cloneObject(pc.body);
+      if(body)setKeywordBlank(body);
+      const u=new URL(seed.url);
+      for(const k of KEYWORD_KEYS)if(u.searchParams.has(k))u.searchParams.set(k,"");
+      const pageSize=Math.max(pc.size,100);
+      if(pc.urlSize)u.searchParams.set(pc.urlSize,String(pageSize));
+      if(pc.urlOffset)u.searchParams.set(pc.urlOffset,String(step*pageSize));
+      if(pc.urlPage)u.searchParams.set(pc.urlPage,String(step+1));
+      if(body){
+        const ph=deepGetContainer(body,PAGE_KEYS);
+        const oh=deepGetContainer(body,OFFSET_KEYS);
+        const sh=deepGetContainer(body,SIZE_KEYS);
+        if(sh)sh.obj[sh.key]=pageSize;
+        if(oh)oh.obj[oh.key]=step*pageSize;
+        if(ph)ph.obj[ph.key]=step+1;
+      }
+      let result=null;
+      try{
+        result=await page.evaluate(async ({url,method,bodyType,body})=>{
+          const opts={method};
+          if(method!=="GET"&&method!=="HEAD"){
+            if(bodyType==="json"){
+              opts.headers={"Content-Type":"application/json"};
+              opts.body=JSON.stringify(body||{});
+            }else if(bodyType==="form"){
+              opts.headers={"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"};
+              opts.body=new URLSearchParams(body||{}).toString();
+            }
+          }
+          const r=await fetch(url,opts);
+          let data={};try{data=await r.json();}catch{}
+          return {status:r.status,data};
+        },{url:u.href,method:seed.method||"POST",bodyType:pc.parsed.bodyType,body});
+      }catch{break;}
+      if(!result||result.status!==200)break;
+      const stats=responseListStats(result.data);
+      if(step===0&&stats.total!=null)total=stats.total;
+      recursiveJobs(result.data,{
+        company,page_url:page.url(),response_url:seed.url,
+        cycle_evidence:(cycle||[]).join(" / "),category
+      },collector);
+      const sig=JSON.stringify(result.data).slice(0,12000);
+      if(step>0&&sig===lastSignature)break;
+      lastSignature=sig;
+      const rows=Math.max(0,Number(stats.rows||0));
+      covered+=rows;
+      if(total===0&&rows===0){terminal=true;break;}
+      if(total!=null&&total>0&&covered>=total){terminal=true;break;}
+      if(rows===0||rows<pageSize){terminal=true;break;}
+    }
+    if(terminal)return {complete:true,total:total??covered,covered,endpoint:seed.url};
+  }
+  return {complete:false};
+}
 async function scroll(page){
   for(let i=0;i<2;i++){
     try{await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));}catch{}
@@ -88,7 +278,9 @@ async function scroll(page){
   try{await page.evaluate(()=>window.scrollTo(0,0));}catch{}
 }
 function jobLinkLike(href){
-  return /(?:\/job\/|\/jobs\/|\/position\/|job-info|postdetail|positionid=|jobid=|#\/job\/|#\/position\/|jobs\.ashbyhq\.com\/[^/]+\/[0-9a-f-]{20,})/i.test(href||"");
+  const u=href||"";
+  if(/(?:\/position\/list(?:[?#]|$)|\/jobs?\/?(?:[?#]|$)|\/positions?\/?(?:[?#]|$))/i.test(u)) return false;
+  return /(?:\/job\/[^/?#]+|\/jobs\/[^/?#]+|\/position\/[^/?#]+|job-info|postdetail|positionid=|jobid=|#\/job\/[^/?#]+|#\/position\/[^/?#]+|jobs\.ashbyhq\.com\/[^/]+\/[0-9a-f-]{20,})/i.test(u);
 }
 function cycleSnippets(body){
   // Current-campus evidence: year labels are metadata only. A live first-party
@@ -269,15 +461,23 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
           url:ru,method:req.method(),post_data:(req.postData()||"").slice(0,4000),
           status:resp.status(),content_type:ct,resource_type:req.resourceType()
         };
+        const genericStats=responseListStats(data);
+        if(genericStats.path){
+          entry.response_count=genericStats.total;
+          entry.response_rows=genericStats.rows;
+          entry.response_list_path=genericStats.path;
+        }
         if(/\/api\/v1\/search\/job\/posts/i.test(ru)){
           const d=data?.data||{};
           entry.response_count=Number(d?.count||0);
           entry.response_rows=Array.isArray(d?.job_post_list)?d.job_post_list.length:0;
+          entry.response_list_path="$.data.job_post_list";
         }
         if(/\/api\/api\/Jobs(?:\\?|$)/i.test(ru)){
           const d=data?.data||{};
           entry.response_count=Number(d?.count||0);
           entry.response_rows=Array.isArray(d?.listData)?d.listData.length:0;
+          entry.response_list_path="$.data.listData";
         }
         if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
         const pageText=(await page.locator("body").innerText().catch(()=>"")).slice(0,50000);
@@ -383,6 +583,22 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       }
     }
 
+    const genericPool=await replayCapturedFullPool(
+      page,company,endpointLog,collector,beforeCycle,
+      boardScope==="campus"?"官方校园招聘":"官方招聘"
+    );
+    if(genericPool.complete){
+      const finalUrl=page.url();
+      await page.close();
+      return {
+        page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,
+        cycle_evidence:beforeCycle,next:[],search_control_found:false,
+        navigation_action:{clicked:false},search_terms_attempted:[],
+        search_hit_links:0,list_scan_complete:true,list_links_seen:genericPool.covered||0,
+        generic_full_pool:true,source_total:genericPool.total,source_endpoint:genericPool.endpoint
+      };
+    }
+
     let search=await searchInputs(page);
     let navAction={clicked:false};
     let listScanComplete=false;
@@ -390,8 +606,54 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     if(!search.found){
       navAction=await openJobSearchSurface(page);
       if(navAction.clicked){
+        await page.waitForTimeout(900);
         beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
         beforeCycle=[...new Set([...beforeCycle,...cycleSnippets(beforeBody)])];
+        await Promise.allSettled(responseTasks);
+        let postNavFeishu=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+        if(!postNavFeishu && /\.jobs\.feishu\.cn$/i.test(new URL(page.url()).hostname)){
+          try{
+            const u=new URL(page.url());
+            if(!/\/position\/list/i.test(u.pathname))u.pathname=u.pathname.replace(/\/$/,"")+"/position/list";
+            u.searchParams.set("keywords","");
+            u.searchParams.set("current","1");
+            u.searchParams.set("limit","100");
+            await page.goto(u.href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+            await page.waitForTimeout(900);
+          }catch{}
+          await Promise.allSettled(responseTasks);
+          postNavFeishu=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+        }
+        if(postNavFeishu){
+          const proof=await exhaustFeishuSignedPool(page,endpointLog,responseTasks,navigationTimeoutMs);
+          if(proof.full_pool_complete){
+            const finalUrl=page.url();
+            await page.close();
+            return {
+              page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,
+              cycle_evidence:beforeCycle,next:[],search_control_found:true,
+              navigation_action:navAction,search_terms_attempted:[],
+              search_hit_links:0,list_scan_complete:true,
+              list_links_seen:proof.full_pool_covered,signed_feishu_full_pool:true,
+              source_total:proof.full_pool_total
+            };
+          }
+        }
+        const postNavGeneric=await replayCapturedFullPool(
+          page,company,endpointLog,collector,beforeCycle,
+          boardScope==="campus"?"官方校园招聘":"官方招聘"
+        );
+        if(postNavGeneric.complete){
+          const finalUrl=page.url();
+          await page.close();
+          return {
+            page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,
+            cycle_evidence:beforeCycle,next:[],search_control_found:false,
+            navigation_action:navAction,search_terms_attempted:[],
+            search_hit_links:0,list_scan_complete:true,list_links_seen:postNavGeneric.covered||0,
+            generic_full_pool:true,source_total:postNavGeneric.total,source_endpoint:postNavGeneric.endpoint
+          };
+        }
         search=await searchInputs(page);
       }
     }
@@ -403,7 +665,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       // An empty page without a search control is not proof that the official
       // job pool has zero jobs. Require actual job-list evidence before
       // certifying a full-list scan.
-      listScanComplete=listHits.length>0;
+      listScanComplete=false;
       for(const h of listHits){
         const low=(h.title||"").toLowerCase();
         if(STRONG.some(k=>low.includes(k))) search.hits.push(h);
@@ -448,11 +710,8 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       if(seenHits.has(key)) continue;
       seenHits.add(key); uniqueHits.push(hit);
     }
-    const feishuLike=/\.jobs\.feishu\.cn/i.test(page.url()) || endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
-    // Feishu list/search JSON already carries the first-party job fields needed
-    // for filtering. Re-opening every detail page is the main timeout source and
-    // is unnecessary for proving keyword/pagination coverage.
-    const detailHits=feishuLike?[]:uniqueHits.slice(0,30);
+    const feishuJsonCaptured=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+    const detailHits=feishuJsonCaptured?[]:uniqueHits.slice(0,30);
     for(let i=0;i<detailHits.length;i+=4){
       const batch=await Promise.all(detailHits.slice(i,i+4).map(h=>scrapeSearchHit(context,company,h,cycleMatches,boardScope)));
       for(const j of batch) if(j) collector.push(j);
@@ -585,13 +844,13 @@ async function processSource(browser,src){
     // whether an otherwise live official job pool is enumerable.
     const jobs=allJobs;
     const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
-    const listScanComplete=pageResults.some(x=>x.list_scan_complete===true);
     const networkProof=feishuKeywordCoverage(endpointLog);
-    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k)) || listScanComplete || networkProof.complete;
+    const listScanComplete=pageResults.some(x=>x.list_scan_complete===true) || networkProof.full_pool_complete;
+    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k));
     const pageErrors=pageResults.filter(x=>x.error).length;
     let status;
-    if(fullKeywordSearch && jobs.length) status="BROWSER_ENUMERATED";
-    else if(fullKeywordSearch && !jobs.length && pageErrors===0) status="BROWSER_ENUMERATED_ZERO";
+    if(listScanComplete && jobs.length) status="BROWSER_ENUMERATED";
+    else if(listScanComplete && !jobs.length && pageErrors===0) status="BROWSER_ENUMERATED_ZERO";
     else if(pageErrors===0) status="BROWSER_CAMPUS_NEEDS_ADAPTER";
     else status="BROWSER_ERROR";
     console.log(`${src.company}: pages=${pageResults.length}, jobs=${jobs.length}, searched=${searched.size}/${SEARCH_TERMS.length}, status=${status}`);
@@ -610,7 +869,7 @@ async function processSource(browser,src){
   }catch(e){
     const proof=feishuKeywordCoverage(endpointLog);
     const jobs=uniqueJobs(collector);
-    if(proof.complete){
+    if(proof.full_pool_complete){
       const status=jobs.length?"BROWSER_ENUMERATED":"BROWSER_ENUMERATED_ZERO";
       console.log(`${src.company}: browser terminal via signed Feishu network proof, jobs=${jobs.length}, status=${status}`);
       return {
@@ -618,7 +877,7 @@ async function processSource(browser,src){
         pages:pageResults,endpoints:endpointLog.slice(0,120),jobs,status,
         error:"browser UI ended after exhaustive signed Feishu pagination: "+String(e).slice(0,300),
         search_terms_attempted:SEARCH_TERMS,search_terms_expected:SEARCH_TERMS,
-        full_keyword_search:true,list_scan_complete:false,network_pagination_proof:true
+        full_keyword_search:false,list_scan_complete:true,network_pagination_proof:true
       };
     }
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);

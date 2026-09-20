@@ -36,14 +36,15 @@ for(const src of cfg.sources||[]){
   if(!b||!isFeishuLike(src,b))continue;
   const jobs=mergeJobs(b.jobs||[]);
   const full=Boolean(b.full_keyword_search);
-  const complete=full&&["BROWSER_ENUMERATED","BROWSER_ENUMERATED_ZERO"].includes(b.status);
+  const wholePool=Boolean(b.list_scan_complete) || (b.pages||[]).some(p=>p.signed_feishu_full_pool===true);
+  const complete=wholePool&&["BROWSER_ENUMERATED","BROWSER_ENUMERATED_ZERO"].includes(b.status);
   results.push({
     company:src.company,portal:src.portal,
     status:complete?"OK":"BLOCKED",
-    complete,full_keyword_search:full,
+    complete,full_keyword_search:full,whole_pool_complete:wholePool,
     jobs:complete?jobs:[],
     discovered_jobs:jobs.length,
-    error:complete?"":"official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    error:complete?"":"official Feishu page discovered, but complete first-party pool pagination is not yet proven"
   });
 }
 for(const r of results)console.log("feishu "+r.company+": status="+r.status+" jobs="+r.jobs.length+" discovered="+r.discovered_jobs);
