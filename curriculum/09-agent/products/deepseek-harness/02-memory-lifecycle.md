@@ -148,7 +148,7 @@ Context 篇已经讲过：
 
 - `packages/context/session-reference/`
 
-但它的设计也刻意不是：
+这里先把产品组合边界说清：它是仓库内建的可选能力，`web-app` bundle 会挂载它，但 `dsh-base` 本身没有这条 row；因此是否默认可用取决于具体 Profile。它的设计也刻意不是：
 
 > 自动全局召回旧聊天。
 
