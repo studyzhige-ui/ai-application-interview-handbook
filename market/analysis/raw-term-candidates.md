@@ -187,7 +187,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**98**
+候选来源：**99**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -289,6 +289,8 @@
 | `S287` | 字节跳动｜Agent 开发｜秋招一面｜发布 2026-09-16 15:09｜HUMAN-A | 真人 / 第一人称证据：作者页面显示当前身份为“小红书 Agent 开发（实习员工）”；正文明确记录本人字节 Agent 秋招一面，并写“当天下午已约二面”。面试过程中保留与真人面试官讨论 Computer Use、Pi Agent、DeepSeek Harness、AI Coding 方式与团队业务的现场互动，属于候选人本人第一人称招聘流程，不是答案帖、合集或内容账号整理。 / Role Scope：标题直接为“字节 Agent 秋招一面”，技术主体围绕企业 AI 助手、Memory / Context、Agent Harness、Computer Use、AI Coding 与 Agent 工程集成展开，明确通过 AI Application / Agent Role Scope Gate。 / 10. 日常怎样真正使用 AI Coding，从需求、理解代码、修改、验证到 Review 的完整 Workflow 是什么？ |
 | `S288` | 蚂蚁｜AI Native / Agent 应用方向｜一面｜面试 2026-09-15 · 发布 2026-09-17｜HUMAN-A | 4. Agent / Skill / AI Coding 已明显向普通 Backend、Data、Test 岗扩散，因此 Role Scope Gate 必须比过去更严格； |
 | `S289` | 阳光电源｜AI 应用开发工程师｜一面｜面试 2026-09-18 10:00，发布 2026-09-18｜HUMAN-A | 4. **Harness + AI-assisted Engineering Authenticity Verification 是值得继续追的弱信号。** 4399 线索已经把 Harness、SQL 验错、测试指标和“AI 帮你完成后是否真正掌握”放在一起，但 provenance 尚未闭环，因此当前只作为观察，不进入正式频率。 / 5. **Agent / AI 术语继续向普通 Backend / Data / Test 岗扩散。** 这使 Role Scope Gate 更重要，而不是更宽松；出现 Memory / Agent / AI Coding 不能替代目标岗位证据。 |
+| `S291` | Shopee｜Chatbot 研发实习｜一面｜面试 2026-09-18，发布 2026-09-19 16:25｜HUMAN-A | Role Scope：岗位标题为 `chatbot研发实习`，技术主体连续覆盖 Agent、Function Call / Tool / MCP、RAG、AI Coding，并混合 Linux 与 Algorithm Foundation；实际职责明确属于 AI Application / Agent Chatbot 研发，不是普通 Backend 顺带问 AI。 / 9. 平时是否 AI Coding，有什么实际方法？ / 去重：正式编号前再次逐个直接回读 `batch-01.md`～`batch-30.md`。历史已有 Shopee `S081`、`S239` 等 Agent 来源，但均为不同作者、不同月份 / 日期与独立流程；未发现当前 URL、作者或“Agent → Function Call / Tool / MCP → RAG 文档规模 → Linux Process → Kth Largest / Quick Sort 深追 → AI Coding”的连续同场来源。 |
+
 
 ## Spec-driven Development
 
