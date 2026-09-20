@@ -842,14 +842,17 @@
       "portal": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
       "official_root": "https://job.zte.com.cn/cn/",
       "browser_probe": true,
-      "note": "中兴通讯官方 2027 应届生招聘入口；持续搜索 AI 应用、Agent、软件/平台工程岗位。",
+      "note": "中兴通讯官方2027应届生页直接暴露官方 Moka 职位入口；同步同时枚举官网校园页与该官方 ATS 职位池，只有职位自身满足应届/校招 Gate 才纳入。",
       "job_list_url": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
       "campus_search_url": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
       "search_url": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
       "board_scope": "campus",
-      "business_summary": "通信网络、算力、云、终端、企业数字化与 AI"
+      "business_summary": "通信网络、算力、云、终端、企业数字化与 AI",
+      "extra_job_list_urls": [
+        "https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList"
+      ]
     },
     {
       "company": "深信服",
