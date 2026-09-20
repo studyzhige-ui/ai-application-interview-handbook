@@ -36,7 +36,9 @@ Third-party Memory over MCP
 
 ---
 
-## 1. 为什么 Session Persistence 不能直接叫“Memory”
+## 1. 先把“长期信息”分成不同生命周期
+
+### 1. 为什么 Session Persistence 不能直接叫“Memory”
 
 DeepSeek Harness 默认有非常完整的 Session Persistence（会话持久化）。
 
@@ -63,7 +65,7 @@ Base bundle 默认安装：
 
 > **“哪些信息应该跨所有未来会话主动影响模型。”**
 
-### 一个简单区分
+#### 一个简单区分
 
 Session A 里用户说：
 
@@ -91,7 +93,7 @@ Semantic Memory
 
 ---
 
-## 2. AGENTS.md / CLAUDE.md 也不是“模型学会的记忆”
+### 2. AGENTS.md / CLAUDE.md 也不是“模型学会的记忆”
 
 Context 篇已经讲过：
 
@@ -138,7 +140,9 @@ Context 篇已经讲过：
 
 ---
 
-## 3. DeepSeek Harness 对“跨会话上下文”的内建答案是 Session Reference
+## 2. Session Reference：DSH 内建的跨会话上下文
+
+### 3. DeepSeek Harness 对“跨会话上下文”的内建答案是 Session Reference
 
 真正跨 Session 读取过去内容的核心能力之一：
 
@@ -160,7 +164,7 @@ Host 可以把它显示成可读的：
 
 `@label`
 
-### 为什么要用户显式引用
+#### 为什么要用户显式引用
 
 因为“这两个 Session 相关”本身就是重要语义。
 
@@ -179,7 +183,7 @@ Session Reference 更像：
 
 ---
 
-## 4. Reference 进入当前 Agent 前经历什么
+### 4. Reference 进入当前 Agent 前经历什么
 
 假设用户说：
 
@@ -219,7 +223,7 @@ Referenced sessions context message
 
 ---
 
-## 5. 为什么 Reference 只投影一部分源历史
+### 5. 为什么 Reference 只投影一部分源历史
 
 源码不会简单把另一个 Session 的所有 Event 全复制过来。
 
@@ -237,7 +241,7 @@ Referenced sessions context message
 
 不会无条件递归传播。
 
-### 为什么这很重要
+#### 为什么这很重要
 
 假设 Session A 引用了 Session B。
 
@@ -268,7 +272,7 @@ A
 
 ---
 
-## 6. 为什么 Reference Snapshot 明确标记为 untrusted
+### 6. 为什么 Reference Snapshot 明确标记为 untrusted
 
 这部分是 DeepSeek Harness 很值得学习的 Prompt Injection 设计。
 
@@ -296,7 +300,7 @@ A
 
 ---
 
-## 7. 为什么 Snapshot 捕获后必须不可变
+### 7. 为什么 Snapshot 捕获后必须不可变
 
 Reference Resolver 记录：
 
@@ -339,7 +343,7 @@ A 的过去 Context 被偷偷改变
 
 ---
 
-## 8. Reference 怎样控制 Context Budget
+### 8. Reference 怎样控制 Context Budget
 
 一个旧 Session 可能非常大。
 
@@ -358,7 +362,7 @@ Session Reference 默认最多处理少量引用，当前 README 中：
 
 这样已有 Compaction Checkpoint 更可能成为高密度历史摘要。
 
-### 还有一个 Spill（外溢存储）机制
+#### 还有一个 Spill（外溢存储）机制
 
 如果 Reference 被截断，并且组合了 Spill Backend（外溢存储后端），完整捕获内容可以保存到独立 artifact。
 
@@ -379,7 +383,7 @@ Session Reference 默认最多处理少量引用，当前 README 中：
 
 ---
 
-## 9. Candidate Discovery 为什么只做轻量发现
+### 9. Candidate Discovery 为什么只做轻量发现
 
 `listCandidates()` 可以帮助 Host 找到可引用 Session。
 
@@ -414,7 +418,9 @@ Session mention 往往会发生在输入联想 / UI 搜索阶段。
 
 ---
 
-## 10. 那么真正的长期语义 Memory 放在哪里
+## 3. 真正的语义长期 Memory：交给 MCP Provider
+
+### 10. 那么真正的长期语义 Memory 放在哪里
 
 答案是：
 
@@ -442,7 +448,7 @@ Session mention 往往会发生在输入联想 / UI 搜索阶段。
 
 ---
 
-## 11. 通过 MCP 接入 Memory 后，DSH 负责什么
+### 11. 通过 MCP 接入 Memory 后，DSH 负责什么
 
 假设接入一个 Memory MCP Server。
 
@@ -467,7 +473,7 @@ mcp__<server>__<tool>
 
 这些对 DSH 来说就是普通 MCP Tools。
 
-### DSH 不负责什么
+#### DSH 不负责什么
 
 官方 guide 明确把这些留给 Provider / User：
 
@@ -493,11 +499,11 @@ Memory Provider
 
 ---
 
-## 12. 官方 Memory 示例为什么要用“新 Session B”验证
+### 12. 官方 Memory 示例为什么要用“新 Session B”验证
 
 官方 MCP Memory Guide 给出的验证思路很值得直接学习。
 
-### Session A
+#### Session A
 
 用户说：
 
@@ -505,7 +511,7 @@ Memory Provider
 
 检查模型是否真正调用了 Memory Write Tool。
 
-### Fresh Session B
+#### Fresh Session B
 
 不要复制 Session A 的对话。
 
@@ -515,7 +521,7 @@ Memory Provider
 
 检查模型是否调用 Search / Recall Tool，并找到唯一值。
 
-### 再使用 Recall
+#### 再使用 Recall
 
 让模型：
 
@@ -541,7 +547,7 @@ External Long-term Memory
 
 ---
 
-## 13. MCP Memory 为什么仍然不是“自动 Memory”
+### 13. MCP Memory 为什么仍然不是“自动 Memory”
 
 接入 MCP Server 后，DeepSeek Harness 也不会自动在每轮：
 
@@ -568,7 +574,7 @@ External Long-term Memory
 
 ---
 
-## 14. 为什么这个“不内建 Memory”的决定反而很值得学
+### 14. 为什么这个“不内建 Memory”的决定反而很值得学
 
 很多 Agent 教材容易产生一种错觉：
 
@@ -608,11 +614,13 @@ Memory Database Product
 
 ---
 
-## 15. Session Reference 和 MCP Memory 到底什么时候用
+## 4. 什么时候用哪一种长期信息机制，以及怎样评测
+
+### 15. Session Reference 和 MCP Memory 到底什么时候用
 
 这是读者最容易混淆的地方。
 
-### Session Reference
+#### Session Reference
 
 适合：
 
@@ -624,7 +632,7 @@ Memory Database Product
 
 它不是长期语义索引。
 
-### MCP Memory
+#### MCP Memory
 
 适合：
 
@@ -632,13 +640,13 @@ Memory Database Product
 
 它由独立 Provider 决定如何存储和搜索。
 
-### Session Persistence
+#### Session Persistence
 
 适合：
 
 > “我以后还要继续这条 Session。”
 
-### AGENTS.md / CLAUDE.md
+#### AGENTS.md / CLAUDE.md
 
 适合：
 
@@ -648,7 +656,7 @@ Memory Database Product
 
 ---
 
-## 16. 一个完整场景
+### 16. 一个完整场景
 
 今天用户在 Session A 说：
 
@@ -690,11 +698,11 @@ mcp__memory__search(...)
 
 ---
 
-## 17. Memory 应该怎样评测
+### 17. Memory 应该怎样评测
 
 因为 DSH 本身没有统一 Semantic Memory Backend，评测也应该按边界拆开。
 
-### Session Persistence
+#### Session Persistence
 
 测试：
 
@@ -703,7 +711,7 @@ mcp__memory__search(...)
 -Interrupted Turn 是否正确修复；
 -Torn Tail 是否不会制造伪事件。
 
-### Session Reference
+#### Session Reference
 
 测试：
 
@@ -714,7 +722,7 @@ mcp__memory__search(...)
 -旧 Session 中的 Prompt Injection 是否被作为 untrusted background；
 -Source 后续变化是否不会改变 Target Replay。
 
-### External MCP Memory
+#### External MCP Memory
 
 官方 Fresh Session 测试是最小基线。
 
@@ -729,7 +737,7 @@ mcp__memory__search(...)
 -MCP reconnect 后 Tool identity 是否稳定；
 -Memory ON / OFF 对最终任务成功率的影响。
 
-### Instructions
+#### Instructions
 
 单独测试：
 
@@ -741,7 +749,7 @@ mcp__memory__search(...)
 
 ---
 
-## 18. 源码锚点
+## 5. 源码锚点
 
 1. [`packages/core/session/`](https://github.com/deepseek-ai/deepseek-harness/tree/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/session)：Session durable history 与 Surface。
 2. [`packages/session/session-persistence-jsonl/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/session/session-persistence-jsonl/README.md)：默认持久化后端与 Crash Semantics。
