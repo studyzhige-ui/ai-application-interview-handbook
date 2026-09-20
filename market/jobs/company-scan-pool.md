@@ -21,22 +21,22 @@
 | 15 | 京东 | 电商、物流、零售科技、云与企业服务 | https://campus.jd.com/ | VERIFIED_ROLE |
 | 16 | OPPO | 智能手机、IoT、操作系统与端侧 AI | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | VERIFIED_ROLE |
 | 17 | vivo | 智能手机、操作系统、IoT 与端侧 AI | https://hr-campus.vivo.com/campus/jobs | VERIFIED_ROLE |
-| 18 | 金山办公/WPS | 办公软件、协同办公与办公 AI | https://join.wps.cn/ | VERIFIED_ROLE |
+| 18 | 金山办公/WPS | 办公软件、协同办公与办公 AI | https://join.wps.cn/ | ZERO_TARGET_JDS |
 | 19 | 荣耀 | 智能手机、PC、IoT 与 AI OS | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | ZERO_TARGET_JDS |
 | 20 | 科大讯飞 | 语音 AI、大模型、教育、医疗与企业 AI | https://iflytek.zhiye.com/5/jobs | VERIFIED_ROLE |
 | 21 | 携程 | 在线旅游、酒店机票与旅行 AI | https://careers.ctrip.com/#/campus | VERIFIED_ROLE |
 | 22 | 360 | 网络安全、搜索/浏览器、AI 助手与企业安全 | https://360campus.zhiye.com/campus/jobs | VERIFIED_ROLE |
 | 23 | 得物 | 潮流电商、社区、鉴别与交易服务 | https://poizon.jobs.feishu.cn/578078/ | ZERO_TARGET_JDS |
 | 24 | DeepSeek | 基础大模型、推理模型与模型服务 | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | ZERO_TARGET_JDS |
-| 25 | 月之暗面/Kimi | 大模型、Kimi AI 助手与 Agent | https://app.mokahr.com/campus-recruitment/moonshot/148507 | VERIFIED_ROLE |
+| 25 | 月之暗面/Kimi | 大模型、Kimi AI 助手与 Agent | https://app.mokahr.com/campus-recruitment/moonshot/148507 | ZERO_TARGET_JDS |
 | 26 | MiniMax | 多模态大模型、AI 产品与 Agent | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | ZERO_TARGET_JDS |
 | 27 | 智谱/Z.ai | GLM 大模型、模型 API 与 Agent 平台 | https://app.mokahr.com/campus-recruitment/zphz/148984 | VERIFIED_ROLE |
 | 28 | 阶跃星辰 | 多模态基础模型、AI 平台与应用 | https://app.mokahr.com/campus-recruitment/step/94905 | VERIFIED_ROLE |
 | 29 | 百川智能 | 大模型与企业/行业 AI 应用 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | ZERO_TARGET_JDS |
 | 30 | 零一万物/01.AI | 大模型、企业 AI 与 AI 应用 | https://01ai.jobs.feishu.cn/index/ | ZERO_TARGET_JDS |
 | 31 | 商汤科技 | 大模型、计算机视觉、AI 基础设施与行业应用 | https://hr-jobs.sensetime.com/edu/ | VERIFIED_ROLE |
-| 32 | 生数科技 | 视频生成、多模态生成模型与 Vidu | https://shengshu.jobs.feishu.cn/index/ | ZERO_TARGET_JDS |
-| 33 | 硅基流动 | 模型推理云、模型 API 与 AI Infra | https://app.mokahr.com/su/Idzsq | VERIFIED_ROLE |
+| 32 | 生数科技 | 视频生成、多模态生成模型与 Vidu | https://shengshu.jobs.feishu.cn/index/ | VERIFIED_ROLE |
+| 33 | 硅基流动 | 模型推理云、模型 API 与 AI Infra | https://app.mokahr.com/su/Idzsq | ZERO_TARGET_JDS |
 | 34 | 面壁智能 | 端侧大模型、小模型与 Agent | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | ZERO_TARGET_JDS |
 | 35 | Manus | 通用 AI Agent | https://jobs.ashbyhq.com/manusai | VERIFIED_ROLE |
 | 36 | 无问芯穹/Infini-AI | AI Infra、异构算力与训练/推理平台 | https://infinigence.jobs.feishu.cn/088717 | ZERO_TARGET_JDS |
@@ -50,15 +50,15 @@
 | 44 | 度小满 | 消费金融、财富管理、支付与金融科技 | https://campus.duxiaoman.com/ | ZERO_TARGET_JDS |
 | 45 | 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION |
 | 46 | 中兴通讯 | 通信网络、算力、云、终端、企业数字化与 AI | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | VERIFIED_ROLE |
-| 47 | 深信服 | 网络安全、云计算、企业 IT 与 AI | https://hr.sangfor.com/schoolRecruitment | ZERO_TARGET_JDS |
+| 47 | 深信服 | 网络安全、云计算、企业 IT 与 AI | https://hr.sangfor.com/schoolRecruitment | VERIFIED_ROLE |
 | 48 | 金蝶 | ERP、企业云 SaaS、企业管理软件与企业 AI | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | ZERO_TARGET_JDS |
 | 49 | 用友 | ERP、BIP、企业软件与企业级 AI | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | ZERO_TARGET_JDS |
 | 50 | 美图 | 图像/视频应用、AI 影像、内容生成与设计工具 | https://hr.meitu.com/ | ZERO_TARGET_JDS |
-| 51 | SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | VERIFIED_ROLE |
+| 51 | SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | ZERO_TARGET_JDS |
 | 52 | 安克创新 | 充电、影音、智能家居、安防与储能消费电子 | https://career.anker.com.cn/universities/recruitment/new/ | ZERO_TARGET_JDS |
 | 53 | 大华股份 | 智慧物联、视频 AI、智慧城市与企业数字化 | https://job.dahuatech.com/ | VERIFIED_ROLE |
-| 54 | 吉利控股 | 汽车、智能电动车、智能座舱与汽车 AI | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | NEEDS_ENUMERATION |
-| 55 | 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | NEEDS_ENUMERATION |
+| 54 | 吉利控股 | 汽车、智能电动车、智能座舱与汽车 AI | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | VERIFIED_ROLE |
+| 55 | 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | ZERO_TARGET_JDS |
 | 56 | 理想汽车 | 智能电动车、智能驾驶、具身智能与智能硬件 | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | VERIFIED_ROLE |
 | 57 | 海尔集团 | 智慧家庭、工业互联网、医疗健康与工业 AI | https://maker.haier.net/client/campus/activityindex.html | VERIFIED_ROLE |
 | 58 | 美的集团 | 智能家居、工业技术、楼宇、机器人与新能源 | https://newpower.midea.com/ | ZERO_TARGET_JDS |
@@ -70,7 +70,7 @@
 | 64 | 挚文集团/陌陌 | 移动社交、直播与泛娱乐 | https://campus.hellogroup.com/ | VERIFIED_ROLE |
 | 65 | BOSS直聘/看准科技 | 在线招聘、人力资源平台与招聘科技 | https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/ | VERIFIED_ROLE |
 | 66 | 作业帮 | 教育科技、学习工具、智能硬件与教育 AI | https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN | VERIFIED_ROLE |
-| 67 | 影石 Insta360 | 全景相机、运动相机、智能影像与 AI 影像软件 | https://arashivision.jobs.feishu.cn/campus/position/list | NEEDS_ENUMERATION |
+| 67 | 影石 Insta360 | 全景相机、运动相机、智能影像与 AI 影像软件 | https://arashivision.jobs.feishu.cn/campus/position/list | VERIFIED_ROLE |
 | 68 | 神州数码/神州信息 | IT 基础设施、金融科技、云服务与企业数字化 | https://dcits.zhiye.com/campus/jobs | VERIFIED_ROLE |
 | 69 | 合合信息 | OCR/文档 AI、扫描全能王、数据智能与企业服务 | https://intsig.zhiye.com/campus/jobs | VERIFIED_ROLE |
 
