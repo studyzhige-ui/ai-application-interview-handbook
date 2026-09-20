@@ -901,18 +901,20 @@
     },
     {
       "company": "深信服",
-      "mode": "sangfor_campus_api",
+      "mode": "portal_only",
       "portal": "https://hr.sangfor.com/schoolRecruitment",
       "official_root": "https://hr.sangfor.com/",
       "browser_probe": true,
-      "note": "深信服官方 2027 校园招聘职位池；自动化直接分页调用官网 /api/api/Jobs（channelId=101），避免 SPA 超时。",
+      "note": "深信服官方2027校园招聘职位池；/api/api/Jobs 依赖官网同源会话，自动化先进入官方页面建立会话，再按 data.count 在浏览器上下文内完整分页，避免 Python 直连 401。",
       "job_list_url": "https://hr.sangfor.com/schoolRecruitment",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
       "campus_search_url": "https://hr.sangfor.com/schoolRecruitment",
       "search_url": "https://hr.sangfor.com/schoolRecruitment",
       "board_scope": "campus",
-      "business_summary": "网络安全、云计算、企业 IT 与 AI"
+      "business_summary": "网络安全、云计算、企业 IT 与 AI",
+      "browser_navigation_timeout_ms": 30000,
+      "browser_company_budget_ms": 120000
     },
     {
       "company": "金蝶",
