@@ -571,8 +571,8 @@
           "title": "Agent平台开发工程师 (YH)",
           "recruitment_type": "校招官网",
           "role_scope": "Agent平台开发工程师 (YH)",
-          "official_apply_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
-          "evidence_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "official_apply_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=",
+          "evidence_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=",
           "evidence_type": "FIRST_PARTY_FULL_JD",
           "jd_status": "FULL_FIRST_PARTY_JD",
           "jd_summary": "职位描述\n我们正在寻找对多模态大模型技术充满热情、具备扎实工程实践能力的集成工程师。您将作为核心技术成员，负责将前沿的多模态大模型（包括视觉-语言模型等）的预训练infra,并构建高可用、高效率的大规模预训练平台。您需要具备优秀的编程能力、系统思维和实际问题解决能力，与算法团队紧密协作，提升大规模多模态模型的研发效率，直接影响数百万用户的产品体验。\n\n岗位职责：\n1、为预训练平台设计、构建稳定/高效的开发工具，包括开发机平台搭建、任务调度工具平台的搭建、视频结果评测平台，加速算法的研发过程；\n2、系统维护与监控：构建并完善模型服务的监控、日志、告警系统，持续进行性能分析、瓶颈排查与线上问题应急响应；\n3、协作与创新：与算法研究员及其他工程师紧密合作，理解业务需求，提供工程化解决方案，并跟进多模态领域最新进展，探索技术落地可能性；\n4、希望你对于深度学习平台有足够的认识，热衷于抽象标准工具，设计便捷/鲁棒可服用的CLI工具/前端工具；加速大模型的研发,降低大家的认知负担。\n职位要求\n1、计算机科学/软件工程相关领域的本科；\n2、需要后端基础,并且有ai平台开发相关的经验(熟悉k8s,后端开发,监控平台)；\n3、能够有用agent开发平台的经历优先；\n4、开发过通用的CLI工具,能够有比较好的前后端全栈开发能力有限,能够践行devops的习惯。\n\n技术能力\n1.编程与框架：精通 Golang/Python/C++/Java 之一。熟悉WebSocket、gRPC等通信协议，有高并发、低延迟网络服务开发经验；\n2.数据存储与计算：熟悉对象存储（如S3、OSS）、关系型数据库、Redis、ClickHouse。加分项：熟悉 LanceDB 和 Daft、Ray 计算框架，了解向量数据库原理与应用；\n3.系统开发：有扎实的后端服务开发经验，熟悉Linux开发环境，掌握Docker容器化技术，熟练使用Kubernetes等编排工具；\n4.扎实的基础知识：熟悉计算机体系结构、操作系统、计算机网络、多线程编程等基础知识；\n5.工程素养：熟悉CI/CD流程、代码版本管理（Git），具备良好的编码习惯与文档编写能力。",
@@ -778,12 +778,24 @@
     },
     {
       "company": "度小满",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://campus.duxiaoman.com/",
       "official_search_url": "https://campus.duxiaoman.com/",
       "board_scope": "campus",
       "business_summary": "消费金融、财富管理、支付与金融科技",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "AI全栈研发工程师-大数据引擎/云原生方向",
+          "recruitment_type": "校招动态",
+          "role_scope": "AI全栈研发工程师-大数据引擎/云原生方向",
+          "official_apply_url": "https://campus.duxiaoman.com/051736/position/list",
+          "evidence_url": "https://campus.duxiaoman.com/051736/position/list",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "1、参与公司分布式基础平台相关研发工作，覆盖大数据引擎、云原生基础设施、资源调度和平台工程能力建设； \n2、参与 Spark、Presto、Doris、Hadoop 等大数据生态相关组件的技术选型、部署优化、性能调优、功能扩展和二次开发； \n3、参与大数据引擎核心组件研发，包括数据采集适配、任务调度、引擎监控、性能分析、ETL 工具等能力建设，提升大规模数据处理效率和平台稳定性；\n4、参与 Kubernetes 集群、云计算服务及云原生平台能力建设，围绕资源隔离、调度优化、部署交付、弹性伸缩、配置管理、监控巡检、故障自愈等场景，提升平台自动化和稳定性； \n5、参与 CPU、GPU 等计算资源的统一管理、调度与使用效率优化，支撑大数据、AI 计算及业务系统等多类场景； \n6、参与分布式系统架构优化、性能优化、稳定性建设和工程化落地，持续提升基础平台的可靠性、可扩展性和研发效率； \n7、跟进大数据、分布式计算、云原生、容器化、资源调度等前沿技术发展，参与新技术预研和业务落地。\n1、硕士及以上学历，计算机、软件工程、网络工程、自动化等相关专业； \n2、计算机基础扎实，熟悉操作系统、计算机网络、数据结构与算法、数据库或分布式系统相关基础知识； \n3、熟悉 Go、Python、Java、C/C++ 中至少一种编程语言，具备良好的编码和调试能力； \n4、对分布式系统、大数据引擎、云原生基础设施、资源调度、平台工程中的一个或多个方向有兴趣和实践基础； \n5、熟悉 Spark、Presto、Doris、Hadoop、HDFS、YARN、OLAP、分布式存储等大数据相关技术者优先； \n6、熟悉 Kubernetes、容器、容器网络、资源隔离、服务部署、弹性伸缩、可观测性、自动化运维等云原生相关技术者优先； \n7、有大数据引擎、数据库内核、分布式计算、Kubernetes、云原生平台、CPU/GPU 调度等相关实习或项目经验者优先；\n8、具备良好的学习能力、逻辑分析能力、责任心和工程质量意识，愿意深入复杂技术问题并推动问题解决。",
+          "source_role_family": "AI全栈研发工程师-大数据引擎/云原生方向"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {
@@ -946,24 +958,12 @@
     },
     {
       "company": "理想汽车",
-      "status": "VERIFIED_ROLE",
+      "status": "ZERO_TARGET_JDS",
       "official_root": "https://www.lixiang.com/",
       "official_search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
       "board_scope": "campus",
       "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件",
-      "representative_roles": [
-        {
-          "title": "智能体应用软件研发工程师",
-          "recruitment_type": "当前校园招聘",
-          "role_scope": "智能体应用软件研发工程师",
-          "official_apply_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
-          "evidence_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
-          "evidence_type": "FIRST_PARTY_OFFICIAL_TITLE",
-          "jd_status": "TITLE_ONLY_FIRST_PARTY",
-          "jd_summary": "",
-          "source_role_family": "智能体应用软件研发工程师"
-        }
-      ],
+      "representative_roles": [],
       "last_verified": "2026-09-20"
     },
     {
@@ -1010,24 +1010,12 @@
     },
     {
       "company": "同花顺",
-      "status": "VERIFIED_ROLE",
+      "status": "ZERO_TARGET_JDS",
       "official_root": "https://campus.10jqka.com.cn/",
       "official_search_url": "https://campus.10jqka.com.cn/",
       "board_scope": "campus",
       "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
-      "representative_roles": [
-        {
-          "title": "金融 Agent 开发工程师（AIME项目）",
-          "recruitment_type": "校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘",
-          "role_scope": "金融 Agent 开发工程师（AIME项目）",
-          "official_apply_url": "https://campus.10jqka.com.cn/job/list?type=school",
-          "evidence_url": "https://campus.10jqka.com.cn/job/list?type=school",
-          "evidence_type": "FIRST_PARTY_FULL_JD",
-          "jd_status": "FULL_FIRST_PARTY_JD",
-          "jd_summary": "【职位要求】\n1、本科及以上学历，计算机、人工智能等相关专业优先。\n2、熟悉大语言模型与智能体基本原理，深入理解 ReAct、Plan-and-Execute、多智能体等主流范式的适用边界。\n3、具备优秀的工程能力，熟练使用 Python，熟悉并发与异步编程，能够独立完成复杂系统的设计与落地。\n4、有 Coding Agent、Deep Research 或同类智能体产品的实际落地经验，理解真实场景中的失效模式。\n5、具备较强的问题定位能力，能够基于轨迹与日志分析定位智能体行为异常的根因。\n6、具备良好的抽象与接口设计能力，以及跨团队沟通推动能力。\n\n【加分项】\n1、有智能体框架从 0 到 1 建设经验，或主导过有影响力的开源 Agent 项目者优先。\n2、有 MCP / 工具协议、沙箱与虚拟化技术（Firecracker、Kata Containers、gVisor 等）实践经验者优先。\n3、有 Agent 评测基准建设或轨迹数据分析经验者优先。\n4、对金融业务场景（投研、选股、事件归因、交易决策等）有深入理解者优先。\n5、有后训练 / Agentic RL 协同优化经验，能与模型团队共同定义能力目标者优先。",
-          "source_role_family": "金融 Agent 开发工程师（AIME项目）"
-        }
-      ],
+      "representative_roles": [],
       "last_verified": "2026-09-20"
     },
     {
@@ -1115,15 +1103,15 @@
       "business_summary": "在线招聘、人力资源平台与招聘科技",
       "representative_roles": [
         {
-          "title": "大模型应用工程师（校招）",
-          "recruitment_type": "当前校园招聘 / 在校应届",
-          "role_scope": "大模型应用工程师（校招）",
-          "official_apply_url": "https://www.zhipin.com/school/",
-          "evidence_url": "https://www.zhipin.com/school/",
-          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
-          "jd_status": "ROLE_VERIFIED",
-          "jd_summary": "BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招），职责包括大模型应用平台建设及AI赋能求职招聘场景。",
-          "source_role_family": "大模型应用工程师（校招）"
+          "title": "Agent开发工程师",
+          "recruitment_type": "当前校园招聘",
+          "role_scope": "Agent开发工程师",
+          "official_apply_url": "https://xiaoyuan.zhipin.com/volunteer/index?encryptJobId=808e2ca9fad7cd9a1HBz0926EFZZ&source=2&advertSource=99",
+          "evidence_url": "https://xiaoyuan.zhipin.com/volunteer/index?encryptJobId=808e2ca9fad7cd9a1HBz0926EFZZ&source=2&advertSource=99",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_TITLE",
+          "jd_status": "TITLE_ONLY_FIRST_PARTY",
+          "jd_summary": "",
+          "source_role_family": "Agent开发工程师"
         }
       ],
       "last_verified": "2026-09-20"
