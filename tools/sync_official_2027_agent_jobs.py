@@ -1803,7 +1803,7 @@ def main() -> int:
         row["business_summary"] = source.get("business_summary", "")
 
         runtime = result_map.get(company)
-        if runtime and runtime.status == "ENUMERATED_WITH_MATCHES":
+        if runtime and (runtime.status == "ENUMERATED_WITH_MATCHES" or runtime.matched > 0):
             candidates = [
                 f for f in role_families
                 if f.get("company") == company and not f.get("carried_forward")
