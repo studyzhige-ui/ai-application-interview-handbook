@@ -1,13 +1,13 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generated_at": "2026-09-20",
-  "scope": "41家公司：官方招聘入口 + 至少一个非算法 AI/Agent 工程相关岗位",
+  "scope": "69 家长期扫描池：第一方招聘入口 + 当前目标岗位状态；公司进入扫描池不再要求预先存在目标 JD",
   "rules": [
-    "每家公司必须有第一方 official_root 与 official_search_url。",
-    "每家公司至少一个 VERIFIED_ROLE；旧抓取器未命中不能解释为 0 岗位。",
-    "岗位事实与JD正文完整度分开：动态官网未暴露正文时保留岗位名+官方投递入口，并明确证据等级。",
-    "优先校招/应届岗位；若公司当前相关岗位只在官方混合招聘池中公开，则保留并明确招聘类型。",
-    "算法/研究/产品/销售/运营岗位不作为代表工程岗位。"
+    "69 家公司都必须有第一方 official_root 与 official_search_url，并在每轮自动枚举中保留。",
+    "公司状态允许 VERIFIED_ROLE、ZERO_TARGET_JDS、NEEDS_ENUMERATION；当前无岗不删除公司。",
+    "ZERO_TARGET_JDS 只能来自完整第一方职位池分页/关键词穷举后的本轮结果；抓取失败不能写成 0。",
+    "VERIFIED_ROLE 的岗位事实与 JD 正文完整度分开；正式 JD 只接受第一方公司官网/官方 ATS。",
+    "算法/模型训练/研究、产品、销售、运营等非目标岗位不作为正式代表工程岗位。"
   ],
   "companies": [
     {
@@ -29,7 +29,8 @@
           "source_role_family": "Agent Harness 研发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "智能手机、IoT、操作系统、智能汽车与 AI"
     },
     {
       "company": "快手",
@@ -50,7 +51,8 @@
           "source_role_family": "AI应用开发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "短视频、直播、电商、广告与 AI"
     },
     {
       "company": "百度",
@@ -71,7 +73,8 @@
           "source_role_family": "2027AIDU-Agent应用全栈工程师(J99974)"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "搜索、生成式 AI、智能云与自动驾驶"
     },
     {
       "company": "腾讯",
@@ -91,7 +94,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "社交、游戏、内容、云计算、金融科技与 AI"
     },
     {
       "company": "美团",
@@ -112,7 +116,8 @@
           "source_role_family": "AI应用开发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "本地生活、外卖、即时零售、旅游与配送科技"
     },
     {
       "company": "网易",
@@ -132,7 +137,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "游戏、音乐、教育、内容与互联网服务"
     },
     {
       "company": "哔哩哔哩",
@@ -153,7 +159,8 @@
           "source_role_family": "【B-UP】多模态智能体工程师（校招）"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "视频社区、直播、游戏与内容生态"
     },
     {
       "company": "滴滴",
@@ -173,7 +180,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "网约车、出行平台、自动驾驶与物流"
     },
     {
       "company": "拼多多",
@@ -193,7 +201,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "电商、Temu、供应链与平台技术"
     },
     {
       "company": "华为",
@@ -213,7 +222,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "通信设备、云、终端、计算、汽车 ICT 与 AI"
     },
     {
       "company": "小红书",
@@ -234,7 +244,8 @@
           "source_role_family": "【REDstar】AI Agent Infra 工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "内容社区、生活方式、电商与广告"
     },
     {
       "company": "字节跳动",
@@ -255,7 +266,8 @@
           "source_role_family": "AI Agent开发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "抖音/TikTok、内容平台、云与大模型 AI"
     },
     {
       "company": "阿里巴巴",
@@ -276,7 +288,8 @@
           "source_role_family": "AI Agent应用开发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "电商、云计算、本地生活、物流与企业 AI"
     },
     {
       "company": "蚂蚁集团",
@@ -296,7 +309,8 @@
           "jd_summary": "面向核心业务建设AI原生Agent系统，覆盖需求理解、记忆管理、推理策略、工具编排与工程落地，强调从场景识别到系统构建的完整闭环。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "支付、金融科技、企业科技与 AI"
     },
     {
       "company": "京东",
@@ -316,7 +330,8 @@
           "jd_summary": "负责O2O核心系统研发与架构设计，并把大模型能力用于智能匹配、画像、方案生成和风险识别；要求扎实的软件工程能力，以及大模型应用落地、系统设计和性能优化能力。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "电商、物流、零售科技、云与企业服务"
     },
     {
       "company": "OPPO",
@@ -337,7 +352,8 @@
           "source_role_family": "AI Agent 研发工程师（研发效能方向）"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "智能手机、IoT、操作系统与端侧 AI"
     },
     {
       "company": "vivo",
@@ -357,7 +373,8 @@
           "jd_summary": "负责蓝心小V等Agent相关技术模块研发，参与AI平台产品架构设计，并推进LLM驱动的AI Agent技术研究与应用落地。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "智能手机、操作系统、IoT 与端侧 AI"
     },
     {
       "company": "金山办公/WPS",
@@ -377,7 +394,8 @@
           "jd_summary": "围绕WPS办公场景把大模型能力工程化到文档、表格和演示等产品，侧重应用层开发、API与性能优化；RAG、Agent开发经验属于核心相关能力。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "办公软件、协同办公与办公 AI"
     },
     {
       "company": "荣耀",
@@ -398,7 +416,8 @@
           "source_role_family": "AI软件开发工程师 （AI Coding / Agent方向）"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "智能手机、PC、IoT 与 AI OS"
     },
     {
       "company": "科大讯飞",
@@ -418,7 +437,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "语音 AI、大模型、教育、医疗与企业 AI"
     },
     {
       "company": "携程",
@@ -438,7 +458,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "在线旅游、酒店机票与旅行 AI"
     },
     {
       "company": "360",
@@ -458,7 +479,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "网络安全、搜索/浏览器、AI 助手与企业安全"
     },
     {
       "company": "得物",
@@ -478,7 +500,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "潮流电商、社区、鉴别与交易服务"
     },
     {
       "company": "DeepSeek",
@@ -498,7 +521,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "基础大模型、推理模型与模型服务"
     },
     {
       "company": "月之暗面/Kimi",
@@ -528,7 +552,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "大模型、Kimi AI 助手与 Agent"
     },
     {
       "company": "MiniMax",
@@ -549,7 +574,8 @@
           "source_role_family": "AGI产品研发工程师-应届生-TOP Talent"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "多模态大模型、AI 产品与 Agent"
     },
     {
       "company": "智谱/Z.ai",
@@ -589,7 +615,8 @@
           "jd_summary": "构建大模型训练、评测与RL流程的Agent基础设施，强调后端系统、并发、可维护性和规模化验证。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "GLM 大模型、模型 API 与 Agent 平台"
     },
     {
       "company": "阶跃星辰",
@@ -619,7 +646,8 @@
           "jd_summary": "建设Agent训练与推理框架、执行沙箱和实验平台，覆盖代码执行、工具调用、调度、网络、存储、数据流水线和评测基础设施。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "多模态基础模型、AI 平台与应用"
     },
     {
       "company": "百川智能",
@@ -639,7 +667,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "大模型与企业/行业 AI 应用"
     },
     {
       "company": "零一万物/01.AI",
@@ -659,7 +688,8 @@
           "jd_summary": "负责企业Agent项目的测试与评测交付，主导B端评测体系建设，并参与评测Harness和通用评测平台建设，强调测试策略、验收标准与平台化沉淀。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "大模型、企业 AI 与 AI 应用"
     },
     {
       "company": "商汤科技",
@@ -680,7 +710,8 @@
           "source_role_family": "【27届校招】Agent开发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "大模型、计算机视觉、AI 基础设施与行业应用"
     },
     {
       "company": "生数科技",
@@ -700,7 +731,8 @@
           "jd_summary": "设计实时交互视频生成Agent，建设多轮对话、意图理解、上下文管理、工具调用与Agent编排链路，并与视频生成系统协同落地。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "视频生成、多模态生成模型与 Vidu"
     },
     {
       "company": "硅基流动",
@@ -720,7 +752,8 @@
           "jd_summary": "负责端侧AI Agent软件架构，建设感知、规划、决策与记忆管理等核心模块，并面向端侧硬件完成模型与Agent系统的工程化部署。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "模型推理云、模型 API 与 AI Infra"
     },
     {
       "company": "面壁智能",
@@ -750,7 +783,8 @@
           "jd_summary": "面向垂直领域研发大模型应用，基于Agent/Multi-Agent与RAG构建代码框架并推动真实场景落地。"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "端侧大模型、小模型与 Agent"
     },
     {
       "company": "Manus",
@@ -771,7 +805,8 @@
           "source_role_family": "AI Agent Engineer"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "通用 AI Agent"
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -791,7 +826,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "AI Infra、异构算力与训练/推理平台"
     },
     {
       "company": "昆仑万维/天工",
@@ -811,7 +847,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "大模型、天工 AI、互联网与海外业务"
     },
     {
       "company": "Shopee",
@@ -831,7 +868,8 @@
           "jd_status": "ROLE_VERIFIED"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "东南亚电商、金融科技、物流与 AI"
     },
     {
       "company": "联想",
@@ -852,7 +890,8 @@
           "source_role_family": "AI Agent开发工程师"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "PC、智能设备、服务器、企业基础设施与 AI"
     },
     {
       "company": "蔚来",
@@ -872,7 +911,8 @@
           "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "智能电动车、智能驾驶、能源服务与 AI"
     },
     {
       "company": "顺丰",
@@ -893,7 +933,288 @@
           "source_role_family": "AI开发工程师（顺丰科技）"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-20",
+      "business_summary": "快递、物流、供应链科技与 AI"
+    },
+    {
+      "company": "米哈游",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://jobs.mihoyo.com/",
+      "official_search_url": "https://jobs.mihoyo.com/#/campus",
+      "board_scope": "campus",
+      "business_summary": "游戏、IP、互动娱乐、游戏研发技术与 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "大疆 DJI",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://careers.dji.com/zh-CN/campus",
+      "official_search_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "board_scope": "campus",
+      "business_summary": "无人机、影像设备、行业机器人与智能硬件",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "度小满",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://campus.duxiaoman.com/",
+      "official_search_url": "https://campus.duxiaoman.com/",
+      "board_scope": "campus",
+      "business_summary": "消费金融、财富管理、支付与金融科技",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "海康威视",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.hikvision.com/cn/",
+      "official_search_url": "https://mcampus.hikvision.com/",
+      "board_scope": "campus",
+      "business_summary": "智慧物联、视频技术、企业数字化与 AIoT",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "中兴通讯",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://job.zte.com.cn/cn/",
+      "official_search_url": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
+      "board_scope": "campus",
+      "business_summary": "通信网络、算力、云、终端、企业数字化与 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "深信服",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://hr.sangfor.com/",
+      "official_search_url": "https://hr.sangfor.com/schoolRecruitment",
+      "board_scope": "campus",
+      "business_summary": "网络安全、云计算、企业 IT 与 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "金蝶",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.kingdee.com/",
+      "official_search_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
+      "board_scope": "campus",
+      "business_summary": "ERP、企业云 SaaS、企业管理软件与企业 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "用友",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://career.yonyou.com/",
+      "official_search_url": "https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html",
+      "board_scope": "campus",
+      "business_summary": "ERP、BIP、企业软件与企业级 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "美图",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://hr.meitu.com/",
+      "official_search_url": "https://hr.meitu.com/",
+      "board_scope": "official_recruiting",
+      "business_summary": "图像/视频应用、AI 影像、内容生成与设计工具",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "SHEIN",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://careers.shein.cn/",
+      "official_search_url": "https://careers.shein.cn/Students",
+      "board_scope": "campus",
+      "business_summary": "全球时尚电商、供应链平台与电商技术",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "安克创新",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://career.anker.com.cn/",
+      "official_search_url": "https://career.anker.com.cn/universities/recruitment/new/",
+      "board_scope": "campus",
+      "business_summary": "充电、影音、智能家居、安防与储能消费电子",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "大华股份",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://job.dahuatech.com/",
+      "official_search_url": "https://job.dahuatech.com/",
+      "board_scope": "official_recruiting",
+      "business_summary": "智慧物联、视频 AI、智慧城市与企业数字化",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "吉利控股",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://campus.geely.com/",
+      "official_search_url": "https://campus.geely.com/campus-recruitment/geely/78436/",
+      "board_scope": "campus",
+      "business_summary": "汽车、智能电动车、智能座舱与汽车 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "小鹏集团",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.xiaopeng.com/",
+      "official_search_url": "https://xiaopeng.jobs.feishu.cn/campus",
+      "board_scope": "campus",
+      "business_summary": "智能电动车、Physical AI、机器人与飞行汽车",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "理想汽车",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.lixiang.com/",
+      "official_search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
+      "board_scope": "campus",
+      "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "海尔集团",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://maker.haier.net/client/campus/index",
+      "official_search_url": "https://maker.haier.net/client/campus/activityindex.html",
+      "board_scope": "campus",
+      "business_summary": "智慧家庭、工业互联网、医疗健康与工业 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "美的集团",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://newpower.midea.com/",
+      "official_search_url": "https://newpower.midea.com/",
+      "board_scope": "campus",
+      "business_summary": "智能家居、工业技术、楼宇、机器人与新能源",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "比亚迪",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://job.byd.com/",
+      "official_search_url": "https://job.byd.com/",
+      "board_scope": "official_recruiting",
+      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "同花顺",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://campus.10jqka.com.cn/",
+      "official_search_url": "https://campus.10jqka.com.cn/",
+      "board_scope": "campus",
+      "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "麒麟软件",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "official_search_url": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "board_scope": "campus",
+      "business_summary": "国产操作系统、服务器/桌面 OS 与 AI OS",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "普渡机器人",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://pudutech.zhiye.com/",
+      "official_search_url": "https://pudutech.zhiye.com/campus/jobs",
+      "board_scope": "campus",
+      "business_summary": "商用服务机器人、具身智能与机器人软件",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "广联达",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.glodon.com/",
+      "official_search_url": "https://app.mokahr.com/campus-recruitment/glodon/91966",
+      "board_scope": "campus",
+      "business_summary": "BIM、数字建筑、工程软件与建筑产业 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "挚文集团/陌陌",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://campus.hellogroup.com/",
+      "official_search_url": "https://campus.hellogroup.com/",
+      "board_scope": "campus",
+      "business_summary": "移动社交、直播与泛娱乐",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "BOSS直聘/看准科技",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.zhipin.com/",
+      "official_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "board_scope": "campus",
+      "business_summary": "在线招聘、人力资源平台与招聘科技",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "作业帮",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.zuoyebang.com/",
+      "official_search_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN",
+      "board_scope": "campus",
+      "business_summary": "教育科技、学习工具、智能硬件与教育 AI",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "影石 Insta360",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://www.insta360.com/",
+      "official_search_url": "https://arashivision.jobs.feishu.cn/campus/position/list",
+      "board_scope": "campus",
+      "business_summary": "全景相机、运动相机、智能影像与 AI 影像软件",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "神州数码/神州信息",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://dcits.zhiye.com/",
+      "official_search_url": "https://dcits.zhiye.com/campus/jobs",
+      "board_scope": "campus",
+      "business_summary": "IT 基础设施、金融科技、云服务与企业数字化",
+      "representative_roles": [],
+      "last_verified": null
+    },
+    {
+      "company": "合合信息",
+      "status": "NEEDS_ENUMERATION",
+      "official_root": "https://intsig.zhiye.com/",
+      "official_search_url": "https://intsig.zhiye.com/campus/jobs",
+      "board_scope": "campus",
+      "business_summary": "OCR/文档 AI、扫描全能王、数据智能与企业服务",
+      "representative_roles": [],
+      "last_verified": null
     }
   ]
 }
