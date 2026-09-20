@@ -38,7 +38,7 @@ Third-party Memory over MCP
 
 ## 1. 先把“长期信息”分成不同生命周期
 
-### 1. 为什么 Session Persistence 不能直接叫“Memory”
+### 为什么 Session Persistence 不能直接叫“Memory”
 
 DeepSeek Harness 默认有非常完整的 Session Persistence（会话持久化）。
 
@@ -93,7 +93,7 @@ Semantic Memory
 
 ---
 
-### 2. AGENTS.md / CLAUDE.md 也不是“模型学会的记忆”
+### AGENTS.md / CLAUDE.md 也不是“模型学会的记忆”
 
 Context 篇已经讲过：
 
@@ -142,7 +142,7 @@ Context 篇已经讲过：
 
 ## 2. Session Reference：DSH 内建的跨会话上下文
 
-### 3. DeepSeek Harness 对“跨会话上下文”的内建答案是 Session Reference
+### DeepSeek Harness 对“跨会话上下文”的内建答案是 Session Reference
 
 真正跨 Session 读取过去内容的核心能力之一：
 
@@ -183,7 +183,7 @@ Session Reference 更像：
 
 ---
 
-### 4. Reference 进入当前 Agent 前经历什么
+### Reference 进入当前 Agent 前经历什么
 
 假设用户说：
 
@@ -223,7 +223,7 @@ Referenced sessions context message
 
 ---
 
-### 5. 为什么 Reference 只投影一部分源历史
+### 为什么 Reference 只投影一部分源历史
 
 源码不会简单把另一个 Session 的所有 Event 全复制过来。
 
@@ -272,7 +272,7 @@ A
 
 ---
 
-### 6. 为什么 Reference Snapshot 明确标记为 untrusted
+### 为什么 Reference Snapshot 明确标记为 untrusted
 
 这部分是 DeepSeek Harness 很值得学习的 Prompt Injection 设计。
 
@@ -300,7 +300,7 @@ A
 
 ---
 
-### 7. 为什么 Snapshot 捕获后必须不可变
+### 为什么 Snapshot 捕获后必须不可变
 
 Reference Resolver 记录：
 
@@ -343,7 +343,7 @@ A 的过去 Context 被偷偷改变
 
 ---
 
-### 8. Reference 怎样控制 Context Budget
+### Reference 怎样控制 Context Budget
 
 一个旧 Session 可能非常大。
 
@@ -383,7 +383,7 @@ Session Reference 默认最多处理少量引用，当前 README 中：
 
 ---
 
-### 9. Candidate Discovery 为什么只做轻量发现
+### Candidate Discovery 为什么只做轻量发现
 
 `listCandidates()` 可以帮助 Host 找到可引用 Session。
 
@@ -420,7 +420,7 @@ Session mention 往往会发生在输入联想 / UI 搜索阶段。
 
 ## 3. 真正的语义长期 Memory：交给 MCP Provider
 
-### 10. 那么真正的长期语义 Memory 放在哪里
+### 那么真正的长期语义 Memory 放在哪里
 
 答案是：
 
@@ -448,7 +448,7 @@ Session mention 往往会发生在输入联想 / UI 搜索阶段。
 
 ---
 
-### 11. 通过 MCP 接入 Memory 后，DSH 负责什么
+### 通过 MCP 接入 Memory 后，DSH 负责什么
 
 假设接入一个 Memory MCP Server。
 
@@ -499,7 +499,7 @@ Memory Provider
 
 ---
 
-### 12. 官方 Memory 示例为什么要用“新 Session B”验证
+### 官方 Memory 示例为什么要用“新 Session B”验证
 
 官方 MCP Memory Guide 给出的验证思路很值得直接学习。
 
@@ -547,7 +547,7 @@ External Long-term Memory
 
 ---
 
-### 13. MCP Memory 为什么仍然不是“自动 Memory”
+### MCP Memory 为什么仍然不是“自动 Memory”
 
 接入 MCP Server 后，DeepSeek Harness 也不会自动在每轮：
 
@@ -574,7 +574,7 @@ External Long-term Memory
 
 ---
 
-### 14. 为什么这个“不内建 Memory”的决定反而很值得学
+### 为什么这个“不内建 Memory”的决定反而很值得学
 
 很多 Agent 教材容易产生一种错觉：
 
@@ -616,7 +616,7 @@ Memory Database Product
 
 ## 4. 什么时候用哪一种长期信息机制，以及怎样评测
 
-### 15. Session Reference 和 MCP Memory 到底什么时候用
+### Session Reference 和 MCP Memory 到底什么时候用
 
 这是读者最容易混淆的地方。
 
@@ -656,7 +656,7 @@ Memory Database Product
 
 ---
 
-### 16. 一个完整场景
+### 一个完整场景
 
 今天用户在 Session A 说：
 
@@ -698,7 +698,7 @@ mcp__memory__search(...)
 
 ---
 
-### 17. Memory 应该怎样评测
+### Memory 应该怎样评测
 
 因为 DSH 本身没有统一 Semantic Memory Backend，评测也应该按边界拆开。
 
