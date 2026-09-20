@@ -25,7 +25,7 @@
 
 ## 1. Session 为什么能在 Crash 后继续
 
-### 1. JSONL 不是“聊天导出格式”，而是 Session Event Store
+### JSONL 不是“聊天导出格式”，而是 Session Event Store
 
 默认持久化实现：
 
@@ -92,7 +92,7 @@ Silent stale fallback
 
 ---
 
-### 2. 持久化正确性从“一个 Writer”开始
+### 持久化正确性从“一个 Writer”开始
 
 Persistence Service 对 write handle 做 single-writer ownership（单写者所有权）。
 
@@ -140,7 +140,7 @@ Persistence API 对这个差异有明确 contract。
 
 ---
 
-### 3. Crash Recovery 必须先区分“文件坏了”还是“协议没闭合”
+### Crash Recovery 必须先区分“文件坏了”还是“协议没闭合”
 
 这是 Persistence 设计里很容易混淆的一点。
 
@@ -181,7 +181,7 @@ tool/call
 
 ---
 
-### 4. Resume 怎样修复 Interrupted Turn
+### Resume 怎样修复 Interrupted Turn
 
 核心函数：
 
@@ -226,7 +226,7 @@ Agent Loop Resume 时会：
 
 ## 2. Retry 为什么必须建立在 durable progress 上
 
-### 5. LLM Retry 也遵守“durable before wait”
+### LLM Retry 也遵守“durable before wait”
 
 默认 Base bundle 安装：
 
@@ -286,7 +286,7 @@ Executor 只负责在正确 lifecycle seam 上执行、读 durable retry history
 
 ---
 
-### 6. Context Overflow Recovery 不是普通 Retry
+### Context Overflow Recovery 不是普通 Retry
 
 LLM 返回 Context Window Exceeded 时，不应该：
 
@@ -318,7 +318,7 @@ Basic Compaction 同样监听：
 
 ## 3. Subagent 怎样继承 Context、隔离 Authority 并长期运行
 
-### 7. Subagent 的两种 Context Contract：Spawn 与 Fork
+### Subagent 的两种 Context Contract：Spawn 与 Fork
 
 默认 Base bundle 同时提供：
 
@@ -365,7 +365,7 @@ Fork 是：
 
 ---
 
-### 8. Subagent 不继承 Parent Tool Authority
+### Subagent 不继承 Parent Tool Authority
 
 Spawn / Fork in-process README 都强调：
 
@@ -385,7 +385,7 @@ Delegated Subagent 的 runtime context 还明确告诉模型：Child scope 在�
 
 ---
 
-### 9. Continuable Subagent 为什么远比“一次性 Agent Tool”复杂
+### Continuable Subagent 为什么远比“一次性 Agent Tool”复杂
 
 `ctx.subagents` 支持两种 child shape：
 
@@ -424,7 +424,7 @@ Continuable Child 会占 Live Agent、Inbox、Ownership graph、可能的 Descen
 
 ---
 
-### 10. Multi-Agent 拓扑为什么也要持久化
+### Multi-Agent 拓扑为什么也要持久化
 
 成功创建本地 Child 后，Parent Session 会得到：
 
@@ -448,7 +448,7 @@ Child Session Header 也会记录：
 
 ## 4. Plugin 生命周期与默认 Bundle 为什么决定真实产品
 
-### 11. Cordis Plugin Lifecycle 为什么也是可靠性的一部分
+### Cordis Plugin Lifecycle 为什么也是可靠性的一部分
 
 DeepSeek Harness 的大多数注册——Tool、Prompt Section、Event Listener、Provider——都是 Cordis effect-scoped（生命周期作用域绑定）的。
 
@@ -472,7 +472,7 @@ Subagent Service 就明确区分 Provider Registration Lifetime 和 Accepted Run
 
 ---
 
-### 12. 为什么真正的产品架构要回到 Base Bundle
+### 为什么真正的产品架构要回到 Base Bundle
 
 DeepSeek Harness 仓库 Package 很多。
 
@@ -518,7 +518,7 @@ subagent
 
 ## 5. 验证体系：从 Invariant 到真实 Provider E2E
 
-### 13. 测试体系为什么特别适合这种 Plugin Harness
+### 测试体系为什么特别适合这种 Plugin Harness
 
 根 `package.json` 不只提供普通 Unit Test。
 
@@ -598,7 +598,7 @@ Verifier 会检查这些输出是否和源码同步。
 
 ---
 
-### 14. Snapshot、Replay 与 With-key E2E 各自证明不同东西
+### Snapshot、Replay 与 With-key E2E 各自证明不同东西
 
 #### Snapshot / Replay
 
@@ -635,7 +635,7 @@ Compaction 的实现记录明确提到 with-key e2e：用真实模型 + Bash，�
 
 ## 6. 用故障场景检验系统是否真正闭环
 
-### 15. 三个场景把恢复逻辑真正串起来
+### 三个场景把恢复逻辑真正串起来
 
 #### 场景一：Resume 后 Tool 又被执行了一次
 
@@ -712,7 +712,7 @@ Assistant
 
 ---
 
-### 16. 应该怎样评价这个 Harness，而不只是评价模型
+### 应该怎样评价这个 Harness，而不只是评价模型
 
 #### Protocol Correctness
 
@@ -763,7 +763,7 @@ Runtime Contract 全绿，但模型任务失败，也不能叫优秀 Agent Produ
 
 ---
 
-### 17. 从源码能抽出的系统设计原则
+### 从源码能抽出的系统设计原则
 
 **第一，持久化不是最后 dump state，而应该参与运行时语义。** Retry、Approval、Compaction、Subagent identity 都先考虑怎样留下 durable evidence。
 
