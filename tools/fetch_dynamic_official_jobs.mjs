@@ -82,10 +82,10 @@ function uniqueJobs(jobs){
 }
 async function scroll(page){
   for(let i=0;i<2;i++){
-    await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));
+    try{await page.evaluate(()=>window.scrollTo(0,document.body.scrollHeight));}catch{}
     await page.waitForTimeout(500);
   }
-  await page.evaluate(()=>window.scrollTo(0,0));
+  try{await page.evaluate(()=>window.scrollTo(0,0));}catch{}
 }
 function jobLinkLike(href){
   return /(?:\/job\/|\/jobs\/|\/position\/|job-info|postdetail|positionid=|jobid=|#\/job\/|#\/position\/|jobs\.ashbyhq\.com\/[^/]+\/[0-9a-f-]{20,})/i.test(href||"");
