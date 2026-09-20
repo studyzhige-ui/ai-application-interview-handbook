@@ -1,1903 +1,497 @@
-# 04. Codex Engineering & Evaluation｜边界、Failure、规模化、诊断与评测
+# 04. Codex Engineering & Evaluation｜把入口、执行、持久化、故障和验证重新合成一个系统
 
 [← Tool](03-tool-lifecycle.md) · [Codex 总览](README.md) · [成熟产品源码学习](../README.md)
 
-> **源码基线：** openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f
+> **源码基线：** `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`
 
-前面三篇分别追了 Context、Memory、Tool。真正进入 Production 以后，它们不会独立运行：
+前面三篇故意把 Context（上下文）、Memory（记忆）和 Tool（工具）拆开，是为了看清各自的生命周期。真实 Codex 运行时不会这样分开工作。
 
-~~~text
-用户输入
-↓
-Session / Turn / Step
-↓
-Context 编译
-↓
-模型请求
-↓
-Tool / Memory / Multi-Agent 行为
-↓
-权限与执行
-↓
-新 observation 回到 Context
-↓
-持续增长
-↓
-Compaction / Retry / Recovery
-↓
-Persistence
-↓
-Trace / Metrics / Tests / Eval
-~~~
+一次网络断开可能发生在 Compaction 请求里；一个 Tool Call 可能因为 Guardian（自动风险审查）转给用户批准；一次 Fork（分叉）既要恢复 History（历史），又要恢复当时的设置和 World State（世界状态）；一个 Memory 后台任务还会另外创建内部 Agent。
 
-这一篇回答的是：
+所以最后一篇重新回到系统问题：
 
-> **当 Agent 长时间运行、网络不稳定、上下文不断增长、工具与 Skill 达到大规模、记忆可能过时、权限又必须受控时，Codex 怎样维持系统边界，并且怎样证明这些设计真的有效？**
+> **当一个 Coding Agent 连续运行很久、会修改真实文件、会接第三方能力、还能恢复和派生子 Agent 时，哪些状态必须由程序守住？出了问题怎样知道该在哪一层恢复？又怎样证明修改以后真的更好？**
 
 ---
 
-## 1. 先建立 Production 边界图
+## 1. 先用“故障属于哪一层”理解 Production Runtime
 
-Codex 的边界不能只画成“LLM + Tools”。
+Codex 的错误类型很多，但没有必要背枚举。真正重要的是：不同故障拥有不同的恢复权。
 
-更接近源码的是：
+一次 Stream（模型响应流）断开，通常还可以重试同一 Turn；一个 Tool 参数错误可以作为 observation 返回给模型修改；一个明确被 Permission Policy（权限策略）禁止的动作不能靠重试突破；State DB（状态数据库）损坏和 Internal Agent Died（内部 Agent 循环死亡）则属于更深的 Runtime 故障。
 
-~~~text
-Client / App Server / TUI
-        │
-        ▼
-Submission Boundary
-        │
-        ▼
-Thread / Session
-  ├─ durable identity
-  ├─ ContextManager
-  ├─ ThreadStore
-  ├─ token / window state
-  ├─ extensions
-  ├─ MCP runtime
-  ├─ permission runtime
-  └─ ModelClient
-        │
-        ▼
-Turn
-  ├─ user goal
-  ├─ turn settings
-  ├─ ModelClientSession
-  ├─ cancellation
-  ├─ required plugins / MCP
-  └─ telemetry
-        │
-        ▼
-Step
-  ├─ captured model settings
-  ├─ world state
-  ├─ permission snapshot
-  ├─ environment
-  └─ ToolRouter
-        │
-        ├───────────────┐
-        ▼               ▼
-Model Request       Tool Runtime
-        │               │
-        └───────┬───────┘
-                ▼
-       Canonical History
-                │
-        ┌───────┴────────┐
-        ▼                ▼
- Compaction / Window   Persistence
-        │                │
-        └───────┬────────┘
-                ▼
-        Resume / Fork
-                │
-                ▼
-      Trace / Analytics / Eval
-~~~
+可以先把恢复思路分成四层：
 
-每一层都对应不同 Failure Domain。
-
-如果把所有失败统一成：
-
-~~~text
-Agent failed
-~~~
-
-就无法判断应该：
-
-- retry；
-- compact；
-- 让模型修参数；
-- 请求权限；
-- 切 transport；
-- 中止 Tool；
-- 恢复 Thread；
-- 还是直接 fail fast。
-
----
-
-## 2. Session、Turn、Step、Context Window 是四个不同工程边界
-
-### Session / Thread
-
-负责长期身份、持久化、Memory 接入、当前 history、token state、services。
-
-### Turn
-
-负责一次用户目标推进，并拥有 turn-scoped ModelClientSession、sticky routing state、cancellation 和本轮 telemetry。
-
-### Step
-
-负责一次模型 sampling 周围的精确执行快照，保证模型看到的 Tool、Permission、Environment 与稍后执行一致。
-
-### Context Window
-
-负责模型可见历史的一个“连续工作窗口”。
-
-它可以因为：
-
-- local compaction；
-- remote compaction；
-- Token Budget 新窗口；
-
-切换。
-
-这四者不能混成“conversation”。
-
-例如：
-
-~~~text
-一个 Session
-可以有很多 Turn
-
-一个 Turn
-可以有很多 Step
-
-一个 Session
-可以跨多个 Context Window
-
-一次 Compaction
-可能发生在同一个 Turn 中间
-~~~
-
-理解这些边界，是解释 Retry、Cancel、Resume 和 Eval 的前提。
-
----
-
-## 3. Codex 的错误分类为什么很细
-
-protocol/src/error.rs 中的 CodexErrorDetails 已经把大量错误做了语义分类。
-
-这不是为了 UI 显示漂亮，而是因为不同错误需要不同控制策略。
-
-| 层 | 代表错误 | 更合理的控制动作 |
+| 故障层 | 典型问题 | 谁更适合决定下一步 |
 |---|---|---|
-| 用户 / Turn | TurnAborted、Interrupted | 结束当前动作；必要时把中止结果回填，不伪装成功 |
-| 预算 | SessionBudgetExceeded | 停止继续消耗共享预算 |
-| Context | ContextWindowExceeded | 触发 / 建议 Compaction 或新窗口，而不是普通网络重试 |
-| Stream | Stream、ResponseStreamFailed | 在允许范围内 reconnect / retry |
-| Rate limit | RateLimitExceeded | 按 server retry delay / backoff |
-| Transport | ConnectionFailed、RequestTimeout | retry；满足条件时 WS → HTTP fallback |
-| Provider | ServerOverloaded、InternalServerError | 有限重试 / 换路径；不能无限循环 |
-| Tool Contract | ToolCollision、InvalidRequest | 修 Registry / request；不是随机 retry |
-| Tool Process | Timeout、Spawn、Interrupted | 产生明确 Tool failure / aborted semantics |
-| Sandbox | Denied、Timeout、Signal、Landlock / seccomp | 按 policy 决定拒绝、请求批准或有限 escalation |
-| Auth / Plan | RefreshTokenFailed、QuotaExceeded、UsageNotIncluded | 不能靠 retry 假装修好 |
-| Policy | Cyber / Bio / Misalignment | 按政策终止相应行为 |
-| Runtime invariant | InternalAgentDied、Fatal、TokioJoin | fail fast + 诊断，不包装成普通业务失败 |
+| 模型通信 | Stream 中断、连接失败、Provider 临时过载 | Model Client / Retry Runtime |
+| Agent 语义 | Context Window 满、Tool 参数错误、可恢复 Tool Failure | Turn / Compaction / 模型下一步 |
+| 权限与执行 | Sandbox 拒绝、网络被策略拦截、用户未批准 | Permission / Approval / Tool Orchestrator |
+| Runtime / 持久化 | Thread 不存在、内部 invariant 破坏、数据库 / 任务异常 | Host fail fast、恢复或人工诊断 |
 
-成熟 Agent 的 Failure Handling 不是：
-
-~~~text
-try:
-    run()
-except:
-    retry()
-~~~
-
-而是：
-
-> **先判断“失败属于哪一层”，再决定这个层是否拥有恢复权。**
+这比统一写一个 `except: retry()` 可靠得多。
 
 ---
 
-## 4. 为什么 UI 错误消息还有 2KB 上限
+## 2. 模型 Stream 断开时，Codex 怎样尽量保住同一个 Turn
 
-错误本身也可能非常大：
+`responses_retry.rs` 把 Responses sampling（模型采样）和 Remote Compaction（远端压缩）的 Stream Retry（流重试）逻辑集中处理。
 
-- server response；
-- Tool stderr；
-- malformed JSON；
-- stack / protocol details。
+如果连接已经建立，但在 `response.completed` 之前断开，错误会先判断是否具有 retry delay（可重试延迟）。在 retry budget（重试预算）内，Codex 等待后重新发送，并向客户端发出 “Reconnecting...” 状态。
 
-如果直接把全部错误：
+这里有两个重要边界。
 
-~~~text
-进入 UI
-进入下一轮 Context
-进入 telemetry
-~~~
+第一，这是**同一个 Turn 内的通信恢复**，不应该因为一次网络抖动就制造一个新的用户 Turn。
 
-可能造成：
-
-- Context 污染；
-- 隐私泄露；
-- 日志成本；
-- 终端不可读。
-
-Codex 对 UI error message 做有界截断。
-
-这个小细节代表同一个全局原则：
-
-> **任何可能进入用户界面或模型 Context 的自动生成内容都应该有体积边界。**
+第二，重试必须有次数 / 延迟边界。否则断网以后 Agent 可以无限占用前台，看起来像“还在努力”，实际上什么也没进展。
 
 ---
 
-## 5. 模型流中断后怎样 Retry
+## 3. WebSocket 失败以后，Transport 可以降级但 Agent 语义不必重启
 
-core/src/responses_retry.rs 把普通 sampling 和 Remote Compaction 的 response retry 逻辑集中起来。
+Model Client 支持 Responses WebSocket（响应 WebSocket）路径。如果有限次数的 WebSocket retry 用完，并且当前环境允许 fallback（降级），`ModelClientSession` 可以切到 HTTPS transport（HTTPS 传输）继续请求。
 
-典型链：
+`core/tests/suite/websocket_fallback.rs` 直接覆盖了这个行为。
+
+这说明成熟 Runtime 会把：
 
 ~~~text
-发送 request
-↓
-stream 已建立
-↓
-尚未 response.completed 就断开
-↓
-CodexErrorDetails::Stream
-↓
-判断 retry budget
-↓
-计算 delay
-  server advice / backoff
-↓
-向用户发 Reconnecting 状态
-↓
-同一个 Turn 重试
+“用什么网络传输”
 ~~~
 
-注意：
+和：
 
-- Retry 是 Turn 内行为；
-- 不会因此创建新的用户 Turn；
-- 同一 Turn 的 sticky routing state 仍应保持；
-- 不能把一次 stream failure 当成 Tool failure。
+~~~text
+“这是不是同一个 Agent Turn”
+~~~
+
+分开。
+
+Transport 是实现手段；只要请求可以安全重放，底层通信方式改变不应该自动把整个任务判成失败。
 
 ---
 
-## 6. Retry 为什么必须有 Budget
+## 4. 但不是所有错误都应该 Retry
 
-如果网络持续坏：
+`CodexErrorDetails` 同时包含 Context Window exceeded（上下文超限）、Tool collision（工具冲突）、Quota（配额）、Policy violation（策略违规）、Sandbox error、Fatal、Internal Agent Died 等类别。
 
-~~~text
-retry
-→ retry
-→ retry
-→ ...
-~~~
+它们的恢复动作完全不同。
 
-Agent 会：
+Context Window 满应进入 Context Window / Compaction 生命周期；Tool 名冲突是 Registry 配置或能力组合问题，重发模型请求不会自动修好；Quota 用尽和登录失败需要外部状态改变；Policy 拒绝也不能靠增加 retry 次数绕过。
 
-- 一直占用用户时间；
-- 重复消耗请求；
-- 产生不可预测成本；
-- 掩盖真正 outage。
+所以可以用一句话概括：
 
-因此 Codex 有有限 retry budget。
+> **Retry 只属于“状态没有本质改变、同一动作再次尝试仍然可能合法成功”的故障。**
 
-源码还区分某些允许更长 connection retry 的路径，但仍通过 backoff 和专门条件控制。
-
-原则：
-
-> **Retry 不是“失败了再试一次”，而是带错误类别、次数、延迟和作用域的恢复协议。**
+恢复权必须由错误语义决定，而不是由“有没有抛异常”决定。
 
 ---
 
-## 7. WebSocket 失败后为什么可以切 HTTP
+## 5. 用户 Cancel（取消）和 Runtime Crash（崩溃）是不同事件
 
-ModelClientSession 可以优先走 Responses WebSocket。
+用户按下中断时，系统知道这是一个有意的控制输入。
 
-当 WS retry 达到条件后，Codex 可以：
+Tool Runtime 会传播 Cancellation Token，尝试停止仍可安全中止的操作，并把 Aborted Tool Result（中止结果）写回模型历史。Turn 本身也有 Interrupted / Aborted（中断 / 终止）语义。
 
-~~~text
-WebSocket retries exhausted
-↓
-try_switch_fallback_transport()
-↓
-HTTP
-↓
-reset retry counter
-↓
-继续同一 Turn
-~~~
+Runtime Crash 则可能在任意位置打断进程，没有机会优雅补齐所有内存状态。
 
-core/tests/suite/websocket_fallback.rs 对这类行为有集成测试。
+为什么要区分？
 
-工程意义：
-
-> **Transport 是实现细节，不应该轻易升级成“Agent 整体任务失败”。**
-
-只要语义请求仍能安全重放，就可以切备用 transport。
+因为 Cancel 可以主动把 History 收束到一个协议合法状态，而 Crash 只能依赖已经持久化的边界恢复。把两者都叫 “failed” 会让恢复算法不知道哪些清理动作已经完成。
 
 ---
 
-## 8. 为什么 Retry Advice 必须绑定 Turn
+## 6. Thread Store 解决“未来怎样继续”，不是为了替代所有数据库
 
-Retry / reconnect 的状态不能泄漏给另一个内部任务。
+`codex-thread-store` 自己把职责定义得很清楚：它是 Codex Thread 的 storage boundary（存储边界）。
 
-例如：
+对于活动 Thread，`LiveThread` 负责按 Rollout persistence policy（持久化策略）追加 canonical history，再通过明确的 metadata patch（元数据补丁）更新 Thread 元数据。Local Thread Store 用 JSONL Rollout 保存历史；有 State DB 时，查询友好的 Thread metadata 同时进入 SQLite。
 
-~~~text
-用户 Turn A
-发生 stream retry
+`codex-state` 则承载另外一类结构化运行状态：可查询 Thread 元数据、Queue、Goal、Memory Job、部分关系等。
 
-同时启动 Guardian Review Turn B
-~~~
-
-如果共享一个“最近 retry reason”：
+因此不要把架构理解成：
 
 ~~~text
-B 可能错误继承 A 的网络状态
+JSONL 是旧实现
+SQLite 是新实现
 ~~~
 
-源码因此把 retry advice / state 放在合适的 turn-scoped 边界。
-
-这和：
-
-- ModelClientSession turn-scoped；
-- StepContext step-scoped；
-
-是同一种时序隔离思想。
+当前源码里它们承担的责任并不相同。
 
 ---
 
-## 9. Ctrl-C / Cancel 为什么不能等于 Crash
+## 7. Compaction Checkpoint 是长 Thread 能高效恢复的关键
 
-用户中止一个 Tool 或 Turn 是正常交互，不是程序崩溃。
+Context 篇已经解释过 replacement history（替代历史）。从工程角度再看一次：
 
-Tool runtime 中：
+如果一个 Thread 运行了数周，Rollout 可能非常长。每次 Resume 都从第一行重放，会让启动成本随着历史长度增长。
+
+现代 reconstruction（重建）路径会从 Rollout 尾部反向查找最新仍有效的 CompactedItem（压缩项）。只要它携带 replacement history，就可以把这份历史当作新基线，再 replay（重放）后面的 surviving suffix（仍有效尾部）。
+
+这相当于：
 
 ~~~text
-CancellationToken fired
+很长的执行历史
 ↓
-如果调用已经不可安全中断 / 已到 terminal outcome
-  → 等待结果
-否则
-  → abort task
-  → 生成 AbortedToolOutput
-  → notify abort lifecycle
-  → 让 call/output pairing 完整
+Compaction
+↓
+生成新的“可恢复历史基线”
+↓
+以后 Resume 只需要：
+  基线 + 后续增量
 ~~~
 
-顶层还有 Interrupted / TurnAborted 等语义。
-
-因此：
-
-> **Cancellation 也必须产生可恢复的历史。**
-
-如果只 kill future 而不补 Tool Result，下一轮 Context 就会留下 dangling tool call。
+所以 Compaction 同时是 Context 优化和持久化优化。
 
 ---
 
-## 10. Tool Timeout、Sandbox Denied、Model Timeout 为什么不是同一个 Timeout
+## 8. Resume 和 Fork 的正确性不只看“聊天内容一样”
 
-三者恢复权不同。
+恢复后的 Thread 还要继续工作，因此真正要恢复的是行为语义。
 
-### Tool Timeout
+除了模型 History，重建代码还会处理 previous turn settings（之前的 Turn 设置）、World State baseline、Context Window ID、Token usage（Token 使用）以及 rollback / fork lineage（回滚 / 分叉谱系）等。
 
-某个本地 / 外部动作太久。
+可以把正确性目标叫做 Behavioral Resume Equivalence（行为恢复等价）：
 
-可以：
+> **冷启动恢复以后，模型下一步应该拥有与中断前相容的约束、能力和历史，而不是只看 UI 上的聊天文本能不能显示出来。**
 
-- 返回 Tool failure；
-- 模型换策略；
-- 用户取消。
-
-### Sandbox Timeout / Denied
-
-说明执行环境限制。
-
-可能：
-
-- 最终拒绝；
-- 请求 approval；
-- 有限 escalation 到更宽 sandbox。
-
-### Model Request Timeout
-
-模型请求没完成。
-
-可能：
-
-- transport retry；
-- fallback。
-
-所以监控上也不能只有：
-
-~~~text
-timeout_count
-~~~
-
-应该带：
-
-- layer；
-- tool / model；
-- turn；
-- retry count；
-- sandbox；
-- provider；
-- duration。
+例如 Fork 截止在父 Thread 的第三个用户 Turn，那么第四个 Turn 才获得的 Tool Result 就不能“穿越”到子 Thread。
 
 ---
 
-## 11. Compaction Failure 为什么要和普通模型失败分开
+## 9. Queue 和 Goal 说明 Agent Runtime 还有“对话之外的任务状态”
 
-Compaction 本身也是一次模型 / runtime 操作。
+App Server 的 Extension Registry 当前还安装 Queue Extension（队列扩展）和 Goal Extension（目标扩展）。
 
-如果 Compaction 失败：
+Queue 支持 durable user-message queue（持久化用户消息队列）和 idle dispatch（空闲时投递）。这让用户的新消息不必强行插进正在执行的 Tool Call 中，可以在合适的运行边界进入后续工作。
 
-~~~text
-不能：
-先替换 live history
-→ 再发现 summary request 失败
-~~~
+Goal Extension 则把更长期的目标状态与 Token accounting（Token 计量）等逻辑作为扩展接入。
 
-否则会丢掉原历史。
+这两个例子提醒我们：
 
-正确语义是：
+> **一个长期 Agent Thread 不是“聊天消息数组 + 一个 while 循环”。**
 
-~~~text
-准备 compact input
-↓
-执行 compact
-↓
-成功得到 replacement
-↓
-验证 / 构造 CompactedItem
-↓
-commit live Context replacement
-↓
-persist checkpoint
-~~~
-
-失败则保留旧基线。
-
-Codex analytics 还为 Compaction 单独记录：
-
-- trigger；
-- reason；
-- implementation；
-- phase；
-- strategy；
-- status；
-- Codex error kind。
-
-这使“Agent 失败”可以进一步回答：
-
-> 是 Pre-turn ContextLimit 的 Remote Compaction 失败，还是 Manual Local Compaction 失败？
+真正运行时还需要排队、目标、环境、批准、子 Agent 等结构化状态，而且这些状态不一定全部成为自然语言 Prompt。
 
 ---
 
-## 12. Persistence 的目标不是“日志尽量多”
+## 10. Multi-Agent 复用了 Thread / Fork / Agent Control，而不是另造第二套 Runtime
 
-ThreadStore 保存的是：
+Codex 当前 Multi-Agent V2 不是另起一个“Agent 服务”。
 
-> **未来恢复 Thread 所需要的 canonical history + metadata boundary。**
+`ThreadManager` 可以从父 Thread spawn subagent（派生子 Agent），`AgentRunner` 会在 forked context（分叉上下文）中启动新 Thread 并提交初始 Turn。Agent Control（智能体控制）再负责消息、等待、中断等协作操作。
 
-它与诊断 Trace 的职责不同。
+这样做的一个明显好处是：子 Agent 可以复用已有的 Context、Tool、Permission、Persistence 和 Trace 机制。
 
-### ThreadStore / Rollout
-
-目标：
-
-- resume；
-- fork；
-- query thread metadata；
-- rebuild Context；
-- 恢复 token / settings。
-
-### Rollout Trace
-
-目标：
-
-- 深度诊断；
-- 重建 runtime semantic graph；
-- 看 inference / tool / terminal / compaction 关系。
-
-不能拿一个替代另一个。
+代价也很真实。源码 Prompt 明确说明多个 Agent 共享同一目录和文件系统，因此两个 Agent 同时改同一文件并不会因为“它们是两个 Agent”就自动隔离。协作策略、Tool 并发和工作区管理仍然要处理冲突。
 
 ---
 
-## 13. Resume 为什么不是从 JSONL 第一行永远重放
+## 11. Extension Registry 让安全、Memory、Skills 等能力共享生命周期，但不混职责
 
-长 Session 可能非常大。
+App Server 当前安装 Guardian V2、Memories、MCP、Skills、Goal、Queue、Web Search、Image Generation 等多个扩展。
 
-如果每次启动都：
+它们共享 Thread / Turn / Tool 的生命周期入口，但各自维护 private extension state（扩展私有状态）。比如 Guardian 参与 Approval Review，Memory 贡献 Context 和长期工具，Skills 贡献能力目录，Queue 在 Thread idle（空闲）时尝试派发消息。
 
-~~~text
-从第一条 rollout
-→ replay 几十万 event
-~~~
+这种设计的价值在于：
 
-冷启动会越来越慢。
+> **宿主提供稳定时序；扩展只在自己负责的时序点读写自己的状态。**
 
-Codex reconstruction 会反向寻找：
-
-> **最新仍有效的 replacement-history checkpoint。**
-
-链：
-
-~~~text
-从 rollout 尾部向前
-↓
-找到 surviving CompactedItem
-  with replacement_history
-↓
-该 replacement_history
-成为完整 Context base
-↓
-只 replay 之后的 surviving suffix
-~~~
-
-老于 checkpoint 的历史不再需要重新参与模型 Context 重建。
-
-这正是 Compaction 和 Persistence 真正闭环的地方。
+这比所有功能都直接拿一个全局 Session 对象任意修改，更容易控制依赖和恢复。
 
 ---
 
-## 14. 为什么 Rollback / Fork 让恢复变复杂
+## 12. Observability（可观测性）有不同层，不能只看一份日志
 
-### Rollback
+Codex 同时有 Event、Analytics、OTEL Metrics 和 Rollout Trace。
 
-不是删除最后 N 行。
+### Event（事件）
 
-语义通常是：
+主要服务产品协议和生命周期通知，例如 Turn 开始 / 结束、Tool 事件、Queue / Goal 更新等。客户端需要它们更新 UI 和状态。
 
-> 删除最后 N 个真实用户 Turn 及其派生执行。
+### Analytics（分析事实）
 
-所以需要识别 user-turn boundary。
+把一些行为压成结构化事实。例如 Compaction 会记录 trigger（触发源）、reason（原因）、implementation（实现方式）、phase（阶段）、strategy（策略）、status（结果）和错误类别。
 
-### Fork
+### OTEL / Metrics（OpenTelemetry / 指标）
 
-Child Thread 只继承 Parent 到某个 cutoff。
+更适合统计时延、次数、Token、Tool timing、Skill catalog truncation、Memory pipeline 等跨大量请求的数据。
 
-因此不能错误恢复 cutoff 之后：
+### Rollout Trace（运行轨迹）
 
-- 新 Tool Result；
-- 新 WorldState；
-- 新 permission；
-- 新 context checkpoint。
+这是更重的、显式 opt-in（选择开启）的本地诊断路径。它可以保存模型请求 / 响应、Tool 输入输出、Terminal（终端）行为和多 Agent 边，再离线 reduction（归约）成语义图。
 
-### Compaction
-
-会重置 Context baseline。
-
-### WorldState
-
-又有 full snapshot + patches。
-
-因此恢复算法真正重建的是：
+这四层分别回答：
 
 ~~~text
-History base
-+
-surviving suffix
-+
-Turn settings
-+
-WorldState baseline / patches
-+
-Context-window IDs
-+
-token information
+发生了什么产品事件？
+整体指标怎样？
+某类行为为什么变多？
+这个具体 Bad Case 的真实因果链是什么？
 ~~~
 
-而不是“把聊天消息读回来”。
+一份 stdout 日志很难同时做好四件事。
 
 ---
 
-## 15. 恢复正确性的核心 Invariant
+## 13. Rollout Trace 的“先观察，后解释”为什么很成熟
 
-一个成熟 Agent Resume 至少要满足：
+`rollout-trace/README.md` 把核心设计概括成：
 
-~~~text
-Resume 前最后一个可继续执行状态
-≈
-冷启动重建后的状态
-~~~
+> observe first, interpret later（先记录事实，再解释语义）。
 
-这里的“≈”不是文本完全一样，而是未来行为所需语义一致：
+在线运行时只按顺序写 raw event（原始事件）和 payload reference（载荷引用），尽量不急着判断“这个 Terminal 操作最终属于哪次模型推理”。
 
-- 模型看到同样有效的约束；
-- tool call / output pairing 完整；
-- current environment / permission 合法；
-- context window identity 正确；
-- compaction summary 没丢关键任务；
-- token accounting 可继续；
-- fork cutoff 没越界。
+之后 offline reducer（离线归约器）再把证据还原成：
 
-这可以称为：
-
-> **Behavioral Resume Equivalence。**
-
----
-
-## 16. Prompt Cache、Latency、Cost 是同一个工程问题的不同面
-
-假设一个 100k-token Context：
-
-~~~text
-每轮都完整重写早期 instructions
-↓
-Prompt Cache miss
-↓
-更多 prefill
-↓
-latency ↑
-cost ↑
-~~~
-
-所以 Codex 的一些看似“代码洁癖”的设计其实直接影响生产指标：
-
-- append-only normal history；
-- WorldState diff；
-- stable synthetic IDs；
-- bounded Skill catalog；
-- Deferred Tool；
-- prompt_cache_key；
-- previous-response incremental continuation；
-- compaction。
-
-优化成本不能只做：
-
-> “少写几个 Prompt 字。”
-
-真正应该优化：
-
-~~~text
-stable prefix
-+ useful context density
-+ bounded dynamic injections
-+ fewer unnecessary model round trips
-+ less repeated Tool output
-+ cache-friendly identity
-~~~
-
----
-
-## 17. 1M Context Window 时代还需要 Context Engineering 吗
-
-需要，而且原因更多。
-
-即使模型支持 1M：
-
-### 成本
-
-1M input 仍然有成本。
-
-### Latency
-
-Prefill 仍然需要时间。
-
-### Attention Dilution
-
-历史越多，不代表模型越能抓住真正约束。
-
-### Stale State
-
-旧 environment / permission / plan 继续存在，会污染当前任务。
-
-### Security
-
-Prompt injection / secret / irrelevant Tool Result 留得更久。
-
-### Recovery
-
-巨量 history 冷启动 / replay 仍然昂贵。
-
-所以 Codex 当前思路依然成立：
-
-~~~text
-typed sources
-→ hard bounds
-→ incremental update
-→ stable prefix
-→ compactable body
-→ checkpointed window lifecycle
-~~~
-
-大 Context 主要改变阈值，不取消生命周期管理。
-
----
-
-## 18. 5 万 Tool 怎么设计
-
-Codex 已经给出可扩展骨架：
-
-~~~text
-Full Registry
-↓
-Tenant / Policy / Capability Filter
-↓
-Exposure Planning
-↓
-大多数 Deferred
-↓
-tool_search
-↓
-Top-K LoadableToolSpec
-↓
-模型选择
-↓
-runtime dispatch
-~~~
-
-如果真的上升到 50,000，还应继续演化 discovery：
-
-### 18.1 分层索引
-
-先：
-
-~~~text
-domain / server / app / namespace
-~~~
-
-再具体 Tool。
-
-### 18.2 Hybrid Retrieval
-
-当前 BM25 可以继续保留 exact / schema-key 能力，再补：
-
-- semantic retrieval；
-- query expansion；
-- learning-to-rank。
-
-### 18.3 Policy Before Retrieval
-
-无权调用的 Tool 尽量不要进入候选索引。
-
-### 18.4 Stable Catalog Cache
-
-静态 Tool metadata 与动态 Tool 分开版本化，避免每个 Step rebuild 全量索引。
-
-### 18.5 Evaluation
-
-规模化 Tool Search 最终必须测：
-
-- recall@K；
-- MRR；
-- wrong-tool rate；
-- candidate count；
-- search latency；
-- schema bytes loaded；
-- cache rebuild frequency。
-
-“有 Tool Search”本身不是终点。
-
----
-
-## 19. 1 万 Skill 怎么设计
-
-Codex 当前 Skills 已经采用 Progressive Disclosure：
-
-~~~text
-catalog metadata
-↓
-selected SKILL.md
-↓
-selected references / scripts / assets
-~~~
-
-并对第一层 catalog 做：
-
-- 默认 char budget；
-- context-window 百分比预算；
-- token hard max；
-- description truncation；
-- fair allocation；
-- omission metrics。
-
-如果 Skill 达到 10,000，合理下一步：
-
-~~~text
-full Skill registry
-↓
-scope / project / authority filter
-↓
-search / routing
-↓
-只渲染 top-K metadata
-↓
-selected SKILL.md
-↓
-selected resources
-~~~
-
-不能因为模型 Context 变大，就把 10,000 份 SKILL.md 全塞进去。
-
----
-
-## 20. Memory 很多以后怎样避免“越记越差”
-
-Memory 的规模问题本质不是 storage，而是：
-
-> **未来 Context 里的有效信息密度。**
-
-Codex 当前已经有：
-
-- Stage1 bounded discovery；
-- Phase2 top-N；
-- usage_count；
-- last_usage；
-- max_unused_days；
-- global consolidation；
-- summary <10KB；
-- progressive search / read；
-- correction / pollution / prune。
-
-因此 Memory 规模化的主线是：
-
-~~~text
-更多原始历史
-≠
-更多直接注入
-
-更多历史
-→ 更严格 extraction
-→ 更强 consolidation
-→ 更强 usage feedback
-→ 更小高价值 summary
-~~~
-
----
-
-## 21. Observability 要同时看四种证据
-
-### 21.1 Events
-
-Session / Turn / Tool lifecycle event。
-
-用于：
-
-- UI；
-- client protocol；
-- basic state transitions。
-
-### 21.2 Analytics
-
-结构化事实，例如 Compaction：
-
-- trigger；
-- reason；
-- implementation；
-- phase；
-- strategy；
-- status；
-- error kind。
-
-### 21.3 OTEL / Metrics
-
-例如：
-
-- Tool timing；
-- Skill catalog truncation；
-- Memory pipeline；
-- model token usage；
-- request latency。
-
-### 21.4 Rollout Trace
-
-当普通 metrics 不够解释一个复杂 Bad Case 时，保留更完整的本地运行证据。
-
-四种层次不能互相替代。
-
----
-
-## 22. Rollout Trace 为什么采用“先观察，再解释”
-
-rollout-trace/README.md 的核心思想可以概括成：
-
-> **记录阶段尽量忠实保留事实，语义解释放到离线 reducer。**
-
-为什么？
-
-如果在线 recorder 一边运行一边下结论：
-
-~~~text
-看到 tool event
-→ 立即认定它属于某 inference / 某 user turn
-~~~
-
-后面如果：
-
-- child thread 才出现；
-- call id 映射延迟；
-- compaction 重建关系；
-- terminal operation 异步结束；
-
-早期推断可能错。
-
-所以 Trace：
-
-~~~text
-raw event append
-↓
-payload store
-↓
-offline reduction
-↓
-semantic graph
-~~~
-
-graph 再建立：
-
-- ConversationItem；
-- InferenceCall；
-- ToolCall；
-- CodeCell；
-- TerminalOperation；
+- Agent Thread / Turn；
+- model-visible Conversation Item（模型可见对话项）；
+- Inference Call（模型推理调用）；
+- Tool Call；
+- Code Cell（代码模式执行单元）；
+- Terminal Operation（终端操作）；
 - Compaction；
-- multi-agent parent/child；
-- interaction edges。
+- Multi-Agent interaction edge（多智能体交互边）。
 
-这是复杂 Agent 可解释性的一个成熟方向。
+为什么不在线直接构图？
 
----
-
-## 23. Rollout Trace 为什么不能默认全开
-
-Trace bundle 可能包含：
-
-- prompts；
-- responses；
-- tool inputs / outputs；
-- terminal output；
-- paths。
-
-这是高敏感诊断数据。
-
-所以当前是：
-
-- 显式 opt-in；
-- 本地 bundle；
-- 不应让 trace failure 反过来导致 Codex Session 失败。
-
-原则：
-
-> **Observability 是辅助平面，不能成为主执行平面的单点故障。**
+因为 Runtime 里有并发和两个时钟：Tool 可能已经开始执行，但包含它的完整模型 response item 还没有最终写完；子 Agent 的事件也可能稍后才补齐上下文。先保存事实，离线统一解释，更不容易因为到达顺序写出错误关系。
 
 ---
 
-## 24. Codex 的 Evaluation 不是一个单独 eval 文件夹
+## 14. Trace 为什么默认不能当普通 Telemetry 上传
 
-源码里的验证证据分布在多层。
+Rollout Trace 可能包含 Prompt、Tool 参数、终端输出、路径和模型响应。这些信息非常适合深度排障，也同样可能敏感。
 
-### 24.1 Unit / Contract Tests
+当前源码明确把它和普通 Telemetry 区分，并且只在配置了相应本地 Trace Root 时写 bundle（轨迹包）。Trace 写入还是 best effort（尽力而为）：诊断记录失败不能让主 Codex Session 因此失败。
 
-各 crate 验证：
+这体现一个很实用的系统原则：
 
-- Tool contract；
-- Memory read/write；
-- Context fragments；
-- state；
-- sandbox；
-- protocol。
-
-### 24.2 Core Integration Tests
-
-core/tests/suite 覆盖跨模块行为。
-
-### 24.3 Request / History Snapshot Scenarios
-
-Scenario snapshots 会直接检查：
-
-> 模型真正看到的 Context / Tool shape 是否符合预期。
-
-例如源码中可以看到 Astra 场景覆盖：
-
-- plugin refresh 后不重启仍使用新 Skill / Code Mode MCP；
-- disabled Skill 不应进入 Context；
-- remote compaction 跨 window；
-- Code Mode call timing；
-- Tool shape；
-- active-turn async question / answer；
-- multi-agent catalog 参数。
-
-这比只测试某个 helper return value 更接近 Agent Runtime 的真实契约。
-
-### 24.4 Subsystem Metrics
-
-Memory、Skill、Tool、Compaction 都有自己的 telemetry。
-
-### 24.5 Rollout Trace
-
-用于难以由单一 metric 解释的真实失败。
-
-因此 Codex 的评测证据链可以理解为：
-
-~~~text
-unit correctness
-→ integration contract
-→ model-visible snapshot
-→ runtime metrics
-→ deep trace
-→ task-level outcome eval
-~~~
+> **Observability 是主执行系统的辅助平面；辅助平面故障不能成为用户任务的新单点故障。**
 
 ---
 
-## 25. 但“测试都过了”不等于 Agent 真的更好
+## 15. 源码里的 Tests 能证明什么
 
-源码 Tests 主要能证明：
+Codex 的验证不是集中在一个 `evals/` 目录。
 
-> **实现符合当前定义的 contract。**
+每个 crate 有自己的 unit / contract test（单元 / 契约测试），Core 和 App Server 又有大量 integration test（集成测试）。Context 还有 request/history snapshot（请求 / 历史快照），直接检查模型真正看到的内容；WebSocket fallback、Guardian review、Multi-Agent resume、Memory startup、Tool exposure 等都有专门测试。
 
-例如：
+这些测试非常重要，但要准确理解它们的证明范围：
 
-~~~text
-ToolSearch 能返回预期 schema
-Compaction checkpoint 能重建
-Memory summary 合法
-WS 能 fallback HTTP
-~~~
+> **它们主要证明 Runtime 实现符合定义好的协议和不变量，不自动证明“Agent 解决真实用户任务的成功率更高”。**
 
-它们不能自动证明：
-
-> “用户任务成功率更高。”
-
-因此产品级 Eval 还要加：
-
-~~~text
-Task Dataset
-↓
-Agent Runtime
-↓
-Environment Outcome
-↓
-Grader
-↓
-Metrics
-↓
-Bad Case → Trace
-~~~
-
-这与通用课程里 Agent Harness / Eval Harness 的区分完全一致。
+例如 Tool Search 单测通过，只说明 BM25 索引和返回 shape（结构）符合预期；它不能说明模型在真实一万个工具里一定能选对。
 
 ---
 
-## 26. Agent 整体 Eval 应该分四层
+## 16. 产品级 Evaluation 需要在源码测试之上再加一层
 
-### 26.1 Outcome
+下面这一节是**基于 Codex 当前源码生命周期设计的课程评测方案**，不是声称 OpenAI 仓库已经公开同名 Benchmark。
 
-最重要：
+一个完整 Agent Eval（智能体评测）至少要同时看四类结果。
 
-- 代码是否真的修改正确；
-- tests 是否通过；
-- target behavior 是否满足；
-- 是否引入 regression；
-- 用户 acceptance criteria 是否满足。
+### Outcome（最终结果）
 
-不能因为最终回答写：
+代码任务最重要的是环境最终状态：目标测试是否通过、行为是否满足要求、有没有 regression（回归）。最终回答里说“已经完成”不能当作 pass。
 
-> “已完成。”
+### Process（过程）
 
-就判 pass。
+即使最后成功，也要看是不是重复读同一文件、反复调用失败工具、无意义触发多次 Compaction，或在网络故障时过度 Retry。
 
-### 26.2 Process
+### Safety（安全）
 
-- 无效 Loop；
-- 重复 Tool；
-- 无意义重读；
-- retry 次数；
-- compaction 次数；
-- recovery 是否成功。
+是否绕过 Approval、越出 Sandbox、错误使用网络、把用户没有批准的副作用执行了。
 
-### 26.3 Safety
+### Resource（资源）
 
-- 是否越权；
-- 是否绕过 approval；
-- sandbox denial 是否正确；
-- 网络权限是否符合 policy；
-- 是否有 destructive side effect。
+Input / cached tokens、模型调用次数、Tool Call 数、时延、TTFT（首 Token 延迟）、Memory 深读次数等。
 
-### 26.4 Resource
-
-- token；
-- cached input；
-- latency；
-- TTFT；
-- tool calls；
-- model calls；
-- search calls；
-- memory reads。
-
-最终报告应同时展示，而不是压成一个总分。
+四类指标共同解释“系统是不是变好”，而不是最后合成一个没有原因的总分。
 
 ---
 
-## 27. Context 应该怎样 Eval
+## 17. Context 应该怎样做任务级评测
 
-Context 是最容易“看起来没问题，实际上悄悄退化”的组件。
+### 【源码已经提供的基础】
 
-### 27.1 Constraint Retention
+Context / Compaction / Resume 有大量 integration tests 和 snapshots，可以验证 History shape、Window 切换、请求设置、恢复等实现契约。
 
-构造长任务：
+### 【课程评测推导】
 
-~~~text
-开始时给关键约束
-↓
-多轮 Tool
-↓
-触发 Compaction
-↓
-继续执行
-~~~
+进一步可以构造 Constraint Retention（约束保留）任务：在长任务开头写入“不能改公开 API”，经过多轮 Tool 和一次 Compaction 后检查最终代码是否仍遵守。
 
-检查：
-
-- 约束是否仍可见；
-- 是否被 summary 错改；
-- 是否错误复活旧约束。
-
-### 27.2 Compaction Equivalence
-
-同一任务：
+还可以做 Compaction Equivalence（压缩等价）：
 
 ~~~text
-A 不触发 compact
-B 在指定点 compact
+同一任务 A
+不触发 Compaction
+
+同一任务 B
+在固定位置触发 Compaction
 ~~~
 
-后续给同一 observation，看行为 / 最终 outcome 是否基本一致。
+比较之后的最终行为，而不是比较摘要文字是否相同。
 
-### 27.3 Resume Equivalence
+Resume Equivalence（恢复等价）则把同一任务分别连续运行和中途退出 / Resume，观察下一步 Tool、权限、最终结果是否仍相容。
 
-~~~text
-连续运行
-vs
-中途持久化 → 进程退出 → Resume
-~~~
-
-比较：
-
-- 模型可见 Context；
-- 下一步 Tool；
-- 最终 task outcome；
-- permission / environment；
-- token/window state。
-
-### 27.4 Cache Stability
-
-跟踪：
-
-- cached_input_tokens；
-- prefix mutation；
-- WS incremental reuse；
-- prompt-cache hit proxy metrics；
-- latency。
-
-### 27.5 Context Efficiency
-
-~~~text
-task success
-/
-effective input tokens
-~~~
-
-或在 success 不下降条件下比较：
-
-- Context size；
-- Tool spec bytes；
-- Skill metadata；
-- Memory injection；
-- latency。
+这些评测直接对应源码里最容易出错的状态转换。
 
 ---
 
-## 28. Compaction 应该怎样 Eval
+## 18. Memory 应该怎样做任务级评测
 
-不要只测：
+Memory 的 Recall Rate（召回率）高并不等于好。
 
-> “summary 是否语句通顺。”
+更合理的测试要覆盖：
 
-至少要测：
+~~~text
+Thread A：用户明确长期偏好
+Thread B：应正确使用
+Thread C：用户纠正
+Thread D：旧偏好不得复活
+~~~
 
-### Retain
+然后区分：
 
-- 当前 goal；
-- user constraints；
-- 关键 file path；
-- 已完成动作；
-- Tool evidence；
-- unresolved blocker；
-- permission relevant state。
+- extraction precision（提取精确率）；
+- over-generalization（过度泛化）；
+- correction compliance（纠错遵从）；
+- stale-memory failure（陈旧记忆导致的失败）；
+- Memory ON / OFF 的任务效果差异。
 
-### Drop
-
-- 重复 observation；
-- 过时中间推测；
-- 无用日志；
-- 已经被新事实覆盖的旧信息。
-
-### Structural Correctness
-
-- Tool call/output pairing；
-- Context fragment order；
-- resume checkpoint；
-- world-state baseline。
-
-### Failure Recovery
-
-Compaction request 失败后：
-
-- 原 history 是否仍完整；
-- 新用户输入是否保住；
-- 下一次能否重试。
+如果一个系统每次都能“召回很多历史”，但频繁把一次性约束误当永久偏好，召回率越高可能反而越糟。
 
 ---
 
-## 29. Memory 应该怎样 Eval
+## 19. Tool / Skill 应该怎样做任务级评测
 
-Memory 不能只测 Recall。
+Tool 需要拆开看 discovery（发现）、selection（选择）、argument（参数）、execution（执行）和 result reuse（结果利用）。
 
-### 29.1 Extraction
+例如 Deferred Tool Search 可以测 Recall@K：正确 Tool 是否进入前 K 个候选；模型真正选择后再测参数是否合法、Runtime 是否正确要求 approval、执行后模型有没有把失败结果误认为成功。
 
-Gold Thread 标注：
+Skill 还多一个层级：正确 Skill 是否在 metadata catalog（元数据目录）中被模型识别；真正选中后，是否只读取必要的 `SKILL.md` 和 reference，而不是把所有 supporting resources 全塞进 Context。
 
-~~~text
-应该记
-不应该记
-范围
-provenance
-是否一次性要求
-~~~
-
-指标：
-
-- precision；
-- recall；
-- overgeneralization；
-- unsupported preference；
-- secret / injected-content retention。
-
-### 29.2 Consolidation
-
-检查：
-
-- correction wins；
-- no resurrection；
-- dedup；
-- contradiction handling；
-- summary size；
-- stale removal；
-- provenance pointers。
-
-### 29.3 Retrieval
-
-- search recall@K；
-- precision@K；
-- read escalation rate；
-- citation correctness；
-- unnecessary deep reads。
-
-### 29.4 Online Utility
-
-Memory ON vs OFF：
-
-- task success；
-- 重复询问次数；
-- 个性化正确率；
-- stale-memory failure；
-- token / latency；
-- unsafe behavior。
-
-### 29.5 Long-term Maintenance
-
-模拟：
-
-~~~text
-偏好 A
-→ 使用
-→ 改成 B
-→ forget
-→ 多个旧 Thread 仍含 A
-~~~
-
-验证未来 Session 不 resurrect A。
+这些测试应该随着 Tool / Skill catalog 规模增长逐步做压力实验，而不是只在两个工具的 Demo 上确认“Function Calling 能工作”。
 
 ---
 
-## 30. Tool 应该怎样 Eval
+## 20. 大 Context、数万 Tool、上万 Skill：哪些是源码事实，哪些是工程外推
 
-### Discovery
+上一版把这些场景和 Codex 当前实现写得太接近，容易产生“Codex 已经按这个规模部署”的误读。这里明确分开。
 
-- recall@K；
-- MRR；
-- wrong namespace；
-- deferred search latency。
+### 【当前源码事实】
 
-### Selection
+Codex 已经存在：
 
-- correct tool rate；
-- unnecessary tool-search count；
-- repeated wrong-tool loop。
+- Context 增量更新和有界注入；
+- 多种 Compaction / Context Window 路径；
+- Prompt Cache 友好的稳定前缀设计；
+- Deferred Tool + BM25 search；
+- MCP Spec hard budget；
+- Skill metadata budget + progressive disclosure；
+- Memory top-N consolidation + bounded summary；
+- checkpoint-based resume（基于检查点的恢复）。
 
-### Argument
+这些机制都在控制“大量信息不能直接全给模型”的问题。
 
-- schema-valid；
-- semantic-valid；
-- repair success；
-- hook rewrite correctness。
+### 【工程推导】
 
-### Permission / Safety
+如果未来面对 1M Token Context、五万个 Tool、一万个 Skill，可以继续沿这些机制扩展：更强的分层检索、索引缓存、Policy pre-filter、semantic rerank（语义重排）、更细的 Context budget 和压力评测。
 
-- dangerous tool true-positive；
-- benign tool false-positive；
-- approval bypass；
-- sandbox escape；
-- network violation。
-
-### Execution
-
-- success；
-- timeout；
-- cancel correctness；
-- parallel speedup；
-- serial conflict rate；
-- result truncation usefulness。
-
-### Result Reuse
-
-Tool Result 回填后：
-
-- 模型是否正确解释；
-- 是否重复调用同一 Tool；
-- 是否把 failure 当 success。
+但源码没有告诉我们“当前生产 Codex 就以五万个 Tool / 一万个 Skill 运行”，所以这里不把规模数字当产品事实。
 
 ---
 
-## 31. Skill 应该怎样 Eval
+## 21. 一个 Bad Case 应该怎样从 Trace 走回改进
 
-Skills 有自己独特的两个问题：
+假设线上出现：
 
-> **能不能发现？发现后能不能正确执行？**
+> Codex 连续三次运行同一个失败测试，最后还告诉用户“已经修复”。
 
-因此分两段。
+先别急着改 Prompt。
 
-### Skill Discovery
+用 Trace / Rollout 可以问：
 
-给任务和大 catalog：
+第一次 Tool Result 是否真的记录了非零 exit code？第二次模型请求里是否看见？Tool 输出有没有被过度截断？模型是否误读了结果？是否存在 Goal / Plan 让它无条件继续 Retry？最终 Eval 为什么没有通过真实测试来判结果？
 
-- 正确 Skill 是否在可见 metadata；
-- 是否因 budget 被 omit；
-- 选中率；
-- 错误 Skill 干扰。
+Root Cause（根因）可能分别在 Tool、Context、Planning 或 Eval Harness。
 
-### Skill Execution
+修复以后，再把这条真实 Bad Case 和几个相似变体放进 regression eval（回归评测）。
 
-选中 Skill 后：
-
-- 是否正确读 SKILL.md；
-- 是否按需读 references；
-- 是否运行 script 而不是把大脚本全塞 Context；
-- 是否遵守 Skill 边界。
-
-### Scale
-
-逐步从：
+这样才形成：
 
 ~~~text
-100
-→ 1,000
-→ 10,000 Skills
+真实失败
+→ Trace 找到因果链
+→ 定向修复
+→ 回归评测
+→ 再发布
 ~~~
 
-观察：
-
-- catalog tokens；
-- truncation；
-- search latency；
-- selection quality；
-- task success。
+这比“感觉新 Prompt 更聪明”更接近成熟 Agent Engineering。
 
 ---
 
-## 32. 场景题：Compaction 后 Agent 忘记了“不能改 API”
+## 22. Codex 源码最值得带走的系统边界
 
-按 Codex 生命周期排查：
+把整个仓库重新读一遍以后，可以看到一个反复出现的模式：
 
-~~~text
-1. 原始约束是否真的进入 Context？
-2. compact 输入是否包含它？
-3. summary 是否保留？
-4. build_compacted_history 是否把正确 user context 拼回？
-5. mid-turn / pre-turn injection phase 是否正确？
-6. replacement_history 是否持久化？
-7. Resume 是否选到正确 checkpoint？
-8. 新 model switch / world-state update 是否覆盖了它？
-~~~
+需要概率语义判断的事情，Codex 可以交给模型，例如代码理解、下一步动作、Memory extraction、Memory consolidation 和某些 Compaction summary。
 
-Eval：
+必须保持一致和安全的事情，则留给 Runtime，例如 Thread identity、Step snapshot、Tool Router、Permission、Sandbox、Job lease、Context checkpoint、Retry count、call/result pairing 和持久化。
 
-- long-context constraint retention；
-- compaction A/B；
-- resume equivalence。
+可以用一句话概括：
 
-修复不能只说：
+> **模型负责“判断什么更合适”，Runtime 负责“哪些事实不能乱、哪些边界不能越、失败以后怎样知道自己还在哪”。**
 
-> “把 Prompt 写强一点。”
-
-先定位约束在哪一阶段丢失。
+这比“Agent = LLM + Tools”更接近当前 Codex 源码真正展示的系统。
 
 ---
 
-## 33. 场景题：Memory 召回很多，但结果变差
+## 23. 面试时怎样用源码解释，而不是背产品名词
 
-排查：
+如果面试官问“一个成熟 Coding Agent Runtime 怎样设计”，可以从真实链路回答：
 
 ~~~text
-Phase1
-有没有把一次性要求当永久偏好？
+我会先把产品入口和 Agent Core 分开。
+以当前 Codex 源码为例，TUI 通过 App Server 的类型化 RPC 创建或恢复 Thread，
+ThreadManager 管长期 Thread，Turn 管一次用户任务，
+每次模型采样前再捕获 StepContext，把当时的模型设置、环境、MCP 和 ToolRouter 固定在同一版本。
 
-Phase2
-有没有把旧 correction 合并错？
+Context 不是每轮重拼全部历史，而是初始 full baseline + WorldState diff + canonical history；
+长对话通过 Compaction 产生 replacement-history checkpoint，ThreadStore 持久化以后 Resume 从最新有效 checkpoint + suffix 重建。
 
-Selection
-usage_count 高的旧信息是不是已经 stale？
+Tool 也不是所有能力全塞模型。
+Registry 保存 Host 能力，Router 决定 Direct / Deferred / CodeMode；
+MCP 可以通过 BM25 tool_search 按需加载，真正执行还经过 Hook、Approval Review、Sandbox、Network 和并发控制。
 
-Summary
-是不是太长，压过当前目标？
+Memory 是独立后台两阶段 pipeline：
+先按 Thread 提取，再串行 consolidation；
+新 Thread 先注入 bounded summary，需要证据时才深读历史；
+显式纠错通过 append-only note 进入下一次 consolidation。
 
-Read
-模型是否过度展开历史？
-
-Citation
-真正支持 claim 的 thread 是哪个？
-
-Current Task
-是否应该重新核验易变化事实？
+最后用 Events / Metrics / Rollout Trace 查运行事实，
+源码测试验证协议和不变量，任务级 Eval 再验证真实代码结果、安全和成本。
 ~~~
 
-Eval 应看：
-
-- overgeneralization；
-- correction compliance；
-- stale memory failures；
-- task-level Memory ON/OFF。
+这段回答有价值的地方不是“Codex 很先进”，而是每一步都能落回真实源码对象和时序。
 
 ---
 
-## 34. 场景题：一个 Connector Tool 标记为 destructive
-
-不能只在 description 写：
-
-> “危险，请谨慎。”
-
-合理路径：
-
-~~~text
-MCP/App Tool metadata
-↓
-AppToolPolicyEvaluator
-  destructive / open-world hints
-↓
-是否进入 Registry / Exposure
-↓
-模型产生 call
-↓
-pre-hook
-↓
-approval / Guardian
-↓
-Permission Profile
-↓
-sandbox / network
-↓
-execute
-~~~
-
-Eval 必须有 adversarial cases：
-
-- injection 诱导；
-- 用户未批准；
-- 参数被 hook 改写；
-- 同名 Tool collision；
-- 权限刚刚变化。
-
----
-
-## 35. 场景题：模型 Stream 在 Tool Call 前断开
-
-如果还没有形成可接受的完整 response / terminal semantic outcome：
-
-~~~text
-Stream error
-↓
-responses_retry
-↓
-同 Turn retry
-↓
-必要时 WS → HTTP
-~~~
-
-不能：
-
-~~~text
-把半个 function call 当成真实 Tool Call 执行
-~~~
-
-评测应验证：
-
-- partial stream 不产生幽灵副作用；
-- retry 后 call id / history 合法；
-- 不会执行两次 destructive action。
-
----
-
-## 36. 场景题：Tool 执行成功，但结果没写进 History
-
-这是严重一致性问题。
-
-下一次模型可能：
-
-- 不知道 Tool 已执行；
-- 再次执行相同副作用；
-- 看到 dangling call；
-- 错误判断任务状态。
-
-Codex 的应对机制包括：
-
-- canonical call/output pairing；
-- context normalization；
-- missing output synthesis；
-- executed-tool recording；
-- Tool result accepted callback；
-- Rollout / Trace evidence。
-
-Eval 需要专门故障注入：
-
-~~~text
-handler success
-↓
-在 result-recording 之间注入异常
-↓
-确认不会静默继续成“未知状态”
-~~~
-
----
-
-## 37. 场景题：Tool schema 在模型看见后刷新了
-
-靠 StepContext。
-
-~~~text
-Step 1
-模型看到 schema v1
-↓
-catalog refresh
-↓
-Step 2 已经 v2
-↓
-Step 1 call 延迟执行
-~~~
-
-Step 1 的 ToolCallRuntime 仍保存产生它的 StepContext / binding。
-
-这防止：
-
-> time-of-advertisement 和 time-of-execution 不一致。
-
-Eval：
-
-- 动态 refresh；
-- 延迟 Tool；
-- 并行 Steps；
-- 确认旧 call 仍按旧 binding 语义处理。
-
----
-
-## 38. 场景题：Sandbox Denied，是不是直接失败
-
-不一定。
-
-先判断：
-
-~~~text
-这是 policy 明确禁止
-还是
-当前 sandbox 级别不足？
-~~~
-
-Codex Orchestrator：
-
-~~~text
-Denied
-↓
-检查 escalation eligibility
-↓
-需要用户批准？
-↓
-网络 / filesystem policy 是否允许？
-↓
-有限 retry with broader execution
-~~~
-
-如果 policy Forbidden，就不能通过 retry 绕过。
-
-因此：
-
-> **Retry 权限必须小于 Policy 权限。**
-
----
-
-## 39. 场景题：Benchmark 很高，上线却表现很差
-
-优先检查 Eval Harness 的覆盖，而不是先怪模型。
-
-### Dataset Shift
-
-离线任务太干净，线上有：
-
-- 大 repo；
-- 坏网络；
-- 权限；
-- 动态 Tool；
-- 长 Session；
-- stale Memory。
-
-### Outcome Grader 太弱
-
-只看最终文本，不验证：
-
-- 文件；
-- tests；
-- external state；
-- side effects。
-
-### Process 没测
-
-虽然最终成功，但：
-
-- 多 10 倍 Tool；
-- 多 5 次 retry；
-- 频繁 compact；
-- 延迟不可接受。
-
-### Safety 没测
-
-成功是靠越权实现的。
-
-### Harness Drift
-
-Tool schema、sandbox、model version、prompt、Memory baseline 与线上不同。
-
-因此 Product Eval 要保存：
-
-~~~text
-task version
-runtime version
-model
-tool catalog
-permission profile
-context / memory setup
-environment snapshot
-grader version
-~~~
-
-才能解释分数变化。
-
----
-
-## 40. 怎样用 Rollout Trace 改 Agent
-
-一个 Bad Case：
-
-> Agent 重复三次运行同一个失败命令，最后还声称成功。
-
-不要只看最终回答。
-
-Trace Graph 可重建：
-
-~~~text
-InferenceCall #1
-→ ToolCall exec
-→ TerminalOperation exit=1
-
-InferenceCall #2
-→ ToolCall exec
-→ TerminalOperation exit=1
-
-InferenceCall #3
-→ ToolCall exec
-→ TerminalOperation exit=1
-
-InferenceCall #4
-→ final answer “done”
-~~~
-
-然后把问题分类：
-
-- Tool Result 是否正确进入 Context？
-- failure schema 是否明显？
-- 模型是不是错误解释 exit code？
-- Retry / planning 是否缺少 stop condition？
-- 最终 Outcome Grader 是否只看文本？
-
-修复后加入：
-
-> 这个原始 Bad Case + 变体
-
-进入 eval dataset。
-
-这才形成：
-
-~~~text
-production bad case
-→ trace
-→ root cause
-→ targeted change
-→ regression eval
-→ deploy
-~~~
-
-Data Flywheel。
-
----
-
-## 41. Engineering Trade-off：为什么不把所有状态交给模型
-
-模型推理灵活，但：
-
-- 不确定；
-- token expensive；
-- 难做强一致性；
-- 不能承担安全边界；
-- 不能可靠持久化所有 runtime invariant。
-
-所以 Codex 把：
-
-### 适合程序确定的
-
-- 权限；
-- job lease；
-- thread identity；
-- tool routing；
-- sandbox；
-- token budget；
-- checkpoint；
-- protocol pairing；
-- retry count；
-- cache key。
-
-放 Runtime。
-
-### 适合模型判断的
-
-- 任务语义；
-- 代码理解；
-- 下一步 Tool；
-- Memory extraction；
-- Memory consolidation；
-- compaction summary；
-- 复杂诊断 / editing strategy。
-
-放模型。
-
-成熟 Agent 的核心不是：
-
-> “让模型越自主越好。”
-
-而是：
-
-> **把需要概率推理的部分交给模型，把必须保持一致和安全的部分留在 Runtime。**
-
----
-
-## 42. Engineering Trade-off：为什么 Memory / Compaction 也用模型
-
-因为这些任务需要语义压缩：
-
-- 哪些约束关键；
-- 哪些历史重复；
-- 哪些用户表达是可复用偏好；
-- 哪些 correction 应覆盖旧事实。
-
-硬规则无法覆盖全部自然语言。
-
-但 Codex 不会让模型单独承担正确性。
-
-它在模型外继续提供：
-
-- bounded input；
-- structured output；
-- filesystem boundary；
-- validation；
-- job ownership；
-- retention；
-- provenance；
-- checkpoint；
-- metrics。
-
-可以概括成：
-
-> **LLM 负责语义变换，Runtime 负责边界与可验证性。**
-
----
-
-## 43. 一套适合面试的 Codex Production 回答
-
-~~~text
-Codex 的 Production 边界不是简单的 LLM + Tools，而是 Session、Turn、Step 和 Context Window 四个生命周期叠加。
-Session 保存长期状态和持久化，Turn 管一次用户目标与 turn-scoped model session，
-Step 捕获当时的 Tool、Permission、Environment，Context Window 管模型历史基线和 Compaction。
-
-错误首先按层分类。
-Stream、Connection、Rate Limit 走有限 retry；
-WebSocket 达到条件后可以 fallback HTTP；
-ContextWindowExceeded 不做普通网络重试，而进入 Compaction / 新窗口；
-Tool 参数类错误回给模型修复；
-Sandbox Denied 只能在 Policy 允许时通过 approval 做有限 escalation；
-Fatal / invariant 错误则 fail fast。
-
-长期执行依赖 ThreadStore。
-Compaction 成功后会持久化 replacement-history checkpoint；
-Resume / Fork 从最新仍有效 checkpoint 加 suffix 重建，而不是永远从第一条 JSONL replay，
-同时还要恢复 WorldState、Turn settings、Context window 和 token state。
-
-规模化时也不是依赖超大 Context。
-Tools 通过 Registry → policy filter → Deferred discovery → 小候选集，
-Skills 用 metadata budget + progressive disclosure，
-Memory 用 Phase1/Phase2 consolidation、usage feedback 和 bounded summary。
-
-评测则分 Outcome、Process、Safety、Resource。
-Codex 源码本身已经提供 unit/integration tests、model-visible snapshots、
-Analytics/OTEL、Memory/Skill/Tool/Compaction metrics 和 opt-in Rollout Trace。
-在这些证据上再构建任务级 Eval Harness，分别测 Context constraint retention / compaction equivalence、
-Memory extraction / correction / retrieval、Tool discovery / permission / cancellation，
-最后用真实 environment outcome 验证整个 Coding Agent，而不是看它有没有说“完成”。
-~~~
-
----
-
-## 44. 源码核验入口
-
-- [protocol/src/error.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/protocol/src/error.rs)：Codex / Sandbox error taxonomy。
-- [core/src/responses_retry.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/responses_retry.rs)：stream retry / reconnect / fallback。
-- [core/src/client.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/client.rs)：ModelClient / turn-scoped ModelClientSession。
-- [core/src/tools/orchestrator.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/orchestrator.rs)：approval / sandbox / escalation。
-- [core/src/tools/parallel.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/parallel.rs)：parallel gate / cancellation / timing。
-- [thread-store/README.md](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/thread-store/README.md)：持久化边界。
-- [core/src/session/rollout_reconstruction.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/rollout_reconstruction.rs)：Resume / Fork reconstruction。
-- [thread-store/src/local/model_context.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/thread-store/src/local/model_context.rs)：local model-context checkpoint scanning。
-- [analytics/src/facts.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/analytics/src/facts.rs)：structured analytics facts。
-- [rollout-trace/README.md](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/rollout-trace/README.md)：深度诊断与 semantic graph。
-- [core/tests/suite/](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/tests/suite)：核心集成测试。
-- [core/tests/suite/websocket_fallback.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/tests/suite/websocket_fallback.rs)：WS → HTTP fallback。
-- [core/tests/suite/scenarios.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/tests/suite/scenarios.rs)：跨能力场景测试。
-- [core/tests/suite/snapshots/](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/tests/suite/snapshots)：model-visible request/history snapshots。
-- [analytics/src/tests/suite/turns/compaction_tests.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/analytics/src/tests/suite/turns/compaction_tests.rs)：Compaction analytics contract。
-- [memories/write/src/metrics.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/src/metrics.rs)：Memory pipeline metrics。
-- [ext/skills/src/render_observability.rs](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/render_observability.rs)：Skill catalog pressure metrics。
-
----
-
-至此，Codex 的四条源码学习主线形成闭环：
-
-~~~text
-Context
-模型这一次看见什么，以及怎样跨长 Session 继续
-
-Memory
-哪些过去信息值得跨 Session 保存、怎样召回和纠正
-
-Tool
-模型怎样获得并安全执行真实能力
-
-Engineering & Evaluation
-这些机制怎样在失败、规模化和长期运行下保持可恢复、可诊断、可验证
-~~~
+## 24. 源码核验入口
+
+- [`core/src/responses_retry.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/responses_retry.rs)：模型 Stream retry 与 transport fallback。
+- [`protocol/src/error.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/protocol/src/error.rs)：Codex / Sandbox 错误语义。
+- [`thread-store/README.md`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/thread-store/README.md)：Thread Store 的持久化责任。
+- [`state/src/lib.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/state/src/lib.rs)：SQLite 状态层的责任边界。
+- [`core/src/session/rollout_reconstruction.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/rollout_reconstruction.rs)：checkpoint、rollback 与 Resume 重建。
+- [`thread-store/src/local/model_context.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/thread-store/src/local/model_context.rs)：Local Store 怎样反向扫描最新模型上下文。
+- [`app-server/src/extensions.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/app-server/src/extensions.rs)：当前产品实际安装哪些运行时扩展。
+- [`core/src/thread_manager.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/thread_manager.rs)：Thread 创建、恢复、Fork 与 Subagent。
+- [`ext/agent/src/lib.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/agent/src/lib.rs)：派生 Agent 怎样启动自己的 Thread / Turn。
+- [`rollout-trace/README.md`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/rollout-trace/README.md)：本地诊断 Trace 与离线语义图。
+- [`analytics/src/facts.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/analytics/src/facts.rs)：结构化 Analytics facts。
+- [`core/tests/suite/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/tests/suite) 与 [`app-server/tests/suite/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/app-server/tests/suite)：跨模块 Integration Tests。
 
 回到：[Codex 系统总览](README.md)
