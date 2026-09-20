@@ -1959,7 +1959,7 @@ def main() -> int:
         "sources": source_rows,
         "role_families": role_families,
     }
-    OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
+    OUT_JSON.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     lines = [
         "# 当前官方校招 / 应届｜非算法 AI 应用 & Agent 工程 JD 全量结果",
@@ -2013,7 +2013,7 @@ def main() -> int:
             lines += ["", "**JD 完整度**", "", "> 第一方当前职位列表已确认岗位标题；职责 / 要求正文尚未稳定取得，不用二手来源补写。"]
         lines.append("")
 
-    OUT_MD.write_text("\\n".join(lines).rstrip() + "\\n", encoding="utf-8")
+    OUT_MD.write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
 
     # Keep human-readable company status files in lockstep with the JSON state.
     index_rows = {x.get("company"): x for x in verified_index.get("companies") or [] if x.get("company")}
