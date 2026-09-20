@@ -39,7 +39,7 @@ Model Request
 
 ## 1. 先建立 DeepSeek Harness 自己的产品心智模型
 
-### 1. 先理解“everything is a plugin”到底是什么意思
+### 先理解“everything is a plugin”到底是什么意思
 
 DeepSeek Harness 的官方架构文档直接写明：
 
@@ -111,7 +111,7 @@ dsh-command-compact
 
 ---
 
-### 2. 真实产品不是所有插件全开，而是 Profile / Bundle 组装出来的
+### 真实产品不是所有插件全开，而是 Profile / Bundle 组装出来的
 
 仓库里存在很多 Package，不代表默认产品每次都会把它们全部装上。
 
@@ -160,7 +160,7 @@ DeepSeek Harness 用 Bundle / Profile 组合产品能力。
 
 ---
 
-### 3. DeepSeek Harness 最重要的不变量：Model-visible means logged
+### DeepSeek Harness 最重要的不变量：Model-visible means logged
 
 理解这个产品，最值得先记住一句源码架构原则：
 
@@ -210,7 +210,7 @@ Model Context
 
 ## 2. 沿一次真实请求看清 Runtime 骨架
 
-### 4. 一次用户请求在源码里到底怎样跑
+### 一次用户请求在源码里到底怎样跑
 
 先不要看细节，先把一次完整 Agent Turn（智能体轮次）讲成故事。
 
@@ -306,7 +306,7 @@ Inbox
 
 ---
 
-### 5. 为什么它不是“messages 数组 + while loop”
+### 为什么它不是“messages 数组 + while loop”
 
 很多简单 Agent 框架的状态中心是：
 
@@ -360,7 +360,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 ## 3. 四篇正文分别追哪条真实生命周期
 
-### 6. Context Lifecycle 学什么
+### Context Lifecycle 学什么
 
 [01｜Context Lifecycle](01-context-lifecycle.md) 会从“用户这一轮输入以后，模型究竟看到什么”出发，连续追：
 
@@ -378,7 +378,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 ---
 
-### 7. Memory Lifecycle 为什么这次标题会和前两个产品不同
+### Memory Lifecycle 为什么这次标题会和前两个产品不同
 
 [02｜Memory Lifecycle](02-memory-lifecycle.md) 最重要的源码结论不是“DeepSeek Harness 的 Memory 怎么实现”，而是：
 
@@ -420,7 +420,7 @@ Third-party Memory via MCP
 
 ---
 
-### 8. Tool Lifecycle 学什么
+### Tool Lifecycle 学什么
 
 [03｜Tool Lifecycle](03-tool-lifecycle.md) 会追完整链路：
 
@@ -455,7 +455,7 @@ Plugin register ToolDefinition
 
 ---
 
-### 9. Engineering & Evaluation 学什么
+### Engineering & Evaluation 学什么
 
 [04｜Engineering & Evaluation](04-engineering-evaluation.md) 会把长期运行问题放回来：
 
