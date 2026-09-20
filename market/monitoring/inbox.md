@@ -33,61 +33,14 @@
 
 ## 当前正式基线
 
-2026-09-20 17:00 Afternoon Search 写入前已再次逐个直接回读 `market/interviews/batch-01.md` ～ `batch-30.md` 全历史，并确认：
+2026-09-20 22:00 Evening Finalize 在分配编号前再次逐个直接回读 `market/interviews/batch-01.md` ～ `batch-30.md` 全历史，并确认归档前基线为 30 Batch / 289 HUMAN-A / 最大 `S289` / 下一 `S290`。最终两个候选再次通过 HUMAN-A + Role Scope + Stable Original + 全历史去重 Gate，已归档至 `batch-31.md`：
 
-- 正式 Batch：`batch-01.md` ～ `batch-30.md`，共 **30** 个；
-- HUMAN-A：`S001–S289`，共 **289** 个；
-- 最大编号：`S289`；
-- 下一保留编号：**`S290`**；
-- Afternoon 不分配 `Sxxx`、不创建 Batch；
+- 正式 Batch：`batch-01.md` ～ `batch-31.md`，共 **31** 个；
+- HUMAN-A：`S001–S291`，共 **291** 个；
+- 最大编号：`S291`；
+- 下一保留编号：**`S292`**；
 - `interview/canonical/` Frozen Canonical、`market/analysis/` Frozen 统计与 Curriculum 本轮均不修改。
 
 ## 当前 Inbox
 
-### Candidate A — 小红书｜AI 全栈开发实习｜一面｜面试 2026-08-25，发布 2026-09-18 15:43｜HUMAN-A
-
-作者：`中二的西红柿起床了`
-
-来源：https://www.nowcoder.com/feed/main/detail/c712eda7fbf44ba69835b6dd2ff7fc4c?sourceSSR=enterprise
-
-真人 / 第一人称证据：post-specific 原始正文可稳定直接回读。作者明确写“回忆一下”“大部分时间都在问项目”，保留“面试官不断提问让我说服他”“我终于投降了”“一面挂”等本人现场状态；同一账号还存在长期个人求职 / 学业记录和本周 Shopee 本人面经，个人候选人 Timeline 成立，不是批量内容号。
-
-Role Scope：标题直接标注 `小红书实习 AI全栈开发实习一面`；40 分钟主体持续围绕 Multi-Agent、Skill、RAG / Vector DB、Harness 与 Evaluation / Outcome 验真，明确属于 AI Full-stack / Agent 应用范围。
-
-代表性技术链：
-
-1. 项目做什么、为什么要做成 Multi-Agent、怎样编排？
-2. 面试官持续追问为什么 Multi-Agent 真有必要，要求候选人证明 Architecture Choice，而不是只报框架名。
-3. Skill 是什么，在项目中承担什么？
-4. RAG 怎样实现、Vector Database 怎样使用？
-5. 是否了解 Harness？
-6. 继续验真项目：怎样评测、真实成果是什么、同事是否反馈、准确率怎样、是否做过指定功能；候选人对未覆盖部分明确承认没有想到。
-7. 反问；无手撕、无传统八股，项目深挖约 40 分钟，一面未通过。
-
-去重：进入 Inbox 前已逐个直接回读 `batch-01.md`～`batch-30.md`。未发现该 URL、作者，或“Multi-Agent 必要性反复论证 → Skill → RAG / Vector DB → Harness → Evaluation / 同事反馈 / 准确率验真”的连续同场来源。GitHub exact URL / 作者搜索 0 命中仅作辅助证据。
-
-### Candidate B — Shopee｜Chatbot 研发实习｜一面｜面试 2026-09-18，发布 2026-09-19 16:25｜HUMAN-A
-
-作者：`中二的西红柿起床了`
-
-来源：https://www.nowcoder.com/feed/main/detail/9f02a7f8009d4aca9fc730a18b9f96cc
-
-真人 / 第一人称证据：post-specific 原始正文可稳定直接回读。作者逐题记录本人回答、停顿和不会的状态：第 K 大先回答排序，被继续追 Quick Sort 复杂度 / 原理 / 手写，随后明确记录“不会”“发呆”，最后用 `sort` 两行完成；文末写全程 20 多分钟和面后自评，现场痕迹强。与 Candidate A 为同一候选人、但不同公司独立招聘流程，按规则可分别暂存。
-
-Role Scope：岗位标题为 `chatbot研发实习`，技术主体连续覆盖 Agent、Function Call / Tool / MCP、RAG、AI Coding，再混合 Linux 与算法基础；实际面试职责明确属于 AI Application / Agent 类 Chatbot 研发，而非普通后端顺带问 AI。
-
-代表性技术链：
-
-1. 什么是 Agent？
-2. Function Call、Tool、MCP 分别是什么、怎样区分？
-3. 项目 RAG 怎样做，承载多大文档？
-4. Linux 常用命令，怎样查看 Process？
-5. Coding：数组第 K 大；从“排序后取第 K 个”继续追 Quick Sort 复杂度、排序机制与手写实现，再追其它方法。
-6. 平时怎样 AI Coding，有什么实际方法？
-7. 反问；整场 20 多分钟。
-
-去重：进入 Inbox 前已直接回读全部 30 个正式 Batch。历史虽有 Shopee `S081` / `S239` 等 Agent 场次，但作者、月份 / 日期、岗位流程、项目与连续题序不同；当前 URL 和作者未在正式库出现，没有同场或复制链证据。GitHub exact URL 搜索 0 命中仅作辅助。
-
-## 当前状态
-
-Afternoon Search 结束后：**Inbox 共 2 个候选流程，尚未分配任何 `Sxxx`。** 22:00 Finalize 必须重新直接回读全部正式 Batch，并再次核验两个来源是否仍稳定、是否出现更早 canonical source / 同流程后续轮次 / 复制链，再决定是否从当前真实下一编号 `S290` 连续归档。
+**空。** 2026-09-20 当日通过的两个候选已经在 Evening Finalize 归档为 `S290–S291`；下一轮从最近 3 天主动发现窗口继续搜索，只有再次通过全部 Gate 的新候选才进入本文件。

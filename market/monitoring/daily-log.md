@@ -445,3 +445,46 @@ Afternoon 重点排除 / 待追源：
 Afternoon 主要观察：**“Architecture Choice 必须被证明”正在成为 Agent 项目验真的更明确形式。** 小红书新候选不是停在“做了 Multi-Agent”，而是面试官反复要求解释为什么必须 Multi-Agent、怎样编排，再继续追 Harness、RAG 与 Evaluation / 真实反馈 / 准确率。这与过去单纯问框架定义不同，更接近“为什么这个架构真的必要、怎样用结果证明”。与此同时，Shopee Chatbot 仍把 Agent / MCP / RAG 与 Linux / Algorithm / AI Coding 放在同场，继续说明目标 AI Application 岗的 Foundation 不能弱化。以上只进入 Market Observation，不修改 Frozen Canonical、`market/analysis/` Frozen 统计或 Curriculum 正文。
 
 Afternoon 盲区：22:00 优先重新核验当前 2 个 Inbox 候选的稳定原帖与作者 Timeline，并再次直接回读全部正式 Batch 做最终去重；继续追字节广告团队、4399、携程、腾讯 AI 全栈、小红书 Agent 平台研发的 post-specific 原帖 / 作者 provenance，以及美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米和非牛客平台的新目标岗来源。质量门槛不变。
+
+### 22:00 Evening Search + Finalize
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-17 21:58 ～ 2026-09-20 21:58**；主动发现只使用窗口内新发布 / 更新，历史页面仅用于 provenance、作者 Timeline 与全库去重。
+- Baseline / full-history dedup：重新读取最新 `main`、`market/README.md`、Inbox、Daily Log、两份 Market Policy 与最新 `batch-30.md`，并在分配任何编号前再次**逐个直接回读 `market/interviews/batch-01.md`～`batch-30.md` 全历史**。确认归档前正式基线仍为 **30 Batch / 289 HUMAN-A / `S001–S289` / 最大 `S289` / 下一 `S290`**。晚间运行期间 `main` 又前进 6 个提交；compare 确认并发变更只涉及 `.github/workflows/`、`market/jobs/` 与 `tools/`，没有修改 monitoring / interviews，因此基于最新 HEAD 安全重放。根目录再次复核，**没有 `research/` 一级目录**。
+- Search effort：第三轮新增至少 **100 组定向 Query / Query 变体**，继续覆盖字节 / 抖音、阿里 / 千问、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场；岗位别名继续覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `Coding Agent` / `Harness` / `Runtime` / `Applied AI` / `FDE` / `RAG` / `大模型应用开发` / `智能体开发`，并重点复查字节广告团队、4399、携程、腾讯 AI 全栈、小红书 Agent 平台研发与非牛客平台盲区。
+- Verification effort：第三轮显式打开、回读或追源 **20+ 次**近期 post-specific 原帖、作者页、企业页、搜索结果与 provenance 入口；Search Snippet、企业聚合、答案化展示或只能取得页面壳的原帖不替代 Stable Original。
+- New HUMAN-A after Evening search：**0 个**。第三轮没有发现新的、同时满足最近 72 小时 + 真人面试官 + 候选人本人第一人称 + 高技术密度 + 目标 Role Scope + Stable Original + 全历史去重的独立招聘流程。
+- Final dedup：Afternoon Inbox 的两个候选重新与 `S001–S289` 全历史逐项核对，均再次通过最终 Gate；没有出现更早 canonical source、同公司同流程后续轮次或复制链证据。
+- Final Batch：创建 `batch-31.md`，按当前真实下一编号连续归档 **`S290–S291`**；归档后 Inbox 清空。
+
+Evening 重点复核：
+
+1. **小红书 AI 全栈开发实习一面｜`中二的西红柿起床了`**：post-specific 原帖晚间仍可稳定回读，作者、发布时间、现场失败状态和“为什么必须 Multi-Agent → 编排 → Skill → RAG / Vector DB → Harness → Evaluation / 成果 / 反馈 / 准确率”的连续追问完整。最终归档 `S290`。
+2. **Shopee Chatbot 研发实习一面｜同作者**：原帖晚间仍稳定可读；Agent → Function Call / Tool / MCP → RAG 文档规模 → Linux Process → 第 K 大 / Quick Sort 连续深追 → AI Coding 的题序和“不会 / 发呆 / 用 sort 两行完成”的现场状态完整。与 `S290` 是同一候选人、不同公司独立招聘流程，最终归档 `S291`。
+3. **字节广告团队 Agent 一 / 二面｜9/19 17:07**：当前 Search 层能够完整回读两轮问题，包含内部 Skill Platform 上传 / 下载 / 发布、本地 Runtime、AI 提效、营销秒杀、现场 Demo、Skill vs Function Call 与 Coding；但 direct post-specific open 仍只返回页面壳，且作者账号 / Timeline 未稳定闭环。技术价值很高但 provenance 仍不满足 Stable Original Gate，继续零贡献。
+4. **4399 Agent 开发 9/18｜`AAA野生原子弹批发`**：作者主页与完整 14 题索引保持可见，包含 Harness、十万级日志、Agent SQL 验错、90% 测试通过率来源和“如何证明不是只依赖 AI”；但 post-specific 详情正文仍未稳定闭环，继续待追源。
+5. **快手 AI 全栈 `明天会有好天气`**：全历史直接回读再次确认就是正式 `S282`，精确重复，零新增。
+6. **携程 9/18 AI 应用一 / 二面、腾讯 9/18 AI 全栈、小红书 9/20 Agent 平台研发**：仍主要依赖企业 / 话题索引或 Search Cache，候选人 post-specific 原始正文与作者 provenance 未完整闭环，不升级 HUMAN-A。
+7. **B站 9/19“大模型面试岗”**：正文明确为内容作者让一位学员复述其面试，属于二手转述而非候选人本人第一人称；且岗位偏算法，排除。
+8. **普通 Backend / Data / Test 岗近期 Agent / Memory / AI Coding 深挖**：继续严格按 Role Scope 排除；“出现 Agent 名词”不能替代目标职位证据。
+9. **合集 / 标准答案 / 内容号 / JD / 内推 / 聚合 / 新闻**：只用于发现与市场旁证，不贡献 HUMAN-A。
+
+### Final Summary
+
+- Three-round search effort：**至少 300 组 Query / Query 变体**（Morning ≥100 + Afternoon ≥100 + Evening ≥100）。
+- Three-round verification effort：**至少 75 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试（Morning 25+ + Afternoon 30+ + Evening 20+）；这是工作量次数，不代表 75 个唯一 URL。
+- Final additions：**2 个 HUMAN-A，`S290–S291`**。
+- Current formal Market library：**31 Batch / 291 HUMAN-A / `S001–S291`**。
+- Next ID：**`S292`**。
+- Inbox：归档后清空。
+- Frozen Canonical / `market/analysis/` / Curriculum：**本日不修改**；`S290–S291` 只进入后续 periodic canonical mapping / review candidate。
+
+当日主要市场信号：
+
+1. **Architecture Choice 必须被证明。** 真实面试已经从“用了 Multi-Agent”进一步追到为什么必须 Multi-Agent、为什么不能更简单、怎样编排，以及结果 / 准确率 / 使用者反馈能否证明架构值得存在。
+2. **Agent / MCP / RAG 与 Foundation 仍同场。** Shopee Chatbot 把 Agent、Function Call / Tool / MCP、RAG 与 Linux Process、Quick Sort 深追、AI Coding 放在同一场，应用岗的系统基础与算法能力不能弱化。
+3. **Skill / Runtime 正继续向平台级设计与现场验真下沉。** 字节广告团队待追源样本已经问内部 Skill Platform 发布、本地 Runtime、现场 Demo 与 Skill vs Function Call；provenance 未闭环，因此仅记 Market Observation，不计正式频率。
+4. **AI-assisted Engineering 的真实性验证继续增强。** 4399 待追源样本同时追 Harness、SQL 验错、测试通过率来源与“如何证明不是只依赖 AI 工具”；值得继续追，但当前不进入 HUMAN-A。
+5. **Role Scope Gate 需要继续收紧。** Agent / Memory / AI Coding 已扩散到普通 Backend / Data / Test 岗；术语出现本身越来越不能证明岗位主体属于目标范围。
+
+饱和度 / 盲区：最近 72 小时公开热门层继续呈现**局部饱和 + 高 provenance 成本**。牛客仍是最容易取得稳定候选人原帖的平台，但企业聚合、Search Cache、答案化页面与 post-specific Cache Miss 占比较高；字节广告团队、4399、携程、腾讯 AI 全栈、小红书 Agent 平台研发仍是最值得继续补 provenance 的近端线索。腾讯 / 美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米等目标公司，以及小红书 / 知乎 / 脉脉 / 独立博客等非牛客平台，在当前窗口内仍缺更多稳定可核验的新目标岗第一人称来源。继续补盲，但不降低 Gate。
