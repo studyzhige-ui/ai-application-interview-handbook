@@ -33,15 +33,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
+      - name: Check local Windows toolchain
+        shell: powershell
+        run: |
+          python -c "import sys; print(sys.version); assert sys.version_info >= (3, 12)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node -e "const major=Number(process.versions.node.split('.')[0]); console.log(process.version); if(major < 22) process.exit(1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Compile Python tools
         run: python -m compileall -q tools

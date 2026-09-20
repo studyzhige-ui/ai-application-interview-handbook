@@ -30,10 +30,13 @@ jobs:
           ref: ${{ github.ref_name }}
           fetch-depth: 0
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
+      - name: Check local Windows toolchain
+        shell: powershell
+        run: |
+          python -c "import sys; print(sys.version); assert sys.version_info >= (3, 12)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Apply reviewed canonical coverage audit
         run: python tools/apply_canonical_audit.py

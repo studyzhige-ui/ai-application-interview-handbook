@@ -15,10 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
+      - name: Check local Windows toolchain
+        shell: powershell
+        run: |
+          node -e "const major=Number(process.versions.node.split('.')[0]); console.log(process.version); if(major < 22) process.exit(1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git --version
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Install Playwright
         run: |
