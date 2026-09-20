@@ -31,6 +31,8 @@ jobs:
     name: Sync jobs (private / Windows self-hosted)
     if: github.event.repository.private == true
     runs-on: [self-hosted, Windows]
+    env:
+      PYTHONUTF8: "1"
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4

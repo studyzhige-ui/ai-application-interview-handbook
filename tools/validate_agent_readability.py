@@ -29,10 +29,10 @@ def main():
     errors=[];docs=sorted((ROOT/'curriculum/09-agent/docs').glob('*.md'));examples={};counts={'interviews':0,'self_tests':0,'pitfalls':0}
     if [p.name[:2] for p in docs]!=[f'{i:02}' for i in range(1,25)]:errors.append('Agent chapter count/numbering differs from 01-24')
     if (ROOT/'agent-harness').exists():errors.append('old parallel learning directory still exists')
-    homepage=(ROOT/'curriculum/09-agent/README.md').read_text()
+    homepage=(ROOT/'curriculum/09-agent/README.md').read_text(encoding="utf-8")
     found_ids=set();explicit={}
     for p in docs:
-        text=p.read_text();relative=p.relative_to(ROOT).as_posix()
+        text=p.read_text(encoding="utf-8");relative=p.relative_to(ROOT).as_posix()
         if not text.startswith('# '+p.name[:2]+'.'):errors.append(relative+': H1 number mismatch')
         if homepage.count('](docs/'+p.name+')')!=1:errors.append(relative+': homepage entry must be unique')
         try:prose,blocks=split_fences(text)
@@ -62,7 +62,7 @@ def main():
         ids=re.findall(r'<a\s+id="([^"]+)"',text)
         if len(ids)!=len(set(ids)):errors.append(relative+': duplicate explicit anchor')
         explicit[p.resolve()]=set(ids)
-    expected=set(re.findall(r'^###\s+(AGENT-\d{3})\s+·',(ROOT/'interview/canonical/agent-harness.md').read_text(),re.M))
+    expected=set(re.findall(r'^###\s+(AGENT-\d{3})\s+·',(ROOT/'interview/canonical/agent-harness.md').read_text(encoding="utf-8"),re.M))
     if len(expected)!=44 or expected!=found_ids:errors.append(f'Canonical mismatch: missing {expected-found_ids}, extra {found_ids-expected}')
     if set(examples)!=ALLOWED_EXAMPLES:errors.append('missing named teaching examples')
     total=0
@@ -75,7 +75,7 @@ def main():
         # Historical snapshots are intentionally preserved at a new archive path;
         # their old relative links describe the original location and are not rewritten.
         if 'history' in p.parts and p.name != 'README.md':continue
-        try:prose,_=split_fences(p.read_text())
+        try:prose,_=split_fences(p.read_text(encoding="utf-8"))
         except ValueError as exc:errors.append(str(p.relative_to(ROOT))+': '+str(exc));continue
         for target in re.findall(r'(?<!!)\[[^\]\n]*\]\(([^)\n]+)\)',prose):
             target=target.strip().split(' "',1)[0].strip('<>')
@@ -88,10 +88,10 @@ def main():
             if dest in explicit and anchor and (anchor.startswith(('legacy-','section-')) or anchor in ('human-a','interview','pitfalls','self-test')):
                 anchor_checks+=1
                 if anchor not in explicit[dest]:errors.append(f'{p.relative_to(ROOT)} -> {target}: missing explicit anchor')
-    report=(ROOT/'guide/project/agent-reader-revision.md').read_text()
+    report=(ROOT/'guide/project/agent-reader-revision.md').read_text(encoding="utf-8")
     mapped=re.findall(r'^\| (\d{2})/(\d{2}) \|',report,re.M)
     if len(mapped)!=395 or len(set(mapped))!=395:errors.append('original numbered-section disposition map must have 395 unique entries')
-    drills=(ROOT/'curriculum/09-agent/interview/高频面试题.md').read_text()
+    drills=(ROOT/'curriculum/09-agent/interview/高频面试题.md').read_text(encoding="utf-8")
     if len(re.findall(r'^### \d+\.',drills,re.M))!=56:errors.append('centralized 56-question scope not retained')
     print(f'Agent: {len(docs)} chapters; curriculum: {total}; Agent Canonical: {len(expected)}')
     print('Chapter endcaps:',counts)
