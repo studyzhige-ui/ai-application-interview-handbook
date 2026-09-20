@@ -280,7 +280,7 @@ def fetch_bytedance(src: dict) -> list[Job]:
 
 def fetch_sangfor_campus(src: dict) -> list[Job]:
     """Enumerate Sangfor's official campus API without relying on its slow SPA."""
-    api = "https://hr.sangfor.com/api/api/Jobs"
+    api = "https://hr.sangfor.com/api/Jobs"
     headers = {
         **HEADERS,
         "Origin": "https://hr.sangfor.com",
@@ -2127,7 +2127,7 @@ def main() -> int:
             f"- **官方 Requisition**：{len(f['requisitions'])} 个",
         ]
         for req in f["requisitions"]:
-            prefix = (f"\`{req['job_id']}\` · " if req.get("job_id") else "")
+            prefix = (f"`{req['job_id']}` · " if req.get("job_id") else "")
             loc = (f" · {req['location']}" if req.get("location") else "")
             url = (f" · {req['official_url']}" if req.get("official_url") else "")
             lines.append(f"  - {prefix}{req['title']}{loc}{url}")
