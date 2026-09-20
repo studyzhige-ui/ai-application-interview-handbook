@@ -50,7 +50,9 @@ MCP、Skill、Filesystem、Bash、Subagent 甚至 PTC（Programmatic Tool Callin
 
 ---
 
-## 1. 一个 ToolDefinition 为什么同时有 Value 和 Content
+## 1. Tool 怎样进入模型的能力面
+
+### 1. 一个 ToolDefinition 为什么同时有 Value 和 Content
 
 核心实现：
 
@@ -90,7 +92,7 @@ Report: /tmp/report.json
 
 供模型读取。
 
-### 为什么不直接让 Tool 返回字符串
+#### 为什么不直接让 Tool 返回字符串
 
 因为同一个 Tool Result 可能同时服务：
 
@@ -121,7 +123,7 @@ Model Projection
 
 ---
 
-## 2. Tool Registry 也是 Scoped 的
+### 2. Tool Registry 也是 Scoped 的
 
 `ctx.tools` 不是一个全局不可变 Map。
 
@@ -142,7 +144,7 @@ Agent 的 Tool View（工具视图）还可以通过：
 
 进一步收窄。
 
-### 为什么这对 Subagent 很重要
+#### 为什么这对 Subagent 很重要
 
 一个 Parent Agent 有：
 
@@ -163,7 +165,7 @@ Subagent 创建时会有自己的 scope，再根据 composition / filter 形成�
 
 ---
 
-## 3. 模型真正看到的 Tool Schema 从哪里来
+### 3. 模型真正看到的 Tool Schema 从哪里来
 
 System Prompt Service 在：
 
@@ -191,7 +193,9 @@ Tool Runtime 只把模型需要的部分暴露出去，例如：
 
 ---
 
-## 4. 模型 Tool Call 为什么必须先写 `tool/call` 再执行
+## 2. 一次 Tool Call 怎样安全地走完整 Pipeline
+
+### 4. 模型 Tool Call 为什么必须先写 `tool/call` 再执行
 
 Tool 调度主要在：
 
@@ -236,7 +240,7 @@ Crash Recovery 后可以区分：
 
 ---
 
-## 5. Argument Validation 为什么发生在执行前，而且参数不能被任意重写
+### 5. Argument Validation 为什么发生在执行前，而且参数不能被任意重写
 
 Tool Runtime 会先把模型提供的参数：
 
@@ -278,7 +282,7 @@ DSH 因此把“Argument Rewrite”排除在 Pre Tool Decision 之外。
 
 ---
 
-## 6. `tools/pre-execute` 解决什么
+### 6. `tools/pre-execute` 解决什么
 
 这是第一层 extensible policy（可扩展策略）。
 
@@ -289,15 +293,15 @@ DSH 因此把“Argument Rewrite”排除在 Pre Tool Decision 之外。
 -cancel；
 -ask。
 
-### deny
+#### deny
 
 直接变成一个 Tool Error Result，不执行 Tool Body。
 
-### cancel
+#### cancel
 
 产生规范 cancellation result。
 
-### ask
+#### ask
 
 调用 Approval Service。
 
@@ -315,7 +319,7 @@ DSH 因此把“Argument Rewrite”排除在 Pre Tool Decision 之外。
 
 全部 fail closed。
 
-### 为什么 missing approval 也要 deny
+#### 为什么 missing approval 也要 deny
 
 Headless deployment（无界面部署）很可能没有人能弹批准框。
 
@@ -331,7 +335,7 @@ Headless deployment（无界面部署）很可能没有人能弹批准框。
 
 ---
 
-## 7. 为什么 Pre-execute 后面还有 Monotonic Guard
+### 7. 为什么 Pre-execute 后面还有 Monotonic Guard
 
 Tool Runtime 还支持：
 
@@ -365,7 +369,7 @@ Guard 没有 allow vocabulary（允许词汇），所以只能缩小权限。
 
 ---
 
-## 8. Approval 是 Tool Pipeline 的一层，不是 Tool Runtime 本身
+### 8. Approval 是 Tool Pipeline 的一层，不是 Tool Runtime 本身
 
 Approval Service：
 
@@ -397,7 +401,7 @@ approval/decided
 
 模型只看到最终 Tool Result。
 
-### 为什么 Approval 不带一份完整 Tool Args 副本
+#### 为什么 Approval 不带一份完整 Tool Args 副本
 
 源码设计让 Approval Request 可以通过 `callId` 关联 UI 已经展示的 Tool Call。
 
@@ -407,7 +411,7 @@ approval/decided
 
 ---
 
-## 9. Permission Preset 为什么不是新的安全机制
+### 9. Permission Preset 为什么不是新的安全机制
 
 用户界面更希望看到：
 
@@ -456,7 +460,7 @@ danger-full-access
 
 ---
 
-## 10. Sandbox 管的是文件副作用，不是所有安全问题
+### 10. Sandbox 管的是文件副作用，不是所有安全问题
 
 Process Sandbox：
 
@@ -482,7 +486,7 @@ danger-full-access
 
 > “进了 Sandbox 就什么都安全了。”
 
-### per-call policy
+#### per-call policy
 
 Sandbox Policy 不是一个全局开关。
 
@@ -506,7 +510,7 @@ read-only /repo/b
 
 ---
 
-## 11. Local Sandbox Provider 怎样做到 fail closed
+### 11. Local Sandbox Provider 怎样做到 fail closed
 
 当前 Local Provider 会根据平台选择：
 
@@ -544,7 +548,7 @@ Sandbox Runner 根本没成功启动命令
 
 ---
 
-## 12. `tools/execute` 为什么是 Around-dispatch Wrapper
+### 12. `tools/execute` 为什么是 Around-dispatch Wrapper
 
 通过 Pre Policy 和 Guard 后，调用进入：
 
@@ -569,7 +573,7 @@ Wrapper 可以代理下游执行。
 
 ---
 
-## 13. Tool Body 返回以后为什么还不能立刻写 Result
+### 13. Tool Body 返回以后为什么还不能立刻写 Result
 
 Tool Body 返回 canonical value 后，Runtime 还要经过：
 
@@ -583,7 +587,7 @@ Post Policy 可以：
 -附加 additional context；
 -block 并变成 corrective error。
 
-### 替换 Value 和 Content 为什么互斥
+#### 替换 Value 和 Content 为什么互斥
 
 如果同时说：
 
@@ -604,7 +608,7 @@ DSH 要求一次决策只选一类：
 
 ---
 
-## 14. `finalizeContent` 为什么在 Post Policy 后面
+### 14. `finalizeContent` 为什么在 Post Policy 后面
 
 某些 Tool 的最终 model content 需要结合执行后信息。
 
@@ -631,7 +635,7 @@ Post Policy 如果没有改掉结果，再由：
 
 ---
 
-## 15. `tools/result` 是观察点，不是再修改点
+### 15. `tools/result` 是观察点，不是再修改点
 
 所有 normalization（规范化）完成以后，Runtime deep freeze：
 
@@ -654,7 +658,7 @@ Post Policy 如果没有改掉结果，再由：
 
 ---
 
-## 16. Agent Loop 为什么并发执行，却按模型顺序提交 Result
+### 16. Agent Loop 为什么并发执行，却按模型顺序提交 Result
 
 一条 Assistant Message 可能同时要求：
 
@@ -681,7 +685,7 @@ A、B、C 可以并发跑
 
 这样模型历史不会因为网络 / 文件速度不同而每次产生随机顺序。
 
-### Exclusive Tool
+#### Exclusive Tool
 
 如果某 Tool 被判定为 exclusive：
 
@@ -693,7 +697,7 @@ A、B、C 可以并发跑
 
 ---
 
-## 17. Cancellation 时为什么还要给“未启动 Tool”补结果
+### 17. Cancellation 时为什么还要给“未启动 Tool”补结果
 
 假设模型一次请求了 5 个 Tool。
 
@@ -724,7 +728,9 @@ assistant: tool-call X
 
 ---
 
-## 18. PTC 是什么：让模型用代码编排 Tool，而不是一次只 Call 一个
+## 3. PTC：把多个 Tool 调用变成受控程序编排
+
+### 18. PTC 是什么：让模型用代码编排 Tool，而不是一次只 Call 一个
 
 Tool Runtime 支持三种 presentation mode（呈现模式）：
 
@@ -752,7 +758,7 @@ const b = await tools.search(...)
 return { a, b }
 ~~~
 
-### 为什么这很有价值
+#### 为什么这很有价值
 
 复杂任务可能需要：
 
@@ -769,7 +775,7 @@ PTC 允许在一个程序里完成一段 deterministic orchestration（确定性
 
 ---
 
-## 19. PTC 不是绕过 Tool Permission
+### 19. PTC 不是绕过 Tool Permission
 
 这是最容易误解的地方。
 
@@ -798,7 +804,7 @@ PTC 只是新的 orchestration surface（编排表面），不是新的 authorit
 
 ---
 
-## 20. PTC Runtime 本身又怎样隔离
+### 20. PTC Runtime 本身又怎样隔离
 
 默认 Node PTC Runtime：
 
@@ -829,7 +835,9 @@ Program-visible `process.env` 会被清空，Host 和 Child 通过受限 control
 
 ---
 
-## 21. Skill 怎样建立在 Tool Runtime 之上
+## 4. Skill：先暴露目录，再按需加载完整能力
+
+### 21. Skill 怎样建立在 Tool Runtime 之上
 
 Skills 分为：
 
@@ -837,7 +845,7 @@ Skills 分为：
 -`dsh-skill-filesystem`：Filesystem Provider；
 -`dsh-tool-skill`：模型可见 Loader。
 
-### 第一阶段：只发布目录摘要
+#### 第一阶段：只发布目录摘要
 
 Tool Skill 会在 `agent/pre-step` 读取当前可见 Skills。
 
@@ -854,7 +862,7 @@ Tool Skill 会在 `agent/pre-step` 读取当前可见 Skills。
 
 完整正文此时不进入 Context。
 
-### 第二阶段：模型按需调用 `skill`
+#### 第二阶段：模型按需调用 `skill`
 
 模型判断某个 Skill 相关后：
 
@@ -864,7 +872,7 @@ skill({ name })
 
 Tool Runtime 再真正读取完整 Skill Content。
 
-### 用户显式 `/name`
+#### 用户显式 `/name`
 
 如果 direct user message 明确包含一个 user-invocable Skill gesture：
 
@@ -876,7 +884,7 @@ Tool Runtime 再真正读取完整 Skill Content。
 
 ---
 
-## 22. Skill Catalog 为什么也要 durable
+### 22. Skill Catalog 为什么也要 durable
 
 Skill Provider 可以在运行时变化。
 
@@ -906,7 +914,9 @@ Tool Skill 会检测 digest 变化，写一个完整 replacement catalog message
 
 ---
 
-## 23. MCP Tool 怎样进入普通 Tool Runtime
+## 5. MCP：外部工具怎样进入同一 Runtime
+
+### 23. MCP Tool 怎样进入普通 Tool Runtime
 
 MCP Client：
 
@@ -920,7 +930,7 @@ Model-facing name：
 
 `mcp__<serverName>__<rawName>`
 
-### 为什么 Server Name 来自本地配置，不信远端
+#### 为什么 Server Name 来自本地配置，不信远端
 
 远端 `serverInfo.name`：
 
@@ -934,7 +944,7 @@ Raw name 仍然只用于真正 `tools/call` Wire Protocol。
 
 ---
 
-## 24. MCP Tool 更新为什么要“整代替换”
+### 24. MCP Tool 更新为什么要“整代替换”
 
 MCP Server 可能动态改变 Tool List。
 
@@ -966,7 +976,7 @@ DeepSeek Harness 不会：
 
 ---
 
-## 25. MCP 断线时为什么最后已知 Tool 还先保留
+### 25. MCP 断线时为什么最后已知 Tool 还先保留
 
 MCP Connection Supervisor 有 reconnect policy（重连策略）。
 
@@ -986,7 +996,7 @@ MCP Connection Supervisor 有 reconnect policy（重连策略）。
 
 ---
 
-## 26. MCP Memory 为什么不需要一条特殊 Tool Pipeline
+### 26. MCP Memory 为什么不需要一条特殊 Tool Pipeline
 
 Memory 篇已经讲过：
 
@@ -1014,13 +1024,15 @@ MCP Tool
 
 ---
 
-## 27. 一个完整 Tool Call 例子
+## 6. 把 Tool 生命周期串起来，并知道怎样验证
+
+### 27. 一个完整 Tool Call 例子
 
 用户说：
 
 > “搜索项目里所有旧 API 的调用，然后用 Memory Server 记住迁移原则，最后修改代码。”
 
-### 模型请求
+#### 模型请求
 
 当前 Tool Schemas 包含：
 
@@ -1029,7 +1041,7 @@ MCP Tool
 -skill；
 -Bash。
 
-### Search
+#### Search
 
 模型 Call 搜索 Tool。
 
@@ -1051,7 +1063,7 @@ Renderer 生成 model-facing content。
 
 `tool/result`
 
-### Memory Write
+#### Memory Write
 
 模型调用：
 
@@ -1065,7 +1077,7 @@ Approval Service 记录 audit 并等待 answerer。
 
 获准后执行 MCP。
 
-### Edit
+#### Edit
 
 文件修改进入 Sandbox Policy。
 
@@ -1075,7 +1087,7 @@ Approval Service 记录 audit 并等待 answerer。
 
 修改完成后 durable result 写回。
 
-### 下一 Step
+#### 下一 Step
 
 `deriveMessages()`
 
@@ -1085,24 +1097,24 @@ Approval Service 记录 audit 并等待 answerer。
 
 ---
 
-## 28. Tool 应该怎样评测
+### 28. Tool 应该怎样评测
 
 至少分六层。
 
-### Schema
+#### Schema
 
 -无效 JSON 是否拒绝；
 -oneOf 是否正确；
 -output schema 是否真正校验；
 -MCP malformed schema 是否 fail。
 
-### Discovery / Scope
+#### Discovery / Scope
 
 - Agent restriction 是否真的同时影响 schema 和 executable lookup；
 -Skill Catalog 和实际 Loader visibility 是否一致；
 -MCP generation swap 是否原子。
 
-### Policy
+#### Policy
 
 - pre-execute deny；
 -monotonic guard；
@@ -1112,7 +1124,7 @@ Approval Service 记录 audit 并等待 answerer。
 
 都应该 fail closed。
 
-### Execution
+#### Execution
 
 - timeout；
 -cancel；
@@ -1121,13 +1133,13 @@ Approval Service 记录 audit 并等待 answerer。
 -MCP disconnect；
 -PTC nested call。
 
-### Persistence
+#### Persistence
 
 -每个 durable `tool/call` 是否有合法 settlement；
 -取消时未 dispatch call 是否补 synthetic result；
 -PTC sub-dispatch logging 是否保持父子 identity。
 
-### End-to-End
+#### End-to-End
 
 最终还要测：
 
@@ -1137,7 +1149,7 @@ Approval Service 记录 audit 并等待 answerer。
 
 ---
 
-## 29. 源码锚点
+## 7. 源码锚点
 
 1. [`packages/core/tools/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/tools/README.md)：Tool contract、PTC、Policy、Output。
 2. [`packages/core/tools/src/index.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/tools/src/index.ts)：ToolRuntime Pipeline。
