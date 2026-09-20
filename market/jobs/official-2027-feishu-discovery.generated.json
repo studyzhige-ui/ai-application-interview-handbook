@@ -1,55 +1,45 @@
 {
-  "generated_at": "2026-09-19T10:17:39.326Z",
-  "keywords": [
-    "Agent",
-    "AI Agent",
-    "智能体",
-    "AI应用",
-    "AI 应用",
-    "大模型应用",
-    "LLM应用",
-    "AI Native",
-    "Coding Agent",
-    "Code Agent",
-    "RAG",
-    "Harness",
-    "Runtime",
-    "Agent Infra",
-    "MCP",
-    "Skill"
-  ],
+  "generated_at": "2026-09-20T14:33:15.712Z",
   "results": [
     {
-      "company": "得物",
-      "portal": "https://poizon.jobs.feishu.cn/578078/",
+      "company": "生数科技",
+      "portal": "https://shengshu.jobs.feishu.cn/index/",
       "status": "BLOCKED",
-      "requests": 0,
+      "complete": false,
+      "full_keyword_search": false,
       "jobs": [],
-      "error": "campus: Error: 得物 campus HTTP 405 | social: Error: 得物 social HTTP 405"
+      "discovered_jobs": 27,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     },
     {
-      "company": "MiniMax",
-      "portal": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
+      "company": "面壁智能",
+      "portal": "https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH",
       "status": "BLOCKED",
-      "requests": 0,
+      "complete": false,
+      "full_keyword_search": false,
       "jobs": [],
-      "error": "campus: Error: MiniMax campus HTTP 405 | social: Error: MiniMax social HTTP 405"
+      "discovered_jobs": 29,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     },
     {
-      "company": "百川智能",
-      "portal": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
+      "company": "昆仑万维/天工",
+      "portal": "https://jobs.kunlun.com/459522/position/list",
       "status": "BLOCKED",
-      "requests": 0,
+      "complete": false,
+      "full_keyword_search": false,
       "jobs": [],
-      "error": "campus: Error: 百川智能 campus HTTP 405 | social: Error: 百川智能 social HTTP 405"
+      "discovered_jobs": 8,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     },
     {
-      "company": "零一万物/01.AI",
-      "portal": "https://01ai.jobs.feishu.cn/index/",
+      "company": "度小满",
+      "portal": "https://campus.duxiaoman.com/",
       "status": "BLOCKED",
-      "requests": 0,
+      "complete": false,
+      "full_keyword_search": false,
       "jobs": [],
-      "error": "campus: Error: 零一万物/01.AI campus HTTP 405 | social: Error: 零一万物/01.AI social HTTP 405"
+      "discovered_jobs": 23,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     }
   ]
 }
