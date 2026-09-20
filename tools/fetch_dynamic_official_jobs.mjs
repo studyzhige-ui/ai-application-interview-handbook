@@ -14,7 +14,7 @@ const ROOT = process.cwd();
 const CONFIG = JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.json","utf8"));
 const OUT = process.argv[2] || "market/jobs/official-2027-browser-discovery.generated.json";
 
-const SEARCH_TERMS = CONFIG.strong_agent_keywords || CONFIG.agent_keywords || [];
+const SEARCH_TERMS = CONFIG.search_keywords || CONFIG.strong_agent_keywords || CONFIG.agent_keywords || [];
 const STRONG = SEARCH_TERMS.map(x=>x.toLowerCase());
 const COMPANY_BUDGET_MS=Math.max(15000,Number(process.env.COMPANY_BUDGET_MS||"45000"));
 const TITLE_KEYS = ["positionName","jobName","jobTitle","positionTitle","recruitPostName","postName","title","name"];
@@ -134,7 +134,8 @@ async function openJobSearchSurface(page){
 async function collectSearchPages(page,keyword){
   const hits=[];
   const seenSignatures=new Set();
-  for(let step=0;step<30;step++){
+  const maxSteps=keyword==="__FULL_LIST__"?30:10;
+  for(let step=0;step<maxSteps;step++){
     await page.waitForTimeout(step===0?650:350);
     await scroll(page);
     const pageHits=await jobLinksOnPage(page,keyword);
