@@ -52,7 +52,7 @@ MCP、Skill、Filesystem、Bash、Subagent 甚至 PTC（Programmatic Tool Callin
 
 ## 1. Tool 怎样进入模型的能力面
 
-### 1. 一个 ToolDefinition 为什么同时有 Value 和 Content
+### 一个 ToolDefinition 为什么同时有 Value 和 Content
 
 核心实现：
 
@@ -123,7 +123,7 @@ Model Projection
 
 ---
 
-### 2. Tool Registry 也是 Scoped 的
+### Tool Registry 也是 Scoped 的
 
 `ctx.tools` 不是一个全局不可变 Map。
 
@@ -165,7 +165,7 @@ Subagent 创建时会有自己的 scope，再根据 composition / filter 形成�
 
 ---
 
-### 3. 模型真正看到的 Tool Schema 从哪里来
+### 模型真正看到的 Tool Schema 从哪里来
 
 System Prompt Service 在：
 
@@ -195,7 +195,7 @@ Tool Runtime 只把模型需要的部分暴露出去，例如：
 
 ## 2. 一次 Tool Call 怎样安全地走完整 Pipeline
 
-### 4. 模型 Tool Call 为什么必须先写 `tool/call` 再执行
+### 模型 Tool Call 为什么必须先写 `tool/call` 再执行
 
 Tool 调度主要在：
 
@@ -240,7 +240,7 @@ Crash Recovery 后可以区分：
 
 ---
 
-### 5. Argument Validation 为什么发生在执行前，而且参数不能被任意重写
+### Argument Validation 为什么发生在执行前，而且参数不能被任意重写
 
 Tool Runtime 会先把模型提供的参数：
 
@@ -282,7 +282,7 @@ DSH 因此把“Argument Rewrite”排除在 Pre Tool Decision 之外。
 
 ---
 
-### 6. `tools/pre-execute` 解决什么
+### `tools/pre-execute` 解决什么
 
 这是第一层 extensible policy（可扩展策略）。
 
@@ -335,7 +335,7 @@ Headless deployment（无界面部署）很可能没有人能弹批准框。
 
 ---
 
-### 7. 为什么 Pre-execute 后面还有 Monotonic Guard
+### 为什么 Pre-execute 后面还有 Monotonic Guard
 
 Tool Runtime 还支持：
 
@@ -369,7 +369,7 @@ Guard 没有 allow vocabulary（允许词汇），所以只能缩小权限。
 
 ---
 
-### 8. Approval 是 Tool Pipeline 的一层，不是 Tool Runtime 本身
+### Approval 是 Tool Pipeline 的一层，不是 Tool Runtime 本身
 
 Approval Service：
 
@@ -411,7 +411,7 @@ approval/decided
 
 ---
 
-### 9. Permission Preset 为什么不是新的安全机制
+### Permission Preset 为什么不是新的安全机制
 
 用户界面更希望看到：
 
@@ -460,7 +460,7 @@ danger-full-access
 
 ---
 
-### 10. Sandbox 管的是文件副作用，不是所有安全问题
+### Sandbox 管的是文件副作用，不是所有安全问题
 
 Process Sandbox：
 
@@ -510,7 +510,7 @@ read-only /repo/b
 
 ---
 
-### 11. Local Sandbox Provider 怎样做到 fail closed
+### Local Sandbox Provider 怎样做到 fail closed
 
 当前 Local Provider 会根据平台选择：
 
@@ -548,7 +548,7 @@ Sandbox Runner 根本没成功启动命令
 
 ---
 
-### 12. `tools/execute` 为什么是 Around-dispatch Wrapper
+### `tools/execute` 为什么是 Around-dispatch Wrapper
 
 通过 Pre Policy 和 Guard 后，调用进入：
 
@@ -573,7 +573,7 @@ Wrapper 可以代理下游执行。
 
 ---
 
-### 13. Tool Body 返回以后为什么还不能立刻写 Result
+### Tool Body 返回以后为什么还不能立刻写 Result
 
 Tool Body 返回 canonical value 后，Runtime 还要经过：
 
@@ -608,7 +608,7 @@ DSH 要求一次决策只选一类：
 
 ---
 
-### 14. `finalizeContent` 为什么在 Post Policy 后面
+### `finalizeContent` 为什么在 Post Policy 后面
 
 某些 Tool 的最终 model content 需要结合执行后信息。
 
@@ -635,7 +635,7 @@ Post Policy 如果没有改掉结果，再由：
 
 ---
 
-### 15. `tools/result` 是观察点，不是再修改点
+### `tools/result` 是观察点，不是再修改点
 
 所有 normalization（规范化）完成以后，Runtime deep freeze：
 
@@ -658,7 +658,7 @@ Post Policy 如果没有改掉结果，再由：
 
 ---
 
-### 16. Agent Loop 为什么并发执行，却按模型顺序提交 Result
+### Agent Loop 为什么并发执行，却按模型顺序提交 Result
 
 一条 Assistant Message 可能同时要求：
 
@@ -697,7 +697,7 @@ A、B、C 可以并发跑
 
 ---
 
-### 17. Cancellation 时为什么还要给“未启动 Tool”补结果
+### Cancellation 时为什么还要给“未启动 Tool”补结果
 
 假设模型一次请求了 5 个 Tool。
 
@@ -730,7 +730,7 @@ assistant: tool-call X
 
 ## 3. PTC：把多个 Tool 调用变成受控程序编排
 
-### 18. PTC 是什么：让模型用代码编排 Tool，而不是一次只 Call 一个
+### PTC 是什么：让模型用代码编排 Tool，而不是一次只 Call 一个
 
 Tool Runtime 支持三种 presentation mode（呈现模式）：
 
@@ -775,7 +775,7 @@ PTC 允许在一个程序里完成一段 deterministic orchestration（确定性
 
 ---
 
-### 19. PTC 不是绕过 Tool Permission
+### PTC 不是绕过 Tool Permission
 
 这是最容易误解的地方。
 
@@ -804,7 +804,7 @@ PTC 只是新的 orchestration surface（编排表面），不是新的 authorit
 
 ---
 
-### 20. PTC Runtime 本身又怎样隔离
+### PTC Runtime 本身又怎样隔离
 
 默认 Node PTC Runtime：
 
@@ -837,7 +837,7 @@ Program-visible `process.env` 会被清空，Host 和 Child 通过受限 control
 
 ## 4. Skill：先暴露目录，再按需加载完整能力
 
-### 21. Skill 怎样建立在 Tool Runtime 之上
+### Skill 怎样建立在 Tool Runtime 之上
 
 Skills 分为：
 
@@ -884,7 +884,7 @@ Tool Runtime 再真正读取完整 Skill Content。
 
 ---
 
-### 22. Skill Catalog 为什么也要 durable
+### Skill Catalog 为什么也要 durable
 
 Skill Provider 可以在运行时变化。
 
@@ -916,7 +916,7 @@ Tool Skill 会检测 digest 变化，写一个完整 replacement catalog message
 
 ## 5. MCP：外部工具怎样进入同一 Runtime
 
-### 23. MCP Tool 怎样进入普通 Tool Runtime
+### MCP Tool 怎样进入普通 Tool Runtime
 
 MCP Client：
 
@@ -944,7 +944,7 @@ Raw name 仍然只用于真正 `tools/call` Wire Protocol。
 
 ---
 
-### 24. MCP Tool 更新为什么要“整代替换”
+### MCP Tool 更新为什么要“整代替换”
 
 MCP Server 可能动态改变 Tool List。
 
@@ -976,7 +976,7 @@ DeepSeek Harness 不会：
 
 ---
 
-### 25. MCP 断线时为什么最后已知 Tool 还先保留
+### MCP 断线时为什么最后已知 Tool 还先保留
 
 MCP Connection Supervisor 有 reconnect policy（重连策略）。
 
@@ -996,7 +996,7 @@ MCP Connection Supervisor 有 reconnect policy（重连策略）。
 
 ---
 
-### 26. MCP Memory 为什么不需要一条特殊 Tool Pipeline
+### MCP Memory 为什么不需要一条特殊 Tool Pipeline
 
 Memory 篇已经讲过：
 
@@ -1026,7 +1026,7 @@ MCP Tool
 
 ## 6. 把 Tool 生命周期串起来，并知道怎样验证
 
-### 27. 一个完整 Tool Call 例子
+### 一个完整 Tool Call 例子
 
 用户说：
 
@@ -1097,7 +1097,7 @@ Approval Service 记录 audit 并等待 answerer。
 
 ---
 
-### 28. Tool 应该怎样评测
+### Tool 应该怎样评测
 
 至少分六层。
 
