@@ -9,13 +9,23 @@ on:
 
 permissions:
   actions: write
-  contents: read
+  contents: write
+
+concurrency:
+  group: cleanup-stale-actions
+  cancel-in-progress: true
 
 jobs:
   cleanup:
     runs-on: [self-hosted, Windows]
     timeout-minutes: 10
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
       - name: Cancel stale active workflow runs
         shell: powershell
         env:
@@ -63,3 +73,19 @@ jobs:
           }
 
           Write-Host "Cancellation requests sent: $($cancelled.Count)"
+
+      - name: Remove one-shot cleanup workflow
+        shell: powershell
+        run: |
+          git fetch origin main
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git reset --hard origin/main
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git rm .github/workflows/cleanup-stale-actions.yml
+          git commit -m 'ci: remove one-shot stale Actions cleanup'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git push origin HEAD:main
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
