@@ -15,7 +15,7 @@ const CONFIG = JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sour
 const OUT = process.argv[2] || "market/jobs/official-2027-browser-discovery.generated.json";
 
 const SEARCH_TERMS = CONFIG.search_keywords || CONFIG.strong_agent_keywords || CONFIG.agent_keywords || [];
-const STRONG = SEARCH_TERMS.map(x=>x.toLowerCase());
+const STRONG = [...new Set([...SEARCH_TERMS,"fde"])].map(x=>x.toLowerCase());
 const COMPANY_BUDGET_MS=Math.max(15000,Number(process.env.COMPANY_BUDGET_MS||"45000"));
 const TITLE_KEYS = ["positionName","jobName","jobTitle","positionTitle","recruitPostName","postName","title","name"];
 const ID_KEYS = ["positionId","jobId","postId","publishId","reqId","id","code"];

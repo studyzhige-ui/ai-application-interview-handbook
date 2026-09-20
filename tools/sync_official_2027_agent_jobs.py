@@ -2150,9 +2150,11 @@ def main() -> int:
         if explicit:
             return True
 
-        # FDE and generic "large-model R&D/development engineer" titles are admitted
-        # only when their first-party JD clearly describes Agent/RAG/application work.
+        # AI-qualified FDE titles are explicit AI engineering roles. Generic FDE
+        # titles still require first-party JD evidence of Agent/RAG/application work.
         body_hits = {k for k in body_agent_signals if k in body}
+        if "fde" in title and any(k in title for k in ("ai", "大模型", "智能体", "agent")):
+            return True
         if "fde" in title and len(body_hits) >= 2:
             return True
         if any(k in title for k in ("大模型研发工程师", "大模型开发工程师")) and any(
