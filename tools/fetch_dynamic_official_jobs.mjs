@@ -410,7 +410,9 @@ async function processSource(browser,src){
 }
 
 async function main(){
-  const allSources=CONFIG.sources.filter(s=>s.mode==="portal_only" || s.browser_probe===true);
+  // Dedicated API / direct ATS adapters are enumerated later by the sync layer.
+  // Playwright is reserved for sources that genuinely need browser/XHR discovery.
+  const allSources=CONFIG.sources.filter(s=>s.mode==="portal_only");
   const shardCount=Math.max(1,Number(process.env.SHARD_COUNT||"1"));
   const shardIndex=Math.max(0,Number(process.env.SHARD_INDEX||"0"));
   const sources=allSources.filter((_,i)=>i % shardCount === shardIndex);
