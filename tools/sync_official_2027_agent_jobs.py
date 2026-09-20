@@ -277,6 +277,69 @@ def fetch_bytedance(src: dict) -> list[Job]:
     return out
 
 
+def fetch_sangfor_campus(src: dict) -> list[Job]:
+    """Enumerate Sangfor's official campus API without relying on its slow SPA."""
+    api = "https://hr.sangfor.com/api/api/Jobs"
+    headers = {
+        **HEADERS,
+        "Origin": "https://hr.sangfor.com",
+        "Referer": "https://hr.sangfor.com/schoolRecruitment",
+    }
+    out: list[Job] = []
+    page = 1
+    total = None
+    while page <= 100:
+        payload = {
+            "channelId": 101,
+            "page": page,
+            "pageSize": 100,
+            "departmentId": 0,
+            "functionId": 0,
+            "kw": "",
+            "locationId": 0,
+            "workPlaceId": 0,
+        }
+        data = post_json(api, payload=payload, headers=headers)
+        root = data.get("data") or data.get("Data") or data
+        rows: list[dict[str, Any]] = []
+        if isinstance(root, list):
+            rows = [x for x in root if isinstance(x, dict)]
+        elif isinstance(root, dict):
+            for key in ("list", "rows", "items", "jobs", "data", "records"):
+                value = root.get(key)
+                if isinstance(value, list):
+                    rows = [x for x in value if isinstance(x, dict)]
+                    break
+            if total is None:
+                for key in ("total", "count", "Total", "Count"):
+                    if root.get(key) is not None:
+                        try:
+                            total = int(root.get(key))
+                        except Exception:
+                            pass
+                        break
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("id") or j.get("jobId") or j.get("job_id"))
+            title = txt(j.get("jobName") or j.get("title") or j.get("name"))
+            out.append(Job(
+                src["company"], title, jid,
+                txt(j.get("workPlace") or j.get("workplace") or j.get("location")),
+                txt(j.get("functionName") or j.get("category") or "2027校园招聘"),
+                txt(j.get("departmentName") or j.get("department")),
+                _strip_html(j.get("jobDescription") or j.get("description") or j.get("duty")),
+                _strip_html(j.get("jobRequirement") or j.get("requirement") or j.get("qualifications")),
+                src.get("search_url") or src.get("portal") or "https://hr.sangfor.com/schoolRecruitment",
+                api,
+                "深信服2027届校园招聘",
+            ))
+        if len(rows) < 100 or (total is not None and page * 100 >= total):
+            break
+        page += 1
+    return out
+
+
 def fetch_kuaishou(src: dict) -> list[Job]:
     """Enumerate Kuaishou's official 2027 project; list API already returns full JD."""
     base = "https://campus.kuaishou.cn"
@@ -1412,6 +1475,7 @@ def fetch_feishu_direct(src: dict) -> list[Job]:
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
     "bytedance_api": fetch_bytedance,
+    "sangfor_campus_api": fetch_sangfor_campus,
     "kuaishou_api": fetch_kuaishou,
     "baidu_api": fetch_baidu,
     "tencent_api": fetch_tencent,
