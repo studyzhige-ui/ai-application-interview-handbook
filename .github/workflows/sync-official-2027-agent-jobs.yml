@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: official-current-campus-agent-sync
+  group: official-current-campus-agent-sync-v2
   cancel-in-progress: false
 
 jobs:
