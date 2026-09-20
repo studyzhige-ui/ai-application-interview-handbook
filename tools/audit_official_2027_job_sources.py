@@ -102,6 +102,16 @@ def main() -> int:
     if set(ix) != {x["company"] for x in rows}:
         hard_errors.append("role-state index company set diverges from scan registry")
 
+    for row in rows:
+        if row["runtime"] != "ENUMERATED":
+            hard_errors.append(
+                f"{row['company']}: runtime must be ENUMERATED, got {row['runtime']}"
+            )
+        if row["result"] == "NEEDS_ENUMERATION":
+            hard_errors.append(
+                f"{row['company']}: target-job result still NEEDS_ENUMERATION"
+            )
+
     runtime_counts = Counter(x["runtime"] for x in rows)
     result_counts = Counter(x["result"] for x in rows)
     counts = norm.get("counts") or {}

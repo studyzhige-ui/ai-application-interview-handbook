@@ -192,9 +192,18 @@ function pagingContract(entry){
   return {parsed,body,pageHit,offsetHit,sizeHit,urlPage,urlOffset,urlSize,size};
 }
 async function replayCapturedFullPool(page,company,endpointLog,collector,cycle,category){
-  const candidates=(endpointLog||[]).filter(blankListRequest);
+  const candidates=(endpointLog||[]).filter(entry=>{
+    if(blankListRequest(entry))return true;
+    if(!entry||entry.status!==200||entry.response_list_path===undefined)return false;
+    let pathname="";
+    try{pathname=new URL(entry.url||"https://invalid/").pathname;}catch{}
+    if(/(?:^|\/)(?:detail|info|filter|condition|category|config|count)(?:\/|$)/i.test(pathname))return false;
+    return /(?:job|position|post|apply_list)/i.test(entry.url||"");
+  });
   if(!candidates.length)return {complete:false};
   candidates.sort((a,b)=>{
+    const ab=blankListRequest(a),bb=blankListRequest(b);
+    if(ab!==bb)return ab?-1:1;
     const at=a.response_count==null?-1:Number(a.response_count);
     const bt=b.response_count==null?-1:Number(b.response_count);
     if((bt>=0)!==(at>=0))return bt>=0?-1:1;
@@ -326,7 +335,7 @@ async function openJobSearchSurface(page){
 async function collectSearchPages(page,keyword){
   const hits=[];
   const seenSignatures=new Set();
-  const maxSteps=keyword==="__FULL_LIST__"?30:10;
+  const maxSteps=keyword==="__FULL_LIST__"?200:10;
   for(let step=0;step<maxSteps;step++){
     await page.waitForTimeout(step===0?650:350);
     await scroll(page);
@@ -494,6 +503,17 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     let beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
     let beforeCycle=cycleSnippets(beforeBody);
     await Promise.allSettled(responseTasks);
+    const explicitRenderedZero=/(?:找到|共|合计)\s*[（(]?\s*0\s*[)）]?\s*(?:个)?\s*(?:职位|岗位)|(?:暂无|没有|无)\s*(?:在招)?\s*(?:职位|岗位)/i.test(beforeBody);
+    if(boardScope==="campus" && explicitRenderedZero){
+      const finalUrl=page.url();
+      await page.close();
+      return {
+        page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,cycle_evidence:beforeCycle,
+        next:[],search_control_found:false,navigation_action:{clicked:false},
+        search_terms_attempted:[],search_hit_links:0,list_scan_complete:true,list_links_seen:0,
+        dom_explicit_zero:true,source_total:0
+      };
+    }
     // Moka exposes a stable jobs/v2 contract during the first official page load.
     // Once captured, stop spending browser time on keyword UI replay: the Moka
     // adapter will paginate the entire first-party pool deterministically.
@@ -679,6 +699,49 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       }
     }
     await Promise.allSettled(responseTasks);
+
+    const postSearchFeishu=endpointLog.some(e=>e.status===200 && /\/api\/v1\/search\/job\/posts/i.test(e.url));
+    if(postSearchFeishu){
+      try{
+        const blankUrl=canonicalFeishuListUrl(page.url(),1,10);
+        if(page.url()!==blankUrl){
+          await page.goto(blankUrl,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+          await page.waitForTimeout(500);
+        }
+      }catch{}
+      await collectSearchPages(page,"__FULL_LIST__");
+      await Promise.allSettled(responseTasks);
+      const proof=feishuKeywordCoverage(endpointLog);
+      if(proof.full_pool_complete){
+        const finalUrl=page.url();
+        await page.close();
+        return {
+          page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,
+          cycle_evidence:beforeCycle,next:[],search_control_found:true,
+          navigation_action:navAction,search_terms_attempted:search.terms,
+          search_hit_links:search.hits.length,list_scan_complete:true,
+          list_links_seen:proof.full_pool_covered,signed_feishu_full_pool:true,
+          source_total:proof.full_pool_total
+        };
+      }
+    }
+
+    const postSearchGeneric=await replayCapturedFullPool(
+      page,company,endpointLog,collector,beforeCycle,
+      boardScope==="campus"?"官方校园招聘":"官方招聘"
+    );
+    if(postSearchGeneric.complete){
+      const finalUrl=page.url();
+      await page.close();
+      return {
+        page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,
+        cycle_evidence:beforeCycle,next:[],search_control_found:search.found,
+        navigation_action:navAction,search_terms_attempted:search.terms,
+        search_hit_links:search.hits.length,list_scan_complete:true,
+        list_links_seen:postSearchGeneric.covered||0,generic_full_pool:true,
+        source_total:postSearchGeneric.total,source_endpoint:postSearchGeneric.endpoint
+      };
+    }
 
     const body=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
     const cycleMatches=[...new Set([...beforeCycle,...cycleSnippets(body)])].slice(0,10);

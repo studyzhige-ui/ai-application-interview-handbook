@@ -2130,7 +2130,12 @@ def main() -> int:
         ]
 
     def strict_role_title(job: Job) -> bool:
-        title = job.title.splitlines()[0].strip().lower()
+        title_lines = (job.title or "").splitlines()
+        if not title_lines:
+            return False
+        title = title_lines[0].strip().lower()
+        if not title:
+            return False
         body = " ".join([job.category, job.department, job.description, job.requirements]).lower()
 
         if title in strict_title_allowlist:
@@ -2287,7 +2292,8 @@ def main() -> int:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     def family_title(title: str) -> str:
-        first = (title or "").splitlines()[0].strip()
+        title_lines = (title or "").splitlines()
+        first = (title_lines[0] if title_lines else "").strip()
         return re.sub(r"\\s+-\\s+.+$", "", re.sub(r"\\s+", " ", first)).strip()
 
     family_map: dict[tuple[str, str], dict[str, Any]] = {}
