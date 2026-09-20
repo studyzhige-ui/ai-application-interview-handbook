@@ -7,7 +7,7 @@
 > **核验日期：** 2026-09-20  
 > **当前性确认：** 本次重写时再次核验，该 commit 仍是 `openai/codex` 的 `main` HEAD。递归读取的源码树包含 9,254 个路径且 GitHub 返回 `truncated: false`。
 
-Codex 的根 README 只用一句很朴素的话定义自己：它是一个在本地计算机上运行的 coding agent（编程智能体）。但真正打开源码后，会发现“本地运行”并不意味着“一个终端程序里写了一个模型循环”。当前 Rust workspace（Rust 工作区）已经拆成一百多个 crate（Rust 包），覆盖客户端入口、应用服务器、核心执行、执行环境、MCP、Skills、Memory、持久化、状态数据库、沙箱、网络策略、多 Agent、诊断和可观测性。
+Codex 的根 README 只用一句很朴素的话定义自己：它是一个在本地计算机上运行的 coding agent（编程智能体）。但真正打开源码后，会发现“本地运行”并不意味着“一个终端程序里写了一个模型循环”。当前 Rust workspace（Rust 工作区）已经拆成一百多个 crate（Rust 包），覆盖客户端入口、应用服务器、核心执行、执行环境、MCP（Model Context Protocol，模型上下文协议）、Skills（技能）、Memory（记忆）、持久化、状态数据库、Sandbox（沙箱）、网络策略、Multi-Agent（多智能体）、诊断和可观测性。
 
 所以这组文档先不急着问“Codex 的 Memory 怎么做”。第一步应该先回答：
 
@@ -19,7 +19,7 @@ Codex 的根 README 只用一句很朴素的话定义自己：它是一个在本
 
 `codex-rs/cli/src/main.rs` 是一个很重要的起点。它表明 `codex` 可执行文件并不是只有一种运行方式。
 
-不带子命令时，参数会进入交互式 TUI（Terminal User Interface，终端用户界面）。此外，同一个 CLI 还提供非交互 `exec`、代码审查 `review`、MCP 管理、插件管理、App Server、远程控制、沙箱调试、Resume（恢复）、Fork（分叉）、Queue（排队消息）、Exec Server（执行环境服务）等入口。
+不带子命令时，参数会进入交互式 TUI（Terminal User Interface，终端用户界面）。此外，同一个 CLI 还提供非交互 `exec`、代码审查 `review`、MCP 管理、插件管理、App Server（应用服务器）、远程控制、沙箱调试、Resume（恢复）、Fork（分叉）、Queue（排队消息）、Exec Server（执行环境服务）等入口。
 
 这件事先帮我们纠正一个容易产生的误解：
 
