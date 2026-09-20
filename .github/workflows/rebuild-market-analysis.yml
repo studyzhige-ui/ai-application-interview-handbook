@@ -10,6 +10,7 @@ on:
       - 'tools/build_market_analysis.py'
       - 'tools/build_gap_candidates.py'
       - 'tools/apply_canonical_audit.py'
+      - 'tools/sync_expected_canonical_count.py'
       - 'tools/validate_source_coverage.py'
       - 'tools/phase2b_canonical_audit.json'
       - '.github/workflows/rebuild-market-analysis.yml'
@@ -18,8 +19,56 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    if: github.actor != 'github-actions[bot]'
+  build-windows:
+    name: Rebuild (private / Windows self-hosted)
+    if: github.event.repository.private == true && github.actor != 'github-actions[bot]'
+    runs-on: [self-hosted, Windows]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Apply reviewed canonical coverage audit
+        run: python tools/apply_canonical_audit.py
+
+      - name: Sync expected canonical count from reviewed audit
+        run: python tools/sync_expected_canonical_count.py
+
+      - name: Build raw gap candidates
+        run: python tools/build_gap_candidates.py
+
+      - name: Build frozen Canonical analysis
+        run: python tools/build_market_analysis.py
+
+      - name: Validate reviewed source coverage
+        run: python tools/validate_source_coverage.py
+
+      - name: Commit canonical and generated analysis
+        shell: powershell
+        run: |
+          $changes = git status --porcelain interview/canonical market/analysis tools/build_market_analysis.py
+          if (-not $changes) {
+            Write-Host 'No generated changes.'
+            exit 0
+          }
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add interview/canonical market/analysis tools/build_market_analysis.py
+          git commit -m 'market: rebuild frozen canonical analysis'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git push origin HEAD:${{ github.ref_name }}
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+  build-linux:
+    name: Rebuild (public / Linux GitHub-hosted)
+    if: github.event.repository.private == false && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,26 +86,7 @@ jobs:
         run: python tools/apply_canonical_audit.py
 
       - name: Sync expected canonical count from reviewed audit
-        shell: bash
-        run: |
-          python - <<'PY'
-          import json, re
-          from pathlib import Path
-          root = Path('.')
-          audit = json.loads((root / 'tools/phase2b_canonical_audit.json').read_text(encoding='utf-8'))
-          path = root / 'tools/build_market_analysis.py'
-          text = path.read_text(encoding='utf-8')
-          text, n = re.subn(
-              r'^EXPECTED_QUESTIONS = \d+$',
-              f"EXPECTED_QUESTIONS = {int(audit['expected_active_after'])}",
-              text,
-              count=1,
-              flags=re.M,
-          )
-          if n != 1:
-              raise SystemExit('could not sync EXPECTED_QUESTIONS')
-          path.write_text(text, encoding='utf-8')
-          PY
+        run: python tools/sync_expected_canonical_count.py
 
       - name: Build raw gap candidates
         run: python tools/build_gap_candidates.py
@@ -66,7 +96,6 @@ jobs:
 
       - name: Validate reviewed source coverage
         run: python tools/validate_source_coverage.py
-
 
       - name: Commit canonical and generated analysis
         shell: bash

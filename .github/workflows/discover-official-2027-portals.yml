@@ -7,11 +7,46 @@ permissions:
   contents: read
 
 jobs:
-  debug:
+  debug-windows:
+    name: Debug portals (private / Windows self-hosted)
+    if: github.event.repository.private == true
+    runs-on: [self-hosted, Windows]
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install chromium
+          node --check tools/fetch_dynamic_official_jobs.mjs
+
+      - name: Exhaust fixed official current-campus job-list pages
+        run: node tools/fetch_dynamic_official_jobs.mjs "${{ runner.temp }}/official-2027-browser-debug.json"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: official-2027-browser-debug-windows
+          path: ${{ runner.temp }}/official-2027-browser-debug.json
+          retention-days: 2
+
+  debug-linux:
+    name: Debug portals (public / Linux GitHub-hosted)
+    if: github.event.repository.private == false
     runs-on: ubuntu-latest
     timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
       - name: Install Playwright
         run: |
@@ -20,10 +55,10 @@ jobs:
           node --check tools/fetch_dynamic_official_jobs.mjs
 
       - name: Exhaust fixed official current-campus job-list pages
-        run: node tools/fetch_dynamic_official_jobs.mjs /tmp/official-2027-browser-debug.json
+        run: node tools/fetch_dynamic_official_jobs.mjs "${{ runner.temp }}/official-2027-browser-debug.json"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: official-2027-browser-debug
-          path: /tmp/official-2027-browser-debug.json
+          name: official-2027-browser-debug-linux
+          path: ${{ runner.temp }}/official-2027-browser-debug.json
           retention-days: 2

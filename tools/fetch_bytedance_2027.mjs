@@ -3,10 +3,12 @@
  * Enumerate the complete ByteDance first-party campus pool using parallel pagination.
  */
 import { writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const API="https://jobs.bytedance.com/api/v1/search/job/posts";
 const DETAIL_ROOT="https://jobs.bytedance.com/campus/position";
-const out=process.argv[2]||"/tmp/bytedance-campus.json";
+const out=process.argv[2]||join(tmpdir(),"bytedance-campus.json");
 const headers={
   "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36",
   "Accept":"application/json, text/plain, */*",

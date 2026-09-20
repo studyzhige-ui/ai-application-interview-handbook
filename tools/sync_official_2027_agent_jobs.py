@@ -10,6 +10,8 @@ Portal-only companies remain in the coverage matrix for manual official-site rev
 from __future__ import annotations
 
 import json
+import os
+import tempfile
 import re
 import sys
 import time
@@ -30,6 +32,9 @@ OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
 BROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
 FEISHU_CACHE = ROOT / "market/jobs/official-2027-feishu-discovery.generated.json"
 MOKA_CACHE = ROOT / "market/jobs/official-2027-moka-discovery.generated.json"
+TEMP_ROOT = Path(os.environ.get("RUNNER_TEMP") or tempfile.gettempdir())
+XIAOMI_NODE_CACHE = Path(os.environ.get("XIAOMI_CACHE") or (TEMP_ROOT / "xiaomi-2027-campus.json"))
+BYTEDANCE_NODE_CACHE = Path(os.environ.get("BYTEDANCE_CACHE") or (TEMP_ROOT / "bytedance-campus.json"))
 
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126.0 Safari/537.36"
 HEADERS = {
@@ -227,7 +232,7 @@ def fetch_xiaomi(src: dict) -> list[Job]:
     Python requests differently from browser/Node fetch on GitHub runners.
     The workflow therefore runs tools/fetch_xiaomi_2027.mjs first.
     """
-    cache = Path("/tmp/xiaomi-2027-campus.json")
+    cache = XIAOMI_NODE_CACHE
     if not cache.exists():
         raise RuntimeError("Xiaomi official Node adapter output missing")
     payload = json.loads(cache.read_text(encoding="utf-8"))
@@ -244,7 +249,7 @@ def fetch_xiaomi(src: dict) -> list[Job]:
 
 
 def fetch_bytedance(src: dict) -> list[Job]:
-    cache = Path("/tmp/bytedance-campus.json")
+    cache = BYTEDANCE_NODE_CACHE
     if not cache.exists():
         raise RuntimeError("ByteDance official Node adapter output missing")
     payload = json.loads(cache.read_text(encoding="utf-8"))

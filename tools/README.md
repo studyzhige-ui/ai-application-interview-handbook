@@ -9,6 +9,7 @@
 | `build_market_analysis.py` | 从 HUMAN-A 与 Canonical 构建市场分析 |
 | `build_gap_candidates.py` | 生成待人工核验的 Gap 候选 |
 | `apply_canonical_audit.py` | 应用 Canonical 审计结果 |
+| `sync_expected_canonical_count.py` | 将 Market Analysis 的 Canonical 计数与已审核审计基线同步（跨平台） |
 | `validate_source_coverage.py` | 校验来源覆盖与映射 |
 | `validate_agent_readability.py` | 校验全仓库 Markdown 链接、Agent 教材可读性与结构 |
 | `validate_repository_semantics.py` | 校验 185-block 结构、Market / Canonical 时间边界、旧路径与章节语义漂移 |
@@ -30,6 +31,15 @@ references/
 
 脚本输出不能替代人工 provenance / Role Scope / Source Quality 审核。
 
+
+## GitHub Actions Runner 策略
+
+工作流同时保留 Windows 与 Linux 两套执行路径，但**同一次运行只会启用其中一套**：
+
+- 仓库为 private：运行 `[self-hosted, Windows]`，用于当前本地 Runner；GitHub-hosted Linux job 在 job-level `if` 阶段直接跳过，不消耗 GitHub-hosted minutes。
+- 仓库为 public：运行 `ubuntu-latest`，Windows self-hosted job 直接跳过。公开仓库的 PR / push 不会执行本地 Windows Runner，从而避免把公开贡献代码带到本地机器执行。
+- 两套 job 共享同一套 `tools/` 脚本、数据契约与生成结果；OS 差异只保留在 Playwright 安装、临时目录和 Git 提交 shell 等必要位置。
+- Windows Runner 需要注册到本仓库并具有默认 `self-hosted`、`Windows` labels。当前已验证 Runner `interview-handbook-local-win` 能正常接收 Actions。
 
 ## 生成文件一致性
 

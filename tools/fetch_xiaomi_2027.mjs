@@ -4,10 +4,12 @@
  * with parallel pagination after the first count request.
  */
 import { writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 const API="https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts";
 const DETAIL_ROOT="https://xiaomi.jobs.f.mioffice.cn/campus/position";
-const out=process.argv[2]||"/tmp/xiaomi-2027-campus.json";
+const out=process.argv[2]||join(tmpdir(),"xiaomi-2027-campus.json");
 const headers={
   "User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/124 Safari/537.36",
   "Accept":"application/json, text/plain, */*","Content-Type":"application/json",

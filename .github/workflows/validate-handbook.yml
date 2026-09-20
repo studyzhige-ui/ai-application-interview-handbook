@@ -18,13 +18,73 @@ on:
       - '**/*.md'
       - 'tools/**/*.py'
       - 'tools/**/*.json'
+      - 'tools/**/*.mjs'
       - '.github/workflows/*.yml'
 
 permissions:
   contents: read
 
 jobs:
-  validate:
+  validate-windows:
+    name: Validate (private / Windows self-hosted)
+    if: github.event.repository.private == true
+    runs-on: [self-hosted, Windows]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Compile Python tools
+        run: python -m compileall -q tools
+
+      - name: Check dynamic job fetcher
+        run: node --check tools/fetch_dynamic_official_jobs.mjs
+
+      - name: Check Xiaomi fetcher
+        run: node --check tools/fetch_xiaomi_2027.mjs
+
+      - name: Check ByteDance fetcher
+        run: node --check tools/fetch_bytedance_2027.mjs
+
+      - name: Validate official job source contracts
+        run: python tools/validate_official_2027_source_contracts.py
+
+      - name: Validate handbook structure and local links
+        run: python tools/validate_agent_readability.py
+
+      - name: Validate repository semantics
+        run: python tools/validate_repository_semantics.py
+
+      - name: Apply canonical audit
+        run: python tools/apply_canonical_audit.py
+
+      - name: Verify canonical audit is reproducible
+        run: git diff --exit-code -- interview/canonical
+
+      - name: Build raw gap candidates
+        run: python tools/build_gap_candidates.py
+
+      - name: Build frozen Canonical analysis
+        run: python tools/build_market_analysis.py
+
+      - name: Validate reviewed source coverage
+        run: python tools/validate_source_coverage.py
+
+      - name: Verify generated market analysis is reproducible
+        run: git diff --exit-code -- market/analysis
+
+  validate-linux:
+    name: Validate (public / Linux GitHub-hosted)
+    if: github.event.repository.private == false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -35,14 +95,24 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Compile repository tools
-        run: |
-          python -m py_compile tools/*.py
-          node --check tools/fetch_dynamic_official_jobs.mjs
-          node --check tools/fetch_xiaomi_2027.mjs
-          node --check tools/fetch_bytedance_2027.mjs
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
-      - name: Validate official 2027 job source contracts
+      - name: Compile Python tools
+        run: python -m compileall -q tools
+
+      - name: Check dynamic job fetcher
+        run: node --check tools/fetch_dynamic_official_jobs.mjs
+
+      - name: Check Xiaomi fetcher
+        run: node --check tools/fetch_xiaomi_2027.mjs
+
+      - name: Check ByteDance fetcher
+        run: node --check tools/fetch_bytedance_2027.mjs
+
+      - name: Validate official job source contracts
         run: python tools/validate_official_2027_source_contracts.py
 
       - name: Validate handbook structure and local links
@@ -51,14 +121,20 @@ jobs:
       - name: Validate repository semantics
         run: python tools/validate_repository_semantics.py
 
+      - name: Apply canonical audit
+        run: python tools/apply_canonical_audit.py
+
       - name: Verify canonical audit is reproducible
-        run: |
-          python tools/apply_canonical_audit.py
-          git diff --exit-code -- interview/canonical
+        run: git diff --exit-code -- interview/canonical
+
+      - name: Build raw gap candidates
+        run: python tools/build_gap_candidates.py
+
+      - name: Build frozen Canonical analysis
+        run: python tools/build_market_analysis.py
+
+      - name: Validate reviewed source coverage
+        run: python tools/validate_source_coverage.py
 
       - name: Verify generated market analysis is reproducible
-        run: |
-          python tools/build_gap_candidates.py
-          python tools/build_market_analysis.py
-          python tools/validate_source_coverage.py
-          git diff --exit-code -- market/analysis
+        run: git diff --exit-code -- market/analysis
