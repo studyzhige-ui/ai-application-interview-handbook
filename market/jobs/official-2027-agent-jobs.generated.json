@@ -1,21 +1,27 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "generated_at": "2026-09-20",
-  "scope": "41家公司当前官方校园招聘 / 官方招聘池中的非算法 AI 应用、Agent、Harness、Runtime、RAG 与相关 AI Infra 工程岗位",
+  "scope": "69 家长期扫描公司：当前官方校园/应届招聘中的非算法 AI Application / Agent / RAG / Harness / Runtime / AI Infra 工程岗位",
   "methodology": {
     "inclusion": "First-party official job source; current campus/new-grad eligibility; engineering role; title/body materially about Agent/AI application/RAG/Harness/Runtime/Infra/Coding Agent.",
     "exclusion": "Algorithm/model-training/research, product, sales, operations, marketing, internship-only and generic engineering roles whose JD merely mentions AI tools.",
     "role_family": "Same-company near-identical roles are grouped; all known official requisitions remain under requisitions.",
     "detail_status": "FULL_JD means first-party duties/requirements were captured; TITLE_ONLY_OFFICIAL means only the official current title/listing was obtainable.",
-    "zero_miss_policy": "A crawler miss or failed runtime is never interpreted as zero relevant roles. The persistent verified company-role index is authoritative for role presence."
+    "zero_miss_policy": "Company membership is independent from job presence. Crawler miss/failure may not erase persistent verified role presence; ZERO_TARGET_JDS is valid only after complete first-party enumeration.",
+    "company_pool": "All 69 target companies remain in the long-term scan pool regardless of current target-job count.",
+    "company_result": "HAS_TARGET_JDS / ZERO_TARGET_JDS / NEEDS_ENUMERATION are independent from company inclusion."
   },
   "counts": {
-    "companies": 41,
+    "companies": 69,
     "companies_with_targets": 41,
     "role_families": 230,
     "full_first_party_jd_families": 190,
     "title_only_first_party_families": 7,
-    "role_verified_current_source_families": 33
+    "role_verified_current_source_families": 33,
+    "companies_zero_targets": 0,
+    "companies_needing_enumeration": 28,
+    "full_jd_families": 190,
+    "title_only_families": 7
   },
   "sources": [
     {
@@ -30,7 +36,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "嵌入式测试开发与AI应用工程师-汽车"
+      "verified_representative_role": "Agent Harness 研发工程师",
+      "mode": "xiaomi_api"
     },
     {
       "company": "快手",
@@ -44,7 +51,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "【快Star】安全工程师-安全攻防Agentic AI方向"
+      "verified_representative_role": "AI应用开发工程师",
+      "mode": "kuaishou_api"
     },
     {
       "company": "百度",
@@ -58,7 +66,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "2027AIDU-Agent应用全栈工程师(J99974)"
+      "verified_representative_role": "2027AIDU-Agent应用全栈工程师(J99974)",
+      "mode": "baidu_api"
     },
     {
       "company": "腾讯",
@@ -72,7 +81,8 @@
       "previous_retrieval_status": "ENUMERATED_ZERO_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent开发工程师"
+      "verified_representative_role": "Agent开发工程师",
+      "mode": "tencent_campus_api"
     },
     {
       "company": "美团",
@@ -86,7 +96,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "【北斗】Agent 系统研发工程师"
+      "verified_representative_role": "AI应用开发工程师",
+      "mode": "meituan_campus_api"
     },
     {
       "company": "网易",
@@ -100,7 +111,8 @@
       "previous_retrieval_status": "ENUMERATED_ZERO_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "AI Agent 应用开发工程师"
+      "verified_representative_role": "AI Agent 应用开发工程师",
+      "mode": "netease_api"
     },
     {
       "company": "哔哩哔哩",
@@ -114,7 +126,8 @@
       "previous_retrieval_status": "ENUMERATED_ZERO_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "【B-UP】多模态智能体工程师（校招）"
+      "verified_representative_role": "【B-UP】多模态智能体工程师（校招）",
+      "mode": "bilibili_api"
     },
     {
       "company": "滴滴",
@@ -128,7 +141,8 @@
       "previous_retrieval_status": "ENUMERATED_ZERO_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "27届秋招-自动驾驶-AI Agent工程师"
+      "verified_representative_role": "27届秋招-自动驾驶-AI Agent工程师",
+      "mode": "portal_only"
     },
     {
       "company": "拼多多",
@@ -142,7 +156,8 @@
       "previous_retrieval_status": "ENUMERATED_ZERO_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "AI Agent研发工程师"
+      "verified_representative_role": "AI Agent研发工程师",
+      "mode": "pdd_campus_api"
     },
     {
       "company": "华为",
@@ -156,7 +171,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "AI应用平台开发工程师"
+      "verified_representative_role": "AI应用平台开发工程师",
+      "mode": "huawei_api"
     },
     {
       "company": "小红书",
@@ -170,7 +186,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "【REDstar】大模型 Agent 开发工程师（AI Coding方向）"
+      "verified_representative_role": "【REDstar】AI Agent Infra 工程师",
+      "mode": "xiaohongshu_2027_api"
     },
     {
       "company": "字节跳动",
@@ -184,7 +201,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "安全开发工程师（AI应用隐私保护/数据安全）"
+      "verified_representative_role": "AI Agent开发工程师 - 抖音研发",
+      "mode": "bytedance_api"
     },
     {
       "company": "阿里巴巴",
@@ -198,7 +216,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "大模型应用开发工程师"
+      "verified_representative_role": "AI Agent应用开发工程师",
+      "mode": "alibaba_campus_api"
     },
     {
       "company": "蚂蚁集团",
@@ -212,7 +231,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent研发工程师"
+      "verified_representative_role": "Agent研发工程师",
+      "mode": "ant_2027_api"
     },
     {
       "company": "京东",
@@ -226,7 +246,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "Agent开发工程师"
+      "verified_representative_role": "Agent开发工程师",
+      "mode": "jd_campus_api"
     },
     {
       "company": "OPPO",
@@ -240,7 +261,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "应用开发工程师（AI Agent方向）"
+      "verified_representative_role": "AI Agent 研发工程师（研发效能方向）",
+      "mode": "oppo_campus_api"
     },
     {
       "company": "vivo",
@@ -254,7 +276,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent技术工程师-27届秋招"
+      "verified_representative_role": "Agent技术工程师-27届秋招",
+      "mode": "vivo_2027_api"
     },
     {
       "company": "金山办公/WPS",
@@ -268,7 +291,8 @@
       "previous_retrieval_status": "ENUMERATED_ZERO_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "AI应用开发工程师"
+      "verified_representative_role": "AI应用开发工程师",
+      "mode": "portal_only"
     },
     {
       "company": "荣耀",
@@ -282,7 +306,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "AI软件开发工程师 （AI Coding / Agent方向）"
+      "verified_representative_role": "AI软件开发工程师 （AI Coding / Agent方向）",
+      "mode": "honor_2027_api"
     },
     {
       "company": "科大讯飞",
@@ -296,7 +321,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent研发工程师-Harness方向"
+      "verified_representative_role": "Agent研发工程师-Harness方向",
+      "mode": "iflytek_2027_api"
     },
     {
       "company": "携程",
@@ -310,7 +336,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent开发工程师（2027届秋招）"
+      "verified_representative_role": "Agent开发工程师（2027届秋招）",
+      "mode": "ctrip_2027_api"
     },
     {
       "company": "360",
@@ -324,7 +351,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "AI应用工程师——AI系统软件"
+      "verified_representative_role": "AI应用工程师——AI系统软件",
+      "mode": "portal_only"
     },
     {
       "company": "得物",
@@ -338,7 +366,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "【27届校招】中间件AI开发工程师（Golang方向）"
+      "verified_representative_role": "【27届校招】中间件AI开发工程师（Golang方向）",
+      "mode": "feishu_direct"
     },
     {
       "company": "DeepSeek",
@@ -352,7 +381,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 2,
-      "verified_representative_role": "Agent Harness 研发工程师"
+      "verified_representative_role": "Agent Harness 研发工程师",
+      "mode": "portal_only"
     },
     {
       "company": "月之暗面/Kimi",
@@ -366,7 +396,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 2,
-      "verified_representative_role": "Agent Development Engineer（实习）"
+      "verified_representative_role": "Agent Development Engineer（实习）",
+      "mode": "portal_only"
     },
     {
       "company": "MiniMax",
@@ -380,7 +411,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "AGI产品研发工程师-应届生-TOP Talent"
+      "verified_representative_role": "AGI产品研发工程师-应届生-TOP Talent",
+      "mode": "feishu_direct"
     },
     {
       "company": "智谱/Z.ai",
@@ -394,7 +426,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 3,
-      "verified_representative_role": "Agent Infra开发工程师"
+      "verified_representative_role": "AI研发工程师-Agent Tools/大模型应用方向",
+      "mode": "portal_only"
     },
     {
       "company": "阶跃星辰",
@@ -408,7 +441,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 3,
-      "verified_representative_role": "Agent基建工程师"
+      "verified_representative_role": "Coding Agent 全栈工程师",
+      "mode": "portal_only"
     },
     {
       "company": "百川智能",
@@ -422,7 +456,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "【源点顶尖人才计划】AI Infra工程师-推理方向实习生"
+      "verified_representative_role": "【源点顶尖人才计划】AI Infra工程师-推理方向实习生",
+      "mode": "feishu_direct"
     },
     {
       "company": "零一万物/01.AI",
@@ -436,7 +471,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 2,
-      "verified_representative_role": "大模型应用开发专家"
+      "verified_representative_role": "AI 测试工程师",
+      "mode": "feishu_direct"
     },
     {
       "company": "商汤科技",
@@ -450,7 +486,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "【27届校招】智能体研发-亚太业务事业群"
+      "verified_representative_role": "【27届校招】Agent开发工程师",
+      "mode": "feishu_direct"
     },
     {
       "company": "生数科技",
@@ -464,7 +501,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "流式视频 Agent 工程师"
+      "verified_representative_role": "流式视频 Agent 工程师",
+      "mode": "portal_only"
     },
     {
       "company": "硅基流动",
@@ -478,7 +516,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "端侧AI Agent工程师(A24765)"
+      "verified_representative_role": "端侧AI Agent工程师(A24765)",
+      "mode": "portal_only"
     },
     {
       "company": "面壁智能",
@@ -492,7 +531,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 2,
-      "verified_representative_role": "大模型Agent应用开发工程师"
+      "verified_representative_role": "Agentic Engineering",
+      "mode": "portal_only"
     },
     {
       "company": "Manus",
@@ -506,7 +546,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "AI Agent Engineer"
+      "verified_representative_role": "AI Agent Engineer",
+      "mode": "portal_only"
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -520,7 +561,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "推理框架开发工程师"
+      "verified_representative_role": "推理框架开发工程师",
+      "mode": "feishu_direct"
     },
     {
       "company": "昆仑万维/天工",
@@ -534,7 +576,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent框架工程师"
+      "verified_representative_role": "Agent框架工程师",
+      "mode": "portal_only"
     },
     {
       "company": "Shopee",
@@ -548,7 +591,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Agent开发工程师"
+      "verified_representative_role": "Agent开发工程师",
+      "mode": "portal_only"
     },
     {
       "company": "联想",
@@ -562,7 +606,8 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "AI Agent开发工程师"
+      "verified_representative_role": "AI Agent开发工程师",
+      "mode": "lenovo_api"
     },
     {
       "company": "蔚来",
@@ -576,7 +621,8 @@
       "previous_retrieval_status": "BLOCKED",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 1,
-      "verified_representative_role": "Super Sparks-校招-车端智能体框架和应用工程师"
+      "verified_representative_role": "Super Sparks-校招-车端智能体框架和应用工程师",
+      "mode": "feishu_direct"
     },
     {
       "company": "顺丰",
@@ -590,7 +636,484 @@
       "previous_retrieval_status": "ENUMERATED_WITH_MATCHES",
       "evidence_note": "Relevant engineering role verified. Automated crawler miss/failure must not overwrite verified role presence.",
       "role_verified_current_source_count": 0,
-      "verified_representative_role": "AI开发工程师（顺丰科技）"
+      "verified_representative_role": "AI开发工程师（顺丰科技）",
+      "mode": "sf_campus_api"
+    },
+    {
+      "company": "米哈游",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://jobs.mihoyo.com/",
+      "search_url": "https://jobs.mihoyo.com/#/campus",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "大疆 DJI",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://careers.dji.com/zh-CN/campus",
+      "search_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "度小满",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://campus.duxiaoman.com/",
+      "search_url": "https://campus.duxiaoman.com/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "海康威视",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.hikvision.com/cn/",
+      "search_url": "https://mcampus.hikvision.com/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "中兴通讯",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://job.zte.com.cn/cn/",
+      "search_url": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "深信服",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://hr.sangfor.com/",
+      "search_url": "https://hr.sangfor.com/schoolRecruitment",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "金蝶",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.kingdee.com/",
+      "search_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "用友",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://career.yonyou.com/",
+      "search_url": "https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "美图",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://hr.meitu.com/",
+      "search_url": "https://hr.meitu.com/",
+      "board_scope": "official_recruiting",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "SHEIN",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://careers.shein.cn/",
+      "search_url": "https://careers.shein.cn/Students",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "安克创新",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://career.anker.com.cn/",
+      "search_url": "https://career.anker.com.cn/universities/recruitment/new/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "大华股份",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://job.dahuatech.com/",
+      "search_url": "https://job.dahuatech.com/",
+      "board_scope": "official_recruiting",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "吉利控股",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://campus.geely.com/",
+      "search_url": "https://campus.geely.com/campus-recruitment/geely/78436/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "小鹏集团",
+      "mode": "feishu_direct",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.xiaopeng.com/",
+      "search_url": "https://xiaopeng.jobs.feishu.cn/campus",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "理想汽车",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.lixiang.com/",
+      "search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "海尔集团",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://maker.haier.net/client/campus/index",
+      "search_url": "https://maker.haier.net/client/campus/activityindex.html",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "美的集团",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://newpower.midea.com/",
+      "search_url": "https://newpower.midea.com/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "比亚迪",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://job.byd.com/",
+      "search_url": "https://job.byd.com/",
+      "board_scope": "official_recruiting",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "同花顺",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://campus.10jqka.com.cn/",
+      "search_url": "https://campus.10jqka.com.cn/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "麒麟软件",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "search_url": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "普渡机器人",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://pudutech.zhiye.com/",
+      "search_url": "https://pudutech.zhiye.com/campus/jobs",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "广联达",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.glodon.com/",
+      "search_url": "https://app.mokahr.com/campus-recruitment/glodon/91966",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "挚文集团/陌陌",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://campus.hellogroup.com/",
+      "search_url": "https://campus.hellogroup.com/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "BOSS直聘/看准科技",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.zhipin.com/",
+      "search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "作业帮",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.zuoyebang.com/",
+      "search_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "影石 Insta360",
+      "mode": "feishu_direct",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://www.insta360.com/",
+      "search_url": "https://arashivision.jobs.feishu.cn/campus/position/list",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "神州数码/神州信息",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://dcits.zhiye.com/",
+      "search_url": "https://dcits.zhiye.com/campus/jobs",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
+    },
+    {
+      "company": "合合信息",
+      "mode": "portal_only",
+      "retrieval_status": "PENDING_FIRST_ENUMERATION",
+      "fetched": 0,
+      "matched_requisitions": 0,
+      "error": "company added to 69-company scan pool; awaiting first complete first-party enumeration",
+      "official_root": "https://intsig.zhiye.com/",
+      "search_url": "https://intsig.zhiye.com/campus/jobs",
+      "board_scope": "campus",
+      "result_status": "NEEDS_ENUMERATION",
+      "role_family_count": 0,
+      "full_jd_count": 0,
+      "title_only_count": 0,
+      "role_verified_current_source_count": 0,
+      "verified_representative_role": ""
     }
   ],
   "role_families": [
