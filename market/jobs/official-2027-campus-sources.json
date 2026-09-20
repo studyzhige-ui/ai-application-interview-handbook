@@ -189,7 +189,12 @@
       "campus_search_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs",
       "search_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs",
       "board_scope": "campus",
-      "business_summary": "网约车、出行平台、自动驾驶与物流"
+      "business_summary": "网约车、出行平台、自动驾驶与物流",
+      "moka_endpoint": "https://campus.didiglobal.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "didiglobal",
+      "moka_site_id": "96064",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "拼多多",
@@ -352,7 +357,13 @@
       "campus_search_url": "https://join.wps.cn/",
       "search_url": "https://join.wps.cn/",
       "board_scope": "campus",
-      "business_summary": "办公软件、协同办公与办公 AI"
+      "business_summary": "办公软件、协同办公与办公 AI",
+      "moka_endpoint": "https://join.wps.cn/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "wps",
+      "moka_site_id": "41436",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN",
+      "moka_source_token": "8379ee777457c4d22fc65d4439f660b3"
     },
     {
       "company": "荣耀",
@@ -458,7 +469,12 @@
       "campus_search_url": "https://app.mokahr.com/social-recruitment/high-flyer/140576#/",
       "search_url": "https://app.mokahr.com/social-recruitment/high-flyer/140576#/",
       "board_scope": "official_recruiting",
-      "business_summary": "基础大模型、推理模型与模型服务"
+      "business_summary": "基础大模型、推理模型与模型服务",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "high-flyer",
+      "moka_site_id": "140576",
+      "moka_site": "social",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "月之暗面/Kimi",
@@ -477,7 +493,12 @@
       "campus_search_url": "https://app.mokahr.com/campus-recruitment/moonshot/148507",
       "search_url": "https://app.mokahr.com/campus-recruitment/moonshot/148507",
       "board_scope": "campus",
-      "business_summary": "大模型、Kimi AI 助手与 Agent"
+      "business_summary": "大模型、Kimi AI 助手与 Agent",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "moonshot",
+      "moka_site_id": "148507",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "MiniMax",
@@ -518,7 +539,12 @@
       "campus_search_url": "https://app.mokahr.com/campus-recruitment/zphz/148984",
       "search_url": "https://app.mokahr.com/campus-recruitment/zphz/148984",
       "board_scope": "campus",
-      "business_summary": "GLM 大模型、模型 API 与 Agent 平台"
+      "business_summary": "GLM 大模型、模型 API 与 Agent 平台",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "zphz",
+      "moka_site_id": "148984",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "阶跃星辰",
@@ -536,7 +562,12 @@
       "campus_search_url": "https://app.mokahr.com/campus-recruitment/step/94905",
       "search_url": "https://app.mokahr.com/campus-recruitment/step/94905",
       "board_scope": "campus",
-      "business_summary": "多模态基础模型、AI 平台与应用"
+      "business_summary": "多模态基础模型、AI 平台与应用",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "step",
+      "moka_site_id": "94905",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "百川智能",
@@ -630,7 +661,12 @@
         "https://app.mokahr.com/su/xQ3gI",
         "https://app.mokahr.com/su/Mysj3"
       ],
-      "business_summary": "模型推理云、模型 API 与 AI Infra"
+      "business_summary": "模型推理云、模型 API 与 AI Infra",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "siliconflow",
+      "moka_site_id": "151752",
+      "moka_site": "recommendation",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "面壁智能",
@@ -719,7 +755,12 @@
       "campus_search_url": "https://app.mokahr.com/campus_apply/shopee/2962#/jobs",
       "search_url": "https://app.mokahr.com/campus_apply/shopee/2962#/jobs",
       "board_scope": "campus",
-      "business_summary": "东南亚电商、金融科技、物流与 AI"
+      "business_summary": "东南亚电商、金融科技、物流与 AI",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "shopee",
+      "moka_site_id": "2962",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "联想",
@@ -886,7 +927,12 @@
       "campus_search_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
       "search_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
       "board_scope": "campus",
-      "business_summary": "ERP、企业云 SaaS、企业管理软件与企业 AI"
+      "business_summary": "ERP、企业云 SaaS、企业管理软件与企业 AI",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "kingdeehr",
+      "moka_site_id": "166565",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "用友",
@@ -980,7 +1026,15 @@
       "board_scope": "campus",
       "business_summary": "汽车、智能电动车、智能座舱与汽车 AI",
       "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000
+      "browser_company_budget_ms": 90000,
+      "moka_endpoint": "https://campus.geely.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "geely",
+      "moka_site_id": "78436",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN",
+      "moka_commitments": [
+        "全职"
+      ]
     },
     {
       "company": "小鹏集团",
@@ -1175,7 +1229,12 @@
       "campus_search_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN",
       "search_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN",
       "board_scope": "campus",
-      "business_summary": "教育科技、学习工具、智能硬件与教育 AI"
+      "business_summary": "教育科技、学习工具、智能硬件与教育 AI",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "zuoyebang",
+      "moka_site_id": "144908",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "影石 Insta360",
