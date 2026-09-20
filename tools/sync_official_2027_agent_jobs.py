@@ -2290,6 +2290,7 @@ def main() -> int:
     results.sort(key=lambda r: r.company)
     all_matches.sort(key=lambda j: (j.company, j.title, j.location, j.job_id))
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    source_commit = os.environ.get("SYNC_SOURCE_SHA", "").strip()
 
     def family_title(title: str) -> str:
         title_lines = (title or "").splitlines()
@@ -2607,6 +2608,7 @@ def main() -> int:
     payload = {
         "schema_version": 1,
         "generated_at": now,
+        "source_commit": source_commit,
         "cycle": cfg["cycle"],
         "scope": "current official campus/new-grad non-algorithm AI application & Agent engineering",
         "methodology": {
@@ -2626,6 +2628,7 @@ def main() -> int:
         "# 当前官方校招 / 应届｜非算法 AI 应用 & Agent 工程 JD 全量结果",
         "",
         f"> Generated: **{now}**",
+        f"> Source commit: **{source_commit or 'local/manual'}**",
         f"> 固定长期扫描公司 **{counts['companies']}** 家；当前有目标岗位 **{counts['companies_with_targets']}** 家；完整枚举确认 0 岗 **{counts['companies_zero_targets']}** 家；仍待完整枚举 **{counts['companies_needing_enumeration']}** 家。",
         f"> 其中 **{counts['full_jd_families']}** 个抓到第一方 JD 正文，**{counts['title_only_families']}** 个仅能确认第一方职位标题，**{counts['role_verified_current_source_families']}** 个已核验岗位存在并固定官方入口、正文仍待补齐。",
         "",

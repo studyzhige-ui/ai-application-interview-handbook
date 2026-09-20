@@ -34,12 +34,13 @@ jobs:
     runs-on: [self-hosted, Windows]
     env:
       PYTHONUTF8: "1"
+      SYNC_SOURCE_SHA: ${{ github.sha }}
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: main
+          ref: ${{ github.sha }}
 
       - name: Check local Windows toolchain
         shell: powershell
@@ -97,7 +98,7 @@ jobs:
 
       - name: Print coverage audit
         shell: powershell
-        run: Get-Content market/jobs/official-2027-coverage-audit.generated.md
+        run: Get-Content market/jobs/official-2027-coverage-audit.generated.md -Encoding utf8
 
       - name: Commit generated output safely
         shell: powershell
@@ -111,9 +112,15 @@ jobs:
           Copy-Item 'market/jobs/official-company-role-index.md' -Destination $stashDir
           Copy-Item 'market/jobs/company-scan-pool.md' -Destination $stashDir
 
+          $sourceSha = '${{ github.sha }}'
           git fetch origin main
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          git reset --hard origin/main
+          $remoteSha = (git rev-parse origin/main).Trim()
+          if ($remoteSha -ne $sourceSha) {
+            Write-Host "main advanced from $sourceSha to $remoteSha; discard stale discovery output."
+            exit 0
+          }
+          git reset --hard $sourceSha
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
           Get-ChildItem (Join-Path $stashDir '*') | Copy-Item -Destination 'market/jobs' -Force
@@ -127,8 +134,17 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add 'market/jobs/official-2027-*.generated.*' 'market/jobs/official-company-role-index.json' 'market/jobs/official-company-role-index.md' 'market/jobs/company-scan-pool.md'
-          git commit -m 'market: sync official current-campus Agent discovery'
+          git commit -m 'market: sync official current-campus Agent discovery [skip ci]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          git fetch origin main
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $latestRemoteSha = (git rev-parse origin/main).Trim()
+          if ($latestRemoteSha -ne $sourceSha) {
+            Write-Host "main advanced during publication from $sourceSha to $latestRemoteSha; discard stale discovery commit."
+            exit 0
+          }
+
           git push origin HEAD:main
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
@@ -137,11 +153,13 @@ jobs:
     if: github.event.repository.private == false
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    env:
+      SYNC_SOURCE_SHA: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: main
+          ref: ${{ github.sha }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -208,8 +226,14 @@ jobs:
             cp "$f" "${{ runner.temp }}/job-sync/$(basename "$f")"
           done
 
+          source_sha="${{ github.sha }}"
           git fetch origin main
-          git reset --hard origin/main
+          remote_sha="$(git rev-parse origin/main)"
+          if [ "$remote_sha" != "$source_sha" ]; then
+            echo "main advanced from $source_sha to $remote_sha; discard stale discovery output."
+            exit 0
+          fi
+          git reset --hard "$source_sha"
 
           for f in "${{ runner.temp }}/job-sync/"*; do
             cp "$f" "market/jobs/$(basename "$f")"
@@ -223,5 +247,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md
-          git commit -m 'market: sync official current-campus Agent discovery'
+          git commit -m 'market: sync official current-campus Agent discovery [skip ci]'
+
+          git fetch origin main
+          latest_remote_sha="$(git rev-parse origin/main)"
+          if [ "$latest_remote_sha" != "$source_sha" ]; then
+            echo "main advanced during publication from $source_sha to $latest_remote_sha; discard stale discovery commit."
+            exit 0
+          fi
           git push origin HEAD:main

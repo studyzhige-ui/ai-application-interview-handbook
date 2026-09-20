@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import os
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
@@ -56,6 +57,12 @@ def main() -> int:
 
     rows = []
     hard_errors: list[str] = []
+    expected_source_sha = os.environ.get("SYNC_SOURCE_SHA", "").strip()
+    generated_source_sha = str(norm.get("source_commit") or "").strip()
+    if expected_source_sha and generated_source_sha != expected_source_sha:
+        hard_errors.append(
+            f"generated source_commit mismatch: expected {expected_source_sha}, got {generated_source_sha or '<missing>'}"
+        )
     for src in reg.get("sources", []):
         company = src["company"]
         n, i, b, f, m = ns.get(company, {}), ix.get(company, {}), bs.get(company, {}), fs.get(company, {}), ms.get(company, {})
