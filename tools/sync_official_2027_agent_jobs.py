@@ -1473,10 +1473,157 @@ def fetch_feishu_direct(src: dict) -> list[Job]:
     return out
 
 
+def fetch_ashby_official(src: dict) -> list[Job]:
+    """Enumerate every currently published posting from an official Ashby job board."""
+    board = txt(src.get("ashby_board_name"))
+    if not board:
+        path = urlparse(src.get("portal") or "").path.strip("/")
+        board = path.split("/")[0] if path else ""
+    if not board:
+        raise RuntimeError("Ashby board name missing")
+    api = f"https://api.ashbyhq.com/posting-api/job-board/{board}"
+    data = get_json(api, params={"includeCompensation": "true"})
+    rows = data.get("jobs") or []
+    out: list[Job] = []
+    for j in rows:
+        job_url = txt(j.get("jobUrl") or j.get("applyUrl"))
+        jid = ""
+        if job_url:
+            jid = urlparse(job_url).path.rstrip("/").split("/")[-1]
+        description = _strip_html(
+            j.get("descriptionHtml") or j.get("description") or j.get("descriptionPlain") or ""
+        )
+        team = txt(j.get("team") or j.get("department"))
+        out.append(Job(
+            src["company"], txt(j.get("title")), jid,
+            txt(j.get("location")), "当前官方招聘", team,
+            description, "",
+            job_url or src.get("portal") or api,
+            api,
+            "Ashby 当前已发布官方岗位；职位正文决定应届/新毕业生资格",
+        ))
+    return out
+
+
+def fetch_hikvision_campus(src: dict) -> list[Job]:
+    """Enumerate Hikvision's current graduate pool through its first-party campus API."""
+    root = "https://mcampus.hikvision.com"
+    batch_api = root + "/api/userfacade/crsBatch/findBatchAll"
+    list_api = root + "/api/search/crsPositionSearch/getPositionByQuery"
+    headers = {
+        **HEADERS,
+        "Referer": root + "/#/position?activeTab=0",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Origin": root,
+    }
+    batch_data = get_json(batch_api, params={"jobNature": "应届生"}, headers=headers)
+    def walk_batches(v: Any) -> list[dict[str, Any]]:
+        found: list[dict[str, Any]] = []
+        if isinstance(v, dict):
+            if any(k in v for k in ("batchId", "id")) and any(
+                "2027" in txt(v.get(k)) for k in ("batchName", "name", "title", "batchDesc")
+            ):
+                found.append(v)
+            for x in v.values():
+                found.extend(walk_batches(x))
+        elif isinstance(v, list):
+            for x in v:
+                found.extend(walk_batches(x))
+        return found
+    batches = walk_batches(batch_data)
+    batch_id = txt((batches[0] if batches else {}).get("batchId") or (batches[0] if batches else {}).get("id"))
+    if not batch_id:
+        # Current official browser discovery exposed this endpoint; if the API
+        # omits the year label, fall back to the first active batch object.
+        def first_id(v: Any) -> str:
+            if isinstance(v, dict):
+                for k in ("batchId", "id"):
+                    if v.get(k):
+                        return txt(v.get(k))
+                for x in v.values():
+                    got = first_id(x)
+                    if got:
+                        return got
+            elif isinstance(v, list):
+                for x in v:
+                    got = first_id(x)
+                    if got:
+                        return got
+            return ""
+        batch_id = first_id(batch_data)
+    if not batch_id:
+        raise RuntimeError("Hikvision current graduate batchId missing")
+
+    def rows_from(payload: Any) -> tuple[list[dict[str, Any]], int]:
+        if not isinstance(payload, (dict, list)):
+            return [], 0
+        candidates: list[list[dict[str, Any]]] = []
+        totals: list[int] = []
+        def walk(v: Any) -> None:
+            if isinstance(v, dict):
+                for k in ("total", "count", "totalCount"):
+                    try:
+                        if v.get(k) is not None:
+                            totals.append(int(v.get(k)))
+                    except Exception:
+                        pass
+                for x in v.values():
+                    walk(x)
+            elif isinstance(v, list):
+                ds = [x for x in v if isinstance(x, dict)]
+                if ds and any(
+                    any(key in x for key in ("positionName", "postName", "jobName", "positionId", "postAdSn"))
+                    for x in ds
+                ):
+                    candidates.append(ds)
+                for x in v:
+                    walk(x)
+        walk(payload)
+        rows = max(candidates, key=len) if candidates else []
+        return rows, max(totals) if totals else 0
+
+    out: list[Job] = []
+    seen: set[str] = set()
+    page = 1
+    while page <= 100:
+        form = {
+            "pageNum": page, "pageSize": 100, "keyWord": "",
+            "jobNature": "应届生", "batchId": batch_id,
+            "postAdSnList": "", "workPlaces": "", "adNeedDept": "", "interviewMethodList": "",
+        }
+        data = post_form(list_api, data=form, headers=headers)
+        rows, total = rows_from(data)
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("positionId") or j.get("postAdSn") or j.get("id"))
+            key = jid or (txt(j.get("positionName") or j.get("postName") or j.get("jobName")) + "|" + txt(j.get("workPlace")))
+            if key in seen:
+                continue
+            seen.add(key)
+            title = txt(j.get("positionName") or j.get("postName") or j.get("jobName") or j.get("name"))
+            out.append(Job(
+                src["company"], title, jid,
+                txt(j.get("workPlace") or j.get("workPlaces") or j.get("location")),
+                "【2027校园招聘】应届生", txt(j.get("departmentName") or j.get("adNeedDept") or j.get("department")),
+                _strip_html(j.get("description") or j.get("positionDescription") or j.get("duty")),
+                _strip_html(j.get("requirement") or j.get("jobRequirement") or j.get("qualification")),
+                src.get("search_url") or root + "/#/position?activeTab=0",
+                list_api,
+                "海康威视官方 2027 校园招聘 / 应届生",
+            ))
+        if len(rows) < 100 or (total and page * 100 >= total):
+            break
+        page += 1
+    return out
+
+
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
     "bytedance_api": fetch_bytedance,
     "sangfor_campus_api": fetch_sangfor_campus,
+    "ashby_official": fetch_ashby_official,
+    "hikvision_campus_api": fetch_hikvision_campus,
     "kuaishou_api": fetch_kuaishou,
     "baidu_api": fetch_baidu,
     "tencent_api": fetch_tencent,
