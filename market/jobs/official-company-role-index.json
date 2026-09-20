@@ -443,7 +443,7 @@
       "representative_roles": [
         {
           "title": "【27届校招】中间件AI开发工程师（JAVA方向）",
-          "recruitment_type": "校招职位 / 校招动态 / 【校招】正式校招生 / 2027届秋季校园招聘项目 / 【27届校招】中间件AI开发工程师（JAVA方向） / 上海正式技术类2027届秋季校园招聘项目 / 【27届校招】中间件AI开发工程师（golang方向） / 上海正式技术类2027届秋季校园招聘项目",
+          "recruitment_type": "校招职位 / 校招动态 / 【校招】正式校招生 / 2027届秋季校园招聘项目 / 【27届校招】中间件AI开发工程师（golang方向） / 上海正式技术类2027届秋季校园招聘项目 / 【27届校招】中间件AI开发工程师（JAVA方向） / 上海正式技术类2027届秋季校园招聘项目",
           "role_scope": "【27届校招】中间件AI开发工程师（JAVA方向）",
           "official_apply_url": "https://poizon.jobs.feishu.cn/578078/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
           "evidence_url": "https://poizon.jobs.feishu.cn/578078/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
@@ -616,23 +616,11 @@
     },
     {
       "company": "Manus",
-      "status": "VERIFIED_ROLE",
+      "status": "ZERO_TARGET_JDS",
       "official_root": "https://www.manus.im/",
       "official_search_url": "https://jobs.ashbyhq.com/manusai",
       "board_scope": "official_recruiting",
-      "representative_roles": [
-        {
-          "title": "AI Agent Engineer",
-          "recruitment_type": "当前官方招聘（优秀应届毕业生可投）",
-          "role_scope": "AI Agent Engineer",
-          "official_apply_url": "https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de",
-          "evidence_url": "https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de",
-          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
-          "jd_status": "ROLE_VERIFIED",
-          "jd_summary": "Manus AI 官方 Ashby 当前在招 AI Agent Engineer；岗位负责 Manus Agent 核心模块、Prompt/Tool/RAG/Agent 系统架构优化与评测系统建设，并明确优秀应届毕业生可投。",
-          "source_role_family": "AI Agent Engineer"
-        }
-      ],
+      "representative_roles": [],
       "last_verified": "2026-09-20",
       "business_summary": "通用 AI Agent"
     },
@@ -709,10 +697,10 @@
       "representative_roles": [
         {
           "title": "校招-车端 AI Agent 与应用生态系统架构工程师",
-          "recruitment_type": "校招官网 / 2027届校园招聘 / 2027届校园招聘-正式批 / 2027届营销Sparks校园招聘 / 2027届营销Sparks校园招聘（25/26届） / Shine校园招聘计划 / 校招-Agent安全工程师 / 上海校招正式数字技术 - 软件研发本科及以上2027届校园招聘-正式批职位 ID：A164877A",
+          "recruitment_type": "校招官网 / 2027届校园招聘 / 2027届校园招聘-正式批 / 2027届营销Sparks校园招聘 / 2027届营销Sparks校园招聘（25/26届） / Shine校园招聘计划 / 校招-车端 AI Agent 与应用生态系统架构工程师 / 上海校招正式数字技术 - 软件研发博士及以上2027届校园招聘-正式批职位 ID：A25338A",
           "role_scope": "校招-车端 AI Agent 与应用生态系统架构工程师",
-          "official_apply_url": "https://nio.jobs.feishu.cn/campus/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=2&limit=10&functionCategory=&tag=",
-          "evidence_url": "https://nio.jobs.feishu.cn/campus/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=2&limit=10&functionCategory=&tag=",
+          "official_apply_url": "https://nio.jobs.feishu.cn/campus/position/list?keywords=&category=&location=&project=&type=&job_hot_flag=&current=52&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://nio.jobs.feishu.cn/campus/position/list?keywords=&category=&location=&project=&type=&job_hot_flag=&current=52&limit=10&functionCategory=&tag=",
           "evidence_type": "FIRST_PARTY_FULL_JD",
           "jd_status": "FULL_FIRST_PARTY_JD",
           "jd_summary": "随着大模型能力从“问答”走向“执行任务”，AI Agent、工具调用、长期记忆、多应用协同、权限控制、插件生态和本地化部署，正在成为下一代智能终端的重要能力。\n在智能汽车场景中，车端 AI Agent 不只是一个语音助手，而可能成为连接用户、车辆、座舱、智能辅助驾驶、服务生态和云端能力的新一代应用入口。\n架构团队希望招聘具备 AI Agent、OpenClaw 类应用生态、工具调用框架、多 Agent 协作或 AI 应用平台经验的博士校招生，参与定义下一代车端 AI 应用生态和系统架构。\n你将负责\n跟踪 AI Agent、OpenClaw 类开放生态、MCP / tool calling、workflow、multi-agent、agent memory、local-first agent、权限治理和插件生态的发展趋势。\n分析这些 AI Agent 能力进入车端后的系统架构需求，包括应用框架、工具注册、权限模型、上下文管理、长期记忆、用户确认机制、沙箱隔离、安全审计和异常回滚。\n参与设计车端 AI Agent 应用平台架构，使车端大模型能够安全、可控、可审计地调用车辆能力、座舱能力、云端服务和第三方应用。\n研究车端 AI 应用生态如何与 OS、SOA 服务、车辆信号、用户数据、账号体系、隐私安全、车云协同和开发者工具链结合。\n推动车端 AI Agent 典型场景 POC，例如车内个人助手、跨应用任务执行、行程规划、车辆控制、安全确认、服务推荐、用户记忆和多 Agent 协同。\n将 AI 应用生态需求转化为平台架构指标和工程需求，包括延迟、可靠性、权限边界、数据最小化、离线能力、端云分工、资源占用和安全风险。\n我们希望你具备\n博士学历，计算机、人工智能、软件工程、人机交互、机器人、操作系统、分布式系统等相关方向。\n熟悉以下至少一个方向：\nAI Agent、tool calling、MCP、workflow engine、多 Agent 协作；\nOpenClaw、AutoGPT、LangGraph、CrewAI、Dify、Coze 等 AI 应用 / Agent 框架；\n大模型应用开发、长期记忆、RAG、agent memory、context engineering；\n应用沙箱、权限系统、安全策略、可信执行、隐私保护；\nOS、应用框架、中间件、SOA、端云协同或开发者生态。\n能够从 AI 应用形态反推底层系统架构，而不只是开发单个 demo。\n对“AI 如何成为下一代应用入口”有自己的判断，并愿意把判断落到车端平台设计中。\n具备跨团队沟通能力，能够连接 AI 应用、OS、座舱、云服务、安全、法务合规和产品体验团队。\n加分项\n有开源 Agent 框架、AI 应用平台、插件生态、开发者平台或工具链建设经验。\n熟悉 prompt injection、tool abuse、权限绕过、供应链攻击、agent sandbox 等 AI Agent 安全问题。\n有智能汽车、机器人、IoT、手机、PC、可穿戴设备等端侧 AI 应用经验。\n既能写 POC，也能抽象平台能力和系统边界。\n有开源贡献、开发者社区运营或 AI 应用生态建设经验。",
@@ -775,15 +763,15 @@
       "business_summary": "无人机、影像设备、行业机器人与智能硬件",
       "representative_roles": [
         {
-          "title": "AI DevOps 工程师",
-          "recruitment_type": "2027“拓疆者”校园招聘",
-          "role_scope": "AI DevOps 工程师",
+          "title": "AI全栈开发工程师（深圳）",
+          "recruitment_type": "当前官方校园招聘",
+          "role_scope": "AI全栈开发工程师（深圳）",
           "official_apply_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
           "evidence_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
-          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
-          "jd_status": "ROLE_VERIFIED",
-          "jd_summary": "大疆2027官方热招页将该岗位列在软件类，定位于AI与DevOps交叉，使用AI技术提升研发与软件交付效率。",
-          "source_role_family": "AI DevOps 工程师"
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "职位简介：\n我们致力于将AI技术与研发流程深度融合，“让AI赋能研发，让创造更纯粹”是我们的核心使命。\n在这里，你将让AI代码的能力贯穿产品研发与制造的全链路，驱动关键系统的智能进化；\n在这里，你将与AI技术专家、产品经理及业务方紧密协作，拉通从模型到应用的AI创新闭环；\n在这里，你将与前沿的团队共同构建下一代AI-Native工程体系，为研发效能的革命性提升贡献力量。\n\n工作职责：\n1. 围绕研发与制造领域的数字化与智能化转型，进行全栈式AI应用开发，深度参与关键IT系统的设计、开发、部署与持续优化；\n2. 负责前端、客户端、服务端等多领域业务开发工作，覆盖业务全链路，按业务需求统筹各端开发优先级，打破端侧壁垒，实现业务功能高效落地；沉淀AI编程最佳实践与工程方法论，提升团队通过AI高效交付可靠工程的整体能力。\n3. 立足全栈发展趋势，明确AI编码工程师核心定位，短期聚焦多端AI辅助开发，长期向全栈方向深耕，参与业务全流程开发，推动业务从需求到上线的闭环落地；\n4. 关注AI编码、全栈开发前沿技术与行业趋势，跟进业内最新工具与应用方案，结合业务场景提出创新思路，探索AI技术与全栈开发结合的最优路径，支撑业务长远发展；\n任职要求：\n1. 本科及以上学历，计算机相关专业；\n2. 具备扎实的计算机基础知识（数据结构、算法、计算机网络、操作系统等），了解前端（JS/TS/Vue/React等）、客户端（iOS/Android/鸿蒙任一）、服务端（Golang/Python/Java任一）任一领域的开发，有全栈开发经验者优先；\n3. 对AI技术有强烈兴趣和好奇心，了解并能初步应用大语言模型（LLM）；熟练使用Claude Code、Codex、Cursor等任一AI Coding工具，维护过Rules、MCP、Skills并了解底层机制与技术细节的同学优先；\n4. 认可AI Coder定位，明确自身长期全栈发展规划，具备较强的学习能力和适应能力，能快速上手新领域技术，适配业务驱动的开发模式；深度认同AI开发范式，坚信大语言模型会重塑软件开发，日常工作中能主动使用AI工具，真正用AI提升效率；\n5. 热爱学习，勇于接受挑战，具备快速学习、主动探索和解决问题的强烈自驱力。",
+          "source_role_family": "AI全栈开发工程师（深圳）"
         }
       ],
       "last_verified": "2026-09-20"
@@ -956,7 +944,7 @@
       "representative_roles": [
         {
           "title": "【27届校招】通用智能AI平台研发工程师",
-          "recruitment_type": "小鹏集团校招官网 / 【27届校招】具身智能数据Infra工程师 / 【27届校招】备件采购培训生 / 【27届校招】电驱控制软件培训生 / 【27届校招】动力规划及前瞻运营培训生 / 【27届校招】动力技术前瞻研究培训生 / 【27届校招】通用智能AI平台研发工程师 / 小鹏AI数据闭环平台团队，打造支撑百万级路采、千卡GPU的自动驾驶与具身智能AI基础设施。你将处理PB级多传感器数据，直面分布式训练、大模型标注等工业级挑战，深度应用VLM自动化标注、Milvus向量检索、流批一体、GPU调度等前沿技术。参与数据接入→训练→推理→回流全链路建设。27届校招专属培养，mentor带教，目标快速独立负责核心模块。",
+          "recruitment_type": "小鹏集团校招官网 / 【27届校招】备件采购培训生 / 【27届校招】具身智能数据Infra工程师 / 【27届校招】电驱控制软件培训生 / 【27届校招】通用智能AI平台研发工程师 / 小鹏AI数据闭环平台团队，打造支撑百万级路采、千卡GPU的自动驾驶与具身智能AI基础设施。你将处理PB级多传感器数据，直面分布式训练、大模型标注等工业级挑战，深度应用VLM自动化标注、Milvus向量检索、流批一体、GPU调度等前沿技术。参与数据接入→训练→推理→回流全链路建设。27届校招专属培养，mentor带教，目标快速独立负责核心模块。 / 【27届校招】动力规划及前瞻运营培训生 / 【27届校招】动力技术前瞻研究培训生",
           "role_scope": "【27届校招】通用智能AI平台研发工程师",
           "official_apply_url": "https://xiaopeng.jobs.feishu.cn/campus/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=5&limit=10&functionCategory=&tag=",
           "evidence_url": "https://xiaopeng.jobs.feishu.cn/campus/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=5&limit=10&functionCategory=&tag=",
@@ -970,12 +958,24 @@
     },
     {
       "company": "理想汽车",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://www.lixiang.com/",
       "official_search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
       "board_scope": "campus",
       "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "供应链AI智能体开发工程师",
+          "recruitment_type": "当前校园招聘",
+          "role_scope": "供应链AI智能体开发工程师",
+          "official_apply_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
+          "evidence_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_TITLE",
+          "jd_status": "TITLE_ONLY_FIRST_PARTY",
+          "jd_summary": "",
+          "source_role_family": "供应链AI智能体开发工程师"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {
@@ -988,13 +988,13 @@
       "representative_roles": [
         {
           "title": "FDE工程师（AI前线部署工程师）",
-          "recruitment_type": "当前官方校园招聘",
+          "recruitment_type": "当前校园招聘",
           "role_scope": "FDE工程师（AI前线部署工程师）",
-          "official_apply_url": "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html",
-          "evidence_url": "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html",
-          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
-          "jd_status": "ROLE_VERIFIED",
-          "jd_summary": "海尔官方校园职位池当前在AI/算法类中列出FDE工程师（AI前线部署工程师），工作地点青岛。",
+          "official_apply_url": "https://maker.haier.net/client/campus/customizedptjobs/id/87.html",
+          "evidence_url": "https://maker.haier.net/client/campus/customizedptjobs/id/87.html",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_TITLE",
+          "jd_status": "TITLE_ONLY_FIRST_PARTY",
+          "jd_summary": "",
           "source_role_family": "FDE工程师（AI前线部署工程师）"
         }
       ],

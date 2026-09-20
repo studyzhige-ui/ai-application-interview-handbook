@@ -38,7 +38,7 @@
 | 生数科技 | 视频生成、多模态生成模型与 Vidu | https://shengshu.jobs.feishu.cn/index/ | VERIFIED_ROLE | Agent平台开发工程师 (YH) |
 | 硅基流动 | 模型推理云、模型 API 与 AI Infra | https://app.mokahr.com/su/Idzsq | ZERO_TARGET_JDS |  |
 | 面壁智能 | 端侧大模型、小模型与 Agent | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | ZERO_TARGET_JDS |  |
-| Manus | 通用 AI Agent | https://jobs.ashbyhq.com/manusai | VERIFIED_ROLE | AI Agent Engineer |
+| Manus | 通用 AI Agent | https://jobs.ashbyhq.com/manusai | ZERO_TARGET_JDS |  |
 | 无问芯穹/Infini-AI | AI Infra、异构算力与训练/推理平台 | https://infinigence.jobs.feishu.cn/088717 | ZERO_TARGET_JDS |  |
 | 昆仑万维/天工 | 大模型、天工 AI、互联网与海外业务 | https://jobs.kunlun.com/459522/position/list | ZERO_TARGET_JDS |  |
 | Shopee | 东南亚电商、金融科技、物流与 AI | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | VERIFIED_ROLE | （27届秋招）Agent开发工程师-北京 |
@@ -46,7 +46,7 @@
 | 蔚来 | 智能电动车、智能驾驶、能源服务与 AI | https://nio.jobs.feishu.cn/campus/ | VERIFIED_ROLE | 校招-车端 AI Agent 与应用生态系统架构工程师 |
 | 顺丰 | 快递、物流、供应链科技与 AI | https://campus.sf-express.com/positionList | VERIFIED_ROLE | AI全栈研发工程师（顺丰科技） |
 | 米哈游 | 游戏、IP、互动娱乐、游戏研发技术与 AI | https://jobs.mihoyo.com/#/campus/position | VERIFIED_ROLE | 平台研发-后端开发工程师（AI 应用方向） |
-| 大疆 DJI | 无人机、影像设备、行业机器人与智能硬件 | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | VERIFIED_ROLE | AI DevOps 工程师 |
+| 大疆 DJI | 无人机、影像设备、行业机器人与智能硬件 | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | VERIFIED_ROLE | AI全栈开发工程师（深圳） |
 | 度小满 | 消费金融、财富管理、支付与金融科技 | https://campus.duxiaoman.com/ | VERIFIED_ROLE | AI全栈研发工程师-大数据引擎/云原生方向 |
 | 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/#/position?activeTab=0 | ZERO_TARGET_JDS |  |
 | 中兴通讯 | 通信网络、算力、云、终端、企业数字化与 AI | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | VERIFIED_ROLE | AI应用开发资深专家 |
@@ -59,7 +59,7 @@
 | 大华股份 | 智慧物联、视频 AI、智慧城市与企业数字化 | https://job.dahuatech.com/ | ZERO_TARGET_JDS |  |
 | 吉利控股 | 汽车、智能电动车、智能座舱与汽车 AI | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | VERIFIED_ROLE | AI开发岗 |
 | 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | VERIFIED_ROLE | 【27届校招】通用智能AI平台研发工程师 |
-| 理想汽车 | 智能电动车、智能驾驶、具身智能与智能硬件 | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | ZERO_TARGET_JDS |  |
+| 理想汽车 | 智能电动车、智能驾驶、具身智能与智能硬件 | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | VERIFIED_ROLE | 供应链AI智能体开发工程师 |
 | 海尔集团 | 智慧家庭、工业互联网、医疗健康与工业 AI | https://maker.haier.net/client/campus/activityindex.html | VERIFIED_ROLE | FDE工程师（AI前线部署工程师） |
 | 美的集团 | 智能家居、工业技术、楼宇、机器人与新能源 | https://newpower.midea.com/ | ZERO_TARGET_JDS |  |
 | 比亚迪 | 新能源汽车、电池、新能源、电子与轨道交通 | https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ= | ZERO_TARGET_JDS |  |
