@@ -269,6 +269,11 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
           url:ru,method:req.method(),post_data:(req.postData()||"").slice(0,4000),
           status:resp.status(),content_type:ct,resource_type:req.resourceType()
         };
+        if(/\/api\/v1\/search\/job\/posts/i.test(ru)){
+          const d=data?.data||{};
+          entry.response_count=Number(d?.count||0);
+          entry.response_rows=Array.isArray(d?.job_post_list)?d.job_post_list.length:0;
+        }
         if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
         const pageText=(await page.locator("body").innerText().catch(()=>"")).slice(0,50000);
         const cycle=cycleSnippets(pageText).join(" / ");
@@ -390,6 +395,41 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     return {page_url:url,error:String(e).slice(0,400),hasCampusEvidence:false,next:[],search_control_found:false,search_terms_attempted:[]};
   }
 }
+function feishuKeywordCoverage(endpointLog){
+  const eps=(endpointLog||[]).filter(e=>e.status===200 && /\/api\/v1\/search\/job\/posts/i.test(e.url));
+  if(!eps.length) return {complete:false,terms:[]};
+  const byKeyword=new Map();
+  for(const e of eps){
+    let body={};
+    try{body=JSON.parse(e.post_data||"{}");}catch{}
+    const keyword=String(body.keyword??"").toLowerCase();
+    const limit=Math.max(1,Number(body.limit||10));
+    const offset=Math.max(0,Number(body.offset||0));
+    if(!byKeyword.has(keyword)) byKeyword.set(keyword,[]);
+    byKeyword.get(keyword).push({
+      offset,limit,total:Math.max(0,Number(e.response_count||0)),
+      rows:Math.max(0,Number(e.response_rows||0))
+    });
+  }
+  const required=["",...SEARCH_TERMS.map(x=>x.toLowerCase())];
+  const completeTerm=q=>{
+    const xs=(byKeyword.get(q)||[]).sort((a,b)=>a.offset-b.offset);
+    if(!xs.length) return false;
+    const total=Math.max(...xs.map(x=>x.total));
+    let covered=0;
+    for(const x of xs){
+      if(x.offset>covered) return false;
+      covered=Math.max(covered,x.offset+x.rows);
+      if(total===0 && x.offset===0 && x.rows===0) return true;
+      if(total>0 && covered>=total) return true;
+      if(x.rows<x.limit) return true;
+    }
+    return total>0 && covered>=total;
+  };
+  const done=required.filter(completeTerm);
+  return {complete:done.length===required.length,terms:done};
+}
+
 async function processSource(browser,src){
   const context=await browser.newContext({userAgent:"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36"});
   const collector=[];
@@ -430,7 +470,8 @@ async function processSource(browser,src){
     const jobs=allJobs;
     const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
     const listScanComplete=pageResults.some(x=>x.list_scan_complete===true);
-    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k)) || listScanComplete;
+    const networkProof=feishuKeywordCoverage(endpointLog);
+    const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k)) || listScanComplete || networkProof.complete;
     const pageErrors=pageResults.filter(x=>x.error).length;
     let status;
     if(fullKeywordSearch && jobs.length) status="BROWSER_ENUMERATED";
@@ -451,8 +492,21 @@ async function processSource(browser,src){
   try{
     return await Promise.race([work,timeout]);
   }catch(e){
+    const proof=feishuKeywordCoverage(endpointLog);
+    const jobs=uniqueJobs(collector);
+    if(proof.complete){
+      const status=jobs.length?"BROWSER_ENUMERATED":"BROWSER_ENUMERATED_ZERO";
+      console.log(`${src.company}: browser terminal via signed Feishu network proof, jobs=${jobs.length}, status=${status}`);
+      return {
+        company:src.company,board_scope:boardScope,root_portal:root,seed_portal:src.portal,job_list_url:jobList,
+        pages:pageResults,endpoints:endpointLog.slice(0,120),jobs,status,
+        error:"browser UI ended after exhaustive signed Feishu pagination: "+String(e).slice(0,300),
+        search_terms_attempted:SEARCH_TERMS,search_terms_expected:SEARCH_TERMS,
+        full_keyword_search:true,list_scan_complete:false,network_pagination_proof:true
+      };
+    }
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
-    return {company:src.company,board_scope:boardScope,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs:uniqueJobs(collector),status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
+    return {company:src.company,board_scope:boardScope,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs,status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
   }finally{
     if(timer) clearTimeout(timer);
     work.catch(()=>{});
