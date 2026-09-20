@@ -436,11 +436,23 @@
     },
     {
       "company": "得物",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://www.dewu.com/",
       "official_search_url": "https://poizon.jobs.feishu.cn/578078/",
       "board_scope": "campus",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "【27届校招】中间件AI开发工程师（JAVA方向）",
+          "recruitment_type": "校招职位 / 校招动态 / 【校招】正式校招生 / 2027届秋季校园招聘项目 / 【27届校招】中间件AI开发工程师（JAVA方向） / 上海正式技术类2027届秋季校园招聘项目 / 【27届校招】中间件AI开发工程师（golang方向） / 上海正式技术类2027届秋季校园招聘项目",
+          "role_scope": "【27届校招】中间件AI开发工程师（JAVA方向）",
+          "official_apply_url": "https://poizon.jobs.feishu.cn/578078/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://poizon.jobs.feishu.cn/578078/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "1、参与AI Native及相关工具设计、开发与迭代，包括 AI workflow 编排，Agentic Ops，AI 智能 Agent ， LLM 网关，AI Agent 推理请求调度及 Claw 个人研发助手开发优化等;\n2、参与 AI Infr 和传统中间件设计、开发与迭代，包括大模型 API Gateway ，AI 向量数据库开发，以及传统中间件分布式缓存、RPC框架、消息队列等性能优化和稳定性保障;\n3、参与微服务架构技术攻关和 AI 探索，包括服务治理、热点探测、 AI 短信、AI 语音等中间件核心领域；探索Service Mesh 和容器化在 AI 服务场景下的标准化治理方案；\n3、解决Gateway、Redis、DAL 等大流量分布式场景下的高可用、容灾、数据一致性等问题，制定 AI 系统保障体系，包含 MCP、Agent、SKill 等，保障底层基础设施服务的 SLA。\n1、2027届毕业生，计算机/软件工程/通信等相关专业本科及以上学历，扎实的数据结构与算法基础；\n2、精通 Java（JVM调优、并发编程），熟悉 Golang 协程/GC机制，两者均精通者优先；了解 LLM 推理优化（如 KV Cache、Continuous Batching）原理者优先；\n3、对 AI 大模型有基本认知与实践经验：了解 LLM 工作原理及主流模型（GPT/Claude/Qwen 等）。如有 Agent 开发或使用经验，了解 RAG（检索增强生成）基本流程，熟悉 MCP 等 AI 工具协议者优先；\n4、对中间件/分布式系统/AI 基础设施领域有强烈兴趣和责任心，有开源贡献（GitHub 活跃项目、Apache/CNCF 生态参与）或技术博客者优先。",
+          "source_role_family": "【27届校招】中间件AI开发工程师（JAVA方向）"
+        }
+      ],
       "last_verified": "2026-09-20",
       "business_summary": "潮流电商、社区、鉴别与交易服务"
     },
@@ -569,10 +581,10 @@
       "representative_roles": [
         {
           "title": "Agent平台开发工程师 (YH)",
-          "recruitment_type": "校招官网 / 4、雇主品牌建设：规划并推广雇主品牌，提升公司人才吸引力，策划校园招聘、社会招聘等大型活动；",
+          "recruitment_type": "校招官网",
           "role_scope": "Agent平台开发工程师 (YH)",
-          "official_apply_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=&category=&location=&project=&type=&job_hot_flag=&current=10&limit=10&functionCategory=&tag=",
-          "evidence_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=&category=&location=&project=&type=&job_hot_flag=&current=10&limit=10&functionCategory=&tag=",
+          "official_apply_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
           "evidence_type": "FIRST_PARTY_FULL_JD",
           "jd_status": "FULL_FIRST_PARTY_JD",
           "jd_summary": "职位描述\n我们正在寻找对多模态大模型技术充满热情、具备扎实工程实践能力的集成工程师。您将作为核心技术成员，负责将前沿的多模态大模型（包括视觉-语言模型等）的预训练infra,并构建高可用、高效率的大规模预训练平台。您需要具备优秀的编程能力、系统思维和实际问题解决能力，与算法团队紧密协作，提升大规模多模态模型的研发效率，直接影响数百万用户的产品体验。\n\n岗位职责：\n1、为预训练平台设计、构建稳定/高效的开发工具，包括开发机平台搭建、任务调度工具平台的搭建、视频结果评测平台，加速算法的研发过程；\n2、系统维护与监控：构建并完善模型服务的监控、日志、告警系统，持续进行性能分析、瓶颈排查与线上问题应急响应；\n3、协作与创新：与算法研究员及其他工程师紧密合作，理解业务需求，提供工程化解决方案，并跟进多模态领域最新进展，探索技术落地可能性；\n4、希望你对于深度学习平台有足够的认识，热衷于抽象标准工具，设计便捷/鲁棒可服用的CLI工具/前端工具；加速大模型的研发,降低大家的认知负担。\n职位要求\n1、计算机科学/软件工程相关领域的本科；\n2、需要后端基础,并且有ai平台开发相关的经验(熟悉k8s,后端开发,监控平台)；\n3、能够有用agent开发平台的经历优先；\n4、开发过通用的CLI工具,能够有比较好的前后端全栈开发能力有限,能够践行devops的习惯。\n\n技术能力\n1.编程与框架：精通 Golang/Python/C++/Java 之一。熟悉WebSocket、gRPC等通信协议，有高并发、低延迟网络服务开发经验；\n2.数据存储与计算：熟悉对象存储（如S3、OSS）、关系型数据库、Redis、ClickHouse。加分项：熟悉 LanceDB 和 Daft、Ray 计算框架，了解向量数据库原理与应用；\n3.系统开发：有扎实的后端服务开发经验，熟悉Linux开发环境，掌握Docker容器化技术，熟练使用Kubernetes等编排工具；\n4.扎实的基础知识：熟悉计算机体系结构、操作系统、计算机网络、多线程编程等基础知识；\n5.工程素养：熟悉CI/CD流程、代码版本管理（Git），具备良好的编码习惯与文档编写能力。",
@@ -697,10 +709,10 @@
       "representative_roles": [
         {
           "title": "校招-车端 AI Agent 与应用生态系统架构工程师",
-          "recruitment_type": "校招官网 / 2027届校园招聘 / 2027届校园招聘-正式批 / 2027届营销Sparks校园招聘 / 2027届营销Sparks校园招聘（25/26届） / Shine校园招聘计划 / 校招-车端AI Agent运行时基座软件开发工程师 / 上海、合肥校招正式数字技术 - 软件研发硕士及以上2027届校园招聘-正式批职位 ID：A48074",
+          "recruitment_type": "校招官网 / 2027届校园招聘 / 2027届校园招聘-正式批 / 2027届营销Sparks校园招聘 / 2027届营销Sparks校园招聘（25/26届） / Shine校园招聘计划 / 校招-Agent安全工程师 / 上海校招正式数字技术 - 软件研发本科及以上2027届校园招聘-正式批职位 ID：A164877A",
           "role_scope": "校招-车端 AI Agent 与应用生态系统架构工程师",
-          "official_apply_url": "https://nio.jobs.feishu.cn/campus/?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=",
-          "evidence_url": "https://nio.jobs.feishu.cn/campus/?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=",
+          "official_apply_url": "https://nio.jobs.feishu.cn/campus/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=2&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://nio.jobs.feishu.cn/campus/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=2&limit=10&functionCategory=&tag=",
           "evidence_type": "FIRST_PARTY_FULL_JD",
           "jd_status": "FULL_FIRST_PARTY_JD",
           "jd_summary": "随着大模型能力从“问答”走向“执行任务”，AI Agent、工具调用、长期记忆、多应用协同、权限控制、插件生态和本地化部署，正在成为下一代智能终端的重要能力。\n在智能汽车场景中，车端 AI Agent 不只是一个语音助手，而可能成为连接用户、车辆、座舱、智能辅助驾驶、服务生态和云端能力的新一代应用入口。\n架构团队希望招聘具备 AI Agent、OpenClaw 类应用生态、工具调用框架、多 Agent 协作或 AI 应用平台经验的博士校招生，参与定义下一代车端 AI 应用生态和系统架构。\n你将负责\n跟踪 AI Agent、OpenClaw 类开放生态、MCP / tool calling、workflow、multi-agent、agent memory、local-first agent、权限治理和插件生态的发展趋势。\n分析这些 AI Agent 能力进入车端后的系统架构需求，包括应用框架、工具注册、权限模型、上下文管理、长期记忆、用户确认机制、沙箱隔离、安全审计和异常回滚。\n参与设计车端 AI Agent 应用平台架构，使车端大模型能够安全、可控、可审计地调用车辆能力、座舱能力、云端服务和第三方应用。\n研究车端 AI 应用生态如何与 OS、SOA 服务、车辆信号、用户数据、账号体系、隐私安全、车云协同和开发者工具链结合。\n推动车端 AI Agent 典型场景 POC，例如车内个人助手、跨应用任务执行、行程规划、车辆控制、安全确认、服务推荐、用户记忆和多 Agent 协同。\n将 AI 应用生态需求转化为平台架构指标和工程需求，包括延迟、可靠性、权限边界、数据最小化、离线能力、端云分工、资源占用和安全风险。\n我们希望你具备\n博士学历，计算机、人工智能、软件工程、人机交互、机器人、操作系统、分布式系统等相关方向。\n熟悉以下至少一个方向：\nAI Agent、tool calling、MCP、workflow engine、多 Agent 协作；\nOpenClaw、AutoGPT、LangGraph、CrewAI、Dify、Coze 等 AI 应用 / Agent 框架；\n大模型应用开发、长期记忆、RAG、agent memory、context engineering；\n应用沙箱、权限系统、安全策略、可信执行、隐私保护；\nOS、应用框架、中间件、SOA、端云协同或开发者生态。\n能够从 AI 应用形态反推底层系统架构，而不只是开发单个 demo。\n对“AI 如何成为下一代应用入口”有自己的判断，并愿意把判断落到车端平台设计中。\n具备跨团队沟通能力，能够连接 AI 应用、OS、座舱、云服务、安全、法务合规和产品体验团队。\n加分项\n有开源 Agent 框架、AI 应用平台、插件生态、开发者平台或工具链建设经验。\n熟悉 prompt injection、tool abuse、权限绕过、供应链攻击、agent sandbox 等 AI Agent 安全问题。\n有智能汽车、机器人、IoT、手机、PC、可穿戴设备等端侧 AI 应用经验。\n既能写 POC，也能抽象平台能力和系统边界。\n有开源贡献、开发者社区运营或 AI 应用生态建设经验。",
@@ -800,13 +812,13 @@
     },
     {
       "company": "海康威视",
-      "status": "NEEDS_ENUMERATION",
+      "status": "ZERO_TARGET_JDS",
       "official_root": "https://www.hikvision.com/cn/",
       "official_search_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "board_scope": "campus",
       "business_summary": "智慧物联、视频技术、企业数字化与 AIoT",
       "representative_roles": [],
-      "last_verified": null
+      "last_verified": "2026-09-20"
     },
     {
       "company": "中兴通讯",
@@ -884,24 +896,12 @@
     },
     {
       "company": "SHEIN",
-      "status": "VERIFIED_ROLE",
+      "status": "ZERO_TARGET_JDS",
       "official_root": "https://careers.shein.cn/",
       "official_search_url": "https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS",
       "board_scope": "campus",
       "business_summary": "全球时尚电商、供应链平台与电商技术",
-      "representative_roles": [
-        {
-          "title": "AI Agent工程师（广告营销方向）-上海",
-          "recruitment_type": "校园招聘 / Students & Graduates / 校园招聘",
-          "role_scope": "AI Agent工程师（广告营销方向）-上海",
-          "official_apply_url": "https://careers.shein.cn/All-Jobs?key=agent",
-          "evidence_url": "https://careers.shein.cn/All-Jobs?key=agent",
-          "evidence_type": "FIRST_PARTY_FULL_JD",
-          "jd_status": "FULL_FIRST_PARTY_JD",
-          "jd_summary": "<p><strong>AI Agent工程师（广告营销方向）-上海</strong></p><p><br></p><p><strong>职位概述：</strong></p><p>负责将先进的大语言模型与智能体（Agent）技术落地到广告投放与营销场景，通过构建自动化智能体与数据驱动模型，提升广告创意效率、投放效果与营销转化率。你将参与从数据到模型到线上决策的完整工程化流程，直接赋能广告投放/营销团队与业务指标。</p><p><br></p><p><strong>工作职责：</strong></p><p>1. 业务落地与效果提升</p><p>将LLM/Agent能力落地到广告创意生成、素材个性化、受众分群、投放策略自动化等业务场景；</p><p>通过算法与工程改进提升运营效率与关键指标。</p><p><br></p><p>2.LLM 应用开发</p><p>负责基于大模型的广告文案/创意生成、素材说明、A/B 文案变体生成与评分体系；</p><p>参与 Prompt Engineering、微调（SFT/LoRA 等）、评估与部署，保证生成内容质量与合规性。</p><p><br></p><p>3. 智能体（Agent）与自动化系统构建</p><p>设计并实现用于投放决策与运营自动化的智能体或 Multi‑Agent 系统（如自动出价Agent、预算分配Agent、素材推荐Agent）；</p><p>利用外部工具（Tools/API）增强模型能力，解决复杂的多轮推理与决策问题。</p><p><br></p><p>4. 技术探索与工程化落地</p><p>跟踪前沿技术（RAG、长期记忆、长上下文、多模态创意生成、因果归因等），推动广告营销系统的技术演进；</p><p>保障系统稳定性、延迟、可扩展性及审计/合规性。</p><p><br></p><p><strong>任职要求：</strong></p><p>1. 学历与经验：本科及以上学历，计算机、人工智能、数学或相关专业；具备 2 年及以上算法/后端/广告系统相关经验</p><p>2. 编程基础： 精通Python/Java/C#等至少一门编程语言，具备优秀的编码习惯、工程化思维和代码调试能力</p><p>3. LLM专业能力：</p><p>熟悉大模型微调技术（如LoRA、P-Tuning），有实际的数据构建、SFT/RLHF训练经验者优先。</p><p>具备实际的Agent或Multi-Agent项目开发经验，对AI Agent的规划、记忆、工具使用等模块有深刻理解。</p><p>4. 广告/营销技术栈理解：熟悉广告生态（Google Ads、Meta Ads 等）或具备投放策略、出价机制与归因分析经验者优先</p><p>5. 综合素质：具备强烈的自驱力、学习能力与业务思维，善于跨团队沟通与推动落地</p>",
-          "source_role_family": "AI Agent工程师（广告营销方向）-上海"
-        }
-      ],
+      "representative_roles": [],
       "last_verified": "2026-09-20"
     },
     {
@@ -948,12 +948,24 @@
     },
     {
       "company": "小鹏集团",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://www.xiaopeng.com/",
       "official_search_url": "https://xiaopeng.jobs.feishu.cn/campus",
       "board_scope": "campus",
       "business_summary": "智能电动车、Physical AI、机器人与飞行汽车",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "【27届校招】通用智能AI平台研发工程师",
+          "recruitment_type": "小鹏集团校招官网 / 【27届校招】具身智能数据Infra工程师 / 【27届校招】备件采购培训生 / 【27届校招】电驱控制软件培训生 / 【27届校招】动力规划及前瞻运营培训生 / 【27届校招】动力技术前瞻研究培训生 / 【27届校招】通用智能AI平台研发工程师 / 小鹏AI数据闭环平台团队，打造支撑百万级路采、千卡GPU的自动驾驶与具身智能AI基础设施。你将处理PB级多传感器数据，直面分布式训练、大模型标注等工业级挑战，深度应用VLM自动化标注、Milvus向量检索、流批一体、GPU调度等前沿技术。参与数据接入→训练→推理→回流全链路建设。27届校招专属培养，mentor带教，目标快速独立负责核心模块。",
+          "role_scope": "【27届校招】通用智能AI平台研发工程师",
+          "official_apply_url": "https://xiaopeng.jobs.feishu.cn/campus/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=5&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://xiaopeng.jobs.feishu.cn/campus/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=5&limit=10&functionCategory=&tag=",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "小鹏AI数据闭环平台团队，打造支撑百万级路采、千卡GPU的自动驾驶与具身智能AI基础设施。你将处理PB级多传感器数据，直面分布式训练、大模型标注等工业级挑战，深度应用VLM自动化标注、Milvus向量检索、流批一体、GPU调度等前沿技术。参与数据接入→训练→推理→回流全链路建设。27届校招专属培养，mentor带教，目标快速独立负责核心模块。\n\n方向一：大规模数据处理\n1、开发Spark/Flink ETL流水线，处理车载传感器数据（图像/点云/GPS/CAN）；\n2、构建多模态Embedding生产流水线，支持分布式特征提取；\n3、探索VLM自动标签生成，减少人工标注依赖；\n4、构建驾驶场景语义检索系统（如“夜间雨天前车急刹”）。\n方向二：数据建模与治理\n1、设计数仓分层模型（ODS/DWD/DWS/ADS），支撑算法训练；\n2、构建数据血缘与元数据管理体系，确保全链路可追溯；\n3、制定多模态数据Embedding规范，保障特征输入质量。\n方向三：AI平台架构与优化\n1、搭建Iceberg/Doris湖仓一体架构，兼顾灵活性与查询性能；\n2、开发Milvus向量数据库，支撑亿级低延迟检索；\n3、优化存储计算性能（分区/压缩/缓存），探索流批一体、存算分离；\n4、设计Parquet/ORC存储策略，优化I/O吞吐。\n方向四：分析工具与可视化\n1、开发BI看板，监控数据质量与核心指标（准确率/接管率/覆盖率）；\n2、提供多模态检索接口，支持文本搜视频片段。\n1、2027届硕士/博士毕业生，计算机、软件工程、人工智能、自动化、电子信息等相关专业；\n2、扎实的编程基础，熟练掌握 Python/C++/Java/Scala 中至少一门语言，有良好的工程习惯与代码质量意识；\n熟悉至少一项大数据处理框架（Spark/Flink）或深度学习框架（PyTorch/TensorFlow）；\n3、对自动驾驶场景有基本认知和浓厚兴趣——你不一定懂感知算法细节，但要理解数据对算法训练的价值。\n\n加分项（满足1-2项即可，非硬性要求）\n1、有数据仓库建模或数据湖（Iceberg/Delta Lake/Hudi）实际使用经验；\n2、熟悉分布式计算原理，有Spark/Flink任务性能调优经验；\n3、了解Kubernetes及GPU虚拟化技术，有集群资源调度相关实践；\n4、使用过Milvus、Weaviate、Pinecone等向量数据库，或对向量检索算法（HNSW/IVF）有研究；\n5、熟悉VLM/多模态模型（如CLIP、LLaVA、Qwen-VL等），有特征提取或模型微调经验；\n6、有自动驾驶相关数据集（nuScenes/Waymo/Argoverse）的处理经验，在ACM、Kaggle、天池等编程/数据竞赛中取得过优异成绩；\n7、有高质量技术博客或开源项目贡献。",
+          "source_role_family": "【27届校招】通用智能AI平台研发工程师"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {

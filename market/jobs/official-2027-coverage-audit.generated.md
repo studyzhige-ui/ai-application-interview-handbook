@@ -6,17 +6,17 @@
 
 - 固定长期扫描公司：**69/69**
 - 第一方官方招聘 / 校招入口 READY：**69/69**
-- 当前有目标岗位：**43**
-- 完整枚举后确认当前 0 个目标岗位：**20**
-- 仍需完成本轮枚举：**6**
-- Role Family：**470**
-- 第一方完整 JD：**460**
+- 当前有目标岗位：**44**
+- 完整枚举后确认当前 0 个目标岗位：**25**
+- 仍需完成本轮枚举：**0**
+- Role Family：**474**
+- 第一方完整 JD：**464**
 
 ## Runtime 诊断
 
-- ENUMERATED：**60/69**
-- LIST_REACHABLE：**7**
-- BLOCKED：**2**
+- ENUMERATED：**69/69**
+- LIST_REACHABLE：**0**
+- BLOCKED：**0**
 - Browser cache fresh：**YES**
 - Feishu cache fresh：**YES**
 - Moka cache fresh：**YES**
@@ -47,10 +47,10 @@
 | 科大讯飞 | 语音 AI、大模型、教育、医疗与企业 AI | https://iflytek.zhiye.com/5/jobs | HAS_TARGET_JDS | ENUMERATED | 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13988) |
 | 携程 | 在线旅游、酒店机票与旅行 AI | https://careers.ctrip.com/#/campus | HAS_TARGET_JDS | ENUMERATED | 云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678) |
 | 360 | 网络安全、搜索/浏览器、AI 助手与企业安全 | https://360campus.zhiye.com/campus/jobs | HAS_TARGET_JDS | ENUMERATED | 27秋招-AI应用开发工程师（AIOps）（北京）-5389(J12461) |
-| 得物 | 潮流电商、社区、鉴别与交易服务 | https://poizon.jobs.feishu.cn/578078/ | NEEDS_ENUMERATION | LIST_REACHABLE |  |
+| 得物 | 潮流电商、社区、鉴别与交易服务 | https://poizon.jobs.feishu.cn/578078/ | HAS_TARGET_JDS | ENUMERATED | 【27届校招】中间件AI开发工程师（JAVA方向） |
 | DeepSeek | 基础大模型、推理模型与模型服务 | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | ZERO_TARGET_JDS | ENUMERATED |  |
 | 月之暗面/Kimi | 大模型、Kimi AI 助手与 Agent | https://app.mokahr.com/campus-recruitment/moonshot/148507 | ZERO_TARGET_JDS | ENUMERATED |  |
-| MiniMax | 多模态大模型、AI 产品与 Agent | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | NEEDS_ENUMERATION | LIST_REACHABLE |  |
+| MiniMax | 多模态大模型、AI 产品与 Agent | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | ZERO_TARGET_JDS | ENUMERATED |  |
 | 智谱/Z.ai | GLM 大模型、模型 API 与 Agent 平台 | https://app.mokahr.com/campus-recruitment/zphz/148984 | HAS_TARGET_JDS | ENUMERATED | 26届春招-大模型应用开发工程师（Java） |
 | 阶跃星辰 | 多模态基础模型、AI 平台与应用 | https://app.mokahr.com/campus-recruitment/step/94905 | HAS_TARGET_JDS | ENUMERATED | 27届-Agent 开发工程师（企业信息化方向） |
 | 百川智能 | 大模型与企业/行业 AI 应用 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | ZERO_TARGET_JDS | ENUMERATED |  |
@@ -64,25 +64,25 @@
 | 昆仑万维/天工 | 大模型、天工 AI、互联网与海外业务 | https://jobs.kunlun.com/459522/position/list | ZERO_TARGET_JDS | ENUMERATED |  |
 | Shopee | 东南亚电商、金融科技、物流与 AI | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | HAS_TARGET_JDS | ENUMERATED | （27届秋招）Agent开发工程师-北京 |
 | 联想 | PC、智能设备、服务器、企业基础设施与 AI | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | HAS_TARGET_JDS | ENUMERATED | AI Agent开发工程师 |
-| 蔚来 | 智能电动车、智能驾驶、能源服务与 AI | https://nio.jobs.feishu.cn/campus/ | HAS_TARGET_JDS | LIST_REACHABLE | 校招-车端 AI Agent 与应用生态系统架构工程师 |
+| 蔚来 | 智能电动车、智能驾驶、能源服务与 AI | https://nio.jobs.feishu.cn/campus/ | HAS_TARGET_JDS | ENUMERATED | 校招-车端 AI Agent 与应用生态系统架构工程师 |
 | 顺丰 | 快递、物流、供应链科技与 AI | https://campus.sf-express.com/positionList | HAS_TARGET_JDS | ENUMERATED | AI全栈研发工程师（顺丰科技） |
 | 米哈游 | 游戏、IP、互动娱乐、游戏研发技术与 AI | https://jobs.mihoyo.com/#/campus/position | HAS_TARGET_JDS | ENUMERATED | 平台研发-后端开发工程师（AI 应用方向） |
 | 大疆 DJI | 无人机、影像设备、行业机器人与智能硬件 | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | HAS_TARGET_JDS | ENUMERATED | AI DevOps 工程师 |
-| 度小满 | 消费金融、财富管理、支付与金融科技 | https://campus.duxiaoman.com/ | HAS_TARGET_JDS | LIST_REACHABLE | AI全栈研发工程师-大数据引擎/云原生方向 |
-| 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION | LIST_REACHABLE |  |
+| 度小满 | 消费金融、财富管理、支付与金融科技 | https://campus.duxiaoman.com/ | HAS_TARGET_JDS | ENUMERATED | AI全栈研发工程师-大数据引擎/云原生方向 |
+| 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/#/position?activeTab=0 | ZERO_TARGET_JDS | ENUMERATED |  |
 | 中兴通讯 | 通信网络、算力、云、终端、企业数字化与 AI | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | HAS_TARGET_JDS | ENUMERATED | AI应用开发资深专家 |
 | 深信服 | 网络安全、云计算、企业 IT 与 AI | https://hr.sangfor.com/schoolRecruitment | HAS_TARGET_JDS | ENUMERATED | 深信服27届—技术研发工程师（AI潜力方向） |
 | 金蝶 | ERP、企业云 SaaS、企业管理软件与企业 AI | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | ZERO_TARGET_JDS | ENUMERATED |  |
 | 用友 | ERP、BIP、企业软件与企业级 AI | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | ZERO_TARGET_JDS | ENUMERATED |  |
 | 美图 | 图像/视频应用、AI 影像、内容生成与设计工具 | https://hr.meitu.com/ | ZERO_TARGET_JDS | ENUMERATED |  |
-| SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | HAS_TARGET_JDS | LIST_REACHABLE | AI Agent工程师（广告营销方向）-上海 |
-| 安克创新 | 充电、影音、智能家居、安防与储能消费电子 | https://career.anker.com.cn/universities/recruitment/new/ | NEEDS_ENUMERATION | BLOCKED |  |
+| SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | ZERO_TARGET_JDS | ENUMERATED |  |
+| 安克创新 | 充电、影音、智能家居、安防与储能消费电子 | https://career.anker.com.cn/universities/recruitment/new/ | ZERO_TARGET_JDS | ENUMERATED |  |
 | 大华股份 | 智慧物联、视频 AI、智慧城市与企业数字化 | https://job.dahuatech.com/ | ZERO_TARGET_JDS | ENUMERATED |  |
 | 吉利控股 | 汽车、智能电动车、智能座舱与汽车 AI | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | HAS_TARGET_JDS | ENUMERATED | AI开发岗 |
-| 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | NEEDS_ENUMERATION | LIST_REACHABLE |  |
+| 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | HAS_TARGET_JDS | ENUMERATED | 【27届校招】通用智能AI平台研发工程师 |
 | 理想汽车 | 智能电动车、智能驾驶、具身智能与智能硬件 | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | ZERO_TARGET_JDS | ENUMERATED |  |
 | 海尔集团 | 智慧家庭、工业互联网、医疗健康与工业 AI | https://maker.haier.net/client/campus/activityindex.html | HAS_TARGET_JDS | ENUMERATED | FDE工程师（AI前线部署工程师） |
-| 美的集团 | 智能家居、工业技术、楼宇、机器人与新能源 | https://newpower.midea.com/ | NEEDS_ENUMERATION | BLOCKED |  |
+| 美的集团 | 智能家居、工业技术、楼宇、机器人与新能源 | https://newpower.midea.com/ | ZERO_TARGET_JDS | ENUMERATED |  |
 | 比亚迪 | 新能源汽车、电池、新能源、电子与轨道交通 | https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ= | ZERO_TARGET_JDS | ENUMERATED |  |
 | 同花顺 | 金融信息服务、证券软件、金融数据与金融 AI | https://campus.10jqka.com.cn/ | HAS_TARGET_JDS | ENUMERATED | 金融 Agent 开发工程师（AIME项目） |
 | 麒麟软件 | 国产操作系统、服务器/桌面 OS 与 AI OS | https://kylinos.zhiye.com/campus/jobs | ZERO_TARGET_JDS | ENUMERATED |  |

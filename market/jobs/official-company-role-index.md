@@ -26,7 +26,7 @@
 | 科大讯飞 | 语音 AI、大模型、教育、医疗与企业 AI | https://iflytek.zhiye.com/5/jobs | VERIFIED_ROLE | 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13988) |
 | 携程 | 在线旅游、酒店机票与旅行 AI | https://careers.ctrip.com/#/campus | VERIFIED_ROLE | 云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678) |
 | 360 | 网络安全、搜索/浏览器、AI 助手与企业安全 | https://360campus.zhiye.com/campus/jobs | VERIFIED_ROLE | 27秋招-AI应用开发工程师（AIOps）（北京）-5389(J12461) |
-| 得物 | 潮流电商、社区、鉴别与交易服务 | https://poizon.jobs.feishu.cn/578078/ | ZERO_TARGET_JDS |  |
+| 得物 | 潮流电商、社区、鉴别与交易服务 | https://poizon.jobs.feishu.cn/578078/ | VERIFIED_ROLE | 【27届校招】中间件AI开发工程师（JAVA方向） |
 | DeepSeek | 基础大模型、推理模型与模型服务 | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | ZERO_TARGET_JDS |  |
 | 月之暗面/Kimi | 大模型、Kimi AI 助手与 Agent | https://app.mokahr.com/campus-recruitment/moonshot/148507 | ZERO_TARGET_JDS |  |
 | MiniMax | 多模态大模型、AI 产品与 Agent | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | ZERO_TARGET_JDS |  |
@@ -48,17 +48,17 @@
 | 米哈游 | 游戏、IP、互动娱乐、游戏研发技术与 AI | https://jobs.mihoyo.com/#/campus/position | VERIFIED_ROLE | 平台研发-后端开发工程师（AI 应用方向） |
 | 大疆 DJI | 无人机、影像设备、行业机器人与智能硬件 | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | VERIFIED_ROLE | AI DevOps 工程师 |
 | 度小满 | 消费金融、财富管理、支付与金融科技 | https://campus.duxiaoman.com/ | VERIFIED_ROLE | AI全栈研发工程师-大数据引擎/云原生方向 |
-| 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION |  |
+| 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/#/position?activeTab=0 | ZERO_TARGET_JDS |  |
 | 中兴通讯 | 通信网络、算力、云、终端、企业数字化与 AI | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | VERIFIED_ROLE | AI应用开发资深专家 |
 | 深信服 | 网络安全、云计算、企业 IT 与 AI | https://hr.sangfor.com/schoolRecruitment | VERIFIED_ROLE | 深信服27届—技术研发工程师（AI潜力方向） |
 | 金蝶 | ERP、企业云 SaaS、企业管理软件与企业 AI | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | ZERO_TARGET_JDS |  |
 | 用友 | ERP、BIP、企业软件与企业级 AI | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | ZERO_TARGET_JDS |  |
 | 美图 | 图像/视频应用、AI 影像、内容生成与设计工具 | https://hr.meitu.com/ | ZERO_TARGET_JDS |  |
-| SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | VERIFIED_ROLE | AI Agent工程师（广告营销方向）-上海 |
+| SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | ZERO_TARGET_JDS |  |
 | 安克创新 | 充电、影音、智能家居、安防与储能消费电子 | https://career.anker.com.cn/universities/recruitment/new/ | ZERO_TARGET_JDS |  |
 | 大华股份 | 智慧物联、视频 AI、智慧城市与企业数字化 | https://job.dahuatech.com/ | ZERO_TARGET_JDS |  |
 | 吉利控股 | 汽车、智能电动车、智能座舱与汽车 AI | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | VERIFIED_ROLE | AI开发岗 |
-| 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | ZERO_TARGET_JDS |  |
+| 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | VERIFIED_ROLE | 【27届校招】通用智能AI平台研发工程师 |
 | 理想汽车 | 智能电动车、智能驾驶、具身智能与智能硬件 | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | ZERO_TARGET_JDS |  |
 | 海尔集团 | 智慧家庭、工业互联网、医疗健康与工业 AI | https://maker.haier.net/client/campus/activityindex.html | VERIFIED_ROLE | FDE工程师（AI前线部署工程师） |
 | 美的集团 | 智能家居、工业技术、楼宇、机器人与新能源 | https://newpower.midea.com/ | ZERO_TARGET_JDS |  |
