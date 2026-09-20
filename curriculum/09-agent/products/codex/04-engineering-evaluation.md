@@ -219,7 +219,7 @@ Codex 同时有 Event、Analytics、OTEL Metrics 和 Rollout Trace。
 
 ### Rollout Trace（运行轨迹）
 
-这是更重的、显式 opt-in（选择开启）的本地诊断路径。它可以保存模型请求 / 响应、Tool 输入输出、Terminal（终端）行为和多 Agent 边，再离线 reduction（归约）成语义图。
+这是更重的、显式 opt-in（选择开启）的本地诊断路径。它可以保存模型请求 / 响应、Tool 输入输出、Terminal（终端）行为和多 Agent 边，再离线 reduction（归约）成 semantic graph（语义图）。
 
 这四层分别回答：
 
@@ -403,7 +403,7 @@ Codex 已经存在：
 
 ---
 
-## 21. 一个 Bad Case 应该怎样从 Trace 走回改进
+## 21. 一个 Bad Case（真实失败案例）应该怎样从 Trace 走回改进
 
 假设线上出现：
 
