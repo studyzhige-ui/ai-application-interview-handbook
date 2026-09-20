@@ -46,6 +46,16 @@ HEADERS = {
 }
 TIMEOUT = 12
 CACHE_MAX_AGE_SECONDS = 6 * 60 * 60
+TARGET_TITLE_HINT_RE = re.compile(
+    r"(?:agent|智能体|rag|harness|runtime|coding|"
+    r"ai\s*(?:应用|全栈|开发|研发|工程|平台|infra|devops|builder|软件|系统|技术|后端|前端)|"
+    r"大模型(?:应用|开发|研发|工程|平台)|fde)",
+    re.I,
+)
+
+
+def likely_target_title(title: str) -> bool:
+    return bool(TARGET_TITLE_HINT_RE.search(title or ""))
 
 
 @dataclass
@@ -559,6 +569,9 @@ def fetch_tencent_campus(src: dict) -> list[Job]:
             project = txt(row.get("recruitLabelName") or row.get("projectName") or "校招")
             if "实习" in project:
                 continue
+            title = txt(row.get("positionTitle"))
+            if not likely_target_title(title):
+                continue
             try:
                 detail = get_json(
                     detail_api,
@@ -571,7 +584,7 @@ def fetch_tencent_campus(src: dict) -> list[Job]:
             desc = txt(dd.get("desc") or dd.get("topicDetail") or dd.get("introduction"))
             req = txt(dd.get("request") or dd.get("topicRequirement"))
             out.append(Job(
-                src["company"], txt(row.get("positionTitle")), pid,
+                src["company"], title, pid,
                 txt(row.get("workCities")), project, txt(row.get("bgs")),
                 desc, req,
                 f"https://join.qq.com/post_detail.html?postId={pid}", api,
@@ -888,6 +901,9 @@ def fetch_xiaohongshu_2027(src: dict) -> list[Job]:
             break
         for row in rows:
             pid = txt(row.get("positionId"))
+            list_title = txt(row.get("positionName"))
+            if not likely_target_title(list_title):
+                continue
             detail = {}
             if pid:
                 try:
@@ -895,7 +911,7 @@ def fetch_xiaohongshu_2027(src: dict) -> list[Job]:
                     detail = detail_payload.get("data") or {}
                 except Exception:
                     detail = {}
-            title = txt(detail.get("positionName") or row.get("positionName"))
+            title = txt(detail.get("positionName") or list_title)
             out.append(Job(
                 src["company"], title, pid,
                 txt(detail.get("workplace") or row.get("workplace")),
@@ -999,6 +1015,9 @@ def fetch_huawei_2027(src: dict) -> list[Job]:
         for row in rows:
             jid = txt(row.get("jobId"))
             ds = txt(row.get("dataSource") or "1")
+            list_title = txt(row.get("jobname"))
+            if not likely_target_title(list_title):
+                continue
             detail = {}
             if jid:
                 try:
@@ -1035,7 +1054,7 @@ def fetch_huawei_2027(src: dict) -> list[Job]:
                 except Exception:
                     pass
             out.append(Job(
-                src["company"], txt(detail.get("jobname") or row.get("jobname")), jid,
+                src["company"], txt(detail.get("jobname") or list_title), jid,
                 txt(detail.get("jobArea") or row.get("jobArea") or row.get("jobAddress")),
                 "2027应届生", txt(detail.get("jobFamilyName") or row.get("jobFamilyName")),
                 _strip_html(desc), _strip_html(req),
@@ -1270,6 +1289,9 @@ def fetch_honor_2027(src: dict) -> list[Job]:
             break
         for row in rows:
             pid = txt(row.get("postId"))
+            list_title = txt(row.get("postName"))
+            if not likely_target_title(list_title):
+                continue
             detail: dict[str, Any] = {}
             if pid:
                 try:
@@ -1287,7 +1309,7 @@ def fetch_honor_2027(src: dict) -> list[Job]:
                 except Exception:
                     detail = {}
             out.append(Job(
-                src["company"], txt(detail.get("postName") or row.get("postName")), pid,
+                src["company"], txt(detail.get("postName") or list_title), pid,
                 txt(detail.get("workPlaceStr") or row.get("workPlaceStr")),
                 "荣耀2027校招", txt(detail.get("orgName") or row.get("department") or row.get("postTypeName")),
                 _strip_html(detail.get("workContent") or row.get("description") or row.get("duty")),
@@ -1657,6 +1679,11 @@ def main() -> int:
             result, matches = future.result()
             results.append(result)
             all_matches.extend(matches)
+            print(
+                f"collect {result.company}: {result.status}, "
+                f"fetched={result.fetched}, matched={result.matched}, error={result.error}",
+                flush=True,
+            )
 
     results.sort(key=lambda r: r.company)
     all_matches.sort(key=lambda j: (j.company, j.title, j.location, j.job_id))
