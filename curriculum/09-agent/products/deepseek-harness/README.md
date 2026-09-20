@@ -37,7 +37,9 @@ Model Request
 
 ---
 
-## 1. 先理解“everything is a plugin”到底是什么意思
+## 1. 先建立 DeepSeek Harness 自己的产品心智模型
+
+### 1. 先理解“everything is a plugin”到底是什么意思
 
 DeepSeek Harness 的官方架构文档直接写明：
 
@@ -77,7 +79,7 @@ Approval Capability
 
 这些能力不是硬编码在一个巨大 `Agent` 类里。
 
-### 为什么这件事重要
+#### 为什么这件事重要
 
 因为 DeepSeek Harness 的扩展方式不是：
 
@@ -109,7 +111,7 @@ dsh-command-compact
 
 ---
 
-## 2. 真实产品不是所有插件全开，而是 Profile / Bundle 组装出来的
+### 2. 真实产品不是所有插件全开，而是 Profile / Bundle 组装出来的
 
 仓库里存在很多 Package，不代表默认产品每次都会把它们全部装上。
 
@@ -158,7 +160,7 @@ DeepSeek Harness 用 Bundle / Profile 组合产品能力。
 
 ---
 
-## 3. DeepSeek Harness 最重要的不变量：Model-visible means logged
+### 3. DeepSeek Harness 最重要的不变量：Model-visible means logged
 
 理解这个产品，最值得先记住一句源码架构原则：
 
@@ -206,7 +208,9 @@ Model Context
 
 ---
 
-## 4. 一次用户请求在源码里到底怎样跑
+## 2. 沿一次真实请求看清 Runtime 骨架
+
+### 4. 一次用户请求在源码里到底怎样跑
 
 先不要看细节，先把一次完整 Agent Turn（智能体轮次）讲成故事。
 
@@ -302,7 +306,7 @@ Inbox
 
 ---
 
-## 5. 为什么它不是“messages 数组 + while loop”
+### 5. 为什么它不是“messages 数组 + while loop”
 
 很多简单 Agent 框架的状态中心是：
 
@@ -324,7 +328,7 @@ Surface 是当前模型应该看到的节点序列。
 
 这允许 Runtime 做一些非常重要的事情。
 
-### 压缩旧历史但不删除证据
+#### 压缩旧历史但不删除证据
 
 Compaction 可以：
 
@@ -342,11 +346,11 @@ Summary D E
 
 历史证据没有物理改写，模型可见视图却缩小了。
 
-### Tool Result 可以被替换，但原始结果仍有来源
+#### Tool Result 可以被替换，但原始结果仍有来源
 
 Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `sourceEventSeqs` 指向原始节点。
 
-### Resume 可以重新投影当时的语义状态
+#### Resume 可以重新投影当时的语义状态
 
 不需要相信某个进程退出前恰好保存的 `messages` 数组。
 
@@ -354,7 +358,9 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 ---
 
-## 6. Context Lifecycle 学什么
+## 3. 四篇正文分别追哪条真实生命周期
+
+### 6. Context Lifecycle 学什么
 
 [01｜Context Lifecycle](01-context-lifecycle.md) 会从“用户这一轮输入以后，模型究竟看到什么”出发，连续追：
 
@@ -372,7 +378,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 ---
 
-## 7. Memory Lifecycle 为什么这次标题会和前两个产品不同
+### 7. Memory Lifecycle 为什么这次标题会和前两个产品不同
 
 [02｜Memory Lifecycle](02-memory-lifecycle.md) 最重要的源码结论不是“DeepSeek Harness 的 Memory 怎么实现”，而是：
 
@@ -414,7 +420,7 @@ Third-party Memory via MCP
 
 ---
 
-## 8. Tool Lifecycle 学什么
+### 8. Tool Lifecycle 学什么
 
 [03｜Tool Lifecycle](03-tool-lifecycle.md) 会追完整链路：
 
@@ -449,7 +455,7 @@ Plugin register ToolDefinition
 
 ---
 
-## 9. Engineering & Evaluation 学什么
+### 9. Engineering & Evaluation 学什么
 
 [04｜Engineering & Evaluation](04-engineering-evaluation.md) 会把长期运行问题放回来：
 
@@ -468,7 +474,7 @@ Plugin register ToolDefinition
 
 ---
 
-## 10. 源码覆盖矩阵
+## 4. 源码覆盖矩阵：哪些结论已经核到真实实现
 
 | 系统边界 | 主要源码 / 文档 | 当前快照中确认的职责 |
 |---|---|---|
@@ -498,9 +504,9 @@ Plugin register ToolDefinition
 
 ---
 
-## 11. 这份源码最值得横向比较的四个设计选择
+## 5. 和 Codex / Claude Code 横向比较时最值得抓住什么
 
-### 一：Context 本身是一个 Projection，而不是唯一真源
+#### 一：Context 本身是一个 Projection，而不是唯一真源
 
 Codex / Claude Code 都有自己的持久化和 Context 变换机制。
 
@@ -516,7 +522,7 @@ Model-visible View
 
 这使 Compaction / Tool Result Pruning 不需要物理删除证据。
 
-### 二：运行时扩展优先用 Event / Service Seam
+#### 二：运行时扩展优先用 Event / Service Seam
 
 Context Injection、Retry、Compaction、Approval 都不是不停修改一个 Agent Loop。
 
@@ -534,7 +540,7 @@ tools/post-execute
 
 插件挂到这些 seam 上。
 
-### 三：Memory 没有被为了“功能完整”强行内建
+#### 三：Memory 没有被为了“功能完整”强行内建
 
 这是一个很值得学习的产品边界。
 
@@ -542,7 +548,7 @@ tools/post-execute
 
 已有 MCP 足以表达第三方长期记忆时，官方选择把 Provider-specific responsibility 留在外部系统。
 
-### 四：Recoverability 被当成 Runtime Contract
+#### 四：Recoverability 被当成 Runtime Contract
 
 很多动作都先留下 durable evidence，再进行异步工作：
 
@@ -565,7 +571,7 @@ approval/asked
 
 ---
 
-## 12. 阅读顺序
+## 6. 推荐阅读顺序
 
 建议按下面顺序读：
 
