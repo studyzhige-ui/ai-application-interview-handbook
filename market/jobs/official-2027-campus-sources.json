@@ -27,7 +27,9 @@
     "ai 平台",
     "ai devops",
     "大模型工程",
-    "大模型平台"
+    "大模型平台",
+    "ai研发",
+    "ai 研发"
   ],
   "hard_exclude_title_keywords": [
     "算法",
@@ -1254,7 +1256,9 @@
     "ai 平台",
     "ai devops",
     "大模型工程",
-    "大模型平台"
+    "大模型平台",
+    "ai研发",
+    "ai 研发"
   ],
   "scope_note": "当前有效官方校园招聘/应届可投职位池；只保留明确非算法 AI 应用 / Agent 软件工程角色。混合官方招聘池必须在 JD 中出现应届/毕业生/new graduate 等资格证据。",
   "body_agent_signals": [
@@ -1312,5 +1316,19 @@
     "AI开发工程师（顺丰科技）"
   ],
   "expected_company_count": 69,
-  "company_pool_semantics": "fixed long-term scan pool; company inclusion is independent from whether a target JD exists in the current run"
+  "company_pool_semantics": "fixed long-term scan pool; company inclusion is independent from whether a target JD exists in the current run",
+  "search_keywords": [
+    "agent",
+    "智能体",
+    "ai应用",
+    "ai 应用",
+    "ai全栈",
+    "ai开发",
+    "大模型应用",
+    "rag",
+    "harness",
+    "runtime",
+    "ai devops",
+    "ai平台"
+  ]
 }
