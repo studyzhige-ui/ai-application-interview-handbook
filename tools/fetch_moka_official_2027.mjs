@@ -56,7 +56,7 @@ function decryptEnvelope(env,aesIv){
 }
 function endpointContract(result){
   const eps=(result.endpoints||[]).filter(e=>
-    e.status===200 && e.method==="POST" && /\/api\/outer\/ats-apply\/website\/jobs\/v2/.test(e.url)
+    e.status===200 && e.method==="POST" && /\/api\/outer\/ats-apply\/website\/jobs\/v2(?:\\?|$)/.test(e.url)
   );
   if(!eps.length)return null;
   for(const e of eps){
