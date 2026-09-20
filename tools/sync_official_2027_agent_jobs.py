@@ -27,6 +27,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "market/jobs/official-2027-campus-sources.json"
 VERIFIED_INDEX = ROOT / "market/jobs/official-company-role-index.json"
+MANUAL_ROLE_SEEDS = ROOT / "market/jobs/official-first-party-role-seeds.json"
 VERIFIED_INDEX_MD = ROOT / "market/jobs/official-company-role-index.md"
 SCAN_POOL_MD = ROOT / "market/jobs/company-scan-pool.md"
 OUT_MD = ROOT / "market/jobs/official-2027-agent-jobs.generated.md"
@@ -1517,6 +1518,13 @@ def main() -> int:
         except Exception as e:
             print(f"verified role index parse warning: {e}", file=sys.stderr)
 
+    manual_seed_payload: dict[str, Any] = {"roles": []}
+    if MANUAL_ROLE_SEEDS.exists():
+        try:
+            manual_seed_payload = json.loads(MANUAL_ROLE_SEEDS.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"manual first-party role seed parse warning: {e}", file=sys.stderr)
+
     previous_payload: dict[str, Any] = {}
     if OUT_JSON.exists():
         try:
@@ -1810,6 +1818,46 @@ def main() -> int:
         })
     role_families.sort(key=lambda x: (x["company"], x["role_family"]))
 
+    # First-party manual seeds cover official pages that are current and
+    # verifiable but not reliably enumerable (SPA/WAF/signed ATS). They never
+    # import secondary-source JD text. Fresh automated FULL_JD data wins.
+    automated_keys = {(x["company"], x["role_family"]) for x in role_families}
+    seeded_companies: set[str] = set()
+    for seed in manual_seed_payload.get("roles") or []:
+        company = txt(seed.get("company"))
+        family = txt(seed.get("title"))
+        if not company or not family:
+            continue
+        key = (company, family)
+        seeded_companies.add(company)
+        if key in automated_keys:
+            continue
+        role_families.append({
+            "company": company,
+            "role_family": family,
+            "representative_title": family,
+            "locations": list(seed.get("locations") or []),
+            "description": "",
+            "requirements": "",
+            "evidence_summary": txt(seed.get("evidence_summary")),
+            "cycle_evidence": txt(seed.get("recruitment_type")),
+            "requisitions": [{
+                "job_id": txt(seed.get("job_id")),
+                "title": family,
+                "location": " / ".join(seed.get("locations") or []),
+                "official_url": txt(seed.get("official_url")),
+                "official_api": "FIRST_PARTY_MANUAL_SEED",
+            }],
+            "source_evidence": ["FIRST_PARTY_MANUAL_SEED"],
+            "evidence_url": txt(seed.get("evidence_url") or seed.get("official_url")),
+            "detail_status": "ROLE_VERIFIED_CURRENT_SOURCE",
+            "manual_first_party_seed": True,
+            "verified_on": txt(seed.get("verified_on")),
+        })
+        automated_keys.add(key)
+
+    role_families.sort(key=lambda x: (x["company"], x["role_family"]))
+
     # Preserve the last verified role families whenever this run did not
     # successfully enumerate matching roles for that company. This prevents
     # an incomplete/blocked/zero-result crawl from erasing known-good data.
@@ -1902,10 +1950,28 @@ def main() -> int:
                     "source_role_family": best.get("role_family") or "",
                 }]
                 row["last_verified"] = today
-        elif runtime and runtime.status == "ENUMERATED_ZERO_MATCHES":
+        elif runtime and runtime.status == "ENUMERATED_ZERO_MATCHES" and company not in seeded_companies:
             row["status"] = "ZERO_TARGET_JDS"
             row["representative_roles"] = []
             row["last_verified"] = today
+        elif company in seeded_companies:
+            candidates = [f for f in role_families if f.get("company") == company]
+            if candidates:
+                best = next((f for f in candidates if f.get("manual_first_party_seed")), candidates[0])
+                req = (best.get("requisitions") or [{}])[0]
+                row["status"] = "VERIFIED_ROLE"
+                row["representative_roles"] = [{
+                    "title": best.get("representative_title") or best.get("role_family") or "",
+                    "recruitment_type": best.get("cycle_evidence") or "当前校园招聘",
+                    "role_scope": best.get("role_family") or "",
+                    "official_apply_url": req.get("official_url") or row["official_search_url"],
+                    "evidence_url": best.get("evidence_url") or req.get("official_url") or row["official_search_url"],
+                    "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
+                    "jd_status": "ROLE_VERIFIED",
+                    "jd_summary": best.get("evidence_summary") or "",
+                    "source_role_family": best.get("role_family") or "",
+                }]
+                row["last_verified"] = today
 
     verified_index["schema_version"] = max(2, int(verified_index.get("schema_version") or 1))
     verified_index["generated_at"] = today

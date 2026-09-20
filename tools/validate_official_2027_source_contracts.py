@@ -11,6 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REG = ROOT / "market/jobs/official-2027-campus-sources.json"
 INDEX = ROOT / "market/jobs/official-company-role-index.json"
 SYNC = ROOT / "tools/sync_official_2027_agent_jobs.py"
+SEEDS = ROOT / "market/jobs/official-first-party-role-seeds.json"
 
 BANNED = {
     "nowcoder.com", "liepin.com", "zhaopin.com", "shixiseng.com",
@@ -92,6 +93,27 @@ def main() -> int:
             token = f'"{mode}":'
             if token not in sync:
                 errors.append(f"{company}: mode {mode} has no sync fetcher")
+
+    if SEEDS.exists():
+        try:
+            seed_payload = json.loads(SEEDS.read_text(encoding="utf-8"))
+        except Exception as exc:
+            errors.append(f"manual first-party role seed parse error: {exc}")
+            seed_payload = {"roles": []}
+        for seed in seed_payload.get("roles") or []:
+            company = seed.get("company") or ""
+            title = (seed.get("title") or "").strip()
+            url = seed.get("official_url") or seed.get("evidence_url") or ""
+            if company not in set(names):
+                errors.append(f"manual first-party role seed company outside scan pool: {company}")
+            if not title:
+                errors.append(f"{company}: manual first-party role seed title missing")
+            if not url.startswith("https://"):
+                errors.append(f"{company}: manual first-party role seed official_url missing/invalid")
+            else:
+                h = host(url)
+                if any(h == b or h.endswith("." + b) for b in BANNED):
+                    errors.append(f"{company}: manual first-party role seed uses banned domain {h}")
 
     print(f"Official company scan-pool contracts: companies={len(sources)}/{expected}, errors={len(errors)}")
     for e in errors:

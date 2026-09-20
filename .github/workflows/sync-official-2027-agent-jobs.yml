@@ -7,6 +7,7 @@ on:
     paths:
       - 'market/jobs/official-2027-campus-sources.json'
       - 'market/jobs/official-company-role-index.json'
+      - 'market/jobs/official-first-party-role-seeds.json'
       - 'tools/fetch_dynamic_official_jobs.mjs'
       - 'tools/fetch_feishu_official_2027.mjs'
       - 'tools/fetch_moka_official_2027.mjs'

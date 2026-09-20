@@ -14,6 +14,8 @@ const CFG=JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.j
 const BROWSER=JSON.parse(fs.readFileSync("market/jobs/official-2027-browser-discovery.generated.json","utf8"));
 const OUT=process.argv[2]||"market/jobs/official-2027-moka-discovery.generated.json";
 const REQUEST_TIMEOUT_MS=15000;
+const TENANT_TIMEOUT_MS=45000;
+const TENANT_CONCURRENCY=4;
 async function fetchTimed(url,options={}){
   return fetch(url,{...options,signal:AbortSignal.timeout(REQUEST_TIMEOUT_MS)});
 }
@@ -191,18 +193,30 @@ async function enumerateOne(result){
   };
 }
 
+async function enumerateOneBounded(result){
+  if(!endpointContract(result))return null;
+  let timer;
+  const timeout=new Promise((_,reject)=>{
+    timer=setTimeout(()=>reject(new Error("Moka tenant timeout after "+TENANT_TIMEOUT_MS+"ms")),TENANT_TIMEOUT_MS);
+  });
+  try{return await Promise.race([enumerateOne(result),timeout]);}
+  finally{if(timer)clearTimeout(timer);}
+}
+
 const results=[];
-for(const r of BROWSER.results||[]){
-  try{
-    const x=await enumerateOne(r);
-    if(!x)continue;
-    results.push(x);
-    console.log("moka "+x.company+": jobs="+x.jobs.length+" total="+x.total);
-  }catch(e){
-    if(endpointContract(r)){
-      results.push({company:r.company,status:"BLOCKED",jobs:[],error:String(e).slice(0,500)});
+const candidates=(BROWSER.results||[]).filter(r=>endpointContract(r));
+for(let i=0;i<candidates.length;i+=TENANT_CONCURRENCY){
+  const chunk=candidates.slice(i,i+TENANT_CONCURRENCY);
+  const settled=await Promise.all(chunk.map(async r=>{
+    try{
+      const x=await enumerateOneBounded(r);
+      if(x)console.log("moka "+x.company+": jobs="+x.jobs.length+" total="+x.total);
+      return x;
+    }catch(e){
       console.log("moka "+r.company+": ERROR "+e);
+      return {company:r.company,status:"BLOCKED",jobs:[],error:String(e).slice(0,500)};
     }
-  }
+  }));
+  results.push(...settled.filter(Boolean));
 }
 fs.writeFileSync(OUT,JSON.stringify({generated_at:new Date().toISOString(),results},null,2)+"\n","utf8");

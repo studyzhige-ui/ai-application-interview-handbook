@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-20",
+  "rules": [
+    "只允许当前第一方公司招聘官网或官方ATS已经直接核验的职位。",
+    "不得从聚合站、媒体、学校就业网或搜索摘要复制JD正文。",
+    "自动枚举抓到完整第一方JD时，以自动结果优先；种子只为SPA/WAF/签名接口提供岗位存在性保底。",
+    "完整第一方枚举确认职位关闭后，才允许删除对应种子。"
+  ],
+  "roles": [
+    {
+      "company": "大疆 DJI",
+      "title": "AI DevOps 工程师",
+      "recruitment_type": "2027“拓疆者”校园招聘",
+      "locations": [
+        "深圳",
+        "上海",
+        "北京"
+      ],
+      "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "evidence_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "verified_on": "2026-09-20",
+      "evidence_summary": "大疆2027官方热招页将该岗位列在软件类，定位于AI与DevOps交叉，使用AI技术提升研发与软件交付效率。"
+    },
+    {
+      "company": "大疆 DJI",
+      "title": "AI全栈开发工程师（深圳）",
+      "recruitment_type": "2027“拓疆者”校园招聘",
+      "locations": [
+        "深圳"
+      ],
+      "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "evidence_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "verified_on": "2026-09-20",
+      "evidence_summary": "大疆2027官方热招页将该岗位列在软件类，明确面向AI技术与研发流程深度融合。"
+    },
+    {
+      "company": "大疆 DJI",
+      "title": "端侧 AI 系统工程师",
+      "recruitment_type": "2027“拓疆者”校园招聘",
+      "locations": [
+        "深圳",
+        "上海"
+      ],
+      "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "evidence_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+      "verified_on": "2026-09-20",
+      "evidence_summary": "大疆2027官方热招页明确该岗位负责嵌入式底层AI系统开发，聚焦NPU/DSP优化、异构计算与系统级AI能力。"
+    },
+    {
+      "company": "海尔集团",
+      "title": "FDE工程师（AI前线部署工程师）",
+      "recruitment_type": "当前官方校园招聘",
+      "locations": [
+        "青岛市"
+      ],
+      "official_url": "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html",
+      "evidence_url": "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html",
+      "verified_on": "2026-09-20",
+      "evidence_summary": "海尔官方校园职位池当前在AI/算法类中列出FDE工程师（AI前线部署工程师），工作地点青岛。"
+    },
+    {
+      "company": "BOSS直聘/看准科技",
+      "title": "大模型应用工程师（校招）",
+      "recruitment_type": "当前校园招聘 / 在校应届",
+      "locations": [
+        "北京"
+      ],
+      "official_url": "https://www.zhipin.com/school/",
+      "evidence_url": "https://www.zhipin.com/school/",
+      "verified_on": "2026-09-20",
+      "evidence_summary": "BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招），职责包括大模型应用平台建设及AI赋能求职招聘场景。"
+    }
+  ]
+}

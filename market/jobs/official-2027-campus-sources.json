@@ -1336,7 +1336,9 @@
   "year_is_metadata_only": true,
   "strict_title_allowlist": [
     "AGI产品研发工程师-应届生-TOP Talent",
-    "AI开发工程师（顺丰科技）"
+    "AI开发工程师（顺丰科技）",
+    "深信服27届—技术研发工程师（AI潜力方向）",
+    "深信服27届-技术研发工程师（AI潜力方向）"
   ],
   "expected_company_count": 69,
   "company_pool_semantics": "fixed long-term scan pool; company inclusion is independent from whether a target JD exists in the current run",
