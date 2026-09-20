@@ -575,7 +575,9 @@ expected_valid_days
 
 ### Capacity：Memory 满了以后不能随机删
 
-DeerMem 支持 max facts 等容量策略。
+DeerMem 的对应配置项是 `memory.backend_config.max_facts`。达到这个 per-scope（每个记忆作用域）上限以后，系统才进入容量淘汰；它不是整个部署共享一个无边界的 Fact 池，也不是等文件系统写满以后才处理。
+
+DeerMem 支持多种容量策略。
 
 Eviction Policy（淘汰策略）可以综合：
 
