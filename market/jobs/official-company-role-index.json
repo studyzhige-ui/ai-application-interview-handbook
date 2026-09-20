@@ -63,13 +63,13 @@
       "representative_roles": [
         {
           "title": "2027AIDU-Agent应用全栈工程师(J99974)",
-          "recruitment_type": "当前校园招聘",
+          "recruitment_type": "百度当前校园招聘=2027届",
           "role_scope": "2027AIDU-Agent应用全栈工程师(J99974)",
           "official_apply_url": "https://talent.baidu.com/jobs/detail/GRADUATE/40a5d02a-6805-44c7-9d78-1cc943f11652",
           "evidence_url": "https://talent.baidu.com/jobs/detail/GRADUATE/40a5d02a-6805-44c7-9d78-1cc943f11652",
           "evidence_type": "FIRST_PARTY_FULL_JD",
           "jd_status": "FULL_FIRST_PARTY_JD",
-          "jd_summary": "1. 构建下一代基于大模型的 Autonomous Agent 系统，让 AI 从“对话工具”进化为“可执行任务的智能体”；\n2. 设计复杂任务的  规划（Planning）—执行（Acting）—反思（Reflection）闭环，提升 Agent 的自主决策能力；\n3.搭建 Agent 的核心能力体系，包括： Tool / API  调用（函数调用体系）、长短期记忆（Memory）机制、多轮推理与状态管理（Reasoning & State）；\n4. 探索并落地 多Agent协作（Multi-Agent  Systems），解决复杂业务问题（如自动化流程、复杂决策、智能运营等）；\n5. 深度参与 RAG（检索增强生成）+ Agent  融合架构设计，构建具备知识理解与行动能力的系统，推动 Agent 在真实场",
+          "jd_summary": "1. 构建下一代基于大模型的 Autonomous Agent 系统，让 AI 从“对话工具”进化为“可执行任务的智能体”；\n2. 设计复杂任务的  规划（Planning）—执行（Acting）—反思（Reflection）闭环，提升 Agent 的自主决策能力；\n3.搭建 Agent 的核心能力体系，包括： Tool / API  调用（函数调用体系）、长短期记忆（Memory）机制、多轮推理与状态管理（Reasoning & State）；\n4. 探索并落地 多Agent协作（Multi-Agent  Systems），解决复杂业务问题（如自动化流程、复杂决策、智能运营等）；\n5. 深度参与 RAG（检索增强生成）+ Agent  融合架构设计，构建具备知识理解与行动能力的系统，推动 Agent 在真实场景中的应用落地（如搜索、医疗、企业服务、数据分析、自动化办公等）参与 Agent  系统的评测体系建设（Eval），优化智能体的：成功率 / 稳定性、成本（Token / 调用）、延迟与用户体验；\n5. 持续跟踪前沿方向（如 Tool  Learning、Self-Improvement、长期记忆、World Model、多模态 Agent），并进行工程化落地。\n不满足于“调用 API”，而是想重新定义软件如何被构建（Software 2.0 / Agent-first）\n    对“让 AI 像人一样完成复杂任务”这件事有执念\n    喜欢动手做实验、快速迭代，而不是只停留在论文或概念\n    愿意在一个高速变化、没有标准答案的领域中探索\n    \n    深度使用过大模型（如 GPT / Claude / Gemini 等），理解其能力边界与局限性\n    做过 AI Agent / 自动化工具 / 智能助手相关项目（课程 / 自发项目均可）\n    使用过任一 Agent 框架（如 LangChain / LlamaIndex /  AutoGen / CrewAI 等）\n    对“如何让 AI 完成复杂任务”有强烈兴趣，甚至有自己的方法论或实验\n\n招聘部门：健康事业部",
           "source_role_family": "2027AIDU-Agent应用全栈工程师(J99974)"
         }
       ],
@@ -84,15 +84,15 @@
       "board_scope": "campus",
       "representative_roles": [
         {
-          "title": "财经线培训生-AI应用开发",
-          "recruitment_type": "应届毕业生",
-          "role_scope": "财经线培训生-AI应用开发",
-          "official_apply_url": "https://join.qq.com/post_detail.html?postId=1284634302709277696",
-          "evidence_url": "https://join.qq.com/post_detail.html?postId=1284634302709277696",
+          "title": "面向 Agent 应用开发的易用 API 抽象与平台化建设",
+          "recruitment_type": "应届毕业生 青云计划",
+          "role_scope": "面向 Agent 应用开发的易用 API 抽象与平台化建设",
+          "official_apply_url": "https://join.qq.com/post_detail.html?postId=1277774706287944733",
+          "evidence_url": "https://join.qq.com/post_detail.html?postId=1277774706287944733",
           "evidence_type": "FIRST_PARTY_FULL_JD",
           "jd_status": "FULL_FIRST_PARTY_JD",
-          "jd_summary": "负责公司财务信息化系统的建设，涵盖从产品设计、架构设计到开发与测试的完整环节。聚焦AI技术在财务场景的创新应用，通过AI Agent 助力财务流程智能化升级，保障财务系统安全、稳定、高效运行。\n1、深入理解业务需求和产品设计，创新性地实现产品功能；\n2、实践AI Coding模式，提升产品研发效率，保障代码质量与系统性能；\n3、参与大模型及 Agent 相关前沿技术的研究与实施，推动智能财务场景中的工程化应用。\n1、对财务信息化与AI应用开发有浓厚兴趣，具备较强的逻辑思维和主动钻研能力，能够快速掌握并应用新技术；\n2、熟练掌握Python、Java或Go中的至少一种后端语言，熟悉常用Web框架及主流数据库，具备实际的项目编码经验；\n3、熟悉机器学习（分类、聚类、回归等）、自然语言处理、计算机视觉的基本原理，了解AI在垂直行业的应用场景；\n4、熟悉大模型基本原理及Agent架构，了解LangChain、OpenClaw等主流框架。具备RAG、Skills、MCP、提示词工程或使用Cursor、Claude、CodeBuddy等AI辅助工具开发经验者优先；\n5、了解容器化技术（Docker/K8S）、CI/CD 流程、系统监控及性能测试，具备良好的工程规范意识。",
-          "source_role_family": "财经线培训生-AI应用开发"
+          "jd_summary": "课题背景\n在大数据平台中，用户完成一次业务分析通常需要经历需求表达、数据理解、指标定义、任务开发、质量校验、结果分析和报告输出等多个环节，整体链路长、技术门槛高、跨角色沟通成本大。业务人员往往难以准确描述数据需求，数据开发人员需要反复理解业务口径、确认数据来源并编写处理逻辑，导致分析效率与交付质量受到影响。\nLLMs 与 Agent 技术为重构大数据业务工作流提供了新路径。通过自然语言交互、元数据理解、数据血缘分析、智能任务生成和结果解释能力，AI 可以辅助用户从“提出问题”开始，自动完成需求理解、数据识别、分析方案生成、数据处理逻辑编写、质量校验与报告产出。因此，本课题聚焦 AI 驱动的大数据全流程智能助手建设，探索从“提出问题”到“拿到结果”的端到端智能化工作流，降低数据使用门槛，提升大数据平台的分析效率与产品化体验。\n\n课题挑战\n1、自然语言到数据任务的准确转化：面向用户模糊、非结构化的自然语言需求，构建需求理解、意图识别与任务拆解能力，将业务问题准确转化为可执行的数据查询、指标计算或数据处理任务，解决业务语言与数据开发语言之间的鸿沟。\n2、数据血缘、元数据与指标语义理解：结合数据表、字段、口径、血缘关系和历史任务信息，构建面向大数据平台的元数据理解能力，支持 AI 自动识别相关数据资产、推荐合理指标口径，并保障生成方案与真实业务语义一致。\n3、结果质量校验与异常解释闭环：围绕数据处理结果，设计自动化质量校验、异常检测、结果一致性验证和可解释分析机制，确保 AI 生成的数据任务和分析结论可信、可追溯，避免因口径偏差、数据异常或逻辑错误导致错误决策。\n\n具体工作\n你将结合前沿 LLMs、Agent 技术与大数据工程能力，参与智能化大数据助手原型系统建设，重点工作：设计自然语言到数据任务生成方案；构建基于数据血缘与元数据的智能数据理解能力；研发指标识别、指标建模与分析方案自动生成模块；实现数据处理逻辑生成、结果质量校验与异常解释能力；搭建分析结论与报告自动生成链路，最终形成一个从“提出问题”到“拿到结果”的智能化大数据助手原型，降低用户使用大数据平台的门槛，提升数据分析、开发与交付效率。\n1、包含但不限于计算机科学与技术、人工智能、软件工程、数据科学与大数据技术、信息管理与信息系统、管理科学与工程、统计学、应用数学、自动化、电子信息等相关专业的博士和优秀硕士；\n\n2、了解数据开发、数据分析、数据仓库、SQL 或大数据平台基础，熟悉数据处理链路、指标口径、元数据管理或数据质量相关知识者优先；\n\n3、对自然语言生成数据任务、智能数据分析、LLMs/Agent 在大数据平台中的应用有浓厚兴趣，愿意探索 AI 驱动的数据工作流自动化；\n\n4、具备较强的问题拆解、业务理解、结果验证和逻辑分析能力，能够结合业务目标判断分析结果的合理性，有数据产品、数据开发或智能分析相关项目实践经验优先。",
+          "source_role_family": "面向 Agent 应用开发的易用 API 抽象与平台化建设"
         }
       ],
       "last_verified": "2026-09-20",
@@ -447,22 +447,11 @@
     },
     {
       "company": "得物",
-      "status": "VERIFIED_ROLE",
+      "status": "ZERO_TARGET_JDS",
       "official_root": "https://www.dewu.com/",
       "official_search_url": "https://poizon.jobs.feishu.cn/578078/",
       "board_scope": "campus",
-      "representative_roles": [
-        {
-          "title": "【27届校招】中间件AI开发工程师（Golang方向）",
-          "recruitment_type": "2027秋季校园招聘",
-          "role_scope": "AI Native / Agentic Ops / MCP / AI Infra",
-          "evidence_url": "https://www.shushuqiuzhi.com/position/463742",
-          "evidence_type": "CURRENT_CAMPUS_JD_EVIDENCE",
-          "jd_summary": "开发AI Workflow、Agentic Ops、智能Agent、LLM网关、Agent调度、MCP/Skill与AI基础设施中间件。",
-          "official_apply_url": "https://poizon.jobs.feishu.cn/578078/",
-          "jd_status": "JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY"
-        }
-      ],
+      "representative_roles": [],
       "last_verified": "2026-09-20",
       "business_summary": "潮流电商、社区、鉴别与交易服务"
     },
@@ -654,14 +643,15 @@
       "board_scope": "official_recruiting",
       "representative_roles": [
         {
-          "title": "流式视频 Agent 工程师",
-          "recruitment_type": "当前官方招聘（正式/实习）",
-          "role_scope": "实时交互视频Agent / Context / Tool Calling",
-          "official_apply_url": "https://shengshu.jobs.feishu.cn/index/",
-          "evidence_url": "https://offerdao.ai/j/agent_dxsv97wstj9yst",
-          "evidence_type": "CURRENT_ROLE_JD_EVIDENCE",
-          "jd_status": "ROLE_VERIFIED",
-          "jd_summary": "设计实时交互视频生成Agent，建设多轮对话、意图理解、上下文管理、工具调用与Agent编排链路，并与视频生成系统协同落地。"
+          "title": "Agent平台开发工程师 (YH)",
+          "recruitment_type": "校招官网",
+          "role_scope": "Agent平台开发工程师 (YH)",
+          "official_apply_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "职位描述\n我们正在寻找对多模态大模型技术充满热情、具备扎实工程实践能力的集成工程师。您将作为核心技术成员，负责将前沿的多模态大模型（包括视觉-语言模型等）的预训练infra,并构建高可用、高效率的大规模预训练平台。您需要具备优秀的编程能力、系统思维和实际问题解决能力，与算法团队紧密协作，提升大规模多模态模型的研发效率，直接影响数百万用户的产品体验。\n\n岗位职责：\n1、为预训练平台设计、构建稳定/高效的开发工具，包括开发机平台搭建、任务调度工具平台的搭建、视频结果评测平台，加速算法的研发过程；\n2、系统维护与监控：构建并完善模型服务的监控、日志、告警系统，持续进行性能分析、瓶颈排查与线上问题应急响应；\n3、协作与创新：与算法研究员及其他工程师紧密合作，理解业务需求，提供工程化解决方案，并跟进多模态领域最新进展，探索技术落地可能性；\n4、希望你对于深度学习平台有足够的认识，热衷于抽象标准工具，设计便捷/鲁棒可服用的CLI工具/前端工具；加速大模型的研发,降低大家的认知负担。\n职位要求\n1、计算机科学/软件工程相关领域的本科；\n2、需要后端基础,并且有ai平台开发相关的经验(熟悉k8s,后端开发,监控平台)；\n3、能够有用agent开发平台的经历优先；\n4、开发过通用的CLI工具,能够有比较好的前后端全栈开发能力有限,能够践行devops的习惯。\n\n技术能力\n1.编程与框架：精通 Golang/Python/C++/Java 之一。熟悉WebSocket、gRPC等通信协议，有高并发、低延迟网络服务开发经验；\n2.数据存储与计算：熟悉对象存储（如S3、OSS）、关系型数据库、Redis、ClickHouse。加分项：熟悉 LanceDB 和 Daft、Ray 计算框架，了解向量数据库原理与应用；\n3.系统开发：有扎实的后端服务开发经验，熟悉Linux开发环境，掌握Docker容器化技术，熟练使用Kubernetes等编排工具；\n4.扎实的基础知识：熟悉计算机体系结构、操作系统、计算机网络、多线程编程等基础知识；\n5.工程素养：熟悉CI/CD流程、代码版本管理（Git），具备良好的编码习惯与文档编写能力。",
+          "source_role_family": "Agent平台开发工程师 (YH)"
         }
       ],
       "last_verified": "2026-09-20",
@@ -869,23 +859,47 @@
     },
     {
       "company": "大疆 DJI",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://careers.dji.com/zh-CN/campus",
       "official_search_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "board_scope": "campus",
       "business_summary": "无人机、影像设备、行业机器人与智能硬件",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "AI DevOps 工程师",
+          "recruitment_type": "2027“拓疆者”校园招聘",
+          "role_scope": "AI DevOps 工程师",
+          "official_apply_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+          "evidence_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "大疆2027官方热招页将该岗位列在软件类，定位于AI与DevOps交叉，使用AI技术提升研发与软件交付效率。",
+          "source_role_family": "AI DevOps 工程师"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {
       "company": "度小满",
-      "status": "NEEDS_ENUMERATION",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://campus.duxiaoman.com/",
       "official_search_url": "https://campus.duxiaoman.com/",
       "board_scope": "campus",
       "business_summary": "消费金融、财富管理、支付与金融科技",
-      "representative_roles": [],
-      "last_verified": null
+      "representative_roles": [
+        {
+          "title": "AI全栈研发工程师-大数据引擎/云原生方向",
+          "recruitment_type": "校招动态",
+          "role_scope": "AI全栈研发工程师-大数据引擎/云原生方向",
+          "official_apply_url": "https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_url": "https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "1、参与公司分布式基础平台相关研发工作，覆盖大数据引擎、云原生基础设施、资源调度和平台工程能力建设； \n2、参与 Spark、Presto、Doris、Hadoop 等大数据生态相关组件的技术选型、部署优化、性能调优、功能扩展和二次开发； \n3、参与大数据引擎核心组件研发，包括数据采集适配、任务调度、引擎监控、性能分析、ETL 工具等能力建设，提升大规模数据处理效率和平台稳定性；\n4、参与 Kubernetes 集群、云计算服务及云原生平台能力建设，围绕资源隔离、调度优化、部署交付、弹性伸缩、配置管理、监控巡检、故障自愈等场景，提升平台自动化和稳定性； \n5、参与 CPU、GPU 等计算资源的统一管理、调度与使用效率优化，支撑大数据、AI 计算及业务系统等多类场景； \n6、参与分布式系统架构优化、性能优化、稳定性建设和工程化落地，持续提升基础平台的可靠性、可扩展性和研发效率； \n7、跟进大数据、分布式计算、云原生、容器化、资源调度等前沿技术发展，参与新技术预研和业务落地。\n1、硕士及以上学历，计算机、软件工程、网络工程、自动化等相关专业； \n2、计算机基础扎实，熟悉操作系统、计算机网络、数据结构与算法、数据库或分布式系统相关基础知识； \n3、熟悉 Go、Python、Java、C/C++ 中至少一种编程语言，具备良好的编码和调试能力； \n4、对分布式系统、大数据引擎、云原生基础设施、资源调度、平台工程中的一个或多个方向有兴趣和实践基础； \n5、熟悉 Spark、Presto、Doris、Hadoop、HDFS、YARN、OLAP、分布式存储等大数据相关技术者优先； \n6、熟悉 Kubernetes、容器、容器网络、资源隔离、服务部署、弹性伸缩、可观测性、自动化运维等云原生相关技术者优先； \n7、有大数据引擎、数据库内核、分布式计算、Kubernetes、云原生平台、CPU/GPU 调度等相关实习或项目经验者优先；\n8、具备良好的学习能力、逻辑分析能力、责任心和工程质量意识，愿意深入复杂技术问题并推动问题解决。",
+          "source_role_family": "AI全栈研发工程师-大数据引擎/云原生方向"
+        }
+      ],
+      "last_verified": "2026-09-20"
     },
     {
       "company": "海康威视",
@@ -899,12 +913,24 @@
     },
     {
       "company": "中兴通讯",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://job.zte.com.cn/cn/",
       "official_search_url": "https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html",
       "board_scope": "campus",
       "business_summary": "通信网络、算力、云、终端、企业数字化与 AI",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "AI应用开发资深专家",
+          "recruitment_type": "校园招聘 / 校招公告 / 应届生招聘 / 2027届应届生校园招聘 / 校招有疑问？别急，HR来帮忙！ / 如果您在参加中兴通讯2027届校园招聘的过程中，需要任何帮助，欢迎联系我们，我们会在第一时间为您答疑解惑。 / 加群咨询：关注“中兴通讯招聘” 微信公众号，回复 “校招QQ群” 获取答疑渠道；",
+          "role_scope": "AI应用开发资深专家",
+          "official_apply_url": "https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList",
+          "evidence_url": "https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "岗位职责：\n1、负责多模态交互产品的核心架构与工程落地：主导多模态（语音、视觉、文本等）融合产品的系统架构设计、开发与规模化部署。\n2、攻克多模态大模型的端侧与边缘侧工程挑战：重点解决模型轻量化、低资源部署推理、端云协同架构优化等关键技术难题。\n3、构建场景驱动的数据闭环与迭代体系：设计并实施面向具体场景的数据标注、增强、回流策略，持续优化模型在边缘环境的准确率与鲁棒性。\n4、研发智能引擎与核心能力组件：负责可视化编排后端、智能体调度框架，以及RAG检索、意图识别、多轮对话管理等关键智能节点的开发与SDK化。\n5、设计可扩展的低代码平台与工具生态：设计与实现支持工作流编排的低代码工具链，集成MCP等协议，并构建安全可控的运行沙箱环境。\n任职要求：\n1. 深厚的工程架构与系统设计能力\n5年以上后端或全栈开发经验，精通Python，对数据结构、算法、操作系统及网络有深刻理解。\n具备复杂分布式系统的架构设计经验，能独立负责核心模块的技术选型、设计与实现，拥有高性能、高并发、容错降级等实战经验。\n能够主导涵盖前端交互、后端服务及基础设施的端到端AI系统构建，确保系统的高可用性、可扩展性、稳定性和数据安全。\n2. 扎实的AI工程化与落地经验\n拥有至少2年AI/ML项目落地经验，熟悉AI模型从开发到部署上线的全流程。\n深入理解至少一个主流AI工作流框架（如LangChain、LangGraph、Semantic Kernel）的内部原理，具备框架改造或自研经验者优先。\n能将AI能力（如模型、智能体）高效、稳定地集成至现有软件系统中。\n3. 出色的业务洞察与技术应用前瞻性\n具备深入分析各行业业务需求与痛点的能力，善于将AI技术（如智能体、多模态、RAG、AIGC）与具体应用场景深度融合。\n持续跟踪AI领域前沿进展（如深度学习、强化学习、新型算法与框架），并具备将前沿技术研究应用于实际产品以提升核心竞争力的能力。\n4. 强大的编程基础与综合技术素养\n拥有5年以上的扎实编程经验，对软件工程基础有系统性掌握\n\n综合能力：\n1. 硕士及以上学历，计算机/人工智能相关专业，8年以上工作经验，在顶会发表论文者优先。\n2. 具备较强的技术洞察力，能精准判断技术边界与业务适配性。\n3. 出色的跨团队协作能力，能主导技术方案推进并解决复杂问题。\n\n优先考虑项\n有高质量的技术输出（如开源项目、专利或论文）；\n具备大模型在边缘计算环境或混合云架构下的优化部署经验；\n对AI安全、可解释性有深入理解或实践。",
+          "source_role_family": "AI应用开发资深专家"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {
@@ -919,13 +945,25 @@
     },
     {
       "company": "金蝶",
-      "status": "NEEDS_ENUMERATION",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://www.kingdee.com/",
       "official_search_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
       "board_scope": "campus",
       "business_summary": "ERP、企业云 SaaS、企业管理软件与企业 AI",
-      "representative_roles": [],
-      "last_verified": null
+      "representative_roles": [
+        {
+          "title": "应用开发工程师-FDE（深圳）",
+          "recruitment_type": "当前校园招聘",
+          "role_scope": "应用开发工程师-FDE（深圳）",
+          "official_apply_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
+          "evidence_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "岗位职责\n1、深入企业客户业务现场，围绕财务、供应链、生产制造等核心ERP场景，识别AI落地场景，主导或参与AI智能体应用方案的设计与交付；\n2、基于金蝶灵基企业AI平台能力（包含：Agent开发平台、Coding、RAG等），快速构建AI智能体应用原型，推动方案从验证到生产环境落地；\n3、面向客户业务部门及一线交付团队提供AI技术赋能，包括方案演示、技术培训与最佳实践沉淀，帮助客户建立对AI能力的正确认知与使用习惯；\n4、承担必要的定制开发、系统集成与接口对接工作，编写方案设计、技术说明等项目文档，保障交付质量与可追溯性；\n5、跟踪大模型与AI应用领域的技术演进，结合企业级场景持续探索新的落地模式，反哺产品与方案迭代。\n任职要求\n1、2027届应届毕业生，本科及以上， 计算机科学与技术、软件工程、人工智能、数据科学、信息管理与信息系统、工业工程等相关专业，具备\"技术+业务\"复合兴趣者优先；\n2、具备至少一门编程语言（Python / Java / TypeScript等）的工程实践能力，能独立完成中小型应用开发；\n3、了解主流AI应用开发范式，对RAG、Agent编排、Prompt Engineering、MCP有基本认知；对多智能体协作、工作流状态管理、模型评估与可观测性等进阶议题有了解或实践者显著加分；有实际项目、竞赛或开源贡献经验者优先；\n4、了解关系型数据库基本原理，有MySQL、PostgreSQL、Oracle等任一数据库的使用经验；\n5、对企业级应用架构（微服务、API集成、低代码平台）有基本了解者加分，不作硬性要求；\n6、对 AI 技术在企业级场景的落地应用有浓厚兴趣，富有创新意识，善于思考，具有优秀的解决问题能力、良好的组织沟通能力及团队协作精神。",
+          "source_role_family": "应用开发工程师-FDE（深圳）"
+        }
+      ],
+      "last_verified": "2026-09-20"
     },
     {
       "company": "用友",
@@ -1033,12 +1071,24 @@
     },
     {
       "company": "海尔集团",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://maker.haier.net/client/campus/index",
       "official_search_url": "https://maker.haier.net/client/campus/activityindex.html",
       "board_scope": "campus",
       "business_summary": "智慧家庭、工业互联网、医疗健康与工业 AI",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "FDE工程师（AI前线部署工程师）",
+          "recruitment_type": "当前官方校园招聘",
+          "role_scope": "FDE工程师（AI前线部署工程师）",
+          "official_apply_url": "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html",
+          "evidence_url": "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "海尔官方校园职位池当前在AI/算法类中列出FDE工程师（AI前线部署工程师），工作地点青岛。",
+          "source_role_family": "FDE工程师（AI前线部署工程师）"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {
@@ -1063,13 +1113,25 @@
     },
     {
       "company": "同花顺",
-      "status": "NEEDS_ENUMERATION",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://campus.10jqka.com.cn/",
       "official_search_url": "https://campus.10jqka.com.cn/",
       "board_scope": "campus",
       "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
-      "representative_roles": [],
-      "last_verified": null
+      "representative_roles": [
+        {
+          "title": "金融 Agent 开发工程师（AIME项目）",
+          "recruitment_type": "校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘",
+          "role_scope": "金融 Agent 开发工程师（AIME项目）",
+          "official_apply_url": "https://campus.10jqka.com.cn/job/list?type=school",
+          "evidence_url": "https://campus.10jqka.com.cn/job/list?type=school",
+          "evidence_type": "FIRST_PARTY_FULL_JD",
+          "jd_status": "FULL_FIRST_PARTY_JD",
+          "jd_summary": "【职位要求】\n1、本科及以上学历，计算机、人工智能等相关专业优先。\n2、熟悉大语言模型与智能体基本原理，深入理解 ReAct、Plan-and-Execute、多智能体等主流范式的适用边界。\n3、具备优秀的工程能力，熟练使用 Python，熟悉并发与异步编程，能够独立完成复杂系统的设计与落地。\n4、有 Coding Agent、Deep Research 或同类智能体产品的实际落地经验，理解真实场景中的失效模式。\n5、具备较强的问题定位能力，能够基于轨迹与日志分析定位智能体行为异常的根因。\n6、具备良好的抽象与接口设计能力，以及跨团队沟通推动能力。\n\n【加分项】\n1、有智能体框架从 0 到 1 建设经验，或主导过有影响力的开源 Agent 项目者优先。\n2、有 MCP / 工具协议、沙箱与虚拟化技术（Firecracker、Kata Containers、gVisor 等）实践经验者优先。\n3、有 Agent 评测基准建设或轨迹数据分析经验者优先。\n4、对金融业务场景（投研、选股、事件归因、交易决策等）有深入理解者优先。\n5、有后训练 / Agentic RL 协同优化经验，能与模型团队共同定义能力目标者优先。",
+          "source_role_family": "金融 Agent 开发工程师（AIME项目）"
+        }
+      ],
+      "last_verified": "2026-09-20"
     },
     {
       "company": "麒麟软件",
@@ -1158,12 +1220,13 @@
         {
           "title": "大模型应用工程师（校招）",
           "recruitment_type": "当前校园招聘 / 在校应届",
-          "role_scope": "大模型应用平台 / AI Application Engineering",
+          "role_scope": "大模型应用工程师（校招）",
           "official_apply_url": "https://www.zhipin.com/school/",
           "evidence_url": "https://www.zhipin.com/school/",
           "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
           "jd_status": "ROLE_VERIFIED",
-          "jd_summary": "BOSS直聘官方校园招聘页当前列出“大模型应用工程师（校招）”，职责包括参与大模型相关应用平台建设，并将大模型能力应用于求职招聘场景。"
+          "jd_summary": "BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招），职责包括大模型应用平台建设及AI赋能求职招聘场景。",
+          "source_role_family": "大模型应用工程师（校招）"
         }
       ],
       "last_verified": "2026-09-20"

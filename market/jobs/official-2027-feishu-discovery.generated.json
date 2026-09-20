@@ -1,6 +1,56 @@
 {
-  "generated_at": "2026-09-20T14:33:15.712Z",
+  "generated_at": "2026-09-20T15:24:57.188Z",
   "results": [
+    {
+      "company": "得物",
+      "portal": "https://poizon.jobs.feishu.cn/578078/",
+      "status": "OK",
+      "complete": true,
+      "full_keyword_search": true,
+      "jobs": [],
+      "discovered_jobs": 0,
+      "error": ""
+    },
+    {
+      "company": "MiniMax",
+      "portal": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 9,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
+      "company": "百川智能",
+      "portal": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 3,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
+      "company": "零一万物/01.AI",
+      "portal": "https://01ai.jobs.feishu.cn/index/",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 28,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
+      "company": "商汤科技",
+      "portal": "https://hr-jobs.sensetime.com/edu/",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 56,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
     {
       "company": "生数科技",
       "portal": "https://shengshu.jobs.feishu.cn/index/",
@@ -22,6 +72,16 @@
       "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     },
     {
+      "company": "无问芯穹/Infini-AI",
+      "portal": "https://infinigence.jobs.feishu.cn/088717",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 6,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
       "company": "昆仑万维/天工",
       "portal": "https://jobs.kunlun.com/459522/position/list",
       "status": "BLOCKED",
@@ -32,6 +92,16 @@
       "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     },
     {
+      "company": "蔚来",
+      "portal": "https://nio.jobs.feishu.cn/campus/",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 139,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
       "company": "度小满",
       "portal": "https://campus.duxiaoman.com/",
       "status": "BLOCKED",
@@ -39,6 +109,26 @@
       "full_keyword_search": false,
       "jobs": [],
       "discovered_jobs": 23,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
+      "company": "小鹏集团",
+      "portal": "https://xiaopeng.jobs.feishu.cn/campus",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 58,
+      "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
+    },
+    {
+      "company": "影石 Insta360",
+      "portal": "https://arashivision.jobs.feishu.cn/campus/position/list",
+      "status": "BLOCKED",
+      "complete": false,
+      "full_keyword_search": false,
+      "jobs": [],
+      "discovered_jobs": 19,
       "error": "official Feishu page discovered, but exhaustive current-campus keyword enumeration is not yet proven"
     }
   ]
