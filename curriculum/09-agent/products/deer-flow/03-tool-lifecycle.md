@@ -57,9 +57,12 @@ get_available_tools() 会根据当前 AppConfig、Model 和 Runtime Feature 组�
 - MCP Tools
 - Memory Tools
 - Subagent task / batch tools
+- ACP Agent Tool（存在 ACP agent 配置时动态加入 `invoke_acp_agent`）
 - Skill Evolution 管理工具
 - Vision Tool
 - Upload / Conversation Reader 等条件能力
+
+这里的 ACP（Agent Client Protocol）入口也印证了同一个设计：外部 Agent 能力最终先被包装成普通 Tool，再进入 DeerFlow 统一的模型可见 Schema、Middleware Policy 和 Tool Result 生命周期，而不是绕开 Harness 单独建一条执行通道。
 
 #### 为什么 Model 也会影响 Tool Pool
 
