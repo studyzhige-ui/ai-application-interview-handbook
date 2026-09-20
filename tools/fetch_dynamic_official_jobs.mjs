@@ -249,7 +249,7 @@ async function scrapeSearchHit(context,company,hit,parentCycle,boardScope){
     };
   }catch{return null;}finally{await p.close().catch(()=>{});}
 }
-async function runPage(context,company,url,rootHost,collector,visited,endpointLog,boardScope){
+async function runPage(context,company,url,rootHost,collector,visited,endpointLog,boardScope,navigationTimeoutMs=12000){
   if(visited.has(url)||visited.size>10) return;
   visited.add(url);
   const page=await context.newPage();
@@ -278,7 +278,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     responseTasks.push(task);
   });
   try{
-    await page.goto(url,{waitUntil:"domcontentloaded",timeout:12000});
+    await page.goto(url,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
     await page.waitForTimeout(900);
     await scroll(page);
     let beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
@@ -313,6 +313,25 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
 
     const body=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
     const cycleMatches=[...new Set([...beforeCycle,...cycleSnippets(body)])].slice(0,10);
+    // Exact first-party detail URLs may not expose a searchable list or JSON
+    // endpoint. Capture the rendered JD itself when the page title is a target
+    // AI/Agent engineering role.
+    if(/(?:\/position\/|\/job\/|jobdetail|positiondetail|#\/campus\/position\/)/i.test(url)){
+      let detailTitle=(await page.locator("h1").first().innerText().catch(()=>"")).trim();
+      if(!detailTitle) detailTitle=(await page.locator("h2").first().innerText().catch(()=>"")).trim();
+      const detailBlob=(detailTitle+" "+body).toLowerCase();
+      if(detailTitle && STRONG.some(k=>detailBlob.includes(k))){
+        const jd=splitJobText(body,detailTitle);
+        collector.push({
+          company,title:detailTitle.slice(0,240),job_id:"",location:"",
+          category:boardScope==="campus"?"官方校园招聘详情":"官方招聘详情",
+          department:"",description:jd.description,requirements:jd.requirements,
+          official_url:page.url(),official_api:"DOM-DETAIL:"+url,
+          cycle_evidence:cycleMatches.join(" / "),
+          extraction_path:"official DOM detail page"
+        });
+      }
+    }
     const hasCampusEvidence=cycleMatches.length>0;
     const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>({href:a.href,text:(a.innerText||a.textContent||"").trim()})));
     const next=[];
@@ -362,13 +381,15 @@ async function processSource(browser,src){
   const boardScope=src.board_scope || (src.current_campus_board?"campus":"official_recruiting");
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
+  const navigationTimeoutMs=Math.max(8000,Number(src.browser_navigation_timeout_ms||12000));
+  const companyBudgetMs=Math.max(15000,Number(src.browser_company_budget_ms||COMPANY_BUDGET_MS));
   const started=Date.now();
   let timer=null;
   const work=(async()=>{
     while(queue.length && visited.size<6){
-      if(Date.now()-started>COMPANY_BUDGET_MS) throw new Error("company enumeration budget exceeded");
+      if(Date.now()-started>companyBudgetMs) throw new Error("company enumeration budget exceeded");
       const u=queue.shift();
-      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog,boardScope);
+      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog,boardScope,navigationTimeoutMs);
       if(pr){
         pageResults.push(pr);
         // Do not crawl arbitrary site navigation during recurring collection.
@@ -405,7 +426,7 @@ async function processSource(browser,src){
     };
   })();
   const timeout=new Promise((_,reject)=>{
-    timer=setTimeout(()=>reject(new Error(`company enumeration timed out after ${COMPANY_BUDGET_MS}ms`)),COMPANY_BUDGET_MS);
+    timer=setTimeout(()=>reject(new Error(`company enumeration timed out after ${companyBudgetMs}ms`)),companyBudgetMs);
   });
   try{
     return await Promise.race([work,timeout]);
