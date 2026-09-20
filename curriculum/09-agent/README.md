@@ -128,7 +128,32 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 ---
 
-## 6. 真人面经怎样影响本模块
+## 6. 成熟产品源码学习
+
+通用课程负责建立 Agent 的稳定知识模型；成熟产品源码层负责验证这些机制在真实 Production Agent 中怎样组合、怎样处理 Failure，以及为什么会做出这些工程取舍。
+
+- [成熟 Agent 产品源码学习总入口](products/README.md)
+- [OpenAI Codex｜系统总览](products/codex/README.md)
+  - [Context Lifecycle：输入、编排、Cache、Compaction 与 Resume](products/codex/01-context-lifecycle.md)
+  - [Memory Lifecycle：提取、Consolidation、召回、纠正与维护](products/codex/02-memory-lifecycle.md)
+  - [Tool Lifecycle：Registry、MCP、Skills、权限、Sandbox 与回填](products/codex/03-tool-lifecycle.md)
+  - [Engineering & Evaluation：Failure、规模化、诊断与评测](products/codex/04-engineering-evaluation.md)
+
+Codex 学习文档固定到源码快照 `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`，实现事实以该快照为准；后续源码升级先比较变化，再更新教材，不把不同版本的行为混成一套系统。
+
+源码产品层与 `docs/01–24` 的关系是：
+
+```text
+通用机制
+→ 建立 Context / Memory / Tool / Runtime / Eval 的因果链
+→ 成熟产品源码
+→ 沿真实数据结构与调用链验证机制怎样落地
+→ 横向比较不同产品的设计空间与工程权衡
+```
+
+---
+
+## 7. 真人面经怎样影响本模块
 
 Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canonical、166 个独立 HUMAN-A 招聘流程覆盖**。
 
@@ -146,7 +171,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 ---
 
-## 7. 模块边界
+## 8. 模块边界
 
 - Prompt Engineering 归 LLM Foundation；Harness 负责跨轮、跨 Tool、跨 State 的执行。
 - RAG 负责 Evidence Quality；Agent Harness 决定何时检索、如何继续执行。
@@ -156,7 +181,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 ---
 
-## 8. Review、Interview 与证据入口
+## 9. Review、Interview 与证据入口
 
 | 入口 | 链接 | 用途 |
 |---|---|---|
@@ -176,23 +201,25 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 ---
 
-## 9. 推荐学习方式
+## 10. 推荐学习方式
 
 每章采用轻松引入、逐层解释、过程图、例子与失败边界，不压成结论提纲。章末固定**HUMAN-A信号 → 面试怎么答 → 高频易错点 → 本章自测**：🎯面试答案直接显示，⚠️易错点逐条提醒，只有自测答案和可选产品实现折叠。代码只用于明确的教学目的，并有注释及适用边界。
 
 > 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 24` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
+2. **第二遍：进入成熟实现。** 从 [Codex 系统总览](products/codex/README.md) 开始，按 Context → Memory → Tool → Engineering & Evaluation 连续阅读，把通用概念映射到真实源码。
+3. **第三遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
+4. **第四遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答，并用 Codex 源码实现作为工程例证。
+5. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
 
 ---
 
-## 10. 教材状态
+## 11. 教材状态
 
 ```text
 docs/      ✅ 01–24 连续
+products/  ✅ Codex 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
