@@ -274,6 +274,11 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
           entry.response_count=Number(d?.count||0);
           entry.response_rows=Array.isArray(d?.job_post_list)?d.job_post_list.length:0;
         }
+        if(/\/api\/api\/Jobs(?:\\?|$)/i.test(ru)){
+          const d=data?.data||{};
+          entry.response_count=Number(d?.count||0);
+          entry.response_rows=Array.isArray(d?.listData)?d.listData.length:0;
+        }
         if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
         const pageText=(await page.locator("body").innerText().catch(()=>"")).slice(0,50000);
         const cycle=cycleSnippets(pageText).join(" / ");
@@ -326,6 +331,60 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         };
       }
     }
+    // Sangfor's public campus API is session-bound: direct requests return
+    // 401, while the official page's same-origin session can page /api/api/Jobs.
+    // Exhaust it inside the browser context and use source count as the terminal proof.
+    const sangforSeed=endpointLog.find(e=>e.status===200 && /\/api\/api\/Jobs(?:\\?|$)/i.test(e.url));
+    if(sangforSeed){
+      let seedBody={};
+      try{seedBody=JSON.parse(sangforSeed.post_data||"{}");}catch{}
+      const total=Math.max(0,Number(sangforSeed.response_count||0));
+      const pageSize=Math.max(1,Number(seedBody.pageSize||sangforSeed.response_rows||10));
+      let fetched=Math.max(0,Number(sangforSeed.response_rows||0));
+      let pageNo=Math.max(1,Number(seedBody.page||1))+1;
+      let terminal=(total===0 && fetched===0);
+      while(!terminal && pageNo<=100 && fetched<total){
+        const payload={
+          channelId:Number(seedBody.channelId||101),page:pageNo,pageSize,
+          departmentId:0,functionId:0,kw:"",locationId:0,workPlaceId:0
+        };
+        let result=null;
+        try{
+          result=await page.evaluate(async ({url,payload})=>{
+            const r=await fetch(url,{
+              method:"POST",headers:{"Content-Type":"application/json"},
+              body:JSON.stringify(payload)
+            });
+            let body={}; try{body=await r.json();}catch{}
+            return {status:r.status,body};
+          },{url:sangforSeed.url.split("?")[0],payload});
+        }catch{break;}
+        if(!result||result.status!==200) break;
+        const d=result.body?.data||{};
+        const rows=Array.isArray(d.listData)?d.listData:[];
+        recursiveJobs(
+          result.body,
+          {company,page_url:page.url(),response_url:sangforSeed.url.split("?")[0],
+           cycle_evidence:beforeCycle.join(" / "),category:"官方校园招聘"},
+          collector
+        );
+        fetched+=rows.length;
+        if(!rows.length || rows.length<pageSize || (total>0 && fetched>=total)){terminal=true;break;}
+        pageNo++;
+      }
+      if(terminal || (total>0 && fetched>=total)){
+        const finalUrl=page.url();
+        await page.close();
+        return {
+          page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,
+          cycle_evidence:beforeCycle,next:[],search_control_found:false,
+          navigation_action:{clicked:false},search_terms_attempted:[],
+          search_hit_links:0,list_scan_complete:true,list_links_seen:fetched,
+          sangfor_full_pool:true,source_total:total
+        };
+      }
+    }
+
     let search=await searchInputs(page);
     let navAction={clicked:false};
     let listScanComplete=false;
