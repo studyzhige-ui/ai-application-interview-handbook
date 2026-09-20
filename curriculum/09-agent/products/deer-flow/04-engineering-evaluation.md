@@ -662,6 +662,42 @@ DanglingToolCallMiddleware 会在模型调用前修复这种历史，使 Tool Ca
 
 ---
 
+### Cancellation 为什么不能中断“释放自己持有的 Persistence 资源”
+
+固定快照最新的两个提交正好把这个边界写得很清楚。
+
+Postgres Persistence 在启动 / schema bootstrap 期间可能持有：
+
+- advisory lock（数据库建议锁）
+- schema connection（模式初始化连接）
+
+如果调用者在这时被取消，最危险的实现是：
+
+~~~text
+收到 CancelledError
+→ cleanup task 也一起被取消
+→ unlock / connection.close 没跑完
+→ 把残留 ownership 留给下一次启动
+~~~
+
+最新源码改成的原则是：
+
+> **先 drain 自己拥有的 cleanup，再把原始 cancellation 继续传播。**
+
+因此 bootstrap unlock 和 schema connection close 都属于 cancellation-shielded ownership cleanup（受取消保护的所有权清理）边界。
+
+这和 DeerFlow 其他 Runtime ownership 规则是一致的：Sandbox lease、Subagent runtime、Run worker drain 都不能因为“上层想取消”就把仍然由当前组件拥有的资源直接遗弃。
+
+所以在 Agent 工程里，Cancellation 的语义不应该是：
+
+> “立刻停止所有 await。”
+
+更准确的是：
+
+> **停止继续接受新工作，但先把已经取得 ownership 的资源释放到一致状态，再结束调用者。**
+
+---
+
 ### Run Cancel 为什么 State Rollback 和 Side-effect Rollback 是两回事
 
 用户 Cancel 一个 Run，可以选择 rollback Agent State。
