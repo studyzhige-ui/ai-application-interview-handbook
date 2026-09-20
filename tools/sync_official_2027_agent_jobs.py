@@ -1708,7 +1708,7 @@ def main() -> int:
             role_families.append(carried)
             current_keys.add(key)
 
-    # The verified 41-company index is the minimum role-presence invariant.
+    # Persistent VERIFIED_ROLE entries are a minimum role-presence invariant inside the larger company scan pool.
     # Runtime discovery may upgrade these entries to first-party full JDs, but
     # may never delete them merely because the crawler missed the role.
     for company_row in verified_index.get("companies") or []:
@@ -1768,7 +1768,11 @@ def main() -> int:
             "official_root": src.get("official_root", ""),
             "search_url": src.get("search_url") or src.get("job_list_url") or "",
             "board_scope": src.get("board_scope") or ("campus" if src.get("current_campus_board") else "official_recruiting"),
-            "result_status": "HAS_TARGET_JDS" if fams else "ROLE_PRESENCE_BROKEN",
+            "result_status": (
+                "HAS_TARGET_JDS" if fams
+                else "ZERO_TARGET_JDS" if r and r.status == "ENUMERATED_ZERO_MATCHES"
+                else "NEEDS_ENUMERATION"
+            ),
             "role_family_count": len(fams),
             "full_jd_count": sum(f.get("detail_status") == "FULL_JD" for f in fams),
             "title_only_count": sum(f.get("detail_status") == "TITLE_ONLY_OFFICIAL" for f in fams),
@@ -1787,7 +1791,9 @@ def main() -> int:
 
     counts = {
         "companies": len(source_rows),
-        "companies_with_targets": sum(bool(x["role_family_count"]) for x in source_rows),
+        "companies_with_targets": sum(x["result_status"] == "HAS_TARGET_JDS" for x in source_rows),
+        "companies_zero_targets": sum(x["result_status"] == "ZERO_TARGET_JDS" for x in source_rows),
+        "companies_needing_enumeration": sum(x["result_status"] == "NEEDS_ENUMERATION" for x in source_rows),
         "role_families": len(role_families),
         "full_jd_families": sum(f.get("detail_status") == "FULL_JD" for f in role_families),
         "title_only_families": sum(f.get("detail_status") == "TITLE_ONLY_OFFICIAL" for f in role_families),
@@ -1806,7 +1812,7 @@ def main() -> int:
             "exclusion": "Algorithm/model-training/research, product, sales, operations, marketing, internship-only and generic engineering jobs that merely mention AI tooling.",
             "role_family": "Same-company near-identical titles are grouped while every official requisition remains attached.",
             "detail_status": "FULL_JD = first-party duties/requirements captured; TITLE_ONLY_OFFICIAL = first-party title only; ROLE_VERIFIED_CURRENT_SOURCE = current role presence verified and official application/search entry fixed, first-party body still being backfilled.",
-            "zero_miss_policy": "Crawler miss/failure may not erase persistent verified role presence. Previous verified families are carried forward until a successful matching enumeration refreshes them.",
+            "zero_miss_policy": "Company membership is independent from job presence. Crawler miss/failure may not erase persistent verified role presence; ZERO_TARGET_JDS is valid only after complete official enumeration.",
         },
         "counts": counts,
         "sources": source_rows,
@@ -1818,7 +1824,7 @@ def main() -> int:
         "# 当前官方校招 / 应届｜非算法 AI 应用 & Agent 工程 JD 全量结果",
         "",
         f"> Generated: **{now}**",
-        f"> 固定公司 **{counts['companies']}** 家；命中目标岗位 **{counts['companies_with_targets']}** 家；严格 Role Family **{counts['role_families']}** 个。",
+        f"> 固定长期扫描公司 **{counts['companies']}** 家；当前有目标岗位 **{counts['companies_with_targets']}** 家；完整枚举确认 0 岗 **{counts['companies_zero_targets']}** 家；仍待完整枚举 **{counts['companies_needing_enumeration']}** 家。",
         f"> 其中 **{counts['full_jd_families']}** 个抓到第一方 JD 正文，**{counts['title_only_families']}** 个仅能确认第一方职位标题，**{counts['role_verified_current_source_families']}** 个已核验岗位存在并固定官方入口、正文仍待补齐。",
         "",
         "## 1. 公司结果总表",
