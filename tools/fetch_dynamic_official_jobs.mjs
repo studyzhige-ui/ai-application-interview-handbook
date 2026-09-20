@@ -150,7 +150,7 @@ function deepGetContainer(obj,keys,depth=0){
 function blankListRequest(entry){
   if(!entry||entry.status!==200||entry.response_list_path===undefined)return false;
   if(/(?:^|\/)(?:detail|info|filter|condition|category|config|count)(?:\/|$)/i.test(new URL(entry.url||"https://invalid/").pathname))return false;
-  if(!/(?:job|position|post)/i.test(entry.url||""))return false;
+  if(!/(?:job|position|post|apply_list)/i.test(entry.url||""))return false;
   const {body}=parseRequestContract(entry);
   if(body&&typeof body==="object"){
     const kw=deepGetContainer(body,KEYWORD_KEYS);
@@ -800,44 +800,70 @@ function canonicalFeishuListUrl(raw,current=1,limit=10){
   return u.href;
 }
 
+async function clickFeishuNext(page,minOffset){
+  const candidates=[
+    page.getByRole("button",{name:/下一页|下页|Next/i}).last(),
+    page.getByRole("link",{name:/下一页|下页|Next/i}).last(),
+    page.locator("button").filter({hasText:/下一页|下页|Next/i}).last(),
+    page.locator("[class*=pagination] [class*=next]").last(),
+    page.locator("[class*=next]").last(),
+    page.locator('[aria-label*="next" i]').last()
+  ];
+  for(const next of candidates){
+    try{
+      if(await next.count()===0||!(await next.isVisible()))continue;
+      const disabled=(await next.isDisabled().catch(()=>false)) ||
+        (await next.getAttribute("aria-disabled"))==="true" ||
+        /disabled/i.test((await next.getAttribute("class"))||"");
+      if(disabled)continue;
+      const responsePromise=page.waitForResponse(resp=>{
+        if(resp.status()!==200||!/\/api\/v1\/search\/job\/posts/i.test(resp.url()))return false;
+        try{
+          const b=JSON.parse(resp.request().postData()||"{}");
+          return String(b.keyword??"")==="" && Number(b.offset||0)>=minOffset;
+        }catch{return false;}
+      },{timeout:6000}).catch(()=>null);
+      await next.click({timeout:2500});
+      const resp=await responsePromise;
+      await page.waitForTimeout(120);
+      if(resp)return true;
+    }catch{}
+  }
+  return false;
+}
+
 async function exhaustFeishuSignedPool(page,endpointLog,responseTasks,navigationTimeoutMs){
   await Promise.allSettled(responseTasks);
   let proof=feishuKeywordCoverage(endpointLog);
   if(proof.full_pool_complete)return proof;
 
-  const pageSize=10;
-  const total=Math.max(0,Number(proof.full_pool_total||0));
-  const maxPages=Math.min(200,total>0?Math.ceil(total/pageSize)+2:120);
-  let base=page.url();
-  try{base=canonicalFeishuListUrl(base,1,pageSize);}catch{}
+  // Always begin from the first official list page. Subsequent pages are reached
+  // through the site's own paginator so its runtime signature/session stays valid.
+  try{
+    const first=canonicalFeishuListUrl(page.url(),1,10);
+    if(page.url()!==first){
+      await page.goto(first,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+      await page.waitForTimeout(650);
+      await Promise.allSettled(responseTasks);
+      proof=feishuKeywordCoverage(endpointLog);
+      if(proof.full_pool_complete)return proof;
+    }
+  }catch{}
 
-  let lastCovered=proof.full_pool_covered||0;
   let stalls=0;
-  for(let current=1;current<=maxPages;current++){
-    const expectedOffset=(current-1)*pageSize;
-    const already=(endpointLog||[]).some(e=>{
-      if(e.status!==200||!/\/api\/v1\/search\/job\/posts/i.test(e.url))return false;
-      try{
-        const b=JSON.parse(e.post_data||"{}");
-        return String(b.keyword??"")==="" && Number(b.offset||0)===expectedOffset;
-      }catch{return false;}
-    });
-    if(already)continue;
-
-    let href=base;
-    try{href=canonicalFeishuListUrl(base,current,pageSize);}catch{}
-    try{
-      await page.goto(href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
-      await page.waitForTimeout(220);
-    }catch{}
-    await Promise.allSettled(responseTasks);
-
+  for(let step=0;step<220;step++){
     proof=feishuKeywordCoverage(endpointLog);
     if(proof.full_pool_complete)return proof;
-    const covered=proof.full_pool_covered||0;
-    if(covered<=lastCovered)stalls++; else stalls=0;
-    lastCovered=Math.max(lastCovered,covered);
-    if(stalls>=8)break;
+    const total=Math.max(0,Number(proof.full_pool_total||0));
+    const covered=Math.max(0,Number(proof.full_pool_covered||0));
+    if(total===0&&covered===0)return proof;
+
+    const moved=await clickFeishuNext(page,covered);
+    await Promise.allSettled(responseTasks);
+    const after=feishuKeywordCoverage(endpointLog);
+    if(after.full_pool_complete)return after;
+    if(!moved || Number(after.full_pool_covered||0)<=covered)stalls++; else stalls=0;
+    if(stalls>=3)break;
   }
   return feishuKeywordCoverage(endpointLog);
 }
@@ -853,7 +879,8 @@ async function processSource(browser,src){
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
   const navigationTimeoutMs=Math.max(8000,Number(src.browser_navigation_timeout_ms||12000));
-  const defaultBudget=src.mode==="feishu_direct"?240000:(src.mode==="portal_only"?90000:COMPANY_BUDGET_MS);
+  const isFeishuFamily=/\/api\/v1\/search\/job\/posts/i.test((endpointLog||[]).map(e=>e.url).join(" "));
+  const defaultBudget=src.mode==="feishu_direct"?360000:(src.mode==="portal_only"?180000:COMPANY_BUDGET_MS);
   const companyBudgetMs=Math.max(15000,Number(src.browser_company_budget_ms||defaultBudget));
   const started=Date.now();
   let timer=null;

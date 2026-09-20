@@ -1549,7 +1549,7 @@ def fetch_mihoyo_campus(src: dict) -> list[Job]:
 
 
 def fetch_byd_campus(src: dict) -> list[Job]:
-    """Enumerate BYD's complete 2027 formal campus list, enriching only target-like titles."""
+    """Enumerate BYD's complete 2027 formal campus list with retry/bounded pages."""
     root = "https://job.byd.com"
     list_api = root + "/portal/api/portal-api/schoolPortal/queryPositionList"
     detail_api = root + "/portal/api/portal-api/schoolPortal/queryPosition"
@@ -1557,18 +1557,40 @@ def fetch_byd_campus(src: dict) -> list[Job]:
         **HEADERS, "Content-Type": "application/json",
         "Origin": root, "Referer": src.get("search_url") or src.get("portal") or root,
     }
+    session = requests.Session()
+    session.headers.update(headers)
+    try:
+        session.get(root + "/", timeout=20)
+    except Exception:
+        pass
+
+    def post_retry(payload: dict) -> Any:
+        last: Exception | None = None
+        for attempt in range(4):
+            try:
+                r = session.post(list_api, json=payload, timeout=35)
+                r.raise_for_status()
+                return r.json()
+            except Exception as exc:
+                last = exc
+                if attempt < 3:
+                    time.sleep(1.2 * (attempt + 1))
+        raise last or RuntimeError("BYD list request failed")
+
     rows: list[dict[str, Any]] = []
     page = 1
-    page_size = 100
-    while page <= 100:
+    page_size = 30
+    while page <= 200:
         payload = {
             "topicCode": "", "batch": "2027", "campusNature": "008501",
             "abroad": "", "degree": "", "jobType": [], "researchDirection": [],
             "workPlace": [], "keywords": "", "pageSize": page_size, "pageIndex": page,
         }
-        data = post_json(list_api, payload=payload, headers=headers)
+        data = post_retry(payload)
         got = data.get("data") if isinstance(data, dict) else None
-        if not isinstance(got, list) or not got:
+        if not isinstance(got, list):
+            raise RuntimeError("BYD list response data is not a list")
+        if not got:
             break
         rows.extend(x for x in got if isinstance(x, dict))
         if len(got) < page_size:
@@ -1582,17 +1604,23 @@ def fetch_byd_campus(src: dict) -> list[Job]:
         detail_outer: dict[str, Any] = {}
         inner_rows: list[dict[str, Any]] = []
         if outer_id and likely_target_title(outer_title):
-            try:
-                detail_payload = get_json(
-                    detail_api,
-                    params={"id": outer_id, "abroad": "", "degree": ""},
-                    headers={"Referer": src.get("search_url") or root},
-                )
-                detail_outer = detail_payload.get("data") or {}
-                raw_inner = detail_outer.get("positionInfoList") or []
-                inner_rows = [x for x in raw_inner if isinstance(x, dict)]
-            except Exception:
-                detail_outer, inner_rows = {}, []
+            for attempt in range(2):
+                try:
+                    rr = session.get(
+                        detail_api,
+                        params={"id": outer_id, "abroad": "", "degree": ""},
+                        headers={"Referer": src.get("search_url") or root},
+                        timeout=20,
+                    )
+                    rr.raise_for_status()
+                    detail_payload = rr.json()
+                    detail_outer = detail_payload.get("data") or {}
+                    raw_inner = detail_outer.get("positionInfoList") or []
+                    inner_rows = [x for x in raw_inner if isinstance(x, dict)]
+                    break
+                except Exception:
+                    if attempt == 0:
+                        time.sleep(0.8)
         if inner_rows:
             for inner in inner_rows:
                 inner_id = txt(inner.get("id"))
@@ -1620,7 +1648,6 @@ def fetch_byd_campus(src: dict) -> list[Job]:
                 "比亚迪2027届校园招聘 / campusNature=008501 / 全职",
             ))
     return out
-
 
 def fetch_ashby_official(src: dict) -> list[Job]:
     """Enumerate an official Ashby hosted board through its anonymous GraphQL API."""
@@ -1812,6 +1839,159 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
     return out
 
 
+def _decode_js_string(value: str) -> str:
+    try:
+        return json.loads('"' + value.replace('"', '\\"') + '"')
+    except Exception:
+        return value.replace("\\/", "/").replace("\\"", '"')
+
+
+def fetch_meitu_campus_html(src: dict) -> list[Job]:
+    """Enumerate Meitu's server-rendered campus filter page page-by-page."""
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    pattern = re.compile(
+        r'jobId\\":\\"(?P<job_id>[^\\"]+)\\"'
+        r',\\"title\\":\\"(?P<title>.*?)\\"'
+        r',\\"departmentName\\":\\"(?P<department>.*?)\\"'
+        r',\\"locations\\":\\"(?P<locations>.*?)\\"'
+        r',\\"publishedAt\\":\\"(?P<published_at>.*?)\\"'
+        r',\\"modeName\\":\\"(?P<mode_name>.*?)\\"'
+        r',\\"siteId\\":\\"(?P<site_id>[^\\"]+)\\"',
+        flags=re.S,
+    )
+    out: list[Job] = []
+    seen: set[str] = set()
+    for page in range(1, 101):
+        url = f"https://hr.meitu.com/?page={page}&recruitmentType=campus"
+        r = session.get(url, timeout=30)
+        r.raise_for_status()
+        items = [m.groupdict() for m in pattern.finditer(r.text)]
+        if page == 1 and not items:
+            text_body = _strip_html(r.text)
+            if re.search(r"(暂无职位|没有职位|0\\s*个职位|0\\s*jobs?)", text_body, re.I):
+                return []
+            raise RuntimeError("Meitu campus HTML contained no parseable job records")
+        for item in items:
+            jid = _decode_js_string(item["job_id"])
+            if not jid or jid in seen:
+                continue
+            seen.add(jid)
+            title = _decode_js_string(item["title"])
+            out.append(Job(
+                src["company"], title, jid,
+                _decode_js_string(item["locations"]).replace(" / ", " / "),
+                "美图官方校园招聘",
+                _decode_js_string(item["department"]),
+                title, "",
+                f"https://hr.meitu.com/?page=1&keyword={requests.utils.quote(title)}&recruitmentType=campus",
+                url,
+                _decode_js_string(item["mode_name"]) or "美图官方校园招聘",
+            ))
+        if len(items) < 10:
+            break
+    return out
+
+
+def fetch_anker_campus_html(src: dict) -> list[Job]:
+    """Use Anker's current official campus page count as the exhaustive zero/non-zero gate."""
+    r = requests.get(src.get("search_url") or src["portal"], headers=HEADERS, timeout=30)
+    r.raise_for_status()
+    body = _strip_html(r.text)
+    match = re.search(r"找到\\s*[（(]?\\s*(\\d+)\\s*[)）]?\\s*个职位", body)
+    if not match:
+        match = re.search(r"(?:职位|岗位)[^0-9]{0,12}[（(]?\\s*(\\d+)\\s*[)）]?", body)
+    if not match:
+        raise RuntimeError("Anker official campus job count not found")
+    count = int(match.group(1))
+    if count == 0:
+        return []
+    raise RuntimeError(f"Anker official campus pool has {count} jobs; positive-list adapter required")
+
+
+def _find_position_rows_and_total(payload: Any) -> tuple[list[dict[str, Any]], int | None]:
+    candidates: list[list[dict[str, Any]]] = []
+    totals: list[int] = []
+    def walk(v: Any) -> None:
+        if isinstance(v, dict):
+            for k in ("total", "totalCount", "count", "recordsTotal"):
+                try:
+                    if v.get(k) is not None:
+                        totals.append(int(v.get(k)))
+                except Exception:
+                    pass
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            ds = [x for x in v if isinstance(x, dict)]
+            if ds and any(
+                any(k in x for k in ("positionName", "jobName", "postName", "title", "positionId", "jobId"))
+                for x in ds
+            ):
+                candidates.append(ds)
+            for x in v:
+                walk(x)
+    walk(payload)
+    rows = max(candidates, key=len) if candidates else []
+    return rows, (max(totals) if totals else None)
+
+
+def fetch_midea_campus_api(src: dict) -> list[Job]:
+    """Enumerate Midea's current school project through the official position API."""
+    root = "https://newpower.midea.com"
+    api = root + "/backend/school/position/common/position/list"
+    project_rule_id = txt(src.get("midea_project_rule_id"))
+    if not project_rule_id:
+        raise RuntimeError("Midea project_rule_id missing")
+    session = requests.Session()
+    session.headers.update({
+        **HEADERS, "Content-Type": "application/json",
+        "Origin": root, "Referer": root + "/schoolOut/post",
+    })
+    out: list[Job] = []
+    seen: set[str] = set()
+    page_size = 20
+    covered = 0
+    for page in range(1, 101):
+        body = {
+            "keyword": None, "superiorIds": [], "recruitCategoryIds": [],
+            "workPlaceCodes": [], "projectRuleId": project_rule_id,
+            "pageIndex": page, "pageSize": page_size,
+        }
+        r = session.post(api, json=body, timeout=30)
+        r.raise_for_status()
+        payload = r.json()
+        rows, total = _find_position_rows_and_total(payload)
+        if page == 1 and not rows:
+            if total == 0:
+                return []
+            raise RuntimeError("Midea position response contained no recognizable list/zero total")
+        if not rows:
+            break
+        for j in rows:
+            jid = txt(j.get("positionId") or j.get("jobId") or j.get("id"))
+            title = txt(j.get("positionName") or j.get("jobName") or j.get("postName") or j.get("title"))
+            key = jid or title
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            out.append(Job(
+                src["company"], title, jid,
+                txt(j.get("workPlace") or j.get("workPlaceName") or j.get("location")),
+                "美的官方校园招聘",
+                txt(j.get("departmentName") or j.get("categoryName") or j.get("jobType")),
+                _strip_html(j.get("description") or j.get("jobDuty") or j.get("responsibility")),
+                _strip_html(j.get("requirement") or j.get("jobRequirement") or j.get("qualification")),
+                src.get("search_url") or root + "/schoolOut/post",
+                api,
+                "美的集团当前官方校园招聘",
+            ))
+        covered += len(rows)
+        if (total is not None and covered >= total) or len(rows) < page_size:
+            break
+    return out
+
+
 FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "xiaomi_api": fetch_xiaomi,
     "bytedance_api": fetch_bytedance,
@@ -1819,6 +1999,9 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "ashby_official": fetch_ashby_official,
     "mihoyo_campus_api": fetch_mihoyo_campus,
     "byd_campus_api": fetch_byd_campus,
+    "meitu_campus_html": fetch_meitu_campus_html,
+    "anker_campus_html": fetch_anker_campus_html,
+    "midea_campus_api": fetch_midea_campus_api,
     "hikvision_campus_api": fetch_hikvision_campus,
     "kuaishou_api": fetch_kuaishou,
     "baidu_api": fetch_baidu,
