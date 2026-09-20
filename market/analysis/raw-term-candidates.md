@@ -187,7 +187,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**97**
+候选来源：**98**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -288,6 +288,7 @@
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | - **望尘科技 AI 全栈 9/14**：能从关联页面看到面试时长、Java 与 AI Coding Quality，但原帖直链没有稳定定位，继续零贡献。 / 4. **AI Coding 已进入 Production Verification。** 面试官关心 Bad Case 漏检、Review Bottleneck、真实落地和人类 Review / Test，而不是只问使用了哪个工具。 |
 | `S287` | 字节跳动｜Agent 开发｜秋招一面｜发布 2026-09-16 15:09｜HUMAN-A | 真人 / 第一人称证据：作者页面显示当前身份为“小红书 Agent 开发（实习员工）”；正文明确记录本人字节 Agent 秋招一面，并写“当天下午已约二面”。面试过程中保留与真人面试官讨论 Computer Use、Pi Agent、DeepSeek Harness、AI Coding 方式与团队业务的现场互动，属于候选人本人第一人称招聘流程，不是答案帖、合集或内容账号整理。 / Role Scope：标题直接为“字节 Agent 秋招一面”，技术主体围绕企业 AI 助手、Memory / Context、Agent Harness、Computer Use、AI Coding 与 Agent 工程集成展开，明确通过 AI Application / Agent Role Scope Gate。 / 10. 日常怎样真正使用 AI Coding，从需求、理解代码、修改、验证到 Review 的完整 Workflow 是什么？ |
 | `S288` | 蚂蚁｜AI Native / Agent 应用方向｜一面｜面试 2026-09-15 · 发布 2026-09-17｜HUMAN-A | 4. Agent / Skill / AI Coding 已明显向普通 Backend、Data、Test 岗扩散，因此 Role Scope Gate 必须比过去更严格； |
+| `S289` | 阳光电源｜AI 应用开发工程师｜一面｜面试 2026-09-18 10:00，发布 2026-09-18｜HUMAN-A | 4. **Harness + AI-assisted Engineering Authenticity Verification 是值得继续追的弱信号。** 4399 线索已经把 Harness、SQL 验错、测试指标和“AI 帮你完成后是否真正掌握”放在一起，但 provenance 尚未闭环，因此当前只作为观察，不进入正式频率。 / 5. **Agent / AI 术语继续向普通 Backend / Data / Test 岗扩散。** 这使 Role Scope Gate 更重要，而不是更宽松；出现 Memory / Agent / AI Coding 不能替代目标岗位证据。 |
 
 ## Spec-driven Development
 
