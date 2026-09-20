@@ -3,7 +3,7 @@
 
 [← Memory](02-memory-lifecycle.md) · [DeerFlow 总览](README.md) · [Engineering & Evaluation →](04-engineering-evaluation.md)
 
-> **源码基线：** bytedance/deer-flow@1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe
+> **源码基线：** bytedance/deer-flow@e545c28ac301e6f9feae247c513d8ea8f83df294
 
 DeerFlow 的 Tool（工具）系统不应该只理解成 LangChain BaseTool 列表。
 
@@ -1048,21 +1048,21 @@ Run Journal / Receipt 保存更完整执行证据。
 
 ## 7. 源码锚点
 
-1. [Tool assembly](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/tools/tools.py)
-2. [Deferred Tool Search](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/tools/builtins/tool_search.py)
-3. [DeferredToolFilterMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/deferred_tool_filter_middleware.py)
-4. [McpRoutingMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/mcp_routing_middleware.py)
-5. [SkillToolPolicyMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/skill_tool_policy_middleware.py)
-6. [SkillActivationMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/skill_activation_middleware.py)
-7. [ReadBeforeWriteMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py)
-8. [Guardrail / authorization middleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/guardrails/middleware.py)
-9. [SandboxMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/sandbox/middleware.py)
-10. [ToolErrorHandlingMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py)
-11. [ToolReceiptMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/tool_receipt_middleware.py)
-12. [ToolOutputBudgetMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py)
-13. [MCP Session Pool](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/mcp/session_pool.py)
-14. [MCP tool bridge](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/mcp/tools.py)
-15. [Skill context](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/skill_context.py)
-16. [Subagent executor](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/subagents/executor.py)
+1. [Tool assembly](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/tools/tools.py)
+2. [Deferred Tool Search](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/tools/builtins/tool_search.py)
+3. [DeferredToolFilterMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/deferred_tool_filter_middleware.py)
+4. [McpRoutingMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/mcp_routing_middleware.py)
+5. [SkillToolPolicyMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/skill_tool_policy_middleware.py)
+6. [SkillActivationMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/skill_activation_middleware.py)
+7. [ReadBeforeWriteMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py)
+8. [Guardrail / authorization middleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/guardrails/middleware.py)
+9. [SandboxMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/sandbox/middleware.py)
+10. [ToolErrorHandlingMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py)
+11. [ToolReceiptMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/tool_receipt_middleware.py)
+12. [ToolOutputBudgetMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py)
+13. [MCP Session Pool](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/mcp/session_pool.py)
+14. [MCP tool bridge](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/mcp/tools.py)
+15. [Skill context](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/skill_context.py)
+16. [Subagent executor](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/subagents/executor.py)
 
 下一篇：[DeerFlow Engineering & Evaluation →](04-engineering-evaluation.md)
