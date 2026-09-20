@@ -3,7 +3,7 @@
 
 [← Tool](03-tool-lifecycle.md) · [DeerFlow 总览](README.md) · [成熟产品源码学习](../README.md)
 
-> **源码基线：** bytedance/deer-flow@1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe
+> **源码基线：** bytedance/deer-flow@e545c28ac301e6f9feae247c513d8ea8f83df294
 
 DeerFlow 2.0 进入 Production（生产环境）以后，不只是一个 LangGraph Agent。
 
@@ -525,6 +525,8 @@ Child 不自动获得 Parent 对话。
 
 > historical data, not instructions.
 
+也就是说，它被明确降权为 **untrusted historical data（不可信历史数据）**：过去 Parent Context 可以帮助 Child 理解背景，但不能把旧 System Prompt、权限声明或 Tool 指令当成当前 Child 的新授权。
+
 #### 为什么 Tool Call 变成 inert text
 
 如果直接把 Parent AI tool_call block + ToolMessage 复制给 Child：
@@ -565,8 +567,8 @@ Child 执行期间 Parent 继续收到新消息：
 
 DeerFlow 同时限制：
 
-- 每个 run 最多创建多少 Subagent
-- 同时执行多少 Subagent
+- 每个 run 最多创建多少 Subagent（Lead Agent 侧由 `SubagentLimitMiddleware` 执行，总量来自运行时 `max_total_subagents` 或配置 `subagents.max_total_per_run`）
+- 同时执行多少 Subagent（`max_concurrent_subagents` 还会和进程级 execution capacity 对齐）
 - 每个 Subagent 最大 turns / timeout
 - batch service capacity
 
@@ -657,6 +659,42 @@ DanglingToolCallMiddleware 会在模型调用前修复这种历史，使 Tool Ca
 如果过去副作用未知，产品仍应该通过 Receipt / Journal / External State Verification 判断，而不是因为补了一条 Error ToolMessage 就说：
 
 > “它没执行。”
+
+---
+
+### Cancellation 为什么不能中断“释放自己持有的 Persistence 资源”
+
+固定快照最新的两个提交正好把这个边界写得很清楚。
+
+Postgres Persistence 在启动 / schema bootstrap 期间可能持有：
+
+- advisory lock（数据库建议锁）
+- schema connection（模式初始化连接）
+
+如果调用者在这时被取消，最危险的实现是：
+
+~~~text
+收到 CancelledError
+→ cleanup task 也一起被取消
+→ unlock / connection.close 没跑完
+→ 把残留 ownership 留给下一次启动
+~~~
+
+最新源码改成的原则是：
+
+> **先 drain 自己拥有的 cleanup，再把原始 cancellation 继续传播。**
+
+因此 bootstrap unlock 和 schema connection close 都属于 cancellation-shielded ownership cleanup（受取消保护的所有权清理）边界。
+
+这和 DeerFlow 其他 Runtime ownership 规则是一致的：Sandbox lease、Subagent runtime、Run worker drain 都不能因为“上层想取消”就把仍然由当前组件拥有的资源直接遗弃。
+
+所以在 Agent 工程里，Cancellation 的语义不应该是：
+
+> “立刻停止所有 await。”
+
+更准确的是：
+
+> **停止继续接受新工作，但先把已经取得 ownership 的资源释放到一致状态，再结束调用者。**
 
 ---
 
@@ -1058,21 +1096,21 @@ Dynamic Context、Skill Policy、Deferred Filter、Summarization、Recovery 的�
 
 ## 7. 源码锚点
 
-1. [Runtime architecture](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/docs/ARCHITECTURE.md)
-2. [Runtime notes / checkpoint invariants](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/runtime/AGENTS.md)
-3. [Checkpoint state accessor](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/runtime/checkpoint_state.py)
-4. [Checkpoint mode](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/runtime/checkpoint_mode.py)
-5. [Run worker](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/runtime/runs/worker.py)
-6. [Run Journal](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/runtime/journal.py)
-7. [Checkpoint lineage](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/app/gateway/checkpoint_lineage.py)
-8. [Thread lifecycle](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/docs/THREAD_LIFECYCLE.md)
-9. [Checkpoint retention contract](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/docs/checkpoint-retention-contract.md)
-10. [DanglingToolCallMiddleware](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/agents/middlewares/dangling_tool_call_middleware.py)
-11. [Subagent context snapshot](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/subagents/context_snapshot.py)
-12. [Subagent executor](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/subagents/executor.py)
-13. [Subagent runtime notes](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/packages/harness/deerflow/subagents/AGENTS.md)
-14. [Replay E2E guide](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/docs/REPLAY_E2E.md)
-15. [Run event stream contract](https://github.com/bytedance/deer-flow/blob/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/docs/RUN_EVENT_STREAM.md)
-16. [All backend tests](https://github.com/bytedance/deer-flow/tree/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe/backend/tests)
+1. [Runtime architecture](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/ARCHITECTURE.md)
+2. [Runtime notes / checkpoint invariants](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/runtime/AGENTS.md)
+3. [Checkpoint state accessor](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/runtime/checkpoint_state.py)
+4. [Checkpoint mode](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/runtime/checkpoint_mode.py)
+5. [Run worker](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/runtime/runs/worker.py)
+6. [Run Journal](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/runtime/journal.py)
+7. [Checkpoint lineage](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/app/gateway/checkpoint_lineage.py)
+8. [Thread lifecycle](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/THREAD_LIFECYCLE.md)
+9. [Checkpoint retention contract](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/checkpoint-retention-contract.md)
+10. [DanglingToolCallMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/dangling_tool_call_middleware.py)
+11. [Subagent context snapshot](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/subagents/context_snapshot.py)
+12. [Subagent executor](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/subagents/executor.py)
+13. [Subagent runtime notes](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/subagents/AGENTS.md)
+14. [Replay E2E guide](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/REPLAY_E2E.md)
+15. [Run event stream contract](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/RUN_EVENT_STREAM.md)
+16. [All backend tests](https://github.com/bytedance/deer-flow/tree/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/tests)
 
 回到：[DeerFlow 系统总览](README.md)

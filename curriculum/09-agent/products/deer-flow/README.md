@@ -3,7 +3,7 @@
 [← 成熟产品源码学习](../README.md) · [Agent 模块](../../README.md)
 
 > **源码仓库：** [bytedance/deer-flow](https://github.com/bytedance/deer-flow)  
-> **固定源码快照：** [`1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe`](https://github.com/bytedance/deer-flow/tree/1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe)  
+> **固定源码快照：** [`e545c28ac301e6f9feae247c513d8ea8f83df294`](https://github.com/bytedance/deer-flow/tree/e545c28ac301e6f9feae247c513d8ea8f83df294)  
 > **产品代际：** DeerFlow 2.0。仓库 README 明确说明 2.0 是 ground-up rewrite（完全重写），与 1.x 不共享实现；1.x 另在 `main-1.x` 维护。  
 > **核验日期：** 2026-09-20
 
