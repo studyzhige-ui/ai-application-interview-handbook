@@ -1151,6 +1151,39 @@ def fetch_vivo_2027(src: dict) -> list[Job]:
     )
 
 
+def fetch_beisen_direct(src: dict) -> list[Job]:
+    """Enumerate a company-proven Beisen/Zhiye campus tenant via the public first-party API."""
+    parsed = urlparse(src.get("search_url") or src.get("portal") or "")
+    root = f"{parsed.scheme}://{parsed.netloc}"
+    if not parsed.netloc or not parsed.netloc.endswith("zhiye.com"):
+        raise RuntimeError("beisen_direct requires a zhiye.com official ATS search_url")
+    cond_api = root + "/api/Jobad/GetJobAdSearchConditions"
+    headers = {
+        **HEADERS, "Content-Type": "application/json", "Origin": root,
+        "Referer": src.get("search_url") or src.get("portal") or root,
+        "x-requested-with": "xmlhttprequest", "langtype": "zh_CN",
+    }
+    categories: list[str] = []
+    try:
+        conditions = post_json(cond_api, payload={"displayFilters": ["Category"]}, headers=headers)
+        if conditions.get("Code") == 200:
+            for axis in conditions.get("Data") or []:
+                if txt(axis.get("Value")) != "Category":
+                    continue
+                for item in axis.get("Data") or []:
+                    label = txt(item.get("Text"))
+                    cid = txt(item.get("StrValue") or item.get("Value"))
+                    if cid and not re.search(r"社会|社招|实习", label):
+                        categories.append(cid)
+    except Exception:
+        categories = []
+    return _beisen_fetch_all(
+        company=src["company"], root=root, portal_id=txt(src.get("beisen_portal_id")),
+        categories=categories or None,
+        cycle_evidence=txt(src.get("beisen_cycle_evidence")) or "官方校园招聘",
+        source_url=src.get("search_url") or src.get("portal") or root,
+    )
+
 def fetch_iflytek_2027(src: dict) -> list[Job]:
     root = "https://iflytek.zhiye.com"
     cond_api = root + "/api/Jobad/GetJobAdSearchConditions"
@@ -1375,6 +1408,7 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "ant_2027_api": fetch_ant_2027,
     "vivo_2027_api": fetch_vivo_2027,
     "iflytek_2027_api": fetch_iflytek_2027,
+    "beisen_direct": fetch_beisen_direct,
     "ctrip_2027_api": fetch_ctrip_2027,
     "honor_2027_api": fetch_honor_2027,
     "feishu_direct": fetch_feishu_direct,
