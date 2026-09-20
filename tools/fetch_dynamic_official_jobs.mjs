@@ -314,9 +314,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     // than proving only a set of target keywords.
     const signedFeishuSeen=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
     if(signedFeishuSeen){
-      const fullListHits=await collectSearchPages(page,"__FULL_LIST__");
-      await Promise.allSettled(responseTasks);
-      const fullPoolProof=feishuKeywordCoverage(endpointLog);
+      const fullPoolProof=await exhaustFeishuSignedPool(page,endpointLog,responseTasks,navigationTimeoutMs);
       if(fullPoolProof.full_pool_complete){
         const bodyNow=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
         const cycleNow=[...new Set([...beforeCycle,...cycleSnippets(bodyNow)])].slice(0,10);
@@ -325,9 +323,9 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         return {
           page_url:url,final_url:finalUrl,hasCampusEvidence:cycleNow.length>0,cycle_evidence:cycleNow,
           next:[],search_control_found:true,navigation_action:{clicked:false},
-          search_terms_attempted:[],search_hit_links:fullListHits.length,
-          list_scan_complete:true,list_links_seen:fullListHits.length,
-          signed_feishu_full_pool:true
+          search_terms_attempted:[],search_hit_links:0,
+          list_scan_complete:true,list_links_seen:fullPoolProof.full_pool_covered,
+          signed_feishu_full_pool:true,source_total:fullPoolProof.full_pool_total
         };
       }
     }
@@ -510,11 +508,42 @@ function feishuKeywordCoverage(endpointLog){
   };
   const done=required.filter(completeTerm);
   const fullPoolComplete=completeTerm("");
+  const blanks=(byKeyword.get("")||[]).sort((a,b)=>a.offset-b.offset);
+  const fullTotal=blanks.length?Math.max(...blanks.map(x=>x.total)):0;
+  const fullCovered=blanks.reduce((m,x)=>Math.max(m,x.offset+x.rows),0);
   return {
     complete:fullPoolComplete || done.length===required.length,
     full_pool_complete:fullPoolComplete,
+    full_pool_total:fullTotal,
+    full_pool_covered:fullCovered,
     terms:done
   };
+}
+
+async function exhaustFeishuSignedPool(page,endpointLog,responseTasks,navigationTimeoutMs){
+  await Promise.allSettled(responseTasks);
+  let proof=feishuKeywordCoverage(endpointLog);
+  if(proof.full_pool_complete)return proof;
+  let lastCovered=proof.full_pool_covered||0;
+  let stalls=0;
+  for(let current=1;current<=120;current++){
+    const u=new URL(page.url());
+    u.searchParams.set("keywords","");
+    u.searchParams.set("current",String(current));
+    u.searchParams.set("limit","100");
+    try{
+      await page.goto(u.href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+      await page.waitForTimeout(300);
+    }catch{}
+    await Promise.allSettled(responseTasks);
+    proof=feishuKeywordCoverage(endpointLog);
+    if(proof.full_pool_complete)return proof;
+    const covered=proof.full_pool_covered||0;
+    if(covered<=lastCovered)stalls++; else stalls=0;
+    lastCovered=Math.max(lastCovered,covered);
+    if(stalls>=4)break;
+  }
+  return feishuKeywordCoverage(endpointLog);
 }
 
 async function processSource(browser,src){
@@ -528,7 +557,7 @@ async function processSource(browser,src){
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
   const navigationTimeoutMs=Math.max(8000,Number(src.browser_navigation_timeout_ms||12000));
-  const defaultBudget=(src.mode==="feishu_direct"||src.mode==="portal_only")?90000:COMPANY_BUDGET_MS;
+  const defaultBudget=src.mode==="feishu_direct"?240000:(src.mode==="portal_only"?90000:COMPANY_BUDGET_MS);
   const companyBudgetMs=Math.max(15000,Number(src.browser_company_budget_ms||defaultBudget));
   const started=Date.now();
   let timer=null;

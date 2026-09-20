@@ -16,6 +16,8 @@ const OUT=process.argv[2]||"market/jobs/official-2027-moka-discovery.generated.j
 const REQUEST_TIMEOUT_MS=15000;
 const TENANT_TIMEOUT_MS=90000;
 const TENANT_CONCURRENCY=4;
+const AES_IV="de7c21ed8d6f50fe";
+const MOKA_LIST_API="https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2";
 const TARGET_TITLE_RE=/(?:agent|智能体|rag|harness|runtime|coding|ai\s*(?:应用|全栈|开发|研发|工程|平台|infra|devops|软件|系统|后端|前端)|大模型(?:应用|开发|研发|工程|平台)|fde)/i;
 async function fetchTimed(url,options={}){
   return fetch(url,{...options,signal:AbortSignal.timeout(REQUEST_TIMEOUT_MS)});
@@ -47,11 +49,12 @@ function splitJD(text){
   const i=m.index||0;
   return {description:t.slice(0,i).trim(),requirements:t.slice(i).trim()};
 }
-function decryptEnvelope(env,aesIv){
-  if(!env?.data||!env?.necromancer||!aesIv)return null;
+function decryptEnvelope(env){
+  if(!env||typeof env!=="object")return env;
+  if(!env.data||!env.necromancer)return env;
   try{
     const key=Buffer.from(env.necromancer,"utf8");
-    const iv=Buffer.from(aesIv,"utf8");
+    const iv=Buffer.from(AES_IV,"utf8");
     const d=createDecipheriv("aes-128-cbc",key,iv);
     const plain=Buffer.concat([d.update(Buffer.from(env.data,"base64")),d.final()]).toString("utf8");
     return JSON.parse(plain);
@@ -66,7 +69,7 @@ function configuredContract(src){
   };
   if(src.moka_source_token)body.sourceToken=src.moka_source_token;
   if(Array.isArray(src.moka_commitments)&&src.moka_commitments.length)body.commitments=src.moka_commitments;
-  return {endpoint:src.moka_endpoint,body};
+  return {endpoint:MOKA_LIST_API,body};
 }
 function resultFromConfiguredSource(src){
   const contract=configuredContract(src);
@@ -124,17 +127,15 @@ async function bootstrap(url){
   if(!init?.aesIv)throw new Error("Moka init-data/aesIv missing");
   return {init,cookie,finalUrl:r.url};
 }
-async function apiCall(url,body,boot,referer){
-  const origin=new URL(url).origin;
+async function apiCall(url,body){
   const r=await fetchTimed(url,{method:"POST",headers:{
     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36",
-    "Accept":"application/json,*/*","Content-Type":"application/json",
-    "Origin":origin,"Referer":referer,"Cookie":boot.cookie
+    "Accept":"application/json,*/*","Content-Type":"application/json"
   },body:JSON.stringify(body)});
   if(!r.ok)throw new Error("HTTP "+r.status+" "+url);
   const env=await r.json();
-  const decoded=decryptEnvelope(env,boot.init.aesIv);
-  if(!decoded)throw new Error("cannot decrypt "+url);
+  const decoded=decryptEnvelope(env);
+  if(!decoded)throw new Error("cannot decrypt "+url+" with fixed Moka IV");
   if(decoded.code!==undefined && decoded.code!==0)throw new Error("upstream code="+decoded.code+" "+(decoded.msg||""));
   return decoded;
 }
@@ -185,7 +186,6 @@ async function enumerateOne(result){
   if(!contract)return null;
   const listUrl=new URL(contract.endpoint); listUrl.search="";
   const portal=officialPage(result,listUrl.href);
-  const boot=await bootstrap(portal);
   const template={...contract.body};
   const orgId=template.orgId;
   const siteId=String(template.siteId);
@@ -195,7 +195,7 @@ async function enumerateOne(result){
   let offset=0,total=0,jobs=[];
   for(let page=0;page<100;page++){
     const body={...template,orgId,siteId,limit:50,offset,needStat:true,jobIdTopList:[],keyword:"",customFields:template.customFields||{},site,locale};
-    const decoded=await apiCall(listUrl.href,body,boot,portal);
+    const decoded=await apiCall(listUrl.href,body);
     const rows=jobsFromDecoded(decoded);
     if(page===0)total=totalFromDecoded(decoded);
     jobs=merge(jobs,rows.map(j=>normalize(result.company,j,listUrl.href,portal,cycle)));
@@ -213,7 +213,7 @@ async function enumerateOne(result){
     const vals=await Promise.all(chunk.map(async j=>{
       if(!j.job_id)return j;
       try{
-        const dec=await apiCall(detailUrl,{orgId,siteId,jobId:j.job_id,locale},boot,portal);
+        const dec=await apiCall(detailUrl,{orgId,siteId,jobId:j.job_id,locale});
         const raw=dec?.data?.job||dec?.data||dec?.job||null;
         if(!raw||typeof raw!=="object")return j;
         return normalize(result.company,raw,detailUrl,portal,cycle);

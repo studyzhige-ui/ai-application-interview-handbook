@@ -879,7 +879,8 @@
         "https://campushr.hikvision.com/JobList.html"
       ],
       "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000
+      "browser_company_budget_ms": 90000,
+      "hikvision_batch_id": "e198653730e14820b9e95b29fbc2223f"
     },
     {
       "company": "中兴通讯",
@@ -1184,7 +1185,12 @@
       "campus_search_url": "https://app.mokahr.com/campus-recruitment/glodon/91966",
       "search_url": "https://app.mokahr.com/campus-recruitment/glodon/91966",
       "board_scope": "campus",
-      "business_summary": "BIM、数字建筑、工程软件与建筑产业 AI"
+      "business_summary": "BIM、数字建筑、工程软件与建筑产业 AI",
+      "moka_endpoint": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+      "moka_org_id": "glodon",
+      "moka_site_id": "91966",
+      "moka_site": "campus",
+      "moka_locale": "zh-CN"
     },
     {
       "company": "挚文集团/陌陌",

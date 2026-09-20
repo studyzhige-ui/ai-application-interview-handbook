@@ -1623,33 +1623,73 @@ def fetch_byd_campus(src: dict) -> list[Job]:
 
 
 def fetch_ashby_official(src: dict) -> list[Job]:
-    """Enumerate every currently published posting from an official Ashby job board."""
+    """Enumerate an official Ashby hosted board through its anonymous GraphQL API."""
     board = txt(src.get("ashby_board_name"))
     if not board:
         path = urlparse(src.get("portal") or "").path.strip("/")
         board = path.split("/")[0] if path else ""
     if not board:
         raise RuntimeError("Ashby board name missing")
-    api = f"https://api.ashbyhq.com/posting-api/job-board/{board}"
-    data = get_json(api, params={"includeCompensation": "true"})
-    rows = data.get("jobs") or []
+
+    api = "https://jobs.ashbyhq.com/api/non-user-graphql?op=ApiJobBoardWithTeams"
+    query = """
+    query ApiJobBoardWithTeams($organizationHostedJobsPageName: String!) {
+      jobBoard: jobBoardWithTeams(organizationHostedJobsPageName: $organizationHostedJobsPageName) {
+        teams { id name externalName parentTeamId }
+        jobPostings {
+          id title teamId locationId locationName workplaceType employmentType
+          secondaryLocations { locationId locationName }
+        }
+      }
+    }
+    """
+    payload = post_json(
+        api,
+        payload={
+            "operationName": "ApiJobBoardWithTeams",
+            "variables": {"organizationHostedJobsPageName": board},
+            "query": query,
+        },
+        headers={"Referer": f"https://jobs.ashbyhq.com/{board}"},
+    )
+    job_board = (payload.get("data") or {}).get("jobBoard") or {}
+    rows = job_board.get("jobPostings") or []
+    if not isinstance(rows, list):
+        raise RuntimeError("Ashby public board returned no jobPostings list")
+
+    team_names = {
+        txt(t.get("id")): txt(t.get("externalName") or t.get("name"))
+        for t in (job_board.get("teams") or []) if isinstance(t, dict)
+    }
     out: list[Job] = []
-    for j in rows:
-        job_url = txt(j.get("jobUrl") or j.get("applyUrl"))
-        jid = ""
-        if job_url:
-            jid = urlparse(job_url).path.rstrip("/").split("/")[-1]
-        description = _strip_html(
-            j.get("descriptionHtml") or j.get("description") or j.get("descriptionPlain") or ""
-        )
-        team = txt(j.get("team") or j.get("department"))
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        jid = txt(row.get("id"))
+        title = txt(row.get("title"))
+        # The board list is the exhaustive source of truth. For target-like
+        # postings, the public detail page supplies eligibility/JD text and is
+        # already the first-party evidence URL retained by the persistent index.
+        description = ""
+        if jid and likely_target_title(title):
+            try:
+                rr = requests.get(
+                    f"https://jobs.ashbyhq.com/{board}/{jid}",
+                    headers={**HEADERS, "Referer": f"https://jobs.ashbyhq.com/{board}"},
+                    timeout=TIMEOUT,
+                )
+                if rr.ok:
+                    description = _strip_html(rr.text)
+            except Exception:
+                pass
         out.append(Job(
-            src["company"], txt(j.get("title")), jid,
-            txt(j.get("location")), "当前官方招聘", team,
+            src["company"], title, jid, txt(row.get("locationName")),
+            txt(row.get("employmentType") or "当前官方招聘"),
+            team_names.get(txt(row.get("teamId")), ""),
             description, "",
-            job_url or src.get("portal") or api,
+            f"https://jobs.ashbyhq.com/{board}/{jid}" if jid else src.get("portal") or "",
             api,
-            "Ashby 当前已发布官方岗位；职位正文决定应届/新毕业生资格",
+            "Ashby 当前公开职位池；目标岗位正文用于核验 new-grad / graduate eligibility",
         ))
     return out
 
@@ -1665,7 +1705,10 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
         "Content-Type": "application/x-www-form-urlencoded",
         "Origin": root,
     }
-    batch_data = get_json(batch_api, params={"jobNature": "应届生"}, headers=headers)
+    batch_id = txt(src.get("hikvision_batch_id"))
+    batch_data: Any = {}
+    if not batch_id:
+        batch_data = get_json(batch_api, params={"jobNature": "应届生"}, headers=headers)
     def walk_batches(v: Any) -> list[dict[str, Any]]:
         found: list[dict[str, Any]] = []
         if isinstance(v, dict):
@@ -1679,8 +1722,10 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
             for x in v:
                 found.extend(walk_batches(x))
         return found
-    batches = walk_batches(batch_data)
-    batch_id = txt((batches[0] if batches else {}).get("batchId") or (batches[0] if batches else {}).get("id"))
+    batches = walk_batches(batch_data) if not batch_id else []
+    if not batch_id and batches:
+        first_batch = batches[0]
+        batch_id = txt(first_batch.get("batchId") or first_batch.get("id"))
     if not batch_id:
         # Current official browser discovery exposed this endpoint; if the API
         # omits the year label, fall back to the first active batch object.
