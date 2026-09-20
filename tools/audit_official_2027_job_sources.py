@@ -98,6 +98,10 @@ def main() -> int:
 
         if contract != "READY":
             hard_errors.append(f"{company}: official source contract is broken")
+        if raw_norm == "ENUMERATED_ZERO_MATCHES" and persistent_state == "VERIFIED_ROLE":
+            hard_errors.append(
+                f"{company}: complete enumeration says zero targets but persistent role index still says VERIFIED_ROLE"
+            )
         rows.append({
             "company": company, "business": src.get("business_summary", ""), "contract": contract,
             "persistent_state": persistent_state, "representative": representative,

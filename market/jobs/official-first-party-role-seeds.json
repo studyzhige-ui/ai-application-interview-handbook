@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-09-20",
+  "generated_at": "2026-09-21",
   "rules": [
     "只允许当前第一方公司招聘官网或官方ATS已经直接核验的职位。",
     "不得从聚合站、媒体、学校就业网或搜索摘要复制JD正文。",
@@ -70,18 +70,6 @@
       "evidence_url": "https://www.zhipin.com/school/",
       "verified_on": "2026-09-20",
       "evidence_summary": "BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招），职责包括大模型应用平台建设及AI赋能求职招聘场景。"
-    },
-    {
-      "company": "Manus",
-      "title": "AI Agent Engineer",
-      "recruitment_type": "当前官方招聘（优秀应届毕业生可投）",
-      "locations": [
-        "新加坡"
-      ],
-      "official_url": "https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de",
-      "evidence_url": "https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de",
-      "verified_on": "2026-09-20",
-      "evidence_summary": "Manus AI 官方 Ashby 当前在招 AI Agent Engineer；岗位负责 Manus Agent 核心模块、Prompt/Tool/RAG/Agent 系统架构优化与评测系统建设，并明确优秀应届毕业生可投。"
     }
   ]
 }

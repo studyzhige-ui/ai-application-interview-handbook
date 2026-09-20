@@ -2168,14 +2168,20 @@ def main() -> int:
         # Role scope is intentionally title-first so generic software jobs that merely
         # mention "using AI tools" in boilerplate never enter the formal library.
         explicit_campus_board = bool(src.get("current_campus_board"))
+        campus_formal_pool = bool(src.get("campus_formal_pool"))
         matches = [
             j for j in jobs
             if (explicit_campus_board or campusish(j))
             and strict_role_title(j)
             and not training_heavy(j, training_signals)
             and not is_hard_excluded(j, excludes)
-            and "实习" not in (j.title + " " + j.category).lower()
-            and "intern" not in (j.title + " " + j.category).lower()
+            and (
+                campus_formal_pool
+                or (
+                    "实习" not in (j.title + " " + j.category).lower()
+                    and "intern" not in (j.title + " " + j.category).lower()
+                )
+            )
         ]
         seen = set()
         uniq: list[Job] = []

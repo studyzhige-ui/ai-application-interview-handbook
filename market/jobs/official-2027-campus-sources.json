@@ -837,7 +837,7 @@
       "portal": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "official_root": "https://careers.dji.com/zh-CN/campus",
       "browser_probe": true,
-      "note": "大疆2027校园招聘；官方 campus 页面进入 apply.careers.dji.com/campus-recruitment/dji/143359，固定 Moka tenant 完整枚举全职位池。",
+      "note": "大疆2027“拓疆者”官方热招页为当前正式校园招聘池；Moka 租户完整枚举用于取得第一方 JD，租户 commitment 字段不得覆盖官网明确的校园招聘性质。",
       "job_list_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -849,7 +849,8 @@
       "moka_org_id": "dji",
       "moka_site_id": "143359",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "campus_formal_pool": true
     },
     {
       "company": "度小满",
@@ -1084,7 +1085,7 @@
       "portal": "https://maker.haier.net/client/campus/activityindex.html",
       "official_root": "https://maker.haier.net/client/campus/index",
       "browser_probe": true,
-      "note": "海尔官方2027校园招聘；除活动入口外固定扫描 id/87 当前项目职位列表并完整翻页，第一方 FDE 岗位事实由官方筛选页保底。",
+      "note": "海尔官方2027校园招聘；完整枚举当前项目职位列表，并固定扫描官方 AI/算法类筛选页 sid/87/fid/30，确保 FDE 等目标岗位进入自动结果而非只依赖历史 seed。",
       "job_list_url": "https://maker.haier.net/client/campus/activityindex.html",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -1093,7 +1094,8 @@
       "board_scope": "campus",
       "business_summary": "智慧家庭、工业互联网、医疗健康与工业 AI",
       "extra_job_list_urls": [
-        "https://maker.haier.net/client/campus/customizedptjobs/id/87.html"
+        "https://maker.haier.net/client/campus/customizedptjobs/id/87.html",
+        "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html"
       ],
       "browser_company_budget_ms": 180000
     },
