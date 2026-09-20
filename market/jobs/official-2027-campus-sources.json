@@ -868,11 +868,11 @@
     },
     {
       "company": "海康威视",
-      "mode": "portal_only",
+      "mode": "hikvision_campus_api",
       "portal": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "official_root": "https://www.hikvision.com/cn/",
       "browser_probe": true,
-      "note": "海康威视官方2027应届生职位池；由官网浏览器会话重放 crsPositionSearch 空关键词分页至终点，避免独立 requests 适配器响应结构差异。",
+      "note": "海康威视官方2027应届生职位池；使用固定2027 batchId调用 crsPositionSearch 官方分页 API 完整枚举，浏览器仅作为诊断回退。",
       "job_list_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",

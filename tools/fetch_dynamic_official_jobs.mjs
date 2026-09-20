@@ -149,8 +149,8 @@ function deepGetContainer(obj,keys,depth=0){
 }
 function blankListRequest(entry){
   if(!entry||entry.status!==200||entry.response_list_path===undefined)return false;
-  if(/(?:detail|info|filter|condition|category|config|count)(?:\/|\?|$)/i.test(entry.url||""))return false;
-  if(!/(?:job|position|post|recruit|career)/i.test(entry.url||""))return false;
+  if(/(?:^|\/)(?:detail|info|filter|condition|category|config|count)(?:\/|$)/i.test(new URL(entry.url||"https://invalid/").pathname))return false;
+  if(!/(?:job|position|post)/i.test(entry.url||""))return false;
   const {body}=parseRequestContract(entry);
   if(body&&typeof body==="object"){
     const kw=deepGetContainer(body,KEYWORD_KEYS);
@@ -220,7 +220,7 @@ async function replayCapturedFullPool(page,company,endpointLog,collector,cycle,c
       if(body)setKeywordBlank(body);
       const u=new URL(seed.url);
       for(const k of KEYWORD_KEYS)if(u.searchParams.has(k))u.searchParams.set(k,"");
-      const pageSize=Math.max(pc.size,100);
+      const pageSize=Math.max(1,pc.size||50);
       if(pc.urlSize)u.searchParams.set(pc.urlSize,String(pageSize));
       if(pc.urlOffset)u.searchParams.set(pc.urlOffset,String(step*pageSize));
       if(pc.urlPage)u.searchParams.set(pc.urlPage,String(step+1));
@@ -512,7 +512,18 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     // Feishu-family ATS pages expose signed first-party list calls. Exhaust the
     // blank-query list first: this enumerates the *entire* official pool rather
     // than proving only a set of target keywords.
-    const signedFeishuSeen=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+    let signedFeishuSeen=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+    if(!signedFeishuSeen){
+      try{
+        const host=new URL(page.url()).hostname;
+        if(/\.jobs\.feishu\.cn$/i.test(host)){
+          await page.goto(canonicalFeishuListUrl(page.url(),1,10),{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+          await page.waitForTimeout(700);
+          await Promise.allSettled(responseTasks);
+          signedFeishuSeen=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+        }
+      }catch{}
+    }
     if(signedFeishuSeen){
       const fullPoolProof=await exhaustFeishuSignedPool(page,endpointLog,responseTasks,navigationTimeoutMs);
       if(fullPoolProof.full_pool_complete){
@@ -613,12 +624,8 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         let postNavFeishu=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
         if(!postNavFeishu && /\.jobs\.feishu\.cn$/i.test(new URL(page.url()).hostname)){
           try{
-            const u=new URL(page.url());
-            if(!/\/position\/list/i.test(u.pathname))u.pathname=u.pathname.replace(/\/$/,"")+"/position/list";
-            u.searchParams.set("keywords","");
-            u.searchParams.set("current","1");
-            u.searchParams.set("limit","100");
-            await page.goto(u.href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+            const href=canonicalFeishuListUrl(page.url(),1,10);
+            await page.goto(href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
             await page.waitForTimeout(900);
           }catch{}
           await Promise.allSettled(responseTasks);
@@ -779,28 +786,58 @@ function feishuKeywordCoverage(endpointLog){
   };
 }
 
+function canonicalFeishuListUrl(raw,current=1,limit=10){
+  const u=new URL(raw);
+  let path=u.pathname.replace(/\/+$/,"");
+  if(!/\/position\/list$/i.test(path)) path=path+"/position/list";
+  u.pathname=path;
+  u.searchParams.set("keywords","");
+  u.searchParams.set("current",String(current));
+  u.searchParams.set("limit",String(limit));
+  for(const k of ["category","location","type","job_hot_flag","functionCategory","tag"]){
+    if(!u.searchParams.has(k))u.searchParams.set(k,"");
+  }
+  return u.href;
+}
+
 async function exhaustFeishuSignedPool(page,endpointLog,responseTasks,navigationTimeoutMs){
   await Promise.allSettled(responseTasks);
   let proof=feishuKeywordCoverage(endpointLog);
   if(proof.full_pool_complete)return proof;
+
+  const pageSize=10;
+  const total=Math.max(0,Number(proof.full_pool_total||0));
+  const maxPages=Math.min(200,total>0?Math.ceil(total/pageSize)+2:120);
+  let base=page.url();
+  try{base=canonicalFeishuListUrl(base,1,pageSize);}catch{}
+
   let lastCovered=proof.full_pool_covered||0;
   let stalls=0;
-  for(let current=1;current<=120;current++){
-    const u=new URL(page.url());
-    u.searchParams.set("keywords","");
-    u.searchParams.set("current",String(current));
-    u.searchParams.set("limit","100");
+  for(let current=1;current<=maxPages;current++){
+    const expectedOffset=(current-1)*pageSize;
+    const already=(endpointLog||[]).some(e=>{
+      if(e.status!==200||!/\/api\/v1\/search\/job\/posts/i.test(e.url))return false;
+      try{
+        const b=JSON.parse(e.post_data||"{}");
+        return String(b.keyword??"")==="" && Number(b.offset||0)===expectedOffset;
+      }catch{return false;}
+    });
+    if(already)continue;
+
+    let href=base;
+    try{href=canonicalFeishuListUrl(base,current,pageSize);}catch{}
     try{
-      await page.goto(u.href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
-      await page.waitForTimeout(300);
+      await page.goto(href,{waitUntil:"domcontentloaded",timeout:navigationTimeoutMs});
+      await page.waitForTimeout(220);
     }catch{}
     await Promise.allSettled(responseTasks);
+
     proof=feishuKeywordCoverage(endpointLog);
     if(proof.full_pool_complete)return proof;
     const covered=proof.full_pool_covered||0;
     if(covered<=lastCovered)stalls++; else stalls=0;
     lastCovered=Math.max(lastCovered,covered);
-    if(stalls>=4)break;
+    if(stalls>=8)break;
   }
   return feishuKeywordCoverage(endpointLog);
 }
