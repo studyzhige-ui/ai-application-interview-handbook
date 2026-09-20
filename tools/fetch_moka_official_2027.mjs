@@ -13,6 +13,10 @@ import { createDecipheriv } from "node:crypto";
 const CFG=JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.json","utf8"));
 const BROWSER=JSON.parse(fs.readFileSync("market/jobs/official-2027-browser-discovery.generated.json","utf8"));
 const OUT=process.argv[2]||"market/jobs/official-2027-moka-discovery.generated.json";
+const REQUEST_TIMEOUT_MS=15000;
+async function fetchTimed(url,options={}){
+  return fetch(url,{...options,signal:AbortSignal.timeout(REQUEST_TIMEOUT_MS)});
+}
 
 function htmlDecode(s){
   return (s||"")
@@ -76,12 +80,12 @@ async function bootstrap(url){
     "Accept":"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language":"zh-CN,zh;q=0.9,en;q=0.8"
   };
-  let r=await fetch(url,{headers,redirect:"manual"});
+  let r=await fetchTimed(url,{headers,redirect:"manual"});
   const cookies=[];
   const raw=r.headers.get("set-cookie");
   if(raw)cookies.push(...raw.split(/,(?=[^;,]+=)/).map(x=>x.split(";")[0].trim()).filter(Boolean));
   const cookie=cookies.join("; ");
-  r=await fetch(url,{headers:{...headers,Cookie:cookie},redirect:"follow"});
+  r=await fetchTimed(url,{headers:{...headers,Cookie:cookie},redirect:"follow"});
   if(!r.ok)throw new Error("portal HTTP "+r.status);
   const html=await r.text();
   const init=parseInit(html);
@@ -90,7 +94,7 @@ async function bootstrap(url){
 }
 async function apiCall(url,body,boot,referer){
   const origin=new URL(url).origin;
-  const r=await fetch(url,{method:"POST",headers:{
+  const r=await fetchTimed(url,{method:"POST",headers:{
     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36",
     "Accept":"application/json,*/*","Content-Type":"application/json",
     "Origin":origin,"Referer":referer,"Cookie":boot.cookie
