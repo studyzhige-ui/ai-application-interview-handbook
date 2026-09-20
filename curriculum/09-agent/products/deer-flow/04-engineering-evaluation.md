@@ -567,8 +567,8 @@ Child 执行期间 Parent 继续收到新消息：
 
 DeerFlow 同时限制：
 
-- 每个 run 最多创建多少 Subagent
-- 同时执行多少 Subagent
+- 每个 run 最多创建多少 Subagent（Lead Agent 侧由 `SubagentLimitMiddleware` 执行，总量来自运行时 `max_total_subagents` 或配置 `subagents.max_total_per_run`）
+- 同时执行多少 Subagent（`max_concurrent_subagents` 还会和进程级 execution capacity 对齐）
 - 每个 Subagent 最大 turns / timeout
 - batch service capacity
 
