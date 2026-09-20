@@ -57,6 +57,35 @@ function decryptEnvelope(env,aesIv){
     return JSON.parse(plain);
   }catch{return null;}
 }
+function configuredContract(src){
+  if(!src?.moka_endpoint||!src?.moka_org_id||!src?.moka_site_id)return null;
+  const body={
+    orgId:String(src.moka_org_id),siteId:String(src.moka_site_id),
+    limit:30,offset:0,needStat:true,jobIdTopList:[],
+    customFields:{},site:src.moka_site||"campus",locale:src.moka_locale||"zh-CN"
+  };
+  if(src.moka_source_token)body.sourceToken=src.moka_source_token;
+  if(Array.isArray(src.moka_commitments)&&src.moka_commitments.length)body.commitments=src.moka_commitments;
+  return {endpoint:src.moka_endpoint,body};
+}
+function resultFromConfiguredSource(src){
+  const contract=configuredContract(src);
+  if(!contract)return null;
+  return {
+    company:src.company,seed_portal:src.search_url||src.job_list_url||src.portal,
+    root_portal:src.official_root,pages:[{
+      page_url:src.search_url||src.job_list_url||src.portal,
+      final_url:src.search_url||src.job_list_url||src.portal,
+      cycle_evidence:[src.current_campus_board?"当前官方校园招聘":"当前官方招聘"]
+    }],
+    endpoints:[{
+      status:200,method:"POST",url:contract.endpoint,
+      post_data:JSON.stringify(contract.body)
+    }],
+    configured_contract:true
+  };
+}
+
 function endpointContract(result){
   const eps=(result.endpoints||[]).filter(e=>
     e.status===200 && e.method==="POST" && /\/api\/outer\/ats-apply\/website\/jobs\/v2(?:\\?|$)/.test(e.url)
@@ -209,7 +238,10 @@ async function enumerateOneBounded(result){
 }
 
 const results=[];
-const candidates=(BROWSER.results||[]).filter(r=>endpointContract(r));
+const configured=(CFG.sources||[]).map(resultFromConfiguredSource).filter(Boolean);
+const configuredCompanies=new Set(configured.map(x=>x.company));
+const discovered=(BROWSER.results||[]).filter(r=>endpointContract(r)&&!configuredCompanies.has(r.company));
+const candidates=[...configured,...discovered];
 for(let i=0;i<candidates.length;i+=TENANT_CONCURRENCY){
   const chunk=candidates.slice(i,i+TENANT_CONCURRENCY);
   const settled=await Promise.all(chunk.map(async r=>{
