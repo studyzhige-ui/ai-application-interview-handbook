@@ -525,6 +525,8 @@ Child 不自动获得 Parent 对话。
 
 > historical data, not instructions.
 
+也就是说，它被明确降权为 **untrusted historical data（不可信历史数据）**：过去 Parent Context 可以帮助 Child 理解背景，但不能把旧 System Prompt、权限声明或 Tool 指令当成当前 Child 的新授权。
+
 #### 为什么 Tool Call 变成 inert text
 
 如果直接把 Parent AI tool_call block + ToolMessage 复制给 Child：
