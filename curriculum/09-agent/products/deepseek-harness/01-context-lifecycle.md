@@ -14,7 +14,9 @@
 
 ---
 
-## 1. 用户输入先进入 Inbox，而不是立刻成为 Model Message
+## 1. 从 Inbox 到可重建的 Model Request
+
+### 1. 用户输入先进入 Inbox，而不是立刻成为 Model Message
 
 Agent 公共接口在：
 
@@ -52,7 +54,7 @@ nextStep
 
 ---
 
-## 2. Turn 和 Step 在这里是两个真实层级
+### 2. Turn 和 Step 在这里是两个真实层级
 
 DeepSeek Harness 的 Session Log 会显式记录：
 
@@ -87,7 +89,7 @@ Turn 1
 
 这比笼统说“Agent Loop 一轮”更精确。
 
-### 为什么 Session 要把这些边界记录下来
+#### 为什么 Session 要把这些边界记录下来
 
 因为 Retry、Approval、Compaction、Tool Pairing 都需要知道：
 
@@ -100,7 +102,7 @@ Turn 1
 
 ---
 
-## 3. 每个 Step 开始前，Context 先经过 `agent/pre-step`
+### 3. 每个 Step 开始前，Context 先经过 `agent/pre-step`
 
 默认 Driver 的 `preStep()` 会先从 Inbox claim 当前应处理的消息。
 
@@ -123,7 +125,7 @@ Turn 1
 -当前 Permission / Sandbox policy 的 runtime context；
 -其他插件提供的 context。
 
-### 为什么这些东西很多都用 User-role Message
+#### 为什么这些东西很多都用 User-role Message
 
 因为 DeepSeek Harness 希望动态变化的信息：
 
@@ -137,7 +139,7 @@ Turn 1
 
 ---
 
-## 4. System Prompt 不是一个字符串，而是可组合的 Section / Context / Tool Schema
+### 4. System Prompt 不是一个字符串，而是可组合的 Section / Context / Tool Schema
 
 核心实现：
 
@@ -161,7 +163,7 @@ Turn 1
 - Runtime Policy；
 - Subagent guidance。
 
-### `assemble()` 做什么
+#### `assemble()` 做什么
 
 一次 assembly（组装）会：
 
@@ -177,7 +179,7 @@ Turn 1
 
 ---
 
-## 5. AGENTS.md / CLAUDE.md 怎样进入 Context
+### 5. AGENTS.md / CLAUDE.md 怎样进入 Context
 
 对应实现：
 
@@ -190,7 +192,7 @@ DeepSeek Harness 会加载 Workspace Instructions（工作区指令），包括�
 
 Base bundle 默认给这个插件约 65,536 bytes 的 render budget（渲染预算）。
 
-### Baseline Instructions
+#### Baseline Instructions
 
 Agent 启动时会根据：
 
@@ -201,7 +203,7 @@ Agent 启动时会根据：
 
 它们会在首次相关 Step 通过 `agent/pre-step` 进入 accepted messages。
 
-### Nested / Changed Instructions
+#### Nested / Changed Instructions
 
 当成功执行文件：
 
@@ -219,7 +221,7 @@ Agent 启动时会根据：
 
 所以 Instructions 不是“启动时读一次就结束”。
 
-### 为什么这样做
+#### 为什么这样做
 
 大型仓库中：
 
@@ -235,7 +237,7 @@ ios/AGENTS.md
 
 ---
 
-## 6. 最重要的顺序：`agent/pre-step` 接受消息后，还没有立刻 commit
+### 6. 最重要的顺序：`agent/pre-step` 接受消息后，还没有立刻 commit
 
 这是 DeepSeek Harness Context Lifecycle 最值得理解的一段。
 
@@ -265,7 +267,7 @@ ctx.llm.prepareCall()
 
 只有路由准备成功以后，Loop 才真正 append 当前请求需要的 durable events。
 
-### 为什么不先写消息，再决定 model
+#### 为什么不先写消息，再决定 model
 
 假设：
 
@@ -285,20 +287,20 @@ DeepSeek Harness 因此把“Context Admission（上下文准入）”和“Dura
 
 ---
 
-## 7. Request Envelope 为什么也要持久化
+### 7. Request Envelope 为什么也要持久化
 
 路由成功后，Agent Loop 会根据需要追加：
 
 - `request/header`
 - `request/context`
 
-### `request/header`
+#### `request/header`
 
 用于记录一段 request series（请求序列）的关键配置，例如当前 provider / model 等。
 
 如果模型路由不变，就不必每 Step 重复写完整 header。
 
-### `request/context`
+#### `request/context`
 
 当一些请求环境变化时追加，例如：
 
@@ -318,7 +320,7 @@ DeepSeek Harness 因此把“Context Admission（上下文准入）”和“Dura
 
 ---
 
-## 8. `system/message` 为什么会进入 Session Surface
+### 8. `system/message` 为什么会进入 Session Surface
 
 System Prompt 最终也不是“每次请求临时拼完就忘掉”。
 
@@ -336,7 +338,7 @@ Agent Loop 会通过 System Prompt projection 判断当前组装结果是否需�
 
 ---
 
-## 9. `deriveMessages()` 才是最终 Model History
+### 9. `deriveMessages()` 才是最终 Model History
 
 完成这一轮 durable admission 后，Agent Loop 调：
 
@@ -392,7 +394,9 @@ deriveMessages()
 
 ---
 
-## 10. Surface 为什么是整个 Context 系统的关键抽象
+## 2. Surface 与多层 Compaction：缩小模型视图，但不删历史证据
+
+### 10. Surface 为什么是整个 Context 系统的关键抽象
 
 Surface 支持两个核心操作：
 
@@ -446,7 +450,7 @@ user(seq 5)
 
 ---
 
-## 11. Tool Result Pruner：先做 model-free 的便宜压缩
+### 11. Tool Result Pruner：先做 model-free 的便宜压缩
 
 Base bundle 默认加载：
 
@@ -467,7 +471,7 @@ Base bundle 默认加载：
 
 新的 Tool Result 只改变 model-facing content，但原始 Tool Event 仍留在日志。
 
-### 为什么它放在 Summary Compaction 前面
+#### 为什么它放在 Summary Compaction 前面
 
 因为很多 Context 爆炸只是：
 
@@ -485,7 +489,7 @@ Base bundle 默认加载：
 
 ---
 
-## 12. Basic Compaction：把“压缩”做成 durable transaction
+### 12. Basic Compaction：把“压缩”做成 durable transaction
 
 默认 Compaction backend：
 
@@ -493,7 +497,7 @@ Base bundle 默认加载：
 
 自动触发点主要有两类。
 
-### Step Boundary Pressure
+#### Step Boundary Pressure
 
 在 `agent/pre-step` 时，通过：
 
@@ -503,7 +507,7 @@ Base bundle 默认加载：
 
 如果达到当前模型 Context Window 的阈值，就尝试压缩。
 
-### Provider-confirmed Context Overflow
+#### Provider-confirmed Context Overflow
 
 如果真实模型请求返回 context window exceeded：
 
@@ -525,7 +529,7 @@ Base bundle 默认加载：
 
 ---
 
-## 13. 为什么 Compaction 有 `start → summary → replacement → end`
+### 13. 为什么 Compaction 有 `start → summary → replacement → end`
 
 真正区域压缩逻辑在：
 
@@ -553,7 +557,7 @@ Compaction 先验证要压缩的 Surface range。
 - replacement `user/message`；
 - `compaction/end`。
 
-### 为什么先写 start
+#### 为什么先写 start
 
 因为 Summary Request 可能很慢。
 
@@ -565,7 +569,7 @@ Compaction 先验证要压缩的 Surface range。
 
 ---
 
-## 14. Summary 为什么刻意复用原请求前缀
+### 14. Summary 为什么刻意复用原请求前缀
 
 `compaction-basic/src/summarizer.ts` 的实现很值得学。
 
@@ -602,7 +606,7 @@ System:
 
 ---
 
-## 15. Summary 不是“生成了就算成功”
+### 15. Summary 不是“生成了就算成功”
 
 DeepSeek Harness 会继续验证：
 
@@ -628,7 +632,9 @@ DeepSeek Harness 会继续验证：
 
 ---
 
-## 16. Streaming 为什么不直接作为历史真源
+## 3. 运行中的结果怎样继续进入下一次 Context
+
+### 16. Streaming 为什么不直接作为历史真源
 
 Agent Loop 会向：
 
@@ -650,7 +656,7 @@ UI 可以边生成边显示。
 
 记录这次尝试。
 
-### 这样有什么好处
+#### 这样有什么好处
 
 如果每个 streaming chunk 都是 replay source：
 
@@ -670,7 +676,7 @@ Durable Settlement
 
 ---
 
-## 17. Tool Result 怎样回到下一次 Context
+### 17. Tool Result 怎样回到下一次 Context
 
 Assistant Message 中有 Tool Call 时，Agent Loop 会执行工具。
 
@@ -696,7 +702,7 @@ Tool 还可以返回：
 
 ---
 
-## 18. Cross-session Reference 怎样进入当前 Context
+### 18. Cross-session Reference 怎样进入当前 Context
 
 Session Reference：
 
@@ -720,13 +726,13 @@ Session Reference：
 
 ---
 
-## 19. 一个完整例子
+## 4. 把完整 Context 生命周期串起来
 
 用户说：
 
 > “参考昨天那个支付重构会话，继续修现在这个测试失败；遵守当前 backend 目录的 AGENTS.md。”
 
-### Step 1 admission
+#### Step 1 admission
 
 当前消息进入 next-turn Inbox。
 
@@ -734,7 +740,7 @@ Driver 开：
 
 `turn/start`
 
-### Pre-step
+#### Pre-step
 
 系统组装当前 Prompt。
 
@@ -744,7 +750,7 @@ Session Reference 插件识别另一个 Session，捕获它的有限只读 snaps
 
 Skill Catalog 等其他 Context 也可以一起进入 batch。
 
-### Request routing
+#### Request routing
 
 `agent/request`
 
@@ -754,7 +760,7 @@ Skill Catalog 等其他 Context 也可以一起进入 batch。
 
 确认模型能力和 exact request defaults。
 
-### Durable commit
+#### Durable commit
 
 现在才写入：
 
@@ -764,11 +770,11 @@ Skill Catalog 等其他 Context 也可以一起进入 batch。
 -Referenced Session Snapshot；
 -Request Header / Context。
 
-### Derive
+#### Derive
 
 `deriveMessages()` 从 Surface 形成真正模型 History。
 
-### Model → Tool
+#### Model → Tool
 
 模型先运行测试。
 
@@ -776,7 +782,7 @@ Tool Call / Result 都进入 Session Log。
 
 Result 很大，下一 Step 前 Tool Result Pruner 可能先替换它的模型可见版本。
 
-### Context pressure
+#### Context pressure
 
 任务继续很长，Token Meter 达到阈值。
 
@@ -789,7 +795,7 @@ Basic Compaction：
 
 原始历史还在 Session Log，但模型只看新的 Surface。
 
-### Resume
+#### Resume
 
 进程退出后重启。
 
@@ -803,7 +809,7 @@ Surface 重新投影。
 
 ---
 
-## 20. 源码锚点
+## 5. 源码锚点
 
 建议按因果链阅读：
 
