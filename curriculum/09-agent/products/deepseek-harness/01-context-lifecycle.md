@@ -16,7 +16,7 @@
 
 ## 1. 从 Inbox 到可重建的 Model Request
 
-### 1. 用户输入先进入 Inbox，而不是立刻成为 Model Message
+### 用户输入先进入 Inbox，而不是立刻成为 Model Message
 
 Agent 公共接口在：
 
@@ -54,7 +54,7 @@ nextStep
 
 ---
 
-### 2. Turn 和 Step 在这里是两个真实层级
+### Turn 和 Step 在这里是两个真实层级
 
 DeepSeek Harness 的 Session Log 会显式记录：
 
@@ -102,7 +102,7 @@ Turn 1
 
 ---
 
-### 3. 每个 Step 开始前，Context 先经过 `agent/pre-step`
+### 每个 Step 开始前，Context 先经过 `agent/pre-step`
 
 默认 Driver 的 `preStep()` 会先从 Inbox claim 当前应处理的消息。
 
@@ -139,7 +139,7 @@ Turn 1
 
 ---
 
-### 4. System Prompt 不是一个字符串，而是可组合的 Section / Context / Tool Schema
+### System Prompt 不是一个字符串，而是可组合的 Section / Context / Tool Schema
 
 核心实现：
 
@@ -179,7 +179,7 @@ Turn 1
 
 ---
 
-### 5. AGENTS.md / CLAUDE.md 怎样进入 Context
+### AGENTS.md / CLAUDE.md 怎样进入 Context
 
 对应实现：
 
@@ -237,7 +237,7 @@ ios/AGENTS.md
 
 ---
 
-### 6. 最重要的顺序：`agent/pre-step` 接受消息后，还没有立刻 commit
+### 最重要的顺序：`agent/pre-step` 接受消息后，还没有立刻 commit
 
 这是 DeepSeek Harness Context Lifecycle 最值得理解的一段。
 
@@ -287,7 +287,7 @@ DeepSeek Harness 因此把“Context Admission（上下文准入）”和“Dura
 
 ---
 
-### 7. Request Envelope 为什么也要持久化
+### Request Envelope 为什么也要持久化
 
 路由成功后，Agent Loop 会根据需要追加：
 
@@ -320,7 +320,7 @@ DeepSeek Harness 因此把“Context Admission（上下文准入）”和“Dura
 
 ---
 
-### 8. `system/message` 为什么会进入 Session Surface
+### `system/message` 为什么会进入 Session Surface
 
 System Prompt 最终也不是“每次请求临时拼完就忘掉”。
 
@@ -338,7 +338,7 @@ Agent Loop 会通过 System Prompt projection 判断当前组装结果是否需�
 
 ---
 
-### 9. `deriveMessages()` 才是最终 Model History
+### `deriveMessages()` 才是最终 Model History
 
 完成这一轮 durable admission 后，Agent Loop 调：
 
@@ -396,7 +396,7 @@ deriveMessages()
 
 ## 2. Surface 与多层 Compaction：缩小模型视图，但不删历史证据
 
-### 10. Surface 为什么是整个 Context 系统的关键抽象
+### Surface 为什么是整个 Context 系统的关键抽象
 
 Surface 支持两个核心操作：
 
@@ -450,7 +450,7 @@ user(seq 5)
 
 ---
 
-### 11. Tool Result Pruner：先做 model-free 的便宜压缩
+### Tool Result Pruner：先做 model-free 的便宜压缩
 
 Base bundle 默认加载：
 
@@ -489,7 +489,7 @@ Base bundle 默认加载：
 
 ---
 
-### 12. Basic Compaction：把“压缩”做成 durable transaction
+### Basic Compaction：把“压缩”做成 durable transaction
 
 默认 Compaction backend：
 
@@ -529,7 +529,7 @@ Base bundle 默认加载：
 
 ---
 
-### 13. 为什么 Compaction 有 `start → summary → replacement → end`
+### 为什么 Compaction 有 `start → summary → replacement → end`
 
 真正区域压缩逻辑在：
 
@@ -569,7 +569,7 @@ Compaction 先验证要压缩的 Surface range。
 
 ---
 
-### 14. Summary 为什么刻意复用原请求前缀
+### Summary 为什么刻意复用原请求前缀
 
 `compaction-basic/src/summarizer.ts` 的实现很值得学。
 
@@ -606,7 +606,7 @@ System:
 
 ---
 
-### 15. Summary 不是“生成了就算成功”
+### Summary 不是“生成了就算成功”
 
 DeepSeek Harness 会继续验证：
 
@@ -634,7 +634,7 @@ DeepSeek Harness 会继续验证：
 
 ## 3. 运行中的结果怎样继续进入下一次 Context
 
-### 16. Streaming 为什么不直接作为历史真源
+### Streaming 为什么不直接作为历史真源
 
 Agent Loop 会向：
 
@@ -676,7 +676,7 @@ Durable Settlement
 
 ---
 
-### 17. Tool Result 怎样回到下一次 Context
+### Tool Result 怎样回到下一次 Context
 
 Assistant Message 中有 Tool Call 时，Agent Loop 会执行工具。
 
@@ -702,7 +702,7 @@ Tool 还可以返回：
 
 ---
 
-### 18. Cross-session Reference 怎样进入当前 Context
+### Cross-session Reference 怎样进入当前 Context
 
 Session Reference：
 
