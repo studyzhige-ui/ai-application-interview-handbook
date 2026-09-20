@@ -856,11 +856,11 @@
     },
     {
       "company": "深信服",
-      "mode": "portal_only",
+      "mode": "sangfor_campus_api",
       "portal": "https://hr.sangfor.com/schoolRecruitment",
       "official_root": "https://hr.sangfor.com/",
       "browser_probe": true,
-      "note": "深信服官方校园招聘职位池，长期搜索 Agent、RAG、大模型应用与 AI 工程方向。",
+      "note": "深信服官方 2027 校园招聘职位池；自动化直接分页调用官网 /api/api/Jobs（channelId=101），避免 SPA 超时。",
       "job_list_url": "https://hr.sangfor.com/schoolRecruitment",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
