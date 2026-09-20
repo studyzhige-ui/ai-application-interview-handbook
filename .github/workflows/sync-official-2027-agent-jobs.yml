@@ -33,7 +33,7 @@ jobs:
     runs-on: [self-hosted, Windows]
     env:
       PYTHONUTF8: "1"
-    timeout-minutes: 75
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
@@ -125,7 +125,7 @@ jobs:
     name: Sync jobs (public / Linux GitHub-hosted)
     if: github.event.repository.private == false
     runs-on: ubuntu-latest
-    timeout-minutes: 75
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
