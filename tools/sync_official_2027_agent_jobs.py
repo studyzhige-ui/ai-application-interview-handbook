@@ -27,6 +27,8 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "market/jobs/official-2027-campus-sources.json"
 VERIFIED_INDEX = ROOT / "market/jobs/official-company-role-index.json"
+VERIFIED_INDEX_MD = ROOT / "market/jobs/official-company-role-index.md"
+SCAN_POOL_MD = ROOT / "market/jobs/company-scan-pool.md"
 OUT_MD = ROOT / "market/jobs/official-2027-agent-jobs.generated.md"
 OUT_JSON = ROOT / "market/jobs/official-2027-agent-jobs.generated.json"
 BROWSER_CACHE = ROOT / "market/jobs/official-2027-browser-discovery.generated.json"
@@ -1691,10 +1693,13 @@ def main() -> int:
     live_match_companies = {
         r.company for r in results if r.status == "ENUMERATED_WITH_MATCHES"
     }
+    live_zero_companies = {
+        r.company for r in results if r.status == "ENUMERATED_ZERO_MATCHES"
+    }
     for old in previous_payload.get("role_families") or []:
         company = old.get("company")
         family = old.get("role_family")
-        if not company or not family or company in live_match_companies:
+        if not company or not family or company in live_match_companies or company in live_zero_companies:
             continue
         key = (company, family)
         if key not in current_keys:
@@ -1708,13 +1713,88 @@ def main() -> int:
             role_families.append(carried)
             current_keys.add(key)
 
+    # Update persistent company role state only from a complete fresh first-party enumeration.
+    # BLOCKED/partial runs never overwrite the last verified fact.
+    source_by_company = {x.get("company"): x for x in cfg.get("sources") or [] if x.get("company")}
+    index_by_company = {
+        x.get("company"): x for x in verified_index.get("companies") or [] if x.get("company")
+    }
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    for company, source in source_by_company.items():
+        row = index_by_company.get(company)
+        if row is None:
+            row = {
+                "company": company,
+                "status": "NEEDS_ENUMERATION",
+                "official_root": source.get("official_root", ""),
+                "official_search_url": source.get("search_url") or source.get("job_list_url") or "",
+                "board_scope": source.get("board_scope") or ("campus" if source.get("current_campus_board") else "official_recruiting"),
+                "business_summary": source.get("business_summary", ""),
+                "representative_roles": [],
+                "last_verified": None,
+            }
+            verified_index.setdefault("companies", []).append(row)
+            index_by_company[company] = row
+
+        row["official_root"] = source.get("official_root", "")
+        row["official_search_url"] = source.get("search_url") or source.get("job_list_url") or ""
+        row["board_scope"] = source.get("board_scope") or ("campus" if source.get("current_campus_board") else "official_recruiting")
+        row["business_summary"] = source.get("business_summary", "")
+
+        runtime = result_map.get(company)
+        if runtime and runtime.status == "ENUMERATED_WITH_MATCHES":
+            candidates = [
+                f for f in role_families
+                if f.get("company") == company and not f.get("carried_forward")
+            ]
+            if candidates:
+                candidates.sort(
+                    key=lambda f: (
+                        f.get("detail_status") == "FULL_JD",
+                        len(f.get("description") or "") + len(f.get("requirements") or ""),
+                        len(f.get("requisitions") or []),
+                    ),
+                    reverse=True,
+                )
+                best = candidates[0]
+                req = (best.get("requisitions") or [{}])[0]
+                full = best.get("detail_status") == "FULL_JD"
+                summary = "\n".join(
+                    x for x in [best.get("description") or "", best.get("requirements") or ""] if x
+                )[:5000]
+                row["status"] = "VERIFIED_ROLE"
+                row["representative_roles"] = [{
+                    "title": best.get("representative_title") or best.get("role_family") or "",
+                    "recruitment_type": best.get("cycle_evidence") or (
+                        "当前校园招聘" if row["board_scope"] == "campus" else "当前官方招聘（应届可投）"
+                    ),
+                    "role_scope": best.get("role_family") or best.get("representative_title") or "",
+                    "official_apply_url": req.get("official_url") or row["official_search_url"],
+                    "evidence_url": req.get("official_url") or row["official_search_url"],
+                    "evidence_type": "FIRST_PARTY_FULL_JD" if full else "FIRST_PARTY_OFFICIAL_TITLE",
+                    "jd_status": "FULL_FIRST_PARTY_JD" if full else "TITLE_ONLY_FIRST_PARTY",
+                    "jd_summary": summary,
+                    "source_role_family": best.get("role_family") or "",
+                }]
+                row["last_verified"] = today
+        elif runtime and runtime.status == "ENUMERATED_ZERO_MATCHES":
+            row["status"] = "ZERO_TARGET_JDS"
+            row["representative_roles"] = []
+            row["last_verified"] = today
+
+    verified_index["schema_version"] = max(2, int(verified_index.get("schema_version") or 1))
+    verified_index["generated_at"] = today
+    VERIFIED_INDEX.write_text(
+        json.dumps(verified_index, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     # Persistent VERIFIED_ROLE entries are a minimum role-presence invariant inside the larger company scan pool.
     # Runtime discovery may upgrade these entries to first-party full JDs, but
     # may never delete them merely because the crawler missed the role.
     for company_row in verified_index.get("companies") or []:
         company = company_row.get("company")
         roles = company_row.get("representative_roles") or []
-        if not company or not roles:
+        if not company or company_row.get("status") != "VERIFIED_ROLE" or not roles:
             continue
         role = roles[0]
         family = txt(role.get("title"))
@@ -1873,6 +1953,56 @@ def main() -> int:
         lines.append("")
 
     OUT_MD.write_text("\\n".join(lines).rstrip() + "\\n", encoding="utf-8")
+
+    # Keep human-readable company status files in lockstep with the JSON state.
+    index_rows = {x.get("company"): x for x in verified_index.get("companies") or [] if x.get("company")}
+    index_lines = [
+        "# 69 家目标公司｜官方 AI / Agent 工程岗位状态索引",
+        "",
+        "> 公司扫描池与岗位存在性分离；状态只由第一方职位池完整枚举更新。",
+        "",
+        "| 公司 | 主要业务 | 官方职位池 | 状态 | 代表岗位 |",
+        "|---|---|---|---|---|",
+    ]
+    pool_lines = [
+        "# 目标公司扫描池｜69 家知名中大厂与 AI 公司",
+        "",
+        "> 公司进入扫描池不代表当前一定存在目标岗位；岗位是否存在由每轮第一方职位池完整枚举决定。",
+        "",
+        "| # | 公司 | 主要业务 | 第一方职位池 | 当前持久化状态 |",
+        "|---:|---|---|---|---|",
+    ]
+    for n, source in enumerate(cfg.get("sources") or [], 1):
+        company = source.get("company") or ""
+        row = index_rows.get(company) or {}
+        roles = row.get("representative_roles") or []
+        representative = txt(roles[0].get("title")) if roles else ""
+        business = txt(source.get("business_summary")).replace("|", "\\|")
+        search_url = source.get("search_url") or source.get("job_list_url") or ""
+        status = row.get("status") or "NEEDS_ENUMERATION"
+        safe_company = company.replace("|", "\\|")
+        safe_role = representative.replace("|", "\\|")
+        index_lines.append(f"| {safe_company} | {business} | {search_url} | {status} | {safe_role} |")
+        pool_lines.append(f"| {n} | {safe_company} | {business} | {search_url} | {status} |")
+    index_lines += [
+        "",
+        "## 状态语义",
+        "",
+        "- VERIFIED_ROLE：本轮或历史完整第一方证据已核验目标工程岗位。",
+        "- ZERO_TARGET_JDS：本轮完整第一方枚举后确认当前没有符合 Role Scope 的正式岗位。",
+        "- NEEDS_ENUMERATION：尚未完成可靠完整枚举；不能解释为 0 岗。",
+    ]
+    pool_lines += [
+        "",
+        "## 状态语义",
+        "",
+        "- VERIFIED_ROLE：已有至少一个第一方核验的目标工程岗位事实。",
+        "- ZERO_TARGET_JDS：本轮已完整枚举官方职位池，但当前没有符合 Role Scope 的正式岗位。",
+        "- NEEDS_ENUMERATION：公司与第一方职位池已固定，但完整分页 / 关键词穷举尚未闭环。",
+    ]
+    VERIFIED_INDEX_MD.write_text("\n".join(index_lines) + "\n", encoding="utf-8")
+    SCAN_POOL_MD.write_text("\n".join(pool_lines) + "\n", encoding="utf-8")
+
     print(
         f"official sources={len(results)}, requisitions={len(all_matches)}, "
         f"role_families={len(role_families)}"
