@@ -1,78 +1,78 @@
 # 当前官方校招 / 应届｜非算法 AI 应用 & Agent 工程 JD 全量结果
 
-> Generated: **2026-09-20 15:28 UTC**
-> 固定长期扫描公司 **69** 家；当前有目标岗位 **49** 家；完整枚举确认 0 岗 **11** 家；仍待完整枚举 **9** 家。
-> 其中 **333** 个抓到第一方 JD 正文，**10** 个仅能确认第一方职位标题，**23** 个已核验岗位存在并固定官方入口、正文仍待补齐。
+> Generated: **2026-09-20 16:18 UTC**
+> 固定长期扫描公司 **69** 家；当前有目标岗位 **43** 家；完整枚举确认 0 岗 **22** 家；仍待完整枚举 **4** 家。
+> 其中 **416** 个抓到第一方 JD 正文，**11** 个仅能确认第一方职位标题，**12** 个已核验岗位存在并固定官方入口、正文仍待补齐。
 
 ## 1. 公司结果总表
 
 | 公司 | Retrieval | 官方职位池 | 结果 | Role Family | 完整 JD | 仅标题 |
 |---|---|---|---|---:|---:|---:|
-| 小米 | BLOCKED；RuntimeError: Xiaomi official Node adapter output missing \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://hr.xiaomi.com/campus/recruitment?noticeId=1 ; https://hr.xiaomi.com/campus/recruitment?noticeId=1\ | https://xiaomi.jobs.f.mioffice.cn/campus/ | HAS_TARGET_JDS | 7 | 7 | 0 |
+| 小米 | ENUMERATED_WITH_MATCHES | https://xiaomi.jobs.f.mioffice.cn/campus/ | HAS_TARGET_JDS | 10 | 10 | 0 |
 | 快手 | ENUMERATED_WITH_MATCHES | https://campus.kuaishou.cn/recruit/campus/e/ | HAS_TARGET_JDS | 12 | 12 | 0 |
 | 百度 | ENUMERATED_WITH_MATCHES | https://talent.baidu.com/jobs/list?projectType=1 | HAS_TARGET_JDS | 5 | 5 | 0 |
 | 腾讯 | ENUMERATED_WITH_MATCHES | https://join.qq.com/post.html | HAS_TARGET_JDS | 5 | 5 | 0 |
-| 美团 | ENUMERATED_WITH_MATCHES | https://zhaopin.meituan.com/web/campus | HAS_TARGET_JDS | 6 | 6 | 0 |
+| 美团 | ENUMERATED_WITH_MATCHES | https://zhaopin.meituan.com/web/campus | HAS_TARGET_JDS | 7 | 7 | 0 |
 | 网易 | ENUMERATED_WITH_MATCHES | https://campus.163.com/ | HAS_TARGET_JDS | 30 | 30 | 0 |
 | 哔哩哔哩 | ENUMERATED_WITH_MATCHES | https://jobs.bilibili.com/campus/positions | HAS_TARGET_JDS | 3 | 3 | 0 |
 | 滴滴 | ENUMERATED_ZERO_MATCHES | https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 拼多多 | ENUMERATED_ZERO_MATCHES | https://careers.pddglobalhr.com/campus/grad | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 华为 | ENUMERATED_ZERO_MATCHES | https://career.huawei.com/cn/campus-recruitment | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 小红书 | ENUMERATED_WITH_MATCHES | https://job.xiaohongshu.com/campus/position | HAS_TARGET_JDS | 6 | 6 | 0 |
-| 字节跳动 | BLOCKED；RuntimeError: ByteDance official Node adapter output missing \| discovered: https://job.toutiao.com/s/ihKpHt3k, ; https://jobs.bytedance.com/\ ; https://jobs.bytedance.com/\\\ ; https://jobs.bytedance.com/campus/position?keywords=%E4%BB%8A%E6%97%A5%E5%A4%B4%E6%9D%A1&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=&spread=P4ZGWYS, ; https://jobs.bytedance.com/campus/position?keywords=%E5%9B%BD%E9%99%85%E5%8C%96%E5%B9%BF%E5%91%8A%E4%B8%9A%E5%8A%A1&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=&spread=PGCK4SE ; https://jobs.bytedance.com/campus/position?keywords=%E6%99%BA%E8%83%BD%E5%88%9B%E4%BD%9C&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=&spread=8S13NKM, ; https://jobs.bytedance.com/campus/position?keywords=%E7%95%AA%E8%8C%84&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=&spread=YC5TSYS, ; https://jobs.bytedance.com/campus/position?keywords=&category=&location=&project=&type=2&job_hot_flag=&current=1&limit=10&functionCategory=&tag=&spread=FHPK6FW, | https://jobs.bytedance.com/campus/position | HAS_TARGET_JDS | 131 | 130 | 0 |
+| 字节跳动 | ENUMERATED_WITH_MATCHES | https://jobs.bytedance.com/campus/position | HAS_TARGET_JDS | 214 | 214 | 0 |
 | 阿里巴巴 | ENUMERATED_WITH_MATCHES | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | HAS_TARGET_JDS | 24 | 24 | 0 |
 | 蚂蚁集团 | ENUMERATED_WITH_MATCHES | https://talent.antgroup.com/campus-full-list | HAS_TARGET_JDS | 13 | 13 | 0 |
 | 京东 | ENUMERATED_WITH_MATCHES | https://campus.jd.com/ | HAS_TARGET_JDS | 1 | 1 | 0 |
 | OPPO | ENUMERATED_WITH_MATCHES | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | HAS_TARGET_JDS | 8 | 8 | 0 |
 | vivo | ENUMERATED_WITH_MATCHES | https://hr-campus.vivo.com/campus/jobs | HAS_TARGET_JDS | 11 | 11 | 0 |
-| 金山办公/WPS | BLOCKED；Error: company enumeration timed out after 45000ms | https://join.wps.cn/ | HAS_TARGET_JDS | 1 | 0 | 0 |
+| 金山办公/WPS | BLOCKED；官方根入口存在，但尚未完成可靠的当前校招岗位池枚举 | https://join.wps.cn/ | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 荣耀 | ENUMERATED_ZERO_MATCHES | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 科大讯飞 | ENUMERATED_WITH_MATCHES | https://iflytek.zhiye.com/5/jobs | HAS_TARGET_JDS | 11 | 11 | 0 |
 | 携程 | ENUMERATED_WITH_MATCHES | https://careers.ctrip.com/#/campus | HAS_TARGET_JDS | 2 | 2 | 0 |
 | 360 | ENUMERATED_WITH_MATCHES | https://360campus.zhiye.com/campus/jobs | HAS_TARGET_JDS | 5 | 5 | 0 |
 | 得物 | ENUMERATED_ZERO_MATCHES | https://poizon.jobs.feishu.cn/578078/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | DeepSeek | ENUMERATED_ZERO_MATCHES | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
-| 月之暗面/Kimi | BLOCKED；Error: company enumeration timed out after 45000ms | https://app.mokahr.com/campus-recruitment/moonshot/148507 | HAS_TARGET_JDS | 2 | 0 | 0 |
-| MiniMax | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://vrfi1sk8a0.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://vrfi1sk8a0.jobs.feishu.cn/index\ | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | HAS_TARGET_JDS | 1 | 1 | 0 |
+| 月之暗面/Kimi | BLOCKED；官方根入口存在，但尚未完成可靠的当前校招岗位池枚举 | https://app.mokahr.com/campus-recruitment/moonshot/148507 | HAS_TARGET_JDS | 2 | 0 | 0 |
+| MiniMax | ENUMERATED_ZERO_MATCHES | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 智谱/Z.ai | ENUMERATED_WITH_MATCHES | https://app.mokahr.com/campus-recruitment/zphz/148984 | HAS_TARGET_JDS | 1 | 1 | 0 |
-| 阶跃星辰 | BLOCKED；Error: company enumeration timed out after 45000ms | https://app.mokahr.com/campus-recruitment/step/94905 | HAS_TARGET_JDS | 3 | 0 | 0 |
-| 百川智能 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://cq6qe6bvfr6.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://cq6qe6bvfr6.jobs.feishu.cn/baichuanzhaopin\ | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | HAS_TARGET_JDS | 1 | 0 | 0 |
-| 零一万物/01.AI | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://01ai.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site | https://01ai.jobs.feishu.cn/index/ | HAS_TARGET_JDS | 2 | 0 | 0 |
-| 商汤科技 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://hr-jobs.sensetime.com/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site | https://hr-jobs.sensetime.com/edu/ | HAS_TARGET_JDS | 5 | 5 | 0 |
-| 生数科技 | BLOCKED；Error: company enumeration timed out after 45000ms | https://shengshu.jobs.feishu.cn/index/ | HAS_TARGET_JDS | 5 | 4 | 0 |
-| 硅基流动 | BLOCKED；Error: company enumeration timed out after 45000ms | https://app.mokahr.com/su/Idzsq | HAS_TARGET_JDS | 1 | 0 | 0 |
-| 面壁智能 | BLOCKED；Error: company enumeration timed out after 45000ms | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | HAS_TARGET_JDS | 2 | 0 | 0 |
-| Manus | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://jobs.ashbyhq.com/manusai | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 无问芯穹/Infini-AI | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://infinigence.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site | https://infinigence.jobs.feishu.cn/088717 | HAS_TARGET_JDS | 1 | 0 | 0 |
-| 昆仑万维/天工 | BLOCKED；Error: company enumeration timed out after 45000ms | https://jobs.kunlun.com/459522/position/list | HAS_TARGET_JDS | 1 | 0 | 0 |
-| Shopee | BLOCKED；Error: company enumeration timed out after 45000ms | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | HAS_TARGET_JDS | 1 | 0 | 0 |
+| 阶跃星辰 | ENUMERATED_WITH_MATCHES | https://app.mokahr.com/campus-recruitment/step/94905 | HAS_TARGET_JDS | 2 | 2 | 0 |
+| 百川智能 | ENUMERATED_ZERO_MATCHES | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 零一万物/01.AI | ENUMERATED_ZERO_MATCHES | https://01ai.jobs.feishu.cn/index/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 商汤科技 | ENUMERATED_WITH_MATCHES | https://hr-jobs.sensetime.com/edu/ | HAS_TARGET_JDS | 6 | 6 | 0 |
+| 生数科技 | ENUMERATED_ZERO_MATCHES | https://shengshu.jobs.feishu.cn/index/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 硅基流动 | BLOCKED；官方根入口存在，但尚未完成可靠的当前校招岗位池枚举 | https://app.mokahr.com/su/Idzsq | HAS_TARGET_JDS | 1 | 0 | 0 |
+| 面壁智能 | ENUMERATED_ZERO_MATCHES | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| Manus | BLOCKED；HTTPError: 404 Client Error: Not Found for url: https://api.ashbyhq.com/posting-api/job-board/manusai?includeCompensation=true | https://jobs.ashbyhq.com/manusai | HAS_TARGET_JDS | 1 | 0 | 0 |
+| 无问芯穹/Infini-AI | ENUMERATED_ZERO_MATCHES | https://infinigence.jobs.feishu.cn/088717 | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 昆仑万维/天工 | ENUMERATED_ZERO_MATCHES | https://jobs.kunlun.com/459522/position/list | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| Shopee | BLOCKED；官方根入口存在，但尚未完成可靠的当前校招岗位池枚举 | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 联想 | ENUMERATED_WITH_MATCHES | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | HAS_TARGET_JDS | 3 | 0 | 3 |
 | 蔚来 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://nio.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://www.nio.cn/careers/jobs\ | https://nio.jobs.feishu.cn/campus/ | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 顺丰 | ENUMERATED_WITH_MATCHES | https://campus.sf-express.com/positionList | HAS_TARGET_JDS | 2 | 2 | 0 |
-| 米哈游 | BLOCKED；Error: company enumeration timed out after 70000ms | https://jobs.mihoyo.com/#/campus | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 米哈游 | ENUMERATED_WITH_MATCHES | https://jobs.mihoyo.com/#/campus/position | HAS_TARGET_JDS | 1 | 1 | 0 |
 | 大疆 DJI | ENUMERATED_ZERO_MATCHES | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | HAS_TARGET_JDS | 3 | 0 | 0 |
-| 度小满 | BLOCKED；Error: company enumeration timed out after 45000ms | https://campus.duxiaoman.com/ | HAS_TARGET_JDS | 5 | 5 | 0 |
-| 海康威视 | BLOCKED；Error: company enumeration timed out after 90000ms | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 度小满 | ENUMERATED_ZERO_MATCHES | https://campus.duxiaoman.com/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 海康威视 | BLOCKED；IndexError: list index out of range | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | 中兴通讯 | ENUMERATED_WITH_MATCHES | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | HAS_TARGET_JDS | 2 | 2 | 0 |
-| 深信服 | BLOCKED；HTTPError: 401 Client Error: Unauthorized for url: https://hr.sangfor.com/api/api/Jobs \| discovered: /api/Jobs ; /api/Jobs/contents/101 ; /api/Jobs/department ; /api/Jobs/function ; /api/Jobs/location ; /api/Jobs/workplace ; https://hr.sangfor.com/PhDs/doctorrecruit</loc> ; https://hr.sangfor.com/campucompon/recruitIndex/recruitIndexNav/107/2005</loc> | https://hr.sangfor.com/schoolRecruitment | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 金蝶 | ENUMERATED_WITH_MATCHES | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | HAS_TARGET_JDS | 2 | 2 | 0 |
+| 深信服 | ENUMERATED_ZERO_MATCHES | https://hr.sangfor.com/schoolRecruitment | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 金蝶 | ENUMERATED_ZERO_MATCHES | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 用友 | ENUMERATED_ZERO_MATCHES | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 美图 | ENUMERATED_ZERO_MATCHES | https://hr.meitu.com/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
-| SHEIN | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://careers.shein.cn/Students | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| SHEIN | ENUMERATED_WITH_MATCHES | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | HAS_TARGET_JDS | 3 | 3 | 0 |
 | 安克创新 | ENUMERATED_ZERO_MATCHES | https://career.anker.com.cn/universities/recruitment/new/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 大华股份 | ENUMERATED_WITH_MATCHES | https://job.dahuatech.com/ | HAS_TARGET_JDS | 4 | 4 | 0 |
-| 吉利控股 | BLOCKED；Error: company enumeration timed out after 90000ms | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 吉利控股 | BLOCKED；官方根入口存在，但尚未完成可靠的当前校招岗位池枚举 | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | 小鹏集团 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://xiaopeng.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://xiaopeng.jobs.feishu.cn/307999\ ; https://xiaopeng.jobs.feishu.cn/398875\ ; https://xiaopeng.jobs.feishu.cn/445142\ ; https://xiaopeng.jobs.feishu.cn/958231\ ; https://xiaopeng.jobs.feishu.cn/index\ | https://xiaopeng.jobs.feishu.cn/campus | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 理想汽车 | ENUMERATED_WITH_MATCHES | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | HAS_TARGET_JDS | 7 | 0 | 7 |
+| 理想汽车 | ENUMERATED_WITH_MATCHES | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | HAS_TARGET_JDS | 8 | 0 | 8 |
 | 海尔集团 | ENUMERATED_ZERO_MATCHES | https://maker.haier.net/client/campus/activityindex.html | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 美的集团 | ENUMERATED_ZERO_MATCHES | https://newpower.midea.com/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
-| 比亚迪 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://job.byd.com/ | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 比亚迪 | ENUMERATED_ZERO_MATCHES | https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ= | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 同花顺 | ENUMERATED_WITH_MATCHES | https://campus.10jqka.com.cn/ | HAS_TARGET_JDS | 9 | 9 | 0 |
 | 麒麟软件 | ENUMERATED_ZERO_MATCHES | https://kylinos.zhiye.com/campus/jobs | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 普渡机器人 | ENUMERATED_WITH_MATCHES | https://pudutech.zhiye.com/campus/jobs | HAS_TARGET_JDS | 1 | 1 | 0 |
-| 广联达 | BLOCKED；浏览器枚举失败 | https://app.mokahr.com/campus-recruitment/glodon/91966 | HAS_TARGET_JDS | 1 | 1 | 0 |
+| 广联达 | BLOCKED；Error: company enumeration timed out after 90000ms | https://app.mokahr.com/campus-recruitment/glodon/91966 | HAS_TARGET_JDS | 1 | 1 | 0 |
 | 挚文集团/陌陌 | ENUMERATED_WITH_MATCHES | https://campus.hellogroup.com/ | HAS_TARGET_JDS | 1 | 1 | 0 |
-| BOSS直聘/看准科技 | BLOCKED；浏览器枚举失败 | https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/ | HAS_TARGET_JDS | 1 | 0 | 0 |
+| BOSS直聘/看准科技 | BLOCKED；Error: company enumeration timed out after 90000ms | https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/ | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 作业帮 | ENUMERATED_WITH_MATCHES | https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN | HAS_TARGET_JDS | 5 | 5 | 0 |
 | 影石 Insta360 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://arashivision.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://arashivision.jobs.feishu.cn/social\ ; https://www.insta360.com/cn/jobs\ | https://arashivision.jobs.feishu.cn/campus/position/list | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | 神州数码/神州信息 | ENUMERATED_WITH_MATCHES | https://dcits.zhiye.com/campus/jobs | HAS_TARGET_JDS | 5 | 5 | 0 |
@@ -88,7 +88,7 @@
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`351528897\` · 26秋-AI应用开发工程师（北京）-5064(J11950) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351528897
+  - `351528897` · 26秋-AI应用开发工程师（北京）-5064(J11950) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351528897
 
 **官方职责**
 
@@ -104,7 +104,7 @@
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`351611207\` · 27秋招-AI应用开发工程师（AIOps）（北京）-5389(J12461) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611207
+  - `351611207` · 27秋招-AI应用开发工程师（AIOps）（北京）-5389(J12461) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611207
 
 **官方职责**
 
@@ -120,7 +120,7 @@
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`351611208\` · 27秋招-AI应用开发工程师（北京）-5387(J12457) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611208
+  - `351611208` · 27秋招-AI应用开发工程师（北京）-5387(J12457) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611208
 
 **官方职责**
 
@@ -136,7 +136,7 @@
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`351611206\` · 27秋招-AI应用开发工程师（北京）-5393(J12465) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611206
+  - `351611206` · 27秋招-AI应用开发工程师（北京）-5393(J12465) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611206
 
 **官方职责**
 
@@ -152,7 +152,7 @@
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`351611209\` · 27秋招-Agent智能体开发工程师（北京）-5386(J12456) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611209
+  - `351611209` · 27秋招-Agent智能体开发工程师（北京）-5386(J12456) · 北京市 · https://360campus.zhiye.com/campus/detail?jobAdId=351611209
 
 **官方职责**
 
@@ -181,23 +181,24 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 
 > 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
 
-## MiniMax
+## Manus
 
-### AGI产品研发工程师-应届生-TOP Talent
+### AI Agent Engineer
 
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：2027届校园招聘
+- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
+- **地点**：新加坡
+- **项目 / 届别**：当前官方招聘（优秀应届毕业生可投）
 - **官方 Requisition**：1 个
-  - \`7546180826527893810\` · AGI产品研发工程师-应届生-TOP Talent · https://vrfi1sk8a0.jobs.feishu.cn/379481/?keywords=&category=&location=&project=7496820276634634537&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
+  - AI Agent Engineer · 新加坡 · https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de
+- **岗位核验证据**：https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de
 
-**官方职责**
+**已核验岗位摘要**
 
-产品研发团队负责 MiniMax AI 产品/Agent的创新与研发。 我们相信产品是 AI 连接、服务用户的 Interface，是 Agent 行动与获取反馈的环境，是实现 Intelligence with everyone 的关键。而技术驱动是 AGI 产品的核心。 在这里，你将参与 AI Agent 的用户体验、能力、效果的定义与决策， Agent Environment/Runtime/Infra的研发，以及相关大模型训练环境/数据/Benchmark的构建。你的工作不是实现需求，而是定义和研发未来的技术与体验。 - 定义 AGI 时代的用户体验与产品，技术驱动创新与效果提升，Intelligence with everyone - 参与构建多个模态大模型训练环境/数据/Benchmark，推动智能水平的提升，实现 AGI - 定义、研发、优化 Agent Environment/Runtime/Infra
+Manus AI 官方 Ashby 当前在招 AI Agent Engineer；岗位负责 Manus Agent 核心模块、Prompt/Tool/RAG/Agent 系统架构优化与评测系统建设，并明确优秀应届毕业生可投。
 
-**官方要求**
+**JD 完整度**
 
-基础要求 - 发自内心对技术的热爱与好奇心 - 实现出色技术与产品创新的渴望，对用户体验和用户价值强烈的责任心 - 出色的代码和系统设计能力，出众的技术深度与广度，优秀的技术直觉 - 开放的技术和产品思维，乐于面对不确定性，思考问题本质，具备跨领域、跨技术栈高效解决复杂问题的能力； - 团队协作精神 加分项 - 主流开源项目有深入实践与贡献 - AI/Agent 领域创新技术或产品实践 - ACM/ICPC、NOI/IOI、Kaggle等顶级竞赛获奖经历
+> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
 
 ## OPPO
 
@@ -207,7 +208,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：深圳市
 - **项目 / 届别**：2027届应届生校园招聘
 - **官方 Requisition**：1 个
-  - \`1850\` · AI Agent 研发工程师（研发效能方向） · 深圳市 · https://careers.oppo.com/university/oppo/campus/post/1850
+  - `1850` · AI Agent 研发工程师（研发效能方向） · 深圳市 · https://careers.oppo.com/university/oppo/campus/post/1850
 
 **官方职责**
 
@@ -223,7 +224,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：成都市,深圳市,南京市
 - **项目 / 届别**：2027届应届生校园招聘
 - **官方 Requisition**：1 个
-  - \`1849\` · AI全栈工程师 · 成都市,深圳市,南京市 · https://careers.oppo.com/university/oppo/campus/post/1849
+  - `1849` · AI全栈工程师 · 成都市,深圳市,南京市 · https://careers.oppo.com/university/oppo/campus/post/1849
 
 **官方职责**
 
@@ -239,7 +240,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：成都市,深圳市
 - **项目 / 届别**：2027届应届生校园招聘
 - **官方 Requisition**：1 个
-  - \`1821\` · AI工程师（AI Agent方向） · 成都市,深圳市 · https://careers.oppo.com/university/oppo/campus/post/1821
+  - `1821` · AI工程师（AI Agent方向） · 成都市,深圳市 · https://careers.oppo.com/university/oppo/campus/post/1821
 
 **官方职责**
 
@@ -255,7 +256,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：深圳市
 - **项目 / 届别**：2027届应届生校园招聘
 - **官方 Requisition**：1 个
-  - \`1824\` · AI工程师（AI Infra方向） · 深圳市 · https://careers.oppo.com/university/oppo/campus/post/1824
+  - `1824` · AI工程师（AI Infra方向） · 深圳市 · https://careers.oppo.com/university/oppo/campus/post/1824
 
 **官方职责**
 
@@ -271,7 +272,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：成都市,深圳市
 - **项目 / 届别**：2027届应届生校园招聘
 - **官方 Requisition**：1 个
-  - \`1819\` · AI工程师（AI应用方向） · 成都市,深圳市 · https://careers.oppo.com/university/oppo/campus/post/1819
+  - `1819` · AI工程师（AI应用方向） · 成都市,深圳市 · https://careers.oppo.com/university/oppo/campus/post/1819
 
 **官方职责**
 
@@ -287,7 +288,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：深圳市,南京市
 - **项目 / 届别**：2027届应届生校园招聘
 - **官方 Requisition**：1 个
-  - \`1843\` · AI系统工程师（AI工程化方向） · 深圳市,南京市 · https://careers.oppo.com/university/oppo/campus/post/1843
+  - `1843` · AI系统工程师（AI工程化方向） · 深圳市,南京市 · https://careers.oppo.com/university/oppo/campus/post/1843
 
 **官方职责**
 
@@ -303,8 +304,8 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：东莞市
 - **项目 / 届别**：2027届寻梦实习招聘
 - **官方 Requisition**：2 个
-  - \`1668\` · IT开发工程师（AI应用方向） · 东莞市 · https://careers.oppo.com/university/oppo/campus/post/1668
-  - \`1807\` · IT开发工程师（AI应用方向） · 东莞市 · https://careers.oppo.com/university/oppo/campus/post/1807
+  - `1668` · IT开发工程师（AI应用方向） · 东莞市 · https://careers.oppo.com/university/oppo/campus/post/1668
+  - `1807` · IT开发工程师（AI应用方向） · 东莞市 · https://careers.oppo.com/university/oppo/campus/post/1807
 
 **官方职责**
 
@@ -320,7 +321,7 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 - **地点**：深圳市
 - **项目 / 届别**：2027届寻梦实习招聘
 - **官方 Requisition**：1 个
-  - \`1600\` · 应用开发工程师（AI Agent方向） · 深圳市 · https://careers.oppo.com/university/oppo/campus/post/1600
+  - `1600` · 应用开发工程师（AI Agent方向） · 深圳市 · https://careers.oppo.com/university/oppo/campus/post/1600
 
 **官方职责**
 
@@ -329,6 +330,56 @@ BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招）�
 **官方要求**
 
 1. 计算机相关专业硕士学历，技术好奇心强，深度使用多种 AI 工具并理解其工作原理。 2. 必须熟练使用 Claude Code、Codex 等任一命令行代码助手，维护过 Rules/Prompt/MCP，熟悉 Agent Skills。 3. 熟练使用 Cursor、Windsurf、Kiro 等任一 AI IDE，理解 Vibe Coding 和 Spec Coding 的区别与实际应用场景。 4. 熟练掌握 Python，有 FastAPI 项目经验，了解 JavaScript/TypeScript，有前端项目经验。 5. 有持续维护的独立开源项目或积极参与开源贡献，有 OpenClaw 部署、扩展开发经验，熟悉 RAG、Prompt 工程。 6.懂AI功能实现，懂AI的基本原理，掌握编程能力，能调用，能做算法复现。
+
+## SHEIN
+
+### AI Agent工程师（广告营销方向）-上海
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 校园招聘 / 面向应届生 / 校园招聘 / Students & Graduates / 校园招聘
+- **官方 Requisition**：1 个
+  - `31865613-ab5a-4a68-a212-b8ee5aa22ba0` · AI Agent工程师（广告营销方向）-上海 · https://careers.shein.cn/All-Jobs?key=agent
+
+**官方职责**
+
+<p><strong>AI Agent工程师（广告营销方向）-上海</strong></p><p><br></p><p><strong>职位概述：</strong></p><p>负责将先进的大语言模型与智能体（Agent）技术落地到广告投放与营销场景，通过构建自动化智能体与数据驱动模型，提升广告创意效率、投放效果与营销转化率。你将参与从数据到模型到线上决策的完整工程化流程，直接赋能广告投放/营销团队与业务指标。</p><p><br></p><p><strong>工作职责：</strong></p><p>1. 业务落地与效果提升</p><p>将LLM/Agent能力落地到广告创意生成、素材个性化、受众分群、投放策略自动化等业务场景；</p><p>通过算法与工程改进提升运营效率与关键指标。</p><p><br></p><p>2.LLM 应用开发</p><p>负责基于大模型的广告文案/创意生成、素材说明、A/B 文案变体生成与评分体系；</p><p>参与 Prompt Engineering、微调（SFT/LoRA 等）、评估与部署，保证生成内容质量与合规性。</p><p><br></p><p>3. 智能体（Agent）与自动化系统构建</p><p>设计并实现用于投放决策与运营自动化的智能体或 Multi‑Agent 系统（如自动出价Agent、预算分配Agent、素材推荐Agent）；</p><p>利用外部工具（Tools/API）增强模型能力，解决复杂的多轮推理与决策问题。</p><p><br></p><p>4. 技术探索与工程化落地</p><p>跟踪前沿技术（RAG、长期记忆、长上下文、多模态创意生成、因果归因等），推动广告营销系统的技术演进；</p><p>保障系统稳定性、延迟、可扩展性及审计/合规性。</p><p><br></p><p><strong>任职要求：</strong></p><p>1. 学历与经验：本科及以上学历，计算机、人工智能、数学或相关专业；具备 2 年及以上算法/后端/广告系统相关经验</p><p>2. 编程基础： 精通Python/Java/C#等至少一门编程语言，具备优秀的编码习惯、工程化思维和代码调试能力</p><p>3. LLM专业能力：</p><p>熟悉大模型微调技术（如LoRA、P-Tuning），有实际的数据构建、SFT/RLHF训练经验者优先。</p><p>具备实际的Agent或Multi-Agent项目开发经验，对AI Agent的规划、记忆、工具使用等模块有深刻理解。</p><p>4. 广告/营销技术栈理解：熟悉广告生态（Google Ads、Meta Ads 等）或具备投放策略、出价机制与归因分析经验者优先</p><p>5. 综合素质：具备强烈的自驱力、学习能力与业务思维，善于跨团队沟通与推动落地</p>
+
+**官方要求**
+
+官方未返回任职要求。
+
+### AI Agent工程师（智能客服方向）
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 校园招聘 / 面向应届生 / 校园招聘 / Students & Graduates / 校园招聘
+- **官方 Requisition**：1 个
+  - `95a54509-2632-4c53-88fb-00401eb469dd` · AI Agent工程师（智能客服方向） · https://careers.shein.cn/All-Jobs?key=agent
+
+**官方职责**
+
+<p>【职位概述】</p><p>专注于将先进的LLM能力落地于智能客服核场景。通过研发智能体（Agent）系统，直接赋能业务，提升审核效率与精准度</p><p>【工作职责】</p><p>1. 业务落地与提效： 负责大模型在内容治理、机器审核业务场景的算法应用与工程化落地，针对复杂审核场景设计并优化算法策略，显著提升审核人效与风险识别能力</p><p>2. LLM应用开发： 深入参与基于大语言模型的智能应用开发，包括但不限于Prompt Engineering、模型微调（SFT/RLHF）、模型评测与部署，确保模型在业务中的稳定表现</p><p>3. 智能体（Agent）构建： 主导或参与智能体及多智能体（Multi-Agent）系统的设计与开发，利用外部工具（Tools/API）增强模型能力，解决复杂的多轮推理与决策问题</p><p>4. 技术探索与演进： 紧密跟踪AI前沿技术（如RAG、Long Context、新模型架构等），持续推动机审场景下技术架构的迭代与革新，保持团队技术的行业领先性</p><p>【任职要求】</p><p>1. 学历与经验： 本科及以上学历，计算机、人工智能、软件工程或数学等相关专业；具备2年以上算法或后端开发经验</p><p>2. 编程基础： 精通Python/Java/C#等至少一门编程语言，具备优秀的编码习惯、工程化思维和代码调试能力</p><p>3. LLM专业能力：</p><p>· 熟悉大模型微调技术（如LoRA、P-Tuning），有实际的数据构建、SFT/RLHF训练经验者优先</p><p>· 具备实际的Agent或Multi-Agent项目开发经验，对AI Agent的规划、记忆、工具使用等模块有深刻理解</p><p>4. 综合素质： 具备极强的自驱力和学习能力，对AI技术抱有极大热情，善于解决复杂的工程问题，具备良好的团队协作和业务抽象能力</p><p>【加分项】</p><p>有内容安全、风控、反作弊等领域的算法或系统开发经验者优先</p>
+
+**官方要求**
+
+官方未返回任职要求。
+
+### AI Agent工程师（机审/证书审核/风控方向）-上海
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 校园招聘 / 面向应届生 / 校园招聘 / Students & Graduates / 校园招聘
+- **官方 Requisition**：1 个
+  - `94007621-0bc7-4ae4-ad43-142529b12160` · AI Agent工程师（机审/证书审核/风控方向）-上海 · https://careers.shein.cn/All-Jobs?key=agent
+
+**官方职责**
+
+<p>AI Agent工程师（机审/证书审核/风控方向）-上海</p><p><br></p><p>【职位概述】</p><p>专注于将先进的LLM能力落地于内容治理与机器审核场景。通过研发智能体（Agent）系统，直接赋能业务，提升审核效率与精准度。</p><p><br></p><p>【工作职责】</p><p>1. 业务落地与提效： 负责大模型在内容治理、机器审核业务场景的算法应用与工程化落地，针对复杂审核场景设计并优化算法策略，显著提升审核人效与风险识别能力。</p><p>2. LLM应用开发： 深入参与基于大语言模型的智能应用开发，包括但不限于Prompt Engineering、模型微调（SFT/RLHF）、模型评测与部署，确保模型在业务中的稳定表现。</p><p>3. 智能体（Agent）构建： 主导或参与智能体及多智能体（Multi-Agent）系统的设计与开发，利用外部工具（Tools/API）增强模型能力，解决复杂的多轮推理与决策问题。</p><p>4. 技术探索与演进： 紧密跟踪AI前沿技术（如RAG、Long Context、新模型架构等），持续推动机审场景下技术架构的迭代与革新，保持团队技术的行业领先性。</p><p><br></p><p>【任职要求】</p><p>1. 学历与经验： 本科及以上学历，计算机、人工智能、软件工程或数学等相关专业；具备2年以上算法或后端开发经验。</p><p>2. 编程基础： 精通Python/Java/C#等至少一门编程语言，具备优秀的编码习惯、工程化思维和代码调试能力。</p><p>3. LLM专业能力：</p><p> · 熟悉大模型微调技术（如LoRA、P-Tuning），有实际的数据构建、SFT/RLHF训练经验者优先。</p><p> · 具备实际的Agent或Multi-Agent项目开发经验，对AI Agent的规划、记忆、工具使用等模块有深刻理解。</p><p>4. 综合素质： 具备极强的自驱力和学习能力，对AI技术抱有极大热情，善于解决复杂的工程问题，具备良好的团队协作和业务抽象能力。</p><p><br></p><p>【加分项】</p><p>有内容安全、风控、反作弊等领域的算法或系统开发经验者优先。</p>
+
+**官方要求**
+
+官方未返回任职要求。
 
 ## Shopee
 
@@ -357,7 +408,7 @@ Shopee 2027秋招研发类明确开放Agent开发工程师，同时开放AI基�
 - **地点**：浙江省·杭州市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282950\` · AI应用工程师-27届秋招 · 浙江省·杭州市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282950
+  - `561282950` · AI应用工程师-27届秋招 · 浙江省·杭州市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282950
 
 **官方职责**
 
@@ -373,7 +424,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282548\` · AI系统工程师（智能体方向）-27届秋招 · 上海市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282548
+  - `561282548` · AI系统工程师（智能体方向）-27届秋招 · 上海市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282548
 
 **官方职责**
 
@@ -389,7 +440,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282483\` · Agent工程师（AI搜索方向）-27届秋招 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282483
+  - `561282483` · Agent工程师（AI搜索方向）-27届秋招 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282483
 
 **官方职责**
 
@@ -405,7 +456,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561265304\` · Agent工程师（AI搜索方向）-27届蓝极星 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265304
+  - `561265304` · Agent工程师（AI搜索方向）-27届蓝极星 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265304
 
 **官方职责**
 
@@ -421,7 +472,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市, 浙江省·杭州市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561265303\` · Agent工程师（Harness方向）-27届蓝极星 · 广东省·深圳市, 浙江省·杭州市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265303
+  - `561265303` · Agent工程师（Harness方向）-27届蓝极星 · 广东省·深圳市, 浙江省·杭州市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265303
 
 **官方职责**
 
@@ -437,7 +488,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561265302\` · Agent工程师（具身智能方向）-27届蓝极星 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265302
+  - `561265302` · Agent工程师（具身智能方向）-27届蓝极星 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265302
 
 **官方职责**
 
@@ -453,7 +504,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561265305\` · Agent工程师（感知记忆方向）-27届蓝极星 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265305
+  - `561265305` · Agent工程师（感知记忆方向）-27届蓝极星 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561265305
 
 **官方职责**
 
@@ -469,7 +520,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282495\` · Agent开发工程师（数据方向）-27届秋招 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282495
+  - `561282495` · Agent开发工程师（数据方向）-27届秋招 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282495
 
 **官方职责**
 
@@ -485,7 +536,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市, 浙江省·杭州市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282448\` · Agent技术工程师-27届秋招 · 广东省·深圳市, 浙江省·杭州市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282448
+  - `561282448` · Agent技术工程师-27届秋招 · 广东省·深圳市, 浙江省·杭州市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282448
 
 **官方职责**
 
@@ -501,7 +552,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·东莞市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282492\` · Agent技术工程师（知识管理方向）-27届秋招 · 广东省·东莞市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282492
+  - `561282492` · Agent技术工程师（知识管理方向）-27届秋招 · 广东省·东莞市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282492
 
 **官方职责**
 
@@ -517,7 +568,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：广东省·深圳市
 - **项目 / 届别**：vivo官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`561282935\` · 软件工程师（Agent开发方向）-27届秋招 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282935
+  - `561282935` · 软件工程师（Agent开发方向）-27届秋招 · 广东省·深圳市 · https://hr-campus.vivo.com/campus/detail?jobAdId=561282935
 
 **官方职责**
 
@@ -535,7 +586,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：中国
 - **项目 / 届别**：校园招聘 / 校招公告 / 应届生招聘 / 2027届应届生校园招聘 / 校招有疑问？别急，HR来帮忙！ / 如果您在参加中兴通讯2027届校园招聘的过程中，需要任何帮助，欢迎联系我们，我们会在第一时间为您答疑解惑。 / 加群咨询：关注“中兴通讯招聘” 微信公众号，回复 “校招QQ群” 获取答疑渠道；
 - **官方 Requisition**：1 个
-  - \`810ab3df-6584-466a-863c-afbe435d72cf\` · AI大模型应用资深系统架构师 · 中国 · https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList
+  - `810ab3df-6584-466a-863c-afbe435d72cf` · AI大模型应用资深系统架构师 · 中国 · https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList
 
 **官方职责**
 
@@ -551,7 +602,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：中国
 - **项目 / 届别**：校园招聘 / 校招公告 / 应届生招聘 / 2027届应届生校园招聘 / 校招有疑问？别急，HR来帮忙！ / 如果您在参加中兴通讯2027届校园招聘的过程中，需要任何帮助，欢迎联系我们，我们会在第一时间为您答疑解惑。 / 加群咨询：关注“中兴通讯招聘” 微信公众号，回复 “校招QQ群” 获取答疑渠道；
 - **官方 Requisition**：1 个
-  - \`a83462e2-ae10-4d25-980e-228dfba3618e\` · AI应用开发资深专家 · 中国 · https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList
+  - `a83462e2-ae10-4d25-980e-228dfba3618e` · AI应用开发资深专家 · 中国 · https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList
 
 **官方职责**
 
@@ -569,7 +620,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：北京市-北京市
 - **项目 / 届别**：京东官方校园招聘 talent（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`talent:8978\` · 多智能体强化学习驱动的物流决策系统研发 · 北京市-北京市 · https://campus.jd.com/#/details?type=talent&id=8978
+  - `talent:8978` · 多智能体强化学习驱动的物流决策系统研发 · 北京市-北京市 · https://campus.jd.com/#/details?type=talent&id=8978
 
 **官方职责**
 
@@ -585,9 +636,9 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 
 - **证据状态**：FULL_JD
 - **地点**：海淀区
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - \`cd097e11-7532-4d09-bd2d-744c150d0d7c\` · AI全栈开发工程师（交易营销中台）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
+  - `cd097e11-7532-4d09-bd2d-744c150d0d7c` · AI全栈开发工程师（交易营销中台）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
 
 **官方职责**
 
@@ -601,9 +652,9 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 
 - **证据状态**：FULL_JD
 - **地点**：海淀区
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - \`3b0b3e31-e357-4a9b-b5dc-d3d44742d36e\` · AI全栈开发工程师（企业平台）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
+  - `3b0b3e31-e357-4a9b-b5dc-d3d44742d36e` · AI全栈开发工程师（企业平台）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
 
 **官方职责**
 
@@ -617,9 +668,9 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 
 - **证据状态**：FULL_JD
 - **地点**：海淀区
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - \`39072498-6cee-4401-87a7-38416cecdd68\` · AI全栈开发工程师（海外新业务）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
+  - `39072498-6cee-4401-87a7-38416cecdd68` · AI全栈开发工程师（海外新业务）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
 
 **官方职责**
 
@@ -633,9 +684,9 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 
 - **证据状态**：FULL_JD
 - **地点**：海淀区
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - \`a122f0ac-d925-4c7e-90b1-e46b8f6bbf9e\` · AI应用开发工程师（作业帮/海外）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
+  - `a122f0ac-d925-4c7e-90b1-e46b8f6bbf9e` · AI应用开发工程师（作业帮/海外）-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
 
 **官方职责**
 
@@ -649,9 +700,9 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 
 - **证据状态**：FULL_JD
 - **地点**：海淀区
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - \`b5cd2bf9-0e0b-435d-83bc-c02b62e5b2b0\` · AI应用服务端研发工程师-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
+  - `b5cd2bf9-0e0b-435d-83bc-c02b62e5b2b0` · AI应用服务端研发工程师-27秋招 · 海淀区 · https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN
 
 **官方职责**
 
@@ -669,7 +720,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`390848895\` · 27届校招-AI全栈开发工程师(J14388) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390848895
+  - `390848895` · 27届校招-AI全栈开发工程师(J14388) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390848895
 
 **官方职责**
 
@@ -685,7 +736,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`390849297\` · 27届校招-AI全栈开发工程师(J14430) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849297
+  - `390849297` · 27届校招-AI全栈开发工程师(J14430) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849297
 
 **官方职责**
 
@@ -701,7 +752,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`390848572\` · 27届校招-FDE工程师(J14378) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390848572
+  - `390848572` · 27届校招-FDE工程师(J14378) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390848572
 
 **官方职责**
 
@@ -717,7 +768,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`390849452\` · 【27校招】AI Agent研发工程师(J14439) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849452
+  - `390849452` · 【27校招】AI Agent研发工程师(J14439) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849452
 
 **官方职责**
 
@@ -733,7 +784,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`390849456\` · 【27校招】AI Agent研发工程师（数据合规方向）(J14440) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849456
+  - `390849456` · 【27校招】AI Agent研发工程师（数据合规方向）(J14440) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849456
 
 **官方职责**
 
@@ -749,7 +800,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：上海市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`390849437\` · 【27校招】Agent开发工程师(J14436) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849437
+  - `390849437` · 【27校招】Agent开发工程师(J14436) · 上海市 · https://intsig.zhiye.com/campus/detail?jobAdId=390849437
 
 **官方职责**
 
@@ -767,7 +818,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘
 - **官方 Requisition**：1 个
-  - \`2196\` · AI Agent应用开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+  - `2196` · AI Agent应用开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -783,7 +834,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 【27届校招人才计划】Agent算法工程师 / 校园招聘网申入口
 - **官方 Requisition**：1 个
-  - \`2200\` · AI agent开发工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+  - `2200` · AI agent开发工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -799,7 +850,7 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 校园招聘网申入口
 - **官方 Requisition**：1 个
-  - \`459\` · AI应用开发工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+  - `459` · AI应用开发工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -815,7 +866,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 校园招聘网申入口
 - **官方 Requisition**：1 个
-  - \`509\` · AI应用开发工程师-B2B-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+  - `509` · AI应用开发工程师-B2B-ACMer · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -831,8 +882,8 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 校园招聘网申入口
 - **官方 Requisition**：2 个
-  - \`2156\` · AI开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
-  - \`2193\` · AI开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+  - `2156` · AI开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+  - `2193` · AI开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -848,7 +899,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 校园招聘网申入口
 - **官方 Requisition**：1 个
-  - \`2147\` · AI开发工程师（海外）-ACM · https://campus.10jqka.com.cn/job/list?type=school
+  - `2147` · AI开发工程师（海外）-ACM · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -864,7 +915,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 【27届校招人才计划】Agent算法工程师 / 校园招聘网申入口
 - **官方 Requisition**：1 个
-  - \`2189\` · Agent开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+  - `2189` · Agent开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -880,7 +931,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 校园招聘网申入口
 - **官方 Requisition**：1 个
-  - \`497\` · 多智能体推理工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+  - `497` · 多智能体推理工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -896,7 +947,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘
 - **官方 Requisition**：1 个
-  - \`2179\` · 金融 Agent 开发工程师（AIME项目） · https://campus.10jqka.com.cn/job/list?type=school
+  - `2179` · 金融 Agent 开发工程师（AIME项目） · https://campus.10jqka.com.cn/job/list?type=school
 
 **官方职责**
 
@@ -914,7 +965,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：上海
 - **项目 / 届别**：哔哩哔哩官方校园招聘全职项目 / 2027
 - **官方 Requisition**：1 个
-  - \`29681\` · AI Native 基础架构工程师【2027届】 · 上海 · https://jobs.bilibili.com/campus/positions/29681
+  - `29681` · AI Native 基础架构工程师【2027届】 · 上海 · https://jobs.bilibili.com/campus/positions/29681
 
 **官方职责**
 
@@ -930,7 +981,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：上海
 - **项目 / 届别**：哔哩哔哩官方校园招聘全职项目
 - **官方 Requisition**：1 个
-  - \`29370\` · 【B-UP】多模态智能体工程师（校招） · 上海 · https://jobs.bilibili.com/campus/positions/29370
+  - `29370` · 【B-UP】多模态智能体工程师（校招） · 上海 · https://jobs.bilibili.com/campus/positions/29370
 
 **官方职责**
 
@@ -946,7 +997,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：上海
 - **项目 / 届别**：哔哩哔哩官方校园招聘全职项目 / 2027
 - **官方 Requisition**：1 个
-  - \`29748\` · 广告检索 AI Native 开发工程师【2027届】 · 上海 · https://jobs.bilibili.com/campus/positions/29748
+  - `29748` · 广告检索 AI Native 开发工程师【2027届】 · 上海 · https://jobs.bilibili.com/campus/positions/29748
 
 **官方职责**
 
@@ -962,9 +1013,9 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 - **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：商汤校园招聘 / 27届校园招聘 / 【27届校招】AI 技术支持工程师-大装置（上海） / 上海校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A45755 / 【27届校招】AI 技术支持工程师-大装置（北京） / 北京校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A60855 / 【27届校招】推理Infra开发工程师-大装置 / 北京、杭州校招正式研发 - 基础架构27届校园招聘职位 ID：A86857
 - **官方 Requisition**：1 个
-  - \`7659616422645369139\` · 【27届校招】Agent全栈开发工程师-大装置 · https://hr-jobs.sensetime.com/edu/?keywords=Agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
+  - `7659616422645369139` · 【27届校招】Agent全栈开发工程师-大装置 · https://hr-jobs.sensetime.com/edu/?keywords=&category=&location=&project=&type=&job_hot_flag=&current=12&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -978,9 +1029,9 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 - **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：商汤校园招聘 / 27届校园招聘 / 【27届校招】售前解决方案经理-大装置 / 北京、上海、深圳等 4 个城市校招正式销售 - 销售支持27届校园招聘职位 ID：A48691 / 【27届校招】算法开发工程师-大装置 / 北京、上海校招正式研发 - 算法27届校园招聘职位 ID：A07242 / 【27届校招】AI 算法研发工程师-大装置 / 北京、上海校招正式研发 - 算法27届校园招聘职位 ID：A55835
 - **官方 Requisition**：1 个
-  - \`7659330461617178916\` · 【27届校招】Agent开发工程师 · https://hr-jobs.sensetime.com/edu/?keywords=Agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
+  - `7659330461617178916` · 【27届校招】Agent开发工程师 · https://hr-jobs.sensetime.com/edu/?keywords=&category=&location=&project=&type=&job_hot_flag=&current=14&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -994,9 +1045,9 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 - **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：商汤校园招聘 / 27届校园招聘 / 【27届校招】AI产品运营经理 / 北京、上海、深圳校招正式运营 - 产品运营27届校园招聘职位 ID：A139843 / 【27届校招】FDE工程师—亚太业务事业群 / 新界校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A84555 / 【27届校招】FDE工程师-亚太业务事业群 / 深圳校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A242652
 - **官方 Requisition**：1 个
-  - \`7659254488749951258\` · 【27届校招】FDE工程师-亚太业务事业群 · https://hr-jobs.sensetime.com/edu/?keywords=AI%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
+  - `7659254488749951258` · 【27届校招】FDE工程师-亚太业务事业群 · https://hr-jobs.sensetime.com/edu/?keywords=&category=&location=&project=&type=&job_hot_flag=&current=15&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -1006,13 +1057,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1. 本科及以上学历，计算机、软件工程、人工智能、信息系统等相关专业优先； 2. 熟悉至少一种后端开发语言，如 Python、Java、Go 等，具备扎实的编码基础； 3. 熟悉 Web 后端开发基础，包括接口开发、数据库操作、缓存、消息队列等常见技术； 4. 熟悉 Linux 基础操作，了解 Docker、服务部署、日志排查等基本工程实践； 5. 具备较强的问题定位和解决能力，能够在项目交付过程中快速学习并处理实际问题； 6. 具备良好的沟通表达和团队协作能力，愿意参与客户项目交付与跨团队协作； 7. 对大模型应用、智能体、RAG、企业级 AI 项目交付方向有兴趣。 加分项 1. 有 Web 应用、后端服务、数据平台或企业系统开发项目经验； 2. 有大模型应用、RAG、Agent、知识库问答、模型服务调用等实践经验； 3. 熟悉 Docker、Kubernetes、Nginx、MySQL、Redis、Milvus、Elasticsearch 等技术者优先； 4. 熟悉 LangGraph、LlamaIndex、LangChain、Dify、Coze、n8n 等工具或框架者优先； 5. 有实习经历、开源项目经历、竞赛经历或完整项目交付经验者优先； 6. 能够适应一定的项目交付节奏，具备较强的责任心和执行力。
 
+### 【27届校招】FDE工程师-生态渠道部
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：商汤校园招聘 / 27届校园招聘 / 【27届校招】算法研究员-MIG / 深圳校招正式研发 - 算法27届校园招聘职位 ID：A138156 / 【27届校招】算法研究员-MIG / 上海校招正式研发 - 算法27届校园招聘职位 ID：A62200 / 【27届校招】交付运维工程师-SCG / 上海、深圳校招正式研发 - 后端开发27届校园招聘职位 ID：A95391
+- **官方 Requisition**：1 个
+  - `7660078186973202731` · 【27届校招】FDE工程师-生态渠道部 · https://hr-jobs.sensetime.com/edu/?keywords=&category=&location=&project=&type=&job_hot_flag=&current=8&limit=10&functionCategory=&tag=
+
+**官方职责**
+
+1、方案搭建：围绕文档、营销、客服、数据分析等高频通用场景，基于Token Plan及Sowork / X-Agent / X-Design搭建标准解决方案，沉淀可复制的方案库与Demo库； 2、客户交付：进场客户完成场景拆解、POC验证、部署上线与培训激活，全周期陪跑，目标30天可量化见效； 3、伙伴带教：按原厂:伙伴1:5模式带教伙伴FDE，参与FDE标准课程授课与认证考核，守住对客交付质量底线； 4、生态练兵：策划并参与总代侧AI Hackathon等活动，以赛代练沉淀场景方案； 5、数据回流：建立客户与研发的直连反馈环，将真实场景需求回流至产品与模型迭代。 深入真实业务场景，理解客户需求，协助设计和验证技术解决方案。 搭建 Demo、开发脚本或轻量级工具，提升项目交付效率。 参与 Prompt 调优、RAG 配置、接口调用测试、模型效果评估与问题反馈。 协助排查部署、接口、日志、数据链路、权限配置、模型服务等现场问题。 沉淀部署文档、操作手册、FAQ 和最佳实践，推动经验复用。 收集一线客户反馈，协助产品和研发团队持续优化产品体验。
+
+**官方要求**
+
+1、本科及以上学历，计算机、软件、数学等相关专业； 2、熟悉大模型应用开发：Prompt工程、Agent编排、RAG、API集成，至少熟练掌握Python等一门语言； 3、能把客户的业务问题翻译成技术方案，具备对客沟通、培训授课的表达能力； 4、年轻高潜画像：学习能力强、自驱、抗压，接受出差与客户现场驻场。
+
 ### 【27届校招】FDE工程师—亚太业务事业群
 
 - **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：商汤校园招聘 / 27届校园招聘 / 【27届校招】AI产品运营经理 / 北京、上海、深圳校招正式运营 - 产品运营27届校园招聘职位 ID：A139843 / 【27届校招】FDE工程师—亚太业务事业群 / 新界校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A84555 / 【27届校招】FDE工程师-亚太业务事业群 / 深圳校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A242652
 - **官方 Requisition**：1 个
-  - \`7659255237010508078\` · 【27届校招】FDE工程师—亚太业务事业群 · https://hr-jobs.sensetime.com/edu/?keywords=AI%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
+  - `7659255237010508078` · 【27届校招】FDE工程师—亚太业务事业群 · https://hr-jobs.sensetime.com/edu/?keywords=&category=&location=&project=&type=&job_hot_flag=&current=15&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -1026,10 +1093,9 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 - **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：2 个
-  - \`7659253281403078975\` · 【27届校招】智能体研发-亚太业务事业群 · https://hr-jobs.sensetime.com/edu/?keywords=%E6%99%BA%E8%83%BD%E4%BD%93&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-  - 【27届校招】智能体研发-亚太业务事业群 · https://hr-jobs.sensetime.com/edu/position/7659253281403078975/detail
+- **项目 / 届别**：商汤校园招聘 / 27届校园招聘 / 【27届校招】AI产品运营经理 / 北京、上海、深圳校招正式运营 - 产品运营27届校园招聘职位 ID：A139843 / 【27届校招】FDE工程师—亚太业务事业群 / 新界校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A84555 / 【27届校招】FDE工程师-亚太业务事业群 / 深圳校招正式互联网 / 电子 / 网游 - 研发27届校园招聘职位 ID：A242652
+- **官方 Requisition**：1 个
+  - `7659253281403078975` · 【27届校招】智能体研发-亚太业务事业群 · https://hr-jobs.sensetime.com/edu/?keywords=&category=&location=&project=&type=&job_hot_flag=&current=15&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -1047,7 +1113,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`b966c8c6-d672-4db3-ae45-528ce1219545\` · 【研发中心】2027届AI应用开发工程师(J24400) · https://job.dahuatech.com/#/CampusPosition?id=11
+  - `b966c8c6-d672-4db3-ae45-528ce1219545` · 【研发中心】2027届AI应用开发工程师(J24400) · https://job.dahuatech.com/#/CampusPosition?id=11
 
 **官方职责**
 
@@ -1063,7 +1129,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`5c80b945-0802-4656-acec-8a1cb2b545d5\` · 【研发中心】2027届大数据工程师（Agent方向）(J24380) · https://job.dahuatech.com/#/CampusPosition?id=11
+  - `5c80b945-0802-4656-acec-8a1cb2b545d5` · 【研发中心】2027届大数据工程师（Agent方向）(J24380) · https://job.dahuatech.com/#/CampusPosition?id=11
 
 **官方职责**
 
@@ -1079,7 +1145,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`2de94af9-8760-4594-bad9-f6fe15dd6627\` · 【研发中心】2027届大模型应用工程师(J24455) · https://job.dahuatech.com/#/CampusPosition?id=11
+  - `2de94af9-8760-4594-bad9-f6fe15dd6627` · 【研发中心】2027届大模型应用工程师(J24455) · https://job.dahuatech.com/#/CampusPosition?id=11
 
 **官方职责**
 
@@ -1095,7 +1161,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`e59cb5d5-bfad-4f32-b39e-96ca8a14ced6\` · 【研发中心】2027届测试开发工程师（AI应用测试方向）(J24553) · https://job.dahuatech.com/#/CampusPosition?id=11
+  - `e59cb5d5-bfad-4f32-b39e-96ca8a14ced6` · 【研发中心】2027届测试开发工程师（AI应用测试方向）(J24553) · https://job.dahuatech.com/#/CampusPosition?id=11
 
 **官方职责**
 
@@ -1160,13 +1226,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 ## 字节跳动
 
-### AI Agent全栈开发工程师
+### AI Agent全栈开发工程师 - 豆包
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668324567166929205\` · AI Agent全栈开发工程师 - 豆包 · 北京 · https://jobs.bytedance.com/campus/position/7668324567166929205/detail
+  - `7668324567166929205` · AI Agent全栈开发工程师 - 豆包 · 北京 · https://jobs.bytedance.com/campus/position/7668324567166929205/detail
 
 **官方职责**
 
@@ -1176,14 +1242,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、扎实的计算机基础，熟悉数据结构、算法、网络、操作系统； 3、掌握至少一门后端语言（Go/Java/Python等），有Web开发经验；了解前端技术（React/Vue）者优先； 4、对AI/大模型有热情，了解LLM基本原理，有Agent、RAG、Prompt Engineering相关项目或实践经验者优先； 5、有开源项目贡献、技术博客、竞赛获奖（如ACM、数学建模等）者优先； 6、较强的产品思维和自驱力，乐于探索新技术，善于团队协作。
 
-### AI Agent前端开发工程师
+### AI Agent前端开发工程师 - 开发者服务
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 广州 / 杭州
+- **地点**：北京 / 上海 / 杭州 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：2 个
-  - \`7667096475969407285\` · AI Agent前端开发工程师 - 开发者服务 · 北京 / 上海 / 杭州 / 广州 · https://jobs.bytedance.com/campus/position/7667096475969407285/detail
-  - \`7668208189405661445\` · AI Agent前端开发工程师 - 番茄小说/红果短剧/番茄畅听 · 北京 · https://jobs.bytedance.com/campus/position/7668208189405661445/detail
+- **官方 Requisition**：1 个
+  - `7667096475969407285` · AI Agent前端开发工程师 - 开发者服务 · 北京 / 上海 / 杭州 / 广州 · https://jobs.bytedance.com/campus/position/7667096475969407285/detail
+
+**官方职责**
+
+团队介绍：字节跳动开发者服务团队负责公司研发工具与基础设施体系建设，为内部开发者提供覆盖全技术栈的框架、工具和研发体系能力，支撑业务高效稳定迭代。 在此基础上，团队正打造面向全场景的AI Agent平台，将大模型与公司内部工程知识深度结合，覆盖需求分析、编码开发、测试发布、运维治理等软件全生命周期，帮助ByteDancer显著提升生产力，重塑开发者服务的形态与体验。 期待对研发工具体系、AI工程生产力有热情、希望在大规模真实场景中打磨技术的同学加入，与我们一起建设新一代开发者基础设施，共同成长！ 1、参与AIAgent研发平台的前端研发工作；实习内容涉及多终端开发（Web、桌面端、IDE插件等）、前端研发场景AI能力建设等； 2、参与通用组件、前端架构、研发效能等工程化建设； 3、持续跟进AI Agent前端领域最新进展，探索落地可能性。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业优先； 2、扎实掌握各类前端基础知识，熟练掌握React或Vue、Koa等应用框架； 3、了解AI Agent相关前端技术与设计思想，了解主流AI Agent产品及其应用场景； 4、良好的沟通和团队协作能力、热爱技术、责任心强、能推动技术框架的落地使用。
+
+### AI Agent前端开发工程师 - 番茄小说/红果短剧/番茄畅听
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668208189405661445` · AI Agent前端开发工程师 - 番茄小说/红果短剧/番茄畅听 · 北京 · https://jobs.bytedance.com/campus/position/7668208189405661445/detail
 
 **官方职责**
 
@@ -1193,13 +1274,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业优先； 2、技术基础知识扎实； 3、熟练掌握JavaScript，CSS，HTML，Node.js、DOM、动画、协议、安全、网络、性能优化等前端技术； 4、对主流前端框架（React/Vue等）至少一种有深入应用并深入理解其设计原理； 5、对用户体验、交互操作流程及用户需求有一定了解； 6、热爱前端技术，有较强的学习能力，有强烈的求知欲、好奇心和进取心，能及时关注和学习业界最新的前端技术。
 
-### AI Agent后端研发工程师
+### AI Agent后端研发工程师 - Data AML
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669700362425190709\` · AI Agent后端研发工程师 - Data AML · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7669700362425190709/detail
+  - `7669700362425190709` · AI Agent后端研发工程师 - Data AML · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7669700362425190709/detail
 
 **官方职责**
 
@@ -1209,13 +1290,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能等相关专业优先； 2、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识；熟悉大语言模型相关技术：Prompt Engineering、RAG（检索增强生成）、Function Calling、Fine-Tuning数据工程、长文本处理等； 3、了解大语言模型相关技术，有Agent开发、Agent框架、Agent Skills等相关经验者优先；有LLM应用开发经验，熟悉LangChain/LlamaIndex/AutoGen/CrewAI等Agent框架，或有自主设计Agent架构的经验； 4、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 5、有强烈的求知欲，优秀的学习和沟通能力。
 
-### AI Agent后端研发工程师（小云雀Pippit）
+### AI Agent后端研发工程师（小云雀Pippit） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 广州 / 深圳
+- **地点**：深圳 / 北京 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668223463953549621\` · AI Agent后端研发工程师（小云雀Pippit） - 剪映CapCut · 深圳 / 北京 / 广州 · https://jobs.bytedance.com/campus/position/7668223463953549621/detail
+  - `7668223463953549621` · AI Agent后端研发工程师（小云雀Pippit） - 剪映CapCut · 深圳 / 北京 / 广州 · https://jobs.bytedance.com/campus/position/7668223463953549621/detail
 
 **官方职责**
 
@@ -1225,13 +1306,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、通信、人工智能等相关专业优先； 2、具备扎实的计算机基础、良好的编程能力和代码质量意识； 3、对AI、AIGC和Agent技术有强烈热情，学习能力强，愿意持续探索并快速实践新技术； 4、具备良好的沟通协作能力、主人翁意识和问题解决能力，能够主动推动事情落地； 5、至少符合以下一个技术方向： 1）前端方向：熟悉React、Vue等现代前端框架之一，了解Web工程化及交互体验优化； 2）服务端方向：熟悉至少一种服务端开发语言，了解MySQL、Redis、消息队列等常用组件； 3）客户端方向：熟悉Android或iOS开发，了解Kotlin、Swift、Objective-C等相关技术； 4）全栈方向：能够独立完成从产品交互到服务端能力的端到端开发与验证。 加分项 1、有AI Agent、RAG、MCP、Prompt工程或上下文工程相关项目实践； 2、使用大模型完成过真实产品、开源项目、课程项目或个人作品； 3、了解多模态内容生成、视频或图片生成、模型服务及AI工作流编排； 4、在算法竞赛、开源社区、技术比赛或高质量实习中有突出表现； 5、有较强的产品意识，愿意站在用户视角持续优化体验。
 
-### AI Agent工程师
+### AI Agent工程师 - 豆包
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665235491532736773\` · AI Agent工程师 - 豆包 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7665235491532736773/detail
+  - `7665235491532736773` · AI Agent工程师 - 豆包 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7665235491532736773/detail
 
 **官方职责**
 
@@ -1241,14 +1322,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业； 2、学习能力强，有独立解决问题的能力； 3、熟悉面向对象编程，掌握Java/C++/Python/Go中的至少一门语言，Python/Go背景优先； 4、有良好的沟通能力和业务理解能力； 5、对大模型相关技术有好奇心，持续关注熟悉前沿技术。
 
-### AI Agent应用研发工程师
+### AI Agent应用研发工程师 - 安全与风控
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 杭州 / 深圳
+- **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：2 个
-  - \`7668624170959636789\` · AI Agent应用研发工程师 - 安全与风控 · 北京 · https://jobs.bytedance.com/campus/position/7668624170959636789/detail
-  - \`7672671254742157621\` · AI Agent应用研发工程师 - 火山方舟 · 深圳 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7672671254742157621/detail
+- **官方 Requisition**：1 个
+  - `7668624170959636789` · AI Agent应用研发工程师 - 安全与风控 · 北京 · https://jobs.bytedance.com/campus/position/7668624170959636789/detail
 
 **官方职责**
 
@@ -1258,29 +1338,164 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备扎实的计算机基础和编程基础，掌握常用的数据结构和算法；熟练或精通使用Go、Java其中至少一门编程语言，并了解常用的开发框架和开发流程规范； 3、熟练或精通熟悉MySQL、Redis、Kafka、Hive等常用数据与中间件组件，理解分布式系统的基本原理与开发模式； 4、具备较好的产品意识和数据意识，关注业务与产品效果，愿意以实际产出和结果作为工作的核心驱动力； 5、积极乐观，责任心强，具备良好的服务意识及沟通协作能力； 6、有AI Agent应用开发经验者优先，包括但不限于LLM集成、Prompt工程、Agent编排框架（如LangChain、LangGraph等）、Tool/Skill调用链路设计等。
 
-### AI Agent开发工程师
+### AI Agent应用研发工程师 - 火山方舟
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 广州 / 成都 / 杭州 / 深圳
+- **地点**：深圳 / 北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：17 个
-  - \`7667877734431492357\` · AI Agent开发工程师 - APM · 上海 · https://jobs.bytedance.com/campus/position/7667877734431492357/detail
-  - \`7667090834170972421\` · AI Agent开发工程师 - App Infra · 北京 / 上海 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7667090834170972421/detail
-  - \`7668701836570806581\` · AI Agent开发工程师 - Commercial AI · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668701836570806581/detail
-  - \`7677585479047563573\` · AI Agent开发工程师 - Data-抖音/直播/电商/剪映 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7677585479047563573/detail
-  - \`7668536218151028997\` · AI Agent开发工程师 - Gauth · 北京 · https://jobs.bytedance.com/campus/position/7668536218151028997/detail
-  - \`7667551275686594821\` · AI Agent开发工程师 - 抖音体验 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667551275686594821/detail
-  - \`7665994129960651061\` · AI Agent开发工程师 - 抖音平台产品 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7665994129960651061/detail
-  - \`7665994813989292293\` · AI Agent开发工程师 - 抖音平台产品 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7665994813989292293/detail
-  - \`7666102577985620277\` · AI Agent开发工程师 - 抖音用户产品 · 北京 / 杭州 / 广州 / 深圳 / 上海 / 成都 · https://jobs.bytedance.com/campus/position/7666102577985620277/detail
-  - \`7667476145728080133\` · AI Agent开发工程师 - 抖音研发 · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667476145728080133/detail
-  - \`7667108919110519093\` · AI Agent开发工程师 - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7667108919110519093/detail
-  - \`7667142530726906117\` · AI Agent开发工程师 - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7667142530726906117/detail
-  - \`7678943434803464501\` · AI Agent开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7678943434803464501/detail
-  - \`7678943495675758901\` · AI Agent开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7678943495675758901/detail
-  - \`7678943572557383989\` · AI Agent开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7678943572557383989/detail
-  - \`7667476318612048181\` · AI Agent开发工程师 - 抖音研发 · 广州 / 深圳 · https://jobs.bytedance.com/campus/position/7667476318612048181/detail
-  - \`7667420480446826805\` · AI Agent开发工程师 - 移动OS · 北京 · https://jobs.bytedance.com/campus/position/7667420480446826805/detail
+- **官方 Requisition**：1 个
+  - `7672671254742157621` · AI Agent应用研发工程师 - 火山方舟 · 深圳 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7672671254742157621/detail
+
+**官方职责**
+
+团队介绍：火山方舟是火山引擎推出的一站式大模型服务平台，是中国大模型市场产品和份额领跑者。平台提供模型推理、评测、精调等全流程服务。方舟搭载了豆包及业界主流大模型，提供丰富的插件生态和AI应用开发服务，并通过稳定可靠的安全互信方案、专业的算法技术服务，全方位保障企业级AI应用落地。 1、负责Agent应用的架构设计与研发，包括意图识别、工具调用、记忆、多Agent协作等能力的工程化落地； 2、设计并落地高并发、低延迟的服务架构与数据层，处理长连接（SSE/WebSocket）、流式响应、长任务调度等Agent场景下的典型工程问题； 3、沉淀Agent开发框架、Prompt/工具集、评测体系（EVAL）与线上监控，持续优化任务成功率与端到端体验； 4、与产品、算法、前端紧密协作，将Agent能力落地到真实业务场景（如客服、数据分析、研发提效、办公助手等）。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、具备扎实的数据结构、算法、操作系统、计算机网络基础，熟练掌握至少一门后端语言（Go/Python/TypeScript/Java等），代码风格良好； 3、具备良好的工程素养：注重代码质量、可测试性、可维护性，有强烈的技术追求； 4、学习能力强，能快速跟进LLM/Agent领域的新技术与新范式； 5、良好的沟通协作能力，能与产品、算法、前端高效对齐； 6、熟练使用AI Coding工具，能辅助日常研发，且理解其能力边界。
+
+### AI Agent开发工程师 - APM
+
+- **证据状态**：FULL_JD
+- **地点**：上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667877734431492357` · AI Agent开发工程师 - APM · 上海 · https://jobs.bytedance.com/campus/position/7667877734431492357/detail
+
+**官方职责**
+
+团队介绍：字节跳动APM(Application Performance Management) 团队负责公司所有服务端、移动端、前端、跨端产品的稳定性和性能质量监控保障，构建业界领先的可观测性基础设施，结合机器学习智能化，提供一站式平台覆盖字节跳动各业务线的排障、监控和稳定性提升等需求。 1、负责字节跳动监控观测相关产品核心功能开发； 2、打造业界领先的一站式监控、链路追踪、归因、报警、修复平台； 3、利用最新的LLM技术，建设前沿的可观测AI Agent。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业优先； 2、能熟练使用一种编程语言，包括但不限于Golang/Python/Java/Rust/C++/C； 3、熟悉使用Linux操作系统，了解存储、网络I/O等相关原理； 4、熟悉大型分布式存储系统，比如Hive，ClickHouse，Prometheus，InfluxDB； 5、掌握MySQL、Redis、MQ等常用存储系统的使用。
+
+### AI Agent开发工程师 - App Infra
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 杭州 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667090834170972421` · AI Agent开发工程师 - App Infra · 北京 / 上海 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7667090834170972421/detail
+
+**官方职责**
+
+团队介绍：App Infra 是字节跳动面向移动应用的中台部门，为集团旗下核心 App 提供终端 + 平台一体化技术解决方案。面向研发效能，团队结合在构建系统、编译工具链、虚拟机、深度性能优化等技术上的长期技术沉淀，为Agentic 研发流程提供上下文、编译、验证相关 DevOps，以及 Bugfix、性能优化解决方案；面向商业效率，团队则提供了特征工程、DT/NN/RL/SLM/SVLM 的端云基建，并结合搜索/推荐/广告/直播/电商等场景，孵化出云端协同推荐、精确触达等可迁移方案。如果你热爱挑战底层技术、追求极致优化，又渴望把AI转化为千万用户感受得到的流畅与智能——欢迎加入，和我们一起打造下一代移动体验！ 1、面向字节跳动客户端研发场景，搭建稳定、高效的Agent Harness（涵盖移动运行时知识库、Skills&CLI、规模化验证体系等），并基于Trace机制持续优化长程执行的效率与效果； 2、面向客户端研发全流程，整合Issue Diagnosis、Coding、Review与Validation等能力，构建并标准化AI Agent体系，推动在TRAE等IDE及研发平台的规模化落地，持续提升Agent在真实研发场景中的稳定性、可控性与研发效率。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备扎实的软件工程基础与客户端研发经验，有完整的研发流程经历； 3、熟悉大模型与AI Agent相关技术，具备良好协作能力，能与团队协作持续优化Agent效果。 加分项 1、具备在IDE或研发平台侧推动能力落地的实践经验； 2、有AI Coding、自动化测试或开发工具链相关项目经验者优先。
+
+### AI Agent开发工程师 - Commercial AI
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668701836570806581` · AI Agent开发工程师 - Commercial AI · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668701836570806581/detail
+
+**官方职责**
+
+团队介绍：Commercial AI 负责中国交易与广告的to B应用统一模型建设，包含基础模型能力、AI Infra、统一商业数据、评测等方向。 1、作为广告商家服务方向的大模型算法团队成员，致力于打造广告与经营垂直领域内的Agent，给客户带来全生命周期的一体化服务，助力商家的经营与成长； 2、产品以抖音商家中心为统一门户，串联电商、本地生活、广告等多业务域的账户、数据与能力，目标是让企业从“人工驱动”升级为“Agent驱动”，实现ROI与利润规模的双重提升； 3、从商家在字节跳动的经营与营销场景切入，围绕商家的主要工作场景，打造To B企业一站式AI工作台，辅助商家完成经营策略的制定与执行落地； 4、不仅要以AI赋能日常工作，更要以Agent为核心驱动日常工作；不强调职能边界，每一个人都希望是全能型人才，不再强调传统的算法与工程的区分，也不再强调产品与研发的边界；只要是围绕产品目标与迭代效率，有想法就直接去端到端实现。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，机器学习、人工智能、数理统计等相关专业优先； 2、了解LLM/Agent领域经验，对复杂系统架构设计、Agent开发、LLM Post-Training、RL等方向中的至少一个有专精和深入的实践经验； 3、熟悉大模型应用算法能力优先，包括并不限于SFT、RAG、Agent、PE等； 4、优秀的代码工程能力、数据结构和基础算法功底，有良好的系统设计能力； 5、有熟练的Agent使用经验，需要有各类Agent产品渗透在个人的日常学习与工作中； 6、擅长多人合作，也能独立作战，有激情、勇于克服困难、乐于挑战、快速尝试，乐于了解业务知识，具有良好的团队合作意识、理解沟通能力以及独立解决问题的能力。
+
+### AI Agent开发工程师 - Data-抖音/直播/电商/剪映
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7677585479047563573` · AI Agent开发工程师 - Data-抖音/直播/电商/剪映 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7677585479047563573/detail
+
+**官方职责**
+
+团队介绍：Data-架构团队是字节跳动的核心技术引擎，为抖音、今日头条、番茄小说、剪映等旗舰产品构建大规模、高可用、可持续演进的推荐、搜索与广告工程架构。团队深耕推荐架构、搜索架构、广告架构、机器学习基础设施、在线服务架构与稳定性工程等领域，在千亿乃至万亿级数据规模、超大流量与复杂业务逻辑的真实工程挑战中，持续以技术创新驱动人与信息、人与服务的高效连接，服务全球数亿用户。 目前，团队正积极探索搜广推架构下一代范式：从大规模在线预估框架到生成式推荐大模型的训练、后训练与端到端推理，从分布式异步图引擎、统一数据编排到平台化业务策略与 Infra Research，让大模型真正落地于亿级流量的真实在线系统。欢迎热爱分布式、AI 大模型、搜广推架构的同学加入。 1、参与RAG与Agent上下文数据库的框架和中间件的后端开发和交付，包括记忆抽取与检索、长上下文管理等核心能力，实现公有云产品的特性交付和需求支持，参与开源项目Openviking的开发； 2、在多模态理解（文档、图片、视频、3D模型）、RAG、记忆/自进化、LLM-wiki等领域的效果上持续演进，做到具备行业竞争力； 3、参与大规模Agent上下文基础设施的开发，对于数据处理Pipeline、检索引擎、检索服务的稳定性和性能吞吐负责。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、掌握良好的编程能力，熟悉C++/Golang/Python/Java等其中一种语言，坚持简洁易读代码设计风格； 3、掌握常见的后端开发技术，如Linux操作系统、通讯协议、微服务、数据库、消息队列、Web框架等； 4、具备良好的研究能力，具有出色的分析、自主解决问题的能力，掌握科学的评测方法，对大模型、Agent方向有热情。 加分项：有RAG、记忆、自进化、Agent框架、视频生成等开源项目或研发经验优先，有相关顶会论文发表优先。
+
+### AI Agent开发工程师 - Gauth
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668536218151028997` · AI Agent开发工程师 - Gauth · 北京 · https://jobs.bytedance.com/campus/position/7668536218151028997/detail
+
+**官方职责**
+
+团队介绍：Gauth是一款爆火全球的AI工具产品，占据了出海+AI两个热门赛道，自上线来一直广受用户欢迎，多次登顶全球多国家App Store总榜第一。我们相信大语言模型可以改变人类过往语言、文化、知识学习的方式，也在积极探索应用层的创新，希望为用户创造不一样的知识学习体验。 1、负责AI应用iOS，Android产品开发、新技术探索，以及AI Agent等工具搭建； 2、全球业务，不限于AI多模态问答、用户增长、支付商业化、内容安全等方向； 3、参与产品技术选型与调研，与团队共同成长，以技术驱动业务获取更高价值。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟练掌握Java、Kotlin、Objective-C、Swift、C++任意一种语言，计算机相关知识基础扎实； 3、有良好的学习和动手能力，对AI产品有敏锐的洞察力，对AI新技术充满好奇与热情。 加分项： 1、具备移动客户端Android、iOS开发经验者优先。
+
+### AI Agent开发工程师 - 抖音体验
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667551275686594821` · AI Agent开发工程师 - 抖音体验 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667551275686594821/detail
+
+**官方职责**
+
+团队介绍：抖音用户体验团队成立于2018年，致力于发展业界独特技术栈，通过技术手段提升抖音及抖音系APP的用户体验，为业务发展提供技术支撑。我们在AI与各类基础技术领域的融合上具备远见与决心，曾开创个性化视频体验、个性化应用体验等多个业界全新的技术子领域和相关技术，在抖音等产品建立市场地位的过程中得到充分验证，并持续关注和探索前沿技术方向。团队交叉融合推荐类系统、因果推断、运筹求解、端智能、大模型训练、音视频、网络、编译器等多种不同的技术领域，并能够最直接、快速地推动新技术落地，带来显著业务价值。 1、参与抖音体验团队AI Native研发工具建设，推动AI Native基建建设，协同产品、算法等团队提升用户体验； 2、参与抖音体验团队基建Agent开发，负责需求开发中代码生成效果、全流程交付效果，参与Agent框架建设、编排调度、上下文工程建设、模型适配等，提升需求交付效率； 3、参与评测、知识库、上下文管理等基础能力建设，对大模型应用效果进行持续调优，通过数据分析与策略改进，提升工具的性能和体验； 4、跟踪AI技术趋势，思考AI研发新范式、AI新技术在研发提效中的落地场景，驱动产品创新。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、开发语言和技术栈不限，熟悉Golang/Python/TypeScript优先，并熟悉常见的软件开发模式； 3、对AI应用方向有强烈的兴趣，熟悉Agent相关的常见范式架构，如Plan&Excute、ReAct、Workflow等，熟悉模型的工作原理和特性，并能结合原理和特性做稳定性、成本和效果优化优先； 4、业务理解能力强，能够针对业务上的需求梳理业务边界并快速匹配最适合的Agent工作流范式； 5、对行业流行的常见模型优缺点有大致的了解，并了解如何系统科学的评测帮助做模型选型； 6、掌握模型原理优先，对常见的CNN、RNN、Transformer模型结构及推理架构有一定的了解优先，对模型的二次训练原理及方法了解优先，如SFT、LoRA-SFT、DPO等。
+
+### AI Agent开发工程师 - 抖音平台产品
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳 / 杭州 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7665994129960651061` · AI Agent开发工程师 - 抖音平台产品 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7665994129960651061/detail
+  - `7665994813989292293` · AI Agent开发工程师 - 抖音平台产品 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7665994813989292293/detail
+
+**官方职责**
+
+团队介绍： 平台产品基础：作为抖音平台支撑团队，以 AI为核心抓手，打造高效能平台底座，为全业务线筑牢坚实底层支撑 生态与运营：聚焦创作者成长与商业化，激活生态活力，夯实内容根基 营销搭建：全链路营销体系，助力业务推广，实现品效增长 文娱业务：深耕短剧赛道，打通内容 - 营收 - 宣发全链路，构建健康文娱生态 变现与资金平台：筑牢交易结算核心底盘，提供全链路支付与清结算能力，保障平台资金安全与高效流转 治理・体验・客服：三位一体守护平台安全、用户体验 以及 高效响应解决用户诉求 开放业务：有序开放平台能力与数据，链接外部资源，拓展生态边界 全体团队以业务增长与用户价值为核心，持续深耕、协同共进，推动抖音生态持续繁荣。 1、构建高效、可靠的AI Agent，精准理解产品的复杂需求，实现自规划、任务拆解及执行； 2、设计高效的Multi-Agent系统，确保多Agent间任务流转高效，上下文管理准确； 3、实现AI支撑企业级、大用户规模C端产品的需求端到端生成； 4、负责研发基于LLM的AI Agent系统，负责构建工程研发不同阶段的Agent； 5、参与探索Multi-Agent协作机制，推动Multi-Agent系统对复杂任务的规划和拆解，对已有人类经验的学习和引用，不断优化Agent解决实际问题的路径和效果。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、扎实的计算机、编程基础，熟悉主流大语言模型的原理及方法； 3、理解Multi-Agent系统、任务分解、自动化规划、Prompt Engineering等技术领域之一或多个，有AI Agent相关实践项目者优先； 4、出色的结构化表达能力，较强的技术敏感度与前瞻性，独立的思考和判断力； 5、热爱AI相关技术，对应用和落地工程感兴趣，富有钻研创新精神。
+
+### AI Agent开发工程师 - 抖音用户产品
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州 / 广州 / 深圳 / 上海 / 成都
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7666102577985620277` · AI Agent开发工程师 - 抖音用户产品 · 北京 / 杭州 / 广州 / 深圳 / 上海 / 成都 · https://jobs.bytedance.com/campus/position/7666102577985620277/detail
+
+**官方职责**
+
+团队介绍：抖音用户产品研发团队为抖音全业务提供研发支持与底层技术能力，是驱动业务持续进化的重要工程力量之一。团队围绕首页、推荐、搜索、图文、中长视频、AI 创作、相机、账号及社交通讯等核心场景，承担从客户端、服务端到 AI 工程链路的端到端建设，在亿级 DAU 的真实流量下，持续攻坚极致体验与前沿 AI 系统的工程命题。 我们相信，AI 正在重塑产品的底层架构。团队依托大模型与多模态技术、Multi-Agent 系统工程、在线推理与评测基础设施，面向下一代 AI 原生应用持续投入：在社交与通讯场景，探索长期记忆、多模态理解与人格化对话的技术边界，构建真正能陪伴用户的 AI 交互系统；在内容与创作场景，建设面向亿级创作者的多模态生成与可控创作引擎，让 AI 成为创作者的表达延伸；在搜索与信息获取场景，探索生成式检索、Agentic Search 与个性化推理的新一代系统架构，重新定义 "人与信息" 的连接方式。 这里有工业界领先规模的真实流量，有最前沿的 AI 工程命题，也有一群把技术做到极致的同行者。诚邀热爱技术、追求极致、渴望在真实世界解决硬核问题的你加入我们，一起在 Agent 驱动的技术浪潮中，构建支撑大规模用户的新一代产品。 1、参与抖音研发团队AI-Native研发工具建设，推动AI-Native基建建设，协同产品、算法等团队提升用户体验； 2、参与抖音研发团队基建Agent开发，负责需求开发中代码生成效果、全流程交付效果，参与Agent框架建设、编排调度、上下文工程建设、模型适配等，提升需求交付效率； 3、参与评测、知识库、上下文管理等基础能力建设，对大模型应用效果进行持续调优，通过数据分析与策略改进，提升工具的性能和体验； 4、跟踪AI技术趋势，思考AI研发新范式、AI新技术在研发提效中的落地场景，驱动产品创新。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、开发语言和技术栈不限，熟悉Golang/Python/TypeScript优先，并熟悉常见的软件开发模式； 3、对AI应用方向有强烈的兴趣，熟悉Agent相关的常见范式架构，如Plan&Excute、ReAct、Workflow等，熟悉模型的工作原理和特性，并能结合原理和特性做稳定性、成本和效果优化优先； 4、业务理解能力强，能够针对业务上的需求梳理业务边界并快速匹配最适合的Agent工作流范式； 5、对行业流行的常见模型优缺点有大致的了解，并了解如何系统科学的评测帮助做模型选型； 6、掌握模型原理优先，对常见的CNN、RNN、Transformer模型结构及推理架构有一定的了解优先，对模型的二次训练原理及方法了解优先，如SFT、LoRA-SFT、DPO等。
+
+### AI Agent开发工程师 - 抖音研发
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 杭州 / 北京 / 北京 / 杭州 / 上海 / 广州 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：7 个
+  - `7667476145728080133` · AI Agent开发工程师 - 抖音研发 · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667476145728080133/detail
+  - `7667108919110519093` · AI Agent开发工程师 - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7667108919110519093/detail
+  - `7667142530726906117` · AI Agent开发工程师 - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7667142530726906117/detail
+  - `7678943434803464501` · AI Agent开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7678943434803464501/detail
+  - `7678943495675758901` · AI Agent开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7678943495675758901/detail
+  - `7678943572557383989` · AI Agent开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7678943572557383989/detail
+  - `7667476318612048181` · AI Agent开发工程师 - 抖音研发 · 广州 / 深圳 · https://jobs.bytedance.com/campus/position/7667476318612048181/detail
 
 **官方职责**
 
@@ -1290,30 +1505,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、具备扎实的编程基础，深入理解数据结构、基础算法和常用计算机系统知识；熟练掌握TypeScript/JavaScript、Python、Java/Kotlin、Swift、C++、Golang等至少一门语言，能够独立完成工程项目； 3、在前端、客户端或服务端至少一个方向具备较好的工程基础，能够完成模块设计、编码、测试和问题排查，并愿意跨技术边界解决问题；具备基本的服务端与API开发能力，熟悉Node.js、Golang生态下至少一套开发框架，理解异步任务、状态持久化、超时重试、服务部署及故障排查； 4、理解大语言模型及Agent的基本机制，包括上下文构建、任务规划、工具调用、状态与记忆管理、执行控制、RAG和结果验证；有可实际运行的Agent、AI编程工具或自动化项目经验； 5、具备良好的质量意识，能够针对模型输出的不确定性设计测试与评估方法，并通过日志、Tracing、执行轨迹和指标定位问题；关注系统稳定性、性能、成本、权限及安全边界； 6、具备较强的问题拆解、学习和协作能力，能够将模糊需求转化为可实现、可验证的工程任务，并对最终交付结果负责。 加分项 1、有Agent Harness、MCP、Coding Agent、Multi-Agent、运行时沙箱、自动化评测或可观测性相关实践； 2、有移动端跨端容器、开发者工具、CI/CD等领域经验； 3、了解SFT、模型推理优化，使用过LangChain、LangGraph、LlamaIndex等LLM应用框架，并清晰掌握原理； 4、独立完成过高质量AI项目，或有相关开源贡献、论文、技术竞赛成果。
 
-### AI Agent开发工程师 - 抖音研发
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：官方未提供
-- **项目 / 届别**：当前校园招聘
-- **官方 Requisition**：1 个
-  - AI Agent开发工程师 - 抖音研发 · https://jobs.bytedance.com/campus/position/7667877734431492357/detail
-- **岗位核验证据**：https://jobs.bytedance.com/campus/position/7667877734431492357/detail
-
-**已核验岗位摘要**
-
-团队介绍：抖音研发部门负责多款大型产品的研发，包括但不限于抖音、西瓜视频、汽水音乐。 加入我们，你将有机会参与亿级用户场景的开发与架构工作，使用前沿的技术助力业务一起不断成长。 1、参与抖音跨平台AI Agent产品及Agent Harness的架构设计与功能开发，推动AI能力在跨端研发场景中落地； 2、参与AI Coding产品的基建能力建设，包括SDLC全流程中代码理解与修改、工程构建、设备调试、Verify验证、部署、问题排查、性能优化等环节任务； 3、参与Agent Harness能力建设，包括上下文与状态管理、任务规划与执行控制、工具调用、记忆、权限管理、沙箱执行、异常恢复及执行可观测；根据实际任务复杂度选择单Agent或Multi-Agent架构； 4、建设跨平台研发工具链的AI Native原子
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-### AI Agent开发工程师（AI创作方向）
+### AI Agent开发工程师 - 移动OS
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 广州 / 杭州 / 深圳
+- **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7666017588976535861\` · AI Agent开发工程师（AI创作方向） - 抖音用户产品 · 北京 / 杭州 / 广州 / 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7666017588976535861/detail
+  - `7667420480446826805` · AI Agent开发工程师 - 移动OS · 北京 · https://jobs.bytedance.com/campus/position/7667420480446826805/detail
+
+**官方职责**
+
+团队介绍：我们隶属于产品研发与工程架构部，是字节跳动在智能硬件领域的软件技术攻坚力量—— 聚焦 AI 与智能硬件的深度融合，如豆包手机助手等；以 “让人与设备的交互更自然、更便捷” 为目标，探索前沿 AI 技术的落地场景，打造行业领先的智能硬件综合解决方案。 在这里，你将与一支顶尖技术团队并肩： - 直击 AI 与硬件结合的核心技术难题，参与从 “技术探索” 到 “场景落地” 的全链路研发； - 主导或深度参与关键技术突破，用创新定义智能硬件的交互未来； - 站在行业前沿，将技术理想转化为千万用户可感知的产品体验。 如果你心怀对技术的热忱，渴望在 AI 与智能硬件的赛道上突破自我、创造价值，我们期待你的加入，与我们一起解锁更多技术可能，共筑智能交互的新生态！ 1、负责移动OS测试领域AI提效的核心Agent及功能链路开发，深入理解测试领域提效重点并设计解决方案，设计和开发AI应用和解决方案原型，驱动AI提效； 2、负责Agent的开发，参与框架搭建，Prompt调优，工具开发，上下文管理等环节，技术驱动不断优化Agent落地效果，并降低数据中心成本； 3、负责跟踪AI技术趋势，关注语言模型、多模态模型最新动态，基于对模型的判断，思考人机交互等新范式在测试领域的落地场景，驱动AI提效。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟悉Linux，掌握常用数据结构、算法、设计模式，至少熟练掌握Golang/Java/PHP/Python/C++一门编程语言； 3、对大模型和Agent有较深入的理解，了解Agent Architectures/Structures（Multi-Agent，Context Engineering/Management，ReAct/PlanAct/CodeAct），了解Agent相关的交互协议（MCP，A2A，Function Call），熟悉常见的LLM实施模式、提示工程、评估框架、代理框架和检索框架等； 4、了解模型的Post-training训练技术，具备针对特定模型能力问题进行SFT、RL训练优化优先； 5、具备产品思维，能够以用户为出发点，结合业务有效落地并实现收益，能参与需求设计并提出技术可行性建议，与产品、设计团队高效协作； 6、对Agent技术有实践经验，并能清晰阐述如何通过Agent解决实际业务问题；熟悉AI应用开发流程、有端到端跨技术栈开发能力或AIGC功能落地经验者优先。
+
+### AI Agent开发工程师（AI创作方向） - 抖音用户产品
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州 / 广州 / 深圳 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7666017588976535861` · AI Agent开发工程师（AI创作方向） - 抖音用户产品 · 北京 / 杭州 / 广州 / 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7666017588976535861/detail
 
 **官方职责**
 
@@ -1323,13 +1537,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、开发语言和技术栈不限，熟悉Golang/Python/TypeScript优先，并熟悉常见的软件开发模式； 3、对AI应用方向有强烈的兴趣，熟悉Agent相关的常见范式架构，如Plan&Excute、ReAct、Workflow等，熟悉模型的工作原理和特性，并能结合原理和特性做稳定性、成本和效果优化优先； 4、业务理解能力强，能够针对业务上的需求梳理业务边界并快速匹配最适合的Agent工作流范式； 5、对行业流行的常见模型优缺点有大致的了解，并了解如何系统科学的评测帮助做模型选型； 6、掌握模型原理优先，对常见的CNN、RNN、Transformer模型结构及推理架构有一定的了解优先，对模型的二次训练原理及方法了解优先，如SFT、LoRA-SFT、DPO等。
 
-### AI Agent开发工程师（东南亚业务）
+### AI Agent开发工程师（东南亚业务） - TikTok Shop
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667086452887357749\` · AI Agent开发工程师（东南亚业务） - TikTok Shop · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667086452887357749/detail
+  - `7667086452887357749` · AI Agent开发工程师（东南亚业务） - TikTok Shop · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667086452887357749/detail
 
 **官方职责**
 
@@ -1339,13 +1553,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI Agent开发工程师（全托管业务）
+### AI Agent开发工程师（全托管业务） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：杭州 / 珠海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667052814369622277\` · AI Agent开发工程师（全托管业务） - TikTok Shop · 杭州 / 珠海 · https://jobs.bytedance.com/campus/position/7667052814369622277/detail
+  - `7667052814369622277` · AI Agent开发工程师（全托管业务） - TikTok Shop · 杭州 / 珠海 · https://jobs.bytedance.com/campus/position/7667052814369622277/detail
 
 **官方职责**
 
@@ -1355,13 +1569,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI Agent开发工程师（创新&中台）
+### AI Agent开发工程师（创新&中台） - 数据BP
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7675348782494189877\` · AI Agent开发工程师（创新&中台） - 数据BP · 北京 · https://jobs.bytedance.com/campus/position/7675348782494189877/detail
+  - `7675348782494189877` · AI Agent开发工程师（创新&中台） - 数据BP · 北京 · https://jobs.bytedance.com/campus/position/7675348782494189877/detail
 
 **官方职责**
 
@@ -1371,13 +1585,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业； 2、精通Java/Python/Go至少一门后端开发语言，熟悉分布式系统设计与微服务架构，具备扎实的工程素养； 3、熟悉大数据技术体系，了解Hive/Spark/ClickHouse/Doris等至少一种计算/存储组件，有数据平台或数仓相关研发经验； 4、理解AI Agent原理，熟悉智能体编排、工具调用、RAG检索增强等机制，有大模型API对接与应用落地经验； 5、全栈方向需熟练掌握React/Vue等主流前端框架，具备JS/TS开发能力。 加分项 1、有Text-to-SQL、数据Copilot、智能数据治理相关项目落地经验； 2、有LangChain、LlamaIndex、AutoGen等Agent框架深度使用或二次开发经验； 3、熟悉向量数据库、Prompt工程、大模型微调相关技术； 4、有数据中台、数据资产、数据质量系统研发经验； 5、开源社区活跃贡献者，或拥有个人技术产品。
 
-### AI Agent开发工程师（前端）
+### AI Agent开发工程师（前端） - 数据BP
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 成都
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7675629237999601925\` · AI Agent开发工程师（前端） - 数据BP · 北京 / 成都 · https://jobs.bytedance.com/campus/position/7675629237999601925/detail
+  - `7675629237999601925` · AI Agent开发工程师（前端） - 数据BP · 北京 / 成都 · https://jobs.bytedance.com/campus/position/7675629237999601925/detail
 
 **官方职责**
 
@@ -1387,13 +1601,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业； 2、具备扎实的前端基础，熟练掌握HTML、CSS、JavaScript/TypeScript；熟悉React或Vue等主流框架，了解组件化开发思想，有实际项目开发经验；了解前端工程化基础，如Webpack/Vite、模块化、Git协作等； 3、对AI Agent、大模型应用有兴趣，了解Prompt、对话交互、Function Calling等基本概念，有相关项目或课程实践经验者优先； 4、具备良好的学习能力和好奇心，愿意主动探索AI新技术并尝试落地； 5、沟通顺畅，有团队协作意识，能积极参与需求讨论与方案设计。
 
-### AI Agent开发工程师（国际化方向）
+### AI Agent开发工程师（国际化方向） - 数据BP
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667163020699257141\` · AI Agent开发工程师（国际化方向） - 数据BP · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7667163020699257141/detail
+  - `7667163020699257141` · AI Agent开发工程师（国际化方向） - 数据BP · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7667163020699257141/detail
 
 **官方职责**
 
@@ -1403,13 +1617,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业； 2、精通Java/Python/Go至少一门后端开发语言，熟悉分布式系统设计与微服务架构，具备扎实的工程素养； 3、熟悉大数据技术体系，了解Hive/Spark/ClickHouse/Doris等至少一种计算/存储组件，有数据平台或数仓相关研发经验； 4、理解AI Agent原理，熟悉智能体编排、工具调用、RAG检索增强等机制，有大模型API对接与应用落地经验； 5、全栈方向需熟练掌握React/Vue等主流前端框架，具备JS/TS开发能力。 加分项 1、有Text-to-SQL、数据Copilot、智能数据治理相关项目落地经验； 2、有LangChain、LlamaIndex、AutoGen等Agent框架深度使用或二次开发经验； 3、熟悉向量数据库、Prompt工程、大模型微调相关技术； 4、有数据中台、数据资产、数据质量系统研发经验； 5、开源社区活跃贡献者，或拥有个人技术产品。
 
-### AI Agent开发工程师（安全与合规）
+### AI Agent开发工程师（安全与合规） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667530064128444725\` · AI Agent开发工程师（安全与合规） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667530064128444725/detail
+  - `7667530064128444725` · AI Agent开发工程师（安全与合规） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667530064128444725/detail
 
 **官方职责**
 
@@ -1419,13 +1633,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、信息安全、网络安全等相关专业优先； 2、热爱计算机科学技术，精通至少一门编程语言，包括但不仅限于：Java、C、C++、PHP、Python、Go，掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 3、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 4、了解大模型、多模态及AI应用的基本原理、能力边界和风险特征，能够理解产品架构、数据流转及人机交互过程中的问题； 5、具备AI Native工作意识和较强的学习能力，能够熟练运用AI Agent提升工作效率。 加分项： 1、有生成式AI内容治理、隐私保护、版权治理或数据安全相关项目、实习或研究经历； 2、熟悉个人信息保护、数据安全、生成式AI治理等相关规则； 3、有使用AI工具搭建自动化工作流、评测工具或风险分析原型的经验。
 
-### AI Agent开发工程师（平台方向）
+### AI Agent开发工程师（平台方向） - TikTok Shop
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667045712349726981\` · AI Agent开发工程师（平台方向） - TikTok Shop · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667045712349726981/detail
+  - `7667045712349726981` · AI Agent开发工程师（平台方向） - TikTok Shop · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667045712349726981/detail
 
 **官方职责**
 
@@ -1435,13 +1649,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握Go/Java/Python编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源。
 
-### AI Agent开发工程师（开发套件方向）
+### AI Agent开发工程师（开发套件方向） - 数据平台
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：北京 / 杭州 / 上海 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667538136535140613\` · AI Agent开发工程师（开发套件方向） - 数据平台 · 北京 / 杭州 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667538136535140613/detail
+  - `7667538136535140613` · AI Agent开发工程师（开发套件方向） - 数据平台 · 北京 / 杭州 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667538136535140613/detail
 
 **官方职责**
 
@@ -1451,13 +1665,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、软件工程、数据科学等相关专业优先； 2、编程基础扎实，熟悉至少一种主流编程语言，具备良好的数据结构、算法、操作系统、网络或数据库基础； 3、对前端（React/Vue/TypeScript）或后端（Node.js/Python/Go/Java等）开发有实践经验，能独立完成模块设计、开发、调试与上线交付； 4、对AI Agent/LLM应用有浓厚兴趣，愿意围绕用户问题持续打磨Prompt、评估方法和工程链路； 5、具备良好的问题拆解、沟通协作和负责人意识，关注业务结果、工程质量和长期可维护性。 加分项 1、有AI Agent、LLM应用、数据产品、开发者工具、自动化工作流等相关项目经验； 2、有可验证产出：个人项目、技术博客、开源贡献、论文/专利、竞赛或Hackathon作品等； 3、熟悉数据平台、BI分析、数据研发链路，或有前后端全栈、工程化、评测体系建设经验； 4、有从0到1快速交付产品能力的经历，并能清晰说明方案取舍与落地效果。
 
-### AI Agent开发工程师（抖音服务架构）
+### AI Agent开发工程师（抖音服务架构） - 抖音研发
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 广州 / 深圳
+- **地点**：北京 / 深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664603957314226485\` · AI Agent开发工程师（抖音服务架构） - 抖音研发 · 北京 / 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7664603957314226485/detail
+  - `7664603957314226485` · AI Agent开发工程师（抖音服务架构） - 抖音研发 · 北京 / 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7664603957314226485/detail
 
 **官方职责**
 
@@ -1467,13 +1681,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具有良好的编程基础，熟练使用至少一种编程语言，包括但不限于Python、C++、Golang、Java等，具备扎实的编码能力； 3、具备一定的AI Agent系统端到端开发经验，理解LLM底层原理，熟练运用RAG（检索增强生成）、LangChain、LangGraph、AutoGen、MCP、Skill等一项或多项技术，具备快速复现AI论文核心思想并完成工程化落地的能力； 4、良好的学习能力，对解决具有挑战性的问题充满激情，对AI原生应用及通用Agent领域有强烈热情。
 
-### AI Agent开发工程师（拉美业务）
+### AI Agent开发工程师（拉美业务） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 杭州 / 珠海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667051331064334645\` · AI Agent开发工程师（拉美业务） - TikTok Shop · 上海 / 杭州 / 珠海 · https://jobs.bytedance.com/campus/position/7667051331064334645/detail
+  - `7667051331064334645` · AI Agent开发工程师（拉美业务） - TikTok Shop · 上海 / 杭州 / 珠海 · https://jobs.bytedance.com/campus/position/7667051331064334645/detail
 
 **官方职责**
 
@@ -1483,13 +1697,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI Agent开发工程师（数据知识方向）
+### AI Agent开发工程师（数据知识方向） - 数据平台
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 杭州 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667531539372443909\` · AI Agent开发工程师（数据知识方向） - 数据平台 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667531539372443909/detail
+  - `7667531539372443909` · AI Agent开发工程师（数据知识方向） - 数据平台 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667531539372443909/detail
 
 **官方职责**
 
@@ -1499,13 +1713,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、软件工程、数据科学等相关专业优先； 2、编程基础扎实，熟悉至少一种主流编程语言，具备良好的数据结构、算法、操作系统、网络或数据库基础； 3、对前端（React/Vue/TypeScript）或后端（Node.js/Python/Go等）开发有实践经验，能独立完成模块设计、开发、调试与上线交付； 4、对AI Agent/LLM应用有浓厚兴趣，愿意围绕用户问题持续打磨Prompt、评估方法和工程链路； 5、具备良好的问题拆解、沟通协作和负责人意识，关注业务结果、工程质量和长期可维护性。 加分项 1、有AI Agent、LLM应用、数据产品、开发者工具、自动化工作流等相关项目经验； 2、有可验证产出：个人项目、技术博客、开源贡献、论文/专利、竞赛或Hackathon作品等； 3、熟悉数据平台、BI分析、数据研发链路，或有前后端全栈、工程化、评测体系建设经验； 4、有从0到1快速交付产品能力的经历，并能清晰说明方案取舍与落地效果。
 
-### AI Agent开发工程师（治理风控）
+### AI Agent开发工程师（治理风控） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667049108856277253\` · AI Agent开发工程师（治理风控） - TikTok Shop · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667049108856277253/detail
+  - `7667049108856277253` · AI Agent开发工程师（治理风控） - TikTok Shop · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667049108856277253/detail
 
 **官方职责**
 
@@ -1515,13 +1729,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI Agent开发工程师（泛抖音）
+### AI Agent开发工程师（泛抖音） - 数据BP
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 杭州 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668170602797402421\` · AI Agent开发工程师（泛抖音） - 数据BP · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7668170602797402421/detail
+  - `7668170602797402421` · AI Agent开发工程师（泛抖音） - 数据BP · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7668170602797402421/detail
 
 **官方职责**
 
@@ -1531,13 +1745,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、大数据等相关专业优先； 2、具备扎实的软件工程基础，熟悉至少一种后端开发语言，Python经验优先； 3、熟悉数据库、SQL、数据仓库或大数据研发基础知识； 4、对大模型、AI Agent、AI Coding、工具调用等方向有兴趣或实践经验； 5、具备良好的问题分析能力和工程落地能力，能够在复杂系统中持续迭代优化； 6、有AI Agent、Text-to-SQL、RAG、智能问答、开发者工具相关项目经验优先；有数据平台、指标平台、数仓研发、大数据分析相关经验优先；有后端服务、异步任务、消息队列、缓存、测试框架相关经验优先。
 
-### AI Agent开发工程师（美国业务）
+### AI Agent开发工程师（美国业务） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667053567440701701\` · AI Agent开发工程师（美国业务） - TikTok Shop · 上海 · https://jobs.bytedance.com/campus/position/7667053567440701701/detail
+  - `7667053567440701701` · AI Agent开发工程师（美国业务） - TikTok Shop · 上海 · https://jobs.bytedance.com/campus/position/7667053567440701701/detail
 
 **官方职责**
 
@@ -1547,13 +1761,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI Agent开发工程师（质量方向）
+### AI Agent开发工程师（质量方向） - TikTok Shop
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳 / 珠海
+- **地点**：上海 / 杭州 / 北京 / 深圳 / 珠海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667050433923287301\` · AI Agent开发工程师（质量方向） - TikTok Shop · 上海 / 杭州 / 北京 / 深圳 / 珠海 · https://jobs.bytedance.com/campus/position/7667050433923287301/detail
+  - `7667050433923287301` · AI Agent开发工程师（质量方向） - TikTok Shop · 上海 / 杭州 / 北京 / 深圳 / 珠海 · https://jobs.bytedance.com/campus/position/7667050433923287301/detail
 
 **官方职责**
 
@@ -1563,13 +1777,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、热爱计算机科学，精通至少一门编程语言，包括但不仅限于：Java、C、C++、PHP、Python、Go； 3、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 4、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 5、有强烈的求知欲，优秀的学习和沟通能力。
 
-### AI Agent开发工程师（资金业务）
+### AI Agent开发工程师（资金业务） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667055078772820229\` · AI Agent开发工程师（资金业务） - TikTok Shop · 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7667055078772820229/detail
+  - `7667055078772820229` · AI Agent开发工程师（资金业务） - TikTok Shop · 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7667055078772820229/detail
 
 **官方职责**
 
@@ -1579,13 +1793,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI Agent开发（数据采集方向）
+### AI Agent开发（数据采集方向） - 内容质量与数据服务平台
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670745533246884101\` · AI Agent开发（数据采集方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7670745533246884101/detail
+  - `7670745533246884101` · AI Agent开发（数据采集方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7670745533246884101/detail
 
 **官方职责**
 
@@ -1595,13 +1809,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历； 2、对AI技术与业务落地有热情，有大模型/AI应用相关学习或实践经验，熟悉主流大模型工具/框架（如LangChain、Dify等），会使用Python/Go其中一种代码语言的； 3、有项目交付、资源协调或运营类实习经验优先； 4、沟通协调能力良好，责任心强，具备较强的问题拆解、主动学习和独立解决问题的能力，执行力和自驱力突出，能适应业务环境。
 
-### AI Agent服务端研发工程师
+### AI Agent服务端研发工程师 - 开发者服务
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 广州 / 杭州 / 深圳
+- **地点**：北京 / 上海 / 杭州 / 深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667098583514024245\` · AI Agent服务端研发工程师 - 开发者服务 · 北京 / 上海 / 杭州 / 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667098583514024245/detail
+  - `7667098583514024245` · AI Agent服务端研发工程师 - 开发者服务 · 北京 / 上海 / 杭州 / 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667098583514024245/detail
 
 **官方职责**
 
@@ -1611,19 +1825,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、优秀的代码能力、数据结构和基础算法功底，熟练掌握至少一门编程语言，包括但不限于Python、Java、Go等； 3、了解AI Agent相关技术与设计思想，了解主流AI模型及其应用场景； 4、有从0-1搭建AI Agent应用经验，能够独立完成Agent应用的设计开发者优先； 5、在ACM/ICPC、NOI/IOI、Top Coder、Kaggle等比赛获奖者优先。
 
-### AI Agent研发工程师
+### AI Agent研发工程师 - AI算力基础设施
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 广州 / 杭州 / 深圳 / 西安
+- **地点**：北京 / 上海 / 杭州 / 西安
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：7 个
-  - \`7664440558144833845\` · AI Agent研发工程师 - AI算力基础设施 · 北京 / 上海 / 杭州 / 西安 · https://jobs.bytedance.com/campus/position/7664440558144833845/detail
-  - \`7669651173607278901\` · AI Agent研发工程师 - 中国交易与广告 · 北京 / 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7669651173607278901/detail
-  - \`7672741461658994997\` · AI Agent研发工程师 - 剪映CapCut · 深圳 / 北京 / 广州 · https://jobs.bytedance.com/campus/position/7672741461658994997/detail
-  - \`7667124448756091189\` · AI Agent研发工程师 - 国际化广告质量效能 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667124448756091189/detail
-  - \`7667887867200948533\` · AI Agent研发工程师 - 火山引擎 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7667887867200948533/detail
-  - \`7680919763589417269\` · AI Agent研发工程师 - 火山方舟 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7680919763589417269/detail
-  - \`7667030890266380549\` · AI Agent研发工程师 - 番茄小说/红果短剧/番茄畅听 · 上海 · https://jobs.bytedance.com/campus/position/7667030890266380549/detail
+- **官方 Requisition**：1 个
+  - `7664440558144833845` · AI Agent研发工程师 - AI算力基础设施 · 北京 / 上海 / 杭州 / 西安 · https://jobs.bytedance.com/campus/position/7664440558144833845/detail
 
 **官方职责**
 
@@ -1633,13 +1841,109 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、掌握扎实的计算机基础与算法功底，熟练掌握至少一门编程语言（Go/Python/C++/Java等）； 3、对大模型与AI Agent领域有强烈兴趣，了解主流大模型能力边界、Agent基本机制（工具调用、上下文与记忆、任务编排等）； 4、熟悉Prompt Engineering、RAG、LangChain/LangGraph/AutoGen、MCP等其中一种技术栈者优先； 5、具备良好的系统思维与抽象能力，能够在复杂协作场景下拆解问题、设计可演进的方案； 6、求知欲强、学习能力突出，能够及时跟进业界前沿技术；具备良好的沟通与协作能力。 加分项 1、有Agent、LLM应用、RAG、知识库、Plugin/MCP等相关项目经验或开源贡献； 2、使用或研究过LangGraph、Claude Code、Codex、Hermes、Computer Use、Agent Skills等前沿框架或工具； 3、有大规模在线系统、工作流引擎、平台化产品或高并发服务的研发经验； 4、具备强化学习、规划算法实践经验，对Agentic AI研发范式有深入理解者优先； 5、参与过学术论文、竞赛或社区分享，具备良好的技术表达与写作能力。
 
-### AI Agent研发工程师（客服方向）
+### AI Agent研发工程师 - 中国交易与广告
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 深圳
+- **地点**：北京 / 深圳 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668200707203303733\` · AI Agent研发工程师（客服方向） - 火山引擎 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7668200707203303733/detail
+  - `7669651173607278901` · AI Agent研发工程师 - 中国交易与广告 · 北京 / 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7669651173607278901/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，基于个性化推荐、深度学习和大模型技术，依托抖音、今日头条、红果短剧、西瓜视频、番茄小说等多元产品，构建抖音电商、生活服务、广告营销等核心营收业务的算法策略和工程架构。部门运用领先的算法能力，精准连接海量用户与商家，通过推荐、广告和搜索算法精准匹配需求并促进交易达成，保障用户体验与商家权益，实现营收业务可持续增长；基于深厚的技术积累，构建高效、智能、可靠的交易与广告产品，全面提升多行业收入变现与市场占有。在这里，你将直面超大规模流量与复杂业务场景的技术挑战，深度应用业界领先的商业模型与算法技术，投身面向未来的数字营销能力建设，持续探索前沿技术。 1、智能Agent研发：面向商业化广告审核与治理场景，利用前沿大模型与Agent技术，研发下一代用于智能审核体系，智能风险治理，如智能标注、风险识别、大模型治理、智能审核链路等； 2、审核体系演进：负责商业化广告（广告主、账户、素材、投放链路等）核心审核与风控系统的架构设计与研发；重构传统审核链路，推进审核流程线上化、自动化，并通过AI能力提效，实现高效、稳定、可规模化的商业化审核体系； 3、业务数据洞察：深入理解商业化广告投放及审核业务逻辑，通过数据分析发现问题并归因；针对特定风险场景（如广告合规、虚假宣传、导流风险、低质内容等）进行链路或策略优化，用技术手段解决审核与治理中的实际痛点； 4、深入业务，与产品、策略、审核运营团队紧密协作，沉淀通用能力与平台化方案，共同达成商业化安全与业务增长目标。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、对商业化广告与审核业务场景有强烈兴趣，渴望利用AI技术解决复杂的内容治理难题；持续关注大模型、Agent在风控、内容理解、审核提效等领域的前沿应用，保持技术敏感度； 3、具备扎实的计算机基础，理解常见数据结构、算法、操作系统、网络等基础知识；拥有扎实的计算机基础与后端研发经验（Java、Go、Python等），具备高并发、高可用系统设计能力；对主流AI技术架构（LLM应用、Agent架构、RAG等）有系统认知； 4、具备敏捷高效的工作方式，面对复杂、多角色参与的审核场景能主动思考、自主推进，具备较强的项目落地与跨团队协同能力，致力于通过技术手段创造可量化的业务价值（如降低风险水位、提升审核效率、优化人力投入结构）； 5、具备优秀的数据敏感度与分析能力者优先，有广告审核、内容安全、风控、大模型Agent等相关经验者加分。
+
+### AI Agent研发工程师 - 剪映CapCut
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 北京 / 广州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7672741461658994997` · AI Agent研发工程师 - 剪映CapCut · 深圳 / 北京 / 广州 · https://jobs.bytedance.com/campus/position/7672741461658994997/detail
+
+**官方职责**
+
+团队介绍：剪映研发团队，主要支持剪映、CapCut、醒图、Hypic、即梦、Dreamina、小云雀、Pippit等多款国内外产品的研发工作，业务覆盖多元化影像创作场景，并孵化了多款AIGC明星产品，相关产品多次登顶国内外App Store 免费应用榜第一，并继续保持高速增长。加入我们，一起打造全球最受用户欢迎的影像创作和GenAI产品。 1、参与小云雀及Pippit Web、App核心功能开发，负责综合创作Agent的能力迭代与效果优化； 2、参与AI Agent技术建设，包括Prompt工程、上下文工程、原子能力搭建、工作流编排及性能调优； 3、调研、评估并快速应用前沿AI技术，优化视频、图片、短剧等内容的生成与编辑链路； 4、与产品、算法、设计等团队紧密协作，持续提升AI内容生成效果和实时交互体验； 5、参与市场调研与用户分析，根据业务需求设计技术方案并推动落地，保持产品体验的行业领先。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、通信、人工智能等相关专业优先； 2、具备扎实的计算机基础、良好的编程能力和代码质量意识； 3、对AI、AIGC和Agent技术有强烈热情，学习能力强，愿意持续探索并快速实践新技术； 4、具备良好的沟通协作能力、主人翁意识和问题解决能力，能够主动推动事情落地； 5、至少符合以下一个技术方向： 1）前端方向：熟悉React、Vue等现代前端框架之一，了解Web工程化及交互体验优化； 2）服务端方向：熟悉至少一种服务端开发语言，了解MySQL、Redis、消息队列等常用组件； 3）客户端方向：熟悉Android或iOS开发，了解Kotlin、Swift、Objective-C等相关技术； 4）全栈方向：能够独立完成从产品交互到服务端能力的端到端开发与验证。 加分项 1、有AI Agent、RAG、MCP、Prompt工程或上下文工程相关项目实践； 2、使用大模型完成过真实产品、开源项目、课程项目或个人作品； 3、了解多模态内容生成、视频或图片生成、模型服务及AI工作流编排； 4、在算法竞赛、开源社区、技术比赛或高质量实习中有突出表现； 5、有较强的产品意识，愿意站在用户视角持续优化体验。
+
+### AI Agent研发工程师 - 国际化广告质量效能
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667124448756091189` · AI Agent研发工程师 - 国际化广告质量效能 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667124448756091189/detail
+
+**官方职责**
+
+团队介绍：国际化广告质量与效能技术团队致力于构建覆盖广告生态全链路的质量保障体系，并通过技术驱动效能提升，业务范围涵盖广告管理平台、投放系统、审核系统、转化归因及相关基础设施等。 1、负责国际化商业平台应急响应、稳定性保障等场景的Agent开发，建设对话机器人中的信息检索、内容创作、记忆管理、任务执行等核心能力； 2、深度参与Agent在质量保障场景中的AI应用落地，负责上下文工程、工具调用设计、知识检索、任务拆解、多轮交互等方案设计与实现； 3、解决Agent工程化过程中的关键技术挑战，包括超长任务可靠性、执行链路稳定性、系统成本控制、异常恢复与结果可验证等问题； 4、持续优化模型迭代依赖的训练基础设施、人效工具和评测闭环，推动Agent从Demo走向可在线上稳定运行的生产级系统； 5、与研发、产品、算法、SRE、数据等团队协作，将一线工程师的排障经验、质量策略和业务知识沉淀为可复用的智能系统能力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能、数学等相关专业优先； 2、计算机基础扎实，熟悉数据结构、算法、操作系统、计算机网络、数据库等基础知识； 3、熟练掌握Go/Python/Java/TypeScript/C++等至少一门编程语言，具备良好的代码实现能力和工程习惯； 4、对大语言模型、AI Agent、RAG、Prompt Engineering、工具调用、模型评测等方向有兴趣或实践经验； 5、有好奇心、自驱力和负责人意识，愿意面对线上真实复杂问题，并持续追问本质。 加分项 1、有AI Agent、LLM应用、RAG、智能问答、自动化工作流等项目经验； 2、有稳定性、AIOps、智能排障、日志分析、监控告警、故障归因相关实践经验； 3、有工程项目、开源项目、竞赛获奖或高质量实习经历； 4、能熟练使用AI工具辅助编码、排障、文档理解和方案设计，并能对AI输出进行判断、校验和优化。 加入我们，你会获得： 1、真实全球商业化场景：直接参与国际化商业化核心链路的质量、稳定性和效能建设； 2、前沿AI工程实践：不是停留在Prompt层，而是深入Agent架构、工具系统、评测体系和生产级落地； 3、高成长技术环境：资深工程师1v1带教，有机会快速负责真实系统模块； 4、足够大的技术舞台：在质量保障、稳定性、研发效能和AI Agent交叉地带，做有业务价值也有技术深度的事情。
+
+### AI Agent研发工程师 - 火山引擎
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667887867200948533` · AI Agent研发工程师 - 火山引擎 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7667887867200948533/detail
+
+**官方职责**
+
+团队介绍：火山引擎是字节跳动旗下云和AI服务平台，将字节跳动快速发展过程中积累的增长方法、技术能力和应用工具开放给外部企业，通过云和AI技术，推进企业智能化转型，激发增长潜能。 1、负责语音大模型智能体应用的开发与探索； 2、推动产品架构和核心技术改进和优化，解决工程技术难题； 3、跟踪大模型前沿技术、最新研究成果及行业应用趋势，结合业务场景探索创新方向。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备熟练使用AI Coding工具、良好的编程习惯和代码管理能力； 3、对多模态大模型、Agent技术以及模型的部署流程有基本的了解和认识； 4、能够独立负责模块级别的服务开发，完成复杂组件的技术设计和实现； 5、熟练掌握常用的数据库，缓存，消息队列等，具备业务使用场景下方案选型能力； 6、保持开放、持续学习，备较强的责任心和主动性，善于发现并解决问题，具备良好的团队协作精神。 【加分项】 1、熟悉大模型应用算法能力优先，包括并不限于SFT、RAG、Agent、PE等； 2、有大模型相关项目或使用经验者优先，熟悉LangChain、Dify等框架； 3、熟悉云原生相关开发使用经验者优先。
+
+### AI Agent研发工程师 - 火山方舟
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7680919763589417269` · AI Agent研发工程师 - 火山方舟 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7680919763589417269/detail
+
+**官方职责**
+
+团队介绍：火山方舟是火山引擎推出的一站式大模型服务平台，是中国大模型市场产品和份额领跑者。平台提供模型推理、评测、精调等全流程服务。方舟搭载了豆包及业界主流大模型，提供丰富的插件生态和AI应用开发服务，并通过稳定可靠的安全互信方案、专业的算法技术服务，全方位保障企业级AI应用落地。 1、建设Agent Runtime与Harness，覆盖任务规划、工具调用、状态管理、异步执行、结果校验与异常恢复； 2、设计上下文构建、检索、压缩、记忆与缓存策略，平衡任务质量、响应延迟与Token成本； 3、建设工具接入协议、权限控制与插件机制，以及Trace、调试、评测与回归体系； 4、优化任务成功率、工具调用成功率、延迟与成本，完善重试、降级、幂等、可观测性及安全防护。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能、数据科学、自动化、电子信息等相关专业； 2、有LLM应用、Agent或复杂工作流的生产经验，理解任务拆解、工具编排、执行反馈与结果校验； 3、有Context Engineering实践经验，熟悉上下文构建、检索、压缩、记忆与缓存策略； 4、能独立设计可靠的API、存储、缓存、队列与异步任务系统，并具备测试和线上运维能力； 5、能在需求不明确时完成问题拆解、优先级判断与高质量交付，并持续跟进AI技术进展。
+
+### AI Agent研发工程师 - 番茄小说/红果短剧/番茄畅听
+
+- **证据状态**：FULL_JD
+- **地点**：上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667030890266380549` · AI Agent研发工程师 - 番茄小说/红果短剧/番茄畅听 · 上海 · https://jobs.bytedance.com/campus/position/7667030890266380549/detail
+
+**官方职责**
+
+团队介绍： 番茄小说 - 是抖音集团在 2019 年推出的免费阅读产品，致力于为读者提供优质的阅读体验。番茄小说拥有海量正版小说，涵盖言情、都市、玄幻、悬疑等主流网文类型，以及大量热剧原著和经典出版物，支持用户看书、听书。 番茄畅听 - 于2020年6月推出，是抖音集团旗下的免费音频产品，致力于为用户提供优质的音频体验。番茄畅听拥有海量的正版免费真人有声音频，音频类型丰富多样，包括有声书、评书相声、历史人文、学习成长等。 红果短剧 - 是抖音集团2023年推出的免费看剧产品，致力于为用户提供海量免费优质短剧，同时也为用户提供电影、电视剧、小说、有声书等多元内容，满足不同用户的内容消费需求。 1、构建高效、可靠的AI Agent；包括但不限于模型接入、Multi-Agent系统，RAG优化、MCP及工具开发、数据和训练工程等； 2、围绕小说、短剧等内容的全生命周期做引入决策、生态策略、标签挖掘等方向Agent应用开发工作、保证业务的高效迭代； 3、追踪前沿Agent技术，探索最新的架构与交互范式，推进内容产品相关的Agent技术预研与产品化落地。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，扎实的计算机、编程基础，熟悉主流大语言模型的原理及方法； 2、理解Multi-Agent系统、任务分解、自动化规划、Prompt Engineering等技术领域之一或多个； 3、出色的结构化表达能力，较强的技术敏感度与前瞻性，独立的思考和判断力；自驱力与学习能力突出，对Agent及知识工程前沿技术有强烈探索欲，逻辑清晰，具备优秀的技术攻坚与团队协作能力。
+
+### AI Agent研发工程师（客服方向） - 火山引擎
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668200707203303733` · AI Agent研发工程师（客服方向） - 火山引擎 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7668200707203303733/detail
 
 **官方职责**
 
@@ -1649,13 +1953,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、精通数据结构和算法设计，熟练掌握Python/Java/Go等至少一门语言； 3、对大模型有深入理解，熟悉LLM技术原理与应用方法，有Agent系统设计与实现经验优先； 4、在ACM/NOI/IOI/TopCoder获奖者优先； 5、具备良好的团队沟通协作能力，能和团队一起探索新技术，推进技术进步。
 
-### AI Agent研发质量效能工程师
+### AI Agent研发质量效能工程师 - 豆包
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668592272490367285\` · AI Agent研发质量效能工程师 - 豆包 · 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668592272490367285/detail
+  - `7668592272490367285` · AI Agent研发质量效能工程师 - 豆包 · 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668592272490367285/detail
 
 **官方职责**
 
@@ -1665,13 +1969,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、自动化等相关专业优先； 2、具备基础的编程能力，至少熟悉一门常用开发语言；具备扎实的计算机基础知识，了解网络通信基础，包括TCP/IP、HTTP等常见协议； 3、熟练使用至少一种AI编程工具，能够将AI能力应用于自动化验证、评测脚本开发、问题分析等场景；对AI产品质量、自动化验证、评测。
 
-### AI Agent移动端研发工程师
+### AI Agent移动端研发工程师 - 开发者服务
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667097616880404741\` · AI Agent移动端研发工程师 - 开发者服务 · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667097616880404741/detail
+  - `7667097616880404741` · AI Agent移动端研发工程师 - 开发者服务 · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667097616880404741/detail
 
 **官方职责**
 
@@ -1681,13 +1985,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、优秀的代码能力、数据结构和基础算法功底，熟练掌握至少一门编程语言，包括但不限于Python、Java、Go等； 3、了解AI Agent相关技术与设计思想，了解主流AI模型及其应用场景； 4、有从0-1搭建AI Agent应用经验，能够独立完成Agent应用的设计开发者优先； 5、在ACM/ICPC、NOI/IOI、Top Coder、Kaggle等比赛获奖者优先。
 
-### AI Agent策略工程师
+### AI Agent策略工程师 - 豆包爱学
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665188768413042997\` · AI Agent策略工程师 - 豆包爱学 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665188768413042997/detail
+  - `7665188768413042997` · AI Agent策略工程师 - 豆包爱学 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665188768413042997/detail
 
 **官方职责**
 
@@ -1697,16 +2001,16 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机等相关专业优先； 2、熟悉LLM技术原理与应用方法，理解Agent相关技术方法（如harness、多智能体、RAG、Memory）； 3、有良好的产品思维，能够主动思考并探索产品创新； 4、对AI技术和应用有浓厚兴趣，能持续追踪业内最新技术进展。
 
-### AI Agent质量效能工程师
+### AI Agent质量效能工程师 - Seed
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：上海 / 深圳 / 北京 / 上海 / 杭州 / 北京 / 深圳 / 杭州 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：4 个
-  - \`7683832671797774645\` · AI Agent质量效能工程师 - Seed · 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7683832671797774645/detail
-  - \`7668319507681216821\` · AI Agent质量效能工程师 - Seed · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668319507681216821/detail
-  - \`7668321652288211253\` · AI Agent质量效能工程师 - Seed · 北京 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7668321652288211253/detail
-  - \`7668318655901976885\` · AI Agent质量效能工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668318655901976885/detail
+  - `7683832671797774645` · AI Agent质量效能工程师 - Seed · 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7683832671797774645/detail
+  - `7668319507681216821` · AI Agent质量效能工程师 - Seed · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668319507681216821/detail
+  - `7668321652288211253` · AI Agent质量效能工程师 - Seed · 北京 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7668321652288211253/detail
+  - `7668318655901976885` · AI Agent质量效能工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668318655901976885/detail
 
 **官方职责**
 
@@ -1716,29 +2020,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、自动化等相关专业优先； 2、熟练使用至少一种AI编程工具，包含但不限于Claude、Codex、TRAE等，能够将AI能力应用于自动化验证、评测脚本开发、问题分析与质量效率优化等场景；具备基础的编程能力，至少熟悉一门常用开发语言，包括但不限于Python、Golang、Java、C/C++等，有脚本开发、工具开发或工程实践经验者优先； 3、具备扎实的计算机基础知识，了解网络通信基础，包括TCP/IP、HTTP等常见协议； 4、对AI产品质量、自动化验证、评测体系或工程效率方向有兴趣，理解除“结果是否正确”之外，还需要关注“过程是否可控、系统是否稳定、反馈是否高效”； 5、了解常见的自动化方法、数据驱动验证思路或持续集成流程，有质量工具、评测平台、自动化流程或工程效率建设经验者优先，了解常见算法评测方法与客观评估指标，有大模型、搜索、NLP、语音、多模态等相关评测经验者优先； 6、具备良好的问题分析与协作能力，能够从业务、流程与系统多个层面推动质量与效率持续优化。
 
-### AI Native应用服务端开发工程师（即梦AI）
-
-- **证据状态**：FULL_JD
-- **地点**：北京 / 深圳
-- **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：1 个
-  - \`7678349457138878773\` · AI Native应用服务端开发工程师（即梦AI） - 剪映CapCut · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7678349457138878773/detail
-
-**官方职责**
-
-团队介绍：剪映研发团队，主要支持剪映、CapCut、醒图、Hypic、即梦、Dreamina、小云雀、Pippit等多款国内外产品的研发工作，业务覆盖多元化影像创作场景，并孵化了多款AIGC明星产品，相关产品多次登顶国内外App Store 免费应用榜第一，并继续保持高速增长。加入我们，一起打造全球最受用户欢迎的影像创作和GenAI产品。 1、负责即梦App功能研发工作、架构设计以及体验优化，独立承担业务模块的需求交付与质量保障； 2、负责AI Native应用的全新交互和体验，与产品、设计团队紧密协作，将前沿的AIGC技术转化为用户可感知的功能； 3、参与AI生成领域的技术研究与应用，包括但不限于生成模型优化、多模态内容合成、实时交互体验提升等方向； 4、持续关注行业动态和用户反馈，通过技术手段迭代产品AI应用能力，为用户创造全新体验。
-
-**官方要求**
-
-1、2027届获得本科及以上学历，计算机、软件工程、通信和电子信息科学等相关专业优先； 2、精通至少一门编程语言，包括但不仅限于：Go、C/C++、Python、Java，有一定工程能力； 3、熟悉算法基础和AI原理，包括但不限于：机器学习、深度学习、LLM、多模态、CV等； 4、对AIGC相关技术感兴趣，有Agent搭建、Pre-Training、SFT、RL经验优先； 5、具备扎实的计算机基础，熟悉数据结构与算法、操作系统、计算机网络、数据库等知识，有分布式系统、高并发服务开发经验者优先。
-
-### AI Native开发工程师
+### AI Native开发工程师 - 抖音直播
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665704152723523893\` · AI Native开发工程师 - 抖音直播 · 深圳 · https://jobs.bytedance.com/campus/position/7665704152723523893/detail
+  - `7665704152723523893` · AI Native开发工程师 - 抖音直播 · 深圳 · https://jobs.bytedance.com/campus/position/7665704152723523893/detail
 
 **官方职责**
 
@@ -1748,13 +2036,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业优先； 2、计算机基础扎实，掌握数据结构与算法、操作系统/网络等基础； 3、具备完整的项目开发经验，能够独立负责相对复杂模块的设计与实现； 4、对AI有一定深度的理解和应用，有完整实践和落地过AI应用或智能体产品的经验。 加分项： 1、具备客户端开发经验，熟悉iOS或Android平台，具备完整的移动端项目研发经验，能够独立负责复杂模块的设计与实现； 2、有开源贡献、技术博客或可展示的个人项目，熟悉TypeScript、Kotlin、Swift、Go等工程栈； 3、了解LLM、Agent、RAG、ASR、TTS、数字人驱动、端侧推理等相关技术。
 
-### AI agent研发工程师（经营平台方向）
+### AI agent研发工程师（经营平台方向） - AI算力基础设施
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664986569519008053\` · AI agent研发工程师（经营平台方向） - AI算力基础设施 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7664986569519008053/detail
+  - `7664986569519008053` · AI agent研发工程师（经营平台方向） - AI算力基础设施 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7664986569519008053/detail
 
 **官方职责**
 
@@ -1764,13 +2052,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、通信、电子信息等相关专业优先； 2、扎实的计算机基础，深入理解数据结构、算法、操作系统、计算机网络与分布式系统原理； 3、熟练掌握至少一门主流编程语言（Go/Java/C++/Python/Rust等），有良好的编码习惯与工程质量意识； 4、了解MySQL/Redis/MQ/K8s等常用后端组件的基本原理，有分布式系统、微服务、高并发服务相关项目经验者优先； 5、对AI与To B商业化的结合方向有强烈兴趣，了解大模型、AI Agent、RAG、推理服务等基础机制，或有用AI能力构建过实际应用（如智能助手、知识库、Copilot类工具）者优先； 6、具备良好的抽象设计能力和工程落地能力，责任心强，乐于在复杂业务场景中解决挑战性问题。
 
-### AIGC Agent开发工程师
+### AIGC Agent开发工程师 - 火山引擎
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670123636821575989\` · AIGC Agent开发工程师 - 火山引擎 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7670123636821575989/detail
+  - `7670123636821575989` · AIGC Agent开发工程师 - 火山引擎 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7670123636821575989/detail
 
 **官方职责**
 
@@ -1780,13 +2068,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，人工智能、软件工程、电子信息、自动化等相关专业优先； 2、具备扎实的编程基础，熟悉至少一种主流编程语言，如Python、Go、Java、TypeScript/JavaScript等，具备良好的代码风格、工程意识和问题定位能力； 3、相关AI领域实践经验要求： 1）了解大模型与AIGC应用开发，具备Prompt Engineering、RAG、Function Calling、Tool Use、Agent Workflow等实践经验者优先； 2）具备多模态相关经验，了解文本、图像、音频、视频等多模态模型或应用场景，有多模态理解、内容生成、视频分析、图像生成、语音处理等项目经验者优先； 3）对Agent/Copilot产品有理解或实践，有智能助手、自动化工作流、AI编程助手、AI创作工具、AI Agent框架等开发经验者优先； 4、具备良好的产品意识和用户视角，能够理解创作者、内容机构、内容运营团队等用户的实际工作流，关注AI能力如何真正提升效率和质量； 5、具备良好的学习能力与沟通协作能力，对前沿AI技术保持热情，能够快速学习新框架、新模型和新工具，并在团队中高效协作。 加分项 1、有AIGC视频、短视频创作、智能剪辑、数字人、文生视频、图生视频等相关项目经验； 2、熟悉或使用过主流大模型、多模态模型或Agent框架，如GPT、Claude、Gemini、LangChain、AutoGen等； 3、有前后端全栈开发经验，能够独立完成从产品原型到功能上线的闭环； 4、有AI产品、创作者工具、内容平台、视频平台、广告创意平台等相关实习或项目经历； 5、有开源项目、技术博客、竞赛获奖、论文发表或高质量个人作品集者优先。
 
-### AIOS Agent开发工程师
+### AIOS Agent开发工程师 - 豆包手机助手
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668236952991631669\` · AIOS Agent开发工程师 - 豆包手机助手 · 北京 · https://jobs.bytedance.com/campus/position/7668236952991631669/detail
+  - `7668236952991631669` · AIOS Agent开发工程师 - 豆包手机助手 · 北京 · https://jobs.bytedance.com/campus/position/7668236952991631669/detail
 
 **官方职责**
 
@@ -1796,13 +2084,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟练掌握C++/Java/C，熟悉常见移动端OS开发平台者优先； 3、对AI应用相关技术有一定理解和实践，熟悉AI Agent/AI数据/AI评测等技术者优先； 4、具备扎实的编程功底，良好的编程习惯，能够设计优秀的代码结构，不断迭代重构； 5、具备良好的自驱力和学习能力，优秀的沟通表达能力，具有一定的产品和业务思维。
 
-### AIOps研发工程师（AI Agent方向）
+### AIOps研发工程师（AI Agent方向） - 音视频技术
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664640744187398405\` · AIOps研发工程师（AI Agent方向） - 音视频技术 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7664640744187398405/detail
+  - `7664640744187398405` · AIOps研发工程师（AI Agent方向） - 音视频技术 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7664640744187398405/detail
 
 **官方职责**
 
@@ -1812,13 +2100,615 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得硕士及以上学位，计算机、通信或相关专业优先； 2、理解数据结构、算法、操作系统、网络等计算机基础知识，对SRE领域理解深入者优先； 3、对AI Agent有强烈的兴趣与动手能力，理解LLM的能力与边界，用过或亲手搭过基于大模型的应用/Agent（RAG、工具调用、多步任务编排等）； 4、有旺盛的好奇心和进取心，持续关注AI Coding、AIOps行业和技术动态，热爱研发创造性工作，做事高标准。 加分项： 1、有AI Agent/LLM应用的实际项目、开源贡献或竞赛经历； 2、熟悉音视频、CDN、分布式系统或运维（SRE/AIOps）；有高并发、系统的设计或实践经验。
 
-### AI娱乐方向Agent Harness研发工程师
+### AI全栈产品研发工程师（国际化内容社区） - TikTok研发
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7670031907660319029` · AI全栈产品研发工程师（国际化内容社区） - TikTok研发 · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7670031907660319029/detail
+
+**官方职责**
+
+团队介绍：TikTok研发团队，旨在实现TikTok业务的研发工作，搭建及维护业界领先的产品。加入我们，你能接触到包括用户增长、社交、直播、电商C端、内容创造、内容消费等核心业务场景，支持产品在全球赛道上高速发展；也能接触到包括服务架构、基础技术等方向上的技术挑战，保障业务持续高质量、高效率、且安全地为用户服务；同时还能为不同业务场景提供全面的技术解决方案，优化各项产品指标及用户体验。 在这里， 有大牛带队与大家一同不断探索前沿， 突破想象空间。 在这里，你的每一行代码都将服务亿万用户。在这里，团队专业且纯粹，合作氛围平等且轻松。目前在北京，上海，杭州、广州、深圳分别开放多个岗位机会。 1、参与TikTok、Lemon8等国际化内容社区产品研发，在导师指导下以AI Coding为核心工作方式，完成前端、客户端、服务端等方向的开发； 2、参与需求讨论、方案设计、编码实现、测试验证与上线迭代，建立完整的端到端工程交付意识； 3、岗位亮点： 1）面向全球用户的真实业务场景，你的代码和产品判断有机会影响海量用户； 2）以AI原生方式工作，强调端到端交付和下一代软件工程范式，而非单一技术栈的执行； 3）业务节奏快、技术挑战丰富，团队重视工程质量、技术成长和跨角色协作； 4）把AI工具用于日常开发——实践代码理解、生成、问题定位、测试补全和重构建议，并学会审查、验证和修正AI的输出； 5）学习跨栈与跨职能协作，理解页面、端侧、服务端接口、数据与发布验证之间的链路关系； 6）在真实业务项目中快速成长，逐步具备独立负责模块设计与开发的能力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机及相关专业优先； 2、扎实的基础功：熟悉数据结构、算法、操作系统、网络、数据库等基础，至少熟练一种主流编程语言，能编写清晰、可维护的代码； 3、真实的AI使用经历与验证意识：在个人项目、课程、实习或开源中真正用过AI工具，能说明如何验证和修正AI的输出，而不只停留在工具名或概念层面； 4、快速学习与跨栈潜力：能在不熟悉的语言或环境里借助AI快速上手，至少一个方向有可展示的实践；产品好奇心与自驱力：对真实业务问题和用户体验有好奇心，能主动发现、拆解并推动解决问题；逻辑思维、沟通能力和团队合作意识良好； 5、加分项：有实习经历，参与过完整的业务项目或工程项目；有前端、客户端、服务端、多端协同或全栈项目经验；能展示用AI辅助完成的代码、测试、重构或问题定位成果（熟悉Cursor、TRAE、Copilot、Claude Code、Codex等工具）；有ACM/ICPC、蓝桥杯、CCPC、LeetCode、Kaggle等竞赛经历或优秀成绩；有开源贡献、技术博客、App、小程序、网站或工具类作品。
+
+### AI全栈工程师 - Global Ads Core
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667849306610731317` · AI全栈工程师 - Global Ads Core · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7667849306610731317/detail
+
+**官方职责**
+
+团队介绍：广告核心团队在不同的广告投放阶段建立关键的变现机制 1. 我们建立排序、出价、预算、样式、诊断和其他框架，作为中台，使其他广告团队能够并行迭代他们的产品。 2. 我们实施流量策略，在用户体验的约束下实现收入的持续增长，实现广告主受众的深度探索。 3. 我们的模型驱动自动化解决方案从头到尾优化广告投放性能。 1、参与全球广告客户端产品的设计、开发与持续迭代，为全球用户打造流畅、稳定且高质量的产品体验； 2、参与客户端基础组件和架构设计，建设可复用、可扩展的技术能力，支撑业务快速发展； 3、参与APP性能优化、体验提升及质量监控评估体系建设，持续改善稳定性与研发质量； 4、参与Hybrid容器、插件化、动态化等客户端技术的调研、设计与落地； 5、参与搭建AI研发工作流，探索AI在需求分析、代码生成、自动测试、问题诊断和研发提效等场景中的应用； 6、与产品、设计、算法及服务端团队紧密协作，将技术创新转化为真实的用户价值和业务增长。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程或相关专业； 2、热爱计算机科学与互联网技术，对移动端产品和客户端研发有浓厚兴趣，具备扎实的数据结构、算法及计算机基础，熟悉至少一门编程语言，包括但不限于Java、Kotlin、Objective-C、Swift、C或C++； 3、关注产品与用户体验，愿意主动思考并通过技术推动体验改进； 4、对AI及新技术保持热情，愿意探索AI研发方式并快速学习实践； 5、具备良好的分析、解决问题和团队协作能力。 加分项： 1、有Android、iOS、跨端或Hybrid项目经验； 2、有AI编程工具、智能体或自动化研发工作流的实践经验； 3、对客户端架构、性能优化、工程效率或动态化技术有深入探索； 4、有开源项目、技术竞赛或高质量个人项目经历。
+
+### AI全栈工程师 - Seed
+
+- **证据状态**：FULL_JD
+- **地点**：杭州 / 杭州 / 上海 / 杭州 / 北京 / 杭州 / 北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：5 个
+  - `7668267255849355573` · AI全栈工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668267255849355573/detail
+  - `7668270341789632821` · AI全栈工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668270341789632821/detail
+  - `7668269573698881845` · AI全栈工程师 - Seed · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7668269573698881845/detail
+  - `7668271920346286341` · AI全栈工程师 - Seed · 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7668271920346286341/detail
+  - `7668261926326798597` · AI全栈工程师 - Seed · 杭州 / 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668261926326798597/detail
+
+**官方职责**
+
+团队介绍：产品研发和工程架构-Seed 团队深耕大模型技术在场景中的创新应用，负责多款现象级AI产品的工程研发 —— 包括豆包、飞书、豆包工作、豆包爱学、Gauth、猫箱等创新产品，覆盖消费级与企业级多个场景。我们致力于将大模型能力从 "生成内容" 推进到 "完成工作"，让 AI 服务用户日常与企业协作。你将面对多模态交互、工具调用可靠性、企业级数据安全等真实工程挑战，与团队一起推动 AI 生产力落地。 1、参与飞书项目核心模块的前后端全链路研发，端到端负责功能设计、开发、测试与上线； 2、不断探索各种新技术，参与系统架构演进、性能与稳定性优化，保障平台在大规模企业客户下的高可用； 3、以AI为默认工作方式，深度实践AI Coding，持续沉淀团队研发提效方法与工具。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、数据结构、算法、操作系统、网络、数据库基础扎实，熟练掌握至少一门主流编程语言（Go/TypeScript/Java/Python等），代码逻辑清晰、结构良好； 3、至少熟练使用一种AI编码工具Cursor/Claude Code/Copilot/TRAE/Codex等；了解大模型、Agent、RAG、MCP、CLI、Prompt、Harness等核心概念并有自己的理解；能识别AI输出的正确性、风险与边界，并设计验证机制； 4、具备良好的逻辑思考与问题拆解能力，好奇心与学习动手能力强，主动自驱，面对复杂问题有攻坚钻研的韧性，沟通协作顺畅。 加分项： 1、独立AI相关作品项目经验； 2、优秀的开源贡献或个人项目； 3、ACM/NOI/CTF等竞赛获奖； 4、有To B/SaaS类产品实习或复杂业务开发经历。
+
+### AI全栈工程师 - 抖音平台产品
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 杭州 / 深圳 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7665658319908178181` · AI全栈工程师 - 抖音平台产品 · 上海 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7665658319908178181/detail
+  - `7666017487045790005` · AI全栈工程师 - 抖音平台产品 · 北京 · https://jobs.bytedance.com/campus/position/7666017487045790005/detail
+
+**官方职责**
+
+团队介绍： 平台产品基础：作为抖音平台支撑团队，以 AI为核心抓手，打造高效能平台底座，为全业务线筑牢坚实底层支撑 生态与运营：聚焦创作者成长与商业化，激活生态活力，夯实内容根基 营销搭建：全链路营销体系，助力业务推广，实现品效增长 文娱业务：深耕短剧赛道，打通内容 - 营收 - 宣发全链路，构建健康文娱生态 变现与资金平台：筑牢交易结算核心底盘，提供全链路支付与清结算能力，保障平台资金安全与高效流转 治理・体验・客服：三位一体守护平台安全、用户体验 以及 高效响应解决用户诉求 开放业务：有序开放平台能力与数据，链接外部资源，拓展生态边界 全体团队以业务增长与用户价值为核心，持续深耕、协同共进，推动抖音生态持续繁荣。 1、负责前端和服务端的业务开发工作，覆盖业务全链路，按业务需求统筹各端开发优先级，打破端侧壁垒，实现业务功能高效落地； 2、深度运用AI Coding工具，开发并维护基于MCP、CLI、Skills等的各类工具，参与AI研发基础设施与Agent工作流建设，对接公司内部系统与模型，打造一体化AI研发体验； 3、立足全栈发展趋势，推动并沉淀Vibe-Coding、Spec-Coding等新型AI研发范式在团队内的落地与最佳实践，参与业务全流程开发，推动业务从需求到上线的闭环落地； 4、负责前沿技术探索与范式推广，持续跟进AI/LLM（包含底层大模型）的最新进展，提供创新的交互解决方案，并推动技术的迭代和升级； 5、配合团队完成技术方案讨论、架构优化、代码评审等工作，助力团队形成“按业务分工、AI+全栈协同”的开发模式，适配未来1~2年全栈发展导向。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、通信和电子信息科学、数学等相关专业优先； 2、具备良好的计算机基础（数据结构、算法、计算机网络、操作系统等），并熟练使用至少一门编程语言； 3、熟练使用HTML5/CSS3/JavaScript/TypeScript/Vue/React等前端技术完成页面布局和交互开发，有全栈（Golang）开发经验者优先； 4、熟练使用TRAE、Claude Code、Codex、Cursor等任一AI Coding工具，维护过Rules、MCP、Skills并了解底层机制与技术细节的同学优先； 5、认可AI Coder定位，明确自身长期全栈发展规划，具备较强的学习能力和适应能力，能快速上手新领域技术，适配业务驱动的开发模式； 6、积极乐观，责任心强，具备良好的沟通协作能力、逻辑思维能力以及服务意识。
+
+### AI全栈工程师 - 抖音用户产品
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 成都
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668203832703781125` · AI全栈工程师 - 抖音用户产品 · 北京 / 上海 / 成都 · https://jobs.bytedance.com/campus/position/7668203832703781125/detail
+
+**官方职责**
+
+团队介绍：抖音用户产品研发团队为抖音全业务提供研发支持与底层技术能力，是驱动业务持续进化的重要工程力量之一。团队围绕首页、推荐、搜索、图文、中长视频、AI 创作、相机、账号及社交通讯等核心场景，承担从客户端、服务端到 AI 工程链路的端到端建设，在亿级 DAU 的真实流量下，持续攻坚极致体验与前沿 AI 系统的工程命题。 我们相信，AI 正在重塑产品的底层架构。团队依托大模型与多模态技术、Multi-Agent 系统工程、在线推理与评测基础设施，面向下一代 AI 原生应用持续投入：在社交与通讯场景，探索长期记忆、多模态理解与人格化对话的技术边界，构建真正能陪伴用户的 AI 交互系统；在内容与创作场景，建设面向亿级创作者的多模态生成与可控创作引擎，让 AI 成为创作者的表达延伸；在搜索与信息获取场景，探索生成式检索、Agentic Search 与个性化推理的新一代系统架构，重新定义 "人与信息" 的连接方式。 这里有工业界领先规模的真实流量，有最前沿的 AI 工程命题，也有一群把技术做到极致的同行者。诚邀热爱技术、追求极致、渴望在真实世界解决硬核问题的你加入我们，一起在 Agent 驱动的技术浪潮中，构建支撑大规模用户的新一代产品。 1、全栈产品研发：参与社交与通讯相关产品的客户端、前端或后端开发工作，在导师指导下完成从需求分析、方案设计到编码上线的完整研发流程； 2、工程体系建设：参与系统架构设计与优化、性能调优、API设计、自动化测试等工程化工作，提升系统的稳定性和可维护性； 3、AICoding实践：使用AICoding工具（如Cursor、Copilot、TRAE等）辅助日常开发，探索AI驱动的研发提效方式； 4、AI能力集成：参与将AI能力融入社交与通讯产品的技术方案设计与落地，如智能对话、内容理解、社交推荐等方向。
+
+**官方要求**
+
+1、2027届获得本科及以上学历； 2、扎实的计算机基础，熟悉数据结构、算法、操作系统、计算机网络等核心知识； 3、至少熟悉以下一个技术方向，有相关的项目实践经验：客户端方向（熟悉Android（Java/Kotlin）、iOS（Swift/Objective-C）或鸿蒙（ArkTS）开发，了解移动端架构设计和性能优化）、前端方向（熟悉React/Vue/TypeScript等至少一种技术栈，了解前端工程化和性能优化）或后端方向（熟悉Go/Python/Java/C++等至少一门语言，了解常见系统设计概念（数据库、缓存、消息队列、RESTful API等））； 4、对全栈开发有热情和意愿，愿意在导师指导下拓展不熟悉的技术领域； 5、较强的自驱力和学习能力，能快速掌握新技术并应用于实际场景； 6、良好的沟通表达能力和团队协作意识。 【加分项】 1、具备跨端开发经验（如客户端+后端、前端+后端等），能独立完成全链路项目； 2、有独立开发并上线过完整项目（个人项目、开源项目、课程项目均可）； 3、有高并发、分布式系统相关的学习或实践经验； 4、ACM/ICPC、CTF等技术竞赛获奖经历，或在GitHub有活跃的开源贡献或技术社区有持续输出； 5、对AI/LLM技术有兴趣，有使用大模型API或AICoding工具进行项目开发的经历，或有AI Agent、RAG系统、Prompt Engineering等方面的实践经验； 6、有社交产品或即时通讯相关的项目经验。
+
+### AI全栈工程师 - 豆包
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7668601480149076277` · AI全栈工程师 - 豆包 · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7668601480149076277/detail
+  - `7668605191879493893` · AI全栈工程师 - 豆包 · 北京 · https://jobs.bytedance.com/campus/position/7668605191879493893/detail
+
+**官方职责**
+
+团队介绍：字节跳动Flow产品研发团队，专注研究AI智能化相关业务落地，目前落地豆包等APP，以及Bot开发平台等AI智能化创新产品。其中，豆包是一款基于字节自研模型的AI智能助手，能为你答疑解惑，查询信息，提供灵感，辅助创作，也可以和你聊任何感兴趣的话题。业务和团队均处于快速发展期，成长空间大，欢迎各位同学加入！ 1、负责豆包移动端核心功能以及Agent工具的研发工作，与产品、设计及多端研发协作，覆盖业务全链路，完成跨端功能的方案设计与闭环交付； 2、秉持AI First理念，深度运用AI Coding工具赋能开发工作；参与AI Agent建设以解决实际业务痛点，探索模型落地与调优，提升底层逻辑开发和安全分析场景的智能化水平； 3、关注客户端核心模块、安全机制与极致用户体验的打磨，长期向系统底层深耕，参与业务全流程开发，推动业务从需求到上线的闭环落地； 4、关注前沿技术与行业趋势，跟进业内最新工具与应用方案，结合业务场景提出创新思路，支撑业务长远发展。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、具备扎实的计算机基础知识，具备前端（JS/TS/Vue/React等）、客户端（Android/iOS/Harmony任一）、服务端（Golang/Python/Java任一）领域的开发经验，有全栈开发经验者优先； 3、对AI Coding工具有强烈的使用兴趣和意愿，乐于主动探索AI工具在开发中的应用，能通过AI工具提升开发效率与代码质量； 4、认可AI Coder定位，明确自身长期全栈发展规划，具备较强的学习能力和适应能力，能快速上手新领域技术，适配业务驱动的开发模式； 5、具备良好的编程习惯和代码管理能力，熟悉基础设计模式和开发原则，能主动关注并优化自身负责的项目，具备一定的问题排查和解决能力； 6、热爱技术、主动负责、乐于直面挑战，具备良好的沟通能力和团队合作精神，能积极参与团队技术讨论，共同推进业务落地与技术创新。
+
+### AI全栈工程师（东南亚业务） - TikTok Shop
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667086447781988661` · AI全栈工程师（东南亚业务） - TikTok Shop · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667086447781988661/detail
+
+**官方职责**
+
+团队介绍：TikTok Shop是以TikTok为载体的内容电商业务，致力于成为用户发现并获取优价好物的首选平台，在直播电商、视频内容电商等多场景下，TikTok Shop希望能为用户提供更个性化、更主动、更高效的消费体验，为商家提供稳定可靠的平台服务，在更多的地区实现没有难卖的优价好物，让美好生活触手可得的使命。我们邀请你来此成长、钻研，发掘无限的潜力，一起应对技术和业务上的挑战。目前团队拥有丰富的国际产品研发经验，包容多元的文化，且在全球设立研发团队，邀请你来一起接受跨国合作的挑战！ 1、参与TikTok Shop东南亚业务的研发工作，包含从前端页面、服务端接口、数据链路到上线验证的端到端全栈交付； 2、参与TikTok Shop前端与全栈工程建设，包括：数据模型抽象、性能优化、用户体验优化； 3、基于AI Coding工具，建设需求理解、方案生成、代码实现、测试验证、Code Review和线上排障的AI辅助研发流程，提升需求效率与质量，参与AI工程化能力在真实业务中落地； 4、基于东南亚业务场景和Agent应用，参与设计AI业务落地场景，帮助业务提效、解决业务痛点。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、具备扎实的计算机基础和优秀的工程编码能力，熟悉至少一门主流编程语言或技术栈（TS/Go/Java/Android/iOS），能够在指导下完成模块的方案设计、开发实现、问题定位和性能优化； 3、具备较强的全栈工程能力，理解前后端之间的协作方式，能够围绕AI产品场景完成从交互体验、接口设计、服务实现到上线交付的闭环； 4、对Agent技术在研发场景有一定了解，在AI Coding、Skills、Prompt Engineering、RAG、Embedding、Tool Calling、MCP、结构化输出、AI评测等任一方向有实践经验； 5、具备良好的问题拆解能力、逻辑分析能力和快速学习能力，能够从一定复杂度的场景中抽象问题、设计方案，并完成交付。
+
+### AI全栈工程师（客服平台方向） - TikTok Shop
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667145321130248501` · AI全栈工程师（客服平台方向） - TikTok Shop · 北京 · https://jobs.bytedance.com/campus/position/7667145321130248501/detail
+
+**官方职责**
+
+团队介绍：TikTok Shop是以TikTok为载体的内容电商业务，致力于成为用户发现并获取优价好物的首选平台，在直播电商、视频内容电商等多场景下，TikTok Shop希望能为用户提供更个性化、更主动、更高效的消费体验，为商家提供稳定可靠的平台服务，在更多的地区实现没有难卖的优价好物，让美好生活触手可得的使命。我们邀请你来此成长、钻研，发掘无限的潜力，一起应对技术和业务上的挑战。目前团队拥有丰富的国际产品研发经验，包容多元的文化，且在全球设立研发团队，邀请你来一起接受跨国合作的挑战！ 1、负责国际电商（TikTok Shop）客服业务平台架构设计，研发体系搭建，工程化方案优化； 2、完成用户端、商家端、运营端产品功能设计和开发，结合LLM等前沿领域，探索、设计并实现AI-Native的应用架构； 3、设计、落地客服业务场景AI Coding、智能业务交付、AI智能体验优化等体系化建设； 4、设计与实现基于LLM的Agent应用，包括任务规划、对话管理、意图识别、工具/流程编排与执行闭环，帮助业务提效、解决业务痛点。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能、电子信息等相关专业； 2、具备良好的计算机基础，熟悉常用的数据结构和算法，熟悉前端（React/Vue）或后端（Java/Golang）至少一门语言； 3、理解大语言模型的基本原理与应用范式，包括PE、RAG、MCP、CoT、MEM和评测等，持续关注业界进展与最佳实践； 4、对AI工具有实际使用与落地经验，熟悉AI Coding流程，有AI赋能研发实践优先，具备复杂项目开发、用户交互体验优化经验的同学优先； 5、积极乐观，责任心强，具备良好的沟通协作和逻辑思维能力以及服务意识。
+
+### AI全栈工程师（平台方向） - TikTok Shop
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳 / 珠海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667046688703711493` · AI全栈工程师（平台方向） - TikTok Shop · 北京 / 上海 / 深圳 / 珠海 · https://jobs.bytedance.com/campus/position/7667046688703711493/detail
+
+**官方职责**
+
+团队介绍：TikTok Shop是以TikTok为载体的内容电商业务，致力于成为用户发现并获取优价好物的首选平台，在直播电商、视频内容电商等多场景下，TikTok Shop希望能为用户提供更个性化、更主动、更高效的消费体验，为商家提供稳定可靠的平台服务，在更多的地区实现没有难卖的优价好物，让美好生活触手可得的使命。我们邀请你来此成长、钻研，发掘无限的潜力，一起应对技术和业务上的挑战。目前团队拥有丰富的国际产品研发经验，包容多元的文化，且在全球设立研发团队，邀请你来一起接受跨国合作的挑战！ 1、参与TikTok Shop业务的研发工作，包含从前端页面、服务端接口、数据链路到上线验证的端到端全栈交付； 2、参与TikTok Shop全栈工程建设，包括：数据模型抽象、性能优化、用户体验优化； 3、基于AI Coding工具，建设需求理解、方案生成、代码实现、测试验证、Code Review和线上排障的AI辅助研发流程，提升需求效率与质量，参与AI工程化能力在真实业务中落地； 4、基于业务场景和Agent应用，参与设计AI业务落地场景，帮助业务提效、解决业务痛点。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、具有优秀的代码能力，熟练掌握Go/Java/Python编程语言； 3、熟悉Agent架构核心组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源。
+
+### AI全栈工程师（广告业务） - 中国交易与广告
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京 / 杭州 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：4 个
+  - `7664849986345568565` · AI全栈工程师（广告业务） - 中国交易与广告 · 上海 · https://jobs.bytedance.com/campus/position/7664849986345568565/detail
+  - `7663331444258179333` · AI全栈工程师（广告业务） - 中国交易与广告 · 北京 · https://jobs.bytedance.com/campus/position/7663331444258179333/detail
+  - `7664850115949562165` · AI全栈工程师（广告业务） - 中国交易与广告 · 杭州 · https://jobs.bytedance.com/campus/position/7664850115949562165/detail
+  - `7664851280653257013` · AI全栈工程师（广告业务） - 中国交易与广告 · 深圳 · https://jobs.bytedance.com/campus/position/7664851280653257013/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，负责抖音电商、生活服务、广告营销等营收业务的研发。用技术带来美好生活，让用户发现更多优价好物，为用户提供更丰富独特的生活体验；连接海量用户与商家，促进交易达成，让生态里全流程体验更流畅，助力营收业务长效增长。 加入团队，你将投身流量与增长主战场，挑战复杂业务场景技术难题；直面真实商家和用户，用技术解决看得见的问题，在实战中快速成长，书写属于你的价值故事！ 1、依托各类AI Coding工具，独立完成广告业务相关项目的前后端全栈开发、功能迭代与接口联调，负责前/后端技术选型和开发工作，参与广告业务全栈开发，保障业务需求高质量落地； 2、主导或参与前后端基础设施建设，包括组件库沉淀、工程化工具链优化、CI/CD流程改进，提升团队研发效率； 3、与产品、算法等团队紧密协作，推动跨团队技术方案对齐，保障项目按时交付； 4、能够参与Agent在广告业务场景中的落地探索（如Agent产品交互开发、工作流编排等）； 5、利用AI Coding工具提升个人及团队开发效率，跟进前沿Agent开源方案，沉淀可复用的调度模板与工程最佳实践。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业； 2、掌握Python/Go/Java/JavaScript任意2门开发语言，熟悉Node.js/Go，具备前后端一体化开发能力； 3、理解LLM基础原理，熟悉AI Agent核心模块（Prompt、记忆机制、工具调用、RAG、多智能体），能区分不同层级模型的业务适用场景； 4、熟练掌握主流AI编码工具（TRAE、Claude Code、Codex等），能够利用AI完成需求拆解、代码编写、复杂逻辑重构、Bug定位修复、单测编写、代码评审，具备AI协同研发思维； 5、熟悉Git基础操作，具备良好的沟通能力与团队合作精神；对技术保持好奇心，善于独立思考并反思总结； 6、有相关岗位实习及项目开发经历优先。 加分项： 1、有AI辅助前后端全栈开发、Agent项目部署与二次开发实战经验； 2、实操过Agent任务拆分、多智能体并行调度、模型自动择优等核心功能； 3、熟悉MCP协议、LLM工具调用、AI自动化工作流搭建； 4、有对话应用、智能编排、知识库平台等相关项目开发经验。
+
+### AI全栈工程师（欧洲业务） - TikTok Shop
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667041001986525493` · AI全栈工程师（欧洲业务） - TikTok Shop · 北京 · https://jobs.bytedance.com/campus/position/7667041001986525493/detail
+
+**官方职责**
+
+团队介绍：TikTok Shop是以TikTok为载体的内容电商业务，致力于成为用户发现并获取优价好物的首选平台，在直播电商、视频内容电商等多场景下，TikTok Shop希望能为用户提供更个性化、更主动、更高效的消费体验，为商家提供稳定可靠的平台服务，在更多的地区实现没有难卖的优价好物，让美好生活触手可得的使命。我们邀请你来此成长、钻研，发掘无限的潜力，一起应对技术和业务上的挑战。目前团队拥有丰富的国际产品研发经验，包容多元的文化，且在全球设立研发团队，邀请你来一起接受跨国合作的挑战！ 1、参与TikTok Shop欧洲业务的研发工作，包含从前端页面、服务端接口、数据链路到上线验证的端到端全栈交付； 2、参与TikTok Shop前端与全栈工程建设，包括：数据模型抽象、性能优化、用户体验优化； 3、基于AI Coding工具，建设需求理解、方案生成、代码实现、测试验证、Code Review和线上排障的AI辅助研发流程，提升需求交付效率与交付质量，参与AI工程化能力在真实业务中落地； 4、基于欧洲业务场景和Agent应用，参与设计AI业务落地场景，帮助业务提效、解决业务痛点。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、具备扎实的计算机基础和优秀的工程编码能力，熟悉至少一门主流编程语言或技术栈（TS/Go/Java/Android/iOS），能够在指导下完成模块的方案设计、开发实现、问题定位和性能优化； 3、具备较强的全栈工程能力，理解前后端之间的协作方式，能够围绕AI产品场景完成从交互体验、接口设计、服务实现到上线交付的闭环； 4、对Agent技术在研发场景有一定了解，在AI Coding、Skills、Prompt Engineering、RAG、Embedding、Tool Calling、MCP、结构化输出、AI评测等任一方向有实践经验； 5、具备良好的问题拆解能力、逻辑分析能力和快速学习能力，能够从一定复杂度的场景中抽象问题、设计方案，并完成交付。
+
+### AI全栈工程师（物流方向） - TikTok Shop
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667866453257341189` · AI全栈工程师（物流方向） - TikTok Shop · 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667866453257341189/detail
+
+**官方职责**
+
+团队介绍：TikTok Shop是以TikTok为载体的内容电商业务，致力于成为用户发现并获取优价好物的首选平台，在直播电商、视频内容电商等多场景下，TikTok Shop希望能为用户提供更个性化、更主动、更高效的消费体验，为商家提供稳定可靠的平台服务，在更多的地区实现没有难卖的优价好物，让美好生活触手可得的使命。我们邀请你来此成长、钻研，发掘无限的潜力，一起应对技术和业务上的挑战。目前团队拥有丰富的国际产品研发经验，包容多元的文化，且在全球设立研发团队，邀请你来一起接受跨国合作的挑战！ 1、参与TikTok Shop供应链物流的业务研发，以及国际供应链能力建设，包含从前端页面、服务端接口、数据链路到上线验证的端到端全栈交付； 2、参与TikTok Shop前端与全栈工程建设，包括：数据模型抽象、性能优化、用户体验优化； 3、基于AI Coding工具，建设需求理解、方案生成、代码实现、测试验证、Code Review和线上排障的AI辅助研发流程，提升需求效率与质量，参与AI工程化能力在真实业务中落地； 4、基于供应链物流业务场景和Agent应用，参与设计AI业务落地场景，帮助业务提效、解决业务痛点。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能、自动化、物流工程、电子信息等相关专业； 2、具备扎实的计算机基础和优秀的工程编码能力，熟悉至少一门主流编程语言或技术栈（TS/Go/Java/Android/iOS），能够在指导下完成模块的方案设计、开发实现、问题定位和性能优化； 3、具备较强的全栈工程能力，理解前后端之间的协作方式，能够围绕AI产品场景完成从交互体验、接口设计、服务实现到上线交付的闭环； 4、对Agent技术在研发场景有一定了解，在AI Coding、Skills、Prompt Engineering、RAG、Embedding、Tool Calling、MCP、结构化输出、AI评测等任一方向有实践经验； 5、具备良好的问题拆解能力、逻辑分析能力和快速学习能力，能够从一定复杂度的场景中抽象问题、设计方案，并完成交付。
+
+### AI全栈工程师（直播营收） - 抖音直播
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7669702883252062517` · AI全栈工程师（直播营收） - 抖音直播 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7669702883252062517/detail
+
+**官方职责**
+
+团队介绍：直播团队负责为抖音集团旗下产品提供直播服务。团队负责直播平台技术和直播业务研发，打造灵活稳定的直播服务平台，为用户提供优质直播体验，支持电商、本地生活、游戏、节目、多人互动等不同类型的业务场景。直播业务发展迅猛，处于行业头部地位，业务发展空间巨大。现在加入我们，和优秀的人一起做有挑战的事，你的技术与创意将影响亿级用户，激发创意和丰富生活。 1、负责抖音直播主播供给和主播不同模式（团播、多人、连屏等）业务的技术研发工作，技术方向包括服务端工程师、全栈开发工程师、AI Agent开发工程师； 2、深入理解用户和业务需求，设计合理的、可面向未来扩展的技术方案，保障技术效率和产品体验；除了支持好业务需求以外，善于用技术赋能业务或用户，包括不限于技术创新的尝试、AI赋能业务或用户等不断创造技术价值； 3、不断完善系统技术能力，建设AI友好的技术框架和系统，在保障好系统稳定性的同时，保障好技术效率。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件等计算机相关专业； 2、具备扎实的计算机和编程基础，掌握常用的数据结构和算法，熟练掌握至少一门编程语言，并了解常用的开发框架； 3、熟悉数据库、消息队列、缓存等组件的使用及这些组件的特性原理，并了解分布式系统开发； 4、对AI Coding感兴趣，熟练使用AI编程工具，并能够验证AI Coding准确性； 5、积极乐观，责任心强，具备良好的服务意识及沟通协作能力。
+
+### AI全栈开发工程师 - 中国交易与广告
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7669684366839007541` · AI全栈开发工程师 - 中国交易与广告 · 北京 · https://jobs.bytedance.com/campus/position/7669684366839007541/detail
+  - `7669686942389881093` · AI全栈开发工程师 - 中国交易与广告 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7669686942389881093/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，基于个性化推荐、深度学习和大模型技术，依托抖音、今日头条、红果短剧、西瓜视频、番茄小说等多元产品，构建抖音电商、生活服务、广告营销等核心营收业务的算法策略和工程架构。部门运用领先的算法能力，精准连接海量用户与商家，通过推荐、广告和搜索算法精准匹配需求并促进交易达成，保障用户体验与商家权益，实现营收业务可持续增长；基于深厚的技术积累，构建高效、智能、可靠的交易与广告产品，全面提升多行业收入变现与市场占有。在这里，你将直面超大规模流量与复杂业务场景的技术挑战，深度应用业界领先的商业模型与算法技术，投身面向未来的数字营销能力建设，持续探索前沿技术。 1、参与业务前端技术方案设计和开发工作，覆盖Web应用、组件库、数据可视化等多个方向； 2、通过技术手段，持续优化性能、提升用户体验，满足产品高性能要求； 3、参与前端工程化体系建设，持续提高研发效率、工程质量，保障产品高效交付、运行； 4、参与前沿技术研究，围绕AI场景能力建设。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业优先； 2、熟悉JavaScript，CSS，HTML，DOM、协议、安全、网络、性能优化等前端技术； 3、对主流前端框架（React/Vue等）至少一种有了解和应用； 4、对用户体验、交互操作流程及用户需求有一定了解； 5、积极乐观，责任心强，工作认真细致，具备良好的服务意识，具有良好的团队沟通与协作能力； 6、热爱前端技术，有较强的学习能力，有求知欲、好奇心和进取心，能及时关注和学习业界最新的前端技术。
+
+### AI全栈开发工程师 - 今日头条
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 广州 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7672654026278816053` · AI全栈开发工程师 - 今日头条 · 深圳 / 广州 / 北京 · https://jobs.bytedance.com/campus/position/7672654026278816053/detail
+
+**官方职责**
+
+团队介绍：产品覆盖今日头条、头条极速版等各类产品，为上亿用户持续提供优质的资讯、视频等服务。我们通过建立良好的内容生态，鼓励原创优质的内容，为创作者提供优质的服务和创作体验，促进创作和交流，同时我们致力于通过尽可能丰富的内容体裁和尽可能多的分发方式，连接人与信息，丰富大家的精神生活，让人们看到更大的世界。 1、负责今日头条、悟空浏览器、西瓜视频等多业务方向的开发工作，完成从需求分析、方案设计到编码上线的完整研发流程； 2、参与系统架构设计与优化、性能调优、API设计、自动化测试等工程化工作，提升系统的稳定性和可维护性； 3、AI Coding实践：使用AI Coding工具（如Cursor、Copilot、TRAE、Claude Code等）辅助日常开发，探索AI驱动的研发提效方式； 4、参与将AI能力融入到业务技术方案设计与落地，在实践中验证和优化AI驱动开发流程，持续提升生产力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、熟练使用至少一种AI Coding工具（Claude Code、Cursor、Codex、Cline等），了解其实现原理有加分； 3、至少熟悉以下一个技术方向，有相关的项目实践经验： 1）客户端方向：熟悉Android（Java/Kotlin）、iOS（Swift/Objective-C）或鸿蒙（ArkTS）开发，了解移动端架构设计和性能优化； 2）前端方向：熟悉React/Vue/TypeScript等至少一种技术栈，了解前端工程化和性能优化； 3）后端方向：熟悉Go/Python/Java/C++等至少一门语言，了解常见系统设计概念（数据库、缓存、消息队列、RESTful API等）； 4、对全栈开发有热情和意愿，愿意在导师指导下拓展不熟悉的技术领域； 5、良好的沟通能力与自驱力，能在AI辅助下独立推进任务。
+
+### AI全栈开发工程师 - 剪映CapCut
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7672240507919862021` · AI全栈开发工程师 - 剪映CapCut · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7672240507919862021/detail
+
+**官方职责**
+
+团队介绍：剪映研发团队，主要支持剪映、CapCut、醒图、Hypic、即梦、Dreamina、小云雀、Pippit等多款国内外产品的研发工作，业务覆盖多元化影像创作场景，并孵化了多款AIGC明星产品，相关产品多次登顶国内外App Store 免费应用榜第一，并继续保持高速增长。加入我们，一起打造全球最受用户欢迎的影像创作和GenAI产品。 1、负责亿级DAU产品增长业务研发，包括但不限于端内用户激励体系，用户增长活动，社媒增长，SEO增长等方向； 2、关注业务指标和转化链路，探索精细化体验优化，分人群、分机型、分场景； 3、深入研究高性能跨平台动态化渲染方案&Web技术体系，负责架构设计，性能优化，SEO优化等工作； 4、负责助力于增长、留存、研发效率等方面的平台化建设。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、掌握当前流行的前端框架，如React、Vue，并熟悉其衍生生态，如Redux、Vite等，熟悉一种构建工具，如Webpack、FIS、Esbuild等； 3、了解跨端以及全栈技术栈，熟悉客户端、服务端开发模式，能站在其他角色角度给出改进建议，并推动落地，熟悉一门后端语言，如Node、Java、Python、Go等； 4、熟练掌握数据结构、算法、设计模式、网络通信相关计算机基础知识，具备良好的系统模块设计能力，并能在日常研发中灵活使用； 5、对技术保持好奇，有良好的沟通能力和团队合作精神、分析问题和解决问题的能力。
+
+### AI全栈开发工程师 - 抖音平台产品
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京 / 成都 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：5 个
+  - `7666062254521862453` · AI全栈开发工程师 - 抖音平台产品 · 上海 · https://jobs.bytedance.com/campus/position/7666062254521862453/detail
+  - `7667113434978208053` · AI全栈开发工程师 - 抖音平台产品 · 北京 · https://jobs.bytedance.com/campus/position/7667113434978208053/detail
+  - `7667869276644083973` · AI全栈开发工程师 - 抖音平台产品 · 北京 · https://jobs.bytedance.com/campus/position/7667869276644083973/detail
+  - `7667113601964329221` · AI全栈开发工程师 - 抖音平台产品 · 成都 · https://jobs.bytedance.com/campus/position/7667113601964329221/detail
+  - `7667114080289736965` · AI全栈开发工程师 - 抖音平台产品 · 深圳 · https://jobs.bytedance.com/campus/position/7667114080289736965/detail
+
+**官方职责**
+
+团队介绍： 平台产品基础：作为抖音平台支撑团队，以 AI为核心抓手，打造高效能平台底座，为全业务线筑牢坚实底层支撑 生态与运营：聚焦创作者成长与商业化，激活生态活力，夯实内容根基 营销搭建：全链路营销体系，助力业务推广，实现品效增长 文娱业务：深耕短剧赛道，打通内容 - 营收 - 宣发全链路，构建健康文娱生态 变现与资金平台：筑牢交易结算核心底盘，提供全链路支付与清结算能力，保障平台资金安全与高效流转 治理・体验・客服：三位一体守护平台安全、用户体验 以及 高效响应解决用户诉求 开放业务：有序开放平台能力与数据，链接外部资源，拓展生态边界 全体团队以业务增长与用户价值为核心，持续深耕、协同共进，推动抖音生态持续繁荣。 1、负责智能客服系统（工单、实时会话、坐席工作台、多渠道接入）的全栈研发工作； 2、在AI工具辅助下，独立完成前端界面→后端服务→数据存储的全链路开发任务，与产品、运营协作推动功能上线； 3、探索AI在智能回复、情绪识别、会话质检等客服场景的应用，参与高并发消息、工单分配等真实业务挑战。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、通信和电子信息科学、数学等相关专业； 2、计算机基础：扎实的数据结构、算法、操作系统知识，至少熟练掌握一门语言（JS/TS/Python/Java/Go等）； 3、全栈能力：有前端（React/Vue）或后端（Node.js/Java/Go）开发经验，愿意借助AI跨越技术栈边界，完成从页面到接口的全链路任务； 4、AI工具应用：深度认同AI辅助开发范式，日常主动使用各种AI编程工具提升效率，乐于探索AI在客服领域的创新应用（如自动生成工单逻辑、聊天组件）； 5、客服领域基础：了解实时通信（WebSocket）、消息队列、关系型数据库（MySQL/PostgreSQL）或Redis等基本概念，有相关实践优先； 6、学习与自驱：具备强技术自驱力，能快速上手新领域，主动负责，善于沟通协作。
+
+### AI全栈开发工程师 - 抖音用户产品
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 成都 / 广州 / 杭州 / 深圳 / 北京 / 杭州 / 广州 / 深圳 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7666018844783528245` · AI全栈开发工程师 - 抖音用户产品 · 北京 / 上海 / 成都 / 广州 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7666018844783528245/detail
+  - `7683739993118443829` · AI全栈开发工程师 - 抖音用户产品 · 北京 / 杭州 / 广州 / 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7683739993118443829/detail
+
+**官方职责**
+
+团队介绍：抖音用户产品研发团队为抖音全业务提供研发支持与底层技术能力，是驱动业务持续进化的重要工程力量之一。团队围绕首页、推荐、搜索、图文、中长视频、AI 创作、相机、账号及社交通讯等核心场景，承担从客户端、服务端到 AI 工程链路的端到端建设，在亿级 DAU 的真实流量下，持续攻坚极致体验与前沿 AI 系统的工程命题。 我们相信，AI 正在重塑产品的底层架构。团队依托大模型与多模态技术、Multi-Agent 系统工程、在线推理与评测基础设施，面向下一代 AI 原生应用持续投入：在社交与通讯场景，探索长期记忆、多模态理解与人格化对话的技术边界，构建真正能陪伴用户的 AI 交互系统；在内容与创作场景，建设面向亿级创作者的多模态生成与可控创作引擎，让 AI 成为创作者的表达延伸；在搜索与信息获取场景，探索生成式检索、Agentic Search 与个性化推理的新一代系统架构，重新定义 "人与信息" 的连接方式。 这里有工业界领先规模的真实流量，有最前沿的 AI 工程命题，也有一群把技术做到极致的同行者。诚邀热爱技术、追求极致、渴望在真实世界解决硬核问题的你加入我们，一起在 Agent 驱动的技术浪潮中，构建支撑大规模用户的新一代产品。 1、负责抖音及抖音系相关产品的业务研发，参与核心功能从需求分析、方案设计到上线落地的全链路开发； 2、以AI-Native方式跨越技术栈边界，借助AI能力完成从客户端到服务端、前端的全栈开发，不局限于单一技术领域； 3、深度参与产品需求讨论与功能定义，与产品、设计、QA等团队紧密协作，设计良好的代码结构并持续迭代重构； 4、探索和落地AI时代软件开发新范式，在团队内验证并优化AI驱动的开发工作流，推动研发效率与工程质量的提升。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备扎实的计算机基础，至少熟练掌握一门编程语言；良好的编程习惯和代码设计，追求良好的用户体验； 3、对AI产品和技术有热情，认同AI开发范式，日常工作中已主动、深度使用AI工具，真正用AI提升效率；具备AI全栈思维，愿意借助AI能力抹平技术栈差异，能在AI辅助下独立完成跨栈开发任务； 4、主动性强，具备良好的沟通协作能力，能主动理解业务目标、参与需求讨论与方案决策，与协作职能角色高效协同推进项目落地。
+
+### AI全栈开发工程师 - 抖音研发
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 北京 / 杭州 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：5 个
+  - `7671143640540481797` · AI全栈开发工程师 - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7671143640540481797/detail
+  - `7671144169427241221` · AI全栈开发工程师 - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7671144169427241221/detail
+  - `7667193024355797301` · AI全栈开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667193024355797301/detail
+  - `7670479533021464837` · AI全栈开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7670479533021464837/detail
+  - `7670480058276137269` · AI全栈开发工程师 - 抖音研发 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7670480058276137269/detail
+
+**官方职责**
+
+团队介绍：抖音研发部门负责多款大型产品的研发，包括但不限于抖音、西瓜视频、汽水音乐。 加入我们，你将有机会参与亿级用户场景的开发与架构工作，使用前沿的技术助力业务一起不断成长。 1、参与抖音应用安全解决方案、应用安全平台、AI安全智能体等方向的设计和开发工作； 2、负责技术攻关和创新技术研究，不断增强安全解决方案的覆盖范围与使用体验； 3、关注AI技术前沿，及时把新技术转化为业务开发中的生产力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能、网络安全等相关专业； 2、具备扎实前端/全栈工程能力，熟悉JavaScript/TypeScript/HTML/CSS，熟悉React/Vue等至少一种主流前端框架； 3、具备实际全栈开发经验，理解HTTP、RESTful API、数据库、缓存、消息队列、服务治理等基础概念，熟悉Node.js/Python/Go/Java任一后端技术栈； 4、有AI Agent或LLM应用实践经验，熟悉AI Coding、Prompt Engineering、RAG、Embedding、Tool Calling、MCP、结构化输出、AI评测等任一方向； 5、具备良好的业务抽象、系统设计、工程质量和主人翁意识，能够在复杂业务中主动构造上下文、拆解问题并推动端到端闭环。 加分项 1、有完整全栈项目经验，能独立完成从页面、接口、数据到部署验证的端到端交付； 2、有AI Agent/RAG/MCP/LangGraph/LangChain/Vercel AI SDK等AI应用实践经验； 3、有安全相关专业背景，有CTF参赛经验者加分，参与或主导过开源项目，有技术博客产出加分。
+
+### AI全栈开发工程师 - 抖音音乐
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665938446780631301` · AI全栈开发工程师 - 抖音音乐 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665938446780631301/detail
+
+**官方职责**
+
+团队介绍：抖音音乐研发团队的使命是用音乐建立共鸣和激发表达，成为让用户最容易发现音乐、了解音乐、进行音乐创作、表达和交流的平台。目前已经上线了汽水音乐APP、妙响（AI音乐及MV创作）、汽水音乐内容合作平台等消费端、创作端以及平台产品。汽水音乐是旨在成为Z世代用户最喜欢的音乐应用，主打个性化推荐与沉浸式听歌体验；妙响是一站式AI音乐创作发行平台，“灵感即刻成歌”，旨在通过AI技术重塑音乐创作、分发与消费的全链路，团队有自研音乐生成大模型，结合AI打造专业音乐创作平台；汽水音乐内容合作平台，为音乐人及厂牌提供音乐作品管理、发行、宣推、词曲生产等平台能力，旨在为音乐人带来更多听众，激发创作和成长，也带来更多收益。我们期待热爱技术的你加入，一起创造更多可能。 1、业务开发：参与AI音乐产品的端到端研发，应用大模型和音频生成能力赋能音乐创作、编辑、翻唱、混音等C端场景，以及达人投稿、审核提效、版权治理、音质评估等B端场景； 2、产品体验：参与音乐创作工具的核心交互建设，包括音频播放与剪辑、波形/频谱可视化、AI生成实时反馈等，把模型能力封装成稳定易用的产品体验； 3、工程优化：参与AI音乐服务端链路建设，持续迭代模型调度、任务编排、结果缓存、AI Agent底层架构，优化性能、成本、稳定性和安全等指标； 4、前沿探索：参与AI音乐及通用AI新技术的调研与落地，如Multi-Agent、RAG、音频扩散模型、可控生成、特定小模型训练等。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、电子信息、人工智能等相关专业优先； 2、扎实的计算机基础，熟练掌握数据结构与算法、计算机网络、操作系统等课程；具有良好的编程习惯，代码结构清晰，命名规范； 3、熟悉现代化前端框架体系，掌握Go/Python/Java/C++/Node中的一种或多种服务端语言，具备实际全栈开发经验； 4、有AI Agent或LLM应用实践经验，熟悉AI Coding、Prompt Engineering、RAG、Embedding、Tool Calling、MCP、结构化输出、AI评测等任一方向； 5、AI产品爱好者和使用者，追求良好的用户体验；对音乐/音频有兴趣或相关背景，具备较强的自驱力和学习能力。 加分项： 1、有音乐、音频、音视频方向的开发或研究经验，如WebAudio、DSP、音频剪辑与可视化等； 2、有AI音乐相关的实践经验，如Suno/Udio/Riffusion/MusicGen/DiffSinger/RVC等模型使用、微调或二次开发； 3、熟悉大模型相关算法，如Transformer、Diffusion、Mamba、CNN/RNN/LSTM、梯度下降等； 4、具备音乐理论、演唱、演奏、编曲、混音等相关背景； 5、有个人技术作品、开源项目或高质量比赛/论文经历（Kaggle、ISMIR、ICASSP、ACM等）。
+
+### AI全栈开发工程师 - 火山引擎
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668198999834364165` · AI全栈开发工程师 - 火山引擎 · 北京 / 上海 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7668198999834364165/detail
+
+**官方职责**
+
+团队介绍：火山引擎是字节跳动旗下云和AI服务平台，将字节跳动快速发展过程中积累的增长方法、技术能力和应用工具开放给外部企业，通过云和AI技术，推进企业智能化转型，激发增长潜能。 1、负责企业级Agent平台产品的设计与开发，涵盖Agent构建、Harness、管理、协同、工具链等模块； 2、参与Agent Harness、Loop Engineering工程化优化，包括上下文管理、记忆机制设计、Token成本控制等工作； 3、负责场景化Agent应用的开发与调优。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业优先； 2、有实际项目中的性能优化、系统设计或工程落地经验，关注代码质量与可维护性； 3、有AI Coding工具实际使用或开发经验，熟练掌握Python/Go/TS/C中至少一门语言，代码规范良好； 4、了解主流Agent框架、Agent核心机制有实践认知（优先）； 5、具备一定的算法基础和策略思维，能理解模型能力边界，在Agent链路设计中做出合理取舍（优先）； 6、具备良好的团队沟通协作能力，能和团队一起探索新技术，推进技术进步。 加分项 1、有开源项目贡献。
+
+### AI全栈开发工程师 - 豆包
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京 / 杭州 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：3 个
+  - `7665931873445923077` · AI全栈开发工程师 - 豆包 · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7665931873445923077/detail
+  - `7665937995406657797` · AI全栈开发工程师 - 豆包 · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7665937995406657797/detail
+  - `7668318068746078517` · AI全栈开发工程师 - 豆包 · 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7668318068746078517/detail
+
+**官方职责**
+
+团队介绍：产品研发和工程架构-Seed 团队深耕大模型技术在场景中的创新应用，负责多款AI产品的工程研发 —— 包括豆包、飞书、豆包工作、豆包爱学、Gauth、猫箱等创新产品，覆盖消费级与企业级多个场景。我们致力于将大模型能力从 "生成内容" 推进到 "完成工作"，让 AI 服务用户日常与企业协作。你将面对多模态交互、工具调用可靠性、企业级数据安全等真实工程挑战，与团队一起推动 AI 生产力落地。 1、参与豆包PC客户端AI Agent相关产品和平台能力的设计与开发，围绕桌面端和Web端，打造自然、可靠、高效的人机协同体验； 2、负责基于TypeScript、React、Chromium等技术的客户端功能开发，打通交互界面、客户端系统能力、Agent运行时与模型服务； 3、参与团队Agent核心能力建设，包括上下文管理、任务编排、工具调用、结构化输出、流式交互、权限控制及异常恢复等； 4、根据业务需要参与Node.js服务、数据存储、模型接口及工具服务开发，推动新功能从原型验证到产品上线的完整闭环； 5、深度运用AI研发的全新模式，并沉淀可复用的Agent组件、评测体系和工程最佳实践。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、熟悉浏览器或桌面客户端基本原理；熟悉Vite、Webpack、pnpm等现代工程化工具，具备良好的代码质量、测试、性能和安全意识； 3、有自己独立完成的AI项目实践，能够调用模型能力解决真实问题，而不局限于Demo开发； 4、对AI技术保持好奇，善于使用AI编程工具提升研发效率，具备较强的学习能力、责任心和协作意识。
+
+### AI全栈开发工程师 - 豆包爱学
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668263410931239173` · AI全栈开发工程师 - 豆包爱学 · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7668263410931239173/detail
+
+**官方职责**
+
+团队介绍：豆包爱学是豆包旗下的教育产品，提供拍照答疑、作业批改、知识问答等功能。我们致力于使用领先行业的人工智能技术，提升学生的学习体验。加入智能学习团队，你将有机会为全国学生提供优质服务，并与顶尖专家合作，站在科技前沿，推动 AI 与教育科技的发展。 1、负责豆包爱学前端、客户端、服务端等多领域业务开发工作，覆盖业务全链路，按业务需求统筹各端开发优先级，打破端侧壁垒，实现业务功能高效落地； 2、深度运用AI Coding工具开展开发工作，提升代码开发效率与质量，主动探索AI工具在多端开发场景的优化空间，助力提升团队AI代码贡献率； 3、立足全栈发展趋势，明确AI编码工程师核心定位，短期聚焦多端AI辅助开发，长期向全栈方向深耕，参与业务全流程开发，推动业务从需求到上线的闭环落地； 4、关注AI编码、全栈开发前沿技术与行业趋势，跟进业内最新工具与应用方案，结合业务场景提出创新思路，探索AI技术与全栈开发结合的最优路径，支撑业务长远发展； 5、配合团队完成技术方案讨论、架构优化、代码评审等工作，助力团队形成“按业务分工、全栈协同”的开发模式，适配未来1~2年全栈发展导向。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、具备扎实的计算机基础知识（数据结构、算法、计算机网络、操作系统等），具备前端（JS/TS/Vue/React等）、客户端（Flutter/iOS/Android任一）、服务端（Golang/Python/Java任一）任一领域的开发经验，有全栈开发经验者优先； 3、对AI Coding工具（如TRAE）有强烈的使用兴趣和意愿，乐于主动探索AI工具在开发中的应用，能通过AI工具提升开发效率与代码质量； 4、认可AI Coder定位，明确自身长期全栈发展规划，具备较强的学习能力和适应能力，能快速上手新领域技术，适配业务驱动的开发模式； 5、具备良好的编程习惯和代码管理能力，熟悉基础设计模式和开发原则，能主动关注并优化自身负责的项目，具备一定的问题排查和解决能力； 6、热爱技术、主动负责、乐于直面挑战，具备良好的沟通能力和团队合作精神，能积极参与团队技术讨论，共同推进业务落地与技术创新。
+
+### AI全栈开发工程师 - 财经业务
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7669792036694214965` · AI全栈开发工程师 - 财经业务 · 北京 · https://jobs.bytedance.com/campus/position/7669792036694214965/detail
+
+**官方职责**
+
+团队介绍：抖音集团财经业务致力于成为科技驱动业务增长的先锋，服务抖音集团生态内数亿活跃用户与广大商户的多元化金融科技需求，全面涵盖支付、消费金融、小微商户贷、保险经纪等核心板块。 在这里，你将置身于年轻、充满活力的团队氛围中，亲历行业第一的增长速度，感受科技赋能金融的无限可能。 为了支撑业务的高效拓展与价值挖掘，我们正在寻找优秀的伙伴加入，目前重点开放的岗位包括：增长、用户产品、策略运营、算法、风控、数据科学、研发、工程等。期待你的加入，与我们一起用科技重塑金融服务体验，共创更大的商业价值！ 1、参与互联网保险（退运险、车险、场景险）系统的AI全栈开发工作，参与从需求分析、系统设计到代码落地的完整闭环； 2、结合大模型（LLM）与经典机器学习方法，设计并实现保险业务中的AI Agent、RAG、知识问答等能力，提升保险服务的自动化与智能化水平； 3、参与保险系统的稳定性建设与资产损失防控，保障AI服务在高并发、高可用场景下的可观测性； 4、持续沉淀AI工程化与保险行业经验，跟踪前沿AI技术，与业务共同成长。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、精通Go、Python、C++等一种或多种编程语言，具备扎实的编程技能和算法设计能力； 3、有AI应用相关开发经验，了解大语言模型基础原理，了解LLM架构，熟悉PE工程、AI Agent、LangChain、RAG、Memory等优先； 4、创新意识强，乐于探索新的AI技术与应用场景，主动关注AI领域最新动态，具备较强的学习能力、主观能动性及跨团队协作意识。
+
+### AI全栈开发工程师（AI Music） - TikTok研发
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7669437786696829237` · AI全栈开发工程师（AI Music） - TikTok研发 · 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7669437786696829237/detail
+
+**官方职责**
+
+团队介绍：TikTok研发团队，旨在实现TikTok业务的研发工作，搭建及维护业界领先的产品。加入我们，你能接触到包括用户增长、社交、直播、电商C端、内容创造、内容消费等核心业务场景，支持产品在全球赛道上高速发展；也能接触到包括服务架构、基础技术等方向上的技术挑战，保障业务持续高质量、高效率、且安全地为用户服务；同时还能为不同业务场景提供全面的技术解决方案，优化各项产品指标及用户体验。 在这里， 有大牛带队与大家一同不断探索前沿， 突破想象空间。 在这里，你的每一行代码都将服务亿万用户。在这里，团队专业且纯粹，合作氛围平等且轻松。目前在北京，上海，杭州、广州、深圳分别开放多个岗位机会。 1、负责业务全链路开发，覆盖前端、客户端、服务端等多个领域，按业务需求统筹各端开发优先级，推动功能高效落地； 2、深度运用AI Coding工具开展日常开发，主动探索AI工具在多端开发场景中的应用，提升代码开发效率与质量； 3、参与业务从需求分析、技术方案设计、编码实现到测试上线的全流程，打通端侧壁垒，实现业务闭环交付； 4、关注AI编码与全栈开发前沿技术，结合业务场景提出创新思路，推动技术方案持续演进； 5、参与团队技术方案讨论、架构优化、代码评审等协作工作，助力团队形成“按业务分工、全栈协同”的开发模式。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机科学、软件工程等相关专业优先； 2、扎实的计算机基础知识，包括数据结构、算法、计算机网络、操作系统等； 3、具备前端（JavaScript/TypeScript/Vue/React等）、客户端（Flutter/iOS/Android任一）、服务端（Golang/Python/Java任一）中至少一个领域的开发经验，有全栈开发经验或多端项目经历者优先； 4、对AI Coding工具（如TRAE、Cursor等）有强烈的使用兴趣，乐于主动探索AI辅助开发的应用场景，能通过AI工具有效提升开发效率；有AI工具深度使用经验，如利用AI辅助完成完整项目开发、自动化代码生成等；认可全栈工程师定位，具备较强的学习能力和快速上手新技术的适应力，愿意在业务驱动下跨端成长； 5、具备良好的编程习惯和代码管理能力，熟悉Git工作流，了解基础设计模式和开发原则；热爱技术、主动负责、乐于直面挑战，具备良好的沟通能力和团队合作精神； 6、有开源项目贡献或个人技术博客产出，有工程化实践经验；有工程化实践经验，有系统的开发或性能优化经验。
+
+### AI全栈开发工程师（客户端方向） - TikTok研发
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 杭州 / 杭州 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：3 个
+  - `7667101962714663221` · AI全栈开发工程师（客户端方向） - TikTok研发 · 上海 · https://jobs.bytedance.com/campus/position/7667101962714663221/detail
+  - `7667052074640148741` · AI全栈开发工程师（客户端方向） - TikTok研发 · 杭州 · https://jobs.bytedance.com/campus/position/7667052074640148741/detail
+  - `7667107369742829877` · AI全栈开发工程师（客户端方向） - TikTok研发 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667107369742829877/detail
+
+**官方职责**
+
+团队介绍：TikTok研发团队，旨在实现TikTok业务的研发工作，搭建及维护业界领先的产品。加入我们，你能接触到包括用户增长、社交、直播、电商C端、内容创造、内容消费等核心业务场景，支持产品在全球赛道上高速发展；也能接触到包括服务架构、基础技术等方向上的技术挑战，保障业务持续高质量、高效率、且安全地为用户服务；同时还能为不同业务场景提供全面的技术解决方案，优化各项产品指标及用户体验。 在这里， 有大牛带队与大家一同不断探索前沿， 突破想象空间。 在这里，你的每一行代码都将服务亿万用户。在这里，团队专业且纯粹，合作氛围平等且轻松。目前在北京，上海，杭州、广州、深圳分别开放多个岗位机会。 1、参与iOS客户端功能的设计、开发、迭代与交付，覆盖短视频业务、用户体验及相关技术能力建设； 2、参与客户端工程架构演进，包括模块化、组件化、构建工具、研发流程及开发效率优化等工作； 3、参与AI能力在客户端的接入、工程化落地与体验优化，关注性能、稳定性、兼容性及用户体验； 4、在导师指导下参与关键技术问题的分析与攻坚，跟踪行业技术趋势，探索可落地的技术创新方案； 5、与产品、服务端及测试等团队协作，推动高质量、高效率的业务交付。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机科学与技术、软件工程、电子信息等相关专业； 2、具备扎实的计算机基础，理解数据结构、算法、操作系统、计算机网络及软件工程相关知识； 3、熟悉至少一门编程语言，如Swift、Objective-C、Java、Kotlin、C/C++等；有移动端开发基础者优先； 4、对客户端开发、AI应用及新兴技术保持好奇心，具备较强的学习能力、问题分析能力和实践能力； 5、具备良好的代码质量意识，逻辑清晰，养成规范的编码、调试与协作习惯； 6、具备良好的沟通能力和团队协作意识，能够主动推进问题解决。 加分项： 1、有iOS、Android或跨端项目开发经验，具备完整项目或开源项目经历； 2、了解端侧AI、模型推理、智能体应用或AI产品工程化实践； 3、对客户端性能优化、工程效率、架构设计或用户体验有深入兴趣和实践积累。
+
+### AI全栈开发工程师（抖音搜索） - 抖音用户产品
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7664517848791025973` · AI全栈开发工程师（抖音搜索） - 抖音用户产品 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7664517848791025973/detail
+
+**官方职责**
+
+团队介绍：抖音用户产品研发团队为抖音全业务提供研发支持与底层技术能力，是驱动业务持续进化的重要工程力量之一。团队围绕首页、推荐、搜索、图文、中长视频、AI 创作、相机、账号及社交通讯等核心场景，承担从客户端、服务端到 AI 工程链路的端到端建设，在亿级 DAU 的真实流量下，持续攻坚极致体验与前沿 AI 系统的工程命题。 我们相信，AI 正在重塑产品的底层架构。团队依托大模型与多模态技术、Multi-Agent 系统工程、在线推理与评测基础设施，面向下一代 AI 原生应用持续投入：在社交与通讯场景，探索长期记忆、多模态理解与人格化对话的技术边界，构建真正能陪伴用户的 AI 交互系统；在内容与创作场景，建设面向亿级创作者的多模态生成与可控创作引擎，让 AI 成为创作者的表达延伸；在搜索与信息获取场景，探索生成式检索、Agentic Search 与个性化推理的新一代系统架构，重新定义 "人与信息" 的连接方式。 这里有工业界领先规模的真实流量，有最前沿的 AI 工程命题，也有一群把技术做到极致的同行者。诚邀热爱技术、追求极致、渴望在真实世界解决硬核问题的你加入我们，一起在 Agent 驱动的技术浪潮中，构建支撑大规模用户的新一代产品。 1、负责抖音搜索和AI搜等相关产品的开发工作，完成从需求分析、方案设计到编码上线的完整研发流程； 2、参与系统架构设计与优化、性能调优、API设计、自动化测试等工程化工作，提升系统的稳定性和可维护性； 3、AI Coding实践：使用AI Coding工具（如Cursor、Copilot、TRAE、Claude Code等）辅助日常开发，探索AI驱动的研发提效方式； 4、参与将AI能力融入到搜索的技术方案设计与落地，在实践中验证和优化AI驱动开发流程，持续提升生产力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、扎实的计算机基础（数据结构、算法、操作系统、网络）； 3、至少熟悉以下一个技术方向，有相关的项目实践经验： 1）客户端方向：熟悉Android（Java/Kotlin）、iOS（Swift/Objective-C）或鸿蒙（ArkTS）开发，了解移动端架构设计和性能优化； 2）前端方向：熟悉React/Vue/TypeScript等至少一种技术栈，了解前端工程化和性能优化； 3）后端方向：熟悉Go/Python/Java/C++等至少一门语言，了解常见系统设计概念（数据库、缓存、消息队列、RESTful API等）； 4、对全栈开发有热情和意愿，愿意在导师指导下拓展不熟悉的技术领域； 5、良好的沟通能力与自驱力，能在AI辅助下独立推进任务。 加分项： 1、有使用AI工具独立完成项目、课程设计或开源贡献的实战经验； 2、有AI Agent/Context Engineering/Harness Engineering等方向的实践或思考； 3、活跃于GitHub、技术博客或开发者社区，有持续的技术输出。
+
+### AI全栈开发工程师（搜索） - TikTok研发
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665992533729757493` · AI全栈开发工程师（搜索） - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7665992533729757493/detail
+
+**官方职责**
+
+团队介绍：TikTok研发团队，旨在实现TikTok业务的研发工作，搭建及维护业界领先的产品。加入我们，你能接触到包括用户增长、社交、直播、电商C端、内容创造、内容消费等核心业务场景，支持产品在全球赛道上高速发展；也能接触到包括服务架构、基础技术等方向上的技术挑战，保障业务持续高质量、高效率、且安全地为用户服务；同时还能为不同业务场景提供全面的技术解决方案，优化各项产品指标及用户体验。 在这里， 有大牛带队与大家一同不断探索前沿， 突破想象空间。 在这里，你的每一行代码都将服务亿万用户。在这里，团队专业且纯粹，合作氛围平等且轻松。目前在北京，上海，杭州、广州、深圳分别开放多个岗位机会。 1、负责Tako的研发、功能实现和产品迭代，覆盖业务全链路，按业务需求统筹各端开发优先级，打破端侧壁垒，实现业务功能高效落地； 2、深度运用AI Coding工具开展开发工作，提升代码开发效率与质量，主动探索AI工具在多端开发场景的优化空间，助力提升团队AI代码贡献率； 3、关注AI编码、全栈开发前沿技术与行业趋势，跟进业内最新工具与应用方案，结合业务场景提出创新思路，探索AI技术与全栈开发结合的最优路径，支撑业务长远发展。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件、电子信息等相关专业； 2、扎实的计算机、网络和软件开发相关基础，熟悉或掌握至少一门软件开发语言（例如Java、Kotlin、Object-C、C++、C、JavaScript）； 3、学习能力强，对客户端开发技术有好奇心，对新兴技术趋势感兴趣； 4、具有较强的学习能力和动手能力，良好的沟通能力和优秀的团队协作能力； 5、良好的编程习惯，编码思路清晰。 加分项： 1、有移动端开发经验，热爱移动端开发，对新兴技术趋势感兴趣。
+
+### AI全栈开发工程师（服务体验与治理） - 中国交易与广告
+
+- **证据状态**：FULL_JD
+- **地点**：杭州 / 北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668225975628466437` · AI全栈开发工程师（服务体验与治理） - 中国交易与广告 · 杭州 / 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668225975628466437/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，负责抖音电商、生活服务、广告营销等营收业务的研发。用技术带来美好生活，让用户发现更多优价好物，为用户提供更丰富独特的生活体验；连接海量用户与商家，促进交易达成，让生态里全流程体验更流畅，助力营收业务长效增长。 加入团队，你将投身流量与增长主战场，挑战复杂业务场景技术难题；直面真实商家和用户，用技术解决看得见的问题，在实战中快速成长，书写属于你的价值故事！ 1、参与业务系统的设计、开发、测试及持续优化（包括但不限于交互体验、系统性能、可用性等）； 2、与运营、产品、算法、数据等团队紧密协作，保障项目按时完成，达成业务目标； 3、使用AI编程工具和智能Agent辅助需求分析、编码、测试与问题排查，提升研发效率； 4、持续关注大模型、Agent等新技术，探索其在业务和研发流程中的应用。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业优先； 2、具备扎实的计算机基础，理解数据结构、算法、数据库、计算机网络等基础知识；掌握Python/Go/Java/JavaScript中任意一门开发语言，具备基本的软件开发和工程实践能力，熟悉工程开发框架或具备全栈项目经验者优先； 3、具备良好的业务理解、问题分析、学习能力和团队协作意识； 4、能够使用主流AI编码工具（TRAE、Claude Code、Codex等）辅助编码、测试和调试，并能够判断、验证和修正AI生成结果； 5、理解大模型基础原理、熟悉AI Agent模块（Prompt、记忆机制、工具调用、RAG等）者优先； 6、有完整项目、实习、开源贡献或AI应用开发经验者优先。
+
+### AI全栈开发工程师（生服/大前端） - 中国交易与广告
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7665971258781600053` · AI全栈开发工程师（生服/大前端） - 中国交易与广告 · 上海 · https://jobs.bytedance.com/campus/position/7665971258781600053/detail
+  - `7665970752073025845` · AI全栈开发工程师（生服/大前端） - 中国交易与广告 · 北京 · https://jobs.bytedance.com/campus/position/7665970752073025845/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，负责抖音电商、生活服务、广告营销等营收业务的研发。用技术带来美好生活，让用户发现更多优价好物，为用户提供更丰富独特的生活体验；连接海量用户与商家，促进交易达成，让生态里全流程体验更流畅，助力营收业务长效增长。 加入团队，你将投身流量与增长主战场，挑战复杂业务场景技术难题；直面真实商家和用户，用技术解决看得见的问题，在实战中快速成长，书写属于你的价值故事！ 1、依托AI Coding工具开展研发工作，独立负责电商、生活服务相关项目大前端全栈开发，涵盖Web前端、iOS/Android/鸿蒙客户端功能迭代与接口联调，保障业务需求高质量落地； 2、参与Web及移动端技术选型与架构演进，面向iOS、Android、HarmonyOS开展三端跨平台架构设计，实现多端自适应布局、复杂交互与动效，持续优化多屏协同场景用户体验； 3、深度参与业务全生命周期工作，覆盖需求分析、方案设计、编码实现、性能调优至灰度上线，支撑商品、交易、营销活动、商家经营工作台、履约链路等电商/生活服务核心场景；联动产品、算法、数据、后端等跨职能团队，推动技术方案对齐落地，探索AI/Agent在大前端与业务场景的创新实践，依托大模型重构研发流程与终端用户交互体验； 4、围绕内存占用、设备功耗、启动速度、渲染流畅度等核心指标开展深度性能优化，攻克各类疑难技术问题，持续打磨大前端体验上限； 5、主导或参与大前端基础设施建设，包括通用组件库沉淀、跨端框架迭代、工程化工具链优化、CI/CD交付流程升级，提升团队整体研发效能。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业； 2、具备Web前端+移动端一体化开发能力：熟练掌握JavaScript/TypeScript、React等主流前端框架；熟悉iOS（Swift/Objective-C）、Android（Kotlin/Java）、HarmonyOS（ArkTS/C++）至少一端开发体系；理解内存管理、多线程、网络优化，掌握常用数据结构与算法； 3、理解移动端架构思想（模块化/组件化/动态化），了解跨平台开发方案；熟练使用Instruments、Systrace、DevEco等性能分析工具，能够独立定位并解决复杂技术问题； 4、理解LLM基础原理，熟悉AI Agent核心模块（Prompt工程、记忆机制、工具调用、RAG、多智能体），可基于业务场景完成不同层级大模型选型； 5、熟练使用主流AI编码辅助工具（TRAE、Claude Code、Codex等）；能够借助AI完成需求拆解、代码实现、复杂逻辑重构、故障定位修复、单元测试编写、代码评审，具备AI协同研发思维； 6、掌握Git常用操作；拥有良好沟通表达与团队协作意识，对新技术保持好奇心，擅长独立思考、复盘总结；拥有相关岗位实习或项目开发经历优先。 加分项 1、具备iOS/Android/鸿蒙多端或跨端实战经验；独立实现过复杂业务页面、H5互动应用、数据可视化、高性能动效；拥有大型App内存、功耗、启动速度、渲染流畅度专项优化经验； 2、擅长运用AI Coding工具、AI Agent提升研发效能；具备AI辅助大前端开发、Agent部署与二次开发实践；了解MCP协议、LLM工具调用机制，能够搭建AI自动化研发工作流并沉淀可复用模板与工程实践； 3、拥有电商交易、商家经营、营销活动、物流履约、本地生活等业务系统开发经验；或具备对话应用、智能任务编排、企业知识库平台相关项目落地经历。
+
+### AI全栈开发工程师（生活服务/大前端） - 中国交易与广告 - 中国交易与广告
+
+- **证据状态**：FULL_JD
+- **地点**：成都
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665971096596072709` · AI全栈开发工程师（生活服务/大前端） - 中国交易与广告 - 中国交易与广告 · 成都 · https://jobs.bytedance.com/campus/position/7665971096596072709/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，负责抖音电商、生活服务、广告营销等营收业务的研发。用技术带来美好生活，让用户发现更多优价好物，为用户提供更丰富独特的生活体验；连接海量用户与商家，促进交易达成，让生态里全流程体验更流畅，助力营收业务长效增长。 加入团队，你将投身流量与增长主战场，挑战复杂业务场景技术难题；直面真实商家和用户，用技术解决看得见的问题，在实战中快速成长，书写属于你的价值故事！ 1、依托AI Coding工具开展研发工作，独立负责电商、生活服务相关项目大前端全栈开发，涵盖Web前端、iOS/Android/鸿蒙客户端功能迭代与接口联调，保障业务需求高质量落地； 2、参与Web及移动端技术选型与架构演进，面向iOS、Android、HarmonyOS开展三端跨平台架构设计，实现多端自适应布局、复杂交互与动效，持续优化多屏协同场景用户体验； 3、深度参与业务全生命周期工作，覆盖需求分析、方案设计、编码实现、性能调优至灰度上线，支撑商品、交易、营销活动、商家经营工作台、履约链路等电商/生活服务核心场景；联动产品、算法、数据、后端等跨职能团队，推动技术方案对齐落地，探索AI/Agent在大前端与业务场景的创新实践，依托大模型重构研发流程与终端用户交互体验； 4、围绕内存占用、设备功耗、启动速度、渲染流畅度等核心指标开展深度性能优化，攻克各类疑难技术问题，持续打磨大前端体验上限； 5、主导或参与大前端基础设施建设，包括通用组件库沉淀、跨端框架迭代、工程化工具链优化、CI/CD交付流程升级，提升团队整体研发效能。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业； 2、具备Web前端+移动端一体化开发能力：熟练掌握JavaScript/TypeScript、React等主流前端框架；熟悉iOS（Swift/Objective-C）、Android（Kotlin/Java）、HarmonyOS（ArkTS/C++）至少一端开发体系；理解内存管理、多线程、网络优化，掌握常用数据结构与算法； 3、理解移动端架构思想（模块化/组件化/动态化），了解跨平台开发方案；熟练使用Instruments、Systrace、DevEco等性能分析工具，能够独立定位并解决复杂技术问题； 4、理解LLM基础原理，熟悉AI Agent核心模块（Prompt工程、记忆机制、工具调用、RAG、多智能体），可基于业务场景完成不同层级大模型选型； 5、熟练使用主流AI编码辅助工具（TRAE、Claude Code、Codex等）；能够借助AI完成需求拆解、代码实现、复杂逻辑重构、故障定位修复、单元测试编写、代码评审，具备AI协同研发思维； 6、掌握Git常用操作；拥有良好沟通表达与团队协作意识，对新技术保持好奇心，擅长独立思考、复盘总结；拥有相关岗位实习或项目开发经历优先。 加分项 1、具备iOS/Android/鸿蒙多端或跨端实战经验；独立实现过复杂业务页面、H5互动应用、数据可视化、高性能动效；拥有大型App内存、功耗、启动速度、渲染流畅度专项优化经验； 2、擅长运用AI Coding工具、AI Agent提升研发效能；具备AI辅助大前端开发、Agent部署与二次开发实践；了解MCP协议、LLM工具调用机制，能够搭建AI自动化研发工作流并沉淀可复用模板与工程实践； 3、拥有电商交易、商家经营、营销活动、物流履约、本地生活等业务系统开发经验；或具备对话应用、智能任务编排、企业知识库平台相关项目落地经历。
+
+### AI全栈开发工程师（电商/前后端） - 中国交易与广告
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：3 个
+  - `7672248922642843909` · AI全栈开发工程师（电商/前后端） - 中国交易与广告 · 上海 · https://jobs.bytedance.com/campus/position/7672248922642843909/detail
+  - `7665964918622308661` · AI全栈开发工程师（电商/前后端） - 中国交易与广告 · 北京 · https://jobs.bytedance.com/campus/position/7665964918622308661/detail
+  - `7665967242873784629` · AI全栈开发工程师（电商/前后端） - 中国交易与广告 · 杭州 · https://jobs.bytedance.com/campus/position/7665967242873784629/detail
+
+**官方职责**
+
+团队介绍：中国交易与广告，负责抖音电商、生活服务、广告营销等营收业务的研发。用技术带来美好生活，让用户发现更多优价好物，为用户提供更丰富独特的生活体验；连接海量用户与商家，促进交易达成，让生态里全流程体验更流畅，助力营收业务长效增长。 加入团队，你将投身流量与增长主战场，挑战复杂业务场景技术难题；直面真实商家和用户，用技术解决看得见的问题，在实战中快速成长，书写属于你的价值故事！ 1、依托AI Coding工具开展日常研发工作，独立负责电商、生活服务、广告相关项目前后端全栈开发、功能迭代与接口联调，保障业务需求高质量落地； 2、承担业务方向前后端技术方案设计、技术选型与开发实现，独立完成功能编码、接口设计与联调；覆盖商品、交易、营销活动、商家经营工作台、履约链路，以及广告投放、创意素材、竞价出价、效果分析等业务场景； 3、主导或参与前后端基础设施建设，沉淀通用组件库，持续优化工程化工具链、CI/CD交付流程，提升团队整体研发效能； 4、协同产品、算法、数据等跨职能团队，推进技术方案评审与对齐，把控项目进度，保障业务按时稳定交付； 5、持续跟进前端前沿技术，推动新技术业务落地，不断优化页面性能、稳定性与终端用户体验； 6、探索AI、Agent在电商、生活服务、广告场景的创新落地，基于大模型重构营销活动搭建、商家经营诊断、履约异常处置、广告投放与创意生成等业务流程，赋能研发与业务提效。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业； 2、熟练掌握Python/Go/Java/JavaScript至少一门开发语言，熟悉Node.js或Go，具备前后端一体化开发实践能力； 3、熟练使用React等主流前端框架，能够独立完成复杂业务界面、数据可视化功能开发； 4、理解LLM基础原理，熟悉AI Agent核心能力模块（Prompt工程、记忆机制、工具调用、RAG、多智能体），能够结合业务场景选型适配不同能力层级的大模型； 5、熟练使用主流AI编码工具（TRAE、Claude Code、Codex等）；可借助AI完成需求拆解、代码编写、复杂逻辑重构、问题定位与修复、单元测试编写、代码评审，具备AI协同研发思维； 6、掌握Git常用操作；具备良好沟通表达与团队协作能力，对新技术保持好奇心，擅长独立思考、复盘总结。 加分项 1、拥有AI Agent开发、部署与二次开发经验，可参与智能体在电商/生活服务/广告场景落地探索；包括交互开发、营销/商家经营/广告投放/创意工作流编排、任务拆分、多智能体并行调度、模型动态择优等实践； 2、具备利用AI Coding工具提升个人与团队研发效能的实战经验；了解MCP协议、LLM工具调用机制，能够搭建AI自动化工作流，沉淀可复用调度模板与工程实践方案； 3、具备电商交易、商家经营、营销活动、物流履约、本地生活，或是广告投放、创意素材、竞价营销系统等业务开发经历；拥有对话应用、智能任务编排、企业知识库平台相关项目经验优先。
+
+### AI全栈开发工程师（直播营收） - 抖音直播
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668641333339719941` · AI全栈开发工程师（直播营收） - 抖音直播 · 北京 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7668641333339719941/detail
+
+**官方职责**
+
+团队介绍：直播团队负责为抖音集团旗下产品提供直播服务。团队负责直播平台技术和直播业务研发，打造灵活稳定的直播服务平台，为用户提供优质直播体验，支持电商、本地生活、游戏、节目、多人互动等不同类型的业务场景。直播业务发展迅猛，处于行业头部地位，业务发展空间巨大。现在加入我们，和优秀的人一起做有挑战的事，你的技术与创意将影响亿级用户，激发创意和丰富生活。 1、参与抖音直播营收业务研发，负责礼物、红包、道具、互动玩法及资金资产等业务场景建设； 2、以后端研发为基础，在AI工具辅助下完成页面或交互、服务端接口、数据存储和上线验证等全链路开发任务； 3、参与高并发请求、异步消息、资金一致性和服务稳定性等真实挑战，与产品、客户端和运营协作推动功能完整上线； 4、探索Agent在需求分析、代码生成、自动测试、问题诊断和知识沉淀等场景的应用，建设团队Skill、工作流和业务知识库。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机及相关专业优先； 2、具备扎实的计算机基础，理解数据结构、算法、操作系统、计算机网络和数据库等基本知识； 3、至少熟练掌握Go、Java、C++、Python等一种编程语言，具备后端开发基础； 4、有Web前端、客户端、数据处理或云服务相关实践，或愿意借助AI快速跨越技术栈边界，完成从交互到接口、数据存储的完整交付； 5、对AI Coding和Agent研发有强烈兴趣，日常主动使用AI编程工具，并能够验证AI生成结果的正确性； 6、具备较强的学习能力、自驱力和责任心，愿意深入业务、主动发现并解决问题，实习生每周至少出勤4天。
+
+### AI全栈开发工程师（社区方向） - 抖音直播
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665687075878439221` · AI全栈开发工程师（社区方向） - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7665687075878439221/detail
+
+**官方职责**
+
+团队介绍：直播团队负责为抖音集团旗下产品提供直播服务。团队负责直播平台技术和直播业务研发，打造灵活稳定的直播服务平台，为用户提供优质直播体验，支持电商、本地生活、游戏、节目、多人互动等不同类型的业务场景。直播业务发展迅猛，处于行业头部地位，业务发展空间巨大。现在加入我们，和优秀的人一起做有挑战的事，你的技术与创意将影响亿级用户，激发创意和丰富生活。 1、参与抖音直播客户端AI Agent方向的建设，面向直播核心场景，设计并落地具备感知、理解、规划与执行能力的智能体能力；负责基于大语言模型的客户端Agent框架研发，探索AI在直播消费、互动、创作辅助、主播经营等场景中的落地方案； 2、参与端侧、云端协同的AI能力建设，推动Agent在复杂业务场景下的任务拆解、工具调用、上下文管理与执行链路优化； 3、参与客户端智能化产品能力研发，结合抖音直播业务特点，提升AI Agent在多轮交互、实时响应、个性化服务等方向的用户体验； 4、与产品、设计、服务端、算法等团队密切合作，推进AI Agent在直播客户端场景中的工程化落地，持续优化效果、性能与稳定性；关注Multi-Agent、Prompt Engineering、长短期记忆、任务规划等前沿技术，探索其在直播业务中的实际应用与价值。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机科学、软件工程、人工智能、电子信息等相关专业优先； 2、具备扎实的计算机基础和编程能力，熟悉数据结构、算法、操作系统、计算机网络等基础知识； 3、熟悉iOS/Android/跨端客户端开发技术中的一种或多种，有移动端项目实践经验者优先； 4、对大语言模型、AI Agent、Prompt Engineering、RAG、任务规划、工具调用等方向有一定理解，有相关项目实践者优先； 5、具备良好的问题分析与解决能力，较强的学习能力、沟通协作能力和结构化表达能力； 6、对AI技术与产品结合有热情，对直播、内容、互动类产品感兴趣，具备较强的创新意识与落地意识。 加分项 1、有AI Agent、Multi-Agent、智能助手、Copilot、对话系统等相关项目经验； 2、有iOS、Android或跨端客户端产品的开发经历，熟悉移动端性能优化、工程架构设计者优先； 3、有LLM应用落地经验，了解Prompt优化、RAG、Function Calling、Agent工作流等技术； 4、在人工智能、人机交互、自然语言处理、软件工程等相关领域有论文、竞赛或开源项目经历； 5、对直播互动、内容推荐、智能创作、AI驱动产品体验有深入兴趣或相关实践。
+
+### AI全栈研发工程师 - AI算力基础设施
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7664436511980636421` · AI全栈研发工程师 - AI算力基础设施 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7664436511980636421/detail
+
+**官方职责**
+
+团队介绍：字节跳动基础设施部门，负责字节跳动的全栈算力基础设施，从芯片服务器产研、到超大规模数据中心，到传统云平台和如今的AI Native Cloud，全方位为抖音、豆包、今日头条、飞书、火山引擎等各类产品提供领先、稳定的百万量级大规模算力基础设施服务。我们的领域涵盖数据中心建设、内核操作系统开发、服务器集群管理、高速网络通信、EB级数据存储体系、搜索型数据库探索、基于LLM的AI基础设施的研发调度与治理等，致力于打造业界领先的、面向LLM的AI云原生基础设施架构与产品矩阵。 1、参与企业级AI Agent工作台与AI云原生产品的端到端研发，包括Agent运行时与生态建设（如Agent执行、工具调用、Skill/Plugin/MCP生态、多Agent协作和任务编排等），把复杂AI能力打磨成用户可理解、可配置、可持续使用的产品体验，让AI真正进入客户日常工作流； 2、覆盖前端交互、状态管理、后端服务、数据链路的完整全栈工程，把产品需求拆解成稳定、可维护、可复用的工程实现； 3、参与企业级AI产品的权限、配额、审计、观测、稳定性和成本治理等能力建设，理解AI产品从"能跑"到"可控、可信、可规模化交付"之间的工程内涵； 4、参与AI Agent评测体系建设，设计覆盖任务成功率、工具调用准确性、多轮对话、推理链路、安全合规等维度的评测框架，持续提升Agent质量与迭代效率； 5、以AI原生方式改造研发流程，将AI Coding、自动化验证、端到端调试等能力沉淀为团队可复用的工作流。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、计算机基础扎实，理解数据结构、网络、浏览器、HTTP/WebSocket、异步编程和基本工程质量要求； 3、熟悉或愿意深入学习TypeScript、React、Node.js、Python等技术栈，能够独立完成从交互到接口再到边界处理的完整闭环； 4、对AI Agent、LLM应用、工具调用、工作流编排、MCP/Plugin、自动化执行等方向有强烈兴趣； 5、具备产品意识与工程责任感，愿意从用户任务出发思考"为什么做、怎么让它真的可用"，能够在产品、设计、后端、平台等多角色协作中推动问题闭环。 加分项 1、有完整Web应用、组件库、Node服务、BFF、浏览器插件、桌面端或全栈项目经验； 2、使用或研究过Claude Code、Codex、Hermes、LangGraph、MCP、RPA、Computer Use、Agent工作流等工具或框架； 3、做过AI应用、RAG、知识库、文件解析、长任务执行、自动化测试、可观测或权限系统； 4、有开源项目、竞赛、科研、工程博客或高质量个人项目；能主动用AI工具提升开发、调研、验证与表达效率。
+
+### AI全栈研发工程师 - 模型数据工程
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7670043854209386805` · AI全栈研发工程师 - 模型数据工程 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7670043854209386805/detail
+
+**官方职责**
+
+团队介绍：数据工程与平台团队旨在实现人类知识与经验向模型能力的加速迁移。我们从真实场景出发，通过模型短板识别、高质量数据定义、规模化数据生产，提升模型能力。与此同时，团队还致力于依托训练反馈，反哺数据设计，推动系统迭代，构建业内一流的数据工程能力与平台。 1、负责大模型数据生产体系构建，从大规模的数据合成到人机协同，深入研究大模型工作原理，深度参与和助力大模型效果迭代； 2、深度参与业务，通过数据分析与算法策略改进，优化大模型数据的交付质量与规模，提升模型效果和用户体验，并与跨部门团队协作推动项目落地； 3、推动数据平台的智能化演进，搭建AI辅助的智能标注、质量校验与数据迭代闭环系统，实现任务的自动分配、错误智能修正、数据价值自动评估，降低人力成本并提升数据生产的标准化与规模化； 4、主导老系统的渐进式重构与边界治理；在引入AI生成代码提升效率的同时，能够建立有效的隔离与防御机制； 5、关注行业前沿技术，探索大模型在代码生成、多模态处理、自动化评测等领域的创新应用，为数据生产系统的技术底座提供前瞻性建议。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业优先； 2、具备扎实的工程能力，具备代码能力与系统抽象能力，能够熟练应对复杂状态机流转、高复用业务组件抽象以及遗留系统的渐进式改造； 3、具备强烈的“契约优先”和“边界防范”意识，深刻理解在借助AI工具（大模型辅助编程）实现大幅提效的同时，如何通过设计高内聚低耦合的业务边界、完善测试与校验； 4、有数据标注平台、Workflow编排、数据合成或AI训练数据管道开发经验者优先； 5、具备代码大模型应用经验或主导过基于LLM的实际业务应用落地者优先，有顶会论文者优先； 6、优秀的跨团队协作能力，具备积极主动的开发理念，具备强烈的自驱力与“把事情做好”的建设性心态，能通过技术创新与业务重塑解决实际痛点。
+
+### AI娱乐方向Agent Harness研发工程师 - Flow
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668543382147238149\` · AI娱乐方向Agent Harness研发工程师 - Flow · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668543382147238149/detail
+  - `7668543382147238149` · AI娱乐方向Agent Harness研发工程师 - Flow · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668543382147238149/detail
 
 **官方职责**
 
@@ -1828,13 +2718,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能等相关专业优先； 2、对Agent及其工程化有浓厚兴趣；熟悉TypeScript/JavaScript开发，具备一定的工程模块设计意识；了解Go或其它至少一门后端语言，有能力搭建简单的服务与API； 3、对LLM与Agent的基本机制与原理有初步了解（如LLM API、Agent Loop、Tool Use、Planning、Memory、RAG、MCP等概念）； 4、是AI Agent产品的深度使用者（如Codex、Claude Code、Cursor、OpenClaw、Manus、Cowork等），并已经把它们融入到自己的学习或生活中； 5、具备良好的沟通与团队协作意识，乐于在导师带领下共同成长。 【加分项】 1、有AI行业实习、创业或开源项目经验，尤其是Agent相关的0-1项目实践； 2、作为团队或个人开发者快速迭代产品的经历（如独立作品、黑客松项目等）； 3、参与开源社区，有个人作品或贡献记录； 4、学习能力强，能够借助AI辅助，在缺乏直接经验的领域（如新语言、新框架）快速上手并系统性学习。
 
-### AI应用产品测试开发工程师
+### AI应用产品测试开发工程师 - Data AML
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670132898882046213\` · AI应用产品测试开发工程师 - Data AML · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7670132898882046213/detail
+  - `7670132898882046213` · AI应用产品测试开发工程师 - Data AML · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7670132898882046213/detail
 
 **官方职责**
 
@@ -1844,15 +2734,15 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、扎实的计算机基础，熟悉数据结构、算法、操作系统、计算机网络等基础知识； 3、熟练掌握Python、Go、Java等至少一种编程语言，具备扎实的编程基础； 4、对AI、大语言模型（LLM）、Agent等技术方向有浓厚兴趣，关注AI应用的发展趋势； 5、具备良好的分析与解决问题能力，具备良好的编码习惯。
 
-### AI应用全栈工程师
+### AI应用全栈工程师 - 抖音平台产品
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 杭州 / 深圳
+- **地点**：杭州 / 北京 / 深圳 / 北京 / 深圳 / 杭州 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：3 个
-  - \`7667868660185106693\` · AI应用全栈工程师 - 抖音平台产品 · 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667868660185106693/detail
-  - \`7667869209695242501\` · AI应用全栈工程师 - 抖音平台产品 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7667869209695242501/detail
-  - \`7667869280712902965\` · AI应用全栈工程师 - 抖音平台产品 · 深圳 / 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667869280712902965/detail
+  - `7667868660185106693` · AI应用全栈工程师 - 抖音平台产品 · 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667868660185106693/detail
+  - `7667869209695242501` · AI应用全栈工程师 - 抖音平台产品 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7667869209695242501/detail
+  - `7667869280712902965` · AI应用全栈工程师 - 抖音平台产品 · 深圳 / 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667869280712902965/detail
 
 **官方职责**
 
@@ -1862,13 +2752,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业； 2、前端基础扎实，熟悉主流的前端开发框架，深入了解至少一种前端框架及原理，具备系统架构设计能力，对实现高性能、高可用的前端架构有实际经验； 3、具备人工智能集成开发环境产品、Vibe coding产品、人工智能研发工具/测试等人工智能编码相关项目开发经验的优先； 4、具备人工智能应用项目的相关经验或算法背景，熟悉大语言模型应用架构，产品工程化和数据评测等，对于智能体，检索增强生成，监督微调、强化学习等有基本的认知和理解； 5、具备创新意识，能密切关注人工智能领域的最新发展动态，具备人工智能应用产品落地经验者优先，有开源项目经验者优先。
 
-### AI应用前端研发工程师（全栈方向）
+### AI应用前端研发工程师（全栈方向） - 剪映CapCut
 
 - **证据状态**：FULL_JD
 - **地点**：广州 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668599998369171717\` · AI应用前端研发工程师（全栈方向） - 剪映CapCut · 广州 / 深圳 · https://jobs.bytedance.com/campus/position/7668599998369171717/detail
+  - `7668599998369171717` · AI应用前端研发工程师（全栈方向） - 剪映CapCut · 广州 / 深圳 · https://jobs.bytedance.com/campus/position/7668599998369171717/detail
 
 **官方职责**
 
@@ -1878,15 +2768,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、通信、电子信息等相关专业优先； 2、具备良好的编码能力，掌握HTML/CSS/TypeScript等前端基础，具备一门以上后端语言能力； 3、具备扎实的计算机基础，理解常用数据结构、算法、计算机网络和操作系统知识； 4、具备良好的逻辑分析、问题拆解能力，自驱、务实，具备良好的沟通协作意识，愿意深入业务并持续学习； 5、对AI相关技术感兴趣，有AI Agent开发经验者优先； 6、有全栈、音视频编辑开发经验者优先。
 
-### AI应用后端开发工程师
+### AI应用后端开发工程师 - 内容质量与数据服务平台
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 南京 / 杭州 / 深圳
+- **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：3 个
-  - \`7668343736145955077\` · AI应用后端开发工程师 - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7668343736145955077/detail
-  - \`7667086663403145477\` · AI应用后端开发工程师 - 数据平台 · 北京 / 上海 / 杭州 / 南京 / 深圳 · https://jobs.bytedance.com/campus/position/7667086663403145477/detail
-  - \`7669777290679879989\` · AI应用后端开发工程师 - 财经业务 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7669777290679879989/detail
+- **官方 Requisition**：1 个
+  - `7668343736145955077` · AI应用后端开发工程师 - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7668343736145955077/detail
+
+**官方职责**
+
+团队介绍：抖音内容质量与数据服务平台（简称CQC）归属于抖音集团，负责今日头条、抖音等产品内容和抖音集团商业内容的安全质量与体验。平台下设内容质量中心、商业生态与安全、生态治理与增长支持等业务，在全国20余个城市均有分布。 自成立以来，CQC持续守护抖音集团旗下包括抖音、今日头条、番茄小说、飞书、红果短剧等产品在内的安全、质量与体验，优化产品内创作与交流环境，且在各产品运营增长方面开展支持工作。 1、负责平台工具、Agent应用、数据服务等后端工程开发工作； 2、围绕内容质量把控、运营等技术提效场景的大模型应用技术落地，与产品、产品运营、业务等跨部门紧密协作，深入业务流程、参与业务需求及产品方案讨论、设计技术方案并做工程开发实现； 3、快速理解复杂业务需求、负责技术调研、技术方案下独立模块的高质量代码实现；编写高可靠性，高性能的通用服务模块，高效按质完成开发交付，持续改善服务稳定性和性能等技术问题； 4、关注AI前沿技术，跟进业内最新研究进展和应用趋势，结合业务痛点提出创新思路和方向并尝试落地。
+
+**官方要求**
+
+1、2027届获得硕士及以上学位，人工智能、计算机、软件工程、电子信息科学等相关专业； 2、精通Go/Python（至少一门），熟练掌握至少一种Web框架（Django/Flask/FastAPI/Gin/Hertz），具备扎实的编程基础和优秀的编码能力； 3、熟悉Linux开发环境，熟练应用主流数据库和中间件技术，如Redis、MySQL、消息队列等，具备数据结构和算法能力，能编写高复用、可扩展的模块化代码； 4、至少2个+大模型应用相关项目开发经验，深入理解大语言模型（LLM）原理及工程化应用，具备Agent工程化建设能力；有AI Agent开发实战经验者优先； 5、热爱编程，敏锐关注和学习业界最新Agent架构及大模型技术应用。
+
+### AI应用后端开发工程师 - 数据平台
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 杭州 / 南京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667086663403145477` · AI应用后端开发工程师 - 数据平台 · 北京 / 上海 / 杭州 / 南京 / 深圳 · https://jobs.bytedance.com/campus/position/7667086663403145477/detail
 
 **官方职责**
 
@@ -1896,14 +2800,30 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机相关专业； 2、热爱计算机科学和互联网技术，熟练掌握至少一门编程语言，包括但不限于Java、C、C++、PHP、Python、Go； 3、具备扎实的计算机基础，深入理解数据结构、算法和操作系统相关知识； 4、具备优秀的逻辑分析能力，能够对业务逻辑进行合理抽象与拆分； 5、具有强烈的求知欲，以及优秀的学习能力和沟通协作能力； 6、熟悉LLM应用开发，有Prompt Engineering、Agent、Function Calling、RAG应用开发经验者优先。
 
-### AI应用客户端开发工程师
+### AI应用后端开发工程师 - 财经业务
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 广州 / 深圳
+- **地点**：深圳 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7669777290679879989` · AI应用后端开发工程师 - 财经业务 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7669777290679879989/detail
+
+**官方职责**
+
+团队介绍：抖音集团财经业务致力于成为科技驱动业务增长的先锋，服务抖音集团生态内数亿活跃用户与广大商户的多元化金融科技需求，全面涵盖支付、消费金融、小微商户贷、保险经纪等核心板块。 在这里，你将置身于年轻、充满活力的团队氛围中，亲历行业第一的增长速度，感受科技赋能金融的无限可能。 为了支撑业务的高效拓展与价值挖掘，我们正在寻找优秀的伙伴加入，目前重点开放的岗位包括：增长、用户产品、策略运营、算法、风控、数据科学、研发、工程等。期待你的加入，与我们一起用科技重塑金融服务体验，共创更大的商业价值！ 1、参与构建基于AI-Agent架构的金融助手，负责智能答疑、个性化投资建议等核心功能的开发； 2、基于用户行为数据，构建用户需求模型，实现金融服务的“千人千面”； 3、实践AI-Agent领域的最新技术，驱动产品的快速迭代； 4、深入业务一线，全流程参与从需求分析、产品设计到技术研发与测试落地的闭环。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、精通Go、Python、C++等一种或多种编程语言，具备扎实的编程技能和算法设计能力； 3、有AI应用相关开发经验，了解大语言模型基础原理，了解LLM架构，熟悉PE工程、AI Agent、LangChain、RAG、Memory等优先； 4、创新意识强，乐于探索新的AI技术与应用场景，主动关注AI领域最新动态，具备较强的学习能力、主观能动性及跨团队协作意识。
+
+### AI应用客户端开发工程师 - 剪映CapCut
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳 / 广州 / 深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7664596757176092933\` · AI应用客户端开发工程师 - 剪映CapCut · 北京 / 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7664596757176092933/detail
-  - \`7663113049242978613\` · AI应用客户端开发工程师 - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7663113049242978613/detail
+  - `7664596757176092933` · AI应用客户端开发工程师 - 剪映CapCut · 北京 / 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7664596757176092933/detail
+  - `7663113049242978613` · AI应用客户端开发工程师 - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7663113049242978613/detail
 
 **官方职责**
 
@@ -1913,13 +2833,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、精通至少一门编程语言，包括但不仅限于：C/C++、Python、Go、Java，有一定工程能力； 3、熟悉算法基础和AI原理，包括不限于：机器学习、深度学习、LLM、多模态、CV等； 4、对AIGC相关技术感兴趣，有Agent搭建、Pre-training、SFT、RL经验优先。
 
-### AI应用客户端开发工程师（即梦AI）
+### AI应用客户端开发工程师（即梦AI） - 剪映CapCut
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670100164023798069\` · AI应用客户端开发工程师（即梦AI） - 剪映CapCut · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7670100164023798069/detail
+  - `7670100164023798069` · AI应用客户端开发工程师（即梦AI） - 剪映CapCut · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7670100164023798069/detail
 
 **官方职责**
 
@@ -1929,13 +2849,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业优先； 2、精通至少一门编程语言，包括但不仅限于：C/C++、Python、Go、Java，具备扎实的工程能力； 3、熟悉算法基础和AI原理，包括但不限于：机器学习、深度学习、LLM、多模态、CV等； 4、对AIGC相关技术感兴趣，有Agent搭建、Pre-training、SFT、RL相关项目或实习经验优先； 5、有客户端开发（iOS/Android）相关项目经验者优先。
 
-### AI应用客户端开发工程师（多轨剪辑）
+### AI应用客户端开发工程师（多轨剪辑） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667873033492662533\` · AI应用客户端开发工程师（多轨剪辑） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667873033492662533/detail
+  - `7667873033492662533` · AI应用客户端开发工程师（多轨剪辑） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667873033492662533/detail
 
 **官方职责**
 
@@ -1945,15 +2865,15 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、有良好的编程习惯，代码结构清晰，命名规范； 3、熟练掌握数据结构与算法、计算机网络、操作系统、编译原理等课程，熟练掌握Swift/Kotlin/Go/C++/C/JavaScript等一种或多种语言； 4、充满技术热情，有较强的自驱力和学习能力； 5、业余爱好视频拍摄、视频编辑，有移动端、桌面端视频编辑软件使用经验者优先； 6、对AI感兴趣，有AI实践经验者优先。
 
-### AI应用工程师（Agent方向）
+### AI应用工程师（Agent方向） - 抖音直播
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 广州 / 深圳
+- **地点**：北京 / 深圳 / 北京 / 深圳 / 北京 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：3 个
-  - \`7668529021493430533\` · AI应用工程师（Agent方向） - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7668529021493430533/detail
-  - \`7667851701248739637\` · AI应用工程师（Agent方向） - 抖音直播 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7667851701248739637/detail
-  - \`7667137498080512261\` · AI应用工程师（Agent方向） - 抖音直播 · 深圳 / 北京 / 广州 · https://jobs.bytedance.com/campus/position/7667137498080512261/detail
+  - `7668529021493430533` · AI应用工程师（Agent方向） - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7668529021493430533/detail
+  - `7667851701248739637` · AI应用工程师（Agent方向） - 抖音直播 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7667851701248739637/detail
+  - `7667137498080512261` · AI应用工程师（Agent方向） - 抖音直播 · 深圳 / 北京 / 广州 · https://jobs.bytedance.com/campus/position/7667137498080512261/detail
 
 **官方职责**
 
@@ -1963,24 +2883,32 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、数据科学、自动化等相关专业优先； 2、熟悉至少一门编程语言，如Python、Go、Java、C++等，具备良好的编码能力和工程意识；掌握计算机基础知识，包括数据结构、操作系统、计算机网络、数据库、软件工程等；了解常见后端开发技术，如HTTP/RPC、MySQL、Redis、消息队列、微服务、容器化、监控告警等，有实际项目经验优先；对大模型应用和AI Agent有实践经验或浓厚兴趣，了解以下任一方向优先：Prompt Engineering、Function Calling、Tool Use；RAG、Embedding、向量数据库、知识库问答；Agent规划、任务拆解、多轮对话、记忆机制；LangChain、LlamaIndex、AutoGen、Dify、扣子等AI应用开发框架或平台；智能助手、自动化办公、代码助手、数据分析Agent、企业知识库等项目； 3、具备良好的问题拆解能力、学习能力、沟通协作能力和责任心，愿意在真实业务场景中探索AI应用落地。 加分项 1、有AI Agent、大模型应用、RAG系统、智能助手、自动化工作流等相关项目经验； 2、有服务端系统研发经验，理解接口设计、数据建模、系统稳定性、性能优化等工程实践； 3、参与过开源项目、技术竞赛、AI Hackathon、Kaggle、天池、ACM/ICPC等； 4、熟悉模型评测、A/B实验、数据标注、效果分析、安全合规等AI应用闭环； 5、有技术博客、开源作品、论文、专利或完整产品Demo经验。
 
-### AI应用开发工程师
+### AI应用开发工程师 - AI Platform
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 广州 / 杭州 / 深圳 / 珠海
+- **地点**：深圳 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：12 个
-  - \`7667953284506077445\` · AI应用开发工程师 - AI Platform · 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7667953284506077445/detail
-  - \`7667127346115676421\` · AI应用开发工程师 - TikTok Shop · 上海 · https://jobs.bytedance.com/campus/position/7667127346115676421/detail
-  - \`7667126615311567157\` · AI应用开发工程师 - TikTok Shop · 北京 · https://jobs.bytedance.com/campus/position/7667126615311567157/detail
-  - \`7667127948680562997\` · AI应用开发工程师 - TikTok Shop · 杭州 · https://jobs.bytedance.com/campus/position/7667127948680562997/detail
-  - \`7669724522559539509\` · AI应用开发工程师 - TikTok Shop · 珠海 · https://jobs.bytedance.com/campus/position/7669724522559539509/detail
-  - \`7684191873933576501\` · AI应用开发工程师 - 抖音研发中台 · 广州 · https://jobs.bytedance.com/campus/position/7684191873933576501/detail
-  - \`7670820522356427013\` · AI应用开发工程师 - 火山方舟 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7670820522356427013/detail
-  - \`7662663626494511413\` · AI应用开发工程师 - 财经业务 · 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7662663626494511413/detail
-  - \`7665565105152674101\` · AI应用开发工程师 - 财经业务 · 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7665565105152674101/detail
-  - \`7669748948584925493\` · AI应用开发工程师 - 财经业务 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7669748948584925493/detail
-  - \`7669806788477094197\` · AI应用开发工程师 - 财经业务 · 北京 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7669806788477094197/detail
-  - \`7667864076190058757\` · AI应用开发工程师 - 质量团队 · 杭州 · https://jobs.bytedance.com/campus/position/7667864076190058757/detail
+- **官方 Requisition**：1 个
+  - `7667953284506077445` · AI应用开发工程师 - AI Platform · 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7667953284506077445/detail
+
+**官方职责**
+
+团队介绍：AI Platform 团队，隶属于产品研发和工程架构部门。面向公司内部各业务线，建设统一的AI 应用基础设施和工程平台，帮助业务高效、稳定地落地大模型应用，加速 AI 产品创新。 在平台产品侧，团队打造了新一代AgentOps平台，提供 Prompt Engineering、Agent观测、评测、数据处理、模型微调等 Agent 全生命周期解决方案，帮助Agent开发者构建效果调优的数据飞轮。产品也已成功推出商业化版本。 AI Platform 团队还持续孵化多种面向内部与外部场景的AI应用创新产品，积极探索大模型应用的技术发展。团队氛围好，发展空间大，欢迎加入！ 1、负责智能客服场景的LLM应用开发，利用LLM和工程技术的结合，探索高智能化水平的解决方案； 2、持续跟进LLM前沿技术，并能在产品中应用解决复杂任务，提高应用处理问题的准确率。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、物理、数学、统计学相关专业优先； 2、对AI应用开发有强烈的热情，有深入使用过大模型相关应用，并了解大模型基本原理； 3、掌握至少一门服务端开发语言（Go/Python/Java/Rust）； 4、有大模型应用开发经验的优先。
+
+### AI应用开发工程师 - TikTok Shop
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京 / 杭州 / 珠海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：4 个
+  - `7667127346115676421` · AI应用开发工程师 - TikTok Shop · 上海 · https://jobs.bytedance.com/campus/position/7667127346115676421/detail
+  - `7667126615311567157` · AI应用开发工程师 - TikTok Shop · 北京 · https://jobs.bytedance.com/campus/position/7667126615311567157/detail
+  - `7667127948680562997` · AI应用开发工程师 - TikTok Shop · 杭州 · https://jobs.bytedance.com/campus/position/7667127948680562997/detail
+  - `7669724522559539509` · AI应用开发工程师 - TikTok Shop · 珠海 · https://jobs.bytedance.com/campus/position/7669724522559539509/detail
 
 **官方职责**
 
@@ -1990,13 +2918,80 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、CV、NLP、软件工程、分布式系统、应用数学等相关专业优先； 2、掌握数据结构、算法、深度学习/大模型基础，熟练掌握一门编程语言（Go/C++/Java/Python等）； 3、有模型训推、Agent架构、Agent应用等AI相关的应用开发经验优先； 4、积极乐观，责任心强，工作认真细致，具有良好的团队沟通与协作能力； 5、热爱编程，有较强的学习能力，有强烈的求知欲、好奇心和进取心，能及时关注和学习业界最新技术。
 
-### AI应用开发工程师（智能客服方向）
+### AI应用开发工程师 - 抖音研发中台
+
+- **证据状态**：FULL_JD
+- **地点**：广州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7684191873933576501` · AI应用开发工程师 - 抖音研发中台 · 广州 · https://jobs.bytedance.com/campus/position/7684191873933576501/detail
+
+**官方职责**
+
+团队介绍：抖音研发中台团队主要负责抖音、剪映、今日头条、番茄小说、财经等产品的质量建设，面向质量、体验、安全提供全方位、深层次、高效的解决方案。 1、负责抖音系列产品全流程质量保障工作，深度参与产品研发项目，协同产品研发团队高质量交付，围绕需求评审、方案设计、测试策略制定、上线准出等关键环节，识别核心质量风险并推动闭环； 2、参与AI质量建设，能主动发现质量保障体系中的提升点，负责关键技术建设，探索大模型解决方案并应用到质量保障各环节，升级质量保障体系； 3、解决测试过程中遇到的复杂技术问题，沉淀适配业务需求的测试方法论、工具、服务、平台，推动质量保障从经验驱动向规则化、结构化、可复用升级。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟练掌握Python/Java/Go至少一门编程语言； 3、具备扎实的计算机基础知识，对质量工程、软件工程或AI工程方向有持续兴趣，愿意持续学习并推动AI能力在组织中的真实落地； 4、具备较强的责任心、优秀的自我驱动能力，学习能力强，思维严谨细致、逻辑感强；具备良好的沟通协作能力和项目推进能力，能够在跨职能协作中识别关键问题、推动共识形成，并持续跟进问题闭环； 5、有较好的工程技术能力和大模型应用能力；熟悉自动化框架、理解CICD交付流程和编排设计，具备相关技术实践经验者优先，如通过AI应用提升业务质效，包括但不限于测试用例自动化生成、代码缺陷检测、端到端自动化、业务Agent评测等。
+
+### AI应用开发工程师 - 火山方舟
+
+- **证据状态**：FULL_JD
+- **地点**：杭州 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7670820522356427013` · AI应用开发工程师 - 火山方舟 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7670820522356427013/detail
+
+**官方职责**
+
+团队介绍：火山方舟是火山引擎推出的一站式大模型服务平台，是中国大模型市场产品和份额领跑者。平台提供模型推理、评测、精调等全流程服务。方舟搭载了豆包及业界主流大模型，提供丰富的插件生态和AI应用开发服务，并通过稳定可靠的安全互信方案、专业的算法技术服务，全方位保障企业级AI应用落地。 1、负责ModelHub建设，包括模型接入与协议管理、路由调度与供给治理，打造统一、稳定、可扩展的大模型底座； 2、负责模型平台的工程与产品化建设，围绕模型体验、接入、使用与排行等模型优化功能与链路，提升平台整体使用体验与效率； 3、负责平台安全与治理能力建设，包括数据合规、风险拦截与审计追溯，保障模型使用过程可控、可追溯； 4、推动多模型、多厂商、多区域环境下的稳定性与成本优化，建设高可用、可切换的模型供给体系。
+
+**官方要求**
+
+1、2027届获得本科及以上学历； 2、具备扎实的软件工程能力，有平台型系统、网关或分布式系统经验优先； 3、理解AI技术体系，对大模型接入、AI Coding、Agent或相关方向有实践或强兴趣；有复杂在线服务、网关与推理服务或AI平台相关经验优先；有大模型训练、评测经验优先；有AI Coding/Copilot/Agent实践经验，或对AI开发模式有深入理解； 4、不区分前后端，具备完整系统设计与开发能力，对新技术保持好奇心与敏感度，具备持续学习、快速落地及推动AI能力落地的执行力； 5、有较强的问题拆解与协同推进能力，能够在复杂场景下与产品、业务、平台、研发等角色高效协作。 加分项 1、持续关注并输出AI前沿趋势判断、实践总结或方法论沉淀。
+
+### AI应用开发工程师 - 财经业务
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州 / 深圳 / 北京 / 深圳 / 北京 / 深圳 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：4 个
+  - `7662663626494511413` · AI应用开发工程师 - 财经业务 · 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7662663626494511413/detail
+  - `7665565105152674101` · AI应用开发工程师 - 财经业务 · 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7665565105152674101/detail
+  - `7669748948584925493` · AI应用开发工程师 - 财经业务 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7669748948584925493/detail
+  - `7669806788477094197` · AI应用开发工程师 - 财经业务 · 北京 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7669806788477094197/detail
+
+**官方职责**
+
+团队介绍：抖音集团财经业务致力于成为科技驱动业务增长的先锋，服务抖音集团生态内数亿活跃用户与广大商户的多元化金融科技需求，全面涵盖支付、消费金融、小微商户贷、保险经纪等核心板块。 在这里，你将置身于年轻、充满活力的团队氛围中，亲历行业第一的增长速度，感受科技赋能金融的无限可能。 为了支撑业务的高效拓展与价值挖掘，我们正在寻找优秀的伙伴加入，目前重点开放的岗位包括：增长、用户产品、策略运营、算法、风控、数据科学、研发、工程等。期待你的加入，与我们一起用科技重塑金融服务体验，共创更大的商业价值！ 1、深入支付核心系统，负责方案设计、编码实现到上线运维的完整闭环，真正理解一个系统的“why和how”； 2、参与亿级流量、高并发在线系统的设计与落地，亲手解决复杂业务逻辑下的架构可扩展性难题，积累书本上学不到的实战经验； 3、参与系统性能优化、稳定性和资金安全建设，在导师带领下扛住业务快速增长带来的技术挑战； 4、探索AI Native研发模式，把AI4SE（用AI赋能软件工程）工具和理解用到日常开发中，做真正用好AI的新一代工程师。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、有扎实的数据结构和算法功底； 3、熟悉C/C++/Java/Python/Golang中的至少一门语言，具备良好的编码习惯； 4、了解数据库相关知识和基础操作，至少熟练使用MySQL； 5、具备良好的问题分析能力、学习能力与团队协作能力。
+
+### AI应用开发工程师 - 质量团队
+
+- **证据状态**：FULL_JD
+- **地点**：杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667864076190058757` · AI应用开发工程师 - 质量团队 · 杭州 · https://jobs.bytedance.com/campus/position/7667864076190058757/detail
+
+**官方职责**
+
+团队介绍：字节跳动质量团队作为公司质量保障体系的核心力量，覆盖Trae、Coze、开发者服务、语音等多个业务关键领域，通过建设和提供更高效的质量保障方案、技术、工具以及业务自动化保障服务，为公司业务稳健发展提供坚实保障。 当前，我们聚焦用 AI 重构测试流程、提升研发效能，探索从 “自动化” 到 “智能化” 的质量保障新路径。我们坚信，AI 将彻底改变测试行业的底层逻辑，欢迎加入，与我们一同突破技术边界，定义下一代质量保障模式，推动行业变革！ 1、围绕跨端业务参与质量智能化建设，赋能AI研发模式升级以及质量Loop闭环； 2、负责质量工具与平台的研发全流程，包括但不限于测试Agent、Skill、MCP、知识库构建等，沉淀可复用组件； 3、参与跨端业务质量分析及痛点改进，以AI智能化、工程化手段持续推进质量体系、开发体验、用户体验优化； 4、面向跨端业务的质量保障前沿课题，开展创新性质量技术0-1突破工作，以及创新技术的规模化应用。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，人工智能、计算机、软件工程、电子信息工程等相关专业优先； 2、具备扎实的人工智能、计算机基础知识，精通至少一门编程语言，深入理解LLM、算法、操作系统和网络等知识； 3、熟悉AI大模型应用，拥有Agent搭建、Skill开发、Prompt Engineering经验者优先； 4、逻辑思维清晰，自学与钻研能力强，责任心强，善于协作沟通，热衷智能化质量测试领域。
+
+### AI应用开发工程师（智能客服方向） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667144323682584885\` · AI应用开发工程师（智能客服方向） - TikTok Shop · 北京 · https://jobs.bytedance.com/campus/position/7667144323682584885/detail
+  - `7667144323682584885` · AI应用开发工程师（智能客服方向） - TikTok Shop · 北京 · https://jobs.bytedance.com/campus/position/7667144323682584885/detail
 
 **官方职责**
 
@@ -2006,13 +3001,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、电子信息等相关专业优先； 2、具备扎实的计算机基础，熟悉数据结构、算法、操作系统、计算机网络、数据库等基础知识，熟悉至少一种后端开发语言（如Go/Java/Python/C++等），有良好的编码习惯和工程实践意识； 3、了解AI大模型原理，对Agent相关能力研发有基本认识，在AI Coding或大模型应用开发上有项目/实习实践经验者优先； 4、了解或使用过大模型应用开发框架，对RAG、模型评估、自动化评测框架等有实践经验者加分； 5、具备全栈或后端开发能力，能够将AI能力快速转化为产品特性，具备较强的责任心和自驱力，乐于探索新技术，能够在快速变化的业务和技术环境中持续成长。
 
-### AI应用框架开发工程师
+### AI应用框架开发工程师 - AI Platform
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667955486829857029\` · AI应用框架开发工程师 - AI Platform · 北京 · https://jobs.bytedance.com/campus/position/7667955486829857029/detail
+  - `7667955486829857029` · AI应用框架开发工程师 - AI Platform · 北京 · https://jobs.bytedance.com/campus/position/7667955486829857029/detail
 
 **官方职责**
 
@@ -2022,13 +3017,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、物理、数学、统计学相关专业优先； 2、对AI应用开发有浓厚兴趣，深入使用过大模型相关产品或工具，了解大模型基本原理； 3、掌握至少一门服务端开发语言，熟悉Go优先（Python/Java/Rust亦可）； 4、具备良好的API设计意识，能站在框架使用者的角度思考接口的易理解性与易用性； 5、有大模型应用开发经验（如Agent、工作流编排等）的优先； 6、有开源项目贡献经验或框架/中间件/SDK开发经验的优先。
 
-### AI应用研发工程师（安全与效率方向）
+### AI应用研发工程师（安全与效率方向） - 安全专项
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667866811002718517\` · AI应用研发工程师（安全与效率方向） - 安全专项 · 深圳 · https://jobs.bytedance.com/campus/position/7667866811002718517/detail
+  - `7667866811002718517` · AI应用研发工程师（安全与效率方向） - 安全专项 · 深圳 · https://jobs.bytedance.com/campus/position/7667866811002718517/detail
 
 **官方职责**
 
@@ -2038,13 +3033,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业优先； 2、具备扎实的软件开发能力，熟练掌握Python/Go/Java等至少一种编程语言； 3、熟悉大模型应用开发相关技术，包括Agent、RAG、MCP、Prompt Engineering等； 4、具备优秀的问题分析和系统设计能力，对AI+软件工程、AI安全等方向有兴趣。 加分项 1、有Agent应用开发实践经验，包括Agent框架使用、工作流设计、RAG优化、MCP、Skill工具开发等； 2、有AI应用评测或AI安全或SDD（Specification Driven Development）或Harness Engineering等相关实践经验。
 
-### AI应用研发工程师（架构方向）
+### AI应用研发工程师（架构方向） - TikTok Shop
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 杭州
+- **地点**：杭州 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667912940288428341\` · AI应用研发工程师（架构方向） - TikTok Shop · 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667912940288428341/detail
+  - `7667912940288428341` · AI应用研发工程师（架构方向） - TikTok Shop · 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667912940288428341/detail
 
 **官方职责**
 
@@ -2054,13 +3049,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、信息安全、人工智能等相关专业； 2、具有优秀的代码能力，熟练掌握Go/Java/Python编程语言； 3、熟悉Agent架构组件的设计原理与调优方案，了解主流开源Agent框架（如LangGraph/Pi等），具备Prompt调优、Harness、RAG、上下文工程、Skill编写等实践经验； 4、学习能力强，对新技术保有好奇心，善于独立思考与反思总结，具备将复杂问题转化为简洁高效方案的能力； 5、良好的沟通与跨团队协作能力，热爱技术，拥抱开源，能适应快速变化的业务环境。
 
-### AI应用研发工程师（物流方向）
+### AI应用研发工程师（物流方向） - TikTok Shop
 
 - **证据状态**：FULL_JD
 - **地点**：杭州 / 珠海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667853522878925061\` · AI应用研发工程师（物流方向） - TikTok Shop · 杭州 / 珠海 · https://jobs.bytedance.com/campus/position/7667853522878925061/detail
+  - `7667853522878925061` · AI应用研发工程师（物流方向） - TikTok Shop · 杭州 / 珠海 · https://jobs.bytedance.com/campus/position/7667853522878925061/detail
 
 **官方职责**
 
@@ -2070,14 +3065,31 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、自动化、物流工程、电子信息等相关专业； 2、具备扎实的计算机基础，熟悉数据结构、算法、操作系统、计算机网络、数据库等基础知识，熟悉至少一种后端开发语言（如Go/Java/Python/C++等），有良好的编码习惯和工程实践意识； 3、了解AI大模型原理，对Agent相关能力研发有基本认识，在AI Coding或大模型应用开发上有项目/实习实践经验者优先； 4、了解或使用过大模型应用开发框架，对RAG、模型评估、自动化评测框架等有实践经验者加分； 5、具备全栈或后端开发能力，能够将AI能力快速转化为产品特性，具备较强的责任心和自驱力，乐于探索新技术，能够在快速变化的业务和技术环境中持续成长。
 
-### AI开发工程师（Agent方向）
+### AI开发工程师 - 抖音研发中台
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7664536968654620981` · AI开发工程师 - 抖音研发中台 · 北京 · https://jobs.bytedance.com/campus/position/7664536968654620981/detail
+  - `7668633824344951045` · AI开发工程师 - 抖音研发中台 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7668633824344951045/detail
+
+**官方职责**
+
+团队介绍：抖音研发中台团队主要负责抖音、剪映、今日头条、番茄小说、财经等产品的质量建设，面向质量、体验、安全提供全方位、深层次、高效的解决方案。 1、基于LLM构建面向研发团队的测试提效工具与平台，覆盖需求测试流程中的典型场景，包括但不限于：智能缺陷检测、测试风险分析、用例自动生成等； 2、深入参与复杂在线AI应用的评测体系建设，根据迭代内容设计前沿评测方法，包含评估指标、Agent评估器、评测自动化工作流等，持续迭代优化在线AI应用效果； 3、持续追踪AI Agent、RAG等领域的最新学术和开源成果（如React、AutoGPT、CrewAI、LangChain等），推动前沿技术落地与产品化。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、对AI技术有热情，熟悉大语言模型（LLM）的底层原理，有Prompt调优、微调（SFT/LoRA）、RAG系统搭建或Agent框架开发经验优先； 3、具备扎实的算法与数据结构基础，至少精通一门主流编程语言（如Python/Go/Java/C++），具备良好的工程编码习惯； 4、具备创新意识、快速学习和协同落地能力、积极主动、自驱力强。
+
+### AI开发工程师（Agent方向） - 抖音
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7668203792723167541\` · AI开发工程师（Agent方向） - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7668203792723167541/detail
-  - \`7668206857570339077\` · AI开发工程师（Agent方向） - 抖音 · 杭州 · https://jobs.bytedance.com/campus/position/7668206857570339077/detail
+  - `7668203792723167541` · AI开发工程师（Agent方向） - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7668203792723167541/detail
+  - `7668206857570339077` · AI开发工程师（Agent方向） - 抖音 · 杭州 · https://jobs.bytedance.com/campus/position/7668206857570339077/detail
 
 **官方职责**
 
@@ -2087,13 +3099,45 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟练掌握Python/Java/Go至少一门编程语言； 3、具备较强的责任心、优秀的自我驱动能力，思维严谨细致、逻辑感强； 4、具备良好的沟通协作能力和项目推进能力，能够在跨职能协作中识别关键问题、推动共识形成，并持续跟进问题闭环； 5、具备AI大模型相关技术实践经验，有以下一个或多个方向的实际落地经验优先：LLM应用（Prompt Engineering、RAG、Agent等）、多模态模型（图像/视频理解、生成模型）、模型微调（SFT/LoRA/DPO等）、AI在测试领域的应用（如自动生成用例、智能评测、缺陷分析等）。
 
-### Agent Harness工程师
+### AI研发工程师（AI Music） - TikTok研发
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 深圳
+- **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7675314464131959045\` · Agent Harness工程师 - 国际化广告质量效能 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7675314464131959045/detail
+  - `7669439289629247749` · AI研发工程师（AI Music） - TikTok研发 · 上海 · https://jobs.bytedance.com/campus/position/7669439289629247749/detail
+
+**官方职责**
+
+团队介绍：TikTok研发团队，旨在实现TikTok业务的研发工作，搭建及维护业界领先的产品。加入我们，你能接触到包括用户增长、社交、直播、电商C端、内容创造、内容消费等核心业务场景，支持产品在全球赛道上高速发展；也能接触到包括服务架构、基础技术等方向上的技术挑战，保障业务持续高质量、高效率、且安全地为用户服务；同时还能为不同业务场景提供全面的技术解决方案，优化各项产品指标及用户体验。 在这里， 有大牛带队与大家一同不断探索前沿， 突破想象空间。 在这里，你的每一行代码都将服务亿万用户。在这里，团队专业且纯粹，合作氛围平等且轻松。目前在北京，上海，杭州、广州、深圳分别开放多个岗位机会。 1、负责音乐业务场景下的业务研发，包括旗下音乐发行平台SoundOn的业务迭代和端内音乐宣传推广和消费指标提升和优化； 2、服务端系统的架构设计与实现，保障业务在高速发展中的架构稳定和可靠性，解决超高流量带来的分布式技术问题； 3、与多个跨职能团队合作，在快速产品开发中提供高质量的工作； 4、负责调研业界前沿技术，针对业务领域问题有相应解决方案并落地。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件、电子信息等相关专业； 2、热爱计算机科学和技术，精通至少一门编程语言，包括但不仅限于：Java、C、C++、PHP、Python、Go； 3、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 4、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 5、有强烈的求知欲，优秀的学习和沟通能力。
+
+### AI研发工程师（番茄小说） - 抖音研发中台
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7664595471457569029` · AI研发工程师（番茄小说） - 抖音研发中台 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7664595471457569029/detail
+
+**官方职责**
+
+团队介绍：抖音研发中台团队主要负责抖音、剪映、今日头条、番茄小说、财经等产品的质量建设，面向质量、体验、安全提供全方位、深层次、高效的解决方案。 1、基于LLM构建面向研发团队的测试提效工具与平台，覆盖需求测试流程中的典型场景，包括但不限于：智能缺陷检测、测试风险分析、用例自动生成等； 2、深入参与复杂在线AI应用的评测体系建设，根据迭代内容设计前沿评测方法，包含评估指标、Agent评估器、评测自动化工作流等，持续迭代优化在线AI应用效果； 3、持续追踪AI Agent、RAG等领域的最新学术和开源成果（如React、AutoGPT、CrewAI、LangChain等），推动前沿技术落地与产品化。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、对AI技术有热情，熟悉大语言模型（LLM）的底层原理，有Prompt调优、微调（SFT/LoRA）、RAG系统搭建或Agent框架开发经验优先； 3、具备扎实的算法与数据结构基础，至少精通一门主流编程语言（如Python/Go/Java/C++），具备良好的工程编码习惯； 4、具备创新意识、快速学习和协同落地能力、积极主动、自驱力强。
+
+### Agent Harness工程师 - 国际化广告质量效能
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7675314464131959045` · Agent Harness工程师 - 国际化广告质量效能 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7675314464131959045/detail
 
 **官方职责**
 
@@ -2103,13 +3147,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、数学等相关专业优先； 2、计算机基础扎实，熟悉数据结构、算法、操作系统、计算机网络、数据库等基础知识； 3、熟练掌握Go/Python/Java/TypeScript/C++等至少一门编程语言，具备良好的代码实现能力和工程习惯； 4、对大语言模型、AI Agent、RAG、Prompt Engineering、工具调用、模型评测等方向有兴趣或实践经验； 5、有好奇心、自驱力和负责人意识，愿意面对线上真实复杂问题，并持续追问本质。 加分项 1、有AI Agent、LLM应用、RAG、智能问答、自动化工作流等项目经验； 2、有稳定性、AIOps、智能排障、日志分析、监控告警、故障归因相关实践经验； 3、有工程项目、开源项目、竞赛获奖或高质量实习经历； 4、能熟练使用AI工具辅助编码、排障、文档理解和方案设计，并能对AI输出进行判断、校验和优化。 加入我们，你会获得 1、真实全球商业化场景：直接参与商业化核心链路的质量、稳定性和效能建设； 2、前沿AI工程实践：不是停留在Prompt层，而是深入Agent架构、工具系统、评测体系和生产级落地； 3、高成长技术环境：资深工程师1v1带教，有机会快速负责真实系统模块； 4、足够大的技术舞台：在质量保障、稳定性、研发效能和AI Agent交叉地带，做有业务价值也有技术深度的事情。
 
-### Agent Harness研发工程师
+### Agent Harness研发工程师 - 飞书
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：深圳 / 上海 / 北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7676057466433521973\` · Agent Harness研发工程师 - 飞书 · 深圳 / 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7676057466433521973/detail
+  - `7676057466433521973` · Agent Harness研发工程师 - 飞书 · 深圳 / 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7676057466433521973/detail
 
 **官方职责**
 
@@ -2119,13 +3163,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业优先； 2、编程基础扎实，熟悉Python、Golang、Java、C/C++、JavaScript/TypeScript等至少一门语言； 3、具备前端、后端或客户端任一方向的开发基础，并愿意根据产品需要拓展技术边界； 4、了解大模型应用开发，对Agent、RAG、工具调用、工作流编排或评测体系有实践或浓厚兴趣； 5、深度使用AI工具，能够审查、验证和修正AI产出，具备较强的产品意识、独立判断、执行力和主人翁意识。 加分项 1、独立开发过AI产品、个人工具、开源项目、课程项目或其他可运行作品； 1）欢迎通过「作品」入口，分享一项最能代表你的AI产品或项目，例如Demo、GitHub、产品方案或设计稿节选、可运行应用等；请简要说明解决的问题、个人贡献、AI方案、验证结果及一次关键迭代，帮助我们快速了解你的能力长板（作品可使用公开或已脱敏的材料，无需提供完整源代码、未公开数据或商业敏感信息）； 2）如未在投递阶段分享产品，我们将通过项目作业（Take-home Project）在面试前考核你的AI产品/项目设计与落地能力； 2、有从需求分析、产品设计到开发部署和用户验证的端到端实践； 3、熟悉主流前后端技术、云服务、数据库、工程部署或Al应用评测； 4、对交互体验敏感，能够在产品价值、实现成本和技术复杂度之间做出合理取舍。
 
-### Agent Infra研发工程师
+### Agent Infra研发工程师 - Commercial AI
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668201492008110389\` · Agent Infra研发工程师 - Commercial AI · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668201492008110389/detail
+  - `7668201492008110389` · Agent Infra研发工程师 - Commercial AI · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668201492008110389/detail
 
 **官方职责**
 
@@ -2135,13 +3179,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机等相关专业优先； 2、计算机基础知识扎实，熟悉常见的服务端技术组件，有良好的系统设计能力； 3、编码能力优秀，对代码质量与代码风格有高标准要求，对所熟悉的编程语言有一定的深入了解； 4、了解LLM/Agent相关技术，擅长使用大模型能力辅助解决问题，有LLM/Agent项目与实习经验优先； 5、主动性与自驱力强，对新事物的学习与探索能力强，具备出色的问题分析与解决能力。
 
-### Agent Sandbox研发工程师
+### Agent Sandbox研发工程师 - AI算力基础设施
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670856589524814133\` · Agent Sandbox研发工程师 - AI算力基础设施 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7670856589524814133/detail
+  - `7670856589524814133` · Agent Sandbox研发工程师 - AI算力基础设施 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7670856589524814133/detail
 
 **官方职责**
 
@@ -2151,13 +3195,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、通信等相关专业优先； 2、扎实的计算机基础知识与编程基础，熟练掌握至少一门主流编程语言，包括但不限于Go、C++、Java、Python、Rust等； 3、具备良好的抽象设计能力与工程落地能力，能够对复杂业务逻辑进行合理拆分与建模； 4、有强烈的求知欲、优秀的学习和沟通能力，热爱技术、乐于解决具有挑战性的问题。
 
-### AgentOps平台研发工程师
+### AgentOps平台研发工程师 - AI Platform
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667884524668160309\` · AgentOps平台研发工程师 - AI Platform · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7667884524668160309/detail
+  - `7667884524668160309` · AgentOps平台研发工程师 - AI Platform · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7667884524668160309/detail
 
 **官方职责**
 
@@ -2167,13 +3211,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、具备扎实的计算机专业基础，精通主流的后端/前端语言； 3、具备良好的系统设计与问题拆解能力，能独立完成技术攻坚，有高可用分布式系统/前端全栈项目研发经验者优先； 4、对LLMOps/AgentOps赛道有浓厚兴趣，自驱力与学习能力突出，能持续跟进AI领域前沿技术，工作严谨负责，具备良好的团队协作与沟通能力； 5、有大模型应用开发、RAG/Agent落地、大数据平台建设、研发效能工具研发相关经验者优先。
 
-### Agentic AI研发工程师（架构方向）
+### Agentic AI研发工程师（架构方向） - TikTok研发
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665250565488609541\` · Agentic AI研发工程师（架构方向） - TikTok研发 · 深圳 · https://jobs.bytedance.com/campus/position/7665250565488609541/detail
+  - `7665250565488609541` · Agentic AI研发工程师（架构方向） - TikTok研发 · 深圳 · https://jobs.bytedance.com/campus/position/7665250565488609541/detail
 
 **官方职责**
 
@@ -2183,13 +3227,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、软件工程、数学等相关专业优先； 2、具备扎实的计算机基础，熟悉数据结构、算法、操作系统、计算机网络及软件工程； 3、熟练掌握Python、Go、Java、C++、TypeScript中至少一种编程语言； 4、了解大语言模型基本原理，熟悉Prompt Engineering、RAG、Function Calling、Agent Framework等技术； 5、具备较强的工程实现能力，能够独立完成技术调研、原型开发、实验评估和问题定位； 6、对复杂问题有强烈好奇心，具备清晰的逻辑分析能力和持续学习能力；认可快速实验、数据驱动和结果导向的研发方式。 加分项： 1、参与过Agent、RAG、大模型应用或模型训练相关项目； 2、熟悉LangGraph、AutoGen、OpenAI Agents SDK、Claude Code、MCP、A2A等框架或协议； 3、具备模型微调、强化学习、推理优化或智能体评测经验； 4、在人工智能相关会议发表过论文，或在高水平竞赛中取得优秀成绩；有高质量开源项目、技术博客或活跃的开源社区贡献；在实习、科研或个人项目中独立解决过具有挑战性的真实问题。
 
-### Agent全栈开发工程师
+### Agent全栈开发工程师 - 数据平台
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667507511763913013\` · Agent全栈开发工程师 - 数据平台 · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667507511763913013/detail
+  - `7667507511763913013` · Agent全栈开发工程师 - 数据平台 · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667507511763913013/detail
 
 **官方职责**
 
@@ -2199,13 +3243,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、扎实的Web前端基础，熟悉HTML、CSS、JavaScript/TypeScript与HTTP协议，了解浏览器渲染与常见性能问题； 3、具备工程能力与全栈潜力，熟悉常用数据结构与设计模式，掌握Python、Java、Go、Node.js中至少一种服务端语言，能够独立完成从前端到接口的小型闭环开发； 4、学习能力强，喜欢钻研，工作积极主动，能够独立思考，具有良好的团队合作精神和沟通能力。 加分项： 1、对大模型与Agent有真实的动手经验，做过基于大模型API、Agent框架、Prompt/评测相关的项目；或者有数据产品相关项目经验。
 
-### Agent全栈开发工程师（AI剪辑方向）
+### Agent全栈开发工程师（AI剪辑方向） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668335125199259909\` · Agent全栈开发工程师（AI剪辑方向） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7668335125199259909/detail
+  - `7668335125199259909` · Agent全栈开发工程师（AI剪辑方向） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7668335125199259909/detail
 
 **官方职责**
 
@@ -2215,13 +3259,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、有良好的编程习惯，代码结构清晰，命名规范； 3、熟练掌握数据结构与算法、计算机网络、操作系统、编译原理等课程，熟练掌握Swift/Kotlin/Go/C++/C/JavaScript等一种或多种语言； 4、充满技术热情，有较强的自驱力和学习能力； 5、业余爱好视频拍摄、视频编辑，有移动端、桌面端视频编辑软件使用经验者优先； 6、至少掌握1款Coding Agent工具；对AI感兴趣，有AI实践经验者优先。
 
-### Agent全栈研发工程师
+### Agent全栈研发工程师 - 飞书
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：深圳 / 上海 / 北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7676056716118755637\` · Agent全栈研发工程师 - 飞书 · 深圳 / 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7676056716118755637/detail
+  - `7676056716118755637` · Agent全栈研发工程师 - 飞书 · 深圳 / 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7676056716118755637/detail
 
 **官方职责**
 
@@ -2231,13 +3275,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、软件工程等相关专业优先； 2、编程基础扎实，熟悉Python、Golang、Java、C/C++、JavaScript/TypeScript等至少一门语言； 3、具备前端、后端或客户端任一方向的开发基础，并愿意根据产品需要拓展技术边界； 4、了解大模型应用开发，对Agent、RAG、工具调用、工作流编排或评测体系有实践或浓厚兴趣； 5、深度使用AI工具，能够审查、验证和修正AI产出，具备较强的产品意识、独立判断、执行力和主人翁意识。 加分项 1、独立开发过AI产品、个人工具、开源项目、课程项目或其他可运行作品； 1）欢迎通过「作品」入口，分享一项最能代表你的AI产品或项目，例如Demo、GitHub、产品方案或设计稿节选、可运行应用等；请简要说明解决的问题、个人贡献、AI方案、验证结果及一次关键迭代，帮助我们快速了解你的能力长板（作品可使用公开或已脱敏的材料，无需提供完整源代码、未公开数据或商业敏感信息）； 2）如未在投递阶段分享产品，我们将通过项目作业（Take-home Project）在面试前考核你的AI产品/项目设计与落地能力； 2、有从需求分析、产品设计到开发部署和用户验证的端到端实践； 3、熟悉主流前后端技术、云服务、数据库、工程部署或Al应用评测； 4、对交互体验敏感，能够在产品价值、实现成本和技术复杂度之间做出合理取舍。
 
-### Agent全链路研发工程师
+### Agent全链路研发工程师 - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668245129375254789\` · Agent全链路研发工程师 - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7668245129375254789/detail
+  - `7668245129375254789` · Agent全链路研发工程师 - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7668245129375254789/detail
 
 **官方职责**
 
@@ -2247,14 +3291,14 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、数学等相关专业优先； 2、有良好的编程习惯，代码结构清晰，命名规范； 3、熟练掌握数据结构与算法、计算机网络、操作系统、编译原理等课程，熟练掌握C++/C/Java/JavaScript等一种或多种语言； 4、充满技术热情，有较强的自驱力和学习能力； 5、业余爱好视频拍摄、视频编辑，有移动端、桌面端视频编辑软件使用经验者优先。
 
-### Agent前端开发工程师
+### Agent前端开发工程师 - Seed
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7668275337299609861\` · Agent前端开发工程师 - Seed · 北京 · https://jobs.bytedance.com/campus/position/7668275337299609861/detail
-  - \`7668274521331124485\` · Agent前端开发工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668274521331124485/detail
+  - `7668275337299609861` · Agent前端开发工程师 - Seed · 北京 · https://jobs.bytedance.com/campus/position/7668275337299609861/detail
+  - `7668274521331124485` · Agent前端开发工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668274521331124485/detail
 
 **官方职责**
 
@@ -2264,13 +3308,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、信息安全等相关专业； 2、具备AI使用和实践经验，有将大模型/AI工具应用于实际业务场景的经验，熟悉Prompt工程、AI Agent编排或LLM应用开发者优先，了解安全相关知识（如Web安全的常见威胁与防护）者优先； 3、对外沟通协作能力强，能够跨团队、跨职能高效推进项目，善于将技术方案转化为业务语言与非技术团队对齐； 4、较好的产品意识，愿意将产品效果作为工作的重要驱动因素； 5、掌握Web后端开发技术：协议、架构、存储、缓存、安全等； 6、积极乐观，认真负责，乐于协作。
 
-### Agent后端开发工程师
+### Agent后端开发工程师 - Aime
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668351902195009845\` · Agent后端开发工程师 - Aime · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668351902195009845/detail
+  - `7668351902195009845` · Agent后端开发工程师 - Aime · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668351902195009845/detail
 
 **官方职责**
 
@@ -2280,13 +3324,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业； 2、具备扎实的计算机基础和编程能力，熟悉至少一门主流后端开发语言；具备良好的编码习惯、工程意识和问题定位能力，能在快速变化的业务与技术环境中主动学习、持续迭代； 3、对AI Agent、大模型应用工程化或后端基础设施方向有浓厚兴趣，有后端服务、AI Agent、RAG、Tool Calling等相关项目或实践经验者优先； 4、有异步任务、调度系统、消息队列、工作流引擎等复杂后端系统经验，或深度使用过AI编程助手/Agent工具并有自己理解与思考者加分。
 
-### Agent基础系统研发工程师
+### Agent基础系统研发工程师 - 火山方舟
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 北京 / 杭州 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669725958044518661\` · Agent基础系统研发工程师 - 火山方舟 · 上海 / 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7669725958044518661/detail
+  - `7669725958044518661` · Agent基础系统研发工程师 - 火山方舟 · 上海 / 北京 / 杭州 / 深圳 · https://jobs.bytedance.com/campus/position/7669725958044518661/detail
 
 **官方职责**
 
@@ -2296,13 +3340,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历； 2、熟练掌握Python/Golang/Rust/Java等至少一门语言，具备扎实的代码功底和系统设计能力，熟练使用AI Coding工具； 3、理解大模型与Agent技术原理，熟悉工具调用、上下文管理、长程执行、Self-Involve等关键机制，有Agent系统落地经验者优先； 4、熟悉云原生、分布式系统、任务调度、可观测性、资源隔离、网络访问控制等基础技术，有企业级平台或基础设施系统研发经验者优先； 5、对AI原生应用有强烈热情，关注前沿技术发展，具备快速复现论文及工程化能力，顶会论文或开源项目贡献者优先。
 
-### Agent安全后端开发工程师
+### Agent安全后端开发工程师 - Seed
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668304903009257733\` · Agent安全后端开发工程师 - Seed · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668304903009257733/detail
+  - `7668304903009257733` · Agent安全后端开发工程师 - Seed · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668304903009257733/detail
 
 **官方职责**
 
@@ -2312,13 +3356,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、网络安全等相关专业优先； 2、较好的产品意识，愿意将产品效果作为工作重要的驱动因素； 3、掌握Web后端开发技术：协议、架构、存储、缓存、安全等； 4、对AI/Agent安全有热情，愿意探索AI时代的新型安全问题； 5、积极乐观，认真负责，乐于协作。
 
-### Agent客户端开发工程师（剪映PC）
+### Agent客户端开发工程师（剪映PC） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668588899530901813\` · Agent客户端开发工程师（剪映PC） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7668588899530901813/detail
+  - `7668588899530901813` · Agent客户端开发工程师（剪映PC） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7668588899530901813/detail
 
 **官方职责**
 
@@ -2328,14 +3372,14 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、软件工程或相关专业； 2、熟悉C++/Python/TypeScript中至少一门语言，有良好的编程习惯和数据结构算法基础； 3、了解桌面端开发框架（如Qt、Electron、CEF等），有跨平台开发经验者优先； 4、对AI/LLM应用开发有浓厚兴趣，了解Prompt Engineering、Function Calling、RAG等概念优先； 5、具备良好的学习能力和团队协作精神，有较强的问题分析和解决能力； 6、有开源项目贡献、竞赛获奖或AI相关项目经验者优先。
 
-### Agent工程师
+### Agent工程师 - 抖音用户增长
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：北京 / 深圳 / 杭州 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7667417055350491397\` · Agent工程师 - 抖音用户增长 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667417055350491397/detail
-  - \`7667419628440242485\` · Agent工程师 - 抖音用户增长 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667419628440242485/detail
+  - `7667417055350491397` · Agent工程师 - 抖音用户增长 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667417055350491397/detail
+  - `7667419628440242485` · Agent工程师 - 抖音用户增长 · 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667419628440242485/detail
 
 **官方职责**
 
@@ -2345,13 +3389,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、扎实的计算机、编程基础，熟悉主流大语言模型的原理及方法； 3、理解Multi-Agent系统、任务分解、自动化规划、Prompt Engineering等技术领域之一或多个，有AI Agent相关实践项目者优先； 4、出色的结构化表达能力，较强的技术敏感度与前瞻性，独立的思考和判断力； 5、热爱AI相关技术，对应用和落地工程感兴趣，富有钻研创新精神。 加分项（具备一项或多项者优先）： 1、拥有大量Prompt实践和优化经验； 2、在国际顶级会议或期刊相关领域有论文发表经历； 3、有Multi-Agent系统搭建实践经验或Agent落地应用经验； 4、对AI driven IDE有大量实践经验。
 
-### Agent平台开发工程师
+### Agent平台开发工程师 - Data AML
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7680483213027690757\` · Agent平台开发工程师 - Data AML · 北京 · https://jobs.bytedance.com/campus/position/7680483213027690757/detail
+  - `7680483213027690757` · Agent平台开发工程师 - Data AML · 北京 · https://jobs.bytedance.com/campus/position/7680483213027690757/detail
 
 **官方职责**
 
@@ -2361,17 +3405,16 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、数据科学、自动化、电子信息等相关专业； 2、具备扎实的计算机基础，熟悉操作系统、计算机网络、数据库、数据结构与算法等基础知识； 3、熟悉至少一门编程语言，如Go、Python等，具备良好的代码能力和工程实现能力； 4、了解LLM应用开发相关技术，如RAG、Prompt Engineering、Agent、Function Calling、Embedding、向量检索、知识库构建等； 5、具备AI相关实习经历，包括但不限于LLM应用、智能问答、Agent平台、AIOps、MLOps、机器学习平台、数据分析平台、AI工具链等方向； 6、具备良好的学习能力、问题拆解能力和沟通协作能力，能够在复杂业务场景中理解问题并推动工程落地。 加分项 1、有LLM Agent、RAG、智能问答、Copilot、AI助手、AIOps平台等项目或实习经验； 2、熟悉LangChain、LlamaIndex、MCP、向量数据库、模型评测、上下文工程等相关技术； 3、熟悉Kubernetes、云原生、微服务、可观测、日志分析、监控告警、CI/CD等工程平台技术； 4、有后端平台开发、分布式系统、工程效能平台或基础设施平台相关实践经验； 5、对AI Infra、AIOps、研发效能、稳定性治理等方向有持续兴趣。 你将获得 1、深入参与大规模AI训练与推理基础设施中的Agent平台建设； 2、在真实生产场景中探索LLM Agent的工程化落地，解决复杂系统诊断和效率提升问题； 3、接触AIOps、AI Infra、资源治理、可观测、稳定性、研发效能等平台方向； 4、与算法、基础架构、平台工程、SRE等团队协作，快速提升工程能力和系统视野。
 
-### Agent应用开发工程师
+### Agent应用开发工程师 - Seed
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：北京 / 北京 / 杭州 / 深圳 / 深圳 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：5 个
-  - \`7668300363304306949\` · Agent应用开发工程师 - Seed · 北京 · https://jobs.bytedance.com/campus/position/7668300363304306949/detail
-  - \`7668282271810242821\` · Agent应用开发工程师 - Seed · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668282271810242821/detail
-  - \`7668303335674431797\` · Agent应用开发工程师 - Seed · 深圳 · https://jobs.bytedance.com/campus/position/7668303335674431797/detail
-  - \`7668308335585970485\` · Agent应用开发工程师 - Seed · 深圳 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668308335585970485/detail
-  - \`7668235538637457717\` · Agent应用开发工程师 - 豆包手机助手 · 上海 · https://jobs.bytedance.com/campus/position/7668235538637457717/detail
+- **官方 Requisition**：4 个
+  - `7668300363304306949` · Agent应用开发工程师 - Seed · 北京 · https://jobs.bytedance.com/campus/position/7668300363304306949/detail
+  - `7668282271810242821` · Agent应用开发工程师 - Seed · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668282271810242821/detail
+  - `7668303335674431797` · Agent应用开发工程师 - Seed · 深圳 · https://jobs.bytedance.com/campus/position/7668303335674431797/detail
+  - `7668308335585970485` · Agent应用开发工程师 - Seed · 深圳 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668308335585970485/detail
 
 **官方职责**
 
@@ -2381,26 +3424,61 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备扎实的计算机基础和良好的编码能力，熟悉至少一种服务端语言，团队主要使用Golang，了解协议、存储、缓存、并发、安全等Web后端技术； 3、对大模型和AI Agent有热情，愿意主动使用并理解其能力边界； 4、具备产品意识、负责人意识和良好的协作能力，愿意对最终用户体验负责； 5、开发过Agent、MCP、CLI、插件或其他AI应用，有开源项目、个人产品或高质量课程项目； 6、了解Tool Calling、RAG、Agent Runtime、模型评测等相关技术。
 
-### Agent开发工程师
+### Agent应用开发工程师 - 豆包手机助手
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 南京 / 广州 / 成都 / 杭州 / 深圳
+- **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：14 个
-  - \`7667885791859837237\` · Agent开发工程师 - AI Platform · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7667885791859837237/detail
-  - \`7667160543863343365\` · Agent开发工程师 - Coze · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667160543863343365/detail
-  - \`7664433884154841349\` · Agent开发工程师 - 剪映CapCut · 深圳 / 北京 / 广州 / 杭州 · https://jobs.bytedance.com/campus/position/7664433884154841349/detail
-  - \`7665597568441534773\` · Agent开发工程师 - 小荷健康 · 北京 · https://jobs.bytedance.com/campus/position/7665597568441534773/detail
-  - \`7668156130133199109\` · Agent开发工程师 - 抖音 · 深圳 / 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7668156130133199109/detail
-  - \`7665614511443560709\` · Agent开发工程师 - 抖音AI · 北京 · https://jobs.bytedance.com/campus/position/7665614511443560709/detail
-  - \`7674830007332522293\` · Agent开发工程师 - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7674830007332522293/detail
-  - \`7667086494969530629\` · Agent开发工程师 - 数据平台 · 北京 / 上海 / 杭州 / 南京 / 深圳 · https://jobs.bytedance.com/campus/position/7667086494969530629/detail
-  - \`7668616776146487605\` · Agent开发工程师 - 豆包 · 上海 · https://jobs.bytedance.com/campus/position/7668616776146487605/detail
-  - \`7668617888100567301\` · Agent开发工程师 - 豆包 · 北京 · https://jobs.bytedance.com/campus/position/7668617888100567301/detail
-  - \`7678589759266081077\` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7678589759266081077/detail
-  - \`7668147008355830069\` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 / 广州 · https://jobs.bytedance.com/campus/position/7668147008355830069/detail
-  - \`7680195912761166085\` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 / 广州 · https://jobs.bytedance.com/campus/position/7680195912761166085/detail
-  - \`7669676519560136965\` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 / 广州 / 杭州 / 成都 · https://jobs.bytedance.com/campus/position/7669676519560136965/detail
+- **官方 Requisition**：1 个
+  - `7668235538637457717` · Agent应用开发工程师 - 豆包手机助手 · 上海 · https://jobs.bytedance.com/campus/position/7668235538637457717/detail
+
+**官方职责**
+
+团队介绍：我们隶属于产品研发与工程架构部，是字节跳动在智能硬件领域的软件技术攻坚力量—— 聚焦 AI 与智能硬件的深度融合，如豆包手机助手等；以 “让人与设备的交互更自然、更便捷” 为目标，探索前沿 AI 技术的落地场景，打造行业领先的智能硬件综合解决方案。 在这里，你将与一支顶尖技术团队并肩： - 直击 AI 与硬件结合的核心技术难题，参与从 “技术探索” 到 “场景落地” 的全链路研发； - 主导或深度参与关键技术突破，用创新定义智能硬件的交互未来； - 站在行业前沿，将技术理想转化为千万用户可感知的产品体验。 如果你心怀对技术的热忱，渴望在 AI 与智能硬件的赛道上突破自我、创造价值，我们期待你的加入，与我们一起解锁更多技术可能，共筑智能交互的新生态！ 1、负责手机助手相关业务的服务端研发工作，包括云基础服务、一方应用服务、AI相关服务开发； 2、理解业务需求，完成服务端相关的功能设计和开发； 3、关注前沿LLM、VLM等AI技术，结合业务场景，推动文件、图像、音频、GUI等结合AI Agent新技术在业务探索落地。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备良好的专业基础知识，熟悉常用算法和数据结构； 3、熟悉Go/Java/Python等开发语言，熟悉MySQL/NoSQL/Redis，掌握网络编程技术； 4、有AI Agent开发经验优先；熟悉LLM/MLLM等大模型应用优先。
+
+### Agent开发工程师 - AI Platform
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667885791859837237` · Agent开发工程师 - AI Platform · 上海 / 北京 · https://jobs.bytedance.com/campus/position/7667885791859837237/detail
+
+**官方职责**
+
+团队介绍：AI Platform 团队，隶属于产品研发和工程架构部门。面向公司内部各业务线，建设统一的AI 应用基础设施和工程平台，帮助业务高效、稳定地落地大模型应用，加速 AI 产品创新。 在平台产品侧，团队打造了新一代AgentOps平台，提供 Prompt Engineering、Agent观测、评测、数据处理、模型微调等 Agent 全生命周期解决方案，帮助Agent开发者构建效果调优的数据飞轮。产品也已成功推出商业化版本。 AI Platform 团队还持续孵化多种面向内部与外部场景的AI应用创新产品，积极探索大模型应用的技术发展。团队氛围好，发展空间大，欢迎加入！ 1、基于业务场景核心诉求，主导Agent架构设计、深度迭代与落地，适配复杂业务需求，解决Agent工程化落地的核心痛点； 2、设计并落地Agent自进化全链路体系，构建自主反思、迭代优化的闭环能力，实现Agent基于业务反馈的持续能力升级； 3、打磨Agent任务拆解、推理规划、工具调用、多智能体协作等核心模块，持续优化架构性能，沉淀业务场景最佳实践； 4、跟进Agent领域前沿技术，开展自进化、多模态智能体等方向的技术预研，结合业务完成创新落地，提升核心竞争力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、精通Go、Python、C++等一种或多种编程语言，具备扎实的编程技能和算法设计能力； 3、对AI Agent技术有深入了解，熟悉LangChain等框架，熟悉LangSmith等平台； 4、具备出色的团队协作精神和良好的英文阅读及沟通能力。 加分项： 1、在LLM工程领域有落地经验； 2、对AgentOps平台熟悉，如LangSmith、Langfuse等； 3、具备优秀的研究和探索精神，对最新Agent技术趋势和论文有深入的了解。
+
+### Agent开发工程师 - Coze
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667160543863343365` · Agent开发工程师 - Coze · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667160543863343365/detail
+
+**官方职责**
+
+团队介绍：扣子是新一代开箱即用的 AI Agent 平台，面向个人、团队、企业，提供全面服务。具有多人多 Agent 协作特色功能、专家级编程/视频能力、企业级精选“行业专家”技能，等多项产品优势。同时，扣子支持网页端、电脑桌面端、手机 App 端多端协同，用户可以通过手机，远程指挥电脑工作，同时推进多项复杂任务。加入扣子，在AI赛道上拥有广阔的发展空间！ 1、负责AI Agent的架构设计与核心功能开发，包括设计并实现基于LLM的AI Agent核心架构，包括规划、推理、记忆管理、工具使用能力等；集成大模型、图片、视频等多模态能力，增强Agent的多模态交互与理解能力； 2、开发AI Agent与外部环境的交互接口，增强AI Agent能力；关注Agent系统的性能、稳定性、可扩展性和安全性； 3、负责AI Agent的效果评估与优化，包括设计和实施AI Agent的评测和评估方案，量化其效果（如任务完成率、准确性、效率、用户体验等）；持续监控Agent运行表现，分析日志和用户反馈，识别瓶颈和问题；对Agent的提示词、工作流、工具使用、模型选择、模型后训练等进行迭代优化，提升效果和效率。
+
+**官方要求**
+
+1、2027届获得硕士及以上学位，计算机、人工智能、自动化、数学相关专业优先； 2、熟练掌握Python/Golang编程语言，具备扎实的编程技能和算法设计能力； 3、熟悉至少一种主流AI Agent开发框架（如Eino、LangGraph等）； 4、需要有使用LLM进行项目开发和效果调优的经验，需要有直接调用LLM API并调试Prompt和上下文的经验。
+
+### Agent开发工程师 - 剪映CapCut
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 北京 / 广州 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7664433884154841349` · Agent开发工程师 - 剪映CapCut · 深圳 / 北京 / 广州 / 杭州 · https://jobs.bytedance.com/campus/position/7664433884154841349/detail
 
 **官方职责**
 
@@ -2410,13 +3488,129 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备全栈开发能力，熟悉至少一门主流开发语言（Go、Python、TypeScript、C++、Java均可），数据结构、算法、操作系统、网络基础扎实； 3、对智能体基础架构方向有浓厚兴趣，理解或愿意深入研究智能体运行机制、工具编排、沙箱、上下文工程等运行时技术； 4、对大语言模型、智能体、生成式AI有好奇心和动手经验，例如： 1）了解LangGraph、Dify等经典框架，使用过Claude Agent SDK、OpenAI Agents SDK等任一智能体开发框架； 2）实践过智能体检索增强、工具调用功能，或开发过MCP服务端或客户端； 3）对接过主流大模型应用程序接口完成个人项目，并对效果有独立判断； 5、能将模糊需求拆解为清晰的工程方案，代码具备良好的可读性与工程质量。 加分项 1、有视频、图像、语音相关的多模态项目经验； 2、了解现代智能体评测体系（如Terminal-Bench、GAIA、τ-bench、OSWorld等），或有搭建私有评测集的实践经验； 3、高频使用AI编程工具或智能体产品，能够判断产出质量，对主流大模型与智能体产品有独立见解； 4、在GitHub上有个人开源项目、参加过黑客马拉松，或有个人AI作品； 5、持续关注大模型与智能体领域前沿进展，如上下文工程、基础架构、智能体自进化、多智能体协作协议、世界模型等方向，并有独立思考。
 
-### Agent开发工程师（AI-基础能力）
+### Agent开发工程师 - 小荷健康
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665597568441534773` · Agent开发工程师 - 小荷健康 · 北京 · https://jobs.bytedance.com/campus/position/7665597568441534773/detail
+
+**官方职责**
+
+团队介绍：小荷健康是字节跳动旗下的医疗健康品牌，我们致力于利用大模型技术，探索医疗健康服务的新范式，孵化了“小荷AI医生”app，为用户提供专业的健康咨询服务。小荷健康拥有专业的医学和互联网产研团队，认真探索AI医疗。 1、在抖音、今日头条、小荷健康等App内，负责全端医疗AI医疗卡体验优化和医疗大模型首轮对话，带动垂类业务增长和用户体验； 2、改进基于深度学习、端到端生成式的搜索系统，覆盖从候选挖掘到召回、粗精排、多目标融合全链路技术环节，迭代优化端到端生成式搜索，探索Agent在医疗搜索的应用； 3、探索通用搜推技术的上限，并结合LLM、Harness落地在搜推及chat化场景； 4、通过SFT、DPO、RM优化、RL训练提升各场景模型回答质量，探索如何利用海量的用户反馈信号及体验构建端到端医疗生成大模型，优化个性化回答能力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、拥有坚实的数据结构、算法和计算机网络基础，至少熟练掌握Golang/Java/C++其中一门语言； 3、熟悉Linux开发环境，对代码质量追求简洁与可维护性；对缓存、消息队列、负载均衡、分布式存储、分布式事务的架构原理有深入理解和实践； 4、有大模型相关工程实践经验（如开发过AI Agent、搭建过RAG系统、熟悉Eino/LangChain4j等框架）优先； 5、对大模型技术（LLM）有浓厚兴趣，能够持续追踪最新的论文和技术动态，在开源项目、技术竞赛（如ACM/ICPC，Kaggle）中取得优异成绩优先； 6、乐于接受新事物，对AI医疗领域有改变世界的渴望，具备较强的自驱力，能在快速变化的环境中保持专注，拥有良好的团队协作意识，能和产品、算法、前端不同角色沟通协作。
+
+### Agent开发工程师 - 抖音
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 杭州 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668156130133199109` · Agent开发工程师 - 抖音 · 深圳 / 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7668156130133199109/detail
+
+**官方职责**
+
+团队介绍：抖音致力于打造一个开放、积极、多元、友善的平台，鼓励表达、沟通和记录，激发创造，丰富人们的精神世界，让现实生活更美好。我们通过AI算法驱动的个性化推荐与智能创作工具，满足用户表达、学习、娱乐、社交、消费等需求。回顾抖音一路走来的历程，我们在帮助亿万用户记录美好生活的过程中，努力变得更好。 1、负责大模型Agent体系（Harness、MAS等）架构设计和落地，搭建高可用、高扩展的Agent研发平台； 2、攻坚Agent核心技术，优化Prompt工程、Skill管理、Context管理、Harness执行管控机制，解决落地技术瓶颈； 3、学习和研究新技术以提高测试效率和质量； 4、对产品提出改进建议以建立较好的用户感受，对项目提出改进建议以提高项目整体效率。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机等相关专业； 2、扎实的数据结构和算法基础，熟悉至少一门编程语言，包括但不仅限于：Go、Python、Java、OC、C、C++、PHP； 3、对AI技术与Agent系统有浓厚兴趣，具备主动学习与动手实践能力，有独立搭建过LLM Agent或Demo者优先； 4、持续追踪最新的技术进展（Claude code、Deepresearch等），能快速理解和复现相关技术博客或者期刊的技术方案者优先； 5、了解常用客户端、服务端开发或测试工具，如自动化框架、压测工具、大数据处理工具者优先。
+
+### Agent开发工程师 - 抖音AI
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665614511443560709` · Agent开发工程师 - 抖音AI · 北京 · https://jobs.bytedance.com/campus/position/7665614511443560709/detail
+
+**官方职责**
+
+团队介绍：抖音AI团队主要负责抖音项目以及团队内的AI落地相关基础建设工作。我们的职责是用前沿的AI技术去赋能抖音应用以及抖音团队。我们希望在AI技术的加持下，能够更好的给抖音用户带来更好的信息消费体验，也能够让抖音这个大型组织能够更加高效的运转，从而更加及时的满足用户的各项诉求。团队主要负责抖音AI基础建设，包括但不限于模型训练、Agent相关的工程链路开发、通用Agent工具抽象以及AI Native的各类产品开发工作。AGI信仰强，以发展成为AI Native组织为目标，努力拓展传统协作模式的职责边界，充分给同学们提供自身探索的空间。 1、聚焦抖音内研发提效场景，参与AI Native研发流程中相关的Agent设计、效果调优和评测设计； 2、围绕抖音内研发建设Agent基建，探索Agent最佳实践和Agent交互范式，推动产品体验优化； 3、持续跟踪AI Coding领域的最新技术动态，并将其应用于实际业务场景中，推动技术落地。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、具备扎实的软件开发基础，熟悉C/C++/Golang/Java/Python/Android/iOS中至少一门编程语言或技术栈； 3、优秀的问题分析与解决能力，了解Agent开发、RAG、编排调优、上下文工程开发等至少一项开发经验； 4、深度使用Copilot、Cursor、Claude Code等AI编程工具者优先； 5、学习能力强，具备技术好奇心，乐于探索并实践新技术、新方向。 加分项 1、持续关注Agentic AI领域的前沿技术，拥有Agent System相关的研发实践经验者优先；或熟悉大模型相关技术，对大模型预训练、指令微调、RL等方向有了解和实践； 2、有Pretrain研究或应用经验者优先，熟悉代码领域的预训练与微调方法者优先； 3、以第一作者在ICML、ICLR、NeurIPS、ACL等顶级学术会议发表过高影响力研究成果者优先； 4、在ACM/ICPC、NOI/IOI、KAGGLE等编程或AI竞赛中获奖者优先； 5、主导或参与过具有广泛影响力的AI开源或闭源项目者优先。
+
+### Agent开发工程师 - 抖音直播
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7674830007332522293` · Agent开发工程师 - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7674830007332522293/detail
+
+**官方职责**
+
+团队介绍：直播团队负责为抖音集团旗下产品提供直播服务。团队负责直播平台技术和直播业务研发，打造灵活稳定的直播服务平台，为用户提供优质直播体验，支持电商、本地生活、游戏、节目、多人互动等不同类型的业务场景。直播业务发展迅猛，处于行业头部地位，业务发展空间巨大。现在加入我们，和优秀的人一起做有挑战的事，你的技术与创意将影响亿级用户，激发创意和丰富生活。 1、参与抖音直播客户端AI Agent方向的建设，面向直播场景，设计并落地具备感知、理解、规划与执行能力的智能体能力；负责基于大语言模型的客户端Agent框架研发，探索AI在直播消费、互动、创作辅助、主播经营等场景中的落地方案； 2、参与端侧、云端协同的AI能力建设，推动Agent在复杂业务场景下的任务拆解、工具调用、上下文管理与执行链路优化； 3、参与客户端智能化产品能力研发，结合抖音直播业务特点，提升AI Agent在多轮交互、实时响应、个性化服务等方向的用户体验； 4、与产品、设计、服务端、算法等团队密切合作，推进AI Agent在直播客户端场景中的工程化落地，持续优化效果、性能与稳定性；关注Multi-Agent、Prompt Engineering、长短期记忆、任务规划等前沿技术，探索其在直播业务中的实际应用与价值。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、扎实的工程功底与数据结构、算法基础：精通至少一门主流编程语言或技术栈（Python/Go/JS/TS/Java/Objective-C/Swift/C/C++/Android/iOS/Harmony），对软件架构有良好的理解； 3、对Agent技术在研发及直播业务场景落地有兴趣，熟悉大语言模型技术栈，在上下文工程、Skills、Agent编排、评测等方向有实践经验，并能清晰阐述如何通过Agent解决实际业务问题； 4、优秀的系统设计与问题拆解能力：能够将模糊、复杂的业务问题拆解为清晰、可执行的技术模块和迭代路径； 5、关注用户体验，能够积极把技术转化为用户体验改进；对新技术保持热情，具备良好的分析、解决问题能力； 6、具备良好的沟通协作能力与自驱力，愿意在快速变化的AI领域中持续学习与探索。
+
+### Agent开发工程师 - 数据平台
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 杭州 / 南京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667086494969530629` · Agent开发工程师 - 数据平台 · 北京 / 上海 / 杭州 / 南京 / 深圳 · https://jobs.bytedance.com/campus/position/7667086494969530629/detail
+
+**官方职责**
+
+团队介绍：数据平台是字节跳动数据中台部门，为公司多业务线（包括抖音、电商、直播和生活服务等）提供一站式大数据解决方案，涵盖数据的生产、清洗、传输、建模、分析等全流程链路，提供数据开发、实验评估、画像标签、增强分析等多元场景解决能力。同时，数据平台部门也致力于把字节跳动积累沉淀的数据中台解决方案做商业化输出，让更多行业能够应用我们的产品能力构建自己的数据中台。在火山引擎上，我们提供了营销增长套件，数据中台等相关产品解决方案，为泛互联网、金融、汽车、新零售等行业提供了行业解决方案。 1、负责数据平台通用或垂类Agent能力的研发工作，参与Agent Framework、任务编排、工具调用、RAG、Workflow等核心能力建设； 2、参与面向内部或To B业务场景的Agent平台设计与开发，提升Agent能力的复用性、扩展性和易用性； 3、参与大模型应用后端服务建设，包括Prompt优化、知识库构建、检索增强、工具接入、效果评估与链路优化； 4、支撑业务快速迭代，保障Agent服务的稳定性、可用性与响应效率； 5、关注大模型、AI Agent、数据平台等方向的前沿技术，并探索在实际业务中的应用。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机等相关专业优先； 2、具备扎实的编程基础，熟悉Python、Java、Go等至少一种编程语言，有良好的代码习惯； 3、了解大模型应用开发相关技术，包括Prompt Engineering、RAG、Agent、Workflow、工具调用、向量检索等，有相关项目经验优先； 4、具备良好的学习能力和沟通能力，责任心强，积极主动。
+
+### Agent开发工程师 - 豆包
+
+- **证据状态**：FULL_JD
+- **地点**：上海 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7668616776146487605` · Agent开发工程师 - 豆包 · 上海 · https://jobs.bytedance.com/campus/position/7668616776146487605/detail
+  - `7668617888100567301` · Agent开发工程师 - 豆包 · 北京 · https://jobs.bytedance.com/campus/position/7668617888100567301/detail
+
+**官方职责**
+
+团队介绍：字节跳动Flow产品研发团队，专注研究AI智能化相关业务落地，目前落地豆包等APP，以及Bot开发平台等AI智能化创新产品。其中，豆包是一款基于字节自研模型的AI智能助手，能为你答疑解惑，查询信息，提供灵感，辅助创作，也可以和你聊任何感兴趣的话题。业务和团队均处于快速发展期，成长空间大，欢迎各位同学加入！ 1、负责豆包的Agent技术研发，包括Multi-Agent框架、Memory机制等基础能力建设； 2、开发信息检索、创作、DeepResearch等专业领域Agent，提升大模型在特定场景的应用能力； 3、探索Agent方向的创新方法与技术，提出更先进的Agent范式，引领行业技术发展； 4、探索面向Agent的评估方法，构建豆包的Agent评估体系； 5、设计并实现易用高效的Agent开发周边套件工具，提升开发效率，降低使用Agent技术的门槛，保障交付质量。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、熟练掌握Python/Java/Go等至少一门语言，有项目开发经验者优先； 3、对大模型有深入理解，熟悉LLM技术原理与应用方法，有Agent系统设计与实现经验；了解Memory机制、RAG、工具调用、规划执行等Agent关键技术，有相关实践经验； 4、深入理解Agent相关技术方法，具备强化学习、规划算法实践经验者加分； 5、对AI原生应用有热情，具备快速复现论文及工程化能力，顶会论文或开源项目贡献者加分。
+
+### Agent开发工程师 - 集团信息系统
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 上海 / 深圳 / 上海 / 广州 / 深圳 / 上海 / 广州 / 杭州 / 成都
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：4 个
+  - `7678589759266081077` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 · https://jobs.bytedance.com/campus/position/7678589759266081077/detail
+  - `7668147008355830069` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 / 广州 · https://jobs.bytedance.com/campus/position/7668147008355830069/detail
+  - `7680195912761166085` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 / 广州 · https://jobs.bytedance.com/campus/position/7680195912761166085/detail
+  - `7669676519560136965` · Agent开发工程师 - 集团信息系统 · 深圳 / 上海 / 广州 / 杭州 / 成都 · https://jobs.bytedance.com/campus/position/7669676519560136965/detail
+
+**官方职责**
+
+团队介绍：集团信息系统部（Corporate Information System） 负责字节跳动企业内信息系统、工具与AI创新应用的整体规划与建设，我们服务全球所有员工与业务单元，覆盖通用办公、人事、财务、法务、采购、审批、职场等核心领域。在AI时代下，我们致力于推动公司组织效率跃升与业务流程变革，我们正用AI重构企业运作的毛细血管：通过系统工具 AI 化与构建企业级 Agent 体系，让系统进化为 “智能助手”，提升全球团队的协同协作与业务运转效率；通过深耕企业上下文建设，实现从端到端业务流的智能化升级与流程再造。在持续激发AI 生产力的同时，部门加强安全、隐私与合规的治理，为公司长远发展保驾护航。 1、负责AI原生应用的算法研发和LLM效果优化工作，推动技术的探索和应用； 2、探索大语言模型等AI技术在字节跳动国际化公司运营的落地，包括领域预训练、指令微调、训练和推理加速、模型评测等技术； 3、提升自然语言理解的能力，比如实体识别、意图识别、NL2SQL，向量召回，结构化/非结构化，短文本/长文本的表征学习等；应用于对话系统、文本生成、文本分类、知识图谱，检索问答等领域； 4、提升多模态识别和理解能力，比如图片、音频、视频等多模态分类、内容挖掘、理解和生成等。
+
+**官方要求**
+
+1、2027届获得硕士及以上学位，人工智能、计算机、软件工程等相关专业； 2、学术研究经历优先，扎实的算法和数据结构基础，熟练掌握Python/Go/C++等至少一种编程语言； 3、动手能力强，熟悉NLP/CV领域的理论基础，掌握统计模型、机器学习相关原理，具有实战经验，参与过相关项目； 4、学习能力优秀，有良好的团队合作精神，有责任心； 5、熟悉业界领先大语言模型（GPT系列、Llama、ChatGLM等）的原理与训练方法，有NLP、计算机视觉、多模态大模型等科研经历或者对LLM有实践应用经历优先； 6、在顶级学术会议（如CVPR、ICCV、ECCV等）发表论文者优先；在Kaggle，COCO，ImageNet，ActivityNet，ICPC，NOI/IOI等比赛获奖者优先。
+
+### Agent开发工程师（AI-基础能力） - 集团信息系统
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7680196825143773493\` · Agent开发工程师（AI-基础能力） - 集团信息系统 · 深圳 · https://jobs.bytedance.com/campus/position/7680196825143773493/detail
+  - `7680196825143773493` · Agent开发工程师（AI-基础能力） - 集团信息系统 · 深圳 · https://jobs.bytedance.com/campus/position/7680196825143773493/detail
 
 **官方职责**
 
@@ -2426,13 +3620,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信等相关专业者优先； 2、有扎实的编程能力，有优秀的设计和代码质量； 3、深刻理解计算机原理，有良好的数据结构和算法基础； 4、熟悉MySQL、Redis、消息队列等常用研发组件； 5、积极乐观，责任心强，工作认真细致，有良好的团队沟通和协作能力。
 
-### Agent开发工程师（云游戏）
+### Agent开发工程师（云游戏） - 抖音直播
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664881173931477301\` · Agent开发工程师（云游戏） - 抖音直播 · 深圳 · https://jobs.bytedance.com/campus/position/7664881173931477301/detail
+  - `7664881173931477301` · Agent开发工程师（云游戏） - 抖音直播 · 深圳 · https://jobs.bytedance.com/campus/position/7664881173931477301/detail
 
 **官方职责**
 
@@ -2442,14 +3636,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业； 2、AI Coding必备：熟练使用TRAE、Codex等AI编码工具，具备高质量Skill、MCP开发能力； 3、Agent化开发实践：了解常见Agent工作原理，熟悉其中某一部分的具体实现（上下文管理/Memory/Sub Agent管理等)； 4、具备优秀的编码习惯和架构设计能力，以及良好的问题分析与解决能力。 加分项： 1、有自研或二次开发AI编码工具、IDE插件或Code Agent的项目经验； 2、拥有音视频编解码、网络传输或图形渲染相关开发经验； 3、有过Android(Kotlin/Java)与iOS(Object-C)、Windows（C++)原生开发经验，深入理解操作系统原理。
 
-### Agent开发工程师（搜索）
+### Agent开发工程师（搜索） - TikTok研发
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：2 个
-  - \`7665985793949993269\` · Agent开发工程师（搜索） - TikTok研发 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665985793949993269/detail
-  - \`7665584080572418309\` · Agent开发工程师（搜索） - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7665584080572418309/detail
+- **官方 Requisition**：1 个
+  - `7665985793949993269` · Agent开发工程师（搜索） - TikTok研发 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665985793949993269/detail
 
 **官方职责**
 
@@ -2459,13 +3652,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件、电子信息等相关专业； 2、热爱计算机科学和互联网技术，精通至少一门编程语言，包括但不仅限于：Java、C、C++、PHP、Python、Go； 3、有LLM/RAG/Agent/多模态理解等AI工程落地经验，参与过AI搜索、AI问答、Copilot、AI Workflow等系统建设； 4、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 5、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 6、有强烈的求知欲，优秀的学习和沟通能力，关注新技术。
 
-### Agent开发工程师（泛架构）
+### Agent开发工程师（搜索） - 抖音研发
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7666031054687897861\` · Agent开发工程师（泛架构） - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7666031054687897861/detail
+  - `7665584080572418309` · Agent开发工程师（搜索） - 抖音研发 · 北京 · https://jobs.bytedance.com/campus/position/7665584080572418309/detail
+
+**官方职责**
+
+团队介绍：抖音研发部门负责多款大型产品的研发，包括但不限于抖音、西瓜视频、汽水音乐。 加入我们，你将有机会参与亿级用户场景的开发与架构工作，使用前沿的技术助力业务一起不断成长。 1、参与AI搜索中台的基建能力建设，参与RAG知识库构建、Agent编排、Agent评测、Agent/Tool/Skill/Data市场、内容安全、Agent可观测等平台能力建设，支持公司内部业务快速搭建AI搜产品能力； 2、参与搜索平台能力建设，以搜索效果质量保障和研发效率提升为目标，构建抓取评估、安全干预、诊断大师、负面案例管理、数据飞轮等产品矩阵，为抖音搜索、豆包搜索、AI抖音、今日头条搜索等业务线提供一站式接入服务； 3、深度参与AI在搜索场景的工程化落地或者模型调优，包括但不限于机评Agent、智能归因Agent、平台AI Coding等建设； 4、建设AI时代的搜索平台架构，利用AI技术构建开发者生态，保障性能与稳定性，提供通用、低成本的平台接入能力。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、有扎实的编程能力和良好的代码习惯、数据结构和算法基础； 3、能熟练使用一种编程语言，包括不限于Golang、Python、Java、PHP、C++、C；熟悉MySQL、Redis、MQ等常用Web组件，并了解基本原理； 4、关注LLM和Agent相关技术，对新技术有热情；关注用户体验，能够积极把技术转化到用户体验改进上； 5、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分，具备强烈的求知欲及优秀的学习、沟通能力。
+
+### Agent开发工程师（泛架构） - TikTok研发
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7666031054687897861` · Agent开发工程师（泛架构） - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7666031054687897861/detail
 
 **官方职责**
 
@@ -2475,13 +3684,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟悉Python/Go/Java/C++中至少一种编程语言，具备扎实的工程开发能力； 3、熟悉LLM应用开发，有RAG、Agent、Prompt Engineering、Function Calling、Workflow编排等实践经验者优先； 4、具备较强的数据处理和分析能力，熟悉SQL，能从复杂业务数据中抽象问题并形成解决方案； 5、具备良好的系统设计能力，能够设计稳定、可扩展、可观测的AI应用服务；对基础设施资源管理、云计算、GPU资源、容量规划、成本优化等方向有经验或兴趣； 6、具备较强的业务理解能力和沟通协作能力，能够在不确定场景下推动问题闭环；具备主动学习能力，能快速跟进AI Agent相关技术发展，并转化为实际业务价值。
 
-### Agent开发工程师（用户平台方向）
+### Agent开发工程师（用户平台方向） - 抖音直播
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665702118183176453\` · Agent开发工程师（用户平台方向） - 抖音直播 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7665702118183176453/detail
+  - `7665702118183176453` · Agent开发工程师（用户平台方向） - 抖音直播 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7665702118183176453/detail
 
 **官方职责**
 
@@ -2491,14 +3700,14 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、软件工程、人工智能、电子信息等相关专业优先； 2、具备扎实的计算机基础和编程能力，熟悉数据结构、算法、操作系统、计算机网络等基础知识； 3、熟悉iOS/Android/跨端客户端开发技术中的一种或多种，有移动端项目实践经验者优先； 4、对大语言模型、AI Agent、Prompt Engineering、RAG、任务规划、工具调用等方向有一定理解，有相关项目实践者优先； 5、具备良好的问题分析与解决能力，较强的学习能力、沟通协作能力和结构化表达能力； 6、对AI技术与产品结合有热情，对直播、内容、互动类产品感兴趣，具备较强的创新意识与落地意识。 加分项 1、有AI Agent、Multi-Agent、智能助手、Copilot、对话系统等相关项目经验； 2、有iOS、Android或跨端客户端产品的开发经历，熟悉移动端性能优化、工程架构设计者优先； 3、有LLM应用落地经验，了解Prompt优化、RAG、Function Calling、Agent工作流等技术； 4、在人工智能、人机交互、自然语言处理、软件工程等相关领域有论文、竞赛或开源项目经历； 5、对直播互动、内容推荐、智能创作、AI驱动产品体验有深入兴趣或相关实践。
 
-### Agent开发工程师（直播营收方向）
+### Agent开发工程师（直播营收方向） - 抖音直播
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 广州 / 杭州 / 深圳
+- **地点**：北京 / 杭州 / 深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7665706464694569221\` · Agent开发工程师（直播营收方向） - 抖音直播 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7665706464694569221/detail
-  - \`7667138034899257653\` · Agent开发工程师（直播营收方向） - 抖音直播 · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667138034899257653/detail
+  - `7665706464694569221` · Agent开发工程师（直播营收方向） - 抖音直播 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7665706464694569221/detail
+  - `7667138034899257653` · Agent开发工程师（直播营收方向） - 抖音直播 · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667138034899257653/detail
 
 **官方职责**
 
@@ -2508,14 +3717,14 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、软件工程、人工智能、电子信息等相关专业优先； 2、具备扎实的计算机基础和编程能力，熟悉数据结构、算法、操作系统、计算机网络等基础知识； 3、熟悉iOS/Android/跨端客户端开发技术中的一种或多种，有移动端项目实践经验者优先； 4、对大语言模型、AI Agent、Prompt Engineering、RAG、任务规划、工具调用等方向有一定理解，有相关项目实践者优先； 5、具备良好的问题分析与解决能力，较强的学习能力、沟通协作能力和结构化表达能力； 6、对AI技术与产品结合有热情，对直播、内容、互动类产品感兴趣，具备较强的创新意识与落地意识。 加分项 1、有AI Agent、Multi-Agent、智能助手、Copilot、对话系统等相关项目经验； 2、有iOS、Android或跨端客户端产品的开发经历，熟悉移动端性能优化、工程架构设计者优先； 3、有LLM应用落地经验，了解Prompt优化、RAG、Function Calling、Agent工作流等技术； 4、在人工智能、人机交互、自然语言处理、软件工程等相关领域有论文、竞赛或开源项目经历； 5、对直播互动、内容推荐、智能创作、AI驱动产品体验有深入兴趣或相关实践。
 
-### Agent开发工程师（评测技术）
+### Agent开发工程师（评测技术） - 抖音
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7665688716433852677\` · Agent开发工程师（评测技术） - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7665688716433852677/detail
-  - \`7665691286032156933\` · Agent开发工程师（评测技术） - 抖音 · 深圳 · https://jobs.bytedance.com/campus/position/7665691286032156933/detail
+  - `7665688716433852677` · Agent开发工程师（评测技术） - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7665688716433852677/detail
+  - `7665691286032156933` · Agent开发工程师（评测技术） - 抖音 · 深圳 · https://jobs.bytedance.com/campus/position/7665691286032156933/detail
 
 **官方职责**
 
@@ -2525,13 +3734,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟练掌握Python/Java/Go至少一门编程语言； 3、对大模型技术充满热情，对模型评测方法论、Prompt Engineering或数据集构建有浓厚兴趣； 4、具备结构化数据分析能力与逻辑推理能力，能通过数据分析提炼问题本质，具备良好的判断能力； 5、有模型策略/评测/数据产品相关经验，熟悉LLM/多模态/Agent产品评估者优先。
 
-### Agent效果评测工程师
+### Agent效果评测工程师 - 开发者服务
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667106823808305413\` · Agent效果评测工程师 - 开发者服务 · 深圳 · https://jobs.bytedance.com/campus/position/7667106823808305413/detail
+  - `7667106823808305413` · Agent效果评测工程师 - 开发者服务 · 深圳 · https://jobs.bytedance.com/campus/position/7667106823808305413/detail
 
 **官方职责**
 
@@ -2541,13 +3750,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、数学等相关专业； 2、有评测经验者优先，具备良好的工程架构设计与编码能力，精通Go/Python/Java中至少一种； 3、沟通表达能力强，具备好奇心、创新意识、自驱力与复杂问题解决能力； 4、对大模型与Agent有深入理解，熟悉主流LLM应用模式与评估框架，了解Agent架构（Multi-Agent、Context Engineering、ReAct）及协议（MCP、A2A、Function Call）； 5、加分项：具备Agent开发或复杂场景评测经验；有AI论文发表、大模型评测或训练经验。
 
-### Agent数据&评测工程师
+### Agent数据&评测工程师 - AI Platform
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667950077989980469\` · Agent数据&评测工程师 - AI Platform · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667950077989980469/detail
+  - `7667950077989980469` · Agent数据&评测工程师 - AI Platform · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667950077989980469/detail
 
 **官方职责**
 
@@ -2557,21 +3766,66 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、人工智能、数学等相关专业优先； 2、具备优秀的编码能力，扎实的数据结构和算法功底，至少熟练掌握C/C++/Go/Python一种开发语言； 3、有Agent开发或复杂场景评测经验者优先，在相关顶级会议发表过论文者优先； 4、具备优秀的学习能力且对探索未知领域有强烈兴趣，具备优秀的问题解决能力与自驱力者优先。
 
-### Agent研发工程师
+### Agent研发工程师 - App Infra
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667091390681368885` · Agent研发工程师 - App Infra · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667091390681368885/detail
+
+**官方职责**
+
+团队介绍：App Infra 是字节跳动面向移动应用的中台部门，为集团旗下核心 App 提供终端 + 平台一体化技术解决方案。面向研发效能，团队结合在构建系统、编译工具链、虚拟机、深度性能优化等技术上的长期技术沉淀，为Agentic 研发流程提供上下文、编译、验证相关 DevOps，以及 Bugfix、性能优化解决方案；面向商业效率，团队则提供了特征工程、DT/NN/RL/SLM/SVLM 的端云基建，并结合搜索/推荐/广告/直播/电商等场景，孵化出云端协同推荐、精确触达等可迁移方案。如果你热爱挑战底层技术、追求极致优化，又渴望把AI转化为千万用户感受得到的流畅与智能——欢迎加入，和我们一起打造下一代移动体验！ 1、参与字节跳动亿级DAU产品端智能服务端研发，建设高可用、高并发服务架构，保障业务链路稳定； 2、参与大模型端云协同方案的探索，优化资源调度，协同移动研发工程师完成业务落地； 3、通过Agent技术实现解决方案自动化迭代，覆盖特征工程、模型训练、策略优化、部署观测的完整流程。
+
+**官方要求**
+
+1、2027届获得硕士及以上学位，计算机、通信和电子信息科学等相关专业优先； 2、掌握C++/Go/Python中任意一门后端开发语言，了解常用开发框架与基础组件； 3、了解MySQL、Redis等常见存储/缓存系统的基本使用方法和原理。 加分项： 1、理解LLM原理，具备Agent系统设计与落地经验，关注Agent上下文管理、状态维护与效果评估，能持续提升智能体执行效率与可靠性； 2、了解本地大模型部署与推理框架，对模型量化、加速或推理优化有一定实践经验或认知； 3、具备大数据处理、分布式系统相关课程或项目经验，对高并发、高可用系统有基本认识。
+
+### Agent研发工程师 - Seed
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 深圳 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7668280227769157893` · Agent研发工程师 - Seed · 深圳 · https://jobs.bytedance.com/campus/position/7668280227769157893/detail
+  - `7669686857256405301` · Agent研发工程师 - Seed · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7669686857256405301/detail
+
+**官方职责**
+
+团队介绍：产品研发和工程架构-Seed 团队深耕大模型技术在场景中的创新应用，负责多款现象级AI产品的工程研发 —— 包括豆包、飞书、豆包工作、豆包爱学、Gauth、猫箱等创新产品，覆盖消费级与企业级多个场景。我们致力于将大模型能力从 "生成内容" 推进到 "完成工作"，让 AI 服务用户日常与企业协作。你将面对多模态交互、工具调用可靠性、企业级数据安全等真实工程挑战，与团队一起推动 AI 生产力落地。 1、参与飞书与豆包办公场景的Agent系统研发，构建面向文档、幻灯片、表格和知识任务的可扩展服务； 2、设计模型调用、RAG、工具使用、任务编排与上下文管理等能力，提升复杂任务完成质量； 3、建设评测、观测、反馈和安全机制，探索多Agent、代码生成等前沿方向。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、人工智能等相关专业优先； 2、编程基础扎实，熟悉Python、Golang、Java、C/C++等至少一门语言； 3、了解大模型应用开发，对RAG、Agent、Prompt Engineering或工具调用有实践或浓厚兴趣； 4、学习与动手能力强，关注AI技术发展，重视验证与结果质量；有AI项目或开源实践者加分。
+
+### Agent研发工程师 - 抖音
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 北京 / 杭州 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：9 个
-  - \`7667091390681368885\` · Agent研发工程师 - App Infra · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667091390681368885/detail
-  - \`7668280227769157893\` · Agent研发工程师 - Seed · 深圳 · https://jobs.bytedance.com/campus/position/7668280227769157893/detail
-  - \`7669686857256405301\` · Agent研发工程师 - Seed · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7669686857256405301/detail
-  - \`7667534821039982853\` · Agent研发工程师 - 抖音 · 上海 · https://jobs.bytedance.com/campus/position/7667534821039982853/detail
-  - \`7667174318011484469\` · Agent研发工程师 - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7667174318011484469/detail
-  - \`7667535843305130293\` · Agent研发工程师 - 抖音 · 杭州 · https://jobs.bytedance.com/campus/position/7667535843305130293/detail
-  - \`7668202433734936885\` · Agent研发工程师 - 抖音 · 深圳 · https://jobs.bytedance.com/campus/position/7668202433734936885/detail
-  - \`7665316926683515141\` · Agent研发工程师 - 抖音用户增长 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665316926683515141/detail
-  - \`7667554460750989573\` · Agent研发工程师 - 抖音用户增长 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667554460750989573/detail
+- **官方 Requisition**：4 个
+  - `7667534821039982853` · Agent研发工程师 - 抖音 · 上海 · https://jobs.bytedance.com/campus/position/7667534821039982853/detail
+  - `7667174318011484469` · Agent研发工程师 - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7667174318011484469/detail
+  - `7667535843305130293` · Agent研发工程师 - 抖音 · 杭州 · https://jobs.bytedance.com/campus/position/7667535843305130293/detail
+  - `7668202433734936885` · Agent研发工程师 - 抖音 · 深圳 · https://jobs.bytedance.com/campus/position/7668202433734936885/detail
+
+**官方职责**
+
+团队介绍：抖音致力于打造一个开放、积极、多元、友善的平台，鼓励表达、沟通和记录，激发创造，丰富人们的精神世界，让现实生活更美好。我们通过AI算法驱动的个性化推荐与智能创作工具，满足用户表达、学习、娱乐、社交、消费等需求。回顾抖音一路走来的历程，我们在帮助亿万用户记录美好生活的过程中，努力变得更好。 1、参与面向业务场景的Agent系统设计与研发，构建覆盖需求理解、测试生成、代码评审、缺陷发现等核心场景的端到端Agent工作流；持续跟进前沿技术，推动新技术在质量场景中的落地应用，形成可验证的业务价值； 2、参与Agent核心链路建设，包括任务规划、上下文构建、多工具调用编排、结果汇总验证等关键环节，持续提升Agent的分析深度、稳定性与可靠性； 3、参与可复用Agent框架的设计与沉淀，包括通用任务模板、工具协议规范、执行管控机制、调试与评测能力，提升多场景下的复用效率与工程化水平。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、熟练掌握Python/Java/Go至少一门编程语言； 3、熟悉主流Agent编排框架与开源生态，熟悉Agent范式并有实际的项目经验； 4、良好的结构化表达能力与独立思考能力，能够在快速变化的AI领域中主动探索、持续学习与落地。 加分项 1、有开源项目贡献、技术博客或优秀的AI Agent个人项目； 2、有程序分析、质量保障相关领域的研究经验； 3、发表过AI或软件工程领域顶级会议/期刊论文。
+
+### Agent研发工程师 - 抖音用户增长
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 北京 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：2 个
+  - `7665316926683515141` · Agent研发工程师 - 抖音用户增长 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665316926683515141/detail
+  - `7667554460750989573` · Agent研发工程师 - 抖音用户增长 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7667554460750989573/detail
 
 **官方职责**
 
@@ -2581,14 +3835,14 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、具备扎实的计算机基础，熟悉数据结构、算法、计算机网络、操作系统和数据库等基础知识； 3、熟练掌握至少一门编程语言，具备良好的编程能力和代码习惯，能够快速学习并使用新的技术解决实际问题； 4、具备基本的全栈研发能力，了解前端、后端、API、数据库和鉴权等基础知识，能够独立完成完整功能的开发与联调； 5、了解大语言模型和Agent的基本原理，有Agent或大模型应用实践，能够清楚说明项目中的问题、方案和迭代过程； 6、关注Agent场景下的人机交互，能够从用户视角思考任务反馈、用户确认、执行中断和异常恢复等问题；对业务有好奇心，愿意主动发现和解决问题，具备良好的学习、沟通和团队协作能力。 加分项： 1、有独立完成或长期维护的Agent项目； 2、使用过Agent框架、MCP或相关工具调用协议； 3、有使用AI Coding工具改善研发流程的实践； 4、有开源项目、技术比赛或完整产品实践经历； 5、对用户增长、推荐、广告或营销业务有一定了解。
 
-### Agent策略工程师
+### Agent策略工程师 - Seed
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 杭州 / 深圳
+- **地点**：杭州 / 深圳 / 上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7668270973026175237\` · Agent策略工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668270973026175237/detail
-  - \`7668269590400698677\` · Agent策略工程师 - Seed · 深圳 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668269590400698677/detail
+  - `7668270973026175237` · Agent策略工程师 - Seed · 杭州 · https://jobs.bytedance.com/campus/position/7668270973026175237/detail
+  - `7668269590400698677` · Agent策略工程师 - Seed · 深圳 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7668269590400698677/detail
 
 **官方职责**
 
@@ -2598,13 +3852,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、扎实的算法和数据结构基础，熟练掌握至少一门编程语言； 3、对LLM和AI Agent有浓厚兴趣，动手能力强，有独立完成项目的能力，学习能力优秀； 4、有良好的团队合作精神，有责任心。 以下经历加分： 1、有AI Agent产品的开发或调优经验（如OpenClaw、Claude Code、Codex等）； 2、有LLM应用调优经验（效果评测、Prompt优化、模型选型等）； 3、有NLP或大模型相关科研经历。
 
-### Agent解决方案架构师
+### Agent解决方案架构师 - AI算力基础设施
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667893314209384757\` · Agent解决方案架构师 - AI算力基础设施 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7667893314209384757/detail
+  - `7667893314209384757` · Agent解决方案架构师 - AI算力基础设施 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7667893314209384757/detail
 
 **官方职责**
 
@@ -2614,14 +3868,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、人工智能、软件工程、电子信息、通信工程等相关专业优先； 2、具备技术方案产品化能力，能将复杂技术转化为客户可感知的价值； 3、具备优秀的管理能力和跨团队沟通能力，能协调研发、产品、客户多方资源推动项目落地。
 
-### Agent评测工程师
+### Agent评测工程师 - 抖音研发中台
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：北京 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：2 个
-  - \`7668618512634366261\` · Agent评测工程师 - 抖音研发中台 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7668618512634366261/detail
-  - \`7667548857429870901\` · Agent评测工程师 - 数据平台 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667548857429870901/detail
+- **官方 Requisition**：1 个
+  - `7668618512634366261` · Agent评测工程师 - 抖音研发中台 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7668618512634366261/detail
+
+**官方职责**
+
+团队介绍：抖音研发中台团队主要负责抖音、剪映、今日头条、番茄小说、财经等产品的质量建设，面向质量、体验、安全提供全方位、深层次、高效的解决方案。 1、负责剪辑、创作、Coding Agent及产品的效果评测工作，基于评测结果进行分析与诊断，挖掘模型或Agent在推理、规划、工具调用、代码执行等环节的问题，并输出改进建议； 2、负责评测技术基建的建设工作，通过LLM Judge等多维度手段，提升评测的效率和自动化率； 3、参与业务评测体系的建设工作，包括评测标准，评测集，评估能力，评测结果分析与归因等系列核心能力建设，跟踪前沿评测技术与Benchmark趋势，开展技术调研与创新实践，推动评测体系升级。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机等相关专业； 2、热爱计算机科学和大模型技术，对大模型评测工作有浓厚兴趣； 3、对主流大模型的原理、能力边界及典型应用场景有较深入理解，熟悉大模型与Agent的常见评测方法； 4、扎实的数据结构和算法基础，熟悉至少一门编程语言，包括但不仅限于：Java、OC、C、C++、Python、Go、PHP； 5、快速适应和学习能力，善于发现和定位问题有强烈的求知欲、好奇心和进取心，能及时关注和学习业界最新技术，对解决挑战性问题充满激情； 6、对AI技术有持续的学习和实践，深度使用AI Coding等各类AI产品，并形成自己的应用范式。
+
+### Agent评测工程师 - 数据平台
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667548857429870901` · Agent评测工程师 - 数据平台 · 北京 / 杭州 / 上海 · https://jobs.bytedance.com/campus/position/7667548857429870901/detail
 
 **官方职责**
 
@@ -2631,13 +3900,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备扎实的计算机基础知识，对操作系统、计算机网络、算法与数据结构有较好理解； 3、熟悉至少一门编程语言，如C/C++/Java/Go/Python/OC/PHP，具备基本编码与调试能力，每周保证出勤； 4、具备强烈的学习与钻研精神，责任心强，执行力好，能主动推进任务落地，善于发现问题和分析定位问题，有条理地输出结论和改进建议； 5、拥有良好的沟通表达能力与团队合作精神，能够在多团队协作环境中高效推进工作。 加分项 1、了解并应用主流Agent框架（如LangChain等）； 2、有智能体技术实践或探索经验； 3、了解智能体相关评测技术。
 
-### Dev Agent后端开发工程师
+### Data For AI开发工程师 - Data-抖音/直播/电商/剪映
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州
+- **地点**：北京 / 上海 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667095809582926085\` · Dev Agent后端开发工程师 - 开发者服务 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667095809582926085/detail
+  - `7665704613723736373` · Data For AI开发工程师 - Data-抖音/直播/电商/剪映 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7665704613723736373/detail
+
+**官方职责**
+
+团队介绍：Data-架构团队是字节跳动的核心技术引擎，为抖音、今日头条、番茄小说、剪映等旗舰产品构建大规模、高可用、可持续演进的推荐、搜索与广告工程架构。团队深耕推荐架构、搜索架构、广告架构、机器学习基础设施、在线服务架构与稳定性工程等领域，在千亿乃至万亿级数据规模、超大流量与复杂业务逻辑的真实工程挑战中，持续以技术创新驱动人与信息、人与服务的高效连接，服务全球数亿用户。 目前，团队正积极探索搜广推架构下一代范式：从大规模在线预估框架到生成式推荐大模型的训练、后训练与端到端推理，从分布式异步图引擎、统一数据编排到平台化业务策略与 Infra Research，让大模型真正落地于亿级流量的真实在线系统。欢迎热爱分布式、AI 大模型、搜广推架构的同学加入。 1、为大规模搜索、推荐、广告系统设计和实现合理的分布式计算和训练系统； 2、设计和实现灵活可扩展、稳定、高性能的离线存储、计算、训练组件； 3、生产系统的Troubleshooting，设计和实现必要的机制和工具保障生产系统整体运行的稳定性； 4、打造业界领先搜广推系统分布式训练和计算框架等分布式系统，为海量数据和大规模业务系统提供可靠的基础设施。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、热爱计算机科学和技术，熟悉Java、C++、Scala、Python等编程语言，对Hudi/Iceberg/Paimon数据湖技术感兴趣，对Ray/PyTorch/Flink/Spark等AI生态和分布式计算系统感兴趣； 3、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 4、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 5、有强烈的求知欲，能够读懂业界前沿Paper，优秀的学习和沟通能力。
+
+### Dev Agent后端开发工程师 - 开发者服务
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海 / 杭州
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7667095809582926085` · Dev Agent后端开发工程师 - 开发者服务 · 北京 / 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667095809582926085/detail
 
 **官方职责**
 
@@ -2647,13 +3932,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信和电子信息科学等相关专业优先； 2、至少熟练掌握一门编程语言（C/C++/Golang/Java/Python//PHP等）； 3、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 4、有强烈的求知欲，优秀的学习和沟通能力。
 
-### LLM Agents研发工程师
+### LLM Agents研发工程师 - TikTok研发
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669443335572310325\` · LLM Agents研发工程师 - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7669443335572310325/detail
+  - `7669443335572310325` · LLM Agents研发工程师 - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7669443335572310325/detail
 
 **官方职责**
 
@@ -2663,13 +3948,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得硕士及以上学位，计算机科学或相关专业优先； 2、具备良好的沟通和团队协作能力，编码能力、数据结构和基本算法技能，精通C/C++或Python，ACM/ICPC、NOI/IOI、Top Coder、Kaggle等竞赛获奖者优先； 3、与全球大学的研究人员进行深入研究与合作。 具有以下一项或多项资质的候选人将优先考虑： 1、在机器学习（ML）、计算机视觉（CV）、自然语言处理（NLP）等领域发布过论文者优先（NeurIPS、ICML、ICLR、CVPR、ACL、OSDI、NSDI、SC和SigMOD等）； 2、有开发和部署大语言模型智能体的经验； 3、有AI Coding、多智能体协作方面的经验。
 
-### LLM Agent开发工程师
+### LLM Agent开发工程师 - TRAE
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 杭州 / 深圳
+- **地点**：北京 / 上海 / 深圳 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667152802128922885\` · LLM Agent开发工程师 - TRAE · 北京 / 上海 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7667152802128922885/detail
+  - `7667152802128922885` · LLM Agent开发工程师 - TRAE · 北京 / 上海 / 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7667152802128922885/detail
 
 **官方职责**
 
@@ -2679,13 +3964,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、具备扎实的软件开发基本功，熟练掌握Golang/Java/Python/C++中至少一种编程语言； 3、深入理解LLM应用研发技术栈，熟悉主流大模型及API的能力边界和工程化特点，了解模型路由、流式输出、工具调用、Prompt Caching、Rate Limit、上下文窗口、Token计费、结构化输出等机制； 4、具备Agent应用开发或优化经验，理解Agent Loop、任务分解、多轮工具调用、上下文构造、状态管理、失败恢复、结果验证、Tracing、实验评估等核心机制，能够端到端分析和优化Agent应用效果； 5、熟悉AI IDE/Coding Agent相关场景，对代码补全、代码生成、代码检索、测试执行、PR生成、开发者工作流等场景有实践经验或深入理解；能够针对低延迟高频请求和长任务Agent请求设计差异化的系统架构与优化策略。 加分项： 1、有AI IDE、Coding Agent、LLM Gateway、Agent Runtime、Prompt管理平台、LLM Tracing、实验平台、代码补全、商业化计费等系统建设经验； 2、对Cursor、Claude Code、Codex、GitHub Copilot、Continue、Aider、Cline、SWE-Agent等产品或框架有深入使用和工程理解。
 
-### 主动式Agent研发工程师
+### 主动式Agent研发工程师 - PICO
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7672338121601763589\` · 主动式Agent研发工程师 - PICO · 北京 · https://jobs.bytedance.com/campus/position/7672338121601763589/detail
+  - `7672338121601763589` · 主动式Agent研发工程师 - PICO · 北京 · https://jobs.bytedance.com/campus/position/7672338121601763589/detail
 
 **官方职责**
 
@@ -2695,13 +3980,29 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得硕士及以上学位，计算机、电子信息、自动化等相关专业； 2、有多模态大模型或计算机视觉相关研发经验，精通PyTorch深度学习框架，具备扎实的算法基础，深入理解Transformer、ViT、多模态特征对齐等核心技术原理； 3、熟悉主流多模态大模型的架构与训练推理流程，具备VLM模型微调、部署落地的实操经验； 4、具备实时视频理解、流式多模态交互相关项目经验，熟悉视频流处理、帧采样、时序建模等相关技术； 5、具备良好的工程实现能力，熟悉vLLM等主流大模型推理框架，有低延迟推理系统开发与优化经验者优先； 6、具备较强的问题分析与解决能力，能够独立完成技术方案设计与落地，拥有良好的团队协作与沟通能力。 加分项： 1、有开源多模态项目贡献经历，具备主流多模态系统二次开发与定制化经验； 2、具备vLLM定制化开发、KV Cache优化、低位量化推理等性能优化经验； 3、熟悉强化学习在多模态交互决策中的应用，有RLHF/DPO相关训练经验； 4、具备端侧多模态模型部署、边缘计算设备适配经验。
 
-### 产品交付运维工程师（AI Agent和办公安全）
+### 云网络AI研发工程师 - AI算力基础设施
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 深圳 / 杭州 / 上海 / 成都
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668521542770723077` · 云网络AI研发工程师 - AI算力基础设施 · 北京 / 深圳 / 杭州 / 上海 / 成都 · https://jobs.bytedance.com/campus/position/7668521542770723077/detail
+
+**官方职责**
+
+团队介绍：字节跳动基础设施部门，负责字节跳动的全栈算力基础设施，从芯片服务器产研、到超大规模数据中心，到传统云平台和如今的AI Native Cloud，全方位为抖音、豆包、今日头条、飞书、火山引擎等各类产品提供领先、稳定的百万量级大规模算力基础设施服务。我们的领域涵盖数据中心建设、内核操作系统开发、服务器集群管理、高速网络通信、EB级数据存储体系、搜索型数据库探索、基于LLM的AI基础设施的研发调度与治理等，致力于打造业界领先的、面向LLM的AI云原生基础设施架构与产品矩阵。 1、负责云网络AI相关产品的转发和控制面的架构设计与开发； 2、密切关注大模型训练、推理和应用的行业趋势，探索云网络和AI融合的新产品的设计与开发； 3、参与云网络产品的设计、规划和研发工作； 4、参与云网络转发面的架构设计，涉及网络虚拟化、软硬件结合等技术； 5、参与云网络SDN网络控制器分布式平台的架构设计，设计并实现大规模分布式算法，以满足超大规模租户需求； 6、参与云网络新技术的预研究、原型设计与开发，探索云网络与AI技术的结合。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、网络、软件工程等相关专业优先； 2、热爱技术，精通至少一门编程语言，包括但不仅限于：Java、C、C++、PHP、Python、Go； 3、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 4、有强烈的求知欲，优秀的学习和沟通能力。
+
+### 产品交付运维工程师（AI Agent和办公安全） - 火山引擎
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7676049219773810997\` · 产品交付运维工程师（AI Agent和办公安全） - 火山引擎 · 北京 · https://jobs.bytedance.com/campus/position/7676049219773810997/detail
+  - `7676049219773810997` · 产品交付运维工程师（AI Agent和办公安全） - 火山引擎 · 北京 · https://jobs.bytedance.com/campus/position/7676049219773810997/detail
 
 **官方职责**
 
@@ -2711,13 +4012,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、网络工程、软件工程等相关专业优先； 2、扎实的计算机软件基础知识，熟练掌握Linux操作系统、网络、容器等相关原理，具备常见问题排障能力； 3、了解大语言模型（LLM）基本原理及应用场景，对AI技术感兴趣，有AI Agent使用经验； 4、中英文流利（书面及口头沟通），能够与全球客户、跨区域团队开展专业沟通； 5、有良好的沟通协调能力，较强的团队合作精神和责任心，优秀的执行力； 6、有客户服务意识，能建立和维护良好的客户关系，能接受出差。
 
-### 代码质量Agent开发工程师
+### 代码质量Agent开发工程师 - 开发者服务
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京 / 深圳
+- **地点**：北京 / 上海 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667103749781981493\` · 代码质量Agent开发工程师 - 开发者服务 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667103749781981493/detail
+  - `7667103749781981493` · 代码质量Agent开发工程师 - 开发者服务 · 北京 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7667103749781981493/detail
 
 **官方职责**
 
@@ -2727,13 +4028,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信等相关专业优先； 2、扎实的计算机基础知识，熟悉常用的数据结构与算法，并能在日常研发中灵活使用； 3、有较强的学习能力，有强烈的求知欲、好奇心和进取心，能及时关注和学习业界最新技术； 4、深入了解大语言模型相关技术及应用，有AI工程落地经验者优先；有系统架构经验优先； 5、能够独立完成一个复杂模块或项目的研发工作； 6、具备较强的责任感、团队合作精神、逻辑思维能力和表达能力。
 
-### 全栈工程师（客户端智能诊断Agent方向）
+### 全栈工程师（客户端智能诊断Agent方向） - 抖音
 
 - **证据状态**：FULL_JD
 - **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665696307097012533\` · 全栈工程师（客户端智能诊断Agent方向） - 抖音 · 上海 · https://jobs.bytedance.com/campus/position/7665696307097012533/detail
+  - `7665696307097012533` · 全栈工程师（客户端智能诊断Agent方向） - 抖音 · 上海 · https://jobs.bytedance.com/campus/position/7665696307097012533/detail
 
 **官方职责**
 
@@ -2749,7 +4050,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：北京
 - **项目 / 届别**：2027届前沿技术领域人才校招 / 正式
 - **官方 Requisition**：1 个
-  - \`7628839760593455413\` · 办公场景的企业级AI Agent智能体平台构建（Agent训练）-飞书AI（北京/深圳/上海） · 北京 · https://jobs.bytedance.com/campus/position/7628839760593455413/detail
+  - `7628839760593455413` · 办公场景的企业级AI Agent智能体平台构建（Agent训练）-飞书AI（北京/深圳/上海） · 北京 · https://jobs.bytedance.com/campus/position/7628839760593455413/detail
 
 **官方职责**
 
@@ -2765,7 +4066,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：上海
 - **项目 / 届别**：2027届前沿技术领域人才校招 / 正式
 - **官方 Requisition**：1 个
-  - \`7628867368516700421\` · 办公场景的企业级AI Agent智能体平台构建（会议数字人）-飞书AI（上海） · 上海 · https://jobs.bytedance.com/campus/position/7628867368516700421/detail
+  - `7628867368516700421` · 办公场景的企业级AI Agent智能体平台构建（会议数字人）-飞书AI（上海） · 上海 · https://jobs.bytedance.com/campus/position/7628867368516700421/detail
 
 **官方职责**
 
@@ -2781,7 +4082,7 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：北京
 - **项目 / 届别**：2027届前沿技术领域人才校招 / 正式
 - **官方 Requisition**：1 个
-  - \`7628897090341882117\` · 办公场景的企业级AI Agent智能体平台构建（自动化评测）-飞书AI（北京） · 北京 · https://jobs.bytedance.com/campus/position/7628897090341882117/detail
+  - `7628897090341882117` · 办公场景的企业级AI Agent智能体平台构建（自动化评测）-飞书AI（北京） · 北京 · https://jobs.bytedance.com/campus/position/7628897090341882117/detail
 
 **官方职责**
 
@@ -2791,13 +4092,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届毕业，获得博士学位，计算机科学、人工智能、自然语言处理、语音与多模态等相关专业优先； 2、具备扎实的机器学习与深度学习理论基础，对Agent长程复杂任务等领域有一定理论积累和强烈的探索热情； 3、具备良好的数据意识和实践能力，了解LLM、Agent框架等相关工具链； 4、对办公生产力场景有深入思考，能够结合实际业务需求，自述探索规模化的评测方式； 5、具备优秀的学习与分析能力、跨团队沟通协作能力，能在多角色协同的研究环境中高效推进工作。
 
-### 后端开发工程师（Agent/LLM）
+### 后端开发工程师（Agent/LLM） - 抖音用户产品
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664511141422893365\` · 后端开发工程师（Agent/LLM） - 抖音用户产品 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7664511141422893365/detail
+  - `7664511141422893365` · 后端开发工程师（Agent/LLM） - 抖音用户产品 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7664511141422893365/detail
 
 **官方职责**
 
@@ -2807,13 +4108,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、通信、电子信息、人工智能等相关专业优先； 2、具备扎实的计算机基础，熟悉数据结构、算法、操作系统、计算机网络等基础知识； 3、熟练掌握至少一门编程语言，包括但不限于C/C++、Python、Go、Java，具备良好的编码习惯和工程实现能力； 4、具备优秀的逻辑分析能力，能够对复杂业务问题进行合理抽象、拆解和建模，并推动方案落地； 5、对LLM/Agent技术有浓厚兴趣，了解大模型应用开发的基本范式，如PE工程、RAG、Function Calling、Workflow编排等； 6、有LLM应用开发、AI Agent、搜索系统、服务端工程等相关项目经验者优先。
 
-### 后端研发工程师（AI Agent方向）
+### 后端研发工程师（AI Agent方向） - 安全与风控
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668323746595735861\` · 后端研发工程师（AI Agent方向） - 安全与风控 · 北京 · https://jobs.bytedance.com/campus/position/7668323746595735861/detail
+  - `7668323746595735861` · 后端研发工程师（AI Agent方向） - 安全与风控 · 北京 · https://jobs.bytedance.com/campus/position/7668323746595735861/detail
 
 **官方职责**
 
@@ -2823,13 +4124,61 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、信息安全等相关专业优先； 2、至少熟悉一种主流编程语言（Go/C++/C/Rust/Java/Python，或NodeJS等），有扎实的编程能力和良好的编码风格； 3、有良好沟通能力和团队协作能力，工作积极主动，责任心强； 4、具备较强的逻辑思维与问题拆解能力，能够将复杂或模糊的问题分解，并及时形成清晰、务实的解决方案； 5、有AI Agent应用开发经验者优先，包括但不限于LLM集成、Prompt工程、Agent编排框架、Tool/Skill调用链路设计等； 6、有架构经验优先，在服务治理、稳定性提升、高并发处理及容量规划等方面有实战经验。
 
-### 大数据大模型应用后端开发工程师
+### 国际直播前端开发工程师（营收AI工程方向） - TikTok直播
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668613580803508533` · 国际直播前端开发工程师（营收AI工程方向） - TikTok直播 · 北京 · https://jobs.bytedance.com/campus/position/7668613580803508533/detail
+
+**官方职责**
+
+团队介绍：TikTok是一个覆盖150个国家和地区的国际短视频平台，我们希望通过TikTok发现真实、有趣的瞬间，让生活更美好。TikTok 在全球各地设有办公室，全球总部位于洛杉矶和新加坡，办公地点还包括纽约、伦敦、都柏林、巴黎、柏林、迪拜、雅加达、首尔和东京等多个城市。 TikTok直播研发团队，旨在实现TikTok直播业务的研发工作，搭建及维护业界领先的产品。 加入我们，你能接触到包括：社交互动、营收活动、主播生态、消费订阅、游戏直播、公会&运营平台等核心业务场景，支持产品在全球赛道上高速发展； 也能接触到包括服务架构、大模型算法、基础技术等方向上的技术挑战，保障业务持续高质量、高效率、且安全地为用户服务；同时还能为不同业务场景提供全面的技术解决方案，优化各项产品指标及用户体验。 在这里， 有大牛带队与大家一同不断探索前沿， 突破想象空间。 在这里，你的每一行代码都将服务亿万用户。 在这里，团队专业且纯粹，合作氛围平等且轻松。 目前在北京，上海，杭州、广州、深圳分别开放多个岗位机会。 1、参与TikTok业务产品研发，深度参与产品需求讨论，C端和B端的功能构建等； 2、参与设计基于前端和全栈的解决方案，核心代码开发、组件抽象以及系统调优等； 3、参与系统工程效率和性能优化，提升研发效率以及用户体验； 4、调研和学习前端新技术，进行技术分享并在项目内落地，参与部门前端和全栈技术建设。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、热爱计算机科学，对数据分析、前端架构、渲染和性能等技术有热情； 3、精通JavaScript、HTML、CSS，熟悉DOM、HTTP协议等前端领域知识，至少掌握一种主流前端框架（如React/Vue等）； 4、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 5、有强烈的求知欲，优秀的学习能力和沟通能力。
+
+### 大数据AI工程师 - 抖音用户增长
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7665314139103267125` · 大数据AI工程师 - 抖音用户增长 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7665314139103267125/detail
+
+**官方职责**
+
+团队介绍：抖音用户增长（User Growth）负责抖音、今日头条、番茄小说等多个产品的用户增长业务，建立行业领先的增长和营销技术，打造极致的用户体验。加入我们，有机会参与亿级用户场景的开发与架构工作，也有机会从数据出发，利用策略和模型为业务带来更大的助力。 1、参与字节跳动用户行为的理解和建模，帮助业务洞察用户需求，促进业务增长； 2、基于用户数据和业务数据，深度参与各业务线增长的离线、实时数据仓库建设工作； 3、面向PB级超大规模数据问题，处理亿级增量的用户行为数据，对数据质量和赋能业务的效率负责； 4、体验前沿的AI开发模式，协助构建面向AI应用（如智能分析、智能问答）的数据底座与工具，降低数据使用门槛； 5、参与构建设计良好的数据流、数据仓库、数据服务，构建流程规范和数据工具、产品，保证系统稳定高效运行，以实现数据的最大价值。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、数据等相关专业优先； 2、扎实的计算机编程能力，会使用SQL，掌握C/C++、Java、Python、Scala中任意一门编程语言； 3、熟悉数据仓库实施方法论、了解数据仓库体系优先； 4、熟悉大数据集、分布式计算工具（Map/Reduce、Hadoop、Hive、Spark、Flink等）的应用和基本原理优先； 5、对AI大模型应用充满热情，有基于大模型完成相关开发经验的优先； 6、有过数据治理，数据挖掘，BI，算法等大数据相关项目/实习经验优先。
+
+### 大数据AI工程师 - 数据BP
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 杭州 / 上海 / 深圳
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7682636037198694709` · 大数据AI工程师 - 数据BP · 北京 / 杭州 / 上海 / 深圳 · https://jobs.bytedance.com/campus/position/7682636037198694709/detail
+
+**官方职责**
+
+团队介绍：负责字节跳动旗下泛抖音、国际化、创新与中台等业务的数据 BP 工作，业务版图覆盖抖音、国际化、大模型、番茄小说等板块。我们以数据高效赋能业务增长为核心使命，深度扎根各业务线，以数据体系建设为根基、以业务目标达成为导向，为业务方提供专业、稳定、高效的数据服务与架构解决方案。工作内容聚焦海量数据的治理与应用，需对产品全链路数据进行复杂且深度的分析挖掘；深度参与大数据产品的迭代优化，探索前沿数据技术在业务场景中的落地实践，在字节跳动的技术土壤中实现个人能力与业务价值的双重增长。 1、负责数据BP业务的海量数据全链路建设，基于分布式计算与存储底座搭建高稳定、高吞吐数据流水线，沉淀标准化数据平台工具与商业化数据产品，支撑集团规模化数据生产； 2、深度联动各相关业务线，综合运用数据开发、多维分析、数据挖掘能力输出一站式数据解决方案，挖掘数据资产价值，持续优化整体数据流转与使用效率； 3、落地复杂SQL、ETL流程开发交付，负责超大规模数据任务性能调优、故障治理与高复杂度业务需求落地，跟进并落地前沿大数据技术方案迭代； 4、基于LLM提升数据开发和数据消费的效率，覆盖需求拆解、数据建模、开发实现、自动化测试、标准化文档全流程，协同前后端工程师共同完成对外数据服务接口交付与上线； 5、结合业务场景，基于企业数据落地AI应用，建设面向AI应用的数据基建底座与知识库，参与大模型应用架构设计，推进Agent、Skills及效果评估优化，参与数据能力产品化和工具化建设，支撑业务智能化升级。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、数学、大数据等相关专业优先； 2、计算机基础（操作系统、数据库、算法与数据结构、网络、概率统计等）扎实，有优秀的编码能力，熟练掌握至少一种主流编程语言（包括但不限于C/C++/Java/Python/Golang）； 3、对数据开发、分析、挖掘领域有兴趣和热情，有志于在大数据领域长期发展； 4、有分布式系统/数据挖掘等相关领域论文发表，或参与过大数据社区开源项目者加分； 5、能使用AI Coding加速建模、ETL开发、测试与文档生成，对大模型和AI技术有好奇心和自驱力者优先； 6、了解大模型应用开发流程，理解RAG、向量检索、知识库、Prompt、Agent等相关能力者优先。
+
+### 大数据大模型应用后端开发工程师 - 音视频技术
 
 - **证据状态**：FULL_JD
 - **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664634045443492149\` · 大数据大模型应用后端开发工程师 - 音视频技术 · 上海 · https://jobs.bytedance.com/campus/position/7664634045443492149/detail
+  - `7664634045443492149` · 大数据大模型应用后端开发工程师 - 音视频技术 · 上海 · https://jobs.bytedance.com/campus/position/7664634045443492149/detail
 
 **官方职责**
 
@@ -2839,13 +4188,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、数学等相关专业优先； 2、具备优秀的沟通能力和团队合作能力，能够迅速理解并完成各类开放式任务； 3、熟悉常见的算法、设计模式和数据结构，具备扎实的操作系统、计算机体系结构等知识； 4、熟练掌握至少一种编程语言，具备良好的编程能力，熟悉MySQL、Redis、消息队列等常用组件； 5、对大模型、Agent有理解和认识；熟悉大模型应用算法能力优先，包括但不限于SFT、RAG、PE、上下文工程等；有Agent系统搭建经验，使用过Eino、LangChain、LangGraph优先。
 
-### 大模型Agent Infra工程师
+### 大模型Agent Infra工程师 - 模型数据工程
 
 - **证据状态**：FULL_JD
-- **地点**：上海 / 北京
+- **地点**：北京 / 上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670043468333746485\` · 大模型Agent Infra工程师 - 模型数据工程 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7670043468333746485/detail
+  - `7670043468333746485` · 大模型Agent Infra工程师 - 模型数据工程 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7670043468333746485/detail
 
 **官方职责**
 
@@ -2855,13 +4204,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能、自动化等相关专业优先； 2、具备扎实的计算机基础，理解数据结构、算法、操作系统、计算机网络等基础知识； 3、具备良好的编程能力和工程实现能力，熟悉至少一种常用编程语言，如Python、Go或C++； 4、对后端开发、系统设计、平台研发或数据处理有一定理解，对复杂系统和工程问题有持续兴趣； 5、对大模型、Agent Infra等方向有热情，具备较强的学习能力、问题分析与解决能力； 6、具备良好的沟通协作能力和自驱力，能够持续学习和迭代。 加分项： 1、在课程项目、实验室、竞赛、开源或实习中，有服务端开发、虚拟化、容器化、任务调度、分布式系统等相关实践经历； 2、对大模型、Agent、多模态、模型评测、工作流编排等方向有一定了解或实践经验； 3、有搭建工具链、开发平台系统、参与复杂工程项目或优化系统性能与稳定性的经历； 4、有开源贡献、技术竞赛、科研经历或较强的工程作品积累者优先。
 
-### 大模型平台研发工程师（Agentic Infra）
+### 大模型平台研发工程师（Agentic Infra） - TikTok内容安全平台
 
 - **证据状态**：FULL_JD
 - **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669272212160547077\` · 大模型平台研发工程师（Agentic Infra） - TikTok内容安全平台 · 上海 · https://jobs.bytedance.com/campus/position/7669272212160547077/detail
+  - `7669272212160547077` · 大模型平台研发工程师（Agentic Infra） - TikTok内容安全平台 · 上海 · https://jobs.bytedance.com/campus/position/7669272212160547077/detail
 
 **官方职责**
 
@@ -2871,13 +4220,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、热爱计算机科学和技术，精通至少一门编程语言，包括但不仅限于：Java、C、C++、PHP、Python、Go； 3、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 4、有优秀的逻辑分析能力，能够对业务逻辑进行合理的抽象和拆分； 5、有强烈的求知欲，优秀的学习和沟通能力。
 
-### 大模型应用开发工程师
+### 大模型应用开发工程师 - 风控
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 深圳
+- **地点**：深圳 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669740035771582773\` · 大模型应用开发工程师 - 风控 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7669740035771582773/detail
+  - `7669740035771582773` · 大模型应用开发工程师 - 风控 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7669740035771582773/detail
 
 **官方职责**
 
@@ -2887,13 +4236,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、通信等相关专业优先； 2、热爱计算机科学和技术，精通至少一门编程语言，包括但不仅限于：Go、C/C++、Java、Rust； 3、掌握扎实的计算机基础知识，深入理解数据结构、算法和操作系统知识； 4、有创新意识，对问题能深入分析本质并能不拘泥现状提出解决方案； 5、积极追踪开源社区进展，熟悉Agent相关建设工作优先； 6、了解大模型相关原理，有丰富的大模型应用或者优化经验优先。
 
-### 大模型应用开发工程师（AI Coding方向）
+### 大模型应用开发工程师（AI Coding方向） - AI Platform
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667887564768643333\` · 大模型应用开发工程师（AI Coding方向） - AI Platform · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667887564768643333/detail
+  - `7667887564768643333` · 大模型应用开发工程师（AI Coding方向） - AI Platform · 上海 / 杭州 · https://jobs.bytedance.com/campus/position/7667887564768643333/detail
 
 **官方职责**
 
@@ -2903,13 +4252,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机、人工智能、自动化、数学相关专业优先； 2、精通Go、Python、C++等一种或多种编程语言，具备扎实的编程技能和算法设计能力； 3、对AI Agent技术有深入了解，熟悉LangChain等框架，熟悉LangSmith等平台； 4、具备出色的团队协作精神和良好的英文阅读及沟通能力。 加分项： 1、在LLM工程领域有落地经验； 2、对AgentOps平台熟悉，如LangSmith、Langfuse等； 3、有不错的research和探索精神，对最新Agent技术趋势和论文有不错的了解。
 
-### 大模型应用（商业化基模&Agent方向）
+### 大模型应用（商业化基模&Agent方向） - 内容质量与数据服务平台
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669691358501865733\` · 大模型应用（商业化基模&Agent方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669691358501865733/detail
+  - `7669691358501865733` · 大模型应用（商业化基模&Agent方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669691358501865733/detail
 
 **官方职责**
 
@@ -2919,13 +4268,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，数学/计算机/人工智能等工科专业优先； 2、有模型训练、基模优化、模型效果评测、机审&人审流程设计类工作经验者优先； 3、有机器学习基础，对大模型技术有深刻认知，掌握算法在机审和人审场景的应用方法； 4、熟练掌握SQL、Python，乐于主动学习新技术，能够基于数据独立分析业务问题； 5、具备较强的逻辑思维和问题拆解能力，善于沟通协作，愿意挑战复杂问题。
 
-### 大模型应用（商业化方向）
+### 大模型应用（商业化方向） - 内容质量与数据服务平台
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669693515362289925\` · 大模型应用（商业化方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669693515362289925/detail
+  - `7669693515362289925` · 大模型应用（商业化方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669693515362289925/detail
 
 **官方职责**
 
@@ -2935,13 +4284,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，数学/计算机/经济管理/HCI等专业优先； 2、有模型训练、业务流设计、策略设计、内容治理类实习或项目经验优先； 3、有机器学习基础，对传统模型和大模型技术有一定认知，明晰算法在机审场景的应用方法； 4、熟练掌握SQL，具备Python数据开发和处理能力者优先，乐于主动学习新技术，能够基于数据独立分析业务问题； 5、具备优秀的学习能力和适应性，较强的逻辑思维和问题拆解能力，善于沟通协作，愿意挑战复杂问题且有解决问题的韧性； 6、加分项：ACM挑战赛获奖者优先，在ACL、EMNLP、NAACL、COLING、ICCV、ECCV、CVPR、NeurIPS、ICLR、AAAI、CoNLL、NLPCC发表过Paper者优先。
 
-### 大模型应用（视频方向）
+### 大模型应用（视频方向） - 内容质量与数据服务平台
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669694605223332149\` · 大模型应用（视频方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669694605223332149/detail
+  - `7669694605223332149` · 大模型应用（视频方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669694605223332149/detail
 
 **官方职责**
 
@@ -2951,13 +4300,13 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、数学、统计学专业优先； 2、具备AI应用落地经验方法论，对内容治理、用户治理领域感兴趣，有经验者加分； 3、熟练掌握并运用Python编程语言、SQL（基础能力）、Pandas、Spark（进阶能力），了解CV、NLP、音频常用算法，具备良好的数据分析和问题解决能力，能够独立进行模型调优和性能优化； 4、熟悉掌握大模型关键技术，包括但不限于Prompt工程、微调技术、RAG等，有Hugging Face、LangChain等框架使用经验； 5、强烈的业务驱动意识，有良好的沟通表达能力和团队精神，愿意挑战复杂问题，具备优秀的跨团队协作能力和技术创新落地能力。
 
-### 大模型应用（评论方向）
+### 大模型应用（评论方向） - 内容质量与数据服务平台
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7669695267839117621\` · 大模型应用（评论方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669695267839117621/detail
+  - `7669695267839117621` · 大模型应用（评论方向） - 内容质量与数据服务平台 · 北京 · https://jobs.bytedance.com/campus/position/7669695267839117621/detail
 
 **官方职责**
 
@@ -2967,31 +4316,15 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 
 1、2027届获得本科及以上学历，计算机科学、数学、统计学专业优先； 2、具备AI应用落地经验方法论，对内容治理、用户治理领域感兴趣，有经验者加分； 3、熟练掌握并运用Python编程语言、SQL（基础能力）、Pandas、Spark（进阶能力），了解CV、NLP、音频常用算法，具备良好的数据分析和问题解决能力，能够独立进行模型调优和性能优化； 4、熟悉掌握大模型关键技术，包括但不限于Prompt工程、微调技术、RAG等，有Hugging Face、LangChain等框架使用经验； 5、强烈的业务驱动意识，有良好的沟通表达能力和团队精神，愿意挑战复杂问题，具备优秀的跨团队协作能力和技术创新落地能力。
 
-### 大模型研发工程师
-
-- **证据状态**：FULL_JD
-- **地点**：北京 / 杭州 / 深圳
-- **项目 / 届别**：2027届校园招聘 / 正式
-- **官方 Requisition**：1 个
-  - \`7667899539806488885\` · 大模型研发工程师 - 抖音 · 深圳 / 杭州 / 北京 · https://jobs.bytedance.com/campus/position/7667899539806488885/detail
-
-**官方职责**
-
-团队介绍：抖音致力于打造一个开放、积极、多元、友善的平台，鼓励表达、沟通和记录，激发创造，丰富人们的精神世界，让现实生活更美好。我们通过AI算法驱动的个性化推荐与智能创作工具，满足用户表达、学习、娱乐、社交、消费等需求。回顾抖音一路走来的历程，我们在帮助亿万用户记录美好生活的过程中，努力变得更好。 1、负责研发效能提升方向，专注于研发全生命周期提效工作，包括需求工程、代码理解、自动化测试、发布、监控等场景，结合LLM技术迭代相关策略与工程能力； 2、熟悉软件工程领域，了解大模型领域并持续跟进最新研究成果，用以持续提升LLM的应用落地效果，研究方向包括但不限于代码风险图谱、单测生成、代码分析、复杂程序行为理解以及大模型微调、RAG等； 3、调研新技术，参与各类技术难题的攻关，沉淀技术能力和行业经验，带领团队成员攻坚技术难点，与平台一起成长和发展。
-
-**官方要求**
-
-1、2027届获得本科及以上学历，计算机相关专业； 2、对AI技术与Agent系统有浓厚兴趣，具备主动学习与动手实践能力，有独立搭建过LLM Agent或Demo者优先； 3、熟悉大语言模型的原理及生态（如RAG、Self-Evolve、RLHF、Memory System、多智能体协作等），具备Agent策略优化或评测经验者优先； 4、持续追踪最新的技术进展（Claude code、Deepresearch等），能快速理解和复现相关技术博客或者期刊的技术方案者优先； 5、有激情，勇于面对挑战，积极解决问题，具有良好的团队合作意识、理解沟通能力及独立解决问题的能力。 加分项： 1、具备优秀算法背景，深入了解LLM预训练与微调，对RLHF有经验者优先； 2、具备软件工程背景，有软件程序分析、漏洞挖掘等领域实践经验优先； 3、有国际顶级会议（ACL/EMNLP/IJCAI/AAAI/SIGIR/ICSE/ASE等）期刊论文发表者优先。
-
-### 大语言模型Agent全栈开发工程师
+### 大语言模型Agent全栈开发工程师 - 中国交易与广告
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 成都 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：3 个
-  - \`7665572754423810357\` · 大语言模型Agent全栈开发工程师 - 中国交易与广告 · 北京 · https://jobs.bytedance.com/campus/position/7665572754423810357/detail
-  - \`7665574114471954693\` · 大语言模型Agent全栈开发工程师 - 中国交易与广告 · 成都 · https://jobs.bytedance.com/campus/position/7665574114471954693/detail
-  - \`7665573911026747653\` · 大语言模型Agent全栈开发工程师 - 中国交易与广告 · 杭州 · https://jobs.bytedance.com/campus/position/7665573911026747653/detail
+  - `7665572754423810357` · 大语言模型Agent全栈开发工程师 - 中国交易与广告 · 北京 · https://jobs.bytedance.com/campus/position/7665572754423810357/detail
+  - `7665574114471954693` · 大语言模型Agent全栈开发工程师 - 中国交易与广告 · 成都 · https://jobs.bytedance.com/campus/position/7665574114471954693/detail
+  - `7665573911026747653` · 大语言模型Agent全栈开发工程师 - 中国交易与广告 · 杭州 · https://jobs.bytedance.com/campus/position/7665573911026747653/detail
 
 **官方职责**
 
@@ -3007,8 +4340,8 @@ icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法�
 - **地点**：上海 / 北京
 - **项目 / 届别**：2027届Seed大模型人才校招 / 正式
 - **官方 Requisition**：2 个
-  - \`7621895637840431413\` · 大语言模型Agent应用架构工程师-Seed大模型人才校招 · 上海 · https://jobs.bytedance.com/campus/position/7621895637840431413/detail
-  - \`7621893271589472565\` · 大语言模型Agent应用架构工程师-Seed大模型人才校招 · 北京 · https://jobs.bytedance.com/campus/position/7621893271589472565/detail
+  - `7621895637840431413` · 大语言模型Agent应用架构工程师-Seed大模型人才校招 · 上海 · https://jobs.bytedance.com/campus/position/7621895637840431413/detail
+  - `7621893271589472565` · 大语言模型Agent应用架构工程师-Seed大模型人才校招 · 北京 · https://jobs.bytedance.com/campus/position/7621893271589472565/detail
 
 **官方职责**
 
@@ -3018,13 +4351,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、电子信息、软件工程等相关专业； 2、具备优秀的代码能力（C++/Golang/Python）、数据结构和基础算法功底，以及扎实的软件工程基础（包括系统设计、API开发和代码质量控制）； 3、对大模型、Agent方向充满热情，不断探索前沿技术领域并持续接受新挑战，同时有强烈的学习欲望，对新技术抱有足够热情和好奇心，愿意沿AGI方向进行持续探索； 4、对系统性能优化、AI基础设施建设及前沿模型技术有浓厚兴趣，具备良好的协作与自驱能力。
 
-### 安全开发工程师（AI应用隐私保护/数据安全）
+### 安全开发工程师（AI应用隐私保护/数据安全） - 安全与风控
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668511815866829061\` · 安全开发工程师（AI应用隐私保护/数据安全） - 安全与风控 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668511815866829061/detail
+  - `7668511815866829061` · 安全开发工程师（AI应用隐私保护/数据安全） - 安全与风控 · 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668511815866829061/detail
 
 **官方职责**
 
@@ -3034,13 +4367,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，密码学、信息安全、计算机、软件工程等相关专业优先； 2、熟悉密码学原理、及常见对称/非对称加密算法，了解机密计算、多方计算、同态加密等相关技术及其应用；熟悉数据安全风险及其原理，如越权获取、批量泄露、过度收集、无序分发等，了解XSS、SSRF、SQL注入、堆栈溢出等网络攻击手段及其原理； 3、计算机基础扎实，掌握数据结构、算法、网络和操作系统等知识，熟悉常见的数据结构与算法； 4、熟练掌握以下至少一门编程语言：C、C++、Python、Go、Java，了解虚拟化、微服务、分布式技术，有较强的工程能力； 5、对安全领域充满热情，具备良好的沟通能力，强烈的自我成长意愿和求知欲，具备出色的学习能力和自驱力； 6、对大模型有基本的了解，了解豆包、Claude Code、TRAE等大模型应用。
 
-### 安全研发工程师（AI Agent安全方向）
+### 安全研发工程师（AI Agent安全方向） - 安全与风控
 
 - **证据状态**：FULL_JD
 - **地点**：杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668323989529970997\` · 安全研发工程师（AI Agent安全方向） - 安全与风控 · 杭州 · https://jobs.bytedance.com/campus/position/7668323989529970997/detail
+  - `7668323989529970997` · 安全研发工程师（AI Agent安全方向） - 安全与风控 · 杭州 · https://jobs.bytedance.com/campus/position/7668323989529970997/detail
 
 **官方职责**
 
@@ -3050,13 +4383,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程、网络空间安全、信息安全等相关专业优先； 2、熟悉Linux操作系统和开发环境，有良好的数据结构、算法基础和系统设计能力； 3、至少熟悉一种主流编程语言（Go/C++/C/Rust/Java/Python，或NodeJS等），有扎实的编程能力和良好的编码风格； 4、有良好沟通能力和团队协作能力，工作积极主动，责任心强。
 
-### 客户端开发工程师（AI应用框架方向）
+### 客户端开发工程师（AI应用框架方向） - Cross Platform
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667970666129737989\` · 客户端开发工程师（AI应用框架方向） - Cross Platform · 深圳 · https://jobs.bytedance.com/campus/position/7667970666129737989/detail
+  - `7667970666129737989` · 客户端开发工程师（AI应用框架方向） - Cross Platform · 深圳 · https://jobs.bytedance.com/campus/position/7667970666129737989/detail
 
 **官方职责**
 
@@ -3066,13 +4399,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、掌握Android/iOS系统机制，熟悉MVVM/MVP等架构模式； 3、具备跨平台开发经验者优先（Flutter/RN/小程序框架等）； 4、对AI技术有兴趣者优先，有智能推荐/语音交互/大模型应用等实践经验更佳； 5、具备良好的技术热情和学习能力。
 
-### 客户端开发工程师（创作Agent）
+### 客户端开发工程师（创作Agent） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667875532809308469\` · 客户端开发工程师（创作Agent） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667875532809308469/detail
+  - `7667875532809308469` · 客户端开发工程师（创作Agent） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667875532809308469/detail
 
 **官方职责**
 
@@ -3082,13 +4415,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程等相关专业优先； 2、有良好的编程习惯，代码结构清晰，命名规范； 3、熟练掌握数据结构与算法、计算机网络、操作系统、编译原理等课程，熟练掌握Swift/Kotlin/Go/C++/C/JavaScript等一种或多种语言； 4、充满技术热情，有较强的自驱力和学习能力； 5、业余爱好视频拍摄、视频编辑，有移动端、桌面端视频编辑软件使用经验者优先； 6、对AI感兴趣，有AI实践经验者优先。
 
-### 客户端开发工程师（图像Agent）
+### 客户端开发工程师（图像Agent） - 剪映CapCut
 
 - **证据状态**：FULL_JD
-- **地点**：广州 / 深圳
+- **地点**：深圳 / 广州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667878064660007221\` · 客户端开发工程师（图像Agent） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667878064660007221/detail
+  - `7667878064660007221` · 客户端开发工程师（图像Agent） - 剪映CapCut · 深圳 / 广州 · https://jobs.bytedance.com/campus/position/7667878064660007221/detail
 
 **官方职责**
 
@@ -3098,13 +4431,29 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程、通信、自动化等相关专业优先； 2、计算机基础扎实，掌握数据结构、算法、操作系统、计算机网络等基础知识，具备良好的问题分析与抽象能力； 3、至少熟悉以下一个方向，并对跨端学习有明确兴趣：iOS（Swift/Objective-C）、Android（Kotlin/Java）、鸿蒙（ArkTS）、前端（TypeScript/JavaScript/React/Vue）； 4、有完整项目经验者优先，包括课程项目、实习、开源项目或个人作品，参与过客户端、前端、跨端框架或工程工具开发更匹配岗位需求；对图像、视频、渲染、创作工具、跨端架构或复杂交互场景有兴趣及相关学习、项目或实习经历者优先； 5、对工程质量有要求，具备良好的编码习惯，重视可读性、可维护性与稳定性，愿意持续优化性能、架构和研发流程； 6、对AI Coding工具和AI Agent有实际使用兴趣或经验，愿意将AI能力用于编码提效、调试分析、自动化处理和工程协作，具备较强的自驱力、沟通协作能力和技术好奇心，能够在不确定问题中主动推进，持续学习并快速落地。
 
-### 广告创意Agent后端开发工程师
+### 客户端研发工程师（AI全栈方向） - 剪映CapCut
+
+- **证据状态**：FULL_JD
+- **地点**：深圳 / 北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668327847907477813` · 客户端研发工程师（AI全栈方向） - 剪映CapCut · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7668327847907477813/detail
+
+**官方职责**
+
+团队介绍：剪映研发团队，主要支持剪映、CapCut、醒图、Hypic、即梦、Dreamina、小云雀、Pippit等多款国内外产品的研发工作，业务覆盖多元化影像创作场景，并孵化了多款AIGC明星产品，相关产品多次登顶国内外App Store 免费应用榜第一，并继续保持高速增长。加入我们，一起打造全球最受用户欢迎的影像创作和GenAI产品。 1、负责即梦、小云雀等产品商业化能力的客户端（iOS/Android/跨端）研发，深度参与订阅支付、会员增长、权益供给等链路的架构设计与实现； 2、负责商业化方向的业务迭代与团队版（协作/企业版）能力建设，通过技术手段驱动商业化收入增长； 3、负责营销Agent的研发与落地，探索Agent与营销场景结合的产品化路径，建设端侧智能化能力； 4、参与项目重点、难点的技术攻坚任务，如性能优化、稳定性治理、多端一体化架构，持续优化链路和产品体验； 5、探索AI结合研发与业务的应用场景，如AI提效、AI Coding、业务智能化升级等。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机相关专业优先； 2、扎实的计算机基础，熟悉常用数据结构与算法、操作系统原理和计算机网络； 3、熟练掌握至少一门编程语言（如Swift/Objective-C/Kotlin/Java/C++），有iOS或Android开发实践经历者优先； 4、对AI充满热情，乐于使用AI Coding工具提升效率； 5、有较强的技术好奇心、自驱力和学习能力，具备良好的沟通表达能力和团队合作精神； 6、有AI Agent相关项目实践、服务端开发经历（如实习、课程项目、开源、竞赛），或对营销/广告业务有了解者优先。
+
+### 广告创意Agent后端开发工程师 - 国际化广告创意与品牌
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 北京 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668349794238679349\` · 广告创意Agent后端开发工程师 - 国际化广告创意与品牌 · 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668349794238679349/detail
+  - `7668349794238679349` · 广告创意Agent后端开发工程师 - 国际化广告创意与品牌 · 上海 / 北京 / 杭州 · https://jobs.bytedance.com/campus/position/7668349794238679349/detail
 
 **官方职责**
 
@@ -3114,14 +4463,30 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机及相关专业优先； 2、有扎实的数据结构和算法基础，编码能力良好，熟悉Linux开发环境，熟练掌握Golang、Python中至少一种语言； 3、对AIGC、Agent、AI应用等方向有兴趣；有相关项目、比赛、实习或个人作品加分； 4、有一定后端基础，了解服务端开发的基本方法和常见问题，比如任务调度、服务限流、稳定性优化等； 5、有较强的问题分析和动手能力，愿意钻研，也愿意把事情推进落地； 6、具备良好的沟通协作能力，能够和产品、算法、设计、业务等同学一起推进项目。 加分项 1、英语听说读写能力较好，能够适应国际化团队协作； 2、深度使用过一款或多款AI产品，对AI应用的产品体验和技术逻辑有自己的理解； 3、有多模态生成、智能体系统、推荐/广告、内容平台相关经验或项目积累。
 
-### 效能Agent开发工程师
+### 抖音AI平台治理治理策略 - 抖音社区治理
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668278936820566325` · 抖音AI平台治理治理策略 - 抖音社区治理 · 北京 · https://jobs.bytedance.com/campus/position/7668278936820566325/detail
+
+**官方职责**
+
+团队介绍：抖音致力于打造一个开放、积极、多元、友善的平台，鼓励表达、沟通和记录，激发创造，丰富人们的精神世界，让现实生活更美好。我们通过AI算法驱动的个性化推荐与智能创作工具，满足用户表达、学习、娱乐、社交、消费等需求。回顾抖音一路走来的历程，我们在帮助亿万用户记录美好生活的过程中，努力变得更好。抖音社区治理团队负责抖音的社区治理工作，包括视频、直播等多体裁的内容治理，以及安全产品中台能力建设。 1、负责抖音AI平台的安全及治理规范，协同相关团队落地问题发现、定义、识别、处置、沟通的治理流程机制； 2、通过AI安全评测集对各AI应用场景做风险评估，基于AI应用及客观风险情况不断完善评测集，使评测集和评测标准满足AI开放平台治理诉求； 3、以抖音AI平台风险理解为基础，结合内容特征、行为特征、消费路径及意图分析，设计生成干预、内容拦截、账号冻结、知识库下线、智能体下线等多样化的识别处置策略，并持续迭代AI平台治理规范； 4、规划业务方向和目标，产出具有长期价值的优化思路，做好项目优先级管理，推进跨部门协作。
+
+**官方要求**
+
+1、2027届获得本科及以上学历，计算机、统计学、数学、算法等专业背景优先； 2、有AI大模型产品使用或实习经验优先，逻辑性强，有一定的数据分析能力，能够通过数据分析确定问题，制定策略； 3、对内容安全和生态治理有热情，具备内容判断能力，能够判断其中的安全风险； 4、对大模型的原理有一定了解，熟悉大模型的典型应用场景及市场常见产品。
+
+### 效能Agent开发工程师 - 火山引擎
 
 - **证据状态**：FULL_JD
 - **地点**：上海 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：2 个
-  - \`7667863099529677109\` · 效能Agent开发工程师 - 火山引擎 · 上海 · https://jobs.bytedance.com/campus/position/7667863099529677109/detail
-  - \`7667862424641407285\` · 效能Agent开发工程师 - 火山引擎 · 北京 · https://jobs.bytedance.com/campus/position/7667862424641407285/detail
+  - `7667863099529677109` · 效能Agent开发工程师 - 火山引擎 · 上海 · https://jobs.bytedance.com/campus/position/7667863099529677109/detail
+  - `7667862424641407285` · 效能Agent开发工程师 - 火山引擎 · 北京 · https://jobs.bytedance.com/campus/position/7667862424641407285/detail
 
 **官方职责**
 
@@ -3131,13 +4496,29 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机科学与技术、软件工程等相关专业； 2、需要对大模型有深入理解，熟悉LLM、技术原理与应用方法，有Agent系统设计与实现经验；了解Memory机制、RAG、工具调用、规划执行等Agent关键技术，有相关实践经验； 3、熟练掌握Python/Java/Go等至少一门编程语言，精通计算机基础技术，熟悉测试流程、质量保证方法、目标及常用工具，并能在Agent开发与测试工作中灵活运用； 4、需具备：在测试工具开发过程中实际应用AI技术或拥有丰富的Agent系统设计与实现经验；在顶会发表过相关论文或有开源项目贡献者优先； 5、拥有To B相关产品或云服务产品的质量保障经验者优先，熟悉此类产品的测试特点与Agent应用场景者优先。
 
-### 数据分析Agent开发工程师
+### 数据AI工程师 - 国际支付
+
+- **证据状态**：FULL_JD
+- **地点**：北京 / 上海
+- **项目 / 届别**：2027届校园招聘 / 正式
+- **官方 Requisition**：1 个
+  - `7668298552939366661` · 数据AI工程师 - 国际支付 · 北京 / 上海 · https://jobs.bytedance.com/campus/position/7668298552939366661/detail
+
+**官方职责**
+
+团队介绍：国际支付，立足于为字节跳动国际化业务提供专业的支付和金融服务，专注于全球支付产品线的质量和效率，确保为国际产品提供高度可靠和稳定的服务，建立国际支付产品和能力，同时在高效助力业务快速拓展的同时，打造行业领先的支付和金融产品能力。团队当前所提供的产品和服务，遍布全球多个国家和地区，团队拥有丰富的国际化产品研发经验；同时这里有全球超大规模的支付网络；覆盖多业务场景的海外钱包及金融产品解决方案；围绕分布式一致性、高并发、高可用、资金安全在内的核心技术能力攻坚；LLM等前沿AI技术在支付&金融服务中的探索、研发和应用。另外，我们在全球设立团队，团队同学背景多元，不同的思维方式，打造了一个多元、碰撞、融合、包容的工作环境。我们邀请你来此成长、专研，发掘无限的潜力，一起应对技术和业务以及跨国合作上的挑战，还有跨文化交流机会在等你！ 1、负责国际化支付金融业务的数据仓库资产建设与数据智能应用落地，围绕业务场景完成数据建模、链路开发、治理优化和数据服务建设，并推动基于业务数据的AI应用工程化落地，支撑业务分析、运营提效和智能化升级； 2、负责国际支付数据仓库建设与数据模型设计，完成离线、实时数据链路开发； 3、负责国际支付数据治理、指标体系建设及数据服务输出，保障数据准确性、稳定性和一致性； 4、结合业务场景，基于企业数据落地AI应用，包括智能问答、数据分析助手、知识检索、自动化洞察等； 5、负责结构化与非结构化数据处理，建设面向AI应用的数据基建底座与知识库，参与大模型应用架构设计，推进Agent、Skills及效果评估优化； 6、参与数据能力产品化和工具化建设，支撑业务智能化升级。
+
+**官方要求**
+
+1、2027届获得本科及以上学历； 2、有数据开发、数据仓库相关专业学习或实习经历优先，熟练掌握SQL，熟悉数据仓库建模理论及实践，具备完整的数据链路开发经验； 3、熟悉Hive、Spark、Flink、Kafka、ClickHouse、StarRocks、Doris等相关技术栈中的一种或多种； 4、了解大模型应用开发流程，理解RAG、向量检索、知识库、Prompt、Agent等相关能力； 5、具备良好的业务理解能力、沟通能力和跨团队协作能力； 6、有金融、支付、交易、风控、清结算、经营分析或AI应用落地经验者优先。
+
+### 数据分析Agent开发工程师 - 抖音
 
 - **证据状态**：FULL_JD
 - **地点**：杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665693942535293189\` · 数据分析Agent开发工程师 - 抖音 · 杭州 · https://jobs.bytedance.com/campus/position/7665693942535293189/detail
+  - `7665693942535293189` · 数据分析Agent开发工程师 - 抖音 · 杭州 · https://jobs.bytedance.com/campus/position/7665693942535293189/detail
 
 **官方职责**
 
@@ -3147,13 +4528,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、人工智能、数学、统计学、数据科学等相关专业； 2、具备良好的数据分析基础，了解常用统计学方法，能够使用SQL完成数据提取和分析； 3、掌握至少一门编程语言，如Python、Java或C++，具备基本的算法和工程能力； 4、对大语言模型及AI Agent感兴趣，了解Prompt Engineering、RAG、SFT、强化学习等概念中的一种或多种； 5、具备良好的逻辑思维、问题拆解和学习能力，能够主动探索并解决开放性问题； 6、具备良好的沟通与团队协作能力，对用户体验和产品问题保持好奇心。 加分项： 1、有大语言模型应用、AI Agent、数据挖掘或机器学习相关的课程项目、科研或实习经历； 2、使用过LangChain、LlamaIndex、AutoGen、LangGraph等Agent或LLM应用开发框架； 3、具备数据分析竞赛、算法竞赛、科研论文或开源项目经历； 4、熟悉常见的模型评测方法，或有数据集构建、Prompt优化、模型微调经验； 5、对抖音、番茄小说、剪映等内容产品有深入使用体验，能够从用户视角发现和思考产品问题。
 
-### 智能交付Agent工程师
+### 智能交付Agent工程师 - 移动OS
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667857541388945717\` · 智能交付Agent工程师 - 移动OS · 北京 · https://jobs.bytedance.com/campus/position/7667857541388945717/detail
+  - `7667857541388945717` · 智能交付Agent工程师 - 移动OS · 北京 · https://jobs.bytedance.com/campus/position/7667857541388945717/detail
 
 **官方职责**
 
@@ -3163,13 +4544,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历； 2、熟悉Android、Linux或嵌入式系统基础，理解内存管理、I/O、GPU/NPU等系统资源运行机制； 3、具备一定的系统性能分析与问题定位能力，能够使用常见性能分析工具进行数据采集、瓶颈判断和优化验证； 4、熟悉C/C++、Java/Kotlin、Python中至少一种语言，具备良好的工程实现与脚本分析能力； 5、对AI、模型推理优化、异构计算或智能体技术有兴趣，有相关调研或实践经验者优先。
 
-### 智能体安全攻防工程师
+### 智能体安全攻防工程师 - 安全与风控
 
 - **证据状态**：FULL_JD
 - **地点**：北京 / 深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668599371989010693\` · 智能体安全攻防工程师 - 安全与风控 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7668599371989010693/detail
+  - `7668599371989010693` · 智能体安全攻防工程师 - 安全与风控 · 北京 / 深圳 · https://jobs.bytedance.com/campus/position/7668599371989010693/detail
 
 **官方职责**
 
@@ -3179,13 +4560,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机相关专业； 2、熟悉网络和主机安全原理和攻防； 3、熟悉智能体架构、开发相关； 4、熟练掌握Python、Shell、Yara、Lua或Golang语言； 5、快速掌握AI Coding最佳实践。 加分项： 1、参加过CTF类竞赛并拿过名次优先； 2、参加过HW攻防、值守等优先； 3、熟悉大模型/智能体Harness Engineering,SFT等实践优先； 4、To B安全厂商核心攻防能力开发者、研究者优先。
 
-### 智能体安全研发工程师（AI安全）
+### 智能体安全研发工程师（AI安全） - 安全与风控
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665227634418796805\` · 智能体安全研发工程师（AI安全） - 安全与风控 · 北京 · https://jobs.bytedance.com/campus/position/7665227634418796805/detail
+  - `7665227634418796805` · 智能体安全研发工程师（AI安全） - 安全与风控 · 北京 · https://jobs.bytedance.com/campus/position/7665227634418796805/detail
 
 **官方职责**
 
@@ -3195,13 +4576,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程、网络安全、人工智能等相关专业； 2、熟悉至少一种编程语言，如Python、Go、Java或Rust； 3、扎实的数据结构、算法、操作系统、计算机网络和数据库基础； 4、对LLM、AI Agent、网络安全及云计算充满热情，具备良好的学习能力和工程实践能力；热爱AI+Security，关注AI Agent、LLM和Agentic AI的最新发展；对企业级AI安全产品充满兴趣，希望解决真实世界中的安全与治理问题；乐于学习新技术，具备良好的工程实践能力和团队协作能力； 5、加分项：有AI Agent或AI产品开发经验，熟悉LangChain、Dify等框架；熟悉RAG、Embedding、Prompt Engineering等技术；有机器学习、后端开发、云原生、安全或开源项目经验者优先。
 
-### 智能创作AI Agent工程师（相机方向）
+### 智能创作AI Agent工程师（相机方向） - TikTok研发
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665637092222994693\` · 智能创作AI Agent工程师（相机方向） - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7665637092222994693/detail
+  - `7665637092222994693` · 智能创作AI Agent工程师（相机方向） - TikTok研发 · 北京 · https://jobs.bytedance.com/campus/position/7665637092222994693/detail
 
 **官方职责**
 
@@ -3211,13 +4592,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件、电子信息等相关专业； 2、具备扎实的计算机基础，熟悉数据结构、网络、数据库、并发和分布式系统基本原理，熟练掌握Go、Java、Rust等至少一种后端语言，能够独立完成服务设计、开发、测试和上线； 3、具备较强的系统设计与问题拆解能力，能够将模糊需求收敛为清晰、可验证的工程方案； 4、熟悉大模型、Agent Loop、Tool Calling、RAG、Memory或Workflow等相关技术，有实际使用AI Coding工具完成项目的经验，理解上下文管理、任务拆分、代码审查和质量控制； 5、具备良好的负责人意识，能够主动识别问题并推动跨角色协作； 6、重视工程质量，能够综合考虑稳定性、可观测性、数据一致性、权限和长期维护成本，具备良好的总结和沟通能力，能够将个人经验沉淀为团队可复用的文档、工具和规范。
 
-### 服务端研发工程师（Agent方向）
+### 服务端研发工程师（Agent方向） - 抖音直播
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7664908981027244341\` · 服务端研发工程师（Agent方向） - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7664908981027244341/detail
+  - `7664908981027244341` · 服务端研发工程师（Agent方向） - 抖音直播 · 北京 · https://jobs.bytedance.com/campus/position/7664908981027244341/detail
 
 **官方职责**
 
@@ -3227,13 +4608,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得硕士及以上学位，计算机科学、软件工程、人工智能等相关专业； 2、扎实的编程基础，熟练掌握Go/Python/Java中至少一门语言，具备良好的数据结构与算法功底； 3、对大语言模型（LLM）及AI Agent技术栈有浓厚兴趣，了解Transformer架构、Prompt Engineering、RAG、Function Calling等核心概念； 4、熟悉分布式系统设计原理，了解微服务架构、消息队列、缓存、数据库等基础组件； 5、具备良好的学习能力和工程素养，能够快速掌握新技术并应用于实际业务； 6、良好的沟通协作能力，具备独立分析和解决复杂问题的能力。 加分项 1、有LLM应用开发经验，如基于LangChain/LlamaIndex等框架构建Agent系统； 2、有多轮对话系统、任务型对话、对话状态管理相关项目经验； 3、在AI/NLP相关竞赛或开源项目中有突出表现； 4、有高并发、高性能服务端开发实践经验； 5、对AIGC、数字人、实时互动等方向有深入探索和思考。 你将获得 1、站在AI Agent+直播互动的产业前沿，直面亿级用户的真实业务挑战； 2、深度参与LLM落地全链路，从模型能力到工程体系的端到端实践； 3、与技术团队协作，快速成长为AI Agent领域的核心技术骨干； 4、探索AI数字分身的无限可能，定义人机交互的下一代体验。
 
-### 测试开发工程师（AI Agent方向）
+### 测试开发工程师（AI Agent方向） - 抖音
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667044097673677109\` · 测试开发工程师（AI Agent方向） - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7667044097673677109/detail
+  - `7667044097673677109` · 测试开发工程师（AI Agent方向） - 抖音 · 北京 · https://jobs.bytedance.com/campus/position/7667044097673677109/detail
 
 **官方职责**
 
@@ -3243,13 +4624,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程、人工智能等相关专业优先； 2、熟练使用、TRAE、Codex等AI编程工具，具备高质量Skill、MCP开发能力，对AI技术及应用有浓厚兴趣； 3、较好的结构化表达能力，较强的分析能力，独立的思考和判断力； 4、热爱AI相关技术，对应用和落地工程感兴趣，富有钻研创新精神。
 
-### 渲染引擎研发工程师（AI agent方向）
+### 渲染引擎研发工程师（AI agent方向） - TikTok研发
 
 - **证据状态**：FULL_JD
 - **地点**：上海
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7665702229265041669\` · 渲染引擎研发工程师（AI agent方向） - TikTok研发 · 上海 · https://jobs.bytedance.com/campus/position/7665702229265041669/detail
+  - `7665702229265041669` · 渲染引擎研发工程师（AI agent方向） - TikTok研发 · 上海 · https://jobs.bytedance.com/campus/position/7665702229265041669/detail
 
 **官方职责**
 
@@ -3259,13 +4640,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、人工智能等相关专业优先； 2、扎实的计算机、编程基础，熟悉主流大语言模型的原理及方法； 3、熟悉Web前端（TS/Vue/React等）或后端（Node.js/Python/Java等），有全栈开发经验优先，熟练运用任一AI Coding工具（TRAE/Claude Code/Codex等）； 4、逻辑清晰，善于总结归纳，能够通过观察和数据发现问题； 5、热爱AI相关技术，对应用和落地工程感兴趣，富有钻研创新精神。 加分项： 1、拥有大量Prompt实践和优化经验； 2、有LLM应用/Agent开发经验，了解Function Call、RAG、Eval、Multi-Agent等任一方向； 3、有Multi-Agent系统搭建实践经验或Agent落地应用经验； 4、有游戏引擎的实践经验，如：Unity、UE、Godot、Cocos等； 5、对技术有较大的热情，学习能力强，责任心强，工作认真细致，具备良好的服务意识，具有良好的团队沟通与协作能力。
 
-### 游戏编辑器Agent工程师
+### 游戏编辑器Agent工程师 - 抖音直播
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 广州 / 深圳
+- **地点**：深圳 / 广州 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670753896516815157\` · 游戏编辑器Agent工程师 - 抖音直播 · 深圳 / 广州 / 北京 · https://jobs.bytedance.com/campus/position/7670753896516815157/detail
+  - `7670753896516815157` · 游戏编辑器Agent工程师 - 抖音直播 · 深圳 / 广州 / 北京 · https://jobs.bytedance.com/campus/position/7670753896516815157/detail
 
 **官方职责**
 
@@ -3275,13 +4656,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、软件工程、数字媒体技术或相关专业优先； 2、具备扎实的前端基础，熟悉JavaScript/TypeScript、HTML、CSS，掌握React、Vue等至少一种主流前端框架； 3、理解常见的数据结构、网络与浏览器原理，具备良好的编码习惯；了解Git、构建工具、测试和前端工程化实践； 4、熟练使用至少一种AI Coding工具（TRAE/Codex/ClaudeCode等），能够通过上下文构建、任务拆解、代码审查和测试验证提升研发效率，并对AI生成结果负责； 5、了解大模型与AI Agent的基本工作原理，对Prompt/Context Engineering、Tool Calling等概念有基本认知；愿意持续学习MCP、RAG、Memory、Sub-Agent等技术并将其应用到真实项目。 加分项： 1、有游戏编辑器、低代码/可视化编辑器或复杂工具型产品开发经验； 2、熟悉至少一种游戏相关技术或引擎，如Three.js、Babylon.js、Godot、Unity、Cocos Creator、LayaAir等； 3、了解计算机图形学、图形渲染或游戏引擎原理，并有相关作品； 4、有Agent、RAG、MCP、工作流编排或Multi-Agent项目实践及开源贡献； 5、有AI应用评测、Prompt/Context优化或模型效果分析经验； 6、有Node.js、Python或Go等全栈实践；具备良好的产品意识、沟通协作和快速学习能力。
 
-### 短剧Agent开发工程师
+### 短剧Agent开发工程师 - 抖音平台产品
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 深圳
+- **地点**：深圳 / 北京
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7667869542593612085\` · 短剧Agent开发工程师 - 抖音平台产品 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7667869542593612085/detail
+  - `7667869542593612085` · 短剧Agent开发工程师 - 抖音平台产品 · 深圳 / 北京 · https://jobs.bytedance.com/campus/position/7667869542593612085/detail
 
 **官方职责**
 
@@ -3291,13 +4672,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机、通信和电子信息科学、数学等相关专业； 2、具备良好的编码能力和工程素养，熟悉常见的数据结构、算法及系统设计方法； 3、有服务端、前端、客户端等开发经验，有全栈的研发经验优先； 4、具备较好的业务理解、问题抽象和系统设计能力，能够独立负责模块设计与落地；有责任心、自驱力和良好的沟通协同能力，能够在复杂业务场景中持续推进项目； 5、对AI方向有兴趣，有智能体、内容理解等相关研发经验者优先。
 
-### 研发工程师（AI垂直场景Agent方向）
+### 研发工程师（AI垂直场景Agent方向） - 集团信息系统
 
 - **证据状态**：FULL_JD
 - **地点**：深圳
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7670076745041348869\` · 研发工程师（AI垂直场景Agent方向） - 集团信息系统 · 深圳 · https://jobs.bytedance.com/campus/position/7670076745041348869/detail
+  - `7670076745041348869` · 研发工程师（AI垂直场景Agent方向） - 集团信息系统 · 深圳 · https://jobs.bytedance.com/campus/position/7670076745041348869/detail
 
 **官方职责**
 
@@ -3307,13 +4688,13 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、2027届获得本科及以上学历，计算机科学或相关专业； 2、后端开发经验或同等技术深度，能够独立负责中等及以上复杂度的系统； 3、精通Golang/Java/Python（一种或多种），具备扎实的后端架构经验； 4、熟悉消息中间件、关系型数据库及常见后端设计模式（幂等、重试、限流、异步任务等）； 5、具备AI Agent相关经验和技能者优先，包括但不限于： 1）熟悉AI Agent架构设计与开发（如基于LLM的自主决策Agent、多Agent协作系统）； 2）有Agent工具调用（Tool Use/Function Calling）、规划与推理（Planning&Reasoning）、记忆管理（Memory Management）等核心机制的实践经验； 3）了解主流Agent框架（如LangChain/LangGraph、Claude Agent SDK等）并有实际项目落地经验； 4）熟悉RAG（检索增强生成）技术及其在企业级系统中的工程化实践；对Prompt Engineering、上下文管理、Agent可观测性与评估（Eval）有深入理解。
 
-### 稳定性Agent工程师
+### 稳定性Agent工程师 - 国际支付
 
 - **证据状态**：FULL_JD
-- **地点**：杭州 / 深圳
+- **地点**：深圳 / 杭州
 - **项目 / 届别**：2027届校园招聘 / 正式
 - **官方 Requisition**：1 个
-  - \`7668312496296069381\` · 稳定性Agent工程师 - 国际支付 · 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7668312496296069381/detail
+  - `7668312496296069381` · 稳定性Agent工程师 - 国际支付 · 深圳 / 杭州 · https://jobs.bytedance.com/campus/position/7668312496296069381/detail
 
 **官方职责**
 
@@ -3329,7 +4710,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：上海
 - **项目 / 届别**：2027届前沿技术领域人才校招 / 正式
 - **官方 Requisition**：1 个
-  - \`7628868062890002693\` · 飞书办公场景的企业级AI Agent智能体平台构建（Memory）-飞书AI（上海） · 上海 · https://jobs.bytedance.com/campus/position/7628868062890002693/detail
+  - `7628868062890002693` · 飞书办公场景的企业级AI Agent智能体平台构建（Memory）-飞书AI（上海） · 上海 · https://jobs.bytedance.com/campus/position/7628868062890002693/detail
 
 **官方职责**
 
@@ -3347,7 +4728,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京 / 深圳
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7670885684991281471\` · AI Agent开发工程师-Java方向 · 北京 / 深圳 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885684991281471/detail
+  - `7670885684991281471` · AI Agent开发工程师-Java方向 · 北京 / 深圳 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885684991281471/detail
 
 **官方职责**
 
@@ -3363,7 +4744,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：南京
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7670914994071046451\` · AI Agent开发工程师-汽车 · 南京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670914994071046451/detail
+  - `7670914994071046451` · AI Agent开发工程师-汽车 · 南京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670914994071046451/detail
 
 **官方职责**
 
@@ -3373,13 +4754,45 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1、计算机/软件/自动化/电子信息等相关专业，本科以上学历； 2、扎实的编程功底与工程素养：数据结构/网络/并发基础，良好的代码风格与调试能力； 3、熟练掌握主流深度学习框架pytorch/tensorflow，大模型训练框架Megatron-LM/Deepspeed等多机多卡方案，有大模型训练和项目经验优先； 4、熟悉至少一种主语言：Python 或 TypeScript/Node.js；能使用 FastAPI/Express 等快速落地服务； 5、具备Web基础能力其中之一：前端（React/Next.js/Vue）或后端（API设计、鉴权、日志、监控）； 6、了解LLM基础与常见能力：Prompt设计、函数调用/工具使用、上下文管理、流式响应。
 
+### AI研发工程师-手机
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘计划 / 正式
+- **官方 Requisition**：1 个
+  - `7670891457062127881` · AI研发工程师-手机 · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891457062127881/detail
+
+**官方职责**
+
+1. 主导Windows桌面应用程序的全生命周期开发、梳理,并确认Windows端侧应用的业务需求与技术实现方案。 2. 负责模型端侧落地部署,适配NPU（如Intel平台）,涉及模型量化、精度验证、性能调优等。 3. 跟进并解决软件开发过程中遇到的技术问题和缺陷。 4. 协同其他开发团队成员紧密合作,确保项目按时高质量完成。
+
+**官方要求**
+
+1. 计算机科学与技术、软件工程或相关专业本科及以上学历。 2. 对人工智能领域有浓厚兴趣,愿意深入研究并应用到实际项目中。 3. 掌握C++、C#等语言,熟悉前后端混合架构（如：WebView2、CEF、Electron、Tauri等）。 4. 对Windows操作系统有深入理解,熟悉Windows API、进程、线程、内存管理等基本原理。 5. 优秀的团队合作精神及沟通协调能力,适应跨部门协作的工作环境。
+
+### AI研发工程师-智能风控方向
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘计划 / 正式
+- **官方 Requisition**：1 个
+  - `7671289294427113737` · AI研发工程师-智能风控方向 · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289294427113737/detail
+
+**官方职责**
+
+1、参与建设面向零售、服务、整车等业务的 AI 风控工作流与应用平台，围绕风险主动发现、特征与数据分析、风险识别、策略生成与上线、监控复盘、客诉分析与处置辅助等场景，形成端到端闭环。 2、基于 LangGraph、LangChain、AutoGen 等 Agent 框架及工作流编排能力，设计并实现具备任务规划、工具调用、知识检索、状态管理和人工审核能力的智能风控应用，提升风险分析、策略运营和案件处置效率。 3、以 MCP 为核心建设风控工具生态，标准化接入数据仓库、特征与标签平台、策略平台、规则引擎、案件系统、监控告警、知识库及内部服务，保障工具调用的权限控制、审计追踪、稳定性和可维护性。 4、结合 RAG、结构化检索、SQL 分析及现有算法能力，建设风险知识库和分析助手，支持异常线索挖掘、风险归因、特征分析、策略效果评估和运营决策辅助。 5、与产品、算法、运营及业务团队协同，将实际业务问题拆解为可落地的 AI 工作流；持续优化模型调用效果、工具成功率、流程时效和人工提效，并推动应用稳定上线。
+
+**官方要求**
+
+1、计算机基础扎实，熟练使用 Python，至少掌握一门后端开发语言（Go、Java、C++、Rust 等）；熟悉 Git、Linux、数据库、接口开发及容器化部署。 2、有大模型应用、Agent 或工作流平台相关项目经验，熟悉 LangGraph、LangChain、AutoGen、LlamaIndex 等任一框架；理解 MCP、Function Calling、RAG、Prompt Engineering、Memory、Workflow Orchestration 等方法，并能够独立完成应用落地。 3、具备较好的工程化能力，能够设计和实现稳定、可扩展、可观测的服务；了解工具调用鉴权、日志审计、异常降级、评测与监控等机制。 4、具备数据分析与问题定位能力，熟悉 SQL、数据处理及常见检索方案；能够围绕风险线索、策略效果、工具调用链路和用户反馈提出可量化的优化方案。 5、对风控、反作弊、智能运营或企业级 AI 应用有兴趣；具备良好的沟通与协作能力，能够与产品、算法、运营和业务团队共同推进复杂问题落地。 6、有风控、反作弊、策略平台、数据平台、RAG/MCP/Agent 应用或多系统集成经验者优先。
+
 ### Agent Harness 开发工程师
 
 - **证据状态**：FULL_JD
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7678147882801678602\` · Agent Harness 开发工程师 · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7678147882801678602/detail
+  - `7678147882801678602` · Agent Harness 开发工程师 · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7678147882801678602/detail
 
 **官方职责**
 
@@ -3392,10 +4805,10 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 ### Agent Harness 研发工程师
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 武汉
+- **地点**：武汉 / 北京
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7671284471720020243\` · Agent Harness 研发工程师 · 武汉 / 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7671284471720020243/detail
+  - `7671284471720020243` · Agent Harness 研发工程师 · 武汉 / 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7671284471720020243/detail
 
 **官方职责**
 
@@ -3408,10 +4821,10 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 ### Agent工程师
 
 - **证据状态**：FULL_JD
-- **地点**：北京 / 武汉
+- **地点**：武汉 / 北京
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7670928909127223588\` · Agent工程师 · 武汉 / 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670928909127223588/detail
+  - `7670928909127223588` · Agent工程师 · 武汉 / 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670928909127223588/detail
 
 **官方职责**
 
@@ -3427,7 +4840,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7671295351281731850\` · OS软件工程师（AI Agent方向） · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7671295351281731850/detail
+  - `7671295351281731850` · OS软件工程师（AI Agent方向） · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7671295351281731850/detail
 
 **官方职责**
 
@@ -3437,13 +4850,29 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 1. 计算机及相关专业应届本科及以上,基础扎实。 2. 熟练掌握 Kotlin/Java 或 Python/TypeScript 中至少一门;有扎实的数据结构与工程能力。 3. 了解 Android 系统 / 移动端开发,或了解大模型应用（LLM）基础;对 AI Agent / 智能体方向有热情。 4. 学习能力强、乐于探索新技术,有良好的代码品味。
 
+### 体系AI工程师-汽车
+
+- **证据状态**：FULL_JD
+- **地点**：北京
+- **项目 / 届别**：2027届校园招聘计划 / 正式
+- **官方 Requisition**：1 个
+  - `7670918570079652123` · 体系AI工程师-汽车 · 北京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918570079652123/detail
+
+**官方职责**
+
+1. 参与完成AI在电动汽车智造领域的关键技术预研、业务开发工作 ； 2. 参与打造企业运营AI产品，提升团队的运营效率； 3. 参与汽车舆情产品算法建设，包括标签分类，情感分类，热词提取等，辅助完成汽车舆情管理闭环； 4. 运用大数据、人工智能和运筹优化等先进数字技术，深入挖掘和分析海量汽车工厂制造数据，建立模型，解决制造领域遇到的问题，提高生产效率，降低成本。
+
+**官方要求**
+
+1. 计算机、电子、数学、机器学习或者统计学相关专业，本科以上学历； 2. 精通Python语言，Java语言加分项，熟练掌握常用数据结构和算法； 3. 熟悉常用机器学习和数据挖掘算法，包括但不限于树模型、支持向量机、线性回归、逻辑斯谛回归以及深度学习算法； 4. 熟悉常用运筹优化算法，如线性规划，整数规划，图论算法，动态规划等，并能够使用OR-tools等运筹优化算法包； 5. 了解常用大模型如Qwen,GLM，Baichuan等方法论，能够通过Prompt调优提升推理精度，并对大模型微调技术如LoRA,P-Tuning等有实践经验 ； 6. 熟练掌握一种数据库，例如MySQL，精通SQL语言，并有实际开发经验；熟悉运用Hadoop/Spark/HBase/Hive等大数据平台工具； 7. 优秀的沟通能力和表达能力，有创新精神，乐于接受挑战。 具有以下条件之一者优先： 1. 有实战经验，包括但不限于大预测类，运筹类，并取得较好的效果； 2. 了解社媒舆情相关算法，如情感分类，热词提取，摘要等； 3. 对模型理论、参数调优有系统和深刻的理解。
+
 ### 嵌入式测试开发与AI应用工程师-汽车
 
 - **证据状态**：FULL_JD
 - **地点**：南京
 - **项目 / 届别**：2027届校园招聘计划 / 正式
 - **官方 Requisition**：1 个
-  - \`7670915178993256713\` · 嵌入式测试开发与AI应用工程师-汽车 · 南京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670915178993256713/detail
+  - `7670915178993256713` · 嵌入式测试开发与AI应用工程师-汽车 · 南京 · https://xiaomi.jobs.f.mioffice.cn/campus/position/7670915178993256713/detail
 
 **官方职责**
 
@@ -3461,7 +4890,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京市，上海市，杭州市
 - **项目 / 届别**：小红书2027校园招聘 / red_star_27
 - **官方 Requisition**：1 个
-  - \`21899\` · 【REDstar】AI Agent Infra 工程师 · 北京市，上海市，杭州市 · https://job.xiaohongshu.com/campus/position/21899
+  - `21899` · 【REDstar】AI Agent Infra 工程师 · 北京市，上海市，杭州市 · https://job.xiaohongshu.com/campus/position/21899
 
 **官方职责**
 
@@ -3477,7 +4906,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京市，上海市，杭州市
 - **项目 / 届别**：小红书2027校园招聘 / red_star_27
 - **官方 Requisition**：1 个
-  - \`21828\` · 【REDstar】AI Agent 工程师（大模型 AI Coding方向）-质效研发 · 北京市，上海市，杭州市 · https://job.xiaohongshu.com/campus/position/21828
+  - `21828` · 【REDstar】AI Agent 工程师（大模型 AI Coding方向）-质效研发 · 北京市，上海市，杭州市 · https://job.xiaohongshu.com/campus/position/21828
 
 **官方职责**
 
@@ -3493,7 +4922,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京市，上海市
 - **项目 / 届别**：小红书2027校园招聘 / red_star_27
 - **官方 Requisition**：1 个
-  - \`21821\` · 【REDstar】AI Agent工程师-社区工程 · 北京市，上海市 · https://job.xiaohongshu.com/campus/position/21821
+  - `21821` · 【REDstar】AI Agent工程师-社区工程 · 北京市，上海市 · https://job.xiaohongshu.com/campus/position/21821
 
 **官方职责**
 
@@ -3509,7 +4938,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京市，上海市
 - **项目 / 届别**：小红书2027校园招聘 / red_star_27
 - **官方 Requisition**：1 个
-  - \`20960\` · 【REDstar】大模型 Agent 开发工程师（AI Coding方向） · 北京市，上海市 · https://job.xiaohongshu.com/campus/position/20960
+  - `20960` · 【REDstar】大模型 Agent 开发工程师（AI Coding方向） · 北京市，上海市 · https://job.xiaohongshu.com/campus/position/20960
 
 **官方职责**
 
@@ -3525,7 +4954,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京市，上海市，深圳市
 - **项目 / 届别**：小红书2027校园招聘 / red_star_27
 - **官方 Requisition**：1 个
-  - \`21820\` · 【REDstar】搜广推 × AI 应用工程师 · 北京市，上海市，深圳市 · https://job.xiaohongshu.com/campus/position/21820
+  - `21820` · 【REDstar】搜广推 × AI 应用工程师 · 北京市，上海市，深圳市 · https://job.xiaohongshu.com/campus/position/21820
 
 **官方职责**
 
@@ -3541,7 +4970,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京市，上海市
 - **项目 / 届别**：小红书2027校园招聘 / red_star_27
 - **官方 Requisition**：1 个
-  - \`21822\` · 【REDstar】点点 Agent研发工程师 · 北京市，上海市 · https://job.xiaohongshu.com/campus/position/21822
+  - `21822` · 【REDstar】点点 Agent研发工程师 · 北京市，上海市 · https://job.xiaohongshu.com/campus/position/21822
 
 **官方职责**
 
@@ -3559,7 +4988,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：西安市 / 上海市 / 北京市
 - **项目 / 届别**：TOT产研序列（Top of Top）特指公司为研发战略而进行招聘和培养高素质、高潜质毕业生的人才项目。
 - **官方 Requisition**：1 个
-  - \`2e2ec322-b91e-4d6d-a2ba-928b4c8d69bd\` · 27届校招-AI Agent开发工程师 · 西安市 / 上海市 / 北京市 · https://app.mokahr.com/campus-recruitment/glodon/91966#/jobs?keyword=
+  - `2e2ec322-b91e-4d6d-a2ba-928b4c8d69bd` · 27届校招-AI Agent开发工程师 · 西安市 / 上海市 / 北京市 · https://app.mokahr.com/campus-recruitment/glodon/91966#/jobs?keyword=
 
 **官方职责**
 
@@ -3569,88 +4998,6 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 官方未返回任职要求。
 
-## 度小满
-
-### AI全栈研发工程师-大数据引擎/云原生方向
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招动态
-- **官方 Requisition**：1 个
-  - \`7680508916397476142\` · AI全栈研发工程师-大数据引擎/云原生方向 · https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、参与公司分布式基础平台相关研发工作，覆盖大数据引擎、云原生基础设施、资源调度和平台工程能力建设； 2、参与 Spark、Presto、Doris、Hadoop 等大数据生态相关组件的技术选型、部署优化、性能调优、功能扩展和二次开发； 3、参与大数据引擎核心组件研发，包括数据采集适配、任务调度、引擎监控、性能分析、ETL 工具等能力建设，提升大规模数据处理效率和平台稳定性； 4、参与 Kubernetes 集群、云计算服务及云原生平台能力建设，围绕资源隔离、调度优化、部署交付、弹性伸缩、配置管理、监控巡检、故障自愈等场景，提升平台自动化和稳定性； 5、参与 CPU、GPU 等计算资源的统一管理、调度与使用效率优化，支撑大数据、AI 计算及业务系统等多类场景； 6、参与分布式系统架构优化、性能优化、稳定性建设和工程化落地，持续提升基础平台的可靠性、可扩展性和研发效率； 7、跟进大数据、分布式计算、云原生、容器化、资源调度等前沿技术发展，参与新技术预研和业务落地。
-
-**官方要求**
-
-1、硕士及以上学历，计算机、软件工程、网络工程、自动化等相关专业； 2、计算机基础扎实，熟悉操作系统、计算机网络、数据结构与算法、数据库或分布式系统相关基础知识； 3、熟悉 Go、Python、Java、C/C++ 中至少一种编程语言，具备良好的编码和调试能力； 4、对分布式系统、大数据引擎、云原生基础设施、资源调度、平台工程中的一个或多个方向有兴趣和实践基础； 5、熟悉 Spark、Presto、Doris、Hadoop、HDFS、YARN、OLAP、分布式存储等大数据相关技术者优先； 6、熟悉 Kubernetes、容器、容器网络、资源隔离、服务部署、弹性伸缩、可观测性、自动化运维等云原生相关技术者优先； 7、有大数据引擎、数据库内核、分布式计算、Kubernetes、云原生平台、CPU/GPU 调度等相关实习或项目经验者优先； 8、具备良好的学习能力、逻辑分析能力、责任心和工程质量意识，愿意深入复杂技术问题并推动问题解决。
-
-### AI全栈研发工程师-大数据方向
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招动态
-- **官方 Requisition**：1 个
-  - \`7680510258036574505\` · AI全栈研发工程师-大数据方向 · https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、参与公司数据服务及数据平台相关研发工作，支撑业务稳定运行、数据分析和智能化应用落地； 2、参与产品及业务需求讨论，理解业务场景，完成后端服务、数据处理链路、数据指标体系、分析服务等能力的设计与开发； 3、参与数据系统与平台的架构优化、性能优化、稳定性建设和研发效率提升，持续提升系统质量与交付效率； 4、面向业务分析和经营决策需求，参与数据采集、加工、治理、指标统计、多维分析及数据服务建设； 5、参与 AI 技术在数据与平台场景中的应用探索，包括智能助手、智能 Agent、自动化工作流等方向，提升业务支持及平台效率； 6、跟进 Java/Go/Python/Scala、大数据处理、实时计算、AI 应用工程化等相关技术发展，并结合实际业务场景进行落地实践。
-
-**官方要求**
-
-1、硕士及以上学历，计算机、软件工程、自动化等相关专业； 2、计算机基础扎实，熟悉数据结构、算法、操作系统、计算机网络、数据库等基础知识； 3、掌握至少一种主流编程语言，如 Java、Go、Python、Scala 等，具备良好的编码能力和工程实践意识； 4、对后端研发、数据研发、数据平台、大数据处理或 AI 应用方向中的一个或多个领域有兴趣和实践基础； 5、熟悉 Java/Go 后端开发，或了解 Linux、Shell、SQL、Hadoop、Hive、Spark、Flink 其中一个或多个数据处理技术者优先； 6、有后端服务、业务系统、数据指标、数据分析平台、实时/离线数据处理、AI 应用等相关实习或项目经验者优先； 7、了解智能 Agent、RAG、自动化工作流、数据智能分析等 AI 应用技术者优先； 8、具备良好的学习能力、逻辑思维能力、沟通协作能力和问题解决能力，对技术有热情，自驱力强，乐观积极，具备一定抗压能力和复盘意识。
-
-### AI全栈研发工程师—系统平台方向
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招动态
-- **官方 Requisition**：1 个
-  - \`7673423780304111914\` · AI全栈研发工程师—系统平台方向 · https://campus.duxiaoman.com/051736/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=3&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、端到端业务交付： 负责核心业务需求的分析、设计、编码与测试验证，贯穿产研测全流程，确保业务交付质量与稳定性； 2、AI 协同研发： 运用智能化工具链进行受控代码生成、错误定位自愈与单元测试跑通，确保交付成果符合金融级系统架构规范； 3、技术资产与工具沉淀： 整理并沉淀业务领域知识、标准接口契约及测试基线，参与特定业务场景下规则校验插件的开发与维护； 4、架构重构与工程治理： 遵循领域驱动设计与微服务架构规范，参与存量系统的结构化重构与工程治理，持续提升系统的可维护性。
-
-**官方要求**
-
-1、学历与专业： 2027 届应届毕业生，计算机、软件工程、人工智能、电子信息等相关专业本科及以上学历； 2、计算机专业基础： 熟练掌握至少一门主流后端编程语言（如 Java / Go / Python / C++），具备扎实的数据结构、算法、操作系统、计算机网络及数据库基础； 3、技术规范与基础设施认知： 理解微服务架构与接口规范，掌握 OpenAPI 契约定义；对云原生技术体系、容器化（Docker）及 Kubernetes（K8s）具备基本概念与应用认知； 4、智能化工具运用能力： 对大语言模型（LLM）及主流 AI 辅助编程工具有实际实践经验，具备良好的逻辑推理与精准提问表达能力； 5、通用素质： 具备严谨的工程思维、出色的学习能力、良好的团队协作沟通意识及强烈的责任心。 加分项： 熟悉前端开发技术栈（如 React、Vue 或 JavaScript/TypeScript），具备全栈研发倾向或实践经验者优先； 具备实际项目开发、开源项目贡献或大型企业实习经验者优先。
-
-### AI研发效能与项目管理岗
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招动态
-- **官方 Requisition**：1 个
-  - \`7673425008291006758\` · AI研发效能与项目管理岗 · https://campus.duxiaoman.com/051736/position/list?keywords=%E6%99%BA%E8%83%BD%E4%BD%93&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-面向公司重点项目和真实研发场景，运用数据分析、AI智能体和自动化工作流，发现效率问题、构建解决方案并推动落地。 1、分析研发效能及项目过程数据，识别效率瓶颈和交付风险，推动流程及工具优化； 2、参与公司级重点项目管理，协助开展计划跟踪、风险识别、跨团队协同及项目复盘； 3、研究并验证AI Coding、智能体协作等新工具、新模式，推动优秀实践在研发场景落地； 4、参与AI PMO应用、智能体及自动化工作流建设，提升项目协同和管理效率。
-
-**官方要求**
-
-1、本科及以上学历，专业不限，计算机、人工智能、软件工程、统计学等相关专业优先； 2、对AI技术有好奇心和实践热情，能够熟练运用AI工具解决实际问题； 3、具备良好的数据分析和结构化表达能力，掌握SQL，具备Python或其他编程能力； 5、善于沟通协作，能够主动理解需求、拆解复杂问题并持续推动解决。 加分项： 有AI应用、智能体、自动化工作流或数据分析项目经验；有可展示的作品、代码、竞赛或实习成果。
-
-### Agent应用研发工程师
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招动态
-- **官方 Requisition**：1 个
-  - \`7673430451776457011\` · Agent应用研发工程师 · https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、与业务团队协作，设计大模型技术落地方案，推动 Agent 应用从原型到生产环境的全流程交付； 2、负责企业级 Agent 平台的架构设计与研发，构建高可用、高扩展的 Agent 框架，支持工具调用、多步规划、多 Agent 协作等复杂任务编排； 3、设计与实现 RAG 系统，包括文档解析、Chunking 策略、混合检索、Reranking 等关键链路的优化； 4、参与 Agent 工作流引擎建设，支持 DAG/状态机等任务调度模型，实现可观测、可回溯的执行链路； 5、跟踪大模型及 Agent 技术前沿（MCP、Function Calling、Computer Use 等），探索创新应用场景并快速验证。
-
-**官方要求**
-
-1、本科及以上学历，计算机科学、自动化、人工智能、统计学等相关专业； 2、精通 Python，熟悉 Java/Golang 至少一门语言，具备扎实的工程能力； 3、深入理解 Prompt Engineering、RAG、Agent 核心技术，有实际大模型应用项目经验； 4、熟悉主流大模型 API 及开源模型生态（OpenAI / Claude / Qwen / DeepSeek 等），了解模型能力边界与调优策略； 5、熟悉 LangChain / LlamaIndex / Dify / FastGPT 等至少一个 Agent 开发框架； 6、具备良好的系统设计能力，了解 Docker/K8s 等云原生技术。 加分项： 1、有 MCP（Model Context Protocol）协议集成或 Tool 开发经验； 2、有多 Agent 编排框架（CrewAI / AutoGen / LangGraph 等）实践经验； 3、有 RAG 系统从零搭建及效果调优经验，熟悉向量数据库（Milvus / Qdrant / Weaviate 等）； 4、有大模型应用线上化经验，熟悉 LLM 应用的监控、评测与持续优化。 有顶会论文、竞赛获奖或相关实习经验
-
 ## 快手
 
 ### AI Agent 全栈工程师-Agent 应用研发方向
@@ -3659,7 +5006,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13836\` · AI Agent 全栈工程师-Agent 应用研发方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13836?code=0f93d69bcf1143aaaaff2f6de0a769ec&recruitSubProjectCodes=20271779425607
+  - `13836` · AI Agent 全栈工程师-Agent 应用研发方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13836?code=0f93d69bcf1143aaaaff2f6de0a769ec&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3675,7 +5022,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13145\` · AI Agent 全栈工程师-音视频方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13145?code=7746933f8afa43bb9708bc47f621ae3d&recruitSubProjectCodes=20271779425607
+  - `13145` · AI Agent 全栈工程师-音视频方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13145?code=7746933f8afa43bb9708bc47f621ae3d&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3691,7 +5038,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京 / 杭州
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13185\` · AI全栈开发工程师 · 北京 / 杭州 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13185?code=ac45f2b033ed4c32900b9049fcc37fd7&recruitSubProjectCodes=20271779425607
+  - `13185` · AI全栈开发工程师 · 北京 / 杭州 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13185?code=ac45f2b033ed4c32900b9049fcc37fd7&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3707,7 +5054,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：上海 / 北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13610\` · AI全栈开发工程师-数据平台 · 上海 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13610?code=7740fb39d4024143adaea42e4d4de530&recruitSubProjectCodes=20271779425607
+  - `13610` · AI全栈开发工程师-数据平台 · 上海 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13610?code=7740fb39d4024143adaea42e4d4de530&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3723,7 +5070,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：杭州 / 北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13150\` · AI应用开发工程师 · 杭州 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13150?code=dd3c94b2618e48e48146a46c98d25c10&recruitSubProjectCodes=20271779425607
+  - `13150` · AI应用开发工程师 · 杭州 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13150?code=dd3c94b2618e48e48146a46c98d25c10&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3739,7 +5086,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13115\` · AI应用服务端开发工程师 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13115?code=721e12629eed4095872ba6c8d389c3d5&recruitSubProjectCodes=20271779425607
+  - `13115` · AI应用服务端开发工程师 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13115?code=721e12629eed4095872ba6c8d389c3d5&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3755,7 +5102,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`12779\` · 【快Star】AI应用开发工程师 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12779?code=ea8ab823cff346b5861e92a5d5e01c63&recruitSubProjectCodes=20271779425607
+  - `12779` · 【快Star】AI应用开发工程师 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12779?code=ea8ab823cff346b5861e92a5d5e01c63&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3771,7 +5118,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`12829\` · 【快Star】Data Agent研发工程师 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12829?code=d30d1acd84a84251811134eb72139c33&recruitSubProjectCodes=20271779425607
+  - `12829` · 【快Star】Data Agent研发工程师 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12829?code=d30d1acd84a84251811134eb72139c33&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3787,7 +5134,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`12999\` · 【快Star】安全工程师-安全攻防Agentic AI方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12999?code=d209ff95796440028c36fcbbe74e8cf5&recruitSubProjectCodes=20271779425607
+  - `12999` · 【快Star】安全工程师-安全攻防Agentic AI方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12999?code=d209ff95796440028c36fcbbe74e8cf5&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3803,7 +5150,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：杭州 / 北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13091\` · 大模型 AI Agent 开发工程师 · 杭州 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13091?code=029b10e68bec40d190d0379d40223c5f&recruitSubProjectCodes=20271779425607
+  - `13091` · 大模型 AI Agent 开发工程师 · 杭州 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13091?code=029b10e68bec40d190d0379d40223c5f&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3819,7 +5166,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：杭州 / 北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13613\` · 数据FDE工程师-数据研发方向 · 杭州 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13613?code=ce63adf1eeb2489881c7c1d43b924d03&recruitSubProjectCodes=20271779425607
+  - `13613` · 数据FDE工程师-数据研发方向 · 杭州 / 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13613?code=ce63adf1eeb2489881c7c1d43b924d03&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3835,7 +5182,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：北京
 - **项目 / 届别**：快手官方2027项目 20271779425607
 - **官方 Requisition**：1 个
-  - \`13868\` · 智能测试 Agent 开发工程师-安全方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13868?code=e177bb46d2004d3999d788ef2e172f5b&recruitSubProjectCodes=20271779425607
+  - `13868` · 智能测试 Agent 开发工程师-安全方向 · 北京 · https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13868?code=e177bb46d2004d3999d788ef2e172f5b&recruitSubProjectCodes=20271779425607
 
 **官方职责**
 
@@ -3853,7 +5200,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`10d86835-d153-4a2b-afe3-a37b4e6cb6bf\` · 【2027校招正式批】Agent开发工程师 · https://campus.hellogroup.com/
+  - `10d86835-d153-4a2b-afe3-a37b4e6cb6bf` · 【2027校招正式批】Agent开发工程师 · https://campus.hellogroup.com/
 
 **官方职责**
 
@@ -3871,7 +5218,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：Shanghai
 - **项目 / 届别**：携程集团2027届应届校招生
 - **官方 Requisition**：1 个
-  - \`30145668\` · Agent开发工程师（2027届秋招）(MJ036607) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036607
+  - `30146475` · Agent开发工程师（2027届秋招）(MJ036607) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036607
 
 **官方职责**
 
@@ -3887,7 +5234,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：Shanghai
 - **项目 / 届别**：携程集团2027届应届校招生
 - **官方 Requisition**：1 个
-  - \`30145670\` · 云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036678
+  - `30146477` · 云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036678
 
 **官方职责**
 
@@ -3897,44 +5244,6 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 招聘对象：本、硕、博。 毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。 你将会负责： 1. 参与一站式 AI Agent 交付平台的整体研发与版本迭代工作，负责智能体模块功能开发、业务流程编排、链路调试、性能调优与问题排查，保障平台功能稳定可用。 2. 负责 Harness 工程设计、调优与版本管理，完成各类工具能力封装、集成与适配，支撑多类型 Agent 业务场景需求，跟进业务落地全流程，持续迭代优化智能体执行效果。 3. 参与 Agent 相关业务需求分析、方案讨论，对接业务方梳理场景诉求，输出可落地的技术实现思路，推动智能体能力从原型向生产环境落地。 4. 协助完成平台技术文档、接口文档、使用手册的编写与维护，沉淀 Agent 开发最佳实践。 5. 跟进 AI Agent 领域新技术、新框架，参与技术调研与方案预研，赋能平台能力迭代，协同团队完成代码评审、单元测试，保障代码质量。 我们期望你： 1. 熟练使用 Python 或 Golang 进行后端开发，具备完整的项目开发实践经验，熟悉常用库与异步开发模式，能够独立完成模块编码、调试与 bug 修复。 2. 至少了解 CrewAI / LangChain / LangGraph / Pi 其中一种主流 AI Agent 开发框架，有框架二次开发、流程定制经验优先。 3. 理解 AI Agent 基础原理，掌握 MCP 协议、RAG、记忆、Skills 工具集、Agent Loop、Tool Calling 等核心机制，熟悉大模型应用开发的常见问题与优化手段。 4. 了解 CI/CD 开发流水线，熟悉 Git 版本管理，理解 PaaS 平台基础概念，有容器、应用部署、环境维护相关经验优先。 5. 具备良好的需求理解能力、逻辑思维，自主学习能力强，善于排查定位复杂问题；有 AI Agent、大模型应用、智能体编排相关项目实战经验优先。 6. 具备良好的沟通协作意识，能够和产品、业务同学协同推进项目，重视文档沉淀，有较强的工程化意识。
 
-## 无问芯穹/Infini-AI
-
-### 推理框架开发工程师
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：官方未提供
-- **项目 / 届别**：2027秋季校园招聘
-- **官方 Requisition**：1 个
-  - 推理框架开发工程师 · https://infinigence.jobs.feishu.cn/088717
-- **岗位核验证据**：https://www.wondercv.com/xiaozhao/infinigence-2027-campus-recruitment-beijing-shangha-14656-8432f6/
-
-**已核验岗位摘要**
-
-无问芯穹2027秋招工程岗，围绕大模型推理框架与Agentic Infra基础设施建设。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-## 昆仑万维/天工
-
-### Agent框架工程师
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘
-- **官方 Requisition**：1 个
-  - Agent框架工程师 · https://jobs.kunlun.com/459522/position/list
-- **岗位核验证据**：https://jobs.kunlun.com/459522/position/list
-
-**已核验岗位摘要**
-
-官方职位池中已发现Agent框架工程师，属于Agent底层框架和应用工程方向。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
 ## 普渡机器人
 
 ### Agent开发工程师(J12678)
@@ -3943,7 +5252,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：广东省·深圳市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`311153208\` · Agent开发工程师(J12678) · 广东省·深圳市 · https://pudutech.zhiye.com/campus/detail?jobAdId=311153208
+  - `311153208` · Agent开发工程师(J12678) · 广东省·深圳市 · https://pudutech.zhiye.com/campus/detail?jobAdId=311153208
 
 **官方职责**
 
@@ -3959,9 +5268,9 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 - **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - \`07d7076c-cbe2-46fc-b33e-fe60ff9e3955\` · 26届春招-大模型应用开发工程师（Java） · https://app.mokahr.com/campus-recruitment/zphz/148984
+  - `07d7076c-cbe2-46fc-b33e-fe60ff9e3955` · 26届春招-大模型应用开发工程师（Java） · https://app.mokahr.com/campus-recruitment/zphz/148984
 
 **官方职责**
 
@@ -4034,7 +5343,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`20505\` · 供应链AI智能体开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `20505` · 供应链AI智能体开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
@@ -4046,7 +5355,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`20030\` · 大模型AI应用开发-北京市 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `20030` · 大模型AI应用开发-北京市 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
@@ -4058,7 +5367,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`20300\` · 工业AI开发工程师-上海 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `20300` · 工业AI开发工程师-上海 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
@@ -4070,7 +5379,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`20004\` · 工业AI开发工程师-北京 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `20004` · 工业AI开发工程师-北京 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
@@ -4082,7 +5391,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`20304\` · 工业AI开发工程师-常州 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `20304` · 工业AI开发工程师-常州 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
@@ -4093,9 +5402,10 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **证据状态**：TITLE_ONLY_OFFICIAL
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：2 个
-  - \`19786\` · 智能体应用软件研发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
-  - \`19789\` · 智能体应用软件研发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+- **官方 Requisition**：3 个
+  - `19786` · 智能体应用软件研发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `19789` · 智能体应用软件研发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `19795` · 智能体应用软件研发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
@@ -4107,114 +5417,24 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：2 个
-  - \`19860\` · 智能体架构软件开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
-  - \`19861\` · 智能体架构软件开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `19860` · 智能体架构软件开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+  - `19861` · 智能体架构软件开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
 > 第一方当前职位列表已确认岗位标题；职责 / 要求正文尚未稳定取得，不用二手来源补写。
 
-## 生数科技
+### 智能数据分析工程师（Agent 方向）
 
-### Agent 架构师
-
-- **证据状态**：FULL_JD
+- **证据状态**：TITLE_ONLY_OFFICIAL
 - **地点**：官方未提供
-- **项目 / 届别**：校招官网
+- **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`7646644078872480038\` · Agent 架构师 · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、负责公司AI智能体（Agent）系统的整体技术架构设计与规划，构建高可用、可扩展的多智能体协作框架； 2、主导核心引擎的研发与优化，解决大模型在长上下文处理、复杂任务规划及意图识别中的关键技术难题； 3、设计标准化的工具调用接口，实现智能体与公司内部业务系统、外部API及向量数据库的深度融合； 4、建立智能体全链路监控与自动化评估体系，制定严格的权限管控与安全围栏机制，保障系统稳定运行与数据安全； 5、跟踪全球AI Agent领域的前沿技术动态，负责技术预研与验证，并指导团队沉淀通用组件库与技术文档。
-
-**官方要求**
-
-1、计算机、人工智能或相关专业本科及以上学历，具备8年以上软件架构或AI系统研发经验，其中至少3年专注于大语言模型应用架构或复杂分布式系统设计； 2、精通Go等主流编程语言，具备扎实的工程化落地能力与优秀的代码规范； 3、深入理解主流大模型特性，熟悉主流开发框架底层原理，并具备深度定制或重构经验； 4、熟练掌握向量数据库、图数据库及微服务架构设计，具备极强的抽象建模能力，能够有效拆解复杂业务逻辑； 5、具备出色的跨部门沟通协调能力，AI编程重度使用者，对AI技术变革保持高度敏感，能够将技术方案高效转化为业务价值。
-
-### Agent 架构师（V）
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招官网
-- **官方 Requisition**：1 个
-  - \`7683803101065185542\` · Agent 架构师（V） · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、负责公司AI智能体（Agent）系统的整体技术架构设计与规划，构建高可用、可扩展的多智能体协作框架； 2、主导核心引擎的研发与优化，解决大模型在长上下文处理、复杂任务规划及意图识别中的关键技术难题； 3、设计标准化的工具调用接口，实现智能体与公司内部业务系统、外部API及向量数据库的深度融合； 4、建立智能体全链路监控与自动化评估体系，制定严格的权限管控与安全围栏机制，保障系统稳定运行与数据安全； 5、跟踪全球AI Agent领域的前沿技术动态，负责技术预研与验证，并指导团队沉淀通用组件库与技术文档。
-
-**官方要求**
-
-1、计算机、人工智能或相关专业本科及以上学历，具备8年以上软件架构或AI系统研发经验，其中至少3年专注于大语言模型应用架构或复杂分布式系统设计； 2、精通Go等主流编程语言，具备扎实的工程化落地能力与优秀的代码规范； 3、深入理解主流大模型特性，熟悉主流开发框架底层原理，并具备深度定制或重构经验； 4、熟练掌握向量数据库、图数据库及微服务架构设计，具备极强的抽象建模能力，能够有效拆解复杂业务逻辑； 5、具备出色的跨部门沟通协调能力，AI编程重度使用者，对AI技术变革保持高度敏感，能够将技术方案高效转化为业务价值。
-
-### Agent平台开发工程师 (YH)
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招官网
-- **官方 Requisition**：1 个
-  - \`7629599412080494875\` · Agent平台开发工程师 (YH) · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-职位描述 我们正在寻找对多模态大模型技术充满热情、具备扎实工程实践能力的集成工程师。您将作为核心技术成员，负责将前沿的多模态大模型（包括视觉-语言模型等）的预训练infra,并构建高可用、高效率的大规模预训练平台。您需要具备优秀的编程能力、系统思维和实际问题解决能力，与算法团队紧密协作，提升大规模多模态模型的研发效率，直接影响数百万用户的产品体验。 岗位职责： 1、为预训练平台设计、构建稳定/高效的开发工具，包括开发机平台搭建、任务调度工具平台的搭建、视频结果评测平台，加速算法的研发过程； 2、系统维护与监控：构建并完善模型服务的监控、日志、告警系统，持续进行性能分析、瓶颈排查与线上问题应急响应； 3、协作与创新：与算法研究员及其他工程师紧密合作，理解业务需求，提供工程化解决方案，并跟进多模态领域最新进展，探索技术落地可能性； 4、希望你对于深度学习平台有足够的认识，热衷于抽象标准工具，设计便捷/鲁棒可服用的CLI工具/前端工具；加速大模型的研发,降低大家的认知负担。
-
-**官方要求**
-
-职位要求 1、计算机科学/软件工程相关领域的本科； 2、需要后端基础,并且有ai平台开发相关的经验(熟悉k8s,后端开发,监控平台)； 3、能够有用agent开发平台的经历优先； 4、开发过通用的CLI工具,能够有比较好的前后端全栈开发能力有限,能够践行devops的习惯。 技术能力 1.编程与框架：精通 Golang/Python/C++/Java 之一。熟悉WebSocket、gRPC等通信协议，有高并发、低延迟网络服务开发经验； 2.数据存储与计算：熟悉对象存储（如S3、OSS）、关系型数据库、Redis、ClickHouse。加分项：熟悉 LanceDB 和 Daft、Ray 计算框架，了解向量数据库原理与应用； 3.系统开发：有扎实的后端服务开发经验，熟悉Linux开发环境，掌握Docker容器化技术，熟练使用Kubernetes等编排工具； 4.扎实的基础知识：熟悉计算机体系结构、操作系统、计算机网络、多线程编程等基础知识； 5.工程素养：熟悉CI/CD流程、代码版本管理（Git），具备良好的编码习惯与文档编写能力。
-
-### 流式视频 Agent 工程师
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：北京
-- **项目 / 届别**：当前官方招聘（正式/实习）
-- **官方 Requisition**：1 个
-  - 流式视频 Agent 工程师 · 北京 · https://shengshu.jobs.feishu.cn/index/
-- **岗位核验证据**：https://offerdao.ai/j/agent_dxsv97wstj9yst
-
-**已核验岗位摘要**
-
-设计实时交互视频生成Agent，建设多轮对话、意图理解、上下文管理、工具调用和Agent编排链路，并与视频生成系统联合落地。
+  - `20579` · 智能数据分析工程师（Agent 方向） · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
 
 **JD 完整度**
 
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-### 流式视频Agent工程师
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：校招官网
-- **官方 Requisition**：1 个
-  - \`7670016197601446207\` · 流式视频Agent工程师 · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
-
-**官方职责**
-
-1、参与国内领先的实时交互式视频生成模型 Vidu S 的研发，负责视频生成 Agent 的设计与落地，使其能够准确理解用户意图，并实时转化为驱动视频生成模型的控制指令。 2、负责面向交互式视频生成场景的 VLM 训练、评测与迭代优化，持续提升模型的多模态理解、指令遵循和交互决策能力； 3、构建 Agent 的多轮对话、意图识别、上下文管理及工具调用能力，打通“用户输入 → 意图解析 → 指令生成 → 视频反馈”的端到端链路； 4、设计并优化 Agent 的编排与决策机制，提升其在流式、低延迟场景下的响应速度、引导准确性与运行稳定性； 5、与算法、Infra及产品团队紧密协作，推进 Agent、VLM 与视频生成模型的联合优化、系统集成及产品落地。
-
-**官方要求**
-
-1、计算机、人工智能等相关专业，扎实的工程与系统基础，熟练掌握 Python； 2、熟悉 LLM / Agent 的基本原理与开发，有实际构建对话系统或 Agent 应用的经验； 3、对 VLM（视觉语言模型）、视频理解有一定了解，具备参与相关模型训练的意愿与基础； 4、具备较强的问题定位与工程落地能力； 5、加分项：有多模态、视频/图像生成方向经验；有 VLM、视频理解相关的训练或研究经验；熟悉主流 Agent 框架与 LLM 应用编排；有实时/流式交互系统经验，或顶会论文、显著开源贡献。
-
-## 百川智能
-
-### 【源点顶尖人才计划】AI Infra工程师-推理方向实习生
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：官方未提供
-- **项目 / 届别**：2027及以后在校生/可转正
-- **官方 Requisition**：1 个
-  - 【源点顶尖人才计划】AI Infra工程师-推理方向实习生 · https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987
-- **岗位核验证据**：https://www.shixiseng.com/intern/inn_twk7xh8p5afd?pcm=pc_SearchList
-
-**已核验岗位摘要**
-
-研发大模型推理引擎和高并发服务，优化KV Cache、调度、弹性伸缩、故障自愈与可观测体系。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
+> 第一方当前职位列表已确认岗位标题；职责 / 要求正文尚未稳定取得，不用二手来源补写。
 
 ## 百度
 
@@ -4224,7 +5444,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：百度当前校园招聘=2027届
 - **官方 Requisition**：1 个
-  - \`40a5d02a-6805-44c7-9d78-1cc943f11652\` · 2027AIDU-Agent应用全栈工程师(J99974) · 北京市 · https://talent.baidu.com/jobs/detail/GRADUATE/40a5d02a-6805-44c7-9d78-1cc943f11652
+  - `40a5d02a-6805-44c7-9d78-1cc943f11652` · 2027AIDU-Agent应用全栈工程师(J99974) · 北京市 · https://talent.baidu.com/jobs/detail/GRADUATE/40a5d02a-6805-44c7-9d78-1cc943f11652
 
 **官方职责**
 
@@ -4240,7 +5460,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海市
 - **项目 / 届别**：百度当前校园招聘=2027届
 - **官方 Requisition**：1 个
-  - \`700dac2e-46ca-49a6-bfec-f5a228c16b3d\` · 上海-Agent Harness 研发工程师(J100779) · 上海市 · https://talent.baidu.com/jobs/detail/GRADUATE/700dac2e-46ca-49a6-bfec-f5a228c16b3d
+  - `700dac2e-46ca-49a6-bfec-f5a228c16b3d` · 上海-Agent Harness 研发工程师(J100779) · 上海市 · https://talent.baidu.com/jobs/detail/GRADUATE/700dac2e-46ca-49a6-bfec-f5a228c16b3d
 
 **官方职责**
 
@@ -4256,7 +5476,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海市
 - **项目 / 届别**：百度当前校园招聘=2027届
 - **官方 Requisition**：1 个
-  - \`76a527f1-ddc9-4b52-aa11-7cd96e52f5d9\` · 上海-大模型研发工程师(J100835) · 上海市 · https://talent.baidu.com/jobs/detail/GRADUATE/76a527f1-ddc9-4b52-aa11-7cd96e52f5d9
+  - `76a527f1-ddc9-4b52-aa11-7cd96e52f5d9` · 上海-大模型研发工程师(J100835) · 上海市 · https://talent.baidu.com/jobs/detail/GRADUATE/76a527f1-ddc9-4b52-aa11-7cd96e52f5d9
 
 **官方职责**
 
@@ -4272,7 +5492,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：百度当前校园招聘=2027届
 - **官方 Requisition**：1 个
-  - \`78a17315-aef5-47f8-b9c8-31ccca2669bd\` · 北京-Agent Harness 研发工程师(J100815) · 北京市 · https://talent.baidu.com/jobs/detail/GRADUATE/78a17315-aef5-47f8-b9c8-31ccca2669bd
+  - `78a17315-aef5-47f8-b9c8-31ccca2669bd` · 北京-Agent Harness 研发工程师(J100815) · 北京市 · https://talent.baidu.com/jobs/detail/GRADUATE/78a17315-aef5-47f8-b9c8-31ccca2669bd
 
 **官方职责**
 
@@ -4288,7 +5508,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：百度当前校园招聘=2027届
 - **官方 Requisition**：1 个
-  - \`c8af44f4-9837-48bc-94f0-736c003b3180\` · 北京-大模型研发工程师(J100679) · 北京市 · https://talent.baidu.com/jobs/detail/GRADUATE/c8af44f4-9837-48bc-94f0-736c003b3180
+  - `c8af44f4-9837-48bc-94f0-736c003b3180` · 北京-大模型研发工程师(J100679) · 北京市 · https://talent.baidu.com/jobs/detail/GRADUATE/c8af44f4-9837-48bc-94f0-736c003b3180
 
 **官方职责**
 
@@ -4325,7 +5545,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`190850833\` · 2027届- AI应用开发工程师（AI-Coding方向）(J22541) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190850833
+  - `190850833` · 2027届- AI应用开发工程师（AI-Coding方向）(J22541) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190850833
 
 **官方职责**
 
@@ -4341,7 +5561,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`190851762\` · 2027届-AI Agent咨询设计工程师（北京）(J22568) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190851762
+  - `190851762` · 2027届-AI Agent咨询设计工程师（北京）(J22568) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190851762
 
 **官方职责**
 
@@ -4357,7 +5577,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`190850605\` · 2027届-AI Agent开发工程师（北京）(J22513) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190850605
+  - `190850605` · 2027届-AI Agent开发工程师（北京）(J22513) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190850605
 
 **官方职责**
 
@@ -4373,7 +5593,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：陕西省·西安市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`190850601\` · 2027届-AI Agent开发工程师（西安）(J22512) · 陕西省·西安市 · https://dcits.zhiye.com/campus/detail?jobAdId=190850601
+  - `190850601` · 2027届-AI Agent开发工程师（西安）(J22512) · 陕西省·西安市 · https://dcits.zhiye.com/campus/detail?jobAdId=190850601
 
 **官方职责**
 
@@ -4389,7 +5609,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：当前官方校园招聘 / 应届职位池
 - **官方 Requisition**：1 个
-  - \`190851786\` · 2027届-AI大模型工程师（政企方向）北京(J22570) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190851786
+  - `190851786` · 2027届-AI大模型工程师（政企方向）北京(J22570) · 北京市 · https://dcits.zhiye.com/campus/detail?jobAdId=190851786
 
 **官方职责**
 
@@ -4407,7 +5627,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190853644\` · AI Agent 应用研发工程师(J14187) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190853644
+  - `190853644` · AI Agent 应用研发工程师(J14187) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190853644
 
 **官方职责**
 
@@ -4423,7 +5643,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190862398\` · AI全栈开发工程师(J14446) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190862398
+  - `190862398` · AI全栈开发工程师(J14446) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190862398
 
 **官方职责**
 
@@ -4439,7 +5659,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市, 湖北省·武汉市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190842424\` · AI研发工程师(J13366) · 安徽省·合肥市, 湖北省·武汉市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190842424
+  - `190842424` · AI研发工程师(J13366) · 安徽省·合肥市, 湖北省·武汉市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190842424
 
 **官方职责**
 
@@ -4455,7 +5675,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190851775\` · AI研发工程师-大模型推理集群方向(J14142) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190851775
+  - `190851775` · AI研发工程师-大模型推理集群方向(J14142) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190851775
 
 **官方职责**
 
@@ -4471,7 +5691,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190842425\` · Agent研发工程师-Harness方向(J13347) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190842425
+  - `190842425` · Agent研发工程师-Harness方向(J13347) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190842425
 
 **官方职责**
 
@@ -4487,7 +5707,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市, 北京市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190847622\` · 【星火X计划】面向复杂任务的下一代Agent  Harness 关键技术研发(J13804) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847622
+  - `190847622` · 【星火X计划】面向复杂任务的下一代Agent  Harness 关键技术研发(J13804) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847622
 
 **官方职责**
 
@@ -4503,7 +5723,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市, 北京市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190847641\` · 【星火X计划】面向复杂任务的下一代Agent  Harness 关键技术研发(J13986) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847641
+  - `190847641` · 【星火X计划】面向复杂任务的下一代Agent  Harness 关键技术研发(J13986) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847641
 
 **官方职责**
 
@@ -4519,7 +5739,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市, 北京市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190847601\` · 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13800) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847601
+  - `190847601` · 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13800) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847601
 
 **官方职责**
 
@@ -4535,7 +5755,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市, 北京市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190847626\` · 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13988) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847626
+  - `190847626` · 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13988) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847626
 
 **官方职责**
 
@@ -4551,7 +5771,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市, 北京市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190847844\` · 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13998) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847844
+  - `190847844` · 【星火X计划】面向通用大模型智能体强化学习的Infra工程(J13998) · 安徽省·合肥市, 北京市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190847844
 
 **官方职责**
 
@@ -4567,7 +5787,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：安徽省·合肥市
 - **项目 / 届别**：科大讯飞官方校园招聘（2027届别由职位/项目正文复核）
 - **官方 Requisition**：1 个
-  - \`190861966\` · 行业AI工程师(J14411) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190861966
+  - `190861966` · 行业AI工程师(J14411) · 安徽省·合肥市 · https://iflytek.zhiye.com/campus/detail?jobAdId=190861966
 
 **官方职责**
 
@@ -4577,6 +5797,24 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 
 基本条件： 2027届本科及以上学历，计算机、软件工程、人工智能、信息管理等相关专业； 技术能力： 熟练掌握JavaScript / TypeScript与主流前端框架（React / Vue等），HTML / CSS基础扎实； 了解前后端协作，有完整项目、开源贡献或相关实习经历者优先； 软性素质： 对AI / Agent产品有浓厚兴趣，学习能力强，适应轮岗与快速迭代的工作节奏； 具备良好的沟通能力与客户服务意识，不畏惧与客户直接对话； 拥有极强的目标导向意识，对结果负责。
 
+## 米哈游
+
+### 平台研发-后端开发工程师（AI 应用方向）
+
+- **证据状态**：FULL_JD
+- **地点**：上海
+- **项目 / 届别**：米哈游官方校园招聘 / 校招渠道 channelDetailIds=1 / 正式岗 hireType=1
+- **官方 Requisition**：1 个
+  - `9250` · 平台研发-后端开发工程师（AI 应用方向） · 上海 · https://jobs.mihoyo.com/#/campus/position/9250
+
+**官方职责**
+
+1.面向用户增长业务，深度参与业务讨论，探索 AI 技术在各场景的落地机会，构建提升业务效率和效果的 AI 能力； 2.挖掘游戏玩家核心需求，与产品、运营团队协作，打造面向玩家的 AI 创新体验产品； 3.负责 Agent 应用的性能与稳定性优化，确保系统在高并发场景下的可靠运行； 4.设计并实现易用高效的 Agent 开发周边工具套件，提升研发效率，降低 Agent 技术的使用门槛，保障交付质量。
+
+**官方要求**
+
+1.计算机或相关专业本科及以上学历； 2.热爱计算机科学和互联网技术，至少熟练掌握一门后端编程语言，包括但不限于：C、C++、Go、Python、Java 等； 3.深度使用 AI 编程工具（如 Claude Code、Codex、Cursor、OpenCode 等），能够高效利用 AI 辅助开发； 4.具备扎实的后端工程能力，熟悉常用数据库设计与优化（MySQL/Redis 等），了解分布式系统基本原理，有服务接口设计与高可用实践经验； 5.具备较强的问题拆解、快速学习和实验迭代能力，能够在不确定的需求和技术环境中持续推进方案落地； 6.具备良好的跨团队协作能力，能够理解产品、业务等非工程角色的需求，并推动技术实现； 7.对大语言模型、Agent 技术的基本原理、应用方式和能力边界有一定理解。
+
 ## 网易
 
 ### AI Agent 全栈工程师（新）
@@ -4585,7 +5823,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`78373\` · AI Agent 全栈工程师（新） · https://hr.163.com/position/detail.html?id=78373
+  - `78373` · AI Agent 全栈工程师（新） · https://hr.163.com/position/detail.html?id=78373
 
 **官方职责**
 
@@ -4601,7 +5839,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`58561\` · AI Agent 开发工程师 · https://hr.163.com/position/detail.html?id=58561
+  - `58561` · AI Agent 开发工程师 · https://hr.163.com/position/detail.html?id=58561
 
 **官方职责**
 
@@ -4617,7 +5855,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75153\` · AI Agent开发工程师 · https://hr.163.com/position/detail.html?id=75153
+  - `75153` · AI Agent开发工程师 · https://hr.163.com/position/detail.html?id=75153
 
 **官方职责**
 
@@ -4633,7 +5871,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75409\` · AI 应用工程师（游戏策划客户端Agent方向） · https://hr.163.com/position/detail.html?id=75409
+  - `75409` · AI 应用工程师（游戏策划客户端Agent方向） · https://hr.163.com/position/detail.html?id=75409
 
 **官方职责**
 
@@ -4649,7 +5887,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`73898\` · AI 应用工程师（知识工程） · https://hr.163.com/position/detail.html?id=73898
+  - `73898` · AI 应用工程师（知识工程） · https://hr.163.com/position/detail.html?id=73898
 
 **官方职责**
 
@@ -4665,7 +5903,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`77470\` · AI 应用工程师（研发效能方向） · https://hr.163.com/position/detail.html?id=77470
+  - `77470` · AI 应用工程师（研发效能方向） · https://hr.163.com/position/detail.html?id=77470
 
 **官方职责**
 
@@ -4681,8 +5919,8 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：2 个
-  - \`77484\` · AI全栈开发工程师（暴雪） · https://hr.163.com/position/detail.html?id=77484
-  - \`78036\` · AI全栈开发工程师（暴雪） · https://hr.163.com/position/detail.html?id=78036
+  - `77484` · AI全栈开发工程师（暴雪） · https://hr.163.com/position/detail.html?id=77484
+  - `78036` · AI全栈开发工程师（暴雪） · https://hr.163.com/position/detail.html?id=78036
 
 **官方职责**
 
@@ -4698,7 +5936,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75871\` · AI平台运维工程师 · https://hr.163.com/position/detail.html?id=75871
+  - `75871` · AI平台运维工程师 · https://hr.163.com/position/detail.html?id=75871
 
 **官方职责**
 
@@ -4714,7 +5952,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`78697\` · AI应用工程师 · https://hr.163.com/position/detail.html?id=78697
+  - `78697` · AI应用工程师 · https://hr.163.com/position/detail.html?id=78697
 
 **官方职责**
 
@@ -4730,7 +5968,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`73896\` · AI应用工程师 (偏前端) · https://hr.163.com/position/detail.html?id=73896
+  - `73896` · AI应用工程师 (偏前端) · https://hr.163.com/position/detail.html?id=73896
 
 **官方职责**
 
@@ -4746,7 +5984,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`73897\` · AI应用工程师（偏后端） · https://hr.163.com/position/detail.html?id=73897
+  - `73897` · AI应用工程师（偏后端） · https://hr.163.com/position/detail.html?id=73897
 
 **官方职责**
 
@@ -4762,7 +6000,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75410\` · AI应用工程师（数据平台方向） · https://hr.163.com/position/detail.html?id=75410
+  - `75410` · AI应用工程师（数据平台方向） · https://hr.163.com/position/detail.html?id=75410
 
 **官方职责**
 
@@ -4778,7 +6016,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`74419\` · AI应用工程师（营销工具） · https://hr.163.com/position/detail.html?id=74419
+  - `74419` · AI应用工程师（营销工具） · https://hr.163.com/position/detail.html?id=74419
 
 **官方职责**
 
@@ -4794,7 +6032,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`76008\` · AI应用工程师（评测方向） · https://hr.163.com/position/detail.html?id=76008
+  - `76008` · AI应用工程师（评测方向） · https://hr.163.com/position/detail.html?id=76008
 
 **官方职责**
 
@@ -4810,7 +6048,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`76665\` · AI应用研发工程师（AI 代码图谱方向） · https://hr.163.com/position/detail.html?id=76665
+  - `76665` · AI应用研发工程师（AI 代码图谱方向） · https://hr.163.com/position/detail.html?id=76665
 
 **官方职责**
 
@@ -4826,7 +6064,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`77139\` · Agent工程师 · https://hr.163.com/position/detail.html?id=77139
+  - `77139` · Agent工程师 · https://hr.163.com/position/detail.html?id=77139
 
 **官方职责**
 
@@ -4842,7 +6080,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`76697\` · Agent应用开发工程师 · https://hr.163.com/position/detail.html?id=76697
+  - `76697` · Agent应用开发工程师 · https://hr.163.com/position/detail.html?id=76697
 
 **官方职责**
 
@@ -4858,7 +6096,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`78642\` · Agent开发工程师 · https://hr.163.com/position/detail.html?id=78642
+  - `78642` · Agent开发工程师 · https://hr.163.com/position/detail.html?id=78642
 
 **官方职责**
 
@@ -4874,7 +6112,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`77848\` · CW-Agent测试工程师 · https://hr.163.com/position/detail.html?id=77848
+  - `77848` · CW-Agent测试工程师 · https://hr.163.com/position/detail.html?id=77848
 
 **官方职责**
 
@@ -4890,7 +6128,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`77172\` · 云信-AI场景解决方案专家（FDE） · https://hr.163.com/position/detail.html?id=77172
+  - `77172` · 云信-AI场景解决方案专家（FDE） · https://hr.163.com/position/detail.html?id=77172
 
 **官方职责**
 
@@ -4906,7 +6144,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`74426\` · 云商-AI应用研发工程师 · https://hr.163.com/position/detail.html?id=74426
+  - `74426` · 云商-AI应用研发工程师 · https://hr.163.com/position/detail.html?id=74426
 
 **官方职责**
 
@@ -4922,7 +6160,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`78192\` · 云商-资深 Agent 平台全栈工程师 · https://hr.163.com/position/detail.html?id=78192
+  - `78192` · 云商-资深 Agent 平台全栈工程师 · https://hr.163.com/position/detail.html?id=78192
 
 **官方职责**
 
@@ -4938,7 +6176,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`78126\` · 云网络 AI 研发工程师（广州） · https://hr.163.com/position/detail.html?id=78126
+  - `78126` · 云网络 AI 研发工程师（广州） · https://hr.163.com/position/detail.html?id=78126
 
 **官方职责**
 
@@ -4954,7 +6192,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`77317\` · 全栈开发工程师（AI Coding Agent方向） · https://hr.163.com/position/detail.html?id=77317
+  - `77317` · 全栈开发工程师（AI Coding Agent方向） · https://hr.163.com/position/detail.html?id=77317
 
 **官方职责**
 
@@ -4970,7 +6208,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`77454\` · 工具Agent工程师 · https://hr.163.com/position/detail.html?id=77454
+  - `77454` · 工具Agent工程师 · https://hr.163.com/position/detail.html?id=77454
 
 **官方职责**
 
@@ -4986,7 +6224,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75712\` · 效能平台开发专家（龙虾Agent） · https://hr.163.com/position/detail.html?id=75712
+  - `75712` · 效能平台开发专家（龙虾Agent） · https://hr.163.com/position/detail.html?id=75712
 
 **官方职责**
 
@@ -5002,7 +6240,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`78857\` · 易盾-agent安全工程师 · https://hr.163.com/position/detail.html?id=78857
+  - `78857` · 易盾-agent安全工程师 · https://hr.163.com/position/detail.html?id=78857
 
 **官方职责**
 
@@ -5018,7 +6256,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`76120\` · 资深 AI 工程师（机器学习平台方向） · https://hr.163.com/position/detail.html?id=76120
+  - `76120` · 资深 AI 工程师（机器学习平台方向） · https://hr.163.com/position/detail.html?id=76120
 
 **官方职责**
 
@@ -5034,7 +6272,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75407\` · 资深AI应用工程师（AI Coding方向） · https://hr.163.com/position/detail.html?id=75407
+  - `75407` · 资深AI应用工程师（AI Coding方向） · https://hr.163.com/position/detail.html?id=75407
 
 **官方职责**
 
@@ -5050,7 +6288,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：官方未提供
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`75408\` · 资深AI应用工程师（代码质量方向） · https://hr.163.com/position/detail.html?id=75408
+  - `75408` · 资深AI应用工程师（代码质量方向） · https://hr.163.com/position/detail.html?id=75408
 
 **官方职责**
 
@@ -5062,13 +6300,29 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 
 ## 美团
 
+### AI Agent开发工程师
+
+- **证据状态**：FULL_JD
+- **地点**：北京市 / 上海市 / 成都市 / 深圳市
+- **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
+- **官方 Requisition**：1 个
+  - `4697317646` · AI Agent开发工程师 · 北京市 / 上海市 / 成都市 / 深圳市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4697317646&highlightType=campus
+
+**官方职责**
+
+1. 负责 AI Agent 应用的创新架构设计与核心模块研发，构建和优化 Agentic 交互逻辑与智能决策引擎。 2. 推动 AI Agent 的工程化落地，设计和实现高效的 Agentic 工作流，确保大语言模型及相关能力在实际业务场景中的有效应用与闭环。 3. 与产品及算法团队紧密协作，深度探索 AI Agent 的创新应用场景，包括但不限于自主 Agent (Autonomous Agents)、多智能体系统 (Multi-Agent Systems) 等，快速验证并落地前瞻性技术原型。 4. 跟踪 LLM、Agent 及相关AI前沿技术的发展，提出创新性解决方案并应用于实践。 5. 构建和探索面向 Agent 的评估体系与方法，推动复杂业务场景下 Agent 的持续迭代与性能优化。
+
+**官方要求**
+
+1. 对 AGI的未来充满热情，具备强烈的技术好奇心，致力于前沿技术的探索与创新。 2. 计算机科学或相关专业基础扎实，精通 Python /C++/Java 等至少一门主流编程语言，熟悉 Linux 开发环境及常用工具链。 3. 具备 AI Agent 及 LLM 工程化能力，精通 Prompt Engineering、RAG、Function Calling/Tool Binding，具备复杂 Agent（如任务规划、工具调用、记忆与学习机制）的设计、开发与调优经验。 4. 熟悉至少一种主流 Agent开发框架，并有实际项目应用经验。 5. 学习能力强，能快速跟进并应用Agent 领域的研究成果和开源技术，具备优秀的问题分析与解决能力。 具备以下条件优先 1. 具备复杂 Agent 系统（如 Multi-Agent 协作框架、Autonomous Agent）的设计、开发、调试和评估经验。 2. 有 LLM 微调（Fine-tuning）、量化、部署和推理优化经验，熟悉相关工具和框架。 3. 有高质量相关领域开源项目贡献或顶会论文发表者优先。 4. 具备全栈开发能力，能够独立完成 Agent 应用原型的快速构建与验证。 岗位亮点 1. 专注 AI Agent 领域的小而精技术团队，团队成员均为经验丰富的行业专家，共同探索 AGI 的前沿方向。 2. 浓厚的创业氛围与工程师文化，鼓励开放交流、快速迭代和大胆创新，为个人能力提升提供广阔平台。 3. 深度参与 AI Agent 和 LLM 应用的完整生命周期，从概念到落地，获得该领域的前沿认知和丰富的项目操盘与实践机会。 4. 有机会参与构建下一代Agentic AI 应用，解决富有挑战性的真实世界问题。
+
 ### AI全栈工程师
 
 - **证据状态**：FULL_JD
 - **地点**：北京市 / 上海市 / 成都市 / 深圳市
 - **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`4697320043\` · AI全栈工程师 · 北京市 / 上海市 / 成都市 / 深圳市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4697320043&highlightType=campus
+  - `4697320043` · AI全栈工程师 · 北京市 / 上海市 / 成都市 / 深圳市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4697320043&highlightType=campus
 
 **官方职责**
 
@@ -5084,7 +6338,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市 / 上海市
 - **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`4694862735\` · AI应用开发工程师 · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4694862735&highlightType=campus
+  - `4694862735` · AI应用开发工程师 · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4694862735&highlightType=campus
 
 **官方职责**
 
@@ -5100,7 +6354,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市 / 上海市
 - **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`4531792926\` · 【LongCat大模型人才校招】基座大模型工程架构专家 · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4531792926&highlightType=campus
+  - `4531792926` · 【LongCat大模型人才校招】基座大模型工程架构专家 · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4531792926&highlightType=campus
 
 **官方职责**
 
@@ -5116,7 +6370,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市 / 上海市
 - **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`4533842729\` · 【北斗】AI Agent工程师（大模型方向） · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4533842729&highlightType=campus
+  - `4533842729` · 【北斗】AI Agent工程师（大模型方向） · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4533842729&highlightType=campus
 
 **官方职责**
 
@@ -5132,7 +6386,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市
 - **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`4530632100\` · 【北斗】Agent 系统研发工程师 · 北京市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4530632100&highlightType=campus
+  - `4530632100` · 【北斗】Agent 系统研发工程师 · 北京市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4530632100&highlightType=campus
 
 **官方职责**
 
@@ -5148,7 +6402,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京市 / 上海市
 - **项目 / 届别**：美团官方当前校园招聘正式岗（届别需主库复核）
 - **官方 Requisition**：1 个
-  - \`4554795112\` · 【北斗】CodeAgent AI工程师 · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4554795112&highlightType=campus
+  - `4554795112` · 【北斗】CodeAgent AI工程师 · 北京市 / 上海市 · https://zhaopin.meituan.com/web/position/detail?jobUnionId=4554795112&highlightType=campus
 
 **官方职责**
 
@@ -5166,7 +6420,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：1,5
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`2404\` · AI Agent开发工程师 · 1,5 · https://talent.lenovo.com.cn/position/detail?id=2404
+  - `2404` · AI Agent开发工程师 · 1,5 · https://talent.lenovo.com.cn/position/detail?id=2404
 
 **JD 完整度**
 
@@ -5178,7 +6432,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：1,7,6
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`2403\` · AI全栈开发工程师 · 1,7,6 · https://talent.lenovo.com.cn/position/detail?id=2403
+  - `2403` · AI全栈开发工程师 · 1,7,6 · https://talent.lenovo.com.cn/position/detail?id=2403
 
 **JD 完整度**
 
@@ -5190,7 +6444,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：5,6,7,1,2
 - **项目 / 届别**：当前官方招聘池 / 校招池
 - **官方 Requisition**：1 个
-  - \`2351\` · AI应用开发工程师 · 5,6,7,1,2 · https://talent.lenovo.com.cn/position/detail?id=2351
+  - `2351` · AI应用开发工程师 · 5,6,7,1,2 · https://talent.lenovo.com.cn/position/detail?id=2351
 
 **JD 完整度**
 
@@ -5204,7 +6458,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：深圳总部 北京 上海 广州 成都 杭州
 - **项目 / 届别**：应届毕业生
 - **官方 Requisition**：1 个
-  - \`1282707398326592512\` · AI全栈工程师 · 深圳总部 北京 上海 广州 成都 杭州 · https://join.qq.com/post_detail.html?postId=1282707398326592512
+  - `1282707398326592512` · AI全栈工程师 · 深圳总部 北京 上海 广州 成都 杭州 · https://join.qq.com/post_detail.html?postId=1282707398326592512
 
 **官方职责**
 
@@ -5220,7 +6474,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：深圳总部 北京 上海 广州 成都
 - **项目 / 届别**：应届毕业生
 - **官方 Requisition**：1 个
-  - \`1282707395466077185\` · AI应用工程师 · 深圳总部 北京 上海 广州 成都 · https://join.qq.com/post_detail.html?postId=1282707395466077185
+  - `1282707395466077185` · AI应用工程师 · 深圳总部 北京 上海 广州 成都 · https://join.qq.com/post_detail.html?postId=1282707395466077185
 
 **官方职责**
 
@@ -5236,7 +6490,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：深圳总部 北京 上海 广州 成都
 - **项目 / 届别**：应届毕业生
 - **官方 Requisition**：1 个
-  - \`1282707395466077184\` · Agent开发工程师 · 深圳总部 北京 上海 广州 成都 · https://join.qq.com/post_detail.html?postId=1282707395466077184
+  - `1282707395466077184` · Agent开发工程师 · 深圳总部 北京 上海 广州 成都 · https://join.qq.com/post_detail.html?postId=1282707395466077184
 
 **官方职责**
 
@@ -5252,7 +6506,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：深圳总部
 - **项目 / 届别**：应届毕业生
 - **官方 Requisition**：1 个
-  - \`1284634302709277696\` · 财经线培训生-AI应用开发 · 深圳总部 · https://join.qq.com/post_detail.html?postId=1284634302709277696
+  - `1284634302709277696` · 财经线培训生-AI应用开发 · 深圳总部 · https://join.qq.com/post_detail.html?postId=1284634302709277696
 
 **官方职责**
 
@@ -5268,7 +6522,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：深圳总部
 - **项目 / 届别**：应届毕业生 青云计划
 - **官方 Requisition**：1 个
-  - \`1277774706287944733\` · 面向 Agent 应用开发的易用 API 抽象与平台化建设 · 深圳总部 · https://join.qq.com/post_detail.html?postId=1277774706287944733
+  - `1277774706287944733` · 面向 Agent 应用开发的易用 API 抽象与平台化建设 · 深圳总部 · https://join.qq.com/post_detail.html?postId=1277774706287944733
 
 **官方职责**
 
@@ -5305,7 +6559,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-10-31T16:00:00.000+00:00 2028-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260820011580870\` · AIMA/小灵-Agent 后端工程师 · 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011580870
+  - `260820011580870` · AIMA/小灵-Agent 后端工程师 · 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011580870
 
 **官方职责**
 
@@ -5321,7 +6575,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2026-10-31T16:00:00.000+00:00 2027-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260827011735026\` · FDE-前线部署工程师 · 北京, 杭州 · https://talent.antgroup.com/campus-position?positionId=260827011735026
+  - `260827011735026` · FDE-前线部署工程师 · 北京, 杭州 · https://talent.antgroup.com/campus-position?positionId=260827011735026
 
 **官方职责**
 
@@ -5337,7 +6591,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2026-10-31T16:00:00.000+00:00 2027-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260514010021153\` · 【蚂蚁星】AI 工程师- AI Feedback Loop-平台技术-27届 · 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=260514010021153
+  - `260514010021153` · 【蚂蚁星】AI 工程师- AI Feedback Loop-平台技术-27届 · 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=260514010021153
 
 **官方职责**
 
@@ -5353,7 +6607,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2026-10-31T16:00:00.000+00:00 2027-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`26051209944767\` · 【蚂蚁星】AI工程师-Agent Infra-灵光-27届 · 杭州 · https://talent.antgroup.com/campus-position?positionId=26051209944767
+  - `26051209944767` · 【蚂蚁星】AI工程师-Agent Infra-灵光-27届 · 杭州 · https://talent.antgroup.com/campus-position?positionId=26051209944767
 
 **官方职责**
 
@@ -5369,7 +6623,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2026-10-31T16:00:00.000+00:00 2027-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`26041709641072\` · 【蚂蚁星】Web3智能体架构师-蚂蚁数科-27届 · 北京, 杭州 · https://talent.antgroup.com/campus-position?positionId=26041709641072
+  - `26041709641072` · 【蚂蚁星】Web3智能体架构师-蚂蚁数科-27届 · 北京, 杭州 · https://talent.antgroup.com/campus-position?positionId=26041709641072
 
 **官方职责**
 
@@ -5385,7 +6639,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京, 上海, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-10-31T16:00:00.000+00:00 2028-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260820011582505\` · 投研投顾风控-Agent工程师（金融分析、量化交易方向） · 北京, 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011582505
+  - `260820011582505` · 投研投顾风控-Agent工程师（金融分析、量化交易方向） · 北京, 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011582505
 
 **官方职责**
 
@@ -5401,7 +6655,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-09-30T16:00:00.000+00:00 2030-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260723011057177\` · 支付宝事业群 - AI agent工程师 · 杭州 · https://talent.antgroup.com/campus-position?positionId=260723011057177
+  - `260723011057177` · 支付宝事业群 - AI agent工程师 · 杭州 · https://talent.antgroup.com/campus-position?positionId=260723011057177
 
 **官方职责**
 
@@ -5417,7 +6671,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海, 杭州, 成都
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2026-10-31T16:00:00.000+00:00 2030-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260710010862294\` · 支付宝事业群-智能体安全工程师 · 上海, 杭州, 成都 · https://talent.antgroup.com/campus-position?positionId=260710010862294
+  - `260710010862294` · 支付宝事业群-智能体安全工程师 · 上海, 杭州, 成都 · https://talent.antgroup.com/campus-position?positionId=260710010862294
 
 **官方职责**
 
@@ -5433,7 +6687,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-10-31T16:00:00.000+00:00 2028-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260820011578090\` · 蚁小保-Agent 后端工程师 · 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011578090
+  - `260820011578090` · 蚁小保-Agent 后端工程师 · 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011578090
 
 **官方职责**
 
@@ -5449,7 +6703,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-10-31T16:00:00.000+00:00 2028-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260820011578091\` · 蚁小保-Agent 评测工程师 · 北京, 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011578091
+  - `260820011578091` · 蚁小保-Agent 评测工程师 · 北京, 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011578091
 
 **官方职责**
 
@@ -5465,7 +6719,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京, 上海, 杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2026-10-31T16:00:00.000+00:00 2030-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`25122908188687\` · 蚂蚁数字科技-大模型Agent与Web3创新孵化研发工程师 · 北京, 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=25122908188687
+  - `25122908188687` · 蚂蚁数字科技-大模型Agent与Web3创新孵化研发工程师 · 北京, 上海, 杭州 · https://talent.antgroup.com/campus-position?positionId=25122908188687
 
 **官方职责**
 
@@ -5481,7 +6735,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-10-31T16:00:00.000+00:00 2028-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260820011582506\` · 财保平台架构-Agent研发工程师（AI Coding/AI Testing方向） · 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011582506
+  - `260820011582506` · 财保平台架构-Agent研发工程师（AI Coding/AI Testing方向） · 杭州 · https://talent.antgroup.com/campus-position?positionId=260820011582506
 
 **官方职责**
 
@@ -5497,7 +6751,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海
 - **项目 / 届别**：蚂蚁集团官方校园招聘 / 2027-10-31T16:00:00.000+00:00 2028-10-30T16:00:00.000+00:00
 - **官方 Requisition**：1 个
-  - \`260820011579363\` · 财保平台架构-Agent研发工程师（稳定性底盘方向） · 上海 · https://talent.antgroup.com/campus-position?positionId=260820011579363
+  - `260820011579363` · 财保平台架构-Agent研发工程师（稳定性底盘方向） · 上海 · https://talent.antgroup.com/campus-position?positionId=260820011579363
 
 **官方职责**
 
@@ -5526,92 +6780,39 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 
 > 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
 
-## 金蝶
-
-### AI agent开发工程师（深圳）
-
-- **证据状态**：FULL_JD
-- **地点**：深圳市
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：1 个
-  - \`a7497ec1-e1b7-4510-b62b-7e02a864fa79\` · AI agent开发工程师（深圳） · 深圳市 · https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN
-
-**官方职责**
-
-岗位职责 1、参与企业AI Agent产品的架构设计与核心模块开发，实现意图识别、任务拆解、工具调用与反思纠错闭环； 2、基于LangChain、LangGraph、CrewAI等主流框架构建多智能体协同应用，设计Agent的推理策略、记忆管理与工具编排方案； 3、深入理解行业、供应链、财务等业务场景，将业务痛点转化为Agent可执行的解决方案，推动AI Agent在真实业务中的落地应用； 4、搭建Agent的观测体系与全链路追踪，建立自动化评测与回测机制，持续优化Agent的任务完成率与输出质量； 5、封装标准化SDK/API，构建Agent能力组件库，沉淀可复用的业务最佳实践； 6、跟踪业界Agent技术进展（如ReAct、CoT、Plan-and-Execute等范式），参与技术选型论证与创新方案输出。
-
-**官方要求**
-
-任职要求 1、2027届本科及以上，计算机科学、人工智能、数学、统计学等相关专业； 2、扎实的计算机基础，熟悉数据结构、算法、操作系统等核心知识，熟练掌握至少一门编程语言（Python/Java/C++）； 3、了解LangChain、LangGraph、CrewAI等主流Agent开发框架，有实际项目使用经验者优； 4、对大语言模型、智能体技术有深入了解，了解Prompt Engineering、RAG、Function Calling等核心概念； 5、具备较强的问题拆解与工程落地能力，能通过可控变量验证假设； 6、具备良好的逻辑思维、沟通表达和团队协作能力。
-
-### 应用开发工程师-FDE（深圳）
-
-- **证据状态**：FULL_JD
-- **地点**：深圳市
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：1 个
-  - \`dbc1760a-3f35-4fd4-8eb7-464a72a18c19\` · 应用开发工程师-FDE（深圳） · 深圳市 · https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN
-
-**官方职责**
-
-岗位职责 1、深入企业客户业务现场，围绕财务、供应链、生产制造等核心ERP场景，识别AI落地场景，主导或参与AI智能体应用方案的设计与交付； 2、基于金蝶灵基企业AI平台能力（包含：Agent开发平台、Coding、RAG等），快速构建AI智能体应用原型，推动方案从验证到生产环境落地； 3、面向客户业务部门及一线交付团队提供AI技术赋能，包括方案演示、技术培训与最佳实践沉淀，帮助客户建立对AI能力的正确认知与使用习惯； 4、承担必要的定制开发、系统集成与接口对接工作，编写方案设计、技术说明等项目文档，保障交付质量与可追溯性； 5、跟踪大模型与AI应用领域的技术演进，结合企业级场景持续探索新的落地模式，反哺产品与方案迭代。
-
-**官方要求**
-
-任职要求 1、2027届应届毕业生，本科及以上， 计算机科学与技术、软件工程、人工智能、数据科学、信息管理与信息系统、工业工程等相关专业，具备"技术+业务"复合兴趣者优先； 2、具备至少一门编程语言（Python / Java / TypeScript等）的工程实践能力，能独立完成中小型应用开发； 3、了解主流AI应用开发范式，对RAG、Agent编排、Prompt Engineering、MCP有基本认知；对多智能体协作、工作流状态管理、模型评估与可观测性等进阶议题有了解或实践者显著加分；有实际项目、竞赛或开源贡献经验者优先； 4、了解关系型数据库基本原理，有MySQL、PostgreSQL、Oracle等任一数据库的使用经验； 5、对企业级应用架构（微服务、API集成、低代码平台）有基本了解者加分，不作硬性要求； 6、对 AI 技术在企业级场景的落地应用有浓厚兴趣，富有创新意识，善于思考，具有优秀的解决问题能力、良好的组织沟通能力及团队协作精神。
-
 ## 阶跃星辰
 
-### AI Agent工程师
+### 27届-Agent 开发工程师（企业信息化方向）
 
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：北京
-- **项目 / 届别**：当前官方招聘；公司同时开放2027校园招聘
+- **证据状态**：FULL_JD
+- **地点**：徐汇区
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - AI Agent工程师 · 北京 · https://app.mokahr.com/campus-recruitment/step/94905
-- **岗位核验证据**：https://mqjob.cn/jobs/8815
+  - `7ba6e0f8-f2dc-47d9-9101-dd2f1c055729` · 27届-Agent 开发工程师（企业信息化方向） · 徐汇区 · https://app.mokahr.com/campus-recruitment/step/94905
 
-**已核验岗位摘要**
+**官方职责**
 
-设计Agent任务规划、工具选择、多步推理、记忆与上下文和多Agent协作机制，并建设端到端评测与失败分析体系。
+【岗位描述】 1. 参与公司财务、采购、人事、ERP 等核心企业级系统及 AI 应用的建设，逐步熟悉相关业务流程与数据模型，基于业务理解参与系统设计与开发； 2. 参与 AI Agent 应用的设计与开发，探索将大模型、RAG、工具调用、多智能体协作等能力与实际业务场景结合落地； 3. 参与 Agent 核心能力建设，包括 Prompt 工程、上下文管理、工具/插件集成、任务规划与编排、记忆机制等模块的实现与优化； 4. 积极使用 AI 编程工具，以 vibe coding 方式高效推进开发，在实践中兼顾交付效率与代码质量； 5. 参与系统前后端开发与性能优化，在团队指导下持续提升工程能力与系统稳定性； 6. 与产品、业务、数据团队紧密协作，推动需求高效交付。 【任职资格】 1. 计算机相关专业本科及以上学历，2026年9月-2027年6月期间毕业（含海外同届）； 2. 具备扎实的编程基础与工程能力，熟悉以下技术栈中的一项或多项：后端：Python / Go / Node.js，具备基本的 API 设计与数据库设计能力；前端：熟悉 React 及现代前端工程化体系者优先； 3. 具备良好的学习能力、逻辑思维与主动性，对 AI 应用方向有浓厚兴趣并愿意持续投入； 4. 对 AI Agent、大模型应用有实践热情，有相关课程项目、竞赛、开源或实习经历者优先； 5. 熟悉 AI Agent 的基本原理与关键技术，对以下一项或多项有实践或深入了解：大模型调用与工程化：主流大模型 API（OpenAI 兼容接口、Claude 等）的调用、Prompt 工程、结构化输出；工具调用与集成：Function Calling、MCP（Model Context Protocol）、Agent 与外部系统 / API 的对接；RAG（检索增强生成）：文档处理、向量检索、检索召回优化、与大模型结合的工程实践；Agent 编排与框架：了解 LangChain / LangGraph / LlamaIndex 等主流框架，或对任务规划、多智能体协作、工作流编排有认知；上下文与记忆管理：长上下文处理、会话记忆、状态管理等机制； 6. 在 vibe coding（AI 辅助编程） 方面有一定实践，能熟练借助 AI 编程工具（如 Claude Code、Cursor 等）提升开发效率与质量。
 
-**JD 完整度**
+**官方要求**
 
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
+官方未返回任职要求。
 
-### Agent基建工程师
+### 27届-Agent研发工程师
 
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：北京 / 上海
-- **项目 / 届别**：当前官方招聘；公司同时开放2027校园招聘
-- **官方 Requisition**：1 个
-  - Agent基建工程师 · 北京 / 上海 · https://app.mokahr.com/campus-recruitment/step/94905
-- **岗位核验证据**：https://mqjob.cn/jobs/16483
-
-**已核验岗位摘要**
-
-建设Agent训练与推理框架、执行沙箱和实验平台，覆盖代码执行、工具调用、调度、网络、存储、数据流水线和评测基础设施。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-### Coding Agent 全栈工程师
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
+- **证据状态**：FULL_JD
 - **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘；公司同时开放2027校园招聘
+- **项目 / 届别**：当前官方校园招聘
 - **官方 Requisition**：1 个
-  - Coding Agent 全栈工程师 · https://app.mokahr.com/campus-recruitment/step/94905
-- **岗位核验证据**：https://map.go2ready.com/team/stepfun
+  - `78c46c2d-1fd3-44c1-8c0b-4ba1f36dc9b8` · 27届-Agent研发工程师 · https://app.mokahr.com/campus-recruitment/step/94905
 
-**已核验岗位摘要**
+**官方职责**
 
-负责AI Coding/Coding Agent产品与全栈开发，定义真实研发场景Workflow、交互与任务执行逻辑。
+【岗位描述】 1. 负责面向各类业务场景的企业级AI Agent 系统建设，打造具备信息检索、分析推理、报告生成能力的智能助手； 2. 负责 AI Agent核心能力建设，包括意图理解、知识库管理、会话管理、记忆系统等，支撑多轮对话和复杂需求落地； 3. 跟进 AI Agent前沿技术，推动Agent系统工程化建设，包括性能优化、异常处理等，保障整体保障系统的稳定性、可观测性和可扩展性。 【岗位要求】 1. 本科及以上学历，计算机等相关专业； 2. 扎实的编程基础，熟悉掌握 Golang/Python等编程语言，有良好的代码风格和工程习惯； 3. 对技术有热情，有钻研精神，能快速学习新技术并在工程项目中进行落地应用，良好的沟通和团队协作能力。
 
-**JD 完整度**
+**官方要求**
 
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
+官方未返回任职要求。
 
 ## 阿里巴巴
 
@@ -5621,7 +6822,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907740112\` · AI Agent 应用研发&系统架构-阿里星/A Star · 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907740112
+  - `199907740112` · AI Agent 应用研发&系统架构-阿里星/A Star · 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907740112
 
 **官方职责**
 
@@ -5637,7 +6838,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州 / 上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907720097\` · AI Agent 研发工程师-决策方向 · 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720097
+  - `199907720097` · AI Agent 研发工程师-决策方向 · 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720097
 
 **官方职责**
 
@@ -5653,7 +6854,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907700043\` · AI Agent基础设施&系统架构-阿里星/A Star · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907700043
+  - `199907700043` · AI Agent基础设施&系统架构-阿里星/A Star · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907700043
 
 **官方职责**
 
@@ -5669,7 +6870,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907780033\` · AI Agent平台开发工程师 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780033
+  - `199907780033` · AI Agent平台开发工程师 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780033
 
 **官方职责**
 
@@ -5685,7 +6886,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州 / 上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907700004\` · AI Agent应用开发工程师 · 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907700004
+  - `199907700004` · AI Agent应用开发工程师 · 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907700004
 
 **官方职责**
 
@@ -5701,7 +6902,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907780102\` · AI Agent应用研发&平台架构（AIGC）-阿里星/A Star · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780102
+  - `199907780102` · AI Agent应用研发&平台架构（AIGC）-阿里星/A Star · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780102
 
 **官方职责**
 
@@ -5717,7 +6918,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907720110\` · AI Agent应用研发&系统架构（搜索）-阿里星/A Star · 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720110
+  - `199907720110` · AI Agent应用研发&系统架构（搜索）-阿里星/A Star · 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720110
 
 **官方职责**
 
@@ -5733,7 +6934,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 广州 / 杭州 / 上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907620027\` · AI Agent研发工程师 · 北京 / 广州 / 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907620027
+  - `199907620027` · AI Agent研发工程师 · 北京 / 广州 / 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907620027
 
 **官方职责**
 
@@ -5749,7 +6950,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907660032\` · AI Devops工程师 · 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907660032
+  - `199907660032` · AI Devops工程师 · 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907660032
 
 **官方职责**
 
@@ -5765,7 +6966,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907660055\` · AI Infra研发工程师-AI Agent · 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907660055
+  - `199907660055` · AI Infra研发工程师-AI Agent · 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907660055
 
 **官方职责**
 
@@ -5781,7 +6982,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州 / 上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907780019\` · AI agent平台研发工程师 · 北京 / 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780019
+  - `199907780019` · AI agent平台研发工程师 · 北京 / 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780019
 
 **官方职责**
 
@@ -5797,7 +6998,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州 / 深圳
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907720060\` · AI全栈开发工程师 · 北京 / 杭州 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720060
+  - `199907720060` · AI全栈开发工程师 · 北京 / 杭州 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720060
 
 **官方职责**
 
@@ -5813,7 +7014,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州 / 上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907840004\` · AI全栈开发工程师 -大数据方向 · 北京 / 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907840004
+  - `199907840004` · AI全栈开发工程师 -大数据方向 · 北京 / 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907840004
 
 **官方职责**
 
@@ -5829,7 +7030,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 广州 / 杭州 / 上海 / 深圳
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907640011\` · AI平台研发工程师 · 北京 / 广州 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907640011
+  - `199907640011` · AI平台研发工程师 · 北京 / 广州 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907640011
 
 **官方职责**
 
@@ -5845,7 +7046,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 广州 / 杭州 / 上海 / 深圳
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907620013\` · AI应用研发工程师 · 北京 / 广州 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907620013
+  - `199907620013` · AI应用研发工程师 · 北京 / 广州 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907620013
 
 **官方职责**
 
@@ -5861,7 +7062,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907740023\` · AI研发工程师-商业化风控 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907740023
+  - `199907740023` · AI研发工程师-商业化风控 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907740023
 
 **官方职责**
 
@@ -5877,7 +7078,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 广州 / 杭州 / 上海 / 深圳
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907640058\` · Agent Infra工程师 · 北京 / 广州 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907640058
+  - `199907640058` · Agent Infra工程师 · 北京 / 广州 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907640058
 
 **官方职责**
 
@@ -5893,7 +7094,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州 / 上海 / 深圳
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907780012\` · Agent Infra操作系统研发工程师 · 北京 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780012
+  - `199907780012` · Agent Infra操作系统研发工程师 · 北京 / 杭州 / 上海 / 深圳 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780012
 
 **官方职责**
 
@@ -5909,7 +7110,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：杭州 / 上海
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199908480011\` · Agent Loop/Runtime智能系统专家-阿里星 · 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199908480011
+  - `199908480011` · Agent Loop/Runtime智能系统专家-阿里星 · 杭州 / 上海 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199908480011
 
 **官方职责**
 
@@ -5925,7 +7126,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907720096\` · RAG引擎研发工程师 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720096
+  - `199907720096` · RAG引擎研发工程师 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720096
 
 **官方职责**
 
@@ -5941,7 +7142,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 广州 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907720102\` · 大模型应用开发工程师 · 北京 / 广州 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720102
+  - `199907720102` · 大模型应用开发工程师 · 北京 / 广州 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720102
 
 **官方职责**
 
@@ -5957,7 +7158,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907780017\` · 安全AI研发工程师 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780017
+  - `199907780017` · 安全AI研发工程师 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907780017
 
 **官方职责**
 
@@ -5973,7 +7174,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907720119\` · 构建基于AI模型和Agentic架构的智能自主化Kubernetes容器服务-阿里星/A Star · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720119
+  - `199907720119` · 构建基于AI模型和Agentic架构的智能自主化Kubernetes容器服务-阿里星/A Star · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907720119
 
 **官方职责**
 
@@ -5989,7 +7190,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：北京 / 杭州
 - **项目 / 届别**：阿里官方校园招聘 batchId=100000760001（2027归属需复核）
 - **官方 Requisition**：1 个
-  - \`199907680055\` · 高性能GPU算子生成 Agent 研发（AI for AI）-阿里星 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907680055
+  - `199907680055` · 高性能GPU算子生成 Agent 研发（AI for AI）-阿里星 · 北京 / 杭州 · https://campus-talent.alibaba.com/campus/position-detail?positionId=199907680055
 
 **官方职责**
 
@@ -5999,78 +7200,6 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 
 1. 计算机科学、电子工程、人工智能或相关领域博士研究生。 2. 具备大语言模型及 Agent 系统开发经验，熟悉 Prompt Engineering、模型评测、RAG/向量检索及常见 Agent 框架；有代码生成相关项目经验者优先。 3. 熟悉模型后训练方法，具备 SFT、RLHF/RLAIF、DPO/PPO/GRPO 等一种或多种方法的实践经验，能够围绕业务目标构建训练数据、奖励机制与评测体系。 4. 熟悉 AI 芯片架构（如 GPU/NPU/TPU），掌握 CUDA、Triton、OpenCL、MLIR、TVM 等至少一种编程或优化技术。 5. 具备多智能体系统开发经验，熟悉任务规划、工具调用、反思优化、分布式协作等机制；有 AutoGen、LangGraph、MetaGPT 等框架经验者优先。 6. 扎实的编程能力，熟练使用 Python/C++，具备良好的系统设计与工程落地能力。 7. 具备编译原理、高性能计算（HPC）、算子开发、自动代码优化或 AI 编译器相关经验者优先。 8. 有训练数据构建、自动评测、模型迭代闭环建设经验者优先；有芯片软件栈、编译器或算子库实际落地经验者优先。
 
-## 零一万物/01.AI
-
-### AI 测试工程师
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：北京
-- **项目 / 届别**：当前官方招聘
-- **官方 Requisition**：1 个
-  - AI 测试工程师 · 北京 · https://01ai.jobs.feishu.cn/index/position/7686751993624807722/detail
-- **岗位核验证据**：https://01ai.jobs.feishu.cn/index/position/7686751993624807722/detail
-
-**已核验岗位摘要**
-
-负责企业Agent项目测试与评测交付，主导B端评测体系，并参与评测Harness和通用评测平台建设。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-### 大模型应用开发专家
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘
-- **官方 Requisition**：1 个
-  - 大模型应用开发专家 · https://01ai.jobs.feishu.cn/index/position/7611016949842135338/detail
-- **岗位核验证据**：https://01ai.jobs.feishu.cn/
-
-**已核验岗位摘要**
-
-负责大模型复杂应用系统架构、Python/Java后端、LangChain/LlamaIndex集成与AI工程化落地。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-## 面壁智能
-
-### Agentic Engineering
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：官方未提供
-- **项目 / 届别**：2027/2028/2029顶尖人才实习
-- **官方 Requisition**：1 个
-  - Agentic Engineering · https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH
-- **岗位核验证据**：https://www.shushuqiuzhi.com/article/239697
-
-**已核验岗位摘要**
-
-面壁智能顶尖人才招聘中的Agentic Engineering工程方向，官方校园飞书入口持续维护。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
-### 大模型Agent应用开发工程师
-
-- **证据状态**：ROLE_VERIFIED_CURRENT_SOURCE
-- **地点**：北京
-- **项目 / 届别**：当前官方招聘
-- **官方 Requisition**：1 个
-  - 大模型Agent应用开发工程师 · 北京 · https://www.modelbest.cn/
-- **岗位核验证据**：https://datahub.ac.cn/ai-jobs/topics/ai-application-engineer-jobs.html
-
-**已核验岗位摘要**
-
-面向垂直领域研发大模型应用，基于Agent/Multi-Agent与RAG构建代码框架并推动真实场景落地。
-
-**JD 完整度**
-
-> 第一方职责 / 要求正文仍待回填；该摘要不冒充第一方完整 JD。
-
 ## 顺丰
 
 ### AI全栈研发工程师（顺丰科技）
@@ -6079,7 +7208,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：深圳市
 - **项目 / 届别**：顺丰官方校园招聘（届别待复核）
 - **官方 Requisition**：1 个
-  - \`2246\` · AI全栈研发工程师（顺丰科技） · 深圳市 · https://campus.sf-express.com/#/postDetail/2246
+  - `2246` · AI全栈研发工程师（顺丰科技） · 深圳市 · https://campus.sf-express.com/#/postDetail/2246
 
 **官方职责**
 
@@ -6095,7 +7224,7 @@ Kimi当前校园招聘面向2027/2028届，岗位池包含Agent Development Engi
 - **地点**：武汉市,深圳市
 - **项目 / 届别**：顺丰官方校园招聘（届别待复核）
 - **官方 Requisition**：1 个
-  - \`2239\` · AI开发工程师（顺丰科技） · 武汉市,深圳市 · https://campus.sf-express.com/#/postDetail/2239
+  - `2239` · AI开发工程师（顺丰科技） · 武汉市,深圳市 · https://campus.sf-express.com/#/postDetail/2239
 
 **官方职责**
 
