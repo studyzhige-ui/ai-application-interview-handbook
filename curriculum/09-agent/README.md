@@ -141,6 +141,14 @@ Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assemb
 
 Codex 学习文档固定到源码快照 `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`，实现事实以该快照为准；后续源码升级先比较变化，再更新教材，不把不同版本的行为混成一套系统。
 
+- [Claude Code｜系统总览](products/claude-code/README.md)
+  - [Context Lifecycle：REPL / Query Loop、Prompt Cache、多层 Compaction 与 Resume](products/claude-code/01-context-lifecycle.md)
+  - [Memory Lifecycle：CLAUDE.md、Session Memory、Auto Memory 与相关记忆召回](products/claude-code/02-memory-lifecycle.md)
+  - [Tool Lifecycle：Tool Search、MCP、Skills、Permission、Sandbox 与回填](products/claude-code/03-tool-lifecycle.md)
+  - [Engineering & Evaluation：Transcript、Subagent、Retry、规模化与评测](products/claude-code/04-engineering-evaluation.md)
+
+Claude Code 学习文档固定到私有源码镜像 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。该镜像没有可核验的官方 release 元数据，因此文档只陈述固定镜像中能由源码和调用链确认的事实；被引用但未包含在镜像中的内部模块只描述可见 contract，不推测缺失实现。
+
 源码产品层与 `docs/01–24` 的关系是：
 
 ```text
@@ -219,7 +227,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 ```text
 docs/      ✅ 01–24 连续
-products/  ✅ Codex 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
+products/  ✅ Codex + Claude Code 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
