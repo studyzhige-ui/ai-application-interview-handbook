@@ -1,8 +1,8 @@
 # 当前官方校招 / 应届｜非算法 AI 应用 & Agent 工程 JD 全量结果
 
-> Generated: **2026-09-20 17:01 UTC**
-> 固定长期扫描公司 **69** 家；当前有目标岗位 **42** 家；完整枚举确认 0 岗 **17** 家；仍待完整枚举 **10** 家。
-> 其中 **447** 个抓到第一方 JD 正文，**4** 个仅能确认第一方职位标题，**6** 个已核验岗位存在并固定官方入口、正文仍待补齐。
+> Generated: **2026-09-20 22:43 UTC**
+> 固定长期扫描公司 **69** 家；当前有目标岗位 **43** 家；完整枚举确认 0 岗 **14** 家；仍待完整枚举 **12** 家。
+> 其中 **455** 个抓到第一方 JD 正文，**5** 个仅能确认第一方职位标题，**6** 个已核验岗位存在并固定官方入口、正文仍待补齐。
 
 ## 1. 公司结果总表
 
@@ -41,33 +41,33 @@
 | 商汤科技 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://hr-jobs.sensetime.com/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site | https://hr-jobs.sensetime.com/edu/ | HAS_TARGET_JDS | 6 | 6 | 0 |
 | 生数科技 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://shengshu.jobs.feishu.cn/index/ | HAS_TARGET_JDS | 4 | 4 | 0 |
 | 硅基流动 | ENUMERATED_ZERO_MATCHES | https://app.mokahr.com/su/Idzsq | ZERO_TARGET_JDS | 0 | 0 | 0 |
-| 面壁智能 | ENUMERATED_ZERO_MATCHES | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 面壁智能 | BLOCKED；Error: company enumeration timed out after 90000ms | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | Manus | ENUMERATED_ZERO_MATCHES | https://jobs.ashbyhq.com/manusai | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 无问芯穹/Infini-AI | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://infinigence.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site | https://infinigence.jobs.feishu.cn/088717 | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 昆仑万维/天工 | ENUMERATED_ZERO_MATCHES | https://jobs.kunlun.com/459522/position/list | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 昆仑万维/天工 | BLOCKED；Error: company enumeration timed out after 90000ms | https://jobs.kunlun.com/459522/position/list | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | Shopee | ENUMERATED_WITH_MATCHES | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | HAS_TARGET_JDS | 2 | 2 | 0 |
 | 联想 | ENUMERATED_WITH_MATCHES | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | HAS_TARGET_JDS | 3 | 0 | 3 |
 | 蔚来 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://nio.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://www.nio.cn/careers/jobs\ | https://nio.jobs.feishu.cn/campus/ | HAS_TARGET_JDS | 19 | 19 | 0 |
-| 顺丰 | ENUMERATED_WITH_MATCHES | https://campus.sf-express.com/positionList | HAS_TARGET_JDS | 2 | 2 | 0 |
+| 顺丰 | ENUMERATED_WITH_MATCHES | https://campus.sf-express.com/positionList | HAS_TARGET_JDS | 5 | 5 | 0 |
 | 米哈游 | ENUMERATED_WITH_MATCHES | https://jobs.mihoyo.com/#/campus/position | HAS_TARGET_JDS | 1 | 1 | 0 |
 | 大疆 DJI | ENUMERATED_ZERO_MATCHES | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | HAS_TARGET_JDS | 3 | 0 | 0 |
 | 度小满 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://campus.duxiaoman.com/ | HAS_TARGET_JDS | 5 | 5 | 0 |
-| 海康威视 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 海康威视 | BLOCKED；IndexError: list index out of range | https://mcampus.hikvision.com/#/position?activeTab=0 | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | 中兴通讯 | ENUMERATED_WITH_MATCHES | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | HAS_TARGET_JDS | 2 | 2 | 0 |
 | 深信服 | ENUMERATED_WITH_MATCHES | https://hr.sangfor.com/schoolRecruitment | HAS_TARGET_JDS | 1 | 1 | 0 |
 | 金蝶 | ENUMERATED_ZERO_MATCHES | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | ZERO_TARGET_JDS | 0 | 0 | 0 |
-| 用友 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 用友 | ENUMERATED_ZERO_MATCHES | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 美图 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://hr.meitu.com/ | NEEDS_ENUMERATION | 0 | 0 | 0 |
 | SHEIN | ENUMERATED_ZERO_MATCHES | https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 安克创新 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://career.anker.com.cn/universities/recruitment/new/ | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 大华股份 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://job.dahuatech.com/ | HAS_TARGET_JDS | 4 | 4 | 0 |
+| 大华股份 | ENUMERATED_ZERO_MATCHES | https://job.dahuatech.com/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 吉利控股 | ENUMERATED_WITH_MATCHES | https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList | HAS_TARGET_JDS | 9 | 9 | 0 |
 | 小鹏集团 | BLOCKED；HTTPError: 405 Client Error: Method Not Allowed for url: https://xiaopeng.jobs.feishu.cn/api/v1/search/job/posts \| discovered: /people-suite/next-sdk/api/notice?appId=ATS-X-SaaS-Recruitment-Site ; https://xiaopeng.jobs.feishu.cn/307999\ ; https://xiaopeng.jobs.feishu.cn/398875\ ; https://xiaopeng.jobs.feishu.cn/445142\ ; https://xiaopeng.jobs.feishu.cn/958231\ ; https://xiaopeng.jobs.feishu.cn/index\ | https://xiaopeng.jobs.feishu.cn/campus | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 理想汽车 | ENUMERATED_ZERO_MATCHES | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 理想汽车 | ENUMERATED_WITH_MATCHES | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | HAS_TARGET_JDS | 1 | 0 | 1 |
 | 海尔集团 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://maker.haier.net/client/campus/activityindex.html | HAS_TARGET_JDS | 1 | 0 | 0 |
 | 美的集团 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://newpower.midea.com/ | NEEDS_ENUMERATION | 0 | 0 | 0 |
-| 比亚迪 | ENUMERATED_ZERO_MATCHES | https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ= | ZERO_TARGET_JDS | 0 | 0 | 0 |
-| 同花顺 | ENUMERATED_ZERO_MATCHES | https://campus.10jqka.com.cn/ | ZERO_TARGET_JDS | 0 | 0 | 0 |
+| 比亚迪 | BLOCKED；ReadTimeout: HTTPSConnectionPool(host='job.byd.com', port=443): Read timed out. (read timeout=12) | https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ= | NEEDS_ENUMERATION | 0 | 0 | 0 |
+| 同花顺 | BLOCKED；官方校招入口尚未完成可靠全量枚举；不能判定 0 岗位 | https://campus.10jqka.com.cn/ | HAS_TARGET_JDS | 9 | 9 | 0 |
 | 麒麟软件 | ENUMERATED_ZERO_MATCHES | https://kylinos.zhiye.com/campus/jobs | ZERO_TARGET_JDS | 0 | 0 | 0 |
 | 普渡机器人 | ENUMERATED_WITH_MATCHES | https://pudutech.zhiye.com/campus/jobs | HAS_TARGET_JDS | 1 | 1 | 0 |
 | 广联达 | ENUMERATED_WITH_MATCHES | https://app.mokahr.com/campus-recruitment/glodon/91966 | HAS_TARGET_JDS | 1 | 1 | 0 |
@@ -934,6 +934,153 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 
 官方未返回任职要求。
 
+## 同花顺
+
+### AI Agent应用开发工程师
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘
+- **官方 Requisition**：1 个
+  - `2196` · AI Agent应用开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+1. 有ACM获奖经历。对用AI解决软工的问题极其感兴趣的人，追前沿，参与AI软工顶会。 2. 好学校CS专业，具备扎实的计算机基础(数学、数据结构、算法、操作系统、网络)。熟练阅读英文技术文档。 3. 专业技能：具备 AI Agent 搭建经验，能跟进 AI 领域前沿论文并动手复现。至少熟练使用AI Coding工具中一个。 4. 了解大模型训练流程，可协同算法团队完成模型训练、调优与上线。
+
+### AI agent开发工程师-ACMer
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 【27届校招人才计划】Agent算法工程师 / 校园招聘网申入口
+- **官方 Requisition**：1 个
+  - `2200` · AI agent开发工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+1.熟悉算法基本理论，具备扎实良好的算法和数学基础,有ACM奖项最佳; 2.熟悉自然语言处理/AIGC 等相关领域的知识与技能; 3.能够从复杂的业务场景中进行算法选型、算法优化以及不断提升效果; 4.对 AIGC、特别是 LLM 相关技术有浓厚的兴趣，强烈希望能够参与到这一轮技术变革;在智能问答、对话系统、LLMs等领域有实践经验的优先;
+
+### AI应用开发工程师-ACMer
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 校园招聘网申入口
+- **官方 Requisition**：1 个
+  - `459` · AI应用开发工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法、操作系统、网络）。 具有自驱与产品意识，擅长跨团队协作与沟通，结果导向与工程化思维并重。 熟练阅读英文技术文档，具备良好的问题定位与故障排查能力。
+
+### AI应用开发工程师-B2B-ACMer
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 校园招聘网申入口
+- **官方 Requisition**：1 个
+  - `509` · AI应用开发工程师-B2B-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+icpc/ccpc获奖经历，具备扎实的计算机基础（数据结构、算法、操作系统、网络）。 具有自驱与产品意识，擅长跨团队协作与沟通，结果导向与工程化思维并重。 对前沿技术有热情与探索力，敢于挑战边界； 熟练使用主流 ai 编程助手（如 cursor、claude code等），有团队规范制定经验更佳
+
+### AI开发工程师
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 校园招聘网申入口
+- **官方 Requisition**：2 个
+  - `2156` · AI开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+  - `2193` · AI开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+1. 硕士及以上学历，计算机、人工智能等相关专业，2027届毕业生优先 2. 精通Python编程，了解TypeScript或Java，深入理解LLM基本原理及Agent设计模式 3. 熟悉LangChain/LlamaIndex/AutoGen等主流Agent框架，有相关项目开发经验优先 4. 了解OpenClaw/Playwright等自动化工具，熟悉RAG系统及向量数据库（Milvus/Qdrant）开发经验者优先
+
+### AI开发工程师（海外）-ACM
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 校园招聘网申入口
+- **官方 Requisition**：1 个
+  - `2147` · AI开发工程师（海外）-ACM · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+1.熟悉算法基本理论，具备扎实良好的算法和数学基础,有ACM奖项最佳; 2.熟悉自然语言处理/AIGC 等相关领域的知识与技能; 3.能够从复杂的业务场景中进行算法选型、算法优化以及不断提升效果; 4.对 AIGC、特别是 LLM 相关技术有浓厚的兴趣，强烈希望能够参与到这一轮技术变革; 5.对openclaw、skills等主流先进技术有动手实践者优先；
+
+### Agent开发工程师
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 【27届校招人才计划】Agent算法工程师 / 校园招聘网申入口
+- **官方 Requisition**：1 个
+  - `2189` · Agent开发工程师 · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+任职要求 •计算机相关专业本科及以上,3 年以上后端 / 平台 / AI 工程经验; •精通 Python,具备扎实的系统设计能力;熟悉 Go / Rust / C++ 等系统级语言者优先; •深入理解 LLM Agent 技术栈:Function Calling / Tool Use、ReAct、Planning、Memory、RAG 等; •熟悉主流 Agent 框架与开源项目(如 LangGraph、OpenHands、Claude Code / OpenCode 等); •熟悉 MCP、ACP 等 Agent 互操作协议; •有良好的工程规范与代码质量意识。 加分项 •有金融 / 量化 / 交易系统相关研发经验; •有 Agent 平台从 0 到 1 的落地经验,或活跃的开源项目贡献; •熟悉沙箱隔离、代码执行安全、多租户资源隔离等技术; •熟悉向量检索与记忆系统(如 BGE-M3、mem0 等)。 •熟悉高并发、分布式与容器化(Docker / K8s)
+
+### 多智能体推理工程师-ACMer
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 校园招聘网申入口
+- **官方 Requisition**：1 个
+  - `497` · 多智能体推理工程师-ACMer · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+任职资格: 1、本科及以上学历，计算机/数学/机器学习相关专业毕业，有3年以上优秀的编程/机器学习相关工作经验； 2、主导/参与过大模型训练、调优、应用；熟悉 rag/graphrag、prompt 工程、知识图谱或模型记忆； 3、有大模型业务落地经验；design-to-code 或 aigc+代码场景经验优先； 4、熟悉 playwright/puppeteer 等自动化测试者优先； 5、对前沿技术有热情与探索力，敢于挑战边界； 6、熟练使用主流 ai 编程助手（如 cursor、claude code等），有团队规范制定经验更佳。
+
+### 金融 Agent 开发工程师（AIME项目）
+
+- **证据状态**：FULL_JD
+- **地点**：官方未提供
+- **项目 / 届别**：校园招聘 / 2027届校园招聘 / 云软件校招 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘 / 招聘系列：2027届校园招聘
+- **官方 Requisition**：1 个
+  - `2179` · 金融 Agent 开发工程师（AIME项目） · https://campus.10jqka.com.cn/job/list?type=school
+
+**官方职责**
+
+官方未返回职责正文。
+
+**官方要求**
+
+【职位要求】 1、本科及以上学历，计算机、人工智能等相关专业优先。 2、熟悉大语言模型与智能体基本原理，深入理解 ReAct、Plan-and-Execute、多智能体等主流范式的适用边界。 3、具备优秀的工程能力，熟练使用 Python，熟悉并发与异步编程，能够独立完成复杂系统的设计与落地。 4、有 Coding Agent、Deep Research 或同类智能体产品的实际落地经验，理解真实场景中的失效模式。 5、具备较强的问题定位能力，能够基于轨迹与日志分析定位智能体行为异常的根因。 6、具备良好的抽象与接口设计能力，以及跨团队沟通推动能力。 【加分项】 1、有智能体框架从 0 到 1 建设经验，或主导过有影响力的开源 Agent 项目者优先。 2、有 MCP / 工具协议、沙箱与虚拟化技术（Firecracker、Kata Containers、gVisor 等）实践经验者优先。 3、有 Agent 评测基准建设或轨迹数据分析经验者优先。 4、对金融业务场景（投研、选股、事件归因、交易决策等）有深入理解者优先。 5、有后训练 / Agentic RL 协同优化经验，能与模型团队共同定义能力目标者优先。
+
 ## 哔哩哔哩
 
 ### AI Native 基础架构工程师【2027届】
@@ -1081,72 +1228,6 @@ vivo AI研究院致力于研发业界领先的人工智能技术，通过AI技�
 **官方要求**
 
 1. 本科及以上学历，计算机、软件工程、人工智能、自动化、数学等相关专业优先； 2. 具备扎实的编程基础，熟悉至少一种主流开发语言，如 Python、Java、Go 等； 3. 熟悉数据结构、数据库、接口开发、网络通信、操作系统等计算机基础知识； 4. 对大模型、RAG、Agent、Prompt Engineering、工具调用、多轮对话等方向有浓厚兴趣； 5. 具备良好的工程实现能力，能够将技术方案转化为可运行、可维护、可复用的系统能力； 6. 具备较强的问题分析能力和学习能力，能够快速理解新技术、新框架和实际业务场景； 7. 具备良好的沟通协作意识，能够与产品、算法、前端、交付等多角色团队高效配合； 8. 对 AI Coding、AI Native 软件开发方式有兴趣，愿意使用 AI 工具提升研发效率。 加分项 1. 有 RAG、Agent、多轮对话、知识库问答、工具调用、工作流编排等项目经验； 2. 熟悉 LangGraph、LangChain、LlamaIndex、Dify、Coze、n8n 等框架或平台； 3. 熟悉向量数据库、搜索引擎或知识库相关技术，如 Milvus、Elasticsearch、FAISS 等； 4. 熟悉 Docker、Linux、Git、CI/CD 等工程化工具，有服务部署或系统联调经验； 5. 参与过开源项目、AI 应用项目、算法竞赛、科研项目或完整产品项目者优先； 6. 有较强的英文阅读能力，能够阅读前沿技术文档、论文或开源项目资料。 岗位说明 本岗位重点面向大模型智能体应用与平台能力研发，主要关注 Agent 架构设计、RAG 检索增强、工具调用、流程编排、效果评测与工程化落地，不以模型训练、底层算法研究为主要方向。
-
-## 大华股份
-
-### 【研发中心】2027届AI应用开发工程师(J24400)
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：1 个
-  - `b966c8c6-d672-4db3-ae45-528ce1219545` · 【研发中心】2027届AI应用开发工程师(J24400) · https://job.dahuatech.com/#/CampusPosition?id=11
-
-**官方职责**
-
-1、负责AI驱动的平台软件类产品应用设计、开发与迭代，推动大模型能力在真实业务场景中的落地与价值转化； 2、参与大模型Agent架构设计与开发，构建并优化行业知识库、Skill等关键资产，实现复杂业务流程的智能化自动化处理； 3、持续跟踪AI前沿技术动态，结合特定行业业务场景，主导或参与创新应用方案的探索与原型验证。
-
-**官方要求**
-
-官方未返回任职要求。
-
-### 【研发中心】2027届大数据工程师（Agent方向）(J24380)
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：1 个
-  - `5c80b945-0802-4656-acec-8a1cb2b545d5` · 【研发中心】2027届大数据工程师（Agent方向）(J24380) · https://job.dahuatech.com/#/CampusPosition?id=11
-
-**官方职责**
-
-1、负责Agent系统的设计与核心模块开发，实现自主规划、工具调用与反思优化等关键能力； 2、负责Agent系统的工程化落地与持续优化，分析性能瓶颈，优化资源占用、响应速度等关键指标，保障系统稳定高效运行； 3、跟踪Agent前沿技术动态，开展技术预研与验证，推动技术迭代与产品升级； 4、智能体领域大模型训练、微调与效果优化，提升复杂场景下的决策质量与泛化能力。
-
-**官方要求**
-
-官方未返回任职要求。
-
-### 【研发中心】2027届大模型应用工程师(J24455)
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：1 个
-  - `2de94af9-8760-4594-bad9-f6fe15dd6627` · 【研发中心】2027届大模型应用工程师(J24455) · https://job.dahuatech.com/#/CampusPosition?id=11
-
-**官方职责**
-
-1、结合行业场景特点，深入理解业务，基于大模型技术帮助行业客户提升效率，优化决策，加速行业AI化改造； 2、面向行业业务场景，研发训练领域优势NLP大模型和智能体应用； 3、分析大模型产品的相关技术瓶颈，结合前沿技术发展，实现关键突破。
-
-**官方要求**
-
-官方未返回任职要求。
-
-### 【研发中心】2027届测试开发工程师（AI应用测试方向）(J24553)
-
-- **证据状态**：FULL_JD
-- **地点**：官方未提供
-- **项目 / 届别**：当前官方招聘池 / 校招池
-- **官方 Requisition**：1 个
-  - `e59cb5d5-bfad-4f32-b39e-96ca8a14ced6` · 【研发中心】2027届测试开发工程师（AI应用测试方向）(J24553) · https://job.dahuatech.com/#/CampusPosition?id=11
-
-**官方职责**
-
-1、负责测试领域内传统功能以及AI功能的工具、算子、平台等开发； 2、基于业务需求进行自动化测试用例设计与生成，进行自动化脚本开发与生成，调试、问题定位； 3、进行智能数据分析与挖掘，研究测试领域算法应用及工程化落地； 4、基于优秀的测试经验，利用大模型等新兴技术，提升测试效能。
-
-**官方要求**
-
-官方未返回任职要求。
 
 ## 大疆 DJI
 
@@ -5015,7 +5096,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招动态
 - **官方 Requisition**：1 个
-  - `7673423780304111914` · AI全栈研发工程师—系统平台方向 · https://campus.duxiaoman.com/051736/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=
+  - `7673423780304111914` · AI全栈研发工程师—系统平台方向 · https://campus.duxiaoman.com/051736/position/list?keywords=ai%E5%BA%94%E7%94%A8&category=&location=&project=&type=&job_hot_flag=&current=3&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -5031,7 +5112,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招动态
 - **官方 Requisition**：1 个
-  - `7673425008291006758` · AI研发效能与项目管理岗 · https://campus.duxiaoman.com/051736/position/list?keywords=%E6%99%BA%E8%83%BD%E4%BD%93&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=
+  - `7673425008291006758` · AI研发效能与项目管理岗 · https://campus.duxiaoman.com/051736/position/list?keywords=%E6%99%BA%E8%83%BD%E4%BD%93&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -5047,7 +5128,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招动态
 - **官方 Requisition**：1 个
-  - `7673430451776457011` · Agent应用研发工程师 · https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=
+  - `7673430451776457011` · Agent应用研发工程师 · https://campus.duxiaoman.com/051736/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -5311,7 +5392,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：Shanghai
 - **项目 / 届别**：携程集团2027届应届校招生
 - **官方 Requisition**：1 个
-  - `30146475` · Agent开发工程师（2027届秋招）(MJ036607) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036607
+  - `30151287` · Agent开发工程师（2027届秋招）(MJ036607) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036607
 
 **官方职责**
 
@@ -5327,7 +5408,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：Shanghai
 - **项目 / 届别**：携程集团2027届应届校招生
 - **官方 Requisition**：1 个
-  - `30146477` · 云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036678
+  - `30151289` · 云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678) · Shanghai · https://careers.ctrip.com/campus#/experienced/job-detail/MJ036678
 
 **官方职责**
 
@@ -5410,6 +5491,20 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 
 官方未返回任职要求。
 
+## 理想汽车
+
+### 供应链AI智能体开发工程师
+
+- **证据状态**：TITLE_ONLY_OFFICIAL
+- **地点**：官方未提供
+- **项目 / 届别**：当前官方招聘池 / 校招池
+- **官方 Requisition**：1 个
+  - `20505` · 供应链AI智能体开发工程师 · https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1
+
+**JD 完整度**
+
+> 第一方当前职位列表已确认岗位标题；职责 / 要求正文尚未稳定取得，不用二手来源补写。
+
 ## 生数科技
 
 ### Agent 架构师
@@ -5418,7 +5513,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招官网
 - **官方 Requisition**：1 个
-  - `7646644078872480038` · Agent 架构师 · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=
+  - `7646644078872480038` · Agent 架构师 · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -5434,7 +5529,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招官网
 - **官方 Requisition**：1 个
-  - `7683803101065185542` · Agent 架构师（V） · https://shengshu.jobs.feishu.cn/index/position/list
+  - `7683803101065185542` · Agent 架构师（V） · https://shengshu.jobs.feishu.cn/index/position/list?keywords=&current=1&limit=10&category=&location=&type=&job_hot_flag=&functionCategory=&tag=
 
 **官方职责**
 
@@ -5450,7 +5545,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招官网
 - **官方 Requisition**：1 个
-  - `7629599412080494875` · Agent平台开发工程师 (YH) · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=
+  - `7629599412080494875` · Agent平台开发工程师 (YH) · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -5466,7 +5561,7 @@ Seed 大模型人才校招，是字节跳动 Seed 面向高校人才推出的招
 - **地点**：官方未提供
 - **项目 / 届别**：校招官网
 - **官方 Requisition**：1 个
-  - `7670016197601446207` · 流式视频Agent工程师 · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=100&functionCategory=&tag=
+  - `7670016197601446207` · 流式视频Agent工程师 · https://shengshu.jobs.feishu.cn/index/position/list?keywords=agent&category=&location=&project=&type=&job_hot_flag=&current=1&limit=10&functionCategory=&tag=
 
 **官方职责**
 
@@ -7508,6 +7603,38 @@ AI Agent 安全研究：跟踪大模型与 Agent 安全领域的前沿攻防技�
 
 ## 顺丰
 
+### AI全栈开发副工程师（丰图科技）
+
+- **证据状态**：FULL_JD
+- **地点**：苏州市,北京市,深圳市
+- **项目 / 届别**：顺丰官方校园招聘（届别待复核）
+- **官方 Requisition**：1 个
+  - `2399` · AI全栈开发副工程师（丰图科技） · 苏州市,北京市,深圳市 · https://campus.sf-express.com/#/postDetail/2399
+
+**官方职责**
+
+1、参与公司AI原生产品和智能体（Agent）应用的研发工作，支撑业务场景落地； 2、参与大模型应用能力建设，包括Prompt工程、RAG知识库、工具调用、任务编排等； 3、协助完成AIAgent相关模块开发，支持意图理解、任务拆解、结果生成等流程； 4、参与AI能力与业务系统、数据服务的集成，推动从用户需求到业务结果的端到端闭环； 5、参与智能体效果测试、问题分析和系统优化，提升AI应用的准确性与稳定性； 6、逐步深入核心业务，独立承担部分AI功能模块的开发与迭代工作。
+
+**官方要求**
+
+1、2027届本科及以上学历毕业生，计算机、软件工程、人工智能等相关专业优先； 2、熟悉Python或其他至少一门后端开发语言，具备扎实的编码基础； 3、掌握数据结构、数据库、计算机网络等计算机基础知识； 4、对大语言模型、AIAgent、RAG等方向有一定了解和实践兴趣； 5、学习能力强，能快速理解业务需求并转化为技术方案； 6、具备良好的沟通协作能力，代码习惯规范，做事主动负责。 【加分项】 1、有AIAgent、大模型应用、智能问答等项目经历； 2、使用过LangChain、Dify、CrewAI等框架或工具； 3、有Prompt优化、RAG、函数调用等实践经验； 4、有后端开发、算法竞赛、开源项目贡献或技术博客沉淀； 5、独立开发过AI应用、自动化工具或其他完整技术项目。
+
+### AI全栈开发副工程师（丰行慧运）
+
+- **证据状态**：FULL_JD
+- **地点**：深圳市
+- **项目 / 届别**：顺丰官方校园招聘（届别待复核）
+- **官方 Requisition**：1 个
+  - `2394` · AI全栈开发副工程师（丰行慧运） · 深圳市 · https://campus.sf-express.com/#/postDetail/2394
+
+**官方职责**
+
+1、参与公司AI原生产品和智能体（Agent）应用的后端及全栈研发工作，支撑业务场景落地； 2、参与大模型应用能力建设，包括Prompt工程设计、RAG知识库搭建、工具调用及任务编排； 3、协助开发AIAgent核心模块，支持意图理解、复杂任务拆解与结果生成等流程； 4、参与AI能力与现有业务系统、数据服务的联调集成，推动端到端的业务闭环； 5、配合进行智能体效果测试、BadCase排查及系统性能优化； 6、逐步深入核心业务场景，经培养后独立承担部分AI功能模块的迭代与日常维护。
+
+**官方要求**
+
+1、2027届本科及以上学历毕业生，计算机、软件工程、人工智能等相关专业优先； 2、熟悉Python或其他至少一门后端开发语言，具备扎实的编码基本功； 3、深入理解数据结构、数据库及计算机网络等核心基础知识； 4、对大语言模型、AIAgent、RAG等前沿技术生态有较强的好奇心与实践探索热情； 5、学习能力强，能够快速理解业务痛点并将其转化为可执行的技术方案； 6、具备良好的沟通协作能力与代码规范意识，责任心强。 【加分项】 1、有AIAgent、智能问答、知识库搭建等实际项目经历； 2、熟悉或使用过LangChain、Dify、CrewAI等主流AI应用开发框架； 3、有向量数据库、Prompt调优及函数调用开发经验； 4、有后端技术博客沉淀、GitHub开源贡献或算法竞赛获奖经历。
+
 ### AI全栈研发工程师（顺丰科技）
 
 - **证据状态**：FULL_JD
@@ -7539,3 +7666,20 @@ AI Agent 安全研究：跟踪大模型与 Agent 安全领域的前沿攻防技�
 **官方要求**
 
 1、2027届本科及以上学历毕业生，计算机、软件工程、人工智能等相关专业优先，熟练掌握Java、Python、Go至少一种编程语言，有良好的编程基础。 2、了解大模型基本原理与智能体应用架构，对Claude Agent SDK、DIFY、LangGraph、Spring AI等主流框架有一定了解或学习经历，了解Agent2Agent、MCP等协议，对多智能体系统有浓厚兴趣。 3、了解企业知识库与RAG系统基本概念，对向量数据库、检索优化与大模型集成模式有学习或项目实践经历。 4、了解Docker/K8s等容器化技术，对大模型服务部署与推理优化有基本认知，具备高并发、高可用系统设计的学习意识。 5、对flink、kafka、hive等大数据组件有基本了解，或在课程学习、项目实践中接触过相关技术。 6、对物流、供应链等相关业务有了解或兴趣，具备快速学习能力和业务理解能力，能将业务场景转化为技术方案。 7、具备良好的沟通协作能力、学习能力和创新意识，有相关项目经历、竞赛获奖或开源贡献者优先。
+
+### 星链计划-AI应用开发工程师
+
+- **证据状态**：FULL_JD
+- **地点**：上海市
+- **项目 / 届别**：顺丰官方校园招聘（届别待复核）
+- **官方 Requisition**：2 个
+  - `2410` · 星链计划-AI应用开发工程师 · 上海市 · https://campus.sf-express.com/#/postDetail/2410
+  - `2411` · 星链计划-AI应用开发工程师 · 上海市 · https://campus.sf-express.com/#/postDetail/2411
+
+**官方职责**
+
+1，深入挖掘供应链商业化全生命周期痛点，设计并实现基于LLM的自动化工作流，覆盖需求分析、代码实现、Al测试等核心环节，重塑端到端的产研交付流程； 2、负责AI应用快速接入、API封装、业务系统对接（TMS/WMS/OMS），完成轻量化部署与调试； 3、运用RAG、Agent、FunctionCalling等技术快速搭建垂类物流AI解决方案，快速验证效果并迭代优化； 4、基于Al辅助编码、自动化测试、自动化部署工具，提升开发效率与系统稳定性； 5、与产品、算法、物流业务团队高效协作，快速响应业务需求，推动AI能力规模化落地。
+
+**官方要求**
+
+1、2027届本科及以上学历毕业生，计算机科学与技术、软件工程、人工智能、数据科学与大数据技术、电子信息专业相关； 2、扎实编程基础（java、Python），熟练掌握ClaudeCode/Codex，vibecoding有深入实践； 3、了解大模型基础与应用，有Prompt工程、Agent编排、RAG或AI工具开发实践经验，有相关实习经验优先； 4、对ai有技术热情，逻辑清晰，学习能力强，沟通能力优秀。
