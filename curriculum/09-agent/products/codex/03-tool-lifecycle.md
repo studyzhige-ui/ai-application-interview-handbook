@@ -413,7 +413,7 @@ Tool Orchestrator 在准备一次 Sandbox Attempt（沙箱尝试）时，会同�
 
 ---
 
-## 21. Tool 并发不是模型想并行就直接并行
+## 20. Tool 并发不是模型想并行就直接并行
 
 Tool Executor 可以声明 `supports_parallel_tool_calls`。
 
