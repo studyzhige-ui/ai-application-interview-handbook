@@ -1841,10 +1841,9 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
 
 def _decode_js_string(value: str) -> str:
     try:
-        return json.loads('"' + value.replace('"', '\\"') + '"')
-    except Exception:
-        return value.replace("\\/", "/").replace("\\"", '"')
-
+        return json.loads(f'"{value}"')
+    except json.JSONDecodeError:
+        return value
 
 def fetch_meitu_campus_html(src: dict) -> list[Job]:
     """Enumerate Meitu's server-rendered campus filter page page-by-page."""
