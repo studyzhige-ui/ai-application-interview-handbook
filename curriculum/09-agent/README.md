@@ -163,7 +163,7 @@ DeepSeek Harness 学习文档固定到源码快照 `deepseek-ai/deepseek-harness
   - [Tool Lifecycle：Deferred MCP、Skills、Policy、Sandbox 与执行证据](products/deer-flow/03-tool-lifecycle.md)
   - [Engineering & Evaluation：Checkpoint、Run Journal、Subagent、Recovery 与 Replay](products/deer-flow/04-engineering-evaluation.md)
 
-DeerFlow 学习文档固定到源码快照 `bytedance/deer-flow@1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe`，聚焦 2.0 ground-up rewrite 的真实实现。文档以 Gateway → LangGraph Checkpoint State → Middleware Chain → Tools/Memory/Subagents/Sandbox → Run Journal 的产品运行链为主线，并明确区分 Checkpoint continuation state、Run execution evidence 与外部 Workspace side effects。
+DeerFlow 学习文档固定到源码快照 `bytedance/deer-flow@e545c28ac301e6f9feae247c513d8ea8f83df294`，聚焦 2.0 ground-up rewrite 的真实实现。文档以 Gateway → LangGraph Checkpoint State → Middleware Chain → Tools/Memory/Subagents/Sandbox → Run Journal 的产品运行链为主线，并明确区分 Checkpoint continuation state、Run execution evidence 与外部 Workspace side effects。
 
 源码产品层与 `docs/01–24` 的关系是：
 
