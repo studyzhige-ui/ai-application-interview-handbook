@@ -1,1518 +1,654 @@
-# 03. Codex Tool Lifecycle｜注册、发现、MCP / Skills、权限、执行与回填
+# 03. Codex Tool Lifecycle｜一个模型动作怎样变成真实、受控的执行
 
 [← Memory](02-memory-lifecycle.md) · [Codex 总览](README.md) · [Engineering & Evaluation →](04-engineering-evaluation.md)
 
 > **源码基线：** `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`
 
-Codex 的 Tool 系统不是：
+Tool（工具）是 Coding Agent 最容易被低估的一部分。
 
-```python
-tools = {
-    "bash": bash,
-    "read_file": read_file,
-}
-```
-
-而是一条从“Host 有什么能力”到“某一次模型请求究竟能看到什么、调用后究竟允许执行什么”的完整生命周期：
+从模型视角看，它似乎只做了一件事：
 
 ```text
-Tool implementation
-↓
-Tool contract / spec / runtime
-↓
-Registration
-  built-in / MCP / extension / dynamic / hosted
-↓
-AllowedTools / policy / collision
-↓
-Exposure planning
-  Direct
-  Deferred
-  DeferredModelOnly
-  DirectModelOnly
-  CodeModeOnly
-  Hidden
-↓
-Step-specific ToolRouter
-↓
-model-visible tool specs
-  + tool_search
-  + Code Mode definitions
-↓
-Model tool call
-↓
-parse / normalize call
-↓
-payload type validation
-↓
-pre-tool hooks / optional input rewrite
-↓
-readiness
-↓
-approval / Guardian
-↓
-permission profile / network policy
-↓
-sandbox selection
-↓
-parallel / serial admission
-↓
-handler execution
-↓
-retry / escalation where allowed
-↓
-post-tool hooks
-↓
-normalize ToolOutput
-↓
-canonical call/output pair
-↓
-append history
-↓
-next model sampling
+调用 exec_command({"cmd": "pytest"})
 ```
 
-只有把这条链走完，才算真正理解 Codex Tool Runtime。
+但从 Codex Runtime（运行时）看，这个动作真正落地之前，至少要回答：
+
+- 这个工具是谁注册的；
+- 本轮模型为什么能看见它；
+- 当前权限允许执行到什么范围；
+- 参数有没有被 Hook（钩子）修改；
+- MCP Server 是否已经 ready；
+- 需要不需要 Approval（用户批准）；
+- 应该进入哪个 Sandbox（沙箱）；
+- 有没有网络权限；
+- 能不能和其他 Tool 并发；
+- 用户这时取消怎么办；
+- 结果太大怎么办；
+- 最终怎样让模型知道执行结果。
+
+因此 Tool Lifecycle（工具生命周期）不是“函数调用”，而是一条完整的控制链。
 
 ---
 
-## 1. 先分清四个对象：Spec、Runtime、Registry、Router
+## 1. 先把三个问题分开：系统有什么、模型看到什么、Runtime 允许什么
 
-### Tool Spec
+这是理解 Codex Tool System 最关键的一步。
 
-给模型看的能力契约，例如：
+### 系统有什么能力
 
-- name；
-- description；
-- input schema；
-- output schema；
-- namespace；
-- deferred-loading metadata。
+Codex 会把可执行能力注册到 `ToolRegistry`（工具注册表）。
 
-### Tool Runtime / Executor
+能力来源很多，例如：
 
-Host 内真正可执行的实现。
+- Core 内置工具；
+- MCP Tool；
+- Extension Tool（扩展工具）；
+- Dynamic Tool（动态工具）；
+- Hosted Model Tool（模型服务侧工具）；
+- Code Mode（代码模式）需要的内部执行能力。
 
-共享 `ToolExecutor` contract 负责：
+“注册了”只说明：
 
-- `tool_name()`；
-- `spec()`；
-- preferred exposure；
-- search metadata；
-- parallel support；
-- `handle()`。
+> **Host（宿主程序）知道这个工具是谁、它的 schema（参数结构）是什么、最后应该调用哪个执行器。**
 
-Core 再通过 `CoreToolRuntime` 增加 Codex 特有能力，例如：
+### 模型这轮能看到什么
 
-- immutable spec；
-- Code Mode definitions；
-- readiness future；
-- MCP server identity；
-- payload matching；
-- telemetry tags；
-- result accepted callback；
-- pre/post hook payload；
-- hook input rewrite；
-- streamed argument diff consumer。
+真正给模型的是 `ToolRouter.model_visible_specs()`。
 
-### Tool Registry
-
-当前 Step 可调度能力的完整注册目录。
-
-它知道：
-
-```text
-name
-→ executable runtime
-→ exposure
-```
-
-但 Registry 中存在的工具**不等于**模型当前一定可见。
-
-### Tool Router
-
-`ToolRouter` 是当前 Step 已经 finalize 的执行计划：
-
-```text
-registry
-+
-model-visible specs
-+
-ToolMode
-+
-Code Mode names
-+
-namespace metadata
-```
-
-模型这一轮看到的是 Router 的投影，不是整个 Registry。
-
----
-
-## 2. 为什么 Registry 和 Model-visible Set 必须分开
-
-假设 Host 一共拥有：
-
-```text
-20 built-ins
-+ 3,000 MCP tools
-+ 5,000 app tools
-+ 1,000 dynamic tools
-+ 2,000 skills-related tools
-```
-
-如果：
-
-```text
-registered = model-visible
-```
-
-就会直接得到：
-
-- Prompt / request 膨胀；
-- Tool 选择混乱；
-- Schema namespace 冲突；
-- Prompt Cache prefix 变化；
-- 安全能力过度暴露；
-- 每个 Step 构造成本过高。
-
-Codex 所以显式建模“暴露面”。
-
----
-
-## 3. ToolExposure：一个工具可以存在，但不一定直接出现
-
-当前共享 `codex-tools` 中的 `ToolExposure` 有：
-
-### `Direct`
-
-初始模型 Tool List 直接可见；启用 Code Mode 时也可在嵌套代码工具面使用。
-
-### `Deferred`
-
-不进入初始 Tool List。
-
-可以通过 `tool_search` 发现，同时可参与 Code Mode。
-
-### `DeferredModelOnly`
-
-可被 Tool Search 发现，但不允许嵌套 Code Mode 使用。
-
-### `DirectModelOnly`
-
-只作为普通模型工具直接可见，不进入嵌套 Code Mode。
-
-### `CodeModeOnly`
-
-只允许 Code Mode 内部调用。
-
-### `Hidden`
-
-仍保留在 Host Registry，可用于内部 dispatch / runtime 逻辑，但不对模型暴露。
-
-因此工具暴露不再是：
-
-```text
-visible = true / false
-```
-
-而是：
-
-> **在哪一种模型交互 Surface 上可见。**
-
----
-
-## 4. 一个 Step 的 ToolRouter 怎样构造
-
-`core/src/tools/spec_plan.rs::build_tool_router` 是核心入口。
-
-当前顺序大体是：
-
-```text
-1. register core tools
-↓
-2. append MCP tools
-↓
-3. apply MCP exposure policy
-↓
-4. append extension executors
-↓
-5. append dynamic tools
-↓
-6. append hosted model tool specs
-↓
-7. finalize_tool_router
-```
-
-Finalize 还会：
-
-- 应用 `AllowedTools`；
-- 确定 effective ToolMode；
--处理 direct / deferred / Code Mode；
--安装 `tool_search`；
--生成 namespace inventory；
--做 collision 检查；
--构造最终 `model_visible_specs`。
-
-所以 Tool List 是**每个 Step 根据当前状态编译出来的**。
-
----
-
-## 5. Tool Registration 为什么还要区分 Trusted / External
-
-Registry 有 trusted 与 external registration。
-
-External tool 不能随意覆盖保留能力。
-
-当前源码会保护例如：
-
-- `exec_command`
-- `shell_command`
-
-如果外部 MCP / extension 注册同名危险能力：
-
-```text
-external tool
-name = exec_command
-↓
-不能静默覆盖 core executable
-```
-
-外部 duplicate：
-
-- 默认可以记录 collision 并跳过；
--配置可以把 collision 升级为 hard error。
-
-这解决典型 supply-chain 问题：
-
-> **能力接入系统不能把“名字相同”当成“语义相同”。**
-
----
-
-## 6. AllowedTools 是执行面，不只是 Prompt Filter
-
-`AllowedTools` 在 Registry / final planning 中都参与过滤。
-
-为什么不能只：
-
-```text
-从 prompt 里删掉不允许的工具
-```
-
-因为模型可能：
-
--历史里已经知道名字；
--被 prompt injection 诱导；
--通过 malformed call 猜名字；
--从其他 channel 得到工具名。
-
-安全边界必须是：
-
-```text
-model visibility filter
-+
-runtime dispatch allowlist
-```
-
-而不是只靠“模型看不见”。
-
----
-
-## 7. MCP 从 Server Tool 到 Codex Runtime 要经过哪些步骤
-
-MCP Server 返回 tool catalog 之后，不会自动成为模型工具。
-
-Codex 会先形成 `McpBinding` / `ToolInfo`，再由 `McpHandlerCache` 和 Tool Registry 接入。
-
-生命周期：
-
-```text
-MCP server configured
-↓
-server startup / initialize
-↓
-list tools / refresh catalog
-↓
-ToolInfo
-  server_name
-  callable namespace
-  description
-  schema
-  connector metadata
-  annotations
-↓
-build McpHandler
-↓
-policy filter
-↓
-ToolExposure
-↓
-register external tool
-↓
-ToolRouter
-```
-
-Tool call 真正发生时：
-
-```text
-McpHandler
-↓
-wait_for_mcp_server
-↓
-prepare executed binding
-↓
-pre-tool hooks
-↓
-call MCP
-↓
-normalize result / truncation
-↓
-post hooks
-↓
-history
-```
-
----
-
-## 8. MCP Handler 为什么要绑定“执行时的 catalog snapshot”
-
-MCP catalog 可能在 Session 中刷新。
-
-假设：
-
-```text
-Step 1 模型看到 calendar.create_event v1
-↓
-Server catalog refresh 到 v2
-↓
-Step 1 call 现在才执行
-```
-
-不能让执行资格和 metadata 自动漂到 v2。
-
-MCP handler / executed call 会尽量使用：
-
-> **产生这次 call 时已经准备好的 binding / StepContext。**
-
-这和整个 Tool Runtime 的 Step consistency 是同一个原则。
-
----
-
-## 9. Apps / Connector Tool 还要额外做 Policy
-
-Codex Apps MCP tools 与普通 MCP tools并不完全一样。
-
-进入 Registry 前还会看：
-
-- connector ID；
--配置 layer；
--tool name / title；
-- `destructive_hint`；
-- `open_world_hint`。
-
-`AppToolPolicyEvaluator` 决定这个 App Tool 是否 enabled。
+这是一份经过当前 StepContext、Feature、Policy、Tool Mode 和 AllowedTools 共同筛选后的模型可见工具集。
 
 所以：
 
 ```text
-MCP Server 说“我有这个 Tool”
+Registry 里存在
 ≠
-Codex 必须暴露它
+模型这轮可见
 ```
 
-Host 仍然拥有最终政策权。
+### Runtime 最终允许什么
+
+即使模型已经看见并选择了一个 Tool，也还没有获得“执行授权”。
+
+真实执行还要经过：
+
+- 参数与 payload（负载）检查；
+- Hook；
+- Approval；
+- Guardian（安全审查）；
+- Permission Profile（权限配置）；
+- Sandbox；
+- Network Policy（网络策略）。
+
+因此更完整的三层结构是：
+
+```text
+Capability Registry
+系统知道有哪些能力
+        ↓
+Model-visible Projection
+这一轮告诉模型哪些能力
+        ↓
+Execution Authorization
+模型选中以后，Runtime 再判断这次具体动作能否执行
+```
+
+这三层如果混在一起，就很容易出现“只要从 Prompt 里隐藏工具就安全”这种错误设计。
 
 ---
 
-## 10. 大量 MCP Tool 为什么不会全部塞进 Prompt
+## 2. ToolExecutor 是什么：把“模型说明”和“真实执行器”绑在一起
 
-当前源码最直接的规模化设计：
+共享 Tool 抽象主要在：
 
-如果 Tool Search 开启：
+- `codex-rs/tools/src/tool_executor.rs`
+
+`ToolExecutor`（工具执行器）并不只是一个函数指针。
+
+它至少把几件事绑定到一起：
+
+- 这个工具叫什么；
+- 给模型看的 `ToolSpec`（工具说明）是什么；
+- 它默认应该怎样暴露；
+- 它是否支持并行调用；
+- 真正的 `handle()` 实现是什么。
+
+Core 又在此基础上增加 `CoreToolRuntime`，提供 Codex Runtime 特有能力，例如：
+
+- 这个 spec 是否可以复用；
+- MCP 工具属于哪个 server；
+- 执行前是否需要等某个服务 ready；
+- 怎样生成 Hook 输入；
+- Hook 修改参数以后怎样重新构造调用；
+- 怎样记录 telemetry（遥测）；
+- 结果被接受后要不要额外登记。
+
+为什么要把 spec 和 runtime 绑在一起？
+
+因为一个很危险的系统结构是：
 
 ```text
-MCP tools
-→ default ToolExposure::Deferred
+A 表：给模型看的 tool schema
+B 表：真正执行的函数
 ```
 
-否则才默认：
+如果两边版本漂移，模型看到的参数契约和 Runtime 真正接受的参数可能不一致。
 
-```text
-Direct
-```
-
-Deferred 意味着：
-
-```text
-Registry 里有
-↓
-初始 model-visible list 不展开
-↓
-tool_search 可查
-↓
-命中后把 LoadableToolSpec 返回给模型
-```
-
-这就是 Codex 对“大量工具”的主要答案之一。
+Codex 的 Tool Runtime 设计尽量让“说明”和“执行”属于同一个工具对象，再由 Router 在每次 Step 上做最终投影。
 
 ---
 
-## 11. Tool Search 不是向量数据库，而是当前源码中的 BM25
+## 3. 一个 Step 的 Tool Set 是怎样生成的
 
-`handlers/tool_search.rs` 当前使用 BM25 Search Engine。
+关键入口是：
 
-建立索引时：
+- `codex-rs/core/src/tools/spec_plan.rs::build_tool_router`
+
+一次 Step 捕获时，Runtime 会从多个来源收集工具。
+
+先有 Core Tool，然后接入 MCP Tool，再接 Extension Tool 和 Dynamic Tool，最后把一些模型服务原生工具一起纳入计划。
+
+这一步不是简单 concatenate（拼接数组）。中间还会处理：
+
+- `AllowedTools`（允许工具集合）；
+- 同名冲突；
+-当前模型支持什么 Tool Mode；
+-哪些 Tool 应直接暴露；
+-哪些 Tool 应延迟发现；
+-Code Mode 应该拿到哪些嵌套能力；
+-App / Connector Policy。
+
+最后得到一份 `ToolRouter`。
+
+可以把它看成：
+
+> **“这一份 StepContext 下，模型和 Runtime 对 Tool 世界的共同契约。”**
+
+前一篇说过，Tool Call 后面会保留产生它的 `StepContext`。所以即使 Tool Catalog 后来刷新，旧调用也不会随便套用新 Router。
+
+---
+
+## 4. ToolExposure 为什么不是简单的 visible / hidden
+
+Codex 当前源码中，工具暴露方式不止“看得见”和“看不见”。
+
+共享 `ToolExposure` 包含 Direct、Deferred、DirectModelOnly、DeferredModelOnly、CodeModeOnly、Hidden 等形态。
+
+不需要死记这些枚举。更重要的是理解它们在回答三个问题：
+
+### 要不要一开始就把 schema 发给模型
+
+Direct（直接暴露）的 Tool 会进入初始模型工具列表。
+
+### 能不能以后通过搜索再发现
+
+Deferred（延迟暴露）的 Tool 不一开始展开完整 schema，但可以通过 `tool_search` 找到。
+
+### 能不能给 Code Mode 内部脚本调用
+
+有些 Tool 适合普通模型调用，有些也允许 Code Mode 内嵌调用，有些只给其中一个 surface（暴露面）。
+
+因此 ToolExposure 解决的是：
+
+> **一个已经注册的能力，应该在哪个模型交互面上出现。**
+
+这对大规模 Tool Catalog 尤其重要。
+
+---
+
+## 5. 为什么几千个 MCP Tool 不应该全部塞进首轮请求
+
+MCP（Model Context Protocol，模型上下文协议）让外部 Server 提供 Tool。
+
+Codex 会把 MCP Server 返回的工具转换成自己的 `ToolInfo` 和 `McpHandler`，再注册进 Tool Registry。
+
+相关源码：
+
+- `codex-rs/codex-mcp/`
+- `codex-rs/core/src/mcp_tool_exposure.rs`
+- `codex-rs/core/src/tools/handlers/mcp.rs`
+
+如果一个用户连接了很多应用，一个 Server 又暴露很多 Tool，最直接的实现会变成：
 
 ```text
-deferred tools
-↓
-ToolSearchInfo.search_text
-↓
-BM25 documents
-↓
-SearchEngine
+所有 MCP Tool schema
+→ 每一轮全部发给模型
 ```
 
-一次 call：
+这会迅速增加 Context、破坏 Prompt Cache，并增加模型选错工具的概率。
+
+所以当 Tool Search（工具搜索）开启时，Codex 可以把 MCP Tool 默认放到 Deferred 暴露面。
+
+模型第一轮只需要知道存在 `tool_search`。
+
+当它确实需要“日历”能力时：
 
 ```text
-tool_search(query, limit)
-↓
-BM25 search
-↓
-匹配 ToolSearchEntry
-↓
-coalesce namespace specs
-↓
-返回 LoadableToolSpec
+模型调用 tool_search("calendar create event")
+        ↓
+Runtime 在 deferred catalog 里检索
+        ↓
+返回少量匹配 Tool 的 LoadableToolSpec
+        ↓
+模型再选择具体工具
 ```
 
-对 MCP，search text 会组合：
+这才是“注册很多能力但不把全部 schema 一次塞进 Prompt”的真实实现。
 
-- flattened canonical tool name；
+---
+
+## 6. tool_search 当前怎样找工具：BM25 只是实现，不是架构本身
+
+当前固定快照中：
+
+- `codex-rs/core/src/tools/handlers/tool_search.rs`
+
+使用 BM25（基于词频与逆文档频率的稀疏检索算法）为 Deferred Tool 建索引。
+
+它不会只索引一句 description（描述）。
+
+以 MCP Tool 为例，search text（搜索文本）会组合：
+
+- 工具规范名；
 - callable name；
--server name；
--title；
--description；
--connector name；
--namespace description；
--plugin display names；
--schema property names。
+- MCP Server 名；
+- title；
+- description；
+- Connector 名；
+- namespace（命名空间）说明；
+- Plugin display name；
+- input schema 的字段名。
 
-所以 Tool Discovery 不是只搜 description。
+所以用户说“创建日历事件”时，搜索不必精确命中某一句描述。
 
----
+### 为什么还有 ToolSearchHandlerCache
 
-## 12. 为什么 ToolSearchHandler 还要 Cache
+每个 Step 都可能重新生成 Tool Router，但 Tool Catalog 很多时候并没有变化。
 
-每个 Step 都可能 rebuild ToolRouter。
+如果每次都为几千个 Tool 重建 BM25 索引，会浪费 CPU。
 
-如果每次都：
+因此 `ToolSearchHandlerCache` 会复用稳定 Runtime 的索引；只有动态 Tool metadata（元数据）或候选来源真的变化时才重建。
 
-```text
-几千 deferred tools
-→ 重建 BM25
-```
+这里要区分：
 
-会产生无意义 CPU 成本。
+> Tool Search Cache 是本地目录索引缓存，不是 Prompt Cache。
 
-`ToolSearchHandlerCache` 会区分：
+### 不要把“BM25”泛化成 Codex 的永恒设计
 
-### Immutable Runtime
+源码事实是：这个固定 commit 当前使用 BM25。
 
-通过 `Weak<dyn CoreToolRuntime>` identity 判断能否复用。
-
-### Dynamic Tool
-
-比较 `ToolSearchInfo` 内容。
-
-只有：
-
-- source listing 改变；
--runtime identity 改变；
--dynamic metadata 改变；
-
-才需要重新构造 search handler。
-
-这是一种：
-
-> **catalog cache，而不是模型 Prompt Cache。**
-
----
-
-## 13. 数万个工具还要做 Spec Budget，而不只是 Deferred
-
-Agent-plugin MCP Tool 有非常明确的硬预算：
+工程层面真正稳定的设计思想是：
 
 ```text
-单个 MCP model spec
-<= 8,000 bytes
-
-同类累计 model specs
-<= 64,000 bytes
+完整 Tool Registry
+→ 只给模型少量可见入口
+→ 需要时检索候选工具
+→ 再加载具体 schema
 ```
 
-超过预算：
-
-```text
-ToolExposure::Hidden
-```
-
-不是“反正 Context Window 很大，再塞一点”。
-
-这与根 `AGENTS.md` 的 model-context hard cap 原则一致。
-
-规模化工具系统至少需要：
-
-```text
-catalog scale
-+
-discovery scale
-+
-model-visible spec scale
-+
-runtime dispatch scale
-```
-
-Deferred 只解决其中一部分。
+未来检索算法换成 hybrid retrieval（混合检索）也不会改变这个架构边界。
 
 ---
 
-## 14. Tool Search 能否解决 50,000 Tools？
+## 7. 为什么还要给 MCP spec 设置硬大小上限
 
-它解决的是：
+Deferred 已经能减少首轮 Tool 数量，但还不够。
 
-> **不要把 50,000 个完整 schema 全放入第一轮请求。**
+某些 Agent Plugin MCP spec 在当前源码里还有明确字节预算：
 
-但如果真实达到 50,000，还要继续考虑：
+- 单个 spec 不能无限大；
+- 一组相关 spec 的累计体积也不能无限增长；
+- 超出预算的工具可以保持注册，但不进入模型可见面。
 
-### Search Quality
+相关代码在：
 
-BM25 搜索文本是否能正确命中？
+- `codex-rs/core/src/mcp_tool_exposure.rs`
 
-### Namespace Hierarchy
+这和 Context 篇的原则完全一致：
 
-能否先选 server / app / domain，再选具体 Tool？
+> **任何自动进入 model-visible context 的内容都必须有硬上限。**
 
-### Candidate Limit
-
-单次 `tool_search` 返回多少？
-
-### Tool Similarity
-
-大量同义名字会不会产生错误选择？
-
-### Tenant / Policy Pre-filter
-
-无权使用的 Tool 不应该进入搜索候选。
-
-### Catalog Refresh Cost
-
-动态 Tool metadata 变化会导致 search cache rebuild。
-
-### Evaluation
-
-必须测：
-
-```text
-discovery recall@k
-selection precision
-schema-load count
-tool-search latency
-wrong-tool rate
-```
-
-所以 Codex 已经给了正确架构骨架：
-
-```text
-Full Registry
-→ filtered catalog
-→ deferred retrieval
-→ small model-visible candidate set
-```
-
-未来规模再大，主要扩展 search / routing，而不是退回“全部注入”。
+大 Context Window 并不是“可以不做预算”的理由。
 
 ---
 
-## 15. Skills 和 Tool 的关系：Skill 不是另一个函数 Schema
+## 8. Skill 为什么不是另一种 Tool
 
-Codex 的 Skills Extension 同时参与：
+Codex 还有 Skills（技能）系统：
 
-- Thread lifecycle；
-- Config；
-- Context；
-- World State；
-- Tool contribution；
-- Skill invocation；
-- Turn input。
+- `codex-rs/skills/`
+- `codex-rs/ext/skills/`
 
-Skill 的关键不是直接等于 Tool。
+Tool 回答的是：
 
-Skill 更像：
+> **Runtime 能执行什么动作？**
 
-> **带选择说明、操作知识和 supporting resources 的能力包。**
+Skill 更接近：
 
-它可能进一步告诉模型：
+> **在某类任务里，模型应该怎样组织动作、遵守哪些工作流程、什么时候读取哪些参考材料。**
 
--什么时候使用某工具；
--怎样组合步骤；
--参考哪些文件；
--运行哪些脚本。
+例如一个“创建专业 PPT”的 Skill 可能告诉模型：
 
----
+- 先读模板；
+- 再分析内容结构；
+- 用哪个脚本生成；
+- 最后怎样检查版式。
 
-## 16. Skills 的 Progressive Disclosure
-
-Codex 自带 skill-creator sample 明确采用分层加载：
-
-```text
-第 1 层
-skill name + description
-→ 用于发现
-
-第 2 层
-SKILL.md
-→ Skill 真正被选中时加载
-
-第 3 层
-references / scripts / assets
-→ 只有执行中需要时再读取或运行
-```
-
-为什么脚本很重要？
-
-因为：
-
-```text
-运行一个 300 行 Python helper
-≠
-把 300 行 Python 全塞进模型 Context
-```
-
-这使 Skills 具备：
-
-> **可执行但不必全部 model-visible。**
-
----
-
-## 17. Skills Catalog 也有独立 Context Budget
-
-`ext/skills/src/render.rs` 当前明确限制：
-
-- 默认 metadata char budget：8,000 chars；
-- 配置的 token budget 最高 10,000 tokens；
-- 如果根据模型 Context Window 自动计算，则约取可用窗口的 2%；
-- 单 Skill prompt bytes 也受硬限制；
--单条 description 有字符上限。
-
-预算不够时：
-
-### 能放所有 Skill
-
-保留完整 description。
-
-### 能放所有名字，但 description 太长
-
-对 description 做公平分配 / truncation。
-
-### 连名字都放不下
-
-后面的 Skill 整条 omitted。
-
-而且源码不是把剩余预算全给第一个 Skill，而是 round-robin 分 description chars，避免单个 Skill 吃掉全部空间。
-
----
-
-## 18. Skills Budget 是可观测的
-
-Codex 会记录：
-
-- total enabled skills；
--kept skills；
--whether truncated；
--truncated description chars；
--catalog surface。
-
-Catalog Surface 还区分：
-
-- thread context；
--executor world state；
--orchestrator world state；
--host world state；
--turn input。
-
-所以“Skill 太多导致效果差”可以从 telemetry 先确认：
-
-> 到底有多少 Skill 被截掉了？
-
----
-
-## 19. Tool Call 从模型输出怎样被解析
-
-`ToolRouter::build_tool_call` 会把 Responses API 不同 call 类型统一成内部 ToolCall，例如：
-
-- FunctionCall；
-- ToolSearchCall；
-- CustomToolCall。
-
-统一对象包含：
-
-```text
-tool_name
-call_id
-ToolPayload
-encrypted args（如有）
-source
-```
-
-然后再 dispatch。
-
-所以 Handler 不应该自己理解所有 Provider 原始 response shape。
-
----
-
-## 20. Payload Validation 有两层
-
-### 协议 /类型层
-
-Router / Registry 先检查：
-
-- call type；
--tool name；
--payload kind；
--arguments encoding。
-
-例如：
-
-```text
-tool_search handler
-收到 Function payload
-→ Fatal / protocol mismatch
-```
-
-### 业务语义层
-
-具体 handler 再验证：
-
--参数；
--path；
--command；
--server；
--environment；
--policy。
-
-Tool Schema 只能解决第一部分。
-
----
-
-## 21. PreToolUse Hook 能做什么
-
-Registry dispatch 在真正 handler 前可以调用 hook。
-
-Hook 能：
-
--观察 tool name / input；
--block；
--返回修改后的 input；
--记录审计。
-
-Tool runtime 还可以实现 `with_updated_hook_input`。
-
-MCP Handler 就支持把 hook 改写后的 JSON 再序列化为新的 MCP arguments。
-
-所以 Hook 是真正的 runtime interception point，不只是日志回调。
-
----
-
-## 22. Hook Input Rewrite 为什么必须重新校验
-
-假设原模型生成：
-
-```json
-{"path": "a.txt"}
-```
-
-Hook 改成：
-
-```json
-{"path": "../../etc/passwd"}
-```
-
-如果：
-
-```text
-原参数校验通过
-→ hook rewrite
-→ 直接执行
-```
-
-就会绕过安全边界。
-
-成熟 Tool Runtime 应把：
-
-> **rewrite 后 payload 当成新的执行输入。**
-
-Codex 的 runtime contract把 rewrite 显式建模，也就能在后续 handler / policy 中重新解释它。
-
----
-
-## 23. Tool Readiness：注册存在不代表现在能执行
-
-MCP Runtime 可能还在启动。
-
-`CoreToolRuntime::wait_until_ready` 允许 runtime 暴露 readiness future。
-
-`McpHandler` 会等待：
-
-`session.wait_for_mcp_server(server_name)`
-
-再真正执行。
+真正执行文件、脚本或外部服务，仍然依赖 Tool。
 
 因此：
 
 ```text
-registered
-≠
-ready
-```
-
-但模型可以在 Step 中看到某能力时，Runtime 应保证最终执行对 readiness 有明确等待 / 失败语义。
-
----
-
-## 24. Approval、Permission、Sandbox 是 Tool Execution 的中段
-
-Tool 解析正确以后还不能直接执行。
-
-`core/src/tools/orchestrator.rs` 把核心流程写成：
-
-```text
-approval
-→ sandbox selection
-→ attempt
-→ sandbox-denial retry / escalation
-```
-
-这是 Tool 生命周期里最容易被初学者漏掉的一段。
-
----
-
-## 25. Approval Policy 怎样决定是否问用户
-
-Tool Runtime 会结合：
-
--当前 approval policy；
--tool requirement；
--Guardian / strict review；
--network need；
--sandbox constraint；
--previous approval cache；
-
-得到类似：
-
-```text
-Skip
-Forbidden
-NeedsApproval
-```
-
-不是所有副作用 Tool 都简单：
-
-> “每次弹一次 Yes / No”。
-
-还要避免相同安全事实重复打扰用户。
-
----
-
-## 26. Guardian 和普通 Approval 有什么区别
-
-普通 approval 主要问：
-
-> 用户是否授权这次能力。
-
-Guardian / auto review 更像：
-
-> 即使普通规则认为可以执行，是否还需要额外风险审查。
-
-因此安全层级可能是：
-
-```text
-Model chose tool
-↓
-Tool contract valid
-↓
-Approval policy
-↓
-Guardian review
-↓
-Permission profile
-↓
-Sandbox / network enforcement
-```
-
-每层解决的问题不同。
-
----
-
-## 27. Sandbox 为什么要在执行前动态选择
-
-不同 Tool / Command 可能需要：
-
--只读 filesystem；
--workspace write；
--更宽本地访问；
--network；
--unsandboxed retry。
-
-Orchestrator 根据：
-
-- PermissionProfile；
-- file-system sandbox policy；
-- workspace roots；
--network policy；
--platform sandbox；
-
-选择执行环境。
-
-这比给整个 Agent 一个固定：
-
-```text
-sandbox=true
-```
-
-细得多。
-
----
-
-## 28. Sandbox Denied 后为什么有时可以重试
-
-第一次执行可能因为 sandbox 拒绝。
-
-但：
-
-```text
-sandbox denied
-≠
-命令本身一定非法
-```
-
-可能是：
-
-> 这项合法任务需要更高权限。
-
-所以 Orchestrator 会判断：
-
--是否允许 escalation；
--approval policy；
--network approval；
--unsandboxed 是否可用；
--是否需要再次用户确认。
-
-然后决定：
-
-```text
-deny final
-or
-ask approval
-→ retry with escalated environment
-```
-
-这是“有限恢复”，不是无限重试。
-
----
-
-## 29. Network Permission 为什么单独管理
-
-网络是 Agent 最大副作用之一。
-
-Codex 还可能使用 managed network proxy / policy decider。
-
-因此网络安全不应该只靠：
-
-```text
-shell command 里有没有 curl
-```
-
-更合理：
-
-```text
-tool requirement
-+
-permission profile
-+
-managed network policy
-+
-runtime observation
-```
-
-这样 MCP / App / shell 等不同能力可以共享网络治理。
-
----
-
-## 30. 并发 Tool Call 怎样保证不会互相踩
-
-`ToolCallRuntime` 每个 Step 共享一个 `RwLock`。
-
-逻辑：
-
-### Tool 支持 parallel
-
-获取 read lock。
-
-多个 parallel-safe Tool 可以并发。
-
-### Tool 不支持 parallel
-
-获取 write lock。
-
-它会等待其他并发调用结束，并阻止新的并发 Tool 进入。
-
-因此：
-
-```text
-supports_parallel_tool_calls
-```
-
-不是只发给模型看的提示，而会改变真实 dispatch admission。
-
----
-
-## 31. 为什么 Tool Call 要记住 StepContext
-
-Tool Call 可能在模型 stream 完成后才被收集 / 执行。
-
-如果后面 Step 已经更新：
-
-- tool catalog；
--permission；
--model；
--environment；
-
-旧 Tool Call 仍应该按照：
-
-> **产生它时模型所看到的 Step。**
-
-所以 `ToolCallRuntime` 保留 `Arc<StepContext>`。
-
-这是避免 Time-of-check / Time-of-use 漂移的重要手段。
-
----
-
-## 32. Tool Cancellation 怎样工作
-
-每次 Tool Call 有 cancellation token。
-
-执行任务被 `AbortOnDropHandle` 包住。
-
-取消时：
-
-### 已进入 terminal outcome / 已结束
-
-等待正常结果。
-
-### 仍可中止
-
-```text
-record aborted
-↓
-abort task
-↓
-生成结构化 AbortedToolOutput
-↓
-notify_tool_aborted
-↓
-产生 model-visible tool result
-```
-
-例如 `exec_command` 会把 wall time 和 “aborted by user” 变成输出。
-
-为什么要生成 output？
-
-因为历史里已经有：
-
-```text
-tool call(call_id)
-```
-
-如果取消后什么都不写，下一次模型请求就出现 dangling call。
-
----
-
-## 33. Tool Failure 为什么分 Fatal 和 RespondToModel
-
-`FunctionCallError` 不是所有错误都等价。
-
-### RespondToModel
-
-代表：
-
-> 这次 Tool Call 失败，但 Agent Loop 可以继续，让模型看到错误并修正。
-
-例如：
-
--参数非法；
--path 不存在；
--memory query empty；
--Tool 业务失败。
-
-### Fatal
-
-代表：
-
-> Runtime / protocol 已经不可信，不能把它包装成普通工具结果继续装作没事。
-
-例如：
-
-- handler 收到不可能的 payload kind；
--tool task join failure；
--严重 I/O / internal invariant。
-
-正确 Error Taxonomy 决定 Agent 能不能安全自愈。
-
----
-
-## 34. Tool Result 怎样回到模型
-
-正常 handler 返回 `ToolOutput`。
-
-Runtime：
-
-```text
-handle result
-↓
-attach ToolResultMetadata
-↓
-post-tool hook
-↓
-record executed call / accepted result
-↓
-convert to Responses API output item
-↓
-record canonical history
-↓
-next sampling
-```
-
-失败但可恢复时也会转成：
-
-- `FunctionCallOutput`
-- `CustomToolCallOutput`
-- `ToolSearchOutput`
-
-并带：
-
-```text
-success = false
-```
-
-模型因此能在下一轮：
-
--改参数；
--换 Tool；
--解释失败；
--停止任务。
-
----
-
-## 35. Tool Result 也必须 Truncate
-
-Tool 输出可能极大：
-
-```text
-git diff
-test log
-MCP JSON
-browser page
-database rows
-```
-
-不能无界进入 Context。
-
-MCP Handler 会根据：
-
--Tool 自己 output token limit；
--否则模型 truncation policy；
-
-选择 presentation truncation。
-
-这再次说明：
-
-> **Tool Runtime 的结束不是“函数返回”，而是“形成可安全回填模型的有界 observation”。**
-
----
-
-## 36. Code Mode 为什么也是 Tool Scale 策略
-
-Direct model tool call 适合：
-
-```text
-模型
-→ 一个工具
-→ Runtime
-```
-
-但某些复杂任务需要很多细粒度 calls。
-
-Code Mode 允许模型生成一段受控代码，在内部调用 nested tools。
-
-好处可能包括：
-
--减少模型往返次数；
--把数据变换留在 runtime；
--不把每个中间结果都塞回 LLM；
--复用函数组合。
-
-所以大量工具下有两条 scale path：
-
-```text
-Deferred Search
-解决“先找到哪个工具”
-
-Code Mode
-解决“找到后如何高效组合多个工具”
-```
-
-它们不是互斥。
-
----
-
-## 37. MCP 和 Skills 的关系
-
-MCP：
-
-> **能力协议 / Tool transport。**
-
-Skills：
-
-> **如何识别场景、使用能力、组合流程的知识包。**
-
-可能出现：
-
-```text
-Skill:
-“处理 GitHub PR review”
-
-SKILL.md:
-告诉 Agent 先看 changed files，
-再读 diff，
-再运行 tests，
-最后如何组织 review。
-
-底层能力：
-GitHub MCP / shell / file tools
-```
-
-因此：
-
-```text
-MCP Tool
-≠
 Skill
+= 使用能力的方法与知识包
 
-Skill
-可以引用 / 驱动 MCP Tool
+Tool
+= Runtime 可以执行的动作接口
 ```
+
+两者会配合，但不是一回事。
 
 ---
 
-## 38. 几万个 Skills 怎么办
+## 9. 大量 Skill 怎样避免吃光 Context
 
-不能：
+Codex 自带的 Skill Creator 说明和 `ext/skills/src/render.rs` 都明确采用 progressive disclosure（渐进式展开）。
 
-```text
-10,000 * 完整 SKILL.md
-→ 每轮 Prompt
-```
+模型不是一开始看到每个 Skill 的全部文件。
 
-Codex 已经给出：
-
-### Discovery layer
-
-只暴露名字 / description / locator。
-
-### Metadata budget
-
-根据 Context Window 或 explicit max context tokens 严格限额。
-
-### Fair truncation
-
-description 公平缩短，必要时整条 Skill omitted。
-
-### Progressive disclosure
-
-真正选中以后再打开 SKILL.md。
-
-### Resource on demand
-
-references / scripts 继续延迟读取。
-
-如果 Skill 数量进一步上升，下一步自然是：
+而是：
 
 ```text
-catalog pre-filter / search
-→ top-K metadata
-→ selected SKILL.md
-→ selected resource
+第一层：name + description
+用于发现这个 Skill 是否相关
+        ↓
+第二层：SKILL.md
+真正决定使用以后才读取
+        ↓
+第三层：references / scripts / assets
+执行过程中需要哪一份再读取哪一份
 ```
 
-而不是取消预算。
+第一层 catalog（目录）本身也有预算。
+
+当前源码会根据：
+
+-显式配置的 token budget；
+-模型 Context Window 的一定比例；
+-默认字符预算；
+
+决定最多展示多少 Skill metadata（技能元数据）。
+
+当空间不够时，先缩短 description；再不够才省略部分 Skill。并且 description 预算是近似公平分配，不让第一个 Skill 把剩余空间全部占完。
+
+这就是为什么“几千 Skill 怎么办”的答案不能是：
+
+> “换一个 1M Context 的模型。”
+
+成熟实现首先要做能力目录的渐进展开。
 
 ---
 
-## 39. Tool / Skill Explosion 的评测指标
+## 10. 模型发出 Tool Call 以后，真正执行前发生什么
 
-工具多了以后，最重要的不是“能加载多少”，而是：
+模型输出会先被 `ToolRouter::build_tool_call` 转成 Codex 内部统一的 `ToolCall`。
 
-### Discovery
+无论 Responses API 返回的是 Function Call、Custom Tool Call 还是 Tool Search Call，Runtime 都会把它标准化成：
 
-```text
-Recall@K
-MRR
-top-K relevant-tool coverage
-```
+- tool name；
+- call id；
+- payload；
+-必要的加密参数信息。
 
-### Selection
+然后 Registry 开始真正 dispatch（分发）。
 
-```text
-correct tool rate
-unnecessary search count
-wrong namespace rate
-```
+### 第一道门：这个 Tool 是否真的存在、payload 类型是否匹配
 
-### Arguments
+如果模型调用一个没有注册的工具，Runtime 不会靠名字猜。
 
-```text
-schema-valid rate
-semantic-valid rate
-repair success rate
-```
+如果一个只接受 Function payload 的 Handler 收到了完全不同类型的 payload，也不会继续“尽量执行”。
 
-### Runtime
+这种协议层不一致通常应该被视为严重错误。
 
-```text
-execution success
-approval latency
-sandbox retry rate
-cancel correctness
-parallel speedup
-```
+### 第二道门：PreToolUse Hook
 
-### Context
+Tool 可以生成 Hook-facing input（面向钩子的输入）。
 
-```text
-model-visible tool bytes
-skills metadata tokens
-catalog truncation rate
-Prompt Cache effect
-```
+Hook 可以：
 
-Codex 已经为其中很多维度提供了 telemetry 点。
+- 放行；
+- 阻止；
+- 甚至修改 Tool Input。
+
+MCP Handler 就支持把 Hook 改写后的 JSON 参数重新序列化，再进入后续执行。
+
+但这也意味着：Hook 之后的参数仍然要经过真正 Handler 与权限系统，而不能因为“原参数已经检查过”就跳过安全边界。
 
 ---
 
-## 40. 场景题：Agent 总是选错 Tool，怎么排查
+## 11. Approval、Permission、Sandbox 为什么是三件不同的事
 
-不要先改 Tool description。
+模型选择 Tool 以后，`ToolOrchestrator` 才真正决定怎样运行。
 
-按生命周期：
+源码：
 
-```text
-1. Registry 里是不是正确 Tool？
-2. AllowedTools 有没有误过滤？
-3. Exposure 是 Direct / Deferred / Hidden 哪个？
-4. tool_search 的 search_text 是否能命中？
-5. BM25 top-K 是否被相似 Tool 淹没？
-6. namespace 是否冲突？
-7. model-visible spec 是否被 budget 截断？
-8. Tool description / schema 是否区分度不足？
-9. 模型选对名字但 payload invalid？
-10. Hook 是否改写了 input？
-11. Policy / sandbox 是否把“执行失败”伪装成“选错工具”？
-```
+- `codex-rs/core/src/tools/orchestrator.rs`
 
-这才是 Tool Lifecycle Debug。
+这里容易把几个概念混在一起。
 
----
+### Approval：用户愿不愿意让这次动作发生
 
-## 41. 场景题：为什么不把所有 Tool 做 Embedding Search
+例如某个命令需要扩大权限，Runtime 可能向用户请求批准。
 
-可以使用 embedding，但它不是完整答案。
+Approval 解决的是：
 
-还要处理：
+> **用户授权。**
 
--Exact name / namespace；
--schema field names；
--policy filter；
--dynamic refresh；
--collision；
--deferred loading；
--ToolResult lifecycle；
--permission。
+### Permission Profile：这个 Thread（线程） / Environment（环境） 最多允许什么
 
-Codex 当前 BM25 说明了一个现实：
+即使用户没有被弹窗询问，系统也有一份结构化权限范围，例如 workspace read/write、网络等。
 
-> Tool discovery 更像结构化 catalog search，不一定需要先上复杂向量数据库。
+Permission 解决的是：
 
-什么时候 embedding 有价值？
+> **系统能力上限。**
 
-- tool description 语义同义词很多；
--跨语言；
--大量自然语言 capability；
--BM25 recall 明显不足。
+### Sandbox：这次进程实际上被怎样隔离
 
-即使如此，也应该替换 / 增强 discovery 层，而不是绕过 Registry / Router / Policy。
+最终命令还要在某种沙箱里运行，例如 Linux / Windows 对应的隔离实现。
 
----
+Sandbox 解决的是：
 
-## 42. 面试怎么完整解释 Codex Tool Architecture
+> **技术执行边界。**
 
-可以这样回答：
+所以一条安全链更接近：
 
 ```text
-Codex 把 Tool Runtime 拆成 Spec、Executor、Registry 和每个 Step 的 Router。
-工具可以来自 core、MCP、extensions、dynamic tools 和 hosted tools。
-注册只代表 Host 知道怎么执行，不代表模型直接可见。
-最终每个 Step 会经过 AllowedTools、policy 和 exposure planning，
-把工具分成 Direct、Deferred、Code Mode 或 Hidden 等暴露面。
-
-大量工具时，MCP 默认可以 Deferred，
-初始 Prompt 只暴露 tool_search；
-tool_search 对 deferred ToolSearchInfo 建 BM25 索引，
-命中后才把 LoadableToolSpec 返回给模型。
-Agent-plugin MCP spec 还有单项 8KB、累计 64KB 的硬预算。
-Skills 也不是一次加载全文，而是 catalog metadata → SKILL.md → resources 的 progressive disclosure，
-并且 catalog 有独立 token/char budget。
-
-模型返回 call 后，Router 统一解析 payload；
-Registry 先做 runtime/payload 检查和 pre-tool hook，
-随后 Tool Orchestrator 处理 approval、Guardian、Permission、network 和 sandbox，
-必要时只做有限的 privilege escalation retry。
-ToolCallRuntime 用 StepContext 保证“模型看到什么”和“稍后执行什么”一致，
-用读写锁控制 parallel-safe 与 serial Tool，
-用 cancellation token 把中止也变成结构化 Tool Output。
-最后 post hook、truncation、metadata 与结果一起回填 canonical history，
-再进入下一次 sampling。
-所以完整 Tool Lifecycle 是能力注册、按需发现、安全执行和结果回填的闭环，
-不是一次 function call。
+模型建议执行
+→ Policy 判断是否允许
+→ 必要时请求 Approval
+→ 根据 Permission Profile 计算文件 / 网络能力
+→ 选择 Sandbox
+→ 真正启动进程
 ```
+
+不能用 Prompt 里的“请谨慎操作”代替这些 Runtime 控制。
 
 ---
 
-## 43. 源码核验入口
+## 12. Sandbox Denied 为什么有时还会再试一次
 
-- [`tools/src/tool_executor.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/tools/src/tool_executor.rs)：共享 ToolExecutor / ToolExposure contract。
-- [`core/src/tools/registry.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/registry.rs)：Core Registry。
-- [`core/src/tools/router.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/router.rs)：ToolCall parsing / routing。
-- [`core/src/tools/spec_plan.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/spec_plan.rs)：Step Tool Plan。
-- [`core/src/tools/handlers/tool_search.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/tool_search.rs)：BM25 deferred discovery。
-- [`core/src/mcp_tool_exposure.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/mcp_tool_exposure.rs)：MCP exposure / budget / app policy。
-- [`core/src/tools/handlers/mcp.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/mcp.rs)：MCP Tool Runtime。
-- [`core/src/tools/orchestrator.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/orchestrator.rs)：approval / sandbox / retry。
-- [`core/src/tools/parallel.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/parallel.rs)：parallel gate / cancellation / result。
-- [`ext/skills/src/extension.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/extension.rs)：Skills 接入 Thread/Turn/Tool/Context。
-- [`ext/skills/src/render.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/render.rs)：catalog budget。
-- [`ext/skills/src/render_observability.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/render_observability.rs)：Skill catalog metrics。
-- [Skill Creator sample](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/skills/src/assets/samples/skill-creator/SKILL.md)：Progressive Disclosure 设计说明。
+第一次在受限 Sandbox 中执行失败，不一定说明用户请求本身非法。
+
+可能只是当前命令需要访问一个被沙箱拦住、但用户确实可以授权的资源。
+
+因此 `ToolOrchestrator` 会区分：
+
+- Policy 明确禁止；
+- 只是当前 Sandbox 权限不足。
+
+只有后者，并且当前 approval policy（批准策略）允许时，Runtime 才可能请求更高权限，再做有限的 escalation retry（权限升级重试）。
+
+这条原则非常重要：
+
+> **Retry 能扩大执行环境，但不能扩大 Policy 本身。**
+
+如果 Policy 已经说 Forbidden（禁止），不能通过多试几次把它绕过去。
+
+---
+
+## 13. 并发 Tool 是怎样控制的
+
+`ToolCallRuntime` 在同一 Step 上共享一个读写锁。
+
+源码：
+
+- `codex-rs/core/src/tools/parallel.rs`
+
+如果一个 Tool 声明支持 parallel tool calls（并行工具调用），它拿 read lock（读锁），多个并行安全 Tool 可以同时执行。
+
+不支持并行的 Tool 拿 write lock（写锁），会等其他并发工作结束，并阻止新的并行调用进入。
+
+所以 `supports_parallel_tool_calls` 不是一句给模型看的描述，它真正影响 Runtime 调度。
+
+为什么不能所有 Tool 都并发？
+
+因为有些工具会竞争同一个外部状态，例如：
+
+- 同时修改同一个文件；
+- 同时操作一个终端 Session；
+- 同时改变共享环境。
+
+并发安全是执行器的性质，不是模型自己猜出来的。
+
+---
+
+## 14. 用户取消以后，为什么还要生成 Tool Result
+
+Tool Call 会绑定 CancellationToken（取消令牌）。
+
+如果用户在执行过程中取消：
+
+```text
+Tool Call 已经写进模型历史
+        ↓
+Runtime 中止执行任务
+        ↓
+如果什么都不记录
+        ↓
+历史里只剩 Call，没有 Result
+```
+
+下一轮模型就会面对一个悬空动作。
+
+因此 Codex 会尽量产生结构化 `AbortedToolOutput`（工具中止输出），并完成对应 call id 的结果。
+
+对于 `exec_command`，结果甚至会带运行了多久以及“aborted by user”之类的信息。
+
+这说明取消不是：
+
+> “把 future kill 掉就完了。”
+
+取消也必须维护 Context 协议一致性。
+
+---
+
+## 15. Tool 执行失败以后，为什么有些错误给模型看，有些直接终止
+
+Codex Tool Error（工具错误）区分可反馈给模型的失败和 Runtime fatal（致命）失败。
+
+如果只是：
+
+- 参数错误；
+- 文件不存在；
+- 某个 Tool 业务执行失败；
+
+模型仍然可能换参数或换方法继续任务，所以 Runtime 可以把错误包装成失败 Tool Result，再交给下一次采样。
+
+但如果是：
+
+- 不可能出现的 payload 类型；
+- Tool task 本身崩坏；
+- 核心协议 invariant（不变量）被破坏；
+
+再把它伪装成“普通工具失败”会掩盖系统错误。
+
+所以成熟 Agent 不是“所有 Exception 都塞给模型继续修”。
+
+更准确的原则是：
+
+> **模型只能修复它拥有决策权的错误；Runtime 自身已经失去可信状态时应该 fail fast（快速失败）。**
+
+---
+
+## 16. Tool Result 怎样完成生命周期
+
+正常 Handler 返回的结果还要经过最后几步，才算真正结束。
+
+Runtime 会：
+
+-记录 Tool lifecycle；
+-执行 PostToolUse Hook（工具执行后钩子）；
+-补充 ToolResultMetadata（工具结果元数据）；
+-根据输出策略做必要截断；
+-转换成 Responses API 可消费的 output item；
+-写入 canonical history；
+-触发下一次模型采样。
+
+这也是为什么“工具执行成功”不等于“Agent 已经知道成功”。
+
+只有结果真正写回历史，下一轮模型才知道现实世界已经变化。
+
+如果一个 destructive action（有副作用的动作）已经成功，但结果在进入历史前丢失，模型甚至可能重复执行同一动作。
+
+所以 Tool Lifecycle 的最后一个工程边界不是 function return，而是：
+
+> **结果安全地成为下一次模型决策的 Observation（观察）。**
+
+---
+
+## 17. 用一个例子串完整 Tool Lifecycle
+
+用户说：
+
+> “运行测试并修复失败，但如果需要访问工作区外文件先问我。”
+
+模型第一轮看到 `exec_command`，决定运行测试。
+
+这份 Tool Call 来自产生它的 StepContext。Router 把 Responses 输出解析成内部 ToolCall。Registry 确认工具存在、payload 合法。
+
+PreToolUse Hook 如果配置了审查逻辑，可以先观察命令。
+
+ToolOrchestrator 计算：当前命令只需要 workspace 内权限，所以不需要额外 Approval，使用当前 Permission Profile 对应的 Sandbox。
+
+命令执行后，测试输出很长。Runtime 对结果进行有界处理，把关键内容变成 Tool Result，关联原 call id，写进历史。
+
+下一次模型看到失败信息，决定读取工作区外的一份配置。Runtime 判断这超出当前权限，于是发起 Approval。用户拒绝后，这次工具调用以明确失败结果回填。
+
+模型因此知道：
+
+> 不是文件不存在，而是权限没有获批。
+
+它可以改用工作区内信息继续，而不是无限重试。
+
+这才是一个完整的 Tool Call：从“模型提出动作”一直到“动作结果成为新 Context”。
+
+---
+
+## 18. 源码锚点
+
+建议按这条顺序验证：
+
+1. [`tools/src/tool_executor.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/tools/src/tool_executor.rs)：ToolExecutor 与 ToolExposure 的共享契约。
+2. [`core/src/tools/spec_plan.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/spec_plan.rs)：一次 Step 怎样汇总并筛选工具。
+3. [`core/src/tools/registry.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/registry.rs)：注册、Hook、dispatch。
+4. [`core/src/tools/router.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/router.rs)：模型 Tool Call 如何变成内部调用。
+5. [`core/src/mcp_tool_exposure.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/mcp_tool_exposure.rs)：MCP Tool 的暴露策略和 spec 大小预算。
+6. [`core/src/tools/handlers/tool_search.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/tool_search.rs)：Deferred Tool 的 BM25 搜索。
+7. [`core/src/tools/handlers/mcp.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/mcp.rs)：MCP Handler、ready 等待和结果处理。
+8. [`ext/skills/src/extension.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/extension.rs)：Skill 怎样同时参与 Context 与 Tool。
+9. [`ext/skills/src/render.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/render.rs)：Skill Catalog 的上下文预算。
+10. [`core/src/tools/orchestrator.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/orchestrator.rs)：Approval、Permission、Sandbox、Network 和 escalation。
+11. [`core/src/tools/parallel.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/parallel.rs)：并发、取消、Tool Result。
+12. [`exec-server/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/exec-server)：真正的执行环境和文件系统隔离。
 
 下一篇：[Codex Engineering & Evaluation →](04-engineering-evaluation.md)
