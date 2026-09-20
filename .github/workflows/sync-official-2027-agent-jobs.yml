@@ -59,6 +59,13 @@ jobs:
       - name: Check dynamic job fetcher
         run: node --check tools/fetch_dynamic_official_jobs.mjs
 
+      - name: Check official ATS Node adapters
+        run: |
+          node --check tools/fetch_xiaomi_2027.mjs
+          node --check tools/fetch_bytedance_2027.mjs
+          node --check tools/fetch_feishu_official_2027.mjs
+          node --check tools/fetch_moka_official_2027.mjs
+
       - name: Validate persistent official source and role contracts
         run: python tools/validate_official_2027_source_contracts.py
 
@@ -153,6 +160,13 @@ jobs:
 
       - name: Check dynamic job fetcher
         run: node --check tools/fetch_dynamic_official_jobs.mjs
+
+      - name: Check official ATS Node adapters
+        run: |
+          node --check tools/fetch_xiaomi_2027.mjs
+          node --check tools/fetch_bytedance_2027.mjs
+          node --check tools/fetch_feishu_official_2027.mjs
+          node --check tools/fetch_moka_official_2027.mjs
 
       - name: Validate persistent official source and role contracts
         run: python tools/validate_official_2027_source_contracts.py
