@@ -149,6 +149,14 @@ Codex 学习文档固定到源码快照 `openai/codex@5c5308fc9a9ee789049d646ef1
 
 Claude Code 学习文档固定到私有源码镜像 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。该镜像没有可核验的官方 release 元数据，因此文档只陈述固定镜像中能由源码和调用链确认的事实；被引用但未包含在镜像中的内部模块只描述可见 contract，不推测缺失实现。
 
+- [DeepSeek Harness｜系统总览](products/deepseek-harness/README.md)
+  - [Context Lifecycle：Inbox、Session Log、Surface、Compaction 与 Request Reconstruction](products/deepseek-harness/01-context-lifecycle.md)
+  - [Memory Lifecycle：Instructions、Session Reference 与 MCP 长期记忆边界](products/deepseek-harness/02-memory-lifecycle.md)
+  - [Tool Lifecycle：Tool Pipeline、Approval、Sandbox、PTC、Skills 与 MCP](products/deepseek-harness/03-tool-lifecycle.md)
+  - [Engineering & Evaluation：Crash Recovery、Retry、Subagent 与验证体系](products/deepseek-harness/04-engineering-evaluation.md)
+
+DeepSeek Harness 学习文档固定到源码快照 `deepseek-ai/deepseek-harness@ddefc45fbc7f8e46dd73185e68295696d1297887`（`0.1.6-alpha.2`）。文档以真实 Cordis composition、Session Event / Surface、Agent Loop 和各 capability seam 为主线；当前源码没有内建 Universal Semantic Memory，因此长期语义记忆明确按源码写成 MCP Provider 边界，而不为了产品结构对齐虚构 Memory 子系统。
+
 源码产品层与 `docs/01–24` 的关系是：
 
 ```text
@@ -227,7 +235,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 ```text
 docs/      ✅ 01–24 连续
-products/  ✅ Codex + Claude Code 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
+products/  ✅ Codex + Claude Code + DeepSeek Harness 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
