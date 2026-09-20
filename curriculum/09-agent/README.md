@@ -157,6 +157,14 @@ Claude Code 学习文档固定到私有源码镜像 `studyzhige-ui/claude-code-s
 
 DeepSeek Harness 学习文档固定到源码快照 `deepseek-ai/deepseek-harness@ddefc45fbc7f8e46dd73185e68295696d1297887`（`0.1.6-alpha.2`）。文档以真实 Cordis composition、Session Event / Surface、Agent Loop 和各 capability seam 为主线；当前源码没有内建 Universal Semantic Memory，因此长期语义记忆明确按源码写成 MCP Provider 边界，而不为了产品结构对齐虚构 Memory 子系统。
 
+- [DeerFlow 2.0｜系统总览](products/deer-flow/README.md)
+  - [Context Lifecycle：ThreadState、Dynamic/Durable Context、Summarization 与 Checkpoint](products/deer-flow/01-context-lifecycle.md)
+  - [Memory Lifecycle：DeerMem、异步提取、Recall、CRUD 与长期维护](products/deer-flow/02-memory-lifecycle.md)
+  - [Tool Lifecycle：Deferred MCP、Skills、Policy、Sandbox 与执行证据](products/deer-flow/03-tool-lifecycle.md)
+  - [Engineering & Evaluation：Checkpoint、Run Journal、Subagent、Recovery 与 Replay](products/deer-flow/04-engineering-evaluation.md)
+
+DeerFlow 学习文档固定到源码快照 `bytedance/deer-flow@1e3bfa09d4e31e02d109ef2f4b41895dc89a78fe`，聚焦 2.0 ground-up rewrite 的真实实现。文档以 Gateway → LangGraph Checkpoint State → Middleware Chain → Tools/Memory/Subagents/Sandbox → Run Journal 的产品运行链为主线，并明确区分 Checkpoint continuation state、Run execution evidence 与外部 Workspace side effects。
+
 源码产品层与 `docs/01–24` 的关系是：
 
 ```text
@@ -235,7 +243,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 ```text
 docs/      ✅ 01–24 连续
-products/  ✅ Codex + Claude Code + DeepSeek Harness 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
+products/  ✅ Codex + Claude Code + DeepSeek Harness + DeerFlow 源码学习基线（Context / Memory / Tool / Engineering & Evaluation）
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
