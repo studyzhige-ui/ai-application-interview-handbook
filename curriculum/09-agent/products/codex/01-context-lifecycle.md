@@ -1,1145 +1,497 @@
-# 01. Codex Context Lifecycle｜从输入、Prompt 编排到 Compaction、Cache 与 Resume
+# 01. Codex Context Lifecycle｜一条用户输入怎样变成模型真正看到的上下文
 
 [← Codex 总览](README.md) · [Memory →](02-memory-lifecycle.md)
 
 > **源码基线：** `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`
 
-这一篇只追一个对象：
+Context（上下文）最容易被写成一张“字段清单”：system prompt、history、tools、memory……但这样学完以后，仍然不知道这些内容是谁加进去的、什么时候更新、为什么有些内容每轮都不重发。
 
-> **某一条信息怎样进入 Codex，什么时候成为模型可见 Context，怎样随着 Tool Loop 增长，达到边界后怎样压缩，最后又怎样被持久化、恢复和继续使用？**
+这一篇换一个读法。假设用户在 Codex TUI 里说：
 
-先给完整链路：
+> “修掉这个失败测试，不要改公开 API，完成后运行相关测试。”
 
-```text
-Client / User Input
-↓
-Submission / TurnInput
-↓
-Turn 前置处理
-  Guardian / hooks / pending input
-  explicit plugin mentions
-  required MCP servers
-  pre-turn compaction
-↓
-Capture StepContext
-  model + config + permissions + env + tool view
-↓
-Build / diff WorldState
-↓
-Context contributors
-  developer policy / capabilities
-  memory / skills / plugins / environment / model switch ...
-↓
-Record user input + injected items
-↓
-ContextManager canonical history
-↓
-normalize / truncate / for_prompt
-↓
-Prompt
-  base_instructions
-  + input/history
-  + current model-visible tools
-  + output schema / parallel setting
-↓
-ModelClientSession
-  prompt_cache_key
-  previous_response_id / WS incremental continuation
-↓
-Response stream
-  assistant output / reasoning / tool calls
-↓
-Tool result becomes canonical history
-↓
-next Step / next sampling request
-↓
-token accounting
-↓
-threshold / hard limit
-↓
-local compaction / remote compaction / new token-budget window
-↓
-replacement_history checkpoint
-↓
-ThreadStore / rollout persistence
-↓
-resume / fork: newest valid checkpoint + surviving suffix replay
-```
-
-这是一条连续生命周期，不是“Prompt、Cache、Compaction 三个互不相关的功能”。
+我们沿真实源码看，这句话怎样从客户端一路走到模型；模型调用工具以后，结果又怎样进入下一次请求；对话越来越长以后，Codex 怎样换 Context Window（上下文窗口），最后进程重启时又怎样恢复。
 
 ---
 
-## 1. Context 在 Codex 里不是一个字符串
+## 1. 上下文生命周期从 App Server 的输入边界开始
 
-Codex 同时维护几类不同对象：
+TUI 并不会直接调用模型。它通过 App Server Client（应用服务器客户端）发送类型化 JSON-RPC 请求。对于一次新的用户任务，重要入口之一是 `turn/start`，对应 `app-server/src/request_processors/turn_processor.rs`。
 
-```text
-Session State
-程序内部长期状态
+这里先做的是程序可以确定的校验，而不是把所有问题交给模型。例如源码会检查用户输入总长度，也会拒绝当前接口不允许的远程图片 URL。只有请求满足协议要求，App Server 才找到目标 Thread（线程 / 持续会话容器），把输入转换成 Core 能理解的操作。
 
-ContextManager / History
-已进入 canonical conversation 的模型相关历史
+所以第一层关系是：
 
-WorldState
-当前环境与运行条件的结构化快照
+~~~text
+用户输入
+→ 产品协议校验
+→ 找到 Thread
+→ 提交 Core Operation（核心操作）
+→ 才进入 Agent Turn
+~~~
 
-TurnContext / StepContext
-这一次 Turn / Step 的配置与执行快照
-
-BaseInstructions
-请求级基础指令
-
-ToolRouter.model_visible_specs()
-本次请求可见的工具能力
-
-Prompt
-真正发送给模型的请求视图
-```
-
-因此不能把：
-
-```text
-context = system prompt + chat history
-```
-
-当成 Codex 的实现。
-
-更准确的是：
-
-> **Context 是 Session 中多种状态经过规则化投影后形成的“当前模型可见视图”。**
-
-这也是为什么 Codex 源码把 Context、History、World State、Tool Specs、Memory、Persistence 分成不同 crate / module。
+这一步看似和“Prompt Engineering（提示工程）”无关，却决定了什么东西根本不应该进入 Prompt。输入格式、目标 Thread 是否存在、调用者是否允许直接输入，这些都是 Runtime（运行时）可以确定的事实，没有必要让模型猜。
 
 ---
 
-## 2. 生命周期第一步：用户输入怎样进入 Runtime
+## 2. Codex 的 Turn 不是“一次模型调用”
 
-客户端不是直接调用 `run_turn`。
+进入 Core 以后，`run_turn` 驱动一次 Codex Turn（一次用户任务推进）。
 
-`SessionIo` 接受 submission；对 turn input，Runtime 使用带顺序语义的 `submit_turn_input`，把请求交给 Session Loop。
+一个 Turn 可以发生很多次模型采样。模型第一次可能决定读文件，Runtime 执行后把结果加入历史；第二次模型看到文件内容，再决定运行测试；测试失败以后还可能继续修改代码。直到模型给出最终回答、用户中断、发生不可恢复错误，或者 Runtime 触发其他终止条件，这个 Turn 才结束。
 
-源码边界：
+可以把一次真实 Turn 理解为：
 
-- `codex-rs/core/src/session/mod.rs`
-- `SessionIo::submit`
-- `SessionIo::submit_turn_input`
-- submission loop
-- `codex-rs/core/src/session/turn.rs::run_turn`
+~~~text
+用户任务
+↓
+模型采样 1
+→ Tool Call（工具调用）
+→ Tool Result（工具结果）
+↓
+模型采样 2
+→ Tool Call
+→ Tool Result
+↓
+模型采样 3
+→ 最终回答
+↓
+Turn 结束
+~~~
 
-因此外部输入先成为**程序事件**，再成为模型输入。
-
-这一层的意义是：
-
-```text
-客户端输入
-≠
-立刻写进 Prompt
-```
-
-在真正采样前，还要经过：
-
-- turn routing；
-- active turn / input queue；
-- hook；
-- Guardian；
-- plugin / MCP dependency 处理；
-- pre-turn compaction；
-- step context capture。
+这也是为什么“Chat History（聊天历史）长度”等指标很容易误导。一个用户 Turn 里面就可能产生大量模型消息、工具调用和观察结果。
 
 ---
 
-## 3. Codex 的“意图理解”其实有两层
+## 3. 为什么 Turn 里面还需要 Step Context
 
-用户输入进入 `run_turn` 后，一部分意图会在**模型调用之前**被确定。
+在同一个 Turn 里，运行环境并不是永远不变。
 
-源码会从用户输入里收集：
+MCP Server（MCP 服务器）可能刚刚完成启动，插件目录可能刷新，用户可能在运行中追加一条 Steer（引导指令），某个远程执行环境也可能从“尚未就绪”变成“可用”。如果每次真正执行 Tool Call 时都读取“此刻最新”的全局状态，就会出现一个危险问题：
 
-- 显式 plugin mention；
-- 显式 app / connector 相关引用；
-- 需要启动的 MCP server；
-- 显式 Skill invocation；
-- turn settings / environment 等结构化要求。
+> 模型是根据旧能力做出的决定，执行时却偷偷换成了新能力。
 
-这类意图不是让大模型自由猜：
+Codex 用 `StepContext（步骤上下文）` 避免这种时间错位。
 
-```text
-用户明确 @ 某能力
-→ Runtime 解析
-→ required_plugins / required_servers
-→ StepContext 捕获前准备对应能力
-```
+源码把它定义为**一次模型请求范围内的状态快照**。创建 Step Context 时，会把这一次采样需要共同保持一致的东西一起捕获：Resolved Step Settings（解析后的步骤设置）、Environment Snapshot（执行环境快照）、MCP Binding（MCP 连接与目录快照）、Tool Router（这一步最终可见和可执行的工具计划）、已经加载的 `AGENTS.md` 等。
 
-另一部分开放语义，例如：
+其中最值得记住的不是字段名，而是这个不变量：
 
-> “修掉这个测试失败，并尽量不要改 API。”
+> **模型在这次 Step 看见的能力，与这次 Step 产生的 Tool Call 后续真正使用的能力，应来自同一份快照。**
 
-仍然由模型在完整 Context 中理解。
-
-所以成熟 Agent 的 Intent 不一定是一个单独的“Intent Classifier”：
-
-```text
-确定性语义
-显式引用、协议字段、权限、环境选择
-→ Runtime 先解析
-
-开放任务语义
-目标、策略、代码理解、下一步动作
-→ 交给模型结合完整 Context 推理
-```
-
-这比“先做一次统一意图分类，再把标签交给 Agent”更贴近 Codex 当前源码。
+所以 Step Context 是“模型可见世界”和“真实执行世界”之间的一致性边界。
 
 ---
 
-## 4. Turn 开始前，为什么先检查 Compaction
+## 4. 一次模型请求前，Codex 先重建当前 World State
 
-`run_turn` 一开始就可能执行 pre-sampling compaction，而且发生在新用户输入真正写入历史之前。
+Step Context 捕获完成以后，`Session::build_world_state_for_step` 会构建 World State（世界状态）。
 
-原因非常重要：
+这里的 “World” 不是一个虚构的游戏世界，而是：
 
-假设旧 Context 已经接近阈值：
+> **这一刻会影响模型决策、并且需要以结构化方式投影给模型的运行条件。**
 
-```text
-旧历史 115k
-+ 新用户输入 8k
-+ 新环境差异 4k
-+ Tool / Skill 变化
-→ 可能一开始就越界
-```
+例如模型是否刚切换、当前是什么执行环境、审批和权限怎样约束命令、是否启用多 Agent、是否存在可发现但尚未展开的工具命名空间、`AGENTS.md` 当前内容是什么，这些都不是普通对话消息，但模型做正确决定时可能必须知道。
 
-如果先把新输入写死，再发现 Context 爆掉，恢复路径会复杂得多。
+源码没有把这些东西拼成一个巨大字符串，而是拆成有稳定身份的 section（状态片段）。不同 section 可以比较旧值和新值，并决定是否需要生成新的 model-visible fragment（模型可见片段）。
 
-所以 Codex 的逻辑近似：
+这就是 World State 与普通 History（历史）的区别：
 
-```text
-Turn start
-↓
-检查旧窗口是否需要预压缩
-↓
-成功
-  → 再处理新输入
-失败
-  → 仍要确保新输入被保留 / 正确发出错误
-```
+~~~text
+History
+记录“之前发生了什么”
 
-源码甚至专门注释：
+World State
+描述“当前运行条件是什么”
+~~~
 
-> pre-turn compaction 在新输入记录之前运行，所以失败路径必须保护输入。
-
-这是一个典型 Production 细节：**Compaction 不只是 Token 优化，还参与事务边界。**
+两者最后都可能进入模型请求，但更新方式不一样。
 
 ---
 
-## 5. StepContext：为什么一个 Turn 里还需要 Step
+## 5. World State 里最重要的是关系，不是字段数量
 
-一个 Turn 可能有：
+直接看 `world_state.rs` 会看到很多类型名。如果逐个列出，只会把读者淹没。更适合从它们解决的问题来理解。
 
-```text
-sample #1
-→ tool A
-→ tool result
-→ 用户 steer
-→ MCP server ready
-→ sample #2
-→ tool B
-→ ...
-```
+### 5.1 模型和长期指令有没有变化
 
-如果每次工具执行都去读“现在最新的全局配置”，就会出现时间错位：
+`ModelInstructionsState` 负责当前模型对应的指令；`AgentsMdState` 记录当前环境里加载到的 `AGENTS.md`；受管理配置还可以贡献额外 developer instructions（开发者指令）。
 
-```text
-模型在 Step 1 看见 Tool A schema v1
-↓
-配置在 Step 2 更新
-↓
-Step 1 产生的 Tool A call 延迟执行
-↓
-错误使用 schema / permission v2
-```
+为什么这些内容必须有状态身份？
 
-Codex 通过 `StepContext` 固化一次采样周围需要保持一致的：
+因为模型切换、项目目录切换或管理配置变化以后，过去那份指令可能已经失效。Runtime 需要知道“这是同一份，还是需要向模型说明变化”，而不是每轮无脑重发整段文本。
 
-- model settings；
-- permission profile；
-- environment selection；
-- tool router；
-- provider / context-window 信息；
-- turn snapshot。
+### 5.2 当前允许模型做什么
 
-ToolCallRuntime 会保留产生 Tool Call 的 StepContext。
+权限相关 section 会把 Permission Profile（权限配置）、Approval Policy（批准策略）、执行策略等投影给模型。这样模型知道某个动作是否可能需要批准，但真正的安全边界仍然在 Runtime；模型看见“需要批准”并不等于模型自己获得了批准权。
 
-所以：
+### 5.3 当前在哪些环境工作
 
-> **Step 是模型可见能力与真实执行能力的一致性边界。**
+Environment（环境）相关 section 描述当前工作目录、执行环境和环境说明。多环境场景下，Tool Schema（工具模式）甚至可能需要显式带 environment ID，保证命令被送到正确执行端。
+
+### 5.4 当前有哪些高级能力
+
+Apps、Plugins、Deferred Tools（延迟加载工具）、Multi-Agent Mode（多智能体模式）等 section 负责让模型知道“有哪些能力类别存在”。这里通常只给必要的世界状态，不等于把每个具体 Tool Schema 全部塞进去。
+
+这四组关系比背几十个 State 类型更重要：**指令、权限、环境、能力目录**共同定义模型这一刻所处的运行世界。
 
 ---
 
-## 6. WorldState：Context 不应该每轮全部重发
+## 6. Extension 也能参与 Context，但入口是受控的
 
-Codex 有 `WorldState`，并且同时维护：
+Memory、Skills、插件等能力不是随便在 Prompt 最前面插一段字符串。
 
-```text
-full snapshot
-+
-subsequent merge/diff
-```
+`Extension API（扩展接口）` 提供 `ContextContributor（上下文贡献者）`。扩展可以贡献 thread-scoped context（线程级稳定上下文）、turn-scoped context（本 Turn 的上下文）以及 World State section。
 
-`record_context_updates_and_set_reference_context_item` 的核心逻辑是：
+例如 Memory Extension 会把经过整理和截断的 `memory_summary.md` 渲染成 developer-policy context（开发者策略上下文）；Skills Extension 会在预算允许范围内贡献可用 Skill 的目录信息。
 
-### 第一次 / baseline 丢失
+这个设计有两个好处。
 
-```text
-reference_context_item == None
-↓
-build full WorldState
-↓
-build full initial context
-↓
-set world-state baseline
-↓
-record model-visible items
-↓
-persist full WorldState snapshot
-↓
-persist TurnContextItem
-↓
-set reference_context_item
-```
+第一，Core 知道这些内容来自哪个生命周期。稳定的 Thread Context 不需要像瞬时 Turn 数据一样频繁变动。
 
-### 稳态 Turn
-
-```text
-已有 reference baseline
-↓
-重新构造当前 WorldState
-↓
-与 baseline 比较
-↓
-只发 model-visible diff
-↓
-只持久化需要的 state patch
-```
-
-这与 Codex 根目录 `AGENTS.md` 的 Context 规则完全一致：
-
-> 正常路径应该增量构建 Context，避免不断重写过去内容。
-
-为什么？
-
-因为这样同时改善：
-
-- Token 成本；
-- Prompt Cache 稳定性；
-- 可解释性；
-- Resume 的状态重放；
-- “什么时候发生变化”的可追踪性。
+第二，扩展产物仍然经过统一的 Prompt Fragment / World State 机制，而不是各自直接修改历史。这使增量更新、持久化和测试有共同边界。
 
 ---
 
-## 7. 初始 Context 到底由哪些东西组成
+## 7. 第一次进入一个 Context Window 时，Codex 会建立完整基线
 
-`Session::build_initial_context_with_world_state` 是最值得读的函数之一。
+`record_context_updates_and_set_reference_context_item` 是理解增量 Context 的另一个关键函数。
 
-它不是写死：
+如果当前还没有 `reference_context_item（参考上下文项）`，说明 Runtime 没有可比较的持久基线。这时会：
 
-```text
-system + developer + user
-```
+~~~text
+构造当前 World State
+↓
+生成完整 initial context（初始上下文）
+↓
+把 World State 保存为 full snapshot（完整快照）
+↓
+把模型可见内容写入 canonical history
+↓
+持久化 TurnContextItem
+↓
+把它设为后续比较的 reference
+~~~
 
-而是收集多种 typed fragments。
+这里的重点不是“第一次 Prompt 特别长”，而是：
 
-当前源码可见的来源包括：
+> **从这一刻开始，Runtime 有了一份“模型已经被告知过什么”的基准。**
 
-### 7.1 Developer Instructions
-
-Turn 自身的 developer instructions。
-
-Guardian 子 Agent 有特殊处理：Guardian policy 会保持为独立顶层 developer message，便于审计，不和普通 developer bundle 混在一起。
-
-### 7.2 Extension Thread Context
-
-各 Extension 可以通过 `ContextContributor` 提供：
-
-- `DeveloperPolicy`
-- `DeveloperCapabilities`
-- `ContextWindow`
-
-不同 slot 决定 fragment 最终怎样进入模型可见输入。
-
-Memory Extension 就通过这里把 memory summary 的 developer instructions 注入。
-
-### 7.3 Extension Turn Context
-
-Extension 还可以只针对当前 Turn 贡献 Context。
-
-这说明 Codex 的 Prompt Architecture 不是一个中央巨大模板，而是：
-
-```text
-稳定 Core
-+
-受约束的 Extension contribution points
-```
-
-### 7.4 WorldState
-
-WorldState 渲染出来的 fragment 可能包含：
-
-- model switch instructions；
-- managed developer instructions；
-- multi-agent mode；
-- role instructions；
-- environment / permission / runtime 状态；
-- 其他 model-visible world state。
-
-### 7.5 Recommended Plugins
-
-推荐插件可以作为 contextual user section 进入初始 Context。
-
-### 7.6 Token Budget Context
-
-启用 Token Budget 时，会携带当前 context-window identity 与可选 hints。
-
-它甚至可能通过 notes MCP bridge 获取 thread hint，再组合到 Context Window 提示中。
-
-这体现出一个非常重要的设计：
-
-> **Context Window 本身也有运行时状态，不只是模型 API 的一个整数参数。**
+后续 Turn 就不必每次重新打印整个世界。
 
 ---
 
-## 8. 为什么要 typed Context Fragment
+## 8. 稳态运行时主要发送变化，而不是重写过去
 
-Codex 根 `AGENTS.md` 明确要求新增 model-context 注入最好使用：
+已有 reference baseline（参考基线）以后，Codex 会重新构造当前 World State，并让 Context Manager 比较新旧 section。
 
-`ContextualUserFragment`
+如果某个环境、权限或能力状态没有变化，就不需要重复形成相同的上下文项；有变化时，才渲染对应 diff（差异）。
 
-源码里也确实把各种 Context 做成独立类型：
+因此正常路径更接近：
 
-```text
-base_instructions
-developer_instructions
-user_instructions
-environment_context
-environments_instructions
-compaction_summary
-current_time_reminder
-token_budget_context
-subagent_notification
-guardian_*
-world_state/*
+~~~text
+初始完整状态
++ 用户输入
++ Tool Call / Tool Result
++ 后续状态变化
++ 后续用户输入
 ...
-```
+~~~
 
-Typed Fragment 的价值不是 Rust 代码更“优雅”，而是能附带：
+而不是：
 
-- role；
-- marker；
-- content kind；
-- stable identity；
-- rendering policy；
-- merge / replace 语义；
-- telemetry / test 能力。
+~~~text
+每轮：
+重新生成一份“当前所有规则 + 所有状态 + 所有历史”
+~~~
 
-如果所有东西只是：
+Codex 根目录 `AGENTS.md` 甚至把这点写成源码开发约束：model-visible context（模型可见上下文）在普通流程里应该尽量增量追加，自动注入内容必须有硬上限，并且要避免频繁变化破坏 Prompt Cache（提示缓存）。
 
-```rust
-prompt.push_str(...)
-```
-
-就很难回答：
-
-- 这段是谁加的？
-- 应该覆盖还是追加？
-- 什么时候需要刷新？
-- 能不能被 diff？
-- 它是不是 cache-stable？
-- 它有多大？
-- Resume 时该不该重建？
+这不是纯性能技巧。增量历史还让我们能回答“这个状态是什么时候改变的”，对恢复和排障都更可靠。
 
 ---
 
-## 9. Prompt 的物理结构：Base Instructions 和 input/history 不是一层
+## 9. 用户在运行中追加指令，为什么不能直接插进未完成的 Tool Pair
 
-Codex 最终模型请求可以抽象为：
+App Server 提供 `turn/steer`，允许用户在一个正在执行的 Turn 中继续补充信息。
 
-```text
-Prompt {
-    base_instructions,
-    input,
-    tools,
-    parallel_tool_calls,
-    output_schema,
-    ...
-}
-```
+Core 的 Turn Loop 会在安全的处理边界读取 pending input（待处理输入），把它按顺序记录进历史，再捕获新的 Step Context。这样新用户消息不会随意插到一个尚未完成的 Tool Call / Tool Result 中间。
 
-这里：
+原因可以用一个简单例子理解。
 
-### Base Instructions
+假设模型已经发出：
 
-通过 `get_prompt_base_instructions` 取得。
+~~~text
+call_id = c1
+run_tests(...)
+~~~
 
-它可以根据配置对请求副本做变换，但不会因此修改已经持久化或被 fork 继承的原始 instructions。
+但结果还没回来。这时用户又说：
 
-这是典型的：
+> “先别跑全量测试，只跑这个文件。”
 
-```text
-durable source state
-≠
-request-time rendered view
-```
-
-### input
-
-来自 ContextManager 的 canonical history 经 normalize / truncate / provider adaptation 后得到。
-
-### tools
-
-来自当前 Step 的 `ToolRouter.model_visible_specs()`。
-
-工具 schema 不一定以聊天文本的形式存在，但仍是模型请求 Context 的一部分，也会影响：
-
-- token / request 大小；
-- tool-selection ambiguity；
-- prompt cache compatibility。
+如果 Runtime 直接把这句话塞到 Tool Call 与 Tool Result 之间，模型历史的协议结构就可能被破坏。更稳妥的做法是由 Runtime 决定当前动作是否可中断，并在下一次合法 sampling boundary（采样边界）让新输入生效。
 
 ---
 
-## 10. ContextManager：Canonical History 不是“所有事件日志”
+## 10. Tool Result 回到 History 时，重点是保持因果配对
 
-Codex 的 ContextManager 管理模型对话历史。
+模型发出的 Function Call（函数调用）和 Runtime 返回的 Function Call Output（函数调用输出）通过 call ID 关联。
 
-它和 Rollout / Trace 不同：
+这不是排版细节。如果调用结果缺失，下一轮模型可能不知道某个副作用是否发生；如果结果错配到另一个 call ID，并发执行时甚至会形成错误事实。
 
-```text
-ContextManager
-= 模型相关 canonical history
+因此 Context Manager 的 normalize（规范化）逻辑会处理异常历史，例如补充缺失调用的 aborted output（中止输出），或者移除孤立结果。它的目标是保证送给模型的 History 仍然满足协议和因果关系。
 
-ThreadStore / Rollout
-= 可恢复的持久化事实
+可以把这部分理解成：
 
-Rollout Trace
-= 诊断用原始运行证据
-```
-
-正常路径通过 record 方法增量追加。
-
-`replace_annotated` 不是普通 Turn 的常规操作，主要用于：
-
-- compaction replacement；
-- reconstruction；
-- reset 类边界。
-
-这保证了：
-
-> 正常历史尽量 append-only；只有明确的 Context Window 边界才重建历史基线。
+> **History 不是“把日志按时间拼起来”，而是模型能继续推理的一份结构化因果记录。**
 
 ---
 
-## 11. Tool Result 怎样重新进入 Context
+## 11. 真正发给模型的 Prompt 由不同物理部分组成
 
-一次典型链：
+到了模型客户端，Codex 不会把所有内容统一塞进一个 system string。
 
-```text
-Prompt N
-↓
-model: function_call(call_id, name, args)
-↓
-ToolRouter 解析
-↓
-ToolCallRuntime 执行
-↓
-ResponseInputItem::FunctionCallOutput
-↓
-写入 canonical history
-↓
-Prompt N+1
-↓
-模型同时看到：
-  原始 call
-  对应 call_id 的 output
-```
+抽象来看，请求里至少有：
 
-这也是为什么 Context normalization 必须处理 Tool Pairing。
-
-如果历史里出现：
-
-```text
-有 tool call
-但 output 丢了
-```
-
-下一次请求可能变成协议非法或模型难以理解的结构。
-
-Codex 的 `context_manager/normalize.rs` 会修复这类结构：
-
-- 为缺失的 function/tool-search/custom output 生成合成 aborted output；
-- 删除 orphan output；
-- 对当前模型不支持的 image / audio 做清理；
-- 保证请求历史在协议上可消费。
-
-更有意思的是，合成 ID 使用稳定的确定性策略，避免一次 Retry / Resume 后 ID 随机变化导致 Prompt Cache 失效。
-
----
-
-## 12. Prompt Cache 不是“缓存 Agent 答案”
-
-Codex 的 Prompt Cache 设计至少有三层要分开。
-
-### 12.1 `prompt_cache_key`
-
-ModelClient 会给请求一个稳定 cache-affinity key。
-
-一般根 Session 使用 session identity；内部 Session 在有 parent thread 时，可以用：
-
-```text
-{internal_source}:{parent_thread_id}
-```
-
-让相关内部工作具有合适的缓存亲和性。
-
-如果调用方明确提供 override，则使用 override。
-
-### 12.2 Stable Prefix
-
-Prompt Cache 能否真正命中，不只看 key。
-
-如果前缀内容一直抖动：
-
-```text
-同一个 cache key
+~~~text
+Base Instructions（基础指令）
 +
-每次早期 Context 都变
-→ 仍然很差
-```
-
-因此 Codex 的 Context 设计刻意：
-
-- 初始 Context 稳定；
-- 后续尽量 append；
-- WorldState 用 diff；
-- 自动注入有界；
-- synthetic IDs 稳定；
-- Tool / Skill 暴露受预算限制。
-
-### 12.3 `previous_response_id` / WebSocket Incremental Continuation
-
-`ModelClientSession` 是 **Turn-scoped**。
-
-它缓存：
-
-- WebSocket connection；
-- previous full request；
-- previous response；
-- sticky `x-codex-turn-state`。
-
-只有当前请求是前一请求的兼容增量时，才允许复用增量请求路径。
-
-源码对兼容条件逐字段比较，包括：
-
-- model；
-- instructions；
-- tools；
-- tool choice；
-- parallel setting；
-- reasoning；
-- service tier；
-- prompt_cache_key；
-- output text settings 等。
-
-这说明：
-
-> **Prompt Cache、previous response continuation、WS transport reuse 是相关但不同的机制。**
-
-不能统一叫“缓存”。
-
----
-
-## 13. 为什么 `ModelClientSession` 必须按 Turn 创建
-
-源码明确写明：
-
-> `ModelClientSession` 应该每个 Turn 新建。
-
-因为它持有 `x-codex-turn-state` sticky routing token。
-
-这个 token：
-
-- 同一 Turn 的 retries / continuation 要继续发送；
-- 不能跨 Turn 复用；
-- auth owner 改变时也必须清掉。
-
-如果错误跨 Turn 复用：
-
-```text
-Turn A routing state
-↓
-误带到 Turn B
-↓
-违反 client/server contract
-↓
-产生路由 bug
-```
-
-因此：
-
-```text
-ModelClient          Session-scoped
-ModelClientSession   Turn-scoped
-StepContext          Step-scoped
-```
-
-是三个清楚的时序层。
-
----
-
-## 14. Token 计数不是一个“128k - 当前 tokens”
-
-`session/context_window.rs` 会区分：
-
-- active context tokens；
-- model effective context window；
-- auto-compact token limit；
-- limit scope；
-- full-context hard limit；
-- body-after-prefix token count；
-- server prefill baseline；
-- buffered fallback limit；
-- turn-end compaction threshold。
-
-尤其 `AutoCompactTokenLimitScope` 可以区分：
-
-```text
-Total
-整个请求范围
-
-BodyAfterPrefix
-只看稳定前缀之后的可增长 body
-```
-
-这非常重要。
-
-如果稳定前缀已经很大，而 Compaction 的目标主要是压历史 body，那么按 total token 机械触发可能过早。
-
-所以成熟 Context Budget 要问：
-
-> **究竟预算哪一段？哪些部分可压缩？哪些稳定前缀必须保留？**
-
----
-
-## 15. Codex 有三类 Compaction 路径
-
-### 15.1 Local summarization compaction
-
-`core/src/compact.rs`
-
-近似链：
-
-```text
-clone current history
-↓
-加入 compact/summarization instruction
-↓
-发起模型请求
-↓
-得到 summary
-↓
-收集需要保留的用户消息 / retained context
-↓
-build_compacted_history
-↓
-形成 replacement_history
-↓
-替换 live ContextManager
-↓
-persist CompactedItem
-```
-
-关键不是 summary 文本，而是：
-
-> **Compaction 要产出一个可作为未来恢复基线的 replacement history。**
-
-### 15.2 Remote Compaction V2
-
-Provider 支持时，可以走 Responses remote compaction。
-
-它仍然接入同一套：
-
-- trigger；
-- reason；
-- phase；
-- analytics；
-- pre/post compact lifecycle；
-- Context replacement。
-
-实现位置不同，但生命周期没有分裂。
-
-### 15.3 Token-Budget new context window
-
-`compact_token_budget.rs`
-
-这个路径甚至不一定做摘要。
-
-它可以：
-
-```text
-达到 budget
-↓
-开启新的 Context Window
-↓
-重新注入 full initial context
-↓
-重新建立 baseline
-```
-
-所以“Context Compression = 让模型总结历史”并不成立。
-
-更准确：
-
-> **Compaction 是 Context Window 迁移协议；摘要只是其中一种 replacement 策略。**
-
----
-
-## 16. Pre-turn、Mid-turn、Post-turn Compaction 为什么语义不同
-
-源码里可以看到不同注入策略。
-
-### Pre-turn / Manual
-
-新的用户消息还没进入本轮，压缩后下一个正常 Turn 会重新注入所需 Context。
-
-因此通常：
-
-`InitialContextInjection::DoNotInject`
-
-### Mid-turn
-
-当前用户任务已经在执行中，Tool Loop 还要继续。
-
-压缩后模型必须立刻理解：
-
-- 当前用户消息；
-- 当前任务；
-- 最新 runtime context。
-
-因此 initial Context 要在正确位置重新插入，例如：
-
-`BeforeLastUserMessage`
-
-### Post-turn
-
-如果 Turn 已经完成，可以在成功之后做压缩。
-
-源码特别避免：
-
-> Compaction 请求失败，却已经污染 live/persisted history。
-
-所以 replacement 的 commit 时机本身也是一致性问题。
-
----
-
-## 17. Compaction 为什么需要事件和 Analytics
-
-Codex 对 compaction 记录的维度包括：
-
-- trigger；
-- reason；
-- implementation；
-- phase；
-- strategy；
-- status；
-- error kind。
-
-这让线上问题可以回答：
-
-```text
-为什么这次发生 compact？
-是用户手动还是 ContextLimit？
-在哪个 phase？
-走 Local 还是 Remote？
-成功、失败还是被中断？
-失败属于哪种错误？
-```
-
-只记录“执行过 compact=true”不足以调试 Production Agent。
-
----
-
-## 18. Compaction 和 Resume 怎样闭环
-
-ThreadStore / rollout 会保存 `CompactedItem`。
-
-现代路径里最关键的字段之一：
-
-`replacement_history`
-
-恢复时 `rollout_reconstruction.rs` 不会傻瓜式从第一条历史一直 replay。
-
-它反向扫描：
-
-```text
-最新 rollout
-↑
-寻找最新仍然 surviving 的 replacement-history checkpoint
-↑
-同时寻找恢复所需的 TurnContext / WorldState / settings
-```
-
-一旦找到：
-
-```text
-replacement_history = 完整新基线
+Input / History（输入与规范化历史）
 +
-checkpoint 之后 surviving suffix
-```
-
-更老的数据不再影响模型历史重建。
-
-然后再按时间正序 replay suffix。
-
-因此长 Session 的恢复复杂度不必永远正比于“从创建以来全部历史长度”。
-
----
-
-## 19. Fork、Rollback、WorldState 为什么使恢复更难
-
-恢复不能只找最后一次 compaction。
-
-还要处理：
-
-### Rollback
-
-语义是：
-
-```text
-删除最新 N 个真实 user turns
-```
-
-因此反向扫描时必须知道哪些 segment 真正包含 user boundary。
-
-### Fork
-
-新 Thread 可能只继承父 Thread 的某个截止点。
-
-不能错误拿到 cutoff 之后的父状态。
-
-### WorldState
-
-WorldState 有：
-
-```text
-full snapshot
+Tools（这一步模型可见的工具定义）
 +
-merge patches
-```
+推理 / 输出等请求设置
+~~~
 
-Compaction 会使旧 baseline 失效。
+`Base Instructions` 是请求级基础指令；History 来自 Context Manager；Tool definitions（工具定义）来自这一次 Step Context 中已经 finalize（定稿）的 Tool Router。
 
-因此 reconstruction 还要恢复：
+这也说明一个常见误解：
 
-- latest surviving baseline；
-- 后续 patches；
-- reference Context Item；
-- context-window IDs；
-- previous turn settings。
+> **Tool Schema 虽然不一定出现在聊天消息文本里，但它仍然是模型请求上下文的一部分。**
 
-这说明：
-
-> **Checkpoint/Resume 的本质是恢复“未来继续执行所需的最小一致状态”，不只是恢复聊天文本。**
+工具过多时，成本和选择质量都会受到影响，所以 Tool Lifecycle 才需要 Deferred Discovery（延迟发现）。
 
 ---
 
-## 20. ThreadStore 和 ContextManager 的边界
+## 12. Codex 里至少有三件不同的“缓存 / 续接”机制
 
-`codex-thread-store` 明确是 Codex Thread 的 storage boundary。
+上一版把它们放得太近，容易让人以为都是同一种 Prompt Cache。实际应分开理解。
 
-其中：
+### 12.1 `prompt_cache_key`：缓存亲和键
 
-- `append_items` 保存 canonical history；
-- metadata 更新走独立 API；
-- active session 推荐通过 `LiveThread`；
-- LocalThreadStore 使用 rollout JSONL；
-- queryable metadata 可进入 SQLite state DB。
+Model Client 会生成相对稳定的 `prompt_cache_key（提示缓存键）`。它帮助服务端识别适合复用的请求前缀，但一个 key 相同并不保证命中：如果前缀内容本身一直变化，缓存价值仍然会下降。
 
-ContextManager 是运行时模型历史。
+### 12.2 稳定前缀：Context 结构本身的缓存友好性
+
+这不是一个 API 字段，而是整个上下文架构产生的效果。初始状态稳定、后续主要追加 diff、自动注入有界、Synthetic ID（合成标识）尽量稳定，这些都会减少早期 Context 无谓抖动。
+
+### 12.3 `previous_response_id` / WebSocket continuation：同一 Turn 内的增量续接
+
+`ModelClientSession（模型客户端会话）` 是 Turn-scoped（Turn 级）的。它会保存 WebSocket 连接、上一份请求和 sticky routing state（粘性路由状态）。只有新请求与上一请求在模型、指令、工具、推理设置等方面兼容，并且只是合法增量时，才可以使用 continuation（续接）路径。
 
 所以：
 
-```text
-record in memory
-↓
-persist canonical rollout item
-↓
-未来 resume 时 reconstruction
-↓
-恢复 ContextManager
-```
+~~~text
+prompt_cache_key
+≠
+WebSocket 复用
+≠
+previous_response_id 续接
+~~~
 
-这比“每轮直接 dump 一个完整 messages.json”更适合长期 Agent。
+它们共同优化重复前缀和连续请求，但生命周期与判断条件不同。
 
 ---
 
-## 21. Context 的硬上限原则
+## 13. 为什么 ModelClientSession 不能跨 Turn 随便复用
 
-Codex 根 `AGENTS.md` 对 model context 的源码开发规则非常值得背下来：
+源码对这一点写得很明确。
 
-1. 普通流不要重写历史，应增量追加。
-2. 不要频繁改变 Context，避免 Prompt Cache miss。
-3. 自动注入内容必须有硬上限。
-4. 单一 model-context item 必须受限制。
-5. 大体积新 Context 项需要额外审查。
-6. 新 Context fragment 应 typed。
-7. Integration Test 要验证实际模型可见 payload。
+Model Client（模型客户端）是 Session 级共享对象；`ModelClientSession` 则每个 Codex Turn 新建。后者保存 `x-codex-turn-state`，这是服务端在一次 Turn 中使用的 sticky routing token（粘性路由令牌）。
 
-这些规则在真实实现中的映射：
+同一 Turn 的重试和后续请求需要继续携带它，但新的 Turn 不能继承上一 Turn 的 token。认证主体变化时也需要清理旧状态。
 
-| 原则 | 源码机制 |
-|---|---|
-| 增量 | WorldState diff、history append |
-| Cache 稳定 | stable prefix、stable IDs、incremental WS |
-| 硬上限 | Skill budget、MCP spec budget、Memory summary cap |
-| typed | `ContextualUserFragment`、`PromptFragment` |
-| 大历史 | compaction + replacement checkpoint |
-| 可测试 | prompt-cache / AGENTS / compaction / resume tests |
+因此可以记住这三个层级：
 
----
+~~~text
+ModelClient
+长期 Session 共享
 
-## 22. 常见错误路径
+ModelClientSession
+一个 Codex Turn 内共享
 
-### 22.1 Context Window exceeded
+StepContext
+一次模型采样使用
+~~~
 
-处理不能只是返回错误。
-
-Codex 会根据 phase / feature：
-
-- preemptive compact；
-- ContextLimit compact；
-- Token Budget 新窗口；
-- 必要时重试当前输入；
-- hard full-window limit 仍会失败。
-
-### 22.2 Compaction 本身失败
-
-必须：
-
-- 保住尚未记录的新用户输入；
-- emit lifecycle error；
-- 不把失败 replacement 当成功历史。
-
-### 22.3 Tool history 不完整
-
-Normalization 补 aborted result 或删除 orphan output，保持协议一致。
-
-### 22.4 Model switch
-
-新的 model-specific instructions 需要在 full context 重建时正确进入，不能沿用旧模型的隐含状态。
-
-### 22.5 Extension Context 无限增长
-
-Codex 的总体规则要求硬上限；Skills、Memory、MCP 分别实现自己的预算。
+它们分别解决“长期连接配置”“同一 Turn 连续请求”“单次采样一致性”。
 
 ---
 
-## 23. 大 Context 场景题：如果是 1M Token Window，还需要 Compaction 吗？
+## 14. Context Window 不是只有一个“剩余 Token”数字
 
-需要。
+随着 History 和 Tool Result 增长，Codex 会维护 Context Window（上下文窗口）状态。
 
-因为问题不仅是：
+当前源码不仅关心模型总窗口，还支持不同 auto-compaction scope（自动压缩计量范围）。例如某些配置可以只看 stable prefix（稳定前缀）之后持续增长的 body，而不是把不可压缩的前缀也同等算入触发阈值。
 
-```text
-会不会超过模型最大长度
-```
+为什么要这样做？
 
-还包括：
+假设固定系统指令和工具前缀已经占了很大一部分，但真正可以通过摘要减少的是后面的对话历史。单纯按“总 Token 达到 X”判断，很可能太早或太晚触发压缩。
 
-- latency；
-- input token cost；
-- attention dilution；
-- cache invalidation；
-- Tool Result 噪声；
-- stale state；
--恢复成本；
--安全上下文长期残留。
+所以 Context Budget（上下文预算）实际是在回答：
 
-Codex 当前架构给出的答案不是“窗口大就全部塞进去”，而是：
-
-```text
-typed + bounded sources
-→ incremental diffs
-→ stable prefix
-→ budgeted body
-→ context-window lifecycle
-→ checkpointed compaction
-```
-
-Context Window 越大，通常只是阈值改变，不会让生命周期管理消失。
+> **哪一部分在增长？哪一部分能被替换？为下一次模型输出和后续 Tool Result 要留多少空间？**
 
 ---
 
-## 24. Prompt Cache 场景题：为什么每轮把时间戳放 Prompt 最前面很糟
+## 15. Codex 的 Compaction 不只有“让模型写摘要”
 
-因为：
+当前固定源码里可以看到三类不同路径，它们共享“切换 Context Window 基线”的目标，但实现不同。
 
-```text
-stable instruction prefix
-↓
-每轮最前面插入变化时间
-↓
-后续全部 token 的前缀身份改变
-↓
-Prompt Cache 复用空间下降
-```
+### 15.1 Local Compaction（本地编排的摘要压缩）
 
-Codex 的 Context 规则强调：
+`compact.rs` 会从当前历史构造压缩请求，让模型生成 summary（摘要），再把必要的用户消息、保留上下文和摘要组合成新的 replacement history（替代历史）。
 
-> 变化内容尽量以有界、增量、位置稳定的方式进入，而不是持续改写早期 Context。
+重要产物不是那段 summary 本身，而是：
 
-需要当前时间时，也应该用受控 typed fragment 和明确更新策略，而不是随便把整个系统 Prompt 重写。
+> **一份以后可以作为新 Context 基线继续运行的结构化历史。**
 
----
+### 15.2 Remote Compaction V2（远端压缩）
 
-## 25. 面试怎么解释 Codex Context Architecture
+支持的模型提供方可以使用 Responses 侧的 remote compaction。压缩发生位置不同，但它仍然进入 Codex 自己的 Compaction 生命周期：触发原因、阶段、事件、结果安装和持久化都要由 Runtime 管理。
 
-可以用这条因果链：
+### 15.3 Token Budget 的 New Context Window（新上下文窗口）
 
-```text
-Codex 不是每轮重新拼一份巨大 Prompt。
-Session 保存 canonical history 和持久状态；
-每个 Turn 创建 turn-scoped model session；
-每次 sampling 捕获 StepContext，保证模型看到的工具、权限和真实执行一致。
-初次 Context 由 developer / extension / world state 等 typed fragments 建立，
-后续主要通过 WorldState diff 和历史追加增量更新。
-模型请求还单独携带 base instructions 和本 Step 的 tool specs。
-随着 Tool Loop，call/result 继续写入 canonical history。
-Runtime 持续做 token accounting，到阈值后根据 provider 和 feature
-选择 local summary、remote compaction 或开启新 token-budget window。
-Compaction 不是只产一段摘要，而是生成 replacement-history checkpoint。
-ThreadStore 把 checkpoint 和后续事件持久化；
-Resume/Fork 从最新仍有效 checkpoint + suffix 重建，
-因此长 Session 不需要永远从头 replay。
-整个设计还刻意维持稳定前缀和 prompt_cache_key / previous-response continuation，
-让 Context 正确性、成本、恢复和 Cache 命中一起成立。
-```
+Token Budget 模式下，Codex 还可以直接开启新的 Context Window，重新注入完整初始 Context，而不是一定生成一段传统摘要。
+
+因此更准确的说法是：
+
+> **Compaction 是“如何把一个过大的模型工作窗口迁移到新的可继续执行基线”；摘要只是其中一种迁移策略。**
 
 ---
 
-## 26. 源码核验入口
+## 16. Pre-turn 和 Mid-turn Compaction 为什么不能完全一样
 
-固定快照下建议按下面顺序回读：
+压缩发生的时机决定“压完以后模型接下来要继续什么”。
 
-- [`AGENTS.md`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/AGENTS.md)：model-context 开发约束。
-- [`core/src/session/turn.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/turn.rs)：一次 Turn 的完整 loop。
-- [`core/src/session/mod.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/mod.rs)：initial context、WorldState diff、history/persistence。
-- [`core/src/context/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/context)：typed Context items。
-- [`context-fragments/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/context-fragments)：fragment 抽象。
-- [`core/src/context_manager/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/context_manager)：history、normalize、updates。
-- [`core/src/client.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/client.rs)：Prompt request、cache key、WS continuation。
-- [`core/src/session/context_window.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/context_window.rs)：Context Window accounting。
-- [`core/src/compact.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/compact.rs)：local compaction。
-- [`core/src/compact_remote_v2.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/compact_remote_v2.rs)：remote compaction lifecycle。
-- [`core/src/compact_token_budget.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/compact_token_budget.rs)：new context window。
-- [`core/src/session/rollout_reconstruction.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/rollout_reconstruction.rs)：Resume / Fork reconstruction。
-- [`thread-store/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/thread-store)：持久化边界。
+如果是 Turn 开始前，新的用户输入还没有进入当前 History，压缩失败时尤其要保证这条输入不会丢失。
+
+如果是 Turn 中间，用户任务已经在执行，可能刚完成一个 Tool Call。压缩后下一次模型采样必须继续理解当前目标和刚发生的执行结果，而不是像新会话一样从零开始。
+
+这也是为什么源码给 Compaction 记录 Phase（阶段），并根据阶段选择 initial context 是否以及在哪里重新注入。
+
+---
+
+## 17. Compaction 成功以后，为什么还要持久化 replacement history
+
+如果压缩只改内存里的 Context Manager，当前进程也许还能继续；但一旦用户退出 Codex，再 Resume（恢复），系统就不知道压缩后的真实基线是什么。
+
+因此 `CompactedItem` 会把 replacement history 和相关 Window metadata（窗口元数据）写入持久化历史。
+
+这一步把：
+
+~~~text
+上下文压缩
+~~~
+
+从“当前请求的 Token 优化”升级成：
+
+~~~text
+长期会话的可恢复状态转换
+~~~
+
+---
+
+## 18. Resume 不是重新播放整个聊天文件
+
+Local Thread Store（本地线程存储）会保存 Rollout（运行记录）。如果一个 Thread 很长，每次 Resume 都从第一条 JSONL 重新重放，成本会随着会话寿命无限增长。
+
+`rollout_reconstruction.rs` 的现代路径会从尾部反向扫描，寻找最新、仍然有效的 replacement-history checkpoint（替代历史检查点），同时收集恢复所需的 Turn settings、World State baseline 和 Context Window 标识。
+
+找到后：
+
+~~~text
+replacement history
+= 新的完整历史基线
+
+checkpoint 之后仍然有效的 suffix
+= 需要继续正向 replay 的尾部
+~~~
+
+更老的历史就不必再次参与模型 Context 的重建。
+
+所以 Compaction 和 Resume 是一套机制的前后两半：**前者制造可恢复的新基线，后者利用它缩短恢复路径。**
+
+---
+
+## 19. Fork 比普通 Resume 更严格，因为它有历史截止点
+
+Fork（分叉）不是复制“当前所有状态”这么简单。调用方可以要求只继承父 Thread 到某个历史位置。
+
+这意味着恢复代码必须同时尊重：
+
+- 父 Thread 的 checkpoint；
+- Fork cutoff（分叉截止位置）；
+- 已经回滚 / 中断的 Turn；
+- World State snapshot 与后续 patch；
+- 当前 Window 标识。
+
+如果把 cutoff 之后的 Tool Result 或权限状态带进子 Thread，就会让子 Agent“知道未来”。
+
+因此持久化层里看到的大量 replay / lineage（谱系）代码，并不是为了把实现写复杂，而是在守住“子会话只能继承允许的历史前缀”这个不变量。
+
+---
+
+## 20. 三个典型故障，用生命周期来排查
+
+### 故障一：Compaction 后模型忘了“不能改公开 API”
+
+不要先改 Prompt。先顺序问：
+
+原始用户约束是否进入 canonical history？压缩输入是否包含它？压缩输出是否保留？replacement history 安装以后是否仍然可见？如果中途 Resume，恢复是否选择了正确 checkpoint？
+
+这样才能定位信息在哪一环丢失。
+
+### 故障二：Tool 已经执行，但下一次模型不知道
+
+先检查 call / result pairing 是否完整，再看 Tool Result 是否成功记录进 History。若历史结构异常，Context normalization 是否补了 aborted output？这类问题本质是因果历史损坏，不是模型“记性差”。
+
+### 故障三：同一个 Turn 连续请求突然无法续接缓存
+
+检查 Step 之间是不是修改了模型、基础指令、工具集合、推理设置或其他 continuation compatibility（续接兼容性）字段；再看是不是错误跨 Turn 复用了 ModelClientSession。缓存问题要先查请求身份是否稳定，而不是只看 Token 数。
+
+---
+
+## 21. 这套 Context 架构真正想解决什么
+
+把代码重新连起来，会发现 Codex Context Engineering（上下文工程）同时服务四个目标：
+
+**正确性。** 模型看见的环境、权限、工具和真正执行时的状态要一致。
+
+**成本与延迟。** 稳定内容尽量不反复变化，大量能力按需加载，长历史在必要时迁移窗口。
+
+**恢复。** Context 的重要状态变化要能落到 Rollout，进程退出后可以重建。
+
+**可解释性。** World State section、Tool Call、Compaction event 都保留结构，使系统能解释“模型当时为什么看见这些内容”。
+
+如果只把 Context 理解成“Prompt 字符串”，这四个目标都会消失。
+
+---
+
+## 22. 源码核验入口
+
+建议按调用关系阅读，而不是按文件名随机跳转：
+
+1. [`app-server/src/request_processors/turn_processor.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/app-server/src/request_processors/turn_processor.rs)：外部 Turn 输入怎样进入 Core。
+2. [`core/src/session/turn.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/turn.rs)：一个 Codex Turn 的模型—工具循环。
+3. [`core/src/session/step_context.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/step_context.rs)：单次采样的不可混版本快照。
+4. [`core/src/session/world_state.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/world_state.rs)：当前运行世界怎样形成 typed sections（类型化状态片段）。
+5. [`ext/extension-api/src/contributors.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/extension-api/src/contributors.rs)：扩展怎样贡献 Context 与 World State。
+6. [`core/src/session/mod.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/mod.rs)：initial context、reference baseline、World State diff 与持久化。
+7. [`core/src/context_manager/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/context_manager)：History、normalize 与更新。
+8. [`core/src/client.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/client.rs)：ModelClient、Prompt Cache 和 Turn-scoped continuation。
+9. [`core/src/compact.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/compact.rs) 与 [`compact_remote_v2.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/compact_remote_v2.rs)：压缩路径。
+10. [`core/src/session/rollout_reconstruction.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/session/rollout_reconstruction.rs)：Resume / Fork 的重建。
 
 下一篇：[Codex Memory Lifecycle →](02-memory-lifecycle.md)
