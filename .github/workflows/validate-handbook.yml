@@ -62,6 +62,12 @@ jobs:
       - name: Check ByteDance fetcher
         run: node --check tools/fetch_bytedance_2027.mjs
 
+      - name: Check Feishu fetcher
+        run: node --check tools/fetch_feishu_official_2027.mjs
+
+      - name: Check Moka fetcher
+        run: node --check tools/fetch_moka_official_2027.mjs
+
       - name: Validate official job source contracts
         run: python tools/validate_official_2027_source_contracts.py
 
@@ -119,6 +125,12 @@ jobs:
 
       - name: Check ByteDance fetcher
         run: node --check tools/fetch_bytedance_2027.mjs
+
+      - name: Check Feishu fetcher
+        run: node --check tools/fetch_feishu_official_2027.mjs
+
+      - name: Check Moka fetcher
+        run: node --check tools/fetch_moka_official_2027.mjs
 
       - name: Validate official job source contracts
         run: python tools/validate_official_2027_source_contracts.py
