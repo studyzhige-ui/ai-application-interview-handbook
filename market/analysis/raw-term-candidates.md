@@ -291,7 +291,6 @@
 | `S289` | 阳光电源｜AI 应用开发工程师｜一面｜面试 2026-09-18 10:00，发布 2026-09-18｜HUMAN-A | 4. **Harness + AI-assisted Engineering Authenticity Verification 是值得继续追的弱信号。** 4399 线索已经把 Harness、SQL 验错、测试指标和“AI 帮你完成后是否真正掌握”放在一起，但 provenance 尚未闭环，因此当前只作为观察，不进入正式频率。 / 5. **Agent / AI 术语继续向普通 Backend / Data / Test 岗扩散。** 这使 Role Scope Gate 更重要，而不是更宽松；出现 Memory / Agent / AI Coding 不能替代目标岗位证据。 |
 | `S291` | Shopee｜Chatbot 研发实习｜一面｜面试 2026-09-18，发布 2026-09-19 16:25｜HUMAN-A | Role Scope：岗位标题为 `chatbot研发实习`，技术主体连续覆盖 Agent、Function Call / Tool / MCP、RAG、AI Coding，并混合 Linux 与 Algorithm Foundation；实际职责明确属于 AI Application / Agent Chatbot 研发，不是普通 Backend 顺带问 AI。 / 9. 平时是否 AI Coding，有什么实际方法？ / 去重：正式编号前再次逐个直接回读 `batch-01.md`～`batch-30.md`。历史已有 Shopee `S081`、`S239` 等 Agent 来源，但均为不同作者、不同月份 / 日期与独立流程；未发现当前 URL、作者或“Agent → Function Call / Tool / MCP → RAG 文档规模 → Linux Process → Kth Largest / Quick Sort 深追 → AI Coding”的连续同场来源。 |
 
-
 ## Spec-driven Development
 
 候选来源：**14**
