@@ -303,6 +303,29 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         moka_contract_discovered:true
       };
     }
+
+    // Feishu-family ATS pages expose signed first-party list calls. Exhaust the
+    // blank-query list first: this enumerates the *entire* official pool rather
+    // than proving only a set of target keywords.
+    const signedFeishuSeen=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+    if(signedFeishuSeen){
+      const fullListHits=await collectSearchPages(page,"__FULL_LIST__");
+      await Promise.allSettled(responseTasks);
+      const fullPoolProof=feishuKeywordCoverage(endpointLog);
+      if(fullPoolProof.full_pool_complete){
+        const bodyNow=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+        const cycleNow=[...new Set([...beforeCycle,...cycleSnippets(bodyNow)])].slice(0,10);
+        const finalUrl=page.url();
+        await page.close();
+        return {
+          page_url:url,final_url:finalUrl,hasCampusEvidence:cycleNow.length>0,cycle_evidence:cycleNow,
+          next:[],search_control_found:true,navigation_action:{clicked:false},
+          search_terms_attempted:[],search_hit_links:fullListHits.length,
+          list_scan_complete:true,list_links_seen:fullListHits.length,
+          signed_feishu_full_pool:true
+        };
+      }
+    }
     let search=await searchInputs(page);
     let navAction={clicked:false};
     let listScanComplete=false;
@@ -427,7 +450,12 @@ function feishuKeywordCoverage(endpointLog){
     return total>0 && covered>=total;
   };
   const done=required.filter(completeTerm);
-  return {complete:done.length===required.length,terms:done};
+  const fullPoolComplete=completeTerm("");
+  return {
+    complete:fullPoolComplete || done.length===required.length,
+    full_pool_complete:fullPoolComplete,
+    terms:done
+  };
 }
 
 async function processSource(browser,src){
@@ -441,7 +469,7 @@ async function processSource(browser,src){
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
   const navigationTimeoutMs=Math.max(8000,Number(src.browser_navigation_timeout_ms||12000));
-  const defaultBudget=src.mode==="feishu_direct"?90000:COMPANY_BUDGET_MS;
+  const defaultBudget=(src.mode==="feishu_direct"||src.mode==="portal_only")?90000:COMPANY_BUDGET_MS;
   const companyBudgetMs=Math.max(15000,Number(src.browser_company_budget_ms||defaultBudget));
   const started=Date.now();
   let timer=null;
