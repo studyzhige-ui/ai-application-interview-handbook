@@ -1473,6 +1473,155 @@ def fetch_feishu_direct(src: dict) -> list[Job]:
     return out
 
 
+def fetch_mihoyo_campus(src: dict) -> list[Job]:
+    """Enumerate miHoYo's complete current formal campus pool via its first-party ATS."""
+    list_api = "https://ats.openout.mihoyo.com/ats-portal/v1/job/list"
+    detail_api = "https://ats.openout.mihoyo.com/ats-portal/v1/job/info"
+    headers = {
+        **HEADERS, "Content-Type": "application/json",
+        "Origin": "https://jobs.mihoyo.com",
+        "Referer": "https://jobs.mihoyo.com/#/campus/position",
+    }
+    rows: list[dict[str, Any]] = []
+    page = 1
+    page_size = 100
+    total = None
+    while page <= 100:
+        payload = {
+            "pageNo": page, "pageSize": page_size,
+            "channelDetailIds": [1], "hireType": 1,
+        }
+        data = post_json(list_api, payload=payload, headers=headers)
+        d = data.get("data") or {}
+        got = d.get("list") or d.get("records") or d.get("items") or []
+        if not got:
+            break
+        rows.extend(x for x in got if isinstance(x, dict))
+        try:
+            total = int(d.get("total") or d.get("totalCount") or 0)
+        except Exception:
+            total = 0
+        if len(got) < page_size or (total and len(rows) >= total):
+            break
+        page += 1
+
+    out: list[Job] = []
+    for row in rows:
+        jid = txt(row.get("id") or row.get("jobId"))
+        title = txt(row.get("title") or row.get("jobTitle") or row.get("positionName"))
+        cities = " / ".join(
+            txt(x.get("addressDetail") or x.get("name"))
+            for x in (row.get("addressDetailList") or row.get("addressList") or [])
+            if isinstance(x, dict) and (x.get("addressDetail") or x.get("name"))
+        )
+        desc = txt(row.get("description") or row.get("jobDescription") or row.get("jobSummary"))
+        req = txt(row.get("jobRequire") or row.get("requirement") or row.get("jobRequirement"))
+        detail: dict[str, Any] = {}
+        if jid and likely_target_title(title):
+            try:
+                dd = post_json(
+                    detail_api,
+                    payload={"id": jid, "channelDetailIds": [1], "hireType": 1},
+                    headers=headers,
+                )
+                detail = dd.get("data") or {}
+            except Exception:
+                detail = {}
+        if detail:
+            desc = txt(
+                detail.get("description") or detail.get("jobDescription") or
+                detail.get("responsibility") or detail.get("jobResponsibility") or desc
+            )
+            req = txt(
+                detail.get("jobRequire") or detail.get("requirement") or
+                detail.get("jobRequirement") or detail.get("qualification") or req
+            )
+        out.append(Job(
+            src["company"], title, jid, cities,
+            txt(row.get("jobNature") or row.get("projectName") or "2027校园招聘正式岗"),
+            txt(row.get("competencyType") or row.get("jobCategory")),
+            _strip_html(desc), _strip_html(req),
+            f"https://jobs.mihoyo.com/#/campus/position/{jid}" if jid else src["portal"],
+            list_api,
+            "米哈游官方校园招聘 / 校招渠道 channelDetailIds=1 / 正式岗 hireType=1",
+        ))
+    return out
+
+
+def fetch_byd_campus(src: dict) -> list[Job]:
+    """Enumerate BYD's complete 2027 formal campus list, enriching only target-like titles."""
+    root = "https://job.byd.com"
+    list_api = root + "/portal/api/portal-api/schoolPortal/queryPositionList"
+    detail_api = root + "/portal/api/portal-api/schoolPortal/queryPosition"
+    headers = {
+        **HEADERS, "Content-Type": "application/json",
+        "Origin": root, "Referer": src.get("search_url") or src.get("portal") or root,
+    }
+    rows: list[dict[str, Any]] = []
+    page = 1
+    page_size = 100
+    while page <= 100:
+        payload = {
+            "topicCode": "", "batch": "2027", "campusNature": "008501",
+            "abroad": "", "degree": "", "jobType": [], "researchDirection": [],
+            "workPlace": [], "keywords": "", "pageSize": page_size, "pageIndex": page,
+        }
+        data = post_json(list_api, payload=payload, headers=headers)
+        got = data.get("data") if isinstance(data, dict) else None
+        if not isinstance(got, list) or not got:
+            break
+        rows.extend(x for x in got if isinstance(x, dict))
+        if len(got) < page_size:
+            break
+        page += 1
+
+    out: list[Job] = []
+    for row in rows:
+        outer_id = txt(row.get("id"))
+        outer_title = txt(row.get("jobName") or row.get("positionName") or row.get("title"))
+        detail_outer: dict[str, Any] = {}
+        inner_rows: list[dict[str, Any]] = []
+        if outer_id and likely_target_title(outer_title):
+            try:
+                detail_payload = get_json(
+                    detail_api,
+                    params={"id": outer_id, "abroad": "", "degree": ""},
+                    headers={"Referer": src.get("search_url") or root},
+                )
+                detail_outer = detail_payload.get("data") or {}
+                raw_inner = detail_outer.get("positionInfoList") or []
+                inner_rows = [x for x in raw_inner if isinstance(x, dict)]
+            except Exception:
+                detail_outer, inner_rows = {}, []
+        if inner_rows:
+            for inner in inner_rows:
+                inner_id = txt(inner.get("id"))
+                title = txt(inner.get("jobName") or inner.get("positionName") or outer_title)
+                out.append(Job(
+                    src["company"], title, f"{outer_id}:{inner_id}" if inner_id else outer_id,
+                    txt(inner.get("workPlace") or detail_outer.get("workPlace") or row.get("workPlace")),
+                    "比亚迪2027校园招聘正式岗",
+                    txt(inner.get("jobType") or detail_outer.get("jobType") or row.get("jobType")),
+                    _strip_html(inner.get("jobDuty") or inner.get("description")),
+                    _strip_html(inner.get("jobRequirements") or inner.get("requirement")),
+                    f"{detail_api}?id={outer_id}&abroad=&degree=",
+                    list_api,
+                    "比亚迪2027届校园招聘 / campusNature=008501 / 全职",
+                ))
+        else:
+            out.append(Job(
+                src["company"], outer_title, outer_id,
+                txt(row.get("workPlace")), "比亚迪2027校园招聘正式岗",
+                txt(row.get("jobType")),
+                _strip_html(row.get("jobDuty") or row.get("description")),
+                _strip_html(row.get("jobRequirements") or row.get("requirement")),
+                f"{detail_api}?id={outer_id}&abroad=&degree=" if outer_id else src["portal"],
+                list_api,
+                "比亚迪2027届校园招聘 / campusNature=008501 / 全职",
+            ))
+    return out
+
+
 def fetch_ashby_official(src: dict) -> list[Job]:
     """Enumerate every currently published posting from an official Ashby job board."""
     board = txt(src.get("ashby_board_name"))
@@ -1623,6 +1772,8 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "bytedance_api": fetch_bytedance,
     "sangfor_campus_api": fetch_sangfor_campus,
     "ashby_official": fetch_ashby_official,
+    "mihoyo_campus_api": fetch_mihoyo_campus,
+    "byd_campus_api": fetch_byd_campus,
     "hikvision_campus_api": fetch_hikvision_campus,
     "kuaishou_api": fetch_kuaishou,
     "baidu_api": fetch_baidu,
