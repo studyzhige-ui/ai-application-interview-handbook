@@ -711,11 +711,23 @@
     },
     {
       "company": "Manus",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://www.manus.im/",
       "official_search_url": "https://jobs.ashbyhq.com/manusai",
       "board_scope": "official_recruiting",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "AI Agent Engineer",
+          "recruitment_type": "当前官方招聘（优秀应届毕业生可投）",
+          "role_scope": "AI Agent Engineer",
+          "official_apply_url": "https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de",
+          "evidence_url": "https://jobs.ashbyhq.com/manusai/29933c53-c5e1-472f-94da-c72545b609de",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "Manus AI 官方 Ashby 当前在招 AI Agent Engineer；岗位负责 Manus Agent 核心模块、Prompt/Tool/RAG/Agent 系统架构优化与评测系统建设，并明确优秀应届毕业生可投。",
+          "source_role_family": "AI Agent Engineer"
+        }
+      ],
       "last_verified": "2026-09-20",
       "business_summary": "通用 AI Agent"
     },
