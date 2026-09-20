@@ -16,7 +16,7 @@
 | `fetch_dynamic_official_jobs.mjs` | 从每家公司固定第一手 `job_list_url` 统一搜索、翻页并读取官方职位详情 |
 | `sync_official_2027_agent_jobs.py` | 汇总浏览器与官方 ATS/API，应用严格非算法工程 Gate，并生成 Role Family 全量 JD 层 |
 | `audit_official_2027_job_sources.py` | 分离审计“当前严格结果是否闭环”与“自动维护链路是否已完整枚举” |
-| `validate_official_2027_source_contracts.py` | 强制 41 家公司都有 `official_root + search_url`，并校验第一方招聘域与招聘池范围 |
+| `validate_official_2027_source_contracts.py` | 强制 69 家扫描公司都有 `official_root + search_url`，并校验第一方招聘域与招聘池范围 |
 | `phase2b_canonical_audit.json` | Phase 2B Canonical 审计数据 |
 
 脚本使用的仓库路径基线：
@@ -71,8 +71,8 @@ Role Family 去重 + 第一方 JD 正文
 
 专用 API / Feishu / Moka / ATS 适配器用于提高稳定性和效率；失败时必须回退到固定 `search_url`。只有完整枚举后的 0 才是有效结论。
 
-`validate_official_2027_source_contracts.py` 同时强制官方源注册表与岗位核验索引**恰好等于固定 41 家公司**：缺失、重复或额外公司都会使 CI 失败，避免旧公司或临时测试公司重新混入正式矩阵。
+`validate_official_2027_source_contracts.py` 强制官方源注册表与岗位状态索引**恰好等于固定 69 家扫描公司**：缺失、重复或额外公司都会使 CI 失败。每家公司必须有第一方职位池，但不再要求当前一定有目标岗位。
 
-审计同时保留两种状态：**Persistent Coverage Closure** 表示固定 41 家公司全部具备第一方招聘入口，并且每家公司至少有一个已核验目标工程岗位；**Recurring Runtime Certification** 表示本轮定时采集器已经实际完成该公司的分页 / 关键词穷举。覆盖事实与本轮运行健康度不能互相冒充。
+审计分离三层状态：**Company Scan Coverage** 表示固定 69 家都有第一方招聘入口；**Target JD Presence** 表示 `HAS_TARGET_JDS / ZERO_TARGET_JDS / NEEDS_ENUMERATION`；**Recurring Runtime Certification** 表示本轮定时采集器已经实际完成该公司的分页 / 关键词穷举。三者不能互相冒充。
 
 Runtime Certification 还要求本轮 Browser / Feishu / Moka 缓存通过 `generated_at` freshness gate；过期缓存可以保留历史证据，但不能把本轮 Runtime 标成 `ENUMERATED`。
