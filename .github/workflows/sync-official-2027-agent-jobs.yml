@@ -32,9 +32,6 @@ jobs:
     if: github.event.repository.private == true
     runs-on: [self-hosted, Windows]
     timeout-minutes: 75
-    env:
-      XIAOMI_CACHE: ${{ runner.temp }}/xiaomi-2027-campus.json
-      BYTEDANCE_CACHE: ${{ runner.temp }}/bytedance-campus.json
     steps:
       - uses: actions/checkout@v4
         with:
@@ -68,11 +65,11 @@ jobs:
 
       - name: Pull Xiaomi official campus ATSX accelerator
         continue-on-error: true
-        run: node tools/fetch_xiaomi_2027.mjs "${{ env.XIAOMI_CACHE }}"
+        run: node tools/fetch_xiaomi_2027.mjs
 
       - name: Pull ByteDance official campus ATSX accelerator
         continue-on-error: true
-        run: node tools/fetch_bytedance_2027.mjs "${{ env.BYTEDANCE_CACHE }}"
+        run: node tools/fetch_bytedance_2027.mjs
 
       - name: Pull verified official Feishu ATS accelerators
         continue-on-error: true
@@ -127,9 +124,6 @@ jobs:
     if: github.event.repository.private == false
     runs-on: ubuntu-latest
     timeout-minutes: 75
-    env:
-      XIAOMI_CACHE: ${{ runner.temp }}/xiaomi-2027-campus.json
-      BYTEDANCE_CACHE: ${{ runner.temp }}/bytedance-campus.json
     steps:
       - uses: actions/checkout@v4
         with:
@@ -163,11 +157,11 @@ jobs:
 
       - name: Pull Xiaomi official campus ATSX accelerator
         continue-on-error: true
-        run: node tools/fetch_xiaomi_2027.mjs "${{ env.XIAOMI_CACHE }}"
+        run: node tools/fetch_xiaomi_2027.mjs
 
       - name: Pull ByteDance official campus ATSX accelerator
         continue-on-error: true
-        run: node tools/fetch_bytedance_2027.mjs "${{ env.BYTEDANCE_CACHE }}"
+        run: node tools/fetch_bytedance_2027.mjs
 
       - name: Pull verified official Feishu ATS accelerators
         continue-on-error: true
