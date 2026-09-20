@@ -283,6 +283,21 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     await scroll(page);
     let beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
     let beforeCycle=cycleSnippets(beforeBody);
+    await Promise.allSettled(responseTasks);
+    // Moka exposes a stable jobs/v2 contract during the first official page load.
+    // Once captured, stop spending browser time on keyword UI replay: the Moka
+    // adapter will paginate the entire first-party pool deterministically.
+    const mokaContractSeen=endpointLog.some(e=>/\/api\/outer\/ats-apply\/website\/jobs\/v2(?:\\?|$)/.test(e.url));
+    if(mokaContractSeen){
+      const finalUrl=page.url();
+      await page.close();
+      return {
+        page_url:url,final_url:finalUrl,hasCampusEvidence:beforeCycle.length>0,cycle_evidence:beforeCycle,
+        next:[],search_control_found:false,navigation_action:{clicked:false},
+        search_terms_attempted:[],search_hit_links:0,list_scan_complete:false,list_links_seen:0,
+        moka_contract_discovered:true
+      };
+    }
     let search=await searchInputs(page);
     let navAction={clicked:false};
     let listScanComplete=false;
@@ -348,7 +363,11 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       if(seenHits.has(key)) continue;
       seenHits.add(key); uniqueHits.push(hit);
     }
-    const detailHits=uniqueHits.slice(0,30);
+    const feishuLike=/\.jobs\.feishu\.cn/i.test(page.url()) || endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
+    // Feishu list/search JSON already carries the first-party job fields needed
+    // for filtering. Re-opening every detail page is the main timeout source and
+    // is unnecessary for proving keyword/pagination coverage.
+    const detailHits=feishuLike?[]:uniqueHits.slice(0,30);
     for(let i=0;i<detailHits.length;i+=4){
       const batch=await Promise.all(detailHits.slice(i,i+4).map(h=>scrapeSearchHit(context,company,h,cycleMatches,boardScope)));
       for(const j of batch) if(j) collector.push(j);
@@ -382,7 +401,8 @@ async function processSource(browser,src){
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
   const navigationTimeoutMs=Math.max(8000,Number(src.browser_navigation_timeout_ms||12000));
-  const companyBudgetMs=Math.max(15000,Number(src.browser_company_budget_ms||COMPANY_BUDGET_MS));
+  const defaultBudget=src.mode==="feishu_direct"?90000:COMPANY_BUDGET_MS;
+  const companyBudgetMs=Math.max(15000,Number(src.browser_company_budget_ms||defaultBudget));
   const started=Date.now();
   let timer=null;
   const work=(async()=>{
