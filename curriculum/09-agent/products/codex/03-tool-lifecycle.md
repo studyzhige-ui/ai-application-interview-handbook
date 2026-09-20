@@ -391,7 +391,29 @@ Tool Orchestrator 会根据 Permission Profile（权限配置）、filesystem po
 
 ---
 
-## 19. Tool 并发不是模型想并行就直接并行
+## 19. 网络批准和文件系统 Sandbox 是相互配合的两条边界
+
+网络访问不能只靠“命令里有没有 curl”判断。一个 MCP Tool、Connector 或 shell 命令都可能通过不同方式产生外部网络副作用。
+
+Tool Orchestrator 在准备一次 Sandbox Attempt（沙箱尝试）时，会同时计算 managed network（受管网络）是否生效，并在需要时通过 Network Approval（网络批准）路径建立对应的执行代理。源码中的 `begin_network_approval` / `finish_deferred_network_approval` 负责把一次网络授权和真正执行生命周期绑定起来。
+
+如果第一次执行因为网络策略被拒绝，Sandbox error（沙箱错误）里还可以携带 network policy decision（网络策略决策）。Runtime 会区分：
+
+~~~text
+文件系统权限不足
+和
+网络访问被策略阻止
+~~~
+
+再决定有没有资格请求更高权限或新的网络批准。
+
+这意味着一个命令即使仍然运行在 Sandbox 中，也可以只获得**经过批准的那部分网络能力**；反过来，允许某个网络域也不等于自动获得更宽的文件系统写权限。
+
+所以 Permission（权限）不是一把从“只读”到“全权限”的单旋钮，而是文件系统、网络、执行环境和批准策略共同形成的执行约束。
+
+---
+
+## 21. Tool 并发不是模型想并行就直接并行
 
 Tool Executor 可以声明 `supports_parallel_tool_calls`。
 
@@ -411,7 +433,7 @@ Runtime 必须把它们同时执行
 
 ---
 
-## 20. 用户取消 Tool 时，历史仍然要闭合
+## 21. 用户取消 Tool 时，历史仍然要闭合
 
 每个 Tool Call 都带 Cancellation Token（取消令牌）。
 
@@ -432,7 +454,7 @@ call_id = c17
 
 ---
 
-## 21. Tool Failure 要区分“给模型修”还是“Runtime 已不可信”
+## 22. Tool Failure 要区分“给模型修”还是“Runtime 已不可信”
 
 `FunctionCallError` 的重要语义不是错误字符串，而是能不能继续 Agent Loop。
 
@@ -444,7 +466,7 @@ call_id = c17
 
 ---
 
-## 22. Tool Result 回到模型前还会经过规范化和截断
+## 23. Tool Result 回到模型前还会经过规范化和截断
 
 工具函数“return”并不是生命周期结束。
 
@@ -470,7 +492,7 @@ Host 接受 / 处理结果
 
 ---
 
-## 23. “五万个工具怎么办”是工程推导，不是当前 Codex 规模声明
+## 24. “五万个工具怎么办”是工程推导，不是当前 Codex 规模声明
 
 ### 【源码事实】
 
@@ -496,7 +518,7 @@ Host 接受 / 处理结果
 
 ---
 
-## 24. 用开头的任务把完整 Tool 生命周期串起来
+## 25. 用开头的任务把完整 Tool 生命周期串起来
 
 用户说：
 
@@ -539,7 +561,7 @@ Connector Policy / approval 继续约束副作用
 
 ---
 
-## 25. 源码核验入口
+## 26. 源码核验入口
 
 1. [`tools/src/tool_executor.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/tools/src/tool_executor.rs)：ToolExecutor 和 Exposure 的共享契约。
 2. [`core/src/tools/spec_plan.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/spec_plan.rs)：不同来源 Tool 怎样汇总成当前 Step 的 Tool Router。
