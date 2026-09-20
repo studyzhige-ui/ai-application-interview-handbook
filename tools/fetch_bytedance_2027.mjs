@@ -18,11 +18,12 @@ const headers={
 };
 const limit=100;
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const REQUEST_TIMEOUT_MS=15000;
 async function fetchWithRetry(url,options,label){
   let last;
   for(let attempt=1;attempt<=4;attempt++){
     try{
-      const res=await fetch(url,options);
+      const res=await fetch(url,{...options,signal:AbortSignal.timeout(REQUEST_TIMEOUT_MS)});
       if(res.ok || res.status<500) return res;
       last=new Error(`${label} HTTP ${res.status} ${res.statusText}`);
     }catch(e){ last=e; }
