@@ -779,14 +779,21 @@
       "portal": "https://jobs.mihoyo.com/#/campus",
       "official_root": "https://jobs.mihoyo.com/",
       "browser_probe": true,
-      "note": "米哈游官方招聘站校园招聘入口；长期枚举 Coding Agent、游戏 AI Agent、大模型应用/推理平台等工程岗位。",
+      "note": "米哈游官方2027校园招聘；除校招首页外固定扫描已发现的第一方 AI/Agent 工程职位详情（推理平台、推理系统、游戏 AI Agent），再按非算法 Role Scope 过滤。",
       "job_list_url": "https://jobs.mihoyo.com/#/campus",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
       "campus_search_url": "https://jobs.mihoyo.com/#/campus",
       "search_url": "https://jobs.mihoyo.com/#/campus",
       "board_scope": "campus",
-      "business_summary": "游戏、IP、互动娱乐、游戏研发技术与 AI"
+      "business_summary": "游戏、IP、互动娱乐、游戏研发技术与 AI",
+      "extra_job_list_urls": [
+        "https://jobs.mihoyo.com/#/campus/position/9232",
+        "https://jobs.mihoyo.com/#/campus/position/8904",
+        "https://jobs.mihoyo.com/#/campus/position/8925"
+      ],
+      "browser_navigation_timeout_ms": 20000,
+      "browser_company_budget_ms": 70000
     },
     {
       "company": "大疆 DJI",
@@ -821,20 +828,22 @@
     {
       "company": "海康威视",
       "mode": "portal_only",
-      "portal": "https://mcampus.hikvision.com/",
+      "portal": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "official_root": "https://www.hikvision.com/cn/",
       "browser_probe": true,
       "note": "海康威视官方学生招聘入口；同时扫描 campushr 职位列表，关注大模型应用、AI Agent 等研发岗位。",
-      "job_list_url": "https://mcampus.hikvision.com/",
+      "job_list_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://mcampus.hikvision.com/",
-      "search_url": "https://mcampus.hikvision.com/",
+      "campus_search_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
+      "search_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "board_scope": "campus",
       "business_summary": "智慧物联、视频技术、企业数字化与 AIoT",
       "extra_job_list_urls": [
         "https://campushr.hikvision.com/JobList.html"
-      ]
+      ],
+      "browser_navigation_timeout_ms": 30000,
+      "browser_company_budget_ms": 90000
     },
     {
       "company": "中兴通讯",
@@ -856,11 +865,11 @@
     },
     {
       "company": "深信服",
-      "mode": "portal_only",
+      "mode": "sangfor_campus_api",
       "portal": "https://hr.sangfor.com/schoolRecruitment",
       "official_root": "https://hr.sangfor.com/",
       "browser_probe": true,
-      "note": "深信服官方校园招聘职位池，长期搜索 Agent、RAG、大模型应用与 AI 工程方向。",
+      "note": "深信服官方 2027 校园招聘职位池；自动化直接分页调用官网 /api/api/Jobs（channelId=101），避免 SPA 超时。",
       "job_list_url": "https://hr.sangfor.com/schoolRecruitment",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -962,17 +971,19 @@
     {
       "company": "吉利控股",
       "mode": "portal_only",
-      "portal": "https://campus.geely.com/campus-recruitment/geely/78436/",
+      "portal": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList",
       "official_root": "https://campus.geely.com/",
       "browser_probe": true,
       "note": "吉利控股官方校园招聘项目职位池；持续扫描 Agent、AI 应用、座舱/平台软件 AI 工程岗位。",
-      "job_list_url": "https://campus.geely.com/campus-recruitment/geely/78436/",
+      "job_list_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://campus.geely.com/campus-recruitment/geely/78436/",
-      "search_url": "https://campus.geely.com/campus-recruitment/geely/78436/",
+      "campus_search_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList",
+      "search_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList",
       "board_scope": "campus",
-      "business_summary": "汽车、智能电动车、智能座舱与汽车 AI"
+      "business_summary": "汽车、智能电动车、智能座舱与汽车 AI",
+      "browser_navigation_timeout_ms": 30000,
+      "browser_company_budget_ms": 90000
     },
     {
       "company": "小鹏集团",
@@ -1053,7 +1064,9 @@
       "campus_search_url": "https://job.byd.com/",
       "search_url": "https://job.byd.com/",
       "board_scope": "official_recruiting",
-      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通"
+      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通",
+      "browser_navigation_timeout_ms": 30000,
+      "browser_company_budget_ms": 90000
     },
     {
       "company": "同花顺",
@@ -1068,7 +1081,9 @@
       "campus_search_url": "https://campus.10jqka.com.cn/",
       "search_url": "https://campus.10jqka.com.cn/",
       "board_scope": "campus",
-      "business_summary": "金融信息服务、证券软件、金融数据与金融 AI"
+      "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
+      "browser_navigation_timeout_ms": 30000,
+      "browser_company_budget_ms": 90000
     },
     {
       "company": "麒麟软件",

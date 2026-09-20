@@ -891,7 +891,7 @@
       "company": "海康威视",
       "status": "NEEDS_ENUMERATION",
       "official_root": "https://www.hikvision.com/cn/",
-      "official_search_url": "https://mcampus.hikvision.com/",
+      "official_search_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
       "board_scope": "campus",
       "business_summary": "智慧物联、视频技术、企业数字化与 AIoT",
       "representative_roles": [],
@@ -993,7 +993,7 @@
       "company": "吉利控股",
       "status": "NEEDS_ENUMERATION",
       "official_root": "https://campus.geely.com/",
-      "official_search_url": "https://campus.geely.com/campus-recruitment/geely/78436/",
+      "official_search_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList",
       "board_scope": "campus",
       "business_summary": "汽车、智能电动车、智能座舱与汽车 AI",
       "representative_roles": [],
@@ -1149,12 +1149,23 @@
     },
     {
       "company": "BOSS直聘/看准科技",
-      "status": "ZERO_TARGET_JDS",
+      "status": "VERIFIED_ROLE",
       "official_root": "https://www.zhipin.com/",
       "official_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
-      "representative_roles": [],
+      "representative_roles": [
+        {
+          "title": "大模型应用工程师（校招）",
+          "recruitment_type": "当前校园招聘 / 在校应届",
+          "role_scope": "大模型应用平台 / AI Application Engineering",
+          "official_apply_url": "https://www.zhipin.com/school/",
+          "evidence_url": "https://www.zhipin.com/school/",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
+          "jd_status": "ROLE_VERIFIED",
+          "jd_summary": "BOSS直聘官方校园招聘页当前列出“大模型应用工程师（校招）”，职责包括参与大模型相关应用平台建设，并将大模型能力应用于求职招聘场景。"
+        }
+      ],
       "last_verified": "2026-09-20"
     },
     {
