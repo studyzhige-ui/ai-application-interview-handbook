@@ -1,70 +1,90 @@
 # 官方 AI / Agent 工程岗位覆盖审计
 
-> 覆盖事实与自动抓取运行状态分开。**岗位存在性以持久化核验索引为准；抓取器超时、WAF、API 失效或 Actions 未执行不得把公司回写成 0 岗。**
+> **69 家扫描池升级基线。** 公司覆盖与岗位存在性分开；新增公司等待 fresh runtime 枚举，不能用旧 41 家缓存伪造 69/69 Runtime。
 
-## 当前覆盖结论
+## 扫描池覆盖
 
-- 固定公司：**41**
-- 第一方官方招聘/校招入口：**41/41**
-- 至少 1 个相关非算法 AI / Agent 工程岗位已核验：**41/41**
-- 严格 Role Family：**230**
-- 第一方完整 JD Role Family：**190**
-- 第一方仅标题：**7**
-- 当前岗位已核验、第一方正文仍待补：**33**
+- 固定长期扫描公司：**69/69**
+- 第一方官方招聘 / 校招入口：**69/69 已登记**
+- 持久化已核验目标岗位公司：**41**
+- 新增待首次完整枚举公司：**28**
+- 当前保留 Role Family：**230**
+- 第一方完整 JD：**190**
 
-## 自动维护状态
+## Runtime 诊断
 
-> GitHub Actions 最近的同步 Job 没有进入执行 step，因此不能伪造新的 41/41 Runtime Certification。自动化恢复后仍需逐公司完成分页/关键词穷举；但自动运行失败只表示维护链路失败，不再删除已经核验的岗位事实。
+> Registry 已升级；下一次 Windows/Linux Sync 会逐公司刷新 Runtime。当前新增公司全部标记 `NEEDS_ENUMERATION`，不提前宣称 0 岗或 ENUMERATED。
 
 ## 逐公司
 
-| 公司 | 官方职位池 | 已核验代表岗位 | 招聘类型 | 证据级别 | 岗位覆盖 |
-|---|---|---|---|---|:---:|
-| 小米 | https://xiaomi.jobs.f.mioffice.cn/campus/ | Agent Harness 研发工程师 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 快手 | https://campus.kuaishou.cn/recruit/campus/e/ | AI应用开发工程师 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 百度 | https://talent.baidu.com/jobs/list?projectType=1 | 2027AIDU-Agent应用全栈工程师(J99974) | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 腾讯 | https://join.qq.com/post.html | Agent开发工程师 | 2027校园招聘 | CURRENT_CAMPUS_EVIDENCE | ✅ |
-| 美团 | https://zhaopin.meituan.com/web/campus | AI应用开发工程师 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 网易 | https://campus.163.com/ | AI Agent 应用开发工程师 | 2027校园招聘 | CURRENT_CAMPUS_EVIDENCE | ✅ |
-| 哔哩哔哩 | https://jobs.bilibili.com/campus/positions | 【B-UP】多模态智能体工程师（校招） | 当前校园招聘 | FIRST_PARTY_OFFICIAL_TITLE | ✅ |
-| 滴滴 | https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs | 27届秋招-自动驾驶-AI Agent工程师 | 2027校园招聘 | CURRENT_CAMPUS_EVIDENCE | ✅ |
-| 拼多多 | https://careers.pddglobalhr.com/campus/grad | AI Agent研发工程师 | 2027校园招聘 | CURRENT_CAMPUS_JD_EVIDENCE | ✅ |
-| 华为 | https://career.huawei.com/cn/campus-recruitment | AI应用平台开发工程师 | 2027校园招聘 | CURRENT_CAMPUS_JD_EVIDENCE | ✅ |
-| 小红书 | https://job.xiaohongshu.com/campus/position | 【REDstar】AI Agent Infra 工程师 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 字节跳动 | https://jobs.bytedance.com/campus/position | AI Agent开发工程师 - 抖音研发 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 阿里巴巴 | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | AI Agent应用开发工程师 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 蚂蚁集团 | https://talent.antgroup.com/campus-full-list | Agent研发工程师 | 2027届实习 / 校园人才池 | CURRENT_2027_CAMPUS_JD_EVIDENCE | ✅ |
-| 京东 | https://campus.jd.com/ | Agent开发工程师 | 当前官方招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| OPPO | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | AI Agent 研发工程师（研发效能方向） | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| vivo | https://hr-campus.vivo.com/campus/jobs | Agent技术工程师-27届秋招 | 2027校园招聘 | CURRENT_2027_CAMPUS_EVIDENCE | ✅ |
-| 金山办公/WPS | https://join.wps.cn/ | AI应用开发工程师 | 当前官方招聘 / 2027校招池 | CURRENT_ROLE_JD_EVIDENCE | ✅ |
-| 荣耀 | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | AI软件开发工程师 （AI Coding / Agent方向） | 当前校园招聘 | FIRST_PARTY_OFFICIAL_TITLE | ✅ |
-| 科大讯飞 | https://iflytek.zhiye.com/5/jobs | Agent研发工程师-Harness方向 | 2027秋季校园招聘 | CURRENT_CAMPUS_EVIDENCE | ✅ |
-| 携程 | https://careers.ctrip.com/#/campus | Agent开发工程师（2027届秋招） | 2027秋季校园招聘 | CURRENT_CAMPUS_JD_EVIDENCE | ✅ |
-| 360 | https://360campus.zhiye.com/campus/jobs | AI应用工程师——AI系统软件 | 2027届实习招聘 | CURRENT_2027_ROLE_EVIDENCE | ✅ |
-| 得物 | https://poizon.jobs.feishu.cn/578078/ | 【27届校招】中间件AI开发工程师（Golang方向） | 2027秋季校园招聘 | CURRENT_CAMPUS_JD_EVIDENCE | ✅ |
-| DeepSeek | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | Agent Harness 研发工程师 | 当前官方招聘 | OFFICIAL_DIRECT_LINK_CORROBORATED | ✅ |
-| 月之暗面/Kimi | https://app.mokahr.com/campus-recruitment/moonshot/148507 | Agent Development Engineer（实习） | 2027/2028校园招聘与实习 | CURRENT_CAMPUS_ROLE_EVIDENCE | ✅ |
-| MiniMax | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | AGI产品研发工程师-应届生-TOP Talent | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 智谱/Z.ai | https://app.mokahr.com/campus-recruitment/zphz/148984 | AI研发工程师-Agent Tools/大模型应用方向 | 当前官方招聘（非算法工程） | CURRENT_ROLE_JD_EVIDENCE | ✅ |
-| 阶跃星辰 | https://app.mokahr.com/campus-recruitment/step/94905 | Coding Agent 全栈工程师 | 当前官方招聘；公司同时开放2027校园招聘 | CURRENT_ROLE_JD_EVIDENCE | ✅ |
-| 百川智能 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | 【源点顶尖人才计划】AI Infra工程师-推理方向实习生 | 2027及以后在校生/可转正 | CURRENT_CAMPUS_JD_EVIDENCE | ✅ |
-| 零一万物/01.AI | https://01ai.jobs.feishu.cn/index/ | AI 测试工程师 | 当前官方招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 商汤科技 | https://hr-jobs.sensetime.com/edu/ | 【27届校招】Agent开发工程师 | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 生数科技 | https://shengshu.jobs.feishu.cn/index/ | 流式视频 Agent 工程师 | 当前官方招聘（正式/实习） | CURRENT_ROLE_JD_EVIDENCE | ✅ |
-| 硅基流动 | https://app.mokahr.com/su/Idzsq | 端侧AI Agent工程师(A24765) | 当前官方招聘 | CURRENT_ROLE_JD_EVIDENCE | ✅ |
-| 面壁智能 | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | Agentic Engineering | 2027/2028/2029顶尖人才实习 | CURRENT_CAMPUS_ROLE_EVIDENCE | ✅ |
-| Manus | https://jobs.ashbyhq.com/manusai | AI Agent Engineer | 当前官方招聘 | FIRST_PARTY_FULL_JD | ✅ |
-| 无问芯穹/Infini-AI | https://infinigence.jobs.feishu.cn/088717 | 推理框架开发工程师 | 2027秋季校园招聘 | CURRENT_CAMPUS_EVIDENCE | ✅ |
-| 昆仑万维/天工 | https://jobs.kunlun.com/459522/position/list | Agent框架工程师 | 当前官方招聘 | FIRST_PARTY_SNAPSHOT | ✅ |
-| Shopee | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | Agent开发工程师 | 2027秋季校园招聘 | CURRENT_CAMPUS_EVIDENCE | ✅ |
-| 联想 | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | AI Agent开发工程师 | 当前校园招聘 | FIRST_PARTY_OFFICIAL_TITLE | ✅ |
-| 蔚来 | https://nio.jobs.feishu.cn/campus/ | Super Sparks-校招-车端智能体框架和应用工程师 | 2027校园招聘 | CURRENT_CAMPUS_JD_EVIDENCE | ✅ |
-| 顺丰 | https://campus.sf-express.com/positionList | AI开发工程师（顺丰科技） | 当前校园招聘 | FIRST_PARTY_FULL_JD | ✅ |
-
-## 验收规则
-
-- `✅` 表示“官方入口已固定 + 至少一个相关工程岗位已核验”；不是说所有 JD 正文都已经由第一方接口抓全。
-- 第一方全文已保存的岗位继续进入自动刷新；只有岗位标题/当前招聘证据的条目继续补正文，但不会因下一次抓取失败被改成 0。
-- 自动同步恢复后，41 家每家公司都要单独记录枚举时间、分页完成度、关键词覆盖与错误；只有 41/41 完整枚举时 Runtime 才能全绿。
-- 正式范围仍排除算法/模型训练/研究、产品、销售、运营等非目标岗位；代表岗位必须是开发、研发、全栈、前后端、平台、架构、Infra、Runtime、Harness、FDE 等工程角色。
+| 公司 | 主要业务 | 官方职位池 | 持久化状态 | Runtime |
+|---|---|---|---|---|
+| 小米 | 智能手机、IoT、操作系统、智能汽车与 AI | https://xiaomi.jobs.f.mioffice.cn/campus/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 快手 | 短视频、直播、电商、广告与 AI | https://campus.kuaishou.cn/recruit/campus/e/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 百度 | 搜索、生成式 AI、智能云与自动驾驶 | https://talent.baidu.com/jobs/list?projectType=1 | VERIFIED_ROLE | PENDING_REFRESH |
+| 腾讯 | 社交、游戏、内容、云计算、金融科技与 AI | https://join.qq.com/post.html | VERIFIED_ROLE | PENDING_REFRESH |
+| 美团 | 本地生活、外卖、即时零售、旅游与配送科技 | https://zhaopin.meituan.com/web/campus | VERIFIED_ROLE | PENDING_REFRESH |
+| 网易 | 游戏、音乐、教育、内容与互联网服务 | https://campus.163.com/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 哔哩哔哩 | 视频社区、直播、游戏与内容生态 | https://jobs.bilibili.com/campus/positions | VERIFIED_ROLE | PENDING_REFRESH |
+| 滴滴 | 网约车、出行平台、自动驾驶与物流 | https://campus.didiglobal.com/campus_apply/didiglobal/96064#/jobs | VERIFIED_ROLE | PENDING_REFRESH |
+| 拼多多 | 电商、Temu、供应链与平台技术 | https://careers.pddglobalhr.com/campus/grad | VERIFIED_ROLE | PENDING_REFRESH |
+| 华为 | 通信设备、云、终端、计算、汽车 ICT 与 AI | https://career.huawei.com/cn/campus-recruitment | VERIFIED_ROLE | PENDING_REFRESH |
+| 小红书 | 内容社区、生活方式、电商与广告 | https://job.xiaohongshu.com/campus/position | VERIFIED_ROLE | PENDING_REFRESH |
+| 字节跳动 | 抖音/TikTok、内容平台、云与大模型 AI | https://jobs.bytedance.com/campus/position | VERIFIED_ROLE | PENDING_REFRESH |
+| 阿里巴巴 | 电商、云计算、本地生活、物流与企业 AI | https://campus-talent.alibaba.com/campus/position?batchId=100000760001 | VERIFIED_ROLE | PENDING_REFRESH |
+| 蚂蚁集团 | 支付、金融科技、企业科技与 AI | https://talent.antgroup.com/campus-full-list | VERIFIED_ROLE | PENDING_REFRESH |
+| 京东 | 电商、物流、零售科技、云与企业服务 | https://campus.jd.com/ | VERIFIED_ROLE | PENDING_REFRESH |
+| OPPO | 智能手机、IoT、操作系统与端侧 AI | https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate | VERIFIED_ROLE | PENDING_REFRESH |
+| vivo | 智能手机、操作系统、IoT 与端侧 AI | https://hr-campus.vivo.com/campus/jobs | VERIFIED_ROLE | PENDING_REFRESH |
+| 金山办公/WPS | 办公软件、协同办公与办公 AI | https://join.wps.cn/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 荣耀 | 智能手机、PC、IoT 与 AI OS | https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html | VERIFIED_ROLE | PENDING_REFRESH |
+| 科大讯飞 | 语音 AI、大模型、教育、医疗与企业 AI | https://iflytek.zhiye.com/5/jobs | VERIFIED_ROLE | PENDING_REFRESH |
+| 携程 | 在线旅游、酒店机票与旅行 AI | https://careers.ctrip.com/#/campus | VERIFIED_ROLE | PENDING_REFRESH |
+| 360 | 网络安全、搜索/浏览器、AI 助手与企业安全 | https://360campus.zhiye.com/campus/jobs | VERIFIED_ROLE | PENDING_REFRESH |
+| 得物 | 潮流电商、社区、鉴别与交易服务 | https://poizon.jobs.feishu.cn/578078/ | VERIFIED_ROLE | PENDING_REFRESH |
+| DeepSeek | 基础大模型、推理模型与模型服务 | https://app.mokahr.com/social-recruitment/high-flyer/140576#/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 月之暗面/Kimi | 大模型、Kimi AI 助手与 Agent | https://app.mokahr.com/campus-recruitment/moonshot/148507 | VERIFIED_ROLE | PENDING_REFRESH |
+| MiniMax | 多模态大模型、AI 产品与 Agent | https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415 | VERIFIED_ROLE | PENDING_REFRESH |
+| 智谱/Z.ai | GLM 大模型、模型 API 与 Agent 平台 | https://app.mokahr.com/campus-recruitment/zphz/148984 | VERIFIED_ROLE | PENDING_REFRESH |
+| 阶跃星辰 | 多模态基础模型、AI 平台与应用 | https://app.mokahr.com/campus-recruitment/step/94905 | VERIFIED_ROLE | PENDING_REFRESH |
+| 百川智能 | 大模型与企业/行业 AI 应用 | https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987 | VERIFIED_ROLE | PENDING_REFRESH |
+| 零一万物/01.AI | 大模型、企业 AI 与 AI 应用 | https://01ai.jobs.feishu.cn/index/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 商汤科技 | 大模型、计算机视觉、AI 基础设施与行业应用 | https://hr-jobs.sensetime.com/edu/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 生数科技 | 视频生成、多模态生成模型与 Vidu | https://shengshu.jobs.feishu.cn/index/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 硅基流动 | 模型推理云、模型 API 与 AI Infra | https://app.mokahr.com/su/Idzsq | VERIFIED_ROLE | PENDING_REFRESH |
+| 面壁智能 | 端侧大模型、小模型与 Agent | https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH | VERIFIED_ROLE | PENDING_REFRESH |
+| Manus | 通用 AI Agent | https://jobs.ashbyhq.com/manusai | VERIFIED_ROLE | PENDING_REFRESH |
+| 无问芯穹/Infini-AI | AI Infra、异构算力与训练/推理平台 | https://infinigence.jobs.feishu.cn/088717 | VERIFIED_ROLE | PENDING_REFRESH |
+| 昆仑万维/天工 | 大模型、天工 AI、互联网与海外业务 | https://jobs.kunlun.com/459522/position/list | VERIFIED_ROLE | PENDING_REFRESH |
+| Shopee | 东南亚电商、金融科技、物流与 AI | https://app.mokahr.com/campus_apply/shopee/2962#/jobs | VERIFIED_ROLE | PENDING_REFRESH |
+| 联想 | PC、智能设备、服务器、企业基础设施与 AI | https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1 | VERIFIED_ROLE | PENDING_REFRESH |
+| 蔚来 | 智能电动车、智能驾驶、能源服务与 AI | https://nio.jobs.feishu.cn/campus/ | VERIFIED_ROLE | PENDING_REFRESH |
+| 顺丰 | 快递、物流、供应链科技与 AI | https://campus.sf-express.com/positionList | VERIFIED_ROLE | PENDING_REFRESH |
+| 米哈游 | 游戏、IP、互动娱乐、游戏研发技术与 AI | https://jobs.mihoyo.com/#/campus | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 大疆 DJI | 无人机、影像设备、行业机器人与智能硬件 | https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 度小满 | 消费金融、财富管理、支付与金融科技 | https://campus.duxiaoman.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 海康威视 | 智慧物联、视频技术、企业数字化与 AIoT | https://mcampus.hikvision.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 中兴通讯 | 通信网络、算力、云、终端、企业数字化与 AI | https://job.zte.com.cn/cn/campus-recruitment/Recruitment_positions/freshstudent.html | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 深信服 | 网络安全、云计算、企业 IT 与 AI | https://hr.sangfor.com/schoolRecruitment | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 金蝶 | ERP、企业云 SaaS、企业管理软件与企业 AI | https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 用友 | ERP、BIP、企业软件与企业级 AI | https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 美图 | 图像/视频应用、AI 影像、内容生成与设计工具 | https://hr.meitu.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| SHEIN | 全球时尚电商、供应链平台与电商技术 | https://careers.shein.cn/Students | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 安克创新 | 充电、影音、智能家居、安防与储能消费电子 | https://career.anker.com.cn/universities/recruitment/new/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 大华股份 | 智慧物联、视频 AI、智慧城市与企业数字化 | https://job.dahuatech.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 吉利控股 | 汽车、智能电动车、智能座舱与汽车 AI | https://campus.geely.com/campus-recruitment/geely/78436/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 小鹏集团 | 智能电动车、Physical AI、机器人与飞行汽车 | https://xiaopeng.jobs.feishu.cn/campus | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 理想汽车 | 智能电动车、智能驾驶、具身智能与智能硬件 | https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1 | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 海尔集团 | 智慧家庭、工业互联网、医疗健康与工业 AI | https://maker.haier.net/client/campus/activityindex.html | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 美的集团 | 智能家居、工业技术、楼宇、机器人与新能源 | https://newpower.midea.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 比亚迪 | 新能源汽车、电池、新能源、电子与轨道交通 | https://job.byd.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 同花顺 | 金融信息服务、证券软件、金融数据与金融 AI | https://campus.10jqka.com.cn/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 麒麟软件 | 国产操作系统、服务器/桌面 OS 与 AI OS | https://www.kylinos.cn/about/job/campusRecruitment/index.html | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 普渡机器人 | 商用服务机器人、具身智能与机器人软件 | https://pudutech.zhiye.com/campus/jobs | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 广联达 | BIM、数字建筑、工程软件与建筑产业 AI | https://app.mokahr.com/campus-recruitment/glodon/91966 | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 挚文集团/陌陌 | 移动社交、直播与泛娱乐 | https://campus.hellogroup.com/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| BOSS直聘/看准科技 | 在线招聘、人力资源平台与招聘科技 | https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/ | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 作业帮 | 教育科技、学习工具、智能硬件与教育 AI | https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 影石 Insta360 | 全景相机、运动相机、智能影像与 AI 影像软件 | https://arashivision.jobs.feishu.cn/campus/position/list | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 神州数码/神州信息 | IT 基础设施、金融科技、云服务与企业数字化 | https://dcits.zhiye.com/campus/jobs | NEEDS_ENUMERATION | PENDING_REFRESH |
+| 合合信息 | OCR/文档 AI、扫描全能王、数据智能与企业服务 | https://intsig.zhiye.com/campus/jobs | NEEDS_ENUMERATION | PENDING_REFRESH |
