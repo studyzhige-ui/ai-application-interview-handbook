@@ -32,7 +32,7 @@ README                     系统地图、源码快照、关键模块与阅读�
 | 产品 | 状态 | 源码入口 | 学习入口 |
 |---|---|---|---|
 | OpenAI Codex | ✅ 已建立源码级学习基线 | [openai/codex](https://github.com/openai/codex) | [进入](codex/README.md) |
-| Claude Code | ⏳ 待按同一口径整理 | 用户维护的源码镜像 | 待建立 |
+| Claude Code | ✅ 已建立源码级学习基线 | [私有源码镜像](https://github.com/studyzhige-ui/claude-code-source-private) · `58231dc` | [进入](claude-code/README.md) |
 | DeepSeek Harness | ⏳ 待按同一口径整理 | [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) | 待建立 |
 | DeerFlow | ⏳ 待按同一口径整理 | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) | 待建立 |
 
