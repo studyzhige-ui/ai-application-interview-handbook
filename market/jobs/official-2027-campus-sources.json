@@ -776,11 +776,11 @@
     },
     {
       "company": "米哈游",
-      "mode": "portal_only",
+      "mode": "mihoyo_campus_api",
       "portal": "https://jobs.mihoyo.com/#/campus/position",
       "official_root": "https://jobs.mihoyo.com/",
       "browser_probe": true,
-      "note": "米哈游官方2027校园招聘职位列表固定为 #/campus/position；浏览器完整翻页并拦截 ats-portal/v1/job/list，目标岗位再读取官方详情。",
+      "note": "米哈游官方公开 ATS：ats-portal/v1/job/list，channelDetailIds=[1] 为校招、hireType=1 为正式岗；按 total 完整分页，目标标题再拉第一方详情。",
       "job_list_url": "https://jobs.mihoyo.com/#/campus/position",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -788,9 +788,7 @@
       "search_url": "https://jobs.mihoyo.com/#/campus/position",
       "board_scope": "campus",
       "business_summary": "游戏、IP、互动娱乐、游戏研发技术与 AI",
-      "extra_job_list_urls": [],
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 120000
+      "extra_job_list_urls": []
     },
     {
       "company": "大疆 DJI",
@@ -1052,20 +1050,18 @@
     },
     {
       "company": "比亚迪",
-      "mode": "portal_only",
+      "mode": "byd_campus_api",
       "portal": "https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ=",
       "official_root": "https://job.byd.com/",
       "browser_probe": true,
-      "note": "比亚迪官方 2027 校园招聘职位列表路由；从 job.byd.com 第一方 schoolPositionList 页面枚举当前校招职位与底层 position API。",
+      "note": "比亚迪官方 schoolPortal API；batch=2027、campusNature=008501 为全职校招，queryPositionList 完整分页，目标标题再读取 queryPosition 第一方详情。",
       "job_list_url": "https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ=",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_OFFICIAL_BOARD",
       "campus_search_url": "https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ=",
       "search_url": "https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ=",
       "board_scope": "campus",
-      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通",
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 120000
+      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通"
     },
     {
       "company": "同花顺",
