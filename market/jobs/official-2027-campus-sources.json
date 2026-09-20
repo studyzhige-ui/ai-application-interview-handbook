@@ -410,7 +410,7 @@
     },
     {
       "company": "360",
-      "mode": "portal_only",
+      "mode": "beisen_direct",
       "portal": "https://360campus.zhiye.com/campus/jobs",
       "official_root": "https://campus.360.cn/",
       "browser_probe": true,
@@ -421,7 +421,8 @@
       "search_url": "https://360campus.zhiye.com/campus/jobs",
       "board_scope": "campus",
       "note": "360 官方 campus.360.cn 当前跳转至 360campus.zhiye.com；固定枚举北森校园职位列表。",
-      "business_summary": "网络安全、搜索/浏览器、AI 助手与企业安全"
+      "business_summary": "网络安全、搜索/浏览器、AI 助手与企业安全",
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
     },
     {
       "company": "得物",
@@ -1068,26 +1069,27 @@
     },
     {
       "company": "麒麟软件",
-      "mode": "portal_only",
-      "portal": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "mode": "beisen_direct",
+      "portal": "https://kylinos.zhiye.com/campus/jobs",
       "official_root": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
       "browser_probe": true,
       "note": "麒麟软件官网直接展示 2027 校招完整 JD，并提供官方北森投递；重点扫描 Agent/RAG/AI 应用工程部分。",
-      "job_list_url": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "job_list_url": "https://kylinos.zhiye.com/campus/jobs",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
-      "search_url": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "campus_search_url": "https://kylinos.zhiye.com/campus/jobs",
+      "search_url": "https://kylinos.zhiye.com/campus/jobs",
       "board_scope": "campus",
       "business_summary": "国产操作系统、服务器/桌面 OS 与 AI OS",
       "extra_job_list_urls": [
         "https://kylinos.zhiye.com/campus/jobs"
-      ]
+      ],
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
     },
     {
       "company": "普渡机器人",
-      "mode": "portal_only",
-      "portal": "https://pudutech.zhiye.com/campus",
+      "mode": "beisen_direct",
+      "portal": "https://pudutech.zhiye.com/campus/jobs",
       "official_root": "https://pudutech.zhiye.com/",
       "browser_probe": true,
       "note": "普渡机器人官方北森校园招聘职位池；扫描 Agent 开发、AI Builder、AI Infra 等软件工程岗位。",
@@ -1097,7 +1099,8 @@
       "campus_search_url": "https://pudutech.zhiye.com/campus/jobs",
       "search_url": "https://pudutech.zhiye.com/campus/jobs",
       "board_scope": "campus",
-      "business_summary": "商用服务机器人、具身智能与机器人软件"
+      "business_summary": "商用服务机器人、具身智能与机器人软件",
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
     },
     {
       "company": "广联达",
@@ -1182,7 +1185,7 @@
     },
     {
       "company": "神州数码/神州信息",
-      "mode": "portal_only",
+      "mode": "beisen_direct",
       "portal": "https://dcits.zhiye.com/campus/jobs",
       "official_root": "https://dcits.zhiye.com/",
       "browser_probe": true,
@@ -1193,11 +1196,12 @@
       "campus_search_url": "https://dcits.zhiye.com/campus/jobs",
       "search_url": "https://dcits.zhiye.com/campus/jobs",
       "board_scope": "campus",
-      "business_summary": "IT 基础设施、金融科技、云服务与企业数字化"
+      "business_summary": "IT 基础设施、金融科技、云服务与企业数字化",
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
     },
     {
       "company": "合合信息",
-      "mode": "portal_only",
+      "mode": "beisen_direct",
       "portal": "https://intsig.zhiye.com/campus/jobs",
       "official_root": "https://intsig.zhiye.com/",
       "browser_probe": true,
@@ -1208,7 +1212,8 @@
       "campus_search_url": "https://intsig.zhiye.com/campus/jobs",
       "search_url": "https://intsig.zhiye.com/campus/jobs",
       "board_scope": "campus",
-      "business_summary": "OCR/文档 AI、扫描全能王、数据智能与企业服务"
+      "business_summary": "OCR/文档 AI、扫描全能王、数据智能与企业服务",
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
     }
   ],
   "notes": [
