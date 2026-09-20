@@ -34,7 +34,7 @@ README                     系统地图、源码快照、关键模块与阅读�
 | OpenAI Codex | ✅ 已建立源码级学习基线 | [openai/codex](https://github.com/openai/codex) | [进入](codex/README.md) |
 | Claude Code | ✅ 已建立源码级学习基线 | [私有源码镜像](https://github.com/studyzhige-ui/claude-code-source-private) · `58231dc` | [进入](claude-code/README.md) |
 | DeepSeek Harness | ✅ 已建立源码级学习基线 | [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness) · `ddefc45` | [进入](deepseek-harness/README.md) |
-| DeerFlow | ✅ 已建立源码级学习基线 | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) · `1e3bfa0` | [进入](deer-flow/README.md) |
+| DeerFlow | ✅ 已建立源码级学习基线 | [bytedance/deer-flow](https://github.com/bytedance/deer-flow) · `e545c28` | [进入](deer-flow/README.md) |
 
 这里的“完成”不表示产品永远不再变化。每份文档必须记录固定 commit；后续升级时先比较源码变化，再更新结论。
 
