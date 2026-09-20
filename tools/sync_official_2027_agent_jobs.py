@@ -2175,11 +2175,13 @@ def main() -> int:
             and strict_role_title(j)
             and not training_heavy(j, training_signals)
             and not is_hard_excluded(j, excludes)
+            and "实习" not in j.title.lower()
+            and "intern" not in j.title.lower()
             and (
                 campus_formal_pool
                 or (
-                    "实习" not in (j.title + " " + j.category).lower()
-                    and "intern" not in (j.title + " " + j.category).lower()
+                    "实习" not in j.category.lower()
+                    and "intern" not in j.category.lower()
                 )
             )
         ]
