@@ -1,13 +1,13 @@
 # 当前校招｜AI 应用开发 & Agent / 智能体研发官方 JD 市场库
 
-> **正式口径：41 家目标公司 + 官方招聘/校招入口 + 已核验非算法 AI/Agent 工程岗位。**
+> **正式口径：69 家长期目标公司扫描池 + 第一方招聘/校招入口 + 非算法 AI/Agent 工程岗位。公司是否当前有目标岗是扫描结果，不是进入扫描池的前置条件。**
 >
 > 自动抓取失败不再等价于“公司没有岗位”。岗位存在性由持久化核验索引维护；第一方 API / ATS 自动化负责刷新、扩充和补全文，不负责在失败时删除已核验事实。
 
 ## 1. 数据模型
 
 ```text
-41 家公司官方招聘 / 校招入口
+69 家目标公司第一方招聘 / 校招入口
         ↓ 岗位存在性核验
 official-company-role-index.*
         ↓ 第一方 API / ATS / 浏览器补全与 Role Family 去重
@@ -16,9 +16,10 @@ official-2027-agent-jobs.generated.*
 ai-agent-jd-market.md
 ```
 
-- [41 家官方岗位直达索引](official-company-role-index.md)：每家公司至少 1 个相关工程岗位，包含官方入口、代表岗位、招聘类型和证据等级。
+- [69 家公司岗位状态索引](official-company-role-index.md)：全部公司保留第一方职位池；已有岗位、完整枚举 0 岗、待枚举分别记录。
 - [全量 Role Family / JD 层](official-2027-agent-jobs.generated.md)：保存完整第一方 JD、官方标题和待补正文岗位。
-- [覆盖审计](official-2027-coverage-audit.generated.md)：检查 41/41 公司覆盖，并把 Runtime 抓取状态与岗位事实分开。
+- [覆盖审计](official-2027-coverage-audit.generated.md)：检查 69/69 公司扫描覆盖，并把 Runtime 抓取状态与岗位事实分开。
+- [69 家公司扫描池](company-scan-pool.md)：全量公司名单、主要业务、第一方职位池和当前状态。
 
 ## 2. 正式纳入 Gate
 
@@ -28,15 +29,16 @@ ai-agent-jd-market.md
 
 ## 3. 当前快照｜2026-09-20
 
-- **固定公司：41 家**。
-- **官方招聘 / 校招入口：41/41。**
-- **至少一个相关工程岗位已核验：41/41。**
+- **长期扫描公司：69 家。**
+- **第一方招聘 / 校招入口：69/69 已登记。**
+- **原 41 家已核验目标工程岗位事实全部保留；新增 28 家进入首次完整枚举。**
+- **公司状态与岗位状态分离：允许 HAS_TARGET_JDS / ZERO_TARGET_JDS / NEEDS_ENUMERATION。**
 - **严格 Role Family：230。**
 - **第一方完整 JD：190 个 Role Family。**
 - **第一方仅标题：7 个；当前岗位已核验、待补第一方正文：33 个。**
 - 旧抓取器的 0 命中已废止为岗位结论：它只能表示“本次自动枚举没有抓到”，不能表示“公司没有相关岗位”。
 
-## 4. 41 家公司官方入口与代表岗位
+## 4. 已核验目标岗位公司（长期扫描池共 69 家）
 
 | 公司 | 官方招聘 / 校招入口 | 已核验代表岗位 | 招聘类型 | JD / 证据状态 |
 |---|---|---|---|---|
@@ -82,7 +84,7 @@ ai-agent-jd-market.md
 | 蔚来 | https://nio.jobs.feishu.cn/campus/ | Super Sparks-校招-车端智能体框架和应用工程师 | 2027校园招聘 | JD_VERIFIED_EXTERNAL_OR_FIRST_PARTY |
 | 顺丰 | https://campus.sf-express.com/positionList | AI开发工程师（顺丰科技） | 当前校园招聘 | FULL_FIRST_PARTY_JD |
 
-> 这张表回答“每家公司去哪里搜、至少有什么相关岗”。完整职位族和 JD 见 [official-2027-agent-jobs.generated.md](official-2027-agent-jobs.generated.md)；更多已核验代表岗位见 [official-company-role-index.md](official-company-role-index.md)。
+> 这张表只展示当前已有持久化岗位事实的公司；完整 69 家公司及其第一方职位入口见 [company-scan-pool.md](company-scan-pool.md)。完整职位族和 JD 见 [official-2027-agent-jobs.generated.md](official-2027-agent-jobs.generated.md)。
 ## 5. AI 应用开发｜当前校招 Active 官方 JD
 
 ### 快手｜AI应用开发工程师
@@ -921,6 +923,7 @@ ai-agent-jd-market.md
 
 ## 10. 维护日志
 
+- **2026-09-20｜69 家长期扫描池升级**：公司池由 41 家扩展为 69 家；公司进入扫描池不再要求预先存在目标 JD。新增米哈游、大疆、度小满、海康威视、中兴通讯、深信服、金蝶、用友、美图、SHEIN、安克创新、大华股份、吉利控股、小鹏集团、理想汽车、海尔集团、美的集团、比亚迪、同花顺、麒麟软件、普渡机器人、广联达、挚文集团/陌陌、BOSS直聘/看准科技、作业帮、影石 Insta360、神州数码/神州信息、合合信息，并固定第一方职位入口。
 - **2026-09-20｜41 家覆盖收口**：修复官方源合同校验器的 `INDEX` 未定义错误；注册表与核验索引改为严格的固定 41 家集合，缺失、重复或额外公司都会触发 CI 失败；覆盖事实与 Runtime Certification 继续分离。
 - **2026-09-19｜固定职位页模型收口**：41 家公司全部维护 `official_root + job_list_url`；日常采集统一从固定官方职位列表页穷举，专用 API/ATS 仅作为加速器。
 - **2026-09-19｜官方 JD 扩容**：从已经保存的官方招聘页面/XHR 中新增阿里巴巴 2、小红书 6、商汤科技 4、MiniMax 1，共 13 个非算法 2027 Role Family；正式库由 25 增至 38。
