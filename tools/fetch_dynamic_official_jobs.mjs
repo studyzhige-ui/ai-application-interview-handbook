@@ -16,6 +16,7 @@ const OUT = process.argv[2] || "market/jobs/official-2027-browser-discovery.gene
 
 const SEARCH_TERMS = CONFIG.strong_agent_keywords || CONFIG.agent_keywords || [];
 const STRONG = SEARCH_TERMS.map(x=>x.toLowerCase());
+const COMPANY_BUDGET_MS=Math.max(15000,Number(process.env.COMPANY_BUDGET_MS||"45000"));
 const TITLE_KEYS = ["positionName","jobName","jobTitle","positionTitle","recruitPostName","postName","title","name"];
 const ID_KEYS = ["positionId","jobId","postId","publishId","reqId","id","code"];
 const DESC_KEYS = ["description","jobDescription","jobDesc","positionDesc","responsibility","responsibilities","jobDuty","duty","workContent","desc","postDuty"];
@@ -357,8 +358,11 @@ async function processSource(browser,src){
   const boardScope=src.board_scope || (src.current_campus_board?"campus":"official_recruiting");
   const queue=[jobList, ...(src.extra_job_list_urls||src.extra_portals||[])];
   const pageResults=[];
-  try{
+  const started=Date.now();
+  let timer=null;
+  const work=(async()=>{
     while(queue.length && visited.size<6){
+      if(Date.now()-started>COMPANY_BUDGET_MS) throw new Error("company enumeration budget exceeded");
       const u=queue.shift();
       const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog,boardScope);
       if(pr){
@@ -389,10 +393,18 @@ async function processSource(browser,src){
       search_terms_attempted:[...searched],search_terms_expected:SEARCH_TERMS,
       full_keyword_search:fullKeywordSearch,list_scan_complete:listScanComplete
     };
+  })();
+  const timeout=new Promise((_,reject)=>{
+    timer=setTimeout(()=>reject(new Error(`company enumeration timed out after ${COMPANY_BUDGET_MS}ms`)),COMPANY_BUDGET_MS);
+  });
+  try{
+    return await Promise.race([work,timeout]);
   }catch(e){
     console.log(`${src.company}: browser ERROR ${String(e).slice(0,300)}`);
-    return {company:src.company,root_portal:root,seed_portal:src.portal,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs:uniqueJobs(collector),status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
+    return {company:src.company,board_scope:boardScope,root_portal:root,seed_portal:src.portal,job_list_url:jobList,pages:pageResults,endpoints:endpointLog.slice(0,120),jobs:uniqueJobs(collector),status:"BROWSER_ERROR",error:String(e).slice(0,500),search_terms_attempted:[],search_terms_expected:SEARCH_TERMS,full_keyword_search:false};
   }finally{
+    if(timer) clearTimeout(timer);
+    work.catch(()=>{});
     await context.close().catch(()=>{});
   }
 }
@@ -404,7 +416,7 @@ async function main(){
   const sources=allSources.filter((_,i)=>i % shardCount === shardIndex);
   const browser=await chromium.launch({headless:true,args:["--no-sandbox"]});
   const results=[];
-  const concurrency=4;
+  const concurrency=Math.max(1,Number(process.env.BROWSER_COMPANY_CONCURRENCY||"8"));
   for(let i=0;i<sources.length;i+=concurrency){
     const chunk=sources.slice(i,i+concurrency);
     results.push(...await Promise.all(chunk.map(src=>processSource(browser,src))));
