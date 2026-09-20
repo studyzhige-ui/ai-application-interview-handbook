@@ -1,17 +1,17 @@
 # Claude Code｜从私有源码镜像还原一个成熟 Coding Agent
 
-[← 成熟产品源码学习](../README.md) · [Agent 模块](../../README.md)
+[← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent Curriculum](../../../curriculum/09-agent/README.md) · [Agent References](../../../references/agent/README.md)
 
 > **源码镜像：** [studyzhige-ui/claude-code-source-private](https://github.com/studyzhige-ui/claude-code-source-private)  
 > **固定源码快照：** [`58231dcce408f805c645cfbc352d2876b517223b`](https://github.com/studyzhige-ui/claude-code-source-private/tree/58231dcce408f805c645cfbc352d2876b517223b)  
 > **快照性质：** 私有源码镜像的固定导入提交；仓库没有可用于核验官方 release 的 README / package 元数据，因此本文不虚构 Claude Code 官方版本号。  
 > **核验日期：** 2026-09-20
 
-这组文档仍然坚持和 Codex 一样的原则：**先读产品源码，再抽象 Agent 知识。**
+本组文档遵循同一项源码学习原则：**先读产品源码，再抽象 Agent 知识。**
 
 Claude Code 的源码形态和 Codex 差异很大。如果先拿 Codex 的 Thread / Session / StepContext、Extension Registry、replacement-history checkpoint 等概念去套，很容易得到一份“看起来很统一、实际上不真实”的文档。
 
-Claude Code 当前镜像更像一个大型 TypeScript 产品运行时：交互式 REPL（终端交互界面）在 `screens/REPL.tsx` 中组织本轮状态，Headless（无界面） / SDK（开发工具包）路径可以通过 `QueryEngine` 管理会话，而两条入口最终都汇入 `query.ts` 的 `query()` / `queryLoop()`。工具、MCP、Skills、Memory、权限、Subagent（子智能体）、Compaction（上下文压缩）、Transcript（会话记录）都围绕这一主循环协作。
+固定镜像呈现为一个大型 TypeScript 产品运行时：交互式 REPL（终端交互界面）在 `screens/REPL.tsx` 中组织本轮状态，Headless（无界面） / SDK（开发工具包）路径可以通过 `QueryEngine` 管理会话，而两条入口最终都汇入 `query.ts` 的 `query()` / `queryLoop()`。工具、MCP、Skills、Memory、权限、Subagent（子智能体）、Compaction（上下文压缩）、Transcript（会话记录）都围绕这一主循环协作。
 
 所以本组文档首先回答：
 

@@ -66,6 +66,23 @@ for module, expected in EXPECTED_BLOCKS.items():
 if total != 185:
     errors.append(f"Curriculum total must be 185, found {total}")
 
+# Products are a top-level source-study layer, not a Curriculum subdirectory.
+legacy_products = ROOT / "curriculum/09-agent/products"
+if legacy_products.exists():
+    errors.append("legacy products directory still exists under curriculum/09-agent")
+for product in ("codex", "claude-code", "deepseek-harness", "deer-flow"):
+    product_dir = ROOT / "products/agent" / product
+    expected_files = {
+        "README.md",
+        "01-context-lifecycle.md",
+        "02-memory-lifecycle.md",
+        "03-tool-lifecycle.md",
+        "04-engineering-evaluation.md",
+    }
+    actual_files = {p.name for p in product_dir.glob("*.md")} if product_dir.exists() else set()
+    if actual_files != expected_files:
+        errors.append(f"products/agent/{product}: expected {sorted(expected_files)}, found {sorted(actual_files)}")
+
 # Current-state semantic checks.
 require("guide/knowledge-map.md", "## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 23 blocks")
 forbid("guide/knowledge-map.md", "## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 24 blocks")
@@ -75,6 +92,9 @@ forbid("interview/canonical/schema.md", "采集阶段已经结束")
 require("interview/canonical/schema.md", "S280+")
 forbid("curriculum/09-agent/interview/面试易错点.md", "按23章")
 forbid("references/agent/README.md", "研究层 Capability")
+require("README.md", "products/     成熟 AI 系统怎样把这些机制组合成真实产品")
+require("curriculum/09-agent/README.md", "../../products/agent/README.md")
+forbid("curriculum/09-agent/README.md", "products/codex/README.md")
 forbid("interview/canonical/module-index.md", "Frozen Research 层")
 require("guide/audits/final-quality-audit.md", "Curriculum Blocks          185")
 require("market/analysis/knowledge-gap-analysis.md", "S280–S288")
@@ -132,6 +152,12 @@ if seen_evidence and max(seen_evidence) > FROZEN_CANONICAL_MAX_SOURCE:
 current_state_files = [
     "README.md",
     "curriculum/README.md",
+    "products/README.md",
+    "products/agent/README.md",
+    "products/agent/codex/README.md",
+    "products/agent/claude-code/README.md",
+    "products/agent/deepseek-harness/README.md",
+    "products/agent/deer-flow/README.md",
     "practice/README.md",
     "market/README.md",
     "interview/README.md",
@@ -154,10 +180,13 @@ current_state_files = [
     ".github/workflows/validate-handbook.yml",
 ]
 legacy_path = re.compile(r"(?<![A-Za-z0-9_-])(?:research|roadmap)/")
+legacy_products_path = re.compile(r"curriculum/09-agent/products/")
 for path in current_state_files:
     for line_no, line in enumerate(read(path).splitlines(), 1):
         if legacy_path.search(line):
             errors.append(f"{path}:{line_no}: removed top-level path remains: {line.strip()}")
+        if legacy_products_path.search(line):
+            errors.append(f"{path}:{line_no}: legacy Agent products path remains: {line.strip()}")
 
 if errors:
     print("\nRepository semantic validation FAILED:")

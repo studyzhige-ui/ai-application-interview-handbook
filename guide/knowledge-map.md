@@ -1,12 +1,24 @@
 # AI Application Engineer｜十板块知识地图
 
-[← Handbook 总目录](../README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [当前质量审计](audits/final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
+[← Handbook 总目录](../README.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [当前质量审计](audits/final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
 
 > 十个一级模块已经全部完成第一版系统教材。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
 
 ## 总路线
 
 [Python Foundation](../curriculum/01-python/README.md) → [FastAPI](../curriculum/02-fastapi/README.md) → [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) → [MySQL](../curriculum/04-mysql/README.md) → [Redis](../curriculum/05-redis/README.md) → [Vector Database](../curriculum/06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) → [RAG](../curriculum/08-rag/README.md) → [Agent](../curriculum/09-agent/README.md) → [System Design](../curriculum/10-system-design/README.md)
+
+### 成熟产品源码层（不计入十模块）
+
+[Products](../products/README.md) 用固定源码快照回答“成熟系统怎样把多个通用机制组合起来”。它不改变十模块的 Primary Ownership，也不把某个产品实现提升成通用标准。
+
+Agent 产品源码入口：[Codex](../products/agent/codex/README.md) · [Claude Code](../products/agent/claude-code/README.md) · [DeepSeek Harness](../products/agent/deepseek-harness/README.md) · [DeerFlow 2.0](../products/agent/deer-flow/README.md)。
+
+```text
+Curriculum 通用机制
+→ Products 完整系统源码
+→ Practice / System Design / Interview 中迁移与表达
+```
 
 ### 横向实践轨道（不计入十模块）
 
@@ -140,6 +152,7 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 ## 使用规则
 
 - 学习顺序由知识依赖决定，不按面经频率重排；
+- Products 是成熟系统源码学习层，不作为第 11 个知识模块制造新的 Canonical Ownership；
 - Coding 是并行实践轨道，不作为第 11 个知识模块制造新的 Canonical Ownership；
 - 真人面经只调整复习权重、真实问法和追问深度；
 - 跨模块问题只在 Primary Module 维护完整机制；

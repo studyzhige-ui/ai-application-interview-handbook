@@ -1,6 +1,6 @@
 # OpenAI Codex｜从源码还原一个成熟 Coding Agent 是怎样运行的
 
-[← 成熟产品源码学习](../README.md) · [Agent 模块](../../README.md)
+[← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent Curriculum](../../../curriculum/09-agent/README.md) · [Agent References](../../../references/agent/README.md)
 
 > **源码仓库：** [openai/codex](https://github.com/openai/codex)  
 > **固定源码快照：** [`5c5308fc9a9ee789049d646ef11e5400384b9c6f`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f)  
@@ -8,7 +8,7 @@
 
 这一组文档不是把通用 Agent 教材里的 Context（上下文）、Memory（长期记忆）、Tool（工具） 再讲一遍，然后给它们套上 Codex 的名字。
 
-这次阅读顺序反过来：
+阅读顺序从产品源码本身出发：
 
 > **先从 Codex 仓库本身出发，确认它有哪些进程、crate、状态对象和调用入口；再沿源码追一条真实请求从进入产品、创建 Thread、启动 Turn、组装模型请求、调用工具、写入历史、压缩上下文、恢复会话的全过程。最后才把这些实现抽象成可迁移的 Agent 工程知识。**
 
@@ -284,11 +284,11 @@ Codex 源码就是这样
 | 深度诊断 | `rollout-trace/`、`analytics/`、`otel/` | 区分模型可见历史和真实 Runtime 事件，构造可回放证据 |
 | 集成验证 | `core/tests/suite/`、各 crate tests | 验证 Context shape、MCP、Sandbox、Compaction、Multi-Agent、transport fallback 等真实路径 |
 
-这张矩阵也暴露了上一版写法的问题：如果只从 `Context / Memory / Tool` 三个关键词搜索文件，很容易漏掉 App Server、Extension、Environment、Multi-Agent、Code Mode 和持久化边界，最后得到一个“看起来像 Agent 教材”的 Codex，而不是源码里的 Codex。
+这张矩阵也说明一个重要的阅读边界：如果只从 `Context / Memory / Tool` 三个关键词搜索文件，很容易漏掉 App Server、Extension、Environment、Multi-Agent、Code Mode 和持久化边界，最后得到一个“看起来像 Agent 教材”的 Codex，而不是源码里的 Codex。
 
 ---
 
-## 7. 这次所谓“完整阅读”的范围是什么
+## 7. 源码阅读范围
 
 这里的“完整”指的是：
 
@@ -304,7 +304,7 @@ Codex 源码就是这样
 
 这些代码当然属于仓库，但它们不会改变本文要解释的 Agent Runtime 语义。
 
-为了防止“只搜关键词就下结论”，本次核验至少从以下一级入口交叉确认：
+为了防止“只搜关键词就下结论”，核验至少从以下一级入口交叉确认：
 
 `Cargo.toml` workspace → CLI / App Server → ThreadManager / Session → Turn loop → Extension API → Context / Memory / Tool → Exec / Sandbox → Thread Store / Rollout / State → Trace / Tests。
 

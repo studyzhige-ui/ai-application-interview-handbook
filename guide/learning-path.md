@@ -1,6 +1,6 @@
 # Learning Path｜十板块正式学习路线
 
-[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [Coding & Problem Solving](../practice/coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md)
+[← Handbook 总目录](../README.md) · [十板块知识地图](knowledge-map.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md)
 
 > **状态：✅ 第一版正式学习路线完成。** 这份路线解决“185 个正文知识块应该怎样真正学完、复习并转化成面试能力”。
 >
@@ -48,6 +48,23 @@ Coding 09：AI Coding
 ```
 
 原则：**学一点 → 写一点 → 关掉答案重写 → 再进入下一层。** Hot100 适合当前知识点时优先使用，不适合时先用更小的例子；完整映射见 [Hot100 Curriculum Map](../practice/coding/hot100-map.md)。
+
+### 成熟产品源码轨道
+
+[Products](../products/README.md) 是独立的成熟系统源码学习层，不计入十个 Curriculum 模块，也不改变正式课程顺序。进入这一层前，先完成对应通用机制的第一遍学习与 Review；源码学习关注真实对象、调用链、状态变化、Failure Path 与工程取舍。
+
+Agent 对应入口：[Codex](../products/agent/codex/README.md) · [Claude Code](../products/agent/claude-code/README.md) · [DeepSeek Harness](../products/agent/deepseek-harness/README.md) · [DeerFlow 2.0](../products/agent/deer-flow/README.md)。
+
+推荐关系：
+
+```text
+Agent Curriculum
+→ Agent Review / Exit Gate
+→ Agent Products
+→ 用真实源码重新解释 Context / Memory / Tool / Permission / Recovery / Eval
+```
+
+时间预算有限时，Products 可以在十模块主线完成后集中学习；无论采用哪种节奏，都不使用产品源码顺序替代 Curriculum 的知识依赖。
 
 Review 快速入口：[Python](../curriculum/01-python/review/README.md) · [FastAPI](../curriculum/02-fastapi/review/README.md) · [AIBE](../curriculum/03-backend-engineering/review/README.md) · [MySQL](../curriculum/04-mysql/review/README.md) · [Redis](../curriculum/05-redis/review/README.md) · [Vector DB](../curriculum/06-vector-db/review/README.md) · [LLM](../curriculum/07-llm-foundation/review/README.md) · [RAG](../curriculum/08-rag/review/README.md) · [Agent](../curriculum/09-agent/review/README.md) · [System Design](../curriculum/10-system-design/review/README.md)
 

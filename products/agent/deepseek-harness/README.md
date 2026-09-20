@@ -1,6 +1,6 @@
 # DeepSeek Harness｜从事件日志与插件树理解一个 Agent Harness
 
-[← 成熟产品源码学习](../README.md) · [Agent 模块](../../README.md)
+[← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent Curriculum](../../../curriculum/09-agent/README.md) · [Agent References](../../../references/agent/README.md)
 
 > **源码仓库：** [deepseek-ai/deepseek-harness](https://github.com/deepseek-ai/deepseek-harness)  
 > **固定源码快照：** [`ddefc45fbc7f8e46dd73185e68295696d1297887`](https://github.com/deepseek-ai/deepseek-harness/tree/ddefc45fbc7f8e46dd73185e68295696d1297887)  

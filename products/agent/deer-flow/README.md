@@ -1,6 +1,6 @@
 # DeerFlow 2.0｜从 Middleware Runtime 理解一个 Super Agent Harness
 
-[← 成熟产品源码学习](../README.md) · [Agent 模块](../../README.md)
+[← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent Curriculum](../../../curriculum/09-agent/README.md) · [Agent References](../../../references/agent/README.md)
 
 > **源码仓库：** [bytedance/deer-flow](https://github.com/bytedance/deer-flow)  
 > **固定源码快照：** [`e545c28ac301e6f9feae247c513d8ea8f83df294`](https://github.com/bytedance/deer-flow/tree/e545c28ac301e6f9feae247c513d8ea8f83df294)  
@@ -380,7 +380,7 @@ Run Journal
 
 ### [02｜Memory Lifecycle](02-memory-lifecycle.md)
 
-DeerFlow 当前确实有完整内建长期 Memory。
+固定快照中的 DeerFlow 实现了完整内建长期 Memory。
 
 会连续追：
 
