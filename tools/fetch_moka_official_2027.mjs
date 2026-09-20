@@ -14,8 +14,9 @@ const CFG=JSON.parse(fs.readFileSync("market/jobs/official-2027-campus-sources.j
 const BROWSER=JSON.parse(fs.readFileSync("market/jobs/official-2027-browser-discovery.generated.json","utf8"));
 const OUT=process.argv[2]||"market/jobs/official-2027-moka-discovery.generated.json";
 const REQUEST_TIMEOUT_MS=15000;
-const TENANT_TIMEOUT_MS=45000;
+const TENANT_TIMEOUT_MS=90000;
 const TENANT_CONCURRENCY=4;
+const TARGET_TITLE_RE=/(?:agent|智能体|rag|harness|runtime|coding|ai\s*(?:应用|全栈|开发|研发|工程|平台|infra|devops|软件|系统|后端|前端)|大模型(?:应用|开发|研发|工程|平台)|fde)/i;
 async function fetchTimed(url,options={}){
   return fetch(url,{...options,signal:AbortSignal.timeout(REQUEST_TIMEOUT_MS)});
 }
@@ -173,9 +174,13 @@ async function enumerateOne(result){
     if(!rows.length||rows.length<50||(total&&offset>=total))break;
   }
   const detailUrl=listUrl.origin+"/api/outer/ats-apply/website/job";
+  // Full-pool proof comes from jobs/v2 pagination. Fetch expensive detail pages
+  // only for titles that can enter the formal AI/Agent library; preserve every
+  // list row so enumeration completeness is never coupled to detail latency.
+  const targetJobs=jobs.filter(j=>TARGET_TITLE_RE.test(j.title||""));
   const enriched=[];
-  for(let i=0;i<jobs.length;i+=8){
-    const chunk=jobs.slice(i,i+8);
+  for(let i=0;i<targetJobs.length;i+=8){
+    const chunk=targetJobs.slice(i,i+8);
     const vals=await Promise.all(chunk.map(async j=>{
       if(!j.job_id)return j;
       try{
@@ -189,7 +194,7 @@ async function enumerateOne(result){
   }
   return {
     company:result.company,status:"OK",portal,api:listUrl.href,detail_api:detailUrl,
-    fetched:jobs.length,total:total||jobs.length,cycle_evidence:cycle,jobs:merge([],enriched)
+    fetched:jobs.length,total:total||jobs.length,cycle_evidence:cycle,jobs:merge(jobs,enriched)
   };
 }
 
