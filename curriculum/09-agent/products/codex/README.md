@@ -17,7 +17,7 @@ Codex 的根 README 只用一句很朴素的话定义自己：它是一个在本
 
 ## 1. 先看 Codex 的真实产品入口
 
-`codex-rs/cli/src/main.rs` 是一个很重要的起点。它表明 `codex` 可执行文件并不是只有一种运行方式。
+`codex-rs/cli/src/main.rs` 是一个很重要的起点。这里的 CLI（Command-Line Interface，命令行界面）不是单一交互模式；它表明 `codex` 可执行文件本身就是多个产品入口的分发器。
 
 不带子命令时，参数会进入交互式 TUI（Terminal User Interface，终端用户界面）。此外，同一个 CLI 还提供非交互 `exec`、代码审查 `review`、MCP 管理、插件管理、App Server（应用服务器）、远程控制、沙箱调试、Resume（恢复）、Fork（分叉）、Queue（排队消息）、Exec Server（执行环境服务）等入口。
 
