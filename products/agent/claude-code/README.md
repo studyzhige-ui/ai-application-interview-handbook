@@ -306,7 +306,7 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 
 ---
 
-## 6. 这份私有镜像的证据边界
+## 6. 私有镜像证据边界
 
 这个仓库和公开 Codex 不同：它没有可用的根 README、package manifest 或 release metadata 来证明官方发布版本；同时存在 feature-gated（功能开关控制）的内部 / ant-only 路径，也有少数被调用但没有包含在镜像里的目录。
 
