@@ -7,46 +7,31 @@
 > **快照性质：** 私有源码镜像的固定导入提交；仓库没有可用于核验官方 release 的 README / package 元数据，因此本文不虚构 Claude Code 官方版本号。  
 > **核验日期：** 2026-09-21
 
-## 0. 核心设计
+## 核心设计
 
-固定镜像中的 Claude Code 可以先概括为：
+理解 Claude Code，先抓住 `query() / queryLoop()`。
 
-> **以 `query() / queryLoop()` 为中心的持续执行 Runtime。每次模型调用前，系统都会重新计算这一轮需要保留的上下文、可见工具和可用能力，同时尽量维持 Prompt Cache 与会话恢复所需的稳定结构。**
-
-“Query-loop 驱动的 Context / Cache / Capability 编排”是根据源码调用关系得到的工程抽象，不是官方架构名。它最有价值的地方，是把长期 Coding Session 中会互相影响的几件事放到同一个循环里处理：上下文预算、缓存前缀、Memory / Skill 预取、动态工具集合、工具执行和 Transcript 恢复。
+交互式 REPL 和 Headless / SDK 的入口不同，但最终都会进入同一条查询循环。每次真正请求模型前，Runtime 会先根据本地 Transcript 和运行状态重新计算“这一轮模型应该看到什么”：大 Tool Result 先受预算控制，再经过 Snip、Microcompact、Context Collapse、Auto Compact 等不同层次的瘦身；Memory 和 Skill 也会按需预取。模型返回 Tool Call 后，再经过校验、Hook、权限判断和执行，结果回到消息历史，循环继续。
 
 ```text
-Interactive REPL          Headless / SDK
-      │                         │
-      └──────────┬──────────────┘
-                 ↓
-              query()
-                 ↓
-             queryLoop()
-                 ↓
-Tool Result Budget → Snip → Microcompact
-→ Context Collapse → Auto Compact
-→ Memory / Skill Prefetch
-→ API-bound Messages + Visible Tools
-                 ↓
-              Model
-                 ↓
-         Tool Call / Answer
-                 ↓
-Validation → Hooks → Decision → Execution
-                 ↓
-Tool Result / Attachments / Memory / Skill State
-                 ↓
-          下一次 queryLoop
-                 ↓
-Transcript parentUuid chain + File / Worktree / replacement state
-                 ↓
-              Resume
+REPL / QueryEngine
+       ↓
+     query()
+       ↓
+   queryLoop()
+       ↓
+Context 瘦身 + Memory / Skill / Tool 准备
+       ↓
+     Model
+       ↓
+ Tool Call / Answer
+       ↓
+受控执行 → Result → 下一轮
 ```
 
-最重要的几个不变量是：**本地 Transcript 不等于每次 API 真正看到的 Context；Context slimming 要尽量保护可复用前缀；Deferred Tool / Skill 先暴露少量 metadata，再按需展开；工具使用策略和实际执行环境是不同边界；Compaction / Snip 必须同时维护可恢复的 Transcript 链。**
+这里最重要的区别是：**本地 Transcript 不等于模型每一轮真正看到的 Context。** Claude Code 会持续维护可恢复的会话记录，同时尽量让发给模型的请求更小、Prompt Cache 更稳定、Tool / Skill 只在需要时展开。
 
-因此 Claude Code 的架构中心不是一个复杂 Graph，而是：**在长会话、高工具量和持续代码操作中，不断计算一个成本可控、缓存友好、能力足够且可以恢复的 Model View。**
+所以面试里可以先把 Claude Code 概括成：**围绕 query loop 做 Context、Cache 和 Capability 的持续编排。** 具体实现仍以本页记录的私有源码镜像为准。
 
 ---
 

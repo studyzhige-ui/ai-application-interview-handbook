@@ -45,34 +45,18 @@ README.md                   系统地图、源码快照、关键模块与阅读�
 
 技术证据和版本边界统一回到 [Agent References](../../references/agent/README.md)。
 
-## 4. 四个产品的真实架构对照
+## 4. 四个产品怎么区分
 
-下面的“设计中心”是基于固定源码快照做的工程抽象，不是四家公司共同采用的官方术语。比较的目的不是给产品排优劣，而是回答同一个系统问题在四套真实 Runtime 中分别由什么机制承担。
+四个产品都有 Context、Tool、Memory / Persistence、Permission、Multi-Agent 等能力。真正值得比较的不是“有没有”，而是**这些能力围绕什么运行中心组织，以及状态和模型视图怎样流动**。
 
-| 产品 | 设计中心 | 执行骨架 | 状态 / 历史 | Model Context 怎样形成 | 能力怎样扩展 | 恢复与诊断 |
-|---|---|---|---|---|---|---|
-| [OpenAI Codex](codex/README.md) | **强类型 Core + Lifecycle Extensions** | App Server / CLI → ThreadManager → Session → Turn → StepContext → Model / Tool Runtime | Conversation History、Thread Store、Rollout、State DB 分工，不压成单一存储 | StepContext 固定本次采样附近的执行配置；History、Context Fragments、World State 与本轮 Tool Set 共同形成请求 | Extension Registry 接 Memory / MCP / Skills / Guardian / Goal 等；Tool Runtime 统一执行 | Resume / Fork 依赖持久状态；Rollout Trace / Analytics / Tests 提供更深诊断证据 |
-| [Claude Code](claude-code/README.md) | **Query-loop 驱动的 Context / Cache / Capability 编排** | REPL 或 QueryEngine → query() → queryLoop() → Model → Tool → 下一次迭代 | parent-linked Transcript + Session / File / Worktree / Content-Replacement 等恢复状态 | 每次 API 请求前经过 Tool Result Budget、Snip、Microcompact、Context Collapse、Auto Compact，并叠加 Memory / Skill 预取与可见 Tool | 动态 Tool Pool、MCP、Skills、AgentTool 围绕共享 ToolUseContext / query loop 接入 | Transcript parentUuid 链、Session Restore、Retry / Fallback、Telemetry 共同维持长会话 |
-| [DeepSeek Harness](deepseek-harness/README.md) | **Cordis Plugin Composition + Event-Sourced Session** | Profile / Bundle → Cordis Plugin Tree → Agent Loop → Session Log / Surface → Model / Tool | Append-only SessionEvent Log 是持久事实；Surface 是模型可见投影 | deriveMessages() 从 Surface 构造请求；Compaction / Pruning 用 replacement 改投影而不删除原始事实 | Service / Provider / Consumer capability seam + typed Event + reversible Effect；Agent Loop 自身也是 Plugin | Session generations、durable events、crash repair、retry / compaction evidence 支撑 Resume / Replay |
-| [DeerFlow 2.0](deer-flow/README.md) | **LangGraph 执行基座 + Middleware Product Runtime + 双通道持久化** | Gateway → Run Worker → LeadAgentAssembly → create_agent() / LangGraph → Ordered Middleware → Model / Tool | LangGraph Checkpoint 保存 continuation state；Run Journal 保存 execution evidence；Gateway Run Row 保存产品生命周期 | ThreadState + Runtime Context + request-time Middleware projection 共同生成 ModelRequest | Ordered Middleware、Tool Assembly、MCP、Skills、可插拔 MemoryManager、Subagent Runtime 组合能力 | Checkpoint lineage、Run Journal、Replay / Rollback、Dangling Tool Call 修复与产品事件共同恢复和诊断 |
+| 产品 | 最核心的运行方式 | 状态 / Context 的关键特点 | 面试时先抓住什么 |
+|---|---|---|---|
+| [OpenAI Codex](codex/README.md) | Thread / Session / Turn / StepContext 构成强边界 Core，Extension 接入额外能力 | 每次采样前固定执行快照；History、Thread Store、Rollout、State / Trace 分工 | **强 Core + Extension**：先稳定执行语义，再扩展 Memory、MCP、Skills 等能力 |
+| [Claude Code](claude-code/README.md) | REPL / QueryEngine 最终汇入 `query() / queryLoop()` | 本地 Transcript 持续保存；每轮重新瘦身 Context，并兼顾 Prompt Cache、Memory / Skill / Tool 可见性 | **query-loop 编排**：重点是每一轮怎样得到合适的 Model View |
+| [DeepSeek Harness](deepseek-harness/README.md) | Cordis Profile / Bundle 组装 Plugin Tree；Agent Loop 自身也是 Plugin | Append-only Session Log 保存事实，Surface 决定模型当前看见什么 | **everything is a plugin + Event Log / Surface**：组合能力和模型视图都由 Runtime 明确管理 |
+| [DeerFlow 2.0](deer-flow/README.md) | Gateway → LangGraph / LangChain Agent → Ordered Middleware | ThreadState 经 Middleware 投影成请求；Checkpoint 保存继续执行状态，Run Journal 保存运行证据 | **LangGraph 基座 + Middleware Runtime**：产品能力主要通过有序 Middleware 和 Gateway 运行层组合 |
 
-把它压成面试时最容易先说出的四句话：
-
-~~~text
-Codex
-= 强类型执行内核，能力通过 Extension / Tool Runtime 接入。
-
-Claude Code
-= 以 query loop 为中心，不断优化 Model View、Prompt Cache 和渐进式能力暴露。
-
-DeepSeek Harness
-= Everything-is-a-plugin；Cordis 负责组合与生命周期，Session Log 与 Surface 把持久事实和模型视图分开。
-
-DeerFlow
-= LangGraph / LangChain 提供基础执行，DeerFlow 用有序 Middleware、Gateway 和 Checkpoint / Journal 把它做成产品级 Harness。
-~~~
-
-这四句话只能作为开场。真正的源码差异要继续落回本表的状态所有权、Context 构造、能力接入和恢复机制，而不能只比较“谁有 Memory / MCP / Subagent”。
+这张表是进入源码的地图，不代替各产品 README。遇到追问时，再分别回到它自己的对象模型和真实调用链，而不是拿同一套 Agent 模板硬套四个产品。
 
 ## 5. 源码事实与工程解释
 

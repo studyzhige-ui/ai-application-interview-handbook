@@ -6,51 +6,31 @@
 > **固定源码快照：** [`bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695)  
 > **核验日期：** 2026-09-21
 
-## 0. 核心设计
+## 核心设计
 
-如果只记住一句话，可以把固定快照中的 Codex 概括成：
+理解 Codex，先抓住 **Thread → Session → Turn → StepContext** 这条主线。
 
-> **一个强类型 Agent Core（执行内核），用 Thread / Session / Turn / StepContext 固定执行语义，再通过 Extension Registry、Tool Runtime 和独立的执行隔离 / 持久化层接入不断增长的产品能力。**
-
-“强类型 Core + Lifecycle Extensions”是对源码结构的工程抽象，不是 OpenAI 官方 slogan。它对应的真实价值，是让 TUI、非交互 CLI、App Server 等不同产品入口共享同一套 Agent 执行语义，同时把 Memory、MCP、Skills、Guardian、Goal 等能力放进明确的生命周期边界，而不是持续把条件分支塞进主循环。
-
-源码骨架可以先记成：
+一条长期任务属于 Thread，Core 中由 Session 维护。一次用户输入开始一个 Turn；真正请求模型前，Session 会捕获 `StepContext`，把这一轮采样要使用的模型、工具、环境和权限固定下来。模型如果返回 Tool Call，也不是直接执行，而是进入统一的 Tool Runtime，经过路由、Hook、Approval、Permission、Sandbox / Network 等边界，结果再写回历史并触发下一次采样。
 
 ```text
-TUI / CLI / App Server
-        ↓
-ThreadManager
-        ↓
-Thread / Session
-        ↓
+Thread
+  ↓
+Session
+  ↓
 Turn
-        ↓
+  ↓
 StepContext
-冻结这一轮采样附近的 Model / Tool / Environment / Permission
-        ↓
-Context Assembly + ToolRouter
-        ↓
-Model Sampling ↔ Tool Runtime
-        ↓
-Hook / Approval / Permission / Sandbox / Network
-        ↓
-Conversation History / Thread Store / Rollout / State DB
-        ↓
-Resume / Fork / Trace / Evaluation
-
-Extension Registry
-   ├─ Memory
-   ├─ MCP / Plugins
-   ├─ Skills
-   ├─ Guardian
-   ├─ Goal / Queue
-   └─ Web Search / Image Generation ...
-          ↘ 在 Thread / Turn / Context / Tool 生命周期接入
+  ↓
+Context + 本轮 Tool Set
+  ↓
+Model ↔ Tool Runtime
+  ↓
+History / Persistence
 ```
 
-这里最关键的几个不变量是：**一次采样与随后工具执行共享同一份 StepContext；“能力已经注册”不等于“这一轮模型能看见”；Tool Call 必须经过统一 Runtime，而不是扩展自己绕过权限与沙箱；可恢复状态与深度诊断证据由不同持久化组件分工。**
+Memory、MCP、Skills、Guardian、Goal 等能力并不需要各自重写主循环，而是通过 Extension Registry 进入 Thread、Turn、Context 和 Tool 的生命周期。Thread Store、Rollout、State DB、Rollout Trace 又分别承担恢复状态与诊断证据。
 
-因此 Codex 的架构中心不是某一个 Prompt，也不是某一个 Tool Registry，而是：**怎样让一个长期 Thread 在能力、环境、权限和上下文都可能变化的情况下，仍然以一致、可恢复、可审计的执行快照向前推进。**
+所以面试里可以先把 Codex 概括成：**一个边界很强的 Agent Core，再通过 Extension 把产品能力接进来。** 这句话是对源码结构的工程抽象，具体行为仍以本页记录的固定 commit 为准。
 
 ---
 
@@ -308,7 +288,7 @@ Codex 源码就是这样
 
 ## 6. 源码覆盖矩阵：这套文档具体核到了哪些系统
 
-下面这张表不是“推荐阅读文件”，而是本次结论实际回查过的主干边界。一个机制只有同时找到定义、接入点或调用路径，才会写进正文。
+下面这张表不是“推荐阅读文件”，而是本文结论实际核验过的主干边界。一个机制只有同时找到定义、接入点或调用路径，才会写进正文。
 
 | 系统边界 | 主要源码入口 | 在本文中的作用 |
 |---|---|---|
@@ -352,7 +332,7 @@ Codex 源码就是这样
 
 这些代码当然属于仓库，但它们不会改变本文要解释的 Agent Runtime 语义。
 
-为了防止“只搜关键词就下结论”，核验至少从以下一级入口交叉确认：
+源码核验至少从以下一级入口交叉确认：
 
 `Cargo.toml` workspace → CLI / App Server → ThreadManager / Session → Turn loop → Extension API → Context / Memory / Tool → Exec / Sandbox → Thread Store / Rollout / State → Trace / Tests。
 

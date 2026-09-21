@@ -7,45 +7,33 @@
 > **产品代际：** DeerFlow 2.0。仓库 README 明确说明 2.0 是 ground-up rewrite（完全重写），与 1.x 不共享实现；1.x 另在 `main-1.x` 维护。  
 > **核验日期：** 2026-09-21
 
-## 0. 核心设计
+## 核心设计
 
-固定快照中的 DeerFlow 2.0 可以先概括成：
+理解 DeerFlow 2.0，不能只记“LangGraph + 很多 Middleware”。
 
-> **LangChain / LangGraph 提供基础 Agent 执行骨架，DeerFlow 用 Gateway、ThreadState、按顺序组合的 Middleware、Sandbox / MCP / Memory / Subagent Runtime，以及 Checkpoint + Run Journal，把它扩展成产品级 Super Agent Harness。**
+它确实把 LangChain / LangGraph 当作基础 Agent 执行骨架：Lead Agent 最终通过 `langchain.create_agent(...)` 组装并编译成 LangGraph。但完整产品在这层之外还有 Gateway、Run Worker、ThreadState、Sandbox、MCP、Memory、Subagent，以及一条有明确顺序的 Middleware Chain。真正的产品 Runtime，主要就是在这些层里形成的。
 
-“LangGraph execution substrate + Middleware-composed Product Runtime + dual persistence”是根据源码结构得到的工程抽象。DeerFlow 的价值不在于另写一套模型循环，而在于把 Context、长期 Memory、Tool Policy、安全、Deferred MCP、Skills、Subagent、恢复和产品事件放进一条有明确顺序和所有权的运行链。
-
-```text
-Frontend / API Client
-        ↓
-Gateway
-Thread / Run / Auth / SSE / Replay
-        ↓
+~~~text
+Gateway / Run
+    ↓
 Run Worker
-        ↓
-LeadAgentAssembly
-        ↓
-langchain.create_agent(...)
-        ↓
-LangGraph compiled graph
-        ↓
-Ordered DeerFlow Middleware Chain
-        ↓
-Model Call ↔ Tool Call
-        ↓
+    ↓
+Lead Agent
+    ↓
+LangChain / LangGraph
+    ↓
+Ordered Middleware
+    ↓
+Model ↔ Tool
+    ↓
 Sandbox / MCP / Skills / Memory / Subagent
-        ↓
-┌───────────────────────┬──────────────────────┐
-│ LangGraph Checkpoint  │ Run Journal / Events │
-│ continuation state    │ execution evidence   │
-└───────────────────────┴──────────────────────┘
-        ↓
-History / Resume / Branch / Replay / UI
-```
+~~~
 
-最关键的几个不变量是：**Middleware 顺序本身会改变语义；ModelRequest 由 ThreadState + Runtime Context + request-time Middleware projection 共同生成；Tool schema 可见性和 Tool execution policy 分开处理；LangGraph Checkpoint 负责“怎样继续”，Run Journal 负责“发生过什么”，二者不能混为一种历史。**
+Middleware 不只是“加功能”。它会决定本轮 Context 怎样投影、哪些 Tool Schema 对模型可见、工具能否真正执行、结果怎样裁剪、失败怎样修复。因此 **Middleware 的顺序本身就是运行语义的一部分**。
 
-因此 DeerFlow 不能概括成“LangGraph + 很多 Tool”。更准确的理解是：**它把 LangGraph / LangChain Agent 当作执行基座，再用 Middleware Composition 和产品运行层把基础 Agent 变成具备状态、长期记忆、工具治理、恢复与审计能力的完整 Runtime。**
+DeerFlow 还把两类“历史”分开：LangGraph Checkpoint 保存 Agent 继续执行所需的状态；Run Journal 保存这次 Run 实际发生过的事件，服务于 History、Debug、Audit 和 Replay。
+
+所以面试里可以先把 DeerFlow 概括成：**LangGraph / LangChain 提供基础执行，DeerFlow 用 Gateway + Middleware + 独立的状态与运行证据层，把它扩展成产品级 Agent Harness。**
 
 ---
 
@@ -62,7 +50,7 @@ LangGraph
 
 源码真正有价值的地方不是这些功能“有没有”，而是它们怎样一起进入一条产品运行链。
 
-当前 2.0 的核心更接近：
+固定快照中的 2.0 核心更接近：
 
 ~~~text
 Gateway Run / Thread
@@ -147,7 +135,7 @@ DeerFlow 的差异不在于另写了一套模型循环，而在于：
 
 ### 真正的“Runtime”主要藏在 Middleware Chain 里
 
-当前 Lead Agent 的 Middleware 数量很多，而且顺序本身就是协议。
+Lead Agent 的 Middleware 数量很多，而且顺序本身就是协议。
 
 不要背 30 多个名字。
 
@@ -541,7 +529,7 @@ DeerFlow 则大量使用：
 
 ### Memory：DeerFlow 是这四个产品里最显式的“可插拔 Memory Product”
 
-当前源码不是一个简单 vector store。
+固定快照中的实现不是一个简单 vector store。
 
 它把：
 
@@ -599,31 +587,7 @@ Run Journal 回答：
 
 ---
 
-## 6. 源码阅读范围与证据边界
-
-这里的“完整架构覆盖”指的是：对 DeerFlow 2.0 中直接决定 Agent Runtime 与产品运行语义的主链做闭环核验，而不是把整个前后端仓库逐文件翻译成教材。
-
-本 README 与四篇正文至少覆盖：
-
-~~~text
-Frontend / Gateway
-→ Thread / Run admission
-→ Run Worker / LeadAgentAssembly
-→ LangChain create_agent / LangGraph graph
-→ Ordered Middleware Chain
-→ ThreadState / request-time Context projection
-→ Tool / MCP / Skill / Memory / Sandbox / Subagent
-→ LangGraph Checkpoint + Run Journal + Gateway Run lifecycle
-→ Resume / Branch / Replay / Rollback / Tests
-~~~
-
-完整产品默认从 Gateway 的 Thread / Run API 进入，所以只读 LangGraph graph 不足以解释真实 DeerFlow。反过来，前端视觉组件、通用构建脚本和与 Agent Runtime 无关的产品页面也不属于这里的“完整”范围。
-
-实现结论必须能回到固定快照中的 factory、Middleware、runtime、persistence、Gateway 或测试；配置里出现一个能力名称，不等于该能力在所有运行模式中启用。ThreadState、Checkpoint、Run Journal、Workspace side effect 和 Gateway Run Row 即使都与“历史”有关，也分别承担不同职责，文档不把它们压成一个 State Store。
-
----
-
-## 7. 推荐阅读顺序
+## 6. 推荐阅读顺序
 
 ~~~text
 README

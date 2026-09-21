@@ -7,55 +7,33 @@
 > **快照版本：** `0.1.6-alpha.2`；仓库 README 明确标记为 **developer preview（开发者预览）**，兼容性仍可能发生破坏性变化。  
 > **核验日期：** 2026-09-21
 
-## 0. 核心设计
+## 核心设计
 
-固定快照中的 DeepSeek Harness 可以先概括成：
+理解 DeepSeek Harness，先抓住两件事：**Cordis 插件树**，以及 **Session Log → Surface**。
 
-> **Cordis Plugin Composition（插件组合运行时）+ Append-only SessionEvent Log（仅追加会话事实）+ Surface Projection（模型可见视图投影）。**
+第一层是组合方式。模型适配器、Session、Tool Registry、Agent Loop、Compaction、Sandbox、Subagent、Skill、MCP、Approval 等能力都通过 Cordis 的 Plugin / Service / Event 体系接入。Profile 和 Bundle 决定一套产品实例实际装哪些能力，Cordis 再负责依赖、挂载和卸载。
 
-源码架构文档明确把模型适配器、Tool Registry、Session Log、Agent Loop 等都放进 Cordis Plugin 体系。Profile / Bundle 决定一次产品启动安装哪些插件；Service、typed Event 和 Effect 决定能力怎样提供、消费和撤销；Agent Runtime 再把需要长期保存的事实写入 SessionEvent Log，并从日志投影出模型这一刻应该看到的 Surface。
+第二层是状态方式。运行中的持久事实写进 append-only `SessionEvent` Log；模型并不直接读取整份日志，而是读取由日志投影出来的 Surface，再由 `deriveMessages()` 生成本轮请求。
 
-```text
-dsh launcher
-    ↓
-Profile + ordered Bundles + patch overlays
-    ↓
+~~~text
+Profile / Bundle
+      ↓
 Cordis Plugin Tree
-    ↓
-Context / Services / Typed Events / Effects
-    ↓
-Agent Registry + Agent Loop + Tool Runtime + Prompt Assembly
-    ↓
-Append-only SessionEvent Log
-    ↓
-Surface Projection
-    ↓
+      ↓
+Agent Loop / Tool / Prompt / Capability
+      ↓
+SessionEvent Log
+      ↓
+Surface
+      ↓
 deriveMessages()
-    ↓
-Model Request ↔ Tool Pipeline
-    ↓
-durable assistant / tool / turn events
-    ↓
-Persistence generation / Resume / Replay
-```
+      ↓
+Model Request
+~~~
 
-你可以继续记“Cordis 的时空可组合运行模型”，但这个说法是**教学抽象，不是源码里的官方术语**。它严格对应两组真实机制：
+你可以把 Cordis 理解成一种“时空可组合”的运行模型，但这只是教学上的概括：**空间上**用 Context / Service / Scope 组合能力，**时间上**用 Fiber / Effect 管理能力的生命周期和清理。源码里更关键的不变量是 **Model-visible means logged**：模型真正看到的信息必须已经成为可恢复事实，或能从持久事实确定性重建。
 
-```text
-空间上的组合
-= Context / Service / Scope
-+ Profile / Bundle / Plugin Tree
-
-时间上的组合
-= inject dependency
-+ Fiber lifecycle
-+ reversible Effect
-+ provider 消失时卸载 / 恢复后重新挂载
-```
-
-Session 层还有一个更重要的不变量：**Model-visible means logged**。模型真正看到的信息原则上必须已经成为可恢复事实，或能从持久事实确定性重建；Compaction / Tool Result Pruning 改的是 Surface，而不是物理改写历史真源。
-
-因此 DeepSeek Harness 的核心价值不是“插件很多”，而是：**把能力组合、生命周期、持久事实和模型可见视图都变成明确的 Runtime Contract。** 这也解释了为什么固定快照没有为了功能对齐强行内建 Universal Semantic Memory，而是把第三方长期 Memory 留在 MCP Provider 边界。
+所以面试里可以先把 DeepSeek Harness 概括成：**everything-is-a-plugin 的可组合 Runtime，加上事件日志作为事实层、Surface 作为模型视图层。**
 
 ---
 
@@ -430,7 +408,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 ---
 
-### Memory Lifecycle 为什么这次标题会和前两个产品不同
+### Memory Lifecycle 为什么和前两个产品不同
 
 [02｜Memory Lifecycle](02-memory-lifecycle.md) 最重要的源码结论不是“DeepSeek Harness 的 Memory 怎么实现”，而是：
 
@@ -623,30 +601,7 @@ approval/asked
 
 ---
 
-## 6. 源码阅读范围与证据边界
-
-这里的“完整架构覆盖”指的是：对固定快照中直接决定 Agent Runtime 语义的主路径做闭环核验，而不是逐个解释 monorepo 里的所有 UI、构建脚本和实验包。
-
-本 README 与四篇正文至少覆盖：
-
-~~~text
-Application Profile / Bundle
-→ Cordis Plugin Tree / Service / Event / Effect
-→ Agent Registry / Agent Loop
-→ SessionEvent Log / Surface Projection
-→ System Prompt / Context / Compaction
-→ Tool Runtime / Approval / Sandbox / MCP / Skills
-→ Subagent / Retry / Persistence
-→ Resume / Replay / Tests / Invariants
-~~~
-
-“仓库存在某个 Package”不等于“所有 Profile 默认启用它”；正文必须回到 Profile / Bundle 的真实组合。一个能力只在 Prompt、注释或设计笔记里出现，也不能直接当成已启用 Runtime。固定快照没有 Universal Semantic Memory Service，因此这里明确把第三方长期 Memory 写成 MCP Provider 边界，而不是为了和其他产品结构对齐虚构实现。
-
-Cordis 的 Service、Event、Effect、Fiber 与 Profile / Bundle 结论以仓库官方架构文档和 vendored Cordis 实现为准；Session / Surface、Tool Pipeline、Compaction、Subagent 与 Persistence 结论则必须同时能回到对应 package 的实现或测试。产品处于 developer preview，不把这个固定版本的内部对象命名提升成长期兼容协议。
-
----
-
-## 7. 推荐阅读顺序
+## 6. 推荐阅读顺序
 
 建议按下面顺序读：
 
