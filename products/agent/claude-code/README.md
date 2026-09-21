@@ -123,7 +123,7 @@ query({
 
 这里不要照搬 Codex 的 Thread / Session / Turn / StepContext。
 
-对当前源码，更实用的理解是：
+对固定镜像，更实用的理解是：
 
 ```text
 Session / Conversation
@@ -319,7 +319,7 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 
 因此文档统一遵守：
 
-> **“Claude Code 当前私有源码镜像在 commit `58231dc` 中实现 / 调用了……”**
+> **“该私有源码镜像在 commit `58231dc` 中实现 / 调用了……”**
 
 而不是：
 

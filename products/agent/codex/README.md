@@ -250,7 +250,7 @@ Thread
 
 ### [04｜Engineering & Evaluation：系统边界、故障、规模化与评测](04-engineering-evaluation.md)
 
-这篇把前面三条链重新合在一起，并补上之前版本缺失的全局结构：
+这篇把前面三条链重新合在一起，并补上产品级的全局结构：
 
 - CLI / App Server / Core 之间的产品边界；
 - Extension Registry（扩展注册表）怎样把 Memory、Skills、MCP、Goal、Guardian 接入 Runtime；
@@ -268,7 +268,7 @@ Thread
 
 每篇会尽量使用下面这种写法。
 
-> **源码事实：** `ToolSearchHandler` 在当前固定快照中使用 BM25 建立延迟工具搜索索引。  
+> **源码事实：** `ToolSearchHandler` 在固定快照中使用 BM25 建立延迟工具搜索索引。  
 > **为什么这样设计：** 这让大量已注册工具不必全部进入首轮模型请求，从而减少 Tool Schema（工具模式定义）对 Context 的占用。  
 > **不要误解：** 这不代表“Codex 永远只会用 BM25”，也不代表任何 Agent 都应该照搬 BM25。
 

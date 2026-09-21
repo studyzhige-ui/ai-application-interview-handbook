@@ -412,7 +412,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 [02｜Memory Lifecycle](02-memory-lifecycle.md) 最重要的源码结论不是“DeepSeek Harness 的 Memory 怎么实现”，而是：
 
-> **当前固定源码没有内建自动语义长期 Memory 系统。**
+> **固定快照没有内建自动语义长期 Memory 系统。**
 
 这必须忠于源码。
 
@@ -506,7 +506,7 @@ Plugin register ToolDefinition
 
 ## 4. 源码覆盖矩阵：哪些结论已经核到真实实现
 
-| 系统边界 | 主要源码 / 文档 | 当前快照中确认的职责 |
+| 系统边界 | 主要源码 / 文档 | 固定快照中确认的职责 |
 |---|---|---|
 | 产品架构 | `docs/architecture.md` | Cordis plugin tree、Profile / Bundle、capability seam |
 | Agent 公共接口 | `packages/core/agent/` | Agent Registry、Inbox、Create / Resume、live events |
@@ -524,7 +524,7 @@ Plugin register ToolDefinition
 | Sandbox | `packages/sandbox/*` | per-call filesystem policy、平台 provider、fail-closed |
 | Skills | `packages/skill/*` | catalog、按需正文加载、显式 invocation |
 | MCP | `packages/mcp/mcp-client/` | 连接、工具发现、原子 generation、重连、资源 |
-| 内建长期 Memory | — | **当前没有 Universal Semantic Memory Service** |
+| 内建长期 Memory | — | **固定快照没有 Universal Semantic Memory Service** |
 | 外部长记忆 | `docs/user/guide/mcp-memory.md` | 通过 MCP Provider 接入，默认关闭 |
 | Session Persistence | `packages/session/session-persistence-jsonl/` | JSONL / Zstd、单 writer、crash recovery、format migration |
 | LLM Retry | `packages/llm/llm-retry/` | request-error waterfall、durable-before-wait retry |
@@ -628,7 +628,7 @@ README
 2. 为什么 `agent/request` 成功以后才提交当前 Step 的 System / User Message？
 3. Surface replacement 为什么能压缩模型 Context，却仍然保留原始历史证据？
 4. AGENTS.md / CLAUDE.md 为什么是 Instructions，而不是 Memory？
-5. 为什么 DSH 当前不内建 Universal Semantic Memory？
+5. 为什么固定快照中的 DSH 不内建 Universal Semantic Memory？
 6. Tool Runtime 为什么把 canonical value 和 model-facing content 分开？
 7. 为什么 `tools/pre-execute` 后面还需要 monotonic guard？
 8. Permission Preset、Approval、Sandbox 分别管什么？

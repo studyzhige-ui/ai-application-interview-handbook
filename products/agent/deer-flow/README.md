@@ -474,7 +474,7 @@ Conversation
 
 ## 4. 源码覆盖矩阵
 
-| 系统边界 | 主要源码 | 当前快照中确认的职责 |
+| 系统边界 | 主要源码 | 固定快照中确认的职责 |
 |---|---|---|
 | 产品入口 | `backend/app/gateway/` | Thread / Run API、Auth、SSE、Replay、Artifacts |
 | Agent factory | `agents/factory.py`、`agents/lead_agent/agent.py` | LangGraph Agent 创建、Tool / Middleware / Model 组装 |
