@@ -9,43 +9,45 @@
 
 ## 核心设计
 
-理解 DeepSeek Harness，先抓住两件事：**Cordis 插件树**，以及 **Session Log → Surface**。
-
-第一层是组合方式。模型适配器、Session、Tool Registry、Agent Loop、Compaction、Sandbox、Subagent、Skill、MCP、Approval 等能力都通过 Cordis 的 Plugin / Service / Event 体系接入。Profile 和 Bundle 决定一套产品实例实际装哪些能力，Cordis 再负责依赖、挂载和卸载。
-
-第二层是状态方式。运行中的持久事实写进 append-only `SessionEvent` Log；模型并不直接读取整份日志，而是读取由日志投影出来的 Surface，再由 `deriveMessages()` 生成本轮请求。
+DeepSeek Harness 建立在 Cordis 插件运行时之上，模型适配器、Session、Tool Registry、Agent Loop、Compaction、Sandbox、Subagent、Skill、MCP、Approval 等能力都以 Plugin / Service / Event 的形式参与组合；Profile 与 Bundle 决定一个运行实例实际装载的能力集合，Fiber 与 Effect 管理依赖、挂载、卸载和清理。状态层采用 append-only SessionEvent Log 保存持久事实，Surface 表示这些事实经过投影后当前对模型可见的节点集合，`deriveMessages()` 再从 Surface 生成真实模型请求，因此持久历史与模型视图是两个不同层次。Cordis 可以抽象为“空间上的 Context / Service / Scope 组合 + 时间上的 Fiber / Effect 生命周期”，而 Session 层保持 **Model-visible means logged** 的不变量。
 
 ~~~text
 Profile / Bundle
+产品能力组合
       ↓
 Cordis Plugin Tree
+Plugin / Service / Event / Effect
       ↓
 Agent Loop / Tool / Prompt / Capability
+运行时能力
       ↓
 SessionEvent Log
+仅追加的持久事实
       ↓
-Surface
+Surface Projection
+当前模型可见视图
       ↓
 deriveMessages()
+生成真实模型消息
       ↓
-Model Request
+Model Request ↔ Tool Pipeline
+模型调用与受控工具执行
+      ↓
+Durable Events / Persistence
+恢复、重放与诊断
 ~~~
-
-你可以把 Cordis 理解成一种“时空可组合”的运行模型，但这只是教学上的概括：**空间上**用 Context / Service / Scope 组合能力，**时间上**用 Fiber / Effect 管理能力的生命周期和清理。源码里更关键的不变量是 **Model-visible means logged**：模型真正看到的信息必须已经成为可恢复事实，或能从持久事实确定性重建。
-
-所以面试里可以先把 DeepSeek Harness 概括成：**everything-is-a-plugin 的可组合 Runtime，加上事件日志作为事实层、Surface 作为模型视图层。**
 
 ---
 
-## 1. 先建立 DeepSeek Harness 自己的产品心智模型
+## 1. 产品架构
 
-### 先理解“everything is a plugin”到底是什么意思
+### Everything is a Plugin
 
 DeepSeek Harness 的官方架构文档直接写明：
 
 > Every part of the product is a plugin.
 
-这里不是营销用语。
+该描述直接对应 Cordis 的真实插件组成。
 
 源码确实把模型适配器、Session、Tool Registry、Agent Loop、Compaction、Sandbox、Subagent、Skill、MCP、Approval 等都做成 Cordis（插件运行框架）里的 Service / Plugin。
 
@@ -162,13 +164,13 @@ DeepSeek Harness 用 Bundle / Profile 组合产品能力。
 
 ### DeepSeek Harness 最重要的不变量：Model-visible means logged
 
-理解这个产品，最值得先记住一句源码架构原则：
+源码明确提出一条关键架构原则：
 
 > **Model-visible means logged.**
 
 也就是：
 
-> **只要模型真正能看到某段上下文，它原则上就应该先成为可恢复的 Session Fact（会话事实），或者能由持久事实确定性重建。**
+> **模型可见上下文原则上应先成为可恢复的 Session Fact（会话事实），或者能够由持久事实确定性重建。**
 
 这会影响整个运行时设计。
 
@@ -208,11 +210,11 @@ Model Context
 
 ---
 
-## 2. 沿一次真实请求看清 Runtime 骨架
+## 2. Runtime 运行链
 
 ### 一次用户请求在源码里到底怎样跑
 
-先不要看细节，先把一次完整 Agent Turn（智能体轮次）讲成故事。
+一次完整 Agent Turn（智能体轮次）的运行过程如下。
 
 用户提交：
 
@@ -264,7 +266,7 @@ Agent Loop 打开一个新的 durable：
 
 `session.deriveMessages()`
 
-从当前 Surface 推导出真正要发送给模型的 history，并冻结这份 request。
+从当前 Surface 推导出实际发送给模型的 history，并冻结这份 request。
 
 模型开始流式输出。
 
@@ -358,7 +360,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 
 ---
 
-## 3. 四篇正文分别追哪条真实生命周期
+## 3. 文档结构
 
 ### Context Lifecycle 学什么
 
@@ -368,7 +370,7 @@ Tool Result Pruner 可以生成一个新的 `tool/result` replacement，并用 `
 - `agent/pre-step` 怎样接纳 Context；
 - System Prompt sections / contexts / Tool Schema 怎样组装；
 - AGENTS.md / CLAUDE.md 怎样成为 durable context；
--为什么 Request Routing 成功以后才真正 commit User / System Message；
+- Request Routing 成功以后为什么才 commit User / System Message；
 - `request/header` 与 `request/context` 怎样保存模型请求 envelope；
 -`deriveMessages()` 怎样从 Surface 投影 history；
 - Streaming 为什么不是 replay source；
@@ -404,7 +406,7 @@ Session Reference
 注入当前 Session
 
 Third-party Memory via MCP
-真正的跨 Session 语义 Memory
+跨 Session 语义 Memory
 由外部 Provider 负责
 ~~~
 
@@ -474,7 +476,7 @@ Plugin register ToolDefinition
 
 ---
 
-## 4. 源码覆盖矩阵：哪些结论已经核到真实实现
+## 4. 源码覆盖范围
 
 | 系统边界 | 主要源码 / 文档 | 固定快照中确认的职责 |
 |---|---|---|
@@ -504,7 +506,7 @@ Plugin register ToolDefinition
 
 ---
 
-## 5. 和 Codex / Claude Code 横向比较时最值得抓住什么
+## 5. 与其他产品的关键差异
 
 #### 一：Context 本身是一个 Projection，而不是唯一真源
 
@@ -544,7 +546,7 @@ tools/post-execute
 
 这是一个很值得学习的产品边界。
 
-源码没有因为 Agent 产品“应该有 Memory”就造一个 Universal Memory DB。
+固定快照未内建 Universal Memory DB，而是将第三方长期 Memory 保留在 MCP Provider 边界。
 
 已有 MCP 足以表达第三方长期记忆时，官方选择把 Provider-specific responsibility 留在外部系统。
 
@@ -571,19 +573,19 @@ approval/asked
 
 ---
 
-## 6. 推荐阅读顺序
+## 6. 阅读顺序
 
-建议按下面顺序读：
+阅读顺序如下：
 
 ~~~text
 README
-先建立 Event Log / Surface / Plugin Tree 心智模型
+建立 Event Log / Surface / Plugin Tree 心智模型
 
 01 Context
-看一条用户输入怎样变成真正 Model Request
+看一条用户输入怎样变成 Model Request
 
 02 Memory
-先纠正“持久历史 = 长期记忆”的误区
+区分持久历史与长期记忆
 
 03 Tool
 看 Capability 如何发现、授权、执行、回填
@@ -592,7 +594,7 @@ README
 看 Crash、Retry、Resume、Subagent、测试如何闭环
 ~~~
 
-读完以后，应该能够不用背文件名，自己解释以下问题：
+完成本组文档后，应能够解释以下问题：
 
 1. 为什么 DeepSeek Harness 的 Session Log 和模型 Context 不是同一个东西？
 2. 为什么 `agent/request` 成功以后才提交当前 Step 的 System / User Message？

@@ -9,37 +9,42 @@
 
 ## 核心设计
 
-理解 Claude Code，先抓住 `query() / queryLoop()`。
-
-交互式 REPL 和 Headless / SDK 的入口不同，但最终都会进入同一条查询循环。每次真正请求模型前，Runtime 会先根据本地 Transcript 和运行状态重新计算“这一轮模型应该看到什么”：大 Tool Result 先受预算控制，再经过 Snip、Microcompact、Context Collapse、Auto Compact 等不同层次的瘦身；Memory 和 Skill 也会按需预取。模型返回 Tool Call 后，再经过校验、Hook、权限判断和执行，结果回到消息历史，循环继续。
+Claude Code 的运行中心是 `query() / queryLoop()`。交互式 REPL 与 Headless / SDK 虽然入口不同，但都会进入同一条查询循环；每次模型请求前，Runtime 根据 Transcript 与运行状态重新生成本轮 Model View：先控制大 Tool Result，再按需执行 Snip、Microcompact、Context Collapse、Auto Compact，并合入 Memory / Skill 预取结果和本轮可见 Tool Schema。模型产生 Tool Call 后，工具经过输入校验、Hook、权限决策与执行，结果写回 Transcript 并进入下一轮循环。Transcript 负责可恢复的会话历史，而 API-bound Context 则持续围绕上下文预算、Prompt Cache 稳定性和渐进式能力暴露进行调整。
 
 ```text
-REPL / QueryEngine
-       ↓
-     query()
-       ↓
-   queryLoop()
-       ↓
-Context 瘦身 + Memory / Skill / Tool 准备
-       ↓
-     Model
-       ↓
- Tool Call / Answer
-       ↓
-受控执行 → Result → 下一轮
+Interactive REPL        Headless / SDK
+交互入口                 无界面 / SDK 入口
+        \                 /
+         └───────┬────────┘
+                 ↓
+              query()
+                 ↓
+            queryLoop()
+          持续 Agent 循环
+                 ↓
+Tool Result Budget / Snip / Microcompact
+Context Collapse / Auto Compact
+Memory / Skill Prefetch / Visible Tools
+          生成本轮 Model View
+                 ↓
+              Model
+                 ↓
+        Tool Call / Final Answer
+                 ↓
+Validation / Hook / Permission / Execution
+          受控工具执行
+                 ↓
+Transcript + Tool Result + Runtime State
+可恢复历史与下一轮输入
 ```
-
-这里最重要的区别是：**本地 Transcript 不等于模型每一轮真正看到的 Context。** Claude Code 会持续维护可恢复的会话记录，同时尽量让发给模型的请求更小、Prompt Cache 更稳定、Tool / Skill 只在需要时展开。
-
-所以面试里可以先把 Claude Code 概括成：**围绕 query loop 做 Context、Cache 和 Capability 的持续编排。** 具体实现仍以本页记录的私有源码镜像为准。
 
 ---
 
-## 1. 先把 Claude Code 的真实产品入口看清楚
+## 1. 产品入口与运行主线
 
 这个镜像并不是只有一个“Agent 类”。
 
-最外层可以先看成三条入口。
+产品运行入口可分为三类。
 
 ### 交互式 CLI / REPL
 
@@ -84,7 +89,7 @@ query({
 
 ### 共享的 Agent 主循环
 
-真正把两条入口汇合起来的是：
+两条入口最终汇合到：
 
 - `query.ts`
 
@@ -107,9 +112,9 @@ query({
 
 ---
 
-## 2. Claude Code 自己的执行层级怎样理解
+## 2. Runtime 执行层级
 
-这里不要照搬 Codex 的 Thread / Session / Turn / StepContext。
+Claude Code 使用自己的 Session / Conversation、用户输入、query loop iteration 与模型请求层级。
 
 对固定镜像，更实用的理解是：
 
@@ -144,7 +149,7 @@ Session / Conversation
 
 ---
 
-## 3. 一次真实请求先讲成一个故事
+## 3. 请求运行链
 
 假设用户输入：
 
@@ -172,7 +177,7 @@ Tool Result Budget
 4. 运行 PreToolUse Hook（工具执行前钩子）；
 5. 进入 permission decision（权限决策）；
 6. 必要时弹批准 UI、走自动 classifier（分类器）或 headless hook；
-7. 真正执行 Tool；
+7. 执行 Tool；
 8. 跑 PostToolUse Hook；
 9. 把 Tool Result 写回消息历史。
 
@@ -195,7 +200,7 @@ Prompt → Model → Answer
 
 ---
 
-## 4. 四篇正文分别追哪条真实生命周期
+## 4. 文档结构
 
 ### [01｜Context Lifecycle：上下文怎样编排、缓存、瘦身和恢复](01-context-lifecycle.md)
 
@@ -261,11 +266,11 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 - API 529 / 429、auth、stale connection、model fallback 怎样分层恢复；
 - Prompt Cache Break Detection 怎样定位 cache miss 来源；
 -大 Context、大 Tool、大 Skill、大 Memory 的规模化策略；
--源码现有 telemetry / contract 能验证什么，以及真正的 Agent Eval 还需要怎样做。
+- 源码现有 telemetry / contract 能验证什么，以及任务级 Agent Eval 还需要补充什么。
 
 ---
 
-## 5. 源码覆盖矩阵：哪些主干已经核到真实调用点
+## 5. 源码覆盖范围
 
 这张表用于证明“全面”来自源码覆盖，而不是标题数量。
 
@@ -297,7 +302,7 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 | API Retry | `services/api/withRetry.ts`、`claude.ts` | 429 / 529、auth refresh、stale connection、fallback、后台降载 |
 | Observability | `services/analytics/`、`utils/queryProfiler.ts`、`utils/telemetry/` | Query / Tool / Cache / Memory 等运行证据 |
 
-这张表里也明确标出了**镜像缺失实现**。源码文件被其他代码引用，不等于我们有权凭引用路径脑补里面的算法。
+这张表同时标出**镜像缺失实现**。源码文件被其他代码引用，不足以推断缺失模块内部的具体算法。
 
 ---
 
@@ -313,15 +318,15 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 
 > “Claude Code 官方某版本一定如此。”
 
-对于缺失源码，只描述能在调用方直接观察到的 contract（契约）和数据流。例如我们可以确认 `query.ts` 启动 Skill discovery prefetch，但不能声称知道缺失的 `services/skillSearch/*` 使用什么具体检索模型或索引。
+对于缺失源码，只描述调用方可直接观察到的 contract（契约）和数据流。例如可确认 `query.ts` 启动 Skill discovery prefetch，但不能据此推断缺失的 `services/skillSearch/*` 使用何种具体检索模型或索引。
 
 同样，feature gate 后的内部能力会标出“功能开关控制 / 内部路径”，不把所有源码分支都说成默认面向所有用户的产品行为。
 
 ---
 
-## 7. 阅读这四篇时最值得抓住的 Claude Code 特征
+## 7. 关键工程特征
 
-读完以后，不应该只记住“Claude Code 也有 Context、Memory、Tool”。
+本组文档重点保留 Claude Code 自身的工程选择，而不是把它压缩成通用的 Context / Memory / Tool 三个标签。
 
 更值得记住的是它和 Codex 的不同工程选择：
 
@@ -335,11 +340,11 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 
 **Persistence 方面**，Transcript 用 parent-linked message chain（父链消息结构）恢复；Compaction 和 Snip 必须同时维护这条链，否则 Resume 会复活已经被压缩或裁掉的历史。
 
-这些才是源码对 Agent System Design（智能体系统设计）真正有价值的地方。
+这些机制共同构成 Claude Code 在 Agent System Design（智能体系统设计）上的主要工程特征。
 
 ---
 
-## 8. 推荐学习顺序
+## 8. 阅读顺序
 
 先读总览，再按完整数据流阅读：
 
@@ -357,7 +362,7 @@ Claude Code 源码里“Memory”不是一个系统，而是至少几层不同�
 这些状态怎样恢复、怎样扩到多 Agent、怎样在故障和大规模下保持可控
 ```
 
-读完以后，应该能够直接用 Claude Code 自己的源码对象解释：
+完成本组文档后，应能够直接使用 Claude Code 自身的源码对象解释：
 
 1. REPL 和 QueryEngine 为什么不是同一入口，却汇合到同一个主循环；
 2. `queryLoop` 为什么在 API 请求前先做多层 Context 瘦身；

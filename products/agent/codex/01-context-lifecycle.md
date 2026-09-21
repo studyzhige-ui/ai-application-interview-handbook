@@ -2,7 +2,7 @@
 
 [← Codex 总览](README.md) · [Memory →](02-memory-lifecycle.md)
 
-> **源码基线：** `openai/codex@bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`
+> **源码基线：** `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea`
 
 如果只看最终发给模型的 HTTP / WebSocket 请求，很容易误以为 Codex 的上下文管理就是：
 
@@ -495,15 +495,15 @@ Fork（分叉）要求子 Thread 只继承父 Thread 某个截止点；Rollback�
 
 如果要自己回源码验证，建议按调用顺序读，而不是按文件夹随机浏览：
 
-1. [`app-server-protocol/src/protocol/v2/turn.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/app-server-protocol/src/protocol/v2/turn.rs)：产品层 Turn 请求长什么样。
-2. [`core/src/session/turn.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/session/turn.rs)：真正的 Agent Turn 循环。
-3. [`core/src/session/mod.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/session/mod.rs)：初始 Context、World State 更新、历史持久化。
-4. [`core/src/context/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/context)：不同 Context Fragment 的真实类型。
-5. [`ext/extension-api/src/contributors/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/ext/extension-api/src/contributors)：扩展怎样参与 Context。
-6. [`core/src/context_manager/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/context_manager)：规范历史、差异和 normalize。
-7. [`core/src/client.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/client.rs)：Prompt Cache、WebSocket continuation、请求发送。
-8. [`core/src/session/context_window.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/session/context_window.rs)：Token 与窗口判断。
-9. [`core/src/compact.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/compact.rs)、[`compact_remote_v2.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/compact_remote_v2.rs)、[`compact_token_budget.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/compact_token_budget.rs)：三类窗口迁移。
-10. [`core/src/session/rollout_reconstruction.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/session/rollout_reconstruction.rs)：压缩后的恢复闭环。
+1. [`app-server-protocol/src/protocol/v2/turn.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/app-server-protocol/src/protocol/v2/turn.rs)：产品层 Turn 请求长什么样。
+2. [`core/src/session/turn.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/turn.rs)：真正的 Agent Turn 循环。
+3. [`core/src/session/mod.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/mod.rs)：初始 Context、World State 更新、历史持久化。
+4. [`core/src/context/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/context)：不同 Context Fragment 的真实类型。
+5. [`ext/extension-api/src/contributors/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/extension-api/src/contributors)：扩展怎样参与 Context。
+6. [`core/src/context_manager/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/context_manager)：规范历史、差异和 normalize。
+7. [`core/src/client.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/client.rs)：Prompt Cache、WebSocket continuation、请求发送。
+8. [`core/src/session/context_window.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/context_window.rs)：Token 与窗口判断。
+9. [`core/src/compact.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/compact.rs)、[`compact_remote_v2.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/compact_remote_v2.rs)、[`compact_token_budget.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/compact_token_budget.rs)：三类窗口迁移。
+10. [`core/src/session/rollout_reconstruction.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/rollout_reconstruction.rs)：压缩后的恢复闭环。
 
 下一篇：[Codex Memory Lifecycle →](02-memory-lifecycle.md)

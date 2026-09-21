@@ -3,40 +3,48 @@
 [← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent Curriculum](../../../curriculum/09-agent/README.md) · [Agent References](../../../references/agent/README.md)
 
 > **源码仓库：** [openai/codex](https://github.com/openai/codex)  
-> **固定源码快照：** [`bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695)  
+> **固定源码快照：** [`75db67bbc6a18200b52698c8870adaedd7746dea`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea)  
 > **核验日期：** 2026-09-21
 
 ## 核心设计
 
-理解 Codex，先抓住 **Thread → Session → Turn → StepContext** 这条主线。
-
-一条长期任务属于 Thread，Core 中由 Session 维护。一次用户输入开始一个 Turn；真正请求模型前，Session 会捕获 `StepContext`，把这一轮采样要使用的模型、工具、环境和权限固定下来。模型如果返回 Tool Call，也不是直接执行，而是进入统一的 Tool Runtime，经过路由、Hook、Approval、Permission、Sandbox / Network 等边界，结果再写回历史并触发下一次采样。
+Codex 的核心运行时以 Thread（长期会话）为外层边界，由 Session（运行实例）维护持续状态；一次用户输入形成一个 Turn，真正调用模型前通过 StepContext 固定该次采样及后续工具执行所使用的模型、工具、环境与权限。Context Assembly 负责把历史、World State、Memory、Skills 等信息整理成模型可见上下文，Tool Runtime 负责统一处理工具路由、Hook、Approval、Permission、Sandbox 与 Network。Memory、MCP、Skills、Guardian、Goal 等能力通过 Extension Registry 接入 Thread、Turn、Context 和 Tool 生命周期；Thread Store、Rollout、State DB 与 Rollout Trace 分别承担可恢复状态和诊断证据。
 
 ```text
+TUI / CLI / App Server
+产品入口
+        ↓
 Thread
-  ↓
+长期会话边界
+        ↓
 Session
-  ↓
+持续运行实例
+        ↓
 Turn
-  ↓
+一次用户输入驱动的工作
+        ↓
 StepContext
-  ↓
-Context + 本轮 Tool Set
-  ↓
-Model ↔ Tool Runtime
-  ↓
-History / Persistence
+固定本次采样的模型 / 工具 / 环境 / 权限
+        ↓
+Context Assembly ───────→ Model
+模型可见上下文             │
+                           ↕
+                     Tool Runtime
+                受控工具执行与结果回填
+        ↓
+History / Thread Store / Rollout / State / Trace
+恢复状态与诊断证据
+
+Extension Registry
+Memory / MCP / Skills / Guardian / Goal ...
+→ 接入上述生命周期
 ```
-
-Memory、MCP、Skills、Guardian、Goal 等能力并不需要各自重写主循环，而是通过 Extension Registry 进入 Thread、Turn、Context 和 Tool 的生命周期。Thread Store、Rollout、State DB、Rollout Trace 又分别承担恢复状态与诊断证据。
-
-所以面试里可以先把 Codex 概括成：**一个边界很强的 Agent Core，再通过 Extension 把产品能力接进来。** 这句话是对源码结构的工程抽象，具体行为仍以本页记录的固定 commit 为准。
 
 ---
 
-## 1. 先认识这个仓库，而不是先背 Agent 名词
+## 1. 产品架构
 
-固定快照中的 `codex-rs/Cargo.toml` 是一个很大的 Rust workspace。它包含一百多个 crate。真正与 Agent Runtime（Agent 运行时）直接相关的部分，可以先按职责理解成七层。
+固定快照中的 `codex-rs/Cargo.toml` 是一个很大的 Rust workspace。它包含一百多个 crate。与 Agent Runtime（Agent 运行时）直接相关的部分按职责可分为七层。
 
 ### 第一层：产品入口
 
@@ -49,7 +57,7 @@ Codex CLI（命令行入口）本身就支持交互式 TUI、非交互执行、R
 - `codex-rs/exec/`
 - `codex-rs/app-server/`
 
-这意味着 Codex Core（核心运行时）并不是“整个产品”，而是被多个前端和服务端入口共同调用的执行内核。
+Codex Core（核心运行时）是由多个前端和服务端入口共同调用的执行内核，不等同于完整产品。
 
 ### 第二层：协议与 App Server
 
@@ -64,7 +72,7 @@ Codex CLI（命令行入口）本身就支持交互式 TUI、非交互执行、R
 
 ### 第三层：Thread（线程，会话容器）与 Session（运行实例）
 
-`ThreadManager` 负责创建、恢复、分叉和维护活跃 Thread。真正运行一条 Thread 的内部对象是 `Session`。
+`ThreadManager` 负责创建、恢复、分叉和维护活跃 Thread；Thread 在 Core 中由 `Session` 运行。
 
 核心位置：
 
@@ -72,7 +80,7 @@ Codex CLI（命令行入口）本身就支持交互式 TUI、非交互执行、R
 - `codex-rs/core/src/codex_thread.rs`
 - `codex-rs/core/src/session/`
 
-这里开始出现我们后面会一直看到的长期状态：历史、环境、权限、模型客户端、扩展状态、MCP 状态、工具状态、Token 使用量、上下文窗口状态和持久化句柄。
+Session 持有历史、环境、权限、模型客户端、扩展状态、MCP 状态、工具状态、Token 使用量、上下文窗口状态和持久化句柄等长期运行状态。
 
 ### 第四层：Turn 与模型循环
 
@@ -82,7 +90,7 @@ Codex CLI（命令行入口）本身就支持交互式 TUI、非交互执行、R
 
 - `codex-rs/core/src/session/turn.rs`
 
-它不是“一次模型调用”。一个 Turn 里面可能包含多次模型采样、多次工具调用、用户中途追加输入、上下文压缩和重试。模型请求、工具结果、再次采样会在这里组成真正的 Agent Loop（Agent 执行循环）。
+它不是“一次模型调用”。一个 Turn 里面可能包含多次模型采样、多次工具调用、用户中途追加输入、上下文压缩和重试。模型请求、工具结果与再次采样在这里组成 Agent Loop（Agent 执行循环）。
 
 ### 第五层：扩展与能力系统
 
@@ -112,7 +120,7 @@ App Server 会把 Goal、Guardian、Memory、MCP、Web Search、Image Generation
 
 当模型决定调用工具时，Codex 不会直接 `spawn` 一个进程就结束。
 
-真正执行会经过工具路由、Hook（钩子）、Approval（批准）、Permission Profile（权限配置）、Sandbox（沙箱）、Network Policy（网络策略）和执行环境。
+工具执行会经过工具路由、Hook（钩子）、Approval（批准）、Permission Profile（权限配置）、Sandbox（沙箱）、Network Policy（网络策略）和执行环境。
 
 相关代码包括：
 
@@ -138,13 +146,13 @@ Codex 用 Thread Store（线程存储层）、Rollout（运行记录）和 State
 - `codex-rs/analytics/`
 - `codex-rs/otel/`
 
-到这里，我们才有资格开始谈 Context、Memory、Tool。
+以上七层共同构成后续 Context、Memory 与 Tool 生命周期的产品边界。
 
 ---
 
-## 2. Codex 自己的对象模型是什么
+## 2. Runtime 对象模型
 
-学习源码时最容易犯的错误，是先拿“Session / Run / Turn / Step”这种通用教学树去套产品。
+Codex 的对象模型应以源码自身的 Thread / Session / Turn / StepContext 关系为准。
 
 Codex 自己更接近下面这套关系：
 
@@ -153,7 +161,7 @@ Thread
 长期会话容器
 │
 └── Session
-    Core 内真正维护这条 Thread 的运行实例
+    Core 内维护这条 Thread 的运行实例
     │
     ├── Turn
     │   一次用户输入驱动的一段 Agent 工作
@@ -175,13 +183,13 @@ Thread
 
 ---
 
-## 3. 一次真实 Turn 大致怎样流动
+## 3. Turn 运行链
 
-把代码细节先收起来，一次普通 Turn 可以先读成下面这个故事。
+一次普通 Turn 的运行过程如下。
 
 用户在 TUI、App 或非交互 CLI 中提交任务。产品层把它变成 Thread / Turn 请求，Core 找到或创建对应的 Session。Turn 开始后，Runtime 先检查有没有需要提前做的上下文压缩，再确定这次输入涉及哪些 Plugin、MCP Server、Skill 或环境。
 
-然后 Session 捕获一个 `StepContext`。这一步相当于把“此刻这次采样应该使用的模型、工具、环境、权限和配置”拍成快照。
+随后 Session 捕获 `StepContext`，形成“本次采样使用的模型、工具、环境、权限和配置”的执行快照。
 
 随后 Context 系统会把长期指令、项目指令、当前 World State、Memory、Skills、Plugin 信息、历史消息和本轮用户输入整理成模型真正可见的请求，同时 Tool Router（工具路由器）生成本轮允许模型调用的工具说明。
 
@@ -212,7 +220,7 @@ Thread
 
 ---
 
-## 4. 四篇正文分别追什么
+## 4. 文档结构
 
 ### [01｜Context Lifecycle：上下文完整生命周期](01-context-lifecycle.md)
 
@@ -258,12 +266,12 @@ Thread
 
 > **源码事实：** `ToolSearchHandler` 在固定快照中使用 BM25 建立延迟工具搜索索引。  
 > **为什么这样设计：** 这让大量已注册工具不必全部进入首轮模型请求，从而减少 Tool Schema（工具模式定义）对 Context 的占用。  
-> **不要误解：** 这不代表“Codex 永远只会用 BM25”，也不代表任何 Agent 都应该照搬 BM25。
+> **适用边界：** BM25 是该固定快照中 Tool Search 的具体实现，不代表 Codex 的长期协议，也不构成其他 Agent 的通用要求。
 
 这样做的目的，是避免把：
 
 ```text
-我们认为合理的通用设计
+通用工程解释
 ```
 
 写成：
@@ -274,7 +282,7 @@ Codex 源码就是这样
 
 ---
 
-## 6. 源码覆盖矩阵：这套文档具体核到了哪些系统
+## 6. 源码覆盖范围
 
 下面这张表不是“推荐阅读文件”，而是本文结论实际核验过的主干边界。一个机制只有同时找到定义、接入点或调用路径，才会写进正文。
 
@@ -300,7 +308,7 @@ Codex 源码就是这样
 | 深度诊断 | `rollout-trace/`、`analytics/`、`otel/` | 区分模型可见历史和真实 Runtime 事件，构造可回放证据 |
 | 集成验证 | `core/tests/suite/`、各 crate tests | 验证 Context shape、MCP、Sandbox、Compaction、Multi-Agent、transport fallback 等真实路径 |
 
-这张矩阵也说明一个重要的阅读边界：如果只从 `Context / Memory / Tool` 三个关键词搜索文件，很容易漏掉 App Server、Extension、Environment、Multi-Agent、Code Mode 和持久化边界，最后得到一个“看起来像 Agent 教材”的 Codex，而不是源码里的 Codex。
+源码覆盖范围同时包含 App Server、Extension、Environment、Multi-Agent、Code Mode 与持久化边界，以完整还原 Codex Runtime，而不是仅按 Context / Memory / Tool 三个关键词组织。
 
 ---
 
@@ -328,11 +336,11 @@ Codex 源码就是这样
 
 ---
 
-## 8. 推荐阅读顺序
+## 8. 阅读顺序
 
-第一次不要边看源码路径边背类名。
+阅读时先建立完整运行链，再定位具体源码对象。
 
-建议按一个完整问题推进：
+阅读可围绕一个完整任务推进：
 
 > **“我在 Codex 输入‘修复这个 bug’，接下来系统到底发生了什么？”**
 
@@ -352,7 +360,7 @@ Codex 源码就是这样
 → 最后看故障、恢复、规模和如何证明系统有效
 ```
 
-读完以后，应该能不依赖课程术语、直接用 Codex 自己的源码对象解释：
+完成本组文档后，应能够直接使用 Codex 自身的源码对象解释：
 
 1. Thread（线程）、Session（运行实例）、Turn（轮次）、StepContext（步骤上下文） 分别解决什么问题；
 2. 一条用户消息怎样变成模型请求；

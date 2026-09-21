@@ -88,8 +88,8 @@ for product in ("codex", "claude-code", "deepseek-harness", "deer-flow"):
         errors.append(f"products/agent/{product}/README.md: product README must contain core design")
 
 agent_products_readme = read("products/agent/README.md")
-if "## 4. 四个产品怎么区分" not in agent_products_readme:
-    errors.append("products/agent/README.md: missing four-product comparison")
+if "## 4. 四个产品的架构差异" not in agent_products_readme:
+    errors.append("products/agent/README.md: missing four-product architecture comparison")
 for product_name in ("OpenAI Codex", "Claude Code", "DeepSeek Harness", "DeerFlow 2.0"):
     if product_name not in agent_products_readme:
         errors.append(f"products/agent/README.md: comparison missing {product_name}")

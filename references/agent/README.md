@@ -24,7 +24,7 @@ Tier B 回答“某个成熟 Agent 产品在指定版本里到底怎样实现”
 
 | 产品 | 源码 | 固定快照 | 完整学习入口 |
 |---|---|---|---|
-| OpenAI Codex | `openai/codex` | `bb054a2b03f15787dcc2f9bd8ebfde713bc5b695` | [Products / Codex](../../products/agent/codex/README.md) |
+| OpenAI Codex | `openai/codex` | `75db67bbc6a18200b52698c8870adaedd7746dea` | [Products / Codex](../../products/agent/codex/README.md) |
 | Claude Code | `studyzhige-ui/claude-code-source-private` | `58231dcce408f805c645cfbc352d2876b517223b` | [Products / Claude Code](../../products/agent/claude-code/README.md) |
 | DeepSeek Harness | `deepseek-ai/deepseek-harness` | `ddefc45fbc7f8e46dd73185e68295696d1297887` | [Products / DeepSeek Harness](../../products/agent/deepseek-harness/README.md) |
 | DeerFlow 2.0 | `bytedance/deer-flow` | `29d285731b326a728a9df33d3641f73b68bbe48b` | [Products / DeerFlow](../../products/agent/deer-flow/README.md) |

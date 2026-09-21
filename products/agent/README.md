@@ -38,25 +38,25 @@ README.md                   系统地图、源码快照、关键模块与阅读�
 
 | 产品 | 固定源码快照 | 学习入口 |
 |---|---|---|
-| OpenAI Codex | `openai/codex@bb054a2b03f15787dcc2f9bd8ebfde713bc5b695` | [进入](codex/README.md) |
+| OpenAI Codex | `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea` | [进入](codex/README.md) |
 | Claude Code | `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b` | [进入](claude-code/README.md) |
 | DeepSeek Harness | `deepseek-ai/deepseek-harness@ddefc45fbc7f8e46dd73185e68295696d1297887` | [进入](deepseek-harness/README.md) |
 | DeerFlow 2.0 | `bytedance/deer-flow@29d285731b326a728a9df33d3641f73b68bbe48b` | [进入](deer-flow/README.md) |
 
 技术证据和版本边界统一回到 [Agent References](../../references/agent/README.md)。
 
-## 4. 四个产品怎么区分
+## 4. 四个产品的架构差异
 
-四个产品都有 Context、Tool、Memory / Persistence、Permission、Multi-Agent 等能力。真正值得比较的不是“有没有”，而是**这些能力围绕什么运行中心组织，以及状态和模型视图怎样流动**。
+四个产品都实现了 Context、Tool、Persistence、Permission 和 Multi-Agent 等能力，但它们围绕不同的运行中心组织这些机制。
 
-| 产品 | 最核心的运行方式 | 状态 / Context 的关键特点 | 面试时先抓住什么 |
+| 产品 | 核心架构 | 状态与模型视图 | 关键边界 |
 |---|---|---|---|
-| [OpenAI Codex](codex/README.md) | Thread / Session / Turn / StepContext 构成强边界 Core，Extension 接入额外能力 | 每次采样前固定执行快照；History、Thread Store、Rollout、State / Trace 分工 | **强 Core + Extension**：先稳定执行语义，再扩展 Memory、MCP、Skills 等能力 |
-| [Claude Code](claude-code/README.md) | REPL / QueryEngine 最终汇入 `query() / queryLoop()` | 本地 Transcript 持续保存；每轮重新瘦身 Context，并兼顾 Prompt Cache、Memory / Skill / Tool 可见性 | **query-loop 编排**：重点是每一轮怎样得到合适的 Model View |
-| [DeepSeek Harness](deepseek-harness/README.md) | Cordis Profile / Bundle 组装 Plugin Tree；Agent Loop 自身也是 Plugin | Append-only Session Log 保存事实，Surface 决定模型当前看见什么 | **everything is a plugin + Event Log / Surface**：组合能力和模型视图都由 Runtime 明确管理 |
-| [DeerFlow 2.0](deer-flow/README.md) | Gateway → LangGraph / LangChain Agent → Ordered Middleware | ThreadState 经 Middleware 投影成请求；Checkpoint 保存继续执行状态，Run Journal 保存运行证据 | **LangGraph 基座 + Middleware Runtime**：产品能力主要通过有序 Middleware 和 Gateway 运行层组合 |
+| [OpenAI Codex](codex/README.md) | Thread / Session / Turn / StepContext 构成 Agent Core，Extension Registry 接入额外能力 | StepContext 固定单次采样的执行条件；History、Thread Store、Rollout、State DB、Trace 分工 | Core 执行语义与 Extension 能力分离 |
+| [Claude Code](claude-code/README.md) | REPL / QueryEngine 汇入 `query() / queryLoop()` | Transcript 保留可恢复历史；每轮重新生成经过压缩、缓存和能力筛选的 Model View | 持久 Transcript 与 API-bound Context 分离 |
+| [DeepSeek Harness](deepseek-harness/README.md) | Cordis Profile / Bundle 组装 Plugin Tree；Agent Loop 本身也是 Plugin | SessionEvent Log 保存持久事实；Surface 是模型可见投影 | Plugin 生命周期、持久事实与模型视图分离 |
+| [DeerFlow 2.0](deer-flow/README.md) | Gateway + LangGraph / LangChain Agent + Ordered Middleware | ThreadState 经 Middleware 投影成请求；Checkpoint 保存 continuation state，Run Journal 保存 execution evidence | 基础 Agent 执行、Middleware Runtime 与产品运行证据分层 |
 
-这张表是进入源码的地图，不代替各产品 README。遇到追问时，再分别回到它自己的对象模型和真实调用链，而不是拿同一套 Agent 模板硬套四个产品。
+各产品 README 负责展开本产品的对象模型、真实请求链和源码边界；Context、Memory、Tool、Permission、Recovery 等专题进入对应生命周期文档。
 
 ## 5. 源码事实与工程解释
 
@@ -97,6 +97,6 @@ Prompt 中出现但没有安装入口、调用方或测试支持的概念，不�
 → 再进入第二套产品做横向比较
 ```
 
-真正需要掌握的不是源码文件名，而是：
+本目录的学习目标是：
 
 > **输入怎样变成模型可见上下文，长期信息怎样变成记忆，可执行能力怎样安全地变成工具，以及整个系统怎样在失败、超大规模与长期运行下保持可恢复、可诊断、可验证。**

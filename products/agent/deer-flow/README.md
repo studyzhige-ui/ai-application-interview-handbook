@@ -9,35 +9,44 @@
 
 ## 核心设计
 
-理解 DeerFlow 2.0，不能只记“LangGraph + 很多 Middleware”。
-
-它确实把 LangChain / LangGraph 当作基础 Agent 执行骨架：Lead Agent 最终通过 `langchain.create_agent(...)` 组装并编译成 LangGraph。但完整产品在这层之外还有 Gateway、Run Worker、ThreadState、Sandbox、MCP、Memory、Subagent，以及一条有明确顺序的 Middleware Chain。真正的产品 Runtime，主要就是在这些层里形成的。
+DeerFlow 2.0 以 Gateway 作为完整产品运行入口，由 Run Worker 组装 Lead Agent，底层使用 `langchain.create_agent(...)` 和 LangGraph 提供基础 Agent 执行骨架；DeerFlow 自己的产品 Runtime 主要由 ThreadState、按顺序执行的 Middleware Chain、Sandbox、MCP、Skills、Memory 与 Subagent Runtime 组成。Middleware 同时参与 Context 投影、Tool Schema 可见性、执行策略、结果裁剪和失败修复，因此 Middleware 顺序本身构成运行语义。持久化层把“如何继续执行”和“已经发生什么”分开：LangGraph Checkpoint 保存 continuation state，Run Journal / Run Event Store 保存 execution evidence，Gateway Run Row 维护产品级 Run 生命周期。
 
 ~~~text
-Gateway / Run
-    ↓
+Frontend / API Client
+产品入口
+        ↓
+Gateway
+Thread / Run / Auth / SSE / Replay
+        ↓
 Run Worker
-    ↓
-Lead Agent
-    ↓
-LangChain / LangGraph
-    ↓
-Ordered Middleware
-    ↓
-Model ↔ Tool
-    ↓
+运行调度
+        ↓
+LeadAgentAssembly
+组装模型 / Tool / Middleware / Policy
+        ↓
+LangChain create_agent + LangGraph
+基础 Agent 执行骨架
+        ↓
+Ordered Middleware Chain
+Context / Tool / Safety / Memory / Recovery
+        ↓
+Model Call ↔ Tool Call
+        ↓
 Sandbox / MCP / Skills / Memory / Subagent
+运行能力
+        ↓
+┌────────────────────────┬────────────────────────┐
+│ LangGraph Checkpoint   │ Run Journal / Events   │
+│ 如何继续执行           │ 已经发生什么           │
+└────────────────────────┴────────────────────────┘
+        ↓
+History / Resume / Branch / Replay / Debug
+产品历史、恢复与诊断
 ~~~
-
-Middleware 不只是“加功能”。它会决定本轮 Context 怎样投影、哪些 Tool Schema 对模型可见、工具能否真正执行、结果怎样裁剪、失败怎样修复。因此 **Middleware 的顺序本身就是运行语义的一部分**。
-
-DeerFlow 还把两类“历史”分开：LangGraph Checkpoint 保存 Agent 继续执行所需的状态；Run Journal 保存这次 Run 实际发生过的事件，服务于 History、Debug、Audit 和 Replay。
-
-所以面试里可以先把 DeerFlow 概括成：**LangGraph / LangChain 提供基础执行，DeerFlow 用 Gateway + Middleware + 独立的状态与运行证据层，把它扩展成产品级 Agent Harness。**
 
 ---
 
-## 1. 先建立 DeerFlow 自己的产品心智模型
+## 1. 产品架构
 
 ### Gateway 是默认产品运行入口，不是裸 LangGraph Server
 
@@ -92,13 +101,13 @@ DeerFlow 的差异不在于另写了一套模型循环，而在于：
 
 ---
 
-### 真正的“Runtime”主要藏在 Middleware Chain 里
+### Runtime 与 Middleware Chain
 
 Lead Agent 的 Middleware 数量很多，而且顺序本身就是协议。
 
-不要背 30 多个名字。
+这些 Middleware 按职责可归为以下几组。
 
-先把它们按问题分组：
+这些 Middleware 按职责分组如下：
 
 ~~~text
 输入与远端内容安全
@@ -146,13 +155,13 @@ Memory Middleware
 
 同一个 Tool Call 会穿过其中多个层。
 
-所以 DeerFlow 的 Agent System Design（智能体系统设计）首先是：
+DeerFlow 的 Agent System Design（智能体系统设计）以以下机制为核心：
 
 > **Middleware Composition（中间件组合）。**
 
 ---
 
-## 2. 一次真实用户请求怎样跑完整条链
+## 2. Run 运行链
 
 假设用户说：
 
@@ -224,13 +233,13 @@ Middleware 开始工作。
 
 这时还不是简单“把消息发给模型”。
 
-Runtime 先把当前物理环境和上下文准备好。
+Runtime 在模型调用前完成当前物理环境和上下文准备。
 
 ---
 
 ### Model Request：不同 Context 有不同持久化语义
 
-进入模型调用前，多个 Middleware 会重新构造真正的 `ModelRequest`。
+进入模型调用前，多个 Middleware 会重新构造实际的 `ModelRequest`。
 
 例如：
 
@@ -274,7 +283,7 @@ ThreadState.messages
 
 ### Tool Execution
 
-真正 Tool Call 又会经过一条执行 Middleware 链。
+Tool Call 会进入执行 Middleware 链。
 
 例如文件写入：
 
@@ -303,7 +312,7 @@ Tool Call
 
 ### Memory 更新
 
-这次 Run 完成以后，如果使用默认：
+Run 完成后，在默认配置下：
 
 `memory.mode: middleware`
 
@@ -313,7 +322,7 @@ Tool Call
 
 默认 DeerMem：
 
-1.过滤为真正 User + final Assistant；
+1. 过滤为真实 User + final Assistant；
 2.去掉 trivial acknowledgement；
 3.检测 correction / reinforcement 等 signal；
 4.进入 debounce queue；
@@ -350,7 +359,7 @@ Run Journal
 
 ---
 
-## 3. 五份文档分别追什么
+## 3. 文档结构
 
 ### [01｜Context Lifecycle](01-context-lifecycle.md)
 
@@ -431,7 +440,7 @@ Conversation
 
 ---
 
-## 4. 源码覆盖矩阵
+## 4. 源码覆盖范围
 
 | 系统边界 | 主要源码 | 固定快照中确认的职责 |
 |---|---|---|
@@ -462,7 +471,7 @@ Conversation
 
 ---
 
-## 5. 和前三个产品横向比较时，最值得抓住什么
+## 5. 与其他产品的关键差异
 
 ### Context：DeerFlow 把“持久状态”和“请求时投影”分得很细
 
@@ -506,13 +515,13 @@ User / Agent Isolation
 Remote Backend
 ~~~
 
-都做成了真正的长期 Memory 子系统。
+共同构成完整的长期 Memory 子系统。
 
 而且默认 DeerMem 仍然只是 `MemoryManager` 的一个 Backend。
 
 ---
 
-### Tool：真正的核心不是 Tool Registry，而是 Middleware Policy Stack
+### Tool：Middleware Policy Stack
 
 DeerFlow 的 Tool Call 会被多层 wrapper 改写、拦截、审计和证明。
 
@@ -532,7 +541,7 @@ LangGraph Checkpoint 回答：
 
 Run Journal 回答：
 
-> 这次 Run 到底发生了什么。
+> 该 Run 实际发生过什么。
 
 把两个问题拆开以后：
 
@@ -546,11 +555,11 @@ Run Journal 回答：
 
 ---
 
-## 6. 推荐阅读顺序
+## 6. 阅读顺序
 
 ~~~text
 README
-先建立 Gateway → LangGraph → Middleware → Persistence 的产品图
+建立 Gateway → LangGraph → Middleware → Persistence 的产品图
 
 01 Context
 理解“每次模型真正看到什么”
@@ -565,7 +574,7 @@ README
 理解 Checkpoint / Journal / Sandbox / Subagent / Recovery / Tests
 ~~~
 
-读完以后，应该能直接回答：
+完成本组文档后，应能够回答：
 
 1. DeerFlow 为什么不是“一个 LangGraph workflow”这么简单？
 2. 为什么它要维护 `summary_text`，却不把 summary 直接写回 messages？
