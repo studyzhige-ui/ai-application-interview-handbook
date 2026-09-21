@@ -37,47 +37,6 @@ DeerFlow 还把两类“历史”分开：LangGraph Checkpoint 保存 Agent 继�
 
 ---
 
-DeerFlow 2.0 自己把产品称为 **super agent harness（超级智能体运行框架）**，并把 Sub-Agent、Memory、Sandbox、Skills、Context Engineering 都放在核心能力里。
-
-但如果只看 README，很容易把它理解成：
-
-~~~text
-LangGraph
-+ 一些 Tool
-+ Memory
-+ Subagent
-~~~
-
-源码真正有价值的地方不是这些功能“有没有”，而是它们怎样一起进入一条产品运行链。
-
-固定快照中的 2.0 核心更接近：
-
-~~~text
-Gateway Run / Thread
-        ↓
-LangGraph Checkpoint State
-        ↓
-langchain.create_agent
-        ↓
-DeerFlow Middleware Chain
-        ↓
-Model Call ↔ Tool Call
-        ↓
-Sandbox / MCP / Skills / Memory / Subagent
-        ↓
-Checkpoint State + Run Journal
-        ↓
-SSE / History / Resume / Replay
-~~~
-
-因此这组文档不会先把 DeerFlow 按通用课程切成 Context / Memory / Tool，然后去源码里找同名文件。
-
-正确顺序是：
-
-> **先还原 DeerFlow 一次真实 Run 是怎样被组装、执行、持久化和恢复的；再从这条运行链中分别抽出 Context、Memory、Tool 和 Engineering 生命周期。**
-
----
-
 ## 1. 先建立 DeerFlow 自己的产品心智模型
 
 ### Gateway 是默认产品运行入口，不是裸 LangGraph Server

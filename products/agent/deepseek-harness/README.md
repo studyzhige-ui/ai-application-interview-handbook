@@ -37,36 +37,6 @@ Model Request
 
 ---
 
-DeepSeek Harness 很容易被误读成“DeepSeek 自己做了一个类似 Claude Code 的 CLI Agent”。
-
-从源码看，它真正有价值的地方不在 UI，而在一套更底层的 Agent Harness（智能体运行框架）思想：
-
-> **几乎所有能力都是 Cordis Plugin（插件）；运行中的重要事实优先写进 Append-only Session Log（仅追加会话日志）；模型真正看到的上下文，则是从这份日志投影出来的当前 Surface（模型可见表面）。**
-
-这和 Codex、Claude Code 的实现形态都不一样。
-
-如果先拿别的产品的 Thread / Memory / Tool Registry 概念来套，很容易漏掉 DeepSeek Harness 最核心的设计：
-
-~~~text
-Cordis 插件树
-     ↓
-服务 / Event / Tool / Prompt Contribution
-     ↓
-Agent Loop
-     ↓
-SessionEvent Append-only Log
-     ↓
-Surface Projection
-     ↓
-Model Request
-~~~
-
-因此这组文档仍然坚持一条原则：
-
-> **先把 DeepSeek Harness 自己的执行模型讲清楚，再讨论它和通用 Agent 概念的对应关系。**
-
----
-
 ## 1. 先建立 DeepSeek Harness 自己的产品心智模型
 
 ### 先理解“everything is a plugin”到底是什么意思

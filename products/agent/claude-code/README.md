@@ -35,18 +35,6 @@ Context 瘦身 + Memory / Skill / Tool 准备
 
 ---
 
-本组文档遵循同一项源码学习原则：**先读产品源码，再抽象 Agent 知识。**
-
-Claude Code 的源码形态和 Codex 差异很大。如果先拿 Codex 的 Thread / Session / StepContext、Extension Registry、replacement-history checkpoint 等概念去套，很容易得到一份“看起来很统一、实际上不真实”的文档。
-
-固定镜像呈现为一个大型 TypeScript 产品运行时：交互式 REPL（终端交互界面）在 `screens/REPL.tsx` 中组织本轮状态，Headless（无界面） / SDK（开发工具包）路径可以通过 `QueryEngine` 管理会话，而两条入口最终都汇入 `query.ts` 的 `query()` / `queryLoop()`。工具、MCP、Skills、Memory、权限、Subagent（子智能体）、Compaction（上下文压缩）、Transcript（会话记录）都围绕这一主循环协作。
-
-所以本组文档首先回答：
-
-> **用户在 Claude Code 输入一句任务以后，产品到底经过哪些真实对象和调用路径，才变成模型请求、工具执行、长期记忆、压缩与恢复？**
-
----
-
 ## 1. 先把 Claude Code 的真实产品入口看清楚
 
 这个镜像并不是只有一个“Agent 类”。
