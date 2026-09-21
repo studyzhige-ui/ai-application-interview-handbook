@@ -518,3 +518,33 @@ Morning 主要观察：**Harness / Skill 的“岗位扩散”已经非常明显
 Morning 盲区：17:00 优先追 **字节 AI 后端二面** 的作者与可稳定原文、**阿里云 AI 应用开发一面** 的 post-specific 原帖 / Candidate Timeline、**小红书 9/20 Agent 平台研发** 与 **4399 9/18 Agent** 的 stable original；继续补腾讯 / 美团 / 快手 / 百度 / 蚂蚁 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米及非牛客平台在 9/20～9/21 新发布的目标岗第一人称来源。质量门槛不变。
 
 Morning 不修改 `interview/canonical/`、`market/analysis/` Frozen Canonical 统计或任何 Curriculum 正文。
+
+### 17:00 Afternoon Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-18 17:00 ～ 2026-09-21 17:00**；主动发现只使用窗口内新发布 / 更新，历史页面只用于 provenance、作者 Timeline、Role Scope 与全历史去重。
+- Baseline / full-history dedup：重新读取当前 `main`、`market/README.md`、`market/monitoring/inbox.md`、`market/monitoring/daily-log.md`、两份 Market Policy 和最新 `batch-31.md`；由于本轮出现可进入 Inbox 的候选，随后**逐个直接回读 `market/interviews/batch-01.md`～`batch-31.md` 全历史**。重新确认正式 Market 基线为 **31 Batch / 291 HUMAN-A / `S001–S291` / 最大 `S291` / 下一 `S292`**。根目录复核仍没有 `research/` 一级目录。
+- Search effort：Afternoon 新增至少 **120 组定向 Query / Query 变体**，针对 Morning 盲区重点追字节 AI 后端 / AI 全栈、阿里云 AI 应用、小红书 Agent 平台、4399 Agent，并继续覆盖字节 / 抖音、阿里 / 千问、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场；岗位别名继续覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `Coding Agent` / `Harness` / `Runtime` / `Applied AI` / `FDE` / `RAG` / `大模型应用开发` / `智能体开发`。同时继续补小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等非牛客来源。
+- Verification effort：显式打开、回读或追源 **25+ 次** post-specific 原帖、作者主页、企业页、搜索结果和 provenance 入口。只把 Stable Original + Candidate First-person 用于准入；Search Snippet、企业聚合、二次整理、JD 和页面壳只计验证工作量。
+- Passed HUMAN-A → Inbox：**2 个独立招聘流程**，均由真实候选人 `SOLDIER_627` 发布，但公司不同，按规则分别暂存：① 小红书 Agent 平台研发一面；② 字节 AI 全栈（飞书）一面。Afternoon **不分配 `Sxxx`、不创建 Batch**。
+
+Afternoon 通过项：
+
+1. **小红书｜Agent 平台研发｜一面｜发布 9/20 14:15**：Morning 尚未闭环的 post-specific 原帖 `https://www.nowcoder.com/discuss/931189826643066880?sourceSSR=enterprise` 本轮已可稳定直接回读。作者 `SOLDIER_627`，同济大学 2027 Java，净时长约 29 分钟；正文明确记录上一段实习、求职方向、团队协作与 System Design，评论区楼主补充“面试官迟到 + 面完秒挂”，真人招聘现场成立。岗位标题直接为 Agent 平台研发。技术链包括：后续更想做 Agent 还是后端 → 设计支撑 **10 万 QPS** 且可水平扩展的商品详情服务（底层只有一张 MySQL 商品表）→ 管理端改价后如何完整设计缓存更新 / 失效链路保证 C 端价格新鲜度 → 现场最长回文字符串。原帖与作者主页均稳定可核验。
+2. **字节｜AI 全栈（飞书）｜一面｜发布 9/21 14:28**：post-specific 原帖 `https://www.nowcoder.com/discuss/931555466247700480?sourceSSR=users` 可稳定直接回读，作者同为 `SOLDIER_627`，净时长约 1 小时。连续问题从 Agent 项目 Architecture → Agent 不遵守 Skill 限制时怎样治理、是否应把 Skill 规则写进更高优先级规范，继续进入海量监控视频 OOM / 多长视频串并行、分块上传与断点续传、一致性 / 清理、视频合并失败，再追 MySQL Index、SQL 800ms→50ms 后接口仍慢的端到端定位、Cache / Concurrency，最后是 10 万位大整数相加、Heap、HashMap、一致性哈希。Role Scope 与高技术密度均明确。
+3. **作者真实性 / Timeline**：作者主页当前显示 18 篇发布，并连续记录 9/21 字节 AI 全栈、百度 Agent 后端三面，9/20 度小满 AI 全栈、小红书 Agent 平台，以及此前快手 AI 全栈、美团 AI 后端等本人招聘流程；个人身份、技术栈和求职 Timeline 连续稳定，不是批量内容账号。
+4. **全历史去重**：写入 Inbox 前已逐个直接回读 `batch-01.md`～`batch-31.md`。历史确有同一候选人的其它公司正式流程（如快手 AI 全栈、美团 AI 后端）；这些与当前小红书、字节属于不同公司 / 独立招聘流程，不跨公司合并。未发现两个当前 URL、当前公司流程，或“小红书 Agent 平台 → 10 万 QPS / 缓存新鲜度 → 最长回文”“字节 Skill 遵从性 → 海量视频 OOM / 断点续传 / 清理 → SQL 端到端性能 → 大数 / Heap / HashMap / Consistent Hashing”的历史同场来源。GitHub Search 对作者 / exact URL 的 0 命中仅作辅助，不作为未收录证明。
+
+Afternoon 重点排除 / 待追源：
+
+1. **百度 Agent 后端三面｜同作者 `SOLDIER_627`｜9/21 09:13**：作者 Timeline 已能看到团队做内部 AI 研发提效平台、动态知识库等高价值内容，但 post-specific direct open 本轮仍只返回页面壳；同一作者并不能替代 Stable Original Gate。并且若后续补齐，需要与其已有百度同招聘流程轮次合并，而不是按轮次重复计数。
+2. **度小满 AI 全栈一面｜同作者｜9/20 17:39**：作者页可见完整高密度摘要，但 post-specific 详情仍只返回页面壳；按 Stable Original Gate 不进 Inbox。
+3. **腾讯 AI 全栈 9/18**：仍能定位高并发 JSONL、Worker Crash / Graceful Exit、数据库任务队列、JS Rate Limiter 等真人链，但 direct original 本轮仍是页面壳，继续零贡献。
+4. **4399 Agent 开发 9/18｜`AAA野生原子弹批发`**：作者 Timeline 和 Harness / 十万级日志 / Agent SQL 验错 / 测试通过率 / AI 真实性验证链仍然很强，但 post-specific Stable Original 仍未闭环；继续待追源。
+5. **阿里云 AI 应用开发一面**：企业入口依旧可见 Hallucination、RAG 完整链与两方案比较、MCP、百亿级商品 CRUD / 分库分表、AI Coding / Coding，但候选人 post-specific 原帖与 Timeline 仍未闭环；企业聚合不替代 HUMAN-A provenance。
+6. **合集 / 内容站 / 二次整理 / AI 自动面试 / 普通岗位 AI 深挖**：NiceOffer 等标准化页面、PDD 系列面经、SHEIN 转述、欣旺达 AI 自动面、普通 Backend / Frontend / Test 中的 Agent / Skill / Memory 深挖均继续按对应 Gate 排除，不因技术词新而放宽。
+7. **非牛客平台**：本轮继续补小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等；最近 72 小时高曝光结果仍主要是课程、JD、整理、转载或旧复盘，没有新的、稳定可核验目标岗候选人本人 HUMAN-A。
+
+Afternoon 主要观察：**Agent / AI Application 的工程验真正在进一步呈现“规则遵从 + 生产链路 + Foundation”三层同场。** 字节新候选不只问 Agent / Skill，而是追模型不遵守 Skill 约束时怎样提高规则优先级，再把同一场切到海量视频 OOM、断点续传 / 清理、SQL 端到端性能和传统数据结构；小红书 Agent 平台则直接用 10 万 QPS 商品详情与缓存新鲜度验证平台候选人的 System Design。前沿 Agent 能力没有替代传统工程底座，而是和它一起被验真。该信号只进入 Market Observation，**不修改 `interview/canonical/`、`market/analysis/` Frozen 统计或任何 Curriculum 正文**。
+
+Afternoon 盲区：22:00 应重新核验当前 2 个 Inbox 候选的 Stable Original 与作者 Timeline，并再次直接回读全部历史 Batch 做最终去重；继续追同作者百度 Agent 后端三面 / 度小满 AI 全栈的 post-specific 原文，以及 4399、阿里云、腾讯 AI 全栈、携程 / 快手等近端高价值线索。质量门槛不变。
