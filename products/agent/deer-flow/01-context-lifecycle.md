@@ -3,7 +3,7 @@
 
 [← DeerFlow 总览](README.md) · [Memory →](02-memory-lifecycle.md)
 
-> **源码基线：** bytedance/deer-flow@e545c28ac301e6f9feae247c513d8ea8f83df294
+> **源码基线：** bytedance/deer-flow@29d285731b326a728a9df33d3641f73b68bbe48b
 
 DeerFlow 2.0 的 Context（上下文）不能简单理解成 LangGraph 的 state["messages"]。
 
@@ -672,16 +672,16 @@ checkpoint → restart → continue
 
 ## 5. 源码锚点
 
-1. [Architecture](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/ARCHITECTURE.md)
-2. [Lead Agent assembly](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/lead_agent/agent.py)
-3. [Generic factory](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/factory.py)
-4. [ThreadState](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/thread_state.py)
-5. [DynamicContextMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py)
-6. [DurableContextMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/durable_context_middleware.py)
-7. [SummarizationMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/summarization_middleware.py)
-8. [Memory summarization hook](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/memory/summarization_hook.py)
-9. [ToolOutputBudgetMiddleware](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py)
-10. [Manual context compaction](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/packages/harness/deerflow/runtime/context_compaction.py)
-11. [Middleware execution flow](https://github.com/bytedance/deer-flow/blob/e545c28ac301e6f9feae247c513d8ea8f83df294/backend/docs/middleware-execution-flow.md) — 用于理解 LangChain hook 顺序；实际 middleware 清单以当前 assembly 源码为准。
+1. [Architecture](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/ARCHITECTURE.md)
+2. [Lead Agent assembly](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/lead_agent/agent.py)
+3. [Generic factory](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/factory.py)
+4. [ThreadState](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/thread_state.py)
+5. [DynamicContextMiddleware](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py)
+6. [DurableContextMiddleware](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/middlewares/durable_context_middleware.py)
+7. [SummarizationMiddleware](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/middlewares/summarization_middleware.py)
+8. [Memory summarization hook](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/memory/summarization_hook.py)
+9. [ToolOutputBudgetMiddleware](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/middlewares/tool_output_budget_middleware.py)
+10. [Manual context compaction](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/runtime/context_compaction.py)
+11. [Middleware execution flow](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/middleware-execution-flow.md) — 用于理解 LangChain hook 顺序；实际 middleware 清单以当前 assembly 源码为准。
 
 下一篇：[DeerFlow Memory Lifecycle →](02-memory-lifecycle.md)

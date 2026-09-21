@@ -2,7 +2,7 @@
 
 [← Memory](02-memory-lifecycle.md) · [Codex 总览](README.md) · [Engineering & Evaluation →](04-engineering-evaluation.md)
 
-> **源码基线：** `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`
+> **源码基线：** `openai/codex@bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`
 
 Tool（工具）是 Coding Agent 最容易被低估的一部分。
 
@@ -638,17 +638,17 @@ ToolOrchestrator 计算：当前命令只需要 workspace 内权限，所以不�
 
 建议按这条顺序验证：
 
-1. [`tools/src/tool_executor.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/tools/src/tool_executor.rs)：ToolExecutor 与 ToolExposure 的共享契约。
-2. [`core/src/tools/spec_plan.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/spec_plan.rs)：一次 Step 怎样汇总并筛选工具。
-3. [`core/src/tools/registry.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/registry.rs)：注册、Hook、dispatch。
-4. [`core/src/tools/router.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/router.rs)：模型 Tool Call 如何变成内部调用。
-5. [`core/src/mcp_tool_exposure.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/mcp_tool_exposure.rs)：MCP Tool 的暴露策略和 spec 大小预算。
-6. [`core/src/tools/handlers/tool_search.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/tool_search.rs)：Deferred Tool 的 BM25 搜索。
-7. [`core/src/tools/handlers/mcp.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/mcp.rs)：MCP Handler、ready 等待和结果处理。
-8. [`ext/skills/src/extension.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/extension.rs)：Skill 怎样同时参与 Context 与 Tool。
-9. [`ext/skills/src/render.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/skills/src/render.rs)：Skill Catalog 的上下文预算。
-10. [`core/src/tools/orchestrator.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/orchestrator.rs)：Approval、Permission、Sandbox、Network 和 escalation。
-11. [`core/src/tools/parallel.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/parallel.rs)：并发、取消、Tool Result。
-12. [`exec-server/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/exec-server)：真正的执行环境和文件系统隔离。
+1. [`tools/src/tool_executor.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/tools/src/tool_executor.rs)：ToolExecutor 与 ToolExposure 的共享契约。
+2. [`core/src/tools/spec_plan.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/spec_plan.rs)：一次 Step 怎样汇总并筛选工具。
+3. [`core/src/tools/registry.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/registry.rs)：注册、Hook、dispatch。
+4. [`core/src/tools/router.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/router.rs)：模型 Tool Call 如何变成内部调用。
+5. [`core/src/mcp_tool_exposure.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/mcp_tool_exposure.rs)：MCP Tool 的暴露策略和 spec 大小预算。
+6. [`core/src/tools/handlers/tool_search.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/handlers/tool_search.rs)：Deferred Tool 的 BM25 搜索。
+7. [`core/src/tools/handlers/mcp.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/handlers/mcp.rs)：MCP Handler、ready 等待和结果处理。
+8. [`ext/skills/src/extension.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/ext/skills/src/extension.rs)：Skill 怎样同时参与 Context 与 Tool。
+9. [`ext/skills/src/render.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/ext/skills/src/render.rs)：Skill Catalog 的上下文预算。
+10. [`core/src/tools/orchestrator.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/orchestrator.rs)：Approval、Permission、Sandbox、Network 和 escalation。
+11. [`core/src/tools/parallel.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/parallel.rs)：并发、取消、Tool Result。
+12. [`exec-server/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/exec-server)：真正的执行环境和文件系统隔离。
 
 下一篇：[Codex Engineering & Evaluation →](04-engineering-evaluation.md)

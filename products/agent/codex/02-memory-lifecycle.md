@@ -2,7 +2,7 @@
 
 [← Context](01-context-lifecycle.md) · [Codex 总览](README.md) · [Tool →](03-tool-lifecycle.md)
 
-> **源码基线：** `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`
+> **源码基线：** `openai/codex@bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`
 
 如果把 Memory（长期记忆）理解成“把聊天记录存起来，以后做向量检索”，会完全看不懂 Codex 当前源码。
 
@@ -571,17 +571,17 @@ Codex 不会直接手改 summary，而是追加一条用户 correction note。�
 
 建议按生命周期顺序阅读：
 
-1. [`memories/README.md`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/README.md)：Memory write/read 的源码内职责说明。
-2. [`memories/write/src/start.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/src/start.rs)：什么时候启动 Memory 工作。
-3. [`state/src/runtime/memories.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/state/src/runtime/memories.rs)：候选选择、Job lease、Stage 1 Output、usage / retention。
-4. [`memories/write/src/phase1.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/src/phase1.rs)：单 Thread 提取。
-5. [V2 Stage One Prompt](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/templates/memories/stage_one_system_v2.md)：什么值得记、怎样区分证据与指令。
-6. [`memories/write/src/phase2.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/src/phase2.rs)：全局整理。
-7. [`memories/write/src/storage.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/src/storage.rs) 与 [`workspace.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/src/workspace.rs)：文件工作区、Git diff 与最终校验。
-8. [V2 Consolidation Prompt](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/write/templates/memories/consolidation_v2.md)：全局整理的语义约束。
-9. [`ext/memories/src/extension.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/memories/src/extension.rs)：Memory 怎样接入 Context 与 Tool。
-10. [`ext/memories/src/tools/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/memories/src/tools)：search / list / read / ad-hoc note。
-11. [`memories/read/src/citations.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/read/src/citations.rs)：记忆引用与 Thread provenance。
-12. [`memories/read/src/usage.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/memories/read/src/usage.rs)：读取行为统计。
+1. [`memories/README.md`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/README.md)：Memory write/read 的源码内职责说明。
+2. [`memories/write/src/start.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/src/start.rs)：什么时候启动 Memory 工作。
+3. [`state/src/runtime/memories.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/state/src/runtime/memories.rs)：候选选择、Job lease、Stage 1 Output、usage / retention。
+4. [`memories/write/src/phase1.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/src/phase1.rs)：单 Thread 提取。
+5. [V2 Stage One Prompt](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/templates/memories/stage_one_system_v2.md)：什么值得记、怎样区分证据与指令。
+6. [`memories/write/src/phase2.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/src/phase2.rs)：全局整理。
+7. [`memories/write/src/storage.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/src/storage.rs) 与 [`workspace.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/src/workspace.rs)：文件工作区、Git diff 与最终校验。
+8. [V2 Consolidation Prompt](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/write/templates/memories/consolidation_v2.md)：全局整理的语义约束。
+9. [`ext/memories/src/extension.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/ext/memories/src/extension.rs)：Memory 怎样接入 Context 与 Tool。
+10. [`ext/memories/src/tools/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/ext/memories/src/tools)：search / list / read / ad-hoc note。
+11. [`memories/read/src/citations.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/read/src/citations.rs)：记忆引用与 Thread provenance。
+12. [`memories/read/src/usage.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/memories/read/src/usage.rs)：读取行为统计。
 
 下一篇：[Codex Tool Lifecycle →](03-tool-lifecycle.md)

@@ -3,8 +3,56 @@
 [← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent Curriculum](../../../curriculum/09-agent/README.md) · [Agent References](../../../references/agent/README.md)
 
 > **源码仓库：** [openai/codex](https://github.com/openai/codex)  
-> **固定源码快照：** [`5c5308fc9a9ee789049d646ef11e5400384b9c6f`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f)  
-> **核验日期：** 2026-09-20
+> **固定源码快照：** [`bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695)  
+> **核验日期：** 2026-09-21
+
+## 0. 核心设计
+
+如果只记住一句话，可以把固定快照中的 Codex 概括成：
+
+> **一个强类型 Agent Core（执行内核），用 Thread / Session / Turn / StepContext 固定执行语义，再通过 Extension Registry、Tool Runtime 和独立的执行隔离 / 持久化层接入不断增长的产品能力。**
+
+“强类型 Core + Lifecycle Extensions”是对源码结构的工程抽象，不是 OpenAI 官方 slogan。它对应的真实价值，是让 TUI、非交互 CLI、App Server 等不同产品入口共享同一套 Agent 执行语义，同时把 Memory、MCP、Skills、Guardian、Goal 等能力放进明确的生命周期边界，而不是持续把条件分支塞进主循环。
+
+源码骨架可以先记成：
+
+```text
+TUI / CLI / App Server
+        ↓
+ThreadManager
+        ↓
+Thread / Session
+        ↓
+Turn
+        ↓
+StepContext
+冻结这一轮采样附近的 Model / Tool / Environment / Permission
+        ↓
+Context Assembly + ToolRouter
+        ↓
+Model Sampling ↔ Tool Runtime
+        ↓
+Hook / Approval / Permission / Sandbox / Network
+        ↓
+Conversation History / Thread Store / Rollout / State DB
+        ↓
+Resume / Fork / Trace / Evaluation
+
+Extension Registry
+   ├─ Memory
+   ├─ MCP / Plugins
+   ├─ Skills
+   ├─ Guardian
+   ├─ Goal / Queue
+   └─ Web Search / Image Generation ...
+          ↘ 在 Thread / Turn / Context / Tool 生命周期接入
+```
+
+这里最关键的几个不变量是：**一次采样与随后工具执行共享同一份 StepContext；“能力已经注册”不等于“这一轮模型能看见”；Tool Call 必须经过统一 Runtime，而不是扩展自己绕过权限与沙箱；可恢复状态与深度诊断证据由不同持久化组件分工。**
+
+因此 Codex 的架构中心不是某一个 Prompt，也不是某一个 Tool Registry，而是：**怎样让一个长期 Thread 在能力、环境、权限和上下文都可能变化的情况下，仍然以一致、可恢复、可审计的执行快照向前推进。**
+
+---
 
 这一组文档不是把通用 Agent 教材里的 Context（上下文）、Memory（长期记忆）、Tool（工具） 再讲一遍，然后给它们套上 Codex 的名字。
 

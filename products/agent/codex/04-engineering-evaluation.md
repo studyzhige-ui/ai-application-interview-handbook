@@ -2,7 +2,7 @@
 
 [← Tool](03-tool-lifecycle.md) · [Codex 总览](README.md)
 
-> **源码基线：** `openai/codex@5c5308fc9a9ee789049d646ef11e5400384b9c6f`
+> **源码基线：** `openai/codex@bb054a2b03f15787dcc2f9bd8ebfde713bc5b695`
 
 前面三篇分别沿 Context（上下文）、Memory（长期记忆）和 Tool（工具）追了一条完整生命周期。
 
@@ -788,18 +788,18 @@ Inference #4
 
 如果要自己核验全局结构，建议按下面顺序：
 
-1. [`codex-rs/Cargo.toml`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/Cargo.toml)：完整 workspace，先确认产品真实包含哪些 crate。
-2. [`cli/src/main.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/cli/src/main.rs)：产品入口和命令面。
-3. [`app-server/src/extensions.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/app-server/src/extensions.rs)：Memory、Skills、MCP、Goal、Guardian 等怎样正式装进 Runtime。
-4. [`ext/extension-api/src/lib.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/ext/extension-api/src/lib.rs)：扩展可以参与哪些生命周期。
-5. [`core/src/thread_manager.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/thread_manager.rs)：Thread 创建、恢复、Fork 与运行实例。
-6. [`core/src/state/service.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/state/service.rs)：一条 Session 真正持有哪些长期服务。
-7. [`core/src/agent/api.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/agent/api.rs) 与 [`tools/handlers/multi_agents_v2.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/handlers/multi_agents_v2.rs)：多 Agent 控制语义和 Tool 表面。
-8. [`core/src/tools/code_mode/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/tools/code_mode)：Code Mode 怎样继续走统一 Tool Runtime。
-9. [`exec-server/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/exec-server)：执行环境与远端 / 本地执行边界。
-10. [`thread-store/README.md`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/thread-store/README.md)：Thread 持久化职责。
-11. [`protocol/src/error.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/protocol/src/error.rs) 与 [`core/src/responses_retry.rs`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/src/responses_retry.rs)：错误分类与模型请求恢复。
-12. [`rollout-trace/README.md`](https://github.com/openai/codex/blob/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/rollout-trace/README.md)：完整诊断证据模型。
-13. [`core/tests/suite/`](https://github.com/openai/codex/tree/5c5308fc9a9ee789049d646ef11e5400384b9c6f/codex-rs/core/tests/suite)：跨模块集成验证。
+1. [`codex-rs/Cargo.toml`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/Cargo.toml)：完整 workspace，先确认产品真实包含哪些 crate。
+2. [`cli/src/main.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/cli/src/main.rs)：产品入口和命令面。
+3. [`app-server/src/extensions.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/app-server/src/extensions.rs)：Memory、Skills、MCP、Goal、Guardian 等怎样正式装进 Runtime。
+4. [`ext/extension-api/src/lib.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/ext/extension-api/src/lib.rs)：扩展可以参与哪些生命周期。
+5. [`core/src/thread_manager.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/thread_manager.rs)：Thread 创建、恢复、Fork 与运行实例。
+6. [`core/src/state/service.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/state/service.rs)：一条 Session 真正持有哪些长期服务。
+7. [`core/src/agent/api.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/agent/api.rs) 与 [`tools/handlers/multi_agents_v2.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/handlers/multi_agents_v2.rs)：多 Agent 控制语义和 Tool 表面。
+8. [`core/src/tools/code_mode/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/tools/code_mode)：Code Mode 怎样继续走统一 Tool Runtime。
+9. [`exec-server/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/exec-server)：执行环境与远端 / 本地执行边界。
+10. [`thread-store/README.md`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/thread-store/README.md)：Thread 持久化职责。
+11. [`protocol/src/error.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/protocol/src/error.rs) 与 [`core/src/responses_retry.rs`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/src/responses_retry.rs)：错误分类与模型请求恢复。
+12. [`rollout-trace/README.md`](https://github.com/openai/codex/blob/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/rollout-trace/README.md)：完整诊断证据模型。
+13. [`core/tests/suite/`](https://github.com/openai/codex/tree/bb054a2b03f15787dcc2f9bd8ebfde713bc5b695/codex-rs/core/tests/suite)：跨模块集成验证。
 
 回到：[Codex 系统总览](README.md)

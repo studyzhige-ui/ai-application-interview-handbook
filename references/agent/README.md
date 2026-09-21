@@ -4,7 +4,7 @@
 
 > **用途：Agent Runtime 的技术证据与版本边界。** 本目录校准源码事实、开放规范和工程原则，不创建 HUMAN-A 面试证据，也不改变 Canonical Source Count。
 
-**证据核验日期：2026-09-20**
+**证据核验日期：2026-09-21**
 
 ## 1. 证据体系
 
@@ -24,10 +24,10 @@ Tier B 回答“某个成熟 Agent 产品在指定版本里到底怎样实现”
 
 | 产品 | 源码 | 固定快照 | 完整学习入口 |
 |---|---|---|---|
-| OpenAI Codex | `openai/codex` | `5c5308fc9a9ee789049d646ef11e5400384b9c6f` | [Products / Codex](../../products/agent/codex/README.md) |
+| OpenAI Codex | `openai/codex` | `bb054a2b03f15787dcc2f9bd8ebfde713bc5b695` | [Products / Codex](../../products/agent/codex/README.md) |
 | Claude Code | `studyzhige-ui/claude-code-source-private` | `58231dcce408f805c645cfbc352d2876b517223b` | [Products / Claude Code](../../products/agent/claude-code/README.md) |
 | DeepSeek Harness | `deepseek-ai/deepseek-harness` | `ddefc45fbc7f8e46dd73185e68295696d1297887` | [Products / DeepSeek Harness](../../products/agent/deepseek-harness/README.md) |
-| DeerFlow 2.0 | `bytedance/deer-flow` | `e545c28ac301e6f9feae247c513d8ea8f83df294` | [Products / DeerFlow](../../products/agent/deer-flow/README.md) |
+| DeerFlow 2.0 | `bytedance/deer-flow` | `29d285731b326a728a9df33d3641f73b68bbe48b` | [Products / DeerFlow](../../products/agent/deer-flow/README.md) |
 
 源码索引文件维护自己的固定快照和定位用途：
 

@@ -5,7 +5,50 @@
 > **源码镜像：** [studyzhige-ui/claude-code-source-private](https://github.com/studyzhige-ui/claude-code-source-private)  
 > **固定源码快照：** [`58231dcce408f805c645cfbc352d2876b517223b`](https://github.com/studyzhige-ui/claude-code-source-private/tree/58231dcce408f805c645cfbc352d2876b517223b)  
 > **快照性质：** 私有源码镜像的固定导入提交；仓库没有可用于核验官方 release 的 README / package 元数据，因此本文不虚构 Claude Code 官方版本号。  
-> **核验日期：** 2026-09-20
+> **核验日期：** 2026-09-21
+
+## 0. 核心设计
+
+固定镜像中的 Claude Code 可以先概括为：
+
+> **以 `query() / queryLoop()` 为中心的持续执行 Runtime。每次模型调用前，系统都会重新计算这一轮需要保留的上下文、可见工具和可用能力，同时尽量维持 Prompt Cache 与会话恢复所需的稳定结构。**
+
+“Query-loop 驱动的 Context / Cache / Capability 编排”是根据源码调用关系得到的工程抽象，不是官方架构名。它最有价值的地方，是把长期 Coding Session 中会互相影响的几件事放到同一个循环里处理：上下文预算、缓存前缀、Memory / Skill 预取、动态工具集合、工具执行和 Transcript 恢复。
+
+```text
+Interactive REPL          Headless / SDK
+      │                         │
+      └──────────┬──────────────┘
+                 ↓
+              query()
+                 ↓
+             queryLoop()
+                 ↓
+Tool Result Budget → Snip → Microcompact
+→ Context Collapse → Auto Compact
+→ Memory / Skill Prefetch
+→ API-bound Messages + Visible Tools
+                 ↓
+              Model
+                 ↓
+         Tool Call / Answer
+                 ↓
+Validation → Hooks → Decision → Execution
+                 ↓
+Tool Result / Attachments / Memory / Skill State
+                 ↓
+          下一次 queryLoop
+                 ↓
+Transcript parentUuid chain + File / Worktree / replacement state
+                 ↓
+              Resume
+```
+
+最重要的几个不变量是：**本地 Transcript 不等于每次 API 真正看到的 Context；Context slimming 要尽量保护可复用前缀；Deferred Tool / Skill 先暴露少量 metadata，再按需展开；工具使用策略和实际执行环境是不同边界；Compaction / Snip 必须同时维护可恢复的 Transcript 链。**
+
+因此 Claude Code 的架构中心不是一个复杂 Graph，而是：**在长会话、高工具量和持续代码操作中，不断计算一个成本可控、缓存友好、能力足够且可以恢复的 Model View。**
+
+---
 
 本组文档遵循同一项源码学习原则：**先读产品源码，再抽象 Agent 知识。**
 
