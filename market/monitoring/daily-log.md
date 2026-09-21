@@ -488,3 +488,33 @@ Evening 重点复核：
 5. **Role Scope Gate 需要继续收紧。** Agent / Memory / AI Coding 已扩散到普通 Backend / Data / Test 岗；术语出现本身越来越不能证明岗位主体属于目标范围。
 
 饱和度 / 盲区：最近 72 小时公开热门层继续呈现**局部饱和 + 高 provenance 成本**。牛客仍是最容易取得稳定候选人原帖的平台，但企业聚合、Search Cache、答案化页面与 post-specific Cache Miss 占比较高；字节广告团队、4399、携程、腾讯 AI 全栈、小红书 Agent 平台研发仍是最值得继续补 provenance 的近端线索。腾讯 / 美团 / 百度 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米等目标公司，以及小红书 / 知乎 / 脉脉 / 独立博客等非牛客平台，在当前窗口内仍缺更多稳定可核验的新目标岗第一人称来源。继续补盲，但不降低 Gate。
+
+---
+
+## 2026-09-21
+
+### 10:00 Morning Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-18 10:09 ～ 2026-09-21 10:09**；主动发现只使用窗口内新发布 / 更新，窗口外页面只用于 provenance、作者 Timeline、Role Scope 与历史背景判断。
+- Baseline：重新读取当前 `main`、`market/README.md`、`market/monitoring/inbox.md`、`market/monitoring/daily-log.md`、两份 Market Policy 和最新 `market/interviews/batch-31.md`。当前正式 Market 基线为 **31 Batch / 291 HUMAN-A / `S001–S291` / 最大 `S291` / 下一 `S292`**，本轮开始时 Inbox 为空；仓库根目录复核仍**没有 `research/` 一级目录**。由于本轮最终 **0 个候选进入 Inbox、0 个 ID 分配**，未触发“准入 / 编号前逐个直接回读全部历史 Batch”的写入前 Gate；若 Afternoon 有候选达到准入线，必须先直接回读 `batch-01.md`～`batch-31.md` 全历史。
+- Search effort：至少 **180 组定向 Query / Query 变体**。逐公司覆盖字节 / 抖音、阿里 / 阿里云 / 千问、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，并继续补 4399、携程、Shopee、去哪儿等近端线索；岗位别名覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `Coding Agent` / `Harness` / `Runtime` / `Applied AI` / `FDE` / `RAG` / `大模型应用开发` / `智能体开发`。另外单独补小红书 / 知乎 / 脉脉 / CSDN / 掘金 / Bilibili / 独立技术社区与聚合站，用于追原帖而非替代原帖。
+- Verification effort：显式打开、回读或追源 **27+ 次** post-specific 原帖、作者主页、企业面经页、话题页、二次整理页和 provenance 入口；其中多条牛客 direct detail 只能返回页面壳。Search Snippet、企业聚合、二次整理和 JD 只算验证工作量，不替代 Stable Original。
+- Passed HUMAN-A → Inbox：**0 个**。本轮没有新的流程完整满足真人面试官 + 候选人本人第一人称 + 高技术密度 + 目标 Role Scope + Stable Original + 可核验 Candidate Timeline / provenance；Inbox 继续为空，不分配 `Sxxx`、不创建 Batch。
+
+Morning 重点复核 / 排除：
+
+1. **字节 AI 后端开发二面｜当前热门新帖**：已定位 post-specific 原帖 `https://www.nowcoder.com/feed/main/detail/a197824e0e6e444297482be3c155b0a8`，目标 Role Scope 成立；二次索引可见 Redis、RAG、大规模预约系统设计与算法等连续内容。但 direct original 本轮仍只返回页面壳，作者身份 / Timeline 也未闭环。不能用面灵等二次整理替代候选人原帖，因此 Morning 只记待追源，零贡献。
+2. **阿里云 AI 应用开发一面｜9/16 面、9/19 挂**：企业面经页当前可见真人流程，技术链包含 LLM Hallucination、RAG 定义 / 完整流程、两个 RAG 实现如何比较与选型、MCP、百亿级商品 CRUD / 分库分表思路、AI Coding 与现场 Coding；Role Scope 很强。但稳定入口仍是企业聚合页，尚未定位候选人 post-specific 原帖与账号 Timeline，不进 Inbox。Afternoon 优先追原始详情与作者 provenance。
+3. **小红书 Agent 平台研发一面｜9/20**：企业页仍可见约 29 分钟真人一面和目标 Agent 平台岗位，但 post-specific 原帖、作者身份与 Timeline 仍未闭环；延续昨日 Stable Original Gate，零贡献。
+4. **4399 Agent 开发｜9/18｜`AAA野生原子弹批发`**：作者主页与个人求职 Timeline 继续稳定，14 道问题链仍覆盖“如何证明不是只依赖 AI”、十万级日志、Harness、Agent SQL 验错、测试成功率来源等；但 post-specific 原始详情正文依然无法稳定取得。作者索引不能替代原帖，继续待追源。
+5. **携程前端一面｜9/20 发布**：这是本轮稳定可直接回读的候选人原帖，连续问 Skill、Agent Context 中的 Message 分类、如何搭建简单 Chat Harness、是否读过 DeepSeek Harness 源码，说明 Harness / Skill 已明显扩散进普通前端招聘；但标题明确为前端工程师，无法证明目标 AI Application / Agent Role Scope，因此严格排除，不贡献 HUMAN-A。
+6. **欣旺达 9/20 数据开发 AI 面**：页面明确为 `AI面`，属于 AI 自动面试，同时岗位主体是数据开发；同时违反 Human Interviewer 与 Role Scope Gate，直接排除。
+7. **PDD Agent 系列、NiceOffer / 面灵等近期页面**：继续存在“面经 06/07/08”、题目摘要、准备建议、标准答案或来源转述等内容链 / 聚合风险；只用于 Recall / 追原帖，零贡献。
+8. **匿名 `Agent 开发面经`、其它非牛客来源**：匿名来源仍不披露公司 / 具体岗位，无法闭环招聘流程；小红书 / 知乎 / 脉脉 / CSDN / 掘金 / Bilibili 等本轮新结果仍以课程、JD、趋势文章、转载或旧复盘为主，没有新的、稳定可核验目标岗候选人本人 HUMAN-A。
+
+Morning 主要观察：**Harness / Skill 的“岗位扩散”已经非常明显，反而要求 Role Scope Gate 更严格。** 携程普通前端的稳定真人原帖已经直接问到 Chat Harness 与 DeepSeek Harness 源码；这类证据说明前沿 Agent 素养正在成为更广泛的软件工程能力，但不能被错误计入目标 AI Application / Agent 面试频率。另一方面，阿里云 AI 应用开发待追源样本仍把 RAG 方案选型与百亿级 CRUD / 数据库设计放在同一场，继续强化“AI Application = LLM/RAG + Production System Design”的市场方向；由于 provenance 尚未闭环，目前只记 Market Observation，不新增 Canonical、不修改 Curriculum。
+
+Morning 盲区：17:00 优先追 **字节 AI 后端二面** 的作者与可稳定原文、**阿里云 AI 应用开发一面** 的 post-specific 原帖 / Candidate Timeline、**小红书 9/20 Agent 平台研发** 与 **4399 9/18 Agent** 的 stable original；继续补腾讯 / 美团 / 快手 / 百度 / 蚂蚁 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米及非牛客平台在 9/20～9/21 新发布的目标岗第一人称来源。质量门槛不变。
+
+Morning 不修改 `interview/canonical/`、`market/analysis/` Frozen Canonical 统计或任何 Curriculum 正文。
