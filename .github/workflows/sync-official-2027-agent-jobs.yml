@@ -111,12 +111,14 @@ jobs:
           Copy-Item 'market/jobs/official-company-role-index.json' -Destination $stashDir
           Copy-Item 'market/jobs/official-company-role-index.md' -Destination $stashDir
           Copy-Item 'market/jobs/company-scan-pool.md' -Destination $stashDir
+          Copy-Item 'market/jobs/ai-agent-jd-market.md' -Destination $stashDir
 
           $sourceSha = '${{ github.sha }}'
           $inputPaths = @(
             'market/jobs/official-2027-campus-sources.json',
             'market/jobs/official-company-role-index.json',
             'market/jobs/official-first-party-role-seeds.json',
+            'market/jobs/ai-agent-jd-market.md',
             'tools/fetch_dynamic_official_jobs.mjs',
             'tools/fetch_feishu_official_2027.mjs',
             'tools/fetch_moka_official_2027.mjs',
@@ -147,7 +149,7 @@ jobs:
 
           Get-ChildItem (Join-Path $stashDir '*') | Copy-Item -Destination 'market/jobs' -Force
 
-          $changes = git status --porcelain -- 'market/jobs/official-2027-*.generated.*' 'market/jobs/official-company-role-index.json' 'market/jobs/official-company-role-index.md' 'market/jobs/company-scan-pool.md'
+          $changes = git status --porcelain -- 'market/jobs/official-2027-*.generated.*' 'market/jobs/official-company-role-index.json' 'market/jobs/official-company-role-index.md' 'market/jobs/company-scan-pool.md' 'market/jobs/ai-agent-jd-market.md'
           if (-not $changes) {
             Write-Host 'No discovery changes.'
             exit 0
@@ -155,7 +157,7 @@ jobs:
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add 'market/jobs/official-2027-*.generated.*' 'market/jobs/official-company-role-index.json' 'market/jobs/official-company-role-index.md' 'market/jobs/company-scan-pool.md'
+          git add 'market/jobs/official-2027-*.generated.*' 'market/jobs/official-company-role-index.json' 'market/jobs/official-company-role-index.md' 'market/jobs/company-scan-pool.md' 'market/jobs/ai-agent-jd-market.md'
           git commit -m 'market: sync official current-campus Agent discovery [skip ci]'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
@@ -253,7 +255,7 @@ jobs:
         run: |
           mkdir -p "${{ runner.temp }}/job-sync"
           rm -f "${{ runner.temp }}/job-sync/"*
-          for f in market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md; do
+          for f in market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md market/jobs/ai-agent-jd-market.md; do
             cp "$f" "${{ runner.temp }}/job-sync/$(basename "$f")"
           done
 
@@ -262,6 +264,7 @@ jobs:
             market/jobs/official-2027-campus-sources.json
             market/jobs/official-company-role-index.json
             market/jobs/official-first-party-role-seeds.json
+            market/jobs/ai-agent-jd-market.md
             tools/fetch_dynamic_official_jobs.mjs
             tools/fetch_feishu_official_2027.mjs
             tools/fetch_moka_official_2027.mjs
@@ -291,14 +294,14 @@ jobs:
             cp "$f" "market/jobs/$(basename "$f")"
           done
 
-          if [ -z "$(git status --porcelain -- market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md)" ]; then
+          if [ -z "$(git status --porcelain -- market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md market/jobs/ai-agent-jd-market.md)" ]; then
             echo "No discovery changes."
             exit 0
           fi
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md
+          git add market/jobs/official-2027-*.generated.* market/jobs/official-company-role-index.json market/jobs/official-company-role-index.md market/jobs/company-scan-pool.md market/jobs/ai-agent-jd-market.md
           git commit -m 'market: sync official current-campus Agent discovery [skip ci]'
 
           for attempt in 1 2 3; do
