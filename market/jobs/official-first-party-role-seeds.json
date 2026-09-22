@@ -70,6 +70,20 @@
       "evidence_url": "https://www.zhipin.com/school/",
       "verified_on": "2026-09-20",
       "evidence_summary": "BOSS直聘官方校园招聘页当前列出大模型应用工程师（校招），职责包括大模型应用平台建设及AI赋能求职招聘场景。"
+    },
+    {
+      "company": "麒麟软件",
+      "title": "「2027校招」AI研发工程师",
+      "recruitment_type": "2027校园招聘",
+      "locations": [
+        "北京市",
+        "天津市",
+        "湖南省·长沙市"
+      ],
+      "official_url": "https://kylinos.zhiye.com/campus/detail?jobAdId=0b8de09c-3508-4144-99b2-3ddcfd88a29b",
+      "evidence_url": "https://www.kylinos.cn/about/job/campusRecruitment/index.html",
+      "verified_on": "2026-09-20",
+      "evidence_summary": "麒麟软件官方2027校招JD：负责操作系统AI助手/AI子系统应用开发，基于Agent与RAG开发智能技能，建设智能体核心框架、Tool、Memory、AI Infra与智能体评测；同时包含模型优化与端侧推理工作。"
     }
   ]
 }

@@ -2175,7 +2175,10 @@ def main() -> int:
             j for j in jobs
             if (explicit_campus_board or campusish(j))
             and strict_role_title(j)
-            and not training_heavy(j, training_signals)
+            and (
+                not training_heavy(j, training_signals)
+                or j.title.splitlines()[0].strip().lower() in strict_title_allowlist
+            )
             and not is_hard_excluded(j, excludes)
             and "实习" not in j.title.lower()
             and "intern" not in j.title.lower()
