@@ -548,3 +548,29 @@ Afternoon 重点排除 / 待追源：
 Afternoon 主要观察：**Agent / AI Application 的工程验真正在进一步呈现“规则遵从 + 生产链路 + Foundation”三层同场。** 字节新候选不只问 Agent / Skill，而是追模型不遵守 Skill 约束时怎样提高规则优先级，再把同一场切到海量视频 OOM、断点续传 / 清理、SQL 端到端性能和传统数据结构；小红书 Agent 平台则直接用 10 万 QPS 商品详情与缓存新鲜度验证平台候选人的 System Design。前沿 Agent 能力没有替代传统工程底座，而是和它一起被验真。该信号只进入 Market Observation，**不修改 `interview/canonical/`、`market/analysis/` Frozen 统计或任何 Curriculum 正文**。
 
 Afternoon 盲区：22:00 应重新核验当前 2 个 Inbox 候选的 Stable Original 与作者 Timeline，并再次直接回读全部历史 Batch 做最终去重；继续追同作者百度 Agent 后端三面 / 度小满 AI 全栈的 post-specific 原文，以及 4399、阿里云、腾讯 AI 全栈、携程 / 快手等近端高价值线索。质量门槛不变。
+
+---
+
+## 2026-09-22
+
+### 10:00 Morning Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-19 09:57 ～ 2026-09-22 09:57**；主动发现只使用窗口内新发布 / 更新，历史页面仅用于 provenance、作者 Timeline、Role Scope 与去重参考。
+- Baseline / recovery note：重新读取当前 `main`、`market/README.md`、`market/monitoring/inbox.md`、`market/monitoring/daily-log.md`、两份 Market Policy 与最新 `batch-31.md`。正式 Market 基线仍为 **31 Batch / 291 HUMAN-A / `S001–S291` / 最大 `S291` / 下一 `S292`**；根目录仍无 `research/` 一级目录。当前 `main` 仍停在 2026-09-21 Afternoon 状态：昨日 22:00 Finalize 未落库，Inbox 保留昨日已经通过准入 Gate 的 **2 个旧待归档流程**（小红书 Agent 平台研发、字节 AI 全栈（飞书））。Morning 按阶段规则不补发 ID、不创建 Batch，也不改动这两个既有 Inbox 条目；22:00 Finalize 必须重新直接回读全部正式 Batch 后处理这份 backlog。由于本轮没有新的独立候选进入 Inbox、也不分配 ID，本轮未触发新增候选准入前的全历史重新回读。
+- Search effort：至少 **120 组定向 Query / Query 变体**，覆盖字节 / 抖音、阿里 / 阿里云 / 千问、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，以及 4399、携程、度小满等近端线索；岗位别名继续覆盖 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `Coding Agent` / `Harness` / `Runtime` / `Applied AI` / `FDE` / `RAG` / `大模型应用开发` / `智能体开发`。同时补小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等非牛客来源。
+- Verification effort：显式打开、回读或追源 **25+ 次** post-specific 原帖、作者主页、企业面经页、话题页与 provenance 入口；这是验证次数，不等于 25 个唯一 HUMAN-A URL。Search Snippet、企业聚合、二次整理和页面壳只计验证工作量，不替代 Stable Original。
+- New independent HUMAN-A → Inbox：**0 个**。本轮没有新的独立招聘流程需要写入 Inbox；当前 Inbox 总数仍为 **2 个**，均为 2026-09-21 Afternoon 已通过全历史去重的 backlog。Morning 不分配 `Sxxx`、不创建 Batch。
+
+Morning 重点复核 / 排除：
+
+1. **百度 Agent 后端三面｜`SOLDIER_627`｜2026-09-22 09:13**：本轮 post-specific 原帖 `https://www.nowcoder.com/discuss/931476137576845312` 已恢复为可稳定直接回读，约 42 分钟；面试官明确介绍内部 AI 研发提效平台、Agent 编排 / Workflow、本地与云端开发、动态知识库，随后围绕知识来源 / 更新、关系库与向量库、Milvus 架构、Agent / Skill 项目、端到端耗时、Quality Gate，以及“多 1 分钟换 20–30pp 准确率”的性能—质量权衡持续追问。技术密度与 Role Scope 均成立。但 9/21 Afternoon 已记录同一候选人的百度同招聘流程线索，并明确要求若原帖闭环应与更早百度轮次合并；按“同候选人 + 同公司 + 同流程多轮合并”的当前规则，本轮将它标记为 **same-process merge candidate**，不作为新独立 HUMAN-A、不新增 Inbox / S ID。22:00 全历史回读后再决定如何合并回最早 source。
+2. **蚂蚁 9.21 二面｜`Decadeqqq`**：post-specific 原帖与作者主页现在均可稳定核验，连续追 Agent Runtime、Knowledge vs Skills 覆盖、读写鉴权 / 用户确认、Long-task Plan、AI Native 一年 Roadmap、CLI / Skills 暴露、研发—测试—验收流程 AI Native 化、Agent 全托管服务目标、Base Agent 插件化，以及 Tool / Memory / Permission / Agent Loop 插件化。但该作者的 **9.15 蚂蚁一面已正式归档为 `S288`**；公司、作者与招聘 Timeline 明确属于同一蚂蚁流程。因此这是 **S288 的二面 extension / merge candidate**，不是新 Source Count，不进 Inbox、不占新 ID。
+3. **度小满 AI 全栈一面｜`SOLDIER_627`**：搜索索引可见约 53 分钟完整基础与工程问法（URL→页面、TCP、HTTP 502/504、301/302、进程线程 / 浏览器多进程、Go GMP、MySQL B+Tree 等），但 direct post-specific 页面本轮仍只返回页面壳；Stable Original 未闭环，继续 zero contribution。
+4. **`Decadeqqq` 9.21 帆软一面 / 小红书一面**：作者本人和题序都稳定，但前者主体仍偏通用系统 / Go / DB，仅尾部涉及 Agent Cost 与大仓库幻觉；后者主体是 TNC / CDN / TLS / QUIC / DNS / NAT / Maglev 等网络与流量基础，AI 主要作为开发 / 故障辅助。当前没有稳定证据证明招聘主体属于目标 AI Application / Agent Role Scope，严格排除，避免把“AI 素养扩散”误计为目标岗频率。
+5. **4399 Agent 9/18、阿里云 AI 应用、近期快手 / 腾讯等近端线索**：仍主要卡在 post-specific Stable Original / 作者 provenance 或企业聚合；继续追源，不降 Gate。
+6. **非牛客平台 / 合集 / 答案 / JD / AI 自动面试**：本轮跨平台结果仍以课程、技术文章、内容整理、招聘页和旧复盘为主；没有新的、稳定可核验候选人本人目标岗 HUMAN-A。
+
+Morning 主要观察：今天两个最强的新证据都不是“新 Source”，而是**同一招聘流程的追问深度继续加深**。百度三面把动态知识库的“自动更新”继续压到知识质量、实际采纳度、Skill Quality Gate 与准确率 / 延迟 Trade-off；蚂蚁二面则把 `S288` 一面的写操作风险 / Harness / Eval 继续推进到 Runtime、权限、CLI / Skills 暴露、组织流程 AI Native 化与 Tool / Memory / Permission / Agent Loop 插件化。这强化了“流程级合并比 Source Count 更重要”的维护原则。只记 Market Observation / merge candidate，不修改 Frozen Canonical、`market/analysis/` 或 Curriculum。
+
+Morning 盲区：17:00 优先补 **SOLDIER_627 百度同流程的更早轮次定位与可合并 source**、度小满 AI 全栈 original、4399 9/18 Agent、阿里云 AI 应用，以及 9/21～9/22 字节 / 腾讯 / 美团 / 快手 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米的新目标岗原帖；继续补非牛客 Candidate First-person 来源。质量门槛不变。
