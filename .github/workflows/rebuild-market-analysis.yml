@@ -1,12 +1,12 @@
 name: Rebuild market analysis
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - 'interview/canonical/**'
-      - 'market/interviews/**'
       - 'tools/build_market_analysis.py'
       - 'tools/build_gap_candidates.py'
       - 'tools/apply_canonical_audit.py'
@@ -15,6 +15,9 @@ on:
       - 'tools/phase2b_canonical_audit.json'
       - '.github/workflows/rebuild-market-analysis.yml'
 
+# Daily HUMAN-A collection under market/interviews/ must not rebuild Frozen Canonical
+# or market/analysis. Periodic canonical review can run this workflow explicitly, or
+# it can be triggered by reviewed canonical / analysis-tool changes.
 permissions:
   contents: write
 
