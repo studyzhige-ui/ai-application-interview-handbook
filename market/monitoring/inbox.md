@@ -1,6 +1,6 @@
 # HUMAN-A Monitoring Inbox
 
-更新日期：2026-09-21
+更新日期：2026-09-22
 
 本文件只保存**已经满足 HUMAN-A、但尚未归入当天正式 Batch** 的候选。普通搜索线索、摘要、低质量面经、答案型文章、Role Scope 外来源和待核验复制链都不进入 Inbox。
 
@@ -33,7 +33,7 @@
 
 ## 当前正式基线
 
-2026-09-21 17:00 Afternoon Search 在任何候选进入 Inbox 前，再次逐个直接回读 `market/interviews/batch-01.md` ～ `batch-31.md` 全历史，确认当前正式 Market 基线仍为：
+2026-09-22 17:00 Afternoon Search 在新增候选进入 Inbox 前，再次逐个直接回读 `market/interviews/batch-01.md` ～ `batch-31.md` 全历史，确认当前正式 Market 基线仍为：
 
 - 正式 Batch：`batch-01.md` ～ `batch-31.md`，共 **31** 个；
 - HUMAN-A：`S001–S291`，共 **291** 个；
@@ -43,7 +43,7 @@
 
 ## 当前 Inbox
 
-Afternoon 已有 **2 个独立招聘流程**通过 HUMAN-A + Role Scope + Stable Original + 全历史去重 Gate。两条来自同一候选人 `SOLDIER_627`，但公司不同，属于独立招聘流程；Afternoon 不分配 `Sxxx`，等待 22:00 Finalize 再次全历史去重。
+当前共有 **3 个独立招聘流程**通过 HUMAN-A + Role Scope + Stable Original + 全历史去重 Gate。Candidate A / B 为 2026-09-21 Afternoon 已通过但因当晚 Finalize 未落库而保留的 backlog；Candidate C 为 2026-09-22 Afternoon 新增。三条均来自真实候选人 `SOLDIER_627`，但公司不同，属于独立招聘流程；Afternoon 不分配 `Sxxx`，等待 22:00 Finalize 再次全历史去重。
 
 ### Candidate A — 小红书｜Agent 平台研发｜一面｜发布 2026-09-20 14:15
 
@@ -88,4 +88,31 @@ Afternoon 已有 **2 个独立招聘流程**通过 HUMAN-A + Role Scope + Stable
   15. HashMap 机制。
   16. Consistent Hashing / 一致性哈希。
 - 全历史去重：已直接回读 `batch-01.md`～`batch-31.md`。同一候选人历史其它公司流程不跨公司合并；未发现当前字节 / 飞书流程、URL 或“Agent Skill 遵从性 → 海量视频 OOM / 断点续传 / 清理 → SQL 端到端性能 → 大数 / Heap / HashMap / Consistent Hashing”的连续题序同场来源。GitHub Search 0 命中仅作辅助。
+- Status：**PASSED → pending Evening Finalize；不分配 ID。**
+
+### Candidate C — 度小满｜AI 全栈｜一面｜发布 2026-09-20 17:39
+
+- 作者：`SOLDIER_627`（同济大学 2027 Java，上海）。
+- 原始来源：https://www.nowcoder.com/discuss/931241025345978368?sourceSSR=post&weFlow=true
+- 备用同源入口：https://ac.nowcoder.com/discuss/1677258?type=0
+- 现场 / 招聘证据：post-specific 原帖本轮已恢复为稳定可直接回读，标题明确 `度小满AI全栈一面`，作者给出净面试时长约 **53 分钟**；题目按真实面试顺序记录，Coding 要求先讲思路再现场编码并运行通过。作者主页与小红书、字节、百度、美团、快手等本人流程形成连续 Candidate Timeline，不是内容账号。
+- Role Scope：岗位标题直接为 AI 全栈；面试官还明确围绕候选人“主要做后端和 Agent”追前端参与度，后段继续要求设计 AI 问答功能，属于目标 AI Full-stack / Application 范围。
+- 整场技术问题：
+  1. 自我介绍。
+  2. 做过项目里最有挑战的功能是什么，Pain Point 与解决方式是什么？
+  3. 候选人主要做 Backend 与 Agent，Frontend 实际参与到什么程度？
+  4. 从输入 URL 到页面打开经历什么；TCP 三次握手为什么这样设计？
+  5. HTTP 502 / 504 分别是什么；301 / 302 有什么区别？
+  6. Process 与 Thread 的区别；浏览器为什么采用多进程架构？
+  7. 是否了解 Go；GMP Scheduler 怎样工作？
+  8. MySQL 为什么选择 B+Tree，而不是 Hash / Binary Tree / B-Tree；Index Invalid 常见形式有哪些？
+  9. Redis 为什么快；Cache Avalanche / Breakdown / Penetration 怎样治理？
+  10. CSS `flex: 1` 的含义是什么？
+  11. CORS / 跨域是什么，如何处理？
+  12. 常见 Frontend Framework 与工程选型怎样理解？
+  13. Debounce 与 Throttle 的差异和适用场景是什么？
+  14. AI-assisted Development 中最印象深刻的 Case 是什么；团队 / 个人采用度、收益、坑和 AI 最不擅长的部分怎样评价？
+  15. System Design：从 Frontend / Backend、用户体验、安全和工程实现角度设计一个 AI Q&A 功能。
+  16. Coding：Restore IP Addresses / 复原 IP 地址；先解释思路，再现场编码并运行通过。
+- 全历史去重：写入 Inbox 前已逐个直接回读 `batch-01.md`～`batch-31.md` 全历史。历史存在同一作者的其它公司流程，但未发现度小满同公司 / 同招聘流程、当前 URL，或“浏览器 / 网络 → OS / GMP → MySQL / Redis → Frontend 基础 → AI-assisted Development → AI Q&A System Design → Restore IP”连续题序的同场来源。同作者不同公司按规则分别计数。GitHub 对标题、URL ID 与“作者 + 度小满”的 0 命中只作辅助，不替代全历史正文去重。
 - Status：**PASSED → pending Evening Finalize；不分配 ID。**
