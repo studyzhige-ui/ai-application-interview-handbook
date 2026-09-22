@@ -13,7 +13,6 @@ on:
       - 'tools/sync_expected_canonical_count.py'
       - 'tools/validate_source_coverage.py'
       - 'tools/phase2b_canonical_audit.json'
-      - '.github/workflows/rebuild-market-analysis.yml'
 
 # Daily HUMAN-A collection under market/interviews/ must not rebuild Frozen Canonical
 # or market/analysis. Periodic canonical review can run this workflow explicitly, or
