@@ -1,787 +1,368 @@
-# 01｜Programming Fundamentals：先理解“程序在发生什么”
+# 01｜程序基础：先读懂执行，再写出函数
 
-[← Coding 首页](../README.md) · [下一章：Python Coding Basics →](02-python-coding-basics.md)
+[← Coding 首页](../README.md) · [下一章：数据类型与容器 →](02-python-coding-basics.md)
 
-> 本章不假设你已经会编程。目标不是背 Python 语法，而是先建立一条最基础的执行模型：**代码从哪里开始、每一行改变了什么、数据从哪里来、结果到哪里去、出错时怎么看。**
+> 本章从零开始解释值、赋值、输入输出、判断、循环、函数、验证和错误。容器的完整操作在第 02 章学习；Hot100 的组合例子在容器之后出现，不把尚未教学的列表操作当作本章前提。
 
----
+## 1. 代码、执行与表达式
 
-## 1. 先把“代码”和“程序”分开
-
-一个 Python 文件可以写：
+把代码保存为 `main.py`，在文件所在目录运行 `python main.py`；有些环境命令是 `python3`，应确认使用 Python 3。`#` 后面是给人看的注释，不参与执行。
 
 ```python
 x = 2
-y = 3
-answer = x + y
-print(answer)
+other = 3
+answer = x + other       # 先算右侧，再让 answer 关联整数 5
+print(answer)            # 5
 ```
 
-你看到的是四行**源代码**。
+`print(answer)` 把 answer 的值作为参数交给 Python 提供的 print 函数，让它显示结果。函数调用先按“把数据交给一个操作”理解，第 8 节再学习自己定义函数。
 
-当 Python 解释器执行它时，才变成一次真实的**程序运行**：
+文件里的文字是源代码，解释器执行它们才是一次运行。这里从上往下执行，第三行不是数学等式，而是“求右边的值，再赋给左边”。`2 + 3` 是表达式，会得到 5；在普通文件中单写表达式不会自动打印，交互环境显示结果是额外提供的便利。
 
-```text
-第 1 行：让名字 x 指向整数 2
-第 2 行：让名字 y 指向整数 3
-第 3 行：读取 x 和 y 的值，计算 2 + 3，让 answer 指向 5
-第 4 行：把 5 输出到标准输出
-```
+逐行读代码时，始终问：读了什么值，做了什么操作，哪些状态改变，有没有输出，下一步去哪里。后面的判断、循环、函数只是改变了这条执行路线。
 
-初学时最重要的习惯不是“看起来我懂了”，而是能逐行回答：
+## 2. 数值类型：操作、结果和边界
 
-1. 这一行读了哪些值？
-2. 做了什么计算或调用？
-3. 哪个变量发生了变化？
-4. 有没有产生输出？
-5. 下一行执行前，当前状态是什么？
-
----
-
-## 2. 表达式、赋值和函数调用
-
-先看：
+`int` 是整数，`float` 是浮点数。`type(value)` 返回对象类型；小数不一定能用浮点数精确表示，因此不要把小数显示误当成十进制绝对精确。
 
 ```python
-2 + 3
+print(type(18))          # <class 'int'>
+print(type(2.5))         # <class 'float'>
+print(7 + 2)            # 9
+print(7 - 2)            # 5
+print(7 * 2)            # 14
+print(7 / 2)            # 3.5：除法
+print(7 // 2)           # 3：向下取整除法
+print(-7 // 2)          # -4：向负无穷取整，不是直接删除小数
+print(7 % 2)            # 1：余数；整数 x % 2 == 0 表示偶数
+print(2 ** 3)           # 8：乘方
+print(abs(-7))          # 7：绝对值
+print(round(3.14159, 2)) # 3.14：数值舍入，不等于固定显示两位小数
 ```
 
-它会产生一个值 `5`。这种“计算后产生值”的东西可以先理解成**表达式**。
+乘除先于加减；不确定时用括号表达意图。除数为零会报 `ZeroDivisionError`。Python 整数不受固定 32 位上限约束，但大整数仍然消耗计算时间和内存。位运算也属于整数操作，集中在本节末尾介绍；第 07 章只讨论这些操作怎样解决具体问题。
 
-再看：
+引号里的内容属于字符串 `str`，也就是文字。这里先区分数字与数字的文字表示；字符串全部常用操作归第 02 章。
 
 ```python
-x = 2 + 3
+text = "18"
+number = int(text)      # number=18；text 仍为字符串 "18"
+print(number + 1)      # 19
+print(float("2.5"))    # 2.5
+print(int(2.9))        # 2：向零截断，不是四舍五入
+print(str(18))         # 18：得到字符串，打印时不显示两边引号
 ```
 
-右边先计算出 `5`，然后把名字 `x` 绑定到这个值。
+`int("hello")`、`int("2.5")` 会报 `ValueError`；类型转换需要输入内容符合格式，不会替你猜想要的含义。
 
-再看：
+### 2.1 整数的位运算：工具在这里，算法应用在第 07 章
+
+二进制每一位只有 0 或 1，`0b` 前缀表示二进制整数；`bin` 把整数显示成二进制文字。初次阅读先知道每种操作的含义，不要求立即把它用到算法里。
 
 ```python
-print(x)
+print(bin(5))             # 0b101
+print(int("101", 2))     # 5：按二进制解释文字
+print(5 & 3)              # 1：逐位同时为 1 才为 1
+print(5 | 3)              # 7：逐位至少一项为 1 就为 1
+print(5 ^ 3)              # 6：逐位不同才为 1，^ 不是乘方
+print(5 << 1)             # 10：左移一位
+print(5 >> 1)             # 2：右移一位
+print(~5)                 # -6：Python 整数取反满足 ~x = -x-1
 ```
 
-这里调用了函数 `print`。
+5 的二进制是 101，3 是 011；按相同位置做运算就得到上面结果。Python 整数位运算不受固定 8/32 位截断约束，因此不要把 ~5 误算成某个无符号小整数。`answer ^= x` 与整数场景的 `answer = answer ^ x` 对应。布尔判断使用后面条件部分会学的 and/or/not，不用位运算代替。
 
-可以先形成这个简单模型：
-
-```text
-表达式
-→ 得到值
-
-赋值
-→ 把名字和一个值关联起来
-
-函数调用
-→ 把输入交给一个已经定义好的操作
-→ 它可能返回结果，也可能产生副作用，例如打印
-```
-
-更完整的 Python 对象模型在 [Python Foundation 01](../../../curriculum/01-python/docs/01-python基础与对象模型.md) 学；这里先确保你能追踪程序。
-
----
-
-## 3. 变量不是“装数字的盒子”
-
-初学教材经常把变量说成盒子。这个比喻能入门，但很快会产生误解。
-
-先把变量理解成：
-
-> **一个名字，当前关联到某个对象。**
+## 3. 变量名不等于对象
 
 ```python
 x = 10
-x = 20
+old = x               # old 也关联整数 10
+x = x + 1             # 用旧 x 计算 11，再重新绑定 x
+print(x, old)         # 11 10
+x += 1                # 对本例整数，相当于 x = x + 1
+print(x)              # 12
 ```
 
-可以先画成：
+名字是到对象的关联，不是对象本身。重新绑定 x 不会同时重新绑定 old。第 02 章会说明另一种情况：两个名字关联同一个可变列表时，修改列表对象会被两边同时观察到。
 
-```text
-执行 x = 10 后
-x → 10
+`=` 赋值，`==` 比较值。名字先定义才能读取；拼错名字或超出作用域会导致 `NameError`。读代码要恢复运行时的状态，而不是假定一个变量永远代表同一个值。
 
-执行 x = 20 后
-x → 20
+## 4. 输入与输出：让类型可观察
+
+下面程序运行时输入 `18` 并回车。`input()` 读取一行并去掉行末换行，正常返回字符串，不会自动识别数字。
+
+<!-- run: {"stdin":"18\n","stdout":"18\n<class 'str'>\n'18'\n<class 'int'>\n19\n"} -->
+```python
+age_text = input()
+print(age_text)          # 18
+print(type(age_text))    # <class 'str'>
+print(repr(age_text))    # '18'：repr 展示便于诊断的表示，包括引号
+age = int(age_text)
+print(type(age))         # <class 'int'>
+print(age + 1)           # 19
 ```
 
-为什么这个区别以后重要？因为：
+`int(input())` 是先调用里面的 input，再把返回值传给 int。屏幕显示相同，不代表类型相同。输入源结束而没有数据时会报 `EOFError`；第 04 章学习完整输入协议。
 
 ```python
-a = [1, 2]
-b = a
-b.append(3)
-
-print(a)
+print(2, 3)             # 2 3：默认空格分隔，末尾换行
+print(2, 3, sep=",")    # 2,3：sep 指定分隔符
+print("A", end="")      # A 后面不换行
+print("B")              # 与上一行合起来显示 AB
 ```
 
-输出也是：
+`sep=...`、`end=...` 是按名字传参数。变量变化和注释不会自动产生输出。后面的笔试里只能输出题目要求的内容，不能夹带“请输入”等提示文字。
 
-```text
-[1, 2, 3]
-```
+## 5. 布尔值、条件与缩进
 
-这里 `a` 和 `b` 可以指向同一个 list 对象。完整的“引用、可变对象、对象身份”放在 Python 模块里，本章只先建立：**变量名和对象不是一回事。**
-
----
-
-## 4. 程序怎样获得输入
-
-### 4.1 `input()` 读取一整行
-
-运行：
-
-```python
-name = input()
-print(name)
-```
-
-如果输入：
-
-```text
-Alice
-```
-
-那么 `name` 得到字符串：
-
-```python
-"Alice"
-```
-
-关键规则：
-
-> **Python 的 `input()` 默认返回字符串。**
-
-所以：
-
-```python
-age = input()
-```
-
-输入：
-
-```text
-18
-```
-
-此时 `age` 是字符串 `"18"`，不是整数 `18`。
-
-可以直接用 `type()` 验证，而不是只记结论：
-
-```python
-age = input()       # 假设输入 18
-print(age)          # 18
-print(type(age))    # <class 'str'>
-```
-
-`type(value)` 会返回对象的类型。屏幕上看起来同样是 `18`，但 `18` 是 `int`，`"18"` 是 `str`；“看起来像数字”不等于程序把它当数字。
-
-### 4.2 为什么经常看到 `int(input())`
-
-如果想参与数字计算：
-
-```python
-age = int(input())
-print(age + 1)
-```
-
-过程是：
-
-```text
-input()
-→ "18"
-
-int("18")
-→ 18
-
-18 + 1
-→ 19
-```
-
-以后遇到很长的一行：
-
-```python
-nums = list(map(int, input().split()))
-```
-
-不要背。第 02、04 章会逐层拆开。
-
----
-
-## 5. 输出：`print` 和 `return` 不是一回事
-
-```python
-print(3 + 4)
-```
-
-把 `7` 打印到输出。
-
-但函数：
-
-```python
-def add(a, b):
-    return a + b
-```
-
-这里 `return` 的意思不是“打印”。
-
-```python
-result = add(3, 4)
-print(result)
-```
-
-调用过程：
-
-```text
-add(3, 4)
-→ return 7
-→ result = 7
-→ print(result)
-→ 屏幕出现 7
-```
-
-记住：
-
-```text
-return
-→ 把结果交回调用者
-
-print
-→ 把内容输出给人或评测系统
-```
-
-LeetCode 经常要求 `return`；ACM 笔试最终通常要求 `print`。后面会专门比较。
-
----
-
-## 6. 布尔值和条件判断
-
-程序为什么需要 `if`？
-
-因为同一段程序需要对不同情况做不同操作。
-
-```python
-age = 20
-
-if age >= 18:
-    print("adult")
-else:
-    print("minor")
-```
-
-先算：
-
-```python
-age >= 18
-```
-
-结果是 `True`，于是进入 `if`。
-
-如果是：
+`bool` 的两个值是 `True/False`，分别为真和假。比较运算 `== != < <= > >=` 得到布尔值。条件链从上往下检查，只执行第一个满足的分支。
 
 ```python
 age = 16
+print(age >= 18)         # False
+if age >= 18:
+    print("adult")
+elif age >= 13:
+    print("teen")       # 本例输出 teen
+else:
+    print("child")
 ```
 
-则比较结果是 `False`，执行 `else`。
-
-你可以把 `if` 理解成：
-
-```text
-先得到一个 True / False
-        ↓
-True  → 走 if 分支
-False → 跳过 if，可能进入 elif / else
-```
-
----
-
-## 7. 循环：为什么需要重复执行
-
-假设要打印 1 到 5：
+冒号表示后面有代码块；同一块使用一致缩进，通常四个空格。`else` 没有自己的条件，表示前面都不满足。缩进错不仅是排版问题，也会改变执行逻辑或直接报错。
 
 ```python
-print(1)
-print(2)
-print(3)
-print(4)
-print(5)
+age = 20
+has_ticket = True
+print(age >= 18 and has_ticket)  # True：两个条件都满足
+print(age < 18 or has_ticket)    # True：至少一个条件满足
+print(not has_ticket)           # False：取反
 ```
 
-可以运行，但没有可扩展性。
-
-### 7.1 `for`
-
-先回答一个最容易困惑的问题：**`x` 为什么会自己变成列表里的值？**
-
-`for x in data` 的意思是：每一轮从 `data` 取出下一个元素，让变量名 `x` 暂时指向这个元素，然后执行循环体。`x` 没有特殊含义，换成 `number`、`item` 也一样。
-
-```text
-[1, 2, 3] 被遍历
-→ 第 1 轮取出 1，x = 1
-→ 第 2 轮取出 2，x = 2
-→ 第 3 轮取出 3，x = 3
-→ 没有下一个元素，循环结束
-```
+布尔转换 `bool(value)` 显式得到条件判断使用的真或假；0、0.0、None 按假处理，非零数按真处理。第 02 章在各容器的语境中说明空容器与非空容器。
 
 ```python
-for x in [1, 2, 3, 4, 5]:
-    print(x)
+print(bool(0), bool(2))      # False True
+print(bool(None))           # False
 ```
 
-可以理解成：
+`and/or` 会短路：结果确定时不再计算右侧。这里操作数是布尔值；对一般对象使用 and/or 不保证返回 bool，先用清楚的 if 表达业务。`None` 表示没有结果或未提供值，不是数字 0；函数部分马上使用。
 
-```text
-第一次：x = 1
-第二次：x = 2
-第三次：x = 3
-第四次：x = 4
-第五次：x = 5
-结束
-```
-
-### 7.2 `range`
-
-`range(5)` 可以先读成“依次提供 0、1、2、3、4”。因此 `for i in range(5)` 就是让 `i` 每轮接住其中一个整数。以后看到 `range(len(nums))`，可以读成“让 `i` 依次成为 `nums` 的合法下标”。
+## 6. for：数据来源负责提供下一项
 
 ```python
-for i in range(5):
-    print(i)
+for x in range(1, 4):
+    print(x)             # 1、2、3，各一行
+print("done")            # done
 ```
 
-会输出：
+`range(1,4)` 表示从 1 开始、到 4 之前的整数范围。每轮 for 取得下一项，把它赋给 x，再执行缩进块；取不到下一项时结束。x 没有魔法，换成 number 也一样。以后遍历列表时，取得的是列表元素，不会自动取得下标。
 
-```text
-0
-1
-2
-3
-4
+### 6.1 range 的三个参数
+
+`range(stop)` 默认从 0 开始；`range(start,stop)` 指定起点；`range(start,stop,step)` 再指定步长。终点始终不包含，步长默认 1，不能是 0。
+
+```python
+for i in range(3):
+    print(i)             # 0、1、2
+for i in range(2, 5):
+    print(i)             # 2、3、4
+for i in range(5, 0, -2):
+    print(i)             # 5、3、1
 ```
 
-`range(5)` 不是 1 到 5，而是从 `0` 开始到 `5` 之前。
+`range(5,0)` 是空范围，因为正步长无法走向更小的终点。range 是可反复遍历的范围对象，不需要事先存下所有整数，也不是一次性迭代器。给循环变量重新赋值，不会改变来源下一次提供的值。
 
-### 7.3 `while`
+### 6.2 累积状态与追踪表
+
+```python
+total = 0
+for x in range(1, 4):
+    total += x
+print(total)             # 6
+```
+
+| 轮次 | x | 更新前 total | 更新后 total |
+|---:|---:|---:|---:|
+| 1 | 1 | 0 | 1 |
+| 2 | 2 | 1 | 3 |
+| 3 | 3 | 3 | 6 |
+
+这里 total 表示已处理数字之和，所以初始化必须在循环外。先定义状态含义，更新语句才有理由存在。
+
+## 7. while：每次回到顶部重新判断
 
 ```python
 x = 1
-
-while x <= 5:
-    print(x)
+while x <= 3:
+    print(x)             # 1、2、3
     x += 1
+print(x)                 # 4：下一次判断为 False，循环退出
 ```
 
-`while` 的核心是：
+执行路线是“判断 → 为真进入 → 执行一轮 → 回顶部”。条件最初为假时一次都不执行。对这种靠条件终止的循环，要说明条件依赖哪些状态、每轮如何推进、为什么最终越过边界。
 
-```text
-条件为 True
-→ 执行循环体
-→ 再次判断
-→ ...
-→ 条件变 False
-→ 停止
-```
+状态可以由循环体直接赋值，也可以由其中调用的函数间接修改；不是只能使用某一种更新语句。但写在循环后面的语句，不能帮助一个始终不退出的循环改变条件，因为程序还到不了那里。
 
-如果循环体永远不能让条件变 False，就可能出现死循环。
-
-更准确地说，不要求一定在某一行“直接修改判断式里的变量”；要求的是**循环运行后，条件依赖的程序状态最终有机会改变到 False**。最常见的是 `x += 1` 直接改变 `x`，也可能通过函数调用或容器变化间接改变状态。
-
-检查 `while` 时固定问三件事：条件依赖哪些值？一轮后这些值怎样变化？能否证明条件最终会变成 False？
-
----
-
-## 8. 用“变量追踪表”读循环
-
-先不要靠脑补。
+### 7.1 break 与 continue
 
 ```python
-nums = [3, 1, 4]
-total = 0
-
-for x in nums:
-    total += x
-
-print(total)
+x = 0
+while True:
+    x += 1
+    if x == 4:
+        break            # 退出最近一层循环，即使条件仍为 True
+    if x == 2:
+        continue         # 跳过本轮剩余语句，回到下一次判断
+    print(x)             # 输出 1、3
+print("end")             # end
 ```
 
-手工写表：
+所以“while 必须把条件变为 False 才能结束”并不准确。break 可以结束循环，函数内 return 可以结束函数，未处理异常也会中断正常路径。使用 continue 时要检查更新是否被跳过；有意持续运行的循环也需要取消或退出机制。
 
-| 轮次 | x | 执行前 total | 执行后 total |
-|---:|---:|---:|---:|
-| 1 | 3 | 0 | 3 |
-| 2 | 1 | 3 | 4 |
-| 3 | 4 | 4 | 8 |
-
-最后输出 `8`。
-
-这就是以后理解双指针、动态规划之前必须具备的基本功：
-
-> **你能准确说明每一轮状态怎么变化。**
-
----
-
-## 9. 函数：把一个小任务命名
-
-如果多次求和：
+## 8. 函数：定义、调用、返回是三个时刻
 
 ```python
 def add(a, b):
     result = a + b
     return result
 
-x = add(2, 3)
-y = add(10, 20)
-
-print(x)
-print(y)
+first = add(2, 3)
+second = add(10, 20)
+print(first, second)      # 5 30
 ```
 
-函数至少有四个概念：
+执行 def 时建立函数，还没有执行函数体。调用 add(2,3) 时，形参 a 接收实参 2，b 接收 3，局部变量 result 得到 5；return 把 5 交回调用位置，first 接住它，然后继续后面的语句。每次调用有自己的局部状态，result 不会自动出现在函数外。
 
-```text
-def
-→ 定义函数
-
-a, b
-→ 参数
-
-add(2, 3)
-→ 调用函数
-
-return
-→ 把结果交回调用位置
-```
-
-以后算法题里很常见：
+### 8.1 print 不等于 return
 
 ```python
-def solve(nums):
-    ...
-    return answer
+def show_double(x):
+    print(x * 2)
+
+def get_double(x):
+    return x * 2
+
+value = show_double(3)    # 函数内部打印 6
+print(value)             # None：没有显式返回值
+answer = get_double(3)   # 返回 6，本行不打印
+print(answer + 1)        # 7
 ```
 
-先把算法放进 `solve`，输入输出放在外面，是非常好的习惯。
+return 立即结束本次函数调用，print 只输出，函数还会继续。走到函数末尾或执行不带值的 return 都得到 None。判断缺少结果常写 `value is None`；is 比对象身份，不替代一般数值的 ==。
 
----
-
-## 10. 第一次 Hot100 预览：移动零
-
-现在还不讲最优双指针。
-
-只用当前已经会的：
-
-- list；
-- for；
-- if；
-- append；
-- while。
-
-目标可以简化理解为：
-
-> 给一组数字，把非零数字的相对顺序保留下来，零放到末尾。
-
-例如：
+### 8.2 默认参数与提前返回
 
 ```python
-nums = [0, 1, 0, 3, 12]
+def can_enter(age, minimum=18):
+    if age < minimum:
+        return False
+    return True
 
-result = []
-
-for x in nums:
-    if x != 0:
-        result.append(x)
-
-while len(result) < len(nums):
-    result.append(0)
-
-print(result)
+assert can_enter(16) is False
+assert can_enter(16, minimum=16) is True
 ```
 
-输出：
+这里 minimum 的默认值是整数。容器作为参数、原地修改、可变默认参数的陷阱在第 02 章结合对象操作学习。参数数量或名字不匹配会报 TypeError；return 不能出现在函数外。
 
-```text
-[1, 3, 12, 0, 0]
-```
+`assert 条件` 是断言：为真就继续，为假抛 AssertionError。它用于本地测试，不替代生产输入校验，因为优化运行选项可能关闭断言。样例通过只证明覆盖到的行为，不是所有输入的证明。
 
-这里先不讨论：
-
-- 为什么原题要求原地修改；
-- 怎么做到 O(1) 额外空间；
-- 双指针是什么。
-
-当前目标只有：
-
-> **能逐行解释这段程序怎样把输入状态变成输出状态。**
-
-这不是只让你“预览一下”。请先自己追踪：`result` 在读到 `0 → 1 → 0 → 3 → 12` 后分别是什么；`for` 结束时是什么；`while` 每补一个 `0` 后又是什么。然后再运行代码核对。
-
-<details>
-<summary>查看状态追踪</summary>
-
-```text
-开始                  []
-读到 0，不追加        []
-读到 1，追加          [1]
-读到 0，不追加        [1]
-读到 3，追加          [1, 3]
-读到 12，追加         [1, 3, 12]
-while 补 0            [1, 3, 12, 0]
-while 再补 0          [1, 3, 12, 0, 0]
-```
-
-</details>
-
-等到第 06 章，我们再回来优化 `283. 移动零`。
-
----
-
-## 11. 第二个 Hot100 预览：两数之和的暴力思路
-
-给：
+## 9. 两层循环怎样衔接
 
 ```python
-nums = [2, 7, 11, 15]
-target = 9
+for i in range(3):
+    for j in range(i + 1, 3):
+        print(i, j)      # 依次输出 0 1、0 2、1 2
 ```
 
-最直接的想法不是“哈希表”，而是：
+i=0 时，内层完整走完 j=1,2；再到 i=1，内层重新开始只取得 j=2；i=2 时内层为空。j 从 i+1 开始避免同位置和倒序重复配对。第 02 章学会列表按位置取值后，再用这个过程完成两数之和，而不是在这里提前要求容器知识。
 
-> 把每一对都试一遍。
+## 10. Traceback：从异常位置追到错误状态的来源
 
+下面是故意出错的完整程序，保存为 main.py 后运行。
+
+<!-- run: {"error":"ZeroDivisionError"} -->
 ```python
-for i in range(len(nums)):
-    for j in range(i + 1, len(nums)):
-        if nums[i] + nums[j] == target:
-            print(i, j)
+count = 0
+average = 10 / count
 ```
 
-你现在只需要看懂：
-
-```text
-外层固定一个 i
-        ↓
-内层尝试 i 后面的每一个 j
-        ↓
-如果两个数之和等于 target
-        ↓
-输出两个下标
-```
-
-之后学习 dict 时再问：
-
-> “为什么一定要两两试？我真正需要快速知道的是什么？”
-
-那时才自然进入哈希优化。
-
----
-
-## 12. 错误不是“代码坏了”，而是信息
-
-### 12.1 SyntaxError：语法都无法解析
-
-```python
-if x > 3
-    print(x)
-```
-
-少了 `:`。
-
-### 12.2 NameError：用了不存在的名字
-
-```python
-print(score)
-```
-
-但从未定义 `score`。
-
-### 12.3 TypeError：操作和数据类型不匹配
-
-```python
-age = "18"
-print(age + 1)
-```
-
-字符串和整数不能这样直接相加。
-
-### 12.4 IndexError：列表下标越界
-
-```python
-nums = [10, 20]
-print(nums[2])
-```
-
-合法下标只有 `0` 和 `1`。
-
----
-
-## 13. Traceback 怎么读
-
-Traceback 可以先理解为：**Python 把“程序怎样一路调用到出错位置”的轨迹打印出来。**
-
-最小例子：
-
-```python
-nums = [10, 20, 30]
-print(nums[3])
-```
-
-你会看到类似：
+典型输出：
 
 ```text
 Traceback (most recent call last):
   File "main.py", line 2, in <module>
-    print(nums[3])
-IndexError: list index out of range
+    average = 10 / count
+ZeroDivisionError: division by zero
 ```
 
-不要把整段红字当成一个句子。它有固定语法：
+第一行表示下面列调用轨迹，最近的一层在后面。`File` 后是文件路径，`line` 后是行号，`in <module>` 表示文件顶层；如果显示函数名，就是当时所在的函数。缩进的源码行帮你对照现场。末行冒号前是异常类型，后面是异常信息。不同版本可能增加箭头、波浪线、颜色，不影响基本读法。
 
-```text
-Traceback (most recent call last)
-→ 下面开始列调用轨迹；越靠后越接近真正抛出异常的位置
+先读发生了什么异常，再定位直接失败的表达式，最后恢复变量状态。本例 count=0 导致除零；抛错的位置不自动等于应该修改的位置。
 
-File "main.py"
-→ 当时执行到哪个文件
+### 10.1 多文件调用链
 
-line 2
-→ 这个文件的第几行
-
-in <module>
-→ 当时位于什么调用上下文；<module> 表示文件最外层
-
-print(nums[3])
-→ 对应的源码行
-
-IndexError
-→ 异常类型
-
-list index out of range
-→ 异常信息：list 下标超出范围
-```
-
-基本阅读顺序：**先看最后一行异常类型和信息 → 找最下面一层自己的代码 → 恢复那一刻变量状态 → 再解释为什么这一行会失败。**
-
-这个例子里 `nums` 只有 3 个元素，合法下标是 `0、1、2`，访问 `nums[3]` 就会抛 `IndexError`。
-
-多文件时会像这样：
+下面是一段用于读栈的日志示意，不是三份需要独立运行的源码：
 
 ```text
 Traceback (most recent call last):
   File "main.py", line 8, in <module>
     run()
-  File "app.py", line 12, in run
-    user = load_user()
-  File "storage.py", line 21, in load_user
-    return rows[0]
-IndexError: list index out of range
+  File "service.py", line 12, in run
+    average = calculate(10, 0)
+  File "math_ops.py", line 3, in calculate
+    return total / count
+ZeroDivisionError: division by zero
 ```
 
-把它读成调用链：`main.py` 调用 `run()` → `app.py` 的 `run()` 调用 `load_user()` → `storage.py` 最终在 `rows[0]` 抛错。先调查最下面那层自己的业务代码，再往上追“谁把程序带到了这里”。
+从上往下是 main 调用 run，再调用 calculate；从下往上调查，是先发现 count 为零，再追问上游为什么传零。最下面可能是第三方库，也不能据此判断库有错。看完直接失败层之后，应检查自己与库之间的参数、输入契约和数据来源，不是机械地只改最后一个文件。
 
-真正要问的是：`rows` 到底是什么？`len(rows)` 是多少？为什么代码默认第 0 个元素一定存在？上游查询或输入为什么可能得到空结果？
+长日志出现 `During handling ...` 或 `direct cause ...` 时，可能有多个异常块。每块分别读，再理解前一个异常为何引出后一个，不能当成一条普通调用链。
 
-Debug 的基本功不是随机改代码，而是**根据 Traceback 恢复出错那一刻的真实状态**。
----
+### 10.2 异常类型告诉你从哪里查
 
-## 14. 本章小练习
+| 类型 | 首先调查 |
+|---|---|
+| SyntaxError / IndentationError | 冒号、括号、缩进；语法错误不一定有完整运行调用栈 |
+| NameError | 名字是否定义、拼写、作用域 |
+| TypeError | 运算与类型是否匹配、函数参数是否传对 |
+| ValueError | 类型可以接受，但内容是否合法，例如数字转换 |
+| IndexError / KeyError | 下标或键是否存在；第 02 章结合容器学习 |
+| AssertionError | 哪条预期不成立，实际值是什么 |
 
-先自己写，再展开参考答案。
+修复流程是复现最小失败、检查现场、修改、重跑失败用例和正常用例。不能把吞掉异常当成修好了问题。
 
-### 练习 1：读入一个整数，输出它的平方
+## 11. 章节自测与验收
+
+**任务：** 实现 sum_to(n)，返回 1 到非负整数 n 的总和，不使用 sum；n=3 返回 6，n=0 返回 0。先手工追踪，再写函数。
 
 <details>
-<summary>参考答案</summary>
+<summary>查看参考答案与验证</summary>
 
 ```python
-n = int(input())
-print(n * n)
-```
-
-</details>
-
-### 练习 2：给定列表，计算所有偶数之和
-
-```python
-nums = [1, 2, 3, 4, 5, 6]
-```
-
-<details>
-<summary>参考答案</summary>
-
-```python
-nums = [1, 2, 3, 4, 5, 6]
-
-total = 0
-
-for x in nums:
-    if x % 2 == 0:
+def sum_to(n):
+    total = 0
+    for x in range(1, n + 1):
         total += x
+    return total
 
-print(total)
+assert sum_to(3) == 6
+assert sum_to(0) == 0
+assert sum_to(5) == 15
 ```
+
+终点不包含，所以写 n+1；return 在循环外。若把 return 缩进循环内，n=3 第一次就返回 1，n=0 则没有进入循环，函数最终返回 None。
 
 </details>
 
-### 练习 3：不用 `max()`，自己找最大值
-
-```python
-nums = [4, 2, 9, 1, 7]
-```
+**口述自测：** 为什么循环变量会变？while True 为什么也能结束？屏幕出现 6 为什么不代表函数返回 6？
 
 <details>
-<summary>参考答案</summary>
+<summary>查看参考答案</summary>
 
-```python
-nums = [4, 2, 9, 1, 7]
-
-best = nums[0]
-
-for x in nums:
-    if x > best:
-        best = x
-
-print(best)
-```
+for 每轮从来源取下一项并赋给循环变量。while 可以通过 break 或所在函数的 return 退出，异常也可能中止正常路径。print 产生输出，return 决定交给调用者的值，两者独立。
 
 </details>
 
-### 练习 4：给定字符串，统计字母 `a` 出现多少次
+能预测变量追踪表、独立写并调用函数、区分打印与返回、从错误信息恢复关键状态后，再进入数据类型与容器。
 
-<details>
-<summary>参考答案</summary>
-
-```python
-s = "abracadabra"
-
-count = 0
-
-for ch in s:
-    if ch == "a":
-        count += 1
-
-print(count)
-```
-
-</details>
-
----
-
-## 15. 本章 Exit Gate
-
-先不要看答案，确认自己能做到：
-
-- 能解释 Python 文件大致怎样从上到下执行；
-- 知道 `input()` 默认返回 `str`；
-- 知道 `print` 和 `return` 的区别；
-- 能解释 `if` 判断的是一个真假条件；
-- 能逐轮追踪 `for` / `while` 中变量变化；
-- 能自己写一个求和、计数、最大值的小程序；
-- 遇到 traceback 时先找文件、行号、异常类型；
-- 能看懂“移动零”的基础版本；
-- 能看懂“两数之和”的两层循环暴力版本。
-
-如果其中任何一项仍需要靠背代码完成，就先继续写小程序，不急着进入算法模板。
-
----
-
-下一章：[02. Python Coding Basics](02-python-coding-basics.md)
+语义依据：[Python 控制流](https://docs.python.org/3/tutorial/controlflow.html)、[内置函数](https://docs.python.org/3/library/functions.html)、[错误与异常](https://docs.python.org/3/tutorial/errors.html)。

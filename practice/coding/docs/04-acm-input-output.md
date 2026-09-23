@@ -1,262 +1,79 @@
-# 04｜ACM Input / Output：第一次把“完整程序”写明白
+# 04｜完整输入输出：把数据协议翻译成程序
 
-[← 上一章：Basic Coding Exercises](03-basic-exercises.md) · [Coding 首页](../README.md) · [下一章：Data Structures →](05-data-structures.md)
+[← 上一章：基础练习](03-basic-exercises.md) · [Coding 首页](../README.md) · [下一章：数据结构 →](05-data-structures.md)
 
-> 本章只解决一件事：**题目把数据通过标准输入交给你时，你怎样自己读出来，再把答案按要求写到标准输出。** ACM 模式不是一种新的算法体系。
+> 前面已能写接收参数并返回结果的函数。本章增加输入解析和输出格式两层责任。split、join、解包、格式化、列表构造都已在第 02 章学习；这里组合它们，不把输入模板当成新的算法。
 
----
+## 1. 函数模式与完整程序模式
 
-## 1. LeetCode 模式和 ACM 模式差在哪里
-
-LeetCode 常见：
-
-```python
-class Solution:
-    def twoSum(self, nums, target):
-        ...
-        return answer
-```
-
-平台已经替你完成：
+函数模式由平台准备 nums、target 等参数，调用你的函数并检查返回值。完整程序模式则把文字送入标准输入 stdin，你必须读取、转换、调用算法，再把答案写到标准输出 stdout。
 
 ```text
-读取测试数据
-→ 构造 nums / target
-→ 调用你的函数
-→ 检查返回值
+输入文字 → 解析为 Python 数据 → 算法函数 → Python 结果 → 格式化输出
 ```
 
-ACM / OJ 模式更像：
+LeetCode 有时给 `class Solution` 包装。它是平台约定的接口，不是解题算法；类、实例和 self 在第 05 章统一学习。这里不要求先学类，先用已经掌握的普通函数把输入输出写清楚。
 
-```text
-标准输入 stdin
-→ 你的完整程序
-→ 标准输出 stdout
-```
+## 2. map 与迭代：逐项转换不等于立即生成列表
 
-所以你自己负责：
-
-```text
-读输入
-→ 解析
-→ 调算法
-→ 按格式输出
-```
-
-算法本身没有因为“ACM”三个字变成另一套。
-
----
-
-## 2. stdin 和 stdout 是什么
-
-当前先记：
-
-```text
-stdin  = 程序的标准输入来源
-stdout = 程序的标准输出去向
-```
-
-本地终端里，你键盘输入的内容可以进入 stdin；OJ 上则是评测系统把测试数据交给程序。
-
-`print()` 会写到 stdout，所以除非题目明确要求，不要额外输出：
-
-```text
-请输入 n：
-答案是：
-调试结果：
-```
-
----
-
-## 3. `input()`：一次读取一整行
-
-输入：
-
-```text
-hello world
-```
+先不用键盘输入，观察类型变化。map(function, source) 每次从 source 取得一项，调用 function 转换。参数传 int，不写 int()，因为要交给 map 一个可调用操作，而不是提前执行一次转换。
 
 ```python
-s = input()
+line = "10 20 30"
+parts = line.split()         # ['10', '20', '30']，仍是字符串
+converted = map(int, parts) # 可逐项取值的转换结果，不是列表
+nums = list(converted)      # [10, 20, 30]：消费转换结果并收集
+print(nums)                 # [10, 20, 30]
+print(list(converted))      # []：同一个 map 对象已经消费完
 ```
 
-得到：
+因此 `list(map(int,input().split()))` 应从内向外读：读取一行，切成文字项，每项转换成整数，最后收集。需要反复使用结果就保留列表，不反复消费同一个 map。
 
 ```python
-"hello world"
+parts = ["3", "5"]
+a, b = map(int, parts)      # 解包也会消费结果，a=3，b=5
+print(a + b)               # 8
 ```
 
-如果：
+解包需要项数匹配；不是任意长度的输入都能交给两个变量。
 
-```python
-parts = input().split()
-```
+## 3. 单组输入：先定义每一行的意义
 
-得到：
+**契约：** 第一行是非负整数 n，第二行恰好 n 个整数，输出它们的和。即使 n=0，本练习也规定存在第二个空行。样例输入为 `3` 与 `10 20 30`，输出 60。
 
-```python
-["hello", "world"]
-```
-
-所以：
-
-```text
-input()
-→ 读整行字符串
-
-split()
-→ 按空白把这一行切成多个字符串
-```
-
----
-
-## 4. 彻底拆开 `list(map(int, input().split()))`
-
-假设输入：
-
-```text
-10 20 30
-```
-
-### Step 1
-
-```python
-input()
-```
-
-得到：
-
-```python
-"10 20 30"
-```
-
-### Step 2
-
-```python
-input().split()
-```
-
-得到：
-
-```python
-["10", "20", "30"]
-```
-
-### Step 3
-
-```python
-map(int, ...)
-```
-
-把每个字符串转换成整数：
-
-```text
-"10" → 10
-"20" → 20
-"30" → 30
-```
-
-### Step 4
-
-```python
-list(...)
-```
-
-把转换结果收集成：
-
-```python
-[10, 20, 30]
-```
-
-所以整句最终才是：
-
-```python
-nums = [10, 20, 30]
-```
-
-这句话以后会写很多次，但目标是**理解四步，不是背一串括号**。
-
----
-
-## 5. 单组输入
-
-输入：
-
-```text
-5
-1 2 3 4 5
-```
-
-如果题目说第一行是数组长度，第二行是数组：
-
+<!-- run: {"stdin":"3\n10 20 30\n","stdout":"60\n"} -->
 ```python
 n = int(input())
 nums = list(map(int, input().split()))
+assert len(nums) == n        # 本地核对协议；评测按题目保证的格式读取
+print(sum(nums))             # 60
 ```
 
-这里就是一组测试数据。
+不要把所有“第一行一个数”都解释成 n。它也可能是组数、目标值或终止条件；含义来自题面，不来自你习惯的模板。
 
----
+## 4. T 组、EOF 与哨兵：三种结束依据
 
-## 6. T 组输入
+### 4.1 已知组数
 
-输入：
+**契约：** 第一行 T，随后 T 行，每行两个整数，逐行输出和。样例输出 3、11、30，各一行。
 
-```text
-3
-1 2
-5 6
-10 20
-```
-
-如果题目说第一行 `T` 表示测试组数：
-
-```text
-T = 3
-
-第 1 组：1 2
-第 2 组：5 6
-第 3 组：10 20
-```
-
-代码：
-
+<!-- run: {"stdin":"3\n1 2\n5 6\n10 20\n","stdout":"3\n11\n30\n"} -->
 ```python
 T = int(input())
-
-for _ in range(T):
+for _ in range(T):          # _ 是不用的循环变量，不是特殊语法
     a, b = map(int, input().split())
     print(a + b)
 ```
 
-`_` 不是特殊语法，只是常用变量名，表达“这个循环计数我不会使用”。
+每组内部需要新建的状态放到循环内。把计数或字典留在外面，可能把上一组带到下一组。
 
----
+### 4.2 不知道组数，读到输入源结束
 
-## 7. EOF：不知道有几组，就读到输入结束
+EOF 是 End Of File，表示输入源已经没有更多数据，不等于读取到空白行。`import sys` 引入标准库模块，`sys.stdin` 是标准输入流；遍历流可以逐行读取并自然在 EOF 结束。
 
-EOF = **End Of File**。
+**契约：** 每个非空数据行两个整数，本例没有空行，直到 EOF；输入 `1 2`、`3 4`，输出 3、7。
 
-大白话：
-
-> **没有更多输入了。**
-
-题目可能写：
-
-> 输入包含多组数据，每行两个整数，直到 EOF。
-
-输入：
-
-```text
-1 2
-3 4
-5 6
-```
-
-没有第一行 `3` 告诉你有三组。
-
-Python 可以：
-
+<!-- run: {"stdin":"1 2\n3 4\n","stdout":"3\n7\n"} -->
 ```python
 import sys
 
@@ -265,412 +82,170 @@ for line in sys.stdin:
     print(a + b)
 ```
 
-理解成：
+另一种写法用 try/except。try 内正常执行，匹配的异常发生才进入 except；这里只捕获读取结束，不把格式错误也吞掉。
 
-```text
-还有下一行 → 读
-还有下一行 → 读
-...
-没有下一行 → for 自然结束
-```
-
-也可能看到：
-
+<!-- run: {"stdin":"1 2\n3 4\n","stdout":"3\n7\n"} -->
 ```python
 while True:
     try:
-        a, b = map(int, input().split())
-        print(a + b)
+        line = input()
     except EOFError:
         break
-```
-
-两种写法表达的是同一个结束条件。
-
----
-
-## 8. “遇到 0 结束”不是 EOF
-
-输入：
-
-```text
-1 2
-3 4
-0 0
-```
-
-如果题目规定 `0 0` 表示结束：
-
-```python
-while True:
-    a, b = map(int, input().split())
-
-    if a == 0 and b == 0:
-        break
-
+    a, b = map(int, line.split())
     print(a + b)
 ```
 
-这里是读到了一个人为规定的**哨兵值（sentinel）**，不是输入源真的结束。
+`input()` 遇到一个空白行会得到空字符串；`sys.stdin.readline()` 在空白行得到 `"\n"`，在 EOF 得到 `""`。是否跳过空行取决于协议；不能统一 strip 后把合法空字符串数据当成 EOF。
 
----
+### 4.3 读到了特殊数据才结束
 
-## 9. 常见数据怎么读
+**契约：** 每行两个整数，遇到 0 0 停止，且不输出该行的和；输入保证含哨兵。
 
-### 一行两个整数
-
-```text
-3 5
-```
-
+<!-- run: {"stdin":"1 2\n3 4\n0 0\n","stdout":"3\n7\n"} -->
 ```python
-a, b = map(int, input().split())
+while True:
+    a, b = map(int, input().split())
+    if a == 0 and b == 0:
+        break
+    print(a + b)
 ```
 
-### 一维数组
+哨兵是题目定义的数据值，不是 EOF。三种协议不能靠代码长得像就互换。
 
-```text
-5
-10 20 30 40 50
-```
+## 5. 数组、矩阵、字符串与边列表
 
-```python
-n = int(input())
-nums = list(map(int, input().split()))
-```
+### 5.1 矩阵：先行数列数，再逐行读取
 
-题目也可能把长度和数据放成别的格式，所以永远以题面为准。
+**契约：** 第一行 n m，随后 n 行，每行 m 个整数；输出所有数字总和。样例是两行三列，输出 21。
 
-### n × m 矩阵
-
-```text
-3 4
-1 2 3 4
-5 6 7 8
-9 10 11 12
-```
-
+<!-- run: {"stdin":"2 3\n1 2 3\n4 5 6\n","stdout":"21\n"} -->
 ```python
 n, m = map(int, input().split())
-
 matrix = []
 for _ in range(n):
     row = list(map(int, input().split()))
+    assert len(row) == m
     matrix.append(row)
+answer = 0
+for row in matrix:
+    answer += sum(row)
+print(answer)                 # 21
 ```
 
-得到：
+matrix[r][c] 先取行再取列；行数不是列数。矩阵是否允许空行、零列，应以题目约束为准，不凭样例猜。
 
+### 5.2 字符串里的空格是否有意义
+
+**契约：** 读取一行文字，原样输出。样例保留首尾空格。
+
+<!-- run: {"stdin":"  hello world  \n","stdout":"  hello world  \n"} -->
 ```python
-[
-    [1, 2, 3, 4],
-    [5, 6, 7, 8],
-    [9, 10, 11, 12],
-]
+text = input()
+print(text)
 ```
 
-访问：
+整行是数据时不能先 split；需要保留首尾空格时也不能 strip。输入是多个空白分隔字段时才按字段拆。第 02 章已讲两种 split 的不同规则。
 
-```python
-matrix[row][col]
-```
+### 5.3 图先作为边的数据读取
 
-### 字符串
+**契约：** 第一行点数 n、边数 m，随后 m 行 u v 表示无向边；这里只读取并输出边数，不提前要求图算法。
 
-整行都是内容：
-
-```python
-s = input()
-```
-
-一行多个单词：
-
-```python
-words = input().split()
-```
-
-如果字符串中的空格本身是内容，就不能先 `.split()`。
-
----
-
-## 10. 图的输入：先认识“点和边”
-
-例如：
-
-```text
-4 3
-1 2
-2 3
-2 4
-```
-
-如果题目说：
-
-```text
-4 个点
-3 条边
-```
-
-可以先把边读进来：
-
+<!-- run: {"stdin":"4 3\n1 2\n2 3\n2 4\n","stdout":"3\n"} -->
 ```python
 n, m = map(int, input().split())
-
 edges = []
 for _ in range(m):
     u, v = map(int, input().split())
     edges.append((u, v))
+print(len(edges))              # 3
 ```
 
-第 05、06 章再把它转换成邻接表并做 DFS / BFS。
+有向、无向、带权与点编号从 0 还是 1 开始都会影响解释。树也没有统一 ACM 模板，可能给父子边、层序序列、遍历序列或孩子编号；先读清表示，再构造第 05 章的结构。
 
-图题输入不是固定模板；有向、无向、带权等都会改变含义。
+## 6. 输出与程序入口
 
----
-
-## 11. 树没有统一的“ACM 输入模板”
-
-LeetCode 二叉树经常直接给 `TreeNode`，但 ACM 题可能通过：
-
-- 父子边；
-- 层序序列；
-- 前序 / 中序；
-- 每个节点的左右孩子编号；
-- 普通树的边；
-
-来描述树。
-
-所以不要背“树 = 某一句 input 模板”。先问：
-
-> **这道题究竟用什么数据描述这棵树？**
-
----
-
-## 12. 输出
-
-### 输出一个列表
+`print(*nums)` 中的星号在调用位置展开各项，相当于把元素分别作为参数传给 print。它与 `a,b=pair` 都涉及拆分，但语法位置和用途不同。
 
 ```python
 nums = [1, 3, 5]
-print(*nums)
+print(*nums)                  # 1 3 5，而不是 [1, 3, 5]
+print(" ".join([str(x) for x in nums]))  # 1 3 5
+print(f"{3.14159:.2f}")       # 3.14
 ```
 
-输出：
+join 版本先用第 02 章的列表推导式把各项转成字符串，再拼接。两种输出写法依赖的基础操作都已经解释，选择更容易读清的一种即可。
 
-```text
-1 3 5
-```
+模块被直接运行时 `__name__` 是 `"__main__"`；被其他文件导入时，它是模块名。入口判断避免导入算法时意外开始读输入。def 只定义函数，下面的调用才真正执行。
 
-### 保留两位小数
+**练习契约：** 第一行 n target，第二行 n 个整数；有且仅有一组答案时输出两个不同下标，无解扩展输出 -1 -1。样例输出 0 1。
 
-```python
-x = 3.1415926
-print(f"{x:.2f}")
-```
-
-输出：
-
-```text
-3.14
-```
-
-输出格式也是正确性的一部分。算法算对了，但多了提示文字、少了空格或精度不对，同样可能 Wrong Answer。
-
----
-
-## 13. 推荐的 `solve()` 结构
-
-```python
-def solve():
-    n = int(input())
-    nums = list(map(int, input().split()))
-
-    answer = sum(nums)
-
-    print(answer)
-
-
-if __name__ == "__main__":
-    solve()
-```
-
-当前只需理解：
-
-```text
-solve()
-→ 把这道题的完整流程集中起来
-
-if __name__ == "__main__":
-→ 这个文件被直接运行时调用 solve()
-```
-
-更完整的模块语义回 [Python Foundation 09](../../../curriculum/01-python/docs/09-异常-文件-模块与导入.md) 学。
-
----
-
-## 14. 大量输入：先知道还有“快读”
-
-当数据很多时会看到：
-
-```python
-import sys
-
-data = list(map(int, sys.stdin.buffer.read().split()))
-```
-
-它会一次读取剩余输入并拆成 token。
-
-初学阶段不要所有题都强行写这种形式。**先把输入结构读懂，再谈 I/O 性能。**
-
----
-
-## 15. Hot100 ACM 改写：两数之和
-
-假设我们为练习规定：
-
-```text
-第一行：n target
-第二行：n 个整数
-```
-
-输入：
-
-```text
-4 9
-2 7 11 15
-```
-
-完整程序：
-
+<!-- run: {"stdin":"4 9\n2 7 11 15\n","stdout":"0 1\n"} -->
 ```python
 def two_sum(nums, target):
     seen = {}
-
     for i, x in enumerate(nums):
         need = target - x
-
         if need in seen:
             return seen[need], i
-
         seen[x] = i
-
     return -1, -1
-
 
 def solve():
     n, target = map(int, input().split())
     nums = list(map(int, input().split()))
-
+    assert len(nums) == n
     i, j = two_sum(nums, target)
     print(i, j)
-
 
 if __name__ == "__main__":
     solve()
 ```
 
-算法并没有变，只是在外面补了：
+算法没变，只增加 parse → algorithm → output 的边界。调试时才能分别检查输入、算法和输出。
 
-```text
-stdin → parse → algorithm → stdout
+## 7. 大量输入：按行还是一次读取
+
+`sys.stdin.buffer` 是底层二进制输入流；read() 读取剩余全部字节。bytes、字节切分和整数转换已在第 02 章字符串末尾讲过；这里新增的是输入流一次读取的选择，而不是再引入一个陌生数据类型。
+
+**契约：** 所有内容是整数，换行没有业务含义，输出其和。
+
+<!-- run: {"stdin":"1 2\n3 4\n","stdout":"10\n"} -->
+```python
+import sys
+
+tokens = sys.stdin.buffer.read().split()
+nums = list(map(int, tokens))
+print(sum(nums))               # 10
 ```
 
----
+一次读取占用更多内存，还可能同时保留字节片段和整数列表；交互式程序未到 EOF 时可能继续等待。不能用它处理“每一行是一条完整文字”的协议，也不能靠快读挽救本身 O(n²) 的超时算法。
 
-## 16. 哪些 Hot100 适合 ACM 改写
+## 8. 自测、易错点与训练入口
 
-特别适合：
+**任务：** 第一行 T，之后每组先给 n，再给一行 n 个整数。每组输出和。样例输入 `2 / 3 / 1 2 3 / 2 / 4 5`，输出 6、9，各一行；斜杠表示换行，不属于输入。
 
-- 数组；
-- 字符串；
-- 矩阵；
-- 图 / 网格；
-- 数值 DP。
+<details><summary>查看完整答案</summary>
 
-例如：
-
-```text
-1 两数之和
-3 无重复字符的最长子串
-53 最大子数组和
-54 螺旋矩阵
-200 岛屿数量
-70 爬楼梯
+<!-- run: {"stdin":"2\n3\n1 2 3\n2\n4 5\n","stdout":"6\n9\n"} -->
+```python
+T = int(input())
+for _ in range(T):
+    n = int(input())
+    nums = list(map(int, input().split()))
+    assert len(nums) == n
+    print(sum(nums))
 ```
 
-不要求所有链表 / 二叉树题都改成 ACM。为了输入构造花大量时间，可能反而抢走当前算法目标。
+</details>
 
----
+**口述自测：** 为什么 EOF 不等于空行？为什么不能给所有 input 加 strip？为什么地图、树的输入不能照抄数组模板？
 
-## 17. 常见 ACM 错误
+<details><summary>查看参考答案</summary>
 
-- 多打印“答案是”之类提示文字；
-- 把第一行的 `T` 当作真正待计算数据；
-- 明明是 EOF，却只调用一次 `input()`；
-- 字符串包含空格却先 `.split()`；
-- 把矩阵的行数 `n`、列数 `m` 搞反；
-- 输出格式与题目不一致；
-- 输入解析和算法逻辑混成一团，Debug 时找不到错误在哪一层。
+EOF 是来源结束，空行仍是读到的一条数据。空白可能是文字内容；图和树的输入规定了实体关系，不只是数字列表，必须先理解协议。
 
-能分离时尽量维持：
+</details>
 
-```text
-parse
-→ solve
-→ print
-```
+常见错误来自把 T 当 n、少读组数、把矩阵行列反过来、丢空白、输出额外文字以及算法和解析混在一起。练习先从[牛客输入输出](https://www.nowcoder.com/exam/oj?page=1&tab=%E7%AE%97%E6%B3%95%E7%AC%94%E9%9D%A2%E8%AF%95%E7%AF%87&topicId=372)或 [CodeFun ACM](https://codefun2000.com/acm) 入手，再改写已经会的数组、字符串、矩阵、网格和数值 DP 题。链表和复杂树不强制改写，以免序列化抢走当前目标。
 
----
-
-## 18. 外部练习顺序
-
-先完成专门的输入输出训练：
-
-1. 牛客输入输出练习：<https://www.nowcoder.com/exam/oj?page=1&tab=%E7%AE%97%E6%B3%95%E7%AC%94%E9%9D%A2%E8%AF%95%E7%AF%87&topicId=372>
-2. CodeFun ACM：<https://codefun2000.com/acm>
-
-目标不是刷算法，而是见到下面这些词不再陌生：
-
-```text
-单组
-T 组
-EOF
-哨兵结束
-数组
-矩阵
-字符串
-多行
-格式化输出
-```
-
-然后从已经做过的 Hot100 里挑数组 / 字符串 / 矩阵题做 ACM 改写。
-
----
-
-## 19. Exit Gate
-
-你应该能不用查模板解释并写出：
-
-- `input()` 为什么返回字符串；
-- `split()` 之后是什么；
-- `map(int, ...)` 在做什么；
-- `list(map(int, input().split()))` 每一步发生什么；
-- 单组输入；
-- T 组输入；
-- EOF；
-- 哨兵结束；
-- 一维数组；
-- n×m 矩阵；
-- 带空格字符串；
-- 多条边；
-- `print(*nums)`；
-- 一个清晰的 `solve()`；
-- 把已经会的“两数之和”变成完整 stdin → stdout 程序。
-
-做到这里，“ACM 模式”应该只剩一句话：
-
-> **算法之外，输入输出也由我负责。**
-
----
-
-下一章：[05. Data Structures](05-data-structures.md)
+验收不是背模板，而是给定协议能预测每次 input 消费哪一行、每次转换后是什么、何时停止、输出什么。语义依据：[Python 输入输出](https://docs.python.org/3/tutorial/inputoutput.html)、[内置函数](https://docs.python.org/3/library/functions.html)、[sys](https://docs.python.org/3/library/sys.html)。

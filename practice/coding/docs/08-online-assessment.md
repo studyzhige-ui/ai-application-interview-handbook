@@ -1,407 +1,159 @@
-# 08｜Online Assessment：把算法能力迁移到真实笔试 / 机试
+# 08｜在线笔试：把算法放进完整交付约束
 
-[← 上一章：Hot100](07-hot100.md) · [Coding 首页](../README.md) · [下一章：AI Coding →](09-ai-coding.md)
+[← 上一章：Hot100 综合训练](07-hot100.md) · [Coding 首页](../README.md) · [下一章：AI Coding →](09-ai-coding.md)
 
-> 真实 OA（Online Assessment，在线笔试 / 机试）不是“换个平台继续 LeetCode”。它把 **输入输出、算法、数据范围、时间压力、边界处理和完整程序正确性**放在一起考。
+> 在线笔试 OA（Online Assessment）把题意、输入输出、算法、数据范围、边界与时间预算放到一起。第 04 章已教输入协议，第 05–07 章已教结构和算法；这里通过完整任务组合它们，而不是再次引入一排陌生 API。
 
----
+## 1. 先分清错误可能发生在哪一层
 
-## 使用本章前的一个边界
+函数模式由平台准备参数，完整程序模式则要自己解析文字。失败可能来自输入解析、Python 操作、数据结构、算法、边界、复杂度或输出格式。看到 WA（Wrong Answer，答案错误）不要立刻随机换算法；看到 TLE（Time Limit Exceeded，超过时限）也不要先归咎于语言。
 
-本章会把 `Counter / defaultdict / deque / heapq / bisect` 等工具放到真实笔试语境中，但它们不是要求第一次见面就背下来的“速查表”。如果某个工具仍然陌生，先回到第 05–06 章理解它解决的操作需求，再回来做限时题；OA 负责组合和熟练度，不负责用陌生 API 制造额外难度。
+读题时圈出 n/m 和值域、是否多组、是否允许负数与空数据、是否保证有解、允许修改输入吗、时间和空间限制。n≤20 与 n≤200000 提供的可行范围不同，但仍要结合问题结构，不用 n 猜模板。
 
-## 1. OA 比 LeetCode 多了哪些责任
+## 2. 完整任务：区间长度固定的最大和
 
-LeetCode 核心代码模式：
-
-```text
-平台解析输入
-→ 平台构造参数
-→ 你实现函数
-→ 平台调用
-```
-
-ACM/OA：
+**本章自定义练习，不是复制某家公司的题面。** 第一行 n k，第二行恰好 n 个整数。保证 1≤k≤n，元素允许为负数。输出长度恰好为 k 的连续子数组最大和。样例输入如下，输出 9，对应 [4,5]。
 
 ```text
-读题
-→ 解析完整输入
-→ 选择算法
-→ 自己创建数据结构
-→ 输出
-→ 一次提交接受隐藏测试
+5 2
+1 -2 3 4 5
 ```
 
-所以 OA 的错误来源至少有四层：
-
-```text
-1. Parse 错
-2. Algorithm 错
-3. Boundary / Complexity 错
-4. Output Format 错
-```
-
-不要算法一 WA 就默认“算法想错了”。
-
----
-
-## 2. 做题前先读数据范围
-
-假设：
-
-```text
-n <= 20
-```
-
-和：
-
-```text
-n <= 200000
-```
-
-允许的算法完全不同。
-
-拿到题先圈：
-
-```text
-n / m 范围
-元素值范围
-是否多组
-是否有负数
-是否有重复
-是否保证有解
-时间限制
-空间限制
-```
-
-这些不是题面装饰，而是解法约束。
-
----
-
-## 3. 先把 Input Contract 写成变量
-
-例如题面：
-
-```text
-第一行 n, k
-第二行 n 个整数
-```
-
-先不要想算法，先确认：
+先手算每段：-1、1、7、9。朴素解每次重新累加 k 项，O(nk)；相邻窗口只差一个移出项与一个移入项，所以可复用当前和。这一步是从任务推导状态，不是只看到“连续”就套窗口。
 
 ```python
-n, k = map(int, input().split())
-nums = list(map(int, input().split()))
+def max_window_sum(nums, k):
+    current = 0
+    for i in range(k):
+        current += nums[i]
+    best = current
+    for right in range(k, len(nums)):
+        current += nums[right] - nums[right - k]
+        best = max(best, current)
+    return best
+
+assert max_window_sum([1,-2,3,4,5], 2) == 9
+assert max_window_sum([-5,-2,-8], 2) == -7
+assert max_window_sum([7], 1) == 7
+assert max_window_sum([1,2,3], 3) == 6
 ```
 
-再问：
+best 不能初始化为 0，因为全负数时答案也可能为负。固定长度窗口不依赖正数假设；与“和太大就缩小”的变长窗口不同。函数 O(n) 时间、O(1) 额外空间；代码没有偷偷用 nums[:k] 创建切片。
 
-```text
-len(nums) 是否应该等于 n？
-多组还是单组？
-k 是值、长度还是次数？
-```
+## 3. 算法通过以后，再加输入和输出
 
-输入层理解清楚，算法层才有意义。
+算法函数不读取键盘、不打印，也不依赖上一次测试留下的变量。solve 负责协议。下面代码是完整程序，仍与上一节同一任务。
 
----
-
-## 4. 推荐 OA 代码分层
-
-简单题也尽量形成：
-
+<!-- run: {"stdin":"5 2\n1 -2 3 4 5\n","stdout":"9\n"} -->
 ```python
-def algorithm(nums, k):
-    # 纯算法
-    ...
-    return answer
-
+def max_window_sum(nums, k):
+    current = 0
+    for i in range(k):
+        current += nums[i]
+    best = current
+    for right in range(k, len(nums)):
+        current += nums[right] - nums[right - k]
+        best = max(best, current)
+    return best
 
 def solve():
-    # parse
     n, k = map(int, input().split())
     nums = list(map(int, input().split()))
-
-    # solve
-    answer = algorithm(nums, k)
-
-    # output
+    assert len(nums) == n and 1 <= k <= n
+    answer = max_window_sum(nums, k)
     print(answer)
-
 
 if __name__ == "__main__":
     solve()
 ```
 
-好处：
+assert 在这里用于本地验证对协议的理解，不是生产参数校验。若题目保证输入合法，提交前按平台要求处理。不要多输出提示文字，也不要把结果列表的 Python 表示当作空格分隔输出。
 
-```text
-输入错？
-看 solve 的 parse
+若题面改成第一行 T，每组先 n k 再一行数字，就把每组的读取和算法调用放到 T 循环内；若改成 EOF，则必须明确每组占几行，不能简单地对每一行独立求解。输入协议改变不意味着算法改变。
 
-算法错？
-单独测试 algorithm
+## 4. 样例之外怎样制造测试
 
-输出错？
-看最后 print
-```
+先沿任务约束制造最小合法输入、k=1、k=n、全负数、全相同、重复值、答案在最左或最右。不要为题目保证不出现的输入擅自创造输出协议；但必须确认保证确实存在。
 
-Debug 边界会清楚很多。
-
----
-
-## 5. 本地样例不只是“复制题目样例”
-
-题目给：
-
-```text
-5
-1 2 3 4 5
-```
-
-你还应该自己想：
-
-```text
-最小 n
-全相同
-全负数
-已经有序
-逆序
-重复很多
-答案在最左 / 最右
-无解（如果允许）
-```
-
-隐藏测试最喜欢击中：
-
-> 你默认成立、但题目从未保证的条件。
-
----
-
-## 6. Wrong Answer 时怎么排查
-
-按层排，而不是随机改：
-
-```text
-A. 我读对输入了吗？
-B. 我输出格式对吗？
-C. 样例能手算一致吗？
-D. 最小边界呢？
-E. 重复 / 0 / 负数呢？
-F. 算法 invariant 在每一步都成立吗？
-G. 有溢出 / 精度问题吗？
-H. 数据量大时会超时吗？
-```
-
-Python 没有普通整数的 32 位溢出问题，但仍要注意浮点精度、递归深度和内存。
-
----
-
-## 7. Time Limit Exceeded 时怎么排查
-
-先不要急着换语言。
-
-问：
-
-```text
-复杂度是什么？
-
-n 最大是多少？
-
-有没有：
-- 两层 O(n²)？
-- list 前端反复 pop / insert？
-- 在循环里反复排序？
-- 在循环里构造巨大字符串？
-- DFS 重复访问状态？
-- 没有 memo 的重复递归？
-```
-
-如果算法复杂度本身不够，换“快读”通常救不了。
-
----
-
-## 8. Python OA 常用工具箱
-
-不是让你一次背完，只要逐步熟悉：
+小规模时，用简单正确的暴力解与优化版逐个比对，称为对拍。它发现实现错误，不是代替复杂度分析或正确性证明。
 
 ```python
-from collections import Counter, defaultdict, deque
-import heapq
-import bisect
-import math
-import sys
+def brute(nums, k):
+    best = sum(nums[:k])
+    for left in range(1, len(nums) - k + 1):
+        best = max(best, sum(nums[left:left + k]))
+    return best
+
+def fast(nums, k):
+    current = sum(nums[:k])
+    best = current
+    for right in range(k, len(nums)):
+        current += nums[right] - nums[right - k]
+        best = max(best, current)
+    return best
+
+cases = [[1,-2,3], [-5,-2,-8], [0,0,0], [7], [4,1,4,1]]
+for nums in cases:
+    for k in range(1, len(nums) + 1):
+        assert fast(nums, k) == brute(nums, k)
 ```
 
-常见用途：
+这里 fast 为了简写初始化用了切片，因此额外空间是 O(k)，不是上一节无切片版本的 O(1)。核算复杂度时必须检查实际代码，不能套用算法名字的标准结论。
 
-| 工具 | 常见用途 |
+## 5. WA 与 TLE 的调查顺序
+
+WA 时先确认输入消费的行数和字段含义，再检查实际输出格式，然后手算失败样例，对照每轮状态，最后调查边界和算法依据。浮点题注意精度；Python 普通整数不受固定 32 位上限限制，但大整数、内存与递归深度仍有限制。
+
+TLE 时先数工作量：是否反复线性查找、list 前端删除、循环里排序、复制越来越长的字符串、重复访问搜索状态、递归重复求同一个子问题。仅把 input 换成快读，不能从根本上修复不符合规模要求的平方算法。
+
+错误日志只记录任务、实际失败、错误层、当时哪个假设不成立、下次应检查的信号。例如“best=0 默认答案非负”，比复制整段正确代码更容易迁移。
+
+## 6. 工具回查必须指向已教过的内容
+
+| 需求 | 工具与教学归属 |
 |---|---|
-| `Counter` | 频次 |
-| `defaultdict` | 邻接表 / 分组 |
-| `deque` | BFS / 双端队列 |
-| `heapq` | Priority Queue / Top K |
-| `bisect` | 有序序列二分位置 |
-| `math` | 数学函数 |
-| `sys.stdin` | EOF / 大量输入 |
+| 计数与缺失项默认值 | 第 05 章 Counter、defaultdict；普通 dict 操作在第 02 章 |
+| 队列、优先级 | 第 05 章 deque、heapq |
+| 有序序列边界 | 第 06 章 bisect；先理解二分含义 |
+| 数学函数 | 第 07 章 math 示例与任务驱动查询 |
+| 单组、多组、EOF、大量输入 | 第 04 章 input、sys.stdin |
 
-原则：先理解普通写法，再用库让实现更稳定。
+这张表只做回查，不承担首次教学。新任务出现尚未学过的基础工具时，应先补到负责该知识的章节，再把它用在组合练习中，而不是在这里写一句“自行补课”。
 
----
+## 7. 从单题正确到整场时间管理
 
-## 9. 把 Hot100 变成 OA 训练
+先不限时正确完成，消除 API 与输入输出障碍；再对单题练读题、朴素解、优化、实现、测试的完整流程；最后做多题整场模拟，统一时间预算、减少外部提示、提交后复盘。
 
-不要重新找一批完全陌生题才叫“笔试训练”。
+整场先浏览题意与限制，识别能立即写、需要思考但有方向、完全陌生的任务。先完成把握较大的题，同时为每题留下边界与输出检查时间；不要为了“抢时间”省略协议理解。
 
-可以先把熟悉题改完整程序：
+Hot100 可先选熟悉题改完整程序，如 3、53、56、54、200、207、215、70、322，随后进入真实陌生题。避免在输入尚不熟时，把算法难度与环境难度同时拉满。
 
-```text
-3 无重复字符最长子串
-53 最大子数组和
-56 合并区间
-54 螺旋矩阵
-200 岛屿数量
-207 课程表
-215 第 K 大
-70 爬楼梯
-322 零钱兑换
+## 8. 实践验收
+
+**练习：** 把第 2 节任务改成 T 组协议。输入 `2 / 5 2 / 1 -2 3 4 5 / 3 2 / -5 -2 -8`，输出 9、-7，各一行；斜杠仅表示换行。
+
+<details><summary>查看完整参考答案</summary>
+
+<!-- run: {"stdin":"2\n5 2\n1 -2 3 4 5\n3 2\n-5 -2 -8\n","stdout":"9\n-7\n"} -->
+```python
+def max_window_sum(nums, k):
+    current = 0
+    for i in range(k):
+        current += nums[i]
+    best = current
+    for right in range(k, len(nums)):
+        current += nums[right] - nums[right - k]
+        best = max(best, current)
+    return best
+
+T = int(input())
+for _ in range(T):
+    n, k = map(int, input().split())
+    nums = list(map(int, input().split()))
+    assert len(nums) == n
+    print(max_window_sum(nums, k))
 ```
 
-目标是训练：
+</details>
 
-```text
-题面 input contract
-→ parse
-→ 已知算法
-→ output
-```
-
-把输入输出自动化以后，再进入公司真题 / 陌生 OA。
-
----
-
-## 10. 限时训练不要一开始就追求“模拟正式考试”
-
-建议三个阶段：
-
-### Stage 1｜不限时正确完成
-
-先消灭：
-
-- ACM 输入不熟；
-- Python API 不熟；
-- 基础算法不会实现。
-
-### Stage 2｜单题限时
-
-例如给自己一个合理时间窗口，训练：
-
-```text
-读题
-→ 朴素解
-→ 优化
-→ 实现
-→ 测试
-```
-
-### Stage 3｜整场模拟
-
-再做：
-
-```text
-多题
-+ 统一时间预算
-+ 不查答案
-+ 提交后复盘
-```
-
-初学阶段一上来整场模拟，很可能只是连续体验不会做，并不能高效学习。
-
----
-
-## 11. 整场 OA 的题目管理
-
-开始后先快速浏览全部题目，识别：
-
-```text
-我能立即写的
-需要思考但有方向的
-完全陌生的
-```
-
-先拿确定性更高的分数是通用考试策略，但不要因此草率跳过题目约束。
-
-每道题提交前做最短检查：
-
-```text
-是否多组？
-输出有没有调试文字？
-边界下标？
-复杂度？
-变量有没有读错含义？
-```
-
----
-
-## 12. OA 后的复盘比题量更重要
-
-每场只记录：
-
-```text
-题目：
-结果：AC / WA / TLE / 未完成
-
-失败层：
-Input / Python / Data Structure / Algorithm / Boundary / Complexity / Time Management
-
-我第一次错误判断是什么？
-
-下一次应该识别什么信号？
-```
-
-例如：
-
-```text
-失败：TLE
-
-原因：
-每个位置都向右重新扫描，O(n²)
-
-下次信号：
-“右侧第一个更大元素”
-→ 检查是否能用单调栈保存未解决位置
-```
-
-这会把真题变成能力反馈，而不是题号收藏。
-
----
-
-## 13. 外部练习入口
-
-ACM 输入输出基础：
-
-- 牛客算法笔面试篇：<https://www.nowcoder.com/exam/oj?page=1&tab=%E7%AE%97%E6%B3%95%E7%AC%94%E9%9D%A2%E8%AF%95%E7%AF%87&topicId=372>
-- CodeFun ACM：<https://codefun2000.com/acm>
-
-完成输入输出专项后，优先进入真实算法笔试题，而不是继续刷大量 A+B。
-
-题库结构和具体题量会变化，本仓库不复制动态题面。
-
----
-
-## 14. Exit Gate
-
-进入 AI Coding 前，至少应该：
-
-- 能独立读取单组 / T 组 / EOF；
-- 能快速把题面 input contract 翻成 Python 变量；
-- 算法函数和 I/O 能基本分离；
-- 会根据 n 粗略排除明显过慢复杂度；
-- WA 时能按 Input / Algorithm / Boundary / Output 分层排查；
-- TLE 时先看算法复杂度而不是先怪 Python；
-- 已做过一批 Hot100 ACM 改写；
-- 已完成若干真实 OA / 真题并留下失败分类。
-
----
-
-下一章：[09. AI Coding](09-ai-coding.md)
+能独立完成多组程序、从失败输出定位所属层、解释最大规模下的时间与空间、为边界写测试，并留下真实失败记录，才进入工程型 AI Coding。外部练习入口保留[牛客算法笔面试](https://www.nowcoder.com/exam/oj?page=1&tab=%E7%AE%97%E6%B3%95%E7%AC%94%E9%9D%A2%E8%AF%95%E7%AF%87&topicId=372)与 [CodeFun ACM](https://codefun2000.com/acm)；平台题量和界面不作为课程保证。

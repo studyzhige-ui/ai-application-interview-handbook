@@ -1,348 +1,67 @@
-# Coding & Problem Solving｜从会看代码到能独立完成笔试与 AI Coding
+# Coding｜从程序执行到算法与工程交付
 
-[← Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Hot100 映射表](hot100-map.md) · [Python Foundation](../../curriculum/01-python/README.md)
+[← Handbook 总目录](../../README.md) · [学习路线](../../guide/learning-path.md) · [Python Foundation](../../curriculum/01-python/README.md) · [Hot100 映射](hot100-map.md)
 
-> **课程版本：V1** · **结构：9 章主线 + 1 张 Hot100 全量映射表**
->
-> Coding 是与十个正式 Curriculum 模块并行的横向实践轨道。十个正式模块回答“需要懂什么”；Coding 轨道回答“能不能从空白文件开始，把问题真正写成可运行、可验证的代码”。
+> 面向初学者的横向实践轨道，与十个 Curriculum 知识模块并行。课程包含 9 章、1 张 Hot100 映射表、22 题基础 Notebook 与一个三文件 AI Coding 练习。
 
----
+## 1. 本轨道解决什么
 
-## 1. 为什么需要单独的 Coding 轨道
+理解语言或系统概念，不等于能从空白文件把任务写出来。Coding 训练从输入识别、状态设计、实现、调试与验证，到独立完成笔试和工程任务的过程；Python Foundation 解释语言机制，两条线可以并行，不必先看完所有知识再开始写代码。
 
-只学习 Python、FastAPI、RAG、Agent 等知识，并不会自动获得稳定的编程基本功。
+核心阅读路线是：看懂一行怎样执行 → 操作一种数据 → 组合成小函数 → 独立实现并测试 → 接入完整输入输出 → 按操作成本选择结构 → 推导算法 → 混合练习 → 工程交付。每一步增加一种责任，不同时引入一串尚未解释的前置知识。
 
-一个人可能已经能解释：
+## 2. 九章主线与知识归属
 
-- Python 对象模型；
-- dict / GIL / asyncio；
-- RAG Pipeline；
-- Agent Memory / Context / Tool Runtime；
+| 章 | 内容与入口 | 本章新增责任 | 进入下一章前能做到 |
+|---:|---|---|---|
+| 01 | [程序基础](docs/01-programming-fundamentals.md) | 数值与布尔操作、变量、控制流、函数、断言、Traceback | 追踪每轮状态，写函数并区分返回与输出 |
+| 02 | [数据类型与容器](docs/02-python-coding-basics.md) | list → tuple → str/bytes → dict → set；各自操作学完后再组合 | 创建、访问、查询、遍历、修改或构造、转换、处理边界 |
+| 03 | [基础练习](docs/03-basic-exercises.md) | 从题意自主决定变量、步骤与测试 | 不看答案完成累积、构造、索引、频次与基础 Hot100 |
+| 04 | [完整输入输出](docs/04-acm-input-output.md) | 解析协议、单组/T组/EOF/哨兵、数组矩阵、输出与入口 | 写出 stdin → algorithm → stdout 的完整程序 |
+| 05 | [数据结构](docs/05-data-structures.md) | 操作成本、栈队列、类与节点、链表、树、堆、图、Trie | 先建立数据表示，再执行操作并解释成本 |
+| 06 | [算法推导](docs/06-problem-solving-and-algorithms.md) | 线性状态 → 递归 → 搜索/回溯 → Top K → 贪心/DP | 从朴素解解释优化依据、状态含义与边界 |
+| 07 | [Hot100 综合训练](docs/07-hot100.md) | 专题连接、分阶段解锁、混合重写与综合题 | 脱离专题标签仍能分析，不只记住答案 |
+| 08 | [在线笔试](docs/08-online-assessment.md) | 输入、算法、输出、复杂度、测试与时间预算一起验收 | 定位失败所属层，完成限时完整程序 |
+| 09 | [AI Coding](docs/09-ai-coding.md) | 陌生仓库调查、测试失败、最小修改、Review 与交付 | 用真实运行证据验收，而不是相信生成说明 |
 
-但仍然会在下面这些地方卡住：
+第 02 章的基础操作以所属类型为主责位置，后面的例子只复用，不在某道题后面另藏第一次教学。第 05 章介绍节点不等于已经教会树遍历；递归、DFS/BFS 的完整执行放在第 06 章。知识归属与实际解题前提需要同时成立。
 
-```text
-input() 为什么读到的是字符串？
-split() 到底把什么拆开？
-T 组输入是什么意思？
-EOF 是什么？
-怎么从题目描述变成循环和变量？
-为什么需要 dict，而不是“因为题解这么写”？
-怎么自己定位 IndexError / KeyError？
-LeetCode 会写函数，为什么笔试不会写完整程序？
-AI 生成了一堆代码，我怎么判断它真的对？
+## 3. 每章怎样使用
+
+先读当前任务与已有前提，再看一个完整小例子，手工追踪，运行核对，改输入观察，然后关掉答案重写，用自己的话解释为什么。算法题在此基础上增加朴素解、瓶颈、优化与边界测试。
+
+代码注释中的结果不会自动显示，修改操作也不一定返回新对象。读每行时分开观察“对象是否改变”“表达式返回什么”“是否产生输出”。故意报错、未完成编写区、伪代码和正常示例会明确区分，不能要求读者猜代码是否应该运行成功。
+
+较长章节按内部小节学习，不要求一次背完。原型操作集中展示是为了能够回查和建立类别，不是让读者在未理解时机械记忆一张 API 表。技术机制需要深挖时可回 Python Foundation，但完成本章任务所必需的知识应在主线上具备。
+
+## 4. 动手入口
+
+[第 03 章 Notebook](exercises/03-basic-exercises.ipynb)与正文 E01–E22 一一对应：任务和样例可见，编写区与测试可运行，参考答案默认折叠。GitHub 提供静态预览，实际运行使用 JupyterLab 等环境的 Python 3 内核；空白函数不能通过测试是预期行为。
+
+[第 09 章分页修复项目](exercises/09-ai-coding-lab/README.md)包含故意有缺陷的初始实现、验收测试与折叠参考实现。按需求调查、复现、修改并重跑，而不是直接复制答案。
+
+代码以 Python 3.10 及以上为实践基线；标准库和平台运行环境仍应实际确认。练习只使用标准库，Notebook 编辑器和内核属于运行环境，不要求为算法额外安装框架。
+
+## 5. Hot100 怎样贯穿而不打断主线
+
+[100 题映射](hot100-map.md)维护题目快照、前置章节、学习目标与适合的 ACM 改写。基础容器学完才开始两数之和、移动零和分组；结构与算法前提不足时先做最小例子，不为了用上 Hot100 而提前要求陌生语法。
+
+每题可以记录 L（理解）、S（独立实现）、A（完整输入输出）、R（间隔后重建）。不是每题都需要 A，复杂树和链表输入构造可能抢走算法目标；也不为 100 题额外创建 100 份重复 Markdown。
+
+官方题面与在线提交使用 [LeetCode 热题 100](https://leetcode.cn/studyplan/top-100-liked/)。ACM 和 AI Coding 的外部练习入口分别在第 04、08、09 章；不把外部平台动态题量当作课程元数据。
+
+## 6. 维护与验证
+
+写作遵循[文档规范](../../guide/documentation-style-guide.md)：先确定整体依赖和章节职责，再写概念、过程、例子、练习与验收。读者反馈是发现同类设计问题的样本，不是只修所点名位置的补丁清单。具体审查记录见[架构审查](../../guide/audits/coding-reader-first-2026-09-23.md)。
+
+第 03 章是练习题、样例、测试与答案的唯一维护源。修改后执行：
+
+```bash
+python tools/build_coding_practice.py
+python tools/build_coding_practice.py --check
+python tools/validate_coding_curriculum.py
 ```
 
-这些问题属于 **Coding Skill / Problem Solving Skill**，不能靠继续背面经补齐。
+第二条检查 Notebook 同步并运行参考答案，第三条冷启动运行章节示例、核对指定输出和预期异常、验证工程练习的红绿结果、检查本地导航。脚本仅应运行可信课程代码。
 
-因此本仓库采用两条并行学习线：
-
-```text
-Knowledge Track
-Python / FastAPI / Backend / Data / LLM / RAG / Agent / System Design
-→ 建立技术知识体系
-
-Coding Track
-Programming → Python Coding → ACM → DSA → Problem Solving → Hot100 → OA → AI Coding
-→ 建立把知识变成代码的能力
-```
-
-两条线需要并行，而不是先把所有知识看完以后再开始写代码。
-
----
-
-## 2. 本轨道的最终主线
-
-```text
-01 Programming Fundamentals
-程序怎样执行，变量、判断、循环、函数、错误到底是什么
-        ↓
-02 Python Coding Basics
-真正熟练使用 list / dict / set / str / for / 函数等写代码
-        ↓
-03 Basic Coding Exercises
-从“看懂示例”过渡到“能从空白文件独立写出来”
-        ↓
-04 ACM Input / Output
-stdin / stdout / input / split / T 组 / EOF / 数组 / 矩阵 / 多组数据
-        ↓
-05 Data Structures
-数组、哈希、栈、队列、链表、树、堆、图到底解决什么操作需求
-        ↓
-06 Problem Solving & Algorithms
-从读题、暴力解，到双指针、滑窗、DFS/BFS、回溯、二分、DP
-        ↓
-07 Hot100
-完成剩余题目，并把前面分散学过的题重新组织成稳定算法体系
-        ↓
-08 Online Assessment
-ACM + 算法 + 数据范围 + 边界条件 + 限时笔试 / 机试
-        ↓
-09 AI Coding
-读陌生仓库 → 理解需求 → 让 AI 协作 → 修改 → 测试 → Debug → Review → 交付
-```
-
-这不是要求读完 01–06 才能碰 Hot100。Hot100 从早期就会开始出现。
-
----
-
-## 3. Hot100 的固定使用原则
-
-本轨道把 [LeetCode 热题 100](https://leetcode.cn/studyplan/top-100-liked/) 当作**贯穿式真实练习库**，而不是最后突然出现的 100 道作业。
-
-固定规则：
-
-```text
-Hot100 适合作为当前知识点的自然例子
-→ 优先使用 Hot100
-
-Hot100 的前置知识明显超出当前阶段
-→ 使用更小、更纯粹的入门例子
-
-基础学会以后
-→ 再连接回对应 Hot100
-```
-
-因此同一道题可能出现不止一次。
-
-例如 `283. 移动零`：
-
-```text
-第一次：02 Python Coding Basics
-目标：for / if / list / 原地修改的基本感觉
-
-第二次：06 Problem Solving & Algorithms
-目标：从额外数组推导双指针与 O(1) 额外空间
-
-第三次：04 ACM / 08 OA
-目标：自己读数组、输出结果、处理完整程序
-```
-
-这不是重复刷题，而是在不同认知层级重新理解同一个问题。
-
-完整映射见：[Hot100 Curriculum Map](hot100-map.md)。
-
----
-
-## 4. 9 章正式课程
-
-| # | 章节 | 本章真正要解决的问题 |
-|---:|---|---|
-| 01 | [Programming Fundamentals](docs/01-programming-fundamentals.md) | 程序如何执行？变量、表达式、判断、循环、函数、输入输出和报错分别是什么？ |
-| 02 | [Python Coding Basics](docs/02-python-coding-basics.md) | 怎样真正使用 Python 容器、循环、索引和函数写出小程序，而不是只认识语法？ |
-| 03 | [Basic Coding Exercises](docs/03-basic-exercises.md) | 怎样从“看得懂”迈到“不给模板也能写出来”？ |
-| 04 | [ACM Input / Output](docs/04-acm-input-output.md) | LeetCode 函数模式和笔试完整程序模式差在哪里？T、EOF、矩阵输入到底是什么？ |
-| 05 | [Data Structures](docs/05-data-structures.md) | 为什么会有数组、哈希、栈、队列、链表、树、堆和图？各自在解决什么操作成本？ |
-| 06 | [Problem Solving & Algorithms](docs/06-problem-solving-and-algorithms.md) | 拿到陌生题，怎样从暴力解一步步推导到可接受的算法，而不是猜模板？ |
-| 07 | [Hot100](docs/07-hot100.md) | 怎样把已经穿插完成的 Hot100 收口成稳定、可复现、能解释的算法体系？ |
-| 08 | [Online Assessment](docs/08-online-assessment.md) | 怎样把算法能力迁移到牛客等真实 ACM 笔试 / 机试环境？ |
-| 09 | [AI Coding](docs/09-ai-coding.md) | 怎样在陌生代码库里借助 AI 完成需求分析、实现、测试、Debug 和 Review？ |
-
-额外只有一张导航表：[hot100-map.md](hot100-map.md)。本轨道**不会**为 100 道题再制造 100 个 Markdown。
-
-第 03 章另配一份可直接运行的 [Jupyter 基础练习本](exercises/03-basic-exercises.ipynb)：题目、空白代码单元与折叠参考答案放在同一份练习文件中。
-
----
-
-## 5. Coding 与 Python Foundation 的边界
-
-两个目录会互相引用，但职责不同。
-
-### [python/](../../curriculum/01-python/README.md) 负责“语言是什么”
-
-例如：
-
-- 对象、引用和身份；
-- 可变 / 不可变；
-- list / dict 的机制与成本；
-- 函数、作用域、闭包；
-- 迭代器、生成器；
-- 异常、模块；
-- GC / GIL；
-- async / await。
-
-### coding/ 负责“怎么真正用它解决问题”
-
-例如：
-
-- 从空白 `.py` 文件开始写程序；
-- 读输入、打印输出；
-- 循环遍历一个数组；
-- 用 dict 做查找和计数；
-- 从暴力解推导优化；
-- Debug；
-- 完成 Hot100；
-- 完成 ACM 笔试；
-- 阅读陌生仓库并和 AI Coding Agent 协作。
-
-遇到语言机制问题，回 Python；遇到“我知道概念但写不出来”，回 Coding。
-
----
-
-## 6. 初学者的固定学习动作
-
-Coding 文档统一遵守四条 **beginner-first 可读性约束**：
-
-```text
-First Use
-一个语法 / API / 写法第一次出现时，就地解释“它是什么 + 这一行发生了什么”
-
-Observable
-修改容器或变量的示例，要让结果可观察；能用行尾注释说明结果时优先写清楚
-
-Self-contained Exercise
-练习题必须自己包含题目、初始数据 / 输入、要求和可检查结果
-
-Learn Before Use
-后续练习只依赖前面已经讲过的知识；若提前出现新语法，必须当场做最小解释
-```
-
-这四条用于防止初学者在关键一步被迫离开主线搜索“这一行到底是什么意思”。
-
-每一个 Coding 知识点至少经过下面六步：
-
-```text
-1. Read       看懂一个最小例子
-2. Trace      手工追踪每一步变量怎么变化
-3. Run        自己运行，确认真实输出
-4. Modify     改输入 / 改条件，观察行为
-5. Rebuild    关掉答案，从空白文件重新写
-6. Explain    用自己的话解释为什么这样写
-```
-
-算法题再加三步：
-
-```text
-7. Brute Force   先得到一个正确但可能慢的办法
-8. Optimize      找瓶颈，再选择数据结构 / 算法
-9. Test          正常样例 + 边界 + 极端数据
-```
-
-**“看懂题解”不等于“会做”。**
-
----
-
-## 7. 推荐学习方式：知识线与 Coding 线并行
-
-不要使用下面这种顺序：
-
-```text
-先把 Python 13 章全部看完
-→ 几周后再第一次认真写代码
-```
-
-更推荐：
-
-```text
-Python 正文学习一点
-        ↕
-Coding 01–03 立即把最基本语法写起来
-        ↓
-Coding 04 学会完整输入输出
-        ↓
-Coding 05–06 和 Python 数据结构知识互相连接
-        ↓
-Hot100 按知识依赖持续解锁
-```
-
-第一次学习时，不要求同时追求：
-
-- 最短代码；
-- 最优解；
-- 一遍 AC；
-- 记住所有模板。
-
-先建立“我知道每一行为什么存在”的能力。
-
----
-
-## 8. Hot100 不是一道一道孤立推进
-
-本轨道不采用“官方列表从第一题机械刷到第 100 题”作为唯一顺序。
-
-官方题单本身按哈希、双指针、滑动窗口、数组、矩阵、链表、二叉树、图、回溯、二分、栈、堆、贪心、动态规划等专题组织。这里进一步按**前置知识**重排第一次接触的位置。
-
-一题建议保留四种状态：
-
-```text
-L = Learned
-已经理解题意、数据结构和参考解法
-
-S = Solved
-关掉答案能独立写出并通过
-
-A = ACM
-适合的题已经改写成完整 stdin → solve → stdout
-
-R = Recall
-隔一段时间随机抽到仍能说出思路并重写关键代码
-```
-
-不是每一道题都必须做 ACM 改写。链表、树等题如果输入构造本身会抢走当前学习目标，就保留 LeetCode 形式。
-
----
-
-## 9. 外部练习入口
-
-### Hot100
-
-- LeetCode 热题 100：<https://leetcode.cn/studyplan/top-100-liked/>
-
-本仓库只维护学习顺序、知识映射与方法，不复制官方题面。
-
-### ACM 输入输出
-
-- 牛客算法笔面试篇 / 输入输出练习：<https://www.nowcoder.com/exam/oj?page=1&tab=%E7%AE%97%E6%B3%95%E7%AC%94%E9%9D%A2%E8%AF%95%E7%AF%87&topicId=372>
-- CodeFun ACM 模式：<https://codefun2000.com/acm>
-
-### AI Coding
-
-- 牛客 AI 新题型篇：<https://www.nowcoder.com/exam/oj?page=1&tab=AI%E6%96%B0%E9%A2%98%E5%9E%8B%E7%AF%87&topicId=-9001>
-- 牛客 AI Coding 题库：<https://www.nowcoder.com/problem/aicoding/?channelPut=www_oj_aicoding>
-
-外部入口核验日期：**2026-09-18**。平台内容可能变化；仓库只维护学习顺序、知识映射与方法，不把动态题量写成永久事实。
-
----
-
-## 10. Coding Exit Gate
-
-完成主线后，目标不是“刷过很多题”，而是至少具备下面的可调用能力：
-
-- 能从空白 `.py` 文件开始写一个小程序；
-- 能解释 `input()` / `split()` / `map()` / `list()` 的数据变化；
-- 能区分单组、T 组、EOF；
-- 能读数组、矩阵、普通字符串和边列表；
-- 能熟练使用 list / dict / set / deque / heapq 的基本操作；
-- 能说出常见数据结构为什么存在，而不是只背名字；
-- 面对陌生算法题先写出朴素解并分析瓶颈；
-- 能解释时间复杂度和空间复杂度；
-- 能完成 Hot100 的系统训练，而不是只记答案；
-- 能把适合的 LeetCode 题改成 ACM 完整程序；
-- 能读 traceback 并定位常见错误；
-- 能阅读陌生 Python 项目中的入口、模块、测试与数据流；
-- 能让 AI 协助调查 / 修改，但会检查 diff、运行测试并验证最终行为。
-
----
-
-## 11. 轨道范围与维护原则
-
-本轨道包含：
-
-```text
-9 章主线
-+ 1 张 Hot100 全量映射表
-+ 与根 README / Knowledge Map / Learning Path 的导航接入
-```
-
-范围外：
-
-- 100 道 Hot100 的重复题解仓库；
-- 按公司复制大量版权题面；
-- 为每个小练习单独创建文件；
-- 用“AI 能写”替代基础 Coding。
-
-维护原则：以真实学习反馈驱动顺序和练习难度调整；若出现知识跳跃、练习坡度过陡或 Hot100 引入过早，再修订对应位置，不以“文档更多”作为质量目标。
-
----
-
-下一章：[01. Programming Fundamentals](docs/01-programming-fundamentals.md)
+这些检查能发现失效代码、漏输入、漂移和链接问题，不能证明学习者已经理解。结构审查与实际阅读反馈仍是教材验收的一部分；不能以增加规则声明、字数或测试数量代替内容质量。
