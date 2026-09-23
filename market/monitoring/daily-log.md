@@ -607,3 +607,80 @@ Afternoon 主要观察：**AI Full-stack 继续表现为“完整软件工程底
 Afternoon 盲区：22:00 优先重新核验当前 **3 个 Inbox 候选**的 Stable Original / Candidate Timeline，并再次直接回读全部正式 Batch做最终去重；继续追 4399 9/18 Agent、阿里云 AI 应用、杭州微链词元、9/21～9/22 字节 / 腾讯 / 美团 / 快手 / 京东 / 滴滴 / B站 / OPPO / vivo / 小米新目标岗原帖，以及非牛客 Candidate First-person 来源。质量门槛不变。
 
 Afternoon 不修改 `interview/canonical/`、`market/analysis/` Frozen Canonical 统计或任何 Curriculum 正文。
+
+### 22:00 Evening Search + Finalize — Backfilled 2026-09-23
+
+- Status: completed; this section backfills the 2026-09-22 Evening record that was missing from the rolling log while the formal Market Evidence had already been committed.
+- Finalize / full-history dedup：重新直接回读当时全部正式 Batch 后，先将 2026-09-21 已通过 Gate 但漏掉 Finalize 的两个 backlog 独立恢复为 `batch-32.md` / `S292–S293`，再把 2026-09-22 当日正式新增归入唯一日批次 `batch-33.md`。没有把两天来源混进同一个 Batch。
+- 2026-09-22 Final additions：**2 个独立 HUMAN-A：`S294–S295`**，分别为度小满 AI 全栈一面与百度 Agent 后端三面；蚂蚁 9/21 二面按同候选人 + 同公司 + 同招聘流程规则合并回既有 `S288`，不虚增 Source Count。
+- Three-round search effort：**至少 360 组 Query / Query 变体**；verification effort：**至少 75 次**候选原帖 / 作者页 / provenance 入口的打开、回读或追源尝试。
+- Final baseline：**33 Batch / 295 HUMAN-A / `S001–S295`，下一 `S296`**；Inbox 归档后清空。
+- Frozen Canonical / `market/analysis/` / Curriculum：日常采集不修改。Finalize 后还修复了 `market/interviews/**` 日常变更误触发 Frozen Market Analysis rebuild 的 Workflow 边界，最终没有保留日常采集导致的 Frozen Analysis 改写。
+
+2026-09-22 主要信号：百度把动态知识库继续追到 Knowledge Quality、实际采纳、Skill Quality Gate 与 Accuracy–Latency Trade-off；度小满 AI Full-stack 则再次表现为完整软件工程底座 + AI-assisted Development + AI Feature System Design。流程级合并继续优先于 Source Count。
+
+---
+
+## 2026-09-23
+
+### 10:00 Morning Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-20 10:00 ～ 2026-09-23 10:00**；主动发现只使用窗口内新发布 / 更新，历史页面只用于 provenance、作者 Timeline、Role Scope 与去重。
+- Baseline / full-history dedup：重新读取最新 `main`、Market README、Inbox、Daily Log、两份 Market Policy 与最新 `batch-33.md`。在候选进入 Inbox 前，已**逐个直接回读 `market/interviews/batch-01.md`～`batch-33.md` 全历史**，确认正式基线为 **33 Batch / 295 HUMAN-A / `S001–S295` / 下一 `S296`**；根目录无 `research/` 一级目录。
+- Search effort：至少 **120 组定向 Query / Query 变体**，覆盖字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场，并补小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等平台。
+- Verification effort：实际打开、回读或追源 **25+ 次** post-specific 原帖、作者页、企业页与 provenance 入口。
+- Passed HUMAN-A → Inbox：**1 个**，上海联蔚数科 AI 工程实习生 / Agent 技术面，作者 `牛客488100460号`，发布 2026-09-21 18:59。Morning 只进入 Inbox，不分配 ID、不创建 Batch。
+- Candidate signal：短场中已经直接追 `Harness → Skill vs MCP → Skill/MCP 数量过多 → Knowledge Base → Coding Agent Tool → 无框架 Context Compression / Memory → Multi-Agent`；反问确认团队做 Knowledge Base / Agent、实习工作会参与 Agent 相关调研与开发。
+- Typical exclusions：字节广告团队、4399、阿里云等强线索继续卡 Stable Original / author provenance；普通 Frontend / Backend / Data / Test 即使深挖 Harness / Skill / Agent 也按 Role Scope 排除。
+
+Morning 不修改 `interview/canonical/`、Frozen `market/analysis/` 或任何 Curriculum 正文。
+
+### 17:00 Afternoon Search
+
+- Status: completed
+- Discovery window：继续严格按运行时最近 72 小时；重点补 Morning 的公司 / 平台 / Query 盲区。
+- Baseline：正式 Market 仍为 **33 Batch / 295 HUMAN-A / 最大 `S295` / 下一 `S296`**；Morning 候选已经完成过 `batch-01.md`～`batch-33.md` 全历史去重。
+- Search effort：本轮新增至少 **120 组定向 Query / Query 变体**；verification effort：**25+ 次**候选原帖 / 作者页 / provenance 入口回读或追源。
+- New independent HUMAN-A：**0 个**。Inbox 仍为 Morning 的 **1 个**上海联蔚数科候选；Afternoon 不分配 `Sxxx`、不创建 Batch。
+- Stable Original recheck：Afternoon 直接打开同一 post-specific URL 时出现暂时性页面不可读，因此没有提前归档，也没有因单次抓取失败删除已通过候选；明确要求 Evening 再验证 Stable Original 后才可分配 `S296`。
+- Typical exclusions：PDD Agent、快手大模型应用、4399、阿里云及多条企业聚合 / Search Cache 结果因为 Stable Original、作者 provenance 或 Role Scope 不完整继续零贡献。
+
+Afternoon 主要观察：Agent / Harness / Skill 已快速扩散到普通软件工程岗位；目标库因此继续收紧 Role Scope，而不是因为新术语出现就扩大统计范围。Frozen Canonical / Analysis / Curriculum 不修改。
+
+### 22:00 Evening Search + Finalize
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时；继续补字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `RAG` / `Coding Agent` / `Harness` / `Runtime` / `Applied AI` / `FDE` / `大模型应用开发` / `智能体开发`，并继续跨牛客、小红书、知乎、脉脉、博客 / 技术社区补盲。
+- Baseline / final dedup：重新读取最新 `main`、Market README、Inbox、Daily Log、两份 Market Policy 与最新 `batch-33.md`，并在分配编号前再次**逐个直接回读 `market/interviews/batch-01.md`～`batch-33.md` 全历史**。确认归档前真实基线仍为 **33 Batch / 295 HUMAN-A / `S001–S295` / 最大 `S295` / 下一 `S296`**。
+- Search effort：Evening 新增至少 **100 组 Query / Query 变体**；verification effort：显式打开、回读或追源 **20+ 次**近期候选原帖、作者页、企业页与 provenance 入口。
+- Stable Original final recheck：上海联蔚数科 exact post-specific 检索在 Evening 再次完整取得候选人正文、作者、发布时间和全部连续题序，Morning 的来源质量结论得到重复验证；没有出现转载、复制链或内容账号反证。
+- New HUMAN-A after Evening search：**0 个额外流程**。Morning Inbox 的上海联蔚数科候选最终通过 HUMAN-A + Role Scope + Stable Original + 全历史去重 Gate。
+- Final Batch：创建当天唯一正式 `market/interviews/batch-34.md`，分配 **`S296`**；归档后 Inbox 清空。
+
+Evening 重点复核 / 排除：
+
+1. **上海联蔚数科 AI 工程实习生 / Agent｜`牛客488100460号`**：最终归档 `S296`。关键链为 Agent Framework → Harness → Skill / MCP 数量膨胀 → Knowledge Base → Coding Agent Tool → 无框架 Context Compression / Memory → Multi-Agent；反问确认团队与实习工作均直接涉及 Agent。
+2. **作业帮 9/23 一面｜`Decadeqqq`**：第一人称与 Agent Evaluation 技术密度很高，追 Tool Idempotency、断连 / 重连续跑、Audit、真实 User Trace、Eval Set、Deterministic Metric、Agent Reviewer 与 Dataset 演进；但同作者此前公开作业帮流程标为 `全栈开发`，当前页面没有新增证据证明招聘主体属于目标 AI Application / Agent，按 Role Scope Gate 排除。
+3. **某科技 9/23｜`中二的西红柿起床了`**：作者本人明确写“看似 Agent / AI 开发，实际更像科研助理”，岗位重心是文献调研 / 医疗 AI 研究支持，Role Scope 排除。
+4. **4399、阿里云及其它近期高密度结果**：继续受 Stable Original、作者 provenance、Role Scope 或窗口边界限制；企业页 / Search Snippet / 内容整理不替代候选人原始正文。
+5. **普通 Backend / Frontend / Test / Data、AI 自动面试、合集 / 标准答案 / 内容号 / JD / 内推 / 新闻**：继续按既定 Gate 排除或仅作市场旁证。
+
+### Final Summary
+
+- Three-round search effort：**至少 340 组 Query / Query 变体**（Morning ≥120 + Afternoon ≥120 + Evening ≥100）。
+- Three-round verification effort：**至少 70 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试（Morning 25+ + Afternoon 25+ + Evening 20+）。
+- Final additions：**1 个 HUMAN-A：`S296`**。
+- Current formal Market library：**34 Batch / 296 HUMAN-A / `S001–S296`**。
+- Next ID：**`S297`**。
+- Inbox：归档后清空。
+- Frozen Canonical / `market/analysis/` / Curriculum：**本日不修改**；`S296` 只进入后续 periodic canonical mapping / review candidate。
+
+当日主要市场信号：
+
+1. **Capability Scalability 进入基础验真。** Skill / MCP 数量增长后如何 Discovery、如何控制 Context Pressure，已经是短场 Agent 面试可直接追的问题。
+2. **Runtime Ownership 继续下钻。** 不使用 Framework 时怎样自己实现 Context Compression 与 Memory，要求候选人真正理解 Harness / Runtime，而不是只会 API。
+3. **Agent 术语正在跨岗位扩散。** 作业帮普通 Full-stack 流程也能深挖 Agent Evaluation，因此 Role Scope Gate 必须继续保持严格。
+4. **流程级去重优先于 Source Count。** 强题目但 Role Scope / provenance 不闭环的页面继续零贡献。
+
+饱和度 / 盲区：最近 72 小时公开热门层继续呈现**局部饱和 + provenance / Role Scope 成本高**。牛客仍是最容易稳定核验候选人原帖的平台；非牛客渠道当前窗口仍缺新的稳定目标岗第一人称来源。大厂检索持续覆盖，但大量新命中属于普通岗位 AI 素养扩散、聚合 / 内容链、窗口外旧帖或 Stable Original 不足。继续补盲，不降低 Gate。
