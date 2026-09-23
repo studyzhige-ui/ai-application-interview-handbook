@@ -107,12 +107,14 @@ def validate_lab() -> dict:
 def check_ownership() -> dict:
     """Lexical guardrails only; a human must review sequence and explanations."""
     content = (DOCS / "02-python-coding-basics.md").read_text(encoding="utf-8")
+    # A small floor of core concepts, not an API inventory. Task-local tools are
+    # allowed to appear later with an explanation; lexical matches do not prove it.
     owners = {
-        "list": ("tuple", ["append", "extend", "insert", "pop", "remove", "clear", "copy", "sort", "reverse", "index", "count", "切片", "解包"]),
-        "tuple": ("str", ["count", "index", "解包", "sorted", "不可变"]),
-        "str": ("dict", ["split", "join", "find", "index", "replace", "strip", "lower", "upper", "format", "encode", "decode"]),
-        "dict": ("set", ["get", "keys", "values", "items", "update", "setdefault", "popitem", "copy", "clear"]),
-        "set": (None, ["add", "update", "remove", "discard", "pop", "clear", "copy", "union", "intersection", "difference", "frozenset"]),
+        "list": ("tuple", ["append", "pop", "copy", "sort", "reverse", "切片", "enumerate", "解包"]),
+        "tuple": ("str", ["解包", "不可变", "return"]),
+        "str": ("dict", ["split", "join", "sorted", "不可变"]),
+        "dict": ("set", ["get", "keys", "values", "items", "del", "次数"]),
+        "set": (None, ["set()", "add", "remove", "discard", "成员"]),
     }
     for owner, (following, words) in owners.items():
         start = content.index(f'<a id="{owner}"></a>')
@@ -126,6 +128,20 @@ def check_ownership() -> dict:
     if len(ids) != 100 or len(set(ids)) != 100:
         raise ValueError("Hot100 frozen snapshot must contain 100 unique rows")
     return {"container_sections": list(owners), "hot100_unique_rows": len(ids)}
+
+
+def check_learning_sections() -> dict:
+    """Check only missing learning sections; no prose-length/readability score."""
+    checked = []
+    for path in sorted(DOCS.glob("[0-9][0-9]-*.md")):
+        text = path.read_text(encoding="utf-8")
+        for marker in ("本章小结", "面试怎么答", "⚠️", "自测", "知识课程回看"):
+            if marker not in text:
+                raise ValueError(f"{path.name}: missing learning section {marker}")
+        if "算法应用在第 07 章" in text:
+            raise ValueError(f"{path.name}: restored an empty forward-reference heading")
+        checked.append(path.name)
+    return {"checked_chapters": len(checked), "scope": "section-presence-only"}
 
 
 def check_local_links() -> list[str]:
@@ -156,6 +172,7 @@ def main() -> None:
     result["reference_assertions"] = validate_answers(exercises)
     result["lab"] = validate_lab()
     result["ownership_guardrails"] = check_ownership()
+    result["learning_sections"] = check_learning_sections()
     result["missing_local_links"] = check_local_links()
     internal_missing = [link for link in result["missing_local_links"]
                         if (ROOT / link.split(" -> ")[0]).parent.joinpath(link.split(" -> ")[1]).resolve().is_relative_to(ROOT / "practice/coding")]

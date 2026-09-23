@@ -1,142 +1,159 @@
-# 02｜数据类型与容器：先完整掌握一种数据，再组合解决问题
+# 02｜数据类型与容器：给数据选一个合适的组织方式
 
 [← 上一章：程序基础](01-programming-fundamentals.md) · [Coding 首页](../README.md) · [下一章：基础练习 →](03-basic-exercises.md)
 
-> 本章先按容器建立完整操作模型，再组合算法。每个独立代码块都准备自己的数据；代码后的注释说明结果或状态变化，不代表该行自动打印。前置知识是第 01 章的变量、循环、函数和断言。
+只有一个成绩时，写 `score = 90` 就够了。如果有全班同学的成绩呢？如果还要通过姓名查成绩，或者只问“这个人是否已经签到”，同一种保存方式还方便吗？
 
-## 1. 容器选择与操作的两个结果
+**容器不是要背的一排名词，而是几种组织数据的办法。** 顺序重要时用列表，固定的一组值可以放进元组，文字用字符串，名字到成绩的关系用字典，只关心有没有出现则用集合。
 
-`list` 保存可修改的顺序，`tuple` 保存固定位置的组合，`str` 保存文字，`dict` 保存键到值的映射，`set` 只保存不重复的成员。选择容器取决于数据关系，不是哪个名字更熟悉。
+这一章围绕这些常见任务，练习后续编程中反复要用的操作。每种容器先学清楚自己最重要的用法，再把它们组合起来解决两数之和、移动零和分组问题。目标是见到数据就知道如何下手，不是记完 Python 的方法目录。
 
-每个操作都要分别看：**原对象有没有变，表达式返回了什么**。例如 `len(nums)` 是函数调用，把对象传给函数；`nums.append(3)` 是方法调用，通过对象取得操作再调用。方法不一定修改对象，函数也不一定没有副作用，不能只靠有没有点号判断。
+## 1. 读一行操作时，分开看“改了什么”和“得到什么”
 
-数值与布尔运算归第 01 章。这里的顺序是列表、元组、字符串、字典、集合，之后再学习跨容器组合。需要底层对象模型时可回到 [Python Foundation](../../../curriculum/01-python/README.md)，但本章练习所需的基础操作不依赖先去别处补课。
+上一章已经区分过 `print` 与 `return`。操作容器也有类似的区别：有的操作修改原来的数据，有的操作返回一个新结果，也有的两件事都做。
+
+例如，`len(nums)` 问“有几个元素”，不会改变 nums；`nums.append(3)` 把一个新元素加到原列表末尾，却不返回新的列表。不能看到一行代码就只问“输出是多少”，因为这行可能根本没有打印。
+
+调用形状也可以先认一认：`len(nums)` 是把 nums 传给**函数**；`nums.append(3)` 是通过对象调用它的**方法**。但有没有点号，并不决定操作会不会修改原数据，仍要看这个操作本身的含义。
+
+下面每个例子都给出初始数据。代码右侧的注释会说明返回值或执行后的状态；真正要在屏幕上看到它，仍需要 `print`。
 
 <a id="list"></a>
-## 2. list：保留顺序，允许增删替换
+## 2. list：把一组数据按顺序放好
 
-### 2.1 创建、读取与查询
+假设三次练习的得分依次是 10、20、30。你既关心分数，也关心它们出现的顺序，就可以用列表保存：
 
 ```python
 nums = [10, 20, 30]
-empty = []
-print(len(nums))          # 3：元素数量
-print(nums[0])            # 10：下标从 0 开始
-print(nums[-1])           # 30：最后一个元素
-print(20 in nums)         # True：查询值是否出现
-print(nums.index(20))     # 1：第一次出现的下标
-print(nums.count(20))     # 1：出现次数
-print(bool(empty))        # False：空容器在条件中按假处理
-print(bool([0]))          # True：非空容器为真，和其中的值是不是 0 无关
+print(len(nums))    # 3：一共有三个元素
+print(nums[0])      # 10：第一个元素
+print(nums[1])      # 20：第二个元素
+print(nums[-1])     # 30：最后一个元素
+print(20 in nums)  # True：值 20 在列表里
 ```
 
-`in` 问有没有，`index` 问在哪里，`count` 问多少个。index 找不到会报 ValueError；单个下标越界会报 IndexError。布尔转换 `bool(data)` 显式显示条件判断会使用的真值。
+方括号里放各个元素，逗号负责分开它们。**下标从 0 开始**，所以长度为 3 的列表，合法非负下标是 0、1、2；访问 `nums[3]` 就会越界。
 
-### 2.2 切片：一段位置构成新列表
+`in` 检查的是值是否出现，不是在问下标是否合法。空列表写成 `[]`；在条件中，空列表按假处理，非空列表按真处理。即使是 `[0]`，也因为有一个元素而不是空列表。
+
+### 2.1 要一个元素，还是要连续的一段
+
+下标取得一个元素，**切片**取得一段位置上的元素，组成新列表：
 
 ```python
 nums = [10, 20, 30, 40]
-print(nums[1:3])          # [20, 30]：包含左端，不包含右端
-print(nums[:2])           # [10, 20]：省略起点
-print(nums[2:])           # [30, 40]：省略终点
-print(nums[::2])          # [10, 30]：步长为 2
-print(nums[::-1])         # [40, 30, 20, 10]：反向构造新列表
-print(nums[2:100])        # [30, 40]：切片截到边界，不同于单下标访问
-print(nums[3:1])          # []：正步长不能向更小的终点走
+print(nums[1:3])   # [20, 30]：包含位置 1，不包含位置 3
+print(nums[:2])    # [10, 20]：从开头取到位置 2 之前
+print(nums[2:])    # [30, 40]：从位置 2 取到末尾
+print(nums[::-1])  # [40, 30, 20, 10]：反向构造新列表
 ```
 
-通用形式是 `data[start:stop:step]`，步长不能为 0。切片可以得到空结果；原列表不变。索引与切片不是同一种边界行为。
+可以把 `nums[1:3]` 想成“从位置 1 开始，在到达位置 3 前停下”。左边包含、右边不包含，与 `range` 的终点规则相呼应。
 
-### 2.3 新增与替换：一个元素还是多个元素
+完整形式是 `nums[start:stop:step]`，例如 `nums[::2]` 每隔一个位置取一项；`[::-1]` 的步长是 -1。切片不修改原列表，还可能得到空列表。它与单个下标的边界行为不同：切片超过末尾会截到边界，单个下标越界则报错。
+
+### 2.2 改一个值、添一个值、取走一个值
+
+假设第二次成绩录错了，需要改成 99；又完成一次练习，追加 40；随后发现这次不计入统计，要把它取走。
 
 ```python
 nums = [10, 20, 30]
-nums[1] = 99             # nums = [10, 99, 30]
-returned = nums.append(40)  # nums = [10, 99, 30, 40]
-print(returned)          # None：append 修改列表，不返回列表
-nums.extend([50, 60])    # nums = [10, 99, 30, 40, 50, 60]
-nums.insert(1, 15)       # nums = [10, 15, 99, 30, 40, 50, 60]
-nums[1:3] = [7, 8]       # nums = [10, 7, 8, 30, 40, 50, 60]
-print(nums)              # [10, 7, 8, 30, 40, 50, 60]
+nums[1] = 99           # nums 变成 [10, 99, 30]
+result = nums.append(40) # nums 变成 [10, 99, 30, 40]
+print(result)          # None：append 不返回列表
+last = nums.pop()      # last = 40；nums 变回 [10, 99, 30]
+print(last, nums)      # 40 [10, 99, 30]
 ```
 
-append 把参数整体放进去，extend 把来源里的各项逐个加入。普通连续切片赋值可以改变列表长度；带非单位步长的切片替换要求数量匹配。先用等长替换追踪位置，再处理长度变化。
+这三行分别是替换、追加和删除。`append` 修改原对象，返回 `None`；`pop` 不仅删除，还把取走的值返回。因此不要写 `nums = nums.append(40)`，否则名字 nums 最后会关联到 None，而不是追加后的列表。
 
-```python
-a = [1]
-a.append([2, 3])         # a = [1, [2, 3]]，第二项本身是一个列表
-b = [1]
-b.extend([2, 3])         # b = [1, 2, 3]
-print(a, b)              # [1, [2, 3]] [1, 2, 3]
-print([1, 2] + [3])       # [1, 2, 3]：构造新列表
-print([0] * 3)           # [0, 0, 0]：重复三次
-```
-
-### 2.4 删除、清空与返回被删除的值
+删除时还要分清“按位置”与“按值”：
 
 ```python
 nums = [10, 20, 30, 20]
-last = nums.pop()         # last = 20；nums = [10, 20, 30]
-first = nums.pop(0)       # first = 10；nums = [20, 30]
-nums.remove(20)           # nums = [30]：只删第一个匹配的值
-nums.extend([40, 50])    # nums = [30, 40, 50]
-del nums[1]             # nums = [30, 50]：del 是语句，不返回被删值
-nums.clear()             # nums = []
-print(last, first, nums) # 20 10 []
+first = nums.pop(0)  # 返回 10，nums 变成 [20, 30, 20]
+nums.remove(20)      # 删除第一个值为 20 的元素，nums 变成 [30, 20]
+print(first, nums)   # 10 [30, 20]
 ```
 
-空列表 pop 或指定位置越界会报 IndexError；remove 找不到值会报 ValueError。需要取出被删值用 pop。遍历原列表时随意删除会改变后续位置，容易跳过元素；过滤任务优先构造新列表。
+空列表不能 `pop()`，`remove` 找不到值也会报错。过滤数据时，先构造一个新列表通常更好理解；边遍历原列表边删除，后续位置会变化，容易跳过元素。
 
-### 2.5 排序、反转与汇总
+一次加入多个元素时，另一个常用区别是“整体加入”还是“逐项加入”：
 
 ```python
-nums = [3, 1, 2]
-new_nums = sorted(nums)  # [1, 2, 3]；nums 不变
-print(nums, new_nums)    # [3, 1, 2] [1, 2, 3]
-returned = nums.sort()   # nums = [1, 2, 3]
-print(returned)          # None，不是排序结果
-nums.sort(reverse=True) # nums = [3, 2, 1]
-nums.reverse()           # nums = [1, 2, 3]：只反转顺序，不按大小排序
-print(list(reversed(nums)))  # [3, 2, 1]：反向遍历结果收集成新列表
-print(sum(nums))         # 6
-print(min(nums), max(nums))  # 1 3
+a = [1]
+a.append([2, 3])  # [1, [2, 3]]：把整个列表当成一个元素
+b = [1]
+b.extend([2, 3])  # [1, 2, 3]：把来源里的元素逐个加到末尾
+print(a, b)       # [1, [2, 3]] [1, 2, 3]
 ```
 
-`list(source)` 把可逐项读取的来源收集成列表。reversed 提供反向遍历，不修改原对象。sum([]) 为 0，未指定默认值的 min([])/max([]) 会报 ValueError。混合类型不一定可比较，不能默认整数与字符串可以直接排序。
+### 2.3 遍历：要值、要下标，还是两者都要
 
-排序的 key 参数接收函数，表示按每项的哪个特征排列，不是立刻调用该函数一次。
-
-```python
-nums = [-3, 1, -2]
-print(sorted(nums, key=abs))  # [1, -2, -3]：按绝对值排序
-assert nums == [-3, 1, -2]
-```
-
-sorted 和 list.sort 都支持 key、reverse；排序键相同的元素保持原相对顺序。具体成本在第 05 章讨论。
-
-### 2.6 遍历、解包与 enumerate
+如果只是逐个处理分数，直接取得元素值最自然：
 
 ```python
 nums = [10, 20, 30]
 for x in nums:
-    print(x)             # 10、20、30，各一行；取得的是元素值
+    print(x)             # 10、20、30，各一行
 for i in range(len(nums)):
-    print(i, nums[i])     # 0 10、1 20、2 30，各一行；i 是下标
+    print(i, nums[i])     # 0 10、1 20、2 30，各一行
 ```
 
-需要两种信息时先学解包：把右侧多项按位置分别交给左侧多个变量。解包不只用于元组，也能用于列表等可迭代对象。
+第一种的 x 是值，第二种的 i 是下标。名字本身没有决定作用：写 `for i in nums`，i 仍然接收 10、20、30，而不是 0、1、2。
+
+同时需要下标和值时，可以使用 `enumerate`。不过先看懂一对数据怎样分给两个名字，这个动作叫**解包**：
 
 ```python
-i, x = [0, 10]          # i=0，x=10
-print(i, x)              # 0 10
+i, x = [0, 10]  # 第一项交给 i，第二项交给 x
+print(i, x)     # 0 10
+
 nums = [10, 20, 30]
 for i, x in enumerate(nums):
-    print(i, x)          # 0 10、1 20、2 30，各一行
+    print(i, x) # 0 10、1 20、2 30，各一行
 ```
 
-enumerate 每次给一对“编号、元素值”，循环头再解包。默认编号从 0 开始，正好可作下标；`enumerate(nums, start=1)` 则是从 1 编号，不能直接拿编号访问同一位置。普通解包两边数量不匹配会报 ValueError。
+`enumerate` 每次提供一对“编号、元素值”，循环头再把它们分别交给 i 和 x。默认编号从 0 开始，正好对应列表下标。先理解“提供一对”和“拆给两个名字”这两个动作，后面就不会把双变量循环看成新的魔法。
 
-### 2.7 推导式：压缩已经理解的循环
+### 2.4 排序：拿一份新结果，还是改变原顺序
+
+把分数从小到大排好时，先问：原来的时间顺序还需要保留吗？
+
+```python
+nums = [3, 1, 2]
+ordered = sorted(nums)   # 返回新列表 [1, 2, 3]
+print(nums, ordered)     # [3, 1, 2] [1, 2, 3]
+returned = nums.sort()   # 原列表变成 [1, 2, 3]
+print(nums, returned)    # [1, 2, 3] None
+```
+
+`sorted` 返回新的排序结果；`.sort()` 改变原列表，返回 None。两者都能用 `reverse=True` 指定降序。
+
+反转则是另一个动作：只把前后顺序倒过来，不按大小重新排列。汇总操作也不会改动列表：
+
+```python
+nums = [3, 1, 2]
+nums.reverse()          # nums 变成 [2, 1, 3]，不是降序排序
+print(nums)             # [2, 1, 3]
+print(sorted(nums, reverse=True)) # [3, 2, 1]
+print(sum(nums))        # 6：求和
+print(min(nums), max(nums)) # 1 3：最小值与最大值
+```
+
+空列表求和为 0，但没有指定默认值时，`min([])` 和 `max([])` 都没有可返回的极值，会报错。还不能默认任意混合类型都能比较，例如整数与字符串无法直接按大小排序。
+
+当“排序依据”不是元素本身时，`key` 可以接收一个函数。下面按绝对值排，比较依据依次是 3、1、2，但结果保留原来的数字：
+
+```python
+nums = [-3, 1, -2]
+print(sorted(nums, key=abs))  # [1, -2, -3]
+```
+
+传 `abs` 而不是 `abs()`，因为要交给排序操作一个“对每项求比较依据”的函数，而不是提前调用一次。这样理解后，按区间起点、字符串长度排序，就只是换一种比较依据。
+
+### 2.5 构造结果：先会循环，再看推导式
+
+从 `[1,2,3,4]` 里挑偶数，并把它们平方，最直白的过程是：取出一个值，判断，符合要求才加入结果。
 
 ```python
 nums = [1, 2, 3, 4]
@@ -144,444 +161,275 @@ result = []
 for x in nums:
     if x % 2 == 0:
         result.append(x * x)
-compact = [x * x for x in nums if x % 2 == 0]
-assert result == compact == [4, 16]
+print(result)  # [4, 16]
 ```
 
-读推导式时先执行 for 取得 x，再判断 if，最后计算开头的 x*x 放进新列表。不修改原列表。看不清时就使用普通循环，不以行数少作为质量目标。
+把同一个过程压在一行，就是列表推导式：
 
-### 2.8 复制、共享对象与二维列表
+```python
+nums = [1, 2, 3, 4]
+result = [x * x for x in nums if x % 2 == 0]
+print(result)  # [4, 16]
+```
+
+阅读时仍先看中间的 for，再看 if，最后看最前面的 `x * x` 放进结果。**写得短不会改变执行逻辑。** 如果一行让你看不清过程，就保留普通循环；这比强记紧凑写法更有用。
+
+### 2.6 复制与二维列表：为什么两处会一起变
+
+前一章改变量 x，并不会把 old 一起改掉。但两个名字指向同一个列表时，修改列表会被它们共同观察到：
 
 ```python
 nums = [1, 2]
-alias = nums             # 两个名字指向同一对象
-copied = nums.copy()    # 新的外层列表
+alias = nums        # 不是复制，只是另一个名字指向同一列表
+saved = nums.copy() # 新建一个外层列表
 alias.append(3)
-print(nums, copied)      # [1, 2, 3] [1, 2]
-print(alias is nums)     # True
-print(copied is nums)    # False
+print(nums)         # [1, 2, 3]
+print(saved)        # [1, 2]
 ```
 
-copy、完整切片和 list(nums) 都是浅拷贝：只新建外层，内部对象仍可能共享。== 比内容，is 比对象身份。
+`alias = nums` 与 `nums.copy()` 的目的不同。前者共享对象，后者得到新的外层列表；后者叫浅拷贝，因为里面的对象并不一定继续复制。`==` 比较内容，`is` 比较是不是同一个对象。
+
+矩阵就是“列表里面还有列表”，两个下标分别取行和列：
 
 ```python
-bad = [[0, 0]] * 2       # 两个位置引用同一行
+grid = [[1, 2, 3], [4, 5, 6]]
+print(grid[0])     # [1, 2, 3]：第一行
+print(grid[0][1])  # 2：第一行的第二个元素
+```
+
+初始化矩阵时，有一个与共享对象直接相关的坑，值得在这里弄懂：
+
+```python
+bad = [[0, 0]] * 2          # 两个位置引用的是同一行
 bad[0][0] = 9
-print(bad)               # [[9, 0], [9, 0]]
-good = [[0, 0] for _ in range(2)]  # 每轮新建一行；_ 表示不用的循环变量
+print(bad)                  # [[9, 0], [9, 0]]
+good = [[0, 0] for _ in range(2)] # 每轮新建一行；_ 表示不用的循环变量
 good[0][0] = 9
-print(good)              # [[9, 0], [0, 0]]
-print(good[0][1])        # 0：先取行，再取该行的一列
+print(good)                 # [[9, 0], [0, 0]]
 ```
 
-矩阵就是列表里再放列表。深层对象是否也应复制取决于任务，不把浅拷贝当成全层级独立保证。
-
-**自测：** 原输入不变，得到降序列表，应该使用哪种操作？
-
-<details><summary>查看参考答案</summary>
-
-```python
-nums = [3, 1, 2]
-answer = sorted(nums, reverse=True)
-assert answer == [3, 2, 1] and nums == [3, 1, 2]
-```
-
-不能把 nums.sort() 的 None 返回值当成排序结果。
-
-</details>
+`[0] * 3` 适合得到三个零；但把一个**可变的行列表**重复放进去，不会复制出独立的三行。需要每行独立，就在每轮真正创建一行。
 
 <a id="tuple"></a>
-## 3. tuple：固定位置的组合，不支持增删替换
+## 3. tuple：把几个位置的含义固定下来
 
-### 3.1 创建、访问、查询与遍历
-
-```python
-point = (3, 5)
-empty = ()
-single = (3,)            # 单元素需要逗号；(3) 只是整数 3
-print(type(single))     # <class 'tuple'>
-print(len(point))       # 2
-print(point[0], point[-1])  # 3 5
-print(point[:1])         # (3,)
-print(3 in point)        # True
-print(point.count(3))    # 1
-print(point.index(5))    # 1
-for value in point:
-    print(value)         # 3、5，各一行
-```
-
-索引、切片、len、in、count、index 的含义与列表一致，越界与找不到的边界也相同。但 tuple 没有 append/remove/sort，也不能写 point[0]=...。这些不是漏教的方法，而是该类型不支持的操作。
-
-### 3.2 解包、转换与构造新值
-
-元组也能比较或生成排序结果。按位置逐项比较，遇到第一个不同项就决定大小；元素本身仍需可比较。sorted 返回列表，不是原地排序元组。
+坐标中的 3 表示行、5 表示列。它们是一个整体，却不是准备不断追加成绩的列表。这样的固定组合可以用元组表示：
 
 ```python
 point = (3, 5)
-print(point == (3, 5))          # True
-print((1, 9) < (2, 0))         # True：先比较第一项
-print((1, 3) < (1, 5))         # True：第一项相同，再比较第二项
-print(sorted((3, 1, 2)))       # [1, 2, 3]
-print(bool(()))                # False：空元组为假
+print(point[0], point[1])  # 3 5
+row, col = point          # row=3，col=5：与列表一样按位置解包
+print(row, col)           # 3 5
+single = (3,)             # 只有一项也要有逗号；(3) 只是整数 3
+print(type(single))       # <class 'tuple'>
 ```
 
+元组也能使用 `len`、下标、切片、`in` 和普通 for，含义与列表相通。关键区别是**元组不可变**：不能替换某个位置，也没有 append。无需为了对齐列表的目录，重新背一套相同的读取操作。
 
-```python
-point = (3, 5)
-row, col = point         # row=3，col=5：复用刚学过的解包
-print(row, col)          # 3 5
-print(point + (7,))      # (3, 5, 7)：新元组
-print(point * 2)         # (3, 5, 3, 5)
-mutable = list(point)   # [3, 5]：新的可修改容器
-mutable[0] = 9
-new_point = tuple(mutable)
-print(point, new_point) # (3, 5) (9, 5)
-```
-
-多目标赋值先计算右侧全部旧值，再依次写到左侧，因此可以交换，而不需要手工先覆盖一个变量：
+解包也常见于交换变量和函数返回多个结果：
 
 ```python
 a, b = 2, 5
-a, b = b, a
-print(a, b)                    # 5 2
-nums = [10, 20]
-nums[0], nums[1] = nums[1], nums[0]
-assert nums == [20, 10]
-```
+a, b = b, a              # 先得到右侧两个旧值，再分别写到左侧
+print(a, b)              # 5 2
 
-不可变约束的是元组位置不能重新绑定，不代表内部每个对象不可变。`([1],2)` 中的列表仍能修改；元组能否作字典键，要看元素是否都可哈希。
-
-```python
 def bounds(nums):
-    return min(nums), max(nums)  # 把两个结果打包为元组
+    return min(nums), max(nums) # 返回一对结果
 
-low, high = bounds([3, 1, 5])   # 调用后解包
-print(low, high)                # 1 5
+low, high = bounds([3, 1, 5])
+print(low, high)         # 1 5
 ```
 
-**自测：** (3,) 与 (3) 有何不同？
+如果先写 `a = b` 再写 `b = a`，原来的 a 已经丢了；多目标赋值先取得右侧全部旧值，才避免这个问题。普通解包两边项数不匹配会报错。
 
-<details><summary>查看参考答案</summary>
-
-前者是单元素元组，后者是加括号的整数表达式。逗号才决定这里的打包；转换成 list 后修改的是新容器，不是把元组“解锁”。
-
-</details>
+在需要转换时，`list(point)` 得到新列表，`tuple([3,5])` 得到元组。不可变约束的是元组各位置的绑定，不保证内部每个对象都不可变；例如元组里包含一个列表，那个列表仍然可能被修改。
 
 <a id="str"></a>
-## 4. str：文字序列，修改得到新字符串
+## 4. str：按顺序读文字，再构造需要的文字
 
-### 4.1 创建、读取、切片与遍历
+字符串也有顺序，因此已经学会的下标、切片和遍历，不必重新理解一遍。只是每次取出的不是分数，而是一个字符。
 
 ```python
 text = "hello"
-print(len(text))         # 5
-print(text[0], text[-1]) # h o
-print(text[1:4])         # ell
-print(text[::-1])        # olleh
-print("ell" in text)     # True：可查询子串
-for ch in "hi":
-    print(ch)            # h、i，各一行
-print(list("hi"))        # ['h', 'i']
+print(len(text))      # 5
+print(text[0])        # h
+print(text[1:4])      # ell
+print(text[::-1])     # olleh
+print("ell" in text) # True：这里检查一段子串是否出现
+for ch in text:
+    print(ch)         # h、e、l、l、o，各一行
 ```
 
-单个下标越界会报 IndexError；`text[0]="H"` 会报 TypeError。Python 字符串按 Unicode 码点处理，不等于字节数；某些屏幕上的字符可由多个码点组成。普通算法题以题目规定的字符集为准。
-
-### 4.2 查找、计数和内容判断
+空字符串写作 `""`。字符串不可变，不能通过 `text[0] = "H"` 修改它。要把 hello 变成 Hello，应当构造新字符串：
 
 ```python
-text = "banana"
-print(text.find("na"))       # 2：第一次位置
-print(text.find("x"))        # -1：没找到
-print(text.index("na"))      # 2：找不到则报 ValueError
-print(text.count("na"))      # 2：不重叠出现次数
-print(text.startswith("ban")) # True
-print(text.endswith("na"))   # True
-print("abc".isalpha())        # True：字母
-print("123".isdecimal())      # True：十进制数字字符
-print("123".isdigit())        # True：数字字符，范围比 isdecimal 更宽
-print("a1".isalnum())         # True：字母或数字
-print(" \t".isspace())        # True：空白字符
+text = "hello"
+changed = "H" + text[1:] # 用 H 接上后面的 ello
+print(changed)           # Hello
+print(text)              # hello：原字符串没有改变
 ```
 
-这些内容判断对空字符串返回 False。isdigit 为真不保证 int 能转换，例如某些上标数字；带正负号的整数文字也不满足纯数字字符判断。输入解析应遵循明确格式，而不是靠方法名字猜。
+这就是字符串与列表在“修改”上的区别。`+` 用于拼接新文字，而不是修改某个字符的位置。
 
-### 4.3 去两端字符、替换与大小写
+### 4.1 split：一整行怎样变成几项
+
+输入常常是一行文字 `"10 20 30"`，但你想逐个处理其中的数。`split` 先负责拆分，**不会顺便完成数值转换**。
 
 ```python
-text = "  Hello World  "
-trimmed = text.strip()       # 'Hello World'
-print(repr(text))            # '  Hello World  '：原对象不变
-print(repr(trimmed))         # 'Hello World'
-print(repr(text.lstrip()))   # 'Hello World  '
-print(repr(text.rstrip()))   # '  Hello World'
-print(trimmed.lower())       # hello world
-print(trimmed.upper())       # HELLO WORLD
-print(trimmed.replace("World", "Python"))  # Hello Python
-print("banana".replace("a", "A", 1))       # bAnana：只替换一次
-print("pre_name".removeprefix("pre_"))     # name
-print("report.txt".removesuffix(".txt"))   # report
+line = "10 20 30"
+parts = line.split()
+print(parts)             # ['10', '20', '30']
+print(type(parts[0]))    # <class 'str'>
+print("red,blue".split(",")) # ['red', 'blue']：明确用逗号拆分
 ```
 
-strip(chars) 的参数是一组可从两端反复去掉的字符，不是完整前后缀；精确前后缀使用 removeprefix/removesuffix。想让变量保留结果，需写 `text=text.strip()`。没有重新赋值，原变量仍关联原文字。
+无参数的 `.split()` 按空白拆分，连续的空格或换行会作为分隔；明确传入分隔符时，则按那个分隔符拆。后续需要整数，再逐项调用 `int`。先认清拆分前后是什么类型，复杂的输入写法就容易拆开。
 
-### 4.4 split 与 join：拆开后是什么，拼接要求什么
+### 4.2 join：几项文字怎样重新连成一项
+
+反过来，已经有多个字符串，想连接成一段文字，可以使用 `分隔符.join(各项文字)`：
 
 ```python
-text = "  10   20\t30  "
-parts = text.split()
-print(parts)                    # ['10', '20', '30']：合并连续空白、忽略两端空白
-print("a,,b".split(","))         # ['a', '', 'b']：指定分隔符时可保留空段
-print("a b c".split(" ", 1))    # ['a', 'b c']：最多拆一次
-print("a\nb".splitlines())       # ['a', 'b']：按行拆分
-print("-".join(["a", "b"]))      # a-b：分隔符放在相邻项之间
-print("".join(["a", "b"]))       # ab：空分隔符
+words = ["AI", "coding"]
+print(" ".join(words))  # AI coding：中间放一个空格
+print("-".join(words))  # AI-coding
+print("".join(words))   # AIcoding：不放分隔符
 ```
 
-split 返回字符串列表，不会转换成整数。join 要求各项都是字符串，`" ".join([1,2])` 会报 TypeError。
+注意点号前面不是 words，而是**要放在两项之间的分隔符**。空字符串 `""` 也能调用方法，它表示“中间不要加入任何字符”。每项必须是字符串；整数要先转成文字，join 不会替你自动转换。
+
+如果想把一个单词的字符按顺序整理，也可以组合排序与拼接：
 
 ```python
-nums = [10, 20, 30]
-parts = [str(x) for x in nums]   # ['10', '20', '30']
-print(" ".join(parts))          # 10 20 30
-chars = sorted("tea")           # ['a', 'e', 't']：sorted 已在列表部分讲过
-key = "".join(chars)            # 'aet'
-print(key)                       # aet
+chars = sorted("tea") # ['a', 'e', 't']：sorted 返回列表
+key = "".join(chars)  # 'aet'
+print(key)            # aet
 ```
 
-因此 `"".join(sorted(word))` 只是把后两步写到一行，并不是新语法。第一次组合时保留中间变量，更容易追踪类型与结果。
-
-### 4.5 构造、比较与格式化
-
-```python
-print("Py" + "thon")             # Python：新字符串
-print("ha" * 3)                  # hahaha
-print("abc" == "abc")            # True
-print("10" < "2")                # True：按字符顺序比较，不是数字大小
-name = "Alice"
-score = 3.14159
-print(f"{name}: {score:.2f}")     # Alice: 3.14
-print("{}: {:.2f}".format(name, score))  # Alice: 3.14
-```
-
-f 前缀允许在大括号中放表达式，`.2f` 指定显示两位小数，不改变 score 本身。大量拼接优先先收集片段再 join，避免反复复制越来越长的字符串。
-
-### 4.6 bytes：文字编码后得到字节，不是另一种 str
-
-文本进入文件、网络或二进制输入流时，需要编码。str 保存文字，bytes 保存 0～255 的字节值。编码 encode 将文字转字节，解码 decode 按同一种编码解释回文字。
-
-```python
-text = "你好"
-data = text.encode("utf-8")
-print(type(data))              # <class 'bytes'>
-print(len(text), len(data))    # 2 6：文字长度与编码后字节数不同
-print(data.decode("utf-8"))    # 你好
-raw = b"10 20"                # ASCII 内容可以直接用 b 前缀
-print(raw[0], raw[:2])         # 49 b'10'：单下标得到整数，切片仍是 bytes
-print(raw.split())             # [b'10', b'20']
-print(b"10" in raw)           # True
-print(b"-".join(raw.split())) # b'10-20'
-print(int(b"10"))             # 10：符合格式的字节可以转整数
-```
-
-bytes 不可变，不能给 raw[0] 赋值；拼接、替换等得到新对象，不能直接混合 str 与 bytes。二进制输入不保证全是合法 UTF-8，解码失败应检查实际编码与数据。第 04 章只在大量整数输入中使用 bytes，不展开本课程用不到的二进制协议。
-
-**自测：** 把 `"  eat tea  "` 变为 `"eat-tea"`，且原字符串不变。
-
-<details><summary>查看参考答案</summary>
-
-```python
-text = "  eat tea  "
-answer = "-".join(text.split())
-assert answer == "eat-tea" and text == "  eat tea  "
-```
-
-split 在这里已处理两端空白，无需为了形式完整再重复 strip。
-
-</details>
+这里发生了两步类型变化：字符串经过 sorted 得到字符列表，join 再把它变回字符串。这正是后面分组时 `"".join(sorted(word))` 的来历，不必把长表达式整体背下来。
 
 <a id="dict"></a>
-## 5. dict：每个键关联一个值
+## 5. dict：通过一个键找到对应的信息
 
-### 5.1 创建、查值与缺失处理
-
-```python
-score = {"Alice": 90, "Bob": 85}
-empty = {}
-print(len(score))                # 2：键值对数
-print(score["Alice"])            # 90
-print("Alice" in score)          # True：检查的是键，不是值
-print(score.get("Bob", 0))       # 85
-print(score.get("Carol", 0))     # 0：缺失的默认值
-print(score.get("Carol"))        # None：未指定默认值
-print("Carol" in score)          # False：get 不会新增键
-```
-
-直接读取缺失键会报 KeyError。缺失是正常情况可用 get；缺失代表违约时，不应随意默认成 0 掩盖问题。键必须可哈希：常用整数、字符串、元素都可哈希的元组可以，列表、字典、集合不可以直接作键；值没有这项要求。字典按插入顺序遍历，不会自动按键排序。
-
-### 5.2 新增、覆盖和批量更新
+名单与成绩若分别放在两个列表里，你还得先找姓名的位置。字典可以直接表达“姓名对应成绩”：
 
 ```python
-score = {"Alice": 90}
-score["Bob"] = 85                  # 新增
-score["Alice"] = 95                # 覆盖旧值，不新增第二个同名键
-score.update({"Bob": 88, "Carol": 80})
-print(score)                       # {'Alice': 95, 'Bob': 88, 'Carol': 80}
-value = score.setdefault("Dan", 0) # 缺失才写入默认值，value=0
-again = score.setdefault("Dan", 99)# 已有就返回已有值，again=0
-print(value, again)                # 0 0
-print(dict([("a", 1), ("b", 2)]))  # {'a': 1, 'b': 2}：从键值对序列创建
+scores = {"Alice": 90, "Bob": 85}
+print(scores["Alice"])   # 90
+print("Alice" in scores) # True：检查键，不是检查成绩
+scores["Bob"] = 88       # 修改 Bob 的值
+scores["Carol"] = 95     # 新增一个键及其值
+print(scores["Bob"])     # 88
 ```
 
-setdefault 与 get 都可提供默认值，但前者缺失时写入，后者不写。初学时也可以展开为 `if key not in d: d[key]=...`，不必追求压成一行。
+冒号左边是**键 key**，右边是**值 value**。一个键只对应一个值，所以再次给 Bob 赋值是在覆盖原成绩，而不是增加第二个 Bob。空字典写成 `{}`。
 
-### 5.3 keys、values、items 与遍历
+基础题里常用整数和字符串作键。元素都可哈希的元组也能作键，列表则不能；“可哈希”的机制可以在知识课程继续学习。值可以是列表等容器，这样就能表达“一个特征对应一组单词”。
+
+### 5.1 可能没有这个键时，怎样读取
+
+直接读取 `scores["Dan"]` 会因为缺失键而报 KeyError。但统计频次时，“还没见过这个数字”很正常，可以用 get 提供默认值：
 
 ```python
-score = {"Alice": 90, "Bob": 85}
-print(list(score.keys()))          # ['Alice', 'Bob']
-print(list(score.values()))        # [90, 85]
-print(list(score.items()))         # [('Alice', 90), ('Bob', 85)]
-for name in score:
-    print(name)                    # Alice、Bob，各一行
-for value in score.values():
-    print(value)                   # 90、85，各一行
-for name, value in score.items():
-    print(name, value)             # Alice 90、Bob 85，各一行
+scores = {"Alice": 90}
+print(scores.get("Alice", 0)) # 90：存在就取原值
+print(scores.get("Dan", 0))   # 0：缺失时使用默认值
+print("Dan" in scores)       # False：get 没有新增这个键
 ```
 
-items 每轮给一个二元组，再由循环头解包。keys/values/items 返回的是视图，会反映之后的字典变化，不是普通列表；list 把当时各项收集成列表，便于展示或保留外层快照，不能直接写 `score.values()[0]`。
+`get` 是读取，不是写入。这里返回 0，也不表示字典里已经存了 `"Dan": 0`。若任务认为缺失就是错误，也不要随意用默认值把问题掩盖掉。
 
-### 5.4 删除、清空、复制和排序展示
+不再需要一条记录时，可以按键删除：
 
 ```python
-score = {"Alice": 90, "Bob": 85}
-saved = score.copy()               # 浅拷贝，内部可变值仍可能共享
-removed = score.pop("Bob")         # 85；score = {'Alice': 90}
-missing = score.pop("Nobody", -1)  # -1：缺失默认值
-score["Carol"] = 80
-pair = score.popitem()              # ('Carol', 80)：最后插入的一对
-del score["Alice"]                 # score = {}
-score.clear()                      # 清空；这里原本已为空
-print(removed, missing, pair)      # 85 -1 ('Carol', 80)
-print(saved)                       # {'Alice': 90, 'Bob': 85}
-print(sorted(saved))               # ['Alice', 'Bob']：排序键，得到列表
+scores = {"Alice": 90, "Bob": 85}
+del scores["Bob"]       # 删除 Bob 这一条；不是把成绩改为 0
+print(scores)           # {'Alice': 90}
 ```
 
-无默认值的 pop、del 遇到缺失键会报 KeyError，空字典 popitem 也会报错。字典没有 sort 方法，需对它的键、值或键值对生成另一个排序序列。遍历时增删键可能报 RuntimeError，不能把修改遍历结构当作普通过滤。
+`del` 是删除语句，键必须存在。
+
+### 5.2 遍历：只要键、只要值，还是键值都要
 
 ```python
-score = {"Alice": 90, "Bob": 85}
-def by_score(pair):
-    return pair[1]
-print(sorted(score.items(), key=by_score))  # [('Bob', 85), ('Alice', 90)]
-squares = {x: x * x for x in [1, 2, 3]}     # 字典推导式，每轮产生 key:value
-print(squares)                              # {1: 1, 2: 4, 3: 9}
+scores = {"Alice": 90, "Bob": 85}
+print(list(scores.keys()))   # ['Alice', 'Bob']
+print(list(scores.values())) # [90, 85]
+print(list(scores.items()))  # [('Alice', 90), ('Bob', 85)]
 ```
 
-### 5.5 容器内的小应用：计数与位置
+这三行是同一份字典的三种观察方式。`keys` 看名字，`values` 看成绩，`items` 看一对对的“名字、成绩”。外面的 list 把各项收集成列表，便于显示；这些方法本身返回的不是可直接用下标取第一个元素的普通列表。
+
+```python
+scores = {"Alice": 90, "Bob": 85}
+for name in scores:
+    print(name)          # Alice、Bob，各一行：默认遍历键
+for value in scores.values():
+    print(value)         # 90、85，各一行
+for name, value in scores.items():
+    print(name, value)   # Alice 90、Bob 85，各一行
+```
+
+最后一种不是新语法：items 提供一对，循环头解包，再把两项交给 name 和 value。字典保留插入顺序，但不会自动按键或值排序；遍历过程中也不应随意增删键。
+
+### 5.3 计数：让每个字符对应“见过几次”
+
+现在把“姓名 → 成绩”换成“字符 → 次数”，字典就可以统计 banana 中每个字符出现几次。
 
 ```python
 text = "banana"
 count = {}
 for ch in text:
-    old = count.get(ch, 0)         # 先取旧次数，缺失当 0
-    count[ch] = old + 1            # 增加后写回
-print(count)                       # {'b': 1, 'a': 3, 'n': 2}
+    old = count.get(ch, 0) # 以前没见过，就当作 0 次
+    count[ch] = old + 1    # 增加一次，再写回
+print(count)              # {'b': 1, 'a': 3, 'n': 2}
 ```
 
-`count[ch]=count.get(ch,0)+1` 与循环中的两行等价。右侧先得到旧次数，再加一，最后左侧赋值才写入。首次 b 是“默认 0 → 1 → 新增 b:1”，之后重复字符是覆盖旧次数。
+第一次读到 b，字典还为空，因此取到默认 0，写入 b:1。第一次读到 a 也是如此。第二次读到 a 时，旧次数已经是 1，于是覆盖成 2。**新增和更新并不是两套算法：都是取得旧次数，再把新次数写回。**
+
+把循环体的两行合起来，就是常见的 `count[ch] = count.get(ch, 0) + 1`。阅读仍从右侧开始，不能把它误解为“字典自动加一”。
+
+字典还能存位置，关键在于你给值赋予什么含义：
 
 ```python
 nums = [5, 8, 5]
 position = {}
 for i, x in enumerate(nums):
     position[x] = i
-print(position)                    # {5: 2, 8: 1}：保存最后出现位置
+print(position)  # {5: 2, 8: 1}：这里保存最后一次出现的位置
 ```
 
-需要首次位置时，要先检查键是否存在。键值含义来自任务，不能把“计次数”和“记下标”当成同一段模板。
-
-**自测：** 读取缺失 b 时得到 0，但不得新增键，选 get 还是 setdefault？
-
-<details><summary>查看参考答案</summary>
-
-```python
-d = {"a": 2}
-value = d.get("b", 0)
-assert value == 0 and d == {"a": 2}
-```
-
-setdefault 会在缺失时新增键，不符合要求。
-
-</details>
+若想保存首次位置，就先检查 x 是否已经是键，已经有了便不要覆盖。写代码之前先说清楚“值代表次数还是下标”，比记住某段模板重要。
 
 <a id="set"></a>
-## 6. set：只保存成员，不保存位置和重复次数
+## 6. set：只问“有没有见过”
 
-### 6.1 创建、成员查询与遍历
-
-```python
-seen = set()                       # 空集合；{} 是空字典
-values = {3, 1, 3}                 # 只有成员 1、3
-from_list = set([3, 1, 3, 2])
-print(len(values))                 # 2
-print(3 in values)                 # True
-print(9 not in values)             # True
-print(sorted(from_list))           # [1, 2, 3]：显示顺序来自 sorted
-for x in sorted(values):
-    print(x)                        # 1、3，各一行
-```
-
-set 不保证遍历顺序，没有下标、切片、index，也不能保存重复次数。成员必须可哈希，规则与字典键相同。去重之后无法据此还原重复次数，不能承诺保留首次出现顺序。
-
-### 6.2 增删、清空与复制
+检查签到是否重复时，不一定需要知道每个人出现多少次，也不一定需要保存位置。集合只记录成员是否存在：
 
 ```python
-seen = {10}
-seen.add(20)                       # 成员 10、20
-seen.add(20)                       # 重复添加不变
-seen.update([20, 30])              # 成员 10、20、30
-seen.remove(10)                    # 成员 20、30；缺失会报 KeyError
-seen.discard(999)                  # 缺失也不报错
-copied = seen.copy()
-removed = seen.pop()               # 删除并返回任意成员，不是最小值或第一个
-assert removed in {20, 30} and len(seen) == 1
-seen.clear()
-print(sorted(copied), seen)        # [20, 30] set()
+seen = set()       # 创建空集合；{} 创建的是空字典
+seen.add(10)       # 加入成员 10
+seen.add(20)       # 加入成员 20
+seen.add(10)       # 重复加入，不会多出一份 10
+print(len(seen))   # 2
+print(10 in seen)  # True
+print(99 in seen)  # False
 ```
 
-空集合 pop 会报 KeyError。测试集合应比较内容或排序后的列表，不能依赖某次偶然打印顺序。add 把参数当一个成员，update 逐个读取来源成员；成员不可哈希时仍会报错。
+set 不保存重复次数，也不保证遍历顺序，没有“第几个成员”的下标。`set([3,1,3])` 可以得到只有 3 和 1 的集合，但不能据此保证“保留第一次出现的顺序”。成员和字典键一样需要可哈希，列表不能直接作为成员。
 
-### 6.3 集合运算、包含关系与不可变集合
+需要把一个成员移出去时，常用 remove 或 discard：
 
 ```python
-a = {1, 2, 3}
-b = {3, 4}
-print(sorted(a | b))              # [1, 2, 3, 4]：并集，a.union(b)
-print(sorted(a & b))              # [3]：交集，a.intersection(b)
-print(sorted(a - b))              # [1, 2]：差集，a.difference(b)
-print(sorted(a ^ b))              # [1, 2, 4]：对称差，a.symmetric_difference(b)
-print({1, 2} <= a)                # True：子集，issubset
-print(a >= {1})                   # True：超集，issuperset
-print(a.isdisjoint({8, 9}))        # True：没有共同成员
-print(a == {3, 2, 1})             # True：内容相同，与书写顺序无关
+seen = {10, 20}
+seen.remove(10)    # 现在只剩成员 20；10 必须存在
+seen.discard(99)   # 99 不存在也不报错
+print(20 in seen) # True
 ```
 
-上面的四种运算都产生新集合；对应的 update、intersection_update、difference_update、symmetric_difference_update 修改原集合，返回 None。
+它们的区别是**成员不存在时怎么办**。算法已经保证成员在集合里时可以用 remove；不存在也允许时用 discard。集合遍历仍使用普通 for，只是不要把某次观察到的顺序当作保证。
 
-```python
-a = {1, 2, 3}
-returned = a.intersection_update({2, 3, 4})
-print(sorted(a), returned)         # [2, 3] None
-squares = {x * x for x in [-2, 2, 3]}
-print(sorted(squares))             # [4, 9]：集合推导式自动去重
-fixed = frozenset({1, 2})           # 不可变集合，没有 add/remove
-print(fixed == {1, 2})             # True
-```
-
-frozenset 本身可哈希，成员同样必须可哈希，可以作为字典键。这个例子解释“需要不可变成员集合”时怎样表达，不要求基础题强行使用。
-
-### 6.4 容器内的小应用：有没有重复
+把这些操作组合起来，就能判断是否有重复：
 
 ```python
 def has_duplicate(nums):
@@ -597,33 +445,26 @@ assert has_duplicate([3, 1]) is False
 assert has_duplicate([]) is False
 ```
 
-seen 保存此前已经处理的成员，所以先查询再加入。反过来会把每个元素都当成重复。
+必须先查询再加入。否则刚把 x 放进去，又问 x 在不在，就会把每个元素都判成重复。这里 seen 的含义始终是“**这轮之前**已经出现的成员”。
 
-**自测：** 为什么 `list(set([3,1,3,2]))` 不能保证得到 `[3,1,2]`？
+## 7. 跨容器组合：把已经会的操作接起来
 
-<details><summary>查看参考答案</summary>
+### 7.1 两列数据一一对应时，用 zip 配对
 
-集合只表达成员，不表达首次出现顺序。需要一个 set 判重，再用一个 list 按读取顺序收集；完整练习见第 03 章。
-
-</details>
-
-## 7. 跨容器组合：新增的是任务，不是基础 API
-
-### 7.1 zip 配对，循环头解包
+姓名与成绩来自两列，想逐个一起处理，不需要自己同时维护两个下标：
 
 ```python
 names = ["Alice", "Bob"]
 scores = [90, 85]
 pairs = list(zip(names, scores))
-print(pairs)                       # [('Alice', 90), ('Bob', 85)]
+print(pairs)  # [('Alice', 90), ('Bob', 85)]
 for name, score in pairs:
-    print(name, score)             # Alice 90、Bob 85，各一行
-print(list(zip([1, 2], [3])))       # [(1, 3)]：默认到较短来源结束
+    print(name, score) # Alice 90、Bob 85，各一行
 ```
 
-zip 负责按位置配对，解包负责把一对分给两个名字。zip 自身是一次性迭代结果，需要复用时先收集成列表。任务要求两组等长时，先验证长度；支持的环境也可使用 strict=True 拒绝截断，不能默默丢数据。
+zip 负责把相同位置的项配成一对，解包负责把一对分给两个名字。默认会在较短的一组结束时停止；任务要求两组一一对应时，要先确认长度一致，不能让数据悄悄丢失。
 
-### 7.2 函数接收列表：返回新结果与修改原对象
+### 7.2 把列表交给函数：改原来的，还是返回新的
 
 ```python
 def doubled(nums):
@@ -633,29 +474,21 @@ def add_zero(nums):
     nums.append(0)
 
 original = [1, 2]
-assert doubled(original) == [2, 4] and original == [1, 2]
-assert add_zero(original) is None
-assert original == [1, 2, 0]
+answer = doubled(original)
+print(answer, original) # [2, 4] [1, 2]
+returned = add_zero(original)
+print(original, returned) # [1, 2, 0] None
 ```
 
-参数名也只是名字。通过它修改同一个列表，调用方会观察到变化；函数内部 `nums=[]` 则只是重新绑定局部名字，不会把调用方名字重新绑定。
+第一个函数构造新列表并返回，第二个函数修改传入的原列表。参数名也是名字，因此通过它修改共享对象，调用方会看见；但在函数内写 `nums = []` 只是让局部名字指向新列表，不会替调用方重新赋值。
 
-可变默认参数在函数定义时创建，会被多次调用共享。需要每次新列表时使用 None 作标记：
+做题前先确认要求的是哪一种。**“函数没有返回值”不等于“函数没有改变数据”。**
 
-```python
-def collect(value, items=None):
-    if items is None:
-        items = []
-    items.append(value)
-    return items
+## 8. 两数之和：我真正需要找的是什么
 
-assert collect(1) == [1]
-assert collect(2) == [2]
-```
+给定 `nums=[2,7,11,15]` 与 `target=9`，返回两个不同下标，使对应的数相加等于 9，结果应为 `[0,1]`。本练习保证存在时只有一组答案，无解时扩展约定返回 `[]`。
 
-## 8. 两数之和：从逐对尝试到保存历史位置
-
-**练习契约：** 给整数列表与目标和，返回两个不同下标。存在时本例保证唯一答案；无解扩展约定返回 []。nums=[2,7,11,15]、target=9，结果为 [0,1]。
+最直接的办法是逐对检查。两层循环没有新语法，只是把上一章的编号配对换成通过下标读取数值：
 
 ```python
 def two_sum_brute(nums, target):
@@ -669,16 +502,16 @@ assert two_sum_brute([2, 7, 11, 15], 9) == [0, 1]
 assert two_sum_brute([3, 3], 6) == [0, 1]
 ```
 
-外层固定一个位置，内层只检查之后的位置。对于当前数字 x，真正需要的是 target-x 以前在哪个位置出现；字典正好保存这种关系。
+但站在当前数字 x 的位置看，我并不需要尝试所有数字。我知道要找的是 `target - x`，缺的只是“它以前出现在哪里”。这个问题恰好适合字典。
 
 ```python
 def two_sum(nums, target):
-    seen = {}                      # 数字 → 已处理位置
+    seen = {}                      # 数字 → 此前出现的下标
     for i, x in enumerate(nums):
         need = target - x
         if need in seen:
             return [seen[need], i]
-        seen[x] = i                # 先查再记录，排除同位置复用
+        seen[x] = i
     return []
 
 assert two_sum([2, 7, 11, 15], 9) == [0, 1]
@@ -686,16 +519,16 @@ assert two_sum([3, 3], 6) == [0, 1]
 assert two_sum([3], 6) == []
 ```
 
-| i | x | need | 查询前 seen | 动作 |
-|---:|---:|---:|---|---|
-| 0 | 2 | 7 | {} | 没找到，记录 2:0 |
-| 1 | 7 | 2 | {2:0} | 找到，返回 [0,1] |
+| 当前值 | 需要的值 | 查询前的 seen | 接下来做什么 |
+|---:|---:|---|---|
+| 2 | 7 | {} | 没有 7，记下 2 在位置 0 |
+| 7 | 2 | {2: 0} | 找到了 2，返回它的位置 0 与当前位置 1 |
 
-优化减少的是重复找补数的工作，不是看到数组就猜哈希模板。
+先查再记录，保证只和此前的位置配对；不能拿当前位置使用两次。这个顺序与集合判重相似，但字典还保存了答案需要的下标。
 
-## 9. 移动零：先返回新列表，再修改原列表
+## 9. 移动零：同一个结果，两种交付方式
 
-**任务：** nums=[0,1,0,3,12]，非零数字保持相对顺序，零放到后面，得到 [1,3,12,0,0]。先允许额外列表，不声称这是满足原题空间要求的最优解。
+把 `[0,1,0,3,12]` 中的零放到末尾，非零数字保持原相对顺序，应得到 `[1,3,12,0,0]`。先不追求最省空间，只用熟悉的循环和列表操作完成它。
 
 ```python
 def move_zeroes_copy(nums):
@@ -712,11 +545,16 @@ assert move_zeroes_copy(nums) == [1, 3, 12, 0, 0]
 assert nums == [0, 1, 0, 3, 12]
 ```
 
-第一段依次得到 []、[1]、[1,3]、[1,3,12]，跳过零；第二段补到原长度 5。改变输入为全零、全非零、空列表，再追踪执行次数。
+for 遇到零就跳过，依次收集出 `[1]`、`[1,3]`、`[1,3,12]`。原来一共五项，现在只有三项，所以 while 再补两个零。条件依赖的长度会在每次 append 后增加，因此它能结束。
+
+如果要求修改原列表，而不是返回新列表，应该把收集到的值写回去：
 
 ```python
 def move_zeroes_inplace_basic(nums):
-    non_zero = [x for x in nums if x != 0]
+    non_zero = []
+    for x in nums:
+        if x != 0:
+            non_zero.append(x)
     k = len(non_zero)
     for i in range(k):
         nums[i] = non_zero[i]
@@ -728,33 +566,80 @@ assert move_zeroes_inplace_basic(nums) is None
 assert nums == [1, 3, 12, 0, 0]
 ```
 
-这里确实修改原对象，但仍有额外列表。原地修改与 O(1) 额外空间不是同一句话，第 06 章再消除额外数组。
+先覆盖前 k 个位置，剩余位置填零，调用方才会观察到原对象变化。不过我们仍创建了额外列表。**修改原对象与只用常数额外空间是两个不同要求。** 双指针可以进一步用原列表中的位置保存进度，从而省掉这份随输入增长的中间结果；理解它之前，这个版本已足够练熟基础操作。
 
-## 10. 字母异位词分组：特征到同组单词
+## 10. 字母异位词：先找出“同一组”的共同特征
 
-**任务：** 把 ['eat','tea','tan','ate','nat','bat'] 按字母组成分组，组间顺序不影响语义。先限定小写英文字母，不额外引入文字归一化问题。
+`eat`、`tea`、`ate` 顺序不同，却使用相同的字母。要给单词分组，先问：能不能给同组单词算出一个相同的标记？
+
+把字符排序再拼回字符串，这三个词都会变成 `aet`。于是字典可以保存“标记 → 这一组的单词列表”。下面先限定小写英文字母：
 
 ```python
 words = ["eat", "tea", "tan", "ate", "nat", "bat"]
 groups = {}
 for word in words:
-    chars = sorted(word)           # 'tea' → ['a', 'e', 't']
-    key = "".join(chars)           # → 'aet'
+    chars = sorted(word)     # 'tea' → ['a', 'e', 't']
+    key = "".join(chars)     # → 'aet'
     if key not in groups:
-        groups[key] = []
-    groups[key].append(word)      # 修改该键关联的列表
+        groups[key] = []     # 第一次遇到这一组，先准备空列表
+    groups[key].append(word) # 把原单词加到这一组，不是加入排序后的 key
 answer = list(groups.values())
-print(answer)                     # [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
+print(answer) # [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]
 ```
 
-eat、tea、ate 都得到 aet，于是进入同组。sorted、join、查询、append、values 每一步都已在所属容器部分学过；新增的是“用标准形式表示同类”的思路。
+第一次遇到 eat，先建立 `groups["aet"]`，里面放入 eat。遇到 tea 时不再创建组，而是取出已经存在的列表，追加 tea。最后只需要各组，不需要标记，所以取 `.values()`，再收集成列表。
 
-## 11. 复杂度入门与章节验收
+这几步仍是已学过的排序、拼接、字典查询与列表追加。真正新增的是一种解题思路：**给同类数据构造相同的特征，再按特征聚在一起。**
 
-长度为 n 的单次遍历做 n 次，记作 O(n)；检查所有不同位置组合约有 n(n-1)/2 次，按平方增长，记作 O(n²)。字典和集合的查询通常按平均 O(1) 估算，所以两数之和字典版平均 O(n) 时间、O(n) 额外空间。不是所有两层缩进都一定平方，也不是字典在任何情况下都绝对常数；第 05、06 章展开。
+## 11. 本章小结与面试怎么答
 
-闭卷解释：append 为什么返回 None，pop 为什么返回被删元素？get 是否写入？tuple 为什么没有 append？split 得到什么类型？items 与解包分别做什么？set 为什么不能保留首次顺序？能回答后再完成[第 03 章练习](03-basic-exercises.md)和[Notebook](../exercises/03-basic-exercises.ipynb)。
+列表记顺序，元组记固定组合，字符串记文字，字典记对应关系，集合记成员。选容器之前先问“下一步最常需要知道什么”，操作时再区分原对象变化、返回值和输出。
 
-本章覆盖主线需要的常用基础操作，不声称穷举标准库全部 API；后续若新增基础操作，应先补到这里的所属容器小节，而不是散落在某道算法题后面。
+两数之和从逐对尝试变成字典查询，也给复杂度一个直观入口：长度为 n 时，逐对检查约有 n(n-1)/2 对，按 O(n²) 增长；一次扫描配合平均 O(1) 的字典查询，平均时间可按 O(n) 估算，但额外保存了 O(n) 的历史信息。这里是常见成本模型，不是承诺任意字典操作都绝对常数时间。
+
+**问：怎样选择 list、dict 和 set？**
+
+> 🎯 需要按顺序或位置组织数据，用 list；需要通过键取得关联信息，用 dict；只关心成员是否存在，用 set。比如保序去重需要同时满足存在性和顺序，可以用 set 判断、list 收集，而不是直接把 set 转回 list。
+
+**问：sorted(nums) 与 nums.sort() 有什么区别？**
+
+> 🎯 sorted 返回新的排序列表，原列表保持不变；sort 修改原列表并返回 None。先确认是否允许改变输入，再选择用法。
+
+## 12. ⚠️ 容易混淆的地方
+
+- 下标和值是两种信息。`for x in nums` 已经取得值，不能再不加判断地拿它当下标。
+- `.append()`、`.sort()` 返回 None；`.pop()` 返回取出的值。不要把所有修改方法的返回值都当作新容器。
+- `{}` 是空字典，`set()` 才是空集合；集合不保证保留首次出现顺序。
+- `get` 只读取；`count[x] = ...` 才写入。一个字典的值是次数还是下标，必须由任务明确。
+- 浅拷贝只让外层独立。二维列表和回溯路径等场景，要检查内部可变对象是否仍在共享。
+
+## 13. 章节自测
+
+<details>
+<summary>1. 为什么 append([2,3]) 和 extend([2,3]) 的结果不同？</summary>
+
+append 把参数作为一个元素放进去，因此新增元素本身是列表；extend 逐项读取来源，把 2 和 3 分别加入。先问“我想加一项，还是加来源中的每一项”。
+
+</details>
+
+<details>
+<summary>2. for name, score in scores.items() 中，items 与解包分别做什么？</summary>
+
+items 每轮提供一对键和值；解包把第一项交给 name，第二项交给 score。字典遍历与多变量赋值是两个配合的动作，不是一个无法拆开的语法。
+
+</details>
+
+<details>
+<summary>3. 为什么 groups[key].append(word) 不需要再把列表赋回 groups[key]？</summary>
+
+通过 groups[key] 取得的就是那个组所关联的列表对象，append 已经修改了它，不是先修改一份独立副本。因此无需重新绑定这个键。
+
+</details>
+
+**动手验收：** 对 `[3,1,3,2,1]` 分别写出频次表 `{3:2,1:2,2:1}` 和保序去重结果 `[3,1,2]`。先说明为什么一个任务只要字典，另一个需要集合与列表配合，再到[基础练习](03-basic-exercises.md)或[Notebook](../exercises/03-basic-exercises.ipynb)独立完成。
+
+## 14. 知识课程回看
+
+想深入理解容器的对象性质与查找成本，看 [Python：核心数据类型与容器](../../../curriculum/01-python/docs/02-核心数据类型与容器.md)；对“明明复制了，为什么内部还一起变化”有疑问，看 [Python：可变对象与深浅拷贝](../../../curriculum/01-python/docs/03-可变对象-对象身份-深浅拷贝.md)。它们承载更完整的语言机制，这里优先把核心操作练熟。
 
 语义依据：[数据结构教程](https://docs.python.org/3/tutorial/datastructures.html)、[内置类型](https://docs.python.org/3/library/stdtypes.html)、[内置函数](https://docs.python.org/3/library/functions.html)。
