@@ -25,48 +25,15 @@
 
 ## 当前正式基线
 
-2026-09-23 Morning 在任何候选进入 Inbox 前，已基于当前 `main` **逐个直接回读 `market/interviews/batch-01.md`～`batch-33.md` 全历史**，并核验 URL、作者、公司 / 岗位 / 日期 / 轮次、项目语义与连续题序。正式基线确认如下：
+2026-09-23 22:00 Finalize 前，已基于最新 `main` **逐个直接回读 `market/interviews/batch-01.md`～`batch-33.md` 全历史**，并核验 URL、作者、公司 / 岗位 / 日期 / 轮次、项目语义与连续题序；随后将当日唯一最终通过者归档到 `batch-34.md`。
 
-- 正式 Batch：`batch-01.md` ～ `batch-33.md`，共 **33** 个；
-- HUMAN-A：`S001–S295`，共 **295** 个；
-- 最大编号：`S295`；
-- 下一保留编号：**`S296`**；
-- 当前 Inbox：**1**；
-- Morning / Afternoon 不分配 `Sxxx`、不创建 Batch；
+- 正式 Batch：`batch-01.md` ～ `batch-34.md`，共 **34** 个；
+- HUMAN-A：`S001–S296`，共 **296** 个；
+- 最大编号：`S296`；
+- 下一保留编号：**`S297`**；
+- 当前 Inbox：**0**；
 - `interview/canonical/` Frozen Canonical、`market/analysis/` Frozen 统计与 Curriculum 本轮均不修改。
 
 ## 当前 Inbox
 
-### 2026-09-23 Morning — 上海联蔚数科｜AI 工程实习生 / Agent｜技术面｜发布 2026-09-21 18:59｜pending Evening Finalize
-
-作者：`牛客488100460号`
-
-来源：https://www.nowcoder.com/feed/main/detail/97ee6dec31b14d12a1f800b709e21a4c
-
-真人 / 第一人称证据：Morning 的 post-specific 原帖可稳定直接回读。作者明确写 `ai工程实习生 25mins`，连续记录本人技术面问题，并保留“面试官没开摄像头”“面试基本问八股”“早知道说做过知识库了”等现场状态。作者主页显示桂林电子科技大学、2026、后端工程师；公开发布目前只有该面经，未出现批量面经 / 订阅 / 标准答案内容账号特征。
-
-Role Scope：标题为上海联蔚数科 Agent 面经，岗位正文直接写 `ai工程实习生`；反问中面试官说明团队当前做 Knowledge Base / Agent，入职后会做调研和 Agent 相关工作。技术主体连续覆盖 Agent Framework、Harness、Skill / MCP、Knowledge Base、Coding Agent、Context Compression、Memory 与 Multi-Agent，明确属于目标 AI Application / Agent 范围。
-
-连续技术问题：
-
-1. 自我介绍。
-2. 现在主要使用哪些 AI Tool？
-3. 使用过哪些 Agent Development Framework？
-4. 怎样理解 Agent？
-5. 什么是 Harness？
-6. Skill 与 MCP 的区别是什么？
-7. 是否自己做过 Skill？
-8. Skill / MCP 数量过多时怎样解决 Discovery / Context 压力？
-9. 是否做过 Knowledge Base？
-10. Coding Agent 怎样做出来的？
-11. Coding Agent 有哪些 Tool？
-12. Coding Agent 没使用 Framework 时，怎样自己实现 Context Compression 与 Memory Processing？
-13. Multi-Agent 怎样实现？
-14. 平时怎样学习这些技术？
-15. 反问：团队做 Knowledge Base / Agent；实习工作会做调研和 Agent 相关工作。
-
-全历史去重：准入前已直接回读 `batch-01.md`～`batch-33.md` 全历史；未发现当前 URL、作者、上海联蔚数科同招聘流程，也未发现“Agent Framework → Harness → Skill / MCP 数量膨胀 → Knowledge Base → Coding Agent Tool → 无框架 Context Compression / Memory → Multi-Agent”的连续同场来源。GitHub 对 exact URL 与公司名的 0 命中仅作辅助，不替代全历史正文回读。
-
-Morning 处理：**只进入 Inbox，不分配 `S296`，不创建 `batch-34.md`。**
-
-Afternoon 复核：17:00 本轮重新尝试直接打开同一 post-specific URL 时，公开抓取暂时返回失败 / 页面不可读，未能独立重复取得正文。由于 Morning 已取得稳定原文且当前没有出现转载 / 复制链 / 内容号等反证，本轮**不删除候选，也不提前降级**；但把 Stable Original 状态标为需要 Evening 再确认。22:00 Finalize 前必须再次直接回读全部正式 Batch，并重新验证该 URL / 作者 provenance；若届时仍无法稳定回读，则不得分配 `S296`。
+当前为空。下一轮只把新通过 HUMAN-A + Role Scope + Stable Original + 全历史去重的候选暂存到这里；Morning / Afternoon 不分配新编号。
