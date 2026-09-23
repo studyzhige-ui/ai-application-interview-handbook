@@ -137,6 +137,12 @@ print(count)
 
 不用 `max()`。
 
+给定：
+
+```python
+nums = [4, 9, 2, 8]
+```
+
 <details>
 <summary>参考答案</summary>
 
@@ -170,6 +176,10 @@ print(best)
 
 把所有偶数放进新列表：
 
+```python
+nums = [1, 2, 3, 4, 5, 6]
+```
+
 <details>
 <summary>参考答案</summary>
 
@@ -190,6 +200,10 @@ print(result)
 ## 4.2 每个元素做转换
 
 把每个数字平方：
+
+```python
+nums = [1, 2, 3]
+```
 
 <details>
 <summary>参考答案</summary>
@@ -265,6 +279,10 @@ print(count)
 ## 5.2 第一个重复元素
 
 按从左到右的顺序，找到第一个“之前已经出现过”的值。
+
+```python
+nums = [3, 1, 4, 1, 5]
+```
 
 <details>
 <summary>参考答案</summary>
@@ -364,6 +382,17 @@ print(best)
 
 不要永远把所有代码写在最外层。
 
+这一节先不要求你突然“会函数设计”。只复用第 01、02 章的最小模型：**参数是函数收到的输入，函数体处理它，`return` 把结果交回调用处。**
+
+```python
+def double(x):      # x 是参数
+    return x * 2    # 返回结果
+
+answer = double(3)  # 调用函数，answer = 6
+```
+
+下面只是把已经会写的循环 / 判断装进函数，不额外考新的函数技巧。
+
 ## 7.1 判断回文
 
 ```python
@@ -401,6 +430,8 @@ def is_palindrome(s):
 
 # 8. Hot100 Bridge 1：两数之和
 
+**完整题目（本章练习版）：** 给定 `nums = [2, 7, 11, 15]` 和 `target = 9`，返回两个下标，使对应数字之和等于 `target`。先写两层循环版本，再写 dict 版本。
+
 这道题已经出现三次：
 
 ```text
@@ -433,7 +464,30 @@ def is_palindrome(s):
 
 ---
 
+<details>
+<summary>查看两数之和参考答案</summary>
+
+```python
+def two_sum_brute(nums, target):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+
+def two_sum_hash(nums, target):
+    seen = {}
+    for i, x in enumerate(nums):
+        need = target - x
+        if need in seen:
+            return [seen[need], i]
+        seen[x] = i
+```
+
+</details>
+
 # 9. Hot100 Bridge 2：移动零
+
+**完整题目（本章练习版）：** 给定 `nums = [0, 1, 0, 3, 12]`，把所有非零元素保持相对顺序放到前面，并把 0 放到末尾。本章先完成 Level 1 / Level 2，不要求双指针。
 
 同样先不要追求一次写出最优版。
 
@@ -460,7 +514,27 @@ def is_palindrome(s):
 
 ---
 
+<details>
+<summary>查看移动零基础参考答案</summary>
+
+```python
+def move_zeroes_basic(nums):
+    result = []
+    for x in nums:
+        if x != 0:
+            result.append(x)
+    while len(result) < len(nums):
+        result.append(0)
+    return result
+```
+
+</details>
+
 # 10. Hot100 Bridge 3：只出现一次的数字
+
+给定 `nums = [4, 1, 2, 1, 2]`，除了一个数字只出现一次，其余数字都出现两次；本章先用计数字典返回那个只出现一次的数字。
+
+这里的 `for x, freq in count.items()` 使用的是第 02 章已经讲过的 `.items()` + 解包：每一轮同时拿到一个 key 和 value。
 
 `136. 只出现一次的数字` 最经典的最优解会用异或。
 
@@ -584,6 +658,8 @@ for i in range(len(nums))，然后访问 nums[i - 1]
 ---
 
 # 14. 本章练习清单
+
+配套可运行练习：[03-basic-exercises.ipynb](../exercises/03-basic-exercises.ipynb)。建议先在 notebook 的空白代码单元完成，再按需展开参考答案；Markdown 正文承担知识主线，notebook 承担动手练习。
 
 下面这些应该能从空白文件写出来：
 

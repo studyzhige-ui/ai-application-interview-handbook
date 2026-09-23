@@ -3,6 +3,8 @@
 [← 上一章：ACM Input / Output](04-acm-input-output.md) · [Coding 首页](../README.md) · [下一章：Problem Solving & Algorithms →](06-problem-solving-and-algorithms.md)
 
 > 数据结构不是一份需要背诵的名词表。它们存在，是因为不同问题需要不同的**保存、访问、查找、插入、删除、取最值、表达关系**方式。
+>
+> **阅读约束：** 第一次引入 `deque`、`heapq` 等标准库结构时，示例会说明“当前容器里有什么、这一行加入/删除了什么、返回了什么”，不把 API 当作默认背景。
 
 ---
 

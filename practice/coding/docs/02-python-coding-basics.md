@@ -74,20 +74,26 @@ print(nums)
 ### 2.2 追加
 
 ```python
-nums.append(40)
+nums.append(40)  # nums 变成 [10, 99, 30, 40]
 ```
+
+`.append(value)` 会修改原 list，把新元素放到末尾。
 
 ### 2.3 删除最后一个
 
 ```python
-last = nums.pop()
+last = nums.pop()  # last = 40；nums 变回 [10, 99, 30]
 ```
+
+`.pop()` 会删除最后一个元素，并把被删除的值返回。
 
 ### 2.4 长度
 
 ```python
-n = len(nums)
+n = len(nums)  # n = 3
 ```
+
+`len(nums)` 不修改 list，只返回当前元素数量。
 
 ---
 
@@ -214,6 +220,24 @@ if key in my_dict:
 
 是算法题里非常重要的操作。
 
+后面会反复出现的 dict 基础操作在这里先见全：
+
+```python
+user = {"name": "Alice", "score": 90}
+
+print(user["name"])          # Alice：按 key 取值
+print(user.get("score", 0))  # 90：key 存在，返回对应 value
+print(user.get("age", 0))    # 0：key 不存在，返回默认值
+print(list(user.keys()))     # ['name', 'score']：所有 key
+print(list(user.values()))   # ['Alice', 90]：所有 value
+print(list(user.items()))    # [('name', 'Alice'), ('score', 90)]：所有 key-value 对
+
+for key, value in user.items():
+    print(key, value)        # 每轮把一个 (key, value) 解包给两个变量
+```
+
+`.keys()`、`.values()`、`.items()` 都是 dict 对象的方法；`.items()` 之所以常配两个循环变量，是因为它提供的是 `(key, value)` 二元组。
+
 ---
 
 ## 6. dict 最常见的两个算法用途
@@ -246,6 +270,8 @@ print(count)
 ```python
 count[ch] = count.get(ch, 0) + 1
 ```
+
+把它从右往左拆：`count.get(ch, 0)` 表示“有这个 key 就取旧值，没有就先当 0”；然后 `+ 1` 得到新次数；最后 `count[ch] = ...` 写回字典。第一次遇到 `b` 时：`{}.get("b", 0) → 0 → 0 + 1 → count["b"] = 1`。
 
 先理解展开版本，再追求简洁。
 
@@ -357,7 +383,7 @@ seen = {2: 0}
 ## 8. set：只关心“有没有”，不关心对应值
 
 ```python
-seen = set()
+seen = set()  # 创建空 set；注意 {} 是空 dict，不是空 set
 
 seen.add(10)
 seen.add(20)
@@ -415,6 +441,8 @@ row, col = (3, 5)
 
 叫做解包。
 
+“解包”就是把一个容器里的多个位置一次分给多个变量：`point = (3, 5)` 后写 `row, col = point`，等价于分别得到 `row = 3`、`col = 5`。后面的 `for i, x in enumerate(...)`、`for key, value in dict.items()` 本质上都在使用解包。
+
 ---
 
 ## 10. `range`、`enumerate`、`zip`
@@ -436,6 +464,8 @@ for i, x in enumerate(["a", "b", "c"]):
 ```
 
 ### 10.3 zip
+
+`zip(a, b)` 会把两组数据按位置配成一对一对的组合；循环里的 `name, score` 再把每一对解包。例如 `names=["Alice","Bob"]`、`scores=[90,85]` 会依次得到 `("Alice", 90)`、`("Bob", 85)`。
 
 如果两组数据一一对应：
 
@@ -483,6 +513,10 @@ print(nums)
 这比“哪个函数更短”重要。
 
 ---
+
+### 11.1 函数和方法先区分一下
+
+`sorted(nums)`、`len(nums)` 这种写法是**函数调用**：把对象作为参数传进去。`nums.sort()`、`nums.append()`、`dict.items()` 这种写法是**方法调用**：操作属于某个对象，通过点号调用。初学阶段先记调用形状即可。
 
 ## 12. 列表推导式：先会普通循环，再学压缩写法
 
@@ -591,6 +625,15 @@ def move_zeroes(nums):
 那才进入双指针。
 
 ---
+
+在进入这个例子前先补两个马上会用到的常见写法：
+
+```python
+chars = sorted("tea")        # ['a', 'e', 't']：sorted 返回排序后的新 list
+word = "".join(chars)        # "aet"：用空字符串把多个字符串元素连接起来
+```
+
+`separator.join(parts)` 可以读成“用 separator 把 parts 连接起来”。因此 `"".join(...)` 就是不插入分隔符直接拼接。
 
 ## 15. Hot100：字母异位词分组为什么和“构造 key”有关
 

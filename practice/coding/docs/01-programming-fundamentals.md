@@ -166,6 +166,16 @@ age = input()
 
 此时 `age` 是字符串 `"18"`，不是整数 `18`。
 
+可以直接用 `type()` 验证，而不是只记结论：
+
+```python
+age = input()       # 假设输入 18
+print(age)          # 18
+print(type(age))    # <class 'str'>
+```
+
+`type(value)` 会返回对象的类型。屏幕上看起来同样是 `18`，但 `18` 是 `int`，`"18"` 是 `str`；“看起来像数字”不等于程序把它当数字。
+
 ### 4.2 为什么经常看到 `int(input())`
 
 如果想参与数字计算：
@@ -302,6 +312,18 @@ print(5)
 
 ### 7.1 `for`
 
+先回答一个最容易困惑的问题：**`x` 为什么会自己变成列表里的值？**
+
+`for x in data` 的意思是：每一轮从 `data` 取出下一个元素，让变量名 `x` 暂时指向这个元素，然后执行循环体。`x` 没有特殊含义，换成 `number`、`item` 也一样。
+
+```text
+[1, 2, 3] 被遍历
+→ 第 1 轮取出 1，x = 1
+→ 第 2 轮取出 2，x = 2
+→ 第 3 轮取出 3，x = 3
+→ 没有下一个元素，循环结束
+```
+
 ```python
 for x in [1, 2, 3, 4, 5]:
     print(x)
@@ -319,6 +341,8 @@ for x in [1, 2, 3, 4, 5]:
 ```
 
 ### 7.2 `range`
+
+`range(5)` 可以先读成“依次提供 0、1、2、3、4”。因此 `for i in range(5)` 就是让 `i` 每轮接住其中一个整数。以后看到 `range(len(nums))`，可以读成“让 `i` 依次成为 `nums` 的合法下标”。
 
 ```python
 for i in range(5):
@@ -359,6 +383,10 @@ while x <= 5:
 ```
 
 如果循环体永远不能让条件变 False，就可能出现死循环。
+
+更准确地说，不要求一定在某一行“直接修改判断式里的变量”；要求的是**循环运行后，条件依赖的程序状态最终有机会改变到 False**。最常见的是 `x += 1` 直接改变 `x`，也可能通过函数调用或容器变化间接改变状态。
+
+检查 `while` 时固定问三件事：条件依赖哪些值？一轮后这些值怎样变化？能否证明条件最终会变成 False？
 
 ---
 
@@ -485,6 +513,24 @@ print(result)
 
 > **能逐行解释这段程序怎样把输入状态变成输出状态。**
 
+这不是只让你“预览一下”。请先自己追踪：`result` 在读到 `0 → 1 → 0 → 3 → 12` 后分别是什么；`for` 结束时是什么；`while` 每补一个 `0` 后又是什么。然后再运行代码核对。
+
+<details>
+<summary>查看状态追踪</summary>
+
+```text
+开始                  []
+读到 0，不追加        []
+读到 1，追加          [1]
+读到 0，不追加        [1]
+读到 3，追加          [1, 3]
+读到 12，追加         [1, 3, 12]
+while 补 0            [1, 3, 12, 0]
+while 再补 0          [1, 3, 12, 0, 0]
+```
+
+</details>
+
 等到第 06 章，我们再回来优化 `283. 移动零`。
 
 ---
@@ -570,36 +616,71 @@ print(nums[2])
 
 ## 13. Traceback 怎么读
 
-遇到报错：
+Traceback 可以先理解为：**Python 把“程序怎样一路调用到出错位置”的轨迹打印出来。**
+
+最小例子：
+
+```python
+nums = [10, 20, 30]
+print(nums[3])
+```
+
+你会看到类似：
 
 ```text
 Traceback (most recent call last):
-  File "main.py", line 4, in <module>
+  File "main.py", line 2, in <module>
     print(nums[3])
 IndexError: list index out of range
 ```
 
-不要只看红色。
-
-最先抓三个信息：
+不要把整段红字当成一个句子。它有固定语法：
 
 ```text
-1. 哪个文件？
-main.py
+Traceback (most recent call last)
+→ 下面开始列调用轨迹；越靠后越接近真正抛出异常的位置
 
-2. 哪一行？
-line 4
+File "main.py"
+→ 当时执行到哪个文件
 
-3. 什么异常？
+line 2
+→ 这个文件的第几行
+
+in <module>
+→ 当时位于什么调用上下文；<module> 表示文件最外层
+
+print(nums[3])
+→ 对应的源码行
+
+IndexError
+→ 异常类型
+
+list index out of range
+→ 异常信息：list 下标超出范围
+```
+
+基本阅读顺序：**先看最后一行异常类型和信息 → 找最下面一层自己的代码 → 恢复那一刻变量状态 → 再解释为什么这一行会失败。**
+
+这个例子里 `nums` 只有 3 个元素，合法下标是 `0、1、2`，访问 `nums[3]` 就会抛 `IndexError`。
+
+多文件时会像这样：
+
+```text
+Traceback (most recent call last):
+  File "main.py", line 8, in <module>
+    run()
+  File "app.py", line 12, in run
+    user = load_user()
+  File "storage.py", line 21, in load_user
+    return rows[0]
 IndexError: list index out of range
 ```
 
-然后回到那一行，问：
+把它读成调用链：`main.py` 调用 `run()` → `app.py` 的 `run()` 调用 `load_user()` → `storage.py` 最终在 `rows[0]` 抛错。先调查最下面那层自己的业务代码，再往上追“谁把程序带到了这里”。
 
-> 当前 `nums` 到底多长？这个下标为什么会出现？
+真正要问的是：`rows` 到底是什么？`len(rows)` 是多少？为什么代码默认第 0 个元素一定存在？上游查询或输入为什么可能得到空结果？
 
-Debug 的基本动作不是“随机改代码”，而是**恢复出错那一刻的真实状态**。
-
+Debug 的基本功不是随机改代码，而是**根据 Traceback 恢复出错那一刻的真实状态**。
 ---
 
 ## 14. 本章小练习
