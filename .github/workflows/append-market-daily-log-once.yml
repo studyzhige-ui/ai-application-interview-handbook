@@ -19,103 +19,15 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Configure git
+      - name: Append log and commit
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git reset --hard origin/main
-
-      - name: Append missing monitoring log and remove one-shot workflow
-        shell: bash
-        run: |
-          cat >> market/monitoring/daily-log.md <<'EOF'
-
-### 22:00 Evening Search + Finalize — Backfilled 2026-09-23
-
-- Status: completed; this section backfills the 2026-09-22 Evening record that was missing from the rolling log while the formal Market Evidence had already been committed.
-- Finalize / full-history dedup：重新直接回读当时全部正式 Batch 后，先将 2026-09-21 已通过 Gate 但漏掉 Finalize 的两个 backlog 独立恢复为 `batch-32.md` / `S292–S293`，再把 2026-09-22 当日正式新增归入唯一日批次 `batch-33.md`。没有把两天来源混进同一个 Batch。
-- 2026-09-22 Final additions：**2 个独立 HUMAN-A：`S294–S295`**，分别为度小满 AI 全栈一面与百度 Agent 后端三面；蚂蚁 9/21 二面按同候选人 + 同公司 + 同招聘流程规则合并回既有 `S288`，不虚增 Source Count。
-- Three-round search effort：**至少 360 组 Query / Query 变体**；verification effort：**至少 75 次**候选原帖 / 作者页 / provenance 入口的打开、回读或追源尝试。
-- Final baseline：**33 Batch / 295 HUMAN-A / `S001–S295`，下一 `S296`**；Inbox 归档后清空。
-- Frozen Canonical / `market/analysis/` / Curriculum：日常采集不修改。Finalize 后还修复了 `market/interviews/**` 日常变更误触发 Frozen Market Analysis rebuild 的 Workflow 边界，最终没有保留日常采集导致的 Frozen Analysis 改写。
-
-2026-09-22 主要信号：百度把动态知识库继续追到 Knowledge Quality、实际采纳、Skill Quality Gate 与 Accuracy–Latency Trade-off；度小满 AI Full-stack 则再次表现为完整软件工程底座 + AI-assisted Development + AI Feature System Design。流程级合并继续优先于 Source Count。
-
----
-
-## 2026-09-23
-
-### 10:00 Morning Search
-
-- Status: completed
-- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-20 10:00 ～ 2026-09-23 10:00**；主动发现只使用窗口内新发布 / 更新，历史页面只用于 provenance、作者 Timeline、Role Scope 与去重。
-- Baseline / full-history dedup：重新读取最新 `main`、Market README、Inbox、Daily Log、两份 Market Policy 与最新 `batch-33.md`。在候选进入 Inbox 前，已**逐个直接回读 `market/interviews/batch-01.md`～`batch-33.md` 全历史**，确认正式基线为 **33 Batch / 295 HUMAN-A / `S001–S295` / 下一 `S296`**；根目录无 `research/` 一级目录。
-- Search effort：至少 **120 组定向 Query / Query 变体**，覆盖字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场，并补小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等平台。
-- Verification effort：实际打开、回读或追源 **25+ 次** post-specific 原帖、作者页、企业页与 provenance 入口。
-- Passed HUMAN-A → Inbox：**1 个**，上海联蔚数科 AI 工程实习生 / Agent 技术面，作者 `牛客488100460号`，发布 2026-09-21 18:59。Morning 只进入 Inbox，不分配 ID、不创建 Batch。
-- Candidate signal：短场中已经直接追 `Harness → Skill vs MCP → Skill/MCP 数量过多 → Knowledge Base → Coding Agent Tool → 无框架 Context Compression / Memory → Multi-Agent`；反问确认团队做 Knowledge Base / Agent、实习工作会参与 Agent 相关调研与开发。
-- Typical exclusions：字节广告团队、4399、阿里云等强线索继续卡 Stable Original / author provenance；普通 Frontend / Backend / Data / Test 即使深挖 Harness / Skill / Agent 也按 Role Scope 排除。
-
-Morning 不修改 `interview/canonical/`、Frozen `market/analysis/` 或任何 Curriculum 正文。
-
-### 17:00 Afternoon Search
-
-- Status: completed
-- Discovery window：继续严格按运行时最近 72 小时；重点补 Morning 的公司 / 平台 / Query 盲区。
-- Baseline：正式 Market 仍为 **33 Batch / 295 HUMAN-A / 最大 `S295` / 下一 `S296`**；Morning 候选已经完成过 `batch-01.md`～`batch-33.md` 全历史去重。
-- Search effort：本轮新增至少 **120 组定向 Query / Query 变体**；verification effort：**25+ 次**候选原帖 / 作者页 / provenance 入口回读或追源。
-- New independent HUMAN-A：**0 个**。Inbox 仍为 Morning 的 **1 个**上海联蔚数科候选；Afternoon 不分配 `Sxxx`、不创建 Batch。
-- Stable Original recheck：Afternoon 直接打开同一 post-specific URL 时出现暂时性页面不可读，因此没有提前归档，也没有因单次抓取失败删除已通过候选；明确要求 Evening 再验证 Stable Original 后才可分配 `S296`。
-- Typical exclusions：PDD Agent、快手大模型应用、4399、阿里云及多条企业聚合 / Search Cache 结果因为 Stable Original、作者 provenance 或 Role Scope 不完整继续零贡献。
-
-Afternoon 主要观察：Agent / Harness / Skill 已快速扩散到普通软件工程岗位；目标库因此继续收紧 Role Scope，而不是因为新术语出现就扩大统计范围。Frozen Canonical / Analysis / Curriculum 不修改。
-
-### 22:00 Evening Search + Finalize
-
-- Status: completed
-- Discovery window：严格按运行时最近 72 小时；继续补字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及 `AI Application` / `AI Backend` / `AI Full-stack` / `Agent` / `RAG` / `Coding Agent` / `Harness` / `Runtime` / `Applied AI` / `FDE` / `大模型应用开发` / `智能体开发`，并继续跨牛客、小红书、知乎、脉脉、博客 / 技术社区补盲。
-- Baseline / final dedup：重新读取最新 `main`、Market README、Inbox、Daily Log、两份 Market Policy 与最新 `batch-33.md`，并在分配编号前再次**逐个直接回读 `market/interviews/batch-01.md`～`batch-33.md` 全历史**。确认归档前真实基线仍为 **33 Batch / 295 HUMAN-A / `S001–S295` / 最大 `S295` / 下一 `S296`**。
-- Search effort：Evening 新增至少 **100 组 Query / Query 变体**；verification effort：显式打开、回读或追源 **20+ 次**近期候选原帖、作者页、企业页与 provenance 入口。
-- Stable Original final recheck：上海联蔚数科 exact post-specific 检索在 Evening 再次完整取得候选人正文、作者、发布时间和全部连续题序，Morning 的来源质量结论得到重复验证；没有出现转载、复制链或内容账号反证。
-- New HUMAN-A after Evening search：**0 个额外流程**。Morning Inbox 的上海联蔚数科候选最终通过 HUMAN-A + Role Scope + Stable Original + 全历史去重 Gate。
-- Final Batch：创建当天唯一正式 `market/interviews/batch-34.md`，分配 **`S296`**；归档后 Inbox 清空。
-
-Evening 重点复核 / 排除：
-
-1. **上海联蔚数科 AI 工程实习生 / Agent｜`牛客488100460号`**：最终归档 `S296`。关键链为 Agent Framework → Harness → Skill / MCP 数量膨胀 → Knowledge Base → Coding Agent Tool → 无框架 Context Compression / Memory → Multi-Agent；反问确认团队与实习工作均直接涉及 Agent。
-2. **作业帮 9/23 一面｜`Decadeqqq`**：第一人称与 Agent Evaluation 技术密度很高，追 Tool Idempotency、断连 / 重连续跑、Audit、真实 User Trace、Eval Set、Deterministic Metric、Agent Reviewer 与 Dataset 演进；但同作者此前公开作业帮流程标为 `全栈开发`，当前页面没有新增证据证明招聘主体属于目标 AI Application / Agent，按 Role Scope Gate 排除。
-3. **某科技 9/23｜`中二的西红柿起床了`**：作者本人明确写“看似 Agent / AI 开发，实际更像科研助理”，岗位重心是文献调研 / 医疗 AI 研究支持，Role Scope 排除。
-4. **4399、阿里云及其它近期高密度结果**：继续受 Stable Original、作者 provenance、Role Scope 或窗口边界限制；企业页 / Search Snippet / 内容整理不替代候选人原始正文。
-5. **普通 Backend / Frontend / Test / Data、AI 自动面试、合集 / 标准答案 / 内容号 / JD / 内推 / 新闻**：继续按既定 Gate 排除或仅作市场旁证。
-
-### Final Summary
-
-- Three-round search effort：**至少 340 组 Query / Query 变体**（Morning ≥120 + Afternoon ≥120 + Evening ≥100）。
-- Three-round verification effort：**至少 70 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试（Morning 25+ + Afternoon 25+ + Evening 20+）。
-- Final additions：**1 个 HUMAN-A：`S296`**。
-- Current formal Market library：**34 Batch / 296 HUMAN-A / `S001–S296`**。
-- Next ID：**`S297`**。
-- Inbox：归档后清空。
-- Frozen Canonical / `market/analysis/` / Curriculum：**本日不修改**；`S296` 只进入后续 periodic canonical mapping / review candidate。
-
-当日主要市场信号：
-
-1. **Capability Scalability 进入基础验真。** Skill / MCP 数量增长后如何 Discovery、如何控制 Context Pressure，已经是短场 Agent 面试可直接追的问题。
-2. **Runtime Ownership 继续下钻。** 不使用 Framework 时怎样自己实现 Context Compression 与 Memory，要求候选人真正理解 Harness / Runtime，而不是只会 API。
-3. **Agent 术语正在跨岗位扩散。** 作业帮普通 Full-stack 流程也能深挖 Agent Evaluation，因此 Role Scope Gate 必须继续保持严格。
-4. **流程级去重优先于 Source Count。** 强题目但 Role Scope / provenance 不闭环的页面继续零贡献。
-
-饱和度 / 盲区：最近 72 小时公开热门层继续呈现**局部饱和 + provenance / Role Scope 成本高**。牛客仍是最容易稳定核验候选人原帖的平台；非牛客渠道当前窗口仍缺新的稳定目标岗第一人称来源。大厂检索持续覆盖，但大量新命中属于普通岗位 AI 素养扩散、聚合 / 内容链、窗口外旧帖或 Stable Original 不足。继续补盲，不降低 Gate。
-EOF
-
+          printf '%s' 'CiMjIyAyMjowMCBFdmVuaW5nIFNlYXJjaCArIEZpbmFsaXplIOKAlCBCYWNrZmlsbGVkIDIwMjYtMDktMjMKCi0gU3RhdHVzOiBjb21wbGV0ZWQ7IHRoaXMgc2VjdGlvbiBiYWNrZmlsbHMgdGhlIDIwMjYtMDktMjIgRXZlbmluZyByZWNvcmQgdGhhdCB3YXMgbWlzc2luZyBmcm9tIHRoZSByb2xsaW5nIGxvZyB3aGlsZSB0aGUgZm9ybWFsIE1hcmtldCBFdmlkZW5jZSBoYWQgYWxyZWFkeSBiZWVuIGNvbW1pdHRlZC4KLSBGaW5hbGl6ZSAvIGZ1bGwtaGlzdG9yeSBkZWR1cO+8mumHjeaWsOebtOaOpeWbnuivu+W9k+aXtuWFqOmDqOato+W8jyBCYXRjaCDlkI7vvIzlhYjlsIYgMjAyNi0wOS0yMSDlt7LpgJrov4cgR2F0ZSDkvYbmvI/mjokgRmluYWxpemUg55qE5Lik5LiqIGJhY2tsb2cg54us56uL5oGi5aSN5Li6IGBiYXRjaC0zMi5tZGAgLyBgUzI5MuKAk1MyOTNg77yM5YaN5oqKIDIwMjYtMDktMjIg5b2T5pel5q2j5byP5paw5aKe5b2S5YWl5ZSv5LiA5pel5om55qyhIGBiYXRjaC0zMy5tZGDjgILmsqHmnInmiorkuKTlpKnmnaXmupDmt7fov5vlkIzkuIDkuKogQmF0Y2jjgIIKLSAyMDI2LTA5LTIyIEZpbmFsIGFkZGl0aW9uc++8mioqMiDkuKrni6znq4sgSFVNQU4tQe+8mmBTMjk04oCTUzI5NWAqKu+8jOWIhuWIq+S4uuW6puWwj+a7oSBBSSDlhajmoIjkuIDpnaLkuI7nmb7luqYgQWdlbnQg5ZCO56uv5LiJ6Z2i77yb6JqC6JqBIDkvMjEg5LqM6Z2i5oyJ5ZCM5YCZ6YCJ5Lq6ICsg5ZCM5YWs5Y+4ICsg5ZCM5oub6IGY5rWB56iL6KeE5YiZ5ZCI5bm25Zue5pei5pyJIGBTMjg4YO+8jOS4jeiZmuWiniBTb3VyY2UgQ291bnTjgIIKLSBUaHJlZS1yb3VuZCBzZWFyY2ggZWZmb3J077yaKiroh7PlsJEgMzYwIOe7hCBRdWVyeSAvIFF1ZXJ5IOWPmOS9kyoq77ybdmVyaWZpY2F0aW9uIGVmZm9ydO+8mioq6Iez5bCRIDc1IOasoSoq5YCZ6YCJ5Y6f5biWIC8g5L2c6ICF6aG1IC8gcHJvdmVuYW5jZSDlhaXlj6PnmoTmiZPlvIDjgIHlm57or7vmiJbov73mupDlsJ3or5XjgIIKLSBGaW5hbCBiYXNlbGluZe+8mioqMzMgQmF0Y2ggLyAyOTUgSFVNQU4tQSAvIGBTMDAx4oCTUzI5NWDvvIzkuIvkuIAgYFMyOTZgKirvvJtJbmJveCDlvZLmoaPlkI7muIXnqbrjgIIKLSBGcm96ZW4gQ2Fub25pY2FsIC8gYG1hcmtldC9hbmFseXNpcy9gIC8gQ3VycmljdWx1be+8muaXpeW4uOmHh+mbhuS4jeS/ruaUueOAgkZpbmFsaXplIOWQjui/mOS/ruWkjeS6hiBgbWFya2V0L2ludGVydmlld3MvKipgIOaXpeW4uOWPmOabtOivr+inpuWPkSBGcm96ZW4gTWFya2V0IEFuYWx5c2lzIHJlYnVpbGQg55qEIFdvcmtmbG93IOi+ueeVjO+8jOacgOe7iOayoeacieS/neeVmeaXpeW4uOmHh+mbhuWvvOiHtOeahCBGcm96ZW4gQW5hbHlzaXMg5pS55YaZ44CCCgoyMDI2LTA5LTIyIOS4u+imgeS/oeWPt++8mueZvuW6puaKiuWKqOaAgeefpeivhuW6k+e7p+e7rei/veWIsCBLbm93bGVkZ2UgUXVhbGl0eeOAgeWunumZhemHh+e6s+OAgVNraWxsIFF1YWxpdHkgR2F0ZSDkuI4gQWNjdXJhY3nigJNMYXRlbmN5IFRyYWRlLW9mZu+8m+W6puWwj+a7oSBBSSBGdWxsLXN0YWNrIOWImeWGjeasoeihqOeOsOS4uuWujOaVtOi9r+S7tuW3peeoi+W6leW6pyArIEFJLWFzc2lzdGVkIERldmVsb3BtZW50ICsgQUkgRmVhdHVyZSBTeXN0ZW0gRGVzaWdu44CC5rWB56iL57qn5ZCI5bm257un57ut5LyY5YWI5LqOIFNvdXJjZSBDb3VudOOAggoKLS0tCgojIyAyMDI2LTA5LTIzCgojIyMgMTA6MDAgTW9ybmluZyBTZWFyY2gKCi0gU3RhdHVzOiBjb21wbGV0ZWQKLSBEaXNjb3Zlcnkgd2luZG9377ya5Lil5qC85oyJ6L+Q6KGM5pe25pyA6L+RIDcyIOWwj+aXtu+8jOe6puS4uiAqKjIwMjYtMDktMjAgMTA6MDAg772eIDIwMjYtMDktMjMgMTA6MDAqKu+8m+S4u+WKqOWPkeeOsOWPquS9v+eUqOeql+WPo+WGheaWsOWPkeW4gyAvIOabtOaWsO+8jOWOhuWPsumhtemdouWPqueUqOS6jiBwcm92ZW5hbmNl44CB5L2c6ICFIFRpbWVsaW5l44CBUm9sZSBTY29wZSDkuI7ljrvph43jgIIKLSBCYXNlbGluZSAvIGZ1bGwtaGlzdG9yeSBkZWR1cO+8mumHjeaWsOivu+WPluacgOaWsCBgbWFpbmDjgIFNYXJrZXQgUkVBRE1F44CBSW5ib3jjgIFEYWlseSBMb2fjgIHkuKTku70gTWFya2V0IFBvbGljeSDkuI7mnIDmlrAgYGJhdGNoLTMzLm1kYOOAguWcqOWAmemAiei/m+WFpSBJbmJveCDliY3vvIzlt7IqKumAkOS4quebtOaOpeWbnuivuyBgbWFya2V0L2ludGVydmlld3MvYmF0Y2gtMDEubWRg772eYGJhdGNoLTMzLm1kYCDlhajljoblj7IqKu+8jOehruiupOato+W8j+Wfuue6v+S4uiAqKjMzIEJhdGNoIC8gMjk1IEhVTUFOLUEgLyBgUzAwMeKAk1MyOTVgIC8g5LiL5LiAIGBTMjk2YCoq77yb5qC555uu5b2V5pegIGByZXNlYXJjaC9gIOS4gOe6p+ebruW9leOAggotIFNlYXJjaCBlZmZvcnTvvJroh7PlsJEgKioxMjAg57uE5a6a5ZCRIFF1ZXJ5IC8gUXVlcnkg5Y+Y5L2TKirvvIzopobnm5blrZfoioIgLyDmipbpn7PjgIHpmL/ph4zns7vjgIHohb7orq/jgIHnvo7lm6LjgIHlv6vmiYvjgIHlsI/nuqLkuabjgIHnmb7luqbjgIHomoLomoHjgIFQRETjgIHkuqzkuJzjgIHmu7Tmu7TjgIFC56uZ44CBT1BQTyAvIHZpdm8gLyDlsI/nsbPlj4rmm7Tlub8gQUkgQXBwbGljYXRpb24gLyBBZ2VudCDluILlnLrvvIzlubbooaXlsI/nuqLkuaYgLyDnn6XkuY4gLyDohInohIkgLyBDU0ROIC8g5o6Y6YeRIC8g5Y2a5a6iIC8gQmlsaWJpbGkg562J5bmz5Y+w44CCCi0gVmVyaWZpY2F0aW9uIGVmZm9ydO+8muWunumZheaJk+W8gOOAgeWbnuivu+aIlui/vea6kCAqKjI1KyDmrKEqKiBwb3N0LXNwZWNpZmljIOWOn+W4luOAgeS9nOiAhemhteOAgeS8geS4mumhteS4jiBwcm92ZW5hbmNlIOWFpeWPo+OAggotIFBhc3NlZCBIVU1BTi1BIOKGkiBJbmJveO+8mioqMSDkuKoqKu+8jOS4iua1t+iBlOiUmuaVsOenkSBBSSDlt6XnqIvlrp7kuaDnlJ8gLyBBZ2VudCDmioDmnK/pnaLvvIzkvZzogIUgYOeJm+WuojQ4ODEwMDQ2MOWPt2DvvIzlj5HluIMgMjAyNi0wOS0yMSAxODo1OeOAgk1vcm5pbmcg5Y+q6L+b5YWlIEluYm9477yM5LiN5YiG6YWNIElE44CB5LiN5Yib5bu6IEJhdGNo44CCCi0gQ2FuZGlkYXRlIHNpZ25hbO+8muefreWcuuS4reW3sue7j+ebtOaOpei/vSBgSGFybmVzcyDihpIgU2tpbGwgdnMgTUNQIOKGkiBTa2lsbC9NQ1Ag5pWw6YeP6L+H5aSaIOKGkiBLbm93bGVkZ2UgQmFzZSDihpIgQ29kaW5nIEFnZW50IFRvb2wg4oaSIOaXoOahhuaetiBDb250ZXh0IENvbXByZXNzaW9uIC8gTWVtb3J5IOKGkiBNdWx0aS1BZ2VudGDvvJvlj43pl67noa7orqTlm6LpmJ/lgZogS25vd2xlZGdlIEJhc2UgLyBBZ2VudOOAgeWunuS5oOW3peS9nOS8muWPguS4jiBBZ2VudCDnm7jlhbPosIPnoJTkuI7lvIDlj5HjgIIKLSBUeXBpY2FsIGV4Y2x1c2lvbnPvvJrlrZfoioLlub/lkYrlm6LpmJ/jgIE0Mzk544CB6Zi/6YeM5LqR562J5by657q/57Si57un57ut5Y2hIFN0YWJsZSBPcmlnaW5hbCAvIGF1dGhvciBwcm92ZW5hbmNl77yb5pmu6YCaIEZyb250ZW5kIC8gQmFja2VuZCAvIERhdGEgLyBUZXN0IOWNs+S9v+a3seaMliBIYXJuZXNzIC8gU2tpbGwgLyBBZ2VudCDkuZ/mjIkgUm9sZSBTY29wZSDmjpLpmaTjgIIKCk1vcm5pbmcg5LiN5L+u5pS5IGBpbnRlcnZpZXcvY2Fub25pY2FsL2DjgIFGcm96ZW4gYG1hcmtldC9hbmFseXNpcy9gIOaIluS7u+S9lSBDdXJyaWN1bHVtIOato+aWh+OAggoKIyMjIDE3OjAwIEFmdGVybm9vbiBTZWFyY2gKCi0gU3RhdHVzOiBjb21wbGV0ZWQKLSBEaXNjb3Zlcnkgd2luZG9377ya57un57ut5Lil5qC85oyJ6L+Q6KGM5pe25pyA6L+RIDcyIOWwj+aXtu+8m+mHjeeCueihpSBNb3JuaW5nIOeahOWFrOWPuCAvIOW5s+WPsCAvIFF1ZXJ5IOebsuWMuuOAggotIEJhc2VsaW5l77ya5q2j5byPIE1hcmtldCDku43kuLogKiozMyBCYXRjaCAvIDI5NSBIVU1BTi1BIC8g5pyA5aSnIGBTMjk1YCAvIOS4i+S4gCBgUzI5NmAqKu+8m01vcm5pbmcg5YCZ6YCJ5bey57uP5a6M5oiQ6L+HIGBiYXRjaC0wMS5tZGDvvZ5gYmF0Y2gtMzMubWRgIOWFqOWOhuWPsuWOu+mHjeOAggotIFNlYXJjaCBlZmZvcnTvvJrmnKzova7mlrDlop7oh7PlsJEgKioxMjAg57uE5a6a5ZCRIFF1ZXJ5IC8gUXVlcnkg5Y+Y5L2TKirvvJt2ZXJpZmljYXRpb24gZWZmb3J077yaKioyNSsg5qyhKirlgJnpgInljp/luJYgLyDkvZzogIXpobUgLyBwcm92ZW5hbmNlIOWFpeWPo+Wbnuivu+aIlui/vea6kOOAggotIE5ldyBpbmRlcGVuZGVudCBIVU1BTi1B77yaKiowIOS4qioq44CCSW5ib3gg5LuN5Li6IE1vcm5pbmcg55qEICoqMSDkuKoqKuS4iua1t+iBlOiUmuaVsOenkeWAmemAie+8m0FmdGVybm9vbiDkuI3liIbphY0gYFN4eHhg44CB5LiN5Yib5bu6IEJhdGNo44CCCi0gU3RhYmxlIE9yaWdpbmFsIHJlY2hlY2vvvJpBZnRlcm5vb24g55u05o6l5omT5byA5ZCM5LiAIHBvc3Qtc3BlY2lmaWMgVVJMIOaXtuWHuueOsOaaguaXtuaAp+mhtemdouS4jeWPr+ivu++8jOWboOatpOayoeacieaPkOWJjeW9kuaho++8jOS5n+ayoeacieWboOWNleasoeaKk+WPluWksei0peWIoOmZpOW3sumAmui/h+WAmemAie+8m+aYjuehruimgeaxgiBFdmVuaW5nIOWGjemqjOivgSBTdGFibGUgT3JpZ2luYWwg5ZCO5omN5Y+v5YiG6YWNIGBTMjk2YOOAggotIFR5cGljYWwgZXhjbHVzaW9uc++8mlBERCBBZ2VudOOAgeW/q+aJi+Wkp+aooeWei+W6lOeUqOOAgTQzOTnjgIHpmL/ph4zkupHlj4rlpJrmnaHkvIHkuJrogZrlkIggLyBTZWFyY2ggQ2FjaGUg57uT5p6c5Zug5Li6IFN0YWJsZSBPcmlnaW5hbOOAgeS9nOiAhSBwcm92ZW5hbmNlIOaIliBSb2xlIFNjb3BlIOS4jeWujOaVtOe7p+e7rembtui0oeeMruOAggoKQWZ0ZXJub29uIOS4u+imgeinguWvn++8mkFnZW50IC8gSGFybmVzcyAvIFNraWxsIOW3suW/q+mAn+aJqeaVo+WIsOaZrumAmui9r+S7tuW3peeoi+Wyl+S9je+8m+ebruagh+W6k+WboOatpOe7p+e7reaUtue0pyBSb2xlIFNjb3Bl77yM6ICM5LiN5piv5Zug5Li65paw5pyv6K+t5Ye6546w5bCx5omp5aSn57uf6K6h6IyD5Zu044CCRnJvemVuIENhbm9uaWNhbCAvIEFuYWx5c2lzIC8gQ3VycmljdWx1bSDkuI3kv67mlLnjgIIKCiMjIyAyMjowMCBFdmVuaW5nIFNlYXJjaCArIEZpbmFsaXplCgotIFN0YXR1czogY29tcGxldGVkCi0gRGlzY292ZXJ5IHdpbmRvd++8muS4peagvOaMiei/kOihjOaXtuacgOi/kSA3MiDlsI/ml7bvvJvnu6fnu63ooaXlrZfoioIgLyDmipbpn7PjgIHpmL/ph4zns7vjgIHohb7orq/jgIHnvo7lm6LjgIHlv6vmiYvjgIHlsI/nuqLkuabjgIHnmb7luqbjgIHomoLomoHjgIFQRETjgIHkuqzkuJzjgIHmu7Tmu7TjgIFC56uZ44CBT1BQTyAvIHZpdm8gLyDlsI/nsbPlj4ogYEFJIEFwcGxpY2F0aW9uYCAvIGBBSSBCYWNrZW5kYCAvIGBBSSBGdWxsLXN0YWNrYCAvIGBBZ2VudGAgLyBgUkFHYCAvIGBDb2RpbmcgQWdlbnRgIC8gYEhhcm5lc3NgIC8gYFJ1bnRpbWVgIC8gYEFwcGxpZWQgQUlgIC8gYEZERWAgLyBg5aSn5qih5Z6L5bqU55So5byA5Y+RYCAvIGDmmbrog73kvZPlvIDlj5Fg77yM5bm257un57ut6Leo54mb5a6i44CB5bCP57qi5Lmm44CB55+l5LmO44CB6ISJ6ISJ44CB5Y2a5a6iIC8g5oqA5pyv56S+5Yy66KGl55uy44CCCi0gQmFzZWxpbmUgLyBmaW5hbCBkZWR1cO+8mumHjeaWsOivu+WPluacgOaWsCBgbWFpbmDjgIFNYXJrZXQgUkVBRE1F44CBSW5ib3jjgIFEYWlseSBMb2fjgIHkuKTku70gTWFya2V0IFBvbGljeSDkuI7mnIDmlrAgYGJhdGNoLTMzLm1kYO+8jOW5tuWcqOWIhumFjee8luWPt+WJjeWGjeasoSoq6YCQ5Liq55u05o6l5Zue6K+7IGBtYXJrZXQvaW50ZXJ2aWV3cy9iYXRjaC0wMS5tZGDvvZ5gYmF0Y2gtMzMubWRgIOWFqOWOhuWPsioq44CC56Gu6K6k5b2S5qGj5YmN55yf5a6e5Z+657q/5LuN5Li6ICoqMzMgQmF0Y2ggLyAyOTUgSFVNQU4tQSAvIGBTMDAx4oCTUzI5NWAgLyDmnIDlpKcgYFMyOTVgIC8g5LiL5LiAIGBTMjk2YCoq44CCCi0gU2VhcmNoIGVmZm9ydO+8mkV2ZW5pbmcg5paw5aKe6Iez5bCRICoqMTAwIOe7hCBRdWVyeSAvIFF1ZXJ5IOWPmOS9kyoq77ybdmVyaWZpY2F0aW9uIGVmZm9ydO+8muaYvuW8j+aJk+W8gOOAgeWbnuivu+aIlui/vea6kCAqKjIwKyDmrKEqKui/keacn+WAmemAieWOn+W4luOAgeS9nOiAhemhteOAgeS8geS4mumhteS4jiBwcm92ZW5hbmNlIOWFpeWPo+OAggotIFN0YWJsZSBPcmlnaW5hbCBmaW5hbCByZWNoZWNr77ya5LiK5rW36IGU6JSa5pWw56eRIGV4YWN0IHBvc3Qtc3BlY2lmaWMg5qOA57Si5ZyoIEV2ZW5pbmcg5YaN5qyh5a6M5pW05Y+W5b6X5YCZ6YCJ5Lq65q2j5paH44CB5L2c6ICF44CB5Y+R5biD5pe26Ze05ZKM5YWo6YOo6L+e57ut6aKY5bqP77yMTW9ybmluZyDnmoTmnaXmupDotKjph4/nu5PorrrlvpfliLDph43lpI3pqozor4HvvJvmsqHmnInlh7rnjrDovazovb3jgIHlpI3liLbpk77miJblhoXlrrnotKblj7flj43or4HjgIIKLSBOZXcgSFVNQU4tQSBhZnRlciBFdmVuaW5nIHNlYXJjaO+8mioqMCDkuKrpop3lpJbmtYHnqIsqKuOAgk1vcm5pbmcgSW5ib3gg55qE5LiK5rW36IGU6JSa5pWw56eR5YCZ6YCJ5pyA57uI6YCa6L+HIEhVTUFOLUEgKyBSb2xlIFNjb3BlICsgU3RhYmxlIE9yaWdpbmFsICsg5YWo5Y6G5Y+y5Y676YeNIEdhdGXjgIIKLSBGaW5hbCBCYXRjaO+8muWIm+W7uuW9k+WkqeWUr+S4gOato+W8jyBgbWFya2V0L2ludGVydmlld3MvYmF0Y2gtMzQubWRg77yM5YiG6YWNICoqYFMyOTZgKirvvJvlvZLmoaPlkI4gSW5ib3gg5riF56m644CCCgpFdmVuaW5nIOmHjeeCueWkjeaguCAvIOaOkumZpO+8mgoKMS4gKirkuIrmtbfogZTolJrmlbDnp5EgQUkg5bel56iL5a6e5Lmg55SfIC8gQWdlbnTvvZxg54mb5a6iNDg4MTAwNDYw5Y+3YCoq77ya5pyA57uI5b2S5qGjIGBTMjk2YOOAguWFs+mUrumTvuS4uiBBZ2VudCBGcmFtZXdvcmsg4oaSIEhhcm5lc3Mg4oaSIFNraWxsIC8gTUNQIOaVsOmHj+iGqOiDgCDihpIgS25vd2xlZGdlIEJhc2Ug4oaSIENvZGluZyBBZ2VudCBUb29sIOKGkiDml6DmoYbmnrYgQ29udGV4dCBDb21wcmVzc2lvbiAvIE1lbW9yeSDihpIgTXVsdGktQWdlbnTvvJvlj43pl67noa7orqTlm6LpmJ/kuI7lrp7kuaDlt6XkvZzlnYfnm7TmjqXmtonlj4ogQWdlbnTjgIIKMi4gKirkvZzkuJrluK4gOS8yMyDkuIDpnaLvvZxgRGVjYWRlcXFxYCoq77ya56ys5LiA5Lq656ew5LiOIEFnZW50IEV2YWx1YXRpb24g5oqA5pyv5a+G5bqm5b6I6auY77yM6L+9IFRvb2wgSWRlbXBvdGVuY3njgIHmlq3ov54gLyDph43ov57nu63ot5HjgIFBdWRpdOOAgeecn+WuniBVc2VyIFRyYWNl44CBRXZhbCBTZXTjgIFEZXRlcm1pbmlzdGljIE1ldHJpY+OAgUFnZW50IFJldmlld2VyIOS4jiBEYXRhc2V0IOa8lOi/m++8m+S9huWQjOS9nOiAheatpOWJjeWFrOW8gOS9nOS4muW4rua1geeoi+agh+S4uiBg5YWo5qCI5byA5Y+RYO+8jOW9k+WJjemhtemdouayoeacieaWsOWinuivgeaNruivgeaYjuaLm+iBmOS4u+S9k+WxnuS6juebruaghyBBSSBBcHBsaWNhdGlvbiAvIEFnZW5077yM5oyJIFJvbGUgU2NvcGUgR2F0ZSDmjpLpmaTjgIIKMy4gKirmn5Dnp5HmioAgOS8yM++9nGDkuK3kuoznmoTopb/nuqLmn7/otbfluorkuoZgKirvvJrkvZzogIXmnKzkurrmmI7noa7lhpnigJznnIvkvLwgQWdlbnQgLyBBSSDlvIDlj5HvvIzlrp7pmYXmm7Tlg4/np5HnoJTliqnnkIbigJ3vvIzlspfkvY3ph43lv4PmmK/mlofnjK7osIPnoJQgLyDljLvnlpcgQUkg56CU56m25pSv5oyB77yMUm9sZSBTY29wZSDmjpLpmaTjgIIKNC4gKio0Mzk544CB6Zi/6YeM5LqR5Y+K5YW25a6D6L+R5pyf6auY5a+G5bqm57uT5p6cKirvvJrnu6fnu63lj5cgU3RhYmxlIE9yaWdpbmFs44CB5L2c6ICFIHByb3ZlbmFuY2XjgIFSb2xlIFNjb3BlIOaIlueql+WPo+i+ueeVjOmZkOWItu+8m+S8geS4mumhtSAvIFNlYXJjaCBTbmlwcGV0IC8g5YaF5a655pW055CG5LiN5pu/5Luj5YCZ6YCJ5Lq65Y6f5aeL5q2j5paH44CCCjUuICoq5pmu6YCaIEJhY2tlbmQgLyBGcm9udGVuZCAvIFRlc3QgLyBEYXRh44CBQUkg6Ieq5Yqo6Z2i6K+V44CB5ZCI6ZuGIC8g5qCH5YeG562U5qGIIC8g5YaF5a655Y+3IC8gSkQgLyDlhoXmjqggLyDmlrDpl7sqKu+8mue7p+e7reaMieaXouWumiBHYXRlIOaOkumZpOaIluS7heS9nOW4guWcuuaXgeivgeOAggoKIyMjIEZpbmFsIFN1bW1hcnkKCi0gVGhyZWUtcm91bmQgc2VhcmNoIGVmZm9ydO+8mioq6Iez5bCRIDM0MCDnu4QgUXVlcnkgLyBRdWVyeSDlj5jkvZMqKu+8iE1vcm5pbmcg4omlMTIwICsgQWZ0ZXJub29uIOKJpTEyMCArIEV2ZW5pbmcg4omlMTAw77yJ44CCCi0gVGhyZWUtcm91bmQgdmVyaWZpY2F0aW9uIGVmZm9ydO+8mioq6Iez5bCRIDcwIOasoSoq5YCZ6YCJ5Y6f5biWIC8g5L2c6ICF6aG1IC8g5LyB5Lia6aG1IC8gcHJvdmVuYW5jZSDlhaXlj6PnmoTmiZPlvIDjgIHlm57or7vmiJbov73mupDlsJ3or5XvvIhNb3JuaW5nIDI1KyArIEFmdGVybm9vbiAyNSsgKyBFdmVuaW5nIDIwK++8ieOAggotIEZpbmFsIGFkZGl0aW9uc++8mioqMSDkuKogSFVNQU4tQe+8mmBTMjk2YCoq44CCCi0gQ3VycmVudCBmb3JtYWwgTWFya2V0IGxpYnJhcnnvvJoqKjM0IEJhdGNoIC8gMjk2IEhVTUFOLUEgLyBgUzAwMeKAk1MyOTZgKirjgIIKLSBOZXh0IElE77yaKipgUzI5N2AqKuOAggotIEluYm9477ya5b2S5qGj5ZCO5riF56m644CCCi0gRnJvemVuIENhbm9uaWNhbCAvIGBtYXJrZXQvYW5hbHlzaXMvYCAvIEN1cnJpY3VsdW3vvJoqKuacrOaXpeS4jeS/ruaUuSoq77ybYFMyOTZgIOWPqui/m+WFpeWQjue7rSBwZXJpb2RpYyBjYW5vbmljYWwgbWFwcGluZyAvIHJldmlldyBjYW5kaWRhdGXjgIIKCuW9k+aXpeS4u+imgeW4guWcuuS/oeWPt++8mgoKMS4gKipDYXBhYmlsaXR5IFNjYWxhYmlsaXR5IOi/m+WFpeWfuuehgOmqjOecn+OAgioqIFNraWxsIC8gTUNQIOaVsOmHj+WinumVv+WQjuWmguS9lSBEaXNjb3ZlcnnjgIHlpoLkvZXmjqfliLYgQ29udGV4dCBQcmVzc3VyZe+8jOW3sue7j+aYr+efreWcuiBBZ2VudCDpnaLor5Xlj6/nm7TmjqXov73nmoTpl67popjjgIIKMi4gKipSdW50aW1lIE93bmVyc2hpcCDnu6fnu63kuIvpkrvjgIIqKiDkuI3kvb/nlKggRnJhbWV3b3JrIOaXtuaAjuagt+iHquW3seWunueOsCBDb250ZXh0IENvbXByZXNzaW9uIOS4jiBNZW1vcnnvvIzopoHmsYLlgJnpgInkurrnnJ/mraPnkIbop6MgSGFybmVzcyAvIFJ1bnRpbWXvvIzogIzkuI3mmK/lj6rkvJogQVBJ44CCCjMuICoqQWdlbnQg5pyv6K+t5q2j5Zyo6Leo5bKX5L2N5omp5pWj44CCKiog5L2c5Lia5biu5pmu6YCaIEZ1bGwtc3RhY2sg5rWB56iL5Lmf6IO95rex5oyWIEFnZW50IEV2YWx1YXRpb27vvIzlm6DmraQgUm9sZSBTY29wZSBHYXRlIOW/hemhu+e7p+e7reS/neaMgeS4peagvOOAggo0LiAqKua1geeoi+e6p+WOu+mHjeS8mOWFiOS6jiBTb3VyY2UgQ291bnTjgIIqKiDlvLrpopjnm67kvYYgUm9sZSBTY29wZSAvIHByb3ZlbmFuY2Ug5LiN6Zet546v55qE6aG16Z2i57un57ut6Zu26LSh54yu44CCCgrppbHlkozluqYgLyDnm7LljLrvvJrmnIDov5EgNzIg5bCP5pe25YWs5byA54Ot6Zeo5bGC57un57ut5ZGI546wKirlsYDpg6jppbHlkowgKyBwcm92ZW5hbmNlIC8gUm9sZSBTY29wZSDmiJDmnKzpq5gqKuOAgueJm+WuouS7jeaYr+acgOWuueaYk+eos+WumuaguOmqjOWAmemAieS6uuWOn+W4lueahOW5s+WPsO+8m+mdnueJm+Wuoua4oOmBk+W9k+WJjeeql+WPo+S7jee8uuaWsOeahOeos+Wumuebruagh+Wyl+esrOS4gOS6uuensOadpea6kOOAguWkp+WOguajgOe0ouaMgee7reimhueblu+8jOS9huWkp+mHj+aWsOWRveS4reWxnuS6juaZrumAmuWyl+S9jSBBSSDntKDlhbvmianmlaPjgIHogZrlkIggLyDlhoXlrrnpk77jgIHnqpflj6PlpJbml6fluJbmiJYgU3RhYmxlIE9yaWdpbmFsIOS4jei2s+OAgue7p+e7reihpeebsu+8jOS4jemZjeS9jiBHYXRl44CCCg==' | base64 -d >> market/monitoring/daily-log.md
           git rm .github/workflows/append-market-daily-log-once.yml
           git add market/monitoring/daily-log.md
           git commit -m "market: backfill and finalize 2026-09-23 daily log"
-
-      - name: Rebase on latest main and push safely
-        shell: bash
-        run: |
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
