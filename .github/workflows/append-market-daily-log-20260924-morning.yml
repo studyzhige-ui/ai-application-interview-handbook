@@ -19,54 +19,19 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Configure git
+      - name: Append log and self-delete
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git fetch origin main
           git reset --hard origin/main
-
-      - name: Append morning log and remove one-shot workflow
-        shell: bash
-        run: |
           if ! grep -q '^## 2026-09-24$' market/monitoring/daily-log.md; then
-            cat >> market/monitoring/daily-log.md <<'EOF'
-
----
-
-## 2026-09-24
-
-### 10:00 Morning Search
-
-- Status: completed
-- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-21 10:00 ～ 2026-09-24 10:00**；历史页面只用于 provenance、Role Scope 与去重判断，不拿窗口外旧内容补数。
-- Baseline：重新读取最新 `main`、`market/README.md`、Inbox、Daily Log、两份 Market Policy 与最新 `batch-34.md`；当前正式基线为 **34 Batch / 296 HUMAN-A / `S001–S296` / 下一 `S297`**，Inbox 起始为 0。仓库根目录未出现 `research/` 一级目录。
-- Search effort：至少 **75 组定向 Query / Query 变体**，覆盖字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场，并补 `AI Application`、`Agent`、`RAG`、`AI Backend`、`AI Full-stack`、`Coding Agent`、`Harness / Runtime`、`Applied AI`、`FDE`、`大模型应用开发`、`智能体开发` 与牛客 / 小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等平台。
-- Verification effort：显式执行 **20+ 次** post-specific / 候选页 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试；仅搜索摘要、话题聚合、企业聚合或页面壳不视为 Stable Original。
-- Passed HUMAN-A → Inbox：**0 个**。本轮没有候选同时满足真人第一人称、高技术密度、目标 Role Scope、Stable Original 与非重复，因此 Inbox 继续为空；Morning 不分配 `Sxxx`、不创建 Batch。由于没有候选进入 Inbox，本轮未触发“候选准入前逐个回读全部历史 Batch”的强制 Gate。
-
-Morning 重点排除 / 待追源：
-
-1. **字节剪映 AI 前端一面（9/22）**：话题聚合可见自研 Agent Framework、为何不用 LangGraph、ReAct Loop、Tool Registry / `tool_call` JSON Schema、本地 Execution 与 Context 追加等连续高密度内容，且标题显示 `ai前端秋招生`；但当前仍只能稳定取得话题聚合，无法取得可重复回读的 post-specific 候选原帖，且 AI 前端是否属于目标 AI Application Role Scope 仍需原帖业务上下文闭环，因此不进 Inbox。
-2. **水滴 AI 应用开发一面**：近期第一人称线索存在，但 post-specific 直接回读仍不稳定，当前可见内容也主要是“项目 / 业务深挖”概述，缺少足够连续具体题序；Stable Original / A-grade Quality 均未闭环。
-3. **快手 AI 全栈二面**：近期候选人只记录“二面挂、两次面试官均偏后端、被指出后端能力不足”等结果与体验，缺少具体技术问题序列；信息密度不足，不升 HUMAN-A。
-4. **作业帮 9/23 `Decadeqqq`**：Agent Evaluation 题链很强，但最新 `batch-34.md` 已明确确认该招聘流程主体为普通 Full-stack，Role Scope 不闭环；继续零贡献，不因问题高级而扩大统计边界。
-5. **新浪测开 / 美团 AI 数据开发 / 普通前后端中的 Agent 问题**：分别属于 Test / Data / 非目标软件工程岗位；即使出现 Test Agent、Spring AI、Agent / MCP / Skill，也按 Role Scope Gate 排除。
-6. **合集 / 内容号 / 企业聚合 / AI 自动面试 / 标准答案 / 课程与 JD**：只作发现与市场旁证，不贡献 HUMAN-A。小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 本轮未形成新的、最近 72 小时稳定可核验 Candidate First-person 目标岗来源。
-
-Morning 主要观察：**Agent 技术栈继续向 AI Frontend、Test、Data 与普通 Full-stack 扩散，而“目标岗位 + 稳定原帖 + 高密度题序”的同时满足率继续下降。** 因此本轮保持 Role Scope 与 provenance 双 Gate，不把 Agent 术语本身当作准入依据。字节 AI 前端线索显示自研 Agent Runtime / ReAct / Tool Execution 已可能进入前端方向的项目深挖，但在 Stable Original 与 Role Scope 闭环前仅保留为待追源市场信号。
-
-Morning 不修改 `interview/canonical/`、Frozen `market/analysis/` 或任何 Curriculum 正文。
-EOF
+            printf '%s' 'Ci0tLQojIyAyMDI2LTA5LTI0CgojIyMgMTA6MDAgTW9ybmluZyBTZWFyY2gKCi0gU3RhdHVzOiBjb21wbGV0ZWQKLSBEaXNjb3Zlcnkgd2luZG9377ya5Lil5qC85oyJ6L+Q6KGM5pe25pyA6L+RIDcyIOWwj+aXtu+8jOe6puS4uiAqKjIwMjYtMDktMjEgMTA6MDAg772eIDIwMjYtMDktMjQgMTA6MDAqKu+8m+WOhuWPsumhtemdouWPqueUqOS6jiBwcm92ZW5hbmNl44CBUm9sZSBTY29wZSDkuI7ljrvph43liKTmlq3vvIzkuI3mi7/nqpflj6PlpJbml6flhoXlrrnooaXmlbDjgIIKLSBCYXNlbGluZe+8mumHjeaWsOivu+WPluacgOaWsCBgbWFpbmDjgIFgbWFya2V0L1JFQURNRS5tZGDjgIFJbmJveOOAgURhaWx5IExvZ+OAgeS4pOS7vSBNYXJrZXQgUG9saWN5IOS4juacgOaWsCBgYmF0Y2gtMzQubWRg77yb5b2T5YmN5q2j5byP5Z+657q/5Li6ICoqMzQgQmF0Y2ggLyAyOTYgSFVNQU4tQSAvIGBTMDAx4oCTUzI5NmAgLyDkuIvkuIAgYFMyOTdgKirvvIxJbmJveCDotbflp4vkuLogMOOAguS7k+W6k+agueebruW9leacquWHuueOsCBgcmVzZWFyY2gvYCDkuIDnuqfnm67lvZXjgIIKLSBTZWFyY2ggZWZmb3J077ya6Iez5bCRICoqNzUg57uE5a6a5ZCRIFF1ZXJ5IC8gUXVlcnkg5Y+Y5L2TKirvvIzopobnm5blrZfoioIgLyDmipbpn7PjgIHpmL/ph4zns7vjgIHohb7orq/jgIHnvo7lm6LjgIHlv6vmiYvjgIHlsI/nuqLkuabjgIHnmb7luqbjgIHomoLomoHjgIFQRETjgIHkuqzkuJzjgIHmu7Tmu7TjgIFC56uZ44CBT1BQTyAvIHZpdm8gLyDlsI/nsbPlj4rmm7Tlub8gQUkgQXBwbGljYXRpb24gLyBBZ2VudCDluILlnLrvvIzlubbooaUgYEFJIEFwcGxpY2F0aW9uYOOAgWBBZ2VudGDjgIFgUkFHYOOAgWBBSSBCYWNrZW5kYOOAgWBBSSBGdWxsLXN0YWNrYOOAgWBDb2RpbmcgQWdlbnRg44CBYEhhcm5lc3MgLyBSdW50aW1lYOOAgWBBcHBsaWVkIEFJYOOAgWBGREVg44CBYOWkp+aooeWei+W6lOeUqOW8gOWPkWDjgIFg5pm66IO95L2T5byA5Y+RYCDkuI7niZvlrqIgLyDlsI/nuqLkuaYgLyDnn6XkuY4gLyDohInohIkgLyBDU0ROIC8g5o6Y6YeRIC8g5Y2a5a6iIC8gQmlsaWJpbGkg562J5bmz5Y+w44CCCi0gVmVyaWZpY2F0aW9uIGVmZm9ydO+8muaYvuW8j+aJp+ihjCAqKjIwKyDmrKEqKiBwb3N0LXNwZWNpZmljIC8g5YCZ6YCJ6aG1IC8g5L2c6ICF6aG1IC8g5LyB5Lia6aG1IC8gcHJvdmVuYW5jZSDlhaXlj6PnmoTmiZPlvIDjgIHlm57or7vmiJbov73mupDlsJ3or5XvvJvku4XmkJzntKLmkZjopoHjgIHor53popjogZrlkIjjgIHkvIHkuJrogZrlkIjmiJbpobXpnaLlo7PkuI3op4bkuLogU3RhYmxlIE9yaWdpbmFs44CCCi0gUGFzc2VkIEhVTUFOLUEg4oaSIEluYm9477yaKiowIOS4qioq44CC5pys6L2u5rKh5pyJ5YCZ6YCJ5ZCM5pe25ruh6Laz55yf5Lq656ys5LiA5Lq656ew44CB6auY5oqA5pyv5a+G5bqm44CB55uu5qCHIFJvbGUgU2NvcGXjgIFTdGFibGUgT3JpZ2luYWwg5LiO6Z2e6YeN5aSN77yM5Zug5q2kIEluYm94IOe7p+e7reS4uuepuu+8m01vcm5pbmcg5LiN5YiG6YWNIGBTeHh4YOOAgeS4jeWIm+W7uiBCYXRjaOOAgueUseS6juayoeacieWAmemAiei/m+WFpSBJbmJveO+8jOacrOi9ruacquinpuWPkeKAnOWAmemAieWHhuWFpeWJjemAkOS4quWbnuivu+WFqOmDqOWOhuWPsiBCYXRjaOKAneeahOW8uuWItiBHYXRl44CCCgpNb3JuaW5nIOmHjeeCueaOkumZpCAvIOW+hei/vea6kO+8mgoKMS4gKirlrZfoioLliarmmKAgQUkg5YmN56uv5LiA6Z2i77yIOS8yMu+8iSoq77ya6K+d6aKY6IGa5ZCI5Y+v6KeB6Ieq56CUIEFnZW50IEZyYW1ld29ya+OAgeS4uuS9leS4jeeUqCBMYW5nR3JhcGjjgIFSZUFjdCBMb29w44CBVG9vbCBSZWdpc3RyeSAvIGB0b29sX2NhbGxgIEpTT04gU2NoZW1h44CB5pys5ZywIEV4ZWN1dGlvbiDkuI4gQ29udGV4dCDov73liqDnrYnov57nu63pq5jlr4bluqblhoXlrrnvvIzkuJTmoIfpopjmmL7npLogYGFp5YmN56uv56eL5oub55SfYO+8m+S9huW9k+WJjeS7jeWPquiDveeos+WumuWPluW+l+ivnemimOiBmuWQiO+8jOaXoOazleWPluW+l+WPr+mHjeWkjeWbnuivu+eahCBwb3N0LXNwZWNpZmljIOWAmemAieWOn+W4lu+8jOS4lCBBSSDliY3nq6/mmK/lkKblsZ7kuo7nm67moIcgQUkgQXBwbGljYXRpb24gUm9sZSBTY29wZSDku43pnIDljp/luJbkuJrliqHkuIrkuIvmlofpl63njq/vvIzlm6DmraTkuI3ov5sgSW5ib3jjgIIKMi4gKirmsLTmu7QgQUkg5bqU55So5byA5Y+R5LiA6Z2iKirvvJrov5HmnJ/nrKzkuIDkurrnp7Dnur/ntKLlrZjlnKjvvIzkvYYgcG9zdC1zcGVjaWZpYyDnm7TmjqXlm57or7vku43kuI3nqLPlrprvvIzlvZPliY3lj6/op4HlhoXlrrnkuZ/kuLvopoHmmK/igJzpobnnm64gLyDkuJrliqHmt7HmjJbigJ3mpoLov7DvvIznvLrlsJHotrPlpJ/ov57nu63lhbfkvZPpopjluo/vvJtTdGFibGUgT3JpZ2luYWwgLyBBLWdyYWRlIFF1YWxpdHkg5Z2H5pyq6Zet546v44CCCjMuICoq5b+r5omLIEFJIOWFqOagiOS6jOmdoioq77ya6L+R5pyf5YCZ6YCJ5Lq65Y+q6K6w5b2V4oCc5LqM6Z2i5oyC44CB5Lik5qyh6Z2i6K+V5a6Y5Z2H5YGP5ZCO56uv44CB6KKr5oyH5Ye65ZCO56uv6IO95Yqb5LiN6Laz4oCd562J57uT5p6c5LiO5L2T6aqM77yM57y65bCR5YW35L2T5oqA5pyv6Zeu6aKY5bqP5YiX77yb5L+h5oGv5a+G5bqm5LiN6Laz77yM5LiN5Y2HIEhVTUFOLUHjgIIKNC4gKirkvZzkuJrluK4gOS8yMyBgRGVjYWRlcXFxYCoq77yaQWdlbnQgRXZhbHVhdGlvbiDpopjpk77lvojlvLrvvIzkvYbmnIDmlrAgYGJhdGNoLTM0Lm1kYCDlt7LmmI7noa7noa7orqTor6Xmi5vogZjmtYHnqIvkuLvkvZPkuLrmma7pgJogRnVsbC1zdGFja++8jFJvbGUgU2NvcGUg5LiN6Zet546v77yb57un57ut6Zu26LSh54yu77yM5LiN5Zug6Zeu6aKY6auY57qn6ICM5omp5aSn57uf6K6h6L6555WM44CCCjUuICoq5paw5rWq5rWL5byAIC8g576O5ZuiIEFJIOaVsOaNruW8gOWPkSAvIOaZrumAmuWJjeWQjuerr+S4reeahCBBZ2VudCDpl67popgqKu+8muWIhuWIq+WxnuS6jiBUZXN0IC8gRGF0YSAvIOmdnuebruagh+i9r+S7tuW3peeoi+Wyl+S9je+8m+WNs+S9v+WHuueOsCBUZXN0IEFnZW5044CBU3ByaW5nIEFJ44CBQWdlbnQgLyBNQ1AgLyBTa2lsbO+8jOS5n+aMiSBSb2xlIFNjb3BlIEdhdGUg5o6S6Zmk44CCCjYuICoq5ZCI6ZuGIC8g5YaF5a655Y+3IC8g5LyB5Lia6IGa5ZCIIC8gQUkg6Ieq5Yqo6Z2i6K+VIC8g5qCH5YeG562U5qGIIC8g6K++56iL5LiOIEpEKirvvJrlj6rkvZzlj5HnjrDkuI7luILlnLrml4Hor4HvvIzkuI3otKHnjK4gSFVNQU4tQeOAguWwj+e6ouS5piAvIOefpeS5jiAvIOiEieiEiSAvIENTRE4gLyDmjpjph5EgLyDljZrlrqIgLyBCaWxpYmlsaSDmnKzova7mnKrlvaLmiJDmlrDnmoTjgIHmnIDov5EgNzIg5bCP5pe256iz5a6a5Y+v5qC46aqMIENhbmRpZGF0ZSBGaXJzdC1wZXJzb24g55uu5qCH5bKX5p2l5rqQ44CCCgpNb3JuaW5nIOS4u+imgeinguWvn++8mioqQWdlbnQg5oqA5pyv5qCI57un57ut5ZCRIEFJIEZyb250ZW5k44CBVGVzdOOAgURhdGEg5LiO5pmu6YCaIEZ1bGwtc3RhY2sg5omp5pWj77yM6ICM4oCc55uu5qCH5bKX5L2NICsg56iz5a6a5Y6f5biWICsg6auY5a+G5bqm6aKY5bqP4oCd55qE5ZCM5pe25ruh6Laz546H57un57ut5LiL6ZmN44CCKiog5Zug5q2k5pys6L2u5L+d5oyBIFJvbGUgU2NvcGUg5LiOIHByb3ZlbmFuY2Ug5Y+MIEdhdGXvvIzkuI3mioogQWdlbnQg5pyv6K+t5pys6Lqr5b2T5L2c5YeG5YWl5L6d5o2u44CC5a2X6IqCIEFJIOWJjeerr+e6v+e0ouaYvuekuuiHqueglCBBZ2VudCBSdW50aW1lIC8gUmVBY3QgLyBUb29sIEV4ZWN1dGlvbiDlt7Llj6/og73ov5vlhaXliY3nq6/mlrnlkJHnmoTpobnnm67mt7HmjJbvvIzkvYblnKggU3RhYmxlIE9yaWdpbmFsIOS4jiBSb2xlIFNjb3BlIOmXreeOr+WJjeS7heS/neeVmeS4uuW+hei/vea6kOW4guWcuuS/oeWPt+OAggoKTW9ybmluZyDkuI3kv67mlLkgYGludGVydmlldy9jYW5vbmljYWwvYOOAgUZyb3plbiBgbWFya2V0L2FuYWx5c2lzL2Ag5oiW5Lu75L2VIEN1cnJpY3VsdW0g5q2j5paH44CCCg==' | base64 -d >> market/monitoring/daily-log.md
           fi
-          rm -f .github/workflows/append-market-daily-log-20260924-morning.yml
-          git add market/monitoring/daily-log.md .github/workflows/append-market-daily-log-20260924-morning.yml
-          if git diff --cached --quiet; then
-            exit 0
-          fi
+          git rm -f .github/workflows/append-market-daily-log-20260924-morning.yml
+          git add market/monitoring/daily-log.md
           git commit -m "market: log 2026-09-24 morning monitoring"
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
-
-# trigger existing workflow after initial creation
