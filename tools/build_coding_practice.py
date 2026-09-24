@@ -70,24 +70,100 @@ def cell(kind: str, eid: str, role: str, source: str) -> dict:
     return value
 
 
+def inline_html(text: str) -> str:
+    """Render the course's inline code and bold subset, escaping all source HTML."""
+    tokens = re.compile(r"(`[^`\n]+`|\*\*[^*\n]+\*\*)")
+    parts: list[str] = []
+    position = 0
+    for match in tokens.finditer(text):
+        parts.append(html.escape(text[position:match.start()]))
+        token = match.group()
+        if token.startswith("`"):
+            parts.append("<code>" + html.escape(token[1:-1]) + "</code>")
+        else:
+            parts.append("<strong>" + html.escape(token[2:-2]) + "</strong>")
+        position = match.end()
+    parts.append(html.escape(text[position:]))
+    return "".join(parts)
+
+
+def explanation_html(text: str) -> str:
+    """Preserve the explanation structures used in Coding 03.
+
+    Supported blocks: paragraphs, flat ordered/unordered lists and blockquotes.
+    This is deliberately not a general Markdown implementation. Keep generated
+    answers extension-free and escape source HTML. Add explicit support/tests
+    before introducing nested lists, tables or other syntax in explanations.
+    """
+    output: list[str] = []
+    lines = text.splitlines()
+    i = 0
+
+    def kind(line: str) -> str:
+        if re.match(r"^\d+\.\s+", line):
+            return "ol"
+        if line.startswith("- "):
+            return "ul"
+        if line.startswith(">"):
+            return "blockquote"
+        return "p"
+
+    while i < len(lines):
+        if not lines[i].strip():
+            i += 1
+            continue
+        block_kind = kind(lines[i])
+        group: list[str] = []
+        while i < len(lines) and lines[i].strip() and kind(lines[i]) == block_kind:
+            group.append(lines[i])
+            i += 1
+        if block_kind in ("ol", "ul"):
+            start = ""
+            if block_kind == "ol":
+                first = int(group[0].split(".", 1)[0])
+                start = f' start="{first}"' if first != 1 else ""
+            items = []
+            for line in group:
+                content = re.sub(r"^(?:\d+\.|-)\s+", "", line)
+                items.append("<li>" + inline_html(content) + "</li>")
+            output.append(f"<{block_kind}{start}>\n" + "\n".join(items) + f"\n</{block_kind}>")
+        elif block_kind == "blockquote":
+            content = "\n".join(re.sub(r"^> ?", "", line) for line in group)
+            output.append("<blockquote>\n" + explanation_html(content) + "\n</blockquote>")
+        else:
+            content = "\n".join(group)
+            # Fail rather than silently flatten an unsupported block construct.
+            if any(re.match(r"^(?:\s{2,}(?:-|\d+\.)\s|#{1,6}\s|```|\|)", line) for line in group):
+                raise ValueError("Unsupported explanation block; extend the renderer and tests first")
+            output.append("<p>" + inline_html(content) + "</p>")
+    return "\n".join(output)
+
+
 def notebook(exercises: list[Exercise]) -> dict:
     intro = (
         "# 第 03 章基础练习\n\n"
         "[返回课程正文](../docs/03-basic-exercises.md)\n\n"
         "看得懂答案，却不知道第一行怎么写？先从小题练习决定：输入是什么，"
-        "要得到什么，重复做什么，要记住什么。每题先手算，再填写编写区，最后运行测试。\n\n"
-        "`pass` 是留给你完成的空语句；E22 有故意的越界错误。空白函数不能通过测试，"
-        "不表示文件损坏。需要时展开参考答案，看完再关掉重写；答案不会随运行全部自动执行。\n\n"
-        "Shift+Enter 运行当前单元。更换实现后重新运行函数定义与测试；"
-        "遇到旧结果，重启 Python 3 内核再按顺序运行。GitHub 只提供静态预览，"
-        "实际运行使用 JupyterLab 等环境，折叠效果由查看器支持情况决定。\n"
+        "结果是什么，重复做什么，需要记住什么。\n\n"
+        "每题按下面的顺序完成：\n\n"
+        "1. 读任务、输入和预期结果，先手算样例。\n"
+        "2. 填写编写区，按 Shift+Enter 运行该单元。\n"
+        "3. 运行下方测试，对照实际结果修改实现。\n"
+        "4. 需要时展开参考答案，看懂后再关掉重写。\n\n"
+        "> ⚠️ `pass` 是待完成区域。E22 则含有故意的越界错误。"
+        "空白或缺陷实现不能通过测试是预期情况，不表示文件损坏。\n\n"
+        "更换实现后，要重新运行函数定义和测试。结果像在使用旧代码时，"
+        "重启 Python 3 内核，再从上到下运行。参考答案在 Markdown 折叠中，"
+        "不会随“运行全部”自动执行。\n\n"
+        "GitHub 提供静态预览。运行练习请使用带 Python 3 内核的 JupyterLab 等环境；"
+        "折叠显示效果取决于查看器的支持。\n"
     )
     cells = [cell("markdown", "intro", "guide", intro)]
     for e in exercises:
         answer = (
             f"<details><summary>查看 {e.eid} 参考答案与解释</summary>\n"
             f"<pre><code>{html.escape(e.solution)}</code></pre>\n"
-            f"<p>{html.escape(e.explanation)}</p>\n</details>\n"
+            f"{explanation_html(e.explanation)}\n</details>\n"
         )
         cells.extend([
             cell("markdown", e.eid, "question", e.question + "\n"),
