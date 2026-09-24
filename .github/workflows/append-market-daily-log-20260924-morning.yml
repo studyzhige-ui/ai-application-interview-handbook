@@ -68,3 +68,5 @@ EOF
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
+
+# trigger existing workflow after initial creation
