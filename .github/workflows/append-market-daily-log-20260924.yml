@@ -1,0 +1,94 @@
+name: Append Market Daily Log 2026-09-24
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/append-market-daily-log-20260924.yml
+
+permissions:
+  contents: write
+
+jobs:
+  append-log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Append final log safely and self-delete
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          append_block() {
+            cat >> market/monitoring/daily-log.md <<'EOF'
+
+### 22:00 Evening Search + Finalize
+
+- Status: completed
+- Discovery window：继续严格限定运行时最近 72 小时，约 **2026-09-21 22:00 ～ 2026-09-24 22:00**。
+- Baseline / full-history dedup：在正式编号前重新读取最新 `main`、`market/README.md`、Inbox、Daily Log、两份 Market Policy 与最新 Batch，并**逐个直接回读 `market/interviews/batch-01.md`～`batch-34.md` 全历史**。确认归档前真实基线为 **34 Batch / 296 HUMAN-A / `S001–S296` / 下一 `S297`**。
+- Search effort：第三轮新增至少 **100 组 Query / Query 变体**，继续覆盖字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场，并补牛客、小红书、知乎、脉脉、博客 / 技术社区入口。
+- Verification effort：第三轮显式完成 **20+ 次** post-specific 原帖、作者页、企业 / 话题页和 provenance 入口的打开、回读或追源尝试；部分入口发生 Cache Miss / 页面壳，不以摘要替代原文。
+- Evening new independent HUMAN-A：**0 个**。第三轮没有发现第二个同时通过 HUMAN-A + Role Scope + Stable Original + 全历史去重的新招聘流程。
+- Finalized Inbox：Afternoon 唯一候选 **字节跳动中国交易与广告｜AI 全栈开发工程师｜一面** 再次完成全历史去重。Evening direct post-specific 出现暂时性 Cache Miss，但当天 Afternoon 已重复取得稳定完整正文，作者个人招聘 Timeline 与当前帖子标题仍可核验，且没有出现复制 / 转载反证，因此维持 Stable Original 结论并正式归档。
+- Final Batch：创建当天唯一 `market/interviews/batch-35.md`，分配 **`S297`**；归档后 Inbox 清空。
+- Frozen boundary：本日只维护 Market Evidence；**不修改** `interview/canonical/`、Frozen `market/analysis/` 或任何 Curriculum 正文。
+
+Evening 重点排除 / 待追源：
+
+1. **字节剪映 AI 前端一面（9/22 发布）**：话题层可见自研 Agent Framework、LangGraph 取舍、ReAct Loop、Tool Registry、`tool_call` JSON Schema、本地执行与 Context 回填等强链路；但 post-specific 原帖 / 作者 Timeline 与 AI Application Role Scope 尚未同时稳定闭环，继续待追源。
+2. **携程近期 AI 面试复盘**：明确属于 AI 自动面试，不满足 Human Interviewer Gate。
+3. **`林小白zii`、`AIGC小白入门记` 等内容 / 付费链**：技术密度不覆盖 provenance 缺陷，继续零贡献。
+4. **算法 / SFT / RL / 模型训练、Test / Data / 普通 Backend / Frontend 岗**：仅出现 Agent / MCP / Skill / AI Coding 不足以通过 Role Scope。
+5. **宁德时代工业 Agent 近端线索**：真人招聘痕迹存在，但公开技术题序过短、信息密度不足。
+6. **企业聚合 / Search Snippet / JD / 内推 / 题库 / 完整答案 / 二次整理**：只用于 Recall 和市场旁证，不贡献 HUMAN-A。
+
+### Final Summary
+
+- Three-round search effort：**至少 255 组 Query / Query 变体**（Morning ≥75 + Afternoon ≥80 + Evening ≥100）。
+- Three-round verification effort：**至少 64 次**候选原帖 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试（Morning 20+ + Afternoon 24+ + Evening 20+；这是工作量次数，不代表 64 个唯一 URL）。
+- Final additions：**1 个 HUMAN-A：`S297`**。
+- Current formal Market library：**35 Batch / 297 HUMAN-A / `S001–S297`**。
+- Next ID：**`S298`**。
+- Inbox：**0**。
+- Canonical / Frozen Market Analysis / Curriculum：**本日不修改**。
+
+当日主要市场信号：
+
+1. **AI Full-stack 正把 AI Pipeline Quality 与传统大规模系统工程合成同一套能力模型。** Node Accuracy、Hallucination / Deviation、Code Generation Quality 会和 Doris、超大数据过滤、MQ、Cache / DB Consistency、WebSocket、SQL / Index 同场出现。
+2. **Evaluation 更靠近真实业务链。** 不只问“有没有评测”，而是分别追代码生成质量、业务知识准确性、节点质量和端到端结果怎样验证。
+3. **Realtime Backend 与 Agent 产品体验继续合流。** 用户隔离 MQ、最近 N 条状态、幂等、WebSocket / Polling 与长连接稳定性进入 AI 全栈直接考察。
+4. **Agent 技术继续向其它岗位扩散，Role Scope / Provenance Gate 需要继续收紧。** 剪映 AI 前端等线索技术内容很强，但边界与原始证据未闭环前不计正式频率。
+
+饱和度 / 盲区：最近 72 小时公开热门层继续呈现 **局部饱和 + 高 provenance 成本**。牛客仍最容易取得稳定第一人称线索，但 post-specific Cache Miss、内容账号、答案化页面和普通岗位 AI 深挖占比高；字节剪映 AI 前端仍是最值得继续补原帖 / 作者 Timeline 的近端线索。腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，以及小红书 / 知乎 / 脉脉 / 独立博客等非牛客渠道，在当前窗口内没有形成第二个完整通过 Gate 的新独立流程；继续补盲，但不降低 Gate。
+EOF
+          }
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+
+            if ! grep -Fq 'Current formal Market library：**35 Batch / 297 HUMAN-A / `S001–S297`**' market/monitoring/daily-log.md; then
+              append_block
+            fi
+
+            rm -f .github/workflows/append-market-daily-log-20260924.yml
+            git add market/monitoring/daily-log.md .github/workflows/append-market-daily-log-20260924.yml
+
+            if git diff --cached --quiet; then
+              exit 0
+            fi
+
+            git commit -m "market: append 2026-09-24 evening monitoring log"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+          done
+
+          echo "Failed to append daily log after concurrent updates" >&2
+          exit 1
