@@ -1,0 +1,70 @@
+name: One-shot append 2026-09-24 morning market log
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/append-market-daily-log-20260924-morning.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  append-log:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Append morning log and remove one-shot workflow
+        shell: bash
+        run: |
+          if ! grep -q '^## 2026-09-24$' market/monitoring/daily-log.md; then
+            cat >> market/monitoring/daily-log.md <<'EOF'
+
+---
+
+## 2026-09-24
+
+### 10:00 Morning Search
+
+- Status: completed
+- Discovery window：严格按运行时最近 72 小时，约为 **2026-09-21 10:00 ～ 2026-09-24 10:00**；历史页面只用于 provenance、Role Scope 与去重判断，不拿窗口外旧内容补数。
+- Baseline：重新读取最新 `main`、`market/README.md`、Inbox、Daily Log、两份 Market Policy 与最新 `batch-34.md`；当前正式基线为 **34 Batch / 296 HUMAN-A / `S001–S296` / 下一 `S297`**，Inbox 起始为 0。仓库根目录未出现 `research/` 一级目录。
+- Search effort：至少 **75 组定向 Query / Query 变体**，覆盖字节 / 抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米及更广 AI Application / Agent 市场，并补 `AI Application`、`Agent`、`RAG`、`AI Backend`、`AI Full-stack`、`Coding Agent`、`Harness / Runtime`、`Applied AI`、`FDE`、`大模型应用开发`、`智能体开发` 与牛客 / 小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 等平台。
+- Verification effort：显式执行 **20+ 次** post-specific / 候选页 / 作者页 / 企业页 / provenance 入口的打开、回读或追源尝试；仅搜索摘要、话题聚合、企业聚合或页面壳不视为 Stable Original。
+- Passed HUMAN-A → Inbox：**0 个**。本轮没有候选同时满足真人第一人称、高技术密度、目标 Role Scope、Stable Original 与非重复，因此 Inbox 继续为空；Morning 不分配 `Sxxx`、不创建 Batch。由于没有候选进入 Inbox，本轮未触发“候选准入前逐个回读全部历史 Batch”的强制 Gate。
+
+Morning 重点排除 / 待追源：
+
+1. **字节剪映 AI 前端一面（9/22）**：话题聚合可见自研 Agent Framework、为何不用 LangGraph、ReAct Loop、Tool Registry / `tool_call` JSON Schema、本地 Execution 与 Context 追加等连续高密度内容，且标题显示 `ai前端秋招生`；但当前仍只能稳定取得话题聚合，无法取得可重复回读的 post-specific 候选原帖，且 AI 前端是否属于目标 AI Application Role Scope 仍需原帖业务上下文闭环，因此不进 Inbox。
+2. **水滴 AI 应用开发一面**：近期第一人称线索存在，但 post-specific 直接回读仍不稳定，当前可见内容也主要是“项目 / 业务深挖”概述，缺少足够连续具体题序；Stable Original / A-grade Quality 均未闭环。
+3. **快手 AI 全栈二面**：近期候选人只记录“二面挂、两次面试官均偏后端、被指出后端能力不足”等结果与体验，缺少具体技术问题序列；信息密度不足，不升 HUMAN-A。
+4. **作业帮 9/23 `Decadeqqq`**：Agent Evaluation 题链很强，但最新 `batch-34.md` 已明确确认该招聘流程主体为普通 Full-stack，Role Scope 不闭环；继续零贡献，不因问题高级而扩大统计边界。
+5. **新浪测开 / 美团 AI 数据开发 / 普通前后端中的 Agent 问题**：分别属于 Test / Data / 非目标软件工程岗位；即使出现 Test Agent、Spring AI、Agent / MCP / Skill，也按 Role Scope Gate 排除。
+6. **合集 / 内容号 / 企业聚合 / AI 自动面试 / 标准答案 / 课程与 JD**：只作发现与市场旁证，不贡献 HUMAN-A。小红书 / 知乎 / 脉脉 / CSDN / 掘金 / 博客 / Bilibili 本轮未形成新的、最近 72 小时稳定可核验 Candidate First-person 目标岗来源。
+
+Morning 主要观察：**Agent 技术栈继续向 AI Frontend、Test、Data 与普通 Full-stack 扩散，而“目标岗位 + 稳定原帖 + 高密度题序”的同时满足率继续下降。** 因此本轮保持 Role Scope 与 provenance 双 Gate，不把 Agent 术语本身当作准入依据。字节 AI 前端线索显示自研 Agent Runtime / ReAct / Tool Execution 已可能进入前端方向的项目深挖，但在 Stable Original 与 Role Scope 闭环前仅保留为待追源市场信号。
+
+Morning 不修改 `interview/canonical/`、Frozen `market/analysis/` 或任何 Curriculum 正文。
+EOF
+          fi
+          rm -f .github/workflows/append-market-daily-log-20260924-morning.yml
+          git add market/monitoring/daily-log.md .github/workflows/append-market-daily-log-20260924-morning.yml
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "market: log 2026-09-24 morning monitoring"
+          git fetch origin main
+          git rebase origin/main
+          git push origin HEAD:main
