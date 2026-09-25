@@ -68,7 +68,7 @@
 | 62 | 普渡机器人 | 商用服务机器人、具身智能与机器人软件 | https://pudutech.zhiye.com/campus/jobs | VERIFIED_ROLE |
 | 63 | 广联达 | BIM、数字建筑、工程软件与建筑产业 AI | https://app.mokahr.com/campus-recruitment/glodon/91966 | VERIFIED_ROLE |
 | 64 | 挚文集团/陌陌 | 移动社交、直播与泛娱乐 | https://campus.hellogroup.com/ | VERIFIED_ROLE |
-| 65 | BOSS直聘/看准科技 | 在线招聘、人力资源平台与招聘科技 | https://www.zhipin.com/campus/pc/ | VERIFIED_ROLE |
+| 65 | BOSS直聘/看准科技 | 在线招聘、人力资源平台与招聘科技 | https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/ | VERIFIED_ROLE |
 | 66 | 作业帮 | 教育科技、学习工具、智能硬件与教育 AI | https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN | VERIFIED_ROLE |
 | 67 | 影石 Insta360 | 全景相机、运动相机、智能影像与 AI 影像软件 | https://arashivision.jobs.feishu.cn/campus/position/list | VERIFIED_ROLE |
 | 68 | 神州数码/神州信息 | IT 基础设施、金融科技、云服务与企业数字化 | https://dcits.zhiye.com/campus/jobs | VERIFIED_ROLE |
