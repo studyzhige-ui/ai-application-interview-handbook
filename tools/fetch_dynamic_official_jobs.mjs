@@ -289,7 +289,7 @@ async function scroll(page){
 function jobLinkLike(href){
   const u=href||"";
   if(/(?:\/position\/list(?:[?#]|$)|\/jobs?\/?(?:[?#]|$)|\/positions?\/?(?:[?#]|$))/i.test(u)) return false;
-  return /(?:\/job\/[^/?#]+|\/jobs\/[^/?#]+|\/position\/[^/?#]+|job-info|postdetail|positionid=|jobid=|#\/job\/[^/?#]+|#\/position\/[^/?#]+|jobs\.ashbyhq\.com\/[^/]+\/[0-9a-f-]{20,})/i.test(u);
+  return /(?:\/job\/[^/?#]+|\/jobs\/[^/?#]+|\/position\/[^/?#]+|job-info|job[_-]?detail|postdetail|positionid=|jobid=|#\/job\/[^/?#]+|#\/position\/[^/?#]+|jobs\.ashbyhq\.com\/[^/]+\/[0-9a-f-]{20,})/i.test(u);
 }
 function cycleSnippets(body){
   // Current-campus evidence: year labels are metadata only. A live first-party
@@ -297,14 +297,19 @@ function cycleSnippets(body){
   const lines=(body||"").split(/\n+/).map(x=>x.trim()).filter(Boolean);
   return lines.filter(x=>/(校园招聘|校招|应届|毕业生|campus|graduate|new\s*grad|student|university)/i.test(x)).slice(0,8);
 }
-async function jobLinksOnPage(page,keyword){
-  const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>({
-    href:a.href,
-    text:(a.innerText||a.textContent||"").trim()
-  })));
+async function jobLinksOnPage(page,keyword,requiredText=""){
+  const links=await page.locator("a[href]").evaluateAll(as=>as.map(a=>{
+    const card=a.closest('li,[class*="job-card"],[class*="job-list"],[class*="job-item"],[class*="search-job"]') || a.parentElement;
+    return {
+      href:a.href,
+      text:(a.innerText||a.textContent||"").trim(),
+      context:((card?.innerText||card?.textContent||"").trim()).slice(0,2400)
+    };
+  }));
+  const needle=(requiredText||"").trim().toLowerCase();
   return links
-    .filter(a=>a.href && jobLinkLike(a.href))
-    .map(a=>({href:a.href,title:(a.text||"").slice(0,240),keyword}));
+    .filter(a=>a.href && jobLinkLike(a.href) && (!needle || (a.context||"").toLowerCase().includes(needle)))
+    .map(a=>({href:a.href,title:(a.text||"").slice(0,240),context:a.context||"",keyword}));
 }
 async function openJobSearchSurface(page){
   const patterns=[
@@ -332,14 +337,14 @@ async function openJobSearchSurface(page){
   return {clicked:false};
 }
 
-async function collectSearchPages(page,keyword){
+async function collectSearchPages(page,keyword,requiredText=""){
   const hits=[];
   const seenSignatures=new Set();
   const maxSteps=keyword==="__FULL_LIST__"?200:10;
   for(let step=0;step<maxSteps;step++){
     await page.waitForTimeout(step===0?650:350);
     await scroll(page);
-    const pageHits=await jobLinksOnPage(page,keyword);
+    const pageHits=await jobLinksOnPage(page,keyword,requiredText);
     const signature=pageHits.map(x=>x.href).sort().join("|");
     if(signature && seenSignatures.has(signature)) break;
     if(signature) seenSignatures.add(signature);
@@ -364,7 +369,7 @@ async function collectSearchPages(page,keyword){
         const before=page.url()+"|"+signature;
         await next.click({timeout:1200});
         await page.waitForTimeout(500);
-        const afterHits=await jobLinksOnPage(page,keyword);
+        const afterHits=await jobLinksOnPage(page,keyword,requiredText);
         const after=page.url()+"|"+afterHits.map(x=>x.href).sort().join("|");
         if(after!==before){ moved=true; break; }
       }catch{}
@@ -373,7 +378,9 @@ async function collectSearchPages(page,keyword){
   }
   return hits;
 }
-async function searchInputs(page){
+async function searchInputs(page,options={}){
+  const prefix=(options.prefix||"").trim();
+  const requiredText=(options.requiredText||"").trim();
   const inputs=page.locator("input");
   const n=Math.min(await inputs.count(),40);
   let target=null;
@@ -391,11 +398,13 @@ async function searchInputs(page){
   const terms=[];
   for(const q of SEARCH_TERMS){
     try{
-      await target.fill(q);
+      await target.fill((prefix ? prefix+" " : "")+q);
       await target.press("Enter").catch(()=>{});
       await page.waitForTimeout(500);
+      const guard=(page.url()+" "+(await page.locator("body").innerText().catch(()=>"")).slice(0,5000));
+      if(/\/web\/passport\/zp\/security|安全验证|访问异常|验证码/i.test(guard)) throw new Error("search blocked by first-party security challenge");
       terms.push(q);
-      hits.push(...await collectSearchPages(page,q));
+      hits.push(...await collectSearchPages(page,q,requiredText));
       // Some SPAs replace the search input after navigation/pagination.
       const refreshed=page.locator("input");
       const count=Math.min(await refreshed.count(),40);
@@ -436,6 +445,15 @@ async function scrapeSearchHit(context,company,hit,parentCycle,boardScope){
     await p.goto(hit.href,{waitUntil:"domcontentloaded",timeout:12000});
     await p.waitForTimeout(700);
     const body=(await p.locator("body").innerText().catch(()=>"")).slice(0,40000);
+    if(/\/web\/passport\/zp\/security/i.test(p.url()) || /安全验证|访问异常|验证码/i.test(body.slice(0,3000))){
+      return {
+        company,title:(hit.title||"").slice(0,240),job_id:"",location:"",
+        category:boardScope==="campus"?"官方校园招聘搜索结果":"官方招聘搜索结果",
+        department:"",description:"",requirements:"",official_url:hit.href,
+        official_api:"DOM-LIST:"+hit.href,cycle_evidence:(parentCycle||[]).join(" / "),
+        extraction_path:"official list title (detail security challenge)",matched_keyword:hit.keyword
+      };
+    }
     let title=(await p.locator("h1").first().innerText().catch(()=>"")).trim();
     if(!title) title=(await p.locator("h2").first().innerText().catch(()=>"")).trim();
     if(!title) title=hit.title||"";
@@ -450,7 +468,7 @@ async function scrapeSearchHit(context,company,hit,parentCycle,boardScope){
     };
   }catch{return null;}finally{await p.close().catch(()=>{});}
 }
-async function runPage(context,company,url,rootHost,collector,visited,endpointLog,boardScope,navigationTimeoutMs=12000){
+async function runPage(context,company,url,rootHost,collector,visited,endpointLog,boardScope,navigationTimeoutMs=12000,options={}){
   if(visited.has(url)||visited.size>10) return;
   visited.add(url);
   const page=await context.newPage();
@@ -491,7 +509,9 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
         if(!endpointLog.some(x=>x.url===entry.url && x.method===entry.method && x.post_data===entry.post_data)) endpointLog.push(entry);
         const pageText=(await page.locator("body").innerText().catch(()=>"")).slice(0,50000);
         const cycle=cycleSnippets(pageText).join(" / ");
-        recursiveJobs(data,{company,page_url:page.url(),response_url:ru,cycle_evidence:cycle,category:boardScope==="campus"?"官方校园招聘":"官方招聘"},collector);
+        if(!options.disableNetworkJobExtraction){
+          recursiveJobs(data,{company,page_url:page.url(),response_url:ru,cycle_evidence:cycle,category:boardScope==="campus"?"官方校园招聘":"官方招聘"},collector);
+        }
       }catch{}
     })();
     responseTasks.push(task);
@@ -614,7 +634,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       }
     }
 
-    const genericPool=await replayCapturedFullPool(
+    const genericPool=options.disableNetworkJobExtraction ? {complete:false} : await replayCapturedFullPool(
       page,company,endpointLog,collector,beforeCycle,
       boardScope==="campus"?"官方校园招聘":"官方招聘"
     );
@@ -630,7 +650,11 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       };
     }
 
-    let search=await searchInputs(page);
+    const initialHits=options.includeInitialList
+      ? await collectSearchPages(page,"__INITIAL__",options.requiredCompanyText||"")
+      : [];
+    let search=await searchInputs(page,{prefix:options.searchPrefix||"",requiredText:options.requiredCompanyText||""});
+    if(initialHits.length) search.hits.unshift(...initialHits);
     let navAction={clicked:false};
     let listScanComplete=false;
     let listHits=[];
@@ -666,7 +690,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
             };
           }
         }
-        const postNavGeneric=await replayCapturedFullPool(
+        const postNavGeneric=options.disableNetworkJobExtraction ? {complete:false} : await replayCapturedFullPool(
           page,company,endpointLog,collector,beforeCycle,
           boardScope==="campus"?"官方校园招聘":"官方招聘"
         );
@@ -681,14 +705,14 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
             generic_full_pool:true,source_total:postNavGeneric.total,source_endpoint:postNavGeneric.endpoint
           };
         }
-        search=await searchInputs(page);
+        search=await searchInputs(page,{prefix:options.searchPrefix||"",requiredText:options.requiredCompanyText||""});
       }
     }
     // A fixed official job-list page is enough. If the site has no search input,
     // exhaustively paginate the visible official list and let captured XHR/JSON
     // provide full JD fields; title-matching links are opened as an additional fallback.
     if(!search.found){
-      listHits=await collectSearchPages(page,"__FULL_LIST__");
+      listHits=await collectSearchPages(page,"__FULL_LIST__",options.requiredCompanyText||"");
       // An empty page without a search control is not proof that the official
       // job pool has zero jobs. Require actual job-list evidence before
       // certifying a full-list scan.
@@ -726,7 +750,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       }
     }
 
-    const postSearchGeneric=await replayCapturedFullPool(
+    const postSearchGeneric=options.disableNetworkJobExtraction ? {complete:false} : await replayCapturedFullPool(
       page,company,endpointLog,collector,beforeCycle,
       boardScope==="campus"?"官方校园招聘":"官方招聘"
     );
@@ -951,7 +975,14 @@ async function processSource(browser,src){
     while(queue.length && visited.size<6){
       if(Date.now()-started>companyBudgetMs) throw new Error("company enumeration budget exceeded");
       const u=queue.shift();
-      const pr=await runPage(context,src.company,u,new URL(root).hostname,collector,visited,endpointLog,boardScope,navigationTimeoutMs);
+      const pr=await runPage(
+        context,src.company,u,new URL(root).hostname,collector,visited,endpointLog,boardScope,navigationTimeoutMs,{
+          searchPrefix:src.search_prefix||"",
+          requiredCompanyText:src.required_company_text||"",
+          disableNetworkJobExtraction:Boolean(src.disable_network_job_extraction),
+          includeInitialList:Boolean(src.include_initial_list)
+        }
+      );
       if(pr){
         pageResults.push(pr);
         // Do not crawl arbitrary site navigation during recurring collection.
@@ -972,8 +1003,9 @@ async function processSource(browser,src){
     const jobs=allJobs;
     const searched=new Set(pageResults.flatMap(x=>x.search_terms_attempted||[]));
     const networkProof=feishuKeywordCoverage(endpointLog);
-    const listScanComplete=pageResults.some(x=>x.list_scan_complete===true) || networkProof.full_pool_complete;
     const fullKeywordSearch=SEARCH_TERMS.every(k=>searched.has(k));
+    const keywordSearchComplete=Boolean(src.keyword_search_is_terminal) && fullKeywordSearch;
+    const listScanComplete=pageResults.some(x=>x.list_scan_complete===true) || networkProof.full_pool_complete || keywordSearchComplete;
     const pageErrors=pageResults.filter(x=>x.error).length;
     let status;
     if(listScanComplete && jobs.length) status="BROWSER_ENUMERATED";

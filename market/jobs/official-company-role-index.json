@@ -1122,23 +1122,23 @@
       "company": "BOSS直聘/看准科技",
       "status": "VERIFIED_ROLE",
       "official_root": "https://www.zhipin.com/",
-      "official_search_url": "https://www.zhipin.com/campus/pc/",
+      "official_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
       "representative_roles": [
         {
-          "title": "Agent开发工程师",
-          "recruitment_type": "当前校园招聘",
-          "role_scope": "Agent开发工程师",
-          "official_apply_url": "https://xiaoyuan.zhipin.com/volunteer/index?encryptJobId=808e2ca9fad7cd9a1HBz0926EFZZ&source=2&advertSource=99",
-          "evidence_url": "https://xiaoyuan.zhipin.com/volunteer/index?encryptJobId=808e2ca9fad7cd9a1HBz0926EFZZ&source=2&advertSource=99",
-          "evidence_type": "FIRST_PARTY_OFFICIAL_TITLE",
+          "title": "大模型应用工程师（校招）",
+          "recruitment_type": "当前校园招聘 / 在校应届",
+          "role_scope": "大模型应用平台 / AI Application Engineering",
+          "official_apply_url": "https://m.zhipin.com/job_detail/832a45e67af35c820nd63du8EFJZ.html",
+          "evidence_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+          "evidence_type": "FIRST_PARTY_OFFICIAL_LISTING",
           "jd_status": "TITLE_ONLY_FIRST_PARTY",
-          "jd_summary": "",
-          "source_role_family": "Agent开发工程师"
+          "jd_summary": "BOSS直聘第一方校招列表当前列出“大模型应用工程师（校招）”，岗位属于南北阁大模型团队，职责包含大模型应用平台建设及 AI 赋能求职招聘场景。",
+          "source_role_family": "大模型应用工程师（校招）"
         }
       ],
-      "last_verified": "2026-09-20"
+      "last_verified": "2026-09-25"
     },
     {
       "company": "作业帮",

@@ -120,7 +120,7 @@ def sync_market_summary(
         "与人工快照分叉。"
     )
     if log_entry not in updated:
-        if "## 9. 维护日志" not in updated:
+        if not re.search(r"^##\\s+\\d+\\.\\s*维护日志\\s*$", updated, flags=re.M):
             raise RuntimeError("market summary maintenance-log section not found")
         updated = updated.rstrip() + "\n\n" + log_entry + "\n"
 
