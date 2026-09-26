@@ -783,3 +783,28 @@ Evening 重点排除 / 待追源：
 4. **Agent 技术继续向其它岗位扩散，Role Scope / Provenance Gate 需要继续收紧。** 剪映 AI 前端等线索技术内容很强，但边界与原始证据未闭环前不计正式频率。
 
 饱和度 / 盲区：最近 72 小时公开热门层继续呈现 **局部饱和 + 高 provenance 成本**。牛客仍最容易取得稳定第一人称线索，但 post-specific Cache Miss、内容账号、答案化页面和普通岗位 AI 深挖占比高；字节剪映 AI 前端仍是最值得继续补原帖 / 作者 Timeline 的近端线索。腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO / vivo / 小米，以及小红书 / 知乎 / 脉脉 / 独立博客等非牛客渠道，在当前窗口内没有形成第二个完整通过 Gate 的新独立流程；继续补盲，但不降低 Gate。
+
+---
+
+## 2026-09-26
+
+### 10:00 Morning Search
+
+- Status: completed（本次 run-now 在约 09:43 本地时间启动，按 Morning 阶段执行）。
+- Discovery window：严格使用运行时最近 72 小时，约 **2026-09-23 09:43 ～ 2026-09-26 09:43**。
+- Baseline：首先读取最新 `main`、Market README、Inbox、Daily Log、两份 Market Policy 与最新 `batch-35.md`；根目录无顶层 `research/`。出现准入候选后，分 4 组**逐个直接回读 `batch-01.md`～`batch-35.md` 全历史**。按正式 `## Sxxx` 条目重新核算：35 Batch / 297 HUMAN-A / 最大 `S297` / 下一 `S298`。
+- Search effort：至少 **50 组 Query / Query 变体**，覆盖字节/抖音、阿里系、腾讯、美团、快手、小红书、百度、蚂蚁、PDD、京东、滴滴、B站、OPPO/vivo/小米，并覆盖 Agent / AI Application / RAG / AI Backend / AI Full-stack / Harness / Runtime / Coding Agent 等岗位叫法；同时补牛客外平台检索。
+- Verification effort：显式打开、回读或追作者 / provenance **28+ 次**；稳定取得 post-specific 正文的候选再继续做作者 Timeline 和全历史去重。
+- Passed HUMAN-A → Inbox：**4 个独立流程**：① 小红书 Product Engineer（AI 与全栈方向）社区工程一面；② 迅雷 Agent 一面；③ 百度搜索 AI 全栈（偏前端）一面；④ 字节 Agent 开发后端日常实习一面。
+- Morning 阶段：**不分配 `Sxxx`，不创建 Batch**；正式 Market 仍为 35 Batch / 297 HUMAN-A / next `S298`。
+
+Morning 典型排除：vivo Agent 9/22 虽质量合格但已超当前 72h 发现窗口；阿里淘天最新帖存在逐题答案化 / 内容包装风险；美团近期 AI 全栈目前只有企业聚合层，原帖与作者 provenance 未闭环；批量内容号 / 答案链、AI 自动面试、普通 Backend / Frontend / Test / Data 岗仅出现 Agent 术语均继续零贡献。
+
+Morning 主要市场信号：
+
+1. **RAG 正从“讲流程”继续下沉到 Retrieval Quality Engineering**：检索策略选型、Recall bad case、Chunk / overlap、BM25+Vector、RRF、Cross-Encoder 与 Domain Mismatch 开始被连续追问；
+2. **AI Coding / Skill 开始进入团队级工程约束**：不仅问“用不用”，还问 progressive loading、CLAUDE.md 与跨 Coding Agent 的规范一致性；
+3. **Agent Memory / Intent Routing 开始要求量化与冲突处理**：意图正确性、置信度、历史方案复用 vs 新方案选择成为现场问题；
+4. AI Full-stack 继续把 React/Vue、Cache、限流、异步、并发等 Foundation 与 Agent / RAG 同场验证，不能弱化传统工程基础。
+
+本轮只维护 Market Evidence；Frozen Canonical、Frozen `market/analysis/` 与 Curriculum 不修改。
