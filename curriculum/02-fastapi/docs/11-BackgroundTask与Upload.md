@@ -1,278 +1,228 @@
-# 11｜BackgroundTasks、文件上传与 Long-running Task Boundary
+# 11｜上传与后台任务：接收完成不等于处理完成
 
-AI 后端最常见的误区之一是：
+[← 上一章](10-ExternalResourceIntegration.md) · [模块主页](../README.md) · [下一章 →](12-TimeoutCancellation与Disconnect.md)
 
-> “FastAPI 有 `BackgroundTasks`，所以所有长任务都可以扔进去。”
+用户上传了一份材料，接口很快回复“已收到”。一分钟后却发现解析根本没完成。这里至少有两件不同的事：**文件是否接收成功，文件处理是否执行成功。** 如果把两者都叫“上传完成”，页面、重试和排障都会混乱。
 
-这是错误的。
+本章从可运行的文件接收开始，再理解响应后的轻量任务，以及必须交给独立任务系统的工作。
 
----
+## 1. 文件怎样进入接口
 
-## 1. `BackgroundTasks` 解决什么
+文件上传通常使用 `multipart/form-data`。客户端将文件放在表单字段中，不是把文件字节直接塞进 JSON 字段。本章依赖 `python-multipart`，第 01 章的环境已包含它。
 
-FastAPI 的 `BackgroundTasks` 允许在响应返回后继续执行一个小任务：
+`UploadFile` 提供文件名、声明的媒体类型和可读文件接口。底层使用临时文件机制，小文件可在内存，大文件可转存磁盘；它不意味着文件始终不占内存或磁盘。
 
 ```python
-from fastapi import BackgroundTasks
+# example: upload_app
+import hashlib
+from fastapi import FastAPI, HTTPException, UploadFile
 
-@app.post("/notify")
-async def notify(background_tasks: BackgroundTasks):
-    background_tasks.add_task(send_email)
+app = FastAPI()
+MAX_BYTES = 1024 * 1024  # 本练习允许最多1 MiB内容
+
+@app.post("/files/check")
+async def check_file(file: UploadFile):
+    total = 0
+    digest = hashlib.sha256()
+    try:
+        while True:
+            chunk = await file.read(64 * 1024)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > MAX_BYTES:
+                raise HTTPException(413, "文件超过练习大小限制")
+            digest.update(chunk)
+        return {"bytes": total, "sha256": digest.hexdigest()}
+    finally:
+        await file.close()
+```
+
+在 `/docs` 中上传只包含 ASCII 文本 `abc` 的文件，且不要附加换行。预期 `bytes=3`，SHA-256 为：
+
+```text
+ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+```
+
+不同编辑器可能自动加换行，此时字节数和摘要都会不同。测试客户端直接发送 `b"abc"`，可以消除这个环境差异。
+
+读代码时先跟踪 total：每读一块就增加本块长度，超过上限便拒绝，读到空字节串便结束。digest 同时计算文件内容的摘要，用来核对读到的字节是否相同；它不是文件安全检测，也不是必须背诵的上传接口。
+
+本例只读取文件，没有保存或解析文档。
+
+## 2. 为什么不能只因为 UploadFile 就放心接大文件
+
+直接写 `await file.read()` 且不传大小，会把余下内容一次读入内存。分块能控制应用这一步同时处理的数据量，但不能替代入口限制。
+
+> ⚠️ 使用声明式 UploadFile 参数时，表单解析通常发生在进入路由之前。路由内数到超过 1 MiB 才拒绝，不能证明前置解析、网络接收和临时磁盘从未承受大文件压力。还需要代理或服务入口的请求大小限制、上传配额和临时空间管理。
+
+其他需要分别防护的输入包括文件数量、文件名、压缩后体积与解压后体积、错误媒体类型和恶意内容。不能直接把用户文件名拼成服务器写入路径；应生成受控存储标识，并验证目标位置。
+
+### 2.1 分块读取不等于断点续传
+
+上面每次 `read(64 * 1024)`，只是分批读取已经接收的文件。网络中断后，客户端并不能凭这个循环知道之前哪一部分已被服务端可靠保存。
+
+三个容易混淆的“分块”分别解决不同问题：
+
+| 做法 | 解决的问题 | 不自动提供什么 |
+|---|---|---|
+| `multipart/form-data` | 在一次请求中编码表单字段和文件 | 跨请求续传 |
+| 应用分块读取 | 避免应用一次处理完整字节串 | 已上传部分的持久记录 |
+| 可续传上传协议 | 让后续请求接着同一次上传继续 | 后续解析或合并一定成功 |
+
+例如把文件分为三部分，前两部分成功后断网。要只补传第三部分，系统至少需要：
+
+1. 用 `upload_id` 识别这一次上传，并验证它属于当前用户。
+2. 记录已保存部分的位置、大小和校验信息；重试相同部分时有明确的替换或复用规则。
+3. 全部到齐后检查完整性，完成合并，再发布可用于处理的 `file_id`。不能把“收到最后一块”直接当成完整文件已可用。
+
+[Amazon S3 分段上传](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html)是这个思路的一种具体实现；它的接口不等于 FastAPI 的 UploadFile，也不要求本课程额外展开整套对象存储 SDK。
+
+## 3. bytes 参数与 UploadFile 怎样选
+
+`bytes` 参数便于处理确定很小的文件，但框架会把内容作为完整字节串交给函数。`UploadFile` 适合需要文件接口、分块读取或避免一次性字节串的场景。
+
+选择标准是大小和处理方式，不是“哪个类型更高级”。若文件很大，客户端直传对象存储、服务只接收受控文件标识，也可能更合适，但签名、权限和上传完成确认必须由相应系统设计。
+
+## 4. BackgroundTasks 是响应后的进程内工作
+
+先用一个可观察、无外部副作用的例子看执行顺序：
+
+```python
+# example: background_app
+from fastapi import BackgroundTasks, FastAPI
+
+app = FastAPI()
+app.state.events = []
+
+def record_seen(label: str):
+    app.state.events.append("background:" + label)
+
+@app.post("/seen")
+def seen(background: BackgroundTasks):
+    app.state.events.append("handler")
+    background.add_task(record_seen, "note")
     return {"accepted": True}
 ```
 
-适合：
+路由只登记待执行函数与参数，不在 `add_task` 这一行立刻运行 `record_seen`。响应体发出后，框架在当前应用进程中执行相关任务。
 
-- 小型通知；
-- 不要求独立调度；
-- 与当前应用进程关系紧密；
-- 失败后不需要复杂恢复。
+在 TestClient 请求完成后，本例事件列表应为 `['handler', 'background:note']`。真实客户端可能先收到响应，再看到后台效果；TestClient 的调用返回时常已等待本次应用执行结束，所以不能据此判断用户收到响应的精确时刻。
 
----
+同步后台函数需要线程执行能力，异步后台函数必须避免内部阻塞。任务列表中的一个任务抛错还可能阻止之后的任务执行；它不是自动带重试、持久队列和失败恢复的调度平台。
 
-## 2. 它不等于 Durable Task Queue
+## 5. 什么时候不能只用 BackgroundTasks
 
-如果任务需要：
+判断不是只看任务短不短，而是问**任务丢失是否可接受、失败是否必须恢复**。小额扣款即使只需几毫秒，也不能因为“小”就交给没有可靠记录的响应后动作。
 
-```text
-分钟级 / 小时级执行
-Worker 宕机恢复
-跨机器并行
-Retry / Dead Letter
-Lease / Heartbeat
-任务状态查询
-```
+| 要求 | BackgroundTasks 单独是否足够 |
+|---|---|
+| 最佳努力的本进程辅助记录 | 可作为简化选择，但仍处理失败 |
+| 重启后任务仍必须存在 | 不足，需要持久任务状态 |
+| 多台机器分工、重试、领取恢复 | 不足，需要独立执行系统 |
+| 用户可查询进度、取消、稍后重连 | 需要显式任务标识和状态 |
 
-就应该进入：
+后台任务自己需要数据库或 HTTP 资源时，应明确拥有自己的使用范围。不要把已经结束的请求会话对象传进去，期待它永远有效。
 
-```text
-DB Task State
-+ MQ / Job Queue
-+ Worker
-```
+## 6. 上传、接受任务、执行完成要用不同状态
 
-而不是依赖单个 FastAPI Worker 进程里的 BackgroundTasks。
-
-FastAPI 官方也明确提醒：重计算、需要多进程/多服务器的后台工作更适合独立任务系统。
-
----
-
-## 3. RAG Ingestion 是典型 Long-running Task
-
-上传 500MB PDF 后：
+一个设计示意如下；这不是 FastAPI 自带的任务引擎。
 
 ```text
-Upload
-→ Parse
-→ OCR
-→ Chunk
-→ Embedding
-→ Index
+文件接收 → STORED
+             ↓ 创建并持久记录任务
+          QUEUED
+             ↓ 被执行者领取
+          RUNNING
+          ├─ SUCCEEDED
+          ├─ FAILED
+          └─ CANCEL_REQUESTED → CANCELLED（确认停止后）
 ```
 
-这不适合全部塞进一个普通 HTTP Request 等到完成。
+对于需要可靠执行的系统，返回 202 前应该已有符合该业务可靠性要求的“任务已接受”依据。不能先回复成功，再靠一个可能消失的内存列表补建任务。
 
-更常见：
+接口可以约定：
 
-```text
-POST /knowledge/files
-→ save file / object
-→ create task record
-→ enqueue
-→ 202 Accepted + task_id
-```
+| 操作 | 请求 | 结果 |
+|---|---|---|
+| 创建处理任务 | POST `/tasks`，提交 file_id | 202 与 task_id |
+| 查询 | GET `/tasks/{id}` | 当前状态和可用结果 |
+| 看进度 | GET `/tasks/{id}/events` | 状态事件，而不只是虚构百分比 |
+| 请求取消 | POST `/tasks/{id}/cancel` | 已接受取消请求或终态说明 |
 
-然后：
+**202 表示已接受，不表示执行成功。** 后续状态是否可靠、队列信号是否会丢、领取重复怎样处理，由 Backend 模块在数据库与缓存基础之后展开。
 
-```text
-GET /tasks/{id}
-或 SSE progress stream
-```
+### 6.1 合并或处理失败，中间文件归谁清理
+
+`await file.close()` 归还的是当前上传对象的资源，不会替应用删除已经单独保存的分块、失败输出和任务记录。
+
+假设文件已存好，后台合并视频失败：任务应记录失败阶段和原因，不能把半成品发布为成功结果。需要重试时，可以按策略保留可复用分块；取消或保留期结束时，再回收这次任务拥有的临时产物。
+
+> ⚠️ 清理前要确认相关写入者已停止或失去写入权，并限定任务／上传的所属范围。旧任务的迟到清理不能删掉新任务的文件。清理失败也应能重试，不能因为调用过删除就声称空间已经回收。
+
+可续传上传和失败清理是同一条文件生命周期的两端。接口应能区分“文件完整”“任务失败”“临时产物待清理”，而不是只给一个含义不明的 success。具体存储产品的停止、列举和回收行为需要按其协议验证。
+
+## 7. 重复上传与取消如何保留接口位置
+
+内容摘要相同，只能说明字节相同。例如用户同一份文档分别要求“摘要”和“翻译”，仍是两项任务。需要避免重复提交时，应识别同一次业务操作，不能只按文件内容去重。
+
+取消同样要区分“请求已收到”和“外部工作已停止”。若解析已经完成并提交结果，再收到取消不能随意把成功结果改写成“从未发生”。
+
+**练习：** 用客户端直接发送 `b"abc"`、空文件和超过 1 MiB 的字节串。分别预期 3 字节、0 字节、413；确认所有路径都会关闭上传对象。再解释本测试覆盖不到哪些前置资源风险。
 
 ---
 
-## 4. `bytes` vs `UploadFile`
+## 本章小结
 
-如果参数声明为 `bytes`，框架会把整个文件内容读入内存。
+上传接收、任务接受与执行成功是不同阶段。UploadFile 改善文件使用方式，但需要完整入口限制；BackgroundTasks 适合受控的进程内辅助工作，不提供持久执行保证。
 
-适合小文件。
+## 🎯 面试怎么回答
 
-`UploadFile` 更适合大文件，因为底层使用 spooled temporary file：
+**UploadFile 就不会占用大量内存吗？**
 
-```text
-small part in memory
-→ larger content can spill to disk
-```
+> 不是。它提供临时文件接口；应用仍可能一次 read 整个文件，表单解析与临时存储也占资源。应分块处理并配合入口限制。
 
-并且提供文件名、content type 和 file-like async interface。
+**202 和 200 哪个更可靠？**
 
----
+> 状态码本身不提供可靠性。202 表达任务已接受、尚未完成；是否真正可恢复取决于任务记录与执行机制。
 
-## 5. 大文件上传的真实风险
+## ⚠️ 易错点
 
-至少要考虑：
+> ⚠️ 文件名和 Content-Type 是客户端提供的信息，不应直接作为路径与安全信任依据。
 
-- 文件大小限制；
-- Content-Type 不能完全信任；
-- 临时磁盘空间；
-- 并发上传；
-- Hash / Dedup；
-- Virus / Unsafe file；
-- 超时；
-- 中断重传；
-- Object Storage。
+> ⚠️ 一个重要任务即使很短，也可能不适合最佳努力的进程内后台执行。
 
-FastAPI 只提供 Upload 接口能力，不自动解决整条数据管道。
+> ⚠️ 浏览器关掉不等于后台任务取消，取消需要明确的业务状态和执行者配合。
 
----
+## 本章自测
 
-## 6. 不要一次 `await file.read()` 读爆内存
-
-坏模式：
-
-```python
-content = await file.read()
-```
-
-对于巨大文件，这会把整个内容放进内存。
-
-更稳的是分块处理：
-
-```python
-while chunk := await file.read(1024 * 1024):
-    await write_chunk(chunk)
-```
-
-具体 chunk size 要根据存储和吞吐测试决定。
-
----
-
-## 7. Upload API 和 Processing API 解耦
-
-推荐状态机：
-
-```text
-UPLOADING
-→ STORED
-→ QUEUED
-→ PROCESSING
-→ INDEXED
-或 FAILED
-```
-
-这让你可以区分：
-
-- 网络上传失败；
-- 对象存储失败；
-- Parser 失败；
-- Embedding 失败；
-- Index 失败。
-
-否则一句“上传失败”无法排查。
-
----
-
-## 8. `BackgroundTasks` 和 Request Resource
-
-Background Task 不应该继续依赖即将被 Request cleanup 的 DB Session 等资源。
-
-正确思路：
-
-```text
-Task receives stable ID / primitive data
-→ task opens its own resources
-→ task closes its own resources
-```
-
-不要把活跃 Session/Connection 对象直接传过去长期使用。
-
----
-
-## 9. 为什么任务需要 `task_id`
-
-因为长任务生命周期超出单次连接：
-
-```text
-Client disconnect
-→ Task still exists
-→ User reconnects
-→ query by task_id
-```
-
-这也是 Long-running Agent API 的基础。
-
----
-
-## 10. Progress 怎么返回
-
-常见三种：
-
-```text
-Polling
-GET /tasks/{id}
-
-SSE
-GET /tasks/{id}/events
-
-WebSocket
-双向控制 + progress
-```
-
-选择取决于交互需求。
-
-不要把“有进度”默认等于 WebSocket。
-
----
-
-## 11. Cancel 怎么设计
-
-Long-running Task 的取消是业务状态：
-
-```text
-POST /tasks/{id}/cancel
-```
-
-后台 Worker 要看到 Cancel Request，停止后续工作，并清理中间状态。
-
-这和关闭浏览器 Tab 不是同一件事。
-
----
-
-## 12. 🎯 面试怎么回答
-
-> FastAPI `BackgroundTasks` 更适合响应返回后的轻量进程内任务，不应该替代可靠任务系统。像 RAG Ingestion、OCR、长时间 Agent Run 这类任务，我会返回 202 + task_id，把执行交给持久化 Task State + Queue/Worker。大文件使用 UploadFile 和分块读写，避免一次把整个文件读进内存，并让后台任务自己创建 DB/HTTP 等资源。
-
----
-
-## 13. 易错点
-
-- ❌ BackgroundTasks = Celery / MQ。
-- ❌ Response 返回后任务就一定能可靠执行完。
-- ❌ UploadFile 说明文件永远都在内存。
-- ❌ `await file.read()` 对任何大小文件都安全。
-- ❌ 浏览器断开 = 后台任务取消。
-
----
-
-## 14. 本章自测
+先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
 
 <details>
-<summary>1. 为什么重 OCR 不适合只用 BackgroundTasks？</summary>
+<summary>1. 为什么路由内累计文件大小不足以保护上传入口？</summary>
 
-因为任务可能耗时、CPU 重、需要跨进程/机器调度和失败恢复；进程内 BackgroundTasks 没有完整 Durable Task 语义。
+框架可能已解析并临时存储表单，过大的网络和磁盘开销可在路由之前发生。
 
 </details>
 
 <details>
-<summary>2. `bytes` 与 `UploadFile` 对大文件的主要差异是什么？</summary>
+<summary>2. 把数据库会话对象直接交给长后台任务有什么风险？</summary>
 
-`bytes` 会将整个上传内容放入内存；UploadFile 使用 spooled temporary file，适合大文件并提供 file-like 接口。
+它的所有权和寿命属于先前请求，可能已被清理或处于不合适的事务状态。
 
 </details>
 
 <details>
-<summary>3. 为什么后台任务最好只接 task_id / file_id 等稳定标识？</summary>
+<summary>3. 相同文件摘要是否证明应复用之前的处理结果？</summary>
 
-这样任务能自己重建资源和上下文，不依赖已经结束的 Request-scoped Session/Connection，也更利于重试和恢复。
+不一定，还要比较权限、源版本、处理版本和业务意图。
 
 </details>
+
+## 知识回看与权威资料
+
+- [文件上传](https://fastapi.tiangolo.com/tutorial/request-files/)：核对 bytes、UploadFile 与 multipart。
+- [后台任务](https://fastapi.tiangolo.com/tutorial/background-tasks/)：核对进程内工作与独立任务系统的边界。
+- [后台执行顺序](https://starlette.dev/background/)：理解多任务顺序及异常影响。
+
+真人问题回看：[S293 的海量视频、断点续传和失败清理](../../../market/interviews/batch-32.md)。本章建立上传协议与资源责任；跨机器调度、任务重领和一致性实现由 Backend 承担。

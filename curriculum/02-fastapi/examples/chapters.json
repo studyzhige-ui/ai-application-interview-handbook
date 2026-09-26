@@ -1,0 +1,66 @@
+{
+  "1": {
+    "file": "01-FastAPI职责与ASGI请求链路.md",
+    "title": "从一个可访问的接口理解请求与响应"
+  },
+  "2": {
+    "file": "02-Routing与APIContract.md",
+    "title": "路由与参数：请求怎样变成函数输入"
+  },
+  "3": {
+    "file": "03-Pydantic与数据契约.md",
+    "title": "数据契约：校验输入、限制输出、解释错误"
+  },
+  "4": {
+    "file": "04-Dependency与Middleware.md",
+    "title": "依赖与中间件：复用前提，不隐藏执行过程"
+  },
+  "5": {
+    "file": "05-ResourceLifecycle.md",
+    "title": "资源生命周期：何时取得，何时归还"
+  },
+  "6": {
+    "file": "06-AsyncExecution与BlockingBoundary.md",
+    "title": "异步与并发：等待时谁在继续工作"
+  },
+  "7": {
+    "file": "07-Streaming与SSE.md",
+    "title": "流式响应：逐步交付结果与 SSE 事件"
+  },
+  "8": {
+    "file": "08-WebSocket与EventProtocol.md",
+    "title": "WebSocket：让双方在连接中持续交流"
+  },
+  "9": {
+    "file": "09-Security与TenantContext.md",
+    "title": "认证、授权与租户：让访问范围可信"
+  },
+  "10": {
+    "file": "10-ExternalResourceIntegration.md",
+    "title": "连接外部服务：客户端、业务与协议适配"
+  },
+  "11": {
+    "file": "11-BackgroundTask与Upload.md",
+    "title": "上传与后台任务：接收完成不等于处理完成"
+  },
+  "12": {
+    "file": "12-TimeoutCancellation与Disconnect.md",
+    "title": "超时、断开与取消：请求结束之后发生什么"
+  },
+  "13": {
+    "file": "13-Testing.md",
+    "title": "测试：让成功、拒绝与失败都有证据"
+  },
+  "14": {
+    "file": "14-Observability与Performance.md",
+    "title": "观测与性能：把慢请求拆成可定位的时间"
+  },
+  "15": {
+    "file": "15-Deployment与GracefulShutdown.md",
+    "title": "部署与退出：从一个进程到多个实例"
+  },
+  "16": {
+    "file": "16-AIServicePatterns.md",
+    "title": "综合实作：把问答与执行任务接成可验证 API"
+  }
+}

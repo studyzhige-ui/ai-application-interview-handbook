@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "principle": "Learning order follows prerequisites; directory prefixes are stable identifiers, not a mandatory reading order.",
+  "modules": [
+    {
+      "directory": "01-python",
+      "label": "Python"
+    },
+    {
+      "directory": "02-fastapi",
+      "label": "FastAPI"
+    },
+    {
+      "directory": "04-mysql",
+      "label": "MySQL"
+    },
+    {
+      "directory": "05-redis",
+      "label": "Redis"
+    },
+    {
+      "directory": "03-backend-engineering",
+      "label": "Backend"
+    },
+    {
+      "directory": "06-vector-db",
+      "label": "Vector DB"
+    },
+    {
+      "directory": "07-llm-foundation",
+      "label": "LLM Foundation"
+    },
+    {
+      "directory": "08-rag",
+      "label": "RAG"
+    },
+    {
+      "directory": "09-agent",
+      "label": "Agent"
+    },
+    {
+      "directory": "10-system-design",
+      "label": "System Design"
+    }
+  ]
+}

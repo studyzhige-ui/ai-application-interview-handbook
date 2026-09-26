@@ -1,327 +1,397 @@
-# FastAPI｜Review 与综合自测
+# FastAPI｜Review总图与综合自测
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块主页](../README.md) · [面试题](../interview/高频面试题.md) · [练习](../examples/README.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+这一页用于第二遍。先遮住答案，画出请求与资源的路线；哪里说不清，再回对应正文。不要把短答案当作首次学习的完整解释。
 
----
-
-> 目标不是再读一遍 16 章，而是能从空白纸把 FastAPI 作为 **AI Service Layer** 重新画出来。
-
----
-
-# 图 1｜一个请求怎样穿过 FastAPI
-
-```mermaid
-flowchart TD
-    A["Client"] --> B["ASGI Server / Uvicorn"]
-    B --> C["Middleware"]
-    C --> D["Router"]
-    D --> E["Validation + Dependency Graph"]
-    E --> F["Path Operation"]
-    F --> G["Service Layer"]
-    G --> H["DB / Redis / Vector / LLM / Agent"]
-    H --> I["Response Model / Stream"]
-    I --> C
-    C --> B
-    B --> A
-```
-
-能口述：Uvicorn、Starlette、FastAPI、Pydantic 各自负责什么。
-
----
-
-# 图 2｜Middleware、Dependency 与 Resource Lifecycle
-
-```mermaid
-flowchart TD
-    A["Application Startup"] --> B["Lifespan: create shared client/pool"]
-    B --> C["Request"]
-    C --> D["Middleware: request_id / trace / CORS"]
-    D --> E["Dependency: user / tenant / DB session"]
-    E --> F["Handler / Service"]
-    F --> G["Response / Stream"]
-    G --> H["Dependency cleanup"]
-    H --> I["Application Shutdown"]
-    I --> J["Lifespan: close shared resource"]
-```
-
-关键：Application-scoped 和 Request-scoped 不能混。
-
----
-
-# 图 3｜`async def` 的执行边界
-
-```mermaid
-flowchart TD
-    A["FastAPI calls function"] --> B{"Path Operation / Dependency?"}
-    B --> C{"async def?"}
-    C -->|是| D["await on event loop"]
-    C -->|否| E["external thread pool"]
-    D --> F{"directly calls blocking helper?"}
-    F -->|是| G["event loop can still be blocked"]
-    F -->|否| H["async I/O concurrency"]
-    E --> I["thread pool capacity still finite"]
-```
-
-关键：FastAPI 只对它主动调用的 `def` Path Operation / Dependency 做线程池处理；你在 `async def` 里直接调用同步 helper 不会自动 offload。
-
----
-
-# 图 4｜AI Streaming 与 Event Protocol
-
-```mermaid
-flowchart LR
-    A["Agent / LLM Runtime Event"] --> B["Event Adapter"]
-    B --> C{"Transport"}
-    C -->|Server push| D["SSE"]
-    C -->|Full duplex| E["WebSocket"]
-    D --> F["Frontend"]
-    E --> F
-```
-
-Event 应是 typed protocol：
+## 总图1｜从请求到响应
 
 ```text
-message_start
-content_delta
-tool_call_start
-tool_result
-state_update
-error
-message_end
+客户端 → ASGI服务器 → 应用中间件与路由
+                         ↓
+                   输入和依赖边界
+                         ↓
+                    业务服务/适配
+                         ↓
+                     输出与发送
 ```
 
----
+指出FastAPI、Uvicorn、Starlette、Pydantic各自的职责。再找出一条422路径、一条权限拒绝路径和一条下游失败路径。
 
-# 图 5｜Long-running Task Boundary
+## 总图2｜资源什么时候结束
 
-```mermaid
-flowchart TD
-    A["Upload / Agent Job"] --> B{"can finish inside request?"}
-    B -->|yes| C["normal request/response"]
-    B -->|no| D["persist task state"]
-    D --> E["queue / worker"]
-    E --> F["task_id"]
-    F --> G["poll / SSE progress / cancel"]
+```text
+应用启动：创建共享客户端/资源
+  │
+  ├─ 请求A：取得依赖 → 调用处理函数 → 发送响应 → 对应清理
+  ├─ 请求B：取得依赖 → 拒绝/异常 → 对应清理
+  │
+应用退出：平台与服务器协调停止工作，关闭共享资源
 ```
 
-关键：`BackgroundTasks` 不是 Durable Task Queue。
+在图中单独标出function与request作用域。不要把函数返回、响应体发完和客户端显示当成同一时刻。
 
----
+## 总图3｜同步、异步与容量
 
-# 图 6｜FastAPI 与 Agent Harness 的边界
+```text
+框架调用同步路由/依赖 → 线程执行
+框架调用async路由    → 事件循环推进
+async中直接调用同步函数 → 不会自动转交
 
-```mermaid
-flowchart LR
-    A["Client"] --> B["FastAPI"]
-    B --> C["API Contract / Auth / Stream"]
-    C --> D["Agent Service Adapter"]
-    D --> E["Agent Harness"]
-    E --> F["Loop / Tool / Context / Memory / State"]
-    F --> E
-    E --> D
-    D --> C
-    C --> B
-    B --> A
+在途限制 + 有界输入/队列 + 下游容量 + 等待预算
 ```
 
-关键：Transport 与 Runtime 解耦。
+能解释为什么两个Semaphore许可不等于每秒两次请求，也不等于所有worker合计最多两次。
 
----
+## 总图4｜事件、任务与连接
 
-# 综合自测
+```text
+短请求：一个请求 → 一个结果
+流式交付：开始 → 内容/进度 → 成功或失败终态
+双向交互：建立连接 ↔ 消息 ↔ 消息 → 断开清理
+持久任务：接受 → 状态记录 → 独立执行 → 查询/事件/取消
+```
 
-### 1. FastAPI、Starlette、Uvicorn、Pydantic 分别是什么？
+流断开、任务取消与执行停止分开验证。知道事件ID不足以自动恢复，202不足以自动持久。
 
-<details><summary>查看参考答案</summary>
+## 总图5｜诊断与部署
 
-Uvicorn 是 ASGI Server；Starlette 提供 ASGI Web 基础能力；FastAPI 在 Starlette 之上提供类型驱动 API、Dependency、OpenAPI 等；Pydantic 负责 Runtime Data Validation / Serialization。
+```text
+定位慢：排队 → 连接 → 下游 → 发送 → 客户端
+部署：实例 × worker × 每进程资源
+退出：停止接流量 → 有限等待/取消 → 关闭资源
+```
 
-</details>
+说明日志、指标、Trace分别解决什么；不要用每请求ID作为无限标签，不让每次健康检查真实调用全部外部服务。
 
-### 2. Middleware 和 Dependency 最核心的差异？
+## 综合自测
 
-<details><summary>查看参考答案</summary>
+按课程主题重建规则和判断依据，包括为什么选择某种通信方式、失败后保留什么状态。具体实现对照可以稍后重做；题目中的场景判断不是可省略的边界。
 
-Middleware 是 Application 级横切层；Dependency 是 Route-aware 的输入/资源/前置条件图。Request ID、CORS、全局 timing 常放 Middleware；Current User、Tenant、DB Session 常放 Dependency。
+<details>
+<summary>1. FastAPI、Starlette、Uvicorn、Pydantic分别做什么？</summary>
 
-</details>
+Uvicorn承接网络并调用ASGI应用；Starlette提供Web基础；FastAPI组织类型驱动的路由、依赖、契约与文档；Pydantic校验和序列化数据。
 
-### 3. 为什么 `async def` 里直接调用同步 SDK 仍可能阻塞？
-
-<details><summary>查看参考答案</summary>
-
-因为那只是普通 Python 函数调用，不会被 FastAPI 自动放入线程池；如果同步 SDK 阻塞，它会占住 Event Loop 线程。
-
-</details>
-
-### 4. 普通 `def` Path Operation 怎么执行？
-
-<details><summary>查看参考答案</summary>
-
-FastAPI 会把普通 `def` Path Operation / Dependency 放到外部线程池执行并等待结果。
+回看：[01｜从一个可访问的接口理解请求与响应](../docs/01-FastAPI职责与ASGI请求链路.md)。
 
 </details>
 
-### 5. 为什么 Thread Pool 不能当成“同步代码安全区”？
+<details>
+<summary>2. ASGI是什么？</summary>
 
-<details><summary>查看参考答案</summary>
+服务器与应用之间的接口规范，通过scope、receive、send以及生命周期事件表达交互；它不是asyncio的别名。
 
-线程池容量有限，阻塞调用很多时仍会排队；下游连接池/QPS 也可能成为瓶颈。
-
-</details>
-
-### 6. `yield` Dependency 和 Lifespan 的主要边界？
-
-<details><summary>查看参考答案</summary>
-
-`yield` Dependency 常管理请求/Route 级资源；Lifespan 管 Application startup/shutdown 级共享资源。
+回看：[01｜从一个可访问的接口理解请求与响应](../docs/01-FastAPI职责与ASGI请求链路.md)。
 
 </details>
 
-### 7. Streaming Response 为什么让 Dependency cleanup 更复杂？
+<details>
+<summary>3. 一个请求怎样到达路由函数？【FASTAPI-001】</summary>
 
-<details><summary>查看参考答案</summary>
+服务器把网络数据转换成ASGI交互，应用匹配路由、解析校验输入并求值所需依赖，再调用处理函数，最后将结果编码为响应。具体嵌套与失败路径不能压成每次都完全相同的串行顺序。
 
-Handler 返回 Response 后，真正的数据发送可能持续很久；如果 Stream 仍需要某资源，就必须让资源生命周期覆盖 Stream，或提前 materialize 数据。
-
-</details>
-
-### 8. Response Model 除了文档还有什么作用？
-
-<details><summary>查看参考答案</summary>
-
-可以验证、序列化并过滤输出字段，是 API Contract 和潜在安全边界的一部分。
+回看：[01｜从一个可访问的接口理解请求与响应](../docs/01-FastAPI职责与ASGI请求链路.md)。
 
 </details>
 
-### 9. Schema Validation 为什么不能替代 Authorization？
+<details>
+<summary>4. FastAPI为什么适合AI应用接口？</summary>
 
-<details><summary>查看参考答案</summary>
+它把Python、类型契约、异步I/O和流式交付接在一起；但检索质量、工具执行和持久任务仍由业务及执行系统负责。
 
-Schema 只确认结构/类型；Authorization 需要结合身份、资源和策略判断是否允许操作。
-
-</details>
-
-### 10. SSE 和普通 Streaming 的区别？
-
-<details><summary>查看参考答案</summary>
-
-普通 Streaming 只分块发送字节；SSE 在文本流上定义 event/data/id/retry 等事件协议。
+回看：[01｜从一个可访问的接口理解请求与响应](../docs/01-FastAPI职责与ASGI请求链路.md)。
 
 </details>
 
-### 11. 现代 FastAPI SSE 是否只能 GET？
+<details>
+<summary>5. 中间件与依赖的区别？【FASTAPI-002】</summary>
 
-<details><summary>查看参考答案</summary>
+中间件包装应用处理过程，适合请求关联和通用响应处理；依赖声明具体路由所需输入、身份或资源，可组成依赖图并在测试中替换。
 
-不是。在教材核验的官方版本中，SSE 可以用于不同 HTTP 方法，包括 POST。
-
-</details>
-
-### 12. Stream 已开始后下游失败，为什么不能直接改 HTTP 500？
-
-<details><summary>查看参考答案</summary>
-
-Status/Headers 通常已发出，需要在流协议内发送 error/terminal event 表达失败。
+回看：[04｜依赖与中间件：复用前提，不隐藏执行过程](../docs/04-Dependency与Middleware.md)。
 
 </details>
 
-### 13. 什么场景更适合 WebSocket？
+<details>
+<summary>6. 多个中间件怎样执行？</summary>
 
-<details><summary>查看参考答案</summary>
+对示例所添加的中间件，后加的在外层。请求先过外层再到内层，响应沿嵌套返回；流体发送的终点要另行测量。
 
-需要持续双向低延迟交互，例如 Realtime Voice、游戏、用户持续控制；普通单向 AI Chat 通常 SSE 已足够。
-
-</details>
-
-### 14. Client Disconnect 是否等于 Agent Run Cancel？
-
-<details><summary>查看参考答案</summary>
-
-不一定。短生成可取消；Durable Run 可以在 UI 断开后继续，稍后按 run_id 重新连接。
+回看：[04｜依赖与中间件：复用前提，不隐藏执行过程](../docs/04-Dependency与Middleware.md)。
 
 </details>
 
-### 15. 为什么 `BackgroundTasks` 不能替代任务队列？
+<details>
+<summary>7. yield依赖解决什么？</summary>
 
-<details><summary>查看参考答案</summary>
+把资源交给调用方使用，并在相应作用域退出时清理。通常通过try/finally处理正常与异常，不把finally当作断电保证。
 
-它是应用进程内响应后的任务，不具备完整持久化、跨进程调度、Lease/Heartbeat、Worker Recovery 等 Durable Task 语义。
-
-</details>
-
-### 16. `bytes` 文件参数和 `UploadFile` 的主要差异？
-
-<details><summary>查看参考答案</summary>
-
-`bytes` 会把完整内容加载进内存；UploadFile 使用 spooled temporary file，更适合大文件并提供 file-like 接口。
+回看：[05｜资源生命周期：何时取得，何时归还](../docs/05-ResourceLifecycle.md)。
 
 </details>
 
-### 17. 为什么 DB Session 不应该长期跨 Streaming 持有？
+<details>
+<summary>8. function与request作用域有何区别？</summary>
 
-<details><summary>查看参考答案</summary>
+function在处理函数结束后、响应发送前清理；yield依赖默认request作用域覆盖响应周期，流继续使用资源时要匹配其生命周期。
 
-会延长连接/事务生命周期，增加 Pool、锁和版本压力；如果 Stream 不再需要 DB，应提前释放。
-
-</details>
-
-### 18. Dependency Override 解决什么问题？
-
-<details><summary>查看参考答案</summary>
-
-测试时可以替换真实 Dependency，例如 Auth Provider/DB，构造稳定、便宜、可控的测试。
+回看：[05｜资源生命周期：何时取得，何时归还](../docs/05-ResourceLifecycle.md)。
 
 </details>
 
-### 19. FastAPI P99 高但 SQL 只要 20ms，应该看什么？
+<details>
+<summary>9. lifespan与依赖怎么分？</summary>
 
-<details><summary>查看参考答案</summary>
+lifespan管理每个应用实例的启动与退出资源；依赖承接具体请求或操作的输入与资源。一个共享客户端不应被单次请求结束关闭。
 
-看 Pool Acquisition、Thread/Event Loop、其它下游、Queueing、Serialization 和 Proxy；SQL 执行时间只是请求链的一段。
-
-</details>
-
-### 20. 为什么 Metrics 不适合用 request_id 当 Label？
-
-<details><summary>查看参考答案</summary>
-
-request_id 几乎每次都不同，会造成极高 Cardinality；更适合 Log/Trace。
+回看：[05｜资源生命周期：何时取得，何时归还](../docs/05-ResourceLifecycle.md)。
 
 </details>
 
-### 21. 多 Worker 为什么不能共享普通全局 dict？
+<details>
+<summary>10. HTTP模型客户端为什么通常复用？</summary>
 
-<details><summary>查看参考答案</summary>
+它可以管理可复用连接，减少每次创建和建连成本。仍需设有限连接、超时和明确关闭范围。
 
-Worker 是独立进程，各自有独立内存；共享状态需要外部 Store 或明确路由设计。
-
-</details>
-
-### 22. Liveness 和 Readiness 区别？
-
-<details><summary>查看参考答案</summary>
-
-Liveness 判断进程是否活着；Readiness 判断实例当前是否准备好接流量。
+回看：[10｜连接外部服务：客户端、业务与协议适配](../docs/10-ExternalResourceIntegration.md)。
 
 </details>
 
-### 23. 为什么 `/agent/runs` 比单个 `/chat` 更适合长 Agent？
+<details>
+<summary>11. async def一定更快吗？</summary>
 
-<details><summary>查看参考答案</summary>
+不是。可协作等待I/O时能让事件循环推进其他任务；同步阻塞和长CPU计算不会因函数声明改变而消失。
 
-显式 run_id 能承载状态查询、事件流、取消、审批、重连、Checkpoint 等长期生命周期能力。
+回看：[06｜异步与并发：等待时谁在继续工作](../docs/06-AsyncExecution与BlockingBoundary.md)。
+
+</details>
+
+<details>
+<summary>12. 框架怎样执行普通def路由？</summary>
+
+FastAPI对自己调用的同步路由与依赖使用线程执行；线程容量与下游资源仍有限。
+
+回看：[06｜异步与并发：等待时谁在继续工作](../docs/06-AsyncExecution与BlockingBoundary.md)。
 
 </details>
 
-### 24. FASTAPI-005 最终在考什么？
+<details>
+<summary>13. async路由里普通helper会自动进线程池吗？</summary>
 
-<details><summary>查看参考答案</summary>
+不会，那是当前线程普通调用。必要时显式转交或使用异步接口。
 
-不是考更多装饰器，而是考你是否理解 Request/Resource Lifecycle、Async Boundary、Streaming/Event、Session/Run、Cancellation、Long-running Task、Observability、Deployment，以及 FastAPI 与 Agent Runtime 的边界。
+回看：[06｜异步与并发：等待时谁在继续工作](../docs/06-AsyncExecution与BlockingBoundary.md)。
 
 </details>
+
+<details>
+<summary>14. gather会自动限流吗？</summary>
+
+不会。它组织并发结果，不控制总任务数或全局速率。Semaphore也只限制相应实例中的在途量。
+
+回看：[06｜异步与并发：等待时谁在继续工作](../docs/06-AsyncExecution与BlockingBoundary.md)。
+
+</details>
+
+<details>
+<summary>15. 请求、数据库和响应模型应共用吗？</summary>
+
+不应默认共用。输入允许的字段、持久结构与公开结果服务不同边界；小项目可以简化但要明确过滤与责任。
+
+回看：[03｜数据契约：校验输入、限制输出、解释错误](../docs/03-Pydantic与数据契约.md)。
+
+</details>
+
+<details>
+<summary>16. response_model有什么作用？</summary>
+
+参与输出校验、序列化、字段过滤与文档。返回直接构造的Response时，需要理解绕开相应处理的边界。
+
+回看：[03｜数据契约：校验输入、限制输出、解释错误](../docs/03-Pydantic与数据契约.md)。
+
+</details>
+
+<details>
+<summary>17. 字段、跨字段规则和业务授权怎样分开？</summary>
+
+字段校验检查单项类型和范围；跨字段规则检查输入之间的关系，例如起始页不能晚于结束页。实际页数、资源归属和动作权限还需要可信业务事实，不能仅从输入合法推出允许执行。
+
+回看：[03｜数据契约：校验输入、限制输出、解释错误](../docs/03-Pydantic与数据契约.md)。
+
+</details>
+
+<details>
+<summary>18. 怎样通过SSE推运行中事件？【FASTAPI-004】</summary>
+
+运行系统产生明确事件，API适配成SSE。客户端识别内容、错误和终止；重连需游标与历史，不能仅靠事件ID自动获得恢复。
+
+回看：[07｜流式响应：逐步交付结果与 SSE 事件](../docs/07-Streaming与SSE.md)。
+
+</details>
+
+<details>
+<summary>19. SSE只能GET吗？</summary>
+
+服务端可在POST返回SSE；浏览器原生EventSource主要使用GET，不能随意设置POST体或自定义认证头。需要区分服务能力与客户端限制。
+
+回看：[07｜流式响应：逐步交付结果与 SSE 事件](../docs/07-Streaming与SSE.md)。
+
+</details>
+
+<details>
+<summary>20. 流发出200后失败怎么办？</summary>
+
+不能改已发出的状态；能继续发送时用错误与终止事件，断开时客户端也要识别未收到终态。
+
+回看：[07｜流式响应：逐步交付结果与 SSE 事件](../docs/07-Streaming与SSE.md)。
+
+</details>
+
+<details>
+<summary>21. 轮询、SSE与WebSocket怎样选？</summary>
+
+允许一定刷新延迟、只需要当前状态时可先评估轮询；服务端持续交付适合SSE；持续双向消息适合WebSocket。断开后要区分重新取得最新快照与补齐全部事件，身份、游标和缓冲仍由应用负责。
+
+回看：[08｜WebSocket：让双方在连接中持续交流](../docs/08-WebSocket与EventProtocol.md)。
+
+</details>
+
+<details>
+<summary>22. 客户端断开意味着后端停止吗？</summary>
+
+不一定。连接资源应清理，临时工作可以取消，持久任务可以继续；远端动作是否停止取决于其真实协议。
+
+回看：[12｜超时、断开与取消：请求结束之后发生什么](../docs/12-TimeoutCancellation与Disconnect.md)。
+
+</details>
+
+<details>
+<summary>23. BackgroundTasks能代替可靠任务队列吗？</summary>
+
+不能。它是在当前应用进程中响应后的工作。是否适用还要看任务丢失是否可接受，重要小任务也可能需要持久保证。
+
+回看：[11｜上传与后台任务：接收完成不等于处理完成](../docs/11-BackgroundTask与Upload.md)。
+
+</details>
+
+<details>
+<summary>24. bytes与UploadFile怎样选？</summary>
+
+bytes把完整内容交给函数；UploadFile提供临时文件接口，适合分块。路由内分块并不保护之前的表单解析与网络入口，需配合上传限额。
+
+回看：[11｜上传与后台任务：接收完成不等于处理完成](../docs/11-BackgroundTask与Upload.md)。
+
+</details>
+
+<details>
+<summary>25. 大型文档处理API怎样设计？</summary>
+
+区分文件已接收、任务已接受与执行成功。分块读取只改善内存使用；续传还需要上传标识、已存部分和完整性校验。任务应有独立状态，失败不发布半成品，清理由明确的任务所有者负责。
+
+回看：[11｜上传与后台任务：接收完成不等于处理完成](../docs/11-BackgroundTask与Upload.md)。
+
+</details>
+
+<details>
+<summary>26. 测试怎样替换身份或数据库依赖？</summary>
+
+将原依赖函数映射到测试依赖，并在finally或fixture收尾时恢复原覆盖。不要只模拟整个HTTP结果。
+
+回看：[13｜测试：让成功、拒绝与失败都有证据](../docs/13-Testing.md)。
+
+</details>
+
+<details>
+<summary>27. SQL已经优化，为什么接口仍慢？</summary>
+
+先核对端到端与SQL的测量范围，再测连接等待、其他下游、序列化、发送和代理。某一阶段快16倍不代表全程快16倍；并发Span还不能简单相加，优化应针对实际瓶颈。
+
+回看：[14｜观测与性能：把慢请求拆成可定位的时间](../docs/14-Observability与Performance.md)。
+
+</details>
+
+<details>
+<summary>28. 多worker为什么不共享全局dict？</summary>
+
+worker通常是独立进程，各自持有内存与连接池。全局是进程内的全局，不是所有机器的全局。
+
+回看：[15｜部署与退出：从一个进程到多个实例](../docs/15-Deployment与GracefulShutdown.md)。
+
+</details>
+
+<details>
+<summary>29. 只会GET和POST为什么不足以构建完整服务？【FASTAPI-005】</summary>
+
+还要定义身份、契约、资源、执行方式、事件、取消与任务状态，配合测试、观测和部署。路由入口不是整个运行系统。
+
+回看：[16｜综合实作：把问答与执行任务接成可验证 API](../docs/16-AIServicePatterns.md)。
+
+</details>
+
+<details>
+<summary>30. FastAPI与Agent Runtime边界是什么？</summary>
+
+API负责Web访问和交付边界，Runtime负责动态循环、工具、上下文、记忆与恢复。两者配合，不能互相推诿身份、取消和验证责任。
+
+回看：[16｜综合实作：把问答与执行任务接成可验证 API](../docs/16-AIServicePatterns.md)。
+
+</details>
+
+<details>
+<summary>31. JSON没有Content-Type时为什么旧代码和课程版本行为不同？</summary>
+
+0.132.0引入默认严格JSON Content-Type检查。应修正客户端声明，而不是默认关闭全局安全行为。
+
+回看：[03｜数据契约：校验输入、限制输出、解释错误](../docs/03-Pydantic与数据契约.md)。
+
+</details>
+
+<details>
+<summary>32. JSON Lines返回一个JSON数组吗？</summary>
+
+不是，每行一个完整JSON值。课程原生接口默认媒体类型application/jsonl，需要逐行解析。
+
+回看：[07｜流式响应：逐步交付结果与 SSE 事件](../docs/07-Streaming与SSE.md)。
+
+</details>
+
+<details>
+<summary>33. except Exception是否捕获CancelledError？</summary>
+
+现代asyncio中不捕获，CancelledError继承BaseException。显式捕获后通常仍应继续抛出。
+
+回看：[12｜超时、断开与取消：请求结束之后发生什么](../docs/12-TimeoutCancellation与Disconnect.md)。
+
+</details>
+
+<details>
+<summary>34. HTTPX的ASGITransport会自动执行lifespan吗？</summary>
+
+不会，需要显式管理。TestClient用上下文管理器可执行生命周期。
+
+回看：[13｜测试：让成功、拒绝与失败都有证据](../docs/13-Testing.md)。
+
+</details>
+
+<details>
+<summary>35. Liveness和Readiness分别触发什么决策？</summary>
+
+前者用于判断实例是否需要重启等恢复动作，后者判断是否应接流量；具体阈值与探测方式由平台设计。
+
+回看：[15｜部署与退出：从一个进程到多个实例](../docs/15-Deployment与GracefulShutdown.md)。
+
+</details>
+
+<details>
+<summary>36. 后台任务可以复用请求结束时释放的会话吗？</summary>
+
+不应依赖这样的寿命。任务应拿稳定标识，并建立自己拥有的资源范围。
+
+回看：[05｜资源生命周期：何时取得，何时归还](../docs/05-ResourceLifecycle.md)。
+
+</details>
+
+## 操作验收
+
+从空白文件完成一个接口，并主动构造输入拒绝、依赖失败和身份越界。选择一个资源，证明正常和异常时怎样清理。实现了流式接口时，再分别提供协议测试与真实网络实验，并说明尚未验证的代理、供应商与数据库条件。

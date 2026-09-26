@@ -1,327 +1,221 @@
-# 12｜Timeout、Cancellation、Client Disconnect 与 Cleanup
+# 12｜超时、断开与取消：请求结束之后发生什么
 
-AI Service 的一个典型错误心智模型是：
+[← 上一章](11-BackgroundTask与Upload.md) · [模块主页](../README.md) · [下一章 →](13-Testing.md)
 
-> “客户端关掉页面，后端自然就停了。”
+接口等了三秒没有结果，返回超时。用户重新提交后却发现同一动作做了两次。原因可能并不在重试代码里，而是我们把“我不再等待”误解成“对方一定没做”。
 
-实际系统没有这么简单。
+本章先把超时、取消与连接断开分开，再用本地实验观察协程怎样清理。示例使用 Python 3.11+ 的 `asyncio.timeout`。
 
-你需要区分：
+## 1. 先分清超时、取消与断开
 
-```text
-Client Disconnect
-Request Timeout
-Coroutine Cancellation
-Downstream Timeout
-Business Cancel
-Durable Task Cancel
-```
+| 情况 | 能确定什么 | 不能直接推出什么 |
+|---|---|---|
+| 超时 | 等待超过了设定预算 | 下游一定未执行 |
+| 取消 | 已要求某个任务停止 | 任意同步函数或远端动作立刻停止 |
+| 断开 | 当前传输连接已中断 | 业务任务也应该被取消 |
 
-它们不是一回事。
+超时可以发生在一次下游读取，也可以发生在整个路由的总预算上。取消可以来自用户操作、超时处理或服务退出。它们之间怎样触发，需要代码明确安排。
 
----
-
-## 1. Timeout 是“等待边界”，不是“世界停止”
-
-假设：
-
-```text
-FastAPI
-→ LLM Provider
-→ Tool
-→ Payment API
-```
-
-如果你的调用方 10 秒超时：
-
-```text
-caller stops waiting
-```
-
-不代表：
-
-```text
-provider definitely stopped
-side effect definitely did not happen
-```
-
-这就是为什么 Timeout 必须和 Cancellation / Idempotency 一起理解。
-
----
-
-## 2. Client Disconnect 是 Transport 事件
-
-例如用户关闭浏览器：
-
-```text
-Browser connection gone
-```
-
-FastAPI/Starlette 层可以感知连接断开，但接下来应该做什么取决于业务：
-
-### 短 LLM 生成
-
-```text
-cancel generation
-→ release connection
-```
-
-### Durable Agent Run
-
-```text
-UI disconnected
-→ run continues
-→ user reconnects by run_id
-```
-
-因此：
-
-> Transport Disconnect ≠ Business Cancellation。
-
----
-
-## 3. Streaming Generator 的取消
-
-一个良好的 Stream Generator 要有 Cleanup：
+## 2. 一个可观察的超时与清理实验
 
 ```python
+# example: timeout_app
+import asyncio
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+app.state.events = []
+
+async def slow_operation():
+    app.state.events.append("started")
+    try:
+        await asyncio.sleep(1)
+        return "完成"
+    finally:
+        app.state.events.append("cleaned")
+
+@app.get("/slow")
+async def slow():
+    try:
+        async with asyncio.timeout(0.02):
+            result = await slow_operation()
+        return {"result": result}
+    except TimeoutError:
+        raise HTTPException(504, "本次等待超时") from None
+```
+
+请求 `/slow` 应得到 504，记录中出现 `started` 和 `cleaned`。这说明在这个本地、可协作取消的等待中，超时触发了取消，协程执行了 finally。
+
+它**没有**证明另一个服务器中的工作已经停止。若 slow_operation 已把创建工单请求发送出去，工单仍可能在远端成功创建。
+
+## 3. CancelledError 为什么通常要继续抛出
+
+取消是控制流程的一部分。代码可以在被取消时记录必要信息和清理资源，但通常应让取消继续传播，而不是伪装成正常结果。
+
+```python
+# example: cancellation_demo
 import asyncio
 
-async def event_stream():
+async def main():
+    entered = asyncio.Event()
+    events = []
+
+    async def work():
+        try:
+            entered.set()
+            await asyncio.sleep(60)
+        except asyncio.CancelledError:
+            events.append("cancelled")
+            raise
+        finally:
+            events.append("cleaned")
+
+    task = asyncio.create_task(work())
+    await entered.wait()  # 确认已进入工作，再发取消，避免靠猜测等待时间
+    task.cancel()
     try:
-        async for event in runtime.events():
-            yield event
+        await task       # 等待其处理取消并结束，不是发出cancel就不管了
     except asyncio.CancelledError:
-        await runtime.cancel_if_ephemeral()
-        raise
-    finally:
-        await runtime.detach_stream()
+        events.append("observed")
+    return events
+
+if __name__ == "__main__":
+    print(asyncio.run(main()))  # ['cancelled', 'cleaned', 'observed']
 ```
 
-重点是：
+从 Python 3.8 起，`asyncio.CancelledError` 继承 `BaseException`，**普通 `except Exception` 不会捕获它**。真正会把它截住的是显式捕获 CancelledError、捕获 BaseException 或裸 except 等写法。这一点以 [Python 官方异常文档](https://docs.python.org/3/library/asyncio-exceptions.html)为准。
 
-- 不吞 `CancelledError`；
-- finally 释放资源；
-- 是否取消业务 Run 由策略决定。
+> ⚠️ finally 不是断电保障。进程被直接杀死、机器掉电，或者异步清理又被取消时，清理可能不能完成。需要持久恢复的业务不能只依赖内存里的 finally。
 
----
+## 4. 同时启动的其他任务，谁负责收尾
 
-## 4. 不要把 CancelledError 当普通业务异常吞掉
+`gather` 的结果顺序与输入一致，但默认一个子任务报错时，不保证其他所有子任务立即被取消。调用者需要知道是否允许剩余工作继续。
 
-坏模式：
+例如同时查资料和读取配置：资料查询失败后，若已经无法回答，应停止不再需要的配置查询，并等待清理结束；若配置仍有独立用途，则要明确由谁继续管理。
+
+`TaskGroup` 可以管理需要一起结束的子任务。这里先掌握“谁启动、谁决定失败后的去留、谁等待收尾”；处理异常组的具体语法属于 Python 并发用法。
+
+<details>
+<summary>按需实验：TaskGroup 与 except* 怎样落实共同收尾</summary>
 
 ```python
-try:
-    ...
-except Exception:
-    return {"error": "failed"}
+# example: taskgroup_demo
+import asyncio
+
+async def main():
+    entered = asyncio.Event()
+    events = []
+
+    async def slow():
+        try:
+            entered.set()
+            await asyncio.sleep(60)
+        finally:
+            events.append("slow cleaned")
+
+    async def fail():
+        await entered.wait()
+        raise ValueError("模拟下游失败")
+
+    try:
+        async with asyncio.TaskGroup() as group:
+            group.create_task(slow())
+            group.create_task(fail())
+    except* ValueError:
+        events.append("failure observed")
+    return events
+
+if __name__ == "__main__":
+    print(asyncio.run(main()))  # ['slow cleaned', 'failure observed']
 ```
 
-这可能破坏取消传播。
+`except*` 用于处理异常组中的匹配异常，这里处理任务组收集的 ValueError。它不是把所有失败默认为可忽略。任务组负责本地子任务的生命周期，也不能撤销已经提交给外部系统的动作。
 
-更好的原则：
+</details>
 
-> 取消是控制流信号，不应被无脑转换成普通业务失败。
+## 5. 浏览器断开，不要猜业务策略
 
-具体异常层级和 asyncio 版本行为要按当前 Python Runtime 核实。
+临时生成可以随连接中断而停止；已被接受的长任务可以继续，把连接视为一个可重新建立的观察窗口。应先选择业务语义，再连接到框架断开信号。
+
+Starlette 的 `request.is_disconnected()` 可用于检查断开状态，但不要做无等待的忙轮询，也不要让多个消费者争抢原始请求接收流。复杂流式实现的断开通知、发送失败与取消路径应按实际框架版本验证。
+
+```text
+传输断开
+  ├─ 临时工作：请求停止生成 → 清理本次资源
+  └─ 持久任务：解除订阅 → 任务按自身状态继续
+```
+
+## 6. 对哪些东西可以取消，必须有现实预期
+
+协程在可取消的等待点有机会响应。在线程中已经执行的同步函数，通常不能通过取消等待它的协程就安全强杀。远端调用则取决于供应商是否有取消协议以及动作是否已经提交。
+
+当有副作用且结果未知时，后续应使用稳定操作标识查询状态、核对结果或走补偿流程。不要因为没有响应，就立刻用新标识再执行一次。
+
+## 7. 清理只清理自己拥有的资源
+
+单次请求结束可能释放文件、临时订阅、借出的会话和本次创建的子任务；不应顺便关闭所有请求共用的 HTTP 客户端或连接池。
+
+需要异步等待的清理也可能再次被取消。确有必要保护清理时，可以设置有限的屏蔽范围和超时；不要把全部业务都设为不可取消。具体写法取决于 asyncio 或 AnyIO 的取消模型，见[取消与清理说明](https://anyio.readthedocs.io/en/stable/cancellation.html)。
+
+## 8. 失败实验怎样写才有用
+
+分别测试：等待超时、主动取消、流发到一半失败、客户端关闭连接、服务停止。每个实验应观察其具体边界，而不是只断言“请求没有成功”。
+
+上面两个 asyncio 实验只验证本地任务，不能代替真实流式断开测试。代理超时、供应商取消和外部动作查询需要对应集成环境。
+
+**练习：** 把 cancellation_demo 中的 `raise` 临时去掉。观察任务是否仍以 CancelledError 结束，再解释为什么调用者可能误认为工作正常完成。该错误实验只用于本地临时文件，不提交为业务实现。
 
 ---
 
-## 5. `request.is_disconnected()` 的用途
+## 本章小结
 
-Starlette Request 提供检测客户端是否断开的能力。
+超时表示等待预算，取消是本地控制请求，断开是传输事件。清理需要明确所有权，结果未知的外部动作需要核对，不能把任何一个信号当成“世界已经停止”。
 
-在长时间 Poll/Stream 中可以周期性检查。
+## 🎯 面试怎么回答
 
-但不要形成忙轮询：
+**except Exception 会吞掉现代 asyncio 的取消异常吗？**
 
-```text
-while True:
-    is_disconnected()
-```
+> 不会。CancelledError 自 Python3.8 起继承 BaseException。仍应避免显式捕获后不再抛出，或用过宽的 BaseException 捕获把取消转成成功。
 
-应该结合你的异步事件循环和实际工作节奏。
+**超时后为什么不能直接重试有副作用操作？**
 
----
+> 远端可能已执行但响应丢失，需要稳定操作标识与状态查询、幂等或核对流程；不能将等待超时当成未执行证明。
 
-## 6. Timeout 应该分层
+## ⚠️ 易错点
 
-常见：
+> ⚠️ task.cancel()是发出请求，仍需等待和观察任务结束。
 
-```text
-Connect Timeout
-Read Timeout
-Provider Request Timeout
-Route / Request Deadline
-Gateway Timeout
-```
+> ⚠️ 本地 finally 执行通过，不代表远端动作已撤销或进程崩溃能自动恢复。
 
-不要把所有层都设成 30 秒。
 
-更合理：
+## 本章自测
 
-```text
-End-to-end Deadline
-→ 给子调用分预算
-```
-
-完整 Timeout Budget 在 AI Backend Engineering 深讲。
-
----
-
-## 7. Downstream Cancellation 不一定存在
-
-有些 Provider API 支持显式 cancel；有些没有。
-
-即使本地 Coroutine cancel：
-
-```text
-local coroutine stopped
-```
-
-远端服务器可能已经收到请求并继续运行。
-
-因此必须知道下游协议的真实语义。
-
----
-
-## 8. 副作用 Tool 最危险
-
-例子：
-
-```text
-调用支付 Tool
-→ 8 秒没收到响应
-→ FastAPI timeout
-→ 客户端重试
-```
-
-但第一次请求可能已经成功扣款。
-
-这不是 FastAPI 框架问题，而是：
-
-```text
-Timeout + Side Effect + Idempotency
-```
-
-API 层至少要携带稳定 Idempotency Key / Operation ID，真正语义在 Backend/Agent Runtime 实现。
-
----
-
-## 9. Cleanup 要考虑哪些资源
-
-Request 取消时常见需要清理：
-
-- DB Session / Transaction；
-- HTTP Stream；
-- File Handle；
-- Subscription；
-- per-request Task；
-- temporary buffer。
-
-但 Application-scoped Client/Pool 不应该因为单个请求取消就整体关闭。
-
----
-
-## 10. Shield 要谨慎
-
-有时某段清理动作需要在取消时尽量完成，比如：
-
-```text
-写最终状态
-释放 Lease
-flush audit event
-```
-
-可以考虑 shield 类机制，但不能滥用。
-
-如果所有任务都 shield：
-
-```text
-cancel loses meaning
-shutdown hangs
-```
-
----
-
-## 11. Graceful Shutdown 也是 Cancellation 问题
-
-服务关闭时：
-
-```text
-stop accepting new requests
-→ wait / cancel inflight
-→ stop stream
-→ flush state
-→ close pool
-```
-
-这和第 15 章 Deployment 会重新组合。
-
----
-
-## 12. Failure Timeline
-
-### Case：用户关闭 Agent Chat 页面
-
-```text
-Client disconnect
-→ SSE generator cancelled
-→ FastAPI stream closes
-→ Agent run is durable
-→ Runtime keeps executing
-→ user returns later
-→ GET run state / resume stream
-```
-
-另一种业务也可能：
-
-```text
-Client disconnect
-→ generation cancel
-→ provider request cancel
-→ run marked CANCELLED
-```
-
-关键是**预先定义语义**。
-
----
-
-## 13. 🎯 面试怎么回答
-
-> 我会把客户端断开、Request Timeout 和业务取消分开。FastAPI Streaming Endpoint 被取消时要让 Coroutine 正确传播 CancelledError 并在 finally 清理 request-scoped resource；但是否取消 Agent Run 要看 Run 是否 durable。Timeout 只说明本地不再等结果，不代表远端副作用停止，所以有写操作时还必须结合 Idempotency / Operation ID。
-
----
-
-## 14. 易错点
-
-- ❌ Client disconnect = 下游任务一定停止。
-- ❌ Timeout = 请求没有执行成功。
-- ❌ catch Exception 后返回 error 就能处理 Cancellation。
-- ❌ `finally` 可以省略。
-- ❌ Durable Agent Run 必须绑定浏览器连接生命周期。
-
----
-
-## 15. 本章自测
+先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
 
 <details>
-<summary>1. Timeout 与 Cancellation 的区别是什么？</summary>
+<summary>1. 调用 task.cancel() 后，为什么还要 await 这个任务？</summary>
 
-Timeout 是超过等待预算；Cancellation 是显式请求停止某个执行单元。Timeout 可能触发 cancellation，但远端是否真的停止取决于协议实现。
+cancel 只是发出取消请求。等待任务结束，才能观察取消结果，并让它完成相应清理；不能发出请求后就假定工作已经停止。
 
 </details>
 
 <details>
-<summary>2. 为什么支付类 Tool 的 Timeout 特别危险？</summary>
+<summary>2. 为什么超时实验中 cleaned 出现仍不能证明付款未发生？</summary>
 
-因为超时只代表没有收到结果，副作用可能已经发生；盲目重试会重复扣款，因此需要 Idempotency 和明确操作状态。
+cleaned 只记录本地资源清理，远端付款有自己的提交与返回过程。
 
 </details>
 
 <details>
-<summary>3. 为什么 Durable Agent 不应该和 SSE 连接生命周期强绑定？</summary>
+<summary>3. 用户关闭页面后，为什么不一定把 run 状态改成 CANCELLED？</summary>
 
-用户断网或关闭页面不一定意味着要停止长任务；Run 可以持久化并在之后重新连接查看状态。
+断开不等于业务取消，持久任务可能继续；只有明确请求并确认停止语义后才能按契约更新状态。
 
 </details>
+
+## 知识回看与权威资料
+
+- [asyncio 异常层级](https://docs.python.org/3/library/asyncio-exceptions.html)：核对 CancelledError 的继承与传播。
+- [任务、超时与任务组](https://docs.python.org/3/library/asyncio-task.html)：核对 cancel、gather、TaskGroup、timeout。
+- [请求断开](https://starlette.dev/requests/)：核对 is_disconnected。
+- [AnyIO 取消](https://anyio.readthedocs.io/en/stable/cancellation.html)：理解有限清理与取消作用域。

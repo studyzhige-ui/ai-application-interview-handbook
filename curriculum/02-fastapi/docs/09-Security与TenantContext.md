@@ -1,308 +1,211 @@
-# 09｜Authentication、Authorization、CORS 与 Tenant Context
+# 09｜认证、授权与租户：让访问范围可信
 
-FastAPI 的安全章节不应该变成 OAuth2 术语大全。
+[← 上一章](08-WebSocket与EventProtocol.md) · [模块主页](../README.md) · [下一章 →](10-ExternalResourceIntegration.md)
 
-对 AI Application Engineer 更重要的是建立：
+用户甲把地址里的笔记编号从 1 改成 2，竟然读到了用户乙的内容。接口的数据类型可能完全正确，漏洞仍然存在。因为“编号是整数”和“这个人有权读这条记录”不是同一个问题。
 
-```text
-谁在请求？
-→ 他属于哪个 Tenant？
-→ 他能访问哪些资源？
-→ API 层怎样把身份传给后续 RAG / Agent / Tool？
-```
+这一章把身份、权限和访问范围接到已学过的依赖系统上。例子只使用公开的教学口令，不实现生产登录系统；目标是让允许与拒绝的规则可以被亲手验证。
 
----
+## 1. 先分别回答“是谁”和“能做什么”
 
-## 1. Authentication 和 Authorization 先分清
+**认证（Authentication）** 确认请求对应哪个身份。**授权（Authorization）** 决定这个身份能否对某项资源执行某种操作。
 
-```text
-Authentication
-= 你是谁？
+一个令牌格式正确，不代表令牌可信；令牌可信，也不代表它持有者可以读取所有笔记。实际步骤是：提取凭证、验证凭证、建立身份，再根据身份和目标资源检查权限。
 
-Authorization
-= 你能做什么？
-```
+`HTTPBearer` 能帮你读取 `Authorization: Bearer ...`。**它本身不会替你验证任意 JWT 的签名、有效期、签发方或受众，也不会自动查出用户拥有哪些资源。** [FastAPI 安全教程](https://fastapi.tiangolo.com/tutorial/security/first-steps/)解释了安全依赖与 OpenAPI 的关系。
 
-例如：
+## 2. 让身份成为函数的显式输入
 
-```text
-Bearer Token
-→ 解析 user_id
-→ Authentication 完成
-
-user_id + resource_id
-→ 检查 ownership / role / scope
-→ Authorization 决定允许或拒绝
-```
-
-不要把“Token 合法”当成“拥有所有资源权限”。
-
----
-
-## 2. FastAPI 为什么很适合把身份做成 Dependency
-
-例如：
+下面用一个很小的字典模拟认证服务。两个字符串都是公开测试数据，不能用于真实系统。
 
 ```python
+# example: auth_app
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from pydantic import BaseModel
 
-async def get_current_user(...) -> User:
-    ...
+app = FastAPI()
+bearer = HTTPBearer(auto_error=False)
 
-CurrentUser = Annotated[User, Depends(get_current_user)]
+class User(BaseModel):
+    id: str
+    tenant_id: str
 
-@app.get("/me")
-async def me(user: CurrentUser):
+USERS = {
+    "demo-alice": User(id="alice", tenant_id="team-a"),
+    "demo-bob": User(id="bob", tenant_id="team-b"),
+}
+NOTES = {
+    1: {"tenant_id": "team-a", "text": "甲团队的笔记"},
+    2: {"tenant_id": "team-b", "text": "乙团队的笔记"},
+}
+
+def current_user(
+    credentials: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
+) -> User:
+    user = USERS.get(credentials.credentials) if credentials else None
+    if user is None:
+        raise HTTPException(401, "需要有效凭证", headers={"WWW-Authenticate": "Bearer"})
     return user
+
+CurrentUser = Annotated[User, Depends(current_user)]
+
+@app.get("/notes/{note_id}")
+def read_note(note_id: int, user: CurrentUser):
+    note = NOTES.get(note_id)
+    if note is None or note["tenant_id"] != user.tenant_id:
+        raise HTTPException(404, "笔记不存在或不可访问")
+    return {"id": note_id, "text": note["text"]}
 ```
 
-这让身份成为 Handler 的显式输入。
+`HTTPBearer` 提取请求头后，把凭证对象传给 current_user。`credentials.credentials` 是实际的 token 文字；USERS 用它查找教学身份。`auto_error=False` 让缺少凭证的情况也交给 current_user，统一返回本例的 401。
 
-比隐藏全局变量更安全、更易测试。
+| 请求条件 | 预期结果 | 解释 |
+|---|---|---|
+| 没有 Authorization | 401 | 尚未获得可信身份 |
+| `Bearer wrong` | 401 | 教学认证源不接受该口令 |
+| `Bearer demo-alice`，读取 1 | 200 | 同一团队，允许读取 |
+| `Bearer demo-alice`，读取 2 | 404 | 本例不向其他团队暴露资源是否存在 |
+| `Bearer demo-bob`，读取 2 | 200 | 同一团队，允许读取 |
 
----
+可以在 `/docs` 中使用 Authorize，填入教学 token 后调用；也可以在测试中发送请求头。选择 404 是本例的资源隐藏策略，不是所有禁止访问都必须返回 404。明确存在、但不允许执行的操作也常使用 403。
 
-## 3. Tenant Context 是 AI SaaS 的关键前置
+## 3. 租户范围必须来自可信关系
 
-多租户系统中，只传 `user_id` 往往不够。
+租户可以理解为拥有相对独立数据范围的团队或组织。这个例子只允许用户读取所属团队的数据。
 
-更常见：
+客户端即使发送 `X-Tenant-ID: team-b`，也不应因此变成 team-b 成员。可信范围来自通过验证的身份与后端成员关系；多团队用户选择目标团队时，还需要验证其成员资格。
+
+身份继续传到服务和数据访问层：
 
 ```text
-user_id
-tenant_id
-roles / scopes
-request_id
-policy context
+验证凭证 → User / TenantContext
+                  ↓
+         检查当前资源与动作
+                  ↓
+         带可信范围读取数据
+                  ↓
+         过滤输出，返回允许内容
 ```
 
-封装成：
+> ⚠️ 不要把 `current_user` 或 `current_tenant` 放到应用全局变量中。两个请求交错执行时可能读到对方的身份。请求范围的数据通过参数、依赖结果或 request.state 传递；共享客户端才适合应用范围。
+
+## 4. 结构校验和权限检查谁先做
+
+它们共同组成边界，但不必硬背一个所有请求通用的总顺序。路由匹配、参数解析和依赖求值有框架执行关系；业务上必须保证的是：**在访问受限内容或产生副作用之前，身份和授权已经完成。**
+
+不能先把另一租户的材料发送给模型，再在输出页面隐藏它。缓存和向量索引也不例外：键里带租户前缀有帮助，但调用者仍必须无法伪造访问范围。
+
+### 4.1 有权访问，不等于有权替用户确认高风险动作
+
+用户可能有权阅读笔记，但删除整组资料还需要更强权限，甚至需要再次确认。这里要分别核对**身份、动作权限和本次操作意图**。只有业务风险要求时才引入额外确认，不是所有写请求都要弹窗。
+
+例如应用决定批量删除前必须确认，页面应展示将删除哪些资料。确认结果由服务端绑定到用户、目标集合、动作和有效期；执行时再次核对。用户确认删除 A 后，不能把同一确认拿来删除 B。目标或关键参数变化，就应使旧确认失效。[OWASP 事务授权建议](https://cheatsheetseries.owasp.org/cheatsheets/Transaction_Authorization_Cheat_Sheet.html)说明了授权与具体操作绑定的必要性。
+
+FastAPI 可以承接请求、身份依赖和确认结果，但不能让模型自己生成一个 `confirmed=true` 就绕过后端检查。需要审计或跨重启恢复时，确认记录与任务执行要由持久状态共同承载。
+
+## 5. CORS 管什么，不管什么
+
+浏览器页面所在的来源由协议、主机和端口共同决定。例如 `http://localhost:5173` 与 `http://localhost:8000` 是不同来源。CORS 让服务器声明哪些来源的浏览器脚本可以读取跨源响应。
 
 ```python
-class RequestContext:
-    user_id: str
-    tenant_id: str
-    scopes: set[str]
+# example: cors_app
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
+)
+
+@app.get("/hello")
+def hello():
+    return {"message": "hello"}
 ```
 
-然后显式传给：
+这不是给 `hello` 增加登录要求。没有浏览器 CORS 约束的 HTTP 客户端仍可以请求它。CORS 也不能替代 Cookie 身份下的 CSRF 防护。
 
-```text
-MySQL Query
-Redis Key
-Vector Filter
-RAG Retrieval
-Agent State
-Tool Permission
-```
+某些跨源请求会先发送 **OPTIONS 预检**。例如前端要带 Authorization 发 POST，浏览器先询问：“这个来源能用 POST 和这个请求头吗？”允许后才继续原请求。
 
-Tenant Isolation 不是前端传一个 tenant_id 就完成了。
+测试预检时要提供 `Origin`、`Access-Control-Request-Method` 以及所需的请求头声明，才是在模拟这个询问；普通空 OPTIONS 不是同一件事。
 
----
+> ⚠️ 启用凭据的跨域交互应明确列出允许的来源、方法和请求头，不直接复制通配配置。`localhost` 与 `127.0.0.1` 也不是同一个主机名，配置必须匹配实际前端地址。
 
-## 4. Authorization 应靠数据和策略，不靠 Prompt
+## 6. 不可信输入与秘密应在哪一层处理
 
-错误：
+安全不止登录。需要把风险落实到具体边界：
 
-```text
-System Prompt：不要读取别人的知识库
-```
+- 请求结构：限制长度、数量、字段和文件大小，拒绝不合法输入。
+- 数据访问：检查资源所属范围和动作权限，必要时在查询中再限制范围。
+- 外部调用：不要把用户提供的任意地址直接作为服务器请求目标。
+- 日志与响应：不输出 Authorization、密码、私钥和带秘密的连接字符串。
 
-正确边界：
+排错时可以记录 request_id、错误类别和经过筛选的上下文，而不是默认记录全部正文。发生凭证泄露时应吊销或轮换；仅删除最新文件不能消除已泄露的历史。
 
-```text
-Auth Context
-→ API / Service Policy
-→ DB WHERE tenant_id = ?
-→ Vector Metadata Filter
-→ Tool Permission
-```
+## 7. 用拒绝实验检查设计是否真实生效
 
-Prompt 可以提醒模型，但不能替代硬权限控制。
+成功请求只能说明存在一条可用路径。权限实验必须主动交换身份和资源：Alice 读取 Bob 的资源、伪造租户请求头、使用无效 token、取消身份凭证、访问不存在的对象。
+
+**练习：** 在示例中添加 `/me`，只返回用户 ID 和所属团队。再添加两个测试：无凭证时 401，Alice 的响应不能包含她使用的 token。接口帮助客户端了解自己，不应该把凭证当作可公开身份字段。
 
 ---
 
-## 5. Route-level Policy
+## 本章小结
 
-例如：
+认证建立可信身份，授权决定具体动作的访问范围。类型校验、CORS 和输出过滤都很重要，但不能相互替代。安全规则必须通过允许与拒绝的请求共同验证。
 
-```text
-GET /knowledge/{id}
-→ member can read
+## 🎯 面试怎么回答
 
-DELETE /knowledge/{id}
-→ admin only
+**HTTPBearer 是否已经完成 JWT 校验？**
 
-POST /agent/tools/execute
-→ authenticated + specific scope
-```
+> 没有，它主要提取 Bearer 凭证并参与接口声明。具体签名、有效期、签发方、受众及身份关系需要验证器负责。
 
-Dependency 很适合表达这种 Route-specific Policy。
+**多租户接口怎样防止用户修改 tenant_id 越权？**
 
----
+> 从已验证身份确定成员关系，检查资源与动作，向数据和服务层传递可信范围。客户端选择的 tenant_id 不能直接成为授权依据。
 
-## 6. Middleware 在安全中的角色
+## ⚠️ 易错点
 
-Middleware 更适合：
+> ⚠️ 认证通过不等于授权通过；读取和删除同一对象也可能需要不同权限。
 
-- CORS；
-- Security Headers；
-- Request ID；
-- 全局 Trace；
-- 某些 Token Extraction / Context Bootstrap。
+> ⚠️ CORS 是浏览器跨源访问机制，不是接口的登录防线，也不阻止普通服务端客户端。
 
-但细粒度业务权限通常仍应进入 Route/Service Policy。
+> ⚠️ 测试 token 是公开教学输入，不能复制成部署用的硬编码密钥。
 
----
+## 本章自测
 
-## 7. CORS 到底解决什么
-
-CORS 主要是浏览器的 Cross-Origin 访问控制机制。
-
-例如：
-
-```text
-Frontend: https://app.example.com
-API:      https://api.example.com
-```
-
-浏览器会根据 Origin 和 Server 返回的 CORS Header 决定前端脚本是否能读取响应。
-
-FastAPI 可以使用 `CORSMiddleware`。
-
-⚠️ CORS 不是：
-
-- API Authentication；
-- 防爬虫；
-- 防服务端 HTTP Client；
-- 权限系统。
-
----
-
-## 8. `allow_origins=["*"]` 为什么不能无脑用
-
-开发环境图方便可以宽松，但生产要理解：
-
-- 哪些 Origin 真正允许；
-- 是否带 Credential；
-- 暴露哪些 Header；
-- Preflight 行为。
-
-安全配置应该根据实际前端部署关系设计。
-
----
-
-## 9. Secret Boundary
-
-API Key / Model Provider Secret 不应该：
-
-```text
-返回前端
-写进普通 Access Log
-塞进 Error Message
-写入 Prompt Trace 明文
-```
-
-Request Log 需要 Redaction：
-
-```text
-Authorization: Bearer ***
-api_key: ***
-password: ***
-```
-
----
-
-## 10. Upload / Prompt / Tool Input 都是不可信输入
-
-AI Service 的输入风险不止 SQL Injection。
-
-包括：
-
-```text
-huge body / huge file
-path traversal
-malformed JSON
-prompt injection
-malicious retrieved content
-tool parameter abuse
-```
-
-FastAPI 层负责基础输入 Contract 和上传边界；Prompt Injection / Tool Permission 的深层安全在 Agent Harness。
-
----
-
-## 11. 错误响应不要泄露内部信息
-
-不要直接把：
-
-```text
-stack trace
-DB connection string
-internal host
-provider API error with secret
-```
-
-返回给客户端。
-
-外部 Error Contract 应稳定且最小化；内部日志保留诊断信息并做好脱敏。
-
----
-
-## 12. Multi-tenant Cache Key
-
-例如：
-
-```text
-bad:
-chat:{session_id}
-
-better:
-tenant:{tenant_id}:chat:{session_id}
-```
-
-但仅靠 Key 前缀仍不代表完整隔离。
-
-还要确保读取路径中 tenant context 不能被客户端任意伪造。
-
----
-
-## 13. 🎯 面试怎么回答
-
-> FastAPI 层我会把身份和 Tenant Context 做成显式 Dependency，再在 Service/Data 层继续传递，而不是依赖全局变量或 Prompt。Authentication 解决“谁”，Authorization 解决“能不能访问这个资源”。CORS 只是浏览器跨域控制，不是认证。真正的多租户隔离要在 DB、Redis、Vector Filter、Agent State 和 Tool Permission 都带上可信 Tenant Context。
-
----
-
-## 14. 易错点
-
-- ❌ Token 合法 = 拥有资源权限。
-- ❌ CORS = 后端安全认证。
-- ❌ tenant_id 由客户端传过来就可信。
-- ❌ Prompt 写“不要越权”就算 Authorization。
-- ❌ Secret 可以记录到普通 Trace 里方便排错。
-
----
-
-## 15. 本章自测
+先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
 
 <details>
-<summary>1. Authentication 和 Authorization 有什么区别？</summary>
+<summary>1. Alice 为什么读笔记 2 得到 404 而不是 200 后隐藏正文？</summary>
 
-Authentication 确认身份；Authorization 根据身份、资源和策略决定是否允许某个动作。
+服务端在交付受限内容前拒绝，并用 404 降低资源存在性泄露；拒绝策略应明确且一致。
 
 </details>
 
 <details>
-<summary>2. 为什么 Tenant Context 应成为后端可信上下文，而不是直接相信请求参数？</summary>
+<summary>2. 配置 CORSMiddleware 后是否可以删除 current_user？</summary>
 
-请求参数可被客户端伪造；可信 tenant 应从认证信息和后端映射得到，并继续用于数据查询、缓存、向量过滤和工具权限。
+不可以，两者解决不同问题。
 
 </details>
 
 <details>
-<summary>3. CORS 能阻止 curl 调你的 API 吗？</summary>
+<summary>3. 缓存键带 tenant_id 就一定不会越权吗？</summary>
 
-不能。CORS 主要由浏览器执行，用来限制前端脚本跨 Origin 读取响应，不是服务端认证机制。
+不一定。若 tenant_id 可以任意伪造，前缀仍会导向其他团队数据；可信身份与范围检查必须存在。
 
 </details>
+
+## 知识回看与权威资料
+
+- [安全依赖](https://fastapi.tiangolo.com/tutorial/security/first-steps/)：了解凭证提取和 OpenAPI 安全声明。
+- [CORS](https://fastapi.tiangolo.com/tutorial/cors/)：核对来源、预检、凭据和允许项。
+- [安全工具参考](https://fastapi.tiangolo.com/reference/security/)：核对 auto_error 和凭证对象。
+
+真人问题回看：[S288 的读写权限与用户确认](../../../market/interviews/batch-29.md)、[S294 的 CORS](../../../market/interviews/batch-33.md)。这些问题加深的是已有访问边界，不需要另外增加一套安全术语课程。

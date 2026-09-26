@@ -1,305 +1,218 @@
-# 04｜Dependency Injection 与 Middleware：职责、顺序与横切逻辑
+# 04｜依赖与中间件：复用前提，不隐藏执行过程
 
-`FASTAPI-002` 是一个很有代表性的真人问题：
+[← 上一章](03-Pydantic与数据契约.md) · [模块主页](../README.md) · [下一章 →](05-ResourceLifecycle.md)
 
-> **Middleware 和 Dependency Injection 有什么区别？认证、日志、公共上下文到底应该放哪里？**
+两个接口都需要分页参数，三个接口都需要知道当前用户。最直观的做法是在每个函数开头重复读取和检查。代码渐渐变多以后，你会发现同一条规则被写了好几遍，而且并不总是同步更新。
 
-这不是 API 记忆题，而是在考你是否真正理解 Request Lifecycle。
+处理函数需要分页配置，就把这个需要写在参数里，让 FastAPI 调用准备函数，再把结果传进来。这就是**依赖注入**：“依赖”是需要的值或资源，“注入”是由框架准备并传入。
 
----
+**中间件**处理另一类需求，例如在所有 HTTP 请求到来时记录信息，在内层返回时补上响应头。它们都能复用代码，但执行位置和交付结果的方式不同。
 
-## 1. 先看两个抽象解决什么问题
+## 1. 先把重复的输入准备提取成依赖
 
-Middleware 解决的是：
-
-> **整个 ASGI Application 的横切逻辑。**
-
-Dependency Injection 解决的是：
-
-> **某个 Route / Dependency Graph 需要哪些输入、资源、身份和前置条件。**
-
-它们可能都能“执行一段前置逻辑”，但语义完全不同。
-
----
-
-## 2. Middleware 的位置
-
-FastAPI 官方语义可以抽象成：
-
-```mermaid
-flowchart LR
-    A["Request"] --> B["Middleware Before"]
-    B --> C["Routing / Dependencies / Handler"]
-    C --> D["Middleware After"]
-    D --> E["Response"]
-```
-
-常见 Middleware：
-
-- Request ID；
-- Access Log；
-- Timing；
-- CORS；
-- Trace Context；
-- 全局安全 Header；
-- 某些全局 Context 初始化。
-
-Middleware 不知道某个函数参数为什么叫 `current_user`，它更接近整个 Application 的外层。
-
----
-
-## 3. Dependency 的位置
-
-Dependency 是 Route-aware 的：
+下面两个接口使用同一组分页规则。例子不访问数据库，方便只观察依赖怎样执行。
 
 ```python
+# example: dependency_app
 from typing import Annotated
-from fastapi import Depends
+from fastapi import Depends, FastAPI, Query, Request
 
-async def get_current_user(...):
-    ...
+app = FastAPI()
 
-@app.get("/me")
-async def me(user: Annotated[User, Depends(get_current_user)]):
-    return user
+def page_options(limit: Annotated[int, Query(ge=1, le=5)] = 2):
+    return {"limit": limit}
+
+PageOptions = Annotated[dict, Depends(page_options)]
+
+@app.get("/notes")
+def notes(options: PageOptions):
+    return {"kind": "notes", "limit": options["limit"]}
+
+@app.get("/tasks")
+def tasks(options: PageOptions):
+    return {"kind": "tasks", "limit": options["limit"]}
 ```
 
-你声明的是：
+请求 `/notes?limit=3` 时，发生的是：
 
-> `/me` 这个 Handler 运行前需要一个 `User`。
+1. FastAPI 发现 `options` 不是要直接从请求里找的字典，而是由 `page_options` 提供。
+2. 框架解析 `page_options` 的查询参数，检查 limit 范围。
+3. 执行依赖函数，得到 `{"limit":3}`。
+4. 把这个结果传给 `notes` 的 options，再运行处理函数。
 
-FastAPI 会解析 Dependency Graph。
+因此两个接口的 `/docs` 都能显示 limit 参数。依赖是可调用的普通 Python 对象，`Depends` 则是让框架识别这个关系的声明。[依赖基础](https://fastapi.tiangolo.com/tutorial/dependencies/)
 
----
+> ⚠️ 写 `Depends(page_options)`，不是 `Depends(page_options())`。前者交出“需要框架调用的函数”，后者会在登记路由时提前执行。离开 FastAPI，普通 Python 调用也不会自动解析 Depends；业务内部应传明确参数。
 
-## 4. Dependency Graph 可以嵌套
+## 2. 依赖图：共享的不只是代码
+
+身份依赖可以先依赖凭证提取，权限依赖再依赖身份。箭头表示“需要它先提供结果”，不是每个节点都单独发一次 HTTP 请求。
 
 ```text
-Handler
-├── CurrentUser
-│   └── TokenParser
-├── DBSession
-└── TenantContext
-    └── CurrentUser
+处理函数
+├── 分页配置
+└── 当前用户
+    └── 请求凭证
 ```
 
-这比“在每个 Route 顶部手写认证代码”更适合复用和测试。
+同一次请求中，多处需要同一项可复用依赖时，框架默认复用已求出的结果。例如两个检查都需要当前用户，不必重复取得身份；下一次请求仍会重新计算，不会复用别人的身份。
 
-同时 Dependency 声明的参数可以进入 OpenAPI Contract，这也是它和纯 Middleware 的一个重要区别。
-
----
-
-## 5. Middleware 的执行顺序
-
-当有多层 Middleware 时，它们形成嵌套栈。
-
-例如：
+<details>
+<summary>按需实验：观察请求内缓存，以及 use_cache=False</summary>
 
 ```python
-app.add_middleware(MiddlewareA)
-app.add_middleware(MiddlewareB)
+# example: dependency_cache
+from typing import Annotated
+from fastapi import Depends, FastAPI, Request
+
+app = FastAPI()
+
+async def next_number(request: Request):
+    request.state.calls = getattr(request.state, "calls", 0) + 1
+    return request.state.calls
+
+@app.get("/cached")
+async def cached(
+    a: Annotated[int, Depends(next_number)],
+    b: Annotated[int, Depends(next_number)],
+):
+    return {"a": a, "b": b}
+
+@app.get("/uncached")
+async def uncached(
+    a: Annotated[int, Depends(next_number)],
+    b: Annotated[int, Depends(next_number, use_cache=False)],
+):
+    return {"a": a, "b": b}
 ```
 
-可以理解为：
+`request.state` 是本次请求的状态容器，这里只用于记录实验次数。`getattr(..., 0)` 表示尚未记录时从 0 开始。
 
-```text
-Request:
-B → A → Route
-
-Response:
-Route → A → B
-```
-
-最后添加的 Middleware 在外层。
-
-顺序会影响：
-
-- Trace Context 是否已经建立；
-- CORS Header 是否还能加；
-- Error 是否被外层捕获；
-- Timing 到底包含哪些阶段。
-
----
-
-## 6. Middleware vs Dependency 对比
-
-| 问题 | Middleware | Dependency |
+| 请求 | 结果 | 解释 |
 |---|---|---|
-| 作用范围 | 通常全局 / Application | Route / Router / Dependency Graph |
-| 是否理解 Handler 参数 | 否 | 是 |
-| 是否适合 Request ID | 很适合 | 通常没必要 |
-| 是否适合获取 Current User | 可以做，但 Dependency 更自然 | 很适合 |
-| 是否适合 DB Session | 不推荐全局创建 | Request-scoped Dependency 很自然 |
-| 是否进入 OpenAPI 输入声明 | 通常不会 | 可以 |
-| 是否易做 dependency override | 不属于该机制 | 很适合 |
+| `/cached` | `{"a":1,"b":1}` | 第二处复用已求出的值 |
+| 再次 `/cached` | 仍是 `1,1` | 新请求重新计算，没有共享上一请求的缓存 |
+| `/uncached` | `{"a":1,"b":2}` | 第二处明确要求重新执行 |
 
----
+真实依赖的缓存识别还与依赖声明的上下文有关，不要把这个实验推成“同名函数在所有情况下只运行一次”。`use_cache=False` 也不是全局缓存清理操作。[子依赖与缓存](https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/)
 
-## 7. Authentication 放哪？
+</details>
 
-通常需要区分：
+## 3. 中间件：在进入和返回时各做一次事情
 
-```text
-Token Extraction
-→ Authentication
-→ Authorization
-```
-
-例如全局 Middleware 可以建立：
-
-```text
-request_id / trace context
-```
-
-而具体用户身份更常通过 Dependency：
+下面只记录执行顺序：A、B 两层中间件在进入和返回时各记一步，最后通过 `X-Order` 响应头展示。这样能直接看见“包住请求处理”是什么意思，不需要先接日志系统。
 
 ```python
-CurrentUser = Annotated[User, Depends(get_current_user)]
+# example: middleware_order
+from fastapi import FastAPI, Request
+
+app = FastAPI()
+
+@app.middleware("http")
+async def layer_a(request: Request, call_next):
+    request.state.steps.append("A.before")
+    response = await call_next(request)
+    request.state.steps.append("A.after")
+    return response
+
+@app.middleware("http")
+async def layer_b(request: Request, call_next):
+    request.state.steps = ["B.before"]
+    response = await call_next(request)
+    request.state.steps.append("B.after")
+    response.headers["X-Order"] = ",".join(request.state.steps)
+    return response
+
+@app.get("/order")
+async def order(request: Request):
+    request.state.steps.append("handler")
+    return {"ok": True}
 ```
 
-因为不同 Route 可能：
-
-- 不需要登录；
-- 需要用户；
-- 需要管理员；
-- 需要某个 Scope。
-
-Dependency 的 Route-aware 特性更自然。
-
----
-
-## 8. Logging 放哪？
-
-也要分层：
-
-### Access Log / Request Timing
-
-更适合 Middleware：
+访问 `/order`，响应头 X-Order 应为：
 
 ```text
-method
-path
-status
-request_id
-latency
+B.before,A.before,handler,A.after,B.after
 ```
 
-### 业务事件日志
+最后添加的自定义中间件在这组自定义中间件的外层，所以请求从 B 进入 A，返回时再从 A 回到 B。框架还有自己的错误处理层；这张顺序图不是所有内部异常包装的源码展开。[中间件顺序](https://fastapi.tiangolo.com/tutorial/middleware/)
 
-更适合 Service：
+`call_next` 继续调用内层请求处理，返回响应对象。这个对象可能承载尚未发送完的流，因此 “after” 不应直接命名为“客户端完整收到响应之后”。
 
-```text
-order_refunded
-knowledge_base_rebuilt
-agent_run_cancelled
-```
+> ⚠️ `@app.middleware("http")` 处理 HTTP 请求，不会自动包住每条 WebSocket 消息。不要用它的执行次数推断 WebSocket 的消息次数。
 
-不要把所有业务日志都塞到 Middleware，因为 Middleware 不知道业务语义。
+## 4. 怎样选择放在哪里
 
----
+| 需求 | 更合适的起点 | 原因 |
+|---|---|---|
+| 请求编号、HTTP 访问记录、CORS | 中间件 | 跨路由处理共同的 HTTP 边界 |
+| 当前用户、路由所需权限、某次操作的资源 | 依赖 | 路由能声明自己实际需要什么 |
+| “笔记已发布”“退款成功”等业务事件 | 业务代码 | 只有业务层知道动作是否真正完成 |
+| 复杂业务内部的一组对象 | 普通构造与显式传参 | 不必全部绑到 FastAPI 的依赖系统 |
 
-## 9. Tenant Context 放哪？
+这是根据职责作出的选择，不是框架禁止你在中间件认证。应用可以用中间件完成统一身份解析，再由依赖和业务层检查具体资源权限。关键是访问范围能被明确验证。
 
-常见做法是：
+依赖还可以挂在单个路由、APIRouter 或应用级的 `dependencies` 上。如果只需要执行检查而不使用返回值，可以放在装饰器的依赖列表；需要结果时则声明成函数参数。不要把两种方式混为“依赖返回值丢了”。
 
-```text
-Header / Token
-→ Dependency resolve tenant
-→ validate membership
-→ inject TenantContext
-```
+## 5. 一次请求的信息应该放在哪里
 
-之后 DB / Redis / Vector DB 调用都显式拿 TenantContext。
+`app.state` 属于应用实例，多个请求可能同时访问；`request.state` 属于本次请求。把 `current_user` 放进应用全局变量，会让后来的请求覆盖先前请求看到的身份。
 
-⚠️ 不要只把 tenant_id 放进一个全局变量。
+更稳妥的方式是：中间件准备请求编号，身份依赖返回可信用户，再把用户或租户上下文显式交给业务函数。请求编号用于关联记录，不能当认证凭证。
 
-多用户并发时会产生严重状态串扰。
+**练习：** 将 layer_a 与 layer_b 的登记顺序互换。先预测为什么原例可能出错，再修复初始化步骤，使任何一层首先进入时都能创建本次请求的步骤列表。目标不是记住字母顺序，而是看见外层初始化如何成为内层前提。
 
 ---
 
-## 10. Dependency Caching 的直觉
+## 本章小结
 
-同一 Request 内，同一个 Dependency 默认情况下可以被复用，而不是每处重新执行一遍。
+依赖声明“我需要哪个结果”，中间件说明“共同的请求处理怎样被包住”。先根据职责选位置，再观察执行顺序。请求内缓存、请求状态与应用级共享资源是不同的范围，不能因为都叫“共享”就混用。
 
-这能避免：
+## 🎯 面试怎么回答
 
-```text
-CurrentUser
-被多个子依赖重复解析 Token / 查用户
-```
+**依赖和中间件的核心差异是什么？**
 
-但你不应该依赖隐含副作用来“顺便执行一次”。Dependency 最好返回明确资源或上下文。
+> 依赖是路由所需输入、资源和前提的图，结果可以直接传给处理函数；中间件包住应用或协议处理，适合请求编号、访问记录等共同逻辑。两者可以配合，不应仅按“都会提前执行”归为同一种东西。
 
----
+**同一请求里的依赖缓存是什么？**
 
-## 11. Dependency 不等于 Service Locator
+> 对可复用的相同依赖，框架可以在该请求内保存已计算结果，避免重复执行。它不是跨请求缓存，也不能替代持久存储或用户会话。
 
-坏模式：
+## ⚠️ 易错点
 
-```text
-所有对象
-→ 全部 Depends
-→ Route 获得十几个内部 Service
-```
+> ⚠️ 函数对象和调用结果不同，Depends 接收前者；业务函数直接调用不会凭空获得注入。
 
-DI 应该帮助表达 API 边界和资源生命周期，而不是把整个程序都变成 FastAPI-specific Dependency Graph。
+> ⚠️ 中间件拿到 response 不代表响应体已经全部发完，尤其是流式响应。
 
-Service 内部仍然可以用普通 Python 构造和明确接口。
+> ⚠️ 不要把身份或租户放进进程全局变量，随后期待每个请求看到自己的那一份。
 
----
+## 本章自测
 
-## 12. Failure：Middleware 和 Dependency 放错位置会怎样
-
-### 把 DB Session 放 Middleware
-
-问题：
-
-- 静态资源 / 健康检查也可能无意义占连接；
-- 生命周期难和业务 Route 对齐；
-- Transaction Boundary 模糊。
-
-### 把 Request ID 放每个 Dependency
-
-问题：
-
-- 重复；
-- 某些非依赖路径可能缺失；
-- 横切上下文不统一。
-
-### 把 Authorization 只放 Middleware
-
-问题：
-
-- Route-specific Policy 很难表达；
-- 容易出现 path 条件分支地狱。
-
----
-
-## 13. 🎯 面试怎么回答 FASTAPI-002
-
-> Middleware 是 ASGI Application 的外层横切机制，适合 request id、访问日志、统一 timing、CORS、trace context 这类几乎每个请求都需要的逻辑。Dependency Injection 是 Route-aware 的参数和资源图，适合 current user、tenant context、DB session、权限 scope 等具体 Endpoint 需要的前置条件。两者可以配合：Middleware 建全局请求上下文，Dependency 把身份和资源以类型化方式注入到 Handler。
-
----
-
-## 14. 本章自测
+先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
 
 <details>
-<summary>1. 为什么 Current User 通常更适合 Dependency，而不是全局 Middleware？</summary>
+<summary>1. 两个依赖都需要当前用户，是否应该手工复制两份认证代码？</summary>
 
-因为不同 Route 的认证/权限要求不同，Dependency 能表达 Route-aware 的输入和子依赖，也便于 OpenAPI 与测试 override。
+不需要。可以共享同一个身份依赖，并按请求内缓存规则复用结果。
 
 </details>
 
 <details>
-<summary>2. 为什么 Request ID 很适合 Middleware？</summary>
+<summary>2. 为什么业务“处理成功”的日志不宜仅由通用中间件决定？</summary>
 
-它是跨整个请求生命周期的横切上下文，通常所有 Route 都需要，而且要尽早建立、在 Response 和日志中统一传播。
+中间件知道协议层返回情况，不一定知道业务副作用或长任务是否真正完成。
 
 </details>
 
 <details>
-<summary>3. Middleware 顺序为什么重要？</summary>
+<summary>3. X-Order 实验为什么把 B 的返回步骤放在最后？</summary>
 
-Middleware 是嵌套栈，请求和响应经过顺序相反；Trace、Exception、CORS、Timing 等层的先后会直接影响最终行为。
+B 最后登记，处于自定义中间件外层。内层全部返回后，才继续执行 B 在 call_next 后面的语句。
 
 </details>
+
+## 知识回看与权威资料
+
+- [依赖基础](https://fastapi.tiangolo.com/tutorial/dependencies/)：核对 Depends、参数来源与复用。
+- [子依赖与请求内缓存](https://fastapi.tiangolo.com/tutorial/dependencies/sub-dependencies/)：理解 use_cache 的作用范围。
+- [中间件](https://fastapi.tiangolo.com/tutorial/middleware/)：核对请求和返回方向的顺序。
