@@ -1,0 +1,68 @@
+name: Outer navigation maintenance
+on:
+  push:
+    branches: [docs/outer-navigation-sync-20260927]
+    paths: [.github/workflows/outer-navigation-maintenance.yml, tools/sync_outer_navigation.py]
+permissions:
+  contents: write
+concurrency:
+  group: outer-navigation-maintenance
+  cancel-in-progress: false
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/outer-navigation-sync-20260927
+          fetch-depth: 0
+      - name: Inventory current documentation without rewriting lessons
+        shell: python
+        run: |
+          from pathlib import Path
+          import json, re, subprocess, hashlib
+          from urllib.parse import unquote, urlsplit
+          root=Path.cwd()
+          paths=[Path(x) for x in subprocess.check_output(['git','ls-files'],text=True).splitlines()]
+          def plain(s):
+              return re.sub(r'^(`{3,}|~{3,}).*?^\1\s*$', '', s, flags=re.M|re.S)
+          def target(p, href):
+              u=urlsplit(href)
+              if u.scheme or href.startswith(('#','//')): return None
+              return (p.parent/unquote(u.path)).resolve()
+          def links(p,s):
+              return [(m.group(1),m.group(2)) for m in re.finditer(r'!?\[([^\]]*)\]\(([^\s)]+)(?:\s+"[^"]*")?\)',plain(s))]
+          order=json.loads(Path('guide/learning-order.json').read_text())['modules']
+          modules=[]
+          for row in order:
+              folder=Path('curriculum')/row['directory']
+              chapters=sorted(x for x in (folder/'docs').glob('*.md') if re.match(r'^\d+[-_]',x.name))
+              text=(folder/'README.md').read_text()
+              modules.append({**row,'chapter_count':len(chapters),'chapters':[{'path':p.as_posix(),'title':next((l[2:] for l in p.read_text().splitlines() if l.startswith('# ')),p.stem)} for p in chapters], 'opening':text.splitlines()[:8], 'count_lines':[l for l in text.splitlines() if re.search(r'\d+\s*(?:章|篇|blocks|个.*(?:章节|模块))',l)]})
+          peripherals=[p for p in paths if p.suffix=='.md' and (p.name.lower()=='readme.md' or p.as_posix() in ['guide/knowledge-map.md','guide/learning-path.md','guide/terminology-glossary.md'])]
+          missing=[]; conflicts=[]; inventories=[]
+          for p in peripherals:
+              text=p.read_text(encoding='utf-8')
+              inventories.append({'path':p.as_posix(),'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'headings':re.findall(r'^#{1,3} .+',text,re.M),'count_lines':[l for l in text.splitlines() if re.search(r'\d+\s*(?:章|篇|blocks|个.*(?:章节|模块))',l)]})
+              for label,href in links(p,text):
+                  dest=target(p,href)
+                  if dest and not dest.exists():missing.append({'path':p.as_posix(),'label':label,'href':href})
+              if re.search(r'^(?:<{7}|={7}|>{7})(?:\s|$)',text,re.M):conflicts.append(p.as_posix())
+          products=[]
+          for p in sorted(Path('products/agent').glob('*/README.md')):
+              docs=sorted((p.parent/'docs').glob('*.md'))
+              products.append({'path':p.parent.as_posix(),'chapter_count':len(docs),'chapters':[{'path':d.as_posix(),'title':next((l[2:] for l in d.read_text().splitlines() if l.startswith('# ')),d.stem)} for d in docs]})
+          data={'baseline':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'tracked_files':len(paths),'readme_count':sum(p.name.lower()=='readme.md' for p in paths),'peripheral_pages':len(peripherals),'curriculum_chapters':sum(m['chapter_count'] for m in modules),'modules':modules,'products':products,'peripherals':inventories,'broken_file_links':missing,'conflict_markers':conflicts}
+          dest=Path('guide/project/outer-navigation-inventory-2026-09-27.json')
+          dest.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          print(json.dumps({k:data[k] for k in ['tracked_files','readme_count','peripheral_pages','curriculum_chapters','broken_file_links','conflict_markers']},ensure_ascii=False,indent=2))
+      - name: Publish inventory to maintenance branch only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add guide/project/outer-navigation-inventory-2026-09-27.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore(navigation): inventory latest peripheral content'
+            git push origin HEAD:docs/outer-navigation-sync-20260927
+          fi
