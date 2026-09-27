@@ -1,587 +1,207 @@
-# 02. Codex Memory Lifecycle｜过去的 Thread 怎样变成未来可用的长期记忆
+# 02｜记忆：历史怎样变成可以复用、也可以纠正的经验
 
-[← Context](01-context-lifecycle.md) · [Codex 总览](README.md) · [Tool →](03-tool-lifecycle.md)
+[← 上一章：上下文](01-context-lifecycle.md) · [模块入口](README.md) · [下一章：工具 →](03-tool-lifecycle.md)
 
-> **源码基线：** `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea`
+分页修复结束后，有些信息下次还值得知道：这个项目的页码从 1 开始，参数中的布尔值不能冒充整数，验收不能只测第一页。另一些信息只对当时有用，例如某次命令运行到了第几秒、一次临时失败的完整终端输出。
 
-如果把 Memory（长期记忆）理解成“把聊天记录存起来，以后做向量检索”，会完全看不懂 Codex 当前源码。
+把所有对话重新塞给下一次模型，既浪费容量，又容易传播已经过时的结论。Codex 的记忆机制要解决的是：**从历史取得候选经验，整理成可读取的材料，再在需要时使用；同时保留修正、清理与失败处理的路径。** 本章区分公开实现事实与教学上的质量判断，不把“存在记忆文件”直接当作“模型一定正确记住了”。
 
-Codex 已经把长期 Memory 做成了独立子系统。它不是 Thread History（线程历史）的别名，也不是 Context（当前模型上下文）的另一种叫法。
+## 1. 四类容易被叫作“记忆”的东西
 
-先看三块最核心的代码：
+先沿同一个分页任务区分用途，而不是先记数据库字段。
 
-- `codex-rs/memories/write/`：负责从旧 Thread 生成和整理长期记忆；
-- `codex-rs/memories/read/`：负责读取、引用和使用情况统计；
-- `codex-rs/ext/memories/`：把 Memory 接入 Codex Runtime，让模型真正能看到和查询这些记忆。
+| 信息 | 解决什么问题 | 为什么不能互相代替 |
+|---|---|---|
+| `AGENTS.md` 等项目指令 | 这个项目应该遵守什么规则 | 是指令来源，不等于模型自动学到的经验 |
+| 当前模型上下文 | 下一次判断需要看什么 | 有容量上限，可能经过压缩，不是永久知识全集 |
+| 对话与执行历史 | 之前说过、调用过、记录过什么 | 原始事实很多，尚未筛出可复用经验 |
+| 整理后的记忆材料 | 后续任务有哪些经验值得参考 | 是从证据整理出的材料，仍可能错误或过时 |
 
-再加上：
+假设历史记录一次失败：“测试无法启动，因为找不到 `pagination` 模块。”可复用的经验应说明正确工作目录和执行命令，而不是永远保留“这个项目测试失败”。前者帮助下一次行动，后者可能把环境错误误写成产品缺陷。
 
-- `codex-rs/state/src/runtime/memories.rs`：保存 Memory job（记忆任务）、阶段产物、使用次数和保留状态。
+指令与上下文的生产者见上一章；记忆读写实现分别位于 [记忆读取扩展](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/extension.rs)和[记忆写入库](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/lib.rs)。这不是一个默认的“向量数据库检索”流程：这里学习的是这些文件、任务与状态存储的实际协作。
 
-所以 Codex 的 Memory 生命周期更接近：
+## 2. 先检查入口，不能只看功能名
 
-```text
-过去的 Thread
-→ 判断是否值得进入记忆提取
-→ 单 Thread 提取
-→ 全局整理
-→ 生成有界长期摘要
-→ 新 Session 注入
-→ 按需继续搜索证据
-→ 记录哪些记忆真的被用到
-→ 用户纠正 / 遗忘
-→ 下一轮整理更新长期基线
-```
+`memories` 在固定快照的功能注册表中是稳定功能，但源码默认关闭。读取已有记忆还要求 `use_memories`；暴露专用记忆工具进一步要求 `dedicated_tools`。这几个条件回答不同问题：功能能否启用、是否使用已有记忆、是否提供专用读取或笔记工具。依据：[功能默认值](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/features/src/lib.rs)、[读取扩展条件](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/extension.rs)。
 
-下面沿这条链讲。
+写入不是“模型每说一句话就保存一次经验”。在 App Server 的输入处理路径中，带输入的新 Turn 成功启动，且主要执行环境已经配置，才调用记忆后台任务入口；追加到已有轮次的输入与新启动轮次在这里被区分。任务入口还排除临时会话、功能关闭和非根 Agent，并检查状态库、目录准备及额度条件。依据：[真实调用方](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/app-server/src/request_processors/turn_processor.rs)、[后台任务入口](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/start.rs)。
 
----
+源码函数名包含 `startup`，但不能只凭名字把时机写成“进程启动时运行一次”。也不能因为入口返回，就声称异步提取和整理已经完成。当前交互与后台记忆处理有各自的完成状态。
 
-## 1. 为什么 History 不能直接当 Memory
+> ⚠️ **注意：开关、任务启动和产出可用不是同一状态。** 开启功能后，可能没有合格历史、没有额度、没有状态库，或者提取没有产生值得保存的内容。排查时应沿入口和结果检查，而不是反复向模型强调“你应该有记忆”。
 
-假设用户过去有 300 条 Codex Thread。
+## 3. 版本如何影响目录和读写一致性
 
-如果下一次新任务开始时，把 300 条 Thread 的完整历史都重新塞进 Context，会立刻遇到几个问题：
+该快照同时存在 `MemoryVersion::V1` 与 `V2`。后台任务依据版本选择根目录；启用双写时分别处理两个版本。读取扩展也使用所选版本的根目录，而且配置更新时保留线程已经绑定的记忆版本，避免初始摘要来自一个命名空间，后续读取工具却去了另一个。依据：[写入版本选择](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/start.rs)、[线程读取版本绑定](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/extension.rs)。
 
-- 大量过去任务与当前问题无关；
-- 同一个偏好可能被重复表达很多次；
-- 旧事实可能已经过期；
-- 用户后来可能纠正过前面的说法；
-- Tool Log（工具日志）和中间失败会占用大量 Token；
-- Prompt Injection（提示注入）甚至可能被长期带进新任务。
+因此，不能只拿一个固定文件夹名搜索不到文件，就判断“产品没有记忆”；也不能把两版产物视为同一套格式。
 
-因此 Codex 把“原始历史”和“未来可复用知识”分开。
+| 材料 | 用途与版本边界 |
+|---|---|
+| 状态库中的提取结果 | 保存被领取历史的提取结果、来源和处理状态，供整理阶段选择 |
+| `rollout_summaries/` | 由选中的历史提取结果同步出的单段工作摘要 |
+| `raw_memories.md` | V1 整理输入之一；V2 的同步分支不重建这个文件 |
+| `memory_summary.md` | 读取扩展用作进入记忆的摘要入口；为空或不可读取时不产生对应摘要指令 |
+| 整理后的详细材料 | 供按需查阅；必须按版本及当前文件实际结构解释，不能强行套用统一文件清单 |
+| `phase2_workspace_diff.md` | 向整理 Agent 展示工作区相对成功基线的变化，不是用户任务报告 |
 
-可以这样理解：
+依据：[不同版本的同步分支](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase2.rs)、[摘要读取与模板选择](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/prompts.rs)。
 
-```text
-Thread History
-= 当时发生过什么
+这个差异值得在主线讲，因为它影响排障和迁移；不需要为了版本号另开一章，也不需要背下所有内部文件名。
 
-Memory
-= 从过去历史中提炼出的、未来可能仍有价值的信息
-```
+## 4. 第一阶段：先决定哪些历史值得处理
 
-Thread History 主要服务 Resume（恢复）、Fork（分叉）和审计；Memory 主要服务跨 Thread 的复用。
+Extraction（提取）针对某段历史，提出可能值得保留的经验。它不是把整个硬盘当作来源，也不是无限并行扫描所有旧会话。
 
-这两个系统可能引用同一段过去事实，但它们的目的不同。
+第一阶段向状态库领取符合条件的工作。候选受来源类型、历史年龄、最小空闲时间、扫描上限和本次处理数量限制。得到任务后，执行程序以有上限的并发请求模型，并记录结果。依据：[候选领取与受限并行](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase1.rs)。
 
----
+为什么先领取？想象用户同时打开两个 Codex 会话，两个后台任务都发现同一段分页历史。若只是各自“读取后处理”，就可能重复花费模型成本，甚至互相覆盖处理状态。领取任务时携带的所有权令牌和租约，表达了“目前由谁负责，负责权何时失效”。后续提交成功或失败也要带上令牌。
 
-## 2. Memory 什么时候开始工作：先选候选 Thread，而不是先叫模型总结
+租约不是永远持有的锁。工作进程崩溃后，其他处理者需要有机会接管；与此同时，过期的工作者不能不经核验继续提交。这解释了为什么状态库不是可有可无的日志附件。**不过，租约不自动把模型请求、文件系统和数据库变成一个跨系统原子事务。**
 
-Memory write pipeline（记忆写入流水线）不会在每次 Turn 结束后立刻总结。
+本阶段还把模型提取输入限制在可用容量之内，并按版本采用不同的输入组织方式与结构化输出约束。V1 和 V2 不只是目录不同，提取输入和输出处理也有分支。依据：[提取输入与输出解析](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase1.rs)、[写入库的预算与并发设置](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/lib.rs)。
 
-启动逻辑主要在：
+## 5. 没有提取出经验，为什么也可能是成功
 
-- `codex-rs/memories/write/src/start.rs`
-- `codex-rs/state/src/runtime/memories.rs`
+对于分页练习，一段历史可能只包含用户打开页面和闲聊，没有可迁移的工作经验。强行要求模型“必须写三条记忆”，反而会制造无意义或猜测性的内容。
 
-当前源码会先判断这个 Session 是否适合做 Memory 工作。例如普通 root session（根会话）和 durable session（可持久化会话）才有意义；临时 Session 或普通子 Agent 不应该随便把自己的过程写进长期用户记忆。
+源码区分三种结果：
 
-接着，State DB（状态数据库）会从历史 Thread 中挑候选。
+| 结果 | 含义 | 后续判断 |
+|---|---|---|
+| 成功且有输出 | 提取得到可保存的结构化材料，状态提交成功 | 可以进入后续整理候选 |
+| 成功但无输出 | 完成了检查，没有应保存的材料 | 不是因为产物为空就无限重试 |
+| 失败 | 读取、模型调用、解析或状态提交等未完成 | 记录失败并按重试条件处理 |
 
-这里最重要的不是某个 SQL 字段，而是它解决了三个工程问题。
+这个分类并不直接保证提取内容正确。它首先回答程序是否完成了约定的处理。来源时间、工作目录和原历史等信息，有助于后来判断经验适用范围；模型输出仍需要通过整理和真实任务检验。依据：[阶段结果与状态提交](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase1.rs)。
 
-### 第一，不能每次全库扫描
+把“处理失败”和“没有有用内容”区分开，是一种通用工程能力：前者可能需要重试，后者反复重试只是重复成本。
 
-如果用户已经有很多 Thread，Memory startup（记忆启动任务）不能每次都遍历所有历史。
+## 6. 第二阶段：为什么提取结果还需要整理
 
-所以源码有 scan limit（扫描上限）和 max claimed（最多领取任务数），先把候选范围限制住。
+一次分页任务发现页码从 1 开始，另一次任务确认空数据应返回空列表，第三次用户纠正旧约定。三段独立摘要若只是顺序堆在一起，可能重复、冲突，甚至使模型不知道哪条仍然有效。
 
-### 第二，刚结束的 Thread 不一定适合马上总结
+Consolidation（整理）面向一组选中的提取结果与已有记忆材料，更新可供后续阅读的结构。它要处理的不是某一段聊天，而是共享记忆工作区，所以在接触工作区前先领取全局第二阶段任务，再进行以下步骤：
 
-代码会考虑 Thread 的更新时间和 idle（空闲）时间。
+1. 准备工作区与用于比较的 Git 基线。
+2. 选择受数量和保留条件限制的提取结果。
+3. 同步对应摘要与版本所需输入，清理需要处理的旧扩展材料。
+4. 比较工作区变化，并校验整理产物是否有效。
+5. 只有在没有变化且产物有效时，才走无需整理 Agent 的成功路径；否则准备差异材料并启动整理。
 
-原因很自然：一个还在频繁变化的 Thread，今天总结一次，几分钟后又变了，会造成重复提取。
+依据：[第二阶段完整顺序](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase2.rs)。
 
-### 第三，同一份历史不能被多个 worker 重复总结
+这里有两个容易混淆的量。**水位线记录处理进度，工作区差异表达材料是否变化。** 即使时间水位没有向前，源材料删除或工作区产物损坏，也可能仍需要整理；相反，重新扫描并不代表一定值得再次调用模型。
 
-Memory job 有 ownership token / lease（所有权令牌 / 租约）。
+Git 在这里服务于记忆工作区比较和成功基线管理，不能推断为“Codex 会替用户项目自动提交一次业务代码”。两个目录、两个目的要分开。
 
-如果多个 Codex 进程同时启动，都发现 Thread A 需要生成记忆，没有 lease 就会同时调用模型做同一份工作。
+## 7. 整理 Agent 被允许做什么
 
-因此真正流程是：
+整理程序需要写记忆材料，但不应为了整理经验再任意访问应用、安装插件或不断派生子 Agent。源码为它建立专门配置：临时会话、关闭自身记忆生成和使用、清空 MCP 服务器，并关闭协作、应用与相关插件能力，避免整理任务继续生成新的整理任务。依据：[整理 Agent 配置](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase2.rs)。
 
-```text
-从 State DB 找到候选 Thread
-        ↓
-确认它比已有 Memory 更新
-        ↓
-领取带 lease 的 Phase 1 job
-        ↓
-只有成功拿到 ownership 的 worker 才继续
-```
+**沙箱限制必须带条件解释。** 当父环境使用 Codex 管理的权限配置时，整理分支将写入范围限制到记忆根目录，并关闭网络；若父环境明确使用禁用沙箱或外部沙箱配置，则保留相应选择。不能把第一种分支写成“所有情况下整理 Agent 都被 Codex 本地沙箱禁止联网”。同一文件中的实际 `match` 分支就是这个边界的证据。
 
-这已经说明 Codex Memory 不是“调用一次 summary prompt”，而是一个可并发运行的后台数据处理系统。
+审批策略为“不询问”，也不等于“所有动作都获准”。审批决定是否等待批准；沙箱或外部环境决定实际可访问的资源。缺少交互审批的后台任务，更需要清楚的执行边界，而不是更大的默认权限。
 
----
+## 8. 整理完成，怎样避免把半成品当成成功
 
-## 3. Phase 1 做什么：把一条过去 Thread 压成可整理的记忆证据
+模型报告完成，只是一个信号。第二阶段的结束处理还会检查 Agent 状态、关闭执行实例、验证产物，并重新确认仍持有任务所有权。符合条件后才重置成功基线、标记任务成功。依据：[结束处理、心跳与基线更新](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase2.rs)。
 
-Phase 1（第一阶段）主要实现位于：
+假设整理到一半租约丢失。旧工作者不能仅凭“我已经写完了”重置基线，否则新工作者会把未经确认的状态当作成功起点。若执行实例关闭失败，源码会保留已有租约直到它过期，以免另一个工作者立即与尚未退出的执行者竞争。
 
-- `codex-rs/memories/write/src/phase1.rs`
-- `codex-rs/memories/write/templates/memories/stage_one_system_v2.md`
-- `codex-rs/memories/write/templates/memories/stage_one_input_v2.md`
+还有更细的故障窗口：工作区基线已经重置，数据库成功标记却失败。实现会记录这个失败，但这并不是文件系统和数据库天然具有同一个事务。阅读时要看写入顺序和每一步失败处理，而不是看到“成功后提交”就认定绝不会出现中间状态。
 
-它处理的是“一条 Thread”。
+> ⚠️ **注意：产物有效不等于经验真实。** 结构校验可以发现缺文件或格式不符，不能自动证明“以后这个项目永远使用当前测试命令”。来源、时效和业务含义仍要在后续使用与评测中检验。
 
-但它并不是简单：
+## 9. 新任务怎样读取记忆，而不把所有内容塞入上下文
 
-```text
-把整条 rollout 发给模型
-→ 请总结
-```
+一个新任务进入时，读取扩展尝试取得所选版本的 `memory_summary.md`，按预算处理后生成开发者指令片段。文件不可读、为空或最终无法形成有效内容时，不产生这份摘要指令。V1 与 V2 使用不同模板；扩展还处理片段字节上限，不能把“保留完整片段”误解成“无限长摘要不受预算”。依据：[摘要读取和截断](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/prompts.rs)、[扩展注入](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/extension.rs)。
 
-因为一条 Coding Agent 历史里通常有很多噪声：重复文件读取、测试日志、中间猜测、Tool Call、失败重试、临时计划、终端输出。如果全部原样交给 Memory Extractor（记忆提取模型），它只会把 Context 再浪费一次。
+这形成“先知道有哪些相关经验，再按需读取详情”的阅读方式。例如，摘要提示分页项目曾有参数边界问题；模型随后查找相关材料，看到具体约定，再回到当前文件和测试核实。摘要承担导航作用，详情提供依据，当前项目状态决定经验是否仍适用。
 
-所以 Phase 1 的任务本质是：
+启用专用工具时，实现注册 `memories` 命名空间中的 `list`、`search`、`read` 和 `add_ad_hoc_note`。分别用于列出材料、查找线索、读取内容和添加补充笔记；它们不是“模型天然拥有无限记忆”的证明。读取和搜索还有数量、行范围或 token 等边界，应按工具真实说明使用，不把搜索命中当作已经读完全文。依据：[工具注册与参数处理](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/tools/mod.rs)、[名称与读取预算](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/lib.rs)。
 
-> **从一条过去任务的执行证据里，区分哪些东西可能值得跨 Thread 保存，哪些只是当时执行过程中的噪声。**
+读取工具也区分错误：找不到材料、无效参数等可以反馈模型调整；底层 I/O（输入输出）错误在该适配层被归为致命错误。不能统一声称“任何记忆错误都只要换个关键词就能继续”。
 
-### 它特别关心什么
+## 10. 旧经验冲突时，应怎样判断
 
-从当前 V2 Prompt 可以看出，Codex 希望保留的是：
+假设早期经验写着：“返回值直接复用输入列表也可以。”但当前统一练习明确要求新的外层列表。此时，旧经验是待验证的线索，不能覆盖当前任务要求。
 
-- 用户明确说过的要求；
-- 用户后来做出的纠正；
-- 用户作出的稳定决定；
-- 项目中已经确认的约束；
-- 对未来任务可能有帮助的工作方式；
-- 任务最后真正发生了什么；
-- 哪些问题仍没有解决；
-- 这些结论来自哪一条 Thread、哪个 workspace（工作区）和哪个时间点。
+一个可靠的判断过程是：先确认经验来自哪个项目、什么时间与什么条件；再检查当前明确约定、代码和测试；最后更新应修正的派生材料，避免下一次继续读到同一个误导结论。这里是基于前述来源与读写结构提出的工程使用原则，不是声明 Codex 有一个能自动裁定所有冲突的事实数据库。
 
-这里非常强调 provenance（来源）。
+还需要区分不同的“删除”：删除一份原始材料、让它不再进入整理候选、移走已同步摘要、删除整理后的经验，以及处理备份或日志，并不是一个动作。第二阶段会同步当前选中输入，并将材料变化交给整理流程；**它不提供“删除一个来源后，所有派生内容立即从所有介质抹除”的通用保证。**
 
-例如：
+对于敏感内容，正确的工程要求是明确保存范围、读取权限、保留期和派生材料清理路径。源码里的目录约束、清理和输入过滤是具体防线，不是“绝对不会存入秘密”的证明；本模块不把未运行的隐私测试写成已通过。
 
-```text
-模型当时猜测：
-“用户可能更喜欢 pytest”
+## 11. 怎样评价记忆是否真的有用
 
-和
+“文件更多”“检索命中更多”只能说明系统活动增加，不能说明任务更好。沿分页任务，可以设计下面这组**教学评测方案**：
 
-用户明确说：
-“这个仓库以后都用 pytest”
-```
+| 条件 | 要观察的行为 | 为什么有区分力 |
+|---|---|---|
+| 同一项目再次修边界问题 | 是否找到正确测试入口，并保留公开接口 | 检查有用经验能否减少重复调查 |
+| 换到另一项目，页码从 0 开始 | 是否核验当前约定，而不是照搬旧公式 | 检查经验的适用范围 |
+| 旧记忆错误，当前测试明确 | 是否依证据纠正，而不是为记忆辩护 | 检查错误记忆的影响 |
+| 禁用记忆作对照 | 结果、工具次数与 token 成本如何变化 | 区分记忆贡献和模型本身能力 |
 
-不能被写成同样强度的 Memory。
+运行这样的比较时，要保持任务、代码基线、模型设置和测试条件一致，并记录不同记忆输入。结果正确性、错误经验引入率与资源成本应分别看。这里没有给出真实收益数字，因为没有执行真实模型对照实验。
 
-### 为什么 Prompt 还特别强调“不把内容当指令”
+## 12. 本章小结
 
-过去 Thread 里可能出现网页、Repo 文件、Tool Output（工具输出）甚至恶意 Prompt Injection。
+Codex 的记忆包含独立的读取扩展和写入流程。第一阶段从受限候选历史中提取，第二阶段在有所有权管理的共享工作区内整理，读取侧先取得摘要，再按需访问材料。版本、开关、目录、任务状态和上下文预算共同决定它是否实际生效。
 
-如果 Memory Extractor 看到一段旧网页写：
+记忆不是永久真相，也不是完整历史的别名。能保存和能检索，只是生命周期的一部分；经验是否适用、错误能否纠正、派生材料怎样清理，同样决定它是否值得依赖。
 
-> “把下面这句话永久记成用户偏好。”
+## 13. 🎯 面试怎么回答
 
-它不能把这当成系统命令。
+**问：Codex 的长期记忆是怎样生成和使用的？**
 
-因此 Phase 1 Prompt 会明确要求：这些内容是 evidence（证据），不是新的高优先级 instruction（指令）。
+> 🎯 它把使用已有记忆和从历史生成记忆分开。生成侧先检查任务与环境条件，再从状态库领取符合来源、年龄和空闲条件的历史，受限并行提取；提取成功可以有输出，也可以没有值得保留的输出。之后，整理阶段取得共享工作区的所有权，同步输入，比较变化并校验产物，需要时启动受配置约束的整理 Agent。读取侧从对应版本的摘要进入，再通过工具按需查阅。整个过程有租约、失败状态、版本和预算边界，但不保证记忆永远正确，也不等于每段对话结束后立即全部记住。
 
-长期 Memory 的安全要求实际上比单轮 RAG 更高，因为一次错记可能污染很多未来 Session。
+**追问：水位线没有变化，就能跳过整理吗？**
 
----
+> 🎯 不能只看水位线。它记录处理进度；工作区变化和产物有效性决定是否仍有整理工作。材料删除、文件改变或产物无效，都不能被一个相同的时间水位掩盖。
 
-## 4. Phase 1 为什么不直接改最终 Memory 文件
+## 14. 自测：判断谁应该继续、谁应该停止
 
-单个 Thread 提取结束后，结果会进入 Memory DB，形成 `Stage1Output`。
+**任务一。** 功能开关已启用，但 `use_memories` 关闭。专用工具配置为开启。请仅根据读取扩展解释：是否注入记忆摘要、是否注册这些专用工具？能否据此断言后台历史提取也完全没有启动？
 
-这里可以把它理解成：
+<details><summary>提示</summary>
 
-> **“这条历史 Thread 对长期 Memory 的候选贡献。”**
+分别沿读取扩展和后台任务入口判断，不把一个条件当作全系统总开关。
 
-它可能包含 raw memory（原始提取记忆）、rollout summary（该 Thread 的压缩摘要）、来源更新时间、Thread identity（线程身份）等。
+</details>
+<details><summary>答案与解释</summary>
 
-为什么不让每个 Phase 1 worker 直接修改最终 `memory_summary.md`？
+读取扩展的启用条件不成立，因此不注入摘要，也不提供这组专用工具。不能只由读取侧状态推断所有生成路径；后台任务有自己的调用方和前置检查，应继续核对写入入口、会话来源、状态库与任务状态。
 
-因为多个 Thread 可能同时被处理。
+</details>
 
-如果：
+**任务二。** 第二阶段看见工作区没有差异，但产物校验失败。另一次任务中，Agent 已报告完成，却在重置基线前失去租约。分别说明能否走成功路径，答案必须指出各自缺少的条件。
 
-```text
-Thread A 的 worker
-直接写最终 summary
+<details><summary>答案与解释</summary>
 
-Thread B 的 worker
-也直接写最终 summary
-```
+无差异跳过整理还要求产物有效，所以前一种不能仅凭差异为空宣告完成。后一种不应在失去所有权后重置成功基线；Agent 的完成报告不能替代结束状态、产物校验、实例关闭和所有权确认。
 
-就会出现并发覆盖，而且单个 worker 看不到整个长期记忆空间里的冲突和重复。
+</details>
 
-所以 Codex 把职责拆成：
+**任务三。** 项目 A 的记忆说页码从 1 开始，项目 B 的明确约定是从 0 开始，每页两项。设计一个最小检查，使它能区分“有用复用”和“错误迁移”；再说明这不是哪一种性能测试。
 
-```text
-Phase 1
-= 单 Thread 提取
+<details><summary>答案与解释</summary>
 
-Phase 2
-= 跨 Thread 全局整理
-```
+给项目 B 提供 `[10, 20, 30]`，要求第 0 页返回 `[10, 20]`，并检查 Agent 是否先核对 B 的约定，而非套用 A 的 `(page-1)*page_size`。这检验适用范围和结果正确性，不是检索吞吐量测试，也不能由一次通过证明所有记忆都正确。
 
-这种两阶段设计是当前 Memory 源码最重要的结构之一。
+</details>
 
----
+## 源码回读索引
 
-## 5. Phase 2 为什么不是“把最近 N 条摘要拼起来”
+| 要核验的问题 | 固定源码入口 |
+|---|---|
+| 后台记忆任务由谁、何时启动 | [turn_processor.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/app-server/src/request_processors/turn_processor.rs)、[start.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/start.rs) |
+| 提取候选、并发和结果分类 | [phase1.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase1.rs) |
+| 整理的所有权、差异、权限与结束处理 | [phase2.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/memories/write/src/phase2.rs) |
+| 读取开关、版本绑定和上下文注入 | [extension.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/extension.rs)、[prompts.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/prompts.rs) |
+| 工具注册和可恢复、致命错误的区分 | [tools/mod.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/tools/mod.rs) |
 
-Phase 2（第二阶段）主要在：
-
-- `codex-rs/memories/write/src/phase2.rs`
-- `codex-rs/state/src/runtime/memories.rs`
-- `codex-rs/memories/write/src/storage.rs`
-- `codex-rs/memories/write/src/workspace.rs`
-
-它要决定：
-
-> 这么多历史 Thread 的候选记忆里，哪些现在仍值得进入全局 Memory 基线？
-
-当前源码的选择逻辑并不只看“最新”。
-
-它还记录 Memory 是否真的在后来被用过。
-
-如果一条过去 Thread 的 Memory 在后续回答中被引用，State DB 会增加它的 `usage_count`（使用次数）并更新 `last_usage`（最近使用时间）。
-
-因此 Phase 2 选择候选时，会综合：
-
-- 是否仍然是 memory-enabled 的 Thread；
-- 是否近期仍被使用；
-- 如果从未使用，来源是不是还足够新；
-- 使用次数；
-- 最近使用时间；
-- 原始来源更新时间。
-
-这说明 Codex 的长期 Memory 不是单纯“越新越重要”，而是开始形成一个闭环：
-
-```text
-过去 Thread 被提炼
-        ↓
-未来 Session 真正使用
-        ↓
-记录使用反馈
-        ↓
-后续整理时更容易保留
-```
-
-这比固定 TTL（过期时间）更贴近长期 Agent 的真实需求。
-
----
-
-## 6. 为什么 Phase 2 先把 Memory 同步成一个文件工作区
-
-被选中的 Stage 1 产物不会直接塞进另一个巨大 Prompt。
-
-Codex 先把它们投影成一个本地 Memory Workspace（记忆工作区）。
-
-主要文件包括：
-
-```text
-raw_memories.md
-rollout_summaries/
-memory_summary.md
-extensions/
-.git/
-```
-
-`storage.rs` 会重建 raw memories、同步每条 Thread 的 rollout summary，并删除已经不再属于当前输入集的旧 summary。
-
-这样做有两个好处。
-
-第一，Consolidation Agent（整理 Agent）看到的是稳定文件结构，而不是一堆数据库 row（行记录）。
-
-第二，更重要：Codex 给这个 Memory Workspace 建了 Git baseline（Git 基线）。
-
-于是下一次 Phase 2 不需要重新理解全部 Memory，只需要先看：
-
-> 和上一次成功整理以后相比，工作区到底发生了什么变化？
-
-`workspace.rs` 会生成 bounded diff（有界差异），写成临时的 `phase2_workspace_diff.md`。
-
-如果工作区没有变化，就没有必要再次花模型调用去“整理同一批东西”。
-
-这是一种非常工程化的增量 Memory Consolidation（增量记忆整理）。
-
----
-
-## 7. 为什么要用一个内部 Agent 做 Consolidation
-
-跨很多 Thread 的 Memory 整理不是简单排序。
-
-它需要做语义判断，例如：
-
-- 两条记忆是不是重复；
-- 后来的用户纠正是不是应该覆盖早期说法；
-- 一次性要求能不能提升成长期偏好；
-- 哪条证据已经过期；
-- 多个任务共同反映了什么稳定工作习惯。
-
-这些问题很难完全用固定规则解决，所以 Codex 会启动一个内部 MemoryConsolidation Agent（记忆整理 Agent）。
-
-但是这个 Agent 不是“拥有普通 Codex 的所有能力”。
-
-源码专门限制它的执行范围：它工作在 Memory Workspace 中，不能因为“要整理记忆”就获得无限网络或无限写权限，也不能无限递归再拉起别的 Agent。
-
-这背后的边界很重要：
-
-> **让模型参与长期状态维护，不代表让模型拥有长期状态系统的控制权。**
-
-模型负责语义判断，Runtime 仍然负责工作目录、权限、Job ownership（任务所有权）和最终校验。
-
----
-
-## 8. 最终 Memory 为什么必须校验，而不是相信模型说“完成了”
-
-Phase 2 Agent 完成以后，Runtime 还会调用 `validate_consolidation_artifacts`。
-
-源码位置：
-
-- `codex-rs/memories/write/src/workspace.rs`
-
-以当前 V2 记忆格式为例，`memory_summary.md` 不是任意 Markdown。
-
-它有固定结构要求，包含类似：
-
-- User Profile（用户画像）；
-- User preferences（用户偏好）；
-- General Tips（通用提示）；
-- What's in Memory（记忆中包含什么）。
-
-同时还有硬大小限制，V2 summary 要小于约 10 KB。
-
-为什么要限大小？
-
-因为这份 summary 以后可能在新 Session 启动时进入模型 Context。长期 Memory 如果永远只增不减，迟早会重新变成一个巨大的历史垃圾桶。
-
-### 为什么还要清理 Symbolic Link
-
-Memory Workspace validation（记忆工作区校验）还会处理 symbolic link（符号链接）。
-
-如果允许 Memory Agent 在自己的目录里创建一个链接指向目录外：
-
-```text
-memories/foo
-→ /some/sensitive/path
-```
-
-那么“只允许修改 Memory 目录”就失去意义。
-
-所以文件系统边界不是 Prompt 里一句“不要越界”，而是 Runtime 真正检查。
-
----
-
-## 9. 新 Session 怎样使用 Memory：先给摘要，不够再深入
-
-Memory read path（记忆读取路径）主要涉及：
-
-- `codex-rs/ext/memories/src/extension.rs`
-- `codex-rs/ext/memories/templates/memories/read_path_v2.md`
-- `codex-rs/ext/memories/src/tools/`
-
-Memory Extension 会参与 Context Contributor（上下文贡献器）。
-
-新 Session 开始时，它会读取有界的 `memory_summary.md`，再把它作为 developer-policy context（开发者策略上下文）贡献给模型。
-
-这意味着 Codex 的第一层 Memory Recall（记忆召回）并不是“先做向量检索”。
-
-它更像：
-
-```text
-先给模型一份很小的长期 Memory 导航
-        ↓
-如果当前问题已经够回答
-        → 不继续读
-
-如果需要具体过去事件
-        ↓
-再 search / list / read
-        ↓
-读取少量 rollout summary 证据
-```
-
-这是一种 progressive disclosure（渐进式展开）。
-
-长期 Memory 越大，越不能默认全部读取。
-
----
-
-## 10. Search / Read 的意义：Memory Summary 是索引，不是最终证据
-
-Memory Extension 暴露了专门的 Memory Tool（记忆工具），包括：
-
-- search：搜索相关记忆；
-- list：查看可用记忆文件；
-- read：读取具体内容；
-- add_ad_hoc_note：追加用户明确要求的记忆修正。
-
-如果模型回答：
-
-> “你之前明确要求这个项目都使用 uv。”
-
-只依赖 `memory_summary.md` 并不是最强证据，因为 summary 本身已经是模型整理后的二手内容。
-
-需要精确来源时，模型可以进一步找到对应的 `rollout_summaries/<...>.md`，并产生 Memory Citation（记忆引用）。
-
-`memories/read/src/citations.rs` 会把引用中的 Thread ID 解析出来。
-
-于是后续 Runtime 知道：
-
-> 这次回答真正依赖了哪几条过去 Thread。
-
-这一步又会回到上一节的 usage feedback（使用反馈）。
-
----
-
-## 11. 用户说“记住 / 忘掉 / 更新”时，为什么不直接改 summary
-
-Codex 还有一条和自动 Memory extraction 不同的写路径：
-
-`add_ad_hoc_note`
-
-源码：
-
-- `codex-rs/ext/memories/src/tools/ad_hoc_note.rs`
-- `codex-rs/ext/memories/src/local/ad_hoc_note.rs`
-
-Tool description（工具说明）明确限定：当用户明确要求 Codex remember（记住）、forget（忘掉）或 update（更新）某件事时，可以写一条 append-only ad-hoc note（只追加的临时记忆说明）。
-
-它不会直接打开 `memory_summary.md`，把原来某一句删掉。
-
-为什么？
-
-因为最终 summary 是全局整理结果。让模型为了一个用户修正直接手改它，容易意外覆盖其他 Memory。
-
-更稳的路径是：
-
-```text
-用户：以后别再记得我喜欢 X
-        ↓
-新增一条 correction note（纠正说明）
-        ↓
-Memory Workspace 产生 diff
-        ↓
-下一次 Phase 2 Consolidation
-        ↓
-让新的纠正覆盖旧证据
-        ↓
-生成新的全局 summary
-```
-
-也就是说，用户修正先作为“新的事实”写入，再通过统一整理流程更新长期基线。
-
----
-
-## 12. “真正忘掉”为什么比删除一行更难
-
-假设过去有五条 Thread 都包含“用户喜欢 X”。
-
-后来用户说：
-
-> “忘掉这一点。”
-
-即使我们把当前 `memory_summary.md` 中那一句删掉，旧 Stage 1 Output 仍然可能存在。如果下一次 Phase 2 又从那些旧产物重新整理，就可能把“喜欢 X”复活。
-
-因此长期 Memory 的 Forget（遗忘）必须跨多个层次：
-
-- 用户的 correction / forget 意图要被记录；
-- Phase 2 要让 correction wins（纠正优先）；
-- 不再合适的 Stage 1 Output 要退出未来选择；
-- 如果某条 Thread 已经污染当前基线，需要触发重新 consolidation；
-- 最终新 Session 不能再注入被删除的事实。
-
-源码中存在 `mark_thread_memory_mode_polluted` 等相关路径，正是在处理：
-
-> 数据源变化以后，已经写进全局 Memory 的内容也需要被重新整理出去。
-
-所以真正的 Memory Delete（记忆删除）是一个数据一致性问题，而不是文本编辑问题。
-
----
-
-## 13. 把整条 Memory 生命周期串成一个具体例子
-
-用户在 Thread A 中明确说：
-
-> “这个项目所有 Python 服务统一用 uv 管理依赖。”
-
-Thread A 结束并空闲后，Memory startup 发现它满足候选条件，领取 Phase 1 job。
-
-Phase 1 从 Thread A 的 Rollout 中提取出：这是用户明确表达的项目级约束，不是模型猜测，也不是网页内容。它生成对应 Stage 1 Output。
-
-之后 Phase 2 选择这条 Memory，写入 Memory Workspace，并启动内部 Consolidation Agent。Agent 将它整理进有界的 `memory_summary.md`，Runtime 验证文件结构和大小以后，把这份工作区标记为新的成功 baseline。
-
-几天后用户创建 Thread B：
-
-> “给这个项目加一个新 Python 服务。”
-
-Memory Extension 会在初始 Context 中提供长期 summary，所以模型可能直接知道应该使用 uv。
-
-如果它需要确认来源，可以进一步通过 Memory search/read 找到 Thread A 的 rollout summary，并引用对应 Thread。State DB 因此记录 Thread A 的 Memory 被真实使用过，增加它未来继续保留的权重。
-
-后来用户说：
-
-> “这个项目改用 Poetry，不要再记 uv 了。”
-
-Codex 不会直接手改 summary，而是追加一条用户 correction note。下一轮 Phase 2 看到 Workspace diff，再做 consolidation。新的 summary 应该删除或覆盖旧 uv 约束。
-
-这个例子里，Memory 的完整生命周期才真正闭环：
-
-```text
-历史事实
-→ 提取
-→ 全局整理
-→ 注入未来 Session
-→ 按需追证据
-→ 记录实际使用
-→ 用户纠正
-→ 重新整理
-→ 旧事实退出未来 Context
-```
-
----
-
-## 14. 怎样判断 Memory 做得好不好
-
-源码里已经有一批运行指标，例如 Phase 1 / Phase 2 的任务数、耗时、Token 使用量、存储大小，以及 Memory read usage（读取使用情况）。
-
-这些指标能回答：
-
-- Memory pipeline 有没有运行；
-- 成本多大；
-- 失败在哪一阶段；
-- 模型到底读了 summary 还是更深证据。
-
-但它们不能直接证明：
-
-> “长期 Memory 让 Codex 更聪明了。”
-
-真正的效果评测还要单独设计，例如：
-
-- 一次性要求有没有被错误提升成永久偏好；
-- 用户 correction 以后旧信息会不会复活；
-- Memory ON / OFF 对真实任务成功率有什么差异；
-- Recall（召回）很多时，是否反而因为 stale information（过期信息）降低效果；
-- 引用的过去 Thread 是否真的支持当前 claim（结论）。
-
-这部分会在 Engineering & Evaluation 篇统一展开。
-
----
-
-## 15. 源码锚点
-
-建议按生命周期顺序阅读：
-
-1. [`memories/README.md`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/README.md)：Memory write/read 的源码内职责说明。
-2. [`memories/write/src/start.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/src/start.rs)：什么时候启动 Memory 工作。
-3. [`state/src/runtime/memories.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/state/src/runtime/memories.rs)：候选选择、Job lease、Stage 1 Output、usage / retention。
-4. [`memories/write/src/phase1.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/src/phase1.rs)：单 Thread 提取。
-5. [V2 Stage One Prompt](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/templates/memories/stage_one_system_v2.md)：什么值得记、怎样区分证据与指令。
-6. [`memories/write/src/phase2.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/src/phase2.rs)：全局整理。
-7. [`memories/write/src/storage.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/src/storage.rs) 与 [`workspace.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/src/workspace.rs)：文件工作区、Git diff 与最终校验。
-8. [V2 Consolidation Prompt](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/write/templates/memories/consolidation_v2.md)：全局整理的语义约束。
-9. [`ext/memories/src/extension.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/memories/src/extension.rs)：Memory 怎样接入 Context 与 Tool。
-10. [`ext/memories/src/tools/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/memories/src/tools)：search / list / read / ad-hoc note。
-11. [`memories/read/src/citations.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/read/src/citations.rs)：记忆引用与 Thread provenance。
-12. [`memories/read/src/usage.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/memories/read/src/usage.rs)：读取行为统计。
-
-下一篇：[Codex Tool Lifecycle →](03-tool-lifecycle.md)
+[← 上一章：上下文](01-context-lifecycle.md) · [下一章：工具 →](03-tool-lifecycle.md)
