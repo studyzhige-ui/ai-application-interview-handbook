@@ -20,6 +20,7 @@
 按记录自身的基线、日期与验证范围阅读。历史 PASS 不代表此后所有正文已经再次验收；这里只补齐索引，不改写原记录。
 
 - [DeerFlow｜读者优先修订与源码核验记录](deerflow-reader-first-2026-09-27.md)
+- [DeerFlow｜讲解清晰度精修与验证记录](deerflow-clarity-refinement-2026-09-27.md)
 - [DeepSeek Harness｜读者优先修订与验证记录](deepseek-harness-reader-first-2026-09-27.md)
 - [Claude Code｜讲解清晰度精修记录](claude-code-clarity-refinement-2026-09-27.md)
 - [Coding 小节讲解与排版复审｜2026-09-24](coding-subsection-clarity-2026-09-24.md)
