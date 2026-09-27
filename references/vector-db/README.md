@@ -6,9 +6,9 @@
 
 ## 版本基线
 
-核验日期：2026-09-27。下表区分课程针对的发布版本与实际运行；版本记录不表示已经完成该产品部署或兼容性认证。
+课程版本基线记录日期：2026-09-27。版本表集中在本页，正文只在具体行为受版本影响时标注条件。右列保留初版交付的运行范围，本次精修的复验单独记在[维护记录](../../guide/project/vector-db-reader-revision.md)；文档核验不等于产品部署或兼容性认证。
 
-| 对象 | 课程目标与核验依据 | 本轮实际运行 |
+| 对象 | 课程目标与核验依据 | 初版交付记录的实际运行 |
 |---|---|---|
 | 数值与状态实验 | Python 3.11+；标准库算法，不依赖某个向量产品 | Python 3.13.5；结果见维护记录 |
 | Faiss | 1.15.1，2026-09-16 正式发布；[Release](https://github.com/facebookresearch/faiss/releases/tag/v1.15.1) | 未安装，真实库实验跳过 |
@@ -57,14 +57,14 @@ Flat 是适合建立基准的实现。本文的过滤范围、空目标与并列
 <a id="ivf"></a>
 ## 何时能因探测全部列表而恢复精确距离？
 
-核对 IVF 训练、添加与搜索的不同阶段，以及 IVF_FLAT 与压缩表示的区别。给定中心的小例子不是实际训练所得；训练与真实召回由可选 Faiss 实验验证。
+核对 IVF 训练、添加与搜索的不同阶段，以及 IVF_FLAT 与压缩表示的区别。正文先用 L2 K-means 的“分配到最近中心、按组取均值”解释中心学习，再用另一个给定中心的例子观察区域漏搜。手算不代表 Faiss 的实际训练结果；真实索引召回由库实验验证。
 
-[Faiss：入门与 IVF](https://github.com/facebookresearch/faiss/wiki/Getting-started) · [Faiss：全探测与压缩误差](https://github.com/facebookresearch/faiss/wiki/FAQ)
+[Faiss：K-means 的分配与中心更新](https://github.com/facebookresearch/faiss/wiki/FAQ#why-k-means) · [Faiss：入门与 IVF](https://github.com/facebookresearch/faiss/wiki/Getting-started) · [Faiss：全探测与压缩误差](https://github.com/facebookresearch/faiss/wiki/FAQ)
 
 <a id="quantization"></a>
 ## PQ 的短编码和近似距离从哪里来？
 
-索引说明用于核对压缩表示；FAQ 用于区分候选遗漏和压缩误差。正文共享码本摊销与查表数值是可独立核算的教学计算。
+索引说明用于核对压缩表示；FAQ 说明 K-means 在 IVF 与 PQ 中的作用，并区分候选遗漏和压缩误差。正文把子空间码本学习接在 IVF 中心学习之后；共享码本摊销与查表数值仍是可独立核算的教学计算。
 
 [Faiss：压缩与各类索引](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes) · [Faiss：FAQ](https://github.com/facebookresearch/faiss/wiki/FAQ)
 
@@ -106,7 +106,9 @@ Qdrant Points 文档用于核对 wait、幂等及条件更新边界；Milvus 一
 <a id="distributed"></a>
 ## 查询、增量与历史数据由哪些层协作？
 
-Milvus 架构文档用于核对 Proxy、Coordinator、Streaming Node、Query Node、Data Node 与底层存储的职责；3.0 发布说明用于识别 External Collection 等改变数据边界的能力。局部 Top-K 的证明是数学推导，并有明确前提。
+正文第 13 章先解释新写入、历史查询、后台维护各自处理什么，再在[就地选读案例](../../curriculum/06-vector-db/docs/13-分布式VectorDB.md#milvus-example)中对应 Milvus 的组件。局部 Top-K 的证明是数学推导，不依赖记住某个产品的进程名称。
+
+**产品边界选读：External Collection（外部集合）。** Milvus 3.0 发布线支持面向外部湖表的查询方式，可以为外部数据建立向量搜索入口，而不要求先将整份原始数据复制进内部集合。因此“数据库负责检索记录”是职责描述，不应扩写成“所有产品模式都必须自行保存原始数据”。是否需要这项能力取决于数据原本存放的位置；连接器、支持格式和刷新过程按官方版本核对，不作为分布式 Top-K 自测的前置。
 
 [Milvus：Architecture Overview](https://milvus.io/docs/architecture_overview.md) · [Milvus：3.0 正式发布说明](https://milvus.io/docs/release_notes.md) · [Faiss：分片索引与压缩计分问题](https://github.com/facebookresearch/faiss/wiki/FAQ)
 
