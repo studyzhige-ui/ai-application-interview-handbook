@@ -2,231 +2,293 @@
 
 [← 记忆](02-memory-lifecycle.md) · [模块入口](README.md) · [恢复与验证 →](04-engineering-evaluation.md)
 
-> 源码快照：`studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。本章的文件名、调用标识和任务数据是教学示例。
+> 实现依据：本模块固定的私有源码快照。工具标识、路径和业务数据为教学示例；版本边界见 [README](README.md#学习对象与版本边界)。
 
 ## 1. 模型提出修改，谁真正动了文件
 
-分页任务中，模型读到偏移计算有误，决定把起始位置从 `page * size` 改成 `(page - 1) * size`。它可以在响应中提出 Edit 工具调用，但不能仅凭生成这段响应就改变磁盘。
+分页任务中，模型决定把偏移从 `page * size` 改成 `(page - 1) * size`。它可以提出 Edit 调用，但生成响应本身不会改写磁盘。
 
-程序必须知道 Edit 是哪个实现、参数是否合适、是否获准修改这个文件、是否与其他操作冲突，再实际执行并把结果交回模型。任何一环失败，都不能报告为“修复完成”。
+**工具是程序提供的可执行能力，模型生成的是调用请求。** 工具定义告诉模型名称、参数和用途；执行函数、权限与调度把获准请求变成真实动作。[工具接口][tool-type] 与 [执行入口][tool-execution]
 
-先建立一个最小概念：**工具是程序提供的一项可执行能力，模型生成的是调用请求。** 工具名称和参数结构帮助模型表达意图；执行函数、权限与调度决定这个意图能否成为真实动作。源码接口见 [`Tool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts)，执行主线见 [`services/tools/toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)。
+例如模型提出调用 `edit_1`，其中包含文件路径、原文本和替换文本。程序必须找到 Edit，核对参数、操作条件与权限，执行修改，再返回与 `edit_1` 配对的结果。只知道工具名字，还没有完成这条链。
 
-## 2. 工具多了以后，要区分三个集合
+## 2. 工具很多时，先分清三个集合
 
-假设除了本地文件工具，用户还连接了包含许多能力的外部服务。全部工具说明在每轮都出现，会占据上下文，还可能让模型在相似工具间反复选择。
+除了本地 Read、Edit，系统还可以接入 MCP。MCP 是 Model Context Protocol（模型上下文协议），让客户端按约定连接外部工具、资源等能力；这里先把它理解为外部能力的接入方式。
 
-需要区分：
+外部服务可能提供大量工具。如果每次都给模型发送全部完整说明，会占用输入预算。于是需要区分：
 
-| 集合 | 谁使用它 | 它回答的问题 |
+| 集合 | 使用者 | 回答的问题 |
 |---|---|---|
-| 程序中的工具池 | 查找、授权、执行与动态发现逻辑 | 程序认识哪些工具，哪些在当前环境可用？ |
-| 本次请求携带的工具定义 | API 客户端和服务端 | 这次请求提供了哪些名称、参数与加载信息？ |
-| 模型本轮实际可见的工具说明 | 模型 | 模型现在能够依据哪些说明选择工具？ |
+| 程序工具池 | 查找、授权、执行与发现逻辑 | 当前程序认识哪些工具？ |
+| 本次请求的工具定义 | API 客户端与服务端 | 这次发送哪些定义和加载信息？ |
+| 模型本轮可见说明 | 模型 | 本轮可以依据哪些说明选择？ |
 
-三个集合可能部分重合，但不能直接当成同一个集合。工具在程序中注册，不等于完整说明每轮都进入模型上下文；模型看见了一个名字，也不等于程序已经批准这次操作。
+工具注册在程序里，不代表完整说明每轮都进入模型上下文；模型看见一个名字，也不代表这次操作获准。
 
-## 3. 延迟发现怎样让工具说明按需进入请求
+## 3. 按需发现怎样补上工具说明
 
-镜像中的 ToolSearch 是发现工具的入口。Deferred Tool 表示延迟加载工具，即不把完整说明无条件放进每次模型输入。是否启用搜索取决于配置、能力支持和工具预算等条件，不能只看“连接了 MCP”就断言必然延迟加载。
+Deferred Tool（延迟加载工具）不把完整说明无条件放进每轮模型输入。ToolSearch 是发现入口；能否启用取决于配置、能力支持及预算，连接 MCP 本身不等于启用搜索。
 
-启用这条路径时，[`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts) 会读取消息中的已发现集合，并实际过滤 `filteredTools`：保留非延迟工具、搜索入口以及已发现的延迟工具。没有启用搜索时则走另一条工具集合组织路径。
+假设要读取外部缺陷系统里的分页问题，正常过程是：
 
-假设要从外部缺陷系统读分页问题详情，一次成功发现过程可以是：
+1. 模型先看见常驻能力和搜索入口。
+2. 模型按任务搜索缺陷读取工具。
+3. ToolSearch 返回 `tool_reference`，即指向已知工具的结构化引用。
+4. 后续请求从历史恢复已发现名称，纳入对应定义。
+5. 模型依据参数说明提出实际调用，再进入校验与授权。
 
-1. 模型先获得常驻能力与搜索入口，而不是无条件获得全部延迟工具的完整参数说明。
-2. 模型用任务相关词搜索。ToolSearch 根据工具目录寻找候选，也支持按具体名称选择的路径。
-3. 搜索结果返回 `tool_reference`，即对已知工具的结构化引用，而不只是自然语言说“可以用某工具”。
-4. 后续请求从历史中恢复已发现名称，将相应定义纳入本次工具集合；模型据此生成真实工具调用。
-5. 真正执行时仍需要查找当前工具、校验参数和授权。搜索成功没有越过这些检查。
+这个镜像的 API 层会过滤 `filteredTools`，保留非延迟工具、搜索入口及已发现工具，再生成请求定义。调用到来时仍以当前工具池查找实现。[发现状态][tool-search-state]、[搜索实现][tool-search] 与 [请求工具定义][api-tools]
 
-源码阅读顺序是 [`utils/toolSearch.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts)、[`tools/ToolSearchTool/ToolSearchTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts)，最后回到 API 层看实际发送的集合。
+<details><summary>源码细节：关键词搜索与两种延迟加载位置</summary>
 
-### 搜索不是另一个凭空猜工具的模型
+镜像中的 `select:<tool_name>` 按名称选择。普通搜索检查精确名称、服务端前缀，并对名称组成部分、`searchHint` 和描述匹配评分；带 `+` 的词可以作为必须条件，名称中的精确组成部分通常比描述普通匹配权重更高。应在 `searchToolsWithKeywords()` 核对，它不是向量检索，也不是记忆篇的辅助模型选择。
 
-这个快照的 ToolSearch 实现包含精确名称选择与关键词检索。`select:<tool_name>` 表示按工具名直接选择；普通查询先检查精确名称与服务端前缀，再对名称组成部分、`searchHint`（能力检索提示）和描述进行匹配与评分。带 `+` 的词可以作为必须满足的条件。名称的精确组成部分通常比描述中的普通匹配权重高，最后按分数选择结果。
+[官方 Tool Search 文档][official-search] 还描述服务端内置搜索：延迟定义可以已发送给 API，但暂不进入模型可见上下文。它和本镜像的客户端筛选不是同一个步骤。判断时分别看程序工具池、实际请求和模型可见内容。
 
-例如搜索缺陷读取能力，服务端名和动作名比一段描述里偶然出现“缺陷”更有辨识力。这里应追到 `searchToolsWithKeywords()`，而不是把“工具搜索”自动写成向量检索或另一个大模型挑选。记忆篇的相关文件选择使用辅助模型，两条发现路径不能因名字相似就混写。源码见 [ToolSearchTool.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts)。
+</details>
 
-### 不要把两种 Tool Search 实现混写
+MCP 重连、目录变化或压缩以后，历史发现记录还可能存在，工具却已不可用或参数发生变化。发现记录帮助恢复连续性，不能替代当前连接与定义检查。工具说明中的名字、描述和输入结构是执行前提，不是永久有效的授权。
 
-[官方 Tool Search 文档](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)描述的服务端内置搜索，可以在请求中携带延迟定义，再由服务端控制哪些进入模型上下文；它也支持客户端自定义搜索的模式。本镜像还做了上面的客户端过滤。
+## 4. 一次调用怎样从参数走到执行
 
-因此，“延迟定义不进入当前模型上下文”不能单独推出“定义一定没有发送到 API”；反过来，也不能用服务端内置方案的说明否定镜像中实际存在的客户端过滤。应分别检查过滤前工具池、实际请求和模型可见状态。
-
-### 搜索结果还要面对目录变化
-
-MCP 连接重新建立、服务端能力清单变化、上下文发生压缩，都可能改变后续发现状态。历史中的名字只是过去已经发现的线索，不保证今天连接仍在、同名工具仍具有相同参数。压缩边界中的发现信息帮助保持连续性，实际执行还必须以当前可用工具池为准。相关差量附件与恢复入口见 [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts) 和 `utils/toolSearch.ts`。
-
-## 4. 一次工具请求需要经过哪些检查
-
-下面用本地 Edit 串起完整主线。Schema 是参数结构定义，例如“文件路径必须是字符串”；语义校验进一步判断“这组值是否适合当前操作”。结构合法不代表文件存在，也不代表应当修改它。
+Schema（参数结构定义）先检查形状，例如路径是不是字符串；工具的 `validateInput()` 再检查这组值是否适合操作，例如待替换文本能否匹配。然后才处理执行前扩展和权限。
 
 ```text
 模型提出 tool_use
-    │
-查找当前工具、检查取消状态
-    │
-参数结构解析、工具自己的语义校验
-    │
-PreToolUse：执行前钩子，可阻止或改写输入
-    │
-权限判断与必要的批准交互
-    │
+  ↓
+查找当前工具，检查取消状态
+  ↓
+参数结构解析与工具语义校验
+  ↓
+PreToolUse：执行前钩子
+  ↓
+权限判断与必要批准
+  ↓
 实际 tool.call()
-    │
-执行后处理、结果转换、必要的上下文更新
-    │
-与原调用标识配对的 tool_result
+  ↓
+执行后处理与结果转换
+  ↓
+配对的 tool_result
 ```
 
-Hook（钩子）是在特定阶段接入的程序逻辑。它可能提供额外上下文，也可能停止继续执行或改变输入，不能都理解成“打印一条日志”。主要实现见 [`services/tools/toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)。
+Hook（钩子）是在指定阶段接入的程序逻辑，可提供上下文、阻止执行或明确改写参数。找不到工具、结构解析失败或语义校验失败，程序可以返回 `is_error` 的工具结果，而不是凭名称臆造实现。[解析与语义校验][input-validation]
 
-如果工具不存在，程序构造错误结果而不是凭名称臆造一个函数。如果参数解析失败或工具语义校验失败，同样可以返回带 `is_error` 的工具结果，使模型知道失败并决定后续行动。错误作为结果回传，与模型请求本身的网络失败是不同的恢复层。
+### 参数被改写后，批准与执行针对的是哪一份
 
-### 钩子改写参数后，要追踪最终执行对象
+用一条正常的“钩子只改参数，不直接批准”的路径看清对象。设模型原本请求修改 `src/pagination.py`，钩子将目标改为 `sandbox/pagination.py`；其他必要参数一并保留，下面只展示路径。
 
-假设最初调用指向 `src/pagination.py`，钩子把路径改到了另一个目录。前面的校验针对的是原输入；不能凭“校验步骤已经发生”就宣称最终输入已经通过所有同样的检查。
+| 时刻 | 路径或对象 | 本阶段确认什么 |
+|---|---|---|
+| 模型输入 | `src/pagination.py` | 原始调用意图 |
+| 初始解析与 `validateInput()` | 原输入解析后的对象 | 这份输入的结构及工具条件 |
+| 钩子返回 `updatedInput` | `sandbox/pagination.py` | 明确替换后续处理输入 |
+| 正常权限处理 | 使用改写后的输入 | 改写后的操作是否允许 |
+| 获准后实际调用 | 使用最终确定的 `callInput` | 对最终输入执行工具 |
 
-源码区分 `processedInput` 与 `callInput`，并对供观察、钩子或权限使用的派生字段建立浅拷贝，避免意外改变实际调用。钩子或权限阶段明确返回 `updatedInput` 时，则需要追踪替换后值如何进入权限判断及最终调用。具体链路在同一执行文件中；哪些校验再次执行，应逐个查看分支，不能补画一个并不存在的统一“所有改写后自动重验”步骤。
+这不是“早期校验全部自动重做一遍”。在 `checkPermissionsAndCallTool()` 的这条路径中，初始校验发生在钩子之前；透传改写更新 `processedInput`，权限返回后确定 `callInput`，进入 `tool.call()`，**没有统一跳回最前面的 `safeParse()` 和 `validateInput()`**。[改写与权限传递][input-hooks]、[最终输入选择][input-call]
 
-> ⚠️ 审查工具扩展时，要问“批准的是哪个路径、实际执行的是哪个路径”，而不是只问“有没有调用过权限函数”。观察用字段与真正调用参数也不能随意混用。
+因此，前面对旧路径的校验不能直接证明新路径的所有条件。权限回调或具体工具内部可能另有检查，必须按各自实现说明；本结论也不是宣称所有工具都存在绕过漏洞。
 
-## 5. 权限、批准与沙箱不是三个同义词
+钩子直接返回允许时，`resolveHookPermissionDecision()` 仍处理需要用户交互或强制 `canUseTool` 的情况，并检查配置中的 deny/ask 规则。返回拒绝则停止；返回 ask 或没有权限决定时走正常权限流程。**Hook 的 allow 不是无条件越过已有拒绝规则。**[权限解析分支][hook-permission]
 
-Permission（权限判断）决定某个操作是否被允许；Approval（批准交互）在需要人决定时取得明确答复；Sandbox（沙箱）限制某些执行进程能够接触的文件系统和网络。
+<details><summary>实现细节：观察用参数与调用参数为何可能不同</summary>
 
-权限结果常见为 `allow`（允许）、`deny`（拒绝）、`ask`（需要询问）。工具返回“继续交给上层判断”的结果，不等于已经允许。不同交互入口有不同的询问处理方式；无交互入口不能因为没有弹窗就把需要批准的写操作解释为用户默许。规则与宿主交互入口见 [`utils/permissions/permissions.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/permissions/permissions.ts) 和 [`hooks/useCanUseTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/hooks/useCanUseTool.tsx)。
+`backfillObservableInput` 在浅拷贝上补充观察字段。文件工具可能把相对路径展开，让钩子和权限更方便判断；`callInput` 初始保留调用参数，避免仅为显示而改动结果文本。
 
-### 本地 Edit 不能写成必经 shell 沙箱
+若之后没有真正替换输入，调用可继续使用原参数。若钩子或权限明确提供新对象，真实改动会传向调用；但新路径若只是等于之前的展开值，执行层会恢复模型原来的路径写法，同时保留其他改动。这个处理保护相同文件对象的表达稳定性，不把真正换到另一文件的路径恢复掉。[观察拷贝][input-hooks] 与 [最终输入分支][input-call]
 
-分页例子中的内置 Read/Edit/Write 通过自己的路径检查和权限系统访问文件，不是先转换成 Bash 命令再统一经过 shell 沙箱。[官方沙箱文档](https://code.claude.com/docs/en/sandboxing)明确区分内置文件工具与被沙箱包裹的命令执行。镜像的沙箱适配入口是 [`utils/sandbox/sandbox-adapter.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts)。
+</details>
 
-假设命令执行路径处于启用的 OS 沙箱中，它能约束该路径覆盖的进程；不能据此推断远端 MCP 服务也在相同沙箱里，或内置 Edit 可以忽略自己的路径权限。
+> ⚠️ 注意：扩展工具或钩子时，核对“校验哪份输入、批准哪个对象、最终执行什么”。仅仅出现过权限函数，不能证明每次参数变化都被相同检查覆盖。
 
-> ⚠️ 用户批准一次操作，不代表所有后续操作都获批；沙箱开启也不代表产品的每一种工具都受同一个 OS 边界控制。需要分别确认操作主体、权限作用域和实际执行位置。
+## 5. 权限、批准与沙箱分别限制什么
 
-## 6. MCP 把远端能力接进来，还多了哪些生命周期
+Permission（权限判断）决定操作是否允许；Approval（批准交互）在需要人决定时取得答复；Sandbox（沙箱）限制相应执行进程可以接触的文件系统和网络。
 
-MCP 是 Model Context Protocol，即模型上下文协议，用于连接外部工具、资源等能力。它解决接入格式与交互，不替应用决定业务风险。
+权限结果常见为 `allow`、`deny`、`ask`。`ask` 需要由当前交互入口处理；没有交互界面时，不能把未弹窗解释为用户默许。[权限规则][permissions] 与 [交互入口][permission-ui]
 
-本地连接可以通过 stdio，即标准输入输出，与子进程交换协议消息；远端连接使用相应网络传输。建立连接之后，客户端请求 `tools/list` 获取工具清单，把工具名称、参数结构和服务端身份转换为程序中的工具对象。镜像使用带服务端信息的名字组织 MCP 工具，避免不同服务都叫 `search` 时无法区分。主要实现见 [`services/mcp/client.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts)。
+本地 Read/Edit/Write 使用自己的路径检查与权限系统，不是都先转换成 Bash，再统一经过 shell 沙箱。沙箱包裹的命令进程受该执行边界限制，远端 MCP 服务不自动在本机沙箱中。[官方沙箱说明][official-sandbox] 与 [镜像适配入口][sandbox]
 
-完整过程不止一次连接：
+> ⚠️ 注意：批准一次操作不授予所有后续操作；启用沙箱也不等于每种工具都受同一边界控制。判断权限时要知道谁执行、在哪里执行、批准范围是什么。
 
-| 阶段 | 要解决的具体问题 |
+## 6. 接入 MCP 后，还要管理连接和结果
+
+本地 MCP 服务可以通过 stdio（标准输入输出）与子进程交换消息；远端服务使用相应网络传输。连接后，客户端用 `tools/list` 取得清单，将服务端身份、名称与参数结构转换成程序工具。[客户端实现][mcp-client]
+
+| 阶段 | 本次要确认的事实 |
 |---|---|
-| 配置与连接 | 使用哪个服务、传输与凭据，哪些服务连接失败？ |
-| 能力清单与转换 | 名字能否区分服务端，结构是否能转换为本地工具定义？ |
-| 本次调用 | 当前连接可用吗，参数和权限通过了吗？ |
-| 结果转换 | 业务错误、协议错误、大结果和二进制内容怎样交给调用方？ |
-| 恢复与清理 | 哪类错误可以刷新认证或重建连接，何时停止重试和释放资源？ |
+| 配置与连接 | 服务地址、传输和凭据可用 |
+| 清单与转换 | 工具名称能区分服务，参数结构可用 |
+| 调用 | 当前连接、参数与权限满足要求 |
+| 结果 | 正常返回、业务错误、协议错误或大结果得到对应处理 |
+| 恢复与清理 | 按错误类别有限重试，结束时释放资源 |
 
-多个服务可以部分成功。一个连接认证失败，应明确它进入需要认证的状态，不应仅因局部失败把其他正常连接也描述为全部不可用。
+多个服务可以部分成功。某个服务认证失败，应报告这个服务的状态，而不是把所有工具说成不可用。
 
-### 会话过期不等于所有 404 都重连
+<details><summary>连接边界：会话失效、认证与超时</summary>
 
-镜像的 `isMcpSessionExpiredError()` 不只检查 HTTP 404，还检查 JSON-RPC 错误码对应的会话失效信号，以免把 URL 配错或服务不存在当成会话过期。它的恢复路径与 OAuth 认证过期处理不同，不能用一个“出错就重试”概括。
+`isMcpSessionExpiredError()` 同时检查 HTTP 404 和相应 JSON-RPC 信号，以免把错误地址当会话失效。镜像另有远端代理遇到 401 后刷新认证并再试一次的路径，两者职责不同。
 
-本快照还存在远端代理收到 401 后刷新认证再尝试一次的路径；这解释认证恢复，并不意味着任意远端写操作都具备恰好一次执行保证。网络连接恢复，只能恢复通信条件，不能倒推上一次业务动作没有发生。
+默认工具调用等待参数为 `100_000_000` 毫秒，约 27.8 小时，可由环境变量改变。它是快照参数，不是推荐业务时限；连接超时、模型请求超时与用户任务预算另行决定，也不能由等待结束推导远端动作已停止。
 
-调用超时也要看对象和单位。该文件的默认 MCP 工具调用超时为 `100_000_000` 毫秒，约 `100_000_000 ÷ 1000 ÷ 3600 ≈ 27.8` 小时，环境变量可改变它。这是快照中的等待参数，不是推荐的业务时限，也不保证远端操作到时立即终止。连接超时、模型请求超时和用户任务预算不能混作同一个值。
+通信恢复只恢复连接条件。上一笔写入是否已发生，仍要查业务状态，不能由一次重连获得通用的恰好一次保证。
 
-### 服务端要求补充信息时，不能绕过用户
+</details>
 
-Elicitation 表示服务端在执行过程中请求用户提供额外信息，可能包含表单或需要打开的地址。这仍是交互和批准边界，需要处理用户接受、拒绝、取消，以及有限的后续尝试。它不是一条“服务器说需要，就可以任意代用户操作”的授权链。相关入口在 `client.ts` 与 [`services/mcp/elicitationHandler.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/elicitationHandler.ts)。
+Elicitation 是服务端请求用户补充信息的交互，例如填写表单或访问指定地址。客户端仍要处理接受、拒绝、取消和有限后续尝试，不能自动代替用户作出所有决定。[信息补充处理][elicitation]
 
-## 7. Skill 组织做法，Tool 执行动作
+## 7. Skill 不只返回文字，还可能改变后续执行条件
 
-为了反复修复同类分页问题，可以把“先复现、再改最小位置、保留原测试、最后检查接口”写成 Skill。Skill 可以给模型提供一套任务做法和材料，却不是因为有了名字就成为操作系统层的执行权限。
+Skill（技能）组织一种任务做法，例如“先复现分页错误，再作最小修改，最后验证接口”。Tool 负责实际动作；MCP 负责接入外部能力。这三者可以组合，但不是一一对应。
 
-`SKILL.md` 的文件头配置负责说明名称、描述、可见性或调用方式等；正文承载具体指导。重要字段应按用途理解，而不是一次背完整清单：发现相关字段帮助系统选中技能，工具相关设置影响相应执行范围，上下文或代理配置决定在当前会话展开还是通过分叉子任务处理。加载入口见 [`skills/loadSkillsDir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts)。
+`SKILL.md` 的头部配置影响发现与调用，正文提供指导。Inline（当前会话展开）把材料带入当前执行；fork（分叉执行）为子任务建立上下文，再交回结果。[技能加载][skill-loader] 与 [SkillTool][skill-tool]
 
-调用时有两类需要分清的行为：inline（在当前上下文展开）把技能材料带入当前执行；fork（分叉执行）建立子任务上下文，再将结果交回。无论哪类，真正读文件、改代码仍要经过工具系统。SkillTool 可以通过 `contextModifier` 返回后续执行上下文的修改，因此调用结果不一定只有一段显示文字。实现见 [`tools/SkillTool/SkillTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts)。
+### 用一个状态变化理解 `contextModifier`
 
-Skill 与 MCP 可以协作：前者组织“怎样做”，后者提供“能调用哪些外部能力”。但两者不是严格一一对应；一个 Skill 可以调用多个工具，单个工具也能供多个任务使用。
+`contextModifier` 是工具返回的“怎样更新后续执行上下文”的函数，与供模型阅读的消息分开。SkillTool 的正常结果可以同时包含：
 
-如果模型没有遵守“不能删测试”，要先确认技能是否被选中、正文是否加载、约束是否与其他输入冲突，再检查权限与验收。把限制移到更高优先级的指令可能改善遵从，但仍不能替代程序检查。来自不可信来源的技能文本、动态命令和外部工具描述，都不应因为带有 Skill/MCP 标签就自动得到更高信任。
+| 返回部分 | 作用 | 本例中的结果 |
+|---|---|---|
+| `data` | 描述技能调用结果 | 哪个技能成功展开 |
+| `newMessages` | 给模型的材料 | 分页审查步骤 |
+| `contextModifier` | 改变后续程序执行条件 | 更新允许规则或主循环模型配置 |
 
-## 8. 多个工具怎样并发，而不互相踩状态
+设技能被允许展开，并提供 `allowedTools = ["Read"]`。消费其修改函数前，命令来源的允许规则为空；消费后，对应规则中新增 Read。**写入规则不会创建 Read 的实现，也不会移除其他既有规则，更不能被理解成“只允许 Read”的工具白名单。** 若技能指定模型，修改函数还会经 `resolveSkillModelOverride()` 更新 `options.mainLoopModel`；指定 effort 时会更新相应状态。[返回消息及上下文修改][skill-modifier]
 
-读取两个互不依赖的文件可以重叠执行，修改同一个文件则可能产生覆盖。调度器必须依据工具与输入的并发安全声明安排执行，而不是简单按“读取工具都安全、其他全部不安全”分组。
+由此可见，只收到“Launching skill”文字，不足以说明后续状态已经更新。调用方还必须真正消费 `newMessages` 和修改函数，模型材料与程序状态才会分别接上。
 
-[`services/tools/StreamingToolExecutor.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts) 在输入结构解析成功后调用 `isConcurrencySafe()`；判断抛错或解析失败时采用不安全的保守结果。标为不安全的工具需要独占执行，并在队列中形成屏障，防止后面的操作越过依赖边界。
+技能加载失败或约束没被遵守时，先查是否选中了技能、正文是否进入请求，再看输入冲突、权限与验收。不可信技能、动态命令或外部工具说明，也不能因为带有 Skill/MCP 标签就获得更高信任。
 
-例如先读取分页源码和测试文件，再编辑源码，最后运行测试：前两个读取可以在符合安全声明时并发；测试不能为了缩短耗时抢到编辑完成之前。声明本身也需要正确，不能因为第三方提供 `readOnlyHint` 就自动证明它没有共享资源副作用。
+## 8. 多个工具怎样并发，而不越过状态依赖
 
-这个执行器还区分 `queued`（排队）、`executing`（执行中）、`completed`（结果就绪）和 `yielded`（结果已经交付）。进度消息可以及时交付，结果由消费方法取出。不要仅凭类注释就把所有结果说成严格按最初调用顺序串行交付；独占工具的屏障与并发结果的就绪是不同的约束。
+读取互不依赖的源码和测试，可以在工具声明安全时重叠进行；随后编辑与测试则存在先后关系。调度器依赖工具针对输入给出的 `isConcurrencySafe()` 判断，不是自动理解所有业务依赖。[流式执行器][executor]
 
-> ⚠️ 此快照只对非并发工具应用收集到的 `contextModifier`，源码还明确指出并发工具的上下文修改尚未得到同样支持。扩展工具既声明并发安全又依赖修改共享执行上下文时，必须核查这一边界。
+结构解析失败或并发判断抛错时，执行器按不安全处理。非并发工具需要独占，形成屏障。因此，在编辑被正确声明为非并发、调用按预期安排的情况下，后续测试不会越过编辑去测试旧文件；错误声明仍会破坏这项前提。
 
-## 9. 取消、失败与丢弃结果分别发生了什么
+执行器还区分四个状态：
 
-用户在工具执行时追加需求，不是所有工具都具有相同的中断语义。镜像区分工具的取消与阻塞行为；取消信号还通过父、子控制器传播。信号发出以后，具体工具是否及时停止，需要看它有没有处理信号以及副作用发生在哪个时刻。
+| 状态 | 含义 |
+|---|---|
+| `queued` | 调用已登记，等待调度 |
+| `executing` | 正在执行 |
+| `completed` | 结果已收集 |
+| `yielded` | 结果已交付消费者 |
 
-流式执行器还对某些并行失败作传播：此快照中 Bash 错误可以取消同批兄弟任务，而 Read/WebFetch 等错误不因此一律取消其他独立读取。这样可以避免一个普通读取失败就让所有并行观察都丢失。具体逻辑见 [`StreamingToolExecutor.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts)。
+结果就绪与交付是两步。进度可及时交付，并发结果也不应一概写成严格按最初调用顺序返回；独占屏障与就绪结果处理是不同约束。[结果收集与交付][executor-results]
 
-### `discard()` 不是撤销已经发生的操作
+### 上下文修改为什么影响并发声明
 
-流式模型请求失败并切换尝试时，旧执行器可能被丢弃，以免迟到的旧结果污染新一轮消息。`discard()` 本身设置的是 `discarded` 标志；结果消费者检查这个标志，执行过程也会检查它并产生相应错误表示。这不是一个通用事务撤销接口。
+这个快照收集各工具返回的修改函数，但只对非并发工具把它们应用到执行器的后续上下文。源码明确说明并发工具尚未得到同样支持。[修改函数消费][executor-results]
 
-若 Edit 已经改写了文件，再丢弃旧执行器的结果，文件不会因此自动恢复。若远端写入已经成功但响应丢失，后续错误消息也不能证明动作没发生。恢复前必须核对真实状态；涉及不可重复写入时，还需要服务端支持的幂等或查询确认机制。
+沿用上一节的状态例子：一个扩展工具准备增加 Read 允许规则。如果它声明并发安全，结果消息可能正常交付，而依赖的共享规则没有按该路径更新。此时问题不是“文件写冲突”，而是后续执行条件没有建立。
 
-这说明三个动作要分别验证：**停止等待旧结果、请求正在运行的工作停止、撤销已经发生的副作用。** 实现其中一个，不等于完成了其余两个。
+> ⚠️ 注意：既返回共享 `contextModifier` 又声明并发安全的扩展，不能只做无数据竞争测试。应先选择串行语义，或实现明确的合并与消费机制，再验证真实调用方。第三方的只读提示也不能单独证明并发安全。
 
-## 10. 结果回填后，为什么还没到验收终点
+## 9. 取消、失败与丢弃结果各改变哪一层
 
-工具结果通过 `tool_use_id` 与原调用关联。程序可以把输出转换为模型协议、加入错误信息、处理过大结果，必要时更新后续上下文。下一次请求据此继续，但同一份结果还可能有界面显示和持久化等不同去向。
+取消信号通过父子控制器传播，具体工具是否停止，取决于是否处理信号以及副作用发生时机。工具还可声明面对用户新输入时取消或阻塞，其行为不能一概而论。
 
-以 Edit 为例，“工具正常返回”可以支持修改步骤完成的判断，但不能证明分页语义正确。以测试为例，“命令退出码为 0”还需要确认运行的是哪些测试、测试是否被削弱、是否检验了用户要求。源码执行层负责组织结果，任务验收必须结合文件差异和有效测试。执行后处理见 [`toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)，长结果的后续预算处理见[上下文篇](01-context-lifecycle.md)。
+流式执行器对部分失败作传播：该快照中 Bash 错误可以取消同批兄弟任务；Read/WebFetch 等失败不因此一律取消其他独立读取。[失败传播][executor-results]
+
+`discard()` 用于旧尝试失效后隔离旧执行器结果。例如模型流失败并切换尝试，查询循环会丢弃旧执行器，避免旧调用标识的迟到结果混入新消息。[流失败切换][stream-fallback]
+
+它不是回滚：Edit 已改好的文件不会自动恢复，远端已成功但响应丢失的写入也不会自动消失。继续之前必须区分：停止等待旧结果、请求工作停止、撤销已发生操作。不可安全重复的写入，需要查询确认或服务端幂等支持。
+
+## 10. 回填结果，怎样成为下一次判断的证据
+
+模型提出 `edit_1`，程序完成修改后返回的结果块可用下列教学形式表示：
+
+```json
+{
+  "type": "tool_result",
+  "tool_use_id": "edit_1",
+  "content": "分页偏移已替换；尚未运行测试"
+}
+```
+
+调用标识把结果对应到那次 Edit，而不是所有修改。若执行失败，结果可以带 `is_error: true`，再由后续模型请求决定改参数、补充材料或停止。[执行与结果处理][tool-execution]
+
+“修改成功”支持文件变更已发生，不支持分页语义已正确。测试退出码为 0 也要结合实际命令、工作目录和未被削弱的断言。结果还会进入界面、持久记录及下一轮输入，过大内容受 [上下文预算](01-context-lifecycle.md) 处理。**最终验收需要文件差异和有效测试，不只是一条成功消息。**
 
 ## 本章小结
 
-工具生命周期的主线是能力发现、参数形成、检查与批准、调度与执行、结果交付和任务验收。ToolSearch 减轻发现压力，不授予权限；MCP 组织外部接入，不保证业务写入恰好一次；Skill 提供做法，不把自然语言规则变成不可绕过的系统限制。恢复时尤其要把消息状态与真实副作用分开。
+先发现和提供工具说明，再校验、授权、调度并执行，最后配对交付结果。参数改写需要追到最终输入，Skill 的消息与状态修改需要分别消费。权限、沙箱、连接恢复和结果丢弃各有职责，任务正确性仍要独立验收。
 
 ## 🎯 面试怎么回答
 
-**问：Claude Code 怎样保证工具调用不是模型随便生成一段 JSON 就执行？**
+**问：Claude Code 怎样把模型意图变成受控工具操作？**
 
-> 🎯 程序先在当前工具池中查找实现，解析参数并进行工具自己的语义校验，再处理执行前钩子、权限和必要的用户批准。调度层按并发与中断语义安排真正的调用，结果再按调用标识返回。搜索只解决发现，沙箱也只覆盖相应执行路径。出现参数改写、流失败或重试时，还要核对最终批准对象和真实副作用，不能拿一条错误或成功消息替代完整验收。
+模型先依据可见定义提出调用，程序在当前工具池查找并校验，再经过钩子、权限和必要批准，调度实际执行。参数若改写，要确认最终批准及执行对象；结果按调用标识回填，状态修改还要由消费者应用。发现不授权、丢弃结果不回滚，最后以真实差异和测试确认任务，而不是把 JSON 或成功文本当作交付。
 
 ## ⚠️ 高频易错点
 
-- 延迟工具在本次请求里是否存在，与它是否进入模型上下文是两个问题。
-- 参数结构正确、权限允许和业务结果正确，是三个不同判断。
-- 本地内置 Edit 不必经过 shell 沙箱；远端工具也不自动继承本机的执行隔离。
-- 取消信号、丢弃旧结果和撤销副作用不能互相代替。
+- 定义是否发送给 API，与是否进入模型上下文是不同问题。
+- 旧输入校验通过，不能自动证明钩子改写后的输入通过同样检查。
+- 技能的允许规则是程序状态，不是工具实现，也不是全部权限的替代品。
+- 结果已就绪、已交付、业务已完成，需要分别确认。
 
 ## 本章自测
 
-**任务一：工具曾经发现过。** 旧会话已找到一个 MCP 工具。恢复时对应服务没有连接成功，但发现记录仍在。请说明模型知道工具名是否足够，并按顺序列出继续调用前必须确认的事实。
+**任务一：参数换了。** Edit 的原路径已通过校验，透传钩子改成另一文件。怎样判断后续动作是否获准？能否假设语义校验统一重做？
 
 <details><summary>参考答案与解释</summary>
 
-不够。需要确认服务连接及认证状态、当前工具目录仍包含它、参数定义与实际请求可见定义一致，再进行调用校验和权限判断。发现记录保留历史连续性，不提供当前连通性或执行许可。
+看改写后的输入进入权限处理及最终调用的路径。此执行函数没有统一跳回初始解析和 `validateInput()`；具体权限或工具内部检查要分别核对，不能将旧输入通过的结论套到新对象。
 
 </details>
 
-**任务二：并发与状态。** 某个扩展工具声明 `isConcurrencySafe = true`，但其正确结果依赖 `contextModifier` 改变后续共享上下文。请根据本章快照说明为什么需要阻止直接上线，并指出核查位置。不能只回答“加锁”。
-
-<details><summary>提示</summary>
-
-分别检查调用能否并发，以及并发完成后上下文修改有没有被消费者应用。
-
-</details>
+**任务二：并发结果成功。** 一个扩展工具返回增加允许规则的 `contextModifier`，同时声明并发安全。结果显示成功，是否足以证明下一工具已具备该规则？
 
 <details><summary>参考答案与解释</summary>
 
-流式执行器在这个快照中只对非并发工具应用收集到的上下文修改。即使工具自身没有数据竞争，依赖的后续状态也可能没有建立。应核查 `StreamingToolExecutor` 的上下文修改分支与工具声明，先明确需要串行执行还是实现相应的合并语义，再验证真实消费者行为。
+不足。此快照只对非并发工具应用收集到的上下文修改。应检查执行器的消费分支，采用串行方式或实现相应合并语义，再验证后续消费者状态；不能只回答“加锁”。
 
 </details>
 
-**任务三：失去响应的写入。** Edit 已完成文件修改，模型流随后失败，旧执行器被 `discard()`。新请求准备再次执行同样修改。请说明错误消息能证明什么、不能证明什么，以及继续之前应看哪两类证据。
+**任务三：恢复后的旧工具。** 发现记录仍有外部工具名，但 MCP 服务连接失败。可以直接调用吗？
 
 <details><summary>参考答案与解释</summary>
 
-它能说明旧尝试的执行结果不应继续正常交付，不能证明文件未改或已经回滚。应查看实际文件及差异，并核查原工具调用、结果与中断时序。只有确认当前状态和操作可重复性后，才决定重试、跳过或修复。
+不可以。先确认连接和认证、当前工具目录及参数定义，再进行调用校验与权限判断。历史发现只提供线索，不提供当前可用性。
 
 </details>
+
+**任务四：修改后断流。** Edit 已改文件，模型流失败后旧执行器被丢弃。再次执行前必须看什么？
+
+<details><summary>参考答案与解释</summary>
+
+看实际文件差异，以及原调用、结果和中断时序。丢弃表示旧结果不再正常交付，不表示文件已回滚；确认当前状态与操作可重复性后，再决定重试、跳过或修复。
+
+</details>
+
+## 知识回看与源码定位
+
+- [Tool Contract 课程](../../../curriculum/09-agent/docs/04-ToolContractAndValidation.md)：回看参数结构、语义与结果职责。
+- [初始校验][input-validation]、[钩子及权限][input-hooks]、[最终调用][input-call]：沿同一份输入读完整链。
+- [Skill 状态生产][skill-modifier] 与 [执行器消费][executor-results]：核对状态修改为何不只是返回文字。
 
 [下一篇：恢复、协作与工程验证 →](04-engineering-evaluation.md)
+
+[tool-type]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts
+[tool-execution]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts
+[input-validation]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L606-L730
+[input-hooks]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L755-L937
+[input-call]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L1127-L1227
+[hook-permission]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolHooks.ts#L319-L439
+[tool-search-state]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts
+[tool-search]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts
+[api-tools]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts#L1207-L1257
+[permissions]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/permissions/permissions.ts
+[permission-ui]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/hooks/useCanUseTool.tsx
+[sandbox]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts
+[mcp-client]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts
+[elicitation]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/elicitationHandler.ts
+[skill-loader]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts
+[skill-tool]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts
+[skill-modifier]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts#L766-L867
+[executor]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts
+[executor-results]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts#L263-L445
+[stream-fallback]: https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L705-L743
+[official-search]: https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool
+[official-sandbox]: https://code.claude.com/docs/en/sandboxing

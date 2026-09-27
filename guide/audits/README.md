@@ -21,6 +21,7 @@
 
 - [DeerFlow｜读者优先修订与源码核验记录](deerflow-reader-first-2026-09-27.md)
 - [DeepSeek Harness｜读者优先修订与验证记录](deepseek-harness-reader-first-2026-09-27.md)
+- [Claude Code｜讲解清晰度精修记录](claude-code-clarity-refinement-2026-09-27.md)
 - [Coding 小节讲解与排版复审｜2026-09-24](coding-subsection-clarity-2026-09-24.md)
 - [Coding 阅读架构审查｜2026-09-23](coding-reader-first-2026-09-23.md)
 - [Final Quality Audit｜v1.0 终局质量审计](history/final-quality-audit-2026-09-12.md)
