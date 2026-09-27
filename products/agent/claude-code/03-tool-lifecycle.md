@@ -1,771 +1,232 @@
-# 03. Claude Code Tool Lifecycle｜从能力目录到动态发现、权限和真实执行
+# 03. 工具生命周期｜从知道能力到确认动作完成
 
-[← Memory](02-memory-lifecycle.md) · [Claude Code 总览](README.md) · [Engineering & Evaluation →](04-engineering-evaluation.md)
+[← 记忆](02-memory-lifecycle.md) · [模块入口](README.md) · [恢复与验证 →](04-engineering-evaluation.md)
 
-> **源码镜像基线：** `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`
+> 源码快照：`studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。本章的文件名、调用标识和任务数据是教学示例。
 
-Claude Code 的 Tool（工具）系统真正解决的不是：
+## 1. 模型提出修改，谁真正动了文件
 
-> “模型怎样返回一个函数名和 JSON 参数？”
+分页任务中，模型读到偏移计算有误，决定把起始位置从 `page * size` 改成 `(page - 1) * size`。它可以在响应中提出 Edit 工具调用，但不能仅凭生成这段响应就改变磁盘。
 
-而是更长的一条链：
+程序必须知道 Edit 是哪个实现、参数是否合适、是否获准修改这个文件、是否与其他操作冲突，再实际执行并把结果交回模型。任何一环失败，都不能报告为“修复完成”。
 
-~~~text
-产品拥有很多能力
-→ 当前会话组装 Tool Pool（工具池）
-→ 决定哪些 Tool 立即给模型、哪些延迟发现
-→ Claude API 收到 Tool Schema（工具模式定义）
-→ 模型生成 tool_use
-→ Runtime 校验输入
-→ PreToolUse Hook
-→ Permission Decision
-→ 必要时用户 / classifier / headless hook 批准
-→ Tool 真正执行
-→ PostToolUse Hook
-→ 结果截断 / 持久化
-→ tool_result 写回消息
-→ 下一次模型采样
-~~~
+先建立一个最小概念：**工具是程序提供的一项可执行能力，模型生成的是调用请求。** 工具名称和参数结构帮助模型表达意图；执行函数、权限与调度决定这个意图能否成为真实动作。源码接口见 [`Tool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts)，执行主线见 [`services/tools/toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)。
 
-MCP、Skill、Subagent、Bash、Read / Edit 等能力最后都要落到这条控制链上。
+## 2. 工具多了以后，要区分三个集合
 
----
+假设除了本地文件工具，用户还连接了包含许多能力的外部服务。全部工具说明在每轮都出现，会占据上下文，还可能让模型在相似工具间反复选择。
 
-## 1. `Tool` 在 Claude Code 里不是一个普通函数
+需要区分：
 
-最核心的类型定义在：
+| 集合 | 谁使用它 | 它回答的问题 |
+|---|---|---|
+| 程序中的工具池 | 查找、授权、执行与动态发现逻辑 | 程序认识哪些工具，哪些在当前环境可用？ |
+| 本次请求携带的工具定义 | API 客户端和服务端 | 这次请求提供了哪些名称、参数与加载信息？ |
+| 模型本轮实际可见的工具说明 | 模型 | 模型现在能够依据哪些说明选择工具？ |
 
-- `Tool.ts`
+三个集合可能部分重合，但不能直接当成同一个集合。工具在程序中注册，不等于完整说明每轮都进入模型上下文；模型看见了一个名字，也不等于程序已经批准这次操作。
 
-一个 Tool 除了 `call()` 以外，还可以定义：
+## 3. 延迟发现怎样让工具说明按需进入请求
 
--输入 / 输出 schema；
--给模型看的 description / prompt；
--当前是否 enabled；
--是否允许并发；
--是否只读；
--是否 destructive（有破坏性）；
--是否 open-world（会访问开放外部世界）；
--是否需要用户交互；
--是否来自 MCP / LSP；
--是否应该 defer（延迟加载）；
--最大结果体积；
--自己的 permission check；
--额外输入校验；
--结果怎样映射回 Tool Result。
+镜像中的 ToolSearch 是发现工具的入口。Deferred Tool 表示延迟加载工具，即不把完整说明无条件放进每次模型输入。是否启用搜索取决于配置、能力支持和工具预算等条件，不能只看“连接了 MCP”就断言必然延迟加载。
 
-这里不需要背完整字段。
+启用这条路径时，[`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts) 会读取消息中的已发现集合，并实际过滤 `filteredTools`：保留非延迟工具、搜索入口以及已发现的延迟工具。没有启用搜索时则走另一条工具集合组织路径。
 
-真正值得理解的是：
+假设要从外部缺陷系统读分页问题详情，一次成功发现过程可以是：
 
-> **Claude Code 把“模型如何理解这个能力”“Runtime 怎样执行”“安全系统怎样判断它”放在同一个 Tool contract（工具契约）周围。**
+1. 模型先获得常驻能力与搜索入口，而不是无条件获得全部延迟工具的完整参数说明。
+2. 模型用任务相关词搜索。ToolSearch 根据工具目录寻找候选，也支持按具体名称选择的路径。
+3. 搜索结果返回 `tool_reference`，即对已知工具的结构化引用，而不只是自然语言说“可以用某工具”。
+4. 后续请求从历史中恢复已发现名称，将相应定义纳入本次工具集合；模型据此生成真实工具调用。
+5. 真正执行时仍需要查找当前工具、校验参数和授权。搜索成功没有越过这些检查。
 
-如果模型看到的 schema 和真正执行函数完全由两个系统维护，很容易版本漂移。
+源码阅读顺序是 [`utils/toolSearch.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts)、[`tools/ToolSearchTool/ToolSearchTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts)，最后回到 API 层看实际发送的集合。
 
----
+### 搜索不是另一个凭空猜工具的模型
 
-## 2. Tool Pool 从哪里来：不是只有 Bash / Read / Write
+这个快照的 ToolSearch 实现包含精确名称选择与关键词检索。`select:<tool_name>` 表示按工具名直接选择；普通查询先检查精确名称与服务端前缀，再对名称组成部分、`searchHint`（能力检索提示）和描述进行匹配与评分。带 `+` 的词可以作为必须满足的条件。名称的精确组成部分通常比描述中的普通匹配权重高，最后按分数选择结果。
 
-`tools.ts::getAllBaseTools()` 是基础能力的重要入口。
+例如搜索缺陷读取能力，服务端名和动作名比一段描述里偶然出现“缺陷”更有辨识力。这里应追到 `searchToolsWithKeywords()`，而不是把“工具搜索”自动写成向量检索或另一个大模型挑选。记忆篇的相关文件选择使用辅助模型，两条发现路径不能因名字相似就混写。源码见 [ToolSearchTool.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts)。
 
-从当前源码可以看到 Claude Code 可能拥有非常广的能力：
+### 不要把两种 Tool Search 实现混写
 
-- Bash / PowerShell；
-- Read / Edit / Write；
-- Grep / Glob；
-- Web Search / Web Fetch；
-- Agent；
-- Skill；
-- Todo / Task；
-- Worktree；
-- MCP Resource；
-- LSP；
-- Team / SendMessage；
-- REPL；
-- Sleep / Cron；
--以及不同 feature gate 下的内部工具。
+[官方 Tool Search 文档](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)描述的服务端内置搜索，可以在请求中携带延迟定义，再由服务端控制哪些进入模型上下文；它也支持客户端自定义搜索的模式。本镜像还做了上面的客户端过滤。
 
-另外，AppState（应用状态）里还会不断加入 MCP Tool。
+因此，“延迟定义不进入当前模型上下文”不能单独推出“定义一定没有发送到 API”；反过来，也不能用服务端内置方案的说明否定镜像中实际存在的客户端过滤。应分别检查过滤前工具池、实际请求和模型可见状态。
 
-因此“Claude Code 有哪些 Tool”不是一个永远固定的数组。
+### 搜索结果还要面对目录变化
 
-它受：
+MCP 连接重新建立、服务端能力清单变化、上下文发生压缩，都可能改变后续发现状态。历史中的名字只是过去已经发现的线索，不保证今天连接仍在、同名工具仍具有相同参数。压缩边界中的发现信息帮助保持连续性，实际执行还必须以当前可用工具池为准。相关差量附件与恢复入口见 [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts) 和 `utils/toolSearch.ts`。
 
--平台；
--feature gate；
--当前模式；
--用户配置；
--MCP 连接；
--Agent 类型；
--Permission mode；
+## 4. 一次工具请求需要经过哪些检查
 
-共同影响。
+下面用本地 Edit 串起完整主线。Schema 是参数结构定义，例如“文件路径必须是字符串”；语义校验进一步判断“这组值是否适合当前操作”。结构合法不代表文件存在，也不代表应当修改它。
 
-也因为 Tool Set 会变化，源码非常关注一件事：
+```text
+模型提出 tool_use
+    │
+查找当前工具、检查取消状态
+    │
+参数结构解析、工具自己的语义校验
+    │
+PreToolUse：执行前钩子，可阻止或改写输入
+    │
+权限判断与必要的批准交互
+    │
+实际 tool.call()
+    │
+执行后处理、结果转换、必要的上下文更新
+    │
+与原调用标识配对的 tool_result
+```
 
-> **工具定义变化会破坏 Prompt Cache。**
+Hook（钩子）是在特定阶段接入的程序逻辑。它可能提供额外上下文，也可能停止继续执行或改变输入，不能都理解成“打印一条日志”。主要实现见 [`services/tools/toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)。
 
-`tools.ts` 的注释甚至提醒某些动态配置必须和 Tool 列表保持同步，以便跨用户稳定缓存 System Prompt / Tool definitions。
+如果工具不存在，程序构造错误结果而不是凭名称臆造一个函数。如果参数解析失败或工具语义校验失败，同样可以返回带 `is_error` 的工具结果，使模型知道失败并决定后续行动。错误作为结果回传，与模型请求本身的网络失败是不同的恢复层。
 
----
+### 钩子改写参数后，要追踪最终执行对象
 
-## 3. “系统里有 Tool”和“这一轮把完整 Tool Schema 发给模型”不是一回事
+假设最初调用指向 `src/pagination.py`，钩子把路径改到了另一个目录。前面的校验针对的是原输入；不能凭“校验步骤已经发生”就宣称最终输入已经通过所有同样的检查。
 
-如果 MCP Server 很多，Tool 定义可能占掉非常大的 Context。
+源码区分 `processedInput` 与 `callInput`，并对供观察、钩子或权限使用的派生字段建立浅拷贝，避免意外改变实际调用。钩子或权限阶段明确返回 `updatedInput` 时，则需要追踪替换后值如何进入权限判断及最终调用。具体链路在同一执行文件中；哪些校验再次执行，应逐个查看分支，不能补画一个并不存在的统一“所有改写后自动重验”步骤。
 
-Claude Code 没有把解决办法写成：
+> ⚠️ 审查工具扩展时，要问“批准的是哪个路径、实际执行的是哪个路径”，而不是只问“有没有调用过权限函数”。观察用字段与真正调用参数也不能随意混用。
 
-> “Context Window 够大就全发。”
+## 5. 权限、批准与沙箱不是三个同义词
 
-它有专门的 Deferred Tool（延迟工具）机制。
+Permission（权限判断）决定某个操作是否被允许；Approval（批准交互）在需要人决定时取得明确答复；Sandbox（沙箱）限制某些执行进程能够接触的文件系统和网络。
 
-关键实现：
+权限结果常见为 `allow`（允许）、`deny`（拒绝）、`ask`（需要询问）。工具返回“继续交给上层判断”的结果，不等于已经允许。不同交互入口有不同的询问处理方式；无交互入口不能因为没有弹窗就把需要批准的写操作解释为用户默许。规则与宿主交互入口见 [`utils/permissions/permissions.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/permissions/permissions.ts) 和 [`hooks/useCanUseTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/hooks/useCanUseTool.tsx)。
 
-- `utils/toolSearch.ts`
-- `tools/ToolSearchTool/`
-- `services/api/claude.ts`
+### 本地 Edit 不能写成必经 shell 沙箱
 
-当 Tool Search 开启时，一部分 MCP Tool 或 `shouldDefer` Tool 会使用 Claude API 的：
+分页例子中的内置 Read/Edit/Write 通过自己的路径检查和权限系统访问文件，不是先转换成 Bash 命令再统一经过 shell 沙箱。[官方沙箱文档](https://code.claude.com/docs/en/sandboxing)明确区分内置文件工具与被沙箱包裹的命令执行。镜像的沙箱适配入口是 [`utils/sandbox/sandbox-adapter.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts)。
 
-`defer_loading: true`
+假设命令执行路径处于启用的 OS 沙箱中，它能约束该路径覆盖的进程；不能据此推断远端 MCP 服务也在相同沙箱里，或内置 Edit 可以忽略自己的路径权限。
 
-这表示模型知道有动态 Tool discovery（工具发现）能力，但不需要一开始就加载所有完整 Tool Schema。
+> ⚠️ 用户批准一次操作，不代表所有后续操作都获批；沙箱开启也不代表产品的每一种工具都受同一个 OS 边界控制。需要分别确认操作主体、权限作用域和实际执行位置。
 
-因此：
+## 6. MCP 把远端能力接进来，还多了哪些生命周期
 
-~~~text
-Full Tool Pool
-        ↓
-判断哪些 Tool 可延迟
-        ↓
-首轮 API 只发送常驻 Tool + ToolSearch
-        ↓
-模型需要某类能力
-        ↓
-ToolSearch 返回 tool_reference
-        ↓
-后续请求只加载已经发现的 Tool Schema
-~~~
+MCP 是 Model Context Protocol，即模型上下文协议，用于连接外部工具、资源等能力。它解决接入格式与交互，不替应用决定业务风险。
 
-这和 Codex Deferred Tool 的整体目标相似，但 Claude Code 直接利用了 Claude API 的 dynamic tool loading（动态工具加载）协议。
+本地连接可以通过 stdio，即标准输入输出，与子进程交换协议消息；远端连接使用相应网络传输。建立连接之后，客户端请求 `tools/list` 获取工具清单，把工具名称、参数结构和服务端身份转换为程序中的工具对象。镜像使用带服务端信息的名字组织 MCP 工具，避免不同服务都叫 `search` 时无法区分。主要实现见 [`services/mcp/client.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts)。
 
----
+完整过程不止一次连接：
 
-## 4. Tool Search 什么时候启用：甚至会看 Tool 定义占了多少 Context
+| 阶段 | 要解决的具体问题 |
+|---|---|
+| 配置与连接 | 使用哪个服务、传输与凭据，哪些服务连接失败？ |
+| 能力清单与转换 | 名字能否区分服务端，结构是否能转换为本地工具定义？ |
+| 本次调用 | 当前连接可用吗，参数和权限通过了吗？ |
+| 结果转换 | 业务错误、协议错误、大结果和二进制内容怎样交给调用方？ |
+| 恢复与清理 | 哪类错误可以刷新认证或重建连接，何时停止重试和释放资源？ |
 
-`utils/toolSearch.ts` 当前支持多种模式。
+多个服务可以部分成功。一个连接认证失败，应明确它进入需要认证的状态，不应仅因局部失败把其他正常连接也描述为全部不可用。
 
-最值得学习的是 auto mode（自动模式）。
+### 会话过期不等于所有 404 都重连
 
-源码会估算 Deferred Tool definitions（延迟工具定义）的 Token 总量，再把它和当前模型 Context Window 比较。
+镜像的 `isMcpSessionExpiredError()` 不只检查 HTTP 404，还检查 JSON-RPC 错误码对应的会话失效信号，以免把 URL 配错或服务不存在当成会话过期。它的恢复路径与 OAuth 认证过期处理不同，不能用一个“出错就重试”概括。
 
-默认自动阈值约为 Context Window 的 10%，并允许通过配置调整。
+本快照还存在远端代理收到 401 后刷新认证再尝试一次的路径；这解释认证恢复，并不意味着任意远端写操作都具备恰好一次执行保证。网络连接恢复，只能恢复通信条件，不能倒推上一次业务动作没有发生。
 
-如果 Token counting API（Token 计数接口）不可用，还会退回字符估算。
+调用超时也要看对象和单位。该文件的默认 MCP 工具调用超时为 `100_000_000` 毫秒，约 `100_000_000 ÷ 1000 ÷ 3600 ≈ 27.8` 小时，环境变量可改变它。这是快照中的等待参数，不是推荐的业务时限，也不保证远端操作到时立即终止。连接超时、模型请求超时和用户任务预算不能混作同一个值。
 
-这代表一个很成熟的设计：
+### 服务端要求补充信息时，不能绕过用户
 
-> **是否需要 Tool Search，不应该只看“工具数量”，而要看这些工具实际会吃掉多少模型上下文。**
+Elicitation 表示服务端在执行过程中请求用户提供额外信息，可能包含表单或需要打开的地址。这仍是交互和批准边界，需要处理用户接受、拒绝、取消，以及有限的后续尝试。它不是一条“服务器说需要，就可以任意代用户操作”的授权链。相关入口在 `client.ts` 与 [`services/mcp/elicitationHandler.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/elicitationHandler.ts)。
 
-20 个 schema 极复杂的 Tool，可能比 200 个很小的 Tool 更值得延迟加载。
+## 7. Skill 组织做法，Tool 执行动作
 
-因此规模指标应该是：
+为了反复修复同类分页问题，可以把“先复现、再改最小位置、保留原测试、最后检查接口”写成 Skill。Skill 可以给模型提供一套任务做法和材料，却不是因为有了名字就成为操作系统层的执行权限。
 
-~~~text
-tool definition tokens
-~~~
+`SKILL.md` 的文件头配置负责说明名称、描述、可见性或调用方式等；正文承载具体指导。重要字段应按用途理解，而不是一次背完整清单：发现相关字段帮助系统选中技能，工具相关设置影响相应执行范围，上下文或代理配置决定在当前会话展开还是通过分叉子任务处理。加载入口见 [`skills/loadSkillsDir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts)。
 
-而不只是：
+调用时有两类需要分清的行为：inline（在当前上下文展开）把技能材料带入当前执行；fork（分叉执行）建立子任务上下文，再将结果交回。无论哪类，真正读文件、改代码仍要经过工具系统。SkillTool 可以通过 `contextModifier` 返回后续执行上下文的修改，因此调用结果不一定只有一段显示文字。实现见 [`tools/SkillTool/SkillTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts)。
 
-~~~text
-tool count
-~~~
+Skill 与 MCP 可以协作：前者组织“怎样做”，后者提供“能调用哪些外部能力”。但两者不是严格一一对应；一个 Skill 可以调用多个工具，单个工具也能供多个任务使用。
 
----
+如果模型没有遵守“不能删测试”，要先确认技能是否被选中、正文是否加载、约束是否与其他输入冲突，再检查权限与验收。把限制移到更高优先级的指令可能改善遵从，但仍不能替代程序检查。来自不可信来源的技能文本、动态命令和外部工具描述，都不应因为带有 Skill/MCP 标签就自动得到更高信任。
 
-## 5. ToolSearchTool 怎样让模型找到具体工具
+## 8. 多个工具怎样并发，而不互相踩状态
 
-`tools/ToolSearchTool/ToolSearchTool.ts` 是模型可调用的搜索入口。
+读取两个互不依赖的文件可以重叠执行，修改同一个文件则可能产生覆盖。调度器必须依据工具与输入的并发安全声明安排执行，而不是简单按“读取工具都安全、其他全部不安全”分组。
 
-当前实现支持：
+[`services/tools/StreamingToolExecutor.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts) 在输入结构解析成功后调用 `isConcurrencySafe()`；判断抛错或解析失败时采用不安全的保守结果。标为不安全的工具需要独占执行，并在队列中形成屏障，防止后面的操作越过依赖边界。
 
--普通关键词搜索；
--`select:<tool-name>` 这种精确选择；
--有界返回，默认只返回少量候选。
+例如先读取分页源码和测试文件，再编辑源码，最后运行测试：前两个读取可以在符合安全声明时并发；测试不能为了缩短耗时抢到编辑完成之前。声明本身也需要正确，不能因为第三方提供 `readOnlyHint` 就自动证明它没有共享资源副作用。
 
-它的搜索逻辑会更重视 Tool name（工具名）和名字组成部分，同时也利用 `searchHint`（搜索提示）和 description。
+这个执行器还区分 `queued`（排队）、`executing`（执行中）、`completed`（结果就绪）和 `yielded`（结果已经交付）。进度消息可以及时交付，结果由消费方法取出。不要仅凭类注释就把所有结果说成严格按最初调用顺序串行交付；独占工具的屏障与并发结果的就绪是不同的约束。
 
-因此它不是一个“随便对 description 做 contains”。
+> ⚠️ 此快照只对非并发工具应用收集到的 `contextModifier`，源码还明确指出并发工具的上下文修改尚未得到同样支持。扩展工具既声明并发安全又依赖修改共享执行上下文时，必须核查这一边界。
 
-搜索结果会形成 `tool_reference`。
+## 9. 取消、失败与丢弃结果分别发生了什么
 
-模型拿到 reference 后，Claude API 在后续请求中可以把对应完整 Tool definition 展开。
+用户在工具执行时追加需求，不是所有工具都具有相同的中断语义。镜像区分工具的取消与阻塞行为；取消信号还通过父、子控制器传播。信号发出以后，具体工具是否及时停止，需要看它有没有处理信号以及副作用发生在哪个时刻。
 
-### 为什么不是搜索完就直接执行
+流式执行器还对某些并行失败作传播：此快照中 Bash 错误可以取消同批兄弟任务，而 Read/WebFetch 等错误不因此一律取消其他独立读取。这样可以避免一个普通读取失败就让所有并行观察都丢失。具体逻辑见 [`StreamingToolExecutor.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts)。
 
-Tool Search 只解决：
+### `discard()` 不是撤销已经发生的操作
 
-> “这个能力叫什么、schema 是什么？”
+流式模型请求失败并切换尝试时，旧执行器可能被丢弃，以免迟到的旧结果污染新一轮消息。`discard()` 本身设置的是 `discarded` 标志；结果消费者检查这个标志，执行过程也会检查它并产生相应错误表示。这不是一个通用事务撤销接口。
 
-真正执行仍然要经过：
+若 Edit 已经改写了文件，再丢弃旧执行器的结果，文件不会因此自动恢复。若远端写入已经成功但响应丢失，后续错误消息也不能证明动作没发生。恢复前必须核对真实状态；涉及不可重复写入时，还需要服务端支持的幂等或查询确认机制。
 
--模型下一步选择；
--input validation；
--Permission；
--Tool execution。
+这说明三个动作要分别验证：**停止等待旧结果、请求正在运行的工作停止、撤销已经发生的副作用。** 实现其中一个，不等于完成了其余两个。
 
-Discovery（发现）和 Execution（执行）是两个不同安全边界。
+## 10. 结果回填后，为什么还没到验收终点
 
----
+工具结果通过 `tool_use_id` 与原调用关联。程序可以把输出转换为模型协议、加入错误信息、处理过大结果，必要时更新后续上下文。下一次请求据此继续，但同一份结果还可能有界面显示和持久化等不同去向。
 
-## 6. 为什么 discovered Tool 要写进消息历史
+以 Edit 为例，“工具正常返回”可以支持修改步骤完成的判断，但不能证明分页语义正确。以测试为例，“命令退出码为 0”还需要确认运行的是哪些测试、测试是否被削弱、是否检验了用户要求。源码执行层负责组织结果，任务验收必须结合文件差异和有效测试。执行后处理见 [`toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)，长结果的后续预算处理见[上下文篇](01-context-lifecycle.md)。
 
-动态 Tool Loading 有一个容易忽略的问题。
+## 本章小结
 
-如果 Runtime 只在进程内维护：
+工具生命周期的主线是能力发现、参数形成、检查与批准、调度与执行、结果交付和任务验收。ToolSearch 减轻发现压力，不授予权限；MCP 组织外部接入，不保证业务写入恰好一次；Skill 提供做法，不把自然语言规则变成不可绕过的系统限制。恢复时尤其要把消息状态与真实副作用分开。
 
-~~~text
-discoveredTools = Set(...)
-~~~
+## 🎯 面试怎么回答
 
-那么：
+**问：Claude Code 怎样保证工具调用不是模型随便生成一段 JSON 就执行？**
 
-- Compaction 后可能丢；
-- Resume 后一定丢；
--模型请求和持久化 transcript 之间不一致。
+> 🎯 程序先在当前工具池中查找实现，解析参数并进行工具自己的语义校验，再处理执行前钩子、权限和必要的用户批准。调度层按并发与中断语义安排真正的调用，结果再按调用标识返回。搜索只解决发现，沙箱也只覆盖相应执行路径。出现参数改写、流失败或重试时，还要核对最终批准对象和真实副作用，不能拿一条错误或成功消息替代完整验收。
 
-Claude Code 让 `tool_reference` 进入消息历史，再通过：
+## ⚠️ 高频易错点
 
-`extractDiscoveredToolNames(messages)`
+- 延迟工具在本次请求里是否存在，与它是否进入模型上下文是两个问题。
+- 参数结构正确、权限允许和业务结果正确，是三个不同判断。
+- 本地内置 Edit 不必经过 shell 沙箱；远端工具也不自动继承本机的执行隔离。
+- 取消信号、丢弃旧结果和撤销副作用不能互相代替。
 
-恢复“哪些 Deferred Tool 已经被发现”。
+## 本章自测
 
-完整 Compaction 又会把 pre-compact discovered set 写进 compact boundary metadata。
+**任务一：工具曾经发现过。** 旧会话已找到一个 MCP 工具。恢复时对应服务没有连接成功，但发现记录仍在。请说明模型知道工具名是否足够，并按顺序列出继续调用前必须确认的事实。
 
-因此 Tool discovery state（工具发现状态）本身也是 Context State（上下文状态）。
+<details><summary>参考答案与解释</summary>
 
-这说明“上下文”不仅包括自然语言消息，还包括会改变后续 API 能力面的协议状态。
+不够。需要确认服务连接及认证状态、当前工具目录仍包含它、参数定义与实际请求可见定义一致，再进行调用校验和权限判断。发现记录保留历史连续性，不提供当前连通性或执行许可。
 
----
+</details>
 
-## 7. Deferred Tool Pool 变化时怎样通知模型
+**任务二：并发与状态。** 某个扩展工具声明 `isConcurrencySafe = true`，但其正确结果依赖 `contextModifier` 改变后续共享上下文。请根据本章快照说明为什么需要阻止直接上线，并指出核查位置。不能只回答“加锁”。
 
-MCP Server 可以中途连接 / 断开。
+<details><summary>提示</summary>
 
-Tool Pool 因此不是只在 Session 启动时确定一次。
+分别检查调用能否并发，以及并发完成后上下文修改有没有被消费者应用。
 
-Claude Code 的 query loop 会在 Tool Result 后 refresh tools（刷新工具），让刚连接的 MCP Server 能在后续 iteration 出现。
+</details>
 
-`utils/toolSearch.ts` 还维护 deferred tools delta（延迟工具目录差异），用于表示：
+<details><summary>参考答案与解释</summary>
 
--新增了哪些延迟 Tool；
--移除了哪些 Tool。
+流式执行器在这个快照中只对非并发工具应用收集到的上下文修改。即使工具自身没有数据竞争，依赖的后续状态也可能没有建立。应核查 `StreamingToolExecutor` 的上下文修改分支与工具声明，先明确需要串行执行还是实现相应的合并语义，再验证真实消费者行为。
 
-如果目录变化时完全重发一大份列表，不仅浪费 Context，也更容易破坏 Prompt Cache。
+</details>
 
-因此动态工具系统同样在做“增量状态同步”。
+**任务三：失去响应的写入。** Edit 已完成文件修改，模型流随后失败，旧执行器被 `discard()`。新请求准备再次执行同样修改。请说明错误消息能证明什么、不能证明什么，以及继续之前应看哪两类证据。
 
----
+<details><summary>参考答案与解释</summary>
 
-## 8. MCP Tool 是怎样进入 Claude Code 普通 Tool 系统的
+它能说明旧尝试的执行结果不应继续正常交付，不能证明文件未改或已经回滚。应查看实际文件及差异，并核查原工具调用、结果与中断时序。只有确认当前状态和操作可重复性后，才决定重试、跳过或修复。
 
-MCP 主实现之一：
+</details>
 
-- `services/mcp/client.ts`
-
-Server 连接成功后，Claude Code 会发：
-
-`tools/list`
-
-拿到远端 Tool 后，再把它们转换成普通 Claude Code `Tool`。
-
-转换过程中会补上很多 Runtime 需要的信息。
-
-例如：
-
--完全限定名通常是 `mcp__server__tool`；
--`mcpInfo` 保留真实 server / tool identity；
--远端 `searchHint` 会先清理换行和多余空白；
--`alwaysLoad` 可以来自 MCP metadata；
--description 有最大 Prompt 长度；
--readOnlyHint 会影响只读 / 并发判断；
--destructiveHint 和 openWorldHint 会进入安全语义；
--远端 input schema 会成为 Tool schema。
-
-这里特别值得注意 `searchHint` 的清洗。
-
-源码注释说明：远端 MCP metadata 是不可信输入；如果允许它带换行直接进入 Deferred Tool list，可能注入额外伪造行。
-
-这就是 Prompt Injection 防护在 Tool Catalog 层的一个具体例子。
-
----
-
-## 9. MCP 连接本身也有生命周期，不只是 `callTool()`
-
-Claude Code 支持多种 MCP transport（传输方式），包括本地 stdio 和远端 HTTP / SSE 等。
-
-`getMcpToolsCommandsAndResources` 会把本地 Server 和远端 Server 分成不同并发组。
-
-原因很实际：
-
--本地 stdio 需要创建进程，过高并发会争抢机器资源；
--远端 Server 主要是网络连接，可以允许更高并发。
-
-源码还会：
-
--直接跳过 disabled server；
--缓存 needs-auth 状态，避免每隔一段时间重复做注定失败的 OAuth probe（探测）；
--连接成功后并发获取 Tool、Command、Skill / Resource；
--连接出错后仍向 AppState 报告 failed / needs-auth 状态，而不是把所有 Server 启动当成一个全有或全无事务。
-
-所以 MCP startup 本身也是一个有 partial success（部分成功）的能力发现过程。
-
----
-
-## 10. MCP 断线以后怎样恢复
-
-远端连接可能出现：
-
-- ECONNRESET；
-- ETIMEDOUT；
-- EPIPE；
-- SSE reconnect exhaustion；
-- HTTP Session 过期。
-
-源码不会只把当前 Promise 留在永远 pending。
-
-当连续 terminal connection error 达到条件时，它会真正 close transport（关闭传输层），让所有 pending MCP request 明确 reject（拒绝），同时清理：
-
--connection cache；
--tool fetch cache；
--resource cache；
--command cache。
-
-下一次调用才会拿一条新连接和新 Tool Catalog。
-
-Tool call 本身遇到 MCP session expiry 时，还有一次受控的 session recovery retry（会话恢复重试）。
-
-这说明：
-
-> **连接重试必须同时刷新能力目录，否则新连接仍可能继续使用旧 Server 的 Tool metadata。**
-
----
-
-## 11. URL Elicitation：有些 MCP Tool 执行中途还要用户完成外部步骤
-
-MCP Tool 可能返回特定错误，要求用户打开 URL 完成授权 / 操作。
-
-Claude Code 对这类 URL elicitation（URL 引导请求）有单独处理。
-
-它可以先运行 Elicitation Hook；如果 Hook 已经自动解决，就无需 UI。
-
-否则：
-
-- REPL 可以进入交互流程；
-- SDK / print mode 可以交给 structured callback；
--用户完成后再重试 MCP Tool。
-
-重试次数有上限，不能因为外部授权一直失败而无限循环。
-
-这类机制说明 Tool 生命周期有时并不是：
-
-~~~text
-call → result
-~~~
-
-而是：
-
-~~~text
-call
-→ Runtime 请求额外交互
-→ 用户 / Hook 决策
-→ retry
-→ result
-~~~
-
----
-
-## 12. Skill 为什么不是 MCP Tool 的另一个名字
-
-Skills 主实现：
-
-- `skills/loadSkillsDir.ts`
-- `tools/SkillTool/`
-
-本地 `/skills/` 采用：
-
-~~~text
-skill-name/
-└── SKILL.md
-~~~
-
-目录格式。
-
-`SKILL.md` 的 frontmatter（文件头元数据）可以定义：
-
-- description；
--allowed-tools；
--when-to-use；
--model；
--effort；
--hooks；
--`context: fork`；
--agent；
--paths；
--是否允许用户直接调用；
--是否允许模型主动调用。
-
-但这里不要又退回字段背诵。
-
-最重要的设计是：
-
-> **发现 Skill 时只需要很小的 metadata；真正调用以后才读取完整 Markdown。**
-
-源码中的 `estimateSkillFrontmatterTokens` 甚至明确只估 name / description / whenToUse，因为 full content（完整内容）不应该在发现阶段进入 Prompt。
-
-这就是 Progressive Disclosure（渐进式展开）。
-
----
-
-## 13. Skill 调用以后，可以改变这一小段执行上下文
-
-`SkillTool` 并不是只把 SKILL.md 文本返回给模型。
-
-它执行 Skill 后，可以产生新的 messages，并通过 `contextModifier` 修改后续 ToolUseContext。
-
-例如一个 Skill 的 frontmatter 指定：
-
-~~~text
-allowed-tools: ...
-model: ...
-effort: ...
-~~~
-
-那么调用以后，Runtime 可以：
-
--临时把这些 Tool 加到允许规则；
--覆盖当前模型；
--覆盖 effort。
-
-模型覆盖还会保留类似 `[1m]` 的 Context Window suffix，避免一个 Skill 指定 `opus` 后意外把原本 1M Context 会话降回默认窗口。
-
-这个细节说明 Skill 是一个真正的 Runtime extension（运行时扩展），不只是 Prompt 模板。
-
----
-
-## 14. `context: fork` 的 Skill 为什么要拉起 Subagent
-
-Skill 可以选择 inline execution（内联执行），也可以：
-
-`context: fork`
-
-此时 `SkillTool` 会走 `executeForkedSkill`，用 `runAgent` 在隔离的 Subagent 中执行 Skill。
-
-价值在于：
-
--复杂 Skill 不必污染主 Context；
--可以有独立 Token Budget；
--可以有独立 Agent definition / model；
--执行完只把最终结果带回主会话。
-
-这是一种 Context Isolation（上下文隔离）。
-
-所以“Skill 的 progressive disclosure”不只是文件懒加载，还可以进一步做到：
-
-> **连 Skill 的执行轨迹都不进入主线程全部历史。**
-
----
-
-## 15. MCP Skill 为什么禁止在 Markdown 中执行内联 shell
-
-`skills/loadSkillsDir.ts` 支持某些本地 Skill Prompt 中执行内联 shell command。
-
-但对于 `loadedFrom === 'mcp'` 的 Skill，源码明确禁止从远端 Markdown body 中执行这种内联 shell。
-
-理由非常直接：
-
-> MCP Skill 是远端、不可信内容。
-
-如果远端 Skill 的 Markdown 里写：
-
-~~~text
-!curl ...
-!rm ...
-~~~
-
-而 Loader 在“加载 Prompt”阶段直接执行，就相当于把远端文本变成代码执行入口。
-
-所以远端 Skill 和本地 Skill 即使最后都表现为 Skill，也有不同的 trust boundary（信任边界）。
-
----
-
-## 16. 模型真正发出 Tool Call 后，第一步是输入校验
-
-Tool execution 主要在：
-
-- `services/tools/toolExecution.ts`
-
-Claude 返回 `tool_use` 后，Runtime 会先找到 Tool，再做两层校验。
-
-第一层是 Zod input schema（输入模式校验）。
-
-第二层是 Tool 自己的 `validateInput`，处理 schema 无法表达的语义条件。
-
-例如一个路径字段是 string，并不代表：
-
-> 这个路径当前允许访问。
-
-所以 schema-valid（结构合法）和 semantic-valid（语义合法）不能混成一层。
-
----
-
-## 17. PreToolUse Hook 为什么在 Permission 前面
-
-校验通过以后，Claude Code 会跑 PreToolUse Hook。
-
-Hook 能：
-
--注入 additional context；
--修改 Tool input；
--直接拒绝；
--返回 permission decision；
--要求停止继续。
-
-这意味着 Permission 不应该只检查模型原始输入。
-
-如果 Hook 把：
-
-~~~json
-{"path":"./safe.txt"}
-~~~
-
-改成：
-
-~~~json
-{"path":"../secret.txt"}
-~~~
-
-后续 Permission 必须基于修改后的 input 决策。
-
-Claude Code 的执行链允许 Hook result 进入后续 permission resolution，而不是把 Hook 当作纯日志 callback。
-
----
-
-## 18. Permission 决策不是一个弹窗
-
-真正的 Permission 核心在：
-
-- `utils/permissions/permissions.ts`
-- `hooks/useCanUseTool.tsx`
-
-Tool Permission Context 会综合多来源规则：
-
-- policy settings；
--user / project / local settings；
--CLI；
--command / Skill；
--session temporary rules。
-
-规则可以：
-
-- always allow；
--always deny；
--always ask。
-
-MCP Tool 权限匹配还会坚持使用 fully-qualified identity（完全限定身份），即使 SDK 模式为了展示把名字前缀隐藏，也不能因此让一个远端 MCP `Write` 错误匹配内置 `Write` 的权限规则。
-
-这体现出安全系统一个很重要的原则：
-
-> **显示名可以变化，安全 identity 不能丢。**
-
----
-
-## 19. ask 以后由谁决定：交互式、自动模式、Subagent 都不一样
-
-当 Permission result 是 `ask` 时，不一定立刻弹 UI。
-
-### Interactive REPL
-
-`useCanUseTool` 可以：
-
--先等待自动检查；
--让 Coordinator 决策；
--让 Swarm worker 路径处理；
--利用 speculative Bash classifier（预判分类器）；
--最后才进入 Permission Dialog。
-
-### Auto Mode
-
-某些场景下可以用 AI classifier 判断是否自动批准。
-
-但源码专门保护一些 safety check（安全检查）：如果标记为不能由 classifier 批准，那么即使 Auto Mode 也不能偷偷放行。
-
-### Headless / Async Agent
-
-无法显示 Permission UI 时，可以先运行 PermissionRequest Hook。
-
-如果没有 Hook 给出明确许可，默认不能假装用户同意。
-
-所以：
-
-> **“ask”是一种权限状态，不等于“一定会出现一个弹窗”。**
-
-不同 Host / Agent 类型对 ask 有不同 resolution path（解决路径）。
-
----
-
-## 20. Sandbox 为什么又是 Permission 之外的一层
-
-即使 Permission 允许某个 Bash Tool，进程实际执行时仍然可以进入 OS Sandbox（操作系统沙箱）。
-
-相关实现：
-
-- `utils/sandbox/sandbox-adapter.ts`
-
-Sandbox 会把 Settings 转成真正的：
-
-- filesystem allow / deny；
--network domains；
--workspace write；
--managed policy。
-
-源码里有不少真实安全加固。
-
-例如它会阻止 Sandbox 内写 Claude Code settings 文件，因为修改 settings 本身可能改变未来权限。
-
-它还特别阻止写 `.claude/skills`，注释明确指出 Skills 会被自动发现 / 加载，拥有高能力，如果攻击者能在 Sandbox 内种植 Skill，就可能形成持久权限提升路径。
-
-还有针对 bare Git repository + fsmonitor 等 sandbox escape（沙箱逃逸）风险的防护。
-
-所以 Sandbox 不是“让 Bash 更安全”的泛化名词，而是第二道真正的 OS enforcement（系统强制执行）。
-
----
-
-## 21. Tool 并发怎样决定
-
-`services/tools/toolOrchestration.ts` 会依据：
-
-`tool.isConcurrencySafe()`
-
-决定哪些 Tool Call 可以并发运行。
-
-例如只读 Tool 更可能安全并发，而共享状态写操作需要更谨慎。
-
-对于 MCP Tool，远端 `readOnlyHint` 会映射到 Claude Code 的 read-only / concurrency 语义。
-
-这让 MCP Server 自己的 annotations（注解）参与 Runtime 调度，但最终仍由 Host 决定如何解释。
-
----
-
-## 22. Streaming Tool Execution：为什么工具可能在模型还没流完时就开始
-
-Claude Code 还有 `StreamingToolExecutor`。
-
-模型流式返回 `tool_use` 时，Runtime 不一定非要等整条 assistant message 完成才开始所有工具。
-
-对长模型输出和慢工具，这可以降低总体 latency（延迟）。
-
-但它带来一个严重工程问题：
-
-> **如果模型 streaming request 失败，然后 API 层重新 fallback / retry，会不会把刚才已经启动的 Tool 再执行一次？**
-
-`query.ts` 对 fallback 路径专门做保护：
-
-- tombstone（墓碑标记）旧的 partial assistant message；
-- discard streaming executor results；
--避免旧 response 的 Tool Result 和新 response 混在一起。
-
-源码 API 层也有关于 streaming → non-streaming fallback 与 Tool double execution（双执行）风险的防护注释。
-
-这说明“提前执行 Tool”不是纯性能优化。
-
-任何 speculative / streaming execution（推测式 / 流式执行）都必须同时设计：
-
-> **请求重试时如何保证副作用不重复。**
-
----
-
-## 23. Tool Result 返回后还会发生什么
-
-Tool `call()` 成功以后还没有结束。
-
-Runtime 会：
-
-1. 把输出映射成 Tool Result block；
-2.必要时存储 / 替换超大结果；
-3.运行 PostToolUse Hook；
-4.某些 Hook 可以修改最终 Tool output；
-5.把结果作为 user-side `tool_result` message 写入下一轮历史；
-6.应用 Tool 返回的 `contextModifier`。
-
-因此一个 Tool 甚至可以影响下一轮运行上下文，而不只是返回文本。
-
-SkillTool 就会利用 contextModifier 修改 allowed tools / model / effort。
-
-所以 Tool Result 是：
-
-> **Observation + 可能的 Runtime State Transition（运行时状态变更）。**
-
----
-
-## 24. 用一个完整例子串起来
-
-用户说：
-
-> “去日历里找下周的空闲时间，然后把结果写到项目计划里。”
-
-当前连接了很多 MCP Server，Tool definitions 已经超过 Tool Search 自动阈值。
-
-首轮模型不会看到几百个完整 MCP schema，只看到常驻 Tool + ToolSearch。
-
-模型调用：
-
-~~~text
-ToolSearch("calendar availability")
-~~~
-
-结果包含相关 `tool_reference`。下一轮 API 请求才加载对应 Calendar MCP Tool 的完整 schema。
-
-模型发出 Tool Call。Runtime 先做 schema / semantic validation，再跑 PreToolUse Hook。
-
-MCP Tool 的默认 permission 是 passthrough（继续交给上层权限系统），最终权限规则发现这个 Server 尚未永久允许，于是进入 ask。
-
-用户批准后，Claude Code 调用 MCP Server。如果远端 Session 已过期，Runtime 清理旧连接并允许一次 session recovery retry。
-
-Calendar Tool 返回很大结果，Tool Result Storage / Budget 层把它控制在可用范围，再写回模型 Context。
-
-模型随后调用本地 Edit Tool 修改项目计划。这个写操作再次经过自己的路径校验、Permission 和 Sandbox。
-
-这条完整链说明：
-
-~~~text
-Tool discovery
-≠
-Tool authorization
-≠
-Tool execution
-≠
-Tool result delivery
-~~~
-
-四个阶段必须分别正确。
-
----
-
-## 25. 源码锚点
-
-1. [`Tool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts)：Tool contract、ToolUseContext、Permission Context。
-2. [`tools.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools.ts)：基础 Tool Pool。
-3. [`utils/toolSearch.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts)：Deferred Tool、自动阈值、discovered state。
-4. [`tools/ToolSearchTool/ToolSearchTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts)：搜索和 tool_reference。
-5. [`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts)：真正给 API 的 Tool Schema、defer_loading 和 cache。
-6. [`services/mcp/client.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts)：MCP 连接、tools/list、转换、重连与 Tool 调用。
-7. [`skills/loadSkillsDir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts)：SKILL.md、frontmatter、来源和安全边界。
-8. [`tools/SkillTool/SkillTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts)：Skill 调用、inline / fork、contextModifier。
-9. [`services/tools/toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)：validation → Hook → Permission → execution → PostHook → result。
-10. [`services/tools/toolOrchestration.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolOrchestration.ts)：Tool 并发调度。
-11. [`services/tools/StreamingToolExecutor.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts)：流式 Tool 执行。
-12. [`utils/permissions/permissions.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/permissions/permissions.ts) 与 [`hooks/useCanUseTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/hooks/useCanUseTool.tsx)：权限规则与不同 Host 的 ask 处理。
-13. [`utils/sandbox/sandbox-adapter.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts)：真正 OS Sandbox 和网络 / 文件系统边界。
-
-下一篇：[Claude Code Engineering & Evaluation →](04-engineering-evaluation.md)
+[下一篇：恢复、协作与工程验证 →](04-engineering-evaluation.md)
