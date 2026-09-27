@@ -1,1116 +1,302 @@
+# 04｜Engineering & Evaluation：中断以后恢复什么，怎样证明任务完成
 
-# 04. DeerFlow Engineering & Evaluation｜Checkpoint、Run Journal、Subagent、Recovery 与评测
+[← 工具生命周期](03-tool-lifecycle.md) · [模块入口](README.md)
 
-[← Tool](03-tool-lifecycle.md) · [DeerFlow 总览](README.md) · [成熟产品源码学习](../README.md)
+前三章分别追踪了模型看到的信息、长期记忆和工具执行。本章把它们放回同一次任务，处理最容易被一句“支持恢复”掩盖的问题。
 
-> **源码基线：** bytedance/deer-flow@29d285731b326a728a9df33d3641f73b68bbe48b
+假设支付排障 Agent 已经读取代码，将报告写到输出目录，随后向外部工单系统提交了更新；响应尚未返回时，用户取消了本轮运行，并要求回到运行前的聊天状态。
 
-DeerFlow 2.0 进入 Production（生产环境）以后，不只是一个 LangGraph Agent。
+这里有三个不能合并的问题：聊天状态能否恢复，文件是否仍在，以及外部工单究竟有没有修改。**系统恢复到可以继续运行，不等于世界恢复到什么都没发生。** 这个例子是故障推演，不是已经启动外部工单服务的测试记录。
 
-同一次用户任务至少存在四类不同事实：
+## 1. 先拆开保存的对象，再讨论“持久化”
 
-~~~text
-LangGraph Checkpoint
-Agent 下一步怎样继续
+| 保存对象 | 主要回答的问题 | 不能单独证明什么 |
+|---|---|---|
+| Thread State 与 Checkpoint | 智能体从什么状态继续？ | 外部系统有没有执行动作 |
+| Run 状态记录 | 本次运行正在执行、终止还是等待？ | 每个业务结果都正确 |
+| Run Journal / Event Store | 用户和观察者看到了哪些运行事件？ | 任意旧模型输出能逐 token 重放 |
+| 工作区、上传与产物文件 | 工具实际留下哪些内容？ | 文件内容与当前聊天结论一致 |
+| 长期记忆存储 | 后续任务可以复用哪些背景？ | 当前会话中所有临时状态都已保存 |
 
-Run Journal / RunEventStore
-这次 Run 发生了什么
+多个后端都可以选择内存、文件或数据库，但这并不让它们自动成为一个事务。例如检查点写入成功时，外部网络操作可能仍未完成；事件先显示工具结束时，界面还可能没有刷新到最新文件。[运行状态约定][runtime-notes]、[记忆生命周期](02-memory-lifecycle.md)
 
-Sandbox / Workspace
-外部世界现在变成什么样
+因此排查恢复问题，第一步不是“有没有数据库”，而是明确每种对象的权威来源：会话状态找检查点，工具效果查真实目标，事件展示查对应事件记录。用户看见的聊天界面只是它们的一种投影。
 
-Gateway Run Row
-这次产品级运行现在是什么状态
-~~~
+## 2. 检查点保存完整状态，还是保存变化
 
-如果把这些都叫“历史”，就很难解释：
+### 2.1 `full` 与 `delta` 的共同目标
 
-- 为什么取消 Run 可以回滚 Agent State，却不一定能倒转外部副作用；
-- 为什么 UI History 不直接从 Checkpoint 读；
-- 为什么 Subagent 不用 Parent Checkpointer，但它的步骤仍然能被 UI 回看；
-- 为什么 Branch 老 Turn 时不能复制今天的 Workspace 文件；
-- 为什么 Replay 正确性必须同时检查 Checkpoint lineage 和 Run event feed。
+默认 `full` 模式保存完整消息状态。`delta` 模式利用 LangGraph 的增量通道，保存每步写入并周期性建立快照；读取时再按照通道规则重建完整状态。两者目标都是让调用者取得可用状态，存储形态却不同。[模式约定][runtime-notes]
 
-这一篇就沿这条可靠性主线展开。
+为什么引入增量？先使用一个明确简化的计算模型：每步新增一条相同大小的消息，共 N 步，每步都保存一次，忽略压缩和其他字段。完整模式重复保存的消息条数是：
 
----
+```text
+1 + 2 + … + N = N × (N + 1) / 2
+```
 
-## 1. Checkpoint、Rollback、Branch：Agent State 怎样可靠地回到过去
+假设 N=1000，则累计保存 500500 条消息的等价内容；这是重复存储量，不是用户真实发送了 500500 条消息。增量写入有机会把重复的主体变为按新增内容增长，但实际占用还包括快照、索引和序列化，不能把这个公式当作某部署的实测磁盘节省比例。
 
-### LangGraph Checkpoint 回答“Agent 下一步怎么继续”
+### 2.2 增量模式为什么不能直接读取底层 blob
 
-DeerFlow Lead Agent 可以挂载 LangGraph Checkpointer。
+增量检查点中的 `channel_values.messages` 可能是标记，而不是完整消息列表。业务代码若直接读底层 Saver（检查点存储器），再把空值解释成“这个会话没有历史”，就会产生静默丢失。
 
-Checkpoint 保存 ThreadState，包括：
+DeerFlow 用 `CheckpointStateAccessor` 绑定执行图、状态结构、检查点后端与模式，向调用者提供物化后的状态。物化就是“把快照和变化合成为可使用的完整数据”，不是再调用模型生成一份摘要。[访问器源码][checkpoint]
 
-- messages
-- summary_text
-- delegations
-- skill_context
-- promoted tools
-- todos / goal / task state
-- sandbox identity
-- middleware contributed channels
+模式和增量快照频率在进程内冻结，变更需要重启；多个共享检查点数据库的进程也需要保持语义一致。兼容性不是双向对称的：增量模式可以读取完整模式的旧检查点作为种子；完整模式不能直接把增量检查点当完整数据读，反向迁移需要先物化或转换。[模式冻结与兼容条件][runtime-notes]
 
-它是：
+缓存容量等只影响性能的设置可以有不同热更新规则。不能把“某个运行语义需要重启”推广成“所有数据库配置都不可热更新”。
 
-> **Agent continuation state（智能体续跑状态）。**
+## 3. 回到旧状态，为什么不能简单复制消息列表
 
-#### 为什么不能绕开 CheckpointStateAccessor
+### 3.1 合并更新不等于替换
 
-DeerFlow 自己封装：
+状态通道可能带有 Reducer（归并规则）。例如消息更新可能追加或按消息 ID 合并。于是把旧消息列表传给普通更新接口，不一定会清除本轮新增的消息。
 
-CheckpointStateAccessor
+全量恢复需要明确替换语义。DeerFlow 为状态替换建立只写状态、不执行业务节点的图，并对需要替换的归并通道使用 `Overwrite`。这个图仍使用真实会话的完整状态结构，否则自定义中间件贡献的字段可能被忽略。[状态替换图源码][checkpoint]
 
-原因是当前支持：
+这解释了两个必要检查：恢复后不应意外重新调度 Agent；恢复不能只看消息，还要保留相关扩展通道。
 
-- full checkpoint mode
-- delta checkpoint mode
-- cached history
-- custom middleware state schema
-- compatibility marker
+### 3.2 重新生成必须沿父链，而不是按时间找一个“差不多”的检查点
 
-Delta Mode 下 raw checkpoint 甚至不保证直接包含 materialized messages。
+同一会话可能存在重新生成形成的分支。全局时间排序最近的检查点，不一定是目标回答的祖先，也可能是它的兄弟分支。
 
-所以任何需要：
+源码优先沿 `parent_config` 追踪父链，仅对明确的旧数据缺父链接情形使用受限兼容扫描。环、悬空父节点或目标不匹配是完整性问题，不能静默挑另一个分支继续。[检查点血缘规则][runtime-notes]
 
-- read state
-- history
-- update state
-- rollback
-- manual compact
+在本快照中，增量恢复还有额外约束：直接从已有共享祖先分叉，可能重放另一条子分支的写入。Worker 因此把请求恢复的完整状态物化后，替换到当前头部，再线性继续；完整模式仍使用它适用的分支语义。这里不是“所有恢复都复制一份旧检查点”，而是根据存储通道的实际重建方式决定。[增量恢复处理][runtime-notes]
 
-的代码，都应该经过 Accessor。
+### 3.3 回滚点本身也会失败
 
-否则一段看似简单的：
+运行开始前，需要取得完整的旧状态及相应待处理写入，才能把它作为可恢复的基线。捕获失败时，不能用半份状态承诺支持回滚。恢复流程还要协调本轮流处理、时长元数据和旧状态，避免恢复点与正在写入的状态交错。[运行前捕获与恢复约定][runtime-notes]
 
-~~~text
-checkpointer.get_tuple()
-~~~
+这些细节的共同目的只有一个：**恢复必须基于一份明确、完整、属于正确历史路径的状态，而不是“看起来像以前”的消息集合。**
 
-可能拿到 Delta sentinel，或者漏掉 Extension / Middleware 自定义 Channel。
+## 4. 用三条时间线看取消与副作用
 
----
+假设运行前检查点是 C0，报告文件不存在，外部工单为旧内容。以下时序只用于推演：
 
-### 为什么 Wholesale State Replacement 必须使用 Mutation Graph + Overwrite
+| 时刻 | 会话状态 | 文件 | 外部工单 |
+|---|---|---|---|
+| t0 | C0 | 不存在 | 旧内容 |
+| t1 | 读取代码的结果已进入会话 | 不存在 | 旧内容 |
+| t2 | 写报告工具完成 | 新报告存在 | 旧内容 |
+| t3 | 外部提交已发出，响应未返回 | 新报告存在 | 可能已更新，也可能未更新 |
+| t4 | 用户取消，并恢复到 C0 对应状态 | 不会仅因聊天回滚自动删除 | 不会仅因聊天回滚自动撤销 |
 
-LangGraph Channel 往往有 reducer。
+从 t3 到 t4，外部结果是**未知**。下一轮若直接再次提交，可能造成重复；若直接向用户说“已撤销”，又可能与真实远端状态矛盾。
 
-例如 messages 默认是 add_messages。
+正确恢复要先明确当前任务的下一步，再核对外部结果。有业务幂等键时可按同一请求身份核对；有查询接口时可查询真实状态；没有这些能力时就必须保留不确定性。这些属于业务集成策略，不能声称 DeerFlow 为任意外部工具自动提供了 Exactly-once（恰好一次）执行。
 
-如果 rollback 想恢复：
+工具消息的配对修补也遵循同样边界。Dangling tool call（悬空工具调用）是消息中有调用而缺少对应结果，框架可能补齐错误或占位结果，保持下一次模型请求的协议合法。**补齐消息配对不是查询远端状态，也不是证明该调用没有副作用。**[工具配对中间件说明][middleware-notes]
 
-~~~text
-[A, B, C]
-~~~
+## 5. 子 Agent 隔离的是执行，不是整个世界
 
-却普通 update：
+### 5.1 什么情况下值得委派
 
-~~~text
-messages = [A, B, C]
-~~~
+将“读日志”和“检查当前代码”分给两个子 Agent，可能缩短等待或隔离上下文；但如果第二个任务必须使用第一个任务的输出，或者两者都会修改同一个文件，并发反而制造依赖与冲突。
 
-Reducer 可能把它解释成：
+源码的委派指导要求权衡启动、重复发现、结果汇总和状态冲突等成本；重叠的可变状态与任务间输出依赖不应被当作独立并行任务。不是问题看起来复杂，就默认多开几个 Agent。[委派策略][subagent-notes]
 
-> 在当前 history 后面再 merge 一次 A B C。
+一个简化的延迟估算可以帮助判断。假设两个独立只读任务分别耗时 8 秒和 10 秒，串行主体耗时 18 秒，并行主体下界为 10 秒；但如果启动与汇总额外需要 9 秒，总时间约为 19 秒，反而慢于直接执行。这里的数字全是教学假设，不是 DeerFlow 基准测试。
 
-所以 DeerFlow 需要：
+### 5.2 子任务收到什么上下文
 
-- Overwrite
-- build_state_mutation_graph
+普通 `task` 在有效输入检查后捕获必要上下文，再开始隔离执行。它保留真实用户回复，包括被界面隐藏的澄清回复；不会仅凭“隐藏”就把有效回答丢掉。框架状态和不完整工具配对不能不加区分地复制给子 Agent。
 
-这条 mutation graph 没有真正 Agent Node，只借用和 Agent Graph 相同的：
+上传文件边界、知识范围和身份要按可信的父运行快照传递，不能让子 Agent 根据可变全局配置重新扩大权限。上传列表明确为空与没有可靠上传边界也不同：前者是有效状态，后者可能需要禁用相应工具。[上下文与范围传递][subagent-notes]
 
-- state schema
-- channel versions
-- checkpoint metadata
-- checkpointer machinery
+但文件系统可能仍然共享。即使子 Agent 的模型消息是独立快照，两个子 Agent 也可能读写同一线程目录。**上下文隔离不等于可变资源隔离。** 上一章的先读后写只能缓解对应路径上的竞争，不能取代任务拆分时避免重叠修改。
 
-然后写一个新的 idle checkpoint。
+### 5.3 并发上限与总委派上限各防什么
 
-为什么还要使用**当前 Agent 的真实 state schema**？
+并发上限限制同一时刻占用多少执行槽位；总委派上限限制一次运行累计发起多少普通 `task`。如果只限制并发为 3，模型仍可以每次启动 3 个，重复许多轮，累计消耗无限增长。
 
-因为自定义 Agent Middleware 可以贡献额外 Channel。
+本快照把普通委派总量与当前 Run 的持久委派记录关联；同一 Thread 中以前运行的历史委派不应消耗新 Run 的预算。显式批量任务有自己的持久条目、租约和重试限制，不通过普通 `task` 的计数假装同一套语义。[预算与批量任务边界][subagent-notes]
 
-如果 rollback 只用 Base ThreadState：
+这里还要区分普通 `task` 的子执行与可选 durable batch（持久批量任务）。前者的事件或结果可以保存，不代表进程退出后子执行现场就能自动续跑；后者需要实际安装批量服务和持久存储。批量模式由明确工具选择，不是系统看到长提示词后自动切换。[工具暴露条件][tools-notes]
 
-> 恢复时这些 extension channels 会静默消失。
+## 6. 子 Agent 说“完成”，为什么还要验收
 
-因此 Restore / Compact 本身也必须知道当时 Agent Assembly。
+子 Agent 的报告是自述。它可能正确，也可能漏做、引用错结果，或把执行成功误认为需求满足。因此需要将三个层次分开：
 
----
+| 层次 | 可以检查什么 | 仍不能替代什么 |
+|---|---|---|
+| 报告结构 | 是否给出路径、失败情况和可核对引用 | 实际动作是否发生 |
+| 收据核对 | 是否有对应工具结果，引用是否属于当时可见证据 | 文件内容和业务结果是否满足需求 |
+| 客观条件检查 | 文件存在、非空，或与执行证据匹配的测试条件 | 任意开放式业务结论的真实性 |
 
-### Full 和 Delta Mode 为什么需要不同 Rollback 算法
+DeerFlow 让父 Agent 传入 `acceptance_criteria`，验收条件作为任务数据进入子 Agent，而不是获得系统指令权限；同时提供确定性叶子检查。叶子指能够直接判断的小条件，例如“某个文件存在”。“分析足够深入”则不是同样可由文件存在性判断的条件。[报告与验收规则][subagent-notes]
 
-Run 开始前，Worker 可以捕获一个完整 RollbackPoint（回滚点）：
+`exists` 与 `non-empty` 也不同。空的普通文件满足存在，不满足非空；目录、符号链接或不可确认的路径不能随意当作可验收报告。路径超出范围、检查器出错或证据不完整时，应保留 UNVERIFIED（尚未验证），不能默认通过。
 
-- pre-run materialized state
-- checkpoint config
-- pending_writes
+测试结果同样不能只搜索一句“passed”。需关联真实命令、退出状态和可信执行环境。本快照对不能确认隔离语义、可能被已有 shell 状态影响的测试执行保留未验证结论；即使工具元数据报告一般意义的成功，也要留意实际进程退出码。[确定性验收边界][subagent-notes]
 
-如果捕获失败：
+这对自己的项目有直接启发：先定义哪些条件可自动确认，哪些需要人工或更强验证器；不要把所有成功标准压进一个模型评分，再称它为客观通过率。
 
-> rollback disabled，不能拿半份 state 冒充可靠恢复点。
+## 7. 取消以后，为什么资源可能还不能马上释放
 
-#### Full Mode
+Python 协程收到取消，不代表已经派发到线程里的文件操作或 SDK 调用立即停止。若此时先释放沙箱，线程可能仍使用那个资源，产生“运行已结束，后台却还在写”的竞态。
 
-取消并选择 rollback 时，可以从 pre-run checkpoint fork 一个新 head。
+DeerFlow 在相关路径中协调取消与在途操作清理：对已经派发的阻塞工作进行屏蔽取消后的等待，完成清理后再传播取消；子 Agent 的流也要在释放沙箱租约、通知终止之前关闭。[先读后写的在途等待实现][read-write]、[子运行资源生命周期][subagent-notes]
 
-Parent checkpoint 没被原地改写。
+租约在这里表示一个执行仍持有使用资源的权利。共享同一沙箱的多个子 Agent 需要独立持有者，不能第一个子 Agent 结束时就关闭其余子 Agent 仍在使用的客户端。最终释放者还要完成输出同步或其他提供者清理；同步存在容量与时间边界，不能承诺任何大小的结果都会在关闭前完整下载。[共享沙箱与清理约定][subagent-notes]、[提供者输出同步边界][tools-notes]
 
-未显式替换的 Channel 可以自然继承 Parent blobs。
+所以“及时响应取消”和“安全结束所有副作用”存在张力。超时日志可以提醒清理过慢，却不必然给出一个可以强行丢弃所有在途工作的安全时刻。界面显示取消请求、执行停止、资源释放完成，也应避免混成同一个瞬间。
 
-#### Delta Mode
+### 模型失败与工具副作用，不能共用盲目重试
 
-情况更复杂。
+重试应先区分失败发生在哪个边界：模型请求尚未给出结果、模型返回了被长度限制截断的调用、工具已提交但响应丢失，恢复策略并不相同。退避或熔断可以减少持续失败时的压力，但不会让一个非幂等外部动作自动安全；切换模型也要重新检查工具协议和请求格式，不能只替换模型名称。
 
-当前 Run 可能已经在 pre-run checkpoint 上追加 sibling delta writes。
+DeerFlow 的组装顺序还单独处理模型结束语义。真正的空停止回复可在模型调用边界尝试一次恢复；工具后的空终止有确定性的可见结束处理，不靠悄悄再启动一轮图执行。长度或安全结束会阻止继续派发对应工具调用，并尽量保留已经得到的有意义文本。不能把“有一个 tool_calls 字段”就当作完整、可执行、已经获准的指令。[运行中间件组装][assembly]
 
-直接 Fork pre-run checkpoint：
+## 8. 观察与重放：事件完整不等于模型完全可复现
 
-> 可能让新 head 和被取消分支共享不安全的 delta ancestry。
+Run Journal 把执行中的重要事实组织成产品事件。它与模型请求、检查点、工具结果相关，但不是三者的逐字复制。例如相同模型回调可能先没有用量，随后补上用量；系统需要防止重复记账，同时不能因为补用量就替换已经确定的回答内容。[回调合并与事件约定][runtime-notes]
 
-所以 Delta rollback 会在**当前 head**上，把捕获到的每一个 Channel 全量恢复。
+跨线程或跨事件循环修改同一个事件缓冲区也有风险。普通子任务通过窄接口把允许的观察事件调度回父循环，不把整个 Journal 对象交给子循环随意读写。真实执行的归属与事件记录的归属需要一致；子任务相同工具名的独立事件，也不能被误合并成一次父调用。[观察桥接][tools-notes]、[事件所有权][runtime-notes]
 
-Reducer channel 使用 Overwrite。
+排障时至少要区分：事件没有产生，产生但没有落盘，已经落盘但客户端游标或连接没有取得。流式连接断开后应按实际事件存储和重放能力恢复展示，而不是重新执行整轮 Agent 来“补消息”。网络流的确认、游标、背压与部署扩容属于后端课程的主要职责，本模块保留它们与 Agent 运行状态的接口，不另写一套网络教材。
 
-只存在于 current head、却不在 RollbackPoint 的 Channel 还要重置到 schema default / None。
+回放历史事件能帮助观察发生了什么，但模型服务、工具服务和文件状态可能已经改变。同一个输入再次运行也可能产生不同输出。不要把“能显示旧事件”称为“真实外部环境可完全重演”。
 
-这也是为什么 Delta Mode 不能只理解成“少存一点 Messages”。
+## 9. 用分层验证定位失败，而不是只给一个总准确率
 
-它会改变恢复算法。
+还是排查支付超时。最终报告写得流畅，却把重试次数解释错了。只看“报告是否生成”会通过；只看“模型回答是否符合格式”也会通过。需要从最终任务倒推可验证链条。
 
----
+| 层次 | 本任务中可检查的条件 | 失败时优先定位 |
+|---|---|---|
+| 输入与上下文 | 当前约束、正确文件版本、必要日志是否进入请求 | 入参、用户身份、上下文选择与预算 |
+| 节点与工具 | 参数正确、目标有权访问、结果对应调用 | 工具选择、策略、执行与错误处理 |
+| 记忆与历史 | 项目例外没有污染通用偏好，摘要没丢当前约束 | 提取分类、范围、压缩与状态恢复 |
+| 交付物 | 报告实际存在、结论有证据、测试对应修改 | 文件验证、证据关联、测试与验收 |
+| 端到端任务 | 在不改公开接口的条件下解决实际超时问题 | 业务假设、集成和任务是否真正完成 |
 
-### Edit Replay 失败以后为什么也必须回滚
+这几类条件不能简单相乘或取平均生成一个万能指标。不同节点的失败可能有关联；只统计走到节点的样本又可能隐藏上游失败。需要明确分母：多少任务被提交，多少进入某节点，多少有有效验收结果，多少因环境缺失而未验证。
 
-DeerFlow 支持：
+成本和延迟也要附上对象和单位。例如“本次 Run 的总输入 token”“一次工具调用的毫秒”“整个任务的模型费用”不是可直接互换的数字。提供者没有返回用量时，应标为未知，不能填零并拿去比较成本。[子任务用量与缺失值规则][subagent-notes]
 
-- Regenerate（重新生成）
-- Edit and rerun（编辑后重跑）
+真正有用的坏例分析，是找出错误首次出现的边界，再设计反例：旧记忆与新条件冲突、工具返回恶意标签、两个写入竞争、取消发生在提交之后。修复一个症状后，还要在相邻生命周期重新检查，避免“摘要变短了，但凭据或未完成任务被丢掉”。
 
-Edit Replay 会先让 Thread 暂时进入：
+## 10. 一个直接运行真实源码的最小实验
 
-> “假设用户当时说的是新文本。”
+本模块提供 [verify_source_config.py](labs/verify_source_config.py)。它不复制一份“模拟 DeerFlow 配置”，而是读取固定提交中的 `summarization_config.py`，核对 Git blob 摘要后直接加载该文件，检查默认值与输入边界。
 
-如果新的 Run：
+### 10.1 准备条件和操作
 
-- failed
-- timed out
-- interrupted
+准备上游仓库的已核对源码副本，切到模块入口记录的提交；使用 Python 3.12 或以上和 Pydantic 2。完整 DeerFlow 的服务运行应依照其锁文件安装，下面只是单文件配置实验，不能替代完整依赖环境。
 
-但不把 pre-run state 恢复：
+在手册仓库根目录执行，路径替换为你的实际源码位置：
 
-> 用户 UI 会停留在一个并没有成功生成替代答案的临时分支。
+```bash
+python products/agent/deer-flow/labs/verify_source_config.py \
+  --source-file /path/to/deer-flow/backend/packages/harness/deerflow/config/summarization_config.py \
+  --report source-config-results.json
+```
 
-所以 Edit Replay 的失败路径会恢复 pre-run Checkpoint，并在 stream 结束前重新发布 restored values。
+`--source-file` 只读上游文件；`--report` 在指定位置写测试报告，不修改上游源码、数据库、事实记忆或工作区。每次运行独立构造配置对象，不依赖上一轮的消息或全局服务状态；重置只需重新运行。报告文件是本实验唯一的显式写入输出。
 
-产品语义是：
+### 10.2 可检查结果
 
-> **只有新 Run 成功，编辑后的历史才真正成为新主线。**
+实验验证自动摘要默认关闭、默认保留消息数与摘要输入 token 预算的区别、比例范围、非有限数值拒绝、消息数必须是正整数等条件。合法输入得到配置对象；非法输入应在配置校验时被拒绝。
 
----
+上游文件摘要不匹配时，脚本在加载前失败。不要为了让实验通过就改掉预期摘要：先核对提交变化是否改变教学结论，再更新对应源码基线、实验与本章说明。
 
-### Branch / Regenerate 为什么必须沿 Checkpoint Parent Lineage 查找
+这些测试直接验证目标文件的运行行为，但不证明摘要模型回退、增量检查点、真实沙箱、MCP 服务或端到端 Agent 已通过。语法检查、单文件单元测试、模拟、真实服务和跨系统集成，应各记各的结果。
 
-LangGraph 一个 Thread 里可能有 sibling branches（兄弟分支）。
+### 10.3 从这个实验继续验证真实系统
 
-如果用户从中间历史 Regenerate，单纯按 created_at：
+下一层验证应复用上游自己的测试和真实实现，而不是再造一个同名简化类。本模块的源码索引能定位产物解析、记忆后端、检查点和子 Agent 的已有测试约定。挑选与你修改的边界直接相关的测试，再加入真实服务验证；跳过、环境缺失和未执行项目都单独记录。
 
-> “找到目标消息之前最近的 checkpoint”
+例如产物的异步捕获、投影、解析可以先运行上游已有的对应测试；但如果使用了模拟工具返回，它仍不证明真实远端文件可下载。客户端界面也需要真正渲染与操作，文件中存在一个 Markdown 链接不能证明移动端布局正常。[上游产物测试说明][artifact-doc]
 
-可能选到另一个 sibling branch。
+## 11. 本章小结与综合回顾：三种“成功”不能互相冒充
 
-DeerFlow 因此从当前 Head 沿：
+**执行成功**回答工具或运行是否按自己的协议结束；**证据成立**回答结论是否能对应可核对的观察；**任务验收成功**回答用户要求是否在指定条件下满足。
 
-parent_config
+这三个层次形成递进，但不是自动等价。工具可能成功生成一个空文件，收据也正确，但“交付非空报告”失败；子 Agent 可能完成执行，但没有足够证据证明它真的运行了可信测试；状态可能成功回滚，但外部工单仍需对账。
 
-向前走。
+再看四章主线：上下文决定模型根据什么行动，记忆决定哪些信息会影响未来任务，工具决定行动怎样被检查和执行，运行与评估决定中断后如何继续、结果怎样被证明。理解它们的接口，比背四张组件清单更能解释新的故障。
 
-找到真正包含目标 Turn 的同一 lineage checkpoint。
+## 🎯 面试怎么回答
 
-#### Legacy fallback
+**Q：Agent 有 Checkpoint，是不是就能安全重试所有工具？**
 
-旧导入历史可能没有完整 parent links。
+> 不是。检查点恢复的是智能体状态，工具可能已经改变文件或外部系统。调用发出后超时，真实副作用可能已经发生，此时重试会有重复风险。需要先恢复正确会话状态，再查询真实结果或使用业务幂等机制。DeerFlow 的状态访问器、回滚点和消息配对保护解决继续运行的问题，不自动提供任意外部动作的撤销和恰好一次保证。
 
-这时可以有限 chronological fallback。
+**Q：full 和 delta 检查点的工程差异是什么？**
 
-但不能把：
+> full 直接保存完整状态，重复历史可能增加存储；delta 保存增量并通过图的通道结构重建。读取 delta 不能绕过物化访问器，模式迁移和多个进程的配置需要一致。恢复时还要考虑增量祖先与分支写入的关系，不能简单复制原始 blob。全量替换需要覆盖归并语义，并使用真实会话的状态结构，防止丢失扩展字段。
 
-> “找不到正确 checkpoint”
+**Q：怎样评估一个多 Agent 排障系统？**
 
-当成：
+> 先把目标写成可验证条件，再分层检查输入上下文、单节点和工具结果、记忆与恢复、交付物以及端到端业务效果。子 Agent 完成状态与验收状态分开，报告自述、收据引用和真实文件或测试验证也分开。还要覆盖共享文件竞争、取消后的在途工作和结果未知等失败场景，并对延迟、成本、跳过和未验证样本明确统计口径。
 
-> “随便挑一个差不多的。”
+## ⚠️ 高频易错点
 
-Storage / checkpoint-mode error 仍然 fail closed。
+- **把运行状态、检查点、事件和文件叫作同一份持久化。** 它们有不同写入时机和权威来源。
+- **把普通状态更新当完整替换。** Reducer 可能保留本轮新增状态；恢复还必须保留扩展通道。
+- **把子 Agent 独立上下文当共享文件隔离。** 任务分解仍需检查可变资源冲突。
+- **把通过、跳过和未验证混在一起。** 命令返回成功、工具收据成立与端到端任务通过，应分别报告。
 
----
+## 自测：更换条件后重新推导
 
-### Workspace 为什么不能像 Checkpoint 一样历史回放
+### 任务一：回滚以后还能报告“没有修改”吗？
 
-LangGraph Checkpoint 保存的是 Agent State。
+初始条件：运行前报告不存在，之后 `write_file` 成功；外部工单更新已提交但响应超时；用户执行取消并恢复会话到运行前。
 
-但真实文件系统：
+任务：分别填写会话状态、报告文件、外部工单的已知状态与下一步核对方式。可检查结果必须保留外部结果未知，不把聊天回滚写成文件或工单撤销。
 
-/mnt/user-data/workspace
+<details>
+<summary>会话已回滚时，文件和外部工单分别需要怎样核对？</summary>
 
-不是每个 Turn 都做版本化 snapshot。
+会话可回到捕获的旧状态；报告需要检查真实文件，不能假设自动删除；工单结果未知，需要按真实接口查询或使用业务幂等身份对账。不能向用户声称完全未修改，也不应直接重复外部提交。
 
-所以 Branch 一个**历史旧 Turn**时：
+</details>
 
-> 不能把当前 Workspace 直接复制过去。
+### 任务二：两个检查都“通过”，为什么交付仍失败？
 
-因为当前 Workspace 可能包含之后很多 Turn 才产生的文件。
+初始条件：子 Agent 返回完成，收据证明执行过写文件，客观检查确认输出是大小为 0 字节的普通文件。用户要求交付非空排障报告。
 
-这会让过去分支“提前看到未来”。
+任务：分别判断执行、收据、`exists` 与 `non-empty`，再给最终任务验收结论。可检查结果不能用前三项的任一成功代替最后一项。
 
-DeerFlow 的策略是：
+<details>
+<summary>空文件怎样区分执行成功、存在性与任务验收？</summary>
 
-#### 从最新 Turn Branch
+执行与收据可能成立，`exists` 也成立，但 `non-empty` 不成立。用户需要的是非空报告，因此不能完成任务验收。应修复内容生成或写入问题，不能通过放宽非空检查来消除失败。
 
-可以 best-effort copy 当前 Workspace。
+</details>
 
-因为 Branch 点就是现在。
+### 任务三：改用增量检查点后，旧读取代码返回空消息
 
-#### 从历史 Turn Branch
+初始条件：检查点以 delta 模式写入，旧业务接口直接读取底层 `channel_values.messages`，把标记当成空消息列表。目录和数据库连接均正常。
 
-跳过 Workspace clone。
+任务：指出错误属于连接、数据真的丢失还是读取契约不匹配，并说明应改哪个边界。可检查结果需包含物化、模式兼容检查和真实状态结构，不能提出清空数据库重建作为首选。
 
-只恢复 Message / Checkpoint History。
+<details>
+<summary>增量存储中的标记被误当成空消息，应该修复哪里？</summary>
 
-这是非常重要的因果一致性：
+首先是读取方式不匹配，不能据此证明历史丢失。应使用绑定执行图、检查点和模式的状态访问器，按真实状态结构物化，并检查进程模式兼容性。未经核对不应删除数据库，也不应把标记手工改成一份猜测的消息列表。
 
-> **没有被时间版本化的外部状态，不能伪装成可历史回放。**
+</details>
 
----
+## 源码索引：按故障定位
 
-## 2. Run Journal：产品事件历史为什么不能等同于 Checkpoint
+| 要解释的现象 | 入口 |
+|---|---|
+| 检查点读出来不完整，或全量恢复丢字段 | [CheckpointStateAccessor 与状态替换图][checkpoint] |
+| 模式切换、旧状态恢复与回滚 | [Runtime 维护说明][runtime-notes] |
+| 子 Agent 权限、共享资源、并发和验收 | [Subagent 实现约定][subagent-notes] |
+| 被取消的线程操作仍在使用文件资源 | [受控写入的清理代码][read-write] |
+| 工具收据与最终任务结果不一致 | [工具和中间件说明][tools-notes]、[middleware 约定][middleware-notes] |
+| 直接验证真实源码配置而不是模拟类 | [本模块最小实验](labs/verify_source_config.py) |
 
-### Run Journal 回答的是另一件事：“产品里到底发生了什么”
+[返回模块入口，重新串联四条生命周期 →](README.md)
 
-核心：
+[runtime-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/runtime/AGENTS.md
+[checkpoint]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/runtime/checkpoint_state.py
+[middleware-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/AGENTS.md
+[subagent-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/subagents/AGENTS.md
+[tools-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/tools/AGENTS.md
+[read-write]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py
+[artifact-doc]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/TOOL_ARTIFACTS.md
 
-backend/packages/harness/deerflow/runtime/journal.py
-
-RunJournal 是 LangChain Callback Handler。
-
-它把 Runtime callback 规范成：
-
-RunEvent
-
-写进 pluggable RunEventStore。
-
-典型事件包括：
-
-- run.start / run.end / run.error
-- llm.human.input
-- llm.ai.response
-- llm.tool.result
-- memory.context
-- middleware events
-- token usage / latency
-- artifact delivery
-- Subagent step events
-
-它不等于 Checkpoint。
-
-#### 为什么不记录每个 LLM token
-
-RunJournal 刻意不实现 on_llm_new_token。
-
-Streaming Token 是高频 transient（瞬态）UI 数据。
-
-持久 Feed 主要记录：
-
-> 完整 AIMessage。
-
-否则一个长回答可能产生几千个 Event Row，Replay / History 成本巨大。
-
-所以：
-
-~~~text
-Live SSE
-适合瞬态 chunk
-
-Run Event Store
-适合可重放语义事件
-~~~
-
----
-
-### Run Journal 为什么还要做 LLM Response Coalescing
-
-某些 Provider / Callback 链可能对同一个 LangChain run id 多次触发 on_llm_end。
-
-第一次可能没有完整 usage。
-
-如果 Journal 每次都直接写一条 Assistant：
-
-> UI History 会出现重复答案，Token 也重复计费。
-
-所以 RunJournal 会临时 coalesce（合并）同一个 LLM response，再形成最终 Event。
-
-同时有 counted run ids 等集合防重复 Token accounting。
-
-这是 Observability（可观测性）反过来保护产品正确性的例子。
-
----
-
-### 为什么 Journal 不能跨到 Subagent 的隔离事件循环
-
-RunJournal 自己标记：
-
-deerflow_loop_bound = True
-
-因为它持有：
-
-- Parent loop 上的 async tasks
-- Event Store / connection pool
-- buffer flush state
-
-SubagentExecutor 会把 Subagent 工作放到独立 persistent asyncio loop。
-
-它会复制 Parent ContextVars，但过滤：
-
-> deerflow_loop_bound callback。
-
-否则 Parent RunJournal 在另一个 Event Loop 被调用，可能：
-
-- Future attached to different loop
-- 重复 token accounting
-- 重复 event rows
-
-同时它又不能简单清空所有 callbacks，因为 LangGraph 的 stream callback 需要保留，才能把 Child token frame 正确 namespaced 回 Parent Stream。
-
-所以跨 Agent Context Propagation 需要：
-
-> **保留可跨 Loop 的语义，移除 Loop-owned Resource。**
-
----
-
-## 3. Subagent：Context Isolation、Step Evidence 与 Capacity
-
-### Subagent 为什么 checkpointer=False
-
-DeerFlow 的 native Subagent 是 one-shot delegation（一次性委派）。
-
-Executor 创建 Child Agent 时显式：
-
-checkpointer=False
-
-原因是：
-
-> 它不需要像 Lead Thread 一样跨用户 Turn Resume。
-
-如果直接继承 Parent Checkpointer：
-
-- Child State 可能写进 Parent Namespace
-- Child Message 可能污染 Parent stream
-- Parent checkpoint lineage 可能被子图改变
-
-因此 Child 有自己的 in-memory ThreadState 生命周期。
-
-但：
-
-> 不持久 Child Checkpoint ≠ 不记录 Child Execution Evidence。
-
----
-
-### Subagent Step 怎样被产品 UI 回看
-
-SubagentExecutor 会流式观察 Child graph 的 values。
-
-Step Capture 不只是拿：
-
-messages[-1]
-
-因为一个 LangGraph ToolNode super-step 可能一次 append 多个 ToolMessage。
-
-它会扫描自上次 cursor 以后所有新增消息，捕获：
-
-- AIMessage
-- ToolMessage
-
-形成 Subagent Step Event。
-
-Runtime Run Worker 再把这些：
-
-~~~text
-task_start
-task_step
-task_end
-~~~
-
-转成 RunEventStore：
-
-- subagent.start
-- subagent.step
-- subagent.end
-
-而且 category 单独是 subagent。
-
-这样主 Thread 的普通 Message Feed 不被 Child 中间步骤淹没；前端展开 Subagent Card 时，再按 task_id + after_seq 分页读取。
-
----
-
-### Summarization 为什么会影响 Subagent Step Capture
-
-Step Capture 原本假设：
-
-> Messages 长度只增加。
-
-但 Child 也可以使用 SummarizationMiddleware。
-
-压缩后：
-
-~~~text
-len(messages)
-突然变小
-~~~
-
-如果 cursor 仍指向压缩前的旧长度：
-
-> 后面新产生的 Child Step 会一直被当成“还没超过旧 cursor”，永远不记录。
-
-所以检测到：
-
-total < processed_count
-
-时，Capture Cursor 重置到新 tail。
-
-同时用 message id / content dedup 防止重复发旧 Step。
-
-这是一个非常典型的跨组件 invariant：
-
-> **Context Compression 改变了 Observability 的索引假设。**
-
----
-
-### Parent Context Snapshot 为什么不能原样复制父 ThreadState
-
-Subagent 支持 context_mode：
-
-- isolated
-- snapshot
-
-#### isolated
-
-默认更安全。
-
-Delegation Prompt 必须自包含。
-
-Child 不自动获得 Parent 对话。
-
-#### snapshot
-
-需要更多上下文时，ParentContextSnapshot 可以捕获：
-
-- parent summary_text
-- genuine user messages
-- visible assistant messages
--已完成 Tool Call + Result 的文本化表示
--支持序列化的 media
-
-但是不会传：
-
-- Parent System Prompt
-- hidden framework messages
-- Runtime state
-- artifacts metadata
-- Secret / authorization
--未完成 Tool Calls
-
-整个 Snapshot 还会被标记为：
-
-> historical data, not instructions.
-
-也就是说，它被明确降权为 **untrusted historical data（不可信历史数据）**：过去 Parent Context 可以帮助 Child 理解背景，但不能把旧 System Prompt、权限声明或 Tool 指令当成当前 Child 的新授权。
-
-#### 为什么 Tool Call 变成 inert text
-
-如果直接把 Parent AI tool_call block + ToolMessage 复制给 Child：
-
-> Provider 可能认为这些是 Child 自己过去执行过的 Tool Protocol。
-
-Child 甚至可能把 Parent 的外部副作用当成：
-
-> “我已经做过。”
-
-所以 Parent Tool Calls 只作为历史文本描述，而且必须有 retained result 才算 completed。
-
----
-
-### Snapshot 为什么是 dispatch-time immutable
-
-ParentContextSnapshot 在 task dispatch 前捕获并序列化。
-
-Child 执行期间 Parent 继续收到新消息：
-
-> 不会动态更新 Snapshot。
-
-原因和 Fork 一样。
-
-否则：
-
-- Child 的过去 Context 会随着 Parent 改变
-- Replay 无法证明 Child 当时看到什么
--Sibling Subagents 会互相通过 Parent 间接污染
-
-因此：
-
-> **Delegation Context 是不可变快照，不是共享聊天室。**
-
----
-
-### Subagent 为什么还要独立 Capacity Budget
-
-DeerFlow 同时限制：
-
-- 每个 run 最多创建多少 Subagent（Lead Agent 侧由 `SubagentLimitMiddleware` 执行，总量来自运行时 `max_total_subagents` 或配置 `subagents.max_total_per_run`）
-- 同时执行多少 Subagent（`max_concurrent_subagents` 还会和进程级 execution capacity 对齐）
-- 每个 Subagent 最大 turns / timeout
-- batch service capacity
-
-这些不是模型 Token Budget 的重复。
-
-每个 Child 还会占：
-
-- event loop work
-- model requests
-- tools
-- MCP sessions
-- sandbox
-- RunEvent storage
-- output artifacts
-
-如果模型可以无限 task()：
-
-> 一次用户请求就能变成无限 fan-out。
-
-所以 Multi-Agent 必须有：
-
-> **Delegation Budget + Execution Capacity。**
-
----
-
-## 4. Runtime Ownership 与恢复：Sandbox、Dangling Calls、Rollback、Replay
-
-### Sandbox Lease 为什么也是 Runtime Ownership
-
-Sandbox 不是每个 Tool Call 临时 create / destroy。
-
-SandboxMiddleware 会在 Run 开始 acquire，在结束 release。
-
-不同入口：
-
-- Run Worker
-- upload sync
-- artifact request
-- MCP file bridging
-
-都可能临时需要 Sandbox。
-
-因此 Provider / Lease Manager 必须知道：
-
-> 谁现在拥有这个 Sandbox。
-
-取消过程中也不能过早释放：
-
-~~~text
-Run 正在 cancel
-→ Child / Tool cleanup 还在运行
-→ Sandbox 已 release
-→ 后续清理访问失效
-~~~
-
-所以 Sandbox Lifecycle 和 Run Drain 必须同步。
-
----
-
-### Dangling Tool Call 为什么还需要 Middleware 修复
-
-真实历史可能因为：
-
-- Provider output truncation
-- interruption
-- legacy history
-- malformed tool call
-
-出现：
-
-~~~text
-AIMessage:
-  tool_call abc
-
-但没有 ToolMessage abc
-~~~
-
-严格 Provider 下一轮可能直接拒绝请求。
-
-DanglingToolCallMiddleware 会在模型调用前修复这种历史，使 Tool Call / Result 协议重新闭合。
-
-注意这解决的是：
-
-> **Model Protocol Consistency。**
-
-并不意味着原 Tool 真正执行成功。
-
-如果过去副作用未知，产品仍应该通过 Receipt / Journal / External State Verification 判断，而不是因为补了一条 Error ToolMessage 就说：
-
-> “它没执行。”
-
----
-
-### Cancellation 为什么不能中断“释放自己持有的 Persistence 资源”
-
-固定快照最新的两个提交正好把这个边界写得很清楚。
-
-Postgres Persistence 在启动 / schema bootstrap 期间可能持有：
-
-- advisory lock（数据库建议锁）
-- schema connection（模式初始化连接）
-
-如果调用者在这时被取消，最危险的实现是：
-
-~~~text
-收到 CancelledError
-→ cleanup task 也一起被取消
-→ unlock / connection.close 没跑完
-→ 把残留 ownership 留给下一次启动
-~~~
-
-最新源码改成的原则是：
-
-> **先 drain 自己拥有的 cleanup，再把原始 cancellation 继续传播。**
-
-因此 bootstrap unlock 和 schema connection close 都属于 cancellation-shielded ownership cleanup（受取消保护的所有权清理）边界。
-
-这和 DeerFlow 其他 Runtime ownership 规则是一致的：Sandbox lease、Subagent runtime、Run worker drain 都不能因为“上层想取消”就把仍然由当前组件拥有的资源直接遗弃。
-
-所以在 Agent 工程里，Cancellation 的语义不应该是：
-
-> “立刻停止所有 await。”
-
-更准确的是：
-
-> **停止继续接受新工作，但先把已经取得 ownership 的资源释放到一致状态，再结束调用者。**
-
----
-
-### Run Cancel 为什么 State Rollback 和 Side-effect Rollback 是两回事
-
-用户 Cancel 一个 Run，可以选择 rollback Agent State。
-
-Checkpoint 可以恢复：
-
-- messages
-- summary
-- todos
-- promoted tools
-- middleware channels
-
-但如果这次 Run 已经：
-
-- 发了 Slack 消息
-- 修改了远端数据库
-- 调了 MCP API
-- 写了外部系统
-
-LangGraph Checkpoint 没法让它自动倒转。
-
-所以 Cancel with rollback 实际保证的是：
-
-> **Thread continuation state 回到 pre-run。**
-
-不是：
-
-> 世界时间倒流。
-
-这也是为什么 Tool Receipt、External Idempotency、Status Verification 很重要。
-
----
-
-### Run Event Feed 为什么和 Checkpoint History 要互相对齐
-
-DeerFlow UI 的 Thread Message Feed 主要来自 RunEventStore，而不是每次打开都直接把 Checkpoint messages 序列化出来。
-
-这会产生一个工程问题：
-
-#### Branch 新 Thread
-
-新 Branch 已经继承 Parent Checkpoint History。
-
-但它自己的 RunEventStore 还是空的。
-
-如果不 seed：
-
-> 第一轮 Run 以后 UI 只看到新消息，继承历史消失。
-
-所以 Branch Creation 会把 Checkpoint 中可见 Messages 转成 synthetic run-event rows。
-
-而且不是整段共用一个 run_id。
-
-它会按每个 Human Turn 创建 synthetic run id。
-
-为什么？
-
-Regenerate 一个 inherited answer 时，Feed 会按 source run_id supersede（替换）那一轮。
-
-如果所有 inherited history 共用一个 id：
-
-> Regenerate 一轮会删掉整个继承历史。
-
-这说明 UI History 和 Checkpoint 虽是两条存储，但必须共享稳定的 Turn Semantics。
-
----
-
-### SSE Replay Gap 为什么需要 Full State Recovery
-
-Live Run Event Stream 有 seq。
-
-Client 断线重连时可以：
-
-> after_seq 继续。
-
-但 Event Store retention / gap 可能使请求的 seq 已经不存在。
-
-这时不能假装：
-
-> 从现有最早 Event 继续就行。
-
-Gateway 会给出 replay gap signal，要求 Client：
-
-> reload durable state。
-
-因为缺失一段 reducer event 后继续增量应用，Frontend State 会错误。
-
-这是标准 Event Streaming 原则：
-
-~~~text
-连续增量可用
-→ replay delta
-
-出现 gap
-→ 回到 authoritative snapshot
-~~~
-
----
-
-## 5. Observability 与验证体系：怎样证明 Harness 没有跨层漂移
-
-### Extension / Middleware Assembly 为什么也需要可观测 Fingerprint
-
-DeerFlow Agent 的行为取决于：
-
-- model
-- System Prompt
-- Tool Schemas
-- Middleware order
-- Skill set
-- Deferred Tool Catalog
-- Extension policy
-- Context policy parameters
-
-如果线上两个 Run 行为不同，只说：
-
-> “都是 DeerFlow Agent。”
-
-远远不够。
-
-当前源码可以构建 AssemblyDescriptor，记录真正组装结果的 hashes / identities。
-
-而且只在 Observer 真正需要时计算，因为：
-
-> Tool schema serialization 和 middleware policy probe 本身有成本。
-
-这是一种很成熟的 Observability trade-off：
-
-> **可诊断，但不让诊断每次都拖慢运行。**
-
----
-
-### DeerFlow 的测试体系为什么特别像“产品 Harness 验收”
-
-backend/tests 当前有数百个测试。
-
-和产品学习最相关的可以按不变量分类。
-
-#### Context
-
-- test_context_compaction.py
-- test_summarization_middleware.py
-- test_durable_context_middleware.py
-- test_dynamic_context_middleware.py
-- test_tool_output_budget_middleware.py
-- checkpoint full / delta parity
-
-#### Memory
-
-- DeerMem extraction / retrieval / eviction
-- OpenViking / Honcho backends
-- memory scope
-- benchmark scope isolation
-- shutdown / gateway memory lifecycle
-
-#### Tool / Skills / MCP
-
-- deferred tool
-- real LLM promotion
-- skill policy
-- skill secret
-- MCP pool / OAuth / routing / timeouts
-- read-before-write
-- tool receipts / error handling
-
-#### Sandbox
-
-- Local / AIO / E2B / OpenSandbox
-- authorization
-- leases
-- network proxy
-- orphan reconciliation
-- path confinement
-
-#### Subagent
-
-- context snapshot
-- execution capacity
-- turn / token budget
-- checkpointer isolation
-- step events
-- receipt / acceptance
-- persistence
-
-#### Run / Replay
-
-- run event store
-- stream contract
-- rollback
-- recovery
-- thread branch / regenerate
-- replay golden
-- frontend replay E2E
-
-这不是只测试单函数。
-
-它在锁：
-
-> **跨层产品语义。**
-
----
-
-### Replay E2E 为什么非常重要
-
-一个 Agent 产品可能出现：
-
-~~~text
-Backend unit tests 全绿
-Frontend unit tests 全绿
-但真实 Replay 顺序错
-~~~
-
-因为问题发生在：
-
-- SSE ordering
-- checkpoint state
-- RunEventStore
-- reducer events
-- UI reconstruction
-
-之间。
-
-DeerFlow 有 Replay Provider / Golden fixtures 和真实 E2E 来锁这条链。
-
-例如可以重放：
-
-- Model messages
-- Tool results
-- Run events
-- checkpoint transitions
-
-让前端收到确定性 Stream。
-
-这种测试比“Mock API 返回 Hello”更接近 Agent Harness 的系统验证。
-
----
-
-### Memory / Subagent / Context 为什么还要有 Benchmark
-
-很多 Agent 机制不是“对 / 错”二值。
-
-例如：
-
-- Memory scope isolation
-- Memory eviction
-- Sandbox provider overhead
-- checkpoint materialization
-- concurrency
-- tool result probe
-- Context snapshot size
-
-会随着数据规模退化。
-
-所以仓库还有：
-
-- bench tests
-- performance tests
-- dataset / report tests
-
-最近的 DeerMem scope-isolation benchmark 就直接验证：
-
-> 跨 User / Agent scope 的长期 Memory 不应该泄漏。
-
-这类 benchmark 本质上既是性能验证，也是安全 / 质量评测。
-
----
-
-## 6. 用场景和指标评价一个真正的 DeerFlow Run
-
-### 四个场景把工程边界串起来
-
-#### 场景一：Cancel Run 后，模型历史回滚了，但 Slack 消息已经发了
-
-这是正常可能发生的。
-
-Checkpoint rollback 只能恢复 Agent State。
-
-解决外部副作用需要：
-
-- Tool Receipt
-- idempotency key
-- external status check
-- compensation logic
-
-不能要求 Checkpointer 自动撤销世界。
-
-#### 场景二：Branch 一个三天前 Turn，却看到今天生成的文件
-
-这是 bug。
-
-旧 Turn 的 Workspace 没有 version snapshot。
-
-正确行为是：
-
-> 历史 Branch 只继承 Checkpoint History，不复制当前 Workspace。
-
-#### 场景三：Subagent 说“我已经执行了父 Agent 的 Tool”
-
-检查 ParentContextSnapshot。
-
-Parent Tool Call 应该只是 inert historical text，并明确：
-
-> not executed by you。
-
-如果 Child 把它当自己的 Receipt，Snapshot authority boundary 失败。
-
-#### 场景四：Summarization 后 Subagent Step 从 UI 消失
-
-检查 capture cursor。
-
-Context Compression 缩短 Child messages 后，processed_count 是否 reset 到新 tail。
-
-这就是 Context 与 Observability 互相影响的典型跨组件 bug。
-
----
-
-### 应该怎样评测 DeerFlow 这个 Harness
-
-#### Outcome
-
-- 真实任务是否完成
-- Tests 是否通过
-- Artifact 是否正确
-- Project goal 是否满足
-
-#### Process
-
-- Model calls
-- Tool calls
-- Subagent count
-- Loop detection
-- Summarization 次数
-- Memory write / retrieval
-- Retry / timeout
-
-#### Safety
-
-- Authorization bypass
-- Skill policy bypass
-- Cross-user Memory
-- Sandbox path escape
-- MCP auth leakage
-- Subagent authority leakage
-- Prompt Injection through Memory / Snapshot
-
-#### Reliability
-
-- Cancel / rollback
-- Restart
-- full / delta checkpoint parity
-- SSE reconnect / replay gap
-- MCP disconnect
-- sandbox provider failure
-- Memory backend failure
-
-#### Resource
-
-- Token
-- latency
-- Prompt cache
-- Tool output bytes
-- Memory LLM cost
-- Subagent fanout
-- Checkpoint / RunEvent storage
-
-最后不能压成一个“总分”。
-
-这些指标代表不同 Trade-off。
-
----
-
-### 从 DeerFlow 源码能抽出的系统设计原则
-
-**第一，Agent State 和 Product Evidence 应该分开。**  
-Checkpoint 让 Agent 继续；Journal 让产品解释过去。
-
-**第二，所有历史状态都要问“它真的能时间旅行吗？”**  
-Messages 有 Checkpoint；Workspace 没有完整历史版本，所以旧 Branch 不复制当前文件。
-
-**第三，压缩不是删除信息，而是改变未来模型需要携带的信息结构。**  
-summary_text、delegation ledger、skill refs 都是对原历史的更稳定表示。
-
-**第四，Subagent Context 必须降权。**  
-过去父对话是数据，不是 Child System Authority。
-
-**第五，副作用恢复不能只靠 Checkpoint。**  
-Tool Receipt、Journal、External Verification 和 Idempotency 同样重要。
-
-**第六，Middleware Order 本身就是协议。**  
-Dynamic Context、Skill Policy、Deferred Filter、Summarization、Recovery 的先后改变行为。
-
-**第七，成熟 Eval 应围绕跨层 invariant。**  
-真正容易坏的是 Checkpoint ↔ Journal ↔ SSE ↔ UI、Memory ↔ Context、Subagent ↔ Parent，而不是某一个函数。
-
----
-
-## 7. 源码锚点
-
-1. [Runtime architecture](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/ARCHITECTURE.md)
-2. [Runtime notes / checkpoint invariants](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/runtime/AGENTS.md)
-3. [Checkpoint state accessor](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/runtime/checkpoint_state.py)
-4. [Checkpoint mode](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/runtime/checkpoint_mode.py)
-5. [Run worker](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/runtime/runs/worker.py)
-6. [Run Journal](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/runtime/journal.py)
-7. [Checkpoint lineage](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/app/gateway/checkpoint_lineage.py)
-8. [Thread lifecycle](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/THREAD_LIFECYCLE.md)
-9. [Checkpoint retention contract](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/checkpoint-retention-contract.md)
-10. [DanglingToolCallMiddleware](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/agents/middlewares/dangling_tool_call_middleware.py)
-11. [Subagent context snapshot](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/subagents/context_snapshot.py)
-12. [Subagent executor](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/subagents/executor.py)
-13. [Subagent runtime notes](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/packages/harness/deerflow/subagents/AGENTS.md)
-14. [Replay E2E guide](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/REPLAY_E2E.md)
-15. [Run event stream contract](https://github.com/bytedance/deer-flow/blob/29d285731b326a728a9df33d3641f73b68bbe48b/backend/docs/RUN_EVENT_STREAM.md)
-16. [All backend tests](https://github.com/bytedance/deer-flow/tree/29d285731b326a728a9df33d3641f73b68bbe48b/backend/tests)
-
-回到：[DeerFlow 系统总览](README.md)
+[assembly]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py
