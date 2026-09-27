@@ -1,306 +1,120 @@
-# 02｜Corpus Governance：Audit、Identity、Lineage、Version 与 Source of Truth
+# 02｜语料治理：先确定哪些知识可信、有效、可见
 
-RAG 的第一份数据工程任务不是 Embedding，而是回答：
+[← 第 01 章](01-RAG职责与完整链路.md) · [模块目录](../README.md) · [第 03 章 →](03-DocumentProcessing.md)
 
-> **我们到底在检索哪些知识，它们来自哪里、哪个版本、是否重复、是否仍然有效？**
+同一条问题，在三个地方能找到三种说法：政策中心写“14 天”，销售培训材料写“30 天”，聊天记录说“可以特殊处理”。若把它们直接混在索引中，相似度最高的材料可能恰好最不可信。
 
-如果 Corpus 本身混乱，后面的 ANN、Rerank 和 Prompt 都只是在优化脏数据。
+**语料治理**不是先把文件整理漂亮，而是确定哪些材料能进入知识库、以什么身份存在、在什么条件下可用。这里的语料库（Corpus）就是系统允许检索的材料集合。
 
----
+## 1. 先给文档确定身份，而不是先生成向量
 
-## 1. Corpus Audit 先回答什么
+沿用北辰云示例：政策中心的退款文档标为 `P1`。它有旧版 `v1` 和新版 `v2`。`P1` 表示“同一份逻辑文档”，`P1@v2` 表示“这份文档的一个具体版本”。文件从 `退款说明.pdf` 改名为 `订阅退款政策.pdf`，不应因此变成两份互不相关的知识。
 
-在设计 Retrieval 前先盘点：
+还需要区分两类变化。正文变了，检索内容可能要重建；正文没变但权限变了，向量通常无须重算，可见性仍必须更新。仅比较文件名或正文哈希，无法发现全部变化。
 
-```text
-有哪些 Source？
-文件格式是什么？
-更新频率多高？
-是否有重复/历史版本？
-是否有权限域？
-文档是否包含表格/图片/OCR？
-谁是 Source of Truth？
-需要多快同步？
-删除/撤权如何传播？
-```
+| 要回答的问题 | 应保存的信息 | 没有它会怎样 |
+|---|---|---|
+| 这是谁维护的哪份文档？ | 稳定文档标识、来源位置、负责人 | 改名后重复入库，无法追责 |
+| 采用哪一次内容？ | 来源版本、内容哈希 | 无法复现旧答案或判断是否改变 |
+| 规则什么时候有效？ | 生效区间、适用产品或地区 | 将最新版误用于历史事件 |
+| 谁能看？ | 租户、访问规则及其版本 | 发生跨租户或撤权后泄露 |
+| 片段怎样产生？ | 原文位置、解析与切分配置版本 | 无法回源或定位处理错误 |
 
-这会直接决定 Parsing、Chunk、Index、Freshness 和权限架构。
+这些信息称为**元数据**，含义是“描述内容及其使用条件的数据”。并非所有字段都要交给模型；租户和授权条件应由服务端使用。
 
----
+## 2. 权威性与时间有效性怎样共同决定可用范围
 
-## 2. Source of Truth 和 Retrieval Index 要分开
+先由业务定义来源优先级。例如在本教学场景中，政策中心是正式规则，培训材料只用于解释，聊天记录不能自行改写正式政策。这个顺序是业务策略，不是检索算法的自然规律。
 
-推荐：
+接着处理时间。`updated_at` 表示文件何时被编辑，`valid_from` 表示规则从何时开始适用；两者可能不同。政策在 8 月 20 日发布、9 月 1 日生效，回答 8 月的历史问题时仍可能需要旧版。若实际业务以订单签约时间决定适用版本，还要保存并验证该条件，不能只看提问日期。
 
-```text
-Authoritative Source
-→ Ingestion Snapshot
-→ Parsed Document
-→ Chunk
-→ Index
-```
+来源同样权威且适用范围相同，却给出冲突规则时，不应让模型偷偷任选一条。可标记冲突、呈现差异并请求负责人确认。出现更多副本不代表其中一条更真实。
 
-Index 是服务检索的派生数据，不应失去重建能力。
+## 3. 内容相同，为什么仍可能不能合并
 
-当 Embedding / Chunk / Schema 改变时：
+假设租户甲和租户乙都上传了同一段政策。正文哈希相同，只能证明字节相同，不能证明两个用户都拥有相同访问权，也不能证明各自来源都允许被另一个租户看见。
 
-```text
-rebuild from source
-```
+去重可以分层做：先保留每个来源的逻辑记录和访问规则；在安全条件允许时复用底层存储或相同处理结果；检索展示再合并同一文档版本的重复片段。这样既能节约计算，也不会丢失来源和授权边界。
 
-比“在旧索引上打补丁”更可控。
+近似重复更需要谨慎。两份文档只差“14”与“30”，或者只差“不适用”，其语义可能相反。相似度阈值适合召回待核对的重复候选，不应直接决定删除。
 
----
+⚠️ **注意：不要把“清洗”变成悄悄修改规则。** 删除否定词、时间条件或脚注，会改变知识。原文应可回溯；清洗规则和人工修正需要留下记录。
 
-## 3. Document Identity 为什么重要
+## 4. 用清单把一个入库批次变成可核对的结果
 
-每个文档需要稳定 ID：
+一个批次收到 100 份文件，向量库写入成功 100 次，不等于 100 份文件都处理完整。某份扫描件可能解析出空文本，一次写入也可能只是一个片段。
 
-```text
-document_id
-```
+应按文档记录处理过程：发现来源后，保存其版本；解析结束后记录页数、内容块数量与失败页；切分后记录预期片段；索引写入后核对实际可取回的片段及其来源。这个可核对的批次清单通常叫 Manifest。它的用途不是增加字段，而是回答“这一版究竟包含什么，缺了什么”。
 
-不要只使用随机 Vector ID。
+清单还帮助建立规模认知。源文件的 GB 数、页数、解析后字符数、片段数、向量数是不同单位。图像密集的 1 GB 扫描件和纯文本的 1 GB 文档，处理成本不能简单等同。抽样估算必须标明抽了哪些格式，以及未覆盖的长尾。
 
-稳定 ID 支撑：
+## 5. 变化只处理受影响的部分，但不能漏掉删除
 
-- Update；
-- Delete；
-- Citation；
-- Version；
-- Dedup；
-- Bad Case Replay；
-- Permission；
-- Rollback。
+当 `P1@v1` 更新到 `P1@v2`，系统先识别变化，再处理新版本。是否只重建几个片段，取决于来源是否提供稳定段落标识、切分边界是否变化，以及处理配置是否改变。并不是知道文档哈希变了，就自动知道哪些块可以安全复用。
 
----
+正文更新、权限改变、来源删除应被视为不同事件。删除尤其不能只表现为“以后不再同步”：旧索引和答案缓存中仍可能有材料。需要保存删除标记，使查询立即知道该来源不可用，再安排派生数据清理。[第 12 章](12-ProductionGovernance.md)会把这些变化放进完整的构建、切换和回滚过程。
 
-## 4. Version 要表达什么
+这里先建立一条不变量：**派生状态可以重建，来源身份、有效性和访问限制不能在重建中丢失。**
 
-一个文档可能经历：
+## 6. 哪些数据质量问题必须在入口发现
 
-```text
-v1 → v2 → v3
-```
+不是所有低质量文件都要一律拒绝。轻微格式问题可以带状态继续处理；空文档、无法辨认的关键表格、来源权限缺失，则可能不适合直接发布到问答服务。
 
-需要区分：
+质量门槛应对应业务后果。对退款条款，关键否定词识别错误比多一个空格严重得多。可以用代表性文件人工核对关键条款，记录成功率和错误类型，再决定自动处理、人工复核或暂不索引。不要把“解析器没有报异常”当成知识质量合格。
 
-```text
-source version
-content version
-parse version
-chunk version
-embedding version
-index generation
-```
+## 本章小结
 
-这些版本不是一定都要独立字段，但系统必须能回答：
+语料治理先回答“这是什么、哪一版有效、谁能看、从哪里来”。文档身份、正文版本、授权版本和处理版本承担不同职责。去重不能抹掉适用条件，更新不能漏掉删除，索引成功不能代替内容质量检查。
 
-> 当前检索结果来自哪一代数据处理链？
+## 🎯 面试怎么回答
 
----
+**问：知识库为什么不能直接上传后向量化？**
 
-## 5. Lineage 是什么
+向量只提供一种检索表示，不会判断正式来源、版本冲突和访问权限。我会先建立稳定文档身份及来源记录，区分正文、有效期和授权变化，再检查解析完整性与重复。每个入库批次有可核对的文档和片段清单。这样更新、排错和重新建库都能回到同一来源，而不是在一堆失去身份的向量上补救。
 
-Lineage 是从最终 Evidence 追溯到原始来源的链：
+## ⚠️ 易错点
 
-```text
-chunk_id
-→ parsed element
-→ document version
-→ source URI / record
-```
+**“正文哈希没变就什么都不用做。”** 权限、有效期和撤回状态可能变化，应走对应更新路径。
 
-回答 Citation、删除、权限和调试时都需要它。
+**“保留最新文件就没有版本问题。”** 历史提问、预发布政策和按签约时间生效的规则都需要明确适用条件。
 
----
+**“近似重复可以自动删。”** 极少的文字差异也可能改变规则；应保留版本与来源关系并按风险核对。
 
-## 6. 为什么 Chunk ID 也要稳定
+## 自测
 
-如果每次 Rebuild 都给所有 Chunk 完全随机 ID：
+### 自测 1
 
-- Diff 很难；
-- Regression 难比较；
-- Citation 历史失效；
-- 增量更新难判断；
-- Cache 难复用。
+两份正文完全相同的文件分别属于租户甲和乙。甲撤销了用户 u 的访问权。说明哪些计算结果可能复用，哪些检查不能复用。
 
-可以基于：
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-document_id + version + logical position / content hash
-```
+在存储与供应商数据边界允许时，相同正文的解析或向量计算可能复用；逻辑来源、租户身份和 u 的当前授权不能合并。任何答案缓存命中和正文回取仍须按当前权限核验。
 
-建立稳定可追溯 ID。
-
----
-
-## 7. Duplicate 与 Version Duplicate 不一样
-
-常见重复：
-
-```text
-同一 PDF 上传两次
-网页正文和打印版
-同一政策多个历史版本
-模板页大量重复 Boilerplate
-```
-
-要区分：
-
-```text
-Exact Duplicate
-Near Duplicate
-Historical Version
-Legitimate Similar Document
-```
-
-如果把历史版本简单 Dedup 删除，可能失去审计能力；如果全混在一起，Retrieval 会返回多个互相冲突版本。
-
----
-
-## 8. Corpus Freshness 要定义 SLA
-
-不同知识更新要求不同：
-
-```text
-产品文档 → 小时级
-公司制度 → 日级
-用户订单 → 秒级甚至 Tool/DB 查询
-```
-
-不是所有数据都适合批量 RAG Index。
-
-如果 Freshness 要求极高，直接查询业务 DB / API 可能比异步 Embedding 更合理。
-
----
-
-## 9. Permission 是 Corpus Contract 的一部分
-
-在入库时就应知道：
-
-```text
-tenant_id
-owner
-acl / group
-classification
-region
-```
-
-不要到 Query 最后一步才“想起来过滤”。
-
-权限信息如果不随 Chunk 传播，会造成：
-
-```text
-Source protected
-but derived chunk loses ACL
-```
-
-这是严重安全事故。
-
----
-
-## 10. Delete / Right-to-be-forgotten
-
-删除文档不仅是删 Vector：
-
-```text
-Source
-Parsed Artifact
-Chunk
-Embedding / Sparse Index
-Cache
-Replica
-Old Generation
-Trace / Backup（按政策）
-```
-
-都要有生命周期策略。
-
-逻辑不可检索和物理回收也可能是两个时间点。
-
----
-
-## 11. Corpus Manifest
-
-Production 可以维护一个 Manifest / Registry：
-
-```text
-document_id
-source
-version
-checksum
-last_modified
-parse_status
-chunk_count
-embedding_version
-index_generation
-permission_scope
-updated_at
-```
-
-它能帮助：
-
-- 增量同步；
-- 重建；
-- 对账；
-- 失败重试；
-- Missing Document 检查。
-
----
-
-## 12. Audit 最终产出什么
-
-在真正写 Retriever 前，最好得到：
-
-```text
-Source Inventory
-Format Distribution
-Document Count / Size
-Update Frequency
-Permission Model
-Duplicate Rate
-Failure Samples
-Freshness SLA
-Rebuild Strategy
-```
-
-这份结果决定后面的技术选择。
-
----
-
-## 13. 常见错误
-
-- 先选 Vector DB，再看数据：顺序反了。
-- Vector ID 能替代 Document ID：通常不够。
-- Version 只记录一个 updated_at 就够：很多处理层也有版本。
-- Dedup 越彻底越好：可能误删合法历史/相似文档。
-- 权限可以只在 UI 做：错误，Retrieval 层必须有安全边界。
-
----
-
-## 14. 面试怎么答
-
-### Q：RAG 知识库怎样做增量更新？
-
-> 我会先给 Source 建稳定 document_id / version 和 Manifest，检测 Source 变化后只重新 Parse/Chunk/Embed 受影响文档，同时保留内容、Embedding 和 Index Generation 的版本；写入新版本后再切换可见性并清理旧版本。大规模 Rebuild 还需要 Snapshot Boundary 和 Delta Catch-up。
-
-### Q：为什么 RAG 需要 Lineage？
-
-> 因为 Citation、权限、删除、Freshness、Bad Case Replay 和 Rollback 都需要从最终 Chunk 追溯到具体原文与版本，没有 Lineage 就无法可靠运营知识库。
-
----
-
-## 15. 自测
-
-<details><summary>1. Source of Truth 与 Vector Index 最大区别是什么？</summary>
-Source of Truth 是权威原始状态，Index 是可重建的检索派生物。
 </details>
 
-<details><summary>2. 为什么历史版本不能简单当重复数据删除？</summary>
-历史版本可能用于审计/回滚，但在线检索必须通过版本可见性避免新旧冲突。
+### 自测 2
+
+政策 8 月 20 日发布，9 月 1 日生效。用户问 8 月 25 日签订订单的适用规则。给出判断流程，不能直接回答采用 v1 或 v2。
+
+<details>
+<summary>提示</summary>
+
+还缺少决定适用版本的业务条件。
+
 </details>
 
-<details><summary>3. Permission 为什么应该从 Source 传播到 Chunk？</summary>
-因为检索返回的是 Chunk；如果派生数据丢失 ACL，就可能越权召回受保护内容。
+<details>
+<summary>参考答案与解释</summary>
+
+先确认政策按签约、购买、使用还是提问时间适用；在该规则下选择对应生效区间，核对旧版及用户权限。发布时间早于订单日期，并不能单独证明新版已经生效。
+
 </details>
+
+## 知识回看与权威资料
+
+回看 [完整链路](01-RAG职责与完整链路.md)，区分权威来源与派生索引；进入 [文档解析](03-DocumentProcessing.md)，把来源身份继续保留到页面与片段。
+
+[Docling 文档模型](https://docling-project.github.io/docling/concepts/docling_document/)展示内容层次与来源位置怎样共存；本章的来源优先级、发布门槛和字段组合属于课程的应用设计，不是某个解析器的自动保证。
+
+[← 第 01 章](01-RAG职责与完整链路.md) · [模块目录](../README.md) · [第 03 章 →](03-DocumentProcessing.md)

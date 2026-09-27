@@ -1,429 +1,121 @@
-# 05｜Advanced Chunk Structure：Parent-child、Neighbor、Semantic Boundary 与 Chunk Data Model
+# 05｜块之间的关系：小块检索，大块补全
 
-基础 Chunking 决定“切多大”；这一章解决更难的问题：
+[← 第 04 章](04-ChunkingDesign.md) · [模块目录](../README.md) · [第 06 章 →](06-QueryPlanning.md)
 
-> **如果检索需要小粒度，但回答又需要大上下文，怎样同时满足？如何让 Chunk 可追溯、可扩展、可权限过滤？**
+用户的问题使系统命中了“已经开通专属资源的订单需人工复核”这一小段。它很精确，但读者仍想知道：它属于哪个产品、限制哪条一般规则、原文在哪里？把整份手册塞回去，又会带入发票、安全设置等无关内容。
 
-因此 Parent-child、Neighbor、Semantic Boundary 和 Chunk Data Model 应属于同一个“高级 Retrieval Unit”知识块。
+解决办法是让**检索单位、上下文单位和引用单位可以不同，但关系明确**。小块负责定位，较大的相关单元负责解释，精确位置负责追溯。
 
----
+## 1. 三种单位怎样分工
 
-## 1. Small Chunk / Large Context 的矛盾
+| 单位 | 在示例中是什么 | 要回答的问题 |
+|---|---|---|
+| 检索单位 | A、B 两个子片段 | 哪段可能与问题有关？ |
+| 上下文单位 | 同一退款条款中的 A 与 B | 模型理解这段话还缺什么条件？ |
+| 引用单位 | P1@v2 第 2 页对应原文范围 | 回答的这个结论由哪里支持？ |
 
-Retriever 往往喜欢：
+这三者可以相同，也可以不同。文档很短时，无须强行拆层；较长材料中，分开粒度可以避免让向量既承担精确定位，又独自承载所有背景。
 
-```text
-small focused chunk
-```
+## 2. 父子结构怎样把一个命中变成可读内容
 
-因为语义更纯。
-
-生成模型往往需要：
-
-```text
-larger surrounding context
-```
-
-因为要理解条件、定义和例外。
-
-这两个需求可以通过“检索粒度”和“上下文粒度”分离解决。
-
----
-
-## 2. Parent-child Retrieval
-
-一种典型结构：
+**父块**表示一个完整节或段落组，**子块**表示其中较短的检索片段。它们来自同一文档版本，而不是把排名相邻的结果临时称为父子。
 
 ```text
-Parent Section
-├── Child Chunk A
-├── Child Chunk B
-└── Child Chunk C
+P1@v2：退款条款（父单元）
+├── A：标准版的一般期限
+└── B：专属资源订单的例外
 ```
 
-Index Child：
+一次补全过程如下：先检索到 B；根据 B 保存的父单元标识找到退款条款；核对父单元中将被送出的内容仍然获准访问且版本一致；再把 A 与 B 作为上下文提供给模型。若父节很长，可以只取与问题相关的段落，而不是无条件整节回填。
 
-```text
-small unit → easier retrieval
-```
+这里只要求保存可回取的关系，不要求每个父块都再生成一个向量。对很长的层次文档，也可以先检索目录或摘要定位章节，再进入子内容。多一级索引会多出更新和质量责任，收益需与平坦检索对照。
 
-命中 Child 后返回：
+## 3. 邻居扩展与重叠合并分别解决什么
 
-```text
-parent section / selected siblings
-```
+**邻居扩展**沿原文顺序取命中段落之前或之后的内容。它适合指代、步骤前提、相邻说明，而不是把“检索排名前后两条”当成原文邻居。必须根据同一文档、同一版本内的位置关系判断。
 
-于是：
+例如命中“满足上述条件后提交申请”，应先找到“上述条件”所在的前一段。如果紧邻内容已经进入新章节，盲目扩展可能越过主题边界。可以设置最大邻居数、最大长度，并在达到完整条件后停止。
 
-```text
-fine retrieval
-+
-rich generation context
-```
+重叠合并则是去掉重复文字。假设同一来源版本中的两个片段分别覆盖原文 `[0,100)` 和 `[80,180)`，可以按原文位置合并为 `[0,180)`，而不是直接连接成 200 个单位。合并后保留原片段到合并范围的映射，引用才能继续回源。
 
-兼得。
+若两个片段来自不同版本，即使文字看起来相似，也不能按位置直接合并。文档改过以后，同一个偏移可能指向另一段话。
 
----
+## 4. 去重的标识粒度为什么重要
 
-## 3. Parent 为什么不能无限大
+同一个 B 可能从向量路和词项路各返回一次。它们指向同一检索单元，应合并为一个候选，但保留两路命中信息供融合与诊断使用。去重键通常至少能区分租户或知识空间、文档、版本、片段及必要的处理代际。
 
-如果 Parent 是整篇 50 页 PDF：
+不能简单按 `doc_id` 只留一条。A 与 B 虽属于同一文档，却支持不同条件；只保留 A 会把例外删掉。也不能看到两个片段相似，就忽略不同产品、地区或生效时间。
 
-```text
-child hit
-→ return entire document
-```
+反过来，同一个事实的多个重叠副本不应因为“有三条”就被当成三份独立证据。判断独立支持，需要看来源与内容关系，不是数候选条数。
 
-就失去意义。
+## 5. 扩展过程中权限为什么要再检查
 
-Parent 通常应该是：
+命中子块 B，只能说明本次检索允许使用 B，不能自动证明整个父节、邻居或图片附件都可以交给用户。某些系统会把公开操作说明与内部备注放在一个父文档里，权限粒度可能比文档更细。
 
-- Section；
-- Subsection；
-- FAQ Group；
-- Function / Class；
-- Table + Description。
+补全时应逐项检查将被使用的内容：属于当前允许的知识空间吗？来源有没有被删除？当前用户是否仍可访问？与命中采用的文档版本和规则范围是否一致？授权失败的内容不能进入重排器、生成模型、外部模型日志或可见缓存。
 
-仍然要符合 Context Budget。
+⚠️ **注意：只在第一路向量检索加过滤条件，不足以保证整条链路安全。** 词项检索、正文回取、父子扩展、缓存命中和后续搜索都可能重新引入未授权内容。第 12 章将讨论撤权与索引延迟更新之间的处理。
 
----
+## 6. 给块补上下文，不等于给原文补事实
 
-## 4. Neighbor Window
+块中只有“14 天”，可以根据真实标题路径补上“标准版／普通退款”。这叫上下文补充，其作用是帮助孤立片段恢复对象与范围。
 
-有些文档天然是连续文本。
+若使用模型为片段生成说明或摘要，应把原文与生成说明分开保存。生成说明可能帮助检索，但可能错写产品、时间或条件，不能作为原文事实直接引用。需要重要细节时，沿映射回到原始段落。
 
-命中：
+每次原文更新，子块、父单元、摘要和引用映射都可能受影响。仅更新向量却继续回填旧父节，会让一个请求混入多个版本；因此这些派生物应作为一致的知识版本发布。
 
-```text
-chunk_i
-```
+## 7. 补全是否值得，用边际信息判断
 
-可以扩展：
+不必每个命中都“取父块、取前后两段、取摘要”。对已经完整的短问答，额外扩展只是增加噪声。对规则题，例外和定义很重要；对步骤题，前置条件很重要；对表格题，表头、单位和注释很重要。
 
-```text
-chunk_{i-1}
-chunk_i
-chunk_{i+1}
-```
+一个实用判断是：这次补入的内容解决了哪一项缺失条件？若只是重复已有事实，就不值得继续占用预算。遇到不够的预算，应保留必要证据组合，或明确部分回答，而不是靠无关片段填满窗口。
 
-这叫 Neighbor Expansion。
+## 本章小结
 
-它适合补全跨 Chunk 上下文，但要防：
+检索单位负责定位，上下文单位负责解释，引用单位负责追溯。父子关系、原文邻居和重叠位置提供不同的补全方式。任何扩展都要保留版本、来源、权限和预算边界；去重不能误删同一文档中的不同必要事实。
 
-- Context 重复；
-- 邻居其实属于不同 Section；
-- 多个命中 Chunk 扩展后大面积重叠。
+## 🎯 面试怎么回答
 
----
+**问：为什么小块检索后还要补父块或邻居？**
 
-## 5. Semantic Boundary Failure
+小块主题集中，容易定位，但可能缺定义、主语和例外。可以根据事先保存的父子或原文顺序关系补入必要内容，再按当前权限、版本和预算筛选。引用仍映射到具体原文，而不只指向整份文档。这样把“找得到”与“读得完整”分开处理，但补全不是越多越好。
 
-即使使用语义/结构化切分，也可能发生：
+## ⚠️ 易错点
 
-### Definition 与 Exception 分离
+**“同一文档只保留最高分块即可。”** 多个块可能共同构成证据，特别是一般规则与例外。
 
-```text
-Chunk A: general rule
-Chunk B: exception
-```
+**“允许访问子块就允许访问全部父块。”** 权限可能细到节、段落或附件；扩展需要再次核验。
 
-只召回 A 会得到错误结论。
+**“生成的上下文说明就是原文。”** 说明是派生解释，应保留其身份并回源核对事实。
 
-### Table Header 与 Row 分离
+## 自测
 
-```text
-Chunk A: columns
-Chunk B: values
-```
+### 自测 1
 
-Row 没有 Header 就不可解释。
+命中公开操作步骤的子块后，父文档中还有仅管理员可见的配置口令说明。设计补全行为，并指出在哪个时点必须阻止该内容。
 
-### Pronoun / Reference 分离
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-Chunk B starts: “It is valid for 30 days.”
-```
+只补入当前用户有权访问的段落，不能先整份送给模型再过滤输出。应在正文回取/上下文组装边界核验，至少保证未授权内容不流向不获准的处理者或用户。
 
-不知道 `it` 指什么。
-
-高级 Chunk Structure 的目标就是让这些依赖关系可恢复。
-
----
-
-## 6. Retrieval Unit 不等于 Storage Unit
-
-可以有：
-
-```text
-Stored Parent Document
-Stored Chunk
-Stored Sentence / Node
-```
-
-而真正参与 ANN / BM25 的可能只是某一层。
-
-所以系统要明确：
-
-```text
-Index Unit
-Return Unit
-Citation Unit
-```
-
-它们可以不同。
-
----
-
-## 7. 一个成熟 Chunk Data Model
-
-可以至少包含：
-
-```text
-chunk_id
-document_id
-parent_id
-section_path
-ordinal
-text
-content_hash
-source_uri
-page / bbox
-content_version
-parser_version
-chunker_version
-embedding_version
-tenant_id
-permission_scope
-created_at
-```
-
-不是每个系统都需要全部字段，但必须支持：
-
-- Traceability；
-- Update/Delete；
-- Parent/Neighbor；
-- Permission；
-- Citation；
-- Version；
-- Debug。
-
----
-
-## 8. Hierarchy 怎么设计
-
-常见：
-
-```text
-Document
-→ Section
-→ Subsection
-→ Chunk
-→ Sentence
-```
-
-不同层可以承担：
-
-```text
-retrieval
-context expansion
-citation
-summary
-```
-
-例如：
-
-```text
-search child chunk
-→ return parent section
-→ cite original page
-```
-
----
-
-## 9. Chunk Metadata 为什么不能无限塞正文
-
-有人为了补语义，会把：
-
-```text
-title
-path
-author
-permissions
-version
-```
-
-全部拼到 Embedding Text 中。
-
-问题是：
-
-- 相同 Metadata 重复污染向量；
-- Token Cost 增大；
-- 权限字段可能不应参与语义；
-- Structured Filter 和 Semantic Signal 混在一起。
-
-应该区分：
-
-```text
-Embedding Content
-vs
-Metadata / Filter Fields
-```
-
-只有真正需要语义增强的 Header 才考虑加入 Embedding 文本。
-
----
-
-## 10. Contextualized Chunk
-
-有些系统会给每个 Chunk 添加短 Context：
-
-```text
-“本段来自企业退款政策的海外订单章节。”
-+
-original chunk
-```
-
-这种 Contextual Enrichment 可以减少 Chunk 脱离上下文后的歧义。
-
-但它必须：
-
-- 可版本化；
-- 成本可控；
-- 通过 Eval 证明有收益；
-- 不制造事实幻觉。
-
----
-
-## 11. Chunk ID 应该怎样生成
-
-完全随机 UUID 简单，但 Diff / Incremental Update 不方便。
-
-可考虑：
-
-```text
-stable document_id
-+
-logical path / ordinal
-+
-content hash / version
-```
-
-但也要避免：
-
-- 内容小改导致全部 ID 级联变化；
-- Ordinal 改变造成缓存大量失效。
-
-ID 策略和更新模型要一起设计。
-
----
-
-## 12. Parent-child 如何影响 Index 数量
-
-可能只 Index Child：
-
-```text
-child vector index
-→ fetch parent by parent_id
-```
-
-也可以同时 Index：
-
-```text
-parent summary
-child detail
-```
-
-做多粒度检索。
-
-后者会增加：
-
-- Index Size；
-- Fusion Complexity；
-- Evaluation 难度。
-
-所以不是层级越多越高级。
-
----
-
-## 13. Duplicate Context 怎么合并
-
-如果 Top5 命中：
-
-```text
-child 1 from parent A
-child 2 from parent A
-child 3 from parent A
-```
-
-Parent Expansion 后不能把 Parent A 重复三次。
-
-Context Builder 应做：
-
-```text
-stable dedup
-merge overlapping windows
-preserve best evidence score / source mapping
-```
-
-这也是为什么 Retrieval Result 需要结构化 ID，而不是只有文本字符串。
-
----
-
-## 14. Citation Unit 设计
-
-用户看到的 Citation 可以是：
-
-```text
-Document
-Page
-Section
-Paragraph
-Chunk
-```
-
-如果 Chunk 是内部技术单元，不一定适合直接展示。
-
-因此可通过 Lineage 映射：
-
-```text
-internal chunk_id
-→ user-visible document/page/section
-```
-
----
-
-## 15. 常见错误
-
-- Parent-child 就是把所有 Child 的 Parent 全文返回：要受 Budget 约束。
-- Neighbor Window 固定 ±1 永远合理：要尊重结构边界。
-- Chunk Metadata 越多都应该拼进 Embedding 文本：错误。
-- 随机 ID 不影响更新：会增加增量维护和调试困难。
-- Index Unit = Context Unit = Citation Unit：不一定。
-
----
-
-## 16. 面试怎么答
-
-### Q：小 Chunk 和完整上下文怎么兼顾？
-
-> 可以把 Retrieval Unit 和 Context Unit 分离，例如 Index 小 Child Chunk，命中后根据 parent_id 或 neighbor relationship 扩展到较大的 Section/Window；这样保持召回粒度，同时给 LLM 足够上下文。需要用稳定 Chunk Data Model 记录 hierarchy、position、version、permission 和 lineage，并在 Context Builder 去重合并重叠扩展。
-
-### Q：Chunk Data Model 为什么重要？
-
-> 因为 Parent-child、增量更新、删除、权限、Citation、Bad Case Replay 都依赖稳定 ID 和 Lineage。只存 `text + vector` 很难支持 Production 生命周期。
-
----
-
-## 17. 自测
-
-<details><summary>1. Index Unit 和 Return Unit 为什么可以不同？</summary>
-小单元更利于精准召回，而生成可能需要更大的上下文，因此可以命中小 Chunk 后扩展 Parent/Neighbor。
 </details>
 
-<details><summary>2. 为什么 Permission 应作为 Metadata，而不是简单拼进 Embedding Text？</summary>
-权限是硬过滤约束，不应依赖语义相似度决定，而且拼接会污染向量表示。
+### 自测 2
+
+同一文档版本有 A 和 B：A 给一般条件，B 给例外。检索两路都返回 A，只有一路返回 B。说明去重后应留下什么，以及为何不能简单按文档 ID 折叠。
+
+<details>
+<summary>参考答案与解释</summary>
+
+留下 A 与 B 两个不同片段；A 的两路命中记录合并到同一候选。按文档 ID 只保留一条会丢掉必要条件，破坏证据完整性。
+
 </details>
 
-<details><summary>3. Parent-child 最大的额外工程成本是什么？</summary>
-需要维护稳定层级关系、扩展/去重逻辑、更多版本一致性和更复杂 Evaluation。
-</details>
+## 知识回看与权威资料
+
+回看 [切分设计](04-ChunkingDesign.md)区分块长与语义边界；证据最终怎样进入上下文，见 [证据交付](09-EvidenceDelivery.md)。
+
+[Docling 文档模型](https://docling-project.github.io/docling/concepts/docling_document/)可用于理解层次与来源位置；[OWASP 提示注入防护](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)说明外部内容与授权边界不能仅靠提示词保护。父子补全策略本身是本文给出的应用设计。
+
+[← 第 04 章](04-ChunkingDesign.md) · [模块目录](../README.md) · [第 06 章 →](06-QueryPlanning.md)

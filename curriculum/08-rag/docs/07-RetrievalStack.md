@@ -1,388 +1,137 @@
-# 07｜Retrieval Stack：Dense、BM25、Hybrid 与 Fusion
+# 07｜多路检索与融合：让语义和词项互相补位
 
-真正的 Retrieval System 很少只依赖一种信号。
+[← 第 06 章](06-QueryPlanning.md) · [模块目录](../README.md) · [第 08 章 →](08-Rerank与CandidateBudget.md)
 
-这一章把原来的 Dense、Sparse/BM25、Hybrid、RRF/Fusion 合并成一个完整问题：
+用户说“独享资源开通后能退吗”，文档写的是“专属资源订单不适用普通退款”。语义检索可能认出表达相近。另一个用户输入完整错误码 `E1042`，这时精确保留这个词项往往比寻找“大概相关的报错”更重要。
 
-> **不同检索器擅长什么，为什么需要多路召回，以及多个 Ranking 怎样被稳定合并？**
+多路检索不是为了堆系统，而是让不同信号补足彼此的盲区。要判断它是否有效，先理解每一路凭什么把一个片段排到前面，再讨论怎样融合。
 
----
+## 1. 稠密检索：比较预先学到的表示
 
-## 1. Dense Retrieval 擅长什么
+Dense Retrieval（稠密检索）把问题和片段编码成固定维度向量，再按照约定的相似度或距离找近邻。文档向量可提前计算；在线只需编码问题并搜索已有表示，因此不必对每个文档重新运行完整的问答模型。
 
-Dense Retriever：
+它能利用模型学到的语义关系，帮助匹配不同说法。但两个对象在向量空间里接近，不等于它们满足同一数值条件、拥有同一编号或适用同一版本。向量模型输入前缀、归一化方法和距离度量必须匹配；用错输入方式，调索引参数也未必能修复。
 
-```text
-Query
-→ Embedding
-→ Vector Search
-→ semantic candidates
-```
+ANN 是近似近邻搜索，用较少计算寻找近似的前列结果；它可能漏掉本来按向量距离应当排前的片段。这是索引近似误差，与“向量表示本身不符合业务相关性”不同。精确搜索可以作为区分两者的对照，但仍不能保证业务证据完整。
 
-它擅长：
+## 2. 词项检索：先知道词出现在哪里
 
-- 同义表达；
-- 概念语义；
-- 不共享关键词但含义相近；
-- 自然语言 Query。
+词项检索把内容经过分析器转换成词项。分析器可能负责分词、大小写处理或同义词规则。倒排索引记录“这个词项出现在哪些文档或片段中”，因而不必每次扫描所有正文。
 
-但可能弱于：
+BM25 是一种常用排序方法。它同时考虑：查询词是否出现、出现次数是否还提供额外价值、词在整个集合中是否稀有，以及文档是否因为过长而天然容易撞词。
 
-- 精确 ID；
-- SKU；
-- Error Code；
-- 极罕见专有词；
-- 数字/字符串精确匹配。
-
----
-
-## 2. Sparse / BM25 擅长什么
-
-Sparse Retrieval 依赖词项匹配和权重。
-
-BM25 的直觉：
+以某个查询词 t 对片段 d 的贡献为例，一种常见表达是：
 
 ```text
-term appears in document
-+
-rare term gets higher value
-+
-document length normalization
+IDF(t) × tf × (k1 + 1)
+──────────────────────────────────────────
+ tf + k1 × (1 - b + b × dl / avgdl)
 ```
 
-它很适合：
+这里 `tf` 是 t 在 d 中的出现次数，`dl` 是片段长度，`avgdl` 是集合平均长度；`k1` 控制词频增长的饱和程度，`b` 控制长度归一化强度。IDF（逆文档频率）反映词的区分能力：只出现在少数文档中的词，通常比几乎处处出现的词更能区分候选。对多个查询词的贡献求和，形成排序信号。
+
+固定其他条件时，`tf` 从 1 增到 2 会加分，但从 100 增到 101 的边际收益小得多，这就是饱和，避免机械重复一个词无限占优。长度归一化则降低长文档仅靠内容多而撞词的优势，不等于“越短越好”。[Lucene 10.3.1 的 BM25Similarity 文档](https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/search/similarities/BM25Similarity.html)可核对该实现的参数和 IDF 定义；不同实现的分数细节不必完全相同。
+
+BM25 不会自动理解所有同义关系。若“独享”与“专属”被分析器作为不同词，需同义词配置、查询变体或其他检索路线补足。错误码、订单号等还应考虑精确字段匹配，避免分词器把 `E1042` 拆坏。**Sparse（稀疏）表示不只指 BM25**，也有学习得到的稀疏词项权重；主线先把最常用的词项基线讲清。
+
+## 3. 混合检索先合候选，再处理分数不可比
+
+Hybrid Retrieval（混合检索）组合两种或更多检索信号。最常见的起点是稠密路与 BM25 路。两路都在相同的合法知识范围内检索，再合并候选；不是向量路遵守权限，词项路“全库兜底”。
+
+不能直接把某一路的 `0.86` 与另一条路的 `12.4` 相加，随后认为后者更可靠。分数量纲与分布不同；归一化加权可以作为方案，但需要明确归一化样本、权重及离线评测。仅把两个分数都缩到 0–1，也不会自动让它们拥有同样含义。
+
+## 4. RRF 怎样只凭名次做融合
+
+RRF 是 Reciprocal Rank Fusion，倒数排名融合。它不比较原始分数，而让每一路根据候选名次贡献一项：
 
 ```text
-E1042
-Product-X-7B
-exact API name
-rare legal clause
+RRF(d) = 对所有命中 d 的路线求和：1 / (c + rank(d))
 ```
 
-这类精确词。
+名次从 1 开始；某一路没有 d，该路贡献 0。`c` 是平滑常数，**不是返回候选数 K**。它越大，前后名次的相对差异越平缓，多路共同命中的影响相对更明显。各路取多大的窗口，也会改变哪些候选有机会获得贡献。[Elastic 的 RRF 说明](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)给出了这一计算和窗口语义。
 
----
+下面的排名是**人为设定的实验输入**，不代表任何模型实测。A 是一般退款规则，B 是例外，C 是发票说明，D 是账户停用说明。取 `c=60`：
 
-## 3. Dense 和 Sparse 不是谁淘汰谁
+| 片段 | 稠密路名次 | 词项路名次 | 融合计算 | 约值 |
+|---|---:|---:|---|---:|
+| A | 1 | 2 | 1/61 + 1/62 | 0.032522 |
+| B | 3 | 1 | 1/63 + 1/61 | 0.032266 |
+| C | 2 | 未命中 | 1/62 | 0.016129 |
+| D | 未命中 | 3 | 1/63 | 0.015873 |
 
-看两个 Query：
+融合顺序为 A、B、C、D。B 从稠密路第三升到融合第二，是因为另一条路线也强烈支持它；并不是 RRF 已经理解了“例外优先”。如果两路都没找到 B，融合不会创造 B。
 
-### Query A
+在 [实验目录](../examples/README.md)中可独立运行：
 
-```text
-“用户很久不操作后登录状态为什么消失？”
+```python
+from rag_lab import rrf
+
+scores = rrf([["A", "C", "B"], ["B", "A", "D"]], constant=60)
+assert [item[0] for item in scores] == ["A", "B", "C", "D"]
 ```
 
-Dense 可能通过语义命中：
+输入是已有排名，返回按融合分数排序的新列表。函数不执行检索、不调用模型；同一路重复 ID 会被拒绝，防止同一候选在一路中重复计票。并列分数使用固定 ID 顺序打破平局，便于复现。
 
-```text
-session expiration / TTL
-```
+## 5. 过滤、去重与截断怎样影响结果
 
-### Query B
+如果各路只返回前一条，A 与 B 各得到一次命中，前述完整窗口里的交叉支持就消失了。所以记录“使用 RRF”还不够，还应记录每路窗口、融合常数、去重标识和最终截断位置。
 
-```text
-“E1042”
-```
+权限和有效版本决定合法候选集合，实际数据库可能采用预过滤、后过滤或与 ANN 交织的策略。这里不规定所有产品采用同一种内部顺序，但应用必须确保未授权内容不越过处理边界，并检测过滤后结果不足。相关内部机制见 Vector DB 的 Metadata Filter 章节。
 
-BM25 往往更稳定，因为精确 Token 本身就是关键信号。
+同一块从两路返回，应合成一个候选并保留两路排名；不能在融合之前简单按文档只留一块，否则一般规则 A 与例外 B 可能只剩一条。
 
-所以二者是互补信号。
+## 6. 混合检索什么时候没有收益
 
----
+如果两路召回高度重复，增加一路只会增加成本。某一路分词配置错误或召回大量泛化噪声，融合还可能把好结果挤下去。多个几乎相同的查询变体也可能让某类结果获得不成比例的“票数”，并不等于获得独立支持。
 
-## 4. Hybrid Retrieval 是什么
+应比较稠密单路、词项单路和混合方案，在相同候选预算及真实过滤条件下观察相关证据覆盖、排序、时延与成本。精确编号、同义表达、多条件和长文问题要分开看；一个总平均分可能掩盖某类请求明显退化。
 
-同时运行多路 Retriever：
+## 本章小结
 
-```text
-Dense Top-N
-+
-Sparse Top-N
-+
-optional other routes
-        ↓
-Fusion
-        ↓
-Unified Candidates
-```
+稠密检索比较学到的表示，词项检索依赖分析器与词项统计。BM25 的关键是稀有性、词频饱和和长度归一化。混合检索需要解决分数不可比、候选窗口和重复命中的问题；RRF 只融合排名，不判断事实真伪。
 
-目标是：
+## 🎯 面试怎么回答
 
-```text
-提高 Candidate Recall / Robustness
-```
+**问：为什么做 Hybrid，怎样合并结果？**
 
-而不是让每一路都返回最终答案。
+先说明单路失败：语义路可能漏精确编号，词项路可能漏不同说法。两路在同一合法范围召回，用同一片段标识去重并保留各路名次。可以用 RRF 按倒数排名贡献融合，避免直接相加不同量纲的分数。再用固定问题集比较单路与混合的证据覆盖及成本；如果两路只带来重复或噪声，就不必保留复杂方案。
 
----
+## ⚠️ 易错点
 
-## 5. 为什么不能直接比较 Dense Score 和 BM25 Score
+**“BM25 只计算关键词出现次数。”** 它还考虑词的区分能力、词频饱和和长度归一化，分词配置也会决定能否匹配。
 
-Dense 可能返回：
+**“RRF 常数就是 Top-K。”** 常数调整排名贡献，窗口和最终返回数量是另两个决定。
 
-```text
-0.82
-0.79
-```
+**“融合分数越高，答案越可信。”** 它反映路线排名支持，不是事实正确概率，更不能绕过权限或补出不存在的证据。
 
-BM25 可能返回：
+## 自测
 
-```text
-14.3
-8.7
-```
+### 自测 1
 
-分数量纲不同、分布不同。
+两路结果分别为 [X,Y] 与 [Z,X]，取 c=1。计算 X、Y、Z 的分数，并指出第二、第三名是否一定可区分。
 
-直接：
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-0.82 + 14.3
-```
+X=1/2+1/3=5/6；Y=1/3；Z=1/2。顺序 X、Z、Y，三者可区分。若第二路只有 [Z]，X 与 Z 都是 1/2，必须有明确的并列处理规则。
 
-没有通用意义。
-
-所以需要：
-
-- score normalization；
-- learned fusion；
-- rank-based fusion；
-- RRF。
-
----
-
-## 6. RRF 的核心思想
-
-RRF = Reciprocal Rank Fusion。
-
-它主要使用各路候选的 Rank，而不是原始 Score：
-
-```text
-RRF(d) = Σ 1 / (k + rank_i(d))
-```
-
-直觉：
-
-> 在多路 Retriever 中都排得靠前的文档，会获得更高融合分数。
-
-优点：
-
-- 不需要对不同 Score Scale 做复杂归一；
-- 简单稳健；
-- 很适合多个异构 Retriever。
-
----
-
-## 7. RRF 参数 k 怎么理解
-
-`k` 控制 Rank 差异的敏感程度。
-
-较大 k：
-
-```text
-rank 1 vs rank 10 差距相对温和
-```
-
-较小 k：
-
-```text
-特别强调前排结果
-```
-
-不要死背某个默认值，仍应通过 Eval 选择。
-
----
-
-## 8. Candidate Dedup
-
-Dense 和 Sparse 可能返回同一 Chunk：
-
-```text
-Dense: A B C
-Sparse: A D E
-```
-
-Fusion 必须以稳定 `chunk_id` / `document_id` 去重，而不是按 Text String 猜。
-
-如果同一文档多个重叠 Chunk 入选，还可能需要：
-
-```text
-near-duplicate collapse
-parent merge
-neighbor merge
-```
-
-以提高候选多样性。
-
----
-
-## 9. Hybrid 的成本不是免费
-
-多路 Retrieval 意味着：
-
-```text
-更多查询
-更多 Candidate
-更多 Fusion
-更大 Rerank Input
-更高 Latency / Cost
-```
-
-所以应该有：
-
-```text
-Candidate Budget
-```
-
-而不是每路都随意 Top100。
-
----
-
-## 10. Query Routing vs Always Hybrid
-
-不是所有 Query 都需要全量 Hybrid。
-
-例如：
-
-```text
-exact error code
-```
-
-可以更偏 Sparse。
-
-纯自然语言概念问题可以更偏 Dense。
-
-复杂系统可以：
-
-```text
-Query Type
-→ select retrieval routes
-```
-
-但 Routing 错误也会丢 Recall，所以简单系统先做稳定 Hybrid Baseline 往往更容易。
-
----
-
-## 11. Metadata Filter 应在哪一层
-
-Tenant / Permission / Version 是硬约束。
-
-理想情况下每一路 Retriever 都遵守：
-
-```text
-same retrieval scope
-```
-
-否则：
-
-```text
-Dense filtered
-Sparse unfiltered
-→ Fusion leaks unauthorized candidate
-```
-
-所以 Hybrid Pipeline 的安全边界必须一致。
-
----
-
-## 12. Hybrid 为什么可能变差
-
-可能原因：
-
-- Sparse 噪声把相关 Dense Candidate 挤下去；
-- Fusion 参数不合适；
-- Candidate Budget 太小；
-- Query Rewrite 丢失精确词；
-- Duplicate 太多；
-- 权限/版本不一致；
-- Reranker Domain 不匹配。
-
-因此“加 BM25”本身不是质量保证。
-
----
-
-## 13. Exact Keyword / Identifier 的特殊处理
-
-对：
-
-```text
-SKU
-ticket id
-error code
-class name
-function name
-```
-
-可以保留：
-
-- Keyword Field；
-- Exact Match Boost；
-- N-gram / analyzer；
-- Fielded Search。
-
-不要让 Query Rewrite 把这些精确信号消失。
-
----
-
-## 14. Retrieval 评估怎么比较方案
-
-在同一 Dataset 上比较：
-
-```text
-Dense only
-Sparse only
-Hybrid
-Hybrid + RRF
-```
-
-看：
-
-- Recall@K；
-- MRR / NDCG；
-- Candidate Diversity；
-- P95 / P99；
-- Filter Slice；
-- exact-term slice；
-- semantic-paraphrase slice。
-
-只有分 Slice，才能知道 Hybrid 真正改善了哪类 Query。
-
----
-
-## 15. 常见错误
-
-- Dense 已经有语义，所以 BM25 过时：错误。
-- Dense Score 和 BM25 Score 可以直接相加：通常不行。
-- RRF 越多路越好：候选和成本也会爆炸。
-- Hybrid 一定优于单路：需要 Eval。
-- Permission 只在 Fusion 后过滤：存在安全和有效候选不足风险。
-- Rewrite 后可以丢掉 ID/Keyword：错误。
-
----
-
-## 16. 面试怎么答
-
-### Q：为什么 RAG 常用 Hybrid Search？
-
-> Dense 对同义和语义表达强，Sparse/BM25 对精确词、ID、稀有术语强，两者 failure mode 互补。通常分别召回候选，再用 RRF 或其它 Fusion 合并并去重，之后再 Rerank。是否值得 Hybrid 要用 Query Slice 的 Recall、Ranking、Latency 和成本验证。
-
-### Q：RRF 为什么适合 Dense + BM25？
-
-> 因为两路 Score Scale 不可直接比较，RRF 基于各自 Ranking 的 reciprocal rank 做融合，不依赖原始分数量纲，简单且对异构 Retriever 比较稳健。
-
----
-
-## 17. 自测
-
-<details><summary>1. 为什么 BM25 对 Error Code 常比 Dense 稳？</summary>
-因为 Error Code 是高价值精确 Token，Sparse Retrieval 能直接利用 exact term match，而 Dense 可能把它语义平均掉。
 </details>
 
-<details><summary>2. 为什么 Hybrid Pipeline 必须统一 Permission Scope？</summary>
-任何一路召回无权限数据都可能在 Fusion/Rerank 中泄漏或影响有效候选，因此安全约束必须贯穿每路。
+### 自测 2
+
+某检索系统精确错误码搜索效果很差，而同义表达搜索正常。列出先于“换更大向量模型”的两项检查。
+
+<details>
+<summary>参考答案与解释</summary>
+
+先检查分析器是否保留完整错误码，以及是否存在正确配置的精确字段/词项检索。再核对文档是否真的含该编号、过滤是否正确；语义相似正常不能证明精确标识处理正确。
+
 </details>
 
-<details><summary>3. RRF 主要使用 Score 还是 Rank？</summary>
-Rank。
-</details>
+## 知识回看与权威资料
+
+回看 [查询规划](06-QueryPlanning.md)，区分术语变体与多子目标；索引内的过滤细节见 [Vector DB：Metadata Filter](../../06-vector-db/docs/10-MetadataFilter.md)。
+
+[Lucene BM25Similarity 10.3.1](https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/search/similarities/BM25Similarity.html)是固定实现参照；[Elastic RRF](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)用于核对排名、平滑常数与候选窗口，不作为所有数据库的 API 约定。
+
+[← 第 06 章](06-QueryPlanning.md) · [模块目录](../README.md) · [第 08 章 →](08-Rerank与CandidateBudget.md)

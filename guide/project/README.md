@@ -10,6 +10,7 @@
 - [Agent Reader Revision](agent-reader-revision.md)
 - [Claude Code Reader Revision](claude-code-reader-revision.md)
 - [Vector DB Reader Revision](vector-db-reader-revision.md)
+- [RAG Reader Revision](rag-reader-revision.md)
 - [Integration Status](integration-status.md)
 - [PR Summary](pr-summary.md)
 

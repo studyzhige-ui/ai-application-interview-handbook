@@ -1,338 +1,130 @@
-# 01｜RAG 的职责与 Production End-to-End Pipeline
+# 01｜RAG 职责与完整链路：把外部事实变成有依据的回答
 
-RAG = Retrieval-Augmented Generation。
+[← 学习前提](../README.md#prerequisites) · [模块目录](../README.md) · [第 02 章 →](02-CorpusGovernance.md)
 
-它不是“Vector DB + Prompt”的同义词，而是一条完整证据链：
+用户问：“我十天前买了标准版，已经开通专属资源，能直接退款吗？”模型很容易给出一句流畅的回答，但流畅不能证明它读过这家公司的规则，更不能证明它采用了有效版本。
 
-```text
-Knowledge Source
-→ Ingestion
-→ Parse / Clean
-→ Chunk / Metadata
-→ Index
-→ Query Understanding
-→ Retrieval
-→ Fusion / Rerank
-→ Context Construction
-→ Grounded Generation
-→ Citation
-→ Evaluation / Observability
-```
+本模块用**虚构的北辰云政策**贯穿各章。所有条款、排名、时延和评测结果都是教学数据，不是真实公司的政策或生产成绩。当前退款文档记为 `P1@v2`，其中 A、B 分别给出一般规则和例外；知识库还收录发票文档 `P2@v1`，其中的 C 也可能被召回：
 
-这一章把“为什么需要 RAG”和“完整 Pipeline”合成一个入口：先知道系统要解决什么，再看到后面每个子系统为什么存在。
+| 片段 | 内容 | 对这个问题的作用 |
+|---|---|---|
+| A | 标准版订阅购买后 14 天内可申请普通退款。 | 给出一般时间条件 |
+| B | 已经开通专属资源的订单不适用普通退款规则，需人工复核。 | 限制一般规则的适用范围 |
+| C | 发票信息可在开具后 30 天内申请更正。 | 词面接近，但不能回答退款问题 |
 
----
+要回答完整，系统必须同时看到 A 和 B：十天满足一般时间条件，但开通专属资源触发例外，应转人工复核。只找到 A，模型可能错误地回答“可以直接退款”。这就是本模块要解决的问题：**怎样让系统找到足够的有效证据，并准确地用它回答，而不是只找到一段看起来相关的文字。**
 
-## 1. 为什么需要 RAG
+## 1. 检索与生成怎样分工
 
-LLM 参数里拥有的是训练阶段学到的统计知识，它天然存在几个边界：
+RAG 是 Retrieval-Augmented Generation，中文为检索增强生成。先从外部知识源寻找与问题有关的材料，再把材料交给生成模型组织答案。这里的“增强”不是把知识永久写入模型参数，而是在这次请求中提供可使用的上下文。[RAG 原始论文](https://arxiv.org/abs/2005.11401)讨论了参数知识与外部检索记忆的结合；本模块讲应用工程链路，不要求复现论文的联合训练方案。
 
-- 私有企业知识不在公开训练数据中；
-- 知识会过期；
-- 用户/租户数据动态变化；
-- 需要可追溯 Citation；
-- 需要权限过滤；
-- Context Window 不可能放下全部知识库。
+**检索器**负责从很多材料中找出候选；**生成模型**负责理解问题和候选证据，写出回答。检索结果尚未证明事实成立，因此先叫“候选”。经过来源、适用条件和内容支持关系检查后，才能把它用作某个结论的证据。
 
-RAG 的目标是：
+例如，A 的相关性很高，却不足以单独支持“这个订单可以直接退款”。B 不一定重复用户说过的所有词，但它改变了结论。相关性与证据充分性是两件事。
 
-> **在推理时，从外部知识源选出少量最相关、最新、允许访问的证据，再让模型基于这些证据回答。**
+## 2. 一次回答之前，系统先准备了什么
 
----
-
-## 2. RAG 改变的不是模型参数
+如果每次提问都重新读取所有 PDF、重新处理所有表格，响应会很慢。应用通常把大量准备工作放在问答请求之外完成：
 
 ```text
-Fine-tuning
-→ change parameters
-
-RAG
-→ change inference-time evidence
+原始文档 → 解析与清洗 → 带来源的片段 → 检索索引
+                                      ↘ 可回取的片段正文
+用户问题 → 在允许范围内检索 → 候选片段 → 证据上下文 → 生成与引用检查
 ```
 
-所以当问题是：
+这两条线分别称为**入库链路**和**在线查询链路**。“离线入库”表示不在这次回答的关键路径上，不表示断网、永不更新或不需要权限。
 
-```text
-公司最新制度
-内部产品文档
-用户订单状态
-```
+入库时，解析器把页面、段落和表格恢复成有结构的内容；切分器决定哪些内容作为一个检索单元；索引保存用于快速查找的表示。向量索引保存文本的数值表示，词项索引记录词语出现在哪些片段。正文和来源可以保存在同一服务，也可以放在独立文档存储中，不能假设“向量找到了”就一定还能取到对应正文。
 
-通常更自然的是 RAG / Tool，而不是把事实持续训练进模型。
+原始政策系统仍是**权威数据源**。索引是从它生成的派生数据。改变切分方法或更换向量模型时，应能从保留的原文重新构建，而不是把索引当成唯一副本。
 
----
+## 3. 沿着这个问题走完一次请求
 
-## 3. 一个 Production RAG 的两条主链
+假设用户已经登录，服务端知道他属于租户甲；当前使用的知识版本是 `P1@v2`。
 
-### Offline / Ingestion Plane
+1. **确定请求条件。** 保留原问题中的“标准版、十天、已开通专属资源”。服务端根据登录身份决定可读取的知识范围，而不是允许模型自行填一个租户编号。若用户问历史规则，还要保留请求的时间条件，最新版不一定适用于过去的事件。
+2. **取得候选。** 检索器返回 A、C、B 及排名。这里的顺序只是检索判断，不是业务优先级，也不是最终结论。
+3. **选择和补全证据。** 系统排除无关的 C，确认 A 与 B 属于同一有效版本，并在预算内保留两者。可选的重排器会更细地比较问题和候选，但它无法凭空找回候选之外的 B。
+4. **组织上下文。** 给片段附上标题、版本、来源标识和必要正文。模型不仅看到“14 天”，也看到“专属资源”的例外。
+5. **生成并检查。** 回答应说明两条规则怎样共同作用，引用标识必须能回到实际提供的片段。这个回答是政策解释，不表示退款申请已经提交，更不表示退款已经到账。
 
-```text
-Source
-→ Fetch / Parse
-→ Clean / Dedup
-→ Identity / Version
-→ Chunk
-→ Metadata
-→ Embedding / Sparse Index
-→ Vector / Search Store
-```
+最小可用方案不需要一开始就加入查询改写、两路检索、重排和图谱。可以从一个检索器、可靠的文档处理、明确的上下文和一组评测问题起步。后续每增加一个组件，都要说明它修复了哪一种失败。
 
-### Online / Query Plane
+## 4. RAG 与长上下文、微调、实时工具怎样选择
 
-```text
-User Query
-→ Normalize / Rewrite / Route
-→ Retrieve candidates
-→ Fusion
-→ Rerank
-→ Context Budget
-→ LLM
-→ Citation
-→ Trace / Eval
-```
+假设只需回答一份很短、已经获准访问的手册，整份放入模型上下文可能比维护索引更简单。文档能放进去不等于模型一定能找准每个条件，但这时不必为了“用了 RAG”而增加组件。材料很多、经常变化、不同用户可见范围不同，或每次只需要很小一部分时，检索更有价值。
 
-很多 Demo 只实现后半条的几步，Production 必须同时管理知识生命周期。
+微调会改变模型参数，能够影响行为，也可能吸收事实。但对频繁改变的政策，重新训练、检验旧事实残留和提供逐条来源通常不如外部知识更新直接。微调与 RAG 可以组合：前者改善回答方式，后者提供当前材料。
 
----
+用户问“我的订单此刻是否已退款”，答案来自实时订单系统，不能仅凭政策文档推断。应由有权限的业务接口读取状态。**知识问答、业务事实读取、外部写操作是不同职责**：查到退款规则，不等于获准执行退款。
 
-## 4. Source of Truth 在哪里
+## 5. 从第一天就留下可诊断的路径
 
-Vector DB 通常不应该是原始文档唯一 Source of Truth。
+当系统答错时，先还原事实在哪一步丢失：原始文档有没有 B？解析后还在吗？切分是否断开了条件？候选是否包含 B？最终上下文是否保留 B？模型是否正确使用了 B？
 
-更稳妥的结构：
+把这些关键输入、片段标识、版本和阶段结果关联到同一个请求记录，称为请求追踪，常写作 Trace。追踪不是把所有私密正文永久打印到日志里；可先记录标识和配置，必要内容受权限、脱敏和保存期限约束。
 
-```text
-Original Source / Object Store / DB
-        ↓
-Parsed Artifact
-        ↓
-Chunk / Embedding / Index
-```
+⚠️ **注意：检索服务超时不等于知识库没有答案。** 前者是执行失败，后者是检索完成后的知识判断。把超时伪装成“未找到依据”，会同时误导用户和质量评测。
 
-这样当：
+## 6. 本模块与前后课程的边界
 
-- Embedding Model 升级；
-- Chunk Strategy 变化；
-- Index 损坏；
-- 需要 Rollback；
+向量模型怎样产生表示，主要见 LLM Foundation；ANN（近似近邻搜索）和过滤索引怎样执行，主要见 Vector DB。本模块负责把这些能力组合成可验证的知识链路。Agent 课程负责决定何时检索、是否继续、怎样调用其他工具，以及执行状态和批准机制。
 
-都可以从 Source of Truth 重建。
+RAG 仍必须解释当前步骤所需的最小原理，不能只把疑问推给其他模块。例如理解混合检索必须知道语义信号与词项信号的不同，理解重排必须知道它只能看到输入候选。
 
----
+## 本章小结
 
-## 5. RAG 的核心不是 Recall 单指标
+RAG 的目标不是让回答看起来有来源，而是让有效、获准、足够的材料真正参与推理。入库产生可检索的派生状态，在线链路把问题变成候选，再把候选变成有依据的回答。任何一层丢失必要条件，下一层都可能无法补救。
 
-一个回答正确需要：
+## 🎯 面试怎么回答
 
-```text
-Source contains answer
-AND Parser preserves it
-AND Chunk keeps it coherent
-AND Retriever recalls it
-AND Reranker keeps it
-AND Context includes it
-AND Model uses it faithfully
-```
+**问：怎样介绍一个 RAG 系统，而不是报一串组件名？**
 
-任何一层失败都可能得到错误答案。
+先说明业务需要哪些外部知识、知识从哪里来、谁能访问、多久更新。然后解释如何解析与切分，使条件和例外可检索；在线如何取得候选、补全上下文并映射引用。最后用固定问题集和一次真实失败链说明方案有效的依据。采用混合检索或重排，需要指出它相对简单基线解决了什么，而不是把它当作必选项。
 
-所以 RAG Debug 必须分层，而不能“召回差就换 Embedding”。
+## ⚠️ 易错点
 
----
+**“有向量数据库就是完整 RAG。”** 向量数据库不会自动完成语料治理、证据充分性判断和引用核验。
 
-## 6. 为什么要 Dense + Sparse + Rerank
+**“模型回答正确就证明检索正确。”** 模型可能凭参数知识猜中，甚至在检索失败时碰巧答对；仍需检查证据链。
 
-不同检索信号擅长不同问题：
+**“引用政策就是执行了业务动作。”** 政策解释、提交申请、外部动作成功必须分开表达。
 
-```text
-Dense → semantic similarity
-Sparse/BM25 → exact term / ID / rare keyword
-Reranker → fine-grained query-document relevance
-```
+## 自测
 
-Production RAG 往往是 Funnel：
+### 自测 1
 
-```text
-large corpus
-→ cheap broad recall
-→ candidate fusion
-→ expensive precision rerank
-→ small evidence set
-```
+某员工询问“上个月的审批规则是什么”，检索器只取最新版规则。说明问题出在哪一层，并给出正确检索所需的两个条件。
 
-后面会逐层展开。
+<details>
+<summary>提示</summary>
 
----
+区分请求的时间条件与文件修改时间。
 
-## 7. Context Construction 不是简单拼接 Top-K
-
-候选结果需要：
-
-- 去重；
-- 合并 Neighbor / Parent；
-- 保留 Source Mapping；
-- 控制 Token Budget；
-- 按重要性排序；
-- 避免互相冲突；
-- 保留 Permission / Version。
-
-所以：
-
-```text
-Retriever Top-K
-≠ Final LLM Context
-```
-
----
-
-## 8. Grounding 与 Citation
-
-一个可审计 RAG 应尽量保持：
-
-```text
-Answer Claim
-→ Context Evidence
-→ Chunk ID
-→ Document Version
-→ Original Source
-```
-
-Citation 不只是 UI 装饰，而是：
-
-- 用户核验；
-- Bad Case Debug；
-- 合规；
-- Freshness；
-- 来源责任边界。
-
----
-
-## 9. RAG Evaluation 必须从第一天设计
-
-如果没有 Eval，下面这些优化都无法证明：
-
-```text
-Chunk 512 → 1024
-Dense → Hybrid
-TopK 10 → 30
-Add Reranker
-Change Embedding
-```
-
-因此 Production RAG 需要：
-
-```text
-Evaluation Dataset
-Ground Truth / Relevance Labels
-Retrieval Metrics
-Answer Metrics
-Bad Case Slices
-Regression
-```
-
-Evaluation 不是最后上线前的附录，而是整个 Retrieval Engineering 的反馈回路。
-
----
-
-## 10. RAG 和 Vector DB 的边界
-
-Vector DB 解决：
-
-```text
-store vector
-ANN search
-metadata filter
-index lifecycle
-scale
-```
-
-RAG 解决：
-
-```text
-怎样生成 Retrieval Unit
-怎样理解 Query
-怎样组合 Dense/Sparse
-怎样 Rerank
-怎样构造 Context
-怎样 Ground / Cite
-怎样评估和运营
-```
-
-所以学过 HNSW 后，RAG 不再重新从 HNSW 内部参数开始。
-
----
-
-## 11. RAG 和 Agent 的边界
-
-RAG 可以作为 Agent 的一个 Tool/Capability：
-
-```text
-Agent
-→ decide retrieval needed?
-→ call RAG
-→ inspect evidence
-→ maybe reformulate query
-→ continue / answer
-```
-
-RAG 负责 Retrieval Quality；Agent Harness 负责控制循环、Tool Runtime、Context/Memory、Checkpoint 和 Permission。
-
----
-
-## 12. 一条 Trace 应该能看到什么
-
-Production Trace 至少可以关联：
-
-```text
-original query
-rewritten query
-retrieval config
-candidate IDs / scores
-fusion/rerank result
-selected context
-source version
-model / prompt version
-answer / citation
-latency / cost
-```
-
-没有这条链，Bad Case 很难复现。
-
----
-
-## 13. 常见错误
-
-- RAG = Vector DB：错误。
-- 加了 RAG 就不会 Hallucinate：错误。
-- Top-K 候选直接全部塞给 LLM：不一定。
-- 检索到相关 Chunk 就保证模型会用：错误。
-- RAG 只需要在线 Query Pipeline：知识更新同样重要。
-- 没有 Eval 也可以凭几个 Demo 调参数：不可持续。
-
----
-
-## 14. 面试怎么答
-
-### Q：RAG 完整链路是什么？
-
-> 我会把 RAG 分成 Ingestion 和 Query 两个 Plane。离线侧从 Source of Truth 做解析、清洗、版本和 Chunk，再生成 Dense/Sparse Index；在线侧先做 Query Understanding，再多路召回、Fusion、Rerank，构造带 Provenance 的有限 Context，让 LLM Grounded Generation 并输出 Citation。整个链路要有 Eval、Trace、Freshness 和 Permission，而不是只调用 Vector DB Top-K。
-
-### Q：为什么用了 RAG 仍然会答错？
-
-> 因为失败可能发生在 Source、Parsing、Chunk、Query Rewrite、Retrieval、Rerank、Context Construction 或 Generation 任一层，需要沿证据链做 Attribution，不能简单归因于模型。
-
----
-
-## 15. 自测
-
-<details><summary>1. 为什么 Vector DB 不应该默认作为原文 Source of Truth？</summary>
-因为向量/Chunk/Index 都是可重建派生物，模型或 Chunk 策略升级时需要从稳定原始来源重建。
 </details>
 
-<details><summary>2. RAG 为什么天然需要 Evaluation？</summary>
-因为 Chunk、Retriever、Fusion、Rerank、Top-K 等所有改动都存在质量/成本权衡，没有 Ground Truth 和回归无法证明改善。
+<details>
+<summary>参考答案与解释</summary>
+
+查询规划不能把历史问题默认为当前知识。需要保留“上个月”对应的生效时间范围，并核验用户对历史版本的访问权限。不是只增加候选数量。
+
 </details>
 
-<details><summary>3. Candidate Top-K 和最终 Context 有什么区别？</summary>
-Candidate 是召回/排序候选；最终 Context 还要去重、扩展、压缩、权限/版本检查并受 Token Budget 约束。
+### 自测 2
+
+最终回答声称“已经完成退款”，Trace 只有政策检索和模型生成，没有业务工具执行记录。指出这份回答最多能支持什么，并说明缺少的证据。
+
+<details>
+<summary>参考答案与解释</summary>
+
+最多支持政策解释或下一步建议。没有提交记录、业务执行结果和必要核验，不能声称外部退款完成。模型输出不是外部状态变化的凭据。
+
 </details>
+
+## 知识回看与权威资料
+
+回看 [LLM Foundation 的 Embedding 与 Reranker](../../07-llm-foundation/docs/09-Embedding与Reranker.md)，理解“表示”和“候选打分”的区别；在线执行职责转入 [Agent 模块](../../09-agent/README.md)。
+
+[RAG 原始论文](https://arxiv.org/abs/2005.11401)用于理解检索记忆与参数知识的结合；[本模块资料索引](../../../references/rag/README.md)按后续问题组织技术依据。
+
+[← 学习前提](../README.md#prerequisites) · [模块目录](../README.md) · [第 02 章 →](02-CorpusGovernance.md)

@@ -1,417 +1,128 @@
-# 06｜Query Understanding & Retrieval Planning：Lifecycle、Rewrite、Clarification、Decomposition、HyDE 与 No-hit
+# 06｜查询规划：把用户的话变成可执行的检索请求
 
-RAG 在线链路不能把用户原句直接当作唯一检索 Query。
+[← 第 05 章](05-AdvancedChunkStructure.md) · [模块目录](../README.md) · [第 07 章 →](07-RetrievalStack.md)
 
-一个成熟 Retrieval Request 需要回答：
+“这个还能退吗？”这句话很短，但不一定应该立刻变长。如果上一轮只讨论过标准版，可能补全指代即可；如果上一轮比较过标准版与企业版，则需要先问清对象。直接把它改写成“标准版 14 天退款规则”，甚至可能把还没查到的答案写进问题。
 
-```text
-用户到底在问什么？
-要不要改写？
-问题是否需要拆分？
-是否应该生成多个 Query？
-是不是缺少必要信息？
-什么时候应该拒绝检索结果并说“证据不足”？
-```
+**查询规划**要决定检索真正需要知道什么、哪些条件已经确定、哪些仍缺失，以及该使用哪种检索动作。目标是减少误解，不是让每次提问都多调用一个模型。
 
-所以 Request Lifecycle、Rewrite、Clarification、Decomposition、Multi-query、HyDE 和 No-hit 都属于同一个 Query Planning 子系统。
+## 1. 先区分四种看起来相似的困难
 
----
+| 用户表达 | 真正缺什么 | 合适的处理 |
+|---|---|---|
+| “这个能退吗？” | 对象可能不明确 | 有唯一上下文时补全，否则澄清 |
+| “标准版退款” | 可能只缺表达完整性 | 直接检索或轻量扩展，不擅自添加购买天数 |
+| “独享资源开通后怎么退？” | 与文档术语“专属资源”不同 | 保留原词，同时加入可信的术语变体 |
+| “能否退款，已开的发票怎么办？” | 两项不同信息需求 | 分成退款条件与发票处理，再综合回答 |
 
-## 1. 一次 Retrieval Request 的完整入口
+短不等于模糊，长也不等于明确。最重要的是对象、时间、状态和希望得到的结果。
 
-可以抽象为：
+## 2. 从原问题生成独立问题，哪些内容不能丢
 
-```text
-Raw User Query
-→ Normalize
-→ Context / Intent Analysis
-→ Permission / Tenant Scope
-→ Query Plan
-→ Retrieval
-→ Candidate Validation
-→ Evidence / No-hit Decision
-```
-
-Query Planning 的目标不是“让句子更漂亮”，而是生成更适合知识库检索的查询计划。
-
----
-
-## 2. Query Normalization
-
-基础处理可以包括：
-
-- Unicode / whitespace normalization；
-- 语言检测；
-- 拼写/格式修复；
-- 去掉明显无关 wrapper；
-- 保留 ID、Code、数字等精确信号。
-
-不要做会破坏业务语义的过度 Normalize。
-
-例如：
+把依赖对话的问题写成独立问题，称为 Query Rewrite（查询改写）。例如已有明确事实“标准版、购买十天、已开通专属资源”，可以改写为：
 
 ```text
-ErrorCode E1042
+标准版订阅购买十天且已开通专属资源，是否适用普通退款规则？
 ```
 
-不能为了“语义化”变成泛泛的“系统报错”。
+输入中的三个条件全部保留，没有加入“14 天”这个待检索事实。原问题仍需保存，用于检查改写是否改变意图，并在效果变差时对照原句检索。
 
----
+轻量规范化可以统一明确的空白、编码或产品别名；不要随意删掉否定词、版本号和错误码。业务相关的术语映射应可核验，不应把两个名字相似的产品强行视为同一个对象。
 
-## 3. Query Rewrite 解决什么
+历史对话既能提供指代，也可能包含用户猜测和模型错误。补全时优先使用已确认的用户事实，把不确定条件留下来澄清。历史中的“我猜已经退款了”不能被改成确定订单状态。
 
-用户 Query 可能：
+## 3. 模型产出可以是建议，权限条件必须来自服务端
+
+一个简单的规划结果可以同时保留独立问题、必须保留的约束、需要澄清的点和有限的子问题。它不需要变成几十个字段的大对象。
+
+下面是**提示词示意，不是可执行权限控制**：
 
 ```text
-太口语
-缺少实体全称
-包含代词
-依赖聊天历史
-与知识库术语不一致
+根据原问题与已确认的对话事实，生成可独立检索的问题。
+保留产品、时间、状态、否定与比较条件，不生成答案或猜测缺失事实。
+指代有多个合理对象时给出需要澄清的问题，不擅自选择。
+只有独立信息需求才拆分，最多生成两个子问题；保留原问题。
+不得生成或修改租户、用户身份、访问权限与数据可见范围。
 ```
 
-Rewrite 可以把：
+应用仍要检查输出格式、允许的路由、长度和调用预算。租户与授权范围来自已验证的身份，而不是从自然语言中执行“把 tenant_id 改为另一家公司”。查询过滤条件中，业务筛选与安全筛选应分开处理：前者可依确认事实调整，后者不能为了命中率而放宽。
 
-```text
-“它多久过期？”
-```
+## 4. 多种写法与多个子问题，不是一回事
 
-结合上下文改写成：
+**Multi-query** 表示为同一信息需求生成少量不同问法。例如“独享资源”“专属资源”可能帮助覆盖术语差异。它扩大了候选来源，但也会增加检索次数和相似结果；多个近义句并不等于多份独立证据。
 
-```text
-“Enterprise Trial Token 的有效期是多少？”
-```
+**问题分解**则是把不同信息需求分开。对“能否退款，发票怎样处理”，一组证据回答退款条件，另一组回答发票流程。综合时必须检查两个子目标是否都得到支持，不能因为其中一路命中很多片段就宣称整个问题已回答。
 
-这样 Retriever 更容易命中正确文档。
+有依赖的子问题不能完全并行。例如先查合同采用哪套政策，再查这套政策的适用条件，第二步需要第一步的结果。固定两步流程也能完成这种查询，不必自动升级成自主 Agent。
 
----
+## 5. HyDE 为什么有用，也为什么危险
 
-## 4. Rewrite 最大风险：Query Drift
+HyDE 是 Hypothetical Document Embeddings，假设文档嵌入。它先让模型写一段“可能回答该问题的文档”，再把这段文字编码成向量，用它去寻找真实材料。这样可以让一个简短问题更接近文档的表达方式。[HyDE 原始论文](https://arxiv.org/abs/2212.10496)明确指出假设文档可能包含虚假细节。
 
-模型可能把原意改掉：
+因此它是检索线索，不是答案，也不能作为引用。在退款示例中，假设文档若臆造“开通资源后也能退”，可能把搜索方向带偏。对精确编号、强条件或风险较高的问题，应谨慎使用；保留原问题路径，并用实际候选和答案评测判断收益。
 
-```text
-user asks A
-rewrite becomes A+B or C
-```
+## 6. 未命中时，先知道是哪种“没有”
 
-所以要保留：
+先确认检索是否成功完成。服务超时、分片失败和权限服务不可用属于执行问题，不能当成知识缺失。检索正常但结果不足时，再区分以下情形：
 
-```text
-original_query
-rewritten_query
-rewrite_reason / trace
-```
+- **对象或条件未明确。** 先澄清，否则继续搜索只会扩大噪声。
+- **表达不匹配。** 可以回退到原句、保留精确词项、使用有限的可信术语变体。
+- **允许范围内没有足够知识。** 可以给出有证据的部分，并说明缺口；需要实时事实时使用获准的业务接口，不能擅自跨租户搜索。
 
-并在 Eval 中单独分析：
+“相似度高于 0.8”不是通用答复门槛。不同模型、距离度量、查询类型和语料会改变分数分布，而且高相关性仍可能只覆盖一般规则。阈值必须用本地标注集校准，并和证据完整性、风险及故障状态共同判断。
 
-```text
-Original Search vs Rewritten Search
-```
+## 7. 控制规划开销与方向漂移
 
-Rewrite 不是天然提升。
+每次改写、拆分和追加检索都消耗延迟与预算。应限定变体数量、检索次数和截止时间，并记录原问题、规划结果、所用范围及每次检索的新增信息。
 
----
+若原句已经命中完整有效证据，就没有必要继续重写。若连续两次改写只是返回同一组片段，也不应把重复搜索误认为进展。更复杂的按结果继续搜索与停止控制，在第 14 章讨论；这里先保留明确的问题和有限动作。
 
-## 5. Clarification：信息不足时不要猜
+## 本章小结
 
-例如：
+查询规划从信息缺口出发：补全指代、保持约束、澄清歧义、覆盖表达或拆分真实子目标。原问题与已确认事实不能被改写吞掉；授权范围不是模型可以生成的条件。未命中要区分歧义、知识不足和执行失败。
 
-```text
-“怎么配置？”
-```
+## 🎯 面试怎么回答
 
-但系统不知道用户问：
+**问：查询改写怎样做，怎样避免改坏？**
 
-```text
-Redis?
-Model API?
-Agent Tool?
-```
+我会先判断原问题是否已经足够明确。改写只补已确认上下文、统一可信术语、拆分独立信息需求，保留产品、时间、状态和否定条件；不把猜测的答案塞进检索词。原句和改写结果都进入追踪，在同一问题集上比较效果。权限由服务端决定，不能由改写结果扩大；检索没有完成与完成后证据不足分别处理。
 
-与其生成一个自作主张 Query，不如：
+## ⚠️ 易错点
 
-```text
-ask clarification
-```
+**“所有问题都应该先让模型重写。”** 这可能增加成本和意图漂移，明确的精确查询可以直接检索。
 
-这属于 Retrieval Planning 的一部分。
+**“HyDE 生成的答案也能作为证据。”** 它是可能含错的检索引导，最终事实必须来自实际材料。
 
-判断标准是：
+**“没结果就删除过滤条件。”** 安全范围不能为了召回放宽，尤其不能把诊断实验变成线上越权搜索。
 
-> 缺失信息是否会显著改变检索空间或答案。
+## 自测
 
----
+### 自测 1
 
-## 6. Query Decomposition
+上一轮比较了标准版和企业版，用户接着问“这个支持提前终止吗？”写出安全的下一步，并说明为什么不应直接改写成标准版查询。
 
-复杂问题可能包含多个独立事实：
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-“比较 A 和 B 的价格、权限模式和部署方式。”
-```
+应澄清指的是哪一种订阅，或在获准且成本合理时分别查两种并明确区分。上一轮有两个合理对象，直接选标准版会把不确定指代变成伪事实。
 
-可以拆成：
-
-```text
-A price vs B price
-A/B permission model
-A/B deployment model
-```
-
-分别检索，再在上层组合 Evidence。
-
-适合：
-
-- Multi-hop；
-- Comparison；
-- 多实体；
-- 多约束问题。
-
-但分解越多，Latency / Cost / Fusion 也会上升。
-
----
-
-## 7. Multi-query
-
-同一个意图可以生成多个检索表达：
-
-```text
-“如何处理缓存雪崩？”
-→ cache avalanche mitigation
-→ redis mass expiration protection
-→ cache layer outage fallback
-```
-
-多路召回后合并候选。
-
-价值：
-
-```text
-提高 Query Coverage
-```
-
-风险：
-
-```text
-Candidate Explosion
-Latency
-重复结果
-Query Drift
-```
-
-所以需要 Fusion / Dedup 和 Candidate Budget。
-
----
-
-## 8. HyDE 的直觉
-
-HyDE = Hypothetical Document Embeddings。
-
-它先让模型生成一个“可能的答案/文档”，再对这段假设文本做 Embedding：
-
-```text
-Query
-→ hypothetical answer/document
-→ embedding
-→ dense retrieval
-```
-
-直觉是让 Query Representation 更像知识库中的 Document Representation。
-
-但风险包括：
-
-- 模型假设错误；
-- 把错误细节写进 Query Representation；
-- 增加一次模型调用；
-- 对某些领域没有收益。
-
-必须通过 Eval 决定是否使用。
-
----
-
-## 9. History-aware Query
-
-多轮对话中：
-
-```text
-User: 什么是 HNSW？
-User: 那 M 调大有什么影响？
-```
-
-第二问需要引用第一轮实体。
-
-正确做法不是把完整聊天历史直接塞进 Retriever，而是提取/生成：
-
-```text
-standalone retrieval query
-```
-
-同时保留原 Query 供回答语气和上下文使用。
-
----
-
-## 10. Query Planning 要考虑 Retriever 类型
-
-Dense 更擅长语义表达；Sparse 更擅长精确词。
-
-所以 Query Planner 可以决定：
-
-```text
-dense query text
-sparse query terms
-metadata filter
-retrieval route
-```
-
-例如 ID 型 Query：
-
-```text
-“E1042”
-```
-
-不应该被 Rewrite 成只剩自然语言解释，把精确 Token 丢掉。
-
----
-
-## 11. Metadata / Permission Scope 应先进入 Plan
-
-Query Plan 不只是文本。
-
-它还应带：
-
-```text
-tenant_id
-permission_scope
-document_type
-time range
-product
-version
-```
-
-这些硬约束应该进入 Retrieval，而不是拿到结果后才做权限过滤。
-
----
-
-## 12. No-hit 是正常结果，不是异常
-
-如果知识库没有足够 Evidence，正确答案可能是：
-
-```text
-No reliable evidence found
-```
-
-而不是让模型凭参数知识补全。
-
-所以需要定义：
-
-- Candidate Threshold；
-- Minimum Evidence；
-- Required Source Count；
-- Conflict Handling；
-- Refusal Policy。
-
----
-
-## 13. Threshold 为什么不能只看 Vector Score
-
-相似度 Score 没有跨模型统一语义。
-
-No-hit 判断可以综合：
-
-```text
-Dense Score
-Sparse Match
-Reranker Score
-Metadata Match
-Query Type
-Historical Eval
-```
-
-一个固定 `cosine < 0.8 → no hit` 通常过于粗糙。
-
----
-
-## 14. Conflict Evidence 怎么办
-
-如果检索到：
-
-```text
-Policy v1: 30 days
-Policy v2: 14 days
-```
-
-不能简单取最高 Score。
-
-需要结合：
-
-```text
-Version
-Effective Date
-Authority
-Source Priority
-```
-
-这正是 Corpus Governance 与 Query Planning 的连接点。
-
----
-
-## 15. Query Plan 的可观测性
-
-Trace 建议记录：
-
-```text
-original query
-conversation context used
-rewritten query
-subqueries
-HyDE text if any
-filters
-retrieval route
-no-hit decision
-```
-
-否则 Bad Case 很难知道是“Retriever 差”还是“Planner 把 Query 改坏了”。
-
----
-
-## 16. 常见错误
-
-- 所有 Query 都先 Rewrite：可能引入 Drift。
-- Multi-query 越多 Recall 越高越好：成本和噪声也上升。
-- HyDE 是标准必选组件：必须 Eval。
-- No-hit 是系统失败：它是重要安全输出。
-- Clarification 会降低体验，所以永远不问：盲猜可能更差。
-- Query Rewrite 应替代原 Query：原始输入必须保留用于 Trace/Eval。
-
----
-
-## 17. 面试怎么答
-
-### Q：Query Rewrite 为什么有用？
-
-> 用户 Query 往往有代词、口语、缺实体或与知识库术语不一致，Rewrite 可以生成更独立的检索表达。但它也可能 Query Drift，所以要保留原 Query、记录 Rewrite，并用真实 Eval 对比是否真的提高 Retrieval。
-
-### Q：什么时候做 Multi-query / HyDE？
-
-> 当单一 Query 表达不足、语义空间不容易命中时可以作为 Recall 增强候选，但两者都会增加成本和噪声，必须受 Candidate Budget 和 Eval 约束，而不是默认开启。
-
-### Q：RAG 没召回结果怎么办？
-
-> 应把 No-hit 作为正常系统状态，根据历史 Eval 校准的 Evidence/Reranker 阈值、权限和版本判断是否有足够证据；证据不足就拒答或澄清，而不是让模型自由补全。
-
----
-
-## 18. 自测
-
-<details><summary>1. Rewrite 和 Clarification 的边界是什么？</summary>
-能从已有上下文稳定恢复意图时可 Rewrite；关键信息缺失且不同选择会改变检索空间时应 Clarify。
 </details>
 
-<details><summary>2. Multi-query 最大的 Production 风险是什么？</summary>
-候选量、Latency 和噪声成倍增长，需要 Dedup/Fusion/Candidate Budget 控制。
+### 自测 2
+
+查询接口返回超时，系统准备显示“公司没有相关政策”；同时规划模型建议改用另一租户的知识库。分别指出两个错误及处理方式。
+
+<details>
+<summary>参考答案与解释</summary>
+
+超时不证明没有政策，应按预算重试、降级或明确服务暂不可用。模型不能修改租户权限，服务端应拒绝这一计划，所有回退仍限于已授权范围。
+
 </details>
 
-<details><summary>3. 为什么 No-hit 是可靠 RAG 的必要能力？</summary>
-因为知识库不可能覆盖所有问题，强行生成会把“没有证据”转成 Hallucination 风险。
-</details>
+## 知识回看与权威资料
+
+回看 [语料治理](02-CorpusGovernance.md)中的有效期与授权条件；进入 [多路检索](07-RetrievalStack.md)，比较不同检索信号怎样响应同一问题。
+
+[HyDE 原始论文](https://arxiv.org/abs/2212.10496)用于理解假设文档为什么只能引导检索；[OWASP 提示注入防护](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)用于核对不可信内容与确定性授权边界。
+
+[← 第 05 章](05-AdvancedChunkStructure.md) · [模块目录](../README.md) · [第 07 章 →](07-RetrievalStack.md)

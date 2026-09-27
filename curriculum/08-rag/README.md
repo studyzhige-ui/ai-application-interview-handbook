@@ -1,166 +1,58 @@
-# RAG｜检索增强生成工程
+# RAG｜从外部知识到有依据的回答
 
-[← LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Agent Harness / Runtime →](../09-agent/README.md)
+[← LLM Foundation](../07-llm-foundation/README.md) · [↑ Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [Agent →](../09-agent/README.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
-> **教材：14 个连续知识小板块** · **HUMAN-A Canonical：29** · **独立来源覆盖：88**  
-> **质量门：✅ Granularity / Coverage / Content Depth**
+RAG（检索增强生成）把外部知识中适用、允许读取且能够回溯的内容提供给模型，用于回答具体问题。本模块沿语料处理、检索、证据组装、评测和持续更新建立完整理解，面向 AI Application 与 Agent 工程岗位的学习和实践。
 
-把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。
+<a id="prerequisites"></a>
+## 学习前提与模块边界
 
----
+开始前需要理解文本、列表、函数和基本错误处理；了解 Embedding 把对象编码成向量，以及模型输入长度有限。可以从 [LLM Foundation 的 Embedding 与 Reranker](../07-llm-foundation/docs/09-Embedding与Reranker.md) 回看最小模型。正文会就地解释当前机制需要的前提，不要求先背完所有生产组件。
 
-## 1. 这个模块解决什么
+向量索引的内部结构、近似搜索和过滤执行在 [Vector DB](../06-vector-db/README.md) 深入学习；模型内部编码与训练归 LLM Foundation；跨步骤的工具执行、持久状态和恢复归 [Agent](../09-agent/README.md)。RAG 负责把这些能力围绕“得到适用证据并可靠回答”组合起来。完整企业部署取舍由 [System Design](../10-system-design/README.md) 承接。
 
-把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。
+全仓学习顺序以 [learning-order.json](../../guide/learning-order.json) 为准，目录前缀保留稳定身份，不等于必须按数字学习。本模块的实际正文顺序为下表顺序。
 
-学习目标不是记住一组名词，而是能稳定回答：
+## 正文主线
 
-```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
-```
+各章使用同一组虚构北辰云政策，逐步回答“购买 10 天、已经开通专属资源的标准版订单，能否按普通规则退款”。先理解正常路径，再引入版本、例外、权限、失败和规模；数字、排名与政策均为教学假设。
 
----
+| 顺序 | 知识章 | 这一章解决的问题 |
+|---:|---|---|
+| 01 | [RAG 职责与完整链路](docs/01-RAG职责与完整链路.md) | 为什么需要外部证据，RAG 与模型、数据库、业务动作怎样分工？ |
+| 02 | [语料治理](docs/02-CorpusGovernance.md) | 哪份文档可信、有效、允许读取，重复与版本如何区分？ |
+| 03 | [文档解析](docs/03-DocumentProcessing.md) | 页面外观怎样恢复成保留顺序、表格和来源的内容？ |
+| 04 | [切分设计](docs/04-ChunkingDesign.md) | 怎样避免把规则、条件和例外切散，参数怎样验证？ |
+| 05 | [块之间的关系](docs/05-AdvancedChunkStructure.md) | 小块如何找得准，又能补齐父块、邻居与上下文？ |
+| 06 | [查询规划](docs/06-QueryPlanning.md) | 何时改写、拆解、澄清，哪些条件不能被改写掉？ |
+| 07 | [多路检索与融合](docs/07-RetrievalStack.md) | 语义与词项如何互补，多路排名怎样实际融合？ |
+| 08 | [重排与候选预算](docs/08-Rerank与CandidateBudget.md) | 重排为何可能变差，候选与上下文预算怎样区分？ |
+| 09 | [证据交付](docs/09-EvidenceDelivery.md) | 怎样选择证据、分配输入长度，并检查引用支持？ |
+| 10 | [检索评测](docs/10-RetrievalEvaluation.md) | Recall、MRR、NDCG 等指标的分母与边界是什么？ |
+| 11 | [端到端质量](docs/11-EndToEndQualityEngineering.md) | 怎样定位第一处证据丢失，并证明优化有效？ |
+| 12 | [更新、权限与回滚](docs/12-ProductionGovernance.md) | 如何避免旧任务覆盖新版本，回滚为何不能恢复旧授权？ |
+| 13 | [规模、成本与可观测性](docs/13-ScaleCostObservability.md) | 怎样处理积压、配额、尾延迟、缓存、成本和追踪？ |
+| 14 | [GraphRAG 与 Agentic RAG](docs/14-GraphRAG与AgenticRAG.md) | 何时需要图结构，何时需要受控地继续搜索？ |
 
-## 2. 在十板块中的位置
+## 学习、练习与回看
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → **RAG** → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+第一遍沿正文顺序阅读。每章先解释一个具体问题，再给机制、例子、边界与小结；面试回答用于组织已经理解的内容，自测任务在答案之外完整显示。先独立推导，再打开提示或答案。
 
-模块角色：**AI Application / 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。**
+| 入口 | 用途 |
+|---|---|
+| [机制实验](examples/README.md) | 用无外部依赖的确定性实验核对切分、排名、指标与版本状态；不冒充真实模型服务 |
+| [Review 与综合自测](review/README.md) | 第二遍重新画出知识流、证据漏斗与失败定位过程 |
+| [高频面试题](interview/高频面试题.md) | 沿连续追问练习有条件、有过程的表达 |
+| [面试易错点](interview/面试易错点.md) | 纠正绝对化、混淆阶段与忽略失败边界的说法 |
+| [面试前速查表](interview/面试前速查表.md) | 快速唤起机制，需要推导时返回正文 |
+| [RAG 权威资料](../../references/rag/README.md) | 按具体问题查技术依据与适用版本 |
 
----
+机制实验使用 Python 标准库，只是示例选择。本模块不绑定某个 RAG 框架、数据库或模型供应商；具体服务的 API、默认值与运行行为必须按部署版本另行验证。
 
-## 3. 固定课程原则
+## 面经与技术证据
 
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+[Canonical RAG](../../interview/canonical/rag.md) 保存正式面经的归一化问法与冻结统计；[Market](../../market/README.md) 保存持续收录的原始证据。它们用于校准问题、深度和边界，不替代技术事实，也不决定初学者的学习顺序。
 
-同时固定区分：
-
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
-
-所以本模块是 **29 道 Canonical → 14 个教材知识块**，两者不需要一一对应。
-
----
-
-## 4. 正式学习主线
-
-```text
-Corpus Governance → Document Processing → Chunk Design → Query Planning → Dense / Sparse / Hybrid / Fusion → Rerank / Candidate Budget → Evidence / Grounding / Citation → Retrieval & E2E Evaluation → Production Governance / Scale → GraphRAG / Agentic RAG
-```
-
-这个顺序按知识依赖组织，而不是按面经频率排序。
-
----
-
-## 5. 正式课程目录
-
-### Part A｜Knowledge Ingestion
-
-1. [RAG 的职责与 Production End-to-End Pipeline](docs/01-RAG职责与完整链路.md)
-2. [Corpus Governance：Audit、Identity、Lineage、Version、Source of Truth](docs/02-CorpusGovernance.md)
-3. [Document Processing：Parsing、OCR、Layout、Multimodal、Cleaning、Dedup](docs/03-DocumentProcessing.md)
-
-### Part B｜Retrieval Unit
-
-4. [Chunking Design：原则、Strategy、Size、Overlap](docs/04-ChunkingDesign.md)
-5. [Advanced Chunk Structure：Parent-child、Neighbor、Boundary、Data Model](docs/05-AdvancedChunkStructure.md)
-
-### Part C｜Query → Candidate → Evidence
-
-6. [Query Understanding & Retrieval Planning](docs/06-QueryPlanning.md)
-7. [Retrieval Stack：Dense、BM25、Hybrid、Fusion](docs/07-RetrievalStack.md)
-8. [Rerank 与 Candidate Budget](docs/08-Rerank与CandidateBudget.md)
-9. [Context Construction、Grounding 与 Citation](docs/09-EvidenceDelivery.md)
-
-### Part D｜Quality Engineering
-
-10. [Retrieval Evaluation：Metrics、Ground Truth、Dataset、Judge](docs/10-RetrievalEvaluation.md)
-11. [End-to-End Evaluation、Ablation、Regression 与 Bad Case](docs/11-EndToEndQualityEngineering.md)
-
-### Part E｜Production Governance 与 Advanced RAG
-
-12. [Production Governance：Freshness、Version、Permission、Tenant、Rollback](docs/12-ProductionGovernance.md)
-13. [Large-scale Ingestion、Latency / Cost、Cache 与 Observability](docs/13-ScaleCostObservability.md)
-14. [GraphRAG、Agentic RAG 与 Production Architecture](docs/14-GraphRAG与AgenticRAG.md)
-
----
-
-## 6. 真人面经怎样影响本模块
-
-Canonical 统计基线（`S001–S279`）：本模块有 **29 道 Primary Canonical、88 个独立 HUMAN-A 招聘流程覆盖**。
-
-重点市场信号包括：
-
-- End-to-end Pipeline
-- Chunk Strategy
-- Hybrid Retrieval
-- Reranking
-- End-to-end Evaluation
-- Bad Case Attribution
-- Query Transformation
-
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
-
----
-
-## 7. 模块边界
-
-- Embedding / Reranker 内部原理归 LLM Foundation。
-- ANN / HNSW / IVF / Filter 存储机制归 Vector DB。
-- Agentic Retrieval 的控制循环归 Agent Harness；RAG 负责 Evidence Quality。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview 与证据入口
-
-| 入口 | 链接 | 用途 |
-|---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
-
-研究与质量证据：
-
-- [Canonical Questions](../../interview/canonical/rag.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
-
----
-
-## 9. 推荐学习方式
-
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
-
-1. **第一遍：建立因果链。** 按 `docs/01 → 14` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
-
----
-
-## 10. 教材状态
-
-```text
-docs/      ✅ 01–14 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Content Depth       ✅
-```
+阅读范围、正式条目去向、版本核验、已运行检查与未验证项集中记录在 [RAG 修订记录](../../guide/project/rag-reader-revision.md)。
 
 下一环：[Agent](../09-agent/README.md)。

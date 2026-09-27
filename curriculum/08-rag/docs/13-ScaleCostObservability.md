@@ -1,761 +1,226 @@
-# 13｜Large-scale Ingestion、Latency / Cost、Cache 与 Observability
+# 13｜规模、成本与可观测性：让链路能持续运行
 
-> Demo RAG 回答“能不能搜到”；Production RAG 还必须回答：**数据怎样持续进来、重建时怎样不停服、每个阶段能承受多少吞吐、成本花在哪、P99 为什么变坏、Bad Case 能不能重放。**
+[← 第 12 章](12-ProductionGovernance.md) · [模块目录](../README.md) · [第 14 章 →](14-GraphRAG与AgenticRAG.md)
 
-这一章把规模、可靠性、成本和可观测性放在一起，因为它们在生产环境中是同一条运行链。
+上午十点，北辰云发布了一批新政策。同步程序已经接收任务，用户却一直搜到旧内容；工程师把并发数从 20 调到 200，等待反而更久。
 
----
+这不能仅用“向量不够准确”解释。本章沿两条处理时间线思考：**一份文档怎样变成可查询的知识，一次查询怎样变成用户收到的回答。** 找到等待发生在哪里，才能决定加机器、减工作量，还是改变调度。
 
-## 1. 从 Demo 到 Production，问题发生了什么变化
+## 1. 先把规模换成实际需要处理的对象
 
-Demo 常见：
+“语料有 100 GB”不足以估算建库成本。扫描图片、可提取文本和压缩文件，即使磁盘大小相同，页数、OCR 工作量与模型输入长度也可能完全不同。
 
-```text
-几百个文档
-一次性 ingest
-单用户
-无权限
-单版本 Index
-```
+先抽取有代表性的样本，记录原始字节数、文档数、页数、需要 OCR 的页数、解析后文本量、实际分词得到的 Token 数，以及切分后的块数。用各格式占比估算总量，再用小批量实测校正。不能把字符数直接当 Token 数，也不能把少量短文档的速度套到长扫描件上。
 
-Production 可能变成：
+例如，假设恰有 100 万个向量，每个 768 维，每维用 4 字节表示，那么仅原始向量需要：
 
 ```text
-100 GB / TB Corpus
-持续更新
-多 Tenant / ACL
-多个 Embedding / Chunk Version
-在线 Query 不允许停
-每天都有失败 Ingestion
-峰值流量明显
+1,000,000 × 768 × 4 = 3,072,000,000 字节
+                        ≈ 3.072 GB（十进制）
 ```
 
-此时系统必须同时处理：
+它**不包括**文本、元数据、索引结构、副本、备份和重建时同时保留的新旧版本。维度与表示格式来自所选模型；不能把这个算式当成某款数据库的实际内存承诺。
+
+## 2. 摄取链路需要可恢复的阶段，而不是一次性循环
+
+把一份文档的处理过程写成状态，目的不是增加字段，而是让程序重启后知道哪些工作已完成：
 
 ```text
-Throughput
-Backpressure
-Idempotency
-Freshness
-Version Switch
-Latency SLO
-Cost Budget
-Trace / Replay
-Quality Monitoring
+发现版本 → 获取原文 → 解析 → 切分 → 向量化 → 写入索引
+         → 验证可查询 → 允许新版本服务
 ```
 
----
+例如任务处理 `P1` 的源修订号 8，解析完成后保存了解析产物的位置与处理配置。向量化途中进程退出，恢复时可以读取已保存产物，从未确认完成的批次继续；不必重新下载和 OCR 整份文件。
 
-## 2. Ingestion 应该是可恢复 Pipeline，不是一段 for-loop
+“请求发送成功”不等于“所有记录写入成功”。批量接口可能返回部分成功，也可能在服务端处理后、客户端收到响应前断开。程序应逐项确认结果，记录已确认与待核对的项，并用稳定身份重试。第 12 章解释的幂等键防止重复产物，源修订号检查防止旧结果覆盖新结果，两者缺一不可。
 
-典型链路：
+不能恢复的损坏文件应隔离并记录原因，而不是永远占据重试队列。文件句柄、临时文件、网络连接和本地模型资源也需要在成功、异常、取消路径上释放；长期 Worker 的资源泄漏会把少量坏文件变成全局故障。解析器需要的模型、OCR 引擎和访问权限应在任务正式执行前检查，避免整批任务重复失败。
+
+## 3. 背压：限制上游产生工作的速度
+
+背压（Backpressure）是下游来不及处理时，让上游减速或暂停的机制。它不等于“把队列换成更大的”。
+
+假设上游每秒产生 12 个任务，下游只能每秒完成 8 个，且这一分钟内速率恒定、没有失败和额外等待，那么：
 
 ```text
-Source Discovery
-→ Snapshot / Change Detection
-→ Download / Read
-→ Parse / OCR
-→ Clean / Dedup
-→ Chunk
-→ Embed
-→ Index Write
-→ Validate
-→ Activate Generation
+每秒积压 = 12 − 8 = 4 个
+60 秒后积压 = 4 × 60 = 240 个
+上游停止后排空还需要 = 240 ÷ 8 = 30 秒
 ```
 
-每一个阶段都可能：
+继续增加上游线程只会更快地产生待处理任务。若内存队列最多容纳 128 个，空队列约 32 秒后就满了；此时让生产者等待，才能限制内存占用。原始文档仍可能在外部任务库中积压，**有界队列限制的是某个缓冲区，不是让所有积压凭空消失**。
+
+各阶段应分别限制并发：OCR 可能受内存或 GPU 限制，Embedding 可能受供应商配额限制，索引写入可能受磁盘与后台整理影响。观察每阶段的处理速率、最老任务年龄和失败原因，比只记录“队列里有多少个”更能定位新知识延迟。
+
+## 4. 批量、限流和重试共同决定吞吐
+
+假设某个演示服务允许每分钟 60 次请求、每分钟 60,000 个输入 Token，每次最多提交 10 份文档；每份文档平均恰好 1,000 Token。忽略请求额外开销时：
+
+- 按请求次数计算，最多每秒处理 10 份文档。
+- 按 Token 配额计算，最多每秒处理 1 份文档。
+
+最终先受到 Token 配额限制，不能只按每秒请求数设置并发。真实服务还可能有并发上限、批大小限制、不同模型共享配额等条件，应读取实际限额和响应，而不是照抄本例数字。
+
+对于暂时限流、部分网络故障，可以有限重试。若响应给出有效的 `Retry-After`，应结合剩余截止时间考虑等待；否则使用有上限的指数退避和随机抖动，避免大量任务同时醒来。认证失败、格式错误和确定的超长输入通常需要修复输入或配置，不能盲目重试。
+
+⚠️ **注意：超时不证明外部操作没有发生。** 重试写入前要用幂等身份或查询结果确认；请求总截止时间和重试次数也必须有限。取消本地等待不一定取消远端计算，资源费用与最终结果仍可能需要核对。
+
+## 5. 查询耗时要按依赖关系计算
+
+在线路径可能包含排队、改写、两路召回、融合、重排、上下文组装和模型生成。并行与串行的计算方式不同。
+
+假设两路检索同时开始，分别耗时 40 ms、70 ms；融合 5 ms、重排 30 ms、组装 5 ms 串行发生，忽略启动和排队开销，那么组装完成需要：
 
 ```text
-timeout
-429
-parser crash
-OOM
-partial batch failure
-duplicate retry
-worker restart
+max(40, 70) + 5 + 30 + 5 = 110 ms
 ```
 
-因此每个阶段最好有稳定任务身份：
+不是把两路检索机械相加得到 150 ms。反过来，所谓异步代码也不自动说明两路真正同时执行：连接池、线程池或供应商队列可能让它们重新排队。
+
+用户收到首个 Token 的时间包含此前的所有必要等待，以及模型开始输出前的处理。它与模型服务自身报告的首 Token 时间、完整回答耗时不是同一个指标。流式返回能让用户更早看到内容，但不会自动缩短此前的检索和重排。
+
+P95 表示约 95% 的观测不超过该耗时；P99 关注更靠后的长尾。**各阶段的 P95 不能直接相加得到端到端 P95**，因为每个阶段的慢请求不一定是同一批请求。必须按请求追踪完整路径，再统计端到端分位数。
+
+## 6. 从慢请求追到具体瓶颈
+
+当平均检索时间很低、P99 很高时，先挑慢请求与正常请求比较：过滤后候选集规模是否不同，是否命中热点分区，是否遇到冷缓存，某路服务是否排队，重排输入是否特别长，索引是否正做后台整理。
+
+这些只是待验证假设。不能看到 P99 抖动就断言数据库有问题，更不能在未确认业务允许的情况下取消权限过滤来换速度。
+
+服务目标（SLO）要说明对象、时间窗口和失败口径。例如“过去一小时内，至少 95% 的已接收交互请求在约定时间内开始输出”，还需决定拒绝、超时和取消怎样计入。只统计成功请求会把最差的请求从图上删掉。知识新鲜度则需要另一个目标：源变化到新版本实际可查询，允许延迟多久。
+
+## 7. 缓存究竟复用了哪个结果
+
+缓存不是一个统一开关。越接近最终回答，依赖通常越多。
+
+| 缓存对象 | 复用条件至少要核对 | 典型风险 |
+|---|---|---|
+| 解析产物 | 原文内容、解析配置、解析器版本 | 用旧解析产物掩盖新解析器修复 |
+| 文档向量 | 实际输入文本、预处理、模型与表示配置 | 不同模型的向量空间混用 |
+| 检索结果 | 查询语义、过滤条件、知识版本、检索配置、权限边界 | 同句问题跨用户或跨版本错误复用 |
+| 重排结果 | 查询、候选内容及版本、重排模型配置 | 候选 ID 未变但正文已变 |
+| 最终答案 | 以上依赖，以及会话条件、生成提示、模型、外部事实 | 旧答案、错误条件、越权信息一起返回 |
+
+这里列的是判断维度，不是一份放之四海而皆准的缓存键。必须从被缓存函数真正依赖的输入推导键与失效方式。解析产物等离线缓存也要有访问控制，不能因为没有直接返回给用户就默认可跨租户暴露。
+
+语义缓存依据问题的相似程度命中，但“开通专属资源”和“未开通专属资源”只差一个字，答案可能相反。产品、日期、否定条件、租户、权限等不能仅靠向量相似度保证相等。
+
+第 12 章的知识代号可以隔离新旧检索缓存；当前撤权仍要独立检查。切回旧知识代号时，不能顺便复活当时缓存里的旧授权结果。
+
+## 8. 成本要与成功结果放在一起
+
+离线成本包括解析、OCR、Embedding、索引构建、存储、副本和重建；在线成本包括查询处理、召回、重排、输入输出 Token 与外部工具。评估一个月的方案时，还应把周期性重建摊入，而不是只比较一次模型调用。
+
+假设一组**虚构计费结果**：1,000 次请求总费用 20 元，其中 800 次满足预定义的正确、完整且合规标准，那么：
 
 ```text
-job_id
-document_id
-source_version
-processing_version
-stage
-attempt
-status
-artifact_ref
+每请求成本 = 20 ÷ 1,000 = 0.02 元
+每成功回答成本 = 20 ÷ 800 = 0.025 元
 ```
 
-这样 Worker Crash 后才能回答：
+便宜方案若答错更多，每成功回答成本未必更低。成功标准和拒答的处理方式必须先固定，否则通过少回答、挑简单问题就能人为改善数字。质量、延迟和成本常互相制约；选择满足业务约束且不存在明显更优替代的方案，比追求某个单项最高分更合理。
 
-> “这一份文档到底处理到哪一步？”
+## 9. Trace 保存因果关系，不是无限复制用户原文
 
----
-
-## 3. Idempotency 要围绕“输入版本 + 处理版本”设计
-
-简单：
+Trace（调用追踪）把同一请求各阶段的输入摘要、输出身份、时间和因果关系关联起来。例如一次失败可以还原为：
 
 ```text
-retry parse(document)
+问题及明确条件
+→ 使用知识代号 G2、当前授权版本 9
+→ 两路候选 A/C/B 与 B/A/D
+→ 融合得到 A/B/C/D
+→ 重排得到 A/C/B/D
+→ 提前截断后 B 被丢弃
+→ 上下文只有 A
 ```
 
-如果每次都产生新的随机 Chunk / Vector ID：
+仅有“检索成功、生成成功”两条日志无法说明为什么遗漏例外。需要记录实际候选身份、过滤与丢弃原因、处理配置、知识版本和阶段耗时；查询原文、答案、证据正文是否留存，取决于隐私和复现需要，应做脱敏、访问限制和保留期控制。
 
-```text
-重复执行
-→ 重复 Chunk
-→ 重复 Vector
-→ Retrieval 污染
-```
+线上无命中率、拒答率、引用率、分数分布和用户纠正可以帮助发现变化，但它们是线索，不是正确率本身。将有代表性的失败安全地转为第 10、11 章的标注与回归案例，才形成质量闭环。
 
-更稳定的键可以来自：
+## 10. 降级必须保留安全与诚实边界
 
-```text
-document_id
-+ source_version
-+ parser_version
-+ chunker_version
-+ embedding_version
-```
+当重排超时，可以在允许的任务上退回已评测的融合排序；当改写服务不可用，可以保留原问题检索；当部分来源不可用，应说明检索不完整。减少多查询分支、降低候选预算、限制昂贵模式，都需要验证相应问题类别的质量下降。
 
-输出也要可定位：
+权限校验不能作为可省略的优化项。涉及关键条件、合规风险或证据不完整的问题，宁可明确说明暂时不能可靠回答，也不要把不完整结果包装成全量结论。降级、拒绝额外负载和重试策略应作为可测试配置，而不是事故现场临时拼接的分支。
 
-```text
-same logical input
-→ same generation / replaceable artifact set
-```
+## 本章小结
 
-这和前面的 Corpus Lineage 是同一条 Production 设计。
+规模化的核心是识别每阶段的工作量、容量与完成语义。摄取用稳定身份、可恢复状态和背压控制积压；查询用实际依赖关系解释延迟，用版本与权限约束缓存，再把质量、成本、失败和新鲜度放进同一条追踪链。
 
----
+## 🎯 面试怎么回答
 
-## 4. Backpressure：为什么“加并发”经常让 Ingestion 更慢
+**问：大规模 RAG 为什么不能简单加并发？**
 
-不同阶段的瓶颈不同：
+不同阶段受不同资源和配额限制。假如上游每秒产生 12 个任务，下游只能处理 8 个，加上游线程只会增加积压。我会先按格式和 Token 估算工作量，给 OCR、向量化和索引写入分别设置有界队列与并发预算，用稳定任务身份支持重试，并检查旧任务不能覆盖新版本。在线再按实际串并行关系拆解检索、重排和生成耗时，同时看质量、尾延迟、每成功回答成本与源到可查询的延迟。
 
-```text
-OCR           → CPU / GPU
-Embedding API → RPM / TPM / Provider Queue
-Vector DB     → write throughput / compaction
-Object Store  → bandwidth
-Parser        → memory
-```
+## ⚠️ 易错点
 
-如果上游无限生产：
+- 把原始文件 GB 数当成模型输入 Token 数：数据表示和工作量不是一个维度，必须抽样换算。
+- 把任务已入队当成知识已更新：新鲜度终点应是目标版本实际可查询。
+- 把每阶段 P95 相加：分位数不是逐请求耗时，端到端需要独立统计。
+- 为性能省略授权或悄悄使用旧答案：降级不能改变安全边界，也不能隐瞒不完整性。
 
-```text
-Discover 100k docs
-→ 100k OCR tasks
-→ 100k embedding calls
-→ provider 429
-→ retries
-→ larger queue
-→ retry storm
-```
+## 自测
 
-正确思路是：
+### 自测 1
 
-```text
-bounded queue
-+ per-stage concurrency
-+ provider quota
-+ retry budget
-+ queue lag metrics
-```
-
-而不是一条全局 `max_workers=1000`。
-
----
-
-## 5. Ingestion State Machine
-
-可以把文档处理显式成状态：
-
-```text
-DISCOVERED
-→ FETCHED
-→ PARSED
-→ CHUNKED
-→ EMBEDDED
-→ INDEXED
-→ VALIDATED
-→ ACTIVE
-```
-
-失败：
-
-```text
-RETRYABLE_FAILED
-FATAL_FAILED
-QUARANTINED
-```
-
-这样才能做：
-
-- 分阶段重试；
-- 对账；
-- Dead-letter；
-- 运营面板；
-- 自动重跑某一处理版本；
-- 判断 Freshness Lag 在哪一层。
-
----
-
-## 6. 大规模 Rebuild 怎样不停服
-
-错误做法：
-
-```text
-删除旧 Index
-→ 重建几小时
-→ 用户等待
-```
-
-更常见的 Generation / Snapshot 思路：
-
-```text
-Generation A  ← current traffic
-
-后台：
-Source Snapshot
-→ Build Generation B
-→ Validate B
-→ Catch up delta
-→ Atomic / controlled switch A → B
-→ Observe
-→ Retire A later
-```
-
-这样同时得到：
-
-```text
-No-downtime rebuild
-Rollback point
-A/B comparison
-Version traceability
-```
-
-关键是定义切换边界：
-
-> Query 一次请求应该看到一个一致的 Corpus / Index Generation，而不是一半旧、一半新。
-
----
-
-## 7. Delta Catch-up 为什么需要
-
-如果 Generation B 构建 3 小时：
-
-```text
-T0 snapshot
-→ build 3h
-→ T3 ready
-```
-
-期间 Source 仍然发生：
-
-```text
-create / update / delete
-```
-
-如果直接切换 B：
-
-```text
-T0–T3 的变化丢失
-```
-
-所以需要：
-
-```text
-snapshot boundary
-+ change log / CDC / incremental queue
-→ catch up delta
-→ switch
-```
-
-具体 CDC 机制属于 Backend / Data Engineering，但 RAG 必须明确知识版本正确性。
-
----
-
-## 8. 在线 Query Latency 必须按 Stage 拆
-
-端到端：
-
-```text
-API Queue
-→ Query Rewrite
-→ Dense / Sparse Retrieval
-→ Fusion
-→ Rerank
-→ Context Build
-→ LLM Prefill / TTFT
-→ Decode
-```
-
-只监控：
-
-```text
-/api/chat P95 = 4.2s
-```
-
-几乎不能定位问题。
-
-至少要能得到：
-
-| Stage | 指标例子 |
-|---|---|
-| Rewrite | latency / model / fallback |
-| Dense Retrieval | latency / candidate count |
-| Sparse | latency / no-hit |
-| Rerank | latency / candidates in/out |
-| Context | tokens / chunk count |
-| LLM | TTFT / output tokens / total latency |
-
----
-
-## 9. Tail Latency 比平均值更重要
-
-假设：
-
-```text
-Retrieval P50 = 30ms
-Retrieval P99 = 1.5s
-```
-
-平均值看起来很好，真实用户却经常遇到卡顿。
-
-常见 P99 来源：
-
-- Hot Shard；
-- Vector DB compaction；
-- Cold Cache；
-- Rerank batch queue；
-- Provider congestion；
-- 大 Context；
-- 极端 Filter；
-- 多路 Retrieval 某一路慢。
-
-所以 Production 优化不只问“平均快不快”，还要问：
-
-> **谁在拖慢最慢的那 1%？**
-
----
-
-## 10. SLO 应该和用户体验对应
-
-可以拆：
-
-```text
-Retrieval SLO
-Rerank SLO
-TTFT SLO
-End-to-end SLO
-Freshness SLO
-```
-
-例如企业知识库可能关心：
-
-```text
-P95 TTFT
-P99 Retrieval
-Index freshness < 10 min
-Citation coverage
-```
-
-SLO 不是指标列表，而是：
-
-> 超过什么边界就算系统没有履行承诺。
-
----
-
-## 11. 成本要分 Offline 和 Online
-
-### Offline / Ingestion
-
-```text
-OCR
-Parsing
-Embedding
-Index Build
-Vector Storage
-Replica
-Rebuild
-```
-
-### Online
-
-```text
-Query Rewrite Model
-Dense / Sparse Retrieval
-Reranker
-LLM Input Tokens
-LLM Output Tokens
-Tool / Graph retrieval
-```
-
-可以统一成：
-
-```text
-cost_per_ingested_document
-cost_per_1k_chunks
-cost_per_query
-cost_per_successful_answer
-```
-
-最后一个尤其重要：
-
-> 便宜但答错，不是真正低成本。
-
----
-
-## 12. Candidate Budget 是成本控制点
-
-比如：
-
-```text
-Dense Top50
-Sparse Top50
-→ Fusion 70
-→ Rerank 40
-→ Context 6
-```
-
-每扩大一层都会增加：
-
-```text
-retrieval compute
-rerank cost
-context tokens
-LLM prefill
-```
-
-因此 Top-K 不是纯质量参数，也属于成本预算。
-
-真正优化应画：
-
-```text
-Quality
-vs Latency
-vs Cost
-```
-
-Pareto Curve，而不是单独追最高 Recall。
-
----
-
-## 13. Cache 可以放在哪里
-
-### Embedding Cache
-
-Key 至少考虑：
-
-```text
-content hash
-+ embedding model/version
-+ preprocessing version
-```
-
-### Retrieval Cache
-
-必须考虑：
-
-```text
-normalized query
-+ index generation
-+ filter
-+ permission scope
-+ retrieval config
-```
-
-否则旧 Generation / 其它权限域的结果可能被错误复用。
-
-### Rerank Cache
-
-可以基于：
-
-```text
-query
-+ candidate ids/version
-+ reranker version
-```
-
-### Answer Cache
-
-风险最高，因为答案还依赖：
-
-```text
-Knowledge Version
-Permission
-Prompt
-Model
-Conversation Context
-Tool State
-```
-
-所以不是“相同问题就复用答案”。
-
----
-
-## 14. Cache Invalidation 应该跟 Version 走
-
-Production 最容易维护的思路通常不是逐条猜哪些 Cache 失效，而是：
-
-```text
-Index Generation changes
-→ old retrieval cache namespace becomes unreachable
-```
-
-类似：
-
-```text
-cache key includes generation_id
-```
-
-这样 Rollback 时也可以回到旧命名空间。
-
----
-
-## 15. Production Trace 要保存什么
-
-一条 Query 最少希望重建：
-
-```text
-request_id
-user / tenant / permission scope
-raw query
-rewritten / decomposed query
-filters
-retrieval route
-candidate ids + scores
-fusion rank
-rerank score
-final context ids
-corpus/index generation
-prompt version
-model version
-answer
-citations
-stage latency
-stage cost
-```
-
-这不是为了日志好看，而是为了：
-
-```text
-Bad Case Replay
-Latency Attribution
-Cost Attribution
-Security Audit
-Regression Dataset
-```
-
----
-
-## 16. Trace 和 Log 不一样
-
-普通 Log：
-
-```text
-retrieval succeeded
-```
-
-对于 RAG 几乎没法 Debug。
-
-Trace 应该表现因果链：
-
-```text
-Query
-→ Rewrite
-→ Candidate Set
-→ Rerank
-→ Final Context
-→ Generation
-```
-
-并保留关键 Artifact ID，而不是把整份原文复制进日志导致隐私和存储问题。
-
----
-
-## 17. Quality Monitoring 不能只靠线上用户投诉
-
-在线可以持续采样：
-
-```text
-no-hit rate
-candidate count
-citation coverage
-context utilization
-retrieval score distribution
-rerank score distribution
-refusal rate
-user correction / regeneration
-```
-
-再把样本进入：
-
-```text
-human review / judge
-→ labeled bad case
-→ regression set
-```
-
-注意：这些 Online Proxy 不等于最终质量，仍要配合离线 Ground Truth。
-
----
-
-## 18. Freshness Observability 是 RAG 特有核心指标
-
-要区分：
-
-```text
-Source Updated At
-Ingestion Detected At
-Indexed At
-Activated At
-```
-
-于是可以计算：
-
-```text
-source_to_active_lag
-```
-
-如果用户问“为什么新政策还搜不到”，你应该能明确知道：
-
-```text
-Source 没同步？
-Parser 队列堵？
-Embedding 429？
-Index Write 延迟？
-Generation 还没切？
-```
-
----
-
-## 19. Degradation / Load Shedding
-
-系统超载时不要只等超时。
-
-可以有受控降级：
-
-```text
-skip expensive query rewrite
-reduce rerank candidate count
-use smaller reranker
-reduce multi-query branches
-shorten context
-fallback to sparse/dense single route
-refuse noncritical expensive mode
-```
-
-但必须评估：
-
-> 降级后质量下降到什么程度？哪些用户/请求允许？
-
-Degradation Policy 应成为可测试配置，而不是事故时临时写 if。
-
----
-
-## 20. 三个典型 Failure Timeline
-
-### 20.1 Embedding Provider 429
-
-```text
-queue grows
-→ retry immediately
-→ more 429
-→ retry storm
-```
-
-正确方向：
-
-```text
-rate-aware concurrency
-+ exponential backoff / jitter
-+ queue limit
-+ failure state
-```
-
-### 20.2 Rebuild 切换后质量暴跌
-
-```text
-Generation B active
-→ no-hit ↑
-→ citation ↓
-```
-
-需要：
-
-```text
-versioned trace
-→ compare A/B
-→ rollback alias to A
-```
-
-### 20.3 Vector DB P99 抖动
-
-不能立刻“换数据库”。先定位：
-
-```text
-filter selectivity
-hot shard
-compaction
-candidate size
-network
-cache
-```
-
-再决定索引 / 容量 / 路由优化。
-
----
-
-## 21. 🎯 30 秒回答
-
-> 大规模 RAG 我会把 Ingestion 做成可恢复、幂等、带版本的异步状态机，并对 OCR、Embedding、Index Write 分别做并发控制和 Backpressure。Rebuild 用新 Generation 后台构建、校验、追 Delta，再原子切换，避免停服。在线请求按 Rewrite、Retrieval、Rerank、Context、LLM 拆 Stage latency / cost，并保留候选、分数、版本和最终 Context 的 Trace。Cache Key 必须包含 Knowledge Version 和 Permission Scope。除了 P95/P99，还要监控 Freshness Lag、No-hit、Citation、Queue Lag 和 Cost/Query，才能真正定位质量、延迟和成本问题。
-
----
-
-## 22. ⚠️ 易错点
-
-- **“加线程就能提升 Ingestion。”** 上游并发可能放大下游 429 / OOM。
-- **“重建索引要先删旧索引。”** Production 更适合 Generation / Snapshot 切换。
-- **“只看接口总耗时。”** 无法做 Stage Attribution。
-- **“Answer Cache 只按 Query 做 Key。”** 会产生版本和权限错误。
-- **“P50 很低说明性能很好。”** P99 可能已经不可用。
-- **“Online score 高就等于回答质量高。”** Proxy 不能替代 Ground Truth Eval。
-
----
-
-## 23. 🔍 深挖追问
-
-```text
-TB 级语料重建怎样不中断 Query？
-Snapshot 构建期间新数据怎样 Catch-up？
-Embedding Provider 限流怎样做 Backpressure？
-如何制定 Retrieval / TTFT / Freshness SLO？
-哪些 Cache 最安全？
-怎样定位 P99 而不是平均延迟？
-如何从 Production Trace 自动回流 Regression Dataset？
-```
-
----
+上游每秒产生 15 个任务，下游每秒完成 10 个，持续 40 秒后上游停止。忽略失败和启动开销，积压多少？还需多久排空？若仅增大内存队列，能改变稳态吞吐吗？
 
 <details>
-<summary>自测 1：为什么新 Generation 构建完成后不能直接切流量？</summary>
+<summary>提示</summary>
 
-因为构建期间 Source 可能继续变化。需要验证新 Generation，并补齐 Snapshot 之后的 Delta；否则切换后会丢失这段时间的新增、更新或删除。
+区分到达速率、服务速率和缓冲区大小。
+
 </details>
 
 <details>
-<summary>自测 2：为什么 Retrieval Cache Key 必须包含 Permission Scope 和 Index Generation？</summary>
+<summary>参考答案与解释</summary>
 
-否则不同权限用户可能共享不该看到的候选，或者新知识版本仍命中旧索引结果，造成安全和 Freshness 错误。
+积压 (15−10)×40=200 个；排空需 200÷10=20 秒。更大的队列只能容纳更多等待工作，不能让下游每秒完成得更多。
+
+</details>
+
+### 自测 2
+
+两路召回同时启动，分别耗时 30 ms 和 90 ms，之后融合 5 ms、重排 25 ms、组装 10 ms。没有排队时共多久？能否把这几个阶段各自的 P95 按同样算式组合成真实端到端 P95？
+
+<details>
+<summary>提示</summary>
+
+先计算一条具体请求，再区分一组请求的统计量。
+
 </details>
 
 <details>
-<summary>自测 3：为什么 Retrieval Trace 是 Production RAG 的核心基础设施？</summary>
+<summary>参考答案与解释</summary>
 
-因为最终回答由 Query 处理、候选召回、Fusion、Rerank、Context 和 Generation 多阶段共同决定。只有保留每层的输入、输出、版本与延迟，才能复现 Bad Case 并进行质量、成本和延迟归因。
+该请求耗时 max(30,90)+5+25+10=130 ms。不能据此组合阶段 P95 得到真实端到端 P95；需还原每个请求的完整时间，再统计分位数。
+
 </details>
+
+### 自测 3
+
+语义缓存命中了“未开通专属资源，购买 10 天能否普通退款”的答案。当前用户问“已开通专属资源”，且模型判断两个问题高度相似。应该复用吗？请给出具体原因。
+
+<details>
+<summary>提示</summary>
+
+相似检索用于发现相近对象，不证明决定答案的条件相同。
+
+</details>
+
+<details>
+<summary>参考答案与解释</summary>
+
+不能仅凭相似度复用。是否开通专属资源是决定例外的条件，原答案不适用。必须核对硬条件、知识版本及当前授权；无法确认等价时重新检索与回答。
+
+</details>
+
+## 知识回看与权威资料
+
+回看 [版本、撤权与缓存边界](12-ProductionGovernance.md)、[质量与成本的联合比较](11-EndToEndQualityEngineering.md)。通用消息队列、重试、限流与可靠性在 [Backend 模块](../../03-backend-engineering/README.md) 系统学习；本章解释它们在 RAG 数据与查询链路中的作用。
+
+权威资料：[Elasticsearch 的索引别名与切换边界](https://www.elastic.co/docs/manage-data/data-store/aliases) 用于核对具体存储实现；[PyMuPDF OCR 文档](https://pymupdf.readthedocs.io/en/latest/recipes-ocr.html) 用于理解按需 OCR 与结果复用。本文速率、容量和价格均为教学假设，不是厂商性能承诺。
+
+[← 第 12 章](12-ProductionGovernance.md) · [模块目录](../README.md) · [第 14 章 →](14-GraphRAG与AgenticRAG.md)

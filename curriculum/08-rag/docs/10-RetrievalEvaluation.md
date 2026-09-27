@@ -1,404 +1,153 @@
-# 10｜Retrieval Evaluation：Metrics、Ground Truth、Dataset 与 LLM Judge
+# 10｜检索评测：分数到底衡量了什么
 
-没有 Evaluation 的 RAG 优化，本质是：
+[← 第 09 章](09-EvidenceDelivery.md) · [模块目录](../README.md) · [第 11 章 →](11-EndToEndQualityEngineering.md)
 
-```text
-“我改了参数，感觉几个 Demo 更好了。”
-```
+系统对十个问题都找到了“看起来相关”的材料，就能说召回率 100% 吗？如果退款问题只找到一般规则 A，没有找到例外 B，这个“命中”并不足以回答完整问题。
 
-这一章先建立 Evaluation 的基础设施：
+评测首先要规定：**什么算相关，什么算必须找到，按哪个范围和版本判断。** 指标计算只是把这些规定转成可以比较的数值，不能替你定义任务。
 
-```text
-Evaluation Dataset
-→ Ground Truth / Relevance Labels
-→ Retrieval Metrics
-→ Judge / Human Review
-```
+## 1. 一条评测样本不只有问题和标准答案
 
-下一章再进入 End-to-end Experiment / Regression / Bad Case。
+对“购买十天且已开通专属资源，能直接退款吗”，样本至少应给出问题、用户可见范围、适用时间和知识版本，以及支持正确回答的原文证据。A 和 B 都是相关片段，且两者共同构成完整推理。
 
----
+还要标明预期行为：正常回答、先澄清、部分回答、拒绝访问或说明无足够证据。无答案问题不是失败数据，而是检验系统会不会编造规则的重要样本。服务超时则应单独记录为执行失败，不能直接计成正确拒答。
 
-## 1. 先区分 Retrieval Eval 和 Answer Eval
+标注可以由业务人员确认，并保留分歧处理方式。与问题主题相近却适用于另一产品或旧版本的材料，可作为**困难负例**：它提醒系统不要把相似当成适用。
 
-### Retrieval Eval
+## 2. Recall、Precision 和 Hit 的区别
 
-问：
+设相关证据集合 `G={A,B}`，检索结果为 `[A,C,B]`。先看前两条，得到 `{A,C}`：
 
 ```text
-正确 Evidence 有没有被找到？
-排名是否足够靠前？
+Recall@2    = 找到的相关证据数 / 全部标注相关证据数 = 1/2
+Precision@2 = 前 2 条中的相关证据数 / 2           = 1/2
+Hit@2       = 前 2 条是否至少有一条相关证据       = 1
 ```
 
-### Generation Eval
+Recall（召回率）看应找的漏了多少；Precision（精确率）看返回的有多少相关；Hit（命中）只回答有没有至少一条。多证据任务中，Hit 很高仍可能经常缺条件。
 
-问：
+扩大到前 3 条后，Recall@3 为 1，Precision@3 为 2/3。如果这道题明确要求 A 与 B 全部出现，可以额外记录**完整证据覆盖**：前 2 条为否，前 3 条为是。它是针对任务需要定义的检查，不是假装所有检索评测都已有统一同名指标。
+
+本模块实验在结果少于 K 时仍以 K 作为 Precision@K 的分母，缺失位置没有收益。若另一个系统用实际返回数作为分母，应明确其名称和口径，否则不能直接比较。重复 ID 不应重复增加相关证据计数。
+
+## 3. MRR 为什么关心第一条相关结果的位置
+
+如果结果是 `[C,A,B]`，第一条相关证据位于第 2 名，其 Reciprocal Rank（倒数排名）为 `1/2`。若在截断范围内未找到任何相关证据，该样本为 0。对一组有相关答案的样本取平均，就是 MRR（平均倒数排名）。
+
+例如两条样本的首条相关位置分别为 2 和未命中，MRR 是 `(1/2+0)/2=0.25`。它适合关心“用户多快看到第一个好结果”的任务，但只看第一条，无法证明第二项必要证据也已出现。
+
+无答案样本没有应当被找到的相关文档，不应悄悄与可回答样本混在一起解释召回。实验对空相关集返回“不适用”，另用无答案行为指标检查它，而不是把 0/0 编成漂亮的 1。
+
+## 4. NDCG 怎样同时考虑相关程度与顺序
+
+有时“直接解答”“提供背景”“完全无关”不应得到同样的标签。可为相关性赋等级，并让靠前位置的收益更高，这就是 DCG（折损累计增益）的思路；再除以理想排序的收益，得到 NDCG（归一化折损累计增益）。
+
+本例人为设置 B 的等级为 2、A 为 1、C 为 0，仅用于说明计算。等级反映任务相关性，不是来源可信概率。
 
 ```text
-最终答案是否正确、Grounded、完整？
+DCG@K  = Σ (2^rel_i - 1) / log2(i + 1)，i 从 1 开始
+NDCG@K = 当前 DCG@K / 同一标签集的理想 DCG@K
 ```
 
-两者必须分开，否则最终 Answer 错时不知道是哪一层失败。
+对 `[C,A,B]`，DCG@3 是 `0 + 1/log2(3) + 3/log2(4)`，约 2.130930；理想顺序 `[B,A,C]` 的 DCG 约 3.630930，因此 NDCG@3 约 0.586883。理想分母必须来自相同评测范围的全部已知标签，不能只拿已经召回的好结果排序后充当理想答案。[《信息检索导论》的排序评测章节](https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html)解释了位置折损与归一化。
 
----
+若所有标签收益都为零，理想 DCG 为零，实验返回“不适用”。项目可以采用其他约定，但必须显式说明，不能默认为满分。
 
-## 2. Evaluation Dataset 至少包含什么
+## 5. 用统一实现复算，而不是手抄两套公式
 
-最基本：
+以下片段在 [实验目录](../examples/README.md)中运行，调用与单元测试相同的实现：
 
-```text
-query
-relevant_document / chunk IDs
+```python
+from rag_lab import retrieval_metrics
+
+m = retrieval_metrics(["A", "C", "B"], relevant={"A", "B"}, k=2)
+assert m["recall"] == 0.5
+assert m["precision"] == 0.5
+assert m["hit"] == 1.0
+assert m["complete"] == 0.0
 ```
 
-更成熟还可以包含：
+这验证集合、名次和分母的处理，不证明真实检索器有同样表现。实验标签完整且数据极小；实际人工评测经常只有部分候选被判断，未标注不自动等于不相关，需要补标、合并候选池或明确不完整判断的限制。
 
-```text
-answerable / unanswerable
-expected answer facts
-query type
-source version
-permission scope
-difficulty
-domain slice
-```
+## 6. 数据集怎样避免“专为当前实现出题”
 
-如果只保存自然语言“参考答案”，很难直接评 Retrieval。
+来源可以包括真实授权查询、客服问题、业务专家设计、历史失败和有限的合成问题。只让模型照着当前块生成问答，会偏向“每块恰好有完整答案”，很难测出跨块条件和用户真实表达。
 
----
+按问题类型、文档类型、语言、权限、版本、无答案与多证据要求保留切片。相同模板改几个字、同一来源衍生的近重复问题，应按组划分开发集和测试集，避免一边调参、一边在几乎相同的问题上宣布泛化成功。
 
-## 3. Ground Truth 从哪里来
+更换切分后，原文证据仍应可定位。可以把标签绑定到文档版本、事实与原文范围，再映射到新块；不能把旧 Chunk ID 丢掉后重新让新切分给自己出一套更容易的题。
 
-可以来自：
+## 7. 模型评审能帮忙，但它也需要被校准
 
-- 人工标注；
-- 历史客服/搜索日志人工清洗；
-- 文档作者提供 QA；
-- Production 点击/成功行为（谨慎）；
-- Synthetic Query + 人工/模型验证；
-- Bad Case 回流。
+LLM-as-a-Judge（让大模型充当评审）可辅助检查回答是否覆盖问题、是否受证据支持、引用是否匹配。应给它明确问题、回答、相关证据与评分规则，不是只问“这段回答好吗”。
 
-不同来源可信度不同，应该记录 Dataset Provenance。
+选取人工核对样本，观察评审与人工分歧，特别检查过长回答、位置顺序和模型偏好。固定评审模型、提示和采样设置，再记录升级后的变化。[MT-Bench 与 Chatbot Arena 的评审研究](https://arxiv.org/abs/2306.05685)讨论了模型评审的能力和偏差，不能据此将任何模型评分当成真值。
 
----
+涉及权限泄露、精确业务状态或关键数值时，应优先用确定性检查与人工复核，模型打分只是辅助。相同模型负责生成、给自己打分、再给自己出题，会放大盲点。
 
-## 4. Synthetic Data 为什么有用又危险
+## 8. 离线分数与线上反馈怎样共同使用
 
-可以从文档自动生成 Query：
+点赞率、点击引用、用户是否继续追问，都可能帮助发现问题，但会受展示方式、用户群和任务难度影响。“没有被投诉”不等于答案正确。
 
-```text
-Document
-→ LLM generates questions
-→ expected source = document
-```
+离线评测控制变量，适合比较方案；线上反馈揭示真实分布与新失败。应把新发现沉淀为受控回归案例，同时保留未参与调参的测试集。样本量很小时，微小分数变化可能只是波动，应报告样本数、切片与不确定性，而不是只展示一个百分比。
 
-优点：快速扩大覆盖。
+## 本章小结
 
-风险：
+指标先依赖任务与标注，再依赖公式。Recall 看遗漏，Precision 看相关比例，MRR 看首条相关位置，NDCG 看分级相关性的排序；多证据任务还要检查完整覆盖。空相关集、短结果和未标注材料必须有明确口径。
 
-- Query 风格不像真实用户；
-- 问题可能过于容易；
-- LLM 生成错误；
-- Source 泄漏到 Query；
-- Dataset 偏向生成模型习惯。
+## 🎯 面试怎么回答
 
-所以 Synthetic 更适合补 Coverage，而不能完全替代真实 Query。
+**问：RAG 召回率怎样算，为什么不能只看 Hit？**
 
----
+先固定问题、知识版本、用户范围和相关证据标签，再计算前 K 条找到的相关证据占全部相关证据的比例。Hit 只要求找到一条，对必须同时包含规则与例外的问题不够。我会同时看排序、完整证据覆盖及答案行为，并单独评无答案、权限和版本切片。切分变化时保留原文标签的可追溯性，不重新给新实现出一套题。
 
-## 5. Recall@K
+## ⚠️ 易错点
 
-如果 Query 有相关文档集合 `R`，Top-K 返回 `T_K`：
+**“返回里有一个正确片段，召回率就是 100%。”** 那可能只是 Hit；相关证据不止一个时仍有遗漏。
 
-```text
-Recall@K = |R ∩ T_K| / |R|
-```
+**“没标注的都算不相关。”** 实际标签可能不完整，应补标或说明评测限制。
 
-直觉：
+**“NDCG 分母由当前召回结果决定。”** 应以同一评测范围内的理想标签排序归一化，否则会奖励漏召回。
 
-> 应该找的 Evidence，有多少进入前 K。
+## 自测
 
-对于“至少找到一条就够”的任务，也常看 Hit Rate / Success@K。
+### 自测 1
 
----
+相关集为 {U,V,W}，返回 [X,U,V]，取 K=3。计算 Recall、Precision、Hit、首条相关倒数排名和完整覆盖。
 
-## 6. Precision@K
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-Precision@K = relevant retrieved / K
-```
+Recall=2/3，Precision=2/3，Hit=1，倒数排名=1/2，完整覆盖=否。至少命中一条和找齐三条是不同目标。
 
-问的是：
-
-> 返回的前 K 里有多少是真的相关。
-
-第一阶段 Retriever 常更偏 Recall；最终 Context 更关心 Precision / Evidence Density。
-
----
-
-## 7. MRR
-
-MRR = Mean Reciprocal Rank。
-
-对每个 Query 找第一条相关结果的位置：
-
-```text
-rank = 1 → 1.0
-rank = 2 → 0.5
-rank = 5 → 0.2
-```
-
-再取平均。
-
-它适合：
-
-> 只要第一条正确结果越靠前越好的任务。
-
----
-
-## 8. NDCG
-
-当相关性不只是二元：
-
-```text
-highly relevant
-partially relevant
-irrelevant
-```
-
-NDCG 可以同时考虑：
-
-- Relevance Grade；
-- Ranking Position。
-
-它更适合多级相关性的检索场景。
-
-应用工程面试需要理解意义，不必手算完整公式。
-
----
-
-## 9. Metric 必须和任务对齐
-
-例如：
-
-### QA
-
-只要正确证据进入 Top20，后面有 Reranker，第一阶段可以更看 Recall@20。
-
-### Search UI
-
-用户只看前 3 条，可能更看 NDCG@3 / MRR。
-
-### Multi-hop
-
-需要多个 Evidence 都出现，单一 Hit Rate 不够。
-
-所以没有“RAG 最重要指标固定是 Recall@5”这种答案。
-
----
-
-## 10. Query Slice 比总体平均更重要
-
-Dataset 应分：
-
-```text
-Exact term
-Semantic paraphrase
-Multi-hop
-Table
-Long document
-Freshness
-Permission
-No-answer
-Multilingual
-Hard negative
-```
-
-总体 Recall 提升，可能只是简单 Query 变多，而真正困难 Slice 退化。
-
-所以 Regression 要按 Slice 看。
-
----
-
-## 11. Ground Truth 粒度问题
-
-同一个答案可能存在：
-
-```text
-Document-level Ground Truth
-Chunk-level Ground Truth
-Passage-level Ground Truth
-```
-
-如果 Chunking 改变，旧 `chunk_id` Ground Truth 可能失效。
-
-因此可以同时保留：
-
-```text
-document_id
-source span / page
-semantic answer fact
-```
-
-让 Dataset 更耐迁移。
-
----
-
-## 12. Label 不是绝对客观
-
-“相关”可能有主观性。
-
-可以采用：
-
-- 多人标注；
-- Label Guideline；
-- Disagreement Review；
-- graded relevance；
-- hard negative 标注。
-
-尤其法律/企业政策中，“相关但过期”的文档不能简单标成正例。
-
----
-
-## 13. LLM Judge 能做什么
-
-LLM Judge 可以辅助：
-
-- Query-Document Relevance；
-- Answer Correctness；
-- Faithfulness；
-- Citation Support；
-- Completeness；
-- Pairwise Preference。
-
-优点：
-
-```text
-便宜地扩大自动评估覆盖
-```
-
-但它不是 Ground Truth 本身。
-
----
-
-## 14. LLM Judge 的风险
-
-包括：
-
-- Position Bias；
-- Verbosity Bias；
-- Self-preference；
-- Prompt Sensitivity；
-- Domain Knowledge Limitation；
-- Judge Model Version Drift。
-
-所以需要：
-
-```text
-human-labeled calibration set
-```
-
-比较 Judge 和人工判断的一致性。
-
----
-
-## 15. Judge Prompt 也要版本化
-
-记录：
-
-```text
-judge_model
-judge_prompt_version
-temperature / config
-rubric
-```
-
-否则 Eval 分数变化可能只是 Judge 自己变了。
-
----
-
-## 16. Online Signal 和 Offline Eval
-
-Offline Dataset 优点：
-
-- 可重复；
-- 快速 Regression；
-- 容易做 Ablation。
-
-Online Signal 可以反映真实用户：
-
-- click / copy；
-- thumbs up/down；
-- reformulation；
-- task success；
-- escalation。
-
-但 Online Signal 有强烈行为偏差，不能直接当真值。
-
-最好形成：
-
-```text
-Offline Eval
-+
-Online Telemetry
-+
-Human Review
-```
-
-闭环。
-
----
-
-## 17. Eval Dataset 应持续增长
-
-最有价值的 Dataset 往往来自 Production Failure：
-
-```text
-Bad Case
-→ root cause
-→ label
-→ add to regression set
-```
-
-这样系统每犯一次重要错误，都变成未来不会轻易再犯的测试。
-
-这就是 Data Flywheel。
-
----
-
-## 18. 常见错误
-
-- 只看 Recall，不看 Ranking/Final Answer：不完整。
-- Synthetic QA 就是真实用户分布：错误。
-- 一个总体平均分能代表所有 Query：错误。
-- LLM Judge 分数就是客观真相：错误。
-- Chunk 策略改了还直接用旧 Chunk ID Ground Truth：可能失效。
-- Eval Dataset 一次建完永久不变：Production 应持续回流。
-
----
-
-## 19. 面试怎么答
-
-### Q：RAG 怎么评估？
-
-> 我会先把 Retrieval 和 Generation 分层。Retrieval Dataset 至少有 Query 和 Relevant Source/Chunk，按任务看 Recall@K、Hit Rate、MRR、NDCG 等，并按 exact-term、semantic、multi-hop、permission、no-answer 等 Slice 拆分。最终 Answer 再评 correctness、faithfulness、citation。LLM Judge 可以规模化辅助，但要用人工标注集校准并版本化 Judge。
-
-### Q：Evaluation Dataset 怎么建设？
-
-> 组合真实 Query/Bad Case、人工标注和经过验证的 Synthetic Data，记录来源、版本和 Query Slice；Production Failure 归因后持续回流 Regression Set，让 Dataset 随系统演进增长。
-
----
-
-## 20. 自测
-
-<details><summary>1. Recall@K 和 MRR 关注点有什么不同？</summary>
-Recall 关注相关 Evidence 是否进入前 K；MRR 特别关注第一条相关结果排多靠前。
 </details>
 
-<details><summary>2. 为什么 LLM Judge 需要人工 Calibration Set？</summary>
-Judge 本身有偏差和版本漂移，需要用人工真值确认它与业务评判标准是否一致。
+### 自测 2
+
+系统只返回一条相关结果，K=5，相关集共两条。按本章口径计算 Recall@5 与 Precision@5；再说明相关集为空时该怎样处理。
+
+<details>
+<summary>参考答案与解释</summary>
+
+Recall=1/2，Precision=1/5，缺失位置没有收益。空相关集的召回不适用，应单独评无答案行为并记录口径，不能把 0/0 当 1。
+
 </details>
 
-<details><summary>3. 为什么要按 Query Slice 看指标？</summary>
-总体平均可能掩盖某类重要困难 Query 的退化。
+### 自测 3
+
+新切分方案把每个块都切得更短，团队为新块重新自动生成问答，然后宣称分数超过旧方案。指出比较中的混杂因素。
+
+<details>
+<summary>参考答案与解释</summary>
+
+问题集和标签随切分一起变了，无法判断收益来自切分还是出题更容易。应固定来源与问题，将稳定原文证据映射到不同切分，使用共同评测范围比较。
+
 </details>
+
+## 知识回看与权威资料
+
+回看 [多路检索](07-RetrievalStack.md)与 [重排预算](08-Rerank与CandidateBudget.md)，为每个截断位置分别测量；[端到端质量](11-EndToEndQualityEngineering.md)把这些指标用于归因。
+
+[《信息检索导论》排序评测](https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html)用于核对排序指标；[MT-Bench 评审研究](https://arxiv.org/abs/2306.05685)用于理解模型评审的偏差。空标签与短结果处理是本实验明确选择的实现口径。
+
+[← 第 09 章](09-EvidenceDelivery.md) · [模块目录](../README.md) · [第 11 章 →](11-EndToEndQualityEngineering.md)

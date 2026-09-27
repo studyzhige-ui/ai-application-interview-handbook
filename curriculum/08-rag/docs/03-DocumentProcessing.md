@@ -1,427 +1,124 @@
-# 03｜Document Processing：Parsing、OCR、Layout、Multimodal、Cleaning 与 Dedup
+# 03｜文档解析：从页面外观恢复可检索的内容
 
-RAG 的第一道质量门槛不是向量检索，而是：
+[← 第 02 章](02-CorpusGovernance.md) · [模块目录](../README.md) · [第 04 章 →](04-ChunkingDesign.md)
 
-> **原始文档有没有被正确还原成可检索的信息结构？**
+一页 PDF 明明写着“专属资源订单需人工复核”，抽取结果却只剩“订单可退款”。原因可能不在模型：一般规则位于左栏，例外位于右栏脚注，简单抽取时阅读顺序被打乱，后续清洗又把脚注删掉了。
 
-PDF、扫描件、网页、Office、表格和图片都可能在解析时丢失语义。
+文档解析要做的不是把文件变成任意一串文字，而是尽量恢复**内容、结构和原始位置之间的关系**。只有先保住这些关系，切分和引用才有可靠输入。
 
-所以 Parsing、Layout、OCR、Cleaning 和 Dedup 应该作为一个完整“Document Processing”子系统学习。
+## 1. PDF 为什么不像普通文本文件
 
----
+PDF 主要描述页面上如何绘制文字和图形。肉眼看见的段落、表格和多栏顺序，不一定以同样形式存储。读取文字层可以拿到字符，但拿到字符不代表已经恢复阅读顺序。[PyMuPDF 的文本抽取说明](https://pymupdf.readthedocs.io/en/latest/recipes-text.html)明确区分原始文本顺序、带位置的文本块与阅读顺序整理。
 
-## 1. 为什么不能直接 `extract_text()` 就结束
+扫描件则可能只有页面图像，需要 OCR（光学字符识别）把图像中的字识别出来。一份 PDF 还可能混合文本页、扫描页、图片中的表格及质量很差的隐藏文字层。因此处理决策应细到页面或内容区域，而不是仅凭 `.pdf` 扩展名选择固定路径。
 
-文档里的语义不仅来自字符，还来自结构：
+**布局分析**判断标题、正文、多栏、表格和图片分别位于哪里；OCR 识别字；表格结构恢复判断哪些字属于同一行列。它们解决相关但不同的问题。识别出所有字，也可能把数字放错列。
 
-```text
-Heading
-Paragraph
-List
-Table
-Caption
-Footnote
-Page
-Section
-Image
-Code Block
-```
+## 2. 从输入到可切分文档的一条完整过程
 
-如果 Parser 只输出一串纯文本：
+对北辰云退款手册，可按下面的顺序处理：
 
-```text
-标题层级消失
-表格列错位
-页眉页脚混进正文
-图片信息丢失
-```
+1. **检查输入。** 文件能否打开、是否加密、页数是否合理；限制文件大小和解析资源，防止异常文件耗尽工作进程。
+2. **判断页面内容。** 对有可靠文字层的区域提取文字和坐标；对缺失或明显损坏的区域考虑 OCR。记录采用的路径，避免两种结果重复叠加。
+3. **恢复结构。** 按布局组织标题、段落、列表、表格和图片，重建阅读顺序。无法确认的结构带上复核标记，不伪装成确定结果。
+4. **清洗不承载知识的噪声。** 识别反复出现的页眉页脚、意外换行和乱码；保留章节名、否定词、单位和例外说明。
+5. **保留回源位置。** 每个内容块关联文档版本、页码、区域或原文字符范围，供后续切分、引用和人工核验。
 
-后续 Chunk 再聪明也无法恢复原结构。
+这些步骤不必分别部署成服务。一份小文档可以由一个进程完成；关键是结果可区分、失败可定位，而不是组件数量。
 
----
+## 3. 用一张表看懂“恢复结构”
 
-## 2. 不同 Source 的解析难点
+假设原文的退款规则如下。此表是教学数据，不是扫描识别结果。
 
-### Markdown / HTML
+| 订阅类型 | 普通申请期限 | 附加条件 |
+|---|---:|---|
+| 标准版 | 14 天 | 专属资源订单除外，需人工复核 |
+| 企业版 | 以合同为准 | 需核对合同与授权 |
 
-结构相对明确，但要处理：
-
-- Navigation；
-- Boilerplate；
-- Hidden Element；
-- Link / Anchor；
-- Code Block。
-
-### PDF
-
-PDF 更像“页面绘制格式”，并不天然保存正确阅读顺序。
-
-常见问题：
+如果只抽出“标准版 14 企业版 合同”，检索可能命中“标准版”，却不知道 14 的单位、所属列以及适用例外。比较可靠的检索表示可以是：
 
 ```text
-双栏顺序错
-Header / Footer 混入
-表格变散乱 Token
-断行
-页码
-扫描图片无文字层
+来源：P1@v2，第 2 页，退款规则表，第“标准版”行。
+订阅类型：标准版；普通申请期限：14 天。
+附加条件：专属资源订单除外，需人工复核。
 ```
 
-### Office
+这段文字把表头带回行数据，同时保留原始表格对象和位置。它适合检索“标准版退款期限”，但不意味着可以丢掉原表。用户要比较两行或核对原文时，还要回到完整表格。
 
-需要保留：
+跨页表格要根据表头、列结构、续表标记和上下文判断是否属于同一张表，而不是因为两页相邻就合并。合并后同时保留涉及的页码和单元格来源；若列结构不一致，应复核而不是强拼。
 
-- Heading；
-- Table；
-- Sheet / Slide；
-- Notes；
-- Embedded Object。
+## 4. 图片、图表与多模态内容怎样进入知识链
 
----
+图片可能只是装饰，也可能包含唯一的操作流程或统计图。对有信息的图片，可以保留图题、相邻解释和图片位置；需要理解图像时，再选择 OCR、视觉模型或人工标注。流程图中的箭头关系、坐标轴单位及图例，不能只靠抽取文字列表恢复。
 
-## 3. OCR 什么时候需要
+模型生成的图片说明属于**派生解释**。它可能帮助召回，但其中的结论需要回到原图或其他权威证据核对，尤其不能把估计的数字当成原始数据。实际回答需要图像细节而系统只有文字摘要时，应承认证据粒度不足。
 
-如果 PDF 只是扫描图片：
+[Docling 的统一文档模型](https://docling-project.github.io/docling/concepts/docling_document/)提供文本、表格、图片、文档层次和来源位置等表示。这里借它理解统一表示，不要求主线绑定 Docling SDK，也不把模型对象存在当作解析准确率证明。
 
-```text
-no text layer
-```
+## 5. HTML、Markdown 与代码不该先被抹平成字符串
 
-普通 Parser 得不到正文，需要 OCR。
+HTML 中的标题、表格和列表有语义，导航栏、广告和重复菜单则通常不属于目标知识。Markdown 的标题层级和代码围栏也应保留。代码中的函数边界、所属文件和符号关系可以作为结构信息；完整仓库理解及工具选择留给 Agent 的 Coding Agent 章节。
 
-OCR Pipeline 可以理解为：
+统一表示的目标不是让所有格式失去差异，而是让后续知道“这是一段正文”“这是带表头的一行”“这是一个代码块”，并能找到各自来源。不同解析器可以输出不同字段，应用只需在自己使用的边界上统一必要信息。
 
-```text
-page image
-→ layout / region detection
-→ text recognition
-→ reading order
-→ confidence
-```
+## 6. 清洗怎样避免越修越错
 
-OCR 错误会直接变成检索噪声，例如：
+去掉页眉时，可以检查相同位置、相似内容是否跨多页重复，再人工抽查；只按高频词删除，会误删本来就频繁出现的产品名。恢复断行时，应区分排版换行与列表边界；修复 OCR 错字时，关键编号、金额、否定词不能靠“读起来更通顺”直接改写。
 
-```text
-0 ↔ O
-1 ↔ l
-表格数字错位
-```
+⚠️ **注意：OCR 是有成本且会出错的识别过程。** 对已可靠提取的文字重复识别，不一定更准确，还可能制造重复和新错字。应按质量触发并复用同页识别结果；具体语言包、资源和缓存行为依所用工具核对。[PyMuPDF OCR 文档](https://pymupdf.readthedocs.io/en/latest/recipes-ocr.html)给出了按页面需要决定是否 OCR 的用法。
 
-因此应保留 OCR Confidence / Page Metadata，便于后续质量分析。
+## 7. 验收看知识是否保住，而不只看有没有输出
 
----
+准备一组小型代表性文件，覆盖单栏、多栏、扫描、混合页、跨页表和含例外脚注的页面。给出人工核对的关键事实与来源位置，再检查解析结果是否保留它们。页数、文字数和空页率可发现异常，但不能证明“未开通”没有识别成“已开通”。
 
-## 4. Layout 为什么重要
+应记录解析器和配置版本，以及后续使用的 OCR、视觉模型版本。更换解析器后，对同一文件集比较变化：召回变差可能来自结构丢失，而不一定是向量模型退化。解析失败可隔离重试；不能把空文本当成功发布。
 
-假设一页两栏：
+## 本章小结
 
-```text
-left column A B C
-right column D E F
-```
+解析要恢复内容、结构和位置，文字层读取、OCR、布局和表格恢复各有职责。清洗优先去掉排版噪声，不改写事实。统一表示保留格式差异，质量验收追问关键条件是否还在，而不是只统计输出字符。
 
-错误读取顺序可能变成：
+## 🎯 面试怎么回答
 
-```text
-A D B E C F
-```
+**问：PDF 同时有文字、表格和图片时怎样处理？**
 
-语义完全被破坏。
+先按页面或区域判断可靠文字层是否存在，再选择直接提取或 OCR；用布局恢复阅读顺序，把表格的行列、表头、单位和脚注一起保留。图片保留来源及必要说明，需要视觉信息时再走对应模型或复核。结果统一到带文档版本和位置的内容块，随后做切分。最后用代表性页面上的关键事实与回源位置验收，不能把调用某个解析 API 当成整条链路完成。
 
-Layout-aware Parser 会尝试恢复：
+## ⚠️ 易错点
 
-```text
-Block
-Bounding Box
-Reading Order
-Section Hierarchy
-```
+**“电子 PDF 不需要任何结构恢复。”** 有文字层不代表顺序、表格和脚注关系正确。
 
-这对论文、报告、合同尤其重要。
+**“OCR 置信度高就没有知识错误。”** 识别分数不等于事实正确率，还要核对列关系、单位与关键条件。
 
----
+**“转成 Markdown 就可以删除原文。”** Markdown 是便于处理的表示，仍需保留可授权访问的原始证据。
 
-## 5. Table 为什么不能简单 Flatten
+## 自测
 
-例如：
+### 自测 1
 
-| Product | Q1 | Q2 |
-|---|---:|---:|
-| A | 10 | 20 |
-| B | 12 | 25 |
+一张跨页表，第 1 页写“金额单位：万元”，第 2 页只有行数据。用户问第二页的数值是多少元。列出解析阶段必须保留的三类关系，并说明为何只调 Top-K 无法修复。
 
-如果变成：
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-Product Q1 Q2 A 10 20 B 12 25
-```
+至少保留跨页表归属、表头与单位到该单元格的关系，以及单元格原始页码/位置。若单位在解析时丢失，扩大检索数量仍不能可靠解释这个数字，需回到原文重新处理。
 
-模型未必知道列关系。
-
-可以考虑：
-
-- Markdown Table；
-- Row-wise serialization；
-- Table summary + raw structure；
-- 单独 Table Chunk；
-- Query-time Structured Tool。
-
-具体选法要由 Query Pattern 和 Eval 决定。
-
----
-
-## 6. Image / Multimodal Document 怎么处理
-
-图片可能承担：
-
-- Chart；
-- Diagram；
-- Screenshot；
-- Form；
-- Product Image；
-- Slide Visual。
-
-可选策略：
-
-```text
-image → caption / OCR / VLM extraction
-→ multimodal embedding / text representation
-```
-
-不要自动假设“图片内容都能靠 OCR 转文字”，图表关系往往需要 Vision Model 理解。
-
----
-
-## 7. 保留结构，再决定 Chunk
-
-一个好的 Parser 输出应该尽量像：
-
-```text
-Document
-├── Section
-│   ├── Heading
-│   ├── Paragraph
-│   ├── Table
-│   └── Figure
-└── Section
-```
-
-而不是：
-
-```text
-one giant string
-```
-
-Chunking 应在结构信息仍存在时做决策。
-
----
-
-## 8. Cleaning 解决什么
-
-典型脏内容：
-
-```text
-Page Header / Footer
-Cookie Banner
-Navigation
-Repeated Legal Footer
-Broken Unicode
-Invisible Character
-Extra Whitespace
-Generated TOC
-Tracking Params
-```
-
-Cleaning 的目标不是“文本越短越好”，而是：
-
-> **删除对检索没有价值、会污染相似度或重复结果的内容，同时保留语义结构。**
-
----
-
-## 9. Normalization 要谨慎
-
-可能做：
-
-- Unicode normalize；
-- Whitespace normalize；
-- URL canonicalization；
-- Case normalize（视业务）；
-- 标点统一。
-
-但不要破坏：
-
-- Code；
-- ID；
-- SKU；
-- Formula；
-- Legal clause number；
-- Case-sensitive symbol。
-
-Normalization 必须知道领域语义。
-
----
-
-## 10. Exact Dedup
-
-可以根据：
-
-```text
-content hash
-canonical URL
-source ID
-```
-
-识别完全重复文档。
-
-好处：
-
-- 减少 Index；
-- 避免 Top-K 被同一内容占满；
-- 降低 Embedding Cost。
-
----
-
-## 11. Near Duplicate 更难
-
-例如：
-
-```text
-政策 v1
-政策 v1 copied to another folder
-政策 v1 + one paragraph changed
-```
-
-可以使用：
-
-- normalized text hash；
-- shingling / MinHash；
-- embedding similarity；
-- source metadata。
-
-但 Near-dedup 要防误删真正不同文档。
-
----
-
-## 12. Boilerplate 为什么特别危险
-
-假设每份文档都有相同 Footer：
-
-```text
-Company Confidential - Contact support@example.com
-```
-
-如果每个 Chunk 都带这段：
-
-```text
-Embedding gets repeated signal
-Sparse index repeated term
-Top-K may return many duplicates
-```
-
-所以 Boilerplate Removal 能显著提高 Corpus Signal-to-noise。
-
----
-
-## 13. Parser Version 必须可追踪
-
-如果 Parser 升级：
-
-```text
-v1 reading order wrong
-v2 fixed
-```
-
-需要知道：
-
-```text
-哪些 Chunk 来自 v1？
-是否需要 Reparse / Re-embed？
-```
-
-因此建议记录：
-
-```text
-parser_version
-ocr_version
-cleaning_version
-```
-
-这和上一章 Lineage 直接连接。
-
----
-
-## 14. Parsing 质量怎么评估
-
-可以建立文档级 QA Sample：
-
-```text
-Expected heading structure
-Expected table values
-Expected OCR text
-Expected page/source mapping
-```
-
-并监控：
-
-- Parse Success Rate；
-- Empty Document Rate；
-- OCR Confidence；
-- Table Parse Failure；
-- Chunk Count Distribution；
-- Duplicate Ratio。
-
-不要等最终 RAG Answer 错了才发现 Parser 早就丢信息。
-
----
-
-## 15. Failure Attribution
-
-如果回答缺少一个表格数字：
-
-```text
-Source has it?
-→ Parser extracted it?
-→ Table structure preserved?
-→ Chunk contains it?
-→ Retriever recalled it?
-```
-
-如果第二步就失败，调 HNSW 或 Reranker没有意义。
-
----
-
-## 16. 常见错误
-
-- PDF 有文本层就等于解析正确：错误。
-- OCR 成功率高就表示内容质量高：还要看 Layout/数字/表格。
-- 所有表格都转纯文本就行：可能丢结构。
-- Cleaning 越激进越好：可能删掉业务关键 ID/格式。
-- Dedup 就是删除相似内容：要区分版本和合法相似文档。
-
----
-
-## 17. 面试怎么答
-
-### Q：复杂 PDF 怎么做 RAG？
-
-> 我会先把 Parsing 视为独立质量层：检测文本层/OCR，恢复 Layout 和 Reading Order，对 Table/Image 使用结构化或 Multimodal 解析，并保留 page/bbox/source lineage。之后再 Cleaning/Dedup 和 Chunk。Bad Case 中先验证 Parser 是否保留了 Ground Truth，再判断 Retrieval。
-
-### Q：为什么要 Dedup？
-
-> 重复文档会浪费 Embedding/Index 资源，还可能让 Top-K 被同一内容占满、放大 Boilerplate 信号。但需要区分 Exact Duplicate、Near Duplicate 和 Historical Version，不能简单按相似度删除。
-
----
-
-## 18. 自测
-
-<details><summary>1. 为什么 Layout 是 Retrieval Quality 的上游？</summary>
-因为错误阅读顺序会直接破坏段落/表格语义，后续 Chunk 和 Embedding 无法恢复原关系。
 </details>
 
-<details><summary>2. Cleaning 为什么不能统一 lower-case 所有内容？</summary>
-因为 Code、ID、SKU 等领域信息可能区分大小写或格式。
+### 自测 2
+
+某文件 12 页，解析输出 12 个非空页面，人工发现其中一页的“不得”变成“可以”。这个批次能否只凭非空率发布？设计一项更贴近风险的检查。
+
+<details>
+<summary>参考答案与解释</summary>
+
+不能。非空率只检查是否有输出；应在代表性关键条款上核对否定词、条件和数值，错误页进入复核或阻止该来源发布，并记录处理版本与失败类型。
+
 </details>
 
-<details><summary>3. Parser Upgrade 为什么可能需要 Re-embedding？</summary>
-解析输出内容/结构改变后，Chunk 内容也会改变，旧 Embedding 不再对应新文本。
-</details>
+## 知识回看与权威资料
+
+回看 [语料治理](02-CorpusGovernance.md)中的来源身份，再进入 [切分设计](04-ChunkingDesign.md)。解析提供有结构的输入，切分决定哪些关系需要一起检索。
+
+[PyMuPDF 文本抽取](https://pymupdf.readthedocs.io/en/latest/recipes-text.html)用于核对阅读顺序和表格抽取边界；[Docling 文档模型](https://docling-project.github.io/docling/concepts/docling_document/)用于理解结构与来源位置的统一表示。
+
+[← 第 02 章](02-CorpusGovernance.md) · [模块目录](../README.md) · [第 04 章 →](04-ChunkingDesign.md)

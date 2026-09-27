@@ -1,470 +1,133 @@
-# 04｜Chunking Design：原则、Strategy、Size、Overlap 与实验方法
+# 04｜切分设计：怎样保留一个问题需要的完整语义
 
-Chunking 的本质不是“把文档切成 512 Token”，而是决定：
+[← 第 03 章](03-DocumentProcessing.md) · [模块目录](../README.md) · [第 05 章 →](05-AdvancedChunkStructure.md)
 
-> **什么粒度的内容应该作为一次 Retrieval Unit，被独立召回并交给下游排序与生成？**
+把退款手册每 200 个字符切一块，看起来很容易实现。但切点若恰好落在一般规则 A 与例外 B 之间，检索到 A 的系统可能不知道还应该看 B。反过来，整份手册只生成一个向量，退款、发票和账号安全又会互相干扰。
 
-因此 Chunk Principle、Strategy、Size 和 Overlap 应该在同一个设计闭环中学习。
+切分（Chunking）要在两种需要之间取得平衡：**检索时让主题足够集中，回答时让条件足够完整。** 片段大小不是先从经验数字开始，而应从“这个问题需要哪些信息一起出现”开始。
 
----
+## 1. 一个块承担了哪些工作
 
-## 1. 为什么不能整篇文档直接 Embedding
+同一段文本会经历不同限制：向量模型要对它编码，检索器要比较它，重排器可能把它与问题一起输入，生成模型还要在上下文中阅读它。
 
-如果文档很长：
+块太小，容易丢失主语、标题、单位和例外，召回后需要更多补全；块太大，多个主题被压在同一表示中，相关部分容易被噪声稀释，还可能超过模型输入限制。两者都可能降低答案质量，因此没有脱离任务和模型的统一“最佳块长”。
 
-```text
-one document
-→ one embedding
-```
+先明确单位。字符、字节和 Token（模型使用的文本编码单元）不相等。某分割器参数名虽然叫 `chunk_size`，实际可能用字符串长度计数。[LangChain 的递归字符切分文档](https://docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter)就把长度函数和目标重叠单独说明。不能把“500 字符”直接写成“500 Token”。
 
-会把很多主题压进一个 Vector。
+## 2. 先利用已有结构，再为过长部分逐级兜底
 
-Query 只问其中一个细节时：
+对已恢复标题层次的 Markdown，可以先按章节划分；表格按带表头的行组处理；代码尽量保留函数或类的边界。这叫**结构切分**：边界来自文档本身，不依赖模型猜测主题。
 
-- Vector 表示过于平均；
-- 返回整篇文档浪费 Context；
-- Reranker 输入过长；
-- Citation 粒度太粗。
+但一个章节仍可能过长。这时用**递归切分**：先尝试较大的自然边界，只有超出长度上限的部分才继续按更小边界拆分，例如章节、段落、句子，最后才是硬长度。这里的“递归”是逐层处理仍然过长的子问题，不是每段都反复随机切。
 
-所以需要把文档拆成更小 Retrieval Unit。
+假设同一节的三个段落分别长 120、180、260 个计量单位，上限 400，暂不重叠。按原顺序装入，前两个合为 300，第三个另成 260。若第三段本身长 650，则继续看句子边界，而不是无条件把所有段落切成同样大小。中文需要考虑“。；！”等边界，不能只依赖空格。
 
----
+这种过程保留的是形式结构，不自动证明语义完整。例如“但以下情况除外”虽然是新句子，却依赖前一句。应把这种已知依赖保留下来，或者建立可回取的父节关系，而不是认为句号天然是安全边界。
 
-## 2. 但 Chunk 越小也不是越好
+## 3. 固定窗口与重叠到底做了什么
 
-如果切得太小：
+**固定长度切分**按计量位置前进，适合作为简单基线或最后兜底。相邻块保留一部分重复内容，叫 Overlap（重叠），目的是减轻边界附近信息被拆散的问题。
+
+假设文本长度是 1000 个已测量单位，窗口 200、重叠 50，则步长是 `200 - 50 = 150`：
 
 ```text
-一句话
-一句话
-一句话
+[0, 200)    [150, 350)    [300, 500)    [450, 650)
+[600, 800)  [750, 950)    [900, 1000)
 ```
 
-会失去：
+`[起点, 终点)` 表示包含起点、不包含终点。共 7 块，实际编码长度合计 `6 × 200 + 100 = 1300`，比原文多处理 300 个重复单位。不重叠时只需 5 块、合计 1000。重叠既可能保住跨界线索，也会增加计算、存储和重复召回。
 
-- 上下文；
-- 主语；
-- 定义与解释关系；
-- 表格 Header；
-- 前后条件；
-- Section 语义。
+对非空文本、窗口 S、重叠 O，要求 `0 ≤ O < S`。长度 N 大于 S 时，块数为 `1 + ceil((N-S)/(S-O))`；不大于 S 时只有一块。`ceil` 表示向上取整。空文本则不应生成一个伪成功的空块。
 
-所以 Chunking 永远是：
+下面是**可运行的长度演算**，不执行 Tokenizer，也不声称已经切出了语义完整的文档。先按 [实验说明](../examples/README.md)进入 `examples` 目录：
 
-```text
-Retrieval Specificity
-vs
-Semantic Completeness
+```python
+from rag_lab import window_spans
+
+spans = window_spans(length=1000, size=200, overlap=50)
+assert len(spans) == 7
+assert sum(end - start for start, end in spans) == 1300
 ```
 
-的 Trade-off。
+函数返回新的区间列表，不修改文档、不写入数据库。实现与测试共用 `rag_lab.py`。
 
----
+⚠️ **注意：重叠不等于一定包含完整关系。** 如果例外相隔两页，增加几个字符的重叠无济于事；过大的重叠还会让多个重复片段挤占最终上下文。应修复结构或按关系补全，而不是无限放大重叠。
 
-## 3. Chunk Size 的核心矛盾
+## 4. 语义切分有什么额外判断
 
-### Large Chunk
+**语义切分**试图根据内容变化决定边界。一种常见做法是先分句，给句子或相邻句组计算向量，再观察相邻表示的差异：差异较大时可能意味着话题转移。它通常引入模型计算、阈值和对输入语言的依赖；也有其他判界方法，不能把某个库的实现当成定义。
 
-优点：
+“退款一般规则”和“专属资源例外”在表达上可能差异很大，却必须一起理解。因此语义差异不是业务依赖的替代品。只有当文档缺少可靠结构，而且这种额外判断在本地评测中带来收益时，才值得承担复杂度。
 
-- 语义完整；
-- 更容易包含答案上下文；
-- Citation 不容易断裂。
+四类方法不是互斥菜单。可以先利用结构，对长段做递归兜底；固定窗口提供对照；语义边界只用在确实需要的位置。
 
-代价：
+## 5. 加标题和控制模型长度时别漏掉其他输入
 
-- Embedding 主题混合；
-- Rerank 成本高；
-- Context 占用大；
-- 一个 Chunk 可能包含大量无关内容。
+单独的“14 天内”缺少对象，附上真实标题“北辰云／标准版／普通退款”可帮助检索。标题也是输入，会消耗长度；不能正文恰好顶满模型上限后再无限加元数据。
 
-### Small Chunk
+向量模型、重排器和生成模型可能有不同长度限制。重排通常还要容纳问题和特殊标记。超长时可能报错、按配置截断或被服务端拒绝，应核对具体模型和客户端行为；不要一概写成“模型会自动处理”。关键例外被截掉时，即使处理没有报错，语义已经不完整。
 
-优点：
+## 6. 怎样选择块长，而不是背一个范围
 
-- 定位精细；
-- 候选更纯；
-- Context 利用率高。
+先保留一组代表真实问题的评测样本，包括短事实、跨段条件、表格、长文和无答案情形。标注答案依赖的原文位置，不只保存某一套切分生成的块 ID，否则重新切分后评测依据会跟着失效。
 
-代价：
+在相同来源版本、权限、查询集和模型配置下，对照几组切分方案。记录关键证据是否进入候选、补全后的上下文是否完整、答案是否正确，以及多出的计算和长度。用开发集选择参数，最终在未参与调参的测试集上报告效果。
 
-- 语义被切断；
-- Query 需要跨 Chunk 才能回答；
-- Top-K 需要更多候选；
-- 邻接恢复更复杂。
+如果小块提高召回却损害完整性，可以采用下一章的小块检索与父节补全，而不是只能在“全部很小”和“全部很大”之间二选一。
 
-没有通用最佳值。
+## 本章小结
 
----
+切分的核心是保留问题需要的关系，同时让检索主题集中。结构提供优先边界，递归处理过长部分，固定窗口是可解释基线，语义切分引入额外判断。块长、重叠、标题和各模型长度限制必须用同一计量口径评估。
 
-## 4. Fixed-size Chunk
+## 🎯 面试怎么回答
 
-最简单：
+**问：为什么选这个 Chunk Size 和 Overlap？**
 
-```text
-每 N tokens 切一次
-```
+我先说明长度单位、文档结构和最容易丢失的条件，再比较几组切分方案。在同一问题集上检查候选证据覆盖、最终答案和成本。重叠主要缓解相邻边界，不解决远距离依赖；需要时用父节或邻居补全。最终参数是本任务上的取舍，不是所有知识库通用的经验值。
 
-优点：
+## ⚠️ 易错点
 
-- 实现简单；
-- 容量可预测；
-- 适合快速 Baseline。
+**“块越小，检索一定越准。”** 小块可能失去对象与条件；召回看起来相关，答案仍可能错。
 
-问题：
+**“递归切分一定调用大模型。”** 递归描述处理过程，规则与分隔符即可实现；语义切分才通常需要额外内容判断。
 
-```text
-可能在句子 / 表格 / Section 中间切断
-```
+**“重新切分后直接复用旧 Chunk ID 标签。”** 应把标签关联到稳定原文证据，再映射到新块，避免比较两个不同评测目标。
 
-所以它适合做基线，不一定是最终方案。
+## 自测
 
----
+### 自测 1
 
-## 5. Recursive / Separator-based Chunk
+文本长 850 个单位，窗口 300、重叠 100，按本章固定窗口规则列出全部区间，计算块数和合计处理长度。
 
-优先按较大语义边界分割：
+<details>
+<summary>参考答案与解释</summary>
 
-```text
-Section
-→ Paragraph
-→ Sentence
-→ Token
-```
+区间为 [0,300)、[200,500)、[400,700)、[600,850)，共 4 块，总长 1150，比原文多 300。这里的单位必须统一，不能把字符长度用于推断真实 Token 账单。
 
-只有超过目标大小才继续向下切。
-
-优点是比固定长度更尊重文本结构。
-
-但如果原始 Parser 已经丢失结构，Recursive Splitter 也无法凭空恢复。
-
----
-
-## 6. Structure-aware Chunk
-
-对于 Markdown / HTML / Docs：
-
-```text
-Heading hierarchy
-List
-Code Block
-Table
-```
-
-都可以参与 Chunk Boundary。
-
-例如：
-
-```text
-H2 Section
-→ one or more chunks
-→ each keeps heading path
-```
-
-这样检索到 Chunk 时仍知道：
-
-```text
-Product > Authentication > Token Refresh
-```
-
-提高可解释性和 Context Construction。
-
----
-
-## 7. Semantic Chunk
-
-Semantic Chunking 尝试根据内容变化判断边界：
-
-```text
-sentence embeddings
-→ detect semantic shift
-→ split
-```
-
-理论上能避免纯 Token Boundary。
-
-但代价包括：
-
-- 更多 Embedding Cost；
-- 算法参数；
-- 边界不稳定；
-- Rebuild 可重复性更难；
-- 不一定比结构化 Chunk 更好。
-
-所以必须通过 Eval 证明。
-
----
-
-## 8. Overlap 为什么存在
-
-假设重要事实跨越 Chunk Boundary：
-
-```text
-Chunk A ends: “This policy applies when ...”
-Chunk B starts: “the user is an enterprise customer.”
-```
-
-完全无 Overlap 可能让条件和结论分离。
-
-Overlap 通过复制邻近 Token：
-
-```text
-Chunk A: 1–512
-Chunk B: 449–960
-```
-
-降低边界信息丢失。
-
----
-
-## 9. Overlap 不是越大越好
-
-Overlap 太大会：
-
-- Index Size 增长；
-- Embedding Cost 增长；
-- Top-K 返回大量近重复 Chunk；
-- Context 重复；
-- Reranker 浪费算力。
-
-所以 Overlap 是边界补偿机制，不是免费提高 Recall 的旋钮。
-
----
-
-## 10. Chunk Size 应由 Query Pattern 决定
-
-如果用户常问：
-
-```text
-“这个 API 参数默认值是多少？”
-```
-
-小而精确的 Chunk 可能更好。
-
-如果常问：
-
-```text
-“这一政策适用于哪些条件，例外是什么？”
-```
-
-需要更完整上下文。
-
-所以应分析：
-
-```text
-Question granularity
-Answer span length
-Document structure
-Reranker max length
-LLM context budget
-```
-
-再设计 Chunk。
-
----
-
-## 11. 不同内容类型应有不同策略
-
-不要对所有文档统一：
-
-```text
-512 + overlap 64
-```
-
-可以按类型：
-
-### API Doc
-
-```text
-endpoint / section aware
-```
-
-### Contract
-
-```text
-clause aware
-```
-
-### FAQ
-
-```text
-one Q&A as unit
-```
-
-### Table
-
-```text
-header + row group
-```
-
-### Code
-
-```text
-function / class / AST boundary
-```
-
-这比全局固定值更符合知识结构。
-
----
-
-## 12. Chunk Header / Context Enrichment
-
-一个正文段落：
-
-```text
-“It expires after 30 days.”
-```
-
-单独 Embedding 很模糊。
-
-如果添加结构 Header：
-
-```text
-Document: Enterprise Trial Policy
-Section: Expiration
-“It expires after 30 days.”
-```
-
-语义更完整。
-
-但 Enrichment 也会增加 Token 和重复信息，需要 Eval。
-
----
-
-## 13. Chunk 参数必须通过实验选择
-
-不要用：
-
-```text
-“业界都用 512”
-```
-
-作为理由。
-
-更正确的实验：
-
-```text
-same corpus
-same embedding
-same retriever
-same eval queries
-
-variant A: 256 / overlap 32
-variant B: 512 / overlap 64
-variant C: structure-aware
-```
-
-比较：
-
-- Recall@K；
-- MRR / NDCG；
-- Reranker Quality；
-- Context Tokens；
-- Answer Quality；
-- Index Size / Cost。
-
----
-
-## 14. Chunking Failure 怎么看
-
-常见 Bad Case：
-
-### Answer span 被切断
-
-```text
-Ground truth split across chunks
-```
-
-### Chunk 太大
-
-```text
-retrieved chunk contains answer
-but reranker / LLM distracted by unrelated content
-```
-
-### Chunk 太小
-
-```text
-retrieved text lacks subject / condition
-```
-
-### Duplicate overlap
-
-```text
-Top5 = same paragraph repeated 5 times
-```
-
-这些应该在 Bad Case Attribution 中单独标记。
-
----
-
-## 15. Chunking 和 Embedding Model 有关系
-
-Embedding Model 有最大输入长度。
-
-Chunk 超过模型有效长度可能：
-
-- 截断；
-- 表示质量下降；
-- 计算更贵。
-
-因此 Chunk Size 不能脱离模型 Input Limit。
-
----
-
-## 16. Chunking 和 Reranker 有关系
-
-Reranker 通常对：
-
-```text
-query + candidate
-```
-
-一起编码。
-
-Chunk 太长会导致：
-
-- Input Truncation；
-- Latency 增长；
-- Candidate 数减少。
-
-所以 Chunk Design 是整个 Retrieval Funnel 的前置参数。
-
----
-
-## 17. 常见错误
-
-- Chunk 越小 Recall 越高：不一定。
-- Overlap 越大越安全：会制造重复和成本。
-- Semantic Chunk 一定比 Recursive 好：需要 Eval。
-- Chunk Size 是 Vector DB 参数：它属于 Retrieval Data Model。
-- 一套 Size 适合所有文档类型：错误。
-- “512”本身就是合理解释：不是。
-
----
-
-## 18. 面试怎么答
-
-### Q：Chunk Size 怎么定？
-
-> 我不会直接给固定值。先看文档结构、典型 Query 粒度、答案跨度、Embedding/Reranker 长度限制和 LLM Context Budget，再建立几个策略 Baseline，用真实 Evaluation Query 比较 Recall、Ranking、Answer Quality、Context Token 和 Index Cost。Chunk 是 Retrieval Unit，目标是在语义完整性和检索精度之间找到 Operating Point。
-
-### Q：Overlap 为什么需要？
-
-> 它主要补偿 Chunk Boundary，把跨边界的上下文复制到相邻 Chunk，降低答案/条件被切断的概率；但太大又会造成 Index 膨胀、重复候选和 Context 浪费，所以也必须实验。
-
----
-
-## 19. 自测
-
-<details><summary>1. 为什么不存在通用最佳 Chunk Size？</summary>
-因为最优粒度取决于文档结构、Query/Answer 粒度、Embedding/Reranker 限制、Context Budget 和业务指标。
 </details>
 
-<details><summary>2. 为什么 Overlap 会影响 Top-K Diversity？</summary>
-大量重叠会生成高度相似 Chunk，它们可能同时占据前几个候选，挤掉其它相关证据。
+### 自测 2
+
+某退款条款的一般规则与例外相隔两页。把重叠从 50 改成 80 后仍答错。提出比继续增大重叠更直接的改动，并说明如何验证。
+
+<details>
+<summary>提示</summary>
+
+先判断两页之间是否有已知结构关系。
+
 </details>
 
-<details><summary>3. Chunking 改动为什么必须跑 End-to-end Eval？</summary>
-它不仅改变 Retriever Recall，还会改变 Reranker 输入、Context Token 和最终生成质量。
+<details>
+<summary>参考答案与解释</summary>
+
+保留条款与例外的所属节、引用关系或可回取父单元，检索后补全必要内容。对跨页问题检查原文证据、候选和最终上下文，比较答案与上下文成本，而不只看块数。
+
 </details>
+
+## 知识回看与权威资料
+
+回看 [文档解析](03-DocumentProcessing.md)确认结构来自哪里；继续 [块之间的关系](05-AdvancedChunkStructure.md)解决检索粒度与阅读粒度的矛盾。
+
+[LangChain 递归字符切分说明](https://docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter)用于核对分隔符、长度函数和目标重叠的具体含义；本文窗口演算是独立教学规则，不声称与该库输出逐字相同。
+
+[← 第 03 章](03-DocumentProcessing.md) · [模块目录](../README.md) · [第 05 章 →](05-AdvancedChunkStructure.md)

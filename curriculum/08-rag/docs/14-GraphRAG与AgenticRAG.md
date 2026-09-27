@@ -1,758 +1,189 @@
-# 14｜GraphRAG、Agentic RAG 与 Production Architecture
+# 14｜GraphRAG 与 Agentic RAG：何时需要结构，何时需要继续搜索
 
-> 普通 RAG 的默认范式是：**一次 Query → 一次 Retrieval → 一次 Generation**。当问题变成“关系型多跳检索”或“必须根据中间 Evidence 动态决定下一步搜什么”时，系统才自然进入 GraphRAG 和 Agentic RAG。
+[← 第 13 章](13-ScaleCostObservability.md) · [模块目录](../README.md) · [综合复习 →](../review/README.md)
+
+北辰云知识库已经能回答退款政策，但又出现两类问题：
+
+> “数据库 D 故障时，哪些服务会受到间接影响？”
 >
-> 本章重点不是追逐名词，而是判断：**什么问题真的需要图？什么问题真的需要 Loop？新增复杂度怎样评估、限制和运维？**
+> “先找出本次故障涉及的服务，再查它们最近的变更；证据不足时继续查。”
 
----
+第一类要求沿明确关系查找，第二类的下一步取决于刚得到的证据。它们对应两种不同设计：**图增强检索改变知识的组织与查找方式；Agentic RAG 改变检索动作的控制方式。** 两者可以组合，也可以分别使用，不是固定的“初级、进阶、高级”升级阶梯。
 
-## 1. 先把三种问题分开
+## 1. 普通检索什么时候已经够用
 
-### 普通 Retrieval 问题
+如果所有信息都在一段短文里：“服务 A 依赖服务 R，服务 R 依赖数据库 D”，普通文本检索加阅读就可能回答 A 会受 D 影响。不能看到关系词就立刻建图。
 
-```text
-“退款政策是什么？”
-```
+当关系跨越许多文档，需要重复回答路径、约束和影响范围问题，或者希望对全库主题做聚合时，显式结构才可能带来收益。先用固定检索作为基线，再判断遗漏是否确实来自关系组合，而不是源文档缺失、实体名称错误或过滤条件不对。
 
-一次 Hybrid Retrieval + Rerank 可能已经足够。
+同样，一个固定流程可以先查服务，再查变更，执行多次检索仍不一定是 Agentic RAG。关键不是调用次数，而是程序是否让模型根据中间证据选择后续检索动作。
 
-### Relation / Multi-hop 问题
+## 2. 图怎样表达一个可以核对的关系
 
-```text
-“哪些服务依赖组件 A，且负责人属于团队 B？”
-```
-
-这里需要显式关系约束。
-
-### Dynamic Retrieval 问题
+把服务或数据库表示为节点，把“依赖”表示为有方向的边。这里的 A、R、B、D 是服务或数据库名称，与前文证据片段的编号无关：
 
 ```text
-“先找出异常服务，再根据它们的 owner 查询最近变更，并判断最可能原因。”
+A ──依赖──→ R ──依赖──→ D
+B ──依赖──→ D
 ```
 
-下一步查什么取决于前一步 Evidence。
+如果问“服务 A 依赖什么”，沿箭头向前查；如果问“D 故障可能影响谁”，要沿反方向查到 R、B，再通过 R 查到 A。把方向理解反了，即使图里包含全部节点和边，也会给出错误结果。
 
-对应：
+图查询还应保留问题条件：这是生产环境还是测试环境？依赖是否仍有效？是否存在隔离与降级，使“有依赖”不必然意味着“发生不可用”？上图只说明潜在依赖路径，不能单凭路径断言所有节点都已经故障。
 
-```text
-Simple RAG
-Relation-aware / Graph RAG
-Agentic / Iterative RAG
-```
+每条边应能追溯到支持它的具体记录：哪份文档、哪个版本、哪段原文，或哪个权威业务系统提供了关系。关系可以来自确定的业务数据，也可以来自模型抽取；后者需要特别检查原文是否真正支持方向、实体和条件。
 
-不要把三个层级混成“更高级 RAG”。
+## 3. 建图的困难往往不是存储，而是身份与证据
 
----
+文档中的“支付服务”“pay-service”“支付模块”可能指同一对象，也可能指不同环境的两个服务。实体消歧是判断这些名称是否指向同一对象的过程。能使用稳定服务 ID 时，应优先使用；仅凭名称相近就合并，会制造不存在的依赖路径。
 
-## 2. GraphRAG 解决什么
+一个可检查的建图过程是：读取带来源的文本，识别实体与关系，将别名映射到确认的身份，保存关系与证据，再验证抽取结果及其适用版本。模型没抽到的边属于漏检；模型补出原文没有的边属于错误关系。图变得更丰富不等于质量更高。
 
-Vector Retrieval 擅长：
+若一条边同时得到文档 X、Y 的支持，删除 X 后不能机械删除该边；要检查 Y 是否仍然有效。反过来，X 已更新否定旧关系时，也不能仅因历史证据数量多就保留旧结论。应维护有效来源集合、时间条件和冲突处理规则，派生摘要则按受影响关系重新生成。
 
-```text
-semantic similarity
-```
+## 4. 通用图增强检索与 Microsoft GraphRAG 不是同一个范围
 
-Graph 擅长：
+GraphRAG 常被用来泛指“利用图结构增强检索与回答”的方法；Microsoft GraphRAG 则是一个具体开源项目，有自己的构建流程、配置和查询方式。不能把任意图数据库查询写成这个项目的实际实现。
 
-```text
-explicit entity / relation / path constraints
-```
+社区在这里指联系相对密集的实体分组；社区报告是从该分组相关材料生成的聚合摘要，不是另一份独立原始事实。
 
-例如：
+按 Microsoft 官方查询说明，Local Search 围绕问题相关实体，组合图邻域与原始文本等上下文；Global Search 利用社区报告等聚合内容，面向跨数据集的全局问题。DRIFT 则结合社区信息与局部检索扩展探索。它们处理的信息粒度与代价不同，不能只按名字选择。[官方查询概览](https://microsoft.github.io/graphrag/query/overview/) 和 [Local Search 说明](https://microsoft.github.io/graphrag/query/local_search/) 是核对项目机制的入口。
 
-```text
-Service A --depends_on--> DB X
-Service A --owned_by--> Team M
-Team M --belongs_to--> Business Y
-```
+本课程以这些区别辅助理解通用设计，不要求安装该项目，也不教授未经运行的 SDK 调用。具体版本与已核验的正式发布信息见 [RAG 权威资料](../../../references/rag/README.md)。
 
-Query：
+## 5. 图检索最终仍需要检查证据与权限
 
-> “Business Y 中依赖 DB X 的服务有哪些？”
+一种常见方式是先用词项或向量检索定位实体，再沿受限关系展开，取回对应原始证据，交给第 9 章的上下文组装与引用流程。也可以先用明确关系条件得到实体集合，再在该集合关联的文档内进行文本检索。两种顺序服务不同的问题，不应机械地把所有检索器都串起来。
 
-纯向量可以召回相关描述，但 Graph Query 更适合表达：
+当图中的关系直接来自权威业务记录时，那份记录可以是证据；当关系由模型抽取时，应回查原文。重点不是“图永远不能作证据”，而是清楚关系的权威来源、推导过程和有效范围。
 
-```text
-Entity
-→ Relation
-→ Constraint
-→ Path
-```
+⚠️ **注意：派生摘要也可能泄露权限范围外的信息。** 假设一个社区摘要混合了公开文档与机密事故记录，即使最后不展示机密链接，摘要中的结论仍可能泄密。应在生成与检索派生内容时确定它允许面对的权限范围，或在授权范围内重新构建，而不是只过滤最后的引用。
 
----
+## 6. 展开深度越大，工作量不一定越值得
 
-## 3. GraphRAG 不是“把 Chunk 全转成图”这么简单
+假设每个节点恰有 20 个可继续访问的邻居，忽略重复和环，三层展开分别可能出现 20、400、8,000 个访问分支。这是演示分支增长的计算，不是真实图的唯一节点数；真实图还会有重复节点和循环。
 
-一条可运营的 Graph Pipeline 至少要考虑：
+因此需要已访问集合、最大深度、节点或边的预算，以及问题相关性筛选。即便没有无限循环，也可能访问大量无关关系。要分别评测实体识别、关系正确性、路径相关性，以及最终答案的证据支持、完整性、延迟与成本，才能知道新结构是否真正解决原问题。
 
-```text
-Document
-→ Entity Extraction
-→ Entity Resolution / Canonicalization
-→ Relation Extraction
-→ Provenance Linking
-→ Graph Write
-→ Validation
-→ Version / Update
-```
+## 7. Agentic RAG 如何根据证据决定下一步
 
-最容易被忽略的是：
+固定 RAG 通常按预设路径完成查询；Agentic RAG 允许执行系统根据当前证据，选择继续搜什么、换哪个来源，或停止检索。其最小过程可以这样观察：
 
-```text
-Entity Resolution
-```
+| 步骤 | 已知状态 | 下一动作的理由 |
+|---|---|---|
+| 1 | 用户要知道 D 故障可能影响的服务，以及这些服务最近是否有变更 | 先查有效依赖关系，确定服务范围 |
+| 2 | 已找到 R、B、A，但尚无变更证据 | 对这些服务查询当前允许访问的变更记录 |
+| 3 | 找到 R 的变更；B 的记录服务超时 | 区分“没有变更”与“尚未完成查询”，在预算内重试或换允许的来源 |
+| 4 | 关键证据齐全，或已达到时间与调用预算 | 完成有支持的结论，或说明仍缺哪些证据 |
 
-例如：
+这里没有要求模型一定自由规划全部过程。业务可以固定允许的检索能力、敏感字段与停止规则，只让模型在有限选项中判断下一步。RAG 层负责提供有身份、来源和适用条件的证据；完整工具执行、状态持久化和恢复机制在 [Agent 模块](../../09-agent/README.md) 学习。
 
-```text
-OpenAI
-Open AI
-OpenAI Inc.
-该公司
-```
+## 8. 检索状态不应只有聊天历史
 
-如果被建成 4 个 Entity，Graph 很快就失真。
+要判断“已经查过什么、还缺什么”，程序至少需要保存原始目标、不可改变的条件、已尝试的查询、已得到的证据身份、尚未支持的结论，以及已花费的调用次数和时间。
 
-反过来，错误 Merge 两个同名实体也同样危险。
+例如退款问题连续改写三次，每次只得到 A，而 B 始终缺失。只看模型生成的新句子，会误以为系统在推进；比较证据集合和未解决条件，就会发现它没有得到新的支持。连续返回同一批 ID 是停滞信号，但不同 ID 也可能只是相同原文的重复副本，仍需结合内容与来源判断。
 
----
+保留原始目标也能抑制查询漂移。“开通专属资源能否退款”不能在多轮重写后变成“如何取消账号”。每一步都应能说明它在补哪一个必要事实，而不是因为某个工具容易调用就偏离问题。
 
-## 4. Graph 中的 Relation 也需要 Provenance
+## 9. 停止必须同时考虑证据、预算和失败状态
 
-不要只保存：
+合理的停止情形至少有三类：关键结论都有当前、合法且不冲突的证据，可以回答；必要条件缺失，应向用户澄清；连续没有新证据、服务不可用或预算耗尽，应结束搜索并说明限制。
 
-```text
-A --depends_on--> B
-```
+最大步骤数只是防止无限运行的硬边界，不是成功证明。达到第 5 步不等于答案已经完整，获得一个高相似度片段也不等于全部条件已满足。用第 10 章的“多个必要事实是否覆盖”来理解证据充分性，比只让模型自评“信息够了”更可检查；复杂结论仍可能需要人工或额外核验。
 
-还应能回答：
+每条检索路线都要使用当前授权。模型不能因为前一来源没结果，就自动扩大到其他租户或泄露给外部服务。检索产生的信息也不能自动授权写操作：“找到了退款规则”与“允许发起退款”仍是两件事。
 
-```text
-这条 Relation 从哪份文档抽出来？
-哪个版本？
-哪段 Evidence？
-是谁 / 什么模型生成？
-置信度多少？
-```
+## 10. 用相同任务比较新增复杂度
 
-可以理解成：
+对同一组任务和相同安全边界，比较固定检索、图辅助检索和动态检索。除最终正确率，还应记录必要证据覆盖、引用支持、拒答是否恰当、有效新增证据、重复查询、步骤数、费用和用户等待。
 
-```text
-edge
-+ source_document_id
-+ source_version
-+ evidence_chunk_id
-+ extraction_version
-```
+| 问题的主要困难 | 优先验证的方案 | 不应直接得出的结论 |
+|---|---|---|
+| 一条规则找不到 | 先检查语料、切分与普通召回 | 必须改成 Agent |
+| 关系跨文档且约束明确 | 图或结构化关系辅助 | 图一定比文本更准 |
+| 后续问题取决于中间证据 | 受控迭代检索 | 搜得越久越可靠 |
+| 价格、库存等要求实时 | 受授权业务查询 | 异步知识库应承担所有事实 |
 
-否则 Graph 中一条错误关系会很难审计和回滚。
+只有能解释收益来自哪种问题结构、代价是否符合业务需求，复杂度才有理由保留。会使用一个 Agent 框架，不等于已经证明了 Agentic RAG 的必要性。
 
----
+## 本章小结
 
-## 5. Graph Retrieval 常见模式
+图增强检索让关系、路径和聚合结构参与查找；Agentic RAG 让中间证据参与下一步动作选择。两者都需要保留来源、权限与预算，并与更简单的固定方案比较。结构更丰富、搜索更多次，都不能替代证据充分性与结果验证。
 
-GraphRAG 并不只有一种 Query。
+## 🎯 面试怎么回答
 
-### 5.1 Neighbor Expansion
+**问：什么时候用 GraphRAG，什么时候用 Agentic RAG？**
 
-```text
-Entity A
-→ 1-hop / 2-hop neighbors
-```
+我先识别问题的困难。如果要沿明确的实体关系、路径或全局主题查找，图结构可能帮助组织检索，但要验证实体身份、关系方向、来源和更新。如果下一步查什么必须根据中间证据判断，才考虑受控的 Agentic RAG，并明确原始目标、未解决事实、权限、预算和停止条件。它们可以组合，也可能都不需要。我会与固定检索使用同一评测任务比较质量、延迟和成本，而不是仅凭框架或方法名称选择。
 
-适合局部关系探索。
+## ⚠️ 易错点
 
-### 5.2 Path Query
+- 认为多次检索就一定是 Agentic RAG：固定的两步工作流也能多次检索，区别在于动作如何决定。
+- 沿依赖图忽略方向、环境与生效时间：有路径不等于已发生故障，也不代表所有时间都适用。
+- 把模型生成的关系或社区摘要直接当权威事实：派生产物需要有效来源，权限也必须覆盖派生内容。
+- 步骤耗尽就宣布完成：预算限制只说明该停止，不证明关键结论已有证据。
 
-```text
-A → ? → ? → B
-```
+## 自测
 
-适合依赖链、组织关系、供应链等问题。
+### 自测 1
 
-### 5.3 Constraint Query
-
-```text
-service.depends_on = DB-X
-AND service.owner.team = Team-B
-```
-
-适合结构化关系过滤。
-
-### 5.4 Community / Cluster Summary
-
-先把大图组织成社区或主题，再对群组进行摘要和检索。
-
-更适合：
-
-```text
-全局主题 / 跨文档关系问题
-```
-
-但 Summary 本身也可能成为新的信息损失层。
-
----
-
-## 6. Graph Retrieval 最后仍要回到 Evidence
-
-Graph Node / Edge 本身不应该自动成为回答依据。
-
-更安全的链路：
-
-```text
-Graph 找到 Entity / Path
-→ resolve source evidence
-→ retrieve original text / table / record
-→ build grounded context
-→ answer + citation
-```
-
-也就是说：
-
-> **Graph 更像 Retrieval Planner / Structural Index，最终回答仍应尽量回到可验证 Evidence。**
-
----
-
-## 7. Vector + Keyword + Graph 怎样组合
-
-不是三选一。
-
-例如：
-
-```text
-Query
-→ Intent / Entity Detection
-→ Vector Retrieval 找语义候选
-→ Keyword 保证 exact term
-→ Graph Expansion 找相关实体 / Path
-→ Merge / Rerank
-→ Evidence
-```
-
-另一种：
-
-```text
-Graph 先定位 Entity Set
-→ Vector Search 只在该集合相关文档中进行
-```
-
-选型由问题结构决定，而不是“Graph 比 Vector 高级”。
-
----
-
-## 8. GraphRAG 的更新为什么难
-
-普通 Chunk Index 更新可以：
-
-```text
-Document v1 delete
-→ Document v2 insert
-```
-
-Graph 更新还会影响：
-
-```text
-Entity
-Relation
-Alias
-Community
-Path
-Derived Summary
-```
-
-例如 Source 删除一条关系：
-
-```text
-Edge 是否还有其它 Source 支持？
-```
-
-如果有：
-
-```text
-不能直接删 Edge
-```
-
-因此成熟设计需要：
-
-```text
-provenance count / source set
-versioned extraction
-incremental recompute
-```
-
----
-
-## 9. GraphRAG 的主要 Failure
-
-### Entity Extraction Error
-
-漏实体或识别错误。
-
-### Entity Resolution Error
-
-同一实体被拆开，或不同实体被合并。
-
-### Relation Hallucination
-
-模型生成了原文并不支持的边。
-
-### Stale Graph
-
-文档已更新，Graph 仍是旧关系。
-
-### Over-expansion
-
-多跳之后候选呈指数增长：
-
-```text
-1-hop = 20
-2-hop = 400
-3-hop = 8000
-```
-
-### Summary Distortion
-
-Community Summary 把细节压坏。
-
-所以 GraphRAG 同样需要：
-
-```text
-Ground Truth
-Precision / Recall
-Provenance
-Version
-Cost / Latency
-```
-
----
-
-## 10. GraphRAG 怎样评估
-
-至少分两层。
-
-### Graph Construction Quality
-
-```text
-Entity Precision / Recall
-Relation Precision / Recall
-Entity Resolution Accuracy
-Freshness Lag
-```
-
-### End-to-end QA
-
-```text
-Answer Correctness
-Evidence Support
-Path Relevance
-Citation Correctness
-Latency / Cost
-```
-
-不能只看：
-
-> “Graph 看起来很丰富。”
-
-如果 Relation Precision 很低，它只是在把错误结构化。
-
----
-
-# 11. Agentic RAG 是什么
-
-Agentic RAG 把 Retrieval 变成 Runtime 中可重复执行的能力：
-
-```text
-Question
-→ inspect current state
-→ decide retrieval action
-→ retrieve
-→ inspect evidence
-→ rewrite / decompose / switch source
-→ retrieve again
-→ verify sufficiency
-→ stop / refuse / answer
-```
-
-核心定义是：
-
-> **下一次 Retrieval 是否发生、搜什么、搜哪个 Source，由当前 Evidence 和 State 动态决定。**
-
-用了 LangGraph、LangChain 或某个 Agent SDK，本身不构成 Agentic RAG。
-
----
-
-## 12. Agentic RAG 的 Runtime State
-
-不要只保存 Chat History。
-
-可以显式保存：
-
-```text
-original_query
-current_subquestion
-queries_already_tried
-evidence_ids
-sources_searched
-unresolved_claims
-step_count
-cost_spent
-no_new_evidence_count
-```
-
-这样才能实现：
-
-```text
-Loop Detection
-Budget
-Replay
-Evaluation
-```
-
----
-
-## 13. Evidence Sufficiency：什么时候可以停止搜
-
-最难的不是继续 Search，而是知道什么时候停。
-
-可以从多个信号判断：
-
-```text
-required claims 是否都有 Evidence？
-Evidence 是否来自允许 Source？
-多个 Evidence 是否互相冲突？
-Retriever 是否连续多轮没有新增信息？
-answer 是否仍依赖 unsupported assumption？
-```
-
-一种稳定抽象：
-
-```text
-Question
-→ Decompose into Claims / Subtasks
-→ Evidence coverage per claim
-→ all critical claims supported?
-       ├─ yes → answer
-       └─ no  → retrieve / clarify / refuse
-```
-
-而不是让模型凭一句：
-
-> “我觉得信息够了。”
-
----
-
-## 14. No-new-evidence Detection
-
-Agent 最常见死循环之一：
-
-```text
-rewrite A
-→ same docs
-rewrite B
-→ same docs
-rewrite C
-→ same docs
-```
-
-可以检测：
-
-```text
-candidate overlap
-new evidence count
-duplicate citation ids
-query similarity
-repeated tool route
-```
-
-若连续 N 轮没有信息增益：
-
-```text
-stop / clarify / refuse
-```
-
-这比只设 `max_steps=10` 更有语义。
-
----
-
-## 15. Query Drift 怎样防
-
-多轮 Rewrite 容易出现：
-
-```text
-Original Goal
-→ rewritten query
-→ rewritten again
-→ increasingly different problem
-```
-
-因此 Runtime 应一直保留：
-
-```text
-original user goal
-hard constraints
-current subquestion
-```
-
-每轮 Retrieval Plan 都可以检查：
-
-```text
-current action still serves original goal?
-```
-
-这和 Agent Harness 的 Goal Control 是同一个控制思想。
-
----
-
-## 16. Agentic RAG 的 Cost Budget
-
-一次固定 RAG：
-
-```text
-1 rewrite
-1 retrieval
-1 rerank
-1 answer
-```
-
-Agentic RAG 可能：
-
-```text
-5 planning calls
-8 retrievals
-4 reranks
-2 verification calls
-```
-
-所以必须定义：
-
-```text
-max retrieval steps
-max model calls
-max rerank candidates
-max token budget
-max wall-clock time
-```
-
-否则“质量更高”可能只是用 10 倍成本换来的。
-
----
-
-## 17. Multi-source Routing
-
-Agentic RAG 的真正价值之一是动态选择 Source：
-
-```text
-policy docs → Search Index
-real-time price → API
-customer order → SQL Tool
-incident logs → Log Search
-service relation → Graph
-```
-
-此时 Retrieval 不再等于 Vector DB。
-
-更准确：
-
-```text
-Evidence Acquisition
-= Search / DB / API / Graph / Tool
-```
-
-这也是 RAG 与 Agent Harness 的桥梁。
-
----
-
-## 18. Agentic RAG Failure Timeline
-
-### Infinite Loop
-
-不断搜索但没有新增 Evidence。
-
-### Query Drift
-
-逐轮偏离用户原问题。
-
-### Cost Explosion
-
-为了一个简单问题触发多次昂贵 Tool / Model。
-
-### Unsupported Stop
-
-Evidence 不足却自己宣布完成。
-
-### Source Selection Error
-
-把实时事实错误地去向量知识库搜，或者本应文档检索却调用高风险业务 Tool。
-
-### Permission Escalation
-
-多 Source Query 中某一路没有正确应用 ACL。
-
-因此必须同时有：
-
-```text
-Stop Policy
-Budget
-Permission
-Trace
-Evaluation
-```
-
----
-
-## 19. Agentic RAG 怎样评估
-
-不能只看最终回答。
-
-还应观察：
-
-```text
-Task Success
-Evidence Support
-Retrieval Steps
-Useful Evidence Gain / Step
-Duplicate Retrieval Rate
-Source Routing Accuracy
-Refusal Accuracy
-Latency
-Cost
-```
-
-可以比较：
-
-```text
-Fixed RAG Baseline
-vs
-Agentic RAG
-```
-
-如果最终质量只提高 1%，但成本增加 5 倍、P95 翻倍，未必值得。
-
----
-
-## 20. 什么时候不应该用 GraphRAG / Agentic RAG
-
-### 不需要 GraphRAG
-
-如果问题主要是：
-
-```text
-语义查找某段政策 / FAQ
-```
-
-Graph Build 可能没有收益。
-
-### 不需要 Agentic RAG
-
-如果：
-
-```text
-一次 Hybrid + Rerank 已稳定覆盖 Evidence
-```
-
-固定 Pipeline 更：
-
-```text
-低延迟
-低成本
-易评估
-易 Debug
-```
-
-系统复杂度必须有可验证收益才能引入。
-
----
-
-## 21. Production Architecture
-
-```text
-                           ┌─ Vector / Sparse Search
-                           ├─ Graph Retrieval
-User Query                 ├─ SQL / API Tool
-    ↓                      └─ External Search
-Query / Task Planner                  ↑
-    ↓                                 │
-Evidence Acquisition Router ──────────┘
-    ↓
-Evidence Store / Runtime State
-    ↓
-Sufficiency / Verification
-    ├─ insufficient → next retrieval action
-    ├─ conflicting  → verify / clarify
-    └─ sufficient   → grounded answer
-
-横向：
-Permission / Budget / Trace / Eval / Version
-```
-
-这里的 RAG 层负责：
-
-```text
-Evidence Quality
-Retrieval Strategy
-Grounding / Citation
-Retrieval Evaluation
-```
-
-Agent Harness 负责：
-
-```text
-Loop
-State
-Tool Runtime
-Budget
-Checkpoint
-Permission
-Cancellation
-```
-
----
-
-## 22. 🎯 30 秒回答
-
-> GraphRAG 适合显式关系和多跳约束，它把 Entity/Relation 当成结构化检索索引，但必须做 Entity Resolution、Relation Provenance、Version 和图构建质量评估，并最终回到原始 Evidence。Agentic RAG 则把 Retrieval 变成 Agent Loop 中的动态动作，运行时根据当前 Evidence 决定继续搜索、换 Source、停止或拒答。Production 中必须有 Evidence Sufficiency、No-new-evidence、Step/Cost Budget、Permission 和完整 Trace，并用固定 RAG 作为 Baseline 证明复杂度真的带来收益。
-
----
-
-## 23. ⚠️ 易错点
-
-- **“GraphRAG 一定比 Vector RAG 好。”** 只有关系结构真正重要时才有价值。
-- **“Graph Edge 是 LLM 抽出来的，所以就是事实。”** 必须有 Provenance 与验证。
-- **“用了 LangGraph 就是 Agentic RAG。”** Framework 不定义系统语义。
-- **“Max Steps 能解决死循环。”** 只能硬截断，最好还检测信息增益。
-- **“最终回答对就说明 Agentic Pipeline 好。”** 还要比较成本、步骤、路由和稳定性。
-- **“多 Source Retrieval 自动继承相同权限。”** 每个 Source 都要应用自己的授权边界。
-
----
-
-## 24. 🔍 深挖追问
-
-```text
-GraphRAG 怎样做 Incremental Update？
-Edge 有多个 Source 支持时删除一个文档怎么办？
-Entity Resolution 怎样评估？
-Graph / Vector / BM25 怎样融合？
-Agentic RAG 怎样定义 Evidence Sufficiency？
-如何检测 No-new-evidence？
-怎样证明 Agentic RAG 值得多花的成本？
-```
-
----
+已知 A 依赖 R，R 依赖 D，B 依赖 D。问 D 故障可能影响哪些服务，应从 D 沿哪个方向查？能否只凭依赖图断言它们全部不可用？
 
 <details>
-<summary>自测 1：为什么 Graph Retrieval 之后仍应该回到原始 Evidence？</summary>
+<summary>提示</summary>
 
-因为图中的 Entity / Relation 可能由抽取模型生成、版本可能过期。最终回答如果能回到具体 Source / Chunk，就可以 Citation、审计和验证，而不是把派生 Graph 当成不可质疑的事实库。
+区别依赖方向、影响传播方向和实际故障。
+
 </details>
 
 <details>
-<summary>自测 2：为什么 Agentic RAG 只设置 Max Steps 仍不够？</summary>
+<summary>参考答案与解释</summary>
 
-Max Steps 只能防止无限运行，却无法判断多轮检索是否仍在获得新信息。还应追踪 Evidence 增益、重复候选、原始 Goal、成本和未支持 Claim，才能语义上决定停止、澄清或拒答。
+沿依赖边的反方向得到 R、B，再得到 A。只能识别潜在影响范围；是否实际不可用还取决于故障类型、容错、隔离与运行证据。
+
+</details>
+
+### 自测 2
+
+社区摘要由公开文档 X 与机密文档 Y 共同生成。当前用户只能看 X。检索后去掉 Y 的引用，能否直接返回原摘要？应修复哪一层？
+
+<details>
+<summary>提示</summary>
+
+正文中的派生结论本身也可能含有机密信息。
+
 </details>
 
 <details>
-<summary>自测 3：什么时候固定 RAG 比 Agentic RAG 更合理？</summary>
+<summary>参考答案与解释</summary>
 
-当问题类型稳定、知识源单一、一次 Hybrid/Rerank 已能可靠覆盖 Evidence 时，固定 Pipeline 通常更便宜、更快、更容易回归测试。只有动态检索在真实 Eval 上带来足够收益时才值得引入 Agent Loop。
+不能。摘要已经可能携带 Y 的信息；需要在派生内容生成、存储与检索时建立正确权限边界，或只基于当前授权材料重新生成，不能只隐藏引用。
+
 </details>
+
+### 自测 3
+
+动态检索已经执行 4 次，只找到普通退款规则 A，没有找到例外 B；预算最多 4 次。用户问题明确涉及专属资源。此时应该怎样结束？下一版怎样避免无效重复？
+
+<details>
+<summary>提示</summary>
+
+预算耗尽与任务完成是不同状态。
+
+</details>
+
+<details>
+<summary>参考答案与解释</summary>
+
+停止继续调用，说明缺少决定适用性的例外证据，不能确定是否适用普通退款；不能把 A 当成完整规则。记录已试查询、来源、重复证据及未支持条件，后续改善路由或数据覆盖；新的预算上限不能代替数据质量修复。
+
+</details>
+
+## 知识回看与权威资料
+
+回看 [块关系与摘要检索](05-AdvancedChunkStructure.md)、[多条件查询](06-QueryPlanning.md)、[证据与引用](09-EvidenceDelivery.md)、[端到端比较](11-EndToEndQualityEngineering.md)。完整循环、状态、权限与恢复进入 [Agent 模块](../../09-agent/README.md)。
+
+权威资料：[Microsoft GraphRAG 查询方式](https://microsoft.github.io/graphrag/query/overview/)、[正式发布记录](https://github.com/microsoft/graphrag/releases)、[OWASP 提示注入防护](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)。这些技术资料说明机制与风险，不证明面试频率。
+
+[← 第 13 章](13-ScaleCostObservability.md) · [模块目录](../README.md) · [综合复习 →](../review/README.md)
