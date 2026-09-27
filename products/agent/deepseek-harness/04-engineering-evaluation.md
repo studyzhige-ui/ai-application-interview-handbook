@@ -1,798 +1,327 @@
-# 04. DeepSeek Harness Engineering & Evaluation｜Crash Recovery、Retry、Subagent 与验证体系
+# 04｜中断以后怎样安全继续，又怎样证明任务真的完成
 
-[← Tool](03-tool-lifecycle.md) · [DeepSeek Harness 总览](README.md) · [成熟产品源码学习](../README.md)
+[← 工具生命周期](03-tool-lifecycle.md) · [模块入口](README.md) · [源码阅读与验证实验](labs/README.md)
 
-> **源码基线：** `deepseek-ai/deepseek-harness@ddefc45fbc7f8e46dd73185e68295696d1297887`
+分页文件已经改好，测试进程刚开始运行，宿主突然退出。重启后，你看到了上一轮对话。是否应该把刚才的所有工具再执行一次？
 
-前面三篇解决的是“正常运行时怎样工作”。
+答案取决于中断时已经留下什么证据。可能只有模型提出编辑的意图，也可能工具已经启动，还可能文件已改、工具结果却没来得及可靠保存。**能打开历史、能继续对话、能避免重复副作用、能证明任务完成，是四个不同的验收目标。**
 
-这一篇关心另一类问题：
+本章用同一个任务串起持久化、恢复、重试、子 Agent 与评测。涉及故障时点和耗时的案例均为教学条件；实际执行方法与记录要求放在实验页，不把推演当成产品测试成绩。
 
-> **进程可能崩，网络可能断，模型可能 429 / timeout，Tool 可能已经产生副作用，Child Agent 可能在后台继续跑，Session 格式还会升级。DeepSeek Harness 怎样让这些事情仍然可恢复、可解释、可验证？**
+<a id="durability"></a>
+## 1. 从“追加了事件”到“可以依赖它恢复”
 
-这里最值得抓住的一条线是：
+前几章说“写入日志”时，首先指 Session 接受并追加一个事件。程序内看到了它，不等于它已经完成持久化。要在进程退出以后依赖这条记录，需要存储层完成对应写入；要在外部动作之前把这件事变成明确条件，还需要一个等待写入完成的边界。
 
-> **Runtime 中重要的异步动作，尽量先形成 durable evidence（持久证据），再进入等待或副作用。**
+DSH 把这两部分拆开。Session 管逻辑事件；持久化服务提供创建、打开、读取、追加、刷写和关闭的句柄。JSONL 后端把逻辑日志存为文件。JSONL 表示每行一条 JSON 记录；默认物理编码使用带校验和的 Zstandard 压缩帧，因此默认文件并不是可以直接用普通逐行文本读取器处理的裸文本。[持久化后端](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)。
 
-这就是为什么源码里反复出现：
+### 1.1 为什么创建会话后可能还没有文件
 
-~~~text
-先 append event
-→ 再 await
-~~~
+`create(header)` 可以先返回拥有写权限的句柄而不写文件。第一次追加事件时，后端连同头信息创建并同步文件，通过不覆盖已有目标的发布方式完成落盘。只创建而从未追加、也未显式刷写的会话，可以不留下磁盘文件；显式 `flush()` 则可以实体化只有头信息的会话。
 
----
+后续事件分批追加，每批在 `fsync`（请求操作系统同步文件数据）完成后才确认相应追加完成。捕获到写入或同步失败时，后端尝试把文件恢复到此前长度。这里的批处理不是“每个事件都无条件同步一次磁盘”；也不能把同步的文件日志扩展成它与外部数据库之间的共同事务。[持久化与崩溃语义](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)。
 
-## 1. Session 为什么能在 Crash 后继续
+### 1.2 哪些动作前必须先刷写
 
-### JSONL 不是“聊天导出格式”，而是 Session Event Store
+基础组合装配 `session-checkpoint-policy`。这个插件在具有会话身份的模型流进入下游前等待 `sessions.flush()`；在具有 Agent 的顶层工具执行体之前刷写相应会话；并在下一次 `agent/pre-step` 刷写前一步已提交的结果。嵌套工具调用复用外层调用的持久化边界，不为每个子调用机械再建一份相同检查点。[检查点策略源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-checkpoint-policy/src/index.ts)。
 
-默认持久化实现：
+```text
+日志已记录准备发送的模型请求
+    ↓ flush 成功
+才构造并消费下游模型流
 
-- `packages/session/session-persistence-jsonl/`
+日志已记录顶层工具调用
+    ↓ flush 成功，再检查取消
+才进入相应工具执行链的业务执行
+```
 
-Base bundle 默认挂载：
+如果这次刷写失败，下游模型适配器或工具业务函数不会因这一条受控路径而继续启动。这是失败关闭，不是“先做了再尽量保存”。但它有组合与入口边界：插件必须被装配，调用必须经过它接入的链路，任意绕开的 SDK 调用不会自动获得相同保障。
 
-`dsh-session-persistence-jsonl`
+这也解释了第一章的请求接纳为何不等于模型接收：即使请求已经进入逻辑日志，刷写失败也可能阻止发送；即使刷写成功，网络仍可能在发送前后中断。持久化证明“本地记录到这里”，不直接证明“远端处理到这里”。
 
-它保存的不是已经投影好的 Chat Messages，而是完整 Session Event Stream（会话事件流）。
+<a id="storage-recovery"></a>
+## 2. 存储恢复先解决物理问题，不猜业务结果
 
-物理上默认使用：
+先考虑文件只写了一半。未完成的最后一行可以被识别为破损尾部；最后一个压缩帧撕裂时，后端保留其中已经完整解码的记录，在第一次新追加前截去撕裂部分，并可靠重写可恢复记录。已经完整提交的帧若校验和、解压或结构检查失败，则作为损坏拒绝读取，而不是把所有错误都解释成“可以安全忽略的尾巴”。[后端恢复规则](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)。
 
-- JSONL logical records；
-- Zstandard checksummed frames。
+这种修复回答的是“哪些日志记录可信”，还没有回答“被中断的工具做完了没有”。存储层不能通过修好文件推断外部文件、远端 API 或数据库的实际结果。
 
-也可以关闭 compression，写原始 newline-delimited JSONL。
+### 2.1 为什么保留旧格式文件，却不自动回退
 
-为什么保存 Event，而不是 `messages[]`？
+当前快照的格式目录明确将写入格式设为 **V4**，并装配 V0 至 V4 的相邻迁移链。这个数字来自 `session-format-catalog/src/generated.ts`，不是根据包版本或迁移脚本名称猜测。[格式目录源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-format-catalog/src/generated.ts)。
 
-因为 Resume 需要恢复的不只是 User、Assistant、Tool Result，还包括 Turn / Step boundary、Request Header、Compaction replacement、Permission state、Sandbox mode、Subagent descriptor / lineage、Retry bookkeeping 和 Inbox mutations。
+每个会话可以保留多个不可变历史代。运行时选择数值最高的规范代，而不是遇到新代读不懂就悄悄打开旧代；后者可能隐藏已经发生的新事件，让用户误以为它们从未存在。
 
-如果只保存 Model Messages：
+打开受支持的旧格式进行只读操作时，在内存里迁移并验证，不发布新文件。需要写入时，准备新的当前代，验证、重新核对源文件版本，再以不覆盖方式发布；旧源文件保持原样。源文件在准备期间发生变化时，不能用旧准备结果覆盖它。压缩格式的转换与逻辑事件格式迁移也不是同一件事，当前后端不会自动混用两种编码根目录。[迁移与代际发布](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)、[静态格式链](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-format-catalog/README.md)。
 
-> 很多运行时状态只能重新猜。
+### 2.2 单写者保证到哪里为止
 
-#### Session File 为什么采用不可变 Format Generation
+同一会话的写句柄有进程内所有权，并通过相应平台的锁排斥其他写入者。它保护的是会话日志，不能直接防止两个不同 Session 的工具修改同一个工作区文件。
 
-当前格式使用类似：
+还要检查部署环境：POSIX 路径依赖原生系统扩展及文件系统锁、硬链接等能力；某些网络文件系统的锁语义不可靠；Windows 的内核信号量名称又有登录会话范围。不能把本地单写者实现包装成已经验证的跨平台、跨主机分布式锁。[后端限制](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)。
 
-~~~text
-session.jsonl.zstd
-session.v1.jsonl.zstd
-session.v2.jsonl.zstd
-session.v3.jsonl.zstd
-...
-~~~
+<a id="semantic-recovery"></a>
+## 3. 未结束的 Turn 怎样被补成可以继续理解的历史
 
-的 canonical generation（规范代际）。
+物理记录可读取后，还可能留下一个没有结束的 Turn：模型已经提出工具调用，却没有对应结果。下一次模型请求需要看到结构完整、语义不误导的历史。
 
-当旧格式需要迁移，源 generation 不会原地改写。Write open 会读取旧版本、迁移成当前 logical events、编码新的临时 generation、验证、确认 source revision 没漂移，再发布新的 current generation。
+`openTurnClosers()` 扫描未闭合的 Turn 与 Step，对挂起的工具调用补合成错误结果，再补步骤结束与轮次结束。这里的“合成”必须保留在解释中：**它不是重新执行工具得到的真实返回值，而是根据已保存事实标注中断状态。** [恢复源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/session/src/repair.ts)。
 
-旧路径仍保持 byte-identical（字节不变）。
+| 崩溃时可恢复的事实 | 恢复标记 | 可以怎样理解 |
+|---|---|---|
+| 助手提出了调用，但没有记录对应 `tool/call` | `TOOL_NOT_STARTED` | 在该受控中断恢复路径里，没有工具启动记录 |
+| 已有 `tool/call`，但没有对应 `tool/result` | `TOOL_OUTCOME_UNKNOWN` | 结果未知；不能据此断言成功或失败 |
+| 已有成对调用与结果 | 保留已记录结果 | 仍应区分结果陈述与必要的外部核验 |
 
-如果原地升级时写到一半 crash，一个原本可读的 Session 可能直接变成不可读。Immutable generation（不可变代际）让升级更像“发布一个新版本”，而不是给原文件做手术。
+源码限定修复的是打开的执行尾部。它不会随意重写每一个已经闭合的历史步骤，也不会把完整提交区间的结构损坏都当成普通中断。恢复算法有适用范围，不是通用日志纠错器。
 
-#### 为什么最高版本不可读时不能偷偷回退旧版本
+第二章的 Inbox 还增加了一类可恢复状态：已保存的队列变更能够重建待处理输入。可是领取输入、形成请求和执行网络调用仍然跨越多个时点；不能把“队列可投影”讲成“进程死在哪一行都能精确原地继续”。恢复需要重新创建运行对象，并根据完整的已保存边界继续判断。
 
-Persistence 会选择 numerically highest canonical generation（编号最高的规范代）。
+### 3.1 文件已改，结果没保存，应该怎么做
 
-如果最高代是未来格式、当前 Build 不支持，就明确 refusal（拒绝），不会说“那我读前一个老版本吧”。
+设编辑工具确实已经改好 `page.py`，随后持久化失败，重启后只有 `tool/call` 而没有可靠结果。恢复标记应表达结果未知，而不是自动再写一遍。
 
-旧 generation 可能缺少后来发生的 Session Events，回退读取会制造：
+对这个本地文件任务，可以先读取当前文件或比较内容摘要，判断预期修改是否已经存在，再决定是否需要继续编辑。这个验证是只读动作，不会因为核验本身重复产生原有写入。若工具操作的是创建远端记录，则需要服务端查询、请求幂等键或业务状态对账；会话日志本身不提供跨系统的“恰好一次”保证。
 
-> **看似成功，但悄悄丢历史。**
+其中幂等的意思是：同一逻辑请求重复提交时，不重复产生业务效果；不是把每次重试换个随机请求号。具体协议与数据库机制属于后端课程，本模块保留恢复决策必需的最小模型。[通用后端课程入口](../../../curriculum/03-backend-engineering/README.md)。
 
-所以在这里：
+> **注意：没有结果不等于没有执行。** 自动重试有副作用的工具之前，先证明它尚未执行，或证明重复执行不会造成额外效果；证据不足时保留“未知”，请求核验或人工介入。
 
-~~~text
-Unsupported
-优于
-Silent stale fallback
-~~~
+### 3.2 分叉场景中的“未启动”为什么更谨慎
 
----
+`openTurnClosers()` 同时接受中断与分叉两种原因。若某个分叉入口截取了父会话尚未完成的执行区间，子分支看不到调用记录，并不证明父分支在截取之后没有继续执行。源码给出的分叉修复提示因此强调先核验父会话和外部副作用。
 
-### 持久化正确性从“一个 Writer”开始
+这与下面要讲的**子 Agent fork 提供方**是不同入口。后者专门选择父会话已完成 Turn 的前缀，不携带当前未完成 Turn。不能因为都叫 fork，就把两种截取规则合并成一个保证。[修复原因分支](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/session/src/repair.ts)、[子 Agent fork 提供方](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent-fork-in-process/README.md)。
 
-Persistence Service 对 write handle 做 single-writer ownership（单写者所有权）。
+<a id="retry"></a>
+## 4. 重试必须说明重试哪一层、改变什么条件
 
-同一 Session 已经被一个 Runtime 持有写权限时：
+发生错误后，最容易写出的处理是“再来一次”。问题在于模型请求、工具动作、压缩尝试和业务任务不是同一层。
 
-`open(id, 'write')`
+| 情况 | 恢复前需要判断什么 | 不应怎么做 |
+|---|---|---|
+| 模型请求的暂时性失败 | 当前错误策略是否允许重试，预算与取消状态如何 | 重新注入同一用户输入，制造重复要求 |
+| 参数不符合工具要求 | 哪项参数错误，下一步怎样修正 | 不改参数地重复同一调用 |
+| 确认上下文窗口超限 | 可压缩区间是否存在，Surface 是否实际缩小并前进 | 对完全相同的超限请求无限重发 |
+| 工具结果未知 | 副作用是否已发生，是否可安全重复 | 用一个通用重试装饰器掩盖不确定性 |
 
-会拒绝第二个 Writer。
+普通模型请求重试发生在同一个逻辑 Step 中，不重新运行 `agent/pre-step`，也不会再次追加同一批用户消息。主循环把是否重试交给相应请求错误链；安装什么策略、支持什么错误分类，必须看实际组合，而不能把主循环的重试入口描述成一个对所有错误都自动生效的策略。[主循环实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/agent.ts)。
 
-底层还使用进程 / OS 级 lease（租约）机制。
+窗口超限则需要改变产生错误的条件。当前压缩恢复会尝试缩短合法的平衡历史区间，只有历史替换确实前进，才允许相关重试继续；无法压缩的头部或不可分单元仍可能导致失败。取消优先，不能为了恢复上下文而继续用户已经取消的任务。[压缩与溢出恢复](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/compaction/compaction-basic/README.md)。
 
-原因很直接：如果两个 Agent Process 同时 append：
+因此，重试记录最好能回答：哪一层失败、为何可重试、这次输入或状态是否改变、预算还剩多少、之前有没有可能发生副作用。重试次数不是恢复质量指标，更多重试可能只是把同一个错误变得更贵。
 
-~~~text
-step/start
-tool/result
-compaction/start
-~~~
+<a id="subagent"></a>
+## 5. 子 Agent 要分别看历史、能力、寿命和所有权
 
-Event Seq 和协议配对会失去单一真源。
+分页任务可以交给一个子 Agent 审阅边界用例，再由父 Agent 整合结论。这只有在分工带来收益时才值得做。增加角色名称不会自动提升正确率，还会增加上下文传递、等待、冲突和成本。
 
-Read-only Observer 可以并发读取，但 authoritative write path（权威写路径）必须唯一。
+### 5.1 Spawn 与 fork：从什么历史开始
 
-#### 每次 append 为什么要有明确 Durability Barrier
+Spawn 从不带父会话种子的子会话开始；父 Agent 必须在任务里传递必要背景。进程内 fork 提供方则在启动时捕获父会话截至最后一个 `turn/end` 的完整前缀，排除当前未完成 Turn。父会话还没有完成过一轮时，这个前缀可以为空。[共享驱动](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent-in-process-driver/README.md)、[fork 提供方](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent-fork-in-process/README.md)。
 
-JSONL backend 会按 batch append、`fsync`，成功后才 resolve append。如果 write / sync 失败，会尽量回滚到 append 前的文件长度。
+所以，父 Agent 在当前这一轮刚收到“不要修改测试”的要求，不能仅因为使用 fork 就确信子 Agent 已经看见它。若该要求尚不在被捕获的已完成前缀里，就必须在子任务中明确传入。fork 也只是一次快照，父会话之后发生的新事件不会自动同步。
 
-另外：
+父 Agent 得到的结果应来自子 Agent 自己的输出，而不是误把继承的父消息当作子任务答案。结构化输出也需要由子 Agent 的实际执行完成，不应从任意自然语言回复里随便猜一个对象。
 
-`flush()`
+### 5.2 继承模型与预设，不等于复制父 Agent 的全部权限
 
-是明确 Durability Barrier（持久性屏障）。
+子 Agent 的模型选项先从父会话最近实际请求的路由配置取得；父会话还没有发出请求时才回退到创建选项。为子 Agent 改变模型路由、但没有明确指定推理强度时，会清除旧路由拥有的推理强度，让新模型解析自己的默认值。这样避免把旧模型的配置含义生硬带给新模型。[子 Agent 选项解析](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/src/child-agent.ts)。
 
-Base bundle 还安装：
+创建与冷恢复时，子 Agent 加入父 Agent 当时实际使用的预设组合，再安装自己的 persona（角色指导）和工具限制。这里继承的是组合，不是父 Agent 全部临时局部注册与限制的自动复制。要让审阅子 Agent 只读，仍要检查子任务的工具过滤和底层资源权限。
 
-- `dsh-session-checkpoint-policy`
+进程内委派还会在第一次异步等待前捕获显式沙箱覆盖，并在审批能力存在时把子会话审批固定为 `never`。父级处于 Auto 或 Full access 时，还保留相应权限预设身份，避免 fork 种子中的旧身份覆盖新委派状态；它不继承一次性批准。相关事实追加在种子之后，能从子会话日志重建。[委派政策源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/src/child-agent.ts)。
 
-用于在关键 Model / Top-level Dispatch 边界前确保 Session durability。
+这再次说明 `never` 的准确含义：子 Agent 在委派范围内工作，需要额外批准的动作不能由它自己扩大权限；它应向父 Agent 报告边界。其他外部后端有各自的运行与权限系统，不能把进程内 DSH 的规则不加区分地套过去。
 
-所以“Event 已经在内存数组里”不等于：
+### 5.3 One-shot 与 continuable：任务结束后还接受消息吗
 
-> crash 后一定恢复。
+One-shot（一次性）子任务产生一个结果后结束；continuable（可继续）子任务保留稳定身份和持久会话，之后还能接收消息。这是寿命维度，不是历史来源维度。不能把“fork”简单等同于“永远一次性”，也不能把“spawn”简单等同于“永远持续运行”。具体形态由提供方能力和工具行配置决定。[子 Agent 服务](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/README.md)。
 
-Persistence API 对这个差异有明确 contract。
+可继续子会话与某个进程里的 Activation（活跃执行实例）也不同。会话可以保留，Activation 在需要工作时创建或冷恢复，闲置时安全释放。当前消息授权以直接父子相邻关系为边界：它不是任意 Agent 拿一个 ID 就能向所有其他会话发消息。
 
----
+一个子任务暂时没有模型请求，也不一定能释放：它还可能有待处理输入、正在等待的子任务或未完成的收尾。管理器要等 Agent 活动结束、队列清空、所属子任务收束，并刷写最终状态；随后在锁内重新核对唤醒代、会话序号和队列，在同一同步边界关闭新输入接纳，避免“刚判断空闲，就有新消息进入”的竞争。[可继续执行的收束流程](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/README.md)。
 
-### Crash Recovery 必须先区分“文件坏了”还是“协议没闭合”
+### 5.4 为什么容量限制不只数正在发请求的模型
 
-这是 Persistence 设计里很容易混淆的一点。
+当前服务用 `maxActiveSubagents` 控制连续可继续父子链中的活跃实例池，默认值为 8。正在等待子任务的父实例、仍有待处理输入的实例、正在停止的实例也占用槽位。冷恢复要先取得容量，向驻留子实例发消息则复用已有槽位。一次性和外部提供方运行不属于这项限制，因此不能把它描述为全局所有子任务的统一并发上限。
 
-#### Torn Physical Tail
+到达容量时，接纳失败而不是无限排队。否则，一个占着槽位等待后代的父任务可能一直等不到自己的后代获得槽位。深度限制与容量限制也不同：限制委派层数不能阻止同一层产生很多任务，限制活跃实例数又不限制累计历史和 Token 成本。[容量与接纳边界](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/README.md)。
 
-例如写 JSONL / Zstd frame 时进程突然没了。
+### 5.5 发布与释放：谁负责收尾
 
-最后一条 physical record 不完整。
+子任务启动成功返回之前，创建者负责未发布资源；启动失败应清理半成品。成功发布以后，调用方获得运行句柄并承担释放责任。卸载提供方只阻止后续启动，不直接撤销已经接收的任务。
 
-这属于 Storage Layer。
+释放不是只从一个字典删除 Agent ID，而要取消等待、停止循环、等待已启动工作收束、关闭句柄并解除局部注册。否则旧监听器、传输连接或异步回调仍可能继续工作。另一方面，从活跃对象集合移除会话不等于删除持久化文件；当前 JSONL 服务没有自动删除所有会话文件的能力。[共享驱动的所有权](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent-in-process-driver/README.md)、[存储清理边界](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)。
 
-JSONL backend 会：
+> **注意：独立 Session 不是独立操作系统。** 进程内子 Agent 可以隔离逻辑会话与局部能力配置，但不自动获得进程级崩溃隔离、独立工作区或跨文件事务。两个子 Agent 修改同一文件，仍需要任务范围、工作目录或其他资源协调措施。
 
-- 只返回完整、连续、验证通过的 prefix；
-- 丢掉 incomplete raw line；
-- 对 torn Zstd frame 尽量恢复完整 decoded records；
-- Write Handle 在首次新 append 前修正物理尾部。
+<a id="verification"></a>
+## 6. 从运行终止到任务完成，还缺一次验证
 
-#### Interrupted Semantic Turn
+模型输出最终答案、Turn 以 `completed` 结束，表示循环达到了相应结束条件，不表示分页实现必然正确。工具返回合法对象也只证明对象满足结构约束，不证明计算或文件修改符合要求。
 
-但也可能所有 Event 都已经完整落盘：
+对子 Agent 的结构化结果，当前共享驱动会先验证并暂存 `structured_output` 工具提供的值，等权威的最终工具结果成功后才提交；PTC 路径还需考虑外层 `run_code` 的结果。提交后用守卫阻止继续调用。要求结构化输出的运行若只返回自然语言，不会被驱动自动重新询问并假装成功。[结构化结果生命周期](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent-in-process-driver/README.md)。
 
-~~~text
-turn/start
-step/start
-assistant/message
-tool/call
-<进程崩溃>
-~~~
+但结构化的 `{ "passed": true }` 仍然可能没有真实测试支撑。任务验收要回到用户要求：这个仓库只允许改实现，第一页每页两项应为 `[10, 20]`，其他分页边界也应满足原有约定。
 
-文件一点没坏。
+可以按三层观察同一任务：
 
-只是 Agent Protocol 没闭合。
+| 验证层 | 分页案例中的检查 | 不能替代什么 |
+|---|---|---|
+| 单次操作 | 是否读对文件、编辑是否成功、测试命令是否实际执行 | 不能单独证明整项任务满足约束 |
+| 执行过程 | 是否修改了测试、是否越权、取消后是否继续写入 | 不能单独证明功能正确 |
+| 最终结果 | 实现 diff、对应版本上的测试结果、未覆盖边界 | 不能反推每个中间步骤都安全 |
 
-这属于 Agent / Session Semantic Layer。
+这些层需要共同成立。只给一个总成功率，会把“答案对但越权”“工具成功但需求错”“过程安全但结果错”压成同一种现象。
 
-两种 failure 不应该由同一层处理。
+<a id="trace"></a>
+## 7. 怎样用执行轨迹定位错误
 
----
+Trace（执行轨迹）是把一次任务中有关的请求、工具与状态变化关联起来的证据。DSH 的 Session、Turn、Step、调用 ID 和事件序号提供不同粒度的坐标：会话确定任务历史，轮次与步骤确定控制进度，调用 ID 对应某次工具请求，事件序号确定记录次序。它们不是要求读者背诵的字段清单，而是为了找回“谁在何时基于什么输入做了什么”。
 
-### Resume 怎样修复 Interrupted Turn
+例如，分页结果错误时可以从三条不同路径查：
 
-核心函数：
+1. **约束没有到达执行者。** 用户说不能改测试，但压缩摘要或子任务只传了修复目标。先查当前 Surface、实际请求与子任务输入，而不是先改模型温度。
+2. **工具执行了错误实现。** 输入与约束都正确，编辑器实际写错公式。核对调用参数、业务执行结果与文件 diff。
+3. **验收标准过弱。** 代码只对第一页正确，测试没有覆盖后续页；模型把“已有测试通过”当成全部正确。回到需求和测试覆盖，而不是给工具错误重试。
 
-- `packages/core/session/src/repair.ts::interruptedTurnClosers()`
+日志、实时界面和外部监控也有各自范围。实时流中显示过的片段未必已经结算进日志；请求记录证明本地准备和接纳，不能单独证明服务商收到；外部副作用可能需要独立查询。重放日志主要用于理解与重建状态，不应默认重新执行所有工具。[主循环的流结算](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/agent.ts)、[Surface 投影](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/session/src/surface.ts)。
 
-Agent Loop Resume 时会：
+因此，诊断报告应说清“证据支持到哪里”，而不是看到一条日志就直接写出肯定的根因。某次结果未知时，明确未知比伪造一个连贯故事更有利于安全恢复。
 
-1. 先以 write ownership 打开 Session；
-2. 读取 physically valid log；
-3. 计算需要补哪些 synthetic closer；
-4. 把这些 closer 作为正常 Event Batch append 回去；
-5. 再发布 Live Agent。
+<a id="evaluation"></a>
+## 8. 怎样评价一项优化是否值得保留
 
-可能需要补：
+假设你想把单 Agent 改成父子协作，或者用 Skill 与 PTC 缩短执行链。先固定任务集合、授权边界和成功标准，再记录旧方案与新方案，而不是先改架构，最后挑几个表现好的例子。
 
-- missing tool result；
-- `step/end`；
-- `turn/end { interrupted }`。
+分页任务只是一类小例子。一个实际代码任务集合还要覆盖文件查找、修改范围、已有测试失败、依赖问题、长输出、取消、模型限额和外部工具不可用等条件。真实业务评价需要由业务方定义正确结果与适用范围；单凭源码单元测试不能推导生产任务成功率。
 
-#### 为什么 Tool Repair 有两种不同错误
+至少同时观察最终完成、关键过程约束和资源代价。耗时应写清是用户端端到端耗时，还是某个模型或工具阶段的耗时；成本应写清模型 Token、外部 API 或其他计费对象。重复运行时保留失败和取消，不能只对成功样本计算延迟而隐去失败率变化。
 
-源码定义：
+举一个明确标注为**假设**的权衡：100 个同分布任务，方案 A 成功 70 个，方案 B 成功 90 个，但每个任务多用 60 秒。观察到的是这组样本上提高了 `(90/100 - 70/100) × 100 = 20` 个百分点，并增加每任务 60 秒；它不是相对提高 20%，也不是未来必然有相同收益。是否值得采用，要看任务失败的后果、用户可接受等待、成本，以及重复试验的不确定性。
 
-- `TOOL_NOT_STARTED`
-- `TOOL_OUTCOME_UNKNOWN`
+如果新方案只是更快地错误结束，或者为了提高成功率放宽了不得改测试的约束，就不是同一验收标准下的优化。多阶段 Skill 还应有阶段质量检查与最终整合责任：某一阶段返回成功，不代表下一阶段收到正确输入；各阶段正确，也可能在接口与假设处组合失败。
 
-如果 Assistant Request 存在，但 Tool Call 还没 durable commit，可以明确：
+本节是从已讲清的状态、边界与证据推导的评测方法，不声称 DSH 内置了所有业务质量门禁或自动自我进化。具体评测平台与数据治理属于[通用 Agent 课程](../../../curriculum/09-agent/README.md)及相关实践；本产品模块负责说明怎样在真实执行链上放置检查。
 
-> Tool 没有开始。
+<a id="test-layers"></a>
+## 9. 什么结果可以算“已验证”
 
-如果已经有 durable `tool/call`，但没有 `tool/result`，就不能假装 Tool 没执行。
+源码阅读能核对某个分支的实现，不等于已经运行。模拟实验能检查控制逻辑，不等于真实模型、MCP 服务和文件系统都工作正常。为了让验证可以复查，应分别记录：
 
-它可能执行成功后 crash、执行一半、远端副作用已经发生，或者根本没真正 dispatch。
+| 层次 | 最低需要保留的记录 | 不能作出的结论 |
+|---|---|---|
+| 静态检查 | 固定提交、实际读取文件、断言与来源 | 不能报告真实调用通过 |
+| 单元测试 | 命令、环境、通过/失败/跳过数量 | 不能用测试文件存在替代执行 |
+| 模拟集成 | 使用的替身、初始数据、注入的故障 | 不能冒充真实服务行为 |
+| 真实服务 | 模型或服务版本、有效配置、请求与结果证据 | 不能外推未测试的路由与权限组合 |
+| 跨平台与生产 | 平台、负载、持续时间、失败边界 | 不能凭一次本机运行宣称生产验证 |
 
-所以 Repair 给模型的指导是：
+本模块的目标源码版本与运行要求集中在[入口的版本区](README.md#source-version)。实验必须记录本机实际 Node、pnpm 和所用上游 SHA，不能遇到版本不匹配就静默换一个更容易跑的实现。缺少模型密钥而跳过的端到端测试，结果是跳过，不是通过。
 
-> 只读 / 幂等操作可以谨慎 retry；有副作用的操作先验证外部状态或询问用户，不要盲目重放。
+[实验页](labs/README.md)提供固定快照核对、源测试定位和分层验证步骤。教学示例沿用同一分页任务；运行时测试应优先使用上游实现和已有测试，不再另造一套行为近似的 Harness 来证明本书正确。
 
-这比“所有未完成 Tool 自动重试”安全得多。
+## 本章小结
 
----
+安全恢复依赖可信日志与明确的外部边界。持久化检查点把部分记录放在副作用之前，物理恢复保留可信前缀，语义恢复补充未结束历史中的状态标记；它们仍不能代替外部结果核验。重试要改变足以解决问题的条件，未知副作用不能盲目重放。
 
-## 2. Retry 为什么必须建立在 durable progress 上
+子 Agent 要分别说明历史来源、能力组合、持续寿命、活跃容量和释放责任。最终验收再从“循环结束”走到“需求、过程与结果都满足”，并把实际运行与源码推演分开报告。
 
-### LLM Retry 也遵守“durable before wait”
+## 🎯 面试怎么回答
 
-默认 Base bundle 安装：
+**Q：工具已经执行成功，但检查点保存失败，恢复后怎么办？**
 
-- `dsh-llm-retry`
+> 🎯 首先不能把缺少结果解释成工具没有执行。DSH 对打开的执行尾部会用 `TOOL_OUTCOME_UNKNOWN` 标注已有调用却没有结果的情况。接下来根据工具性质核验外部状态：文件操作可先只读检查目标内容，远端写入需要业务查询、幂等标识或对账。请求前和顶层工具前的刷写能缩小不确定窗口，但不能让本地日志与外部系统自动形成共同事务，因此不会承诺所有动作恰好执行一次。
 
-它挂在：
+**Q：怎样证明多 Agent 或 Skill 改造真的有效？**
 
-`agent/request-error`
+> 🎯 先固定任务、授权和成功标准，再比较最终完成率、过程违规、端到端耗时与成本。对子任务不仅看自身输出，还看关键约束是否传入、父任务是否正确整合、共享资源是否冲突，以及失败和取消如何收束。阶段测试通过不等于整体成功；源码、单元测试、模拟和真实服务的结果分别记录，不把没有跑的环节算作通过。
 
-waterfall 上。
 
-一次 transient model failure（瞬态模型失败）如果符合 Provider Retry Policy，Runtime 先 append：
+## ⚠️ 常见误区
 
-`llm/retry`
+| 误解 | 正确判断 |
+|---|---|
+| 能打开历史就是从崩溃行精确继续 | 活跃对象需要重建；外部动作可能仍是未知 |
+| 合成工具错误是恢复时真正执行工具的结果 | 它是根据持久记录标注状态，不是重新调用 |
+| 新格式读不懂就自动读旧文件更安全 | 回退可能丢失后来事件，不能静默进行 |
+| fork 肯定包含当前刚追加的要求 | 子 Agent fork 只捕获已完成 Turn 的前缀 |
+| 子 Agent 没有请求模型就不占容量 | 等待、队列和收尾中的活跃实例仍可能占槽位 |
+| `completed` 或合法 JSON 等于任务正确 | 还要验证需求、过程约束和真实结果 |
 
-记录 provider、policy key、failure、retry number 和 delay。
+<a id="self-test"></a>
+## 综合自测：从证据推导下一步
 
-然后才真正等待 backoff。
+### 任务 A：恢复后只有调用，没有结果
 
-Wait 完成以后再 append：
+条件：持久化记录中有编辑工具的 `tool/call`，没有结果；磁盘文件目前已经包含预期修复。请写出恢复标记、下一项安全动作，以及不能自动采取的动作。
 
-`llm/retry-started`
+检查结果：必须区分未知状态、只读核验和重复写入，不得仅凭日志猜测外部状态。
 
-最后返回：
+<details><summary>任务 A：恢复后只有调用，没有结果｜提示</summary>
 
-`{ kind: 'retry' }`
+考虑先读取当前文件，能否消除一部分不确定性。
 
-让 Agent Loop 重新跑失败 Step。
+</details>
 
-如果先 sleep 30 秒、然后才记录 retry，第 10 秒 crash 时日志完全不知道 Runtime 当时在等什么。当前顺序让待重试状态成为可解释的 Session Fact。
+<details><summary>任务 A：恢复后只有调用，没有结果｜参考答案与解释</summary>
 
-#### Retry 为什么放在 Agent Step Boundary，而不是包住任意 LLM Stream
+标记为 `TOOL_OUTCOME_UNKNOWN`。先只读核对文件内容或修改摘要，确认修复是否存在且符合目标，再决定是否需要补充修改与测试。不能自动重复编辑，更不能因为最终没有结果就把文件恢复成旧版本。
 
-`llm-retry` 的 README 很明确：
+</details>
 
-> 直接 `ctx.llm.stream()` 的调用不自动获得这套 retry。
+### 任务 B：当前轮的约束没有进入子任务
 
-Raw streaming consumer（原始流消费者）很难判断哪些 chunk 已经被外界看到、哪些副作用已经从中触发、重试后怎样避免重复。
+条件：父会话前两轮已经完成；第三轮用户要求“只审查，不改代码”，父 Agent 在第三轮调用进程内 fork，并只传“继续处理分页问题”。请判断子会话种子是否必然包含新约束，以及应怎样修复委派输入。
 
-Agent Loop 有明确 Step boundary。失败 Assistant Attempt 先 settlement，再由 `agent/request-error` 决定是否重建同一个 Step。
+检查结果：回答必须指出捕获截止边界，不能把 fork 当成实时共享历史。
 
-所以可靠 Retry 的边界是：
+<details><summary>任务 B：当前轮的约束没有进入子任务｜参考答案与解释</summary>
 
-> **Durable Agent Step。**
+不能保证包含。子 Agent fork 捕获截至最后已完成 Turn 的前缀，第三轮仍在进行。父任务应在子任务中明确传入只审查的要求，并设置适当的子作用域工具与资源限制；不能只依赖历史种子。
 
-不是任意 Promise。
+</details>
 
-#### Retry Policy 为什么属于 Provider，而 Executor 独立
+### 任务 C：能读 V4，也保留 V3，但目录出现 V5
 
-`dsh-llm-retry` 自己没有 retry config。
+条件：本构建支持并写入 V4；某个会话目录同时包含规范的 V3、V4 和不被本构建支持的 V5 代。请说明为什么不能把 V5 忽略后报告“恢复成功”。
 
-哪些错误 retry、最大次数、backoff、always / normal，都属于 Provider Route 的 `retryPolicy`。
+检查结果：说明最高代选择、可能遗漏的后续事件和正确的失败表达。
 
-Executor 只负责在正确 lifecycle seam 上执行、读 durable retry history、计算 delay、写 Event、等待，再返回 retry action。
+<details><summary>任务 C：能读 V4，也保留 V3，但目录出现 V5｜参考答案与解释</summary>
 
-于是 Provider-specific policy（提供方策略）和 Runtime recovery mechanics（运行时恢复机制）被分开。
+最高规范代是 V5，旧构建不能解释它，就不能静默退回 V4。V5 可能包含更晚的调用与结果，回退会造成历史缺失并诱发重复动作。应报告不支持的选中代，保留文件，并用兼容构建或明确迁移方案处理；不能自行覆盖新代。
 
----
+</details>
 
-### Context Overflow Recovery 不是普通 Retry
+### 任务 D：成功率更高，但违反了同一条约束
 
-LLM 返回 Context Window Exceeded 时，不应该：
+条件：旧方案 100 个任务成功 70 个；新方案报告成功 90 个，但其中 15 个通过修改测试来“修复失败”，原要求禁止改测试。请判断能否直接宣称提高 20 个百分点，以及至少要重新核对什么。
 
-~~~text
-retry same request
-retry same request
-retry same request
-~~~
+检查结果：回答必须同时涉及成功标准、过程违规、失败样本与实验可比性。
 
-Basic Compaction 同样监听：
+<details><summary>任务 D：成功率更高，但违反了同一条约束｜参考答案与解释</summary>
 
-`agent/request-error`
+不能。新方案没有按照同一任务约束判断成功，至少 15 个所谓成功含已知违规。需要逐项按原成功标准重新判定，检查其余案例、重复运行与成本，保留违规和失败记录。不能只从数字里机械减 15 就把剩余样本全当成已经严格验收的成功。
 
-如果识别 Context Overflow，会先尝试 Tool Result Pruning / Compaction。
+</details>
 
-只有当：
+## 第二遍复习：画出五条边界
 
-`session.surface.replaceGeneration`
+合上答案，围绕一次分页任务画出：输入从队列到模型请求的边界，记录从内存到持久化的边界，工具从意图到副作用的边界，父任务到子任务的边界，以及运行结束到需求验收的边界。每一条分别标出正常推进条件、中断时已知事实与仍需核验的状态。
 
-真的前进，说明 Model-visible Surface 已经发生 durable reduction（持久缩减），才返回 retry。
+然后把任务换成“只生成修改建议，不得写文件”，检查你的图是否仍然成立。若只能背原例子，却无法据新授权改变允许路径，说明还需要回到工具政策与验证部分。
 
-这是一条非常重要的恢复原则：
+## 源码回看：从故障时点找入口
 
-> **Retry 必须有 progress evidence（进展证据）。**
+| 要核对的问题 | 固定快照入口 |
+|---|---|
+| 哪些外部调用之前等待刷盘 | [检查点策略](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-checkpoint-policy/src/index.ts) |
+| 文件损坏与格式迁移怎么分开 | [持久化后端](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-persistence-jsonl/README.md)、[当前格式目录](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/session/session-format-catalog/src/generated.ts) |
+| 未结束工具如何标注 | [修复源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/session/src/repair.ts) |
+| 请求重试会不会重复接纳输入 | [主循环](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/agent.ts) |
+| 子 Agent 的配置与权限从哪里来 | [子 Agent 组装源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/src/child-agent.ts) |
+| 可继续子任务何时释放 | [子 Agent 服务](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/subagent/subagent/README.md) |
 
-否则同一个超长请求无限重放没有意义。
-
----
-
-## 3. Subagent 怎样继承 Context、隔离 Authority 并长期运行
-
-### Subagent 的两种 Context Contract：Spawn 与 Fork
-
-默认 Base bundle 同时提供：
-
-- `spawn`
-- `fork`
-
-两种 in-process provider。
-
-#### Spawn：全新会话
-
-Spawn Child 继承 cwd、lineage、默认 provider / model / effort 等 creation option，但**不继承 Parent Conversation**。
-
-所以 Delegation Prompt 必须自包含。
-
-#### Fork：继承已完成的 Parent 历史
-
-Fork Child 的 Session seed 是：
-
-> **Parent Session 到最后一个 completed `turn/end` 的完整前缀。**
-
-当前正在执行的 Parent Turn 不进入 seed。
-
-为什么？
-
-因为正在 Tool Calling 的半个 Turn，不是一个可以独立 replay 的 balanced session prefix。
-
-所以 Fork 不是复制“内存中的最新 messages”，而是复制：
-
-> **已经 durable 完成的 Turn Prefix。**
-
-#### Fork 为什么只捕获一次，不做 Live Shared Context
-
-Fork 发生时计算一次 completed-turn prefix。
-
-Child 之后拥有自己的 Session。Parent 后续的 Turn 不会自动出现在 Child。
-
-否则 Child Resume 时要重新读取 Parent，Parent 修改历史还会改变 Child 过去 Context，两个 Session 就失去独立可恢复性。
-
-Fork 是：
-
-> **Snapshot inheritance（快照继承）。**
-
-不是 Shared mutable conversation（共享可变会话）。
-
----
-
-### Subagent 不继承 Parent Tool Authority
-
-Spawn / Fork in-process README 都强调：
-
-> Child gets a fresh flat registration scope.
-
-Parent Tool restrictions / authority 不会直接进口。
-
-Child 可以有自己的 persona、tool filter 和 scoped registrations。
-
-这避免：
-
-> Parent 有高权限 → Child 自动扩大权限。
-
-Delegated Subagent 的 runtime context 还明确告诉模型：Child scope 在启动时固定，无法从自己 Session 内扩大；需要更高权限时应该把限制告诉 Parent。
-
-这把 Multi-Agent 的权限边界写进 Runtime Contract，而不是只靠 Prompt 礼貌约束。
-
----
-
-### Continuable Subagent 为什么远比“一次性 Agent Tool”复杂
-
-`ctx.subagents` 支持两种 child shape：
-
-- one-shot；
-- continuable。
-
-Continuable Child 有 durable Session、stable child id、process-local Activation、Inbox、cold resume、send message、interrupt 和 descendant discovery。
-
-#### 消息仍然复用 Agent Inbox
-
-Subagent Service 没有再造第二套 Mailbox。
-
-Parent 向 direct continuable child 发消息时：
-
-- Child 正在工作：Steer 到最近 Step；
-- Child idle：启动新的 Turn；
-- Direct Child 不在内存：可以从持久 Session cold resume 后再投递。
-
-同一套 next-turn / next-step 语义继续成立。
-
-#### 为什么需要 Activation Capacity
-
-默认 `maxActiveSubagents` 有有限值。
-
-这是 process-local residency（进程内驻留）限制，不是历史总数限制。
-
-Continuable Child 会占 Live Agent、Inbox、Ownership graph、可能的 Descendants 以及其他 Runtime resource。
-
-如果 Parent 正等待 Child，而 Child 又在 capacity queue 里等待一个由 Parent 自己占住的 slot，容易形成死锁。
-
-所以 capacity reached 时，新 child creation / cold resume 直接拒绝，不排队。
-
-这说明 Multi-Agent Scaling 必须同时考虑：
-
-> **Context Budget + Runtime Residency Budget。**
-
----
-
-### Multi-Agent 拓扑为什么也要持久化
-
-成功创建本地 Child 后，Parent Session 会得到：
-
-`subagent/catalog`
-
-事实。
-
-它记录 direct child identity / mode / label 等，让 UI、`list_agents`、Resume、descendant discovery 不必依赖“当前进程还记不记得曾经创建过 Child”。
-
-Continuable Child 自己的 Session 里还有 durable descriptor，保存 provider / model / effort 等 cold-resume 所需身份。
-
-Child Session Header 也会记录：
-
-- `parentSession`
-- `origin: 'subagent'`
-- `delegationDepth`
-
-因此 Multi-Agent topology（多智能体拓扑）并不是纯内存结构。
-
----
-
-## 4. Plugin 生命周期与默认 Bundle 为什么决定真实产品
-
-### Cordis Plugin Lifecycle 为什么也是可靠性的一部分
-
-DeepSeek Harness 的大多数注册——Tool、Prompt Section、Event Listener、Provider——都是 Cordis effect-scoped（生命周期作用域绑定）的。
-
-Plugin unload 时，注册会自动 unwind（撤销）。
-
-这直接影响：
-
-- HMR；
-- 配置 reload；
-- MCP reconnect；
-- Agent-scoped capability；
-- Provider replacement。
-
-一个重要原则是：
-
-> **Removing Provider 阻止新工作进入，但不应该突然 revoke 已经接受、已经转移 ownership 的运行。**
-
-Subagent Service 就明确区分 Provider Registration Lifetime 和 Accepted Run Lifetime。
-
-这和成熟 Server 的 Job Executor / Connection Pool 是同一类 ownership 问题。
-
----
-
-### 为什么真正的产品架构要回到 Base Bundle
-
-DeepSeek Harness 仓库 Package 很多。
-
-真正理解“产品默认是什么”必须看：
-
-- `packages/bundle/base/cordis.patch.yml`
-
-这里能看到 shipped base 的真实 wiring（连接方式）。
-
-例如：
-
-~~~text
-session
-→ persistence
-→ projections
-
-sandbox
-→ sandbox-policy
-→ bash-sandbox
-→ tool-bash
-
-approval
-→ permission-presets
-
-tools
-→ system-prompt
-→ agent-loop
-
-compaction
-→ pruner
-→ token-meter
-
-subagent
-→ spawn/fork providers
-→ model-facing tools
-~~~
-
-所以“架构图”不应该从目录名猜出来。
-
-应该回到 Product Composition（产品组合）。
-
----
-
-## 5. 验证体系：从 Invariant 到真实 Provider E2E
-
-### 测试体系为什么特别适合这种 Plugin Harness
-
-根 `package.json` 不只提供普通 Unit Test。
-
-它还有：
-
-- `test`
-- `test:e2e`
-- `test:bench`
-- `test:snapshot`
-- `test:web`
-- `test:web:perf`
-- `test:web:stress`
-- `check:all`
-
-以及大量 verifier scripts（验证脚本），覆盖：
-
-- runtime closure；
-- default product isolation；
-- application entrypoints；
-- package dependencies；
-- tool catalog；
-- config catalog；
-- session format catalog；
-- scoped events；
-- persistence contract 等。
-
-这反映出一个很重要的思想：
-
-> **Agent Harness 的正确性，很大一部分是“跨 Package Contract 是否仍然成立”。**
-
-不是某一个函数返回值对不对。
-
-#### Invariant Companion 比普通单测多验证什么
-
-很多 Package 有：
-
-`invariant.ts`
-
-它们验证 Session Event Stream 的跨事件关系，例如：
-
-- Approval asked / decided 是否成对；
-- Tool Call / Result 是否结构合法；
-- Retry Started 是否有对应 scheduled retry；
-- Turn / Step 是否平衡；
-- Event identity 是否一致。
-
-普通 Unit Test 说的是：
-
-> “这个函数在这个例子里返回 X。”
-
-Invariant 更像：
-
-> **任何合法 Session Log 都必须满足这条协议。**
-
-这对 Event-sourced Agent Runtime 特别重要。
-
-#### Contract Suite 防 Provider 漂移
-
-例如 Persistence Provider 有共享 contract tests。
-
-任何 Backend 都要满足 append、flush、read、single writer、crash tail 和 ownership 等一致语义。
-
-新增 Backend 不能只证明“看起来能存”。
-
-#### Catalog Verifier 防公开能力面和源码脱节
-
-DeepSeek Harness 自动生成：
-
-- Tool Catalog；
-- Config Catalog；
-- Cordis API Surface；
-- Session Format Catalog。
-
-Verifier 会检查这些输出是否和源码同步。
-
-插件很多的项目最容易先坏的，往往不是 Runtime，而是“文档说有哪些 Tool / Config / Event”和实际代码开始分叉。
-
----
-
-### Snapshot、Replay 与 With-key E2E 各自证明不同东西
-
-#### Snapshot / Replay
-
-Agent 系统常见 Bug 是：
-
-> 本轮跑得对，但 Resume / Replay 不一样。
-
-因此 Snapshot Test 不应只 snapshot UI。
-
-更重要的是固定：
-
-- Session Events；
-- Surface；
-- Model Request；
-- Tool Pair；
-- Compaction Result；
-- Recovery Result。
-
-仓库中的 LLM Replay / Session Snapshot 一类 test-support package，目的就是把 nondeterministic model runtime（非确定模型运行）尽量转成 deterministic runtime contract test（确定性运行时契约测试）。
-
-#### With-key E2E
-
-Mock Model 可以稳定测试 Event Order、Compaction Bracket、Tool Pipeline、Retry、Resume。
-
-但它无法证明真实 Provider 接受这份 request、真实 Context Window / Tool Calling / Streaming surface 和模拟器完全一致。
-
-Compaction 的实现记录明确提到 with-key e2e：用真实模型 + Bash，并降低限制，触发真正 Compaction，确认完整 `compaction/start…end`、Surface shrink 和最终任务完成。
-
-这类测试不一定适合每个 PR 都昂贵运行，但它验证：
-
-> **模拟协议与真实 Provider 没有整体偏离。**
-
----
-
-## 6. 用故障场景检验系统是否真正闭环
-
-### 三个场景把恢复逻辑真正串起来
-
-#### 场景一：Resume 后 Tool 又被执行了一次
-
-按源码边界查：
-
-~~~text
-原 Session 是否有 tool/call？
-        ↓
-是否有 tool/result？
-        ↓
-Crash Repair 生成的是
-TOOL_NOT_STARTED
-还是
-TOOL_OUTCOME_UNKNOWN？
-        ↓
-模型是否错误忽略了 unknown-outcome guidance？
-        ↓
-Tool 本身是否非幂等？
-        ↓
-是否应该先 Read / Verify 外部世界？
-~~~
-
-如果原日志连 `tool/call` 都没有，重试更安全。
-
-如果已有 `tool/call` 但没有 result，Runtime 无法证明副作用没发生。
-
-问题不是“Resume 太保守”，而是外部系统缺少 idempotency / status check。
-
-#### 场景二：Context Overflow 一直重试
-
-正确路径应该是：
-
-~~~text
-request error = context overflow
-        ↓
-compaction-basic 是否收到 agent/request-error
-        ↓
-tool result pruner 是否先有效缩减
-        ↓
-summary compaction 是否 commit
-        ↓
-session.surface.replaceGeneration 是否增加
-        ↓
-只有真正增加后才 retry
-~~~
-
-如果 `replaceGeneration` 没变却继续 retry，Recovery Progress Gate 失效。
-
-如果变了但仍 overflow，Summary 可能仍太大，或 Retained Tail 太多。
-
-增加 retry count 不是根因修复。
-
-#### 场景三：Fork Subagent “没看到刚才 Parent 讨论的内容”
-
-先确认：
-
-> 那段 Parent Discussion 是否已经完成 `turn/end`？
-
-如果 Parent 正处于：
-
-~~~text
-Assistant
-→ Tool Call
-→ Child Fork
-~~~
-
-当前 Turn 仍 open。
-
-这段 in-flight conversation 故意不进入 Child Seed。
-
-如果 Child 需要这段信息，Delegation Prompt 应显式传入。
-
-这不是 Context 丢失，而是 Fork Contract。
-
----
-
-### 应该怎样评价这个 Harness，而不只是评价模型
-
-#### Protocol Correctness
-
-检查：
-
-- Event pairing；
-- Turn / Step balance；
-- Tool settlement；
-- Approval audit；
-- Compaction bracket；
-- Resume repair。
-
-#### Capability Correctness
-
-检查 Tool、MCP、Skill、Sandbox、Subagent Provider 是否符合各自 Service Contract。
-
-#### Runtime Reliability
-
-做故障注入：
-
-- crash；
-- 429 / 500；
-- MCP disconnect；
-- Sandbox unavailable；
-- Persistence fsync failure；
-- Plugin unload；
-- cancel。
-
-看系统是否 fail closed、可 Resume、无孤儿 Tool Call、无 silent history corruption（静默历史损坏）。
-
-#### Task Utility
-
-最终仍然要回答：
-
-> 这些架构复杂度有没有帮助 Agent 把真实任务做得更好？
-
-所以还要测：
-
-- 任务成功率；
-- Token / Cost；
-- latency；
-- Tool 次数；
-- Compaction 后约束保留；
-- Subagent delegation 收益；
-- 失败恢复后最终正确性。
-
-Runtime Contract 全绿，但模型任务失败，也不能叫优秀 Agent Product。
-
----
-
-### 从源码能抽出的系统设计原则
-
-**第一，持久化不是最后 dump state，而应该参与运行时语义。** Retry、Approval、Compaction、Subagent identity 都先考虑怎样留下 durable evidence。
-
-**第二，Model Context 最好是 Projection，不必等于原始事实存储。** 这样可以压缩、裁剪、替换模型视图，而不删审计证据。
-
-**第三，Crash Recovery 应该分 Physical Repair 和 Semantic Repair。** Torn file 是 Persistence 问题；Open Turn 是 Agent Protocol 问题。
-
-**第四，Retry 必须建立在明确的幂等 / durable boundary 上。** Raw Stream 和 Durable Step 的可重试性不是一回事。
-
-**第五，多 Agent 不只是 Prompt 分工。** 它还需要 Session lineage、scope isolation、depth / residency limits、continuation ownership。
-
-**第六，Plugin Architecture 要靠 Contract Test 维持。** 没有 invariant / catalog / verifier，大量 extension seam 很快就会漂移。
-
----
-
-## 7. 源码锚点
-
-1. [`packages/session/session-persistence-jsonl/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/session/session-persistence-jsonl/README.md)：物理持久化、generation、crash tail。
-2. [`docs/subsystems/persistence.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/subsystems/persistence.md)：Backend-neutral persistence contract。
-3. [`packages/core/session/src/repair.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/session/src/repair.ts)：Interrupted Turn repair。
-4. [`packages/core/agent-loop/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/README.md)：Agent Loop 对 persistence write handle / resume 的 ownership。
-5. [`packages/llm/llm-retry/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/llm/llm-retry/README.md)：durable-before-wait retry。
-6. [`packages/llm/llm-retry/src/index.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/llm/llm-retry/src/index.ts)：request-error waterfall / backoff。
-7. [`packages/subagent/subagent/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/subagent/subagent/README.md)：Subagent provider seam 与 continuation。
-8. [`packages/subagent/subagent-spawn-in-process/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/subagent/subagent-spawn-in-process/README.md)：Fresh child contract。
-9. [`packages/subagent/subagent-fork-in-process/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/subagent/subagent-fork-in-process/README.md)：Completed-turn prefix fork。
-10. [`packages/subagent/tool-subagent-control/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/subagent/tool-subagent-control/README.md)：send / interrupt / list control surface。
-11. [`packages/bundle/base/cordis.patch.yml`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/bundle/base/cordis.patch.yml)：默认产品 wiring。
-12. [`package.json`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/package.json)：测试、E2E、benchmark、catalog / architecture gates。
-13. [`docs/architecture.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/architecture.md)：Plugin architecture 与事件域。
-
-回到：[DeepSeek Harness 系统总览](README.md)
+下一步进入[源码阅读与验证实验](labs/README.md)，用真实快照和运行记录检验这些边界。
