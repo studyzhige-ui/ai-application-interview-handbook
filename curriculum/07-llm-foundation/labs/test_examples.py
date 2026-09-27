@@ -12,6 +12,8 @@ from pathlib import Path
 import re
 import unittest
 
+from lesson_data import numeric_table, table_fingerprint
+
 MODULE = Path(__file__).resolve().parents[1]
 BLOCK = re.compile(r"<!-- example: ([\w-]+) -->\s*```python\n(.*?)\n```", re.S)
 EXPECTED = {"softmax", "kv-bytes", "lora-count"}
@@ -176,6 +178,163 @@ class Examples(unittest.TestCase):
         self.assertEqual((200 + 30, 100 + 40), (230, 140))
         self.assertEqual((200 + 30/.5, 100 + 40/.5), (260, 180))
         self.assertEqual((100-80)/80, .25)
+
+
+class RefinedMechanisms(unittest.TestCase):
+    """Read prose tables and test small calculations, not a trained model."""
+
+    @staticmethod
+    def vector(text: str) -> list[float]:
+        value = ast.literal_eval(text.strip('`').replace('−', '-'))
+        if not isinstance(value, list) or not all(type(x) in (int, float) for x in value):
+            raise ValueError(f"not a numeric vector: {text!r}")
+        return value
+
+    def test_ffn_table_matches_each_step(self) -> None:
+        rows = numeric_table('ffn')[1:]
+        # The input and rules are also checked so a prose edit cannot silently change the experiment.
+        text = next((MODULE / 'docs').glob('03-*.md')).read_text(encoding='utf-8')
+        self.assertIn('h=[1,2]', text)
+        self.assertEqual(rows[0][1], '[h₁, −h₁−h₂, 2h₂]')
+        self.assertEqual(rows[2][1], '对中间结果 u 计算 [u₁+u₃, u₂−u₃]')
+        h = [1, 2]
+        first = [h[0], -h[0]-h[1], 2*h[1]]
+        activated = [max(0, z) for z in first]
+        last = [activated[0]+activated[2], activated[1]-activated[2]]
+        self.assertEqual([self.vector(r[2]) for r in rows], [first, activated, last])
+
+    def test_ffn_transfer_and_without_activation(self) -> None:
+        for h, wanted, linear in [([-1,2], [4,-4], [3,-5]),
+                                   ([2,-1], [2,0], [0,1])]:
+            a = [h[0], -h[0]-h[1], 2*h[1]]
+            u = [max(0, z) for z in a]
+            self.assertEqual([u[0]+u[2], u[1]-u[2]], wanted)
+            self.assertEqual([a[0]+a[2], a[1]-a[2]], linear)
+
+    def test_normalization_table(self) -> None:
+        rows = numeric_table('normalization')[1:]
+        x = [2.,4.]
+        mean = sum(x)/len(x)
+        variance = sum((v-mean)**2 for v in x)/len(x)
+        rms = math.sqrt(sum(v*v for v in x)/len(x))
+        expected = [[(v-mean)/math.sqrt(variance) for v in x],
+                    [round(v/rms,4) for v in x]]
+        self.assertEqual([self.vector(r[3].removeprefix('约 ')) for r in rows], expected)
+
+    def test_normalization_shift_not_softmax(self) -> None:
+        def ln(x):
+            mu = sum(x)/len(x)
+            sigma = math.sqrt(sum((a-mu)**2 for a in x)/len(x))
+            return [(a-mu)/sigma for a in x]
+        self.assertEqual(ln([2,4]), ln([102,104]))
+        self.assertEqual(sum(ln([2,4])), 0)
+        self.assertNotAlmostEqual(2/math.sqrt(10), 102/math.sqrt((102**2+104**2)/2))
+
+    def test_rope_table_and_relative_shift(self) -> None:
+        rows = numeric_table('rope-quarter-turn')[1:]
+        vectors = []
+        for row in rows:
+            position = int(row[0])
+            angle = math.radians(float(row[1].rstrip('°')))
+            self.assertAlmostEqual(angle, position*math.pi/2)
+            wanted = self.vector(row[2])
+            for a,b in zip([math.cos(angle),math.sin(angle)], wanted):
+                self.assertAlmostEqual(a,b)
+            vectors.append(wanted)
+        dot = lambda a,b: sum(x*y for x,y in zip(a,b))
+        self.assertEqual(dot(vectors[2],vectors[1]), 0)
+        self.assertEqual(dot(vectors[3],vectors[2]), 0)
+        self.assertEqual(dot(vectors[2],vectors[0]), -1)
+        self.assertEqual(dot(vectors[1],vectors[0]), 0)
+
+    def test_rope_general_relative_identity(self) -> None:
+        def rotate(x,theta):
+            c,s = math.cos(theta),math.sin(theta)
+            return [c*x[0]-s*x[1],s*x[0]+c*x[1]]
+        dot = lambda a,b: sum(x*y for x,y in zip(a,b))
+        q,k = [2.,-1.],[1.,3.]
+        theta,m,n = .37,5,2
+        self.assertAlmostEqual(dot(rotate(q,m*theta),rotate(k,n*theta)),
+                               dot(q,rotate(k,(n-m)*theta)))
+
+    def test_sft_loss_table(self) -> None:
+        for row in numeric_table('sft-loss')[1:]:
+            self.assertAlmostEqual(-math.log(float(row[0])), float(row[1]), places=4)
+
+    def test_lora_increment_table_and_rank_direction(self) -> None:
+        rows = numeric_table('lora-increment')[1:]
+        x = self.vector(rows[0][2])
+        s = sum(a*b for a,b in zip([1,1,0,0], x))
+        delta = [s*b for b in [1,2,3,4]]
+        self.assertEqual(float(rows[1][2]), s)
+        self.assertEqual(self.vector(rows[2][2]), delta)
+        self.assertEqual(self.vector(rows[3][2]), [a+b for a,b in zip(x,delta)])
+        # A requested delta [1,0,0,0] cannot be a scalar multiple of this fixed B.
+        self.assertNotEqual([1,2,3,4], [1,0,0,0])
+
+    def test_lora_transfer_preserves_base_branch(self) -> None:
+        def run(x):
+            s=x[0]+x[1]
+            delta=[s*b for b in [1,2,3,4]]
+            return delta,[a+b for a,b in zip(x,delta)]
+        self.assertEqual(run([1,-1,0,0]), ([0,0,0,0],[1,-1,0,0]))
+        a,b=run([2,1,0,0]),run([3,0,0,0])
+        self.assertEqual(a[0], b[0])
+        self.assertEqual(b[1], [6,6,9,12])
+        self.assertNotEqual(a[1],b[1])
+
+    def test_lora_zero_initialization_signal(self) -> None:
+        # Sensitivity of b*a*x to a or b; not a simulation of an optimizer.
+        x,a,b=1.,1.,0.
+        derivative_a=b*x
+        derivative_b=a*x
+        self.assertEqual(derivative_a,0.)
+        self.assertEqual(derivative_b,1.)
+        self.assertEqual((0.*x,0.*x), (0.,0.))
+
+    def test_dpo_table_and_loss(self) -> None:
+        rows=numeric_table('dpo-pair')[1:]
+        gains=[]
+        for row in rows:
+            gain=float(row[2])-float(row[1])
+            self.assertEqual(float(row[3]),gain)
+            gains.append(gain)
+        s=gains[0]-gains[1]  # The prose fixes beta=1 for this experiment.
+        self.assertEqual(s,2.)
+        self.assertAlmostEqual(1/(1+math.exp(-s)), .8808, places=4)
+        self.assertAlmostEqual(math.log1p(math.exp(-s)), .1269, places=4)
+        self.assertAlmostEqual(math.log(2), .6931, places=4)
+
+    def test_dpo_relative_improvement_is_not_absolute_probability(self) -> None:
+        # Chapter self-test and review use new conditions, not the worked pair verbatim.
+        for ref,now,score in [([-4,-3],[-5,-6],2), ([-2,-2],[-3,-4],1)]:
+            s=(now[0]-ref[0])-(now[1]-ref[1])
+            self.assertEqual(s,score)
+            self.assertLess(math.exp(now[0]), math.exp(ref[0]))
+            self.assertLess(math.log1p(math.exp(-s)), math.log(2))
+        self.assertAlmostEqual(math.log1p(math.exp(-1)), .3133, places=4)
+
+    def test_quarterly_figure_source_fingerprint(self) -> None:
+        table=numeric_table('quarterly-evidence')
+        records={r[0]:r[1:] for r in table[1:]}
+        first,second=map(float,records['销售额'][:2])
+        self.assertEqual((second-first)/first,.2)
+        self.assertEqual(records['访问量'],['—','150','万次'])
+        svg=(MODULE/'assets'/'quarterly-evidence.svg').read_text(encoding='utf-8')
+        self.assertIn('source-sha256='+table_fingerprint(table), svg)
+
+    def test_cache_self_test_has_no_later_lora_prerequisite(self) -> None:
+        text=next((MODULE/'docs').glob('06-*.md')).read_text(encoding='utf-8')
+        task=text.split('## 11. 自测',1)[1]
+        self.assertNotIn('LoRA',task)
+        self.assertNotIn('适配器',task)
+
+    def test_quick_reference_chapter_cells_are_links(self) -> None:
+        text=(MODULE/'interview'/'面试前速查表.md').read_text(encoding='utf-8')
+        rows=[line for line in text.splitlines() if line.startswith('|')][2:]
+        for row in rows:
+            target=row.strip('|').split('|')[-1].strip()
+            self.assertRegex(target,r'\[第 \d+ 章\]\(\.\./docs/[^)]+\.md\)')
 
 
 if __name__ == '__main__':
