@@ -1,681 +1,218 @@
-# 04. Claude Code Engineering & Evaluation｜恢复、多 Agent、故障、规模化与评测
+# 04. 恢复、协作与验证｜怎样证明长任务做对了
 
-[← Tool](03-tool-lifecycle.md) · [Claude Code 总览](README.md) · [成熟产品源码学习](../README.md)
+[← 工具](03-tool-lifecycle.md) · [模块入口](README.md) · [Agent 课程](../../../curriculum/09-agent/README.md)
 
-> **源码镜像基线：** `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`
+> 源码快照：`studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。本章的故障和测量数据均是教学条件，不是产品实测成绩。
 
-前面三篇已经回答了：一次模型请求怎样获得 Context，信息怎样跨 Session 成为 Memory，模型决定动作以后 Tool 怎样真实执行。
+## 1. 把任务停在最容易误判的位置
 
-这一篇看的是它们长期运行以后发生什么。
+分页源码已经改过，测试还在运行，用户关闭了界面。再次打开会话后，模型说“我继续刚才的任务”。这时什么状态必须恢复？
 
-Claude Code 还要处理一条 Session 退出以后怎样恢复、Compaction / Snip 以后 transcript 怎样保持一致、Subagent 怎样有自己的 Context / Tool Pool / 文件隔离、Agent Teams 怎样传消息、API 429 / 529 和认证 / 网络连接怎样恢复、Streaming Tool 已经开始执行时 API fallback（降级）怎么避免副作用重复，以及最后怎样证明这些机制真的让任务更可靠。
+仅有聊天文本不够。程序要知道应该加载哪段有效历史、当前工作目录是什么、此前操作是否已经完成、哪些结果还可读取，以及当前权限与可用工具是否改变。若把“没有收到结果”理解为“没有执行”，恢复可能造成重复操作；若把“历史写着通过”理解为“当前版本通过”，又可能跳过必要验证。
 
----
+前面三篇分别建立了模型视图、记忆和工具调用的边界。本章把它们合在一起，回答：**中断后从哪里继续，多人或多智能体怎样合作，最后用什么证据判断成功。**
 
-## 1. Claude Code 的持久化核心不是“保存 messages 数组”
+## 2. 持久化的目标是重建有效状态，不是保存界面截图
 
-最值得读的文件之一是：
+镜像的会话记录以消息标识和父消息关系组织历史。`uuid` 区分消息，`parentUuid` 表示接续关系。恢复要选择正确链，而不是把文件里所有行按出现顺序盲目拼起来。
 
-- `utils/sessionStorage.ts`
+[`utils/sessionStorage.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts) 还明确区分会话消息与临时进度：用户、助手、附件和系统消息可以参与持久会话；`progress` 主要是临时界面状态，不应作为普通会话节点插入父链。读取旧记录时，仍有跨过历史进度节点的兼容处理。**不再按旧方式写入，不等于旧文件立即无法读取。**
 
-Claude Code 会给 transcript（会话记录）中的消息分配 UUID，并通过 `parentUuid` 建立父链。
+压缩、历史裁剪和工具结果替换也会影响恢复。若压缩后的新消息接回旧链，重启可能重新引入已裁剪历史；若只在内存保存结果替换，恢复后可能又得到巨大旧输出。这些是数据结构与持久记录之间的一致性问题，不只是摘要提示词问题。
 
-因此它更像：
+## 3. 为什么恢复时还要处理目录与缓存
 
-~~~text
-message A
-   ↓ parent
-message B
-   ↓ parent
-message C
-~~~
+同一个相对路径 `src/pagination.py`，在两个工作目录里可能指向两份不同代码。程序从原仓库恢复到工作树目录，却保留旧的目录相关缓存，就可能读取或修改错误对象。
 
-而不是：
+[`utils/sessionRestore.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionRestore.ts) 不只恢复消息：还处理文件历史、任务信息、代理选择、工作树和相关会话元数据；受功能控制的折叠状态也需要在第一次查询前恢复。镜像区分交互式任务状态与某些非交互入口从旧 TodoWrite 消息恢复的路径，不能把所有入口说成同一种持久化策略。
 
-~~~json
-["A", "B", "C"]
-~~~
+可以把恢复分为三步：
 
-为什么要这么复杂？
+1. **恢复历史解释。** 选择有效会话链，恢复压缩或替换相关状态，明确哪些记录属于这次会话。
+2. **恢复执行环境。** 确认工作目录、工作树、当前代理及可用工具；目录相关的指令或缓存不能沿用错误作用域。
+3. **核对真实世界。** 读取文件差异、当前测试进程或结果、必要的远端状态，再决定下一步。
 
-因为 Claude Code 支持 Compaction、History Snip、Fork Session、Subagent sidechain（子智能体侧链）、消息去重、部分历史恢复和 content replacement（内容替换）。
+前两步恢复程序的工作条件；第三步检查历史记录与现实是否一致。即使前两步完全成功，第三步也不能省略。
 
-这些操作经常不是简单“在数组末尾 append”。
+> ⚠️ 文件历史快照不等于整个系统的通用检查点。它不能自动恢复远端服务、后台进程、凭据或所有第三方副作用。
 
-父链让 Runtime（运行时）能表达：
+## 4. 重试要分清是哪一层失败
 
-> **哪条消息在语义上接在哪条历史之后。**
+同样叫“请求失败”，发生位置不同，处理就不同。
 
----
+| 失败位置 | 已经知道什么 | 继续之前需要确认什么 |
+|---|---|---|
+| 模型 API 请求未取得有效响应 | 这次模型通信失败 | 是否允许重试、等待或切换，预算还剩多少 |
+| 模型流已开始，部分工具可能启动 | 消息可能只收到一部分 | 哪些工具已执行，旧结果怎样隔离 |
+| MCP 认证或会话失效 | 连接条件可能失效 | 是刷新认证、重建会话，还是地址或业务错误 |
+| 工具执行返回业务错误 | 调用有了一个明确结果 | 是否有部分修改，换参数还是停止 |
+| 工具可能成功，结果或持久化丢失 | 最终业务状态未知 | 读取权威状态，不能盲目重复副作用 |
 
-## 2. `recordTranscript` 为什么专门处理 Compaction 后的旧 UUID
+模型 API 层的分类和等待逻辑见 [`services/api/withRetry.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/withRetry.ts)；流结果处理见 [`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts) 与[工具篇](03-tool-lifecycle.md)的流式执行器分析。
 
-完整 Compaction 后，新的历史里可能包含：
+Foreground（前台用户等待）与 background（后台工作）的等待预算可以不同；容量错误也不同于不合法参数。应该根据实际查询来源和条件分支解释策略，不能把某个重试次数写成所有请求的统一保证。增加重试次数也不自动提升任务可靠性：当错误是错误参数、缺少批准或未知写入结果时，重试可能重复失败或放大后果。
 
-~~~text
-compact boundary
-summary
-messagesToKeep
-new messages
-~~~
+### 工具已成功，记录却没写下来
 
-其中 `messagesToKeep` 可能沿用了压缩前已经写过磁盘的 UUID。
+教学条件：远端工具创建了缺陷跟踪记录，响应返回前网络断开。会话只记录了调用，没有成功结果。再次发送同一“创建”请求，可能产生第二条记录。
 
-如果 transcript writer 简单说：
+Tool Call ID 主要用于配对模型调用与结果；只有远端服务把某个键持久地用于同一业务请求去重，才可能支持相应的幂等语义。不能把模型生成的新调用标识、会话消息去重或旧流结果丢弃，直接称为跨重启的业务幂等。
 
-> “这个 UUID 已经存在，那就跳过；同时把它当作当前最后 parent。”
+可靠做法取决于远端能力：能按业务唯一键查询，就先确认是否已有结果；支持幂等键，就在符合服务语义的范围内复用；无法确认且操作不可安全重复，就保留未知状态并请求必要判断。这里是工程推论，不声称镜像对任意 MCP 服务都提供了通用事务或恰好一次执行。
 
-会发生一个很隐蔽的错误：
+## 5. 子智能体解决分工，不自动提供全部隔离
 
-~~~text
-新 summary
-        ↓
-跳过的旧 message UUID 被当成 parent
-        ↓
-后续新消息又接回压缩前历史
-~~~
+分页任务可以分成“定位缺陷”“检查测试覆盖”“审查接口兼容性”。子智能体有自己的任务输入和上下文，能避免主任务塞满每一个探索细节；但分工也会增加模型调用、结果汇总和协调成本。
 
-结果就是 compact boundary 被绕过。
+镜像的 AgentTool 组织子任务，`runAgent.ts` 接入查询执行逻辑。复用 `query` 不代表共享同一份完整消息数组，也不表示每个子智能体都是独立操作系统进程。工具集合、模型、权限与记忆配置需要看各自传递路径。源码入口见 [`tools/AgentTool/AgentTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx) 和 [`tools/AgentTool/runAgent.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/runAgent.ts)。
 
-`recordTranscript` 的源码注释专门说明：已经记录过的消息只有在它们构成“新 slice 的前缀”时，才允许更新 `startingParentUuid`；如果旧 message 出现在新 compact boundary / summary 之后，就不能拿它重新当链尾。
+至少要分别问四件事：
 
-这个细节说明：
+| 边界 | 需要确认的问题 |
+|---|---|
+| 消息上下文 | 子任务能看到哪些需求、代码与中间结果？ |
+| 执行权限 | 可用工具和权限从哪里来，是否允许写入？ |
+| 工作文件 | 读取同一工作目录，还是独立工作树？ |
+| 生命周期 | 父任务取消或退出后，谁停止、收集与清理子任务？ |
 
-> **Compaction 的正确性不仅是模型收到什么，还包括持久化链必须承认新的历史根。**
+给两个子智能体不同的系统提示，只处理了其中一部分，不能声称已经完成文件和安全隔离。
 
----
+### Worktree 隔离工作副本，不等于沙箱
 
-## 3. Snip 删除中间历史时，为什么还要重连 parent chain
+Git Worktree，即工作树，可以为不同任务提供独立检出的工作目录，减少彼此直接覆盖文件的机会。但它不自动限制网络、不构成多租户权限边界，也不解决最后合并时的语义冲突。
 
-History Snip 和完整 Compaction 不同。
+例如子任务 A 修改分页接口，子任务 B 按旧接口补测试。两个补丁没有文本冲突，也可能不再相互兼容。集成者仍要比较原始基线、当前文件和候选变更，在共同最终状态上重新验证，而不能把两个子任务各自通过的结果直接相加。
 
-Compaction 通常截断一个前缀；Snip 可以删除中间区间。
+## 6. 后台任务与团队消息还需要完成语义
 
-假设原来：
+工具可以创建后台子任务，并返回稳定的任务标识。这个标识帮助后续查询、通知、取消和恢复，不表示任务已经完成。主任务需要在合适时机消费结果，失败时保留可诊断状态；不能把“已安排”当成“已交付”。
 
-~~~text
-A → B → C → D → E
-~~~
+镜像还包含受能力条件控制的团队和消息路由。`SendMessageTool` 负责向相应执行对象传递消息；路由与接收者状态会影响能否继续工作。发送成功、入队、接收和执行完成是不同阶段。入口见 [`tools/SendMessageTool/SendMessageTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SendMessageTool/SendMessageTool.ts) 与 `AgentTool.tsx`。
 
-Snip 删除：
+在分页任务里，审查子任务回复“准备检查接口”，不能让主任务据此宣布接口兼容。需要的是实际检查了哪些差异、发现什么问题，以及在当前最终代码上是否成立。并行任务还有共同的模型预算和共享资源成本，不能只计算最短的一条任务耗时。
 
-~~~text
-C → D
-~~~
+> ⚠️ 清理不能破坏仍在使用的成果。移除工作树、终止进程或删除临时文件之前，要确认任务归属、执行状态和结果保存位置；不能为了消除残留而清理另一会话的工作区。
 
-如果只把 C、D 从 Map 里删掉，E 的 `parentUuid` 仍然指向 D。
+## 7. 可观察不等于已经做对
 
-Resume 时沿 parent 链向前走：
+Trace（执行轨迹）把模型请求、工具调用、状态变化和结果关联起来，帮助解释发生了什么。Evaluation（评测）把结果与任务标准比较，判断做得是否正确。两者相互支持，但不能替代。
 
-~~~text
-E → D
-~~~
+镜像的执行层记录模型、工具、钩子耗时或失败事件。例如 `toolExecution.ts` 对执行前钩子阶段记录耗时；API 和缓存诊断层也有相应事件。存在这些埋点，证明具备部分观察入口，不证明有一套已经完成的端到端产品评测集，更不证明任务正确率已达到某个数值。源码见 [`services/tools/toolExecution.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts) 和 [`services/api/promptCacheBreakDetection.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/promptCacheBreakDetection.ts)。
 
-却找不到 D，于是更早的 A、B 可能变成孤立历史；或者如果磁盘旧记录仍然存在，又可能把被裁内容重新恢复。
+对分页任务，观察与判断可以这样配对：
 
-源码因此会先记录被删除节点自己的 parent，再删除目标消息；随后对 surviving messages（幸存消息）的 dangling parent（悬空父指针）向后追，把 E 重新接到 B。
+| 观察证据 | 支持什么判断 | 不能单独证明什么 |
+|---|---|---|
+| 工具调用及结果标识 | 哪次操作对应哪个结果 | 所有副作用都恰好执行一次 |
+| 修改后的 diff | 改了哪些文件与行 | 修改符合所有业务要求 |
+| 测试命令、退出码与输出 | 哪次测试实际执行了什么 | 没覆盖的条件也一定正确 |
+| 压缩前后输入 | 哪些约束进入后续请求 | 模型必然遵守所有约束 |
+| 子任务与消息记录 | 工作如何分配和汇总 | 每个子任务都独立完成了验收 |
 
-源码注释还记录了真实后果：如果不做这一步，Resume 会重建出完整未 Snip 的历史，甚至出现显示约 397K、实际恢复 1.65M 级别 Context 的情况。
+## 8. 把分页任务做成一个可检查的评测案例
 
-这是非常典型的 Production lesson：
+评测不能只有“让 Agent 修一个 bug”。任务输入、初始状态、允许范围和判定标准必须一致，才有比较意义。
 
-> **任何“只改内存 Context、不改恢复语义”的压缩，都只是暂时优化。**
+本案例采用教学条件：项目已有分页函数及测试，页码从 1 开始，输入列表 `[10, 20, 30]`，每页两个元素。公开参数和返回类型不变，不删除原测试。第一次验证使用初始副本；重复实验必须从同一初始版本重新开始，不能在上一次已修复的文件上再次计算“修复成功”。
 
----
+| 检查项 | 输入或操作 | 可检查结果 |
+|---|---|---|
+| 正常分页 | 依次请求第 1、2、3 页 | `[10, 20]`、`[30]`、`[]` |
+| 接口保持 | 比较修改前后函数签名与使用位置 | 没有用更改公开接口绕开缺陷 |
+| 测试完整性 | 比较原测试与最终测试 | 既有有效断言未被删除或削弱 |
+| 真实执行 | 记录使用的命令、运行目录与输出 | 区分实际执行、未执行、环境失败 |
+| 中断恢复 | 在编辑之后、验收之前中断，再恢复 | 先核对当前文件与结果，不盲目重复副作用 |
 
-## 4. Resume 恢复的也远不只是聊天文字
+前四项是基础案例，第五项增加恢复条件。基础测试通过，不能自动计为恢复测试通过。镜像无法在本地构建时，可以完成源码状态推演，但必须把它与运行中的产品实验分开。
 
-`utils/sessionRestore.ts` 显示了 Resume 真正要恢复的状态。
+### 节点通过与整项任务通过的区别
 
-除了 messages，还包括：
+工具把代码写入正确文件，说明写入节点成功；模型给出一段合理解释，说明生成了文本；只有最终代码满足分页规则、接口约束和测试要求，才算这项修复成功。
 
-- File History Snapshot（文件历史快照）；
-- Attribution（归因）状态；
-- Content Replacement（内容替换）；
-- Context Collapse commit / snapshot；
-- Todo / Task 状态；
-- Agent definition；
-- Session mode；
-- Worktree；
-- cost state；
-- session metadata。
+反过来，最终测试偶然通过，也不能忽略过程中发生了越权读写。评测应该同时检查结果正确性与不可违反的过程约束。多个 Skill 串联时，每阶段需要可检查的交付结果；不能让前一阶段“自称完成”成为后一阶段不可质疑的事实。
 
-例如恢复 Worktree 时，Runtime 会重新 `chdir` 到对应目录；如果目录已经不存在，则清除 stale worktree state（陈旧工作树状态）。
+## 9. 怎样量化速度，而不把并发时间重复相加
 
-而且 CWD 改变以后还要清理 Memory file caches、System Prompt sections cache 和 plans directory cache。
+下面是纯教学计算：第一次模型请求 900 毫秒，相关记忆检索 400 毫秒，后续工具执行 300 毫秒，第二次模型请求 700 毫秒。假定除此之外没有排队、网络或处理开销，且后两个步骤顺序执行。
 
-为什么？
+若所有阶段串行，耗时为 `900 + 400 + 300 + 700 = 2300` 毫秒。若记忆检索与第一次请求同时开始、两者结束后即可进入后续操作，关键路径变成 `max(900, 400) + 300 + 700 = 1900` 毫秒。减少的是本设定下 400 毫秒的等待，不是少做了检索工作，也不是降低了所有模型费用。
 
-因为这些缓存很多都依赖当前目录。
+实际测量应分别记录用户等待的墙钟时间、模型和工具消耗、后台工作、失败重试与验证耗时。墙钟时间指从开始到结束的真实经过时间；并发阶段的各自耗时不能直接加成总耗时。
 
-这说明成熟 Resume 的目标是：
+提速还必须与质量一起看。如果删除验证步骤让结果更快，任务错误率却升高，就不能报告为无条件优化。少量案例适合检查机制，不足以宣称代表性正确率或稳定的高分位延迟。完整评测集的构建属于 [Agent 评测章节](../../../curriculum/09-agent/docs/21-EvaluationBenchmarkAndImprovement.md)，本模块只建立读源码时不可省略的判断。
 
-> **恢复“下一步继续执行所需要的环境语义”，不是把 UI 聊天记录重新画出来。**
+## 10. 如何逐层验证，而不是给整个系统盖一个 PASS
 
----
+| 验证层 | 可以支持的结论 | 不覆盖的内容 |
+|---|---|---|
+| 源码阅读与状态推演 | 在可见分支和假设下，状态如何变化 | 构建可用、运行时开关、真实服务行为 |
+| 语法或局部函数检查 | 所检查片段语法及断言成立 | 整个产品运行、完整生命周期 |
+| 模拟故障实验 | 模拟模型和故障条件下的逻辑 | 真实模型、真实网络与服务端语义 |
+| 真实产品单任务实验 | 指定版本、配置和输入下的实际行为 | 多连接并发与其他部署环境 |
+| 跨系统与并发实验 | 所测组合下的协调和恢复 | 任意规模与所有故障条件 |
+| 生产验证 | 真实流量和观测窗口内的结果 | 未出现或未覆盖的未来条件 |
 
-## 5. Subagent 本质上仍然复用同一套 `query()` Runtime
+源码还提供有限的依赖注入入口：[query/deps.ts](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query/deps.ts) 将模型调用、微压缩、自动压缩和 UUID 生成作为可替换依赖。这有利于测试对应路径，但不代表工具执行、停止钩子、持久化和全部 I/O 都已经被替身隔离。设计模拟测试时，需要逐项说明真正替换了哪些依赖。
 
-Claude Code 的 Subagent 主要围绕：
+这张表不是要求每次学习都搭生产环境，而是要求报告与证据相称。修改测试规则也必须来自需求或结构真的变化，不能为了让报告变绿而删除失败断言。
 
-- `tools/AgentTool/AgentTool.tsx`
-- `tools/AgentTool/runAgent.ts`
+进行真实产品练习时，先在独立、可丢弃的项目副本里工作，记录 `claude --version`、入口、模型、权限、功能配置和初始提交；只授权本案例需要的读写与测试范围。不得使用他人正在修改的工作树制造故障。未安装产品或镜像缺少构建依赖时，保留源码阅读结果，不把它改名为真实运行通过。
 
-AgentTool 先选择 Agent Definition，然后构建该 Agent 的 System Prompt、model、permission mode、Tool Pool 和初始 messages。
+## 11. 第二遍怎样重建整条主线
 
-最终 `runAgent` 仍然进入同一个 `query()` 主循环。
+从一项修复任务出发，依次问：请求使用了哪些证据；压缩和召回有没有改变可见信息；工具针对哪个最终参数获得批准；文件与外部状态发生了什么；中断后怎样确认；最后用什么规则验收。
 
-这意味着 Subagent 并不是另一套完全独立的 Agent Runtime。
+这条主线连接了几个可迁移的判断：上下文需要按影响对象分层处理；缓存约束不能靠任意改写历史规避；记忆按用途和时效管理；能力发现与执行授权分开；恢复必须跟上历史变换；多智能体需要明确文件、权限与任务边界；最终质量需要真实证据，而不是组件数量。
 
-它复用 Context / Compact、Tool execution、Permission、API 和 Transcript，但拥有不同的执行配置和消息侧链。
+遇到通用数据库一致性、分布式消息投递或部署容量问题，应转到对应的后端与系统设计模块继续。Claude Code 的文件型会话与局部恢复逻辑，可以帮助理解问题，但不能冒充任意云服务的完整解决方案。
 
-这种复用很重要：如果主 Agent 和 Subagent 各自实现一套 Tool / Compact / Permission，很快就会产生两套行为不一致的系统。
+## 本章小结
 
----
+可靠执行需要同时管理历史、当前环境和真实副作用。会话恢复、API 重试、子任务通信各恢复一部分条件，不能互相替代。验证要把结果正确性、过程约束、恢复行为和成本放在同一个任务条件下观察，并明确哪些检查已经执行、哪些仍然只是推演。
 
-## 6. Subagent 的 Tool Pool 为什么不直接复制父 Agent
+## 🎯 面试怎么回答
 
-AgentTool 当前源码明确：
+**问：一个 Coding Agent 怎样从“能生成代码”走到“能可靠交付”？**
 
-> worker tools are assembled independently of the parent's.
+> 🎯 先把任务、允许改动范围和验收规则明确下来；执行时保存可恢复的有效历史，区分模型输入、工具结果和实际副作用。中断后不仅加载消息，还要恢复环境并核对真实文件或远端状态。多智能体需要明确上下文、权限、工作树和结果归属。最后在共同的最终版本上检查 diff、有效测试和过程约束，分别报告未运行、失败与通过，不能把生成成功、任务入队或日志存在当成交付成功。
 
-Subagent 会根据自己的 Permission Mode 和当前 MCP Tool 重新 `assembleToolPool`。
+## ⚠️ 高频易错点
 
-因此：
+- 恢复消息不等于恢复所有外部状态；没有响应不等于没有执行。
+- 独立工作树不是独立安全沙箱，文本无冲突也不保证语义兼容。
+- 子任务入队、消息送达与任务完成是不同状态。
+- 埋点、局部测试和模拟通过不能替代真实服务或生产验证。
 
-~~~text
-父 Agent 能用哪些 Tool
-≠
-子 Agent 必须完全一样
-~~~
+## 本章自测
 
-Agent Definition 可以限制 Tool；Permission rule 也可以单独 deny 某个 `Agent(agentType)`。
+**任务一：不照搬正文的恢复条件。** 子任务在独立工作树里修改分页函数，主任务恢复后仍处于原工作目录；报告中只写“测试通过”，没有目录或提交信息。请提出三项必须补查的证据，并说明为什么立即合并不安全。
 
-为什么要这样？
+<details><summary>提示</summary>
 
-因为 Subagent 是职责边界。例如 Explore Agent（探索智能体）可能只需要搜索和读文件；一个部署 Agent 才需要更高副作用能力。
+同时检查被测对象、变更对象和集成对象是否是同一份最终状态。
 
-如果所有 Child Agent 都无条件继承 Root 的最大权限，Agent decomposition（任务拆分）会扩大攻击面。
+</details>
 
----
+<details><summary>参考答案与解释</summary>
 
-## 7. Worktree Isolation：Subagent 还可以有独立文件工作空间
+需要确认实际工作树及其基线、最终差异，以及测试运行目录和对应版本；还要在与主干整合后的共同状态上验证。报告可能测试了旧目录，子任务也可能基于过期接口。各自通过不能证明整合后兼容，不能仅凭无文本冲突立即合并。
 
-AgentTool 支持 `isolation: worktree` 一类执行路径。
+</details>
 
-创建 Subagent 时，Runtime 可以为它创建独立 Git Worktree（Git 工作树）。
+**任务二：速度数字。** 两个互相独立的读取分别耗时 500 和 800 毫秒，同时开始；随后编辑 200 毫秒，最后验证 600 毫秒，忽略其他开销。计算总墙钟时间，并说明删掉验证后得到的数字为什么不是同一质量标准下的直接比较。
 
-价值很直观：
+<details><summary>参考答案与解释</summary>
 
-~~~text
-Main Agent 修改 A
-Subagent 修改 B
-~~~
+总耗时是 `max(500, 800) + 200 + 600 = 1600` 毫秒，不是 2100 毫秒。删掉验证后为 1000 毫秒，但交付条件改变，失去验证证据；不能把它直接描述为保持同等质量的 600 毫秒优化。
 
-如果两者在同一个 working tree（工作目录）并发写，很容易覆盖文件、互相看到未完成状态，或者产生 Git index 冲突。
+</details>
 
-Worktree isolation 把文件系统状态也变成 Agent 边界的一部分。
+**任务三：证据分级。** 只完成了状态图推演、Markdown 检查和一个模拟工具测试，没有安装 Claude Code，也没有连接真实 MCP 服务。请写一段验收结论，明确能够确认和不能确认的内容。
 
-这说明 Multi-Agent（多智能体）真正需要隔离的不只是 Prompt：
+<details><summary>参考答案与解释</summary>
 
-> **Context、Tool Permission、执行进程、文件工作区都可能需要独立。**
+可以报告指定状态条件下的推演、文档检查与该模拟测试的实际结果；不能报告固定镜像可构建、真实 Claude Code 行为通过、真实 MCP 断线恢复通过或生产可靠性通过。还应列出目标快照、模拟边界和未执行项，而不是把几个局部通过汇总成“整个模块已全面验证”。
 
----
+</details>
 
-## 8. 同步 Subagent 为什么可以中途转后台
-
-AgentTool 支持同步和异步 Subagent。
-
-同步 Agent 运行时，父级原本会等待它完成。
-
-但如果执行时间较长，Claude Code 可以把 foreground task（前台任务）转换成 background task（后台任务），让主会话继续接受工作。
-
-源码为这个过程维护 stable agent id、Task Registry（任务注册表）、background signal、progress tracker、output file 和 summarization。
-
-这个设计解决的是：
-
-> **长 Subagent 不应该永久占住主线程用户交互。**
-
-也因此结果交付不能只靠函数 return；后台 Agent 完成后需要另一个 notification / task result 通道把结果送回。
-
----
-
-## 9. Agent Teams 和普通 Subagent 不是同一层
-
-AgentTool 中还能看到 feature-gated 的 Agent Teams / Swarm 路径。
-
-当 Team 模式启用时，可以 spawn teammate（创建队友），甚至使用 in-process 或 tmux 等不同后台。
-
-源码对 Team 有自己的约束，例如 Team roster（成员表）是扁平的、teammate 不能继续 spawn teammate、某些 in-process teammate 不能再启动 background agent、不同消息类型有明确路由。
-
-这些代码存在于镜像，但很多属于 feature-gated / 内部能力。
-
-因此文档能确认它们的 Runtime 语义，却不能说“所有 Claude Code 用户默认都处于 Team 架构”。
-
----
-
-## 10. SendMessage 为什么不只是“Agent A 给 Agent B 一句话”
-
-`tools/SendMessageTool/SendMessageTool.ts` 支持：
-
-- 对指定 teammate 发文本；
-- broadcast；
-- shutdown request / response；
-- plan approval response；
-- 向正在运行的 in-process agent queue message；
-- 目标 Agent 停止时尝试自动 Resume；
-- 部分 feature gate 下的 UDS / bridge 跨 Session 消息。
-
-尤其有两个成熟边界值得学习。
-
-### 消息可以只排队，不要求立刻中断目标 Agent
-
-运行中的 Agent 可以在下一次 Tool round（工具轮次）接收 pending message。
-
-这样不会在它正在执行一个关键 Tool 时强行插入新的模型输入。
-
-### 跨机器消息需要更高安全门槛
-
-feature-gated bridge 路径允许向 Remote Control session 发文本，但源码明确把它标成需要显式用户 consent（同意），不能由普通 bypass / classifier 静默放行，而且 structured control message（结构化控制消息）不能跨 Session。
-
-因为跨机器消息实际等价于：
-
-> **向另一条 Claude Session 注入用户 Prompt。**
-
-它的安全风险比同进程 teammate mailbox 高得多。
-
----
-
-## 11. API Retry 为什么按 query source 区分前台和后台
-
-模型 API 的恢复核心在：
-
-- `services/api/withRetry.ts`
-
-默认 retry 数是有限的，并且对 529 overload（过载）有单独处理。
-
-很有意思的是，Claude Code 不让所有后台请求都和用户主请求一样反复重试。
-
-源码维护一组 foreground query sources（前台查询来源），例如 REPL 主线程、SDK、Agent、Compaction 和一些安全 classifier。
-
-用户真的在等待这些结果，所以可以在预算内 retry。
-
-而一些后台标题、建议、辅助任务在 529 capacity cascade（容量雪崩）时会尽早放弃。
-
-源码注释解释了原因：
-
-> 后台任务反复 retry 会把一次平台容量问题放大成 3–10 倍 gateway amplification（网关放大），而用户甚至看不到这些后台结果。
-
-这是 Production Retry 很重要的原则：
-
-> **是否重试，不只由错误类型决定，还由这个请求对用户任务的重要性决定。**
-
----
-
-## 12. 认证、连接和模型 fallback 也是不同恢复路径
-
-`withRetry` 还会区分 API 401、OAuth token revoked、Bedrock / Vertex auth error、ECONNRESET / EPIPE stale connection（陈旧连接）、429 / 529、fast mode 不可用和 model fallback。
-
-例如 stale keep-alive connection 可能先关闭复用，再重新创建 Client。
-
-认证错误会刷新 credential，而不是指数退避十次同一个失效 token。
-
-Fast Mode 遇到短 `retry-after` 可以等一下保留同模型和 Prompt Cache；如果延迟很长，则进入 cooldown（冷却），切回标准速度，避免反复 cache thrashing（缓存抖动）。
-
-所以成熟 Retry 必须回答：
-
-~~~text
-失败的是认证？
-连接？
-容量？
-模型能力？
-还是用户主动取消？
-~~~
-
-不同层不能共享一个万能 `retry()`。
-
----
-
-## 13. Streaming fallback 为什么最怕 Tool 双执行
-
-Context / Tool 篇已经提到 Streaming Tool Executor。
-
-模型还在 streaming（流式输出）时，一些 Tool 可能已经开始执行。
-
-如果随后流失败，API 层决定：
-
-~~~text
-streaming request
-→ fallback to non-streaming
-~~~
-
-新请求可能重新产生相同 Tool Call。
-
-如果 Runtime 没有识别旧流中已经启动的动作，就可能：
-
-~~~text
-第一次：删除记录
-fallback
-第二次：再次删除记录
-~~~
-
-这类副作用不是多花 Token，而是 correctness bug（正确性错误）。
-
-因此 Claude Code 源码在 query fallback 路径会 tombstone partial assistant message，并丢弃对应 Streaming Tool Executor 的旧结果；API 层也有针对“开启 streaming tool execution 时避免危险 fallback”的逻辑。
-
-这给 Agent Runtime 一个非常重要的面试答案：
-
-> **模型请求是否可以 Retry，要看它是否已经触发不可重复的外部副作用。**
-
----
-
-## 14. Prompt Cache Break Detection 为什么是 Production Agent 很少见但很重要的一层
-
-Claude Code 不只记录：
-
-~~~text
-cache_read_input_tokens = N
-~~~
-
-它会建立上一请求的可见 Prompt 状态快照。
-
-下一次 cache read 大幅下降时，Runtime 能关联 System Prompt 是否变了、Tool Schema 是否变了、model 是否变了、cache_control / beta / effort 是否变了。
-
-如果所有客户端可见状态都没变，而且时间间隔又没超过 TTL，那么源码会把原因标得更接近：
-
-> server-side routing / eviction（服务端路由或缓存淘汰）。
-
-这避免工程师看到 cache miss 就盲目重构本地 Prompt。
-
-评测 Context Cache 时也应该照这个思路：
-
-> **先证明是客户端前缀变化，再优化客户端。**
-
----
-
-## 15. 大 Context 怎么扩展：Claude Code 的答案不是“只用 1M 模型”
-
-当前源码已经形成多层 Context Pressure Relief（上下文压力释放）：
-
-~~~text
-Tool Result Budget
-→ Snip
-→ Microcompact
-→ Cached Microcompact
-→ Context Collapse
-→ Session Memory
-→ Auto Compact
-~~~
-
-这些层解决的问题不同。
-
-即使 Context Window 变成 1M，仍然有输入成本、prefill latency、Prompt Cache、旧 Observation 干扰、Resume 体积和 Tool Result 噪声。
-
-所以大窗口主要会移动阈值，而不会让这些机制全部失去意义。
-
----
-
-## 16. 几万个 Tool 怎么扩展：关键是“定义 Token”，不是数量
-
-Claude Code 已经能按 Deferred Tool definition tokens / Context Window 决定 Tool Search。
-
-当 Tool 数量进一步变大，当前架构自然可以继续扩展：
-
-~~~text
-Full Tool Pool
-→ Permission / Mode 预过滤
-→ deferred catalog
-→ Tool Search
-→ tool_reference top-K
-→ 后续加载完整 schema
-~~~
-
-未来无论 search 内部升级成更强的 semantic retrieval（语义检索）还是分层 namespace，核心边界仍然成立：
-
-> **模型不要一开始就看到 Host 拥有的全部能力。**
-
-评测也不应该只测 Tool Search latency。
-
-至少要看 relevant tool recall@K、wrong-tool rate、schema tokens actually loaded、发现后真正执行成功率，以及 Tool Catalog 变化是否破坏 Prompt Cache。
-
----
-
-## 17. 几万个 Skill 怎么扩展：完整正文绝不能都进 Prompt
-
-Claude Code 已经把 Skill 分成：
-
-~~~text
-frontmatter metadata
-        ↓
-Skill discovery
-        ↓
-选中 Skill
-        ↓
-加载完整 SKILL.md
-        ↓
-必要时 fork Subagent
-~~~
-
-源码对 Skill frontmatter 单独做 Token estimate，就是因为完整正文不属于目录发现阶段。
-
-如果未来 Skill 数量非常大，合理扩展方向仍然是 scope / project / path 先过滤，再做 Skill Search，只暴露 top-K metadata，选中后读取正文，重 Skill 放 forked context。
-
-这里和 Tool Scale 有共同原则：
-
-> **Discovery representation（发现用表示）应该远小于 Execution representation（执行用表示）。**
-
----
-
-## 18. Memory 很大以后为什么要把 Recall 放后台
-
-长期 Memory 数量增长时，检索本身也会增加延迟。
-
-Claude Code Relevant Memory Prefetch 的设计已经给出一个很实用的取舍：
-
-~~~text
-Memory selector
-与
-主模型第一步
-并行
-~~~
-
-如果赶得上，就在后续 iteration 注入。
-
-赶不上，就不阻塞用户。
-
-规模越大，这个设计越重要，因为 Memory retrieval 不应该成为每个 turn 的固定 critical path（关键路径）。
-
-后续优化可以关注 selector latency、manifest 规模、topic memory 质量、prefetch hit timing 和 Recall 的端到端收益，而不是只追“召回更多”。
-
----
-
-## 19. Claude Code 源码现有验证能证明什么
-
-这个私有镜像没有公开仓库那样清晰的完整测试目录 / release metadata，因此不能虚构“源码有一套完整 Eval Harness”。
-
-我们能直接确认的是大量 Runtime instrumentation（运行时埋点）和 test-exported helper（为测试导出的辅助函数），以及源码中的 contract / defensive comments。
-
-现有可观测证据包括：
-
-- API success / error / retry；
-- Token 和成本；
-- Prompt Cache read / create / break cause；
-- Tool execution；
-- Skill invocation；
-- Memory loaded / extraction；
-- MCP connection；
-- Agent progress；
-- query profiler；
-- session tracing。
-
-这些能很好地回答：
-
-> **系统内部发生了什么？**
-
-但不能单独证明：
-
-> **Claude Code 最终把用户任务做对了。**
-
-因此真正的产品 Eval 还要在源码 Runtime 之上建立任务级验证。
-
----
-
-## 20. Context、Memory、Tool 和 Multi-Agent 分别应该怎样评测
-
-### Context
-
-设计一个长任务：
-
-~~~text
-最开始：
-“不能修改公开 API”
-
-→ 多轮 Tool
-→ Microcompact
-→ Auto Compact
-→ 退出进程
-→ Resume
-→ 继续修改
-~~~
-
-最终检查约束有没有保留。
-
-还应 A/B Cached Microcompact on / off、不同 Auto Compact 阈值、Tool Search on / off，同时看任务成功和 cache read tokens，而不是只看摘要质量。
-
-### Memory
-
-要测 durable extraction precision、用户 correction、stale memory、relevant memory top-K、prefetch 是否及时赶上，以及 Memory ON / OFF 任务收益。
-
-### Tool
-
-要分 Discovery、Selection、Input validity、Permission correctness、Sandbox、Execution、Cancellation、Result reuse。尤其要故障注入 streaming fallback，验证副作用 Tool 不被执行两次。
-
-### Multi-Agent
-
-不能只看“子 Agent 返回了答案”。
-
-还要测 delegation 是否必要、Subagent Tool / Permission isolation、Worktree 写冲突、background result delivery、agent resume、消息风暴，以及总 Token / latency 是否反而变差。
-
----
-
-## 21. 场景题：Auto Compact 后模型忘了关键约束，怎么排查
-
-不要第一反应说“换更强模型”。
-
-按真实生命周期：
-
-1. 约束最初来自 User message 还是 CLAUDE.md？
-2. 动态 nested CLAUDE.md 是否真的注入？
-3. Tool Result Budget / Snip 有没有错误删除相关上下文？
-4. standard compact prompt 是否看见该约束？
-5. `buildPostCompactMessages` 是否保留了必要 message？
-6. compact boundary 后 API 是否只看到了正确新历史？
-7. Resume 的 parentUuid 链是否又接回错误节点？
-8. 如果是 Tool Search state，`preCompactDiscoveredTools` 是否保存？
-
-这才是 Context Debug，不是只改 Summary Prompt。
-
----
-
-## 22. 场景题：Tool Search 开启后 Agent 反而总找不到工具
-
-排查顺序应该是：
-
-~~~text
-这个 Tool 是否在当前 Tool Pool？
-        ↓
-是否被判定为 deferred？
-        ↓
-Tool Search 当前模式是否启用？
-        ↓
-search hint / name / description 是否可检索？
-        ↓
-ToolSearch top-K 是否命中？
-        ↓
-返回的 tool_reference 是否写入历史？
-        ↓
-extractDiscoveredToolNames 是否恢复到已发现集合？
-        ↓
-后续 API request 是否真的加载对应 schema？
-~~~
-
-如果搜索命中了，但模型下一步仍选错，是 selection 问题。
-
-如果 schema 根本没进入下一轮，是 dynamic loading / Context state 问题。
-
-两者不能混。
-
----
-
-## 23. 场景题：Memory Recall 很高，但任务结果下降
-
-Claude Code 的架构给出几个很具体的排查点：
-
-- `MEMORY.md` 是否已经太长；
-- topic memory 是否重复；
-- selector 是否把“相关”误当成“有用”；
-- 已经成功工作的 Tool 文档是否没有被抑制；
-- stale project fact 是否本应重新 Read；
-- 同一 Memory 是否因为 attachment / Tool read 去重失效被重复注入；
-- Agent-specific Memory 是否污染主 Agent。
-
-最终用 Memory ON / OFF 任务结果验证，而不是把 recall rate 当目标函数。
-
----
-
-## 24. 场景题：API Stream 失败，什么时候不能随便 Retry
-
-关键问题是：
-
-> **这个流已经产生了什么副作用？**
-
-如果还只是模型文本，没有真实 Tool 开始，重试通常简单得多。
-
-如果 Streaming Tool Executor 已经启动了 Bash / MCP / Write：
-
-~~~text
-旧 stream 已产生 side effect
-        ↓
-新 request 重新生成同一 tool_use
-        ↓
-重复执行风险
-~~~
-
-此时必须识别旧 partial response、tombstone / discard、保证旧执行与新 Tool Result 不混链，并对非幂等动作建立更严格的去重语义。
-
-这比“网络失败指数退避”高一个层级。
-
----
-
-## 25. 从 Claude Code 源码能抽出的几个系统原则
-
-**第一，Context 压缩应该分层。** 先处理大 Tool Result，再局部裁剪，再做完整摘要；不要把所有压力都交给一个 Summary Agent。
-
-**第二，Prompt Cache 是架构约束。** API-bound input 不要随便原地修改；Tool Schema、System Prompt、Compaction 都会影响缓存。
-
-**第三，Memory 应按生命周期拆开。** 项目指令、当前 Session continuity、跨 Session durable memory 和当前问题 retrieval 不是一件事。
-
-**第四，大能力目录要动态发现。** Tool / Skill 都应该用小的 discovery representation，再按需加载完整执行内容。
-
-**第五，权限是多层决策。** Tool validation、Hook、配置规则、classifier、用户批准和 OS Sandbox 各自解决不同问题。
-
-**第六，恢复语义必须跟着 Context 变换走。** Compact / Snip 修改模型历史以后，Transcript parent chain 也必须同步，否则优化只在当前进程里有效。
-
-**第七，多 Agent 是资源与隔离问题，不只是 Prompt 协作。** Tool Pool、Permission、Worktree、后台任务和消息路由都要有边界。
-
----
-
-## 26. 源码锚点
-
-1. [`utils/sessionStorage.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts)：Transcript、parentUuid、Compaction / Snip 持久化。
-2. [`utils/sessionRestore.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionRestore.ts)：Resume 状态恢复。
-3. [`tools/AgentTool/AgentTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx)：Subagent、异步执行、Worktree、Team 路径。
-4. [`tools/AgentTool/runAgent.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/runAgent.ts)：Subagent 如何复用 query Runtime。
-5. [`tools/SendMessageTool/SendMessageTool.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SendMessageTool/SendMessageTool.ts)：Agent / Team 消息、恢复和跨 Session 安全。
-6. [`services/api/withRetry.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/withRetry.ts)：错误分类、前后台 retry、capacity handling。
-7. [`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts)：streaming、fallback、Prompt Cache、Tool API request。
-8. [`services/api/promptCacheBreakDetection.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/promptCacheBreakDetection.ts)：cache break attribution。
-9. [`utils/sandbox/sandbox-adapter.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts)：OS Sandbox 与安全加固。
-10. [`query.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts)：所有机制重新汇入主 Agent Loop 的地方。
-
-回到：[Claude Code 系统总览](README.md)
+[回到 Claude Code 模块入口](README.md) · [继续通用 Agent 工程学习](../../../curriculum/09-agent/README.md)
