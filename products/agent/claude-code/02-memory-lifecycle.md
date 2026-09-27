@@ -1,555 +1,196 @@
-# 02. Claude Code Memory Lifecycle｜CLAUDE.md、Session Memory 与长期 Auto Memory 怎样分工
+# 02. 记忆生命周期｜什么值得留下，下一次怎样正确使用
 
-[← Context](01-context-lifecycle.md) · [Claude Code 总览](README.md) · [Tool →](03-tool-lifecycle.md)
+[← 上下文](01-context-lifecycle.md) · [模块入口](README.md) · [工具 →](03-tool-lifecycle.md)
 
-> **源码镜像基线：** `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`
+> 源码快照：`studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。源码存在某条自动化路径，不表示它在所有入口和配置下都会运行。
 
-Claude Code 是最不适合用一句“它有 Memory”概括的产品之一。
+## 1. 同一句“记住”，可能是三种要求
 
-当前源码里至少可以看到四种容易被混淆的长期 / 半长期信息机制：
+分页任务进行到一半，用户说：“接口不能改；测试前先告诉我准备验证什么。”隔了几天，用户又开始另一项任务。系统应该记住什么？
 
-~~~text
-CLAUDE.md / Rules
-项目和用户明确写下的指令
+“分页刚改到哪个文件”主要服务当前任务；“这个仓库公开接口不能随意改变”可能是项目约定；“测试前先说明验证范围”则可能是用户对协作方式的长期反馈。如果把这些信息全部当聊天摘要保存，下一次很容易把已完成任务当成待办，或把只适用于一个项目的规则推广到所有项目。
 
-Session Memory
-当前 Session 内为长任务维护的演进摘要
+所以，记忆的第一步不是选数据库，而是明确：**这条信息服务哪个任务、作用于谁、保持多久、以后凭什么确认仍然有效。**
 
-Auto Memory
-从过去 Session 自动提取、跨 Session 保存的长期记忆
+## 2. 沿信息用途区分存储
 
-Relevant Memory Recall
-面对当前新问题，从长期 Memory 中再挑少量真正相关内容
-~~~
+| 信息形态 | 主要用途 | 分页任务中的例子 |
+|---|---|---|
+| `CLAUDE.md` 等项目指令 | 人维护的工作约定 | 不删除已有测试，遵守仓库接口约定 |
+| Transcript，会话记录 | 恢复发生过的交互与执行过程 | 用户输入、读取结果、修改请求和测试结果 |
+| Session Memory，会话摘要 | 在当前会话增长时保持任务连续性 | 已改偏移计算，类型校验尚未验证 |
+| Auto Memory，自动记忆 | 为后续会话保存可复用信息 | 用户偏好先说明验证计划，再执行测试 |
+| 子智能体的作用域记忆 | 给特定执行角色保存可复用经验 | 某类审查任务的用户反馈 |
 
-另外，Subagent（子智能体）定义还可以拥有独立 Memory scope（记忆范围）。
+这些概念不按“是否落盘”区分。同样是文件，会话摘要仍可只服务当前会话；同样是提示文本，人工项目指令也不是模型自动归纳出的事实。源码入口分别是 [`context.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/context.ts)、[`services/SessionMemory/sessionMemory.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/SessionMemory/sessionMemory.ts) 与 [`memdir/memdir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts)。
 
-如果把这些都叫“Memory 文件”，就会失去最重要的设计边界：**谁写、保存多久、什么时候进 Context、谁有权修改、过期以后怎样维护。**
+Session Memory 的价值在于给出可以继续执行的工作状态。它可以参与上下文压缩，但不能替代原始证据：摘要写“测试通过”，仍需要区分是哪次执行、哪些用例通过，以及哪些没有运行。
 
----
+## 3. 自动记忆为什么采用“入口索引加主题文件”
 
-## 1. 先把 CLAUDE.md 从“长期记忆”里拿出来
+假设同一项目积累了几十条记忆。每次都加载全文会挤占任务上下文，只加载文件名又可能无法判断什么时候该读。镜像把短入口 `MEMORY.md` 与主题文件分开：入口帮助定位，正文保存更完整的信息。
 
-Claude Code 源码历史上把 CLAUDE.md 一类内容放在 memory file 相关函数中，但语义上它更像 instructions（指令）。
+一个教学示意如下；文件名与内容是示例，不是源码内置的业务数据：
 
-用户或项目维护者明确写：
+```text
+memory/
+├── MEMORY.md                 简短的主题索引
+└── feedback_testing.md       测试协作方式及适用说明
+```
 
-~~~markdown
-这个仓库使用 pnpm。
-改数据库 migration 前必须先阅读 docs/db.md。
-~~~
+主题文件头部的名称、描述、类型帮助发现与选择；正文解释具体内容。镜像提示把记忆组织为 `user`（用户信息）、`feedback`（反馈）、`project`（项目背景）、`reference`（资料线索）等类型。这是该产品的记忆组织方式，不是要求所有 Agent 都采用四张同名表。保存规则以及跳过入口索引的配置分支见 [`memdir/memdir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts)。
 
-它的来源是当前文件系统，作用范围通常和目录、项目或用户配置绑定。
+需要索引的路径中，写主题文件和更新索引是两项动作。主题写入成功而索引没有更新，可能影响从入口发现；索引存在但文件已删除，则留下失效引用。因此，完成保存不能只检查一条“已保存”的自然语言消息。
 
-这和“Claude 从以前对话中观察到用户长期偏好 pnpm”是完全不同的证据。
+### 入口预算要看实现，不能只看常量名
 
-前者是明确项目规范，后者才更接近自动长期 Memory。
+此快照的 `truncateEntrypointContent()` 先限制到 200 行，再按 `MAX_ENTRYPOINT_BYTES = 25_000` 限制长度，并附加截断提醒。然而代码实际使用 `trimmed.length` 和字符串 `slice()`，不是 UTF-8 字节计数。因此，准确描述是：**此函数按 JavaScript 字符串长度计算第二道限制；常量虽然叫 BYTES，不能据此声称对任意中文输入都严格限制为 25,000 个 UTF-8 字节。**
 
-所以学习 Claude Code 时，最好固定这条区分：
+例如一个“中”在 JavaScript 中占一个 UTF-16 代码单元，UTF-8 编码占三个字节。这个差异不影响“入口要短”的使用原则，却影响容量验算。源码在同一文件的 `truncateEntrypointContent()`；[官方文档](https://code.claude.com/docs/en/memory)面向公开产品给出行数与大小约束，不用于抹平固定镜像的实现差异。
 
-~~~text
-CLAUDE.md
-= author-written instructions
+> ⚠️ 不要把关键约束仅放在长索引的末尾。超过加载范围时，磁盘上存在这段文字不代表模型读到了它。保持入口短，把完整背景放入可定位的主题文件。
 
-Auto Memory
-= conversation-derived durable knowledge
-~~~
+## 4. 信息怎样从对话变成文件
 
-Context 篇已经讲过 CLAUDE.md 会按目录动态加载。这里不重复它的 Context 细节，只强调：**它不是 Auto Memory 的写入结果。**
+镜像有主智能体直接使用文件工具保存记忆的路径，也有后台提取路径。后者由结束阶段的调用配合初始化和功能条件触发，并不是退出整个进程才运行，也不是每条工具消息出现后都立即写一次。
 
----
+[`services/extractMemories/extractMemories.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/extractMemories/extractMemories.ts) 中，`initExtractMemories()` 为提取器建立闭包状态。闭包状态属于这次初始化出来的提取器，不是可跨任意进程共享的全局协调器。
 
-## 2. Auto Memory 的磁盘结构从 `MEMORY.md` 开始
+一轮可提取的工作，大致经历这些检查与动作：
 
-长期 Auto Memory 的核心实现主要在：
+1. 检查提取器是否初始化、自动记忆及相关入口条件是否允许；关闭或不适用时直接返回。
+2. 根据 `lastMemoryMessageUuid` 找出上次游标之后的消息。若压缩使旧游标找不到，计数逻辑回退到当前可见消息，避免此后一直误判为没有新内容。
+3. 检查主对话是否已出现指向自动记忆目录的写入调用。符合条件时跳过重复提取，并推进游标。
+4. 满足节流条件后，以 `runForkedAgent()` 启动辅助查询，给出当前材料和已有记忆清单；这个辅助查询具有受限的工具执行条件。
+5. 辅助查询正常返回后推进游标。抛出异常时不按成功路径推进，留给后续再次考虑。
 
-- `memdir/`
-- `services/extractMemories/`
-- `services/autoDream/`
+这里的“分叉”表示建立辅助查询上下文，不能自动解释为启动独立操作系统进程。辅助查询使用缓存安全的参数组织方式，尽量避免为了后台工作破坏父查询的稳定输入；它不是在父会话里随意插入一长段整理过程。
 
-`memdir/memdir.ts` 把 `MEMORY.md` 作为长期 Memory 的入口文件。
+### 直接写入检测不等于写入成功检测
 
-但它不会允许这个入口无限增长。当前源码对入口读取有明确的行数和字节上限，例如大约前 200 行、25KB 级别的限制。
+`hasMemoryWritesSince()` 扫描的是 assistant 消息中的 Write/Edit `tool_use`，依据目标路径判断是否出现记忆写入。它没有在这个判断里配对核验成功的 `tool_result`。
 
-原因很重要：
+设想模型提出写入 `feedback_testing.md`，但工具因文件权限失败。随后后台提取看到这条写入调用，仍可能走“主对话已经写过”的跳过分支。由此可以推导：**这个去重条件避免重复提取，但不能用它证明记忆已经持久化。** 排查“说记住了却没有保存”时，需要检查工具结果与文件，而不是仅看调用记录。
 
-> **Memory 的存储容量可以很大，但默认注入模型的 Memory 入口必须很小。**
+这是固定源码中的具体边界，不是宣称每次都会丢记忆。真实是否发生还取决于错误反馈、后续修复与调用时序。
 
-否则 Auto Memory 越用越久，最终又会退化成：
+## 5. 后台提取能读哪里，能改哪里
 
-~~~text
-所有过去信息
-→ 每轮全部注入
-→ Context 爆炸
-~~~
+为了整理记忆，辅助查询既可能需要读原项目，也需要写记忆目录。两类权限没有必要完全相同。
 
-因此 `MEMORY.md` 更像长期 Memory 的“导航和高密度摘要”，更具体的信息可以放到其他 topic memory（主题记忆）文件。
+同一源码文件中的 `createAutoMemCanUseTool()` 明确区分：Read/Grep/Glob 在这个回调里被允许；Bash 需要通过只读判断；Write/Edit 只允许指向自动记忆路径；其他不符合条件的工具被拒绝。回调还处理 REPLTool 代码执行工具；这里的 REPLTool 不是前文的终端交互界面，内部读写原语仍需经过相应检查。
 
----
+因此，“限制写入记忆目录”是准确的概括，“辅助查询只能读取记忆目录”则不准确。也不能把这个回调当作已经实现了独立进程沙箱或多租户隔离。
 
-## 3. Claude Code 想记住什么，而不是什么都记
+> ⚠️ 读取本身也可能带来保密风险。这个回调对读取的放行，只说明本路径的权限决定；不证明读取内容适合写入持久记忆，更不证明数据不会进入模型请求。敏感材料需要另外的范围约束与审查。
 
-`memdir` 中的 Memory Prompt 对长期信息类型有明确约束。
+写入失败还有一个常见误解：辅助查询抛出异常、提取游标没有推进，不等于此前所有文件操作都回滚。多个文件操作不是因为放在同一辅助查询里就自动组成事务。重试前仍要检查已经写了哪些文件，避免重复或冲突。
 
-可以看到类似下面的分类思想：
+## 6. 同一会话提取与跨会话整理怎样避免互相干扰
 
-- user：用户长期偏好、工作习惯；
-- feedback：用户对 Claude 行为的纠正；
-- project：难以从当前仓库直接重建、但未来仍有价值的项目事实；
-- reference：长期可复用参考信息。
+一个较慢的提取任务还没结束，用户又结束了新一轮任务。镜像没有简单地为每轮无限启动一个重叠提取，而是通过 `inProgress` 和 `pendingContext` 保存待处理状态，当前工作结束后再处理后续材料。节流控制处理频率，游标控制重复范围，这些职责不同。
 
-其中有一个很值得注意的原则：
+跨会话整理 Auto Dream 解决另一个问题：长期文件里逐渐出现重复、过期或分散的信息，需要周期性整理。它不是“每条新消息再总结一次”。[`services/autoDream/autoDream.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/autoDream/autoDream.ts) 依次检查入口条件、距上次整理的时间、新会话数量和整理锁，并对会话扫描节流。当前会话被排除在新增会话统计之外，避免它不断更新的时间戳让条件虚假满足。
 
-> **如果事实可以很容易从当前 Repo 重新读出来，就不应该因为“见过一次”而永久复制进 Memory。**
+此快照的默认调度参数是至少 24 小时、至少 5 个符合条件的其他会话；配置可以改变它们，启用条件仍要另外满足。整理锁负责协调进程间的整理竞争，不能用提取器的单进程闭包标志替代。
 
-比如：
+整理失败时可以回退锁的时间标记，使以后还有机会重试；任务被用户取消时有单独处理，避免重复回退。**回退的是调度标记，不是记忆文件的事务回滚。** 这一区别直接影响故障后的检查顺序。
 
-~~~text
-src/auth/index.ts 里现在有函数 foo()
-~~~
+## 7. 新问题来了，怎样挑选相关记忆
 
-这是当前仓库内容，未来可能变化，而且随时可以重新 Read。
+用户几天后要求修另一个函数。系统不应把所有历史项目细节注入进来，而应判断哪些保存的信息确实有帮助。
 
-把它永久写进 Memory 反而容易形成 stale knowledge（陈旧知识）。
+[`memdir/findRelevantMemories.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/findRelevantMemories.ts) 先扫描记忆文件头部，形成名称和描述的清单，再用辅助模型查询选择相关文件。选择结果还要回到真实文件集合过滤，不能直接接受模型生成的任意文件名。它不是“先把全部正文塞入模型”，也不是此文件自己实现了向量数据库。
 
-而下面的信息更适合长期保存：
+选择时还会参考最近使用的工具，避免仅因关键词相同就重复注入已经在使用的工具说明；已呈现过的路径也参与去重。修改时间可以作为新鲜度线索，但时间新不等于事实正确。
 
-~~~text
-用户多次明确要求：
-“写解释时先给结论，再展开证据。”
+### 提示要求与硬限制要分开
 
-或：
+选择提示要求最多选 5 个文件，结构化返回约束要求字符串数组。但该选择函数返回时执行的是文件名有效性过滤，不能仅凭提示里的“最多 5 个”就证明这个函数对任何模型输出都强制截断为 5 个。
 
-“这个内部系统的部署入口在一个当前仓库里看不到的服务。”
-~~~
+内容真正进入上下文时还要经过附件层的长度、累计预算和去重检查。评价整个链路的预算，需要追到消费者，而不是停在提示文案。入口见 [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts)。
 
-这说明 Memory Write Policy（记忆写入策略）的目标不是“信息越多越好”，而是：
+## 8. 异步召回为什么不保证第一条请求就能用上
 
-> **把未来不容易重新恢复、又确实能改善后续任务的信息留下。**
+相关记忆搜索需要时间。若每次用户输入都等待全部搜索完成，主任务的首个请求会变慢。镜像采用预取：`query.ts` 在外层启动 `startRelevantMemoryPrefetch()`，与主任务工作重叠，后续在可消费结果时注入；预取句柄使用 `using` 管理清理。
 
----
+“搜索启动”“文件被选中”“正文被读取”“附件进入某次请求”是四个不同事件。搜索仍在运行时，第一条请求可能已经发出。这个设计用较少等待换取机会性的相关信息，不能把后台召回当作安全约束必然及时到达的通道。调用方见 [`query.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts)，消费者见 [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts)。
 
-## 4. 一次 Session 怎样自动产生长期 Memory
+回到分页任务：用户对讲解风格的偏好晚一些召回，可能只影响体验；“不得向外部发送此文件”的限制若晚到，可能无法挽回已经发生的动作。后者需要在请求和操作之前可靠加载并由权限机制约束，不能寄希望于后台记忆搜索赶得上。
 
-长期 Memory 的自动提取主要在：
+## 9. 纠正与删除，要沿完整链路检查
 
-- `services/extractMemories/extractMemories.ts`
+假设旧记忆写着“此项目用 pytest”，用户明确纠正为“这个项目的标准验证入口是 unittest；pytest 是另一个项目的约定”。正确处理至少需要分清：旧信息作用域是否写错，主题正文是否更新，描述与入口是否仍引导到旧结论，以及当前会话是否已经注入旧内容。
 
-它不是每个 Tool Call 后都同步运行。
+主线应当是：先读取相关记录和当前项目证据，再修改或删除错误内容，更新必要的索引，最后观察后续召回是否仍产生旧建议。把一句更正追加在另一份文件末尾，未必能阻止系统继续选中旧记录。
 
-源码把它接成 complete query（完整查询结束）后的 stop hook（停止钩子）。换句话说，用户的一轮真实工作先完成，后台再考虑是否从这段会话中提取长期 Memory。
+镜像提示明确要求更新、删除错误或过期内容，并避免重复记忆；这是模型行为指引。它不等同于实现了通用的事实冲突求解、自动版本裁决或一键抹除所有副本。源码依据见 [`memdir/memdir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts)。
 
-这样做有几个好处。
+> ⚠️ 删除主题文件不一定让已运行会话立刻“忘记”。旧内容可能已进入当前消息，也可能保留在历史记录中。应区分停止未来召回、刷新当前工作上下文和历史数据处理，不能把其中一项报告成全部完成。
 
-第一，不增加主任务每一次模型循环的延迟。
+子智能体记忆还要检查作用域。在用户、项目或本地等配置范围内保存信息，决定哪些后续任务有机会复用它；文件路径上的分组不等于强制用户权限隔离。源码接入见 [`tools/AgentTool/AgentTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx)。
 
-第二，等一轮工作走完以后，更容易判断哪些只是中间猜测、哪些最后被用户纠正、哪些结论真正成立。
+## 10. 怎样判断记忆真的改善了任务
 
-第三，Memory 提取失败不会让用户正在做的编码任务也跟着失败。
+不要只数“保存了多少条”或“召回了多少条”。一次有用的记忆，需要依次满足保存正确、范围正确、召回及时、内容仍有效、使用后改善结果。
 
-这符合一个很重要的系统边界：
+可以为分页任务设计三组对照，均使用相同的代码初始状态：
 
-> **长期记忆是辅助平面，不应该成为主任务成功的同步依赖。**
+| 条件 | 可检查结果 | 要排除的错误解释 |
+|---|---|---|
+| 新会话，有正确的测试协作反馈 | 行动前说明验证范围，仍执行要求的测试 | 只复述偏好，却没有完成任务 |
+| 新会话，旧记忆已被纠正 | 不把另一项目的测试约定套到本项目 | 仅多存一条新记忆，旧结论仍反复出现 |
+| 不相关项目，没有适用记忆 | 不注入或不采纳错误范围的约定 | 为提高召回率强行加入不相关内容 |
 
----
+这是评测设计，不是已取得的产品实测结果。真实实验还要记录模型、权限、记忆初始文件与请求时序，才能区分改进来自记忆还是其他条件。
 
-## 5. Memory Extraction 为什么有 cursor，而不是每次重新总结整个 Session
+## 本章小结
 
-`extractMemories` 会记录类似 `lastSummarizedMessageId` 的 cursor（游标）。
+项目指令、会话记录、工作摘要和跨会话记忆各有用途。自动记忆的关键链路是选择值得保存的信息、执行文件写入、维护发现入口、按需召回，再允许纠错和删除。游标、后台节流、整理锁和附件预算帮助控制成本与重复，但不能代替写入结果、权限范围和任务质量验证。
 
-它的作用是：
+## 🎯 面试怎么回答
 
-~~~text
-上次已经处理到这里
-        ↓
-这次只看后面新增、真正 model-visible 的消息
-~~~
+**问：Claude Code 的记忆为什么不能只理解为一个 `CLAUDE.md` 文件？**
 
-这避免一条很长 Session 每次结束都重新总结从第一句开始的全部历史。
+> 🎯 `CLAUDE.md` 主要是人工项目指令；会话持久记录和会话摘要负责恢复与连续工作；自动记忆则把可复用信息保存到主题文件，通过索引或相关性选择为后续任务提供内容。这个快照还包含受条件控制的后台提取与跨会话整理。完整分析必须追到实际文件写入、召回时机和纠错删除，并注意“提出写入”不等于成功落盘、“异步搜索启动”不等于约束已进入首个请求。
 
-如果提取成功，cursor 才前进。
+## ⚠️ 高频易错点
 
-如果提取失败，cursor 不前进。
+- 提取游标避免重复处理，但它不是每一条记忆事实都已验证的证明。
+- 限制写入目录不等于限制所有读取，也不等于操作系统级隔离。
+- 文件修改时间只能提供新鲜度线索，不能裁决内容真假。
+- 提示中的数量上限与代码强制的数量上限不同；命名为 BYTES 的常量也要检查实际计数方式。
 
-因此下一次还有机会重新考虑这批消息。
+## 本章自测
 
-这种语义很重要：
+**任务一：保存失败。** 模型提出向自动记忆路径执行 Write，随后工具返回权限错误；提取器发现这段历史中存在该 Write 调用。请按本章快照说明可能走哪个分支、哪些事实仍未确认，并给出不编造保存成功的处理步骤。
 
-> **失败不能被误认为“已经处理过”。**
+<details><summary>提示</summary>
 
-否则一次后台模型错误就会永久丢掉那一段 Memory 候选。
+检查 `hasMemoryWritesSince()` 读的是调用消息还是成功结果，再分别看游标与真实文件。
 
----
+</details>
 
-## 6. 为什么主 Agent 已经直接写 Memory 时，后台提取反而要跳过
+<details><summary>参考答案与解释</summary>
 
-Claude Code 主模型本身可以通过文件 Tool 修改 Auto Memory 目录。
+它可能判断主对话已有记忆写入，跳过辅助提取并推进游标。未确认的是文件是否存在、内容是否正确、索引是否需要更新。应先读取失败结果与实际文件状态，解决权限或改用获准路径，再核验写入结果；不能把跳过日志当保存证据。
 
-如果用户明确说：
+</details>
 
-> “把这个记住。”
+**任务二：迟到的记忆。** 用户任务开始后立即发出了第一次模型请求；相关记忆在稍后才返回，其中包含“不允许修改公开参数”的约定。请说明这是否能保证第一次工具修改遵守约定，并提出至少两种更可靠的承载位置。
 
-主 Agent 可能已经直接更新了对应 Memory 文件。
+<details><summary>参考答案与解释</summary>
 
-这时 complete-query 后的后台 extraction 如果再根据同一段 transcript 生成一次，很容易重复写、覆盖用户刚刚确认的版本，或用自动推断稀释显式修改。
+不能保证，召回与请求之间存在时序差。可把本次硬约束放入可靠加载的当前任务输入或项目指令，并在修改前配置必要的权限、受保护范围或验收检查。长期记忆可辅助提醒，但不能独立承担必须在动作之前生效的限制。
 
-源码因此会检查本轮是否已经有直接 Memory write（记忆写入）。
+</details>
 
-如果发现主 Agent 已经写过 Auto Memory，后台 extractor 会跳过这批内容并推进 cursor。
+**任务三：容量判断。** 某入口文件有 100 行、共 20,000 个基本汉字，忽略换行与提醒文本。按本章展示的计数方式，它能否仅因 UTF-8 内容约 60,000 字节就触发第二道截断？说明这是哪个版本、哪个函数范围内的判断。
 
-可以把这理解为一种 writer arbitration（写入者仲裁）：
+<details><summary>参考答案与解释</summary>
 
-~~~text
-显式、在线写入
-优先于
-后台自动提取
-~~~
+不能仅据 UTF-8 字节数判断。固定快照中的 `truncateEntrypointContent()` 使用 JavaScript 字符串长度，这些基本汉字约为 20,000 个代码单元，小于 25,000。此结论仅解释该函数，不把它推广成所有附件读取或所有官方版本的大小限制。
 
-这比“所有写路径最后互相覆盖”更稳定。
+</details>
 
----
-
-## 7. Memory Extractor 不是普通 Claude Code，它被锁在 Memory 目录里
-
-自动提取使用 `runForkedAgent` 启动一个隔离的内部 Agent。
-
-这个 Agent 的 Tool Permission（工具权限）很窄。
-
-当前源码近似允许：
-
-- Read / Grep / Glob 等只读能力；
--只读 Bash；
--对 Auto Memory 目录内使用 Edit / Write。
-
-其他工具默认拒绝。
-
-这条设计很值得学习。
-
-Memory Extractor 需要语义理解能力，因此让模型参与很合理；但它并不需要访问任意网络、修改用户代码、运行高风险命令或调用所有 MCP 服务。
-
-所以正确边界不是：
-
-> “这是内部 Agent，可以全放开。”
-
-而是：
-
-> **给内部维护 Agent 完成这一职责所需的最小能力。**
-
----
-
-## 8. Extraction 为什么采用 best-effort（尽力而为），还要合并并发触发
-
-会话可能快速连续完成多个用户轮次。
-
-如果每次 stop hook 都立刻启动一个 Memory Extractor，会产生并发竞争。
-
-源码维护 in-progress 状态、节流和 pending coalesced context（待处理合并上下文）。
-
-当一个提取正在运行，又来了新的触发，不是再开第二个并行 writer，而是把“还有新内容需要处理”记下来，当前结束以后再运行最新一批。
-
-这和数据库后台 compaction 很像：
-
-> **Memory maintenance 允许延迟，但不能同时让多个 writer 争抢同一份长期状态。**
-
----
-
-## 9. AutoDream：为什么提取之后还需要跨 Session 整理
-
-即使每条 Session 都能生成不错的 Memory，长期使用以后仍会出现同一个偏好重复多次、用户后来改变想法、旧项目事实过期、主题文件越来越碎等问题。
-
-所以源码还有：
-
-- `services/autoDream/autoDream.ts`
-
-AutoDream（自动记忆整理）是比 per-session extraction 更慢的一层跨 Session 的 Consolidation（整合）。
-
-它不会每次都跑。
-
-当前代码会考虑距离上次 consolidation 的时间、新增 Session 数、后台扫描节流、跨进程 lock（锁）、当前是不是 remote / 特殊模式，以及 feature gate。
-
-默认策略中能看到“小时 / 天”和“若干 Session”级别的维护节奏，而不是每一轮立刻重整全部 Memory。
-
-原因是 consolidation 本身有成本，而且长期 Memory 的结构不需要因为一句普通新消息就重写。
-
----
-
-## 10. AutoDream 也使用受限 Agent，而且失败后允许未来重试
-
-AutoDream 同样通过 forked agent 操作 Memory 目录，沿用受限写权限。
-
-执行成功后，系统可以把结果以类似“Improved memories”的 system surface（系统提示面）反馈给会话。
-
-如果失败，源码会处理 lock / mtime（修改时间）状态，让未来还能重新尝试，而不是把失败误标成“本周期已经成功维护过”。
-
-这里和 Extraction cursor 的思想是一致的：
-
-> **后台 Memory job 的完成状态必须反映真实成功，否则会形成静默数据丢失。**
-
----
-
-## 11. 新问题来了以后，不会把整个 Memory 目录全部塞进 Prompt
-
-`MEMORY.md` 是入口，但 topic memories 可能很多。
-
-Claude Code 因此还有 Relevant Memory Recall（相关记忆召回）：
-
-- `memdir/findRelevantMemories.ts`
-- `utils/attachments.ts`
-
-它的运行方式很有特点。
-
-### 先用一个 side query 选候选
-
-`findRelevantMemories` 会扫描 Memory manifest（清单），然后用一个轻量 side query（侧查询）根据当前用户问题判断哪些 Memory 文件真正有帮助。
-
-当前实现最多选择少量候选，源码中可以看到上限约 5 个。
-
-这不是“相似度越高越全部拿回来”，而是 Prompt 直接要求：只有明确能帮助当前任务的 Memory 才应该选择。
-
-### `MEMORY.md` 不重复进候选
-
-入口 summary 已经在 Context 中，就不应该再次通过 relevance search 重复注入。
-
-这体现了 Memory 系统的去重意识：
-
-~~~text
-全局入口
-≠
-按需证据
-~~~
-
----
-
-## 12. Recall 为什么是非阻塞 Prefetch，而不是让用户等一次额外模型请求
-
-这部分是 Claude Code Memory 很值得学习的设计。
-
-`startRelevantMemoryPrefetch` 会在用户轮次开始时异步启动 relevant memory search。
-
-但主模型不会等它。
-
-代码注释非常明确：
-
-> prefetch runs while the main model streams and tools execute。
-
-也就是说：
-
-~~~text
-用户请求
-├─→ 主模型开始工作
-│
-└─→ Memory relevance side query 并行运行
-~~~
-
-等 Tool 执行结束、主循环准备下一次采样时：
-
-- 如果 Memory prefetch 已经完成，就消费结果；
--如果还没完成，**零等待跳过**；
--下一次 loop iteration 再检查；
--如果整个用户轮次结束都没赶上，就不为了 Memory 单独阻塞。
-
-这是一种非常现实的 latency trade-off（延迟权衡）：
-
-> **长期 Memory 有帮助，但不能为了“也许有帮助”强制给每个用户轮次增加一段串行延迟。**
-
----
-
-## 13. Relevant Memory 怎样控制噪声和重复
-
-Recall 不只是 top-5，它还做多层过滤。
-
-### 已经出现在当前 Session 的 Memory 不再重复
-
-`collectSurfacedMemories` 会扫描当前 messages 中过去注入的 relevant memory attachments（相关记忆附件），收集 path 和累计 bytes。
-
-如果当前 Session 已经注入过某个 topic memory，不再让 selector 把它重复选一次。
-
-### 已经被文件 Tool 读过的 Memory 也不再重复
-
-`readFileState` 会记录本轮 Read / Write / Edit 过的文件。
-
-即使 relevance selector 选中了一个 Memory，如果主模型已经通过 Tool 自己打开过它，attachment 层会过滤掉。
-
-### Session 有总 Memory 体积上限
-
-当当前 Session 已经通过 relevant-memory attachment 注入足够多 Memory，Prefetch 可以停止继续追加。
-
-这能防止“用户连续问相关问题 → 每轮再塞 5 个 → Context 迟早爆掉”。
-
----
-
-## 14. 为什么 selector 还会看“最近哪些 Tool 已经工作正常”
-
-`collectRecentSuccessfulTools` 会统计上一段工作中哪些 Tool 成功、哪些失败。
-
-这组信息会交给 Memory relevance selector。
-
-源码注释解释了目的：
-
-> 如果某个 Tool 已经工作正常，就不要因为用户提到它而自动塞一堆“这个 Tool 怎么用”的 Memory 文档；那是噪声。
-
-但如果 Tool 出错，相关 gotcha（注意事项）和排障经验仍然值得被选中。
-
-这是一个很细但很成熟的 Retrieval Policy（检索策略）：
-
-~~~text
-“当前话题相关”
-并不自动等于
-“现在值得注入”
-~~~
-
-Context 中已经证明“工作正常”的能力，不需要 Memory 再重复教育模型。
-
----
-
-## 15. 被选中的 Memory 仍然有行数和字节上限
-
-Selector（筛选器）认为某个 Memory 很相关，也不能把整个超大文件无限注入。
-
-`readMemoriesForSurfacing` 会使用 max lines 和 max bytes 读取候选文件。
-
-如果被截断，Claude Code 不会假装内容完整，也不会直接把整份 Memory 丢弃。
-
-它会注入前面有价值的部分，并加提示：
-
-> 这个 Memory 被截断了，如需完整内容请用 Read Tool 打开对应路径。
-
-这是一种很好的 progressive recall（渐进式召回）：
-
-~~~text
-先给足以判断是否有用的开头
-→ 模型确认需要
-→ 再主动 Read 完整文件
-~~~
-
-Memory Retrieval（记忆检索）因此和普通 Tool System 自然连接起来。
-
----
-
-## 16. Agent Memory：Subagent 还能拥有自己的长期范围
-
-`AgentTool` 加载的 Agent Definition（智能体定义）可以声明 Memory scope。
-
-源码在启动 Subagent 时会记录对应 Memory loaded telemetry；Relevant Memory Prefetch 如果发现用户明确 @mention 某个有独立 Memory 的 Agent，还会把 relevance search 限制到这个 Agent 的 Memory 目录。
-
-所以 Claude Code 的长期记忆并不一定只有一个“全用户全局库”。
-
-它可以形成：
-
-~~~text
-main auto memory
-
-agent A memory
-
-agent B memory
-~~~
-
-不同 Agent 角色拥有不同工作知识。
-
-这对专门化 Subagent 很合理，但也带来一个新的 Eval 问题：
-
-> Agent A 的 Memory 是否会错误污染 Agent B？
-
-后面的 Engineering 篇会把这种 isolation（隔离）列入 Memory 测试。
-
----
-
-## 17. Session Memory 又是什么：它解决的是“这条长会话快装不下了”
-
-`services/SessionMemory/sessionMemory.ts` 和 Auto Memory 完全不是同一个生命周期。
-
-Auto Memory 面向**下一次、下一个 Session**。
-
-Session Memory 面向**当前这条 Session 还要继续工作**。
-
-它会观察当前 Session 的 Token 增长和自然边界，在达到条件时提取一份演进摘要，帮助 Context Compaction。
-
-它也使用一个受限 forked agent，而且只允许写精确的 Session Memory 文件。
-
-所以：
-
-~~~text
-Session Memory
-≈ current-session working continuity
-
-Auto Memory
-≈ cross-session durable knowledge
-~~~
-
-如果面试时把二者都说成“长期记忆”，就会漏掉它们不同的失效时间和目标。
-
----
-
-## 18. 用一个例子串完整 Memory 生命周期
-
-假设用户在今天的 Session 中反复说明：
-
-> “我做这个仓库时，希望 Claude 不要先重构；先做最小修改，通过测试以后再考虑清理。”
-
-这条信息不是 CLAUDE.md，因为用户并没有修改项目指令文件。
-
-Session 完成以后，`extractMemories` 的 stop hook 发现自上次 cursor 后有新 model-visible history，于是启动受限 forked agent。
-
-Extractor 判断这是未来可能有帮助的工作偏好，把它写进 Auto Memory topic 文件，并维护 `MEMORY.md` 入口。如果主 Agent 本轮已经直接写过同一 Memory 目录，后台 extraction 会跳过，避免竞争。
-
-过了若干 Session，AutoDream 发现达到跨 Session consolidation 条件，对重复或冲突的 Memory 做整理。
-
-几天后用户又说：
-
-> “帮我修一下这个回归。”
-
-主请求立即开始；与此同时 relevant-memory prefetch 在后台根据“修回归”这一问题选择少量相关 Memory。
-
-如果“先最小修改再清理”被判断确实有帮助，并且当前 Session 还没注入过，它会在某个后续 query iteration 作为 attachment 进入 Context。
-
-用户随后明确说：
-
-> “这个项目不用再遵守最小修改了，我现在希望优先重构。”
-
-主 Agent 可以直接更新长期 Memory；下一次 background extractor 看到本轮已经有直接 Memory write，就不会再根据旧对话自动写一遍。
-
-真正完整的 Memory 生命周期因此是：
-
-~~~text
-会话事实
-→ 自动提取 / 显式写入
-→ 持久 Memory 文件
-→ 周期性 consolidation
-→ 新任务非阻塞 relevance recall
-→ 有界注入
-→ 用户修正
-→ 后续长期基线更新
-~~~
-
----
-
-## 19. Claude Code Memory 应该怎样评测
-
-源码提供了许多 telemetry（遥测）和事件，但“后台任务运行成功”不代表 Memory 真有价值。
-
-至少应该分四层。
-
-**写入质量：** 给一段已标注历史，检查真正长期偏好有没有被提取、一次性要求有没有被误记、可以从 Repo 重建的易变事实有没有被多余持久化、用户纠正是否覆盖旧信息。
-
-**Recall 质量：** 给当前任务 + 大量 Memory 文件，检查相关文件有没有进 top-5、不相关 Memory 是否被过滤、已经通过 Tool 读过的文件是否避免重复、正常工作的 Tool 文档是否被抑制。
-
-**延迟与成本：** Relevant Memory Prefetch 的设计目标之一就是“不能阻塞主任务”，所以要测 prefetch 命中率、在第几个 query iteration 赶上、因为未完成而跳过的比例、额外 side-query Token / latency。
-
-**End-to-End Utility（端到端效用）：** 最终还是比较 Memory ON vs Memory OFF 的任务成功率、重复询问用户次数、错误个性化、stale Memory 导致的失败和 Context Token 增量。
-
-Memory recall 很高但任务变差，不是好系统。
-
----
-
-## 20. 源码锚点
-
-1. [`context.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/context.ts)：CLAUDE.md 与 User Context，理解“指令”和 Auto Memory 的边界。
-2. [`memdir/memdir.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts)：MEMORY.md、Memory prompt 和入口预算。
-3. [`memdir/findRelevantMemories.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/findRelevantMemories.ts)：按当前问题选择长期 Memory。
-4. [`services/extractMemories/extractMemories.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/extractMemories/extractMemories.ts)：Session 结束后的长期 Memory 提取。
-5. [`services/autoDream/autoDream.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/autoDream/autoDream.ts)：跨 Session consolidation。
-6. [`services/SessionMemory/sessionMemory.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/SessionMemory/sessionMemory.ts)：当前 Session 的演进摘要。
-7. [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts)：Relevant Memory Prefetch、有界注入和去重。
-8. [`tools/AgentTool/AgentTool.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx)：Agent Memory scope 与 Subagent 接入。
-
-下一篇：[Claude Code Tool Lifecycle →](03-tool-lifecycle.md)
+[下一篇：从工具发现到动作完成 →](03-tool-lifecycle.md)
