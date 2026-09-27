@@ -1,307 +1,91 @@
-# 11｜Partition / Namespace / Tenant Isolation
+# 11｜分区与多租户：数据放在哪，谁可以读
 
-Metadata Filter 解决“查询时筛选”，但当数据规模和租户数量继续增长时，还会自然出现另一个问题：
+[← 10 元数据过滤：在允许的范围内找近邻](10-MetadataFilter.md) · [模块目录](../README.md) · [12 索引生命周期：写入、更新、删除与重建 →](12-VectorIndex生命周期.md)
 
-> **要不要从物理或逻辑上先把数据分开？**
+同一套知识库服务被一千个团队使用。有的团队只有几十份文件，有的团队占据一半数据。该为每个团队建一个集合，还是共用一个集合？
 
-这就是 Partition / Namespace / Tenant Isolation。
+这个问题里至少有三件不同的事：**请求被允许读取谁的数据，数据实际放在哪里，以及谁占用了多少运行资源。** 混在一起讨论，会把“数据分开存了”误当成“已经安全且互不影响”。
 
----
+## 1. 先区分授权、数据布局和资源隔离
 
-## 1. 为什么需要 Partition
+| 维度 | 要保证什么 | 一个可能措施 | 不自动保证什么 |
+|---|---|---|---|
+| 授权 | alpha 只能得到允许的结果 | 服务端强制租户条件或数据库权限 | 其他租户不会抢 CPU |
+| 数据布局 | 可定位并管理目标数据 | 分区、集合、分片路由 | 调用者天然有读取权限 |
+| 资源隔离 | 大租户不压垮其他请求 | 配额、限流、独立实例或资源池 | 业务数据一定不会越权 |
 
-假设一个 SaaS AI 平台有：
+Partition（分区）通常是逻辑组织或管理范围，Shard（分片）通常是水平拆分后的存储／计算单元，但具体产品可能有不同术语。先看它改变了路由、存储还是权限，不仅根据名字判断。
 
-```text
-10,000 tenants
-100 million vectors
-```
+[Qdrant 多租户说明](https://qdrant.tech/documentation/manage-data/multitenancy/)给出共享集合与分片组织的具体选项；它们是实现方案，不替代应用的授权检查。
 
-每次 Query 都是：
+## 2. 共享集合怎样工作
 
-```text
-tenant_id = X
-```
+每条记录都保存租户标识，服务端把授权范围加入每次查询、读取、更新和删除。共享模式便于统一 Schema、索引和维护，也适合大量小租户。
 
-如果所有租户完全混在一起：
+它的成本出现在两处。第一，任何一条遗漏租户条件的代码路径都可能越界，必须通过统一入口和反例测试约束，而不是靠开发者记忆。第二，各租户的数据会共享索引与运行资源，某租户的大量写入、删除或热点查询可能影响别人。
 
-```text
-全局 ANN
-+
-tenant filter
-```
+例如 alpha 有 100 条、beta 有 100 万条，不能仅凭“alpha 数据很少”保证 alpha 查询快。搜索可能还要在共享结构中找到属于 alpha 的少量结果。第 10 章的过滤通过比例和候选预算仍然适用。
 
-可能带来：
+## 3. 独立集合或分区解决什么
 
-- Filter Selectivity 极低；
-- ANN 搜索浪费；
-- 安全边界更复杂；
-- 运维 / 删除 / 迁移困难。
+独立集合便于不同 Schema、模型、保留期限和容量计划，也可以缩小单次操作的影响范围。但若底层仍共用同一台机器，CPU、内存和磁盘压力仍可能相互影响；只有名字独立并不等于物理独立。
 
-因此可能希望：
+独立实例或集群提供更强的资源边界，运维成本也更高。独立集合还可能仍由同一个高权限密钥访问，调用方拿错集合名称照样有风险。因此身份到允许集合的映射仍应由服务端控制。
 
-```text
-先路由到某个 Partition / Namespace
-→ 再做 ANN
-```
+如果每个小租户都创建独立索引和管理对象，大量小对象会带来元数据、文件、后台任务和连接管理开销。不能把“隔离更直观”直接推导为“一租户一集合总是更好”。
 
----
+## 4. 小租户共享，大租户独立，是一种业务策略
 
-# 2. Partition 和 Metadata Filter 的区别
+假设 990 个团队的数据总共只有 10%，另外 10 个团队占 90%。可以让小租户共用一组资源，把大租户迁到独立布局。但这只是候选策略，需要明确何时触发迁移：数据量、持续负载、尾延迟或合同要求等。
 
-可以先建立直觉：
+迁移不能只是把一条路由配置指向空的新集合。需要复制基线、追上期间增删、验证目标结果，再切换路由。相同逻辑标识可能暂时存在于两处，所以切换期还要避免重复或旧版本结果。第 12 章的版本与增量迁移模型可以复用。
 
-```text
-Metadata Filter
-= Query-time 条件
+## 5. 路由和扇出怎样影响查询
 
-Partition / Namespace
-= 更粗粒度的数据组织 / 路由边界
-```
+如果一次请求明确只查 alpha，路由器知道 alpha 对应的目标，可以减少需要访问的分片。若请求获准跨多个团队查找，可能要向多个目标发出查询，再合并结果，这叫 Fan-out（扇出）。
 
-例如：
+减少扇出通常减少网络和归并工作，但路由信息必须与实际数据迁移一致。过期路由可能漏查新位置，也可能只得到旧数据。访问多个位置时更要明确版本和去重规则。
 
-```text
-Partition by tenant group
-Filter by language / version
-```
+不要把 IVF 的 nlist 当成业务分区数量。前者按向量空间组织候选，后者按管理或业务范围组织数据；它们可能同时存在。
 
-或：
+## 6. 用反例验证，而不是只测试正常请求
 
-```text
-Namespace per tenant
-```
+至少验证：alpha 查询不能看到 beta；客户端伪造 tenant_id 不改变授权；没有身份时拒绝；按标识读取和批量删除同样受约束；迁移与故障降级不绕过权限。
 
-具体能力取决于产品。
+再独立观察资源：beta 突然持续导入或执行重建时，alpha 的尾延迟、错误率和配额是否仍符合目标。安全测试通过，不能代替负载隔离测试。
 
----
+> ⚠️ 注意：缓存键也必须包含有效授权范围及相关数据版本。否则数据库查询本身带了过滤，缓存仍可能把另一个团队的结果返回给用户。
 
-# 3. 每个 Tenant 一个 Collection 好吗
+缓存键设计的完整主线属于 Redis 和 Backend，本章只保留跨层安全前提，不在这里重写缓存系统。
 
-不一定。
+## 本章小结
 
-优点：
+授权、布局、资源是三条独立检查线。共享模式降低小租户管理成本，独立模式便于特殊要求和大租户治理，但没有任何一个布局自动替代授权。路由、迁移、缓存和降级都必须延续同一访问范围。
 
-```text
-隔离直观
-删除方便
-配置独立
-```
+## 🎯 面试怎么回答
 
-但如果：
+**问：多租户向量库怎么设计？**
 
-```text
-100,000 tenants
-→ 100,000 collections
-```
+我会先区分授权隔离、数据布局与资源隔离。共享集合需要在所有读写路径由服务端强制租户条件，并验证过滤性能；独立集合便于不同模型、生命周期和影响范围，但未必隔离底层资源。大量小租户可共享，大租户或特殊要求可独立，迁移时复制基线、追增量、验证后切路由。最后分别做越权反例测试和热点租户负载测试。
 
-可能带来：
+## ⚠️ 易错点
 
-```text
-Metadata 管理开销
-Index 数量爆炸
-小索引碎片化
-运维复杂
-```
+tenant 字段不等于权限系统；独立集合不等于独立 CPU；独立分片不一定是独立权限边界；一租户一对象可能产生管理开销。请求降级或缓存命中时，也不能丢失授权范围。
 
-所以多租户常见策略有：
+## 自测
 
-```text
-Shared Collection + tenant_id Filter
-Partition / Namespace by tenant group
-Large Tenant Dedicated Collection
-```
+**任务。** alpha、beta 各有独立集合，但使用同一个可访问全部集合的服务密钥，且部署在同一进程。你能确认哪种隔离已经存在？不能确认哪两种？需要增加什么检查？
 
-需要按规模设计。
+<details><summary>答案与解释</summary>
 
----
+可以确认逻辑数据容器分开。不能仅凭此确认授权隔离和资源隔离。服务端必须限制身份到集合的映射，并覆盖按标识读写等入口；还需通过资源配额或独立部署策略及负载测试验证相互影响。
 
-# 4. Tenant Isolation 不只是性能问题
-
-它首先也是安全问题。
-
-必须保证：
-
-```text
-Tenant A
-绝不能看到 Tenant B 的向量 / Chunk
-```
-
-所以隔离通常需要多层：
-
-```text
-Auth / Authorization
-→ Query 构造
-→ Vector DB Filter / Namespace
-→ Result Validation / Audit
-```
-
-不要把安全只交给：
-
-```text
-LLM Prompt
-```
-
----
-
-# 5. Partition Key 怎么选
-
-好的 Partition Key 通常希望：
-
-```text
-Query 常携带
-数据分布较均匀
-能显著减少搜索范围
-生命周期相对独立
-```
-
-例如：
-
-```text
-tenant_group
-region
-knowledge_base
-```
-
-但如果按一个高度倾斜字段分：
-
-```text
-99% 数据都在一个 Partition
-```
-
-就失去扩展价值。
-
----
-
-# 6. Partition 太细会怎样
-
-过细 Partition 可能带来：
-
-```text
-很多小索引
-Build / Metadata overhead
-Query fan-out
-资源碎片
-难以平衡
-```
-
-所以：
-
-> Partition 是为了让 Query / Lifecycle 更简单，而不是越细越好。
-
----
-
-# 7. 跨 Partition Query 怎么办
-
-如果 Query 需要：
-
-```text
-搜索多个 tenant group
-多个知识库
-```
-
-可能发生：
-
-```text
-fan-out to N partitions
-→ 每个 partition Top-K
-→ merge global Top-K
-```
-
-Fan-out 越大：
-
-```text
-Latency
-Network
-CPU
-Merge Cost
-```
-
-都会上升。
-
-这和普通分布式数据库的 Scatter-Gather 很类似。
-
----
-
-# 8. Partition 与 Shard 的区别
-
-容易混淆。
-
-可以先这样理解：
-
-```text
-Partition / Namespace
-偏逻辑数据组织 / Query Routing
-
-Shard
-偏底层水平扩展 / 数据分布到不同节点
-```
-
-一个 Partition 可能跨 Shard，一个 Shard 也可能承载多个逻辑 Partition。
-
-具体映射取决于产品。
-
----
-
-# 9. 多租户容量规划
-
-不能只看总数据量。
-
-要看：
-
-```text
-Tenant Size Distribution
-Hot Tenant QPS
-Filter Selectivity
-Per-tenant Growth
-Deletion / Rebuild Pattern
-```
-
-如果一个超大客户占：
-
-```text
-50% QPS
-40% vectors
-```
-
-就可能需要：
-
-```text
-dedicated capacity / partition
-```
-
-而不是继续和长尾小租户完全混布。
-
----
-
-# 10. 面试怎么答
-
-## Q：多租户 Vector DB 怎么设计？
-
-🎯 **建议回答**：
-
-> 我会先把 Tenant Isolation 当成安全边界，再考虑性能。小到中等规模可以共享 Collection，用 tenant_id 做强制 Filter；规模扩大后，可以按 tenant group / knowledge base 做 Namespace 或 Partition，让 Query 先路由再 ANN。超大租户可能独立 Collection 或 Capacity。关键是避免 collection-per-tenant 无限膨胀，同时也避免所有租户完全混在一个巨大索引里导致 Filter Selectivity 和热点问题。
-
----
-
-# 11. 高频易错点
-
-⚠️ **Partition = Shard。** 不一定，逻辑组织和物理分片是两个层次。
-
-⚠️ **每 Tenant 一个 Collection 最安全，所以永远最好。** 大量小 Collection 可能带来严重运维成本。
-
-⚠️ **多租户隔离只靠 tenant_id Filter 就绝对安全。** 还需要 Auth、Query Construction、Audit 等多层保证。
-
----
-
-# 12. 本章自测
-
-<details><summary>1. 为什么 collection-per-tenant 在大量长尾租户下可能不合适？</summary>
-
-因为会产生大量小索引和元数据对象，带来资源碎片、索引管理和运维复杂度。
 </details>
 
-<details><summary>2. Partition 和 Shard 最核心的区别是什么？</summary>
+## 知识回看与权威资料
 
-Partition 更偏逻辑数据组织和查询路由；Shard 更偏底层水平扩展和节点间数据分布。
-</details>
+回看第 1 节三维对照，再判断第 4 节策略分别改变了哪一维。[References：多租户](../../../references/vector-db/README.md#multitenancy)提供产品实现入口，不把布局选项当安全结论。
+
+---
+
+[← 10 元数据过滤：在允许的范围内找近邻](10-MetadataFilter.md) · [模块目录](../README.md) · [12 索引生命周期：写入、更新、删除与重建 →](12-VectorIndex生命周期.md)

@@ -1,710 +1,97 @@
-# 16｜Graph DB vs Vector DB，以及 Vector DB 在 AI 系统中的位置
+# 16｜图数据库边界：相似、关系与完整系统
 
-学到这里，我们已经知道 Vector DB 能做什么：
+[← 15 产品与架构选择：先决定需要哪类能力](15-产品与架构选型.md) · [模块目录](../README.md) · [Review：重建主线 →](../review/README.md)
 
-```text
-Vector
-→ Similarity / Distance
-→ Exact / ANN
-→ HNSW / IVF
-→ Metadata Filter
-→ Lifecycle / Shard / Replica
-```
+知识库收到两个问题：“哪份文档讲了相似的故障？”以及“这个服务依赖哪些组件，变更会影响谁？”它们都在找信息，但查询依据不同：前者依赖表示的相似程度，后者依赖明确关系。
 
-最后一个问题不是“Vector DB 还能多存什么”，而是：
+本章用这两个问题收束整个模块：**向量检索擅长找什么，关系查询补什么，以及怎样把它们放进一个有来源和权限的系统。**
 
-> **它在完整 AI 系统里到底负责什么，又不负责什么？**
+## 1. 相似检索与关系遍历的差别
 
-这也是为什么面试里经常出现：
+向量搜索把对象放进表示空间，用距离寻找近邻。Graph Database（图数据库）以节点、关系及属性组织数据，可以沿明确关系遍历。
 
-- Vector DB 和 Graph DB 有什么区别？
-- 为什么不把所有数据都塞进 Vector DB？
-- MySQL、Redis、Vector DB 怎么分工？
-- Knowledge Graph 和 Vector Retrieval 能不能一起用？
-
-这一章用来收住边界。
-
----
-
-# 1. 先讲人话：两种数据库在回答不同问题
-
-假设我们有企业知识库。
-
-用户问：
-
-> “有没有和员工报销标准相关的文档？”
-
-这更像：
+假设系统保存以下事实：
 
 ```text
-找语义相近的内容
+订单服务 ──依赖──> 支付服务 ──依赖──> 账户数据库
+订单服务 ──负责人──> 团队alpha
 ```
 
-Vector DB 擅长。
+“支付服务出问题可能影响谁”需要逆着依赖关系查找。即使“订单”和“支付”的向量很接近，也不能仅凭接近程度确认依赖方向；反过来，向量距离很远的两个系统也可能确有调用关系。
 
-但如果用户问：
+这里的关系是业务或资料中的明确事实，不是 HNSW 为导航创建的图边。两者都叫图，但节点、边的含义与查询目的不同。
 
-> “这个制度由哪个部门维护？这个部门归哪个 VP？该制度引用了哪些上位政策？”
+## 2. 两种查询可以配合
 
-这更像：
+用户用自然语言描述一个组件，系统可能先用名称、别名或向量搜索找到候选实体，再确认实体标识，沿依赖关系查找影响范围，最后取出对应文档证据。
 
 ```text
-实体之间是什么关系？
-沿关系可以走到哪里？
+用户描述 → 候选实体 → 确认具体对象 → 关系遍历 → 取来源证据
+              │              │             │
+           可能匹配错      不能漏授权      关系可能过期
 ```
 
-Graph DB 更自然。
+每一步都可能失败。实体识别错误会导致沿正确的图查错对象；关系过期会导致遗漏影响；取证时不检查权限会泄露内容。增加图数据库不会自动消除这些问题。
 
-一句话：
+若应用只需要固定的一跳关联，关系数据库中的表和 Join（连接）也可能足够。只有关系结构、遍历需求和工作负载值得单独支持时，才有理由引入新的系统，不因为“GraphRAG”是热门名称就搭图。
 
-```text
-Vector DB：按“像不像”找邻居
-Graph DB：按“谁和谁有什么关系”走图
-```
+## 3. 查询模型不等于产品互斥
 
----
+一些图数据库也支持向量索引。例如 Neo4j 提供向量相似查询，同时保留关系遍历能力，因此不能说“用图数据库就不能做向量搜索”。[Neo4j 向量索引文档](https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/)给出了能力、近似性和可见性限制。
 
-# 2. Vector DB 的核心数据模型
+同样，向量服务可以保存某些关联标识，但保存了 `parent_id` 不表示已经提供完整图查询语言或多跳遍历优化。选型仍回到具体查询和目标版本的实现。
 
-Vector DB 常见逻辑形态：
+本章不展开 GraphRAG 的实体抽取、社区摘要和多路检索，它们属于 RAG 的检索与证据组织策略。当前必须建立的前提是：关系需要来源、方向、版本与适用范围，不能把模型生成的关系直接视作已确认事实。
 
-```text
-ID
-+
-Vector
-+
-Metadata
-+
-Payload / Reference
-```
+## 4. 把一个最小知识系统分工说完整
 
-例如：
+以团队制度知识库为例，不需要图关系时，最小完整过程仍然包含以下几类职责：
 
-```text
-chunk_id = c_001
-vector = [0.13, -0.28, ...]
-doc_id = d_100
-tenant_id = t_01
-category = policy
-created_at = ...
-```
-
-查询重点通常是：
-
-```text
-给定 query vector
-→ 找最近邻
-→ 可带 metadata filter
-→ 返回 Top-K candidate
-```
-
-核心能力是：
-
-> **高维向量的高效相似性搜索。**
-
----
-
-# 3. Graph DB 的核心数据模型
-
-Graph DB 更强调：
-
-```text
-Node / Vertex
-Edge / Relationship
-Property
-```
-
-例如：
-
-```text
-[Policy]
-   |
-   | OWNED_BY
-   v
-[Finance Department]
-   |
-   | REPORTS_TO
-   v
-[VP Finance]
-```
-
-或者：
-
-```text
-Document --CITES--> Policy
-Policy   --APPLIES_TO--> EmployeeType
-Person   --MEMBER_OF--> Department
-```
-
-查询重点更像：
-
-```text
-从这个实体出发
-→ 沿某类关系走 1 / 2 / N 跳
-→ 找符合 pattern 的节点
-```
-
-核心能力是：
-
-> **显式关系建模与图遍历。**
-
----
-
-# 4. 两者最关键的区别
-
-| 维度 | Vector DB | Graph DB |
+| 环节 | 保存或处理什么 | 失败时应核对什么 |
 |---|---|---|
-| 核心问题 | 谁和 Query 最相似 | 谁与谁存在什么关系 |
-| 核心结构 | Vector + Metadata | Node + Edge + Property |
-| 查询方式 | Nearest Neighbor / ANN | Traversal / Pattern Match |
-| 关系是否显式 | 通常不是 | 是 |
-| 语义近似 | 强 | 不是主要能力 |
-| 多跳关系 | 不是强项 | 强项 |
-| 典型用途 | Semantic Retrieval | Knowledge Graph / Relationship Query |
+| 资料事实源 | 原文、发布状态、访问范围 | 原文是否存在、有效、可读 |
+| 文档处理与表示 | 片段清单、编码器及空间 | 切分是否完整，查询与文档是否兼容 |
+| 向量索引 | 候选组织、距离计算、过滤 | 合法精确结果与 ANN 差异 |
+| 结果取证 | 标识对应的原文和版本 | 是否取到旧文或错误片段 |
+| 上层回答 | 证据组合与用户表达 | 回答是否由证据支持 |
+| 更新与运行保障 | 增删同步、监控、恢复 | 是否漏更新、部分失败或回滚不完整 |
 
-⚠️ 不要把区别说成：
+关系库、对象存储、向量索引可能在同一产品中实现一部分，也可能分开部署。**职责需要分清，不代表每格必须启动一套服务。**
 
-> “Vector DB 存向量，Graph DB 存图。”
+## 5. 先证明最小链路，再增加复杂度
 
-这句话没错，但面试里更重要的是：
+可以先选少量有代表性的资料和查询，明确授权与来源，用精确搜索建立答案，再比较 ANN。在这一链路上验证更新、删除和恢复后，才根据真实失败引入关键词检索、精排、关系遍历或多阶段策略。
 
-> **两者优化的是不同的查询模型。**
+例如“准确的订单号搜不到”可能适合关键词或结构化条件，而不是增加一个图数据库；“依赖链缺失”则可能需要补全关系来源，而不是不断扩大向量 Top-K。问题要先被定位到机制，才知道应改变哪里。
 
----
+## 本章小结
 
-# 5. Embedding 中“关系近”不等于图关系存在
+向量距离用于相似候选，关系用于明确连接与路径，HNSW 图边不等于业务关系。产品可以组合多种查询能力，但事实源、表示、索引、权限和生命周期仍需分别验证。完整设计从最小可核对链路长出来，不从组件大全开始。
 
-这是非常重要的边界。
+## 🎯 面试怎么回答
 
-假设：
+**问：向量数据库与图数据库有什么区别，什么时候结合？**
 
-```text
-A = 报销制度
-B = 财务政策
-```
+向量库按表示距离寻找相似对象，图查询沿明确节点关系寻找连接和路径。相似不证明依赖或因果，HNSW 的索引边也不是业务关系。需要从自然语言定位实体再做关系查询时可以结合，但要验证实体、关系来源、版本和权限；简单关联也可能用关系库完成。部分图产品本身支持向量索引，所以不能把两类查询误写成产品互斥。
 
-它们 Vector 很近，说明：
+## ⚠️ 易错点
 
-```text
-语义相似 / 相关
-```
+接近不等于关系成立；图中存在一条边不证明它永远有效；向量索引的图不提供业务知识图谱；引入更多组件不自动提高答案质量。标为其他模块负责的机制，也不能在当前设计里假定已经实现。
 
-但不等于：
+## 自测
 
-```text
-A --OWNED_BY--> B
-A --CITES--> B
-A --SUPERSEDES--> B
-```
+**任务。** 用户问“修改支付服务会影响哪些系统？”资料里只存了一批文本向量，没有明确且经过确认的依赖关系。向量搜索返回三篇相似文档。能否直接把这三篇提到的系统当成完整影响范围？请说明可以给出的结果与仍缺的证据。
 
-Embedding 通常把大量信息压缩进连续向量空间，擅长表达“整体语义接近”。
+<details><summary>答案与解释</summary>
 
-Graph Edge 则表达：
-
-```text
-关系类型
-方向
-约束
-业务语义
-```
-
-所以：
-
-> **Similarity 不能替代显式关系。**
-
----
-
-# 6. Graph DB 也不能替代 Vector DB
-
-反过来也一样。
-
-如果用户问：
-
-> “有没有讲员工异地出差住宿标准的文档？”
-
-知识图谱里可能没有：
-
-```text
-Query Text
-→ 精确实体
-```
-
-尤其用户使用自然语言、同义词或模糊表达时。
-
-Vector Retrieval 更适合先完成：
-
-```text
-自然语言 Query
-→ Semantic Candidate Discovery
-```
-
-所以：
-
-```text
-Graph 强关系
-Vector 强语义邻近
-```
-
-不是谁完全替代谁。
-
----
-
-# 7. 两者可以组合吗？
-
-可以，而且这正是很多复杂知识系统的自然方向。
-
-一种思路：
-
-```text
-User Query
-   ↓
-Embedding
-   ↓
-Vector Retrieval
-   ↓
-找到候选 Entity / Document
-   ↓
-Graph Expansion
-   ↓
-沿引用 / 所属 / 依赖 / 时间关系扩展
-   ↓
-形成更完整 Context
-```
-
-另一种：
-
-```text
-Query
- ↓
-先识别 Entity / Relation
- ↓
-Graph Query
- ↓
-得到候选实体集合
- ↓
-Vector Similarity
- ↓
-在候选集合中做语义排序
-```
-
-也可以叫：
-
-```text
-Vector + Graph Hybrid Retrieval
-```
-
-但它不是本模块的 RAG Retrieval 主线。
-
-完整：
-
-```text
-GraphRAG
-Knowledge Graph Retrieval
-Hybrid Retrieval Evaluation
-```
-
-应该在 RAG / System Design 中继续深化。
-
----
-
-# 8. 为什么不能“什么都放 Vector DB”
-
-一个 AI Application 里可能有：
-
-```text
-User
-Tenant
-Conversation
-Document
-Chunk
-Permission
-Agent Run
-Tool Execution
-Embedding
-Session
-Billing
-```
-
-如果全部塞进 Vector DB，就会把不同数据语义混在一起。
-
-## 8.1 业务 Source of Truth
-
-例如：
-
-```text
-用户余额
-订单
-Tenant 权限
-Agent Run 状态
-```
-
-需要：
-
-- Transaction；
-- Constraint；
-- 精确查询；
-- 更新语义；
-- 可靠持久化。
-
-通常 MySQL / PostgreSQL 更自然。
-
-## 8.2 短期高速状态
-
-例如：
-
-```text
-Session
-Rate Limit Counter
-Cache
-短 TTL 状态
-```
-
-Redis 更自然。
-
-## 8.3 语义检索
-
-例如：
-
-```text
-Chunk Embedding
-FAQ Embedding
-Image Embedding
-```
-
-Vector DB 更自然。
-
-## 8.4 显式关系
-
-例如：
-
-```text
-Person → Department
-Document → Policy
-Service → Dependency
-```
-
-复杂多跳时 Graph DB 更自然。
-
-所以数据库选型的第一原则不是：
-
-> 哪个最先进？
-
-而是：
-
-> **当前数据的核心查询模型是什么？**
-
----
-
-# 9. 一个 AI Application 中的数据分工
-
-可以先建立一个简单心智模型：
-
-```text
-                         AI Application
-                               │
-             ┌─────────────────┼──────────────────┐
-             ▼                 ▼                  ▼
-           MySQL             Redis            Vector DB
-             │                 │                  │
-     Business Truth      Hot / Ephemeral      Semantic Index
-     User / Tenant       Session / Cache      Chunk Vector
-     Permission          Rate Limit           ANN Search
-     Run Metadata        Short State          Metadata Filter
-```
-
-如果还存在复杂显式知识关系：
-
-```text
-                         Graph DB
-                            │
-                      Entity / Relation
-                      Multi-hop Traversal
-```
-
-这不是固定架构模板，而是职责划分思维。
-
----
-
-# 10. Vector DB 通常不是 Source of Truth
-
-这是 AI 系统设计里一个很重要的原则。
-
-例如：
-
-```text
-Document
-→ Parse
-→ Chunk
-→ Embedding
-→ Vector DB
-```
-
-真正的原始文档可能在：
-
-```text
-Object Storage
-```
-
-文档元数据、版本、权限可能在：
-
-```text
-MySQL / PostgreSQL
-```
-
-Vector DB 保存的是：
-
-```text
-Derived Search Representation
-```
-
-也就是：
-
-> **从原始内容派生出来、用于检索的索引状态。**
-
-这带来非常重要的工程判断：
-
-如果 Vector Index 损坏或模型升级，理想情况下系统应该能够：
-
-```text
-Source Data
-+ Version Metadata
-+ Embedding Model
-→ Rebuild Vector Index
-```
-
-而不是：
-
-> “Vector DB 没了，原始知识也彻底没了。”
-
----
-
-# 11. 为什么 Vector DB 和 RAG 必须分模块学习
-
-很多教程直接：
-
-```text
-文档
-→ Embedding
-→ Milvus
-→ TopK
-→ LLM
-```
-
-然后把所有东西都叫 Vector DB。
-
-但实际上至少有两层：
-
-## Vector Infrastructure
-
-```text
-Vector Storage
-Distance
-ANN
-Index
-Filter
-Lifecycle
-Scale
-```
-
-这是本模块。
-
-## Retrieval System
-
-```text
-Query Rewrite
-Dense / Sparse
-Hybrid
-RRF
-Rerank
-Top-K Strategy
-Context Build
-Evaluation
-Bad Case Attribution
-```
-
-这是 RAG。
-
-为什么要拆？
-
-因为可能出现：
-
-```text
-Vector DB 很快
-ANN Recall 很高
-```
-
-但：
-
-```text
-最终 RAG 还是答错
-```
-
-原因可能在：
-
-- Chunk；
-- Embedding Model；
-- Query Rewrite；
-- Hybrid Retrieval；
-- Reranker；
-- Context Construction；
-- Generation。
-
-不能把一切问题都归因于 Vector DB。
-
----
-
-# 12. Vector DB 的 Production 检查清单
-
-真正选一个 Vector DB，不应该只问：
-
-> 支不支持 HNSW？
-
-还要问：
-
-```text
-数据规模是多少？
-维度多大？
-更新频率多高？
-Delete 多不多？
-Filter 复杂吗？
-多租户怎么隔离？
-P95 / P99 要多少？
-Recall 目标多少？
-内存预算多少？
-索引能不能在线 Build / Rebuild？
-备份恢复怎么做？
-Shard / Replica 怎么做？
-版本升级怎么迁移？
-Embedding Model 换了怎么办？
-```
-
-这正是前 22 章最终汇合的地方。
-
----
-
-# 13. 面试怎么答
-
-## Q：Vector DB 和 Graph DB 有什么区别？
-
-🎯 **建议回答**：
-
-> Vector DB 的核心查询模型是高维向量的近邻搜索，解决“哪些对象在语义空间里最相似”；Graph DB 的核心是显式 Node/Edge 关系和图遍历，解决“实体之间有什么关系以及如何多跳连接”。Embedding 中语义接近不能替代显式业务关系，反过来 Graph 也不擅长直接解决模糊自然语言的语义近邻，因此复杂知识系统里两者可以组合，而不是简单互相替代。
-
-## Q：为什么不把所有数据都放 Vector DB？
-
-> 因为不同数据有不同的核心查询和一致性需求。用户、权限、订单等业务事实更需要关系数据库的事务和约束；Session、Cache 等短期状态适合 Redis；Vector DB 更适合作为语义索引基础设施。很多情况下 Vector DB 存的是可重建的 Derived Index，而不是最终 Source of Truth。
-
-## Q：Vector DB 在 RAG 里负责到哪里？
-
-> 它负责 Vector Storage、Similarity Search、ANN Index、Metadata Filter、Index Lifecycle 和 Scale；Dense/Sparse 组合、Query Rewrite、RRF、Rerank、Top-K 策略、Retrieval Evaluation 属于更上层的 RAG Retrieval System。
-
----
-
-# 14. 高频易错点
-
-⚠️ **Vector Similarity = 显式关系。**  
-错误。相似不等于 `CITES / OWNED_BY / DEPENDS_ON`。
-
-⚠️ **Graph DB 可以天然替代 Vector DB 做 Semantic Search。**  
-不是它的核心查询模型。
-
-⚠️ **Vector DB 应该保存系统全部业务数据。**  
-通常职责过载。
-
-⚠️ **Vector DB 一定是 Source of Truth。**  
-很多 AI 系统里它更像可重建的 Derived Semantic Index。
-
-⚠️ **RAG 的 Retrieval Quality = Vector DB Quality。**  
-RAG 是更长的 Pipeline。
-
-⚠️ **用了 Graph + Vector 就一定比单独 Vector 好。**  
-引入 Graph 会增加 Extraction、Schema、维护与查询复杂度，必须证明收益。
-
----
-
-# 15. 本章自测
-
-<details>
-<summary>1. Vector DB 和 Graph DB 最本质的区别是什么？</summary>
-
-它们优化的是不同查询模型。Vector DB 优化高维相似性近邻搜索；Graph DB 优化显式实体关系建模和图遍历。
+不能。可以把三篇文档作为待核验候选并给出来源，但相似检索没有证明依赖方向、完整性或关系当前有效。应从受信资料或运行事实建立相关依赖，并检查版本和权限；证据不完整时明确范围限制，而不是声称已覆盖全部受影响系统。
 
 </details>
 
-<details>
-<summary>2. 为什么两个向量很近，不能说明它们存在明确业务关系？</summary>
+## 知识回看与权威资料
 
-Embedding 的距离主要表达连续语义空间中的相似或相关程度，而业务关系通常具有明确的类型、方向和约束，例如 `CITES`、`MEMBER_OF`、`DEPENDS_ON`，需要显式建模。
-
-</details>
-
-<details>
-<summary>3. Vector DB 为什么经常更适合做 Derived Index，而不是 Source of Truth？</summary>
-
-因为 Vector / ANN Index 常由原始文档、Metadata 和 Embedding Model 派生出来。模型升级、Index 损坏或版本迁移时，理想系统可以由权威源重新生成向量和索引。
-
-</details>
-
-<details>
-<summary>4. MySQL、Redis、Vector DB 在 AI 系统里可以怎样粗略分工？</summary>
-
-MySQL 保存长期结构化业务事实和事务状态；Redis 保存低延迟、短生命周期 Cache / Session / Counter 等；Vector DB 保存语义向量和 ANN Index。最终仍应按具体查询、一致性和规模需求选型。
-
-</details>
-
-<details>
-<summary>5. 为什么 Vector DB 模块不直接把 Hybrid Search、RRF、Rerank 全讲完？</summary>
-
-因为这些属于完整 Retrieval Strategy，需要和 Query、Sparse Retrieval、Reranker、Context Build、Evaluation 一起理解，Primary 更适合放在 RAG。Vector DB 先把向量基础设施自身闭环。
-
-</details>
+回看第 1 节的两种问题与第 4 节的职责表。[References：图与向量边界](../../../references/vector-db/README.md#graph-boundary)支持产品能力核验；继续 [Review](../review/README.md)，用新场景重建整条主线。
 
 ---
 
-# 16. 到这里，你应该形成的最终认知
-
-Vector DB 的完整因果链不是：
-
-```text
-Embedding
-→ Milvus
-→ TopK
-```
-
-而是：
-
-```text
-语义对象
-→ Vector Representation
-→ Dimension / Normalization
-→ Similarity Metric
-→ Exact Nearest Neighbor
-→ Scale Problem
-→ ANN
-→ HNSW / IVF / Quantization
-→ Index Selection
-→ Schema / Metadata / Filter
-→ Update / Delete / Compaction
-→ Re-embedding / Rebuild
-→ Shard / Replica
-→ Capacity / Troubleshooting
-→ Product Selection
-→ System Boundary
-```
-
-下一模块开始补上模型侧基础：
-
-> **LLM Foundation（应用工程深度）**
-
-随后在 RAG 中再把：
-
-```text
-Embedding
-+ Vector Infrastructure
-+ Sparse Retrieval
-+ Hybrid
-+ Rerank
-+ Evaluation
-```
-
-组合成真正的检索系统。
+[← 15 产品与架构选择：先决定需要哪类能力](15-产品与架构选型.md) · [模块目录](../README.md) · [Review：重建主线 →](../review/README.md)

@@ -1,324 +1,99 @@
-# 10｜Metadata Filter、Pre-filter 与 Post-filter
+# 10｜元数据过滤：在允许的范围内找近邻
 
-真实 Vector Search 很少只有：
+[← 09 向量数据建模：让结果找得到来源](09-Vector数据建模.md) · [模块目录](../README.md) · [11 分区与多租户：数据放在哪，谁可以读 →](11-Partition与TenantIsolation.md)
 
-```text
-给我最相似的 20 条
-```
+同一个问题在全库中能找到好结果，加上团队条件后却只剩两条。是不是向量失效了？先不要调模型：**带条件的近邻搜索，要找的是合法集合中的前 K 条，而不是全库前 K 条中的合法部分。**
 
-更常见的是：
+本章用同一组数据建立这两个查询的差别，再讨论数据库可能怎样执行。
 
-```text
-给我最相似的 20 条
-AND tenant_id = 42
-AND language = 'zh'
-AND permission_group IN (...)
-AND current_version = true
-```
+## 1. 先把正确答案列出来
 
-这就是 Metadata Filter。
+沿用第 02、03 章的教学向量，查询 q=`[1,0]`，按余弦相似度从大到小排列，并列时按标识排序。全库顺序为 A、B、C、F、D、E。A、C、D、E 属于 alpha；B、F 属于 beta。
 
----
+| 查询过程 | 中间结果 | 最终结果 |
+|---|---|---|
+| 先限定 alpha，再取 Top-3 | 合法顺序 A、C、D、E | A、C、D |
+| 全库先取 Top-3，再删掉 beta | A、B、C | A、C |
 
-## 1. Filter 为什么是 Vector DB 的核心能力
+第二行没有返回越权结果，但少了一条本来应该存在的合法近邻 D。即使用的是全库**精确** Top-3，也不能避免这种不足；问题在截断发生得太早。
 
-如果没有 Filter：
+## 2. Pre-filter 与 Post-filter 描述什么
 
-```text
-ANN 找到全局最相似结果
-```
+Pre-filter（前置过滤）要求搜索目标由条件约束，例如只寻找 alpha 的结果。Post-filter（后置过滤）先生成候选，再剔除不符合条件的记录。
 
-但业务可能要求：
+这两个词不能自动告诉你物理执行细节。前置过滤可以通过标量索引生成允许标识、在图遍历时限制结果、使用过滤感知索引，或对很小的合法集合直接精确计算。它不一定先复制数据、重新建一张小图。
 
-```text
-只能查当前租户
-只能查当前知识库
-只能查用户有权限的文档
-只能查当前版本
-```
+图搜索中，某个节点可能可以作为导航桥梁却不能进入结果。若简单切断所有不合法节点的边，原本可达的合法节点可能变得难以访问。实现必须在搜索效率与结果约束之间处理这个关系，不能从 SQL 中 WHERE 写在前面就推断底层一定先缩小了图。
 
-所以：
+[Elasticsearch kNN 文档](https://www.elastic.co/docs/solutions/search/vector/knn)与 [pgvector 0.8.6 的过滤说明](https://github.com/pgvector/pgvector/blob/v0.8.6/README.md#filtering)展示了不同实现的执行与候选行为。
 
-> **相似度只是第一维约束，业务合法性通常来自 Metadata Filter。**
+## 3. 为什么扩大候选有帮助，却不是保证
 
----
+设过滤通过比例为 s，即全体记录中满足条件的比例，避免使用含义可能相反的“选择性高低”。若候选中通过比例也大致为 s，先取 K/s 条，平均可能留下约 K 条。
 
-# 2. Pre-filter 是什么
+例如 K=10、s=0.1，先取 100 条是一个估算起点。但是向量相似度与租户分布未必独立：相关区域可能几乎全部属于另一个租户。即使总体 10% 合法，最近的 100 条也可能没有合法项。因此 K/s 不是安全或召回保证。
 
-直觉：
+更完整的策略包括继续扫描直到足够、设置明确的扫描预算，或切换到合法集合的精确计算。预算用尽时，应如实返回不足，而不是删除权限条件重试。
 
-```text
-先根据 Metadata 缩小合法候选集
-→ 再在合法候选中做 Vector Search
-```
+## 4. 一个有版本边界的实现例子
 
-优点：
+pgvector 的近似索引查询可能在索引扫描后应用过滤，因此合法结果不足。**从 0.8.0 起支持可启用的迭代扫描；本课程核验的稳定版本为 0.8.6。** 它可以继续扫描，直到结果足够或达到相关上限；不能把它写成“永远只能固定 Top-K 后过滤”。
 
-```text
-不会先找到一堆非法候选
-```
+例如 HNSW 的 `hnsw.iterative_scan=strict_order` 表示启用严格距离顺序的迭代扫描。它不是“保证全库精确召回”的开关；扫描数量和内存等上限仍会停止探索。这里是配置语义说明，不是要求你在尚未建立数据库环境时执行孤立 SQL。[官方固定版本说明](https://github.com/pgvector/pgvector/blob/v0.8.6/README.md#iterative-index-scans)给出上限和严格／宽松顺序的区别。
 
-但难点是：
+不同产品还可能对较小的过滤集合回退为精确搜索。应检查执行计划或诊断信息，不能看到用了 HNSW 索引就假设每次请求都走完全相同的路径。
 
-```text
-ANN Index 如何在被过滤后的稀疏子集里仍然高效导航？
-```
+## 5. 四组对照如何定位问题
 
-如果 Filter 选择性极高，例如：
+在**受控实验数据**上固定快照、查询、距离和 K，分别做下面四组。生产授权请求不为调试而开放全库结果。
 
-```text
-1 亿条中只剩 1000 条
-```
+| 实验 | 精确答案的用途 | 可定位的问题 |
+|---|---|---|
+| 无过滤精确搜索 | 全库距离基准 | 数据或表示是否本来就找不到期待对象 |
+| 无过滤 ANN | 与上行同条件比较 | 没有过滤时的索引损失 |
+| 带过滤精确搜索 | 合法集合距离基准 | 过滤逻辑、合法对象数是否符合预期 |
+| 带过滤 ANN | **与上一行**比较 | 过滤与近似执行结合后的损失 |
 
-算法行为可能与无过滤情况完全不同。
+如果带过滤精确搜索已经只有两条，ANN 返回两条不一定有故障。如果精确有十条而 ANN 只有两条，再查看候选截断、扫描上限、标量索引、数据倾斜和索引可见性。
 
----
+同时区分“找到 K 条合法记录”和“找回合法精确 Top-K”。返回条数足够，并不证明质量足够。使用第 03 章的去重集合指标，同时记录不足率、超时、错误以及越权返回。
 
-# 3. Post-filter 是什么
+## 6. 权限条件由谁提供
 
-直觉：
+客户端可以请求一个知识库，但不能自行决定自己的租户身份。服务端从已认证身份得到授权范围，再与业务条件组合。缺少身份、授权校验失败或条件生成失败时，应拒绝查询，而不是按空过滤解释为全库。
 
-```text
-先做 ANN Top-N
-→ 再按 Metadata 删除不符合条件的结果
-```
+删除和更新同样要带正确范围。读取安全不代表写入安全；一个遗漏 tenant 条件的批量删除，可能影响其他团队。数据库层是否提供行级安全、独立密钥或集合权限要单独核对。
 
-例如：
+> ⚠️ 注意：仅在客户端拿到所有结果后隐藏其他租户文本，已经把不应交付的数据带出了可信边界。过滤不足的降级必须保持同一权限范围。
 
-```text
-先取 100 个
-过滤后剩 7 个
-```
+## 本章小结
 
-问题：
+先定义合法集合，再定义该集合中的近邻答案。前置和后置是理解候选过程的语言，不是通用物理执行承诺。扩大候选和迭代扫描有上限，四组对照能够分开过滤逻辑与索引损失；任何优化都不能撤销授权条件。
 
-```text
-最终需要 Top20
-但只剩 7 个
-```
+## 🎯 面试怎么回答
 
-如果简单 Post-filter，就可能：
+**问：加 Metadata Filter 后召回下降，怎样处理？**
 
-```text
-结果数量不足
-Recall 下降
-```
+我先核对过滤后的精确 Top-K 和合法记录数，而不是拿全库结果比较。若合法集合足够但 ANN 不足，再看候选是否过早截断、扫描预算、标量索引与过滤感知执行。可以扩大候选、使用产品支持的迭代扫描或对小集合精确搜索，但要评测召回和尾延迟，始终保持权限约束。返回 K 条与找回正确 K 条是两项检查。
 
-需要：
+## ⚠️ 易错点
 
-```text
-oversampling
-iterative search
-```
+前置过滤不等于重建子图；后置过滤不足不一定是模型问题；K/s 是分布假设下的估算；迭代扫描不等于无限扫描。字段存在也不代表授权已强制执行。
 
-等策略补救。
+## 自测
 
-具体实现依产品而定。
+**任务。** K=5，带权限过滤的精确搜索仅有 3 条记录；ANN 返回这 3 条。另一个查询精确有 5 条，ANN 返回 5 条但只重合 2 条。分别计算召回，并判断是否“返回条数正常”。
 
----
+<details><summary>答案与解释</summary>
 
-# 4. Pre-filter 和 Post-filter 不是简单二选一
+第一例召回为 1，返回 3 条符合合法集合大小；不是因为不足 K 就判为索引故障。第二例条数达到 K，但索引召回为 2/5，应继续诊断质量。两例都还要独立确认返回项全部合法。
 
-现代 Vector DB 可能采用更复杂的：
-
-```text
-Filter-aware ANN
-Bitmap / Inverted Index + ANN
-Dynamic Candidate Expansion
-Iterative Filtering
-Partition Pruning
-```
-
-所以面试不要说：
-
-> “Vector DB 都是先过滤再搜索。”
-
-或者：
-
-> “都只能搜索后过滤。”
-
-正确表达：
-
-> **不同产品、不同索引会有不同的 Filter Execution Strategy。**
-
----
-
-# 5. Filter Selectivity 是什么
-
-假设原数据 1 亿条。
-
-Filter 后：
-
-```text
-5000 万 → selectivity 50%
-100 万   → 1%
-1 万     → 0.01%
-```
-
-选择性不同会直接影响：
-
-```text
-候选规模
-ANN 导航
-Latency
-Recall
-```
-
-因此 Production Benchmark 必须包含真实 Filter 分布。
-
----
-
-# 6. Tenant Filter 为什么不能只是应用层约定
-
-错误模式：
-
-```text
-先全局 ANN
-→ 应用层看 tenant_id
-→ 不对就丢掉
-```
-
-这可能带来：
-
-```text
-跨租户数据泄漏风险
-结果不足
-额外开销
-```
-
-Tenant Isolation 应在：
-
-```text
-数据模型
-Partition / Namespace
-Metadata Filter
-Authorization
-```
-
-多层共同保证。
-
-安全不能只靠 Prompt。
-
----
-
-# 7. Permission Filter 的难点
-
-权限可能不是简单：
-
-```text
-owner_id = user_id
-```
-
-而是：
-
-```text
-user
-→ role
-→ team
-→ document ACL
-```
-
-如果每个 Query 都构造一个超长：
-
-```text
-doc_id IN (...)
-```
-
-可能很昂贵。
-
-因此需要考虑：
-
-```text
-permission group / ACL token
-partitioning
-precomputed access group
-query-time filter complexity
-```
-
-完整授权模型属于 System Design / Backend Security，但 Vector DB 必须支持有效过滤边界。
-
----
-
-# 8. Filter 与 ANN Recall 怎么分层排查
-
-如果 Query 没召回：
-
-先做：
-
-```text
-Exact + No Filter
-Exact + Filter
-ANN + No Filter
-ANN + Filter
-```
-
-四组对照。
-
-这样可以判断：
-
-```text
-Embedding / Corpus 问题？
-Filter 太严格？
-ANN Recall Loss？
-ANN + Filter 组合问题？
-```
-
-这是非常实用的 Troubleshooting 方法。
-
----
-
-# 9. Filter 字段也需要设计
-
-如果经常过滤：
-
-```text
-tenant_id
-kb_id
-language
-version
-```
-
-就应该确认产品是否对这些字段建立适合的 Scalar / Payload Index。
-
-否则：
-
-```text
-Vector ANN 很快
-但 Metadata Filter 很慢
-```
-
-整体 Query 仍然慢。
-
----
-
-# 10. 面试怎么答
-
-## Q：Vector Search 的 Metadata Filter 怎么做？
-
-🎯 **建议回答**：
-
-> Metadata Filter 会把语义近邻搜索和 tenant、permission、version 等结构化约束结合。实现上可能是 pre-filter、post-filter，或者 filter-aware ANN。Pre-filter 能保证候选先满足约束，但高选择性过滤会改变 ANN 导航；简单 post-filter 可能导致 Top-K 不足和 Recall 下降。所以我会把 Filter Selectivity 纳入 Benchmark，并分别对 Exact/ANN、有无 Filter 做对照，判断问题来自 Embedding、Filter 还是 ANN。
-
----
-
-# 11. 高频易错点
-
-⚠️ **Post-filter 只会变慢，不影响 Recall。** 可能导致结果不足或漏掉过滤后真正的 Top-K。
-
-⚠️ **Tenant Filter 放应用层就够了。** 存在安全和质量风险。
-
-⚠️ **ANN Benchmark 不需要带 Filter。** Production 结论可能完全失真。
-
----
-
-# 12. 本章自测
-
-<details><summary>1. 为什么简单 Post-filter 可能导致返回结果不足？</summary>
-
-因为 ANN 先取出的候选中可能有大量不满足 Metadata 条件，过滤后剩余数量少于目标 Top-K。
 </details>
 
-<details><summary>2. 怎样区分 ANN Recall Loss 和 Filter 问题？</summary>
+## 知识回看与权威资料
 
-分别跑 Exact/ANN 与有无 Filter 的组合对照，观察丢失从哪一步开始。
-</details>
+回看第 1 节的两个 Top-K，再用第 5 节四组实验定位失败发生的层。[References：过滤执行](../../../references/vector-db/README.md#filtering)区分通用问题与产品版本能力。
+
+---
+
+[← 09 向量数据建模：让结果找得到来源](09-Vector数据建模.md) · [模块目录](../README.md) · [11 分区与多租户：数据放在哪，谁可以读 →](11-Partition与TenantIsolation.md)
