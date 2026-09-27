@@ -1,454 +1,109 @@
-# 15. Authentication、Authorization、Session 与 Multi-tenant Boundary
+# 谁能访问什么，权限怎样贯穿请求与任务
 
-> 这一章的主线是：**先确认“你是谁”，再确认“你能做什么”，最后确保任何下游状态都不会越过 Tenant / Permission Boundary。**
+[← 多份数据不一致时，怎样恢复业务正确性](13-Consistency与Compensation.md) · [模块主页](../README.md) · [不可信输入怎样被限制在安全边界内 →](21-BackendSecurity.md)
 
-## 1. Authentication vs Authorization
+Alice 属于 team-a，Bob 属于 team-b。Bob 得到了 Alice 文档的编号 doc-42，还拿着自己合法登录后的令牌。服务应该承认 Bob 是谁，却拒绝他读取这份文档。这个例子把身份和权限分开，也说明“用户已经登录”不是数据访问的终点。
 
-### Authentication
+## 1. 先建立身份，再判断这次动作是否被允许
 
-回答：
+**Authentication（认证）** 确认调用者身份；**Authorization（授权）** 判断该身份能否对某个对象执行某项动作。授权需要同时考虑调用者、资源、操作以及业务状态。
 
-```text
-Who are you?
-```
+对文档读取，服务先验证凭证，形成可信主体，再检查主体是否属于文档团队、是否有读取权。更新还可能要求编辑角色、未锁定状态或特定审批。**请求中写着 team-a 只是用户提供的输入，不能因此变成可信身份。**
 
-例如：
+用伪 SQL 表示最小数据边界：`SELECT ... WHERE doc_id = ? AND tenant_id = ?`。第二个参数应来自经过验证并授权的团队上下文。真实服务还需处理一个人加入多个团队、对象级共享等规则，不能把这条过滤简化成所有权限模型。
 
-- password login；
-- OAuth login；
-- API Key；
-- service identity。
+知道随机 ID 不等于有权访问。是否用 403 或 404 隐藏对象存在性，是接口策略；无论响应怎样，都不能返回未授权内容。列表、导出、批量接口、缓存和后台任务必须遵守同一数据边界。
 
-### Authorization
+## 2. Session 与 Token，怎样让下一次请求认出用户
 
-回答：
+**Session（会话）** 常通过一个不透明的随机标识关联服务端状态。浏览器带上标识，服务查出当前用户和会话有效性。优点是服务端可以集中撤销；代价是查状态的依赖与容量需要管理。多实例应共享必要状态或使用明确定义的路由方案，不能依赖某个进程永远不重启。
 
-```text
-What are you allowed to do?
-```
+**Token（令牌）** 是调用者持有的凭证。它可以是不透明字符串，也可以用 JWT 格式承载声明；JWT 不是所有令牌的同义词。Bearer Token（持有者令牌）通常意味着持有即可使用，所以传输、存储与日志脱敏都属于安全边界。
 
-例如：
+签名 JWT 可让服务本地验证发行者签名和声明，但常见签名形式不会自动保密载荷。解码得到 JSON 也不是验签，更不是授权。[JWT 安全规范](https://www.rfc-editor.org/rfc/rfc8725.html)
 
-- 能否读某 Knowledge Base；
-- 能否调用高风险 Tool；
-- 能否访问某 Tenant 数据；
-- 能否执行 Admin API。
+## 3. 验证 JWT，不只问签名对不对
 
-不要混为一谈。
+服务应预先限制可接受的算法与密钥来源，核对发行者 `iss`、目标受众 `aud`、有效时间及该类令牌要求的其他声明。不能让不可信的 `alg` 或密钥地址决定服务接受哪种验证方式，也不能把给另一服务的令牌直接用于当前 API。
 
----
+例如一个用于浏览器登录身份说明的 ID Token，不应因为也是 JWT 就当作某个业务 API 的 Access Token。不同用途的令牌需要不同验证规则；主体与团队声明也应按实际发行方约定解释，而不是信任任意同名字段。
 
-## 2. Access Token 与 Refresh Token
+令牌验证完成后，仍要判断对象权限。JWT 中的角色快照可能落后于权限变更；若要求立即撤权，就需要服务端状态查询、版本检查或其他撤销机制，不能只等一个长期令牌自然过期。
 
-典型模型：
+## 4. OAuth 授权与登录怎样关联
 
-```text
-Login
-→ Access Token（短）
-→ API
+OAuth 2.0 解决一个客户端怎样取得访问资源的授权，不单独定义完整用户登录身份。OpenID Connect（OIDC）在其上增加身份层，并定义 ID Token 等验证规则。[OIDC Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html)
 
-Access Token expires
-→ Refresh Token
-→ new Access Token
-```
+以授权码配合 PKCE（代码交换证明密钥）为例，浏览器先被送往授权服务，用户完成相应身份验证与授权，客户端收到一次性授权码，再带上最初生成的校验秘密换取令牌。PKCE 把兑换者与发起者关联，减少授权码被截获后被其他客户端兑换的风险；重定向地址、会话关联和令牌验证仍各有作用。[OAuth 安全最佳实践 RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html)
 
-为什么 Access Token 通常较短？
+Access Token（访问令牌）用于访问资源，Refresh Token（刷新令牌）用于按规则换取新访问令牌。刷新令牌通常需要更严格的保存、撤销和重放保护；轮换或发送者约束应按部署模型落实。刷新流程本身不赋予永久权限。
 
-因为泄漏以后影响窗口更小。
+RFC 9700 明确要求不使用资源所有者密码凭证授权方式。这个安全要求不是说所有历史系统瞬间停止工作，而是课程不应再把让第三方客户端直接收集用户密码当作推荐的现代授权设计。
 
-Refresh Token 能长期换新 Token，风险更高，需要更严格保护。
+## 5. 权限要穿过缓存、流和任务
 
----
+同一文档如果按 `doc_id` 缓存完整私有响应，却在命中时跳过权限判断，就可能向另一个团队泄露。可以缓存与用户无关、范围明确的数据，再在返回前授权；也可以按可信访问范围设计缓存键和失效规则。不能只机械地给所有键拼一个 user_id 就宣布问题解决。
 
-## 3. JWT 不等于“Authentication System”
+长连接建立时校验身份，不代表之后永久有效。令牌过期、成员被移除或资源权限改变后，系统要按要求重新校验、限制订阅或关闭连接。重新连接与历史事件补发也要验证当前访问权。
 
-JWT 只是 Token Representation / Signing Format 的一种常见选择。
+任务更加明显：Alice 在 10:00 有导出权限，提交任务后于 10:05 被移出团队，任务在 10:10 才真正执行。若业务要求撤权立即生效，执行者必须在数据读取和输出交付前复核，而不是只相信提交时快照。另一方面，已经明确授权并依法需要完成的后台业务，可能采用另一规则；必须写成业务政策并留审计，不可默默选一种。
 
-它不会自动解决：
+## 6. 用户确认应该确认哪一个动作
 
-- 登录流程；
-- 权限模型；
-- Revocation；
-- Session Device 管理；
-- Token Rotation；
-- Secret / Key Management。
+“允许 Agent 操作”不是无限授权。一次确认应绑定具体对象、动作、参数、有效时间和必要的资源版本。若用户确认的是导出 team-a 的公开摘要，执行时却改成导出全部员工资料，旧确认不能复用。
 
-不要回答：
+格式正确、权限允许、业务条件成立和用户已确认是不同检查。Schema 校验能证明金额字段是数字，不能证明余额足够；拥有写权限也不意味着可以跳过业务额度或审批。高风险动作要在实际提交边界再次校验相关条件，并把批准与操作身份关联。
 
-> “用了 JWT 就是无状态且安全。”
+## 本章小结
 
----
+身份回答是谁，授权回答能对什么做什么。会话、令牌和 JWT 是携带与验证身份的机制，不能代替对象权限、业务条件和执行时校验；权限变化必须贯穿缓存、长连接、后台任务与结果交付。
 
-## 4. Stateless Token 的 Trade-off
+## 🎯 面试怎么答
 
-优势：
+**用户已经通过 JWT 验证，为什么还需要权限检查？**
 
-```text
-API instance 不需要每次查 Session Store
-```
+> JWT 验证只按既定规则确认凭证及其声明有效。还要核对受众、用途与当前主体，再判断对象范围、读写动作和业务状态。角色可能被撤销，任务可能延迟执行，缓存和历史事件也可能泄露，因此关键访问与提交边界仍需适当授权和撤销处理。
 
-但代价：
+## ⚠️ 易错点
 
-- Token 一旦签发难立即撤销；
-- 权限变化传播可能延迟；
-- Payload 版本治理；
-- Key Rotation；
-- Token 大小。
+> ⚠️ 签名 JWT 的载荷不默认保密；解码不等于验签。
 
-因此很多系统仍然有：
+> ⚠️ 客户端传来的团队字段不能直接成为可信授权范围。
 
-```text
-Token + Server-side session / revocation state
-```
+> ⚠️ 一次审批不自动覆盖后来改变的对象、参数或资源版本。
 
----
+## 本章自测
 
-## 5. Server-side Session
+先写判断和依据，再展开提示或答案。
 
-```text
-session_id cookie/token
-→ Session Store
-→ user / tenant / permissions / device
-```
-
-多实例下 Session Store 需要共享。
-
-Redis 常见，但不是唯一选择。
-
-要考虑：
-
-- TTL；
-- logout；
-- concurrent device；
-- session fixation；
-- tenant context；
-- failover。
-
----
-
-## 6. OAuth2 应该掌握到什么程度
-
-AI Application Engineer 至少理解：
-
-```text
-Resource Owner
-Client
-Authorization Server
-Resource Server
-```
-
-以及 Authorization Code Flow 的基本关系。
-
-当前 OAuth 安全最佳实践强调：
-
-- Authorization Code + PKCE；
-- exact redirect URI；
-- 避免 Implicit / Password Grant 等旧式高风险模式；
-- public client 的 refresh token 需要更严格保护。
-
-不需要在本模块推导 OAuth 每个 RFC，但不能只会“拿 Token”。
-
----
-
-## 7. API Key
-
-机器到服务常用：
-
-```text
-Authorization: Bearer api_key
-```
-
-或自定义 Header。
-
-API Key 应该：
-
-- 可 revoke；
-- 有 scope；
-- 有 owner / tenant；
-- 可 rotate；
-- 日志不明文；
-- 不放 URL query。
-
----
-
-## 8. RBAC
-
-Role Based Access Control：
-
-```text
-user
-→ role
-→ permissions
-```
-
-例如：
-
-```text
-viewer → read
-editor → read/write
-admin → manage
-```
-
-简单、可解释。
-
-但复杂多租户场景可能需要更多上下文。
-
----
-
-## 9. ABAC / Policy
-
-Attribute Based：
-
-```text
-subject attributes
-resource attributes
-context
-→ policy decision
-```
-
-例如：
-
-```text
-user.tenant_id == document.tenant_id
-AND user.department in document.allowed_departments
-```
-
-Agent Tool Permission 常更接近 Policy / Capability，而不只是 Role。
-
----
-
-## 10. Permission 必须在 Server 执行
-
-错误：
-
-```text
-System Prompt:
-"不要访问别的用户数据"
-```
-
-Prompt 不是 Authorization Boundary。
-
-正确：
-
-```text
-request identity
-→ server policy
-→ scoped query / tool permission
-```
-
-Agent Harness 中 Prompt Injection 防护也依赖这个原则。
-
----
-
-## 11. Multi-tenant Context
-
-Request 进入后形成：
-
-```text
-principal
-user_id
-tenant_id
-roles/scopes
-request_id
-```
-
-这个 Context 要安全地传播到：
-
-- DB query；
-- Redis key；
-- Vector filter；
-- MQ message；
-- task record；
-- tool call。
-
-不能只在 Controller 校验一次。
-
----
-
-## 12. Background Task 的身份问题
-
-用户发请求：
-
-```text
-User A
-→ create background task
-```
-
-Worker 10 分钟后执行时，HTTP Request 已不存在。
-
-所以 Task Record 必须保存：
-
-```text
-subject / tenant
-permission context / resource scope
-```
-
-但不要简单保存一个永不过期 Access Token。
-
-更成熟的是：Worker 用 Service Identity，并重新按 task owner / tenant 做授权检查。
-
----
-
-## 13. Token Refresh Race
-
-多个并发请求发现 Access Token 过期：
-
-```text
-request A → refresh
-request B → refresh
-request C → refresh
-```
-
-可能造成：
-
-- refresh token rotation 冲突；
-- 多个新 token；
-- old token invalidation race。
-
-常需要：
-
-- singleflight / lock；
-- refresh state；
-- token version。
-
-这也是面经常从 Auth 追到并发正确性的原因。
-
----
-
-## 14. Session Routing
-
-多实例：
-
-```text
-LB
-├─ API A
-├─ API B
-└─ API C
-```
-
-如果 Session 外置：
-
-```text
-任何实例都能处理
-```
-
-如果 Session 只在本机：
-
-```text
-需要 sticky session
-```
-
-Sticky 不是一定错误，但要考虑实例故障和扩缩容。
-
----
-
-## 15. AI 场景：RAG Permission
-
-错误：
-
-```text
-retrieve Top-K
-→ generate
-→ 再检查权限
-```
-
-敏感 Chunk 已经进入模型 Context。
-
-更安全：
-
-```text
-identity / tenant / ACL
-→ retrieval filter
-→ evidence
-→ generation
-```
-
-Permission 应尽可能前置到数据访问边界。
-
----
-
-## 16. AI 场景：Agent Tool Approval
-
-Authentication：
-
-```text
-这是用户 A
-```
-
-Authorization：
-
-```text
-用户 A 可以调用 deploy_tool?
-```
-
-Approval：
-
-```text
-即使有权限，这次高风险动作是否需要人工确认？
-```
-
-三者是不同层。
-
----
-
-## 17. Metrics / Audit
-
-安全链应记录：
-
-```text
-who
-what tenant
-what resource
-what action
-allowed / denied
-policy version
-request_id / trace_id
-```
-
-敏感 Token / Secret 不能写入日志。
-
----
-
-## 18. 🎯 面试怎么答
-
-**问：Authentication 和 Authorization 有什么区别？**
-
-可以回答：
-
-> Authentication 确认身份，Authorization 判断这个身份对具体资源/动作是否有权限。生产系统通常先把 Token/Session 解析成 Principal，再在 Server/Policy 层做资源权限。对多租户 AI 系统，tenant_id 和权限还必须传播到 DB、Cache、Vector Retrieval、MQ Task 和 Tool，不能只靠前端或 Prompt。
-
----
-
-## 19. ⚠️ 易错点
-
-- JWT ≠ 完整 Auth System；
-- Authentication ≠ Authorization；
-- RBAC ≠ 所有场景够用；
-- Prompt ≠ Permission Boundary；
-- Background Worker 不能默认继承 HTTP Request 的权限上下文；
-- Sticky Session 不能替代 Durable State。
-
----
-
-## 20. 本章自测
+### 1. Bob 的合法令牌来自 team-b，他请求 team-a 的 doc-42，缓存恰好有内容。服务可否直接返回缓存？请给出检查发生的位置。
 
 <details>
-<summary>1. 为什么 JWT 无法自动解决 Logout？</summary>
+<summary>提示</summary>
 
-已签发 Token 在过期前仍可能有效。立即撤销通常需要短 TTL、Revocation State、Token Version、Key/Session 管理等额外机制。
+缓存省查询，不省访问控制。
 
 </details>
 
 <details>
-<summary>2. 为什么 RAG Permission 应在 Retrieval 前执行？</summary>
+<summary>参考答案与解释</summary>
 
-如果先取敏感 Chunk 再检查，数据已经进入模型上下文或服务内存，形成泄漏风险。权限应该尽量下沉到数据访问过滤边界。
+不能。验证 Bob 的身份后，必须按当前资源和操作判断权限；缓存键与内容也要匹配可信范围。未授权时不能返回文档，无论数据库是否被访问。
+
+</details>
+
+### 2. 10:00 提交导出，10:05 用户被撤权，10:10 执行。业务要求撤权立即生效。除了提交接口，还要在哪些位置检查？
+
+<details>
+<summary>提示</summary>
+
+长任务跨越了权限变化时刻。
 
 </details>
 
 <details>
-<summary>3. Authorization 与 Approval 有什么区别？</summary>
+<summary>参考答案与解释</summary>
 
-Authorization 判断主体是否具备执行动作的权限；Approval 是即使有权限，某次高风险操作是否仍需人工确认。Agent Tool 常同时需要两者。
+至少在执行读取和敏感结果交付时按当前规则复核；已缓存的身份或旧审批不能无限沿用。还需明确在途任务停止与临时输出清理规则，并记录拒绝原因。
 
 </details>

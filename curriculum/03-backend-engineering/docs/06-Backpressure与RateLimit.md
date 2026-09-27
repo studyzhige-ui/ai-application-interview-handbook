@@ -1,465 +1,103 @@
-# 06. Backpressure、Concurrency Limit、Rate Limit 与 Load Shedding
+# 到达速度超过处理能力时怎么办
 
-> 这一章回答一个核心问题：**当上游比下游快时，系统怎样避免把自己撑爆？**
+[← 连接怎样复用，容量怎样计算](05-ConnectionPool与ResourceCapacity.md) · [模块主页](../README.md) · [等多久，超时之后还发生什么 →](07-TimeoutDeadline与ErrorTaxonomy.md)
 
-## 1. Backpressure 是什么
+文档处理器每秒只能完成 200 项工作，入口却每秒接收 1000 项。开始时接口仍能快速返回，但一分钟后队列增加了约 48000 项。把排队隐藏在内存里没有消除成本，只是把用户等待变成了内存和恢复压力。
 
-想象：
+## 1. 队列只能吸收短期波动
 
-```text
-Producer 1000 req/s
-        ↓
-Consumer 200 req/s
-```
+在这组教学假设中，持续积压增长率为 `1000 - 200 = 800 项/秒`。若每项排队对象占 4 KiB，60 秒新增约 `48000 × 4 KiB = 187.5 MiB`，还没有算运行任务、索引和语言对象额外开销。
 
-如果没有控制：
+队列有价值的前提是高峰会回落，或消费能力会增加。队列里已有 6000 项，后续每秒到达 100 项、完成 200 项，则净清理速度是每秒 100 项，清空约需 60 秒，而不是用 6000/200 算成 30 秒。
 
-```text
-Queue Depth ↑
-Memory ↑
-Latency ↑
-Timeout ↑
-Retry ↑
-```
+**背压（backpressure）** 是下游把“无法按这个速度继续接纳”传回上游，使上游减速或停止。仅仅增加缓存队列，不一定形成背压；上游必须能观察到等待、拒绝或额度变化，并作出反应。[过载与级联故障](https://sre.google/sre-book/addressing-cascading-failures/)
 
-最终系统不是“慢一点”，而是进入级联故障。
+## 2. 三种限制，各自回答不同问题
 
-Backpressure 的本质是：
+| 限制 | 控制对象 | 本例作用 |
+|---|---|---|
+| 速率限制 | 某时间范围进入多少工作 | 防止用户持续超过每秒配额 |
+| 并发限制 | 正在执行多少工作 | 防止同时占满模型和连接资源 |
+| 接纳与队列上限 | 执行中及等待中有多少工作 | 防止等待对象无限堆积 |
 
-> **让上游感知下游处理能力有限，并减慢、拒绝、降级或排队。**
+一个每秒只来 5 个请求的服务，如果每项执行一分钟，也可能累积约 300 项并发。反过来，短任务并发不高，也可能产生非常大的每秒调用次数。因此不能只留一个“限流开关”就以为全部容量有界。
 
----
+## 3. 用令牌桶理解允许短突发的限速
 
-## 2. 四种最常见的手段
+**令牌桶（token bucket）** 有容量 B，以每秒 r 个令牌的速度补充；一项请求需要消耗一定令牌，不足时拒绝或等待。令牌是额度单位，不自动等于大模型分词得到的 token。
 
-### Bound Queue
+教学桶容量 4、补充速率每秒 2、起初满桶。时刻 0 一次消耗 4 后余额是 0；0.25 秒时只补了 0.5，无法接纳成本为 1 的请求；0.5 秒时累计补到 1，才可接纳。即使空闲一天，桶最多也只存 4，所以不能积攒无限突发。
 
-只允许有限等待：
+更新应把“根据时间补充、判断余额、扣减”作为一个原子决策；否则两次并发请求可能同时认为还剩一个额度。单线程模型可以直接顺序执行，多实例全局配额则需要一致的协调点或明确的配额分片策略。[模型实现与可核对测试](../examples/README.md)
 
-```text
-Queue capacity = 1000
-```
+固定窗口计数实现简单，但边界前后可能发生双倍突发；滑动窗口更贴近连续时间，通常增加状态维护成本；漏桶强调按稳定速率排出，适合平滑输出。选择依据是业务需要的突发容忍、状态成本和精度，而不是记住某一种永远最好。
 
-满后必须有明确策略。
+## 4. 分布式额度必须明确误差与故障策略
 
-### Concurrency Limit
+若每个实例都独立允许每秒 100 个请求，10 个实例合计可能是每秒 1000，而不是全局 100。可以在共享存储中原子计数，也可以给每个实例分配局部额度；后者减少集中调用，但扩缩容和闲置额度回收更复杂。
 
-控制同时执行任务数：
+共享额度服务不可达时，是拒绝新工作，还是允许有限的本地降级额度，属于业务策略。涉及付费、敏感外部动作或硬性供应商配额时，随意放行可能造成不可接受的后果。无论选择哪种，都要明确额度超发范围、监控和恢复方法，不把“最终一致”当成无需量化的答案。
 
-```python
-sem = asyncio.Semaphore(20)
-```
+团队级额度之外，还可以给重任务单独预算，避免一个用户的大批量上传占据全部资源。模型额度可按预估成本预留，再按实际用量结算；取消和超时后的真实消耗未知时，需要核对，不能自动把全部额度当作未使用退回。
 
-### Rate Limit
+## 5. 过载时保住有价值的工作
 
-控制单位时间进入量：
+**负载卸除（load shedding）** 是主动拒绝暂时无法处理的工作，防止所有请求都被拖垮。拒绝应尽量在分配昂贵资源之前发生，并让调用方知道是额度不足、暂时过载还是不可重试的输入错误。
 
-```text
-100 req/s
-1000 tokens/min
-```
+重试如果不减速，会把 1000 项/秒变成更多。客户端需要尊重服务给出的等待建议、自己的截止时间和重试预算；服务也可以给交互请求与批量任务不同的队列和优先级，避免相互挤占。优先级策略不能越过身份和权限要求。[SRE 的过载处理](https://sre.google/sre-book/handling-overload/)
 
-### Load Shedding
+观察重点包括到达率、完成率、最老任务年龄、队列长度、拒绝率和资源使用。只有队列变短还不能说明体验改善：也可能是任务被大量丢弃，因此要同时看完成结果。
 
-系统超载时主动拒绝一部分工作：
+## 本章小结
 
-```text
-503 / 429
-skip optional work
-degrade quality
-```
+长期到达率超过完成率，任何有限队列都会耗尽。速率、执行并发和总接纳量应分别约束；背压让上游调整行为，负载卸除保护已接受的工作，分布式配额必须量化误差和故障策略。
 
-它们解决的问题相关，但不是同一个概念。
+## 🎯 面试怎么答
 
----
+**如何避免并发调用模型把服务打满？**
 
-## 3. Concurrency Limit vs Rate Limit
+> 我会同时限制调用速率、真实在途并发及等待队列，并按团队和任务成本分配额度。超过能力时在入口有界等待或拒绝，客户端按预算退避。通过完成率、积压年龄、拒绝率和下游容量验证效果，不能只靠无限排队或盲目重试。
 
-### Concurrency Limit
+## ⚠️ 易错点
 
-约束：
+> ⚠️ 每实例限流不等于全局限流；增加实例可能同时放大流量。
 
-```text
-同时在跑多少个
-```
+> ⚠️ 只限制执行区而不限制等待对象，内存仍会耗尽。
 
-适合保护：
+> ⚠️ 清理积压要减去新的到达量，不能只用消费速率做除法。
 
-- DB Connection；
-- Provider Concurrent Streams；
-- Tool Calls；
-- CPU-heavy jobs。
+## 本章自测
 
-### Rate Limit
+先写判断和依据，再展开提示或答案。
 
-约束：
-
-```text
-单位时间允许多少个
-```
-
-适合：
-
-- API quota；
-- user limit；
-- model token budget；
-- external vendor limit。
-
-例子：
-
-```text
-20 concurrent calls
-但每分钟最多 100 calls
-```
-
-两个约束可以同时存在。
-
----
-
-## 4. Fixed Window
-
-```text
-12:00:00 ~ 12:00:59
-最多 100 次
-```
-
-简单，但窗口边界可能产生突刺：
-
-```text
-12:00:59 100 次
-12:01:00 100 次
-```
-
-短时间可能出现 200 次。
-
----
-
-## 5. Sliding Window
-
-关注最近一段真实时间范围。
-
-优点：比 Fixed Window 平滑。
-
-代价：状态和计算更复杂。
-
-实现可能使用：
-
-- sorted set；
-- approximate counters；
-- bucket aggregation。
-
-Redis 章节负责具体数据结构实现，这里关注算法语义。
-
----
-
-## 6. Token Bucket
-
-抽象：
-
-```text
-tokens 按固定速度补充
-request 消耗 token
-```
-
-允许一定 Burst：
-
-```text
-bucket capacity = 100
-refill = 10/s
-```
-
-很适合 API Rate Limit。
-
-AI 系统还可以把一个请求按成本消耗多个 token：
-
-```text
-small model call = 1 quota unit
-large model call = 5 quota units
-```
-
-甚至直接基于模型 Token 做预算。
-
----
-
-## 7. Leaky Bucket
-
-更强调以稳定速率向下游排出请求。
-
-可以理解：
-
-```text
-burst input
-→ buffer
-→ fixed drain rate
-```
-
-适合平滑流量，但 Queue 仍然必须有界。
-
----
-
-## 8. Multi-tenant Rate Limit
-
-AI SaaS 不能只做 global limit。
-
-常见维度：
-
-```text
-Global
-Tenant
-User
-API Key
-Model
-Endpoint
-Tool
-Token Budget
-```
-
-例如：
-
-```text
-Global LLM concurrency = 500
-Tenant A = 50
-User = 5
-Expensive Model = 100 req/min
-```
-
-否则一个大租户可能耗尽所有容量。
-
----
-
-## 9. Queue 应该有多长
-
-不是越长越好。
-
-假设：
-
-```text
-worker throughput = 100 req/s
-queue depth = 10000
-```
-
-队尾任务理论上可能等约 100 秒。
-
-如果用户 Deadline 只有 10 秒，这些任务进入 Queue 的那一刻已经注定失败。
-
-因此 Queue Capacity 应和：
-
-- processing rate；
-- deadline；
-- acceptable wait；
-- memory；
-- burst duration
-
-一起设计。
-
----
-
-## 10. Load Shedding 为什么是保护机制
-
-很多人把拒绝请求看成“服务失败”。
-
-但过载时：
-
-```text
-fail 10% quickly
-```
-
-可能比：
-
-```text
-accept 100%
-→ all wait
-→ all timeout
-→ system crash
-```
-
-更可靠。
-
-Google SRE 强调服务过载时应具备 graceful degradation 和 load shedding，而不是无限接受所有工作。
-
----
-
-## 11. Degradation
-
-AI Service 的降级特别丰富：
-
-```text
-large model → small model
-rerank → skip rerank
-Top-K 50 → Top-K 10
-agent 10 steps → 4 steps
-realtime retrieval → cached result
-multimodal → text-only
-```
-
-降级不是“随便变差”，而是提前定义：
-
-```text
-什么能力是核心？
-什么是 optional？
-什么可以降低成本？
-```
-
----
-
-## 12. Request Coalescing
-
-HotKey 场景：
-
-```text
-1000 requests
-→ same expensive result
-```
-
-可以把同一个 Key 的并发 Miss 合并：
-
-```text
-first request computes
-others await same future
-```
-
-减少 downstream amplification。
-
-这个思想也适合：
-
-- model metadata；
-- embedding cache miss；
-- config reload；
-- expensive RAG query cache。
-
----
-
-## 13. Adaptive Concurrency
-
-固定 100 并发不一定适合所有时刻。
-
-更高级系统会根据：
-
-- latency；
-- error rate；
-- queue time；
-- downstream saturation
-
-动态收缩或放大并发。
-
-初学者不需要先实现复杂算法，但要理解：
-
-> 并发上限的本质是保护服务曲线，而不是一个永恒常数。
-
----
-
-## 14. Retry 与 Backpressure 的冲突
-
-服务已经过载：
-
-```text
-new requests 1000/s
-capacity 800/s
-```
-
-如果失败 200/s 全部立即 Retry：
-
-```text
-load → 1200/s
-```
-
-Retry 在过载时可能变成**负向 Backpressure**。
-
-所以后面 Retry 必须配：
-
-- backoff；
-- jitter；
-- retry budget；
-- overload-aware errors。
-
----
-
-## 15. AI 场景：Tool Fan-out
-
-一个 Agent 同时调用：
-
-```text
-10 search tools
-5 APIs
-3 DB queries
-```
-
-如果 100 个 Agent 同时运行：
-
-```text
-1800 downstream operations
-```
-
-更成熟的控制：
-
-```text
-per-run semaphore
-per-tool limit
-per-tenant quota
-global provider limit
-queue / reject
-```
-
----
-
-## 16. Metrics
-
-Backpressure 是否健康，要看：
-
-```text
-queue_depth
-queue_wait_time
-active_concurrency
-rejected_requests
-rate_limit_hits
-downstream_latency
-pool_utilization
-```
-
-只看 QPS 不够。
-
----
-
-## 17. 🎯 面试怎么答
-
-**问：怎样防止高并发把 LLM Provider 打满？**
-
-可以回答：
-
-> 我会同时做并发和速率两层控制。Semaphore 或 Worker Slot 限制同时在飞的请求，Token Bucket 等控制单位时间调用量；再按 Tenant/User 做公平配额。Queue 必须有界并受 Deadline 约束，超载时宁可 429/503 或降级，也不能无限排队。还要监控 Queue Wait、Active Concurrency、Reject Rate 和 Provider Latency。
-
----
-
-## 18. ⚠️ 易错点
-
-- Rate Limit ≠ Concurrency Limit；
-- Queue ≠ 无限缓冲；
-- 429 ≠ 系统一定设计失败；
-- Retry ≠ Backpressure；
-- Semaphore ≠ Distributed Rate Limit；
-- Global Limit ≠ Multi-tenant Fairness。
-
----
-
-## 19. 本章自测
+### 1. 队列已有 9000 项，到达 150 项/秒，完成 300 项/秒，之后两者保持不变。清空要多久？若完成降到 150，又会怎样？
 
 <details>
-<summary>1. 为什么 Queue 越长不一定越可靠？</summary>
+<summary>提示</summary>
 
-长 Queue 会增加等待、内存和超时。如果等待时间已经超过任务 Deadline，继续排队只是把失败延迟发生。
+先算净减少速度。
 
 </details>
 
 <details>
-<summary>2. Token Bucket 为什么允许 Burst？</summary>
+<summary>参考答案与解释</summary>
 
-Token 可以在空闲时积累到 Bucket Capacity，因此短时间可一次消耗多个 token；长期平均速率仍由 refill rate 约束。
+9000/(300−150)=60 秒。若两者相等，积压不会减少；若完成更低，积压继续增长。
+
+</details>
+
+### 2. 一个团队全局限额 60 次/秒，三台实例各自维护 60 的本地窗口。解释问题，并比较集中原子计数与分片额度的代价。
+
+<details>
+<summary>提示</summary>
+
+单台正确不等于整体正确。
 
 </details>
 
 <details>
-<summary>3. 为什么过载时快速拒绝可能比全部接收更可靠？</summary>
+<summary>参考答案与解释</summary>
 
-快速拒绝可以保护剩余容量，让一部分请求成功；全部接收会导致 Queue、内存和延迟持续增长，最终可能让所有请求都超时并引发级联故障。
+整体可能接近 180 次/秒。集中计数便于统一决定但有共享依赖与开销；分片额度能减少集中访问，却需处理扩缩容、闲置额度与可能误差。必须明确全局精度要求。
 
 </details>

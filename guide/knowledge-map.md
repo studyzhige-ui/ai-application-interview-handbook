@@ -72,7 +72,7 @@ ASGI Request Lifecycle → API Contract / Validation → DI / Middleware / Resou
 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。
 
 ```text
-Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Idempotency → MQ / Kafka / Durable Task → Consistency / State / Auth → Discovery / Observability / Linux / K8s → Config / Security → Cross-language Runtime Mapping
+Request / Durable State → Network / Streaming → Concurrency / Pool / Backpressure → Deadline / Idempotency / Retry → MQ / Kafka / Durable Task → Consistency / Permission / Security → Discovery / Observability / Linux / K8s → Config / Evolution → Cross-language Runtime Mapping
 ```
 
 市场校准：**39 Canonical / 125 independent HUMAN-A flows**。

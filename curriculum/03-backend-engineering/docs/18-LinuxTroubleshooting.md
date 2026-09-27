@@ -1,423 +1,119 @@
-# 18. Linux Process / CPU / Memory / Disk / Port Troubleshooting
+# 把应用故障追到 Linux 资源
 
-> 线上排障最重要的不是背命令，而是形成：**症状 → 资源 → 进程 → 依赖 → 最近变更 → 验证** 的顺序。
+[← 从慢请求的证据定位瓶颈](17-Observability与PerformanceDiagnosis.md) · [模块主页](../README.md) · [部署、探针与停机怎样配合应用 →](19-ContainerK8s与Deployment.md)
 
-## 1. 先确认问题范围
+请求持续超时，应用日志只写着“资源不可用”。这时需要把问题追到运行它的操作系统：进程是在计算、等待磁盘、耗尽文件描述符，还是受到容器限制？Linux 命令的价值不是名字多，而是每一步缩小故障范围。
 
-用户说：
+以下命令是**只读诊断示例**，适用于具备相应工具和权限的 Linux 环境；不是本课程已经执行过的线上故障实验。PID、路径、服务名需要替换为实际目标，不执行破坏性清理。
 
-> 服务挂了。
+## 1. 先确认正在观察谁
 
-先问：
+同一台机器可能运行多个工作者和多个版本。先确定进程号 PID、启动时间、命令、所属容器和最近发布，不要在旧进程上解释新请求。
 
-```text
-单实例？全部实例？
-单接口？全部接口？
-单 Tenant？全部用户？
-单 Region？全局？
-刚发布？突然流量？
+```sh
+ps -eo pid,ppid,stat,etime,comm
 ```
 
-范围决定排障方向。
+`-e` 列出进程，`-o` 选择输出列；这里依次看 PID、父 PID、状态、已运行时间和程序名。状态中的 R 表示正在运行或可运行，D 常表示不可中断等待，Z 是已退出但尚未被父进程回收的僵尸状态。一个瞬间截图不足以证明持续瓶颈，应连续观察变化并与请求时间对齐。
 
----
+在容器中看到的 PID 可能与宿主机不同，工具是否安装、`/proc` 权限和命名空间也会影响可见性。“命令没有输出”不能直接证明目标不存在。
 
-## 2. 先看进程还活着吗
+## 2. 高负载不一定是 CPU 算满
 
-常用：
+Load Average（平均负载）包含可运行任务与不可中断等待任务。它不是 CPU 使用百分比，要结合 CPU 数、时间窗口、进程状态和 I/O 判断。[Linux loadavg](https://man7.org/linux/man-pages/man5/proc_loadavg.5.html)
 
-```bash
-ps aux
-ps -ef
-pgrep -af myservice
+如果 CPU 使用高，进一步定位哪个进程或线程在计算，再结合语言栈或采样分析查热点；如果 CPU 不高但负载高、D 状态多，应继续看磁盘或其他内核等待。`vmstat 1` 按一秒间隔观察运行队列、阻塞、交换和 CPU 类别，`iostat -xz 1` 可在装有 sysstat 的环境下观察设备等待与利用，但某个百分比本身不等于唯一根因。
+
+容器还可能被 CPU 配额限流，宿主 CPU 空闲也不能证明该容器能获得更多运行时间。cgroup v2 的 `cpu.stat` 等信息用于核对被限制的事实。[Linux cgroup v2](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
+
+## 3. 内存增长，要分清对象、驻留与限制
+
+进程虚拟地址空间不等于实际驻留内存。RSS（驻留集大小）描述驻留部分；运行时堆、原生分配、线程栈、文件映射和缓存都可能贡献占用。`/proc/<PID>/status` 能提供进程级线索，但还需要更细的映射或语言分析才能确定来源。[进程状态字段](https://man7.org/linux/man-pages/man5/proc_pid_status.5.html)
+
+内存碎片是空间组织问题，不都叫内存泄漏：分配块内部没用完是内部浪费，可用块分散则可能难以满足某些较大分配；分配器还可能保留已释放对象的内存供之后复用。对象数量下降但 RSS 不立刻下降，不足以证明仍有业务引用泄漏。
+
+如果容器触发 OOM（内存不足）事件，检查它所属 cgroup 的限制、当前使用与事件计数，再看任务数据量、并行度、未释放缓冲和临时文件映射。不能只看宿主机还有很多内存就否定容器限制。
+
+海量视频、PDF 或分块上传应限制**同时驻留的数据**：流式处理、有限批次、背压与临时对象生命周期共同决定内存。分块只是切割输入；如果随后把所有块同时读进内存合并，峰值并没有自动降低。
+
+## 4. 文件描述符与连接，要看目标进程的限制
+
+文件描述符（FD）是进程引用打开文件、套接字等资源的编号。持续创建连接却不关闭，可能在 CPU 和内存尚可时先耗尽 FD。
+
+```sh
+cat /proc/1234/limits
+ls /proc/1234/fd
+ss -s
 ```
 
-如果进程不在：
+这里的 1234 是需要替换的 PID；第一条看该进程实际继承的软硬限制，第二条列出其打开的描述符，第三条看套接字统计。`ulimit -n` 通常显示当前 shell 的限制，不能替代目标服务的限制。[目标进程 limits](https://man7.org/linux/man-pages/man5/proc_pid_limits.5.html)
 
-- crash；
-- OOMKilled；
-- supervisor restart；
-- deployment replacement。
+如果 CLOSE_WAIT 持续增长，说明对端已经关闭发送方向，而本地仍未完成相应关闭，应追查应用资源释放路径。TIME_WAIT 是 TCP 关闭中的正常保护状态，数量多时需要结合连接创建速率与端口压力分析，不能直接把它当作泄漏并盲目改内核参数。
 
-如果进程在，也不代表能服务请求。
+## 5. 磁盘“有文件”和“占空间”也不是同一视角
 
----
+`df -h` 看文件系统空间，`df -i` 看 inode 使用情况，`du` 统计路径可见对象。很多小文件可能先耗尽 inode；一个已删除但仍被进程打开的文件，可能不再出现在原路径统计，却继续占空间直到最后引用关闭。
 
-## 3. CPU 高怎么办
+因此日志清理后空间没回来，应核对打开文件和日志轮转方式，而不是反复删更多目录。临时上传清理要按任务状态、对象归属和过期策略进行，保留正在使用或待核对的文件；恢复任务还依赖它时，不能为了释放空间直接清空整个目录。
 
-先看：
+## 6. 按证据推进一次排障
 
-```bash
-top
-htop
-ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%cpu
-```
+假设错误是“无法建立新连接”，CPU 30%，请求数没有增长。先查目标进程 FD 与限制，如果 FD 从 500 持续涨到接近上限，再检查哪些类型增加；若多数是下游套接字，关联应用的流式响应关闭、取消和异常路径。
 
-然后区分：
+这是一条可验证假设，不是预设答案。FD 正常时转查连接池等待、对端拒绝、DNS、网络或端口压力。需要时使用有权限、可控开销的 `strace` 观察系统调用，或用抓包核对连接；跟踪可能带来开销和敏感数据风险，应明确范围与审批。
 
-```text
-user CPU
-system CPU
-iowait
-load average
-```
+修复后用同样负载检查资源能否回到稳定水平，同时保留拒绝与超时行为。把上限调高可能延后报错，但若资源持续泄漏，问题没有消失。
 
-CPU 高可能是：
+## 本章小结
 
-- busy loop；
-- parsing；
-- compression；
-- GC；
-- excessive serialization；
-- too many context switches；
-- logging。
+Linux 排障从目标进程和时间窗口开始，区分计算、等待、驻留内存、容器限制、FD 与存储视角。每个命令都要对应一个假设；暂时不报错不等于释放路径或恢复机制已经正确。
 
-不要看到 CPU 100% 就直接扩机器。
+## 🎯 面试怎么答
 
----
+**Linux 服务很慢，你会按什么顺序排查？**
 
-## 4. Load Average
+> 先确认进程、版本、时间和用户症状，再看 CPU、负载、内存与容器限制，结合线程状态判断在算还是在等。随后按证据检查连接、FD、磁盘与应用栈，避免把负载等同 CPU 或只看当前 shell 限制。每次修改后用相同条件复核资源和端到端结果。
 
-Load 不等于 CPU Usage。
+## ⚠️ 易错点
 
-它可以包含：
+> ⚠️ 高 Load Average 不等于 CPU 使用率高，宿主资源空闲不等于容器没有限额。
 
-- 正在运行；
-- 等待 CPU；
-- 某些不可中断等待。
+> ⚠️ 对象被释放后 RSS 不立即下降，不能单凭这一点判定泄漏。
 
-所以：
+> ⚠️ 删除路径不一定立即释放仍被进程打开的文件空间。
 
-```text
-high load + low CPU
-```
+## 本章自测
 
-也可能是 I/O 等待等问题。
+先写判断和依据，再展开提示或答案。
 
----
-
-## 5. Memory 高
-
-常用：
-
-```bash
-free -h
-ps aux --sort=-%mem
-cat /proc/<pid>/status
-```
-
-关注：
-
-- RSS；
-- virtual memory；
-- swap；
-- page cache；
-- container limit。
-
-Linux `free` 里“used”不能简单理解成应用泄漏，因为 Page Cache 也会占内存。
-
----
-
-## 6. OOM
-
-Linux / Container 内存耗尽时可能触发 OOM Kill。
-
-检查：
-
-```bash
-dmesg
-journalctl
-kubectl describe pod
-```
-
-典型 AI Backend 原因：
-
-- 大文件一次性读内存；
-- Queue 无限增长；
-- Agent Context / result retained；
-- per-worker client/model duplication；
-- memory leak；
-- request body / stream buffer。
-
----
-
-## 7. Memory Leak vs High Working Set
-
-### Leak
-
-```text
-traffic stable
-memory continuously grows
-never returns
-```
-
-### High Working Set
-
-```text
-traffic increases
-memory increases
-traffic falls
-memory partly stabilizes/reuses
-```
-
-Python Allocator / GC / libc 还可能让 RSS 不立即下降。
-
-所以不能只看“一次没降”就断言 Leak。
-
----
-
-## 8. Disk 问题
-
-常用：
-
-```bash
-df -h
-du -sh *
-iostat
-```
-
-典型：
-
-- log 打满磁盘；
-- temp file；
-- Docker image / layer；
-- Kafka / DB data；
-- inode exhausted。
-
-`df` 看 filesystem 使用；`du` 看目录文件大小，两者可能因 deleted-but-open file 等原因不一致。
-
----
-
-## 9. Deleted but Open File
-
-进程打开一个大日志文件后，文件被 `rm`：
-
-```text
-目录看不到
-但进程 fd 仍持有 inode
-```
-
-磁盘空间不会立即释放。
-
-可用：
-
-```bash
-lsof +L1
-```
-
-排查。
-
----
-
-## 10. Port / Connection
-
-常用：
-
-```bash
-ss -lntp
-ss -ant
-lsof -i :8000
-```
-
-问题：
-
-- port not listening；
-- too many connections；
-- TIME_WAIT；
-- SYN backlog；
-- FD exhaustion。
-
-AI Streaming 服务长连接多，更容易积累 Socket / FD。
-
----
-
-## 11. File Descriptor
-
-查看：
-
-```bash
-ulimit -n
-ls /proc/<pid>/fd | wc -l
-lsof -p <pid>
-```
-
-FD 用于：
-
-- socket；
-- file；
-- pipe；
-- event mechanism。
-
-如果 Client/Response 没正确关闭，可能 FD Leak。
-
----
-
-## 12. Network 排查
-
-基础：
-
-```bash
-curl -v
-ping
-traceroute
-ss
-nslookup / dig
-```
-
-但不同环境可能禁 Ping，网络路径也可能经过 LB / Proxy / Mesh。
-
-要区分：
-
-```text
-DNS
-connect
-TLS
-server processing
-read
-```
-
-这和 Timeout 章节的分层一致。
-
----
-
-## 13. Process / Thread 数异常
-
-```bash
-ps -T -p <pid>
-```
-
-如果 Thread 持续增长：
-
-- Thread leak；
-- unbounded executor；
-- SDK 每次创建 pool；
-- blocking requests pile up。
-
-Thread 数多也可能带来：
-
-- memory stack；
-- context switch；
-- scheduler overhead。
-
----
-
-## 14. Container 里的“机器资源”
-
-容器看到的资源受到 cgroup 限制。
-
-Host 有 64GB，不代表 Pod 可以用 64GB。
-
-要看：
-
-```text
-requests / limits
-cgroup CPU quota
-memory limit
-OOMKilled
-throttling
-```
-
-所以排障时必须确认运行边界。
-
----
-
-## 15. 最近变更优先
-
-Production Regression 高概率和 Change 有关：
-
-```text
-new deploy
-config change
-model version
-traffic shift
-dependency change
-schema migration
-```
-
-排障时一定要对齐 Timeline。
-
----
-
-## 16. AI 场景：P99 突然升高
-
-推荐链：
-
-```text
-P99 up
-↓
-QPS / errors changed?
-↓
-queue / pool wait?
-↓
-CPU / memory / FD?
-↓
-DB / Redis / Provider / Model latency?
-↓
-new release / config?
-↓
-trace slow samples
-```
-
-不要直接 SSH 上去 `top` 一顿看，没有 Hypothesis。
-
----
-
-## 17. 常见命令不是知识点本身
-
-你可以不会所有参数，但要知道：
-
-| 问题 | 工具方向 |
-|---|---|
-| Process | ps / top |
-| CPU | top / pidstat / perf（进阶） |
-| Memory | free / proc / smem |
-| Disk | df / du / iostat / lsof |
-| Network | ss / curl / dig |
-| Log | journalctl / app logs |
-| Container | docker / kubectl / cgroup metrics |
-
----
-
-## 18. 🎯 面试怎么答
-
-**问：Linux 线上服务 CPU 100% 怎么排查？**
-
-可以回答：
-
-> 先确认影响范围和最近变更，再用 top/ps 定位进程与线程，区分 user/system/iowait 和 load。然后结合应用 Trace 看是不是某个接口、解析任务、GC 或 busy loop。还要检查流量是否突增、Thread/Queue 是否异常以及下游是否导致 spin/retry。定位后通过 Profile/日志/版本对比验证，而不是直接重启。
-
----
-
-## 19. ⚠️ 易错点
-
-- Load Average ≠ CPU Usage；
-- Linux used memory ≠ 全部应用泄漏；
-- 进程活着 ≠ 服务 Ready；
-- `rm` 大日志 ≠ 磁盘立即释放；
-- Host Resource ≠ Container 可用 Resource；
-- 重启能恢复 ≠ 找到 Root Cause。
-
----
-
-## 20. 本章自测
+### 1. 宿主机还有 20GiB 空闲内存，容器却被 OOM 终止。请说明应检查哪一层，并列出两项与应用相关的验证。
 
 <details>
-<summary>1. `df` 很满但 `du` 找不到大文件，可能是什么？</summary>
+<summary>提示</summary>
 
-可能是文件已删除但仍被某进程打开，inode/blocks 仍被 FD 引用。可用 `lsof +L1` 排查。
+宿主总量与该容器可用量不同。
 
 </details>
 
 <details>
-<summary>2. 为什么 Container 里的 OOM 不能只看 Host 还有多少内存？</summary>
+<summary>参考答案与解释</summary>
 
-容器受 cgroup memory limit 约束，即使 Host 有空闲内存，Pod/Container 超过自己的限制仍可能 OOMKilled。
+查目标 cgroup 的内存限制与事件，核对任务并行度和每任务驻留数据，再查未释放缓冲或运行时堆。不能仅凭宿主余量否定容器 OOM。
+
+</details>
+
+### 2. 当前 shell 的 ulimit 很大，服务仍报 Too many open files。请给出正确的检查对象，以及单纯提高上限的风险。
+
+<details>
+<summary>提示</summary>
+
+服务继承的限制不必等于当前 shell。
 
 </details>
 
 <details>
-<summary>3. 为什么排障要先看最近变更？</summary>
+<summary>参考答案与解释</summary>
 
-很多 Regression 与新版本、配置、模型、依赖或流量变化直接相关。Change Timeline 能快速缩小 Hypothesis 空间。
+查看目标 PID 的 limits 与 fd 数量及类型，追踪增长和释放路径。若存在泄漏，提高上限只推迟失败，还可能放大系统资源压力。
 
 </details>

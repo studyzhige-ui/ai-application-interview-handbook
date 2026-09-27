@@ -1,411 +1,115 @@
-# 08. Retry、Backoff、Circuit Breaker、Degradation 与 Failover
+# 什么时候值得再试，怎样防止故障放大
 
-> Retry 是最容易被误用的“可靠性机制”：**它既能恢复瞬时错误，也能把一个小故障放大成全站雪崩。**
+[← 怎样识别同一次操作，避免重复副作用](09-APIIdempotency与SideEffect.md) · [模块主页](../README.md) · [消息怎样交付，确认到底确认了什么 →](10-MQ与DeliverySemantics.md)
 
-## 1. 先问：这个错误值得 Retry 吗
+下游第一次调用失败，第二次可能成功；但失败也可能表示第一次已经完成，只是响应没回来。重试不是一个统一的异常处理模板，而是在“再次尝试有收益、重复执行安全、仍有资源和时间”的条件下重新发起工作。
 
-不是所有失败都应该 Retry。
+## 1. 一次重试前，先完成三个判断
 
-### 可能适合 Retry
+第一，失败是否可能是暂时性的。参数非法、权限被拒绝通常不会因为重复相同请求而好转；限流或临时网络问题才可能适合稍后再试。不能只按“所有 5xx 都重试”忽略业务错误和已执行状态。
 
-- transient network error；
-- temporary 503；
-- provider overload；
-- leader election 短暂切换；
-- connection reset。
+第二，重复是否安全。只读操作、已实现幂等的操作，或者能确认完全没有执行的调用，才有相应依据。结果未知的外部副作用，应先按上一章的协议核对。
 
-### 通常不应该 Retry
+第三，还有没有预算。剩余截止时间要同时容纳退避、下一次调用与收尾；总尝试数和系统级重试额度也应有限。即使单次操作安全，无限重试仍会占用资源。
 
-- invalid schema；
-- permission denied；
-- business rejection；
-- unsupported model；
-- malformed tool input。
+## 2. “重试三次”必须写清是几次总尝试
 
-Retry 的第一步不是写循环，而是先做 Error Taxonomy。
+本例规定 `max_attempts=3`，包含第一次调用，也就是最多再试两次。如果客户端、网关和服务内部各自最多总尝试 3 次，最坏情况下最下游可能收到 `3×3×3=27` 次调用，而不是 3 次。
 
----
+这是所有上层失败都触发完整下层尝试时的上界推导，不是每次请求都会发生的实测数据。应指定哪一层主要负责重试，并在调用链传递已经消耗的预算，避免多层各自重新开始。[SRE 对分层重试放大的分析](https://sre.google/sre-book/handling-overload/)
 
-## 2. 为什么立即 Retry 很危险
+## 3. 退避减少持续施压，抖动避免同时醒来
 
-下游已经过载：
+**退避（backoff）** 是在失败后先等待再试。指数退避把候选间隔逐步放大，例如 0.1、0.2、0.4 秒，同时设置最大间隔。**抖动（jitter）** 在候选范围内加入随机性，避免大量客户端在同一时刻再次冲击服务。
 
-```text
-capacity = 1000 QPS
-incoming = 1100 QPS
-```
+本例采用全抖动策略：第 n 次重试从 0 到 `min(上限, 基础间隔×2^(n−1))` 中选择等待时长。它是一种策略，不是全部 SDK 的共同默认行为。服务给出 Retry-After 等建议时，还要与自己的总截止时间及协议约定协调。
 
-如果失败的 100 QPS 立即重试：
+若剩余 0.6 秒，计划先退避 0.4 秒，而合理的下一次调用和收尾需要 0.5 秒，就不应开始这次重试。以“已经快成功”为理由越过预算，只会把延迟继续转嫁给用户。
+
+## 4. 熔断器回答是否还应向故障依赖发送工作
+
+**熔断器（circuit breaker）** 观察某个依赖在一个窗口内的失败情况。当满足策略条件时，暂时停止正常调用，使请求快速失败或进入明确的替代流程。
 
 ```text
-load = 1200 QPS
+关闭：正常调用并观察
+  │ 达到故障阈值
+  ▼
+打开：暂时拒绝正常调用
+  │ 冷却期结束
+  ▼
+半开：放少量探测
+  ├─ 探测恢复 → 关闭
+  └─ 再次失败 → 打开
 ```
 
-更多失败继续 Retry：
+窗口长度、最小样本数和哪些错误计入失败都要定义。一个用户填错参数，不该让所有用户共享的服务熔断；模型供应商某一区域故障，也不一定需要把全部地区一起切断。故障统计和熔断范围应对应真正共享的失败来源。
 
-```text
-1200 → 1300 → 1400...
-```
+半开不能立即放回全部排队请求，否则恢复中的下游可能再次被压垮。已有请求是否继续与新请求是否允许进入也应区分，熔断不是强制回滚所有在途业务。
 
-这就是 Retry Amplification。
+## 5. 降级、故障切换和限流有什么不同
 
-Google SRE 的经验强调：Retry 可以直接放大 Overload，并触发 Cascading Failure。
+限流约束进入多少工作；熔断停止向已显著失效的依赖继续施压；**降级**减少服务能力，例如只返回已有摘要；**故障切换**改用另一个实例、区域或供应商。它们可以组合，但每个动作解决的问题不同。
 
----
+备用模型可能有不同输出格式、上下文限制、工具调用协议和成本。切换成功不等于答案质量或权限要求仍满足。跨区域切换还要看数据复制是否跟上；恢复目标必须用真实演练证明，而不是只配置一个备用地址。
 
-## 3. Exponential Backoff
+> ⚠️ 不得为了“保持可用”跳过权限检查或把不确定的副作用结果改成成功。可用性降级必须在业务允许的语义范围内进行。
 
-基本思路：
+## 6. 把一次失败写成可观察的尝试链
 
-```text
-attempt 1 → wait 100ms
-attempt 2 → wait 200ms
-attempt 3 → wait 400ms
-...
-```
+同一 `operation_key` 下，可以有多个网络尝试，每次记录尝试序号、错误分类、耗时、退避时长和最后结果。操作身份保持稳定，尝试记录帮助排查“为什么下游调用变多”。
 
-目的：
+最终失败还要给出确定结果或需要核对的状态。仅保存最后一个异常，会丢失之前是否已经发送请求、是否切换过供应商、总共花了多少预算等重要信息。
 
-> 给下游恢复时间，而不是持续轰炸。
+## 本章小结
 
-但如果所有 Client 同时失败，它们仍可能在 100ms、200ms、400ms 时一起重试。
+重试必须同时满足暂时性、安全性与预算。退避和抖动减轻重试压力，熔断控制对故障依赖的新调用，降级与切换则需要重新检查业务语义、质量和容量，不能把异常循环包装成可靠性。
 
-所以还需要 Jitter。
+## 🎯 面试怎么答
 
----
+**重试、熔断、限流和降级有什么区别？**
 
-## 4. Jitter
+> 重试是对可能暂时失败且可安全重复的操作再尝试；限流限制输入负载；熔断依据依赖故障状态暂时拒绝新调用；降级提供业务允许的较少能力。它们都要服从同一截止时间和资源预算，切换模型或区域还必须验证语义、数据、权限与备用容量。
 
-把固定等待随机化：
+## ⚠️ 易错点
 
-```text
-0 ~ 100ms
-0 ~ 200ms
-0 ~ 400ms
-```
+> ⚠️ 要明确总尝试数，不能用含义不清的“重试三次”配置跨层策略。
 
-这样可以打散同步重试波峰。
+> ⚠️ 一个操作幂等不等于可以无限重试；幂等不降低算力成本。
 
-AWS 的经典 Backoff + Jitter 资料就是在解决这一类同步竞争问题。
+> ⚠️ 备用服务能连通不等于输出格式、质量和数据新鲜度都满足要求。
 
----
+## 本章自测
 
-## 5. Retry Budget
+先写判断和依据，再展开提示或答案。
 
-即使每个请求只 Retry 3 次，系统整体仍可能产生大量额外流量。
-
-因此成熟系统会考虑：
-
-```text
-Per-request attempt limit
-+ Process / Service-wide retry budget
-```
-
-例如：
-
-```text
-正常 QPS = 1000
-最多额外 10% retry traffic
-```
-
-Budget 用完就 Fail Fast / Degrade。
-
----
-
-## 6. 只在一层 Retry
-
-深调用链：
-
-```text
-Client
-→ Gateway
-→ Service A
-→ Service B
-→ DB
-```
-
-如果每层都 Retry 3 次：
-
-```text
-一次用户请求
-可能被放大成多层乘法尝试
-```
-
-Google SRE 特别强调避免多层重复 Retry。
-
-更合理：明确哪一层负责 Retry，并向上游返回清晰的 retriable / non-retriable 语义。
-
----
-
-## 7. Retry 必须和 Idempotency 配合
-
-对 GET 类无副作用操作，Retry 较简单。
-
-对：
-
-```text
-create order
-send email
-charge money
-modify file
-execute tool
-```
-
-Retry 可能产生重复副作用。
-
-因此：
-
-```text
-Retry Safety
-= Error is retryable
-+ Operation is idempotent or deduplicated
-```
-
-下一章会专门讲。
-
----
-
-## 8. Circuit Breaker
-
-当下游持续失败，继续发送请求没有意义。
-
-经典状态：
-
-```text
-Closed
-→ failures exceed threshold
-→ Open
-→ wait cooldown
-→ Half-open probe
-→ success → Closed
-→ failure → Open
-```
-
-### Closed
-
-正常放行。
-
-### Open
-
-快速失败，避免继续消耗下游和本地资源。
-
-### Half-open
-
-允许少量探测请求判断是否恢复。
-
----
-
-## 9. Circuit Breaker 不是万能
-
-如果错误原因是：
-
-```text
-all requests malformed
-```
-
-Circuit Breaker 没意义。
-
-如果下游只是部分 Tenant / Region 故障，也需要更细粒度隔离。
-
-Breaker 的 Key 可能按：
-
-```text
-provider
-region
-model
-endpoint
-```
-
-而不是整个服务只有一个总开关。
-
----
-
-## 10. Degradation
-
-当完整能力不可用，提供更便宜或更简单的结果。
-
-AI 例子：
-
-```text
-GPT-large → smaller model
-RAG + rerank → retrieval only
-agent → direct answer
-live search → cached result
-multi-tool → core tool only
-```
-
-降级需要提前定义 Quality Floor。
-
-否则“降级”可能只是默默返回错误结果。
-
----
-
-## 11. Fallback
-
-Fallback 是替代路径：
-
-```text
-Primary Model
-→ fail
-→ Backup Model
-```
-
-它和 Retry 不同：
-
-- Retry：再试同一个操作；
-- Fallback：换一条执行路径。
-
-Fallback 也可能失败，而且可能出现：
-
-- schema 不兼容；
-- quality 差异；
-- cost 差异；
-- semantic drift。
-
-因此必须测试。
-
----
-
-## 12. Failover
-
-基础设施层 Failover：
-
-```text
-Region A
-→ unavailable
-→ Region B
-```
-
-Data Service：
-
-```text
-Primary
-→ fail
-→ Replica promoted
-```
-
-AI Provider：
-
-```text
-Provider A
-→ timeout / outage
-→ Provider B
-```
-
-关键不是“有备份”，而是：
-
-```text
-state compatibility
-routing
-health detection
-capacity of backup
-consistency
-```
-
-备份平时没有真实流量，故障时可能承受不了全部流量。
-
----
-
-## 13. Hedged Request
-
-对少量幂等 Read 请求，有些系统会：
-
-```text
-request A
-→ too slow
-→ request B to another replica
-→ first success wins
-```
-
-可以降低长尾，但会增加额外负载。
-
-不应该在已过载系统里无脑使用。
-
----
-
-## 14. AI Provider Failure Chain
-
-```text
-Provider latency ↑
-→ local requests accumulate
-→ timeout ↑
-→ retry ↑
-→ provider load ↑
-→ more timeout
-```
-
-更成熟的应对：
-
-```text
-deadline
-→ retry budget
-→ backoff + jitter
-→ circuit open
-→ fallback model
-→ load shed / degrade
-```
-
----
-
-## 15. Metrics
-
-至少观察：
-
-```text
-attempt_count
-retry_rate
-retry_success_rate
-retry_budget_exhausted
-circuit_state
-fallback_rate
-degradation_rate
-provider_error_by_category
-```
-
-如果只看最终 Error Rate，会看不到系统是否靠大量 Retry 勉强维持成功率。
-
----
-
-## 16. 🎯 面试怎么答
-
-**问：Retry、Circuit Breaker、Fallback 有什么区别？**
-
-可以回答：
-
-> Retry 是对同一路径再次尝试，适合短暂错误，但需要 Backoff/Jitter/Budget 并确保幂等；Circuit Breaker 是当下游持续失败时快速停止调用，保护双方资源；Fallback 是切换到替代实现或降级路径。三者解决的阶段不同，通常组合使用，而不是互相替代。
-
----
-
-## 17. ⚠️ 易错点
-
-- Retry 次数有限 ≠ 没有 Retry Storm；
-- Backoff 没 Jitter ≠ 足够；
-- Circuit Open ≠ 下游恢复；
-- Fallback ≠ 同等质量；
-- Failover ≠ Backup Capacity 一定够；
-- 非幂等副作用不能只靠 Retry。
-
----
-
-## 18. 本章自测
+### 1. 两层调用各自最多总尝试 4 次，且每次上层重试都重新运行下层。最坏有几次下游尝试？怎样避免指数放大？
 
 <details>
-<summary>1. 为什么多层 Retry 会造成乘法放大？</summary>
+<summary>提示</summary>
 
-每一层都可能对下层做多次尝试，上层又把下层整组失败再次 Retry。多个 attempt 数相乘后，一个用户请求可能转化成几十次底层调用。
+按嵌套关系相乘，而不是相加。
 
 </details>
 
 <details>
-<summary>2. Circuit Breaker Open 状态的核心价值是什么？</summary>
+<summary>参考答案与解释</summary>
 
-快速失败，避免继续把已经没有成功可能的请求送给故障下游，同时释放本地线程、连接和 Deadline 预算。
+最坏 16 次。指定主要重试层、传播预算并限制整个操作的总尝试或重试比例；不能每层都重新发放一份完整预算。
+
+</details>
+
+### 2. 剩余截止时间 0.7 秒，服务建议至少等待 0.5 秒再试，下一次调用与清理预计需 0.4 秒。该怎样处理？若操作结果未知，还要补哪一步？
+
+<details>
+<summary>提示</summary>
+
+既检查时间，也检查重复安全性。
 
 </details>
 
 <details>
-<summary>3. Fallback Model 为什么需要单独评测？</summary>
+<summary>参考答案与解释</summary>
 
-模型能力、输出 Schema、成本、延迟和行为都可能不同。Failover 成功不代表业务语义仍正确，因此要做兼容与质量验证。
+预算不足，不应继续尝试。结果未知的副作用还需查询或核对既有操作，向用户返回可查询的未确定状态，而不是因停止重试就认定原动作失败。
 
 </details>

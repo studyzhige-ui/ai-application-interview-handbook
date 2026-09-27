@@ -1,375 +1,122 @@
-# 02. TCP、TLS 与 HTTP/1.1 / HTTP/2 / HTTP/3
+# 从字节到安全请求：TCP、TLS 与 HTTP
 
-> 这一章不要求你成为网络协议工程师，而是建立 AI Backend 面试和故障排查需要的**服务通信心智模型**。
+[← 哪些状态必须保存，恢复时相信哪一份](14-DataLayering与StateOwnership.md) · [模块主页](../README.md) · [怎样传递结果，断线后怎样继续 →](03-ServiceCommunication与StreamingReliability.md)
 
-## 1. 先看一条完整链路
+你向服务发送“保存文档”，网络却可能丢包、乱序或被旁路观察。应用希望看到完整请求，也希望知道连接的是正确的服务。TCP、TLS 和 HTTP 分别解决这条链上的不同问题，不能把其中一种保证推广成“整个业务可靠”。
 
-访问：
+## 1. TCP 交付字节流，不替应用划分消息
 
-```text
-https://api.example.com/chat
-```
+**TCP（传输控制协议）** 向应用提供有序、可靠的字节流。发送方把字节编号；接收方报告已经连续收到哪里；发生丢失时，发送方按协议重传。接收方先收到后面的字节时，要处理顺序，应用不能因此把缺失片段当作正常数据跳过去。[TCP 的服务模型](https://www.rfc-editor.org/rfc/rfc9293.html#section-2.2)
 
-可以粗略展开为：
+假设应用先写入 `abc`，再写入 `def`，接收端一次读取可能得到 `abcdef`，也可能先得到 `ab` 再得到 `cdef`。这不是 TCP “把消息弄乱了”，而是它只承诺字节顺序，不承诺一次写对应一次读。应用协议需要长度、分隔符或其他帧结构来划定消息。HTTP 的消息与帧规则就承担这项工作。
 
-```text
-DNS
-↓
-IP
-↓
-Transport Connection
-↓
-TLS
-↓
-HTTP
-↓
-Application
-```
+**UDP（用户数据报协议）** 保留数据报边界，但自身不提供 TCP 同样的有序可靠字节流。应用可以选择容忍丢失，也可以在 UDP 上构建可靠协议。不能只记“UDP 快、TCP 慢”；要看可靠性工作由哪层完成、网络丢包和应用延迟目标是什么。
 
-每层解决的问题不同。
+## 2. 建立连接，是双方协商初始序列状态
 
----
-
-## 2. DNS 解决什么
-
-DNS 把域名解析成可访问的地址。
+下面只看普通 TCP 建连，不讨论同时打开等变体。客户端初始序列号为 x，服务端为 y：
 
 ```text
-api.example.com
-→ DNS Resolve
-→ IP
+客户端                         服务端
+   ── SYN，seq=x ────────────────>
+   <── SYN+ACK，seq=y，ack=x+1 ───
+   ── ACK，ack=y+1 ──────────────>
 ```
 
-Production 中 DNS 还可能参与：
+SYN 用于同步序列状态，本身占用一个序列号，因此确认值有 `+1`。第二步同时回复服务端的初始状态并确认客户端的 SYN；第三步让服务端确认客户端已经收到了自己的初始状态。不能把第二步“服务端发出了回复”当成第三步“回复已经被对端确认”。[连接建立](https://www.rfc-editor.org/rfc/rfc9293.html#section-3.5)
 
-- 服务入口切换；
-- Region 路由；
-- Load Balancing；
-- Failover。
+建立成功只说明连接按协议进入相应状态，不保证对端以后一直可达。机器突然断电或网络静默丢包时，不一定立即有明确的关闭消息。应用需要自己的等待预算，必要时用心跳观察对端是否仍有响应。
 
-⚠️ DNS 不是“实时强一致服务发现”。TTL、缓存、递归解析链都意味着变化传播存在时间窗口。
+## 3. 关闭、流控与拥塞，是三个不同问题
 
----
+TCP 可以分别关闭两个方向。A 发送 FIN 表示自己不再发送数据；B 确认后，仍可能继续把剩余数据发给 A。等 B 也发送 FIN 并被确认，双方方向才都结束。常见“四次挥手”表达这两组关闭与确认，但报文可以合并，不能把“四”当成任何抓包都必须出现的独立包数。**半关闭**是一个方向正常关闭；**半开连接**则是双方对连接存在与否的认知不一致，不要混为一谈。[关闭连接](https://www.rfc-editor.org/rfc/rfc9293.html#section-3.6)
 
-## 3. TCP vs UDP
+**流量控制**避免发送速度超过接收端可接纳能力；接收窗口告诉发送端还能接收多少。**拥塞控制**避免把网络路径持续压垮，发送端依据确认、丢失等反馈调节发送量。接收端应用读得太慢和中间网络拥塞都可能导致慢，却不一定是同一原因。应用层还有自己的处理队列，TCP 的流控并不会自动限制已经进入业务队列的任务数量。[拥塞控制基础](https://www.rfc-editor.org/rfc/rfc5681.html)
 
-| 维度 | TCP | UDP |
-|---|---|---|
-| 连接语义 | 面向连接 | 无连接 |
-| 顺序 | 保证字节流顺序 | 不保证 |
-| 丢包恢复 | 有 | 应用自己处理 |
-| 拥塞控制 | 有 | 协议本身不提供同等语义 |
-| Header/状态成本 | 更高 | 更轻 |
-| 常见场景 | HTTP/1.1、HTTP/2、DB、RPC | 实时音视频、QUIC 底层等 |
+## 4. TLS 让链路保密，并验证对端身份
 
-不要简单说：
+**TLS（传输层安全协议）** 提供通信加密、完整性保护和对端认证能力。以常见的 TLS 1.3 证书认证握手为例，客户端提出支持的参数并提供密钥交换信息；服务端选择参数，发送证书及签名等认证信息；双方验证握手信息并导出通信密钥。
 
-> UDP 快，TCP 慢。
+证书把域名身份与公钥关联到受信任的签发链。客户端还要核对目标名称、有效期和信任链。证书里的公钥及签名主要帮助认证，不等于“把所有业务数据都用 RSA 加密”。TLS 1.3 的密钥交换与身份签名是不同职责，后续大量应用数据主要使用对称加密。[TLS 1.3 握手与认证](https://www.rfc-editor.org/rfc/rfc8446.html#section-2)
 
-真实 Trade-off 是：
+> ⚠️ 为解决证书错误而关闭验证，会失去对端身份检查。应核对证书、域名、信任链与系统时间，而不是把 `verify=False` 当成正常修复。
 
-```text
-可靠性 / 顺序 / 拥塞控制 / 连接状态
-vs
-实时性 / 应用自定义恢复 / 协议灵活性
-```
+TLS 保护这段传输链路，不检查当前用户是否有权读取 `doc-42`。如果代理终止 TLS，代理到应用又是另一段链路；不能看到浏览器的小锁图标就假定所有内部跳转都已加密。
 
----
+## 5. HTTP 版本改变传输组织，不改变业务完成含义
 
-## 4. TCP 三次握手为什么不是两次
+HTTP 描述请求方法、目标资源、状态码、头部和消息内容。下面比较的是连接与流的组织，而不是把版本编号当成绝对性能排名。
 
-简化理解：双方需要确认：
+| 协议 | 主要承载 | 多个请求怎样共享底层资源 | 需要注意的边界 |
+|---|---|---|---|
+| HTTP/1.1 | TCP；HTTPS 还使用 TLS | 复用连接；常见客户端用多个连接并发 | 串行响应或排队可能限制并发；复用不等于永久连接 |
+| HTTP/2 | TCP；常见部署使用 TLS | 用不同 stream（流）在一条连接上多路复用 | TCP 字节缺口仍可能阻塞这条连接上的多个流 |
+| HTTP/3 | QUIC，运行在 UDP 上 | QUIC 提供可靠的独立流并集成 TLS 安全机制 | 一个流丢失不必阻塞其他流交付，但仍共享路径拥塞等资源 |
 
-```text
-Client 能发
-Server 能收
-Server 能发
-Client 能收
-```
+**队头阻塞**是后续工作必须等前面的缺口或任务完成。HTTP/2 把应用层的多个流拆开，却仍共享 TCP 的有序字节流；HTTP/3 将可靠交付放到 QUIC 的各个流中。它不是取消可靠性，也不是取消所有等待。[HTTP/2 标准](https://httpwg.org/specs/rfc9113.html)；[HTTP/3 与 QUIC](https://www.rfc-editor.org/rfc/rfc9114.html#section-2)
 
-并建立双方认可的初始序列状态。
+正确的层次画法是：HTTPS 的 HTTP/1.1 或 HTTP/2 使用 TLS 与 TCP；HTTP/3 使用集成 TLS 握手的 QUIC，再由 UDP 承载。不能给 HTTP/3 额外套上一层 TCP。
 
-```text
-Client          Server
-  | SYN ----------> |
-  | <------ SYN+ACK |
-  | ACK ----------> |
-```
+## 6. 回到业务：字节可靠，为什么还会重复操作
 
-面试重点不是背 Flag，而是理解：
+TCP 可能已经把请求交给服务，服务也已提交文档，却在响应到达客户端之前断开。新连接上的重试是一个新的 HTTP 请求；传输协议不知道它与上一次请求是不是同一逻辑操作。
 
-> 连接建立需要双方确认彼此收发能力与序列状态。
+因此，字节层重传与业务层重试不能混用一个结论。业务仍需识别同一操作、保存完成状态，并处理结果未知。连接复用只能减少建连成本，无法替你完成这些判断。
 
----
+### 请求被重定向时，会发生另一轮请求
 
-## 5. TCP Reliable Delivery
+例如旧文档地址返回 `Location` 指向新地址，客户端需要决定是否跟随，再向新目标发起请求。301 表达永久迁移，302 表达临时迁移；历史兼容行为允许它们把 POST 改成 GET。需要保持方法时，应按永久或临时语义选择 308 或 307。不能只把跳转看作“换一个 URL”，忽略请求方法、请求体、凭据以及新的目标权限边界。[HTTP 重定向语义](https://httpwg.org/specs/rfc9110.html#status.301)
 
-TCP 的可靠性来自多种机制协作，例如：
+## 本章小结
 
-- Sequence Number；
-- ACK；
-- Retransmission；
-- Flow Control；
-- Congestion Control。
+TCP 负责有序字节交付，TLS 负责安全链路，HTTP 负责请求和响应语义。每层都有自己的边界：字节流不是消息边界，建连不是持续存活证明，多路复用不是无限容量，传输成功不是业务只执行一次。
 
-### Retransmission
+## 🎯 面试怎么答
 
-网络没有收到预期 ACK 时可能重传。
+**HTTP/2 与 HTTP/3 的主要差别是什么，为什么仍要业务幂等？**
 
-这说明一个重要事实：
+> HTTP/2 在 TCP 上复用多个流，TCP 层的字节缺失可能影响这些流；HTTP/3 使用 QUIC，把可靠交付安排到各个流并集成 TLS，但仍受拥塞和服务容量约束。无论哪种协议，业务成功后响应都可能丢失，因此重复请求仍须由业务操作标识和结果记录处理。
 
-> 网络层“可靠传输”不等于业务层“Exactly Once”。
+## ⚠️ 易错点
 
-假设客户端发送支付请求：
+> ⚠️ 一次 send 不保证对应一次 recv；消息边界需要应用协议定义。
 
-```text
-Server 扣款成功
-↓
-Response 丢失
-↓
-Client timeout
-↓
-Client retry
-```
+> ⚠️ 半关闭与半开不是同一概念；抓不到 FIN 不能证明对端仍正常执行。
 
-TCP 并不能替你解决“是否重复扣款”。
+> ⚠️ TLS 验证服务身份，不替代用户对资源的授权检查。
 
-后面仍需要业务 Idempotency。
+## 本章自测
 
----
+先写判断和依据，再展开提示或答案。
 
-## 6. 四次挥手与半关闭
-
-TCP 双向字节流两个方向可以独立关闭，所以连接终止不是简单“一次 Goodbye”。
-
-这也解释为什么真实服务里会出现：
-
-- 客户端已经断开；
-- 服务端仍有任务运行；
-- 一侧写失败；
-- 中间 Proxy 超时；
-- Half-open Connection。
-
-Streaming Service 要特别关注这种状态。
-
----
-
-## 7. TLS 解决什么
-
-HTTP 本身不提供安全通信。
-
-HTTPS 可以理解为：
-
-```text
-HTTP
-↓
-TLS Secure Channel
-↓
-TCP / QUIC
-```
-
-TLS 主要提供：
-
-- Confidentiality；
-- Integrity；
-- Peer Authentication（典型 Web 场景验证 Server）。
-
----
-
-## 8. 对称加密与非对称加密怎样协作
-
-大致思路：
-
-```text
-Certificate / Public Key Mechanism
-→ 验证身份、建立共享秘密
-→ Session Key
-→ 大量数据使用高效对称加密
-```
-
-为什么不全程只用非对称加密？
-
-因为对称加密更适合高吞吐数据传输。
-
-为什么不能只有对称密钥？
-
-因为初次安全交换密钥与认证对方身份仍需要额外机制。
-
----
-
-## 9. Certificate Trust Chain
-
-浏览器或 Client 不是看到一个证书就“自动相信”。
-
-简化：
-
-```text
-Server Certificate
-→ Intermediate CA
-→ Trusted Root CA
-```
-
-Client 还会检查：
-
-- Hostname；
-- Validity；
-- Signature Chain；
-- Policy / Algorithm 等。
-
----
-
-## 10. HTTP/1.1
-
-典型优势：成熟、简单、兼容广。
-
-长连接允许 Connection Reuse，避免每个请求重新建立 TCP/TLS。
-
-但一个 Connection 上请求并发能力有限，应用常通过连接池维护多个连接。
-
----
-
-## 11. HTTP/2
-
-HTTP/2 一个核心能力是 Multiplexing：
-
-```text
-one TCP connection
-├─ stream A
-├─ stream B
-└─ stream C
-```
-
-多个 HTTP Stream 可以并发复用一个 TCP Connection。
-
-但底层仍是 TCP 字节流。
-
-如果发生底层 Packet Loss，TCP 仍需要按自己的可靠传输规则恢复，因此不同 HTTP/2 Stream 仍可能共同受同一个 TCP Connection 的传输问题影响。
-
----
-
-## 12. HTTP/3 / QUIC
-
-HTTP/3 通常运行在 QUIC 之上，而 QUIC 建在 UDP 之上，但它自己实现：
-
-- Reliable Streams；
-- Congestion Control；
-- Encryption integration；
-- Connection migration 等能力。
-
-所以不能说：
-
-> “HTTP/3 用 UDP，所以不可靠。”
-
-QUIC 在 UDP 之上提供自己的可靠传输语义。
-
----
-
-## 13. AI Streaming 为什么关心 HTTP Version
-
-长时间 Streaming Connection 常关注：
-
-- Connection Establishment；
-- Multiplexing；
-- Proxy Support；
-- Head-of-line Impact；
-- Mobile Network Migration；
-- Disconnect Detection。
-
-但应用层仍然要自己设计：
-
-```text
-Event ID
-Resume Cursor
-Heartbeat
-Business State
-```
-
-协议不会自动帮 Agent Run Resume。
-
----
-
-## 14. Keep-Alive 的意义
-
-如果每个 LLM Provider Request 都重新：
-
-```text
-TCP handshake
-+ TLS handshake
-+ request
-```
-
-会增加延迟与 CPU 成本。
-
-所以 HTTP Client 通常通过 Connection Pool / Keep-Alive 复用连接。
-
-这也是后面 Connection Pool 章节存在的原因。
-
----
-
-## 15. Failure Timeline
-
-假设 AI Service 调外部 Provider：
-
-```text
-DNS slow
-→ TCP connect 2s
-→ TLS 300ms
-→ provider queue 5s
-→ first byte 4s
-→ stream 20s
-```
-
-如果只设置一个“30 秒 Timeout”，你很难知道到底是哪一阶段慢。
-
-后面会拆成：
-
-```text
-connect timeout
-read timeout
-overall deadline
-```
-
----
-
-## 16. 🎯 面试怎么答
-
-**问：HTTP/2 与 HTTP/3 核心区别？**
-
-可以回答：
-
-> HTTP/2 通过一个 TCP Connection 多路复用多个 Stream，但底层仍受 TCP 字节流和连接级丢包恢复影响；HTTP/3 基于 QUIC，QUIC 运行在 UDP 之上并自己实现可靠 Stream、拥塞控制和安全握手等能力，因此可以减少不同应用 Stream 之间的底层阻塞耦合。实际选型还要考虑客户端、代理、基础设施支持，而不是只看理论延迟。
-
----
-
-## 17. ⚠️ 易错点
-
-- UDP ≠ 永远更快；
-- HTTP/3 基于 UDP ≠ 不可靠；
-- TLS ≠ “只用非对称加密”；
-- TCP Reliability ≠ Business Idempotency；
-- Keep-Alive ≠ Connection 永不关闭。
-
----
-
-## 18. 本章自测
+### 1. 应用连续写入两段各 3 字节的数据，接收端只读到 2 字节。是否已经证明丢失？应用应怎样判断一条消息完整？
 
 <details>
-<summary>1. 为什么 TCP 已经可靠，支付 API 仍然需要幂等？</summary>
+<summary>提示</summary>
 
-TCP 只能保证连接中的字节可靠传输。Server 执行业务成功但 Response 丢失时，Client 无法知道结果，Retry 可能再次触发业务副作用，因此仍需要应用层幂等。
+区分字节流交付与应用消息的结束条件。
 
 </details>
 
 <details>
-<summary>2. 为什么 HTTP/3 基于 UDP 仍可以可靠？</summary>
+<summary>参考答案与解释</summary>
 
-因为 UDP 只是提供 Datagram Transport，QUIC 在其上实现自己的可靠 Stream、重传、拥塞控制与安全机制。
+不能。一次读取可以只返回当前可用的部分。应用按协议累计到声明长度或完整帧，再处理；关闭、超时或无效帧须另行处理，不能用一次 read 的大小猜消息边界。
+
+</details>
+
+### 2. 同一 HTTP/3 连接上 A 流丢包、B 流数据已齐。能否推断 B 一定没有任何延迟？能否推断 A 的业务没执行？
+
+<details>
+<summary>提示</summary>
+
+独立流交付只消除特定层的相互阻塞。
 
 </details>
 
 <details>
-<summary>3. AI Streaming 的 Resume 为什么不能只依赖 TCP 重连？</summary>
+<summary>参考答案与解释</summary>
 
-TCP 只恢复新的连接，不知道业务 Event 已经发送到哪里，也不知道 Agent Run 的 durable state。应用仍需 Event ID、Cursor、Run State 等业务协议。
+两个推断都不成立。B 仍可能受共享拥塞、流量控制或服务器调度影响；A 的业务可能已执行，只是响应尚未交付。
 
 </details>

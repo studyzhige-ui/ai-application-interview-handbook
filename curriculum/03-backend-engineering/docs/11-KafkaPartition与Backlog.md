@@ -1,388 +1,122 @@
-# 11. Kafka：Partition、Consumer Group、Ordering 与 Backlog
+# Kafka 怎样分工、保序与恢复消费
 
-> 这一章不把 Kafka 讲成完整产品手册，而是掌握 AI Backend 面试最常追问的：**Partition、Consumer Group、Ordering、Offset、Rebalance 与 Backlog。**
+[← 消息怎样交付，确认到底确认了什么](10-MQ与DeliverySemantics.md) · [模块主页](../README.md) · [进程重启后，任务怎样继续推进 →](12-ReliableAsyncTask.md)
 
-## 1. Kafka 的核心抽象
+文档更新事件已经可靠地进入消息系统。一个处理者来不及完成所有更新，我们增加第二个。接下来不能只问“吞吐翻倍了吗”，还要问：谁处理哪条，哪个文档的两次修改必须有序，进程重启后从哪里继续？Kafka 用分区和消费位置回答这些问题。
 
-可以先理解成：
+本章以 **Kafka 4.2 的传统 Consumer Group（消费组）和 KafkaConsumer API** 为主要语境，最后明确 share group 的不同。这里讲机制，不要求为了理解顺序而先搭集群。
 
-```text
-Topic
-├─ Partition 0: record → record → record
-├─ Partition 1: record → record → record
-└─ Partition 2: record → record → record
-```
+## 1. 分区先划分日志，再划分工作
 
-Partition 是 Kafka 并行与顺序语义的核心边界之一。
+Topic（主题）组织同类记录，一个主题可以分为多个 Partition（分区）。每个分区有自己的追加顺序和 Offset（位置编号）。因此 `(主题, 分区, offset)` 才能定位一条记录，不能只拿 offset 当作全局编号。
 
----
+假设文档更新主题有 P0、P1、P2 三个分区。消费组 `indexer` 有 A、B 两个成员，可能由 A 处理 P0/P1，B 处理 P2。同组成员分工；另一个 `audit` 组可以独立读同一主题，维护自己的进度。消费完成并不立即删除日志，能否重放仍取决于保留与清理策略。[Kafka 日志与消费设计](https://kafka.apache.org/42/design/)
 
-## 2. 为什么需要 Partition
+传统消费组在一次有效分配中，一个分区只交给该组的一个消费者。所以此例增加到四个消费者，至少有一个没有分区可领。但“只有一个合法消费者”不保证发生暂停或重分配时，旧处理线程不会继续向外部系统写；资源侧防重仍不能省。
 
-如果一个 Topic 只有一条单线程 Log：
+## 2. 分区有序，不代表业务自然有序
 
-```text
-producer
-→ one ordered log
-→ one consumer path
-```
+按文档键把同一文档的更新送到同一分区，是建立局部顺序的一种方法。它要求生产端使用一致的键与分区策略，且所依赖的映射保持稳定。增加分区、改变分区器或由不同生产者乱序发送，都可能改变业务观察到的顺序。
 
-吞吐和并行消费受限。
-
-分区后：
+即使记录进入分区的顺序是版本 7、8，消费者把两条交给不同线程，版本 8 可能先完成。日志记录顺序与外部动作完成顺序仍是两件事。可选择同键串行，或让目标存储检查版本并拒绝过时结果。前者保护执行次序，后者保护落地状态，各有等待与实现成本。
 
 ```text
-P0 → Consumer A
-P1 → Consumer B
-P2 → Consumer C
+分区日志：       doc-42 v7        doc-42 v8
+工作完成：           慢                 快
+外部写回：       v8 先到，v7 后到
+必要保护：      同键串行，或资源拒绝较旧版本
 ```
 
-可以并行处理。
+这也解释了为什么热点文档不能靠随意换键来“优化”：把一个业务实体拆散可能增加并行度，却破坏原先的顺序前提。
 
-代价：
+## 3. 拉取位置与已提交位置不是同一个数
 
-> **全局顺序被拆成 Partition 内顺序。**
+`poll()` 拉到记录，会推进客户端的读取位置；**提交消费位置**则告诉消费组，下次恢复时从哪里开始。处理完成后再提交，是把业务完成与恢复位置衔接起来，而不是把“已进入内存”当作完成。[KafkaConsumer 的位置语义](https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
 
----
+用一个没有位置空洞的教学分区说明：原提交位置为 10，读到了 10、11、12。
 
-## 3. Key 决定局部顺序
+| 业务完成情况 | 可安全恢复的下一位置 | 原因 |
+|---|---:|---|
+| 只有 10 完成 | 11 | 11 仍需处理 |
+| 10、12 完成，11 未完成 | 11 | 不能跳过未完成的 11 |
+| 10、11、12 均完成 | 13 | 这批记录均已完成 |
 
-如果业务要求同一 `order_id` 的 Event 顺序：
+Kafka offset 不保证每个整数都有业务记录，压缩或事务控制记录等会造成空洞。真实实现应根据实际拉取记录及 API 提供的下一位置维护完成前沿，不要等待一个根本不存在的 offset。关键不变量是：**提交位置以前所有需要处理的记录都已安全完成**，不是简单取并行任务的最大完成编号。
 
-```text
-key = order_id
-```
+进程在业务提交后、位置提交前崩溃，恢复会重新处理。因此即使手动提交，也需要上一章的幂等。相反，在业务完成前提交，重启后可能跳过尚未完成的工作。
 
-让相同 Key 稳定路由到同一 Partition。
+## 4. 重分配时，谁还可以写回
 
-这样：
+消费者离开或加入时，分区会重新分配。应用要停止为失去的分区接收新工作，妥善处理在途任务和已完成前沿，不能把旧任务的完成结果直接当作新拥有者已经完成。
 
-```text
-order-1 created
-order-1 paid
-order-1 shipped
-```
+心跳表示成员仍与协调者联系，不表示每条业务都在推进。`max.poll.interval.ms` 约束两次 poll 的间隔；长时间处理而不继续 poll，可能触发失效和重分配。静态成员和不同组协议的具体时机又有区别，不能只调心跳就声称修好了长任务。[Kafka 4.2 消费者配置](https://kafka.apache.org/42/configuration/consumer-configs/)
 
-可以在同一 Partition 中按顺序处理。
+一种实现是由单一线程负责消费者对象，工作线程只处理交出的任务，完成通知再回到消费者线程。还必须限制队列、按需要暂停分区拉取，并保持安全提交前沿。KafkaConsumer 本身不是任意线程可共享调用的线程安全对象；其关闭和唤醒也应按 API 约定处理。
 
-不要为了“顺序”把整个 Topic 只做一个 Partition，除非真的需要全局单序列。
+## 5. 积压先分解，再决定加什么
 
----
+Lag（消费位置落后量）提示工作落后，但它受指标采用的末端位置、事务隔离与提交时机影响，也不直接等于等待秒数。应该同时看最老未处理消息年龄、生产速率、有效完成速率、分区倾斜和下游等待。
 
-## 4. Consumer Group
+假设积压 12,000 条，持续到达 100 条/秒，消费者有效完成 300 条/秒，且处理成本稳定。净消化速度为 `300-100=200 条/秒`，预计清空需 `12,000÷200=60 秒`。若完成速率只有 100 条/秒，系统只是在维持积压，永远没有清空余量。这里是教学估算，不是 Kafka 自动给出的恢复承诺。
 
-传统 Consumer Group 可以理解：
+只有一个分区慢，先看热点键、毒消息或局部下游；所有分区都慢，再看共享依赖与整体容量。消费者已达到传统组的分区数时，继续加成员不能直接增加可分配分区；但改成更多业务工作线程又必须重新证明顺序和提交前沿。
 
-> 同一个 Group 中，Partition 会分配给组内 Consumer，实现并行消费与 Failover。
+## 6. 新消费模型不能被旧结论否定
 
-例如：
+Kafka 4.2 还提供 **share group（共享消费组）**：多个消费者可以共享一个分区的记录处理，按记录获取和确认，消费者数不必受分区数同样限制。它与这里主要讲解的传统按分区独占模型不同。[Kafka share group 设计](https://kafka.apache.org/42/design/)
 
-```text
-Topic: 4 partitions
-Group A:
-  consumer-1 → P0, P1
-  consumer-2 → P2, P3
-```
+因此回答“消费者数能不能超过分区数”时，应先说明消费模型。采用 share group 也不自动得到业务顺序或外部系统 exactly-once；产品新增能力改变的是分工与交付机制，不会删除跨系统副作用边界。
 
-如果再加到 4 个 Consumer，可以进一步并行。
+## 本章小结
 
-但如果 Consumer 数量超过传统 Group 的 Partition 数，多出来的 Consumer 没有 Partition 可消费。
+分区组织局部日志，消费组组织分工，提交位置组织恢复。业务完成顺序、外部效果与提交前沿仍由应用保证；积压分析须同时考虑流入、有效完成、热点和下游容量。
 
-这就是为什么：
+## 🎯 面试怎么答
 
-> 扩 Consumer 之前先看 Partition 数。
+**Kafka 消费积压了，是不是增加消费者就可以？**
 
----
+> 先确认消费模型，并按分区查看流入、完成速率、最老消息年龄和下游等待。传统消费组的分工受分区数限制，热点分区和下游瓶颈不能靠盲目增加成员解决。并行处理还要维护有序写回与安全提交前沿；share group 的分工限制不同，应按实际版本与模型判断。
 
-## 5. 不同 Consumer Group
+## ⚠️ 易错点
 
-```text
-Topic
-├─ Group: analytics
-├─ Group: billing
-└─ Group: notification
-```
+> ⚠️ 分区内记录顺序不保证多个工作线程的外部写回顺序。
 
-每个 Group 都可以独立消费同一 Topic。
+> ⚠️ 消费位置提交不能跳过仍需处理的记录；offset 整数本身可能存在空洞。
 
-因此 Kafka 同时支持：
+> ⚠️ 传统消费组的分区限制不能推广到 Kafka 的所有消费模型。
 
-- 同组内 Load Balance；
-- 不同组之间 Pub/Sub。
+## 本章自测
 
----
+先写判断和依据，再展开提示或答案。
 
-## 6. Offset
-
-Consumer 需要知道：
-
-```text
-这个 Partition 消费到哪里了？
-```
-
-Offset 就是记录位置。
-
-消费语义与 Offset Commit 的时机强相关。
-
-### 先 Commit Offset，再处理
-
-Crash：可能丢工作。
-
-### 先处理，再 Commit Offset
-
-Crash 在处理后 Commit 前：可能重复。
-
-所以仍然回到：
-
-```text
-At-least-once
-+ Idempotent Consumer
-```
-
----
-
-## 7. Rebalance
-
-当 Consumer：
-
-- 加入；
-- 离开；
-- Crash；
-- Group Membership 变化
-
-Partition 可能重新分配。
-
-这段过程可能影响延迟和正在处理的任务。
-
-因此长时间处理一条消息的 Consumer 需要特别注意：
-
-- heartbeat；
-- processing model；
-- offset commit；
-- ownership change。
-
-不要把 30 分钟任务直接理解成“Consumer 拿一条消息同步处理 30 分钟就好”。
-
----
-
-## 8. Backlog / Consumer Lag
-
-生产速度：
-
-```text
-10000 msg/s
-```
-
-消费能力：
-
-```text
-8000 msg/s
-```
-
-Lag 每秒增长：
-
-```text
-2000
-```
-
-短时间峰值可以由 Buffer 吸收；长期差额意味着系统容量不足。
-
----
-
-## 9. Backlog 排查
-
-不能只说“加 Consumer”。
-
-依次看：
-
-```text
-Producer traffic increased?
-↓
-Partition distribution balanced?
-↓
-Consumer count < partition count?
-↓
-Single message processing slower?
-↓
-Downstream DB / API slow?
-↓
-Retry / poison message?
-↓
-Rebalance too frequent?
-```
-
----
-
-## 10. Hot Partition
-
-如果 Key 分布不均：
-
-```text
-90% events → same tenant_id
-```
-
-可能让一个 Partition 特别热。
-
-增加 Consumer 无法把一个 Partition 同时交给多个传统 Consumer Group 成员处理。
-
-需要重新考虑：
-
-- partition key；
-- hot tenant isolation；
-- shard key；
-- business ordering requirement。
-
----
-
-## 11. Partition 数不是随便越多越好
-
-增加 Partition 能增加并发，但也增加：
-
-- metadata；
-- file / replica management；
-- rebalance cost；
-- operational complexity。
-
-真正设计要结合吞吐和 Broker 架构。
-
----
-
-## 12. Ordering 与 Retry
-
-消息失败后如果把它放回主队列尾部：
-
-```text
-A1 fail
-A2 success
-A3 success
-A1 retry
-```
-
-同一 Key 的业务顺序可能被破坏。
-
-需要根据业务选择：
-
-- block partition；
-- retry topic；
-- per-key state machine；
-- out-of-order tolerant processing。
-
-没有统一答案。
-
----
-
-## 13. Replay
-
-Kafka Log 的一个重要优势是 Consumer 可以从历史 Offset 重新读取。
-
-这适合：
-
-- rebuild derived state；
-- replay event processing；
-- backfill；
-- debugging。
-
-但 Replay 旧 Event 仍可能触发副作用，所以 Handler 必须区分：
-
-```text
-recompute state
-vs
-external side effect
-```
-
----
-
-## 14. AI 场景：Embedding Pipeline
-
-```text
-document parsed
-→ events partition by knowledge_base_id
-→ embedding consumers
-→ index writer
-```
-
-需要考虑：
-
-- 同文档版本顺序；
-- hot knowledge base；
-- provider rate limit；
-- backlog freshness lag；
-- re-embedding replay。
-
-所以 Kafka Lag 可能直接变成 RAG Freshness Lag。
-
----
-
-## 15. 当前 Kafka 机制不要写死成旧版本
-
-Apache Kafka 当前还在持续演进 Consumer 能力，例如官方设计中已经存在 Share Consumer / Share Group 等新模式。
-
-因此课程只把传统 Consumer Group 的核心模型作为面试基础，不写成“Kafka 永远只有这一种消费模型”。
-
----
-
-## 16. Metrics
-
-```text
-producer_rate
-consumer_rate
-consumer_lag
-oldest_event_age
-processing_latency
-rebalance_count
-partition_skew
-retry_rate
-```
-
-AI 数据管道还要看：
-
-```text
-freshness_lag
-embedding_qps
-index_commit_latency
-```
-
----
-
-## 17. 🎯 面试怎么答
-
-**问：Kafka Consumer Lag 很高怎么办？**
-
-可以回答：
-
-> 我先区分是流量突然增加还是消费能力下降。看 Producer Rate、各 Partition Lag、Consumer 数、单条处理耗时、下游 DB/API 延迟和 Rebalance。如果 Consumer 数还小于 Partition 数，可以扩 Consumer；如果是 Hot Partition，加 Consumer 没用，要调整 Partition Key；如果长期生产率大于消费率，还要扩 Partition/Consumer Capacity 或限流，而不是只等待 Queue 自己恢复。
-
----
-
-## 18. ⚠️ 易错点
-
-- Kafka Topic 有顺序 ≠ 全局顺序；
-- Consumer 越多 ≠ 吞吐无限增加；
-- Commit Offset ≠ Side Effect exactly-once；
-- Lag 高 ≠ 一定 Broker 慢；
-- Replay ≠ 可以安全重放所有外部副作用。
-
----
-
-## 19. 本章自测
+### 1. 某教学分区读到 20、21、22，20 和 22 已写入数据库，21 仍在重试。能否提交 23？若进程此刻重启，应该允许什么重复？
 
 <details>
-<summary>1. 为什么 Consumer 数超过 Partition 数后可能没有收益？</summary>
+<summary>提示</summary>
 
-传统 Consumer Group 中一个 Partition 同一时刻通常分配给一个 Group Member，多出来的 Consumer 没有 Partition 可消费。
+恢复位置不能跨过未完成工作。
 
 </details>
 
 <details>
-<summary>2. 为什么 Hot Partition 不能靠单纯加 Consumer 解决？</summary>
+<summary>参考答案与解释</summary>
 
-热点都集中在一个 Partition 时，该 Partition 的消费能力受单个 Partition Owner 限制，需要改变 Key/Partition Strategy 或业务顺序模型。
+不能。可提交到 21，从 21 恢复后，22 可能再次处理，所以数据库写入必须幂等。先提交 23 会跳过 21，得到数据缺失。
+
+</details>
+
+### 2. 四个分区已有四个消费者，只有一个分区持续积压；慢分区一半事件来自同一文档。请提出两项检查，并说明直接改变分区键的风险。
+
+<details>
+<summary>提示</summary>
+
+区分热点实体、单条失败和共享容量。
 
 </details>
 
 <details>
-<summary>3. Kafka Replay 为什么对 External Side Effect 很危险？</summary>
+<summary>参考答案与解释</summary>
 
-重放历史 Event 可能再次触发邮件、扣款等副作用。需要幂等 Handler 或把重放限制在可重建 Derived State 的处理路径。
+检查该键的处理时间、失败重试和目标存储等待，并核对该分区有效完成率与其他分区差异。改变分区键可能打散同文档顺序，必须同时建立业务版本检查或新的顺序模型，不能只以吞吐判断成功。
 
 </details>

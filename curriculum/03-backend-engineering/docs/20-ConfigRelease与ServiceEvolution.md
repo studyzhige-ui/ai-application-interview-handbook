@@ -1,429 +1,115 @@
-# 20. Configuration、Feature Flag、Gray Release 与 Microservice Evolution
+# 配置和版本怎样安全改变
 
-> Production 系统不只是“代码版本”，还有配置、Feature、模型、Prompt、依赖和服务边界的持续变化。真正稳定的系统必须把 **Change** 本身当作一等工程对象。
+[← 部署、探针与停机怎样配合应用](19-ContainerK8s与Deployment.md) · [模块主页](../README.md) · [把通用机制映射到 Java、Spring 与 Go →](22-CrossLanguageRuntimeMapping.md)
 
-## 1. 为什么 Configuration 需要治理
+限流阈值从 20 改成 200，程序没有换一行代码，下游却被压垮；新版本把文档状态改为另一种格式，回滚二进制后旧版本又读不懂新数据。配置与发布都能改变实际行为，因此也需要输入校验、状态边界和验证过程。
 
-配置可能包括：
+## 1. 配置是应用的输入，必须有明确来源
 
-```text
-DB endpoint
-model name
-provider quota
-feature switch
-retry count
-timeout
-rate limit
-prompt version
-retrieval top_k
-```
+应用可能同时读取代码默认值、配置文件、环境变量和远程配置。优先级由应用或框架定义，不能把某个项目的顺序当作普遍规则。启动时应形成可检查的有效配置，并验证范围、单位和字段之间的关系。
 
-如果配置散落在代码和环境里：
+例如某应用明确约定环境变量覆盖文件，文件覆盖默认值；它把超时统一存为毫秒，并检查总截止时间大于清理预算、线程池容量不小于工作线程数。这里是示例策略，真实项目应记录自己的配置规范。
 
-- 谁改了不知道；
-- 不同实例不一致；
-- 无法快速回滚；
-- Debug 无法复现。
+敏感配置不能直接进入完整配置日志；可记录非敏感值、版本与来源，帮助解释某个请求为何使用旧阈值。密钥轮换与普通功能开关的风险不同，应按权限、审计和撤销要求分别管理。
 
----
+## 2. 配置文件变了，不代表运行中请求已安全切换
 
-## 2. Config Priority
+动态更新需要先读取、解析、整体校验，再发布新的不可变配置快照。若先改一半字段再改另一半，并发请求可能看到不合法组合。让每次请求或任务明确使用某个版本，能避免同一次操作的前半段按旧规则、后半段按新规则。
 
-常见来源：
+有的设置可以热更新，有的需要重建资源，例如连接池或认证材料。重建也要安排旧资源排空，不能换一个全局指针就忘记关闭仍被持有的连接。
 
-```text
-default
-→ config file
-→ env
-→ remote config
-→ runtime override
-```
+Kubernetes ConfigMap 的不同消费方式行为不同：环境变量不会自动更新已运行进程的值，卷内容更新有传播过程，应用也必须实际重读；不能笼统地说“修改 ConfigMap 就完成热更新”。[ConfigMap 更新语义](https://kubernetes.io/docs/concepts/configuration/configmap/)
 
-必须定义明确优先级。
+通过 `subPath` 挂载的 ConfigMap 文件不会收到这类自动更新；即使普通卷内容已经变化，应用也仍需明确重新加载时机，不能把文件变化等同于客户端配置已生效。[ConfigMap 更新边界](https://kubernetes.io/docs/concepts/configuration/configmap/)
 
-否则同一个值到底来自哪里很难排查。
+## 3. 灰度验证要比较同类请求
 
----
+灰度或 Canary（小范围试发布）让部分流量先使用新版本，观察质量、错误、延迟与成本再扩大。比较必须尽量控制用户、输入规模和时间窗口差异：新版本只接简单请求，延迟更低并不能证明优化有效。
 
-## 3. Dynamic Config
+上线前预先确定停止条件和恢复方法。模型、提示词、检索参数与业务代码都可能改变行为，AI 服务不应只检查 HTTP 错误率；输出质量、安全拒绝和外部副作用也应有相应回归与验收。
 
-远程配置中心可以：
+Feature Flag（功能开关）将某段行为与二进制发布分开，但需要负责人、默认值、有效期和清理计划。关闭开关可能停止新动作，却不撤销已经执行的动作，仍要核对持久状态。
+
+## 4. 回滚代码，不等于回滚数据
+
+假设旧服务只认识 `status`，新服务准备拆成 `phase` 与 `outcome`。直接删掉旧字段后发布新版本，一旦回滚，旧服务无法继续读写。
+
+**Expand–Contract（先扩展、后收缩）** 可以分阶段减少风险：先增加兼容字段与读取能力，再部署兼容新旧格式的版本，迁移并验证存量数据，确认旧消费者退出后才删除旧表示。双写期间还必须明确哪份是事实，以及不一致如何发现和修复。
 
 ```text
-publish new version
-→ instances watch / poll
-→ validate
-→ apply
+扩展兼容结构 → 发布兼容代码 → 迁移并核对数据
+            → 确认旧读写者退出 → 收缩旧结构
 ```
 
-优势：
+消息和任务输入同样需要版本：排队数天的任务可能由新代码处理，不能只验证当天新产生的请求。保留兼容读取、显式迁移或拒绝不支持版本，比依赖未声明的字段默认值更可靠。
 
-- 不发版即可调整；
-- 快速止损；
-- 多实例一致分发。
+## 5. 服务拆分首先划分业务责任
 
-风险：
+单体服务可以有清晰模块；多个微服务也可以互相纠缠。拆分前先找业务不变量：哪些数据需要在一个原子边界内一起成立，谁有权修改，其他模块通过什么接口请求变化。
 
-- 错配置瞬间全量扩散；
-- watcher bug；
-- config center outage；
-- incompatible schema。
+DDD（领域驱动设计）用业务概念帮助划分模型与责任；Bounded Context（限界上下文）表示一套概念在某个边界内具有明确含义。例如“任务完成”在生成执行模块与账单结算模块可能有不同判断，不能用一个共享 status 字段混合所有责任。
 
-所以“动态”更需要治理。
+把模块移到网络另一端，会新增超时、版本、鉴权、重试和跨系统一致性问题。只有独立扩容、发布、团队责任或隔离收益足以承担这些成本时，微服务才可能更合适，不能以数量作为成熟度指标。
 
----
+## 6. 状态越来越多时，先避免组合失控
 
-## 4. Safe Config Update
+把上传阶段、执行阶段、审批状态和支付状态都组合成一个枚举，很容易不断增加“上传完成且审批中但付款未知”之类状态。可以在不破坏业务约束的前提下，按不同责任拆分状态维度，明确允许的转换和跨维度条件。
 
-推荐：
+例如审批未通过时不得执行外部写入，是一个需要代码与测试保护的不变量；无需为每个 UI 展示组合制造新持久状态。状态变化使用带当前版本或期望状态的条件更新，记录原因，避免多个模块随意覆盖。
 
-```text
-fetch config
-→ schema validate
-→ semantic validate
-→ stage
-→ atomically swap
-→ keep previous version
-```
+演进不是一次性改名。还要更新 API、任务输入、事件消费者、操作后台、观测与恢复工具。验证时既测试新功能，也回放旧输入和历史未完成任务，才能证明变更后仍然可恢复。
 
-不要直接边读边修改一个全局 dict。
 
-失败时：
+## 本章小结
 
-```text
-keep last-known-good config
-```
+配置与发布都是改变系统行为的输入过程。有效配置需要来源、单位和整体校验；灰度需要可比证据；回滚需要兼容的数据与任务协议。模块和服务边界应围绕业务条件，而不是工具数量。
 
----
+## 🎯 面试怎么答
 
-## 5. Config Version
+**怎样保证一次配置或版本变更可以安全回退？**
 
-Trace / Log 中记录：
+> 先记录配置来源与版本、校验整体约束，按请求或任务固定一致快照。小范围验证可比流量的错误、延迟、质量和副作用，再扩大。数据、消息和未完成任务采用兼容演进，区分停止新行为与撤销既有效果；没有恢复证据不能只凭二进制能回滚认定安全。
 
-```text
-config_version
-```
+## ⚠️ 易错点
 
-否则 P99 变差以后无法判断：
+> ⚠️ 配置中心发布成功不表示所有进程和在途任务都安全切换。
 
-> 是代码变了，还是 Timeout/Rate Limit 配置变了？
+> ⚠️ 代码回滚不撤销已提交数据与外部动作。
 
-AI Service 还要记录：
+> ⚠️ 微服务拆分增加网络与一致性边界，不自动提高模块内聚。
 
-```text
-model_version
-prompt_version
-retrieval_config_version
-```
+## 本章自测
 
----
+先写判断和依据，再展开提示或答案。
 
-## 6. Feature Flag
-
-Feature Flag 把“代码已经部署”和“功能对谁生效”分离。
-
-```text
-code deployed
-feature disabled
-↓
-enable 1%
-↓
-10%
-↓
-100%
-```
-
-用途：
-
-- 灰度；
-- A/B Test；
-- emergency kill switch；
-- tenant-specific feature。
-
----
-
-## 7. Feature Flag 的 Debt
-
-Flag 不能永远留着。
-
-长期会产生：
-
-```text
-2^N code paths
-```
-
-应该有：
-
-- owner；
-- expiry；
-- remove plan；
-- audit。
-
-否则测试复杂度爆炸。
-
----
-
-## 8. Gray / Canary Release
-
-```text
-new version
-→ 1% traffic
-→ observe
-→ 10%
-→ 50%
-→ 100%
-```
-
-监控：
-
-- error rate；
-- P95/P99；
-- business metric；
-- AI quality metric；
-- cost；
-- tenant-specific error。
-
-如果只看 CPU 正常就继续放量，AI 行为可能已经 Regression。
-
----
-
-## 9. Rollback 不是永远简单
-
-Code 可以回滚，但：
-
-```text
-DB schema changed
-Event schema changed
-new data already written
-model output format changed
-```
-
-旧代码可能无法读取新数据。
-
-所以安全发布常要求：
-
-- backward compatible schema；
-- expand/contract migration；
-- versioned event；
-- dual-read / dual-write（谨慎）。
-
----
-
-## 10. Monolith vs Microservice
-
-Monolith 不是“落后架构”。
-
-优点：
-
-- local transaction；
-- 简单部署；
-- Debug 容易；
-- 调用成本低。
-
-Microservice 的价值可能是：
-
-- 团队边界；
-- 独立扩容；
-- failure isolation；
-- independent deploy；
-- technology boundary。
-
-代价：
-
-- network failure；
-- distributed transaction；
-- observability；
-- versioning；
-- service discovery。
-
----
-
-## 11. 什么时候拆服务
-
-不要按数据库表拆。
-
-更合理考虑：
-
-```text
-Business Capability
-Ownership
-Change Frequency
-Scale Pattern
-Failure Boundary
-Data Ownership
-```
-
-例如：
-
-```text
-Billing
-Ingestion
-Inference Gateway
-Agent Runtime
-```
-
-可能有不同扩容和故障模型。
-
----
-
-## 12. DDD 的价值边界
-
-DDD 在本课程只需要掌握：
-
-- Bounded Context；
-- Domain Boundary；
-- Aggregate / Invariant 的直觉；
-- ubiquitous language。
-
-它不是“必须使用某套 Java 框架”。
-
-核心价值是：
-
-> 把服务边界和业务边界对齐，而不是按技术 Layer 乱拆。
-
----
-
-## 13. Gateway
-
-API Gateway 常负责：
-
-- routing；
-- auth entry；
-- rate limit；
-- request normalization；
-- observability context。
-
-不要把所有业务逻辑塞 Gateway。
-
-否则 Gateway 会成为巨大单点逻辑层。
-
----
-
-## 14. Microservice Communication
-
-服务拆开以后需要选择：
-
-```text
-sync HTTP/RPC
-vs
-async Event/MQ
-```
-
-依据仍是前面第三章：
-
-- 是否需要立即结果；
-- Failure 怎样传播；
-- 是否需要 Buffer；
-- consistency requirement。
-
----
-
-## 15. Distributed Transaction
-
-拆服务前的本地 Transaction：
-
-```text
-one DB transaction
-```
-
-拆后：
-
-```text
-Service A DB
-Service B DB
-```
-
-不能再假设本地 ACID 跨服务成立。
-
-必须引入：
-
-- Outbox；
-- Saga；
-- Compensation；
-- Reconciliation。
-
-这就是为什么 Microservice 不是免费的。
-
----
-
-## 16. AI Config 特别容易造成 Silent Regression
-
-例如只改：
-
-```text
-top_k: 20 → 5
-model: large → small
-max_steps: 10 → 4
-```
-
-服务可能没有任何 500，但质量下降。
-
-所以 AI Config 需要同时监控：
-
-```text
-reliability metric
-+ quality/eval metric
-```
-
----
-
-## 17. Kill Switch
-
-高风险功能最好具备快速禁用开关：
-
-```text
-new tool
-new provider
-agent autonomous action
-experimental reranker
-```
-
-事故时比等代码重新构建部署更快。
-
-但 Kill Switch 本身也要有权限和审计。
-
----
-
-## 18. 🎯 面试怎么答
-
-**问：Monolith 什么时候应该拆 Microservice？**
-
-可以回答：
-
-> 我不会把 Microservice 当成熟度指标。先看是否出现清晰业务边界、独立团队 Ownership、不同 Scale Pattern、独立发布需求或 Failure Isolation 需求。拆分后会引入网络 Failure、分布式一致性、服务发现和可观测性成本，所以只有收益明显时才拆。服务边界应更接近 Business Capability / Data Ownership，而不是一张表一个服务。
-
----
-
-## 19. ⚠️ 易错点
-
-- Dynamic Config ≠ 随便热改；
-- Feature Flag ≠ 永久 if/else；
-- Rollback ≠ 数据一定可回滚；
-- Microservice ≠ 一定更先进；
-- DDD ≠ 只属于 Java；
-- Canary 只看 Error Rate 不够，AI 还要看质量。
-
----
-
-## 20. 本章自测
+### 1. 新版本删除旧字段后写入新格式，监控异常准备回滚旧二进制。还必须确认什么？请给出一种更安全的迁移顺序。
 
 <details>
-<summary>1. 为什么 Remote Config 更新最好原子替换而不是原地修改？</summary>
+<summary>提示</summary>
 
-避免多个请求读到半更新状态；先完整校验新版本，再一次切换引用，可以让配置版本更明确，也便于保留 last-known-good 回滚。
+旧程序需要读懂现存数据与排队任务。
 
 </details>
 
 <details>
-<summary>2. 为什么 Microservice 会放大一致性难度？</summary>
+<summary>参考答案与解释</summary>
 
-原本一个数据库事务内的操作被拆到多个服务/数据库后，无法再依赖单个 ACID Transaction，需要事件、Saga、补偿和对账等机制。
+确认旧版本兼容新数据和未完成消息，否则回滚会继续失败。先扩展兼容结构，发布兼容读写，迁移验证，确认旧读写者退出后再收缩旧字段。
+
+</details>
+
+### 2. 配置热更新分别改变总超时与清理预算，一个请求读到了新总超时和旧清理预算。如何避免这种混合？
+
+<details>
+<summary>提示</summary>
+
+让一组相关字段作为同一版本生效。
 
 </details>
 
 <details>
-<summary>3. AI Feature Gray Release 为什么要看质量指标？</summary>
+<summary>参考答案与解释</summary>
 
-Prompt/Model/Retrieval 配置可能不产生 HTTP Error，却显著降低答案质量；只看 CPU/5xx 无法发现 Silent Regression。
+解析并整体校验不可变快照，再原子切换引用；单次请求固定所用快照。需要重建的资源另行排空替换，并记录配置版本用于定位。
 
 </details>

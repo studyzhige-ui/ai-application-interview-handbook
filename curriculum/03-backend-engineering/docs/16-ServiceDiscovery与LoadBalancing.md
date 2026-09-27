@@ -1,401 +1,97 @@
-# 16. Service Discovery、Load Balancing、Stateless Routing 与 Distributed ID
+# 多个服务实例怎样被找到和选中
 
-> 当服务从 1 个实例变成 10 个、100 个实例以后，核心问题变成：**客户端怎样找到服务、请求怎样分配、状态怎样避免绑死实例、全局 ID 怎样生成。**
+[← 不可信输入怎样被限制在安全边界内](21-BackendSecurity.md) · [模块主页](../README.md) · [从慢请求的证据定位瓶颈 →](17-Observability与PerformanceDiagnosis.md)
 
-## 1. 单实例时代没有“发现”问题
+应用从一个实例变成三个实例后，调用方不再能把某个进程地址写死。一个实例正在升级，另一个连接已经很多，第三个刚启动还不能服务。接下来有两个不同的问题：哪些实例可以作为候选，以及这次调用该选哪一个？
 
-```text
-Client
-→ 10.0.0.7:8080
-```
+## 1. 服务发现提供候选，负载均衡选择去向
 
-但多实例：
+**Service Discovery（服务发现）** 让调用方获得服务的可达地址；**Load Balancing（负载均衡）** 从候选中选择一次请求或连接的去向。发现可以通过 DNS、注册表或平台服务抽象完成，选择可以发生在客户端、代理或网络层。
 
-```text
-Service A
-├─ instance-1
-├─ instance-2
-├─ instance-3
-└─ instance-4
-```
+如果名称解析仍返回已退出的实例，选择算法再好也没用；如果三个实例都健康，但某个负载特别高，发现正确也不代表分配合理。发现更新、缓存时间、健康状态和选择策略要连起来分析。
 
-实例会：
+在 Kubernetes 中，Service 提供稳定访问抽象，EndpointSlice 等对象反映后端端点。具体流量处理还取决于集群网络实现，不应把 Service 理解为一段总在用户进程内运行的轮询代码。[Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/)
 
-- 启动；
-- 下线；
-- Crash；
-- 扩容；
-- IP 变化。
+## 2. 选择策略如何影响真实工作
 
-调用方不能硬编码地址。
+轮询适合工作成本比较接近的情况；加权可以表达不同容量；较少连接或较少在途请求的策略，可以近似寻找更空闲的实例。但指标必须与当前工作相关。
 
----
+假设 A 持有 10 条短请求连接，B 只有 2 条连接却都在进行昂贵生成。只数连接可能继续把工作送给 B。HTTP/2 还允许一条连接承载多个流，因此“连接数少”不必然表示“请求少”。应结合活跃请求、排队、资源、长任务成本或实际负载信号，避免用一个代理指标代替容量。
 
-## 2. Service Discovery 的基本问题
+负载均衡也不能突破下游总预算。三个实例各允许 100 个模型调用，并不代表供应商给了 300 个并发名额；分配策略必须服从前面已经计算的容量边界。
 
-需要维护：
+## 3. 会话亲和解决局部状态，不解决持久性
 
-```text
-service name
-→ healthy instances
-```
+**Sticky Session（会话亲和）** 尽量让同一用户继续访问相同实例。如果会话只在 A 内存里，这能减少正常期间访问到“没有会话”的 B，但 A 重启后仍然丢失。用户集中到一个实例也可能造成倾斜。
 
-常见实现思路：
+一条已经建立的 WebSocket 连接本身就连接着特定端点。亲和策略主要影响新连接或重连时的选择，不会把当前连接上的消息神奇地重新分配到别的进程。要跨实例恢复，应保存可共享的任务与事件状态，并让新实例按可信身份和游标接续。
 
-- DNS；
-- Registry；
-- Kubernetes Service；
-- Proxy / Service Mesh。
+可把服务尽量做成可替换实例：短期缓存和执行中局部变量留本地，恢复所需的事实放在具有相应保证的存储。这样实例退出后，流量转移与业务恢复才不会互相矛盾。
 
-它们都是在回答：
+## 4. 健康不是只有一个布尔值
 
-> 当前哪些实例可以接流量？
+端口可连接，可能只说明进程还活着；能够接受新流量，需要初始化完成、容量与关键功能满足要求。一个慢依赖出现问题时，还要判断服务是否仍能提供部分有用响应，而不是让所有实例同时退出候选。
 
----
+发现系统、代理和客户端看到状态变化有传播延迟。某实例开始退出后，仍可能收到已经在路上的请求或连接。因此应用要能拒绝新工作、完成或交接在途工作，而不能假定更新一个健康标志之后再也没人进来。
 
-## 3. DNS Discovery
+## 5. 一致性哈希只减少某些映射变化
 
-```text
-api.internal
-→ multiple addresses
-```
+需要按对象选择缓存分片时，可以把节点和键映射到同一哈希空间，按既定规则选择相邻节点；加入节点主要改变相邻区间，而不是简单取模导致大量键整体重映射。虚拟节点可改善节点分布与容量表达。
 
-优点：
+它不解决数据复制、新节点预热、热点键和节点失联后的恢复。一个特别热的 doc-42 仍可能集中在一个位置。选型时区分“减少迁移键数”与“保证每个节点负载均匀”，也区分请求路由算法与数据库的实际分片迁移协议。
 
-- 通用；
-- 简单；
-- 各语言都支持。
+本章不把服务发现扩写成全部分布式算法。系统设计模块承接多地域、分片和服务拆分的综合取舍；这里建立调用方、候选端点、选择位置与状态恢复之间的关系。
 
-边界：
+## 本章小结
 
-- TTL / cache；
-- 更新不一定瞬时；
-- 健康信息表达能力有限。
+发现提供候选，均衡分配工作，亲和保持局部访问倾向，持久状态支持实例替换。健康传播与连接生命周期都有时间边界，任何路由算法都不能代替下游预算和业务恢复。
 
-所以 DNS 可以用于 Service Discovery，但不能假设它是毫秒级强一致 Registry。
+## 🎯 面试怎么答
 
----
+**多实例服务为什么不能只加一个负载均衡器？**
 
-## 4. Registry + Heartbeat
+> 还要保证候选地址与健康状态可更新，选择指标符合真实负载，共享状态或恢复协议支持实例替换，退出时处理在途连接与任务。会话亲和不等于持久，一致性哈希不等于负载绝对均匀，扩容也不能突破下游总容量。
 
-另一种模型：
+## ⚠️ 易错点
 
-```text
-instance registers
-→ heartbeat
-→ registry
-→ client / proxy watches
-```
+> ⚠️ HTTP/2 流、请求、长任务和 TCP 连接的数量不是同一指标。
 
-如果一段时间没 Heartbeat：
+> ⚠️ 粘性路由不保存进程重启后丢失的状态。
 
-```text
-mark unhealthy
-```
+> ⚠️ 健康状态传播存在延迟，摘除候选不是瞬间清空在途流量。
 
-问题仍然包括：
+## 本章自测
 
-- false positive；
-- network partition；
-- stale registry data；
-- recovery race。
+先写判断和依据，再展开提示或答案。
 
----
-
-## 5. Load Balancing
-
-发现多个实例以后，需要决定请求发给谁。
-
-常见策略：
-
-- round robin；
-- random；
-- least connections；
-- weighted；
-- latency-aware；
-- consistent hashing。
-
-没有“永远最好”。
-
-例如 Streaming Service 更关注 active connections，普通短请求可能更适合 round robin。
-
----
-
-## 6. Client-side vs Server-side LB
-
-### Server-side / Proxy
-
-```text
-Client
-→ LB / Gateway
-→ instances
-```
-
-客户端简单。
-
-### Client-side
-
-```text
-Client gets instance list
-→ chooses instance
-```
-
-少一跳，但客户端需要 Discovery / Health / Retry 逻辑。
-
----
-
-## 7. Health 与 Routing
-
-实例刚启动：
-
-```text
-process alive
-```
-
-不代表：
-
-```text
-model loaded
-DB connected
-cache warm
-ready to receive traffic
-```
-
-所以 Discovery / LB 通常与 Readiness 概念结合。
-
-Kubernetes 章节会继续展开。
-
----
-
-## 8. Stateless Service
-
-水平扩容最舒服的服务：
-
-```text
-request can hit any instance
-```
-
-关键状态外置：
-
-```text
-DB / Redis / Object Store / MQ / Checkpoint Store
-```
-
-这不意味着服务“完全没有内存状态”。
-
-它仍可能有：
-
-- connection pool；
-- local cache；
-- in-flight request；
-- loaded model config。
-
-Stateless 更准确是：
-
-> 实例不是长期业务事实的唯一拥有者。
-
----
-
-## 9. Sticky Session
-
-有时 LB 按 Cookie / IP / Hash 把同用户固定到同一实例。
-
-适合：
-
-- WebSocket connection；
-- local cache affinity；
-- 某些 legacy session。
-
-但要考虑：
-
-- instance crash；
-- rebalance；
-- scale-in；
-- unequal load。
-
-因此 Sticky 可以优化，但不要成为 durable state 的唯一保障。
-
----
-
-## 10. Consistent Hashing
-
-适合把 Key 稳定映射到节点：
-
-```text
-key
-→ hash ring
-→ node
-```
-
-节点增删时，只迁移部分 Key。
-
-常见于：
-
-- cache sharding；
-- state partition；
-- routing affinity。
-
-但 HotKey 仍可能让某节点特别热。
-
----
-
-## 11. Global Unique ID 为什么不总用自增
-
-单库自增简单，但分库分表 / 多 Region 后：
-
-```text
-DB A id=100
-DB B id=100
-```
-
-会冲突。
-
-需要全局 ID 策略。
-
----
-
-## 12. UUID
-
-优点：
-
-- 无中心生成；
-- 冲突概率极低；
-- 适合分布式。
-
-代价：
-
-- 字符串/128-bit 存储；
-- 随机写可能影响某些 B+Tree Locality；
-- 不天然趋势递增；
-- 可读性差。
-
-MySQL 章节已经讨论随机主键对 InnoDB 的影响。
-
----
-
-## 13. Snowflake 思想
-
-典型组成：
-
-```text
-timestamp
-+ worker / region bits
-+ sequence
-```
-
-得到趋势递增且分布式生成的 ID。
-
-需要解决：
-
-- worker id 唯一；
-- clock rollback；
-- sequence exhaustion；
-- bit allocation。
-
-不要只背“64 位”。不同实现位数可以不同。
-
----
-
-## 14. ID 的真正需求
-
-先问：
-
-```text
-是否必须全局唯一？
-是否需要趋势递增？
-是否允许暴露业务量？
-是否需要本地生成？
-是否排序？
-是否数据库主键？
-```
-
-没有一种 ID 适合所有场景。
-
----
-
-## 15. AI 场景：Run ID / Event ID / Task ID
-
-常见：
-
-```text
-run_id
-step_id
-tool_call_id
-task_id
-event_id
-```
-
-这些 ID 不只是数据库主键，还参与：
-
-- trace correlation；
-- idempotency；
-- resume；
-- event ordering；
-- audit。
-
-因此要定义稳定语义。
-
----
-
-## 16. Failure Timeline
-
-服务扩容：
-
-```text
-new instance starts
-→ registered too early
-→ traffic arrives
-→ model/client pool not ready
-→ errors
-→ LB marks unhealthy
-→ retry to other instances
-→ load spike
-```
-
-所以 Readiness 比“进程启动成功”更重要。
-
----
-
-## 17. 🎯 面试怎么答
-
-**问：Service Discovery 和 Load Balancing 有什么区别？**
-
-可以回答：
-
-> Service Discovery 解决“当前有哪些可用实例”，Load Balancing 解决“这次请求选哪个实例”。DNS、Registry、Kubernetes Service 等都可以参与 Discovery；LB 再根据 round robin、least connections、weighted 等策略分配流量。两者都需要结合 Health / Readiness，否则可能持续把请求发给不可用实例。
-
----
-
-## 18. ⚠️ 易错点
-
-- Stateless ≠ 进程内完全没有状态；
-- DNS ≠ 实时 Registry；
-- Sticky Session ≠ 高可用；
-- 加实例 ≠ 下游容量自动增加；
-- Snowflake ≠ 所有实现固定同一 Bit Layout；
-- UUID ≠ 永远不适合作主键，要结合 DB/索引与访问模式。
-
----
-
-## 19. 本章自测
+### 1. A 有十条轻量连接，B 有两条很重的长连接。最少连接策略一直选择 B，延迟上升。应该补哪些信号，而不是直接认定算法坏了？
 
 <details>
-<summary>1. Service Discovery 与 Load Balancing 的输入输出分别是什么？</summary>
+<summary>提示</summary>
 
-Discovery 输出可用实例集合；Load Balancing 基于这个集合和策略选择本次请求的目标实例。
+连接只是工作量的一种近似。
 
 </details>
 
 <details>
-<summary>2. 为什么 Stateless Service 更容易水平扩容？</summary>
+<summary>参考答案与解释</summary>
 
-因为任意实例都可以处理请求，业务事实不依赖某个实例内存。实例增删时不需要迁移唯一业务状态。
+补看活跃请求或流数、排队、CPU/内存、下游并发与任务成本。根据实际工作量选策略和限额；连接数量本身不能表达两条长生成的负担。
+
+</details>
+
+### 2. 会话一直路由到 A，A 重启后用户重连失败。增加粘性时间能否修复？请指出真正缺失的恢复数据。
+
+<details>
+<summary>提示</summary>
+
+更稳定地选中一个失去状态的实例没有帮助。
 
 </details>
 
 <details>
-<summary>3. 选择 Distributed ID 前最重要的问题是什么？</summary>
+<summary>参考答案与解释</summary>
 
-先明确唯一性、排序、趋势递增、本地生成、隐私/业务量暴露和数据库索引等需求，再选 UUID、Snowflake、自增或其它方案。
+不能。要保存会话身份、任务状态、必要事件或游标等恢复依据，并让新实例重新授权后接续；粘性时间不能恢复已丢失内存。
 
 </details>

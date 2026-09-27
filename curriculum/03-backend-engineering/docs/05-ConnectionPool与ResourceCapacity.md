@@ -1,374 +1,116 @@
-# 05. Connection Pool 与 Resource Capacity
+# 连接怎样复用，容量怎样计算
 
-> 很多“服务突然变慢”不是 CPU 不够，而是某个 Pool 先耗尽。
+[← 并发工作由谁执行，等待放在哪里](04-Concurrency与ThreadPool.md) · [模块主页](../README.md) · [到达速度超过处理能力时怎么办 →](06-Backpressure与RateLimit.md)
 
-## 1. 为什么需要 Connection Pool
+模型调用只有 300 毫秒，接口却经常要等 2 秒。检查后发现请求先排队等连接。连接池减少了反复建连成本，却也成了排队入口。要调整容量，首先要看清每个请求占用的到底是哪种资源。
 
-建立连接有成本：
+## 1. 一次借用怎样结束
 
-```text
-DNS
-→ TCP / QUIC
-→ TLS
-→ Authentication
-→ Session / Protocol State
-```
-
-数据库连接还可能有：
-
-- Server Thread / Session；
-- Transaction Context；
-- Memory；
-- Authentication；
-- Network Socket。
-
-如果每个请求都新建/关闭连接，延迟和资源成本会很高。
-
-Pool 的基本思想：
+**连接池**复用已经建立的连接。调用方先申请连接，执行操作，用完后归还；连接失效时，由池或调用方按库的机制丢弃并重建。对数据库而言，“提交事务”和“归还连接”是两个动作：事务结束后仍不归还，别人还是借不到。
 
 ```text
-预先/按需创建有限连接
-→ Request 借用
-→ 使用
-→ 归还
-→ 后续复用
+申请连接 → 等到可用连接 → 执行操作 → 提交或回滚 → 归还连接
+               │                            │
+               └─ 等待超时                  └─ 失效连接可能被丢弃
 ```
 
----
+**持有时间**从借到连接算到归还；**获取等待时间**是排在池前的时间。应用总耗时包含两者。把全部耗时都记成“SQL 慢”，会掩盖连接池排队。
 
-## 2. Pool 不只是“缓存连接”
+HTTP 客户端通常还需要处理响应体读取与关闭。尤其是流式响应，只拿到响应头后就退出而没有关闭响应，可能持续占住连接或流资源。服务可以在合适的应用生命周期复用客户端，并在关闭时释放它；不能跨不兼容的事件循环或进程盲目共享实例。[HTTPX 异步客户端与流清理](https://www.python-httpx.org/async/)
 
-它更重要的作用是：
+## 2. 先做有单位的容量估计
 
-> **把下游容量变成显式的并发边界。**
-
-例如 DB 最多希望服务 50 个并发 Query：
+假设每个请求只借用一条数据库连接一次，平均持有 0.08 秒；稳定到达速率为每秒 100 个请求。平均同时被占用的连接约为：
 
 ```text
-App concurrency = 500
-DB Pool = 50
+100 次/秒 × 0.08 秒/次 = 8 条连接
 ```
 
-那么最多约 50 个请求同时占有 DB Connection，其余需要等待或失败。
+这应用了稳态平均关系 `L = λW`：平均在系统中的数量等于有效到达速率乘平均停留时间。这里“系统”特意选成连接占用区间，所以 W 不能随手换成包括模型推理在内的接口总耗时。
 
-这是一种 Capacity Isolation。
+8 是平均值，不是保证低尾延迟的安全池大小。突发、慢查询、事务长尾、多个请求共享资源和负载不均都要留有余量并压测。接近满负荷时排队会明显增加，仅凭均值把池设置为 8，不能承诺不会等待。
 
----
+反过来，在“一条连接同一时刻只服务一个操作，平均持有时间不变”的简化假设下，20 条连接对应的理论吞吐上限约为 `20 / 0.08 = 250 次/秒`。数据库自身的 CPU、I/O、锁竞争可能让实际能力更低；连接数不是性能凭证。
 
-## 3. 常见 Pool
+## 3. 每进程配置，需要乘上真实实例规模
 
-AI Backend 可能同时有：
+教学假设：数据库允许本业务及其他用户总计 500 条连接；需要为管理和其他服务保留 100 条。本服务最多 8 个实例，每实例 4 个进程，各自一个池。
 
 ```text
-DB Pool
-Redis Pool
-HTTP Connection Pool
-Thread Pool
-Process Pool
-GPU / Model Slot Pool
+本服务预算 = 500 - 100 = 400 条
+池数量 = 8 × 4 = 32 个
+若均匀分配，每池上限不能超过 floor(400 / 32) = 12 条
+总计 384 条，仍需考虑滚动发布时新旧实例重叠
 ```
 
-所以“Pool”是一种通用资源管理模式，而不是 DB 专属概念。
+把每池设成 50，潜在总数是 `8 × 4 × 50 = 1600`，不是 50。即使平时尚未开满，流量上来或重连时仍可能触发连接上限。扩容应用前，必须把下游连接预算一起重算。
 
----
+## 4. 连接数不一定等于请求并发数
 
-## 4. Pool 的几个关键参数
+常见数据库连接在一个时刻由一个调用占用，适合使用前面的简化模型。HTTP/2 则可能在一条连接中复用多个请求流。限制 `max_connections` 不自动等于限制模型调用数，仍可能需要独立的调用并发上限。
 
-不同库名字不同，但常见概念包括：
+HTTPX 的连接上限、空闲连接数和空闲过期时间是不同配置。具体默认值会随库变化，实验和服务应显式配置真正依赖的值，不把某个默认数字当成后端原理。[HTTPX 资源限制](https://www.python-httpx.org/advanced/resource-limits/)；[HTTP/2 多路复用](https://httpwg.org/specs/rfc9113.html)
 
-```text
-min / initial size
-max size
-acquire timeout
-idle timeout
-max lifetime
-keepalive / health check
-```
+还要区分单请求的 token 预算、每分钟配额与并发调用数。模型接口可能允许 20 个并发，但每分钟只能处理一定输入输出量；一个限制不能替代另外两个。
 
-### Max Size
+## 5. 池等待变长，先定位再扩大
 
-限制同时持有多少连接。
+先看在用连接是否持续接近上限、等待队列是否增长。再查看连接持有时间：是慢 SQL、未结束事务、响应流没关，还是申请过早、释放过晚？如果资源被泄漏，扩大池只是推迟耗尽。
 
-### Acquire Timeout
+若数据库 CPU 和锁等待已经饱和，继续加连接可能增加争用。如果下游仍有余量，而客户端池确实成为瓶颈，才在总预算下调整池并验证等待分位数、错误率和吞吐。
 
-Pool 没空闲连接时，调用方最多等多久。
+连接的最大寿命、空闲回收与借用前检查是库的具体行为，不应统一描述成“超龄立即杀掉正在使用的连接”。需要核对驱动文档、在用连接如何处理、故障时是否自动重试；自动重试又必须尊重业务副作用边界。
 
-### Idle Timeout
+## 本章小结
 
-长时间不用的连接是否回收。
+连接池既是复用机制也是等待点。容量计算要区分借用等待和实际持有，标明单位与假设，并乘上全部进程、实例及发布重叠量；协议复用和下游配额还会引入独立上限。
 
-### Max Lifetime
+## 🎯 面试怎么答
 
-连接使用多久后强制替换，避免永久使用老连接。
+**接口慢时，为什么不能直接把连接池调大？**
 
----
+> 我先拆出获取连接等待与持有时间，检查泄漏、长事务和慢调用，再看下游是否有余量。池大小还要乘实例及进程数量，不能越过数据库总预算。HTTP/2 连接可以复用多个请求，所以连接上限也不等于请求并发上限。
 
-## 5. Pool Size 不是越大越好
+## ⚠️ 易错点
 
-例如把 DB Pool 从 50 调到 500：
+> ⚠️ 平均占用量不是满足 p99 延迟的安全容量。
 
-```text
-更多并发 Query
-→ DB CPU / Lock / Buffer Pressure
-→ Query 更慢
-→ Connection 持有更久
-→ Pool 更容易满
-```
+> ⚠️ 事务提交不一定归还连接；响应头返回不一定释放流资源。
 
-甚至形成正反馈。
+> ⚠️ 只按平时实例数计算，会漏掉自动扩容和滚动发布重叠。
 
-Pool 大小应该和下游真正的服务能力匹配，而不是和上游请求数匹配。
+## 本章自测
 
----
+先写判断和依据，再展开提示或答案。
 
-## 6. Little's Law 的直觉
-
-不要求背公式推导，但可以建立直觉：
-
-```text
-系统中平均并发量
-≈ 吞吐 × 平均停留时间
-```
-
-如果 DB Query 平均从 20ms 变成 200ms，哪怕 QPS 不变，所需并发连接也会显著上升。
-
-所以 Pool Exhaustion 可能只是**下游变慢的结果**，而不是 Pool Size 太小。
-
----
-
-## 7. Pool Exhaustion 的典型症状
-
-```text
-request latency ↑
-acquire wait ↑
-active connections = max
-idle connections ≈ 0
-DB query latency maybe ↑
-```
-
-排查顺序不能只看：
-
-> “Pool 满了，调大。”
-
-应该继续看：
-
-```text
-谁占连接最久？
-Query 为什么慢？
-Transaction 是否太长？
-Connection 是否泄漏？
-下游是否过载？
-```
-
----
-
-## 8. Connection Leak
-
-典型：
-
-```python
-conn = pool.acquire()
-do_work(conn)
-# exception
-# forgot release
-```
-
-随着请求增长：
-
-```text
-available connection ↓
-→ Pool Exhaustion
-→ all requests wait
-```
-
-正确方式通常借助：
-
-- context manager；
-- `try/finally`；
-- framework-managed session；
-- `yield` Dependency。
-
-Python / FastAPI 前面学过的资源生命周期在这里真正落地。
-
----
-
-## 9. HTTP Connection Pool
-
-调用 LLM Provider 时同样需要 Pool。
-
-合理复用：
-
-```text
-Service Process
-→ shared HTTP Client
-→ keep-alive connection pool
-→ Provider
-```
-
-错误：
-
-```python
-async def handler():
-    client = AsyncClient()
-    await client.post(...)
-    await client.aclose()
-```
-
-每次请求重新创建 Client，会失去复用收益。
-
----
-
-## 10. HTTP Pool 还有一个特别风险
-
-Streaming Request 长时间占用连接：
-
-```text
-normal request 300ms
-stream request 30s
-```
-
-即使 QPS 不高，长连接也可能让：
-
-```text
-pool occupancy ↑
-```
-
-因此 Streaming Provider Client 的 Pool Size 与普通 API 的容量模型不同。
-
----
-
-## 11. Pool Waiting vs Request Deadline
-
-假设：
-
-```text
-request deadline = 2s
-pool acquire timeout = 10s
-```
-
-这是不合理的。
-
-请求可能在 Pool 里等到用户早已超时。
-
-更合理：
-
-```text
-Pool Wait
-+ Network Connect
-+ Downstream Processing
-+ Serialization
-≤ End-to-End Deadline
-```
-
-这会自然引出下一章的 Timeout Budget。
-
----
-
-## 12. 多 Worker 的 Pool Multiplication
-
-部署：
-
-```text
-8 app processes
-DB pool per process = 20
-```
-
-总潜在连接：
-
-```text
-8 × 20 = 160
-```
-
-再乘 Kubernetes replicas：
-
-```text
-10 pods × 8 processes × 20
-= 1600 connections
-```
-
-如果 DB 最大承载只有 500，这个配置从数学上就不成立。
-
----
-
-## 13. Pool 与 Semaphore 的区别
-
-Pool 管具体资源实例：
-
-```text
-20 DB connections
-```
-
-Semaphore 只是逻辑许可：
-
-```text
-最多 20 个并发任务
-```
-
-两者可以一起使用，但不是同一个概念。
-
----
-
-## 14. AI 场景：Provider Capacity
-
-如果外部 Model Provider 限制：
-
-```text
-100 requests/min
-20 concurrent streams
-```
-
-本地 HTTP Pool 100 并不能安全地产生 100 个并发。
-
-你还需要：
-
-- rate limiter；
-- concurrency semaphore；
-- retry budget；
-- tenant quota。
-
-Pool 只是连接容量的一层。
-
----
-
-## 15. 🎯 面试怎么答
-
-**问：Connection Pool 满了怎么办？**
-
-可以回答：
-
-> 先区分它是原因还是症状。我会看 active/idle、acquire wait、connection hold time 和 downstream latency。如果连接泄漏就修生命周期；如果 query 变慢，要先解决下游；如果容量模型本身太小，再结合实例数和 DB 最大连接数调 Pool。单纯把 Pool 调大可能只是把压力直接打到 DB。
-
----
-
-## 16. ⚠️ 易错点
-
-- Pool 越大 ≠ Throughput 越高；
-- Pool 满 ≠ 一定 Pool 配小；
-- HTTP Keep-Alive ≠ 无限复用；
-- 多进程 / 多 Pod 下 Pool 是乘法；
-- Pool Size ≠ Provider Rate Limit。
-
----
-
-## 17. 本章自测
+### 1. 每秒 120 个请求，每次独占连接 50 毫秒，平均占用是多少？若接口总耗时 2 秒，为什么不能直接拿 2 秒代入连接占用计算？
 
 <details>
-<summary>1. 为什么 DB Query 变慢会导致 Pool Exhaustion？</summary>
+<summary>提示</summary>
 
-连接被每个请求持有更久，在相同吞吐下同时占用的连接数量会上升，最终所有连接都被占用。
+统一毫秒和秒，检查研究对象的边界。
 
 </details>
 
 <details>
-<summary>2. 为什么 10 Pod × 每 Pod 8 Worker × Pool 20 需要特别警惕？</summary>
+<summary>参考答案与解释</summary>
 
-因为每个 Worker 通常都有自己的连接池，总潜在连接可能达到 1600。必须与数据库最大连接数和真实容量一起计算。
+平均为 120×0.05=6 条。2 秒还可能包括不持有连接的其他工作；除非连接确实整个过程都被占着，否则不适用于连接占用区间。
+
+</details>
+
+### 2. 可分配给本服务的连接共 240 条，最多 6 个实例，每实例 4 个独立池。每池 12 是否安全？请给出算式并指出还有什么未计入。
+
+<details>
+<summary>提示</summary>
+
+计算全部池，而不是只看一个实例。
 
 </details>
 
 <details>
-<summary>3. Pool 与 Semaphore 的本质区别？</summary>
+<summary>参考答案与解释</summary>
 
-Pool 管理可复用的具体资源对象；Semaphore 管逻辑并发许可。Semaphore 可以限制没有显式连接对象的外部操作。
+6×4×12=288，已经超过 240。均分上限最多为 10，还要为发布重叠、额外管理连接和实际流量差异检查预算，不能据此宣布生产验证通过。
 
 </details>

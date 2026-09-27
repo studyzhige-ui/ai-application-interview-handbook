@@ -1,418 +1,109 @@
-# 19. Docker、Kubernetes、Health Check、Graceful Shutdown 与 Horizontal Scaling
+# 部署、探针与停机怎样配合应用
 
-> 这一章不把你训练成 Kubernetes 运维工程师，而是掌握 AI Backend 生产部署必须理解的 Runtime Boundary。
+[← 把应用故障追到 Linux 资源](18-LinuxTroubleshooting.md) · [模块主页](../README.md) · [配置和版本怎样安全改变 →](20-ConfigRelease与ServiceEvolution.md)
 
-## 1. Container 解决什么
+程序在本机能运行，不代表发布到多台机器后就能安全替换。新进程何时接流量，旧进程怎样退出，正在执行的 job-42 交给谁，都是应用本身必须参与的过程。容器和 Kubernetes 提供管理机制，但不会替我们推导业务恢复规则。
 
-Container 主要把：
+## 1. 镜像是运行材料，容器是运行实例
 
-```text
-application
-+ runtime
-+ dependency
-+ filesystem view
-```
+**Image（镜像）** 保存创建容器所需的程序与文件系统内容，**Container（容器）** 是按镜像及运行配置启动的实例。把构建产物固定下来，有助于让不同环境使用相同材料，但环境变量、挂载数据、密钥、CPU 架构与外部服务仍会影响行为。[Docker 对象模型](https://docs.docker.com/get-started/docker-overview/)
 
-打包为可重复运行的环境。
+镜像只读内容可分层共享，容器有自己的可写状态；容器被删除后，未放入持久存储的数据不能当作仍然存在。任务事实不能仅放在容器临时目录，除非业务明确接受丢失。
 
-它依赖操作系统级隔离机制，例如 Namespace / cgroup 等。
+Linux 容器依赖命名空间等机制隔离视图，依赖 cgroup 管理资源，共享宿主内核；并非每个容器都有一套独立内核。镜像构建要区分构建期材料与运行期材料，避免把编译工具、缓存或密钥不必要地留在运行镜像中。
 
-Container 不是轻量虚拟机的完整等价物；它通常与 Host 共享内核。
+## 2. Pod、Deployment 与 Service 分别负责什么
 
----
+Pod 是 Kubernetes 调度与管理的一组协作容器单位，Deployment 用期望副本和更新策略管理一类可替换 Pod，Service 为访问一组后端提供稳定抽象。它们分别组织运行单位、副本演进与访问，不等于一个完整业务服务的所有保证。[Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)
 
-## 2. Image 与 Container
+启动三个副本前，应核对每副本工作进程数、连接池和下游并发限额。滚动更新期间新旧副本可能共存，实际连接数可能高于稳定运行时。不能只按照最终副本数计算容量。
 
-Image：
+本章使用这些稳定概念说明生命周期，不提供声称已经验证的部署清单。真实集群需要记录具体版本、网络插件、网关、探针、存储与安全配置，并完成对应集成测试。
 
-```text
-immutable-ish build artifact
-```
+## 3. 三类探针的问题不同
 
-Container：
+| 探针 | 它回答什么 | 失败后的主要作用 |
+|---|---|---|
+| startup（启动） | 是否完成允许较长时间的启动 | 达到阈值时触发相应容器重启；成功前不执行另外两类探针 |
+| readiness（就绪） | 是否适合接受服务流量 | 标记不就绪，常规服务端点不再把它作为就绪后端；不因此直接重启 |
+| liveness（存活） | 是否进入需要重启才能恢复的状态 | 达到阈值后按规则重启容器 |
 
-```text
-image + runtime process + writable layer + resource limits
-```
+具体阈值、周期和超时决定动作时机，不是一次失败就无条件杀进程。[Kubernetes 探针](https://kubernetes.io/docs/concepts/workloads/pods/probes/)
 
-生产部署应该保证：
+liveness 不宜直接依赖所有外部系统：数据库短暂故障时所有实例一起重启，可能造成连接风暴，扩大故障。readiness 也要按能否提供有意义服务设计，不能只因一个可降级依赖慢了就让整个服务没有可用实例。
 
-- Image 可重建；
-- 依赖版本明确；
-- Secret 不 baked into image；
-- runtime config 外置。
+## 4. 停机有共同时间预算，不是严格串行流水线
 
----
+Pod 进入终止流程后，宽限期开始计时。若配置了 preStop，通常先运行该钩子，再向容器主进程发送相应终止信号。钩子消耗的时间也在宽限期内，不是之后再免费获得完整等待时间。[Pod 终止过程](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)
 
-## 3. 一个 Container 里到底跑几个进程
+与此同时，控制面与服务端点更新并行发生，传播还可能有延迟。不能画成“端点已全局摘除 → 再发 TERM”的绝对顺序。程序收到停止信号时，应能停止接受新工作，并处理在途连接，而不假设没有任何请求再进来。
 
-对于 Python API：
+假设教学配置给 30 秒宽限期，preStop 花了 8 秒，应用不能再按有完整 30 秒制定退出计划。超出可用时间仍未完成，进程可能被强制终止；不能依赖运行环境在所有故障中执行 finally。
 
-```text
-1 container
-→ 1 or multiple worker processes
-```
+## 5. 优雅退出不等于等所有工作无限完成
 
-取决于部署模型。
+应用可以按自身职责组织退出：标记不再接收新任务，停止拉取新消息，有限等待短请求，保存可恢复检查点，关闭流和连接，并释放本进程持有的资源。每项动作都应服从剩余退出预算。
 
-Kubernetes 场景常倾向：
+20 分钟的生成任务不可能靠 30 秒宽限期“等完”。应依靠前面建立的持久任务、租约和检查点，由下一执行者核对后继续。若外部动作已经发出，退出时记录其操作身份与未知结果；不能因为进程即将终止就把任务标为明确失败，交给新进程盲目重做。
 
-```text
-Pod replica scaling
-```
+HTTP 流可以按协议通知客户端重连，客户端再凭任务身份和事件游标恢复。流连接关闭是传输事件，不是撤销任务事实。消息确认则仍必须对应安全完成的位置，不能在停机时为了清空队列提前确认全部在途消息。
 
-而不是每个 Container 内堆很多 Process。
+## 6. 资源限制和扩缩容要与应用模型一致
 
-但没有绝对规则。
+CPU 限制可能体现为被节流，内存超限可能触发 OOM；两者不是同一种失败。HPA（水平自动扩缩容）等机制依赖选定指标，CPU 不高但外部调用全部排队时，只盯 CPU 可能错过问题。[cgroup v2 资源模型](https://www.kernel.org/doc/html/latest/admin-guide/cgroup-v2.html)
 
-关键是计算：
+扩容前确认瓶颈可通过更多实例分担，且下游还有预算；缩容前确认任务能安全交接，长连接和剩余容量可承受。发布验收应覆盖初始化失败、依赖慢、在途请求、强制终止与新旧副本共存，而不只是“Pod 是 Running”。
 
-```text
-worker count
-× DB pool
-× HTTP pool
-× memory per process
-```
+## 本章小结
 
----
+镜像固定材料，容器运行程序，Kubernetes 管理副本和访问。探针、端点更新与退出预算必须与应用接流、资源释放和持久任务恢复配合；平台能重启进程，不能自动补齐业务完成语义。
 
-## 4. Kubernetes 解决什么
+## 🎯 面试怎么答
 
-Kubernetes 主要提供：
+**Kubernetes 怎样实现安全发布和优雅停机？**
 
-- Deployment / Replica management；
-- Scheduling；
-- Service Discovery；
-- Health / Restart；
-- Rolling Update；
-- Resource Request/Limit；
-- Config / Secret integration；
-- Horizontal scaling primitives。
+> 先让启动、就绪和存活探针各司其职，新实例满足服务条件再接流量。退出时理解端点更新与信号并行、preStop 消耗宽限期，应用停止新工作并按预算排空或保存检查点。长任务靠持久恢复而非无限等待，滚动期间重新核算连接与下游容量，并测试强制终止边界。
 
-它不会自动解决：
+## ⚠️ 易错点
 
-- Idempotency；
-- DB consistency；
-- application backpressure；
-- agent checkpoint correctness。
+> ⚠️ readiness 失败不等于立即重启，liveness 不宜依赖所有外部服务健康。
 
----
+> ⚠️ preStop 不是宽限期之外的额外时间，摘流和进程终止也非严格全局串行。
 
-## 5. Pod / Deployment / Service
+> ⚠️ Pod Running 与请求成功、任务完成、业务正确不是同一个状态。
 
-### Pod
+## 本章自测
 
-一组紧密协作 Container 的调度单元。
+先写判断和依据，再展开提示或答案。
 
-### Deployment
-
-声明：
-
-```text
-我要 N 个这样的 Pod
-```
-
-Controller 负责逼近期望状态。
-
-### Service
-
-为动态 Pod 集合提供稳定访问入口。
-
-这和上一章 Service Discovery / LB 直接衔接。
-
----
-
-## 6. Startup / Liveness / Readiness
-
-Kubernetes 官方明确区分三类 Probe。
-
-### Startup
-
-```text
-应用是否已经完成启动？
-```
-
-适合启动很慢的 AI Service，例如加载模型、Warm Cache。
-
-### Liveness
-
-```text
-进程是否已经陷入无法恢复状态，需要 restart？
-```
-
-### Readiness
-
-```text
-现在是否应该接流量？
-```
-
-失败时通常先从 Service Endpoint 移除，而不是直接 Restart。
-
----
-
-## 7. 为什么 Liveness 不能乱写
-
-危险：
-
-```text
-DB temporarily slow
-→ liveness fails
-→ pod restarts
-→ remaining pods receive more traffic
-→ also fail
-```
-
-可能造成级联故障。
-
-Liveness 应判断：
-
-> “这个实例自身是否无法恢复？”
-
-Readiness 更适合表达临时不能接流量。
-
----
-
-## 8. Readiness 不应该无脑依赖所有下游
-
-假设 API 依赖：
-
-```text
-DB
-Redis
-LLM A
-LLM B
-```
-
-如果任何一个小依赖波动都让 Readiness false：
-
-```text
-all pods removed
-```
-
-可能比降级服务更糟。
-
-要区分：
-
-- hard dependency；
-- optional dependency；
-- degradable dependency。
-
----
-
-## 9. Graceful Shutdown
-
-收到终止信号后，理想流程：
-
-```text
-mark not ready
-→ stop new traffic
-→ drain in-flight requests
-→ cancel / finish background work
-→ flush / persist state
-→ close pools
-→ exit
-```
-
-而不是：
-
-```text
-SIGTERM
-→ process immediately dies
-```
-
-Streaming / Long-running Task 尤其需要清晰策略。
-
----
-
-## 10. Connection Draining
-
-长连接：
-
-```text
-SSE 60s
-WebSocket hours
-```
-
-Rolling Update 时怎么办？
-
-可以：
-
-- stop accepting new；
-- give grace period；
-- send reconnect hint；
-- persist run state；
-- client reconnect other replica。
-
-所以 Transport 和 Durable State 必须分离。
-
----
-
-## 11. Horizontal Scaling
-
-增加 Replica：
-
-```text
-API pods 10 → 20
-```
-
-前提：
-
-- state externalized；
-- DB / Redis / Provider 有容量；
-- LB/discovery 正常；
-- session 不绑死；
-- work partition 能扩展。
-
-如果 DB 已经 100% CPU，加 API Pod 可能让 DB 更快崩。
-
----
-
-## 12. HPA 的直觉
-
-Horizontal Pod Autoscaler 可以根据 CPU 或其它指标扩缩副本。
-
-但 AI Service 的真实瓶颈可能不是 CPU，而是：
-
-- queue depth；
-- active streams；
-- model concurrency；
-- provider rate limit。
-
-所以 Autoscaling Metric 要和 Workload 对齐。
-
----
-
-## 13. Resource Request / Limit
-
-Request：Scheduler 用于资源规划。
-
-Limit：Container 可使用上限之一。
-
-CPU Limit 可能产生 throttling；Memory 超 Limit 可能 OOMKilled。
-
-因此：
-
-```text
-P99 latency suddenly high
-```
-
-也要看 cgroup throttling，而不只是 Host CPU。
-
----
-
-## 14. Rolling Update
-
-典型：
-
-```text
-old pods + new pods coexist
-```
-
-需要考虑：
-
-- API backward compatibility；
-- DB schema compatibility；
-- event schema；
-- config version；
-- model/prompt version；
-- old/new worker 同时消费。
-
-Deployment 能滚动，并不代表应用语义自动兼容。
-
----
-
-## 15. AI 场景：Model Client Warmup
-
-Pod 启动后可能需要：
-
-```text
-load tokenizer
-initialize HTTP pools
-fetch model config
-warm retrieval client
-```
-
-此时进程已经 alive，但不应接流量。
-
-Startup/Readiness 应表达这个状态。
-
----
-
-## 16. AI 场景：Long-running Worker
-
-Worker Pod 正在处理 20 分钟任务时收到缩容：
-
-要定义：
-
-```text
-finish current?
-checkpoint and release?
-lease expires and reclaim?
-force cancel?
-```
-
-这必须由 Task Runtime 设计决定，Kubernetes 只能给你 termination lifecycle。
-
----
-
-## 17. Metrics
-
-```text
-pod_restarts
-readiness_failures
-liveness_failures
-cpu_throttling
-memory_working_set
-oom_killed
-termination_duration
-inflight_requests
-active_streams
-```
-
-部署层指标要和应用 Trace 对齐。
-
----
-
-## 18. 🎯 面试怎么答
-
-**问：Readiness 和 Liveness 有什么区别？**
-
-可以回答：
-
-> Readiness 表示当前实例是否应该接流量，失败时通常从 Service Endpoint 中移除；Liveness 表示进程是否已经处于无法恢复状态，需要重启。临时依赖慢更适合影响 Readiness 或降级，而不是轻易让 Liveness 失败，否则可能造成所有 Pod 连锁重启。
-
----
-
-## 19. ⚠️ 易错点
-
-- Container ≠ VM；
-- Kubernetes ≠ 自动高可用；
-- Liveness ≠ 所有依赖 Health；
-- 多 Pod ≠ 下游容量增加；
-- Rolling Update ≠ Schema 自动兼容；
-- SIGTERM ≠ 可以忽略 In-flight / Lease / Stream。
-
----
-
-## 20. 本章自测
+### 1. 宽限期 30 秒，preStop 已执行 12 秒，任务还需 20 分钟。能否只等待它完成？请指出应依赖的恢复机制。
 
 <details>
-<summary>1. 为什么 Readiness 比“Process exists”更接近能否接流量？</summary>
+<summary>提示</summary>
 
-进程可能仍在初始化、连接池未建立或正在临时过载。Readiness 专门表达当前服务能力，而 Process 存活只说明程序还没退出。
+停机预算有限，进程可能被强制终止。
 
 </details>
 
 <details>
-<summary>2. 为什么 Horizontal Scaling 可能让 DB 更糟？</summary>
+<summary>参考答案与解释</summary>
 
-更多 API Replica 会产生更多并发连接和 Query，如果 DB 已饱和，只会增加压力。扩容必须看整条依赖链容量。
+不能。剩余预算最多按实际时间核算，长任务需要持久检查点、租约和幂等/核对协议，由新执行者继续；不能提前确认尚未完成消息。
+
+</details>
+
+### 2. 数据库暂时变慢，所有实例的 liveness 都检查数据库并开始重启。请解释故障可能怎样放大，以及该怎样重新划分检查职责。
+
+<details>
+<summary>提示</summary>
+
+重启是否能够修复共享外部依赖？
 
 </details>
 
 <details>
-<summary>3. Graceful Shutdown 最重要的第一步通常是什么？</summary>
+<summary>参考答案与解释</summary>
 
-先停止接收新流量（例如变为 not ready），再 Drain 已有请求/连接/任务，最后释放资源并退出。
+集体重启产生初始化和连接重建压力，可能使数据库更慢。liveness 检查本实例无法自行恢复的状态，就绪与业务降级按服务可用能力判断，结合限流和依赖观测，而非把共享依赖慢变成全体重启。
 
 </details>
