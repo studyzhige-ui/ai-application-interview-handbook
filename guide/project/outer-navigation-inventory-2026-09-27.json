@@ -1,0 +1,2063 @@
+{
+  "baseline": "ca9664ce7197cc1e06538ed680b42a08c95bbd8b",
+  "tracked_files": 502,
+  "readme_count": 61,
+  "peripheral_pages": 64,
+  "curriculum_chapters": 175,
+  "modules": [
+    {
+      "directory": "01-python",
+      "label": "Python",
+      "chapter_count": 13,
+      "chapters": [
+        {
+          "path": "curriculum/01-python/docs/01-python基础与对象模型.md",
+          "title": "01. Python 基础、对象模型与语言选择"
+        },
+        {
+          "path": "curriculum/01-python/docs/02-核心数据类型与容器.md",
+          "title": "02. 核心数据类型、容器、Hash 与切片成本"
+        },
+        {
+          "path": "curriculum/01-python/docs/03-可变对象-对象身份-深浅拷贝.md",
+          "title": "03. 可变对象、对象身份与深浅拷贝"
+        },
+        {
+          "path": "curriculum/01-python/docs/04-函数-参数-作用域-闭包.md",
+          "title": "04. 函数、参数、作用域与闭包"
+        },
+        {
+          "path": "curriculum/01-python/docs/05-lambda-推导式-常用内置函数.md",
+          "title": "05. Lambda、推导式与常用内置函数"
+        },
+        {
+          "path": "curriculum/01-python/docs/06-迭代器-生成器-yield.md",
+          "title": "06. 迭代器、生成器与 yield"
+        },
+        {
+          "path": "curriculum/01-python/docs/07-装饰器-上下文管理器.md",
+          "title": "07. 装饰器与上下文管理器"
+        },
+        {
+          "path": "curriculum/01-python/docs/08-面向对象-魔术方法.md",
+          "title": "08. 面向对象、Duck Typing、Protocol 与魔术方法"
+        },
+        {
+          "path": "curriculum/01-python/docs/09-异常-文件-模块与导入.md",
+          "title": "09. 异常、文件、模块与导入"
+        },
+        {
+          "path": "curriculum/01-python/docs/10-结构化数据-JSON与校验.md",
+          "title": "10. 结构化数据、JSON 与校验"
+        },
+        {
+          "path": "curriculum/01-python/docs/11-内存管理-垃圾回收-GIL.md",
+          "title": "11. 内存管理、垃圾回收与 GIL"
+        },
+        {
+          "path": "curriculum/01-python/docs/12-线程-进程-协程-async-await.md",
+          "title": "12. 线程、进程、协程与 async/await"
+        },
+        {
+          "path": "curriculum/01-python/docs/13-常见数据结构与复杂度.md",
+          "title": "13. 常见数据结构与复杂度"
+        }
+      ],
+      "opening": [
+        "# Python Foundation｜Python 语言与运行时基础",
+        "",
+        "[↑ Handbook 总目录](../../README.md) · [Coding & Problem Solving（并行实践）](../../practice/coding/README.md) · [Learning Path（学习路线）](../../guide/learning-path.md) · [FastAPI →](../02-fastapi/README.md)",
+        "",
+        "> **课程版本：V1** · **教材状态：13 个连续章节**  ",
+        "> **Canonical 统计基线（S001–S279）：15 道 Primary Canonical / 15 个独立 HUMAN-A 来源**  ",
+        "> **教学原则：概念定义清楚、知识依赖明确、代码语义可追踪、原理可推导、示例可验证。**",
+        ""
+      ],
+      "count_lines": [
+        "> **课程版本：V1** · **教材状态：13 个连续章节**  ",
+        "从一行代码开始，逐步理解数据是什么、代码怎样执行、对象怎样协作，以及运行时的资源与成本。首次阅读从 [第 01 章](docs/01-python基础与对象模型.md) 开始，不需要先知道 Agent、框架或面试术语。",
+        "研究条目与章节也保持不同层次：**Canonical Question（独立面试能力）** 不等于 **Capability Primitive（更细的机制）**，也不等于一个教材文件。15 道 Canonical 可以组织成 13 个完整学习章节，章节内部再用二级、三级标题建立层次。",
+        "几个刻意安排的衔接：第 01 章先给出 `def`、`return`、`import` 的最小读法，让第 03 章的传参实验可以理解；第 04 章再系统讲调用与作用域。第 06、07 章先学如何使用迭代与资源协议，手写 `Counter`、`MyContext` 的完整类实现移到第 08 章，在学过 `class` 和 `self` 后再展开。第 06、07 章必要的异常语法就地解释，第 09 章再统一建立完整错误模型。"
+      ]
+    },
+    {
+      "directory": "02-fastapi",
+      "label": "FastAPI",
+      "chapter_count": 16,
+      "chapters": [
+        {
+          "path": "curriculum/02-fastapi/docs/01-FastAPI职责与ASGI请求链路.md",
+          "title": "01｜从一个可访问的接口理解请求与响应"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/02-Routing与APIContract.md",
+          "title": "02｜路由与参数：请求怎样变成函数输入"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/03-Pydantic与数据契约.md",
+          "title": "03｜数据契约：校验输入、限制输出、解释错误"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/04-Dependency与Middleware.md",
+          "title": "04｜依赖与中间件：复用前提，不隐藏执行过程"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/05-ResourceLifecycle.md",
+          "title": "05｜资源生命周期：何时取得，何时归还"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/06-AsyncExecution与BlockingBoundary.md",
+          "title": "06｜异步与并发：等待时谁在继续工作"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/07-Streaming与SSE.md",
+          "title": "07｜流式响应：逐步交付结果与 SSE 事件"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/08-WebSocket与EventProtocol.md",
+          "title": "08｜WebSocket：让双方在连接中持续交流"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/09-Security与TenantContext.md",
+          "title": "09｜认证、授权与租户：让访问范围可信"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/10-ExternalResourceIntegration.md",
+          "title": "10｜连接外部服务：客户端、业务与协议适配"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/11-BackgroundTask与Upload.md",
+          "title": "11｜上传与后台任务：接收完成不等于处理完成"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/12-TimeoutCancellation与Disconnect.md",
+          "title": "12｜超时、断开与取消：请求结束之后发生什么"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/13-Testing.md",
+          "title": "13｜测试：让成功、拒绝与失败都有证据"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/14-Observability与Performance.md",
+          "title": "14｜观测与性能：把慢请求拆成可定位的时间"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/15-Deployment与GracefulShutdown.md",
+          "title": "15｜部署与退出：从一个进程到多个实例"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/16-AIServicePatterns.md",
+          "title": "16｜综合实作：把问答与执行任务接成可验证 API"
+        }
+      ],
+      "opening": [
+        "# FastAPI｜从第一个请求到可靠的API边界",
+        "",
+        "[← Python](../01-python/README.md) · [Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [MySQL →](../04-mysql/README.md)",
+        "",
+        "你已经能用Python处理数据。这个模块继续回答：怎样让其他人通过网络调用这些能力，并在输入错误、等待超时、连接断开和进程退出时保持清楚的行为。",
+        "",
+        "**目标版本：FastAPI 0.141.1。** 版本资料核验日期：2026-09-25。示例以Python 3.11+为入口，依赖和可执行检查见[练习与验证](examples/README.md)。这里的版本基线不是对所有环境都已通过测试的声明。",
+        ""
+      ],
+      "count_lines": [
+        "2026-09-26 本轮以仓库正式库 S001–S297 为检索范围，结合冻结索引、相关收录条目与新增 S280–S297 的问题记录校验正文；范围、来源和落点见[面经校验记录](../../guide/project/fastapi-interview-alignment-2026-09-26.md)。冻结统计仍是 S001–S279 的 4 道 FastAPI 主责 Canonical、3 个独立来源，没有把跨模块问法或新增来源机械计入旧频率。"
+      ]
+    },
+    {
+      "directory": "04-mysql",
+      "label": "MySQL",
+      "chapter_count": 19,
+      "chapters": [
+        {
+          "path": "curriculum/04-mysql/docs/01-数据库与关系表.md",
+          "title": "01｜数据库、MySQL 与关系表"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/02-单表查询与增删改.md",
+          "title": "02｜用 SQL 查询、增加、修改和删除记录"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/03-数据类型约束与表关系.md",
+          "title": "03｜字段、约束与表之间的关系"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/04-关联查询与分组统计.md",
+          "title": "04｜把多张表查在一起，把多条记录汇总起来"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/05-SQL执行与索引基础.md",
+          "title": "05｜从查对结果到少做工作：执行计划与索引"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/06-B+树与数据组织.md",
+          "title": "06｜B+ 树怎样组织数据：聚簇索引与二级索引"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md",
+          "title": "07｜联合索引怎样定位、排序和减少回表"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/08-执行计划与慢查询.md",
+          "title": "08｜读懂执行计划，找到查询真正慢在哪里"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/09-事务与ACID.md",
+          "title": "09｜事务：哪些修改必须一起成立"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/10-隔离级别与MVCC.md",
+          "title": "10｜并发读取：隔离级别与 MVCC"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/11-并发修改锁与死锁.md",
+          "title": "11｜并发修改：条件更新、锁与死锁"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/12-日志提交与恢复.md",
+          "title": "12｜日志、提交与故障恢复"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/13-分页与查询成本.md",
+          "title": "13｜分页：先跳过，还是从上次的位置继续"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/14-主键索引与表结构演进.md",
+          "title": "14｜数据增长以后，怎样维护主键、索引和表结构"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/15-批量写入与写入成本.md",
+          "title": "15｜批量写入：Batch、事务与写入成本"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/16-复制与读写分离.md",
+          "title": "16｜复制与读写分离：多份数据何时一致"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/17-CDC与下游同步.md",
+          "title": "17｜CDC：把已提交的变化可靠地交给下游"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/18-分片与扩容.md",
+          "title": "18｜分片：确认单机边界之后再拆数据"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/19-AI应用数据建模.md",
+          "title": "19｜把数据库知识用在 AI 应用的数据模型中"
+        }
+      ],
+      "opening": [
+        "# MySQL｜从关系表到可靠的数据操作",
+        "",
+        "[← FastAPI](../02-fastapi/README.md) · [↑ Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [Redis →](../05-redis/README.md)",
+        "",
+        "**课程范围：19 章。技术语境：MySQL Community 9.7 LTS、InnoDB。**",
+        "",
+        "本模块面向第一次系统学习数据库的读者。从一份团队任务清单开始，逐步理解记录如何组织、查询怎样得到结果、并发修改如何协调，以及故障和规模增长带来什么问题。阅读不以掌握某种应用编程语言为前提；动手部分以 SQL 和数据库客户端为共同界面。",
+        ""
+      ],
+      "count_lines": [
+        "**课程范围：19 章。技术语境：MySQL Community 9.7 LTS、InnoDB。**"
+      ]
+    },
+    {
+      "directory": "05-redis",
+      "label": "Redis",
+      "chapter_count": 18,
+      "chapters": [
+        {
+          "path": "curriculum/05-redis/docs/01-Redis是什么.md",
+          "title": "01｜Redis 是什么，为什么系统里还需要它"
+        },
+        {
+          "path": "curriculum/05-redis/docs/02-键与常用数据类型.md",
+          "title": "02｜同一份数据，怎样保存才方便使用"
+        },
+        {
+          "path": "curriculum/05-redis/docs/03-过期与内存淘汰.md",
+          "title": "03｜数据什么时候应该消失"
+        },
+        {
+          "path": "curriculum/05-redis/docs/04-缓存读取与更新.md",
+          "title": "04｜把 Redis 用作缓存：读与更新怎样配合"
+        },
+        {
+          "path": "curriculum/05-redis/docs/05-缓存故障与流量保护.md",
+          "title": "05｜缓存帮不上忙时，怎样保护数据来源"
+        },
+        {
+          "path": "curriculum/05-redis/docs/06-多级缓存与结果复用.md",
+          "title": "06｜本地缓存与 AI 结果缓存：什么可以复用"
+        },
+        {
+          "path": "curriculum/05-redis/docs/07-执行模型与Pipeline.md",
+          "title": "07｜Redis 为什么快，请求又为什么会慢"
+        },
+        {
+          "path": "curriculum/05-redis/docs/08-内部编码与数据规模.md",
+          "title": "08｜内存怎样花出去：编码、大小与数据表示"
+        },
+        {
+          "path": "curriculum/05-redis/docs/09-事务与服务端逻辑.md",
+          "title": "09｜多步修改怎样避免互相干扰"
+        },
+        {
+          "path": "curriculum/05-redis/docs/10-持久化与恢复.md",
+          "title": "10｜服务重启后，数据从哪里回来"
+        },
+        {
+          "path": "curriculum/05-redis/docs/11-复制与Sentinel.md",
+          "title": "11｜有了副本，故障时怎样接替服务"
+        },
+        {
+          "path": "curriculum/05-redis/docs/12-Cluster与分片.md",
+          "title": "12｜一台装不下以后，数据怎样分到多台"
+        },
+        {
+          "path": "curriculum/05-redis/docs/13-分布式锁.md",
+          "title": "13｜锁过期了，旧工作者为什么还可能继续"
+        },
+        {
+          "path": "curriculum/05-redis/docs/14-通知与Streams.md",
+          "title": "14｜消息发出以后，怎样知道还有什么没做"
+        },
+        {
+          "path": "curriculum/05-redis/docs/15-共享限流.md",
+          "title": "15｜多个服务怎样共同守住一份限额"
+        },
+        {
+          "path": "curriculum/05-redis/docs/16-会话与运行状态.md",
+          "title": "16｜登录、最近消息和任务进度应该怎样保存"
+        },
+        {
+          "path": "curriculum/05-redis/docs/17-安全与问题定位.md",
+          "title": "17｜出问题时，从哪里找到证据"
+        },
+        {
+          "path": "curriculum/05-redis/docs/18-综合设计与回顾.md",
+          "title": "18｜从需求出发，完成一份 Redis 设计"
+        }
+      ],
+      "opening": [
+        "# Redis｜从存取数据到缓存、并发与恢复",
+        "",
+        "[← MySQL](../04-mysql/README.md) · [课程目录](../README.md) · [学习路线](../../guide/learning-path.md) · [Backend →](../03-backend-engineering/README.md)",
+        "",
+        "Redis 可以保存常用数据副本，也可以供多个应用共享计数、会话和短期记录。本课程从键、值和操作开始，逐步解释这些用途怎样实现，何时会失效，以及丢失、并发和恢复会改变什么。",
+        "",
+        "**不预设应用开发语言。** 正文中的 Redis 命令不属于 Python、Java 或某种框架；任何语言的客户端都需要理解同样的数据规则。阅读时先看过程、预测结果，不必先安装工具或读完长脚本。",
+        ""
+      ],
+      "count_lines": []
+    },
+    {
+      "directory": "03-backend-engineering",
+      "label": "Backend",
+      "chapter_count": 22,
+      "chapters": [
+        {
+          "path": "curriculum/03-backend-engineering/docs/01-AIBackend职责与RequestPath.md",
+          "title": "一次请求完成了什么，后端负责到哪里"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/02-TCPTLS与HTTPVersions.md",
+          "title": "从字节到安全请求：TCP、TLS 与 HTTP"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/03-ServiceCommunication与StreamingReliability.md",
+          "title": "怎样传递结果，断线后怎样继续"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/04-Concurrency与ThreadPool.md",
+          "title": "并发工作由谁执行，等待放在哪里"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/05-ConnectionPool与ResourceCapacity.md",
+          "title": "连接怎样复用，容量怎样计算"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/06-Backpressure与RateLimit.md",
+          "title": "到达速度超过处理能力时怎么办"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md",
+          "title": "等多久，超时之后还发生什么"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/08-RetryCircuitBreaker与Failover.md",
+          "title": "什么时候值得再试，怎样防止故障放大"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/09-APIIdempotency与SideEffect.md",
+          "title": "怎样识别同一次操作，避免重复副作用"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/10-MQ与DeliverySemantics.md",
+          "title": "消息怎样交付，确认到底确认了什么"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/11-KafkaPartition与Backlog.md",
+          "title": "Kafka 怎样分工、保序与恢复消费"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/12-ReliableAsyncTask.md",
+          "title": "进程重启后，任务怎样继续推进"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/13-Consistency与Compensation.md",
+          "title": "多份数据不一致时，怎样恢复业务正确性"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/14-DataLayering与StateOwnership.md",
+          "title": "哪些状态必须保存，恢复时相信哪一份"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/15-AuthSession与TenantBoundary.md",
+          "title": "谁能访问什么，权限怎样贯穿请求与任务"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/16-ServiceDiscovery与LoadBalancing.md",
+          "title": "多个服务实例怎样被找到和选中"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/17-Observability与PerformanceDiagnosis.md",
+          "title": "从慢请求的证据定位瓶颈"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/18-LinuxTroubleshooting.md",
+          "title": "把应用故障追到 Linux 资源"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/19-ContainerK8s与Deployment.md",
+          "title": "部署、探针与停机怎样配合应用"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/20-ConfigRelease与ServiceEvolution.md",
+          "title": "配置和版本怎样安全改变"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/21-BackendSecurity.md",
+          "title": "不可信输入怎样被限制在安全边界内"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/22-CrossLanguageRuntimeMapping.md",
+          "title": "把通用机制映射到 Java、Spring 与 Go"
+        }
+      ],
+      "opening": [
+        "# AI Backend Engineering｜可靠的 AI 应用后端",
+        "",
+        "[← Redis](../05-redis/README.md) · [课程目录](../README.md) · [学习路线](../../guide/learning-path.md) · [Vector DB →](../06-vector-db/README.md)",
+        "",
+        "后端把一次用户操作连接到数据、模型与外部工具，并对执行过程承担责任：输入由谁授权，资源够不够，工作是否真的完成，重启后怎样恢复，发生故障时凭什么判断。",
+        "",
+        "本模块通过文档更新、消息通知和长期任务建立这些共同机制。Python 用于可运行的小实验，不把通用的网络、事务、消息和容量原理绑定到某个 Web 框架。",
+        ""
+      ],
+      "count_lines": []
+    },
+    {
+      "directory": "06-vector-db",
+      "label": "Vector DB",
+      "chapter_count": 16,
+      "chapters": [
+        {
+          "path": "curriculum/06-vector-db/docs/01-VectorDB在AI应用中的职责.md",
+          "title": "01｜向量数据库究竟负责什么"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/02-VectorSpace与Similarity.md",
+          "title": "02｜向量空间与相似度：先把“近”说清楚"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/03-ExactSearch与ANN.md",
+          "title": "03｜精确搜索与 ANN：先建立可核对的答案"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/04-ANN索引谱系.md",
+          "title": "04｜索引谱系：近似究竟发生在哪里"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/05-HNSW机制与调优.md",
+          "title": "05｜HNSW：沿着图寻找近邻"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/06-IVF原理.md",
+          "title": "06｜IVF：先选区域，再找向量"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/07-Quantization与PQ.md",
+          "title": "07｜量化与 PQ：用短编码近似距离"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/08-IndexSelection.md",
+          "title": "08｜索引选择：把机制放回工作负载"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/09-Vector数据建模.md",
+          "title": "09｜向量数据建模：让结果找得到来源"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/10-MetadataFilter.md",
+          "title": "10｜元数据过滤：在允许的范围内找近邻"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/11-Partition与TenantIsolation.md",
+          "title": "11｜分区与多租户：数据放在哪，谁可以读"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/12-VectorIndex生命周期.md",
+          "title": "12｜索引生命周期：写入、更新、删除与重建"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/13-分布式VectorDB.md",
+          "title": "13｜分布式检索：局部结果怎样组成全局答案"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/14-性能容量与Production诊断.md",
+          "title": "14｜性能与容量：用证据定位瓶颈"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/15-产品与架构选型.md",
+          "title": "15｜产品与架构选择：先决定需要哪类能力"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/16-GraphDB边界与系统设计.md",
+          "title": "16｜图数据库边界：相似、关系与完整系统"
+        }
+      ],
+      "opening": [
+        "# Vector Database｜向量检索与索引系统",
+        "",
+        "[← Backend](../03-backend-engineering/README.md) · [↑ Curriculum](../README.md) · [学习路线](../../guide/learning-path.md) · [LLM Foundation →](../07-llm-foundation/README.md)",
+        "",
+        "本模块研究一个完整问题：**给定可比较的向量，怎样在允许的数据范围内找到近邻，并在数据持续变化时保持检索可用、可核对、可恢复。**",
+        "",
+        "学习目标不是背产品参数，而是能够解释搜索过程、定位漏召回的环节，并根据数据规模、访问条件和维护要求作出选择。",
+        ""
+      ],
+      "count_lines": [
+        "按下表顺序阅读。第 04 章提供索引地图，第 05～07 章分别深入三种机制；第 08 章完成一次初步选择，后续数据管理与故障条件会进一步约束这次选择。"
+      ]
+    },
+    {
+      "directory": "07-llm-foundation",
+      "label": "LLM Foundation",
+      "chapter_count": 14,
+      "chapters": [
+        {
+          "path": "curriculum/07-llm-foundation/docs/01-LLMFoundation在AI应用中的职责.md",
+          "title": "01｜模型在 AI 应用中负责什么"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/02-TokenContext与LongContext.md",
+          "title": "02｜Token、上下文与长文本：先确定模型实际读到了什么"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/03-TransformerBlock.md",
+          "title": "03｜Transformer 怎样把 Token 序列变成候选分数"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/04-Attention与Position.md",
+          "title": "04｜Attention 与位置信息：算一次信息怎样汇入当前位置"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/05-Generation与Decoding.md",
+          "title": "05｜从候选分数到一段回答：生成与解码"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/06-KVCache与PrefillDecode.md",
+          "title": "06｜KV Cache 与 Prefill、Decode：为什么少算了，却更占显存"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/07-ServingEngine与性能.md",
+          "title": "07｜模型服务与性能：把等待、吞吐和显存分开判断"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/08-ModelAPI与Selection.md",
+          "title": "08｜模型 API 与选型：接口调用成功以后，还要验证什么"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/09-Embedding与Reranker.md",
+          "title": "09｜Embedding 与 Reranker：一段文字怎样成为可检索的向量"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/10-MultimodalFoundation.md",
+          "title": "10｜多模态基础：从看见一张图到给出可验证答案"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/11-PromptEngineering.md",
+          "title": "11｜Prompt Engineering：把任务写成可检查的输入"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/12-Hallucination与干预边界.md",
+          "title": "12｜事实错误与干预边界：什么时候改 Prompt，什么时候需要别的机制"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md",
+          "title": "13｜SFT 与 LoRA：模型究竟学了什么，少训练哪些参数"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/14-PostTraining与Distillation.md",
+          "title": "14｜后训练与蒸馏：示范、偏好和奖励分别在教什么"
+        }
+      ],
+      "opening": [
+        "# LLM Foundation｜从模型机制到应用判断",
+        "",
+        "[← Vector DB](../06-vector-db/README.md) · [↑ Handbook 总目录](../../README.md) · [学习路线](../../guide/learning-path.md) · [RAG →](../08-rag/README.md)",
+        "",
+        "本模块解释大语言模型怎样处理输入、生成结果和消耗资源，以及应用工程师怎样据此选择模型、检查输出、改进任务表现。学习目标不是训练一个基础模型，而是遇到答错、变慢、超出上下文、检索效果下降或微调无收益时，能够还原过程，找到应负责的层次。",
+        "",
+        "## 学习前提与模块位置",
+        ""
+      ],
+      "count_lines": [
+        "Vector DB 已建立“向量如何比较与检索”的基本模型。本模块第 09 章解释向量由什么模型产生、为什么不能随意混用，并为后续 RAG 的召回与重排提供前提。首次学习不必倒回去先读整套模型训练知识。"
+      ]
+    },
+    {
+      "directory": "08-rag",
+      "label": "RAG",
+      "chapter_count": 14,
+      "chapters": [
+        {
+          "path": "curriculum/08-rag/docs/01-RAG职责与完整链路.md",
+          "title": "01｜RAG 职责与完整链路：把外部事实变成有依据的回答"
+        },
+        {
+          "path": "curriculum/08-rag/docs/02-CorpusGovernance.md",
+          "title": "02｜语料治理：先确定哪些知识可信、有效、可见"
+        },
+        {
+          "path": "curriculum/08-rag/docs/03-DocumentProcessing.md",
+          "title": "03｜文档解析：从页面外观恢复可检索的内容"
+        },
+        {
+          "path": "curriculum/08-rag/docs/04-ChunkingDesign.md",
+          "title": "04｜切分设计：怎样保留一个问题需要的完整语义"
+        },
+        {
+          "path": "curriculum/08-rag/docs/05-AdvancedChunkStructure.md",
+          "title": "05｜块之间的关系：小块检索，大块补全"
+        },
+        {
+          "path": "curriculum/08-rag/docs/06-QueryPlanning.md",
+          "title": "06｜查询规划：把用户的话变成可执行的检索请求"
+        },
+        {
+          "path": "curriculum/08-rag/docs/07-RetrievalStack.md",
+          "title": "07｜多路检索与融合：让语义和词项互相补位"
+        },
+        {
+          "path": "curriculum/08-rag/docs/08-Rerank与CandidateBudget.md",
+          "title": "08｜重排与候选预算：把有限算力用在值得阅读的证据上"
+        },
+        {
+          "path": "curriculum/08-rag/docs/09-EvidenceDelivery.md",
+          "title": "09｜证据交付：从候选片段到可追溯的答案"
+        },
+        {
+          "path": "curriculum/08-rag/docs/10-RetrievalEvaluation.md",
+          "title": "10｜检索评测：分数到底衡量了什么"
+        },
+        {
+          "path": "curriculum/08-rag/docs/11-EndToEndQualityEngineering.md",
+          "title": "11｜端到端质量：用证据定位失败，再证明改动有效"
+        },
+        {
+          "path": "curriculum/08-rag/docs/12-ProductionGovernance.md",
+          "title": "12｜更新、权限与回滚：让用户看到正确版本的合法知识"
+        },
+        {
+          "path": "curriculum/08-rag/docs/13-ScaleCostObservability.md",
+          "title": "13｜规模、成本与可观测性：让链路能持续运行"
+        },
+        {
+          "path": "curriculum/08-rag/docs/14-GraphRAG与AgenticRAG.md",
+          "title": "14｜GraphRAG 与 Agentic RAG：何时需要结构，何时需要继续搜索"
+        }
+      ],
+      "opening": [
+        "# RAG｜从外部知识到有依据的回答",
+        "",
+        "[← LLM Foundation](../07-llm-foundation/README.md) · [↑ Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [Agent →](../09-agent/README.md)",
+        "",
+        "RAG（检索增强生成）把外部知识中适用、允许读取且能够回溯的内容提供给模型，用于回答具体问题。本模块沿语料处理、检索、证据组装、评测和持续更新建立完整理解，面向 AI Application 与 Agent 工程岗位的学习和实践。",
+        "",
+        "<a id=\"prerequisites\"></a>",
+        "## 学习前提与模块边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "directory": "09-agent",
+      "label": "Agent",
+      "chapter_count": 24,
+      "chapters": [
+        {
+          "path": "curriculum/09-agent/docs/01-AgentSystemAndResponsibilities.md",
+          "title": "01. Agent 系统的全貌：模型之外，谁把任务做完"
+        },
+        {
+          "path": "curriculum/09-agent/docs/02-WorkflowAutonomyAndRuntimeBoundary.md",
+          "title": "02. Workflow、Agent 与自主权：执行角色的边界"
+        },
+        {
+          "path": "curriculum/09-agent/docs/03-AgentLoopAndExecutionScopes.md",
+          "title": "03. Agent Loop：Session、Run、Turn、Step 与执行事件"
+        },
+        {
+          "path": "curriculum/09-agent/docs/04-ToolContractAndValidation.md",
+          "title": "04. Tool Contract：工具说明、参数与语义校验"
+        },
+        {
+          "path": "curriculum/09-agent/docs/05-ToolRegistrationAndDiscovery.md",
+          "title": "05. Tool Registry：工具注册、模型可见说明与按需发现"
+        },
+        {
+          "path": "curriculum/09-agent/docs/06-ToolExecutionAndFailure.md",
+          "title": "06. Tool Execution：结果回填、错误分类与有限恢复"
+        },
+        {
+          "path": "curriculum/09-agent/docs/07-ToolConcurrencyAndCancellation.md",
+          "title": "07. Tool Control：副作用、并发、取消与进度"
+        },
+        {
+          "path": "curriculum/09-agent/docs/08-PlanningGoalAndControl.md",
+          "title": "08. Planning / ReAct：计划、目标、停止与预算"
+        },
+        {
+          "path": "curriculum/09-agent/docs/09-ContextAssemblyAndCache.md",
+          "title": "09. Context Assembly：上下文编排、缓存与结果外部化"
+        },
+        {
+          "path": "curriculum/09-agent/docs/10-CompactionAndContinuation.md",
+          "title": "10. Context Compaction：压缩、替代历史与继续执行"
+        },
+        {
+          "path": "curriculum/09-agent/docs/11-MemoryLifecycle.md",
+          "title": "11. Memory：提取、召回、更新、纠错与遗忘"
+        },
+        {
+          "path": "curriculum/09-agent/docs/12-StateHistoryAndPersistence.md",
+          "title": "12. State / Persistence：程序怎样记住当前工作"
+        },
+        {
+          "path": "curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md",
+          "title": "13. Checkpoint / Resume：检查点、恢复、分叉与重放"
+        },
+        {
+          "path": "curriculum/09-agent/docs/14-PermissionApprovalAndSandbox.md",
+          "title": "14. Permission / Approval / Sandbox：政策、批准与隔离"
+        },
+        {
+          "path": "curriculum/09-agent/docs/15-InjectionAndContainment.md",
+          "title": "15. Guardrails：提示注入、秘密保护与风险控制"
+        },
+        {
+          "path": "curriculum/09-agent/docs/16-MCPArchitectureAndLifecycle.md",
+          "title": "16. MCP：从 Host / Client / Server 到完整协议往返"
+        },
+        {
+          "path": "curriculum/09-agent/docs/17-SkillsHooksAndExtensions.md",
+          "title": "17. Skills / Hooks / Plugins：能力扩展与生命周期"
+        },
+        {
+          "path": "curriculum/09-agent/docs/18-RoutingAndProviderResilience.md",
+          "title": "18. Routing：意图、模型适配与供应商容错"
+        },
+        {
+          "path": "curriculum/09-agent/docs/19-MultiAgentAndA2A.md",
+          "title": "19. Multi-Agent / A2A：内部协作与跨系统任务"
+        },
+        {
+          "path": "curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md",
+          "title": "20. Trace / Replay：记录必要证据，定位具体问题"
+        },
+        {
+          "path": "curriculum/09-agent/docs/21-EvaluationBenchmarkAndImprovement.md",
+          "title": "21. Agent Evaluation、Benchmark 与 Data Flywheel"
+        },
+        {
+          "path": "curriculum/09-agent/docs/22-CodingAgentDelivery.md",
+          "title": "22. Coding Agent：Repo Understanding → Patch → Test → Verify"
+        },
+        {
+          "path": "curriculum/09-agent/docs/23-ProductionRuntime.md",
+          "title": "23. Production Agent：从单进程到可运营执行系统"
+        },
+        {
+          "path": "curriculum/09-agent/docs/24-FrameworkSelection.md",
+          "title": "24. Framework Mapping：按核心语义比较框架与自研"
+        }
+      ],
+      "opening": [
+        "# Agent｜从任务到可解释、可验证的执行系统",
+        "",
+        "[← RAG](../08-rag/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [System Design →](../10-system-design/README.md)",
+        "",
+        "> **课程版本：V1** · **教材状态：✅ 完整**  ",
+        "> **教材：24 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**  ",
+        "> **教学结构：展开式解释 + 过程图 + 连续例子 + Failure 边界 + 章末四部分训练。**",
+        ""
+      ],
+      "count_lines": []
+    },
+    {
+      "directory": "10-system-design",
+      "label": "System Design",
+      "chapter_count": 19,
+      "chapters": [
+        {
+          "path": "curriculum/10-system-design/docs/01-SystemDesign职责与答题框架.md",
+          "title": "01｜System Design 的职责与完整答题框架"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/02-Requirement与SLO.md",
+          "title": "02｜Requirement、SLO、Constraint 与 Scope"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/03-Workload与CapacityEstimation.md",
+          "title": "03｜Workload、Capacity、Hotspot 与数量级估算"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md",
+          "title": "04｜API、Data Model 与 State Ownership"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/05-DataFlow与StateMachine.md",
+          "title": "05｜Sync / Async、Data Flow 与 State Machine"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/06-Cache与HotPath.md",
+          "title": "06｜Cache、Hot Path 与 Read / Write Path"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/07-PartitionRouting与Fanout.md",
+          "title": "07｜Partition、Routing、Fan-out 与 Rebalance"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/08-Consistency与Idempotency.md",
+          "title": "08｜Consistency、Idempotency、Transaction 与 Compensation"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/09-QueueBackpressure与LongRunningTask.md",
+          "title": "09｜Queue、Backpressure 与 Long-running Task"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/10-Reliability与Overload.md",
+          "title": "10｜Timeout、Retry、Failover、Degradation 与 Load Shedding"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/11-MultiTenancy与Security.md",
+          "title": "11｜Multi-tenancy、Security、Permission 与 Isolation"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/12-ObservabilityEvaluation与Evolution.md",
+          "title": "12｜Observability、Evaluation、Cost 与 Evolution"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/13-HighConcurrencyTransactionalSystems.md",
+          "title": "13｜High-concurrency Transactional Systems：秒杀、库存、Rate Limit、Token Refresh"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/14-RealtimeReadHeavySystems.md",
+          "title": "14｜Realtime Read-heavy Systems：排行榜、Feed、Autocomplete、Notification"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/15-LargeScaleDataProcessingSystems.md",
+          "title": "15｜Large-scale Data & Processing：10TB Storage、Migration、Dedup、Large-file"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/16-LLMGateway与MultiTenantAIPlatform.md",
+          "title": "16｜LLM Gateway 与 Multi-tenant AI Platform"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/17-EnterpriseRAGSystemDesign.md",
+          "title": "17｜Enterprise / Large-scale RAG System Design"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/18-ProductionAgentBackend.md",
+          "title": "18｜Production Agent Backend 与 Long-running Agent"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/19-VerticalAIAgentPatterns.md",
+          "title": "19｜Vertical AI Agent Patterns：Analysis、Customer Service、Multimodal、Game、Content"
+        }
+      ],
+      "opening": [
+        "# System Design｜AI Application / Agent Production 系统设计",
+        "",
+        "[← Agent Harness / Runtime](../09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md)",
+        "",
+        "> **课程版本：V1** · **教材状态：✅ 完整**  ",
+        "> **教材：19 个连续知识小板块** · **HUMAN-A Canonical：24** · **独立来源覆盖：71**  ",
+        "> **质量门：✅ Granularity / Coverage / Content Depth**",
+        ""
+      ],
+      "count_lines": []
+    }
+  ],
+  "products": [
+    {
+      "path": "products/agent/claude-code",
+      "chapter_count": 0,
+      "chapters": []
+    },
+    {
+      "path": "products/agent/codex",
+      "chapter_count": 0,
+      "chapters": []
+    },
+    {
+      "path": "products/agent/deepseek-harness",
+      "chapter_count": 0,
+      "chapters": []
+    },
+    {
+      "path": "products/agent/deer-flow",
+      "chapter_count": 0,
+      "chapters": []
+    }
+  ],
+  "peripherals": [
+    {
+      "path": "README.md",
+      "bytes": 7857,
+      "sha256": "0f73f3aaba631e40e41f41c69a9db3574870bfffe4db6d939cae2b3da07b3546",
+      "headings": [
+        "# AI Application / Agent Engineer Interview Handbook",
+        "## 快速入口",
+        "## 1. 仓库定位与信息架构",
+        "## 2. Curriculum｜十个正式知识模块",
+        "## 3. Products｜成熟系统源码学习层",
+        "## 4. Practice｜横向实践轨道",
+        "## 5. Market｜招聘市场证据层",
+        "## 6. Interview｜归一化面试能力层",
+        "## 7. References｜技术事实证据层",
+        "## 8. Guide｜导航、规范与质量治理",
+        "## 9. 目录结构"
+      ],
+      "count_lines": [
+        "> **课程：✅ 10 个正式 Curriculum 模块 / V1** · **Products：✅ 4 个成熟 Agent 产品源码学习基线** · **市场：🟢 JD + HUMAN-A 持续监测** · **面试能力层：235 ACTIVE Canonical（统计基线见 Interview）**"
+      ]
+    },
+    {
+      "path": "curriculum/01-python/README.md",
+      "bytes": 12794,
+      "sha256": "034ca7f985ef7c935b4f99bfa7cd8733cdab73efaf10f2585aefb2bbeeee98bf",
+      "headings": [
+        "# Python Foundation｜Python 语言与运行时基础",
+        "## 1. 这个模块解决什么",
+        "## 2. 在十板块中的位置",
+        "## 3. 固定课程原则",
+        "### 定义在关系之前，关系在结论之前",
+        "### 知识覆盖保持完整",
+        "### 代码用于解释，不制造新的阅读障碍",
+        "### 章末结构保持一致",
+        "## 4. 正式学习主线",
+        "## 5. 正式课程目录",
+        "### 第一阶段｜数据与对象",
+        "### 第二阶段｜执行与组织",
+        "### 第三阶段｜对象协作与输入边界",
+        "### 第四阶段｜运行机制与成本",
+        "## 6. 真人面经怎样影响本模块",
+        "## 7. 模块边界",
+        "## 8. Review、Interview 与证据入口",
+        "## 9. 推荐学习方式",
+        "## 10. 教材状态"
+      ],
+      "count_lines": [
+        "> **课程版本：V1** · **教材状态：13 个连续章节**  ",
+        "从一行代码开始，逐步理解数据是什么、代码怎样执行、对象怎样协作，以及运行时的资源与成本。首次阅读从 [第 01 章](docs/01-python基础与对象模型.md) 开始，不需要先知道 Agent、框架或面试术语。",
+        "研究条目与章节也保持不同层次：**Canonical Question（独立面试能力）** 不等于 **Capability Primitive（更细的机制）**，也不等于一个教材文件。15 道 Canonical 可以组织成 13 个完整学习章节，章节内部再用二级、三级标题建立层次。",
+        "几个刻意安排的衔接：第 01 章先给出 `def`、`return`、`import` 的最小读法，让第 03 章的传参实验可以理解；第 04 章再系统讲调用与作用域。第 06、07 章先学如何使用迭代与资源协议，手写 `Counter`、`MyContext` 的完整类实现移到第 08 章，在学过 `class` 和 `self` 后再展开。第 06、07 章必要的异常语法就地解释，第 09 章再统一建立完整错误模型。"
+      ]
+    },
+    {
+      "path": "curriculum/01-python/review/README.md",
+      "bytes": 8609,
+      "sha256": "dc5e9f42712e01dd8503ea215fba13324c2f35e087ee3877c00191f7c1182d65",
+      "headings": [
+        "# Python Foundation｜Review 与综合自测",
+        "## 1. 复习时先重建四个层次",
+        "## 2. 怎么使用图解、自测和正文",
+        "## 3. 对应正文与图解导航",
+        "### 数据与对象：先能画出引用关系",
+        "### 执行与组织：先能追踪一次调用和一次取值",
+        "### 对象协作与输入边界：先能说清契约与失败责任",
+        "### 运行机制与成本：先说明前提，再给结论",
+        "## 4. 跨章节综合自测",
+        "## 5. 进入面试训练之前"
+      ],
+      "count_lines": [
+        "> 本 Review 与 13 章正文一一对应，用于第二遍主动回忆、重画关系和综合自测；图解与自测页是正文的复习层，不构成另一套并行教材。",
+        "手写 `Counter`、`MyContext` 的完整实现集中在第 08 章，避免在还未理解类与 `self` 时跳进实现。第 09 章解释模块如何在执行顶层代码前进入缓存；第 10 章把解析、结构、业务和权限分开，不把一种检查当成全部检查。",
+        "它们都涉及名字、容器或属性怎样持有对象引用。先找到对象，再画出各访问路径，最后判断当前操作是改绑定、改外层引用还是改子对象，就能解释变化会被谁看到。细节分别见 01、03、04、08 章。",
+        "二者都需要理解保存执行进度、暂停与恢复，但协议与调度目的不同。普通生成器由消费方逐项推进并产出值；协程通过 await 表达等待，Task 与事件循环管理相关执行。不能因为都能暂停，就把生成器说成自动并发的任务。见 06、12 章。",
+        "解析解决表示格式，结构校验解决字段契约，业务校验解决当前状态与规则，权限检查解决当前主体是否获准行动。不同层的通过不能互相替代，执行还可能涉及审批、幂等与副作用。见 08—10 章，并在后续 Agent／Backend 模块继续展开。",
+        "调用方可以先停止消费或超过等待预算，但子任务、线程函数或下游请求可能仍在执行。需要明确取消是否传递、是否等待清理结束、谁持有资源，以及已经发生的副作用怎样处理。正常语言控制流中的清理，也不能替代进程强杀或远程服务的可靠性设计。见 07、09、11、12 章。"
+      ]
+    },
+    {
+      "path": "curriculum/02-fastapi/README.md",
+      "bytes": 7402,
+      "sha256": "e7ac8225d9648812a5d00ec8fc425dcfd2292b2f602f5eb4c7bd2869e7ab4a07",
+      "headings": [
+        "# FastAPI｜从第一个请求到可靠的API边界",
+        "## 1. 学完后能独立完成什么",
+        "## 2. 进入前需要什么",
+        "## 学习深度不改变知识出现的位置",
+        "## 3. 一次请求的总览",
+        "## 4. 正式章节",
+        "### A｜先走通请求，再理解契约",
+        "### B｜组织执行与资源",
+        "### C｜持续交付与访问边界",
+        "### D｜外部工作与结束语义",
+        "### E｜验证、运行与综合实践",
+        "## 5. 阅读和练习怎样配合",
+        "## 6. 技术事实与面试证据分开",
+        "## 7. 模块边界与验收"
+      ],
+      "count_lines": [
+        "2026-09-26 本轮以仓库正式库 S001–S297 为检索范围，结合冻结索引、相关收录条目与新增 S280–S297 的问题记录校验正文；范围、来源和落点见[面经校验记录](../../guide/project/fastapi-interview-alignment-2026-09-26.md)。冻结统计仍是 S001–S279 的 4 道 FastAPI 主责 Canonical、3 个独立来源，没有把跨模块问法或新增来源机械计入旧频率。"
+      ]
+    },
+    {
+      "path": "curriculum/02-fastapi/examples/README.md",
+      "bytes": 2571,
+      "sha256": "65f9409bdbcfc0ab045bac85669f748434ed8fbb1bfcefe8fc51c1dc78b0168f",
+      "headings": [
+        "# FastAPI｜可执行例子与回归",
+        "## 运行目标版本验证",
+        "## 取出一个程序自己练习",
+        "## 验证边界",
+        "## 实现对照与维护测试"
+      ],
+      "count_lines": [
+        "第16章内存任务示例不承诺持久、跨进程和幂等创建；相应测试专门保留这些边界。真实代理、供应商取消和数据库事务需要另外的集成环境。"
+      ]
+    },
+    {
+      "path": "curriculum/02-fastapi/review/README.md",
+      "bytes": 15758,
+      "sha256": "2510ab4a54662093c442237e383ef507be503e61da09f3a69d74dcb7f9ca5e99",
+      "headings": [
+        "# FastAPI｜Review总图与综合自测",
+        "## 总图1｜从请求到响应",
+        "## 总图2｜资源什么时候结束",
+        "## 总图3｜同步、异步与容量",
+        "## 总图4｜事件、任务与连接",
+        "## 总图5｜诊断与部署",
+        "## 综合自测",
+        "## 操作验收"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/03-backend-engineering/README.md",
+      "bytes": 6340,
+      "sha256": "76df55c0e804faeb94169dc5aa0d6a059b1dc82e495bc544ad20ecbbeedd35e3",
+      "headings": [
+        "# AI Backend Engineering｜可靠的 AI 应用后端",
+        "## 学习前提与边界",
+        "## 阅读顺序",
+        "## 怎样完成一个学习单元",
+        "## 教材、证据与验证"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/03-backend-engineering/examples/README.md",
+      "bytes": 4313,
+      "sha256": "9d80c62ac875acecbd45c5e8f678a6b839f8239fee9aa84833a0577f8553278f",
+      "headings": [
+        "# Backend 机制实验",
+        "## 环境与运行",
+        "## 初始条件、动作与预期结果",
+        "## 实验与正文的对应",
+        "## 改变条件再判断"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/03-backend-engineering/review/README.md",
+      "bytes": 9212,
+      "sha256": "df7fbe0b6108aaf5b125fc3fa9f91e73e592a1e9bc290271dffdb9f66ae8902d",
+      "headings": [
+        "# Review｜从一次失败重建后端主线",
+        "## 1. 同一次操作的四种事实",
+        "## 2. 用一张关系表判断工具负责什么",
+        "## 3. 综合自测：改条件，而不是复述原句",
+        "### 1. 吞吐降低时，原容量计划还成立吗？",
+        "### 2. 本地事务成功，客户端却收到失败。",
+        "### 3. 租约与资源边界换了。",
+        "### 4. 一条缓存记录并不是完整的恢复依据。",
+        "### 5. 权限在排队期间改变。",
+        "### 6. SQL 优化没有解决接口慢。",
+        "### 7. 发布窗口比任务短。",
+        "## 4. 怎样记录真实薄弱点"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/04-mysql/README.md",
+      "bytes": 6171,
+      "sha256": "7b2e5772c514eb7fe600a9d75d4f8777c4ae7270c88e274a54ae9b6c6b1c67f5",
+      "headings": [
+        "# MySQL｜从关系表到可靠的数据操作",
+        "## 1. 这条主线怎样推进",
+        "## 2. 课程目录",
+        "### 把数据存好、查对",
+        "### 解释查询为什么快或慢",
+        "### 协调并发并恢复修改",
+        "### 让单库长期可用",
+        "### 数据如何扩展和传播",
+        "### 回到应用的数据设计",
+        "## 3. 正文、实验和复习各怎样使用",
+        "## 4. 本模块的知识边界",
+        "## 5. 官方资料与真人面经怎样使用",
+        "## 6. 怎样判断自己已经理解"
+      ],
+      "count_lines": [
+        "**课程范围：19 章。技术语境：MySQL Community 9.7 LTS、InnoDB。**"
+      ]
+    },
+    {
+      "path": "curriculum/04-mysql/examples/README.md",
+      "bytes": 7016,
+      "sha256": "f3dab4e05479c40a78cde53c847893053f9a3f2c0fb8b99050e186570ed2b928",
+      "headings": [
+        "# MySQL 实验｜固定小数据与双会话验证",
+        "## 1. 目标环境与实际验证分开",
+        "## 2. 选择一个数据库客户端",
+        "## 3. 使用已有本地 MySQL",
+        "## 4. 使用已有 Docker 环境",
+        "## 5. 初始化与重置",
+        "## 6. 怎样执行单章实验",
+        "## 7. 可选的维护工具",
+        "### 从正文和实验页导出 SQL",
+        "### 自动运行目标数据库检查"
+      ],
+      "count_lines": [
+        "[返回课程](../README.md) · [第 02 章：创建第一张表](../docs/02-单表查询与增删改.md)",
+        "这里为正文提供统一数据，不是另一份需要先读完的教材。第 01 章先建立概念，第 02 章完成第一张表；从第 03 章起加载本目录的 `seed.sql`。它会重置课程表，使每次实验有同样的起点。",
+        "第 02 章的 `first_tasks`独立，不由此文件重置。要重复第 02 章，在确认是练习库之后单独删除那张表，再执行该章建表语句。"
+      ]
+    },
+    {
+      "path": "curriculum/04-mysql/review/README.md",
+      "bytes": 11466,
+      "sha256": "af669ba6e7588bea2aabc8a9511c48bfd400794870dc69dd1a154e47a934e139",
+      "headings": [
+        "# MySQL｜Review 与综合自测",
+        "## 1. 四张回顾地图",
+        "### 数据与查询：语义和执行是两层",
+        "### 事务：看版本、改记录、判结果",
+        "### 恢复与传播：不要把不同“完成”混在一起",
+        "### 数据分工：按谁负责判断来划边界",
+        "## 2. 先从结果检查基础模型",
+        "## 3. 再用过程检查机制",
+        "## 4. 三项小任务",
+        "## 5. 面试前的检查顺序"
+      ],
+      "count_lines": [
+        "回看：[第 08 章](../docs/08-执行计划与慢查询.md)。",
+        "回看：[第 04 章](../docs/04-关联查询与分组统计.md)。",
+        "回看：[第 04 章](../docs/04-关联查询与分组统计.md)。",
+        "回看：[第 07 章](../docs/07-联合索引覆盖与下推.md)。",
+        "回看：[第 07 章](../docs/07-联合索引覆盖与下推.md)。",
+        "回看：[第 06 章](../docs/06-B+树与数据组织.md)。",
+        "回看：[第 09 章](../docs/09-事务与ACID.md)。",
+        "回看：[第 10 章](../docs/10-隔离级别与MVCC.md)。",
+        "回看：[第 10 章](../docs/10-隔离级别与MVCC.md)。",
+        "回看：[第 10 章](../docs/10-隔离级别与MVCC.md)。",
+        "回看：[第 11 章](../docs/11-并发修改锁与死锁.md)。",
+        "回看：[第 03 章](../docs/03-数据类型约束与表关系.md)。",
+        "回看：[第 09 章](../docs/09-事务与ACID.md)。",
+        "回看：[第 12 章](../docs/12-日志提交与恢复.md)。",
+        "回看：[第 16 章](../docs/16-复制与读写分离.md)。",
+        "回看：[第 17 章](../docs/17-CDC与下游同步.md)。",
+        "回看：[第 17 章](../docs/17-CDC与下游同步.md)。",
+        "回看：[第 18 章](../docs/18-分片与扩容.md)。",
+        "回看：[第 15 章](../docs/15-批量写入与写入成本.md)。"
+      ]
+    },
+    {
+      "path": "curriculum/05-redis/README.md",
+      "bytes": 6256,
+      "sha256": "bfe032bfc1c371c5b8daf5a7b668c9cfe8b9a0e8c936bcb8f449562d684ccaff",
+      "headings": [
+        "# Redis｜从存取数据到缓存、并发与恢复",
+        "## 1. 沿一个问题逐步深入",
+        "## 2. 正式阅读顺序",
+        "### 认识数据与生命周期",
+        "### 围绕一份缓存理解读取、更新和失效",
+        "### 理解执行成本与多步修改",
+        "### 理解恢复、副本和分片",
+        "### 组合机制，解释实际状态与故障",
+        "## 3. 读、练、回顾分别做什么",
+        "## 4. 面经怎样帮助学习",
+        "## 5. 本模块与其他模块的分工",
+        "## 6. 实验与验证边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/05-redis/examples/README.md",
+      "bytes": 3858,
+      "sha256": "fcf88daf8fe20352d7cae2286a45fbd922f65c71e011b5c824e96c9d530064f3",
+      "headings": [
+        "# Redis 实验入口｜任选客户端，先预测再运行",
+        "## 1. 先建立独立、可丢弃的环境",
+        "## 2. 每次只完成与当前问题对应的一组",
+        "## 3. 以下是维护者的验证工具，不是读者语言前置",
+        "## 4. 目标版本实机验证有单独入口"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/05-redis/review/README.md",
+      "bytes": 8972,
+      "sha256": "c5b81bca1124e0ff1ffaeaefa9e5a89e85fc841440e0a7411da97dcbd4ab4b46",
+      "headings": [
+        "# Redis｜用几条关系重新理解全章",
+        "## 1. 一份数据的全貌",
+        "## 2. 一个缓存请求的正常与异常路径",
+        "## 3. 执行、原子性与恢复不是同一维度",
+        "## 4. 两条值得重新画的时间线",
+        "## 5. 消息与状态的四个不同事实",
+        "## 综合自测"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/06-vector-db/README.md",
+      "bytes": 5528,
+      "sha256": "5f2b47e6bef65392ba3819d61e6c3b7f2c38e630280be1f7f40d43d6384aa059",
+      "headings": [
+        "# Vector Database｜向量检索与索引系统",
+        "## 学习前提与边界",
+        "## 主线与目录",
+        "## 实验与复习",
+        "## 技术依据与维护入口"
+      ],
+      "count_lines": [
+        "按下表顺序阅读。第 04 章提供索引地图，第 05～07 章分别深入三种机制；第 08 章完成一次初步选择，后续数据管理与故障条件会进一步约束这次选择。"
+      ]
+    },
+    {
+      "path": "curriculum/06-vector-db/labs/README.md",
+      "bytes": 5610,
+      "sha256": "62df6b1f4b21bbc32b00e4a03bc73092a3aee255a20f19b69fa9862e8d948cdb",
+      "headings": [
+        "# Vector Database｜可核对的实验",
+        "## 1. 无第三方依赖的数值与状态实验",
+        "## 2. 真实 Faiss 的索引比较",
+        "## 3. 真实 Qdrant 的记录与过滤操作",
+        "# 无 --run：明确跳过，不连接服务、不修改数据。",
+        "# 仅在独立本机服务准备好后运行。",
+        "## 状态约定"
+      ],
+      "count_lines": [
+        "**任务与条件。** `data.json` 保存正文 02、03、10 章的六条构造记录与查询。运行脚本后，先核对精确 Top-3，再比较过滤位置、图搜索宽度、IVF 区域与 PQ 距离。图、IVF 小例子使用正文给定图与中心，不声称实现了产品建索引算法；版本状态仅模拟单进程事件顺序，不代表数据库并发安全。"
+      ]
+    },
+    {
+      "path": "curriculum/06-vector-db/review/README.md",
+      "bytes": 9467,
+      "sha256": "b46691433ef3c14b51c3bd4af940f3c7667449a153dd5f77001f20f891c157d9",
+      "headings": [
+        "# Vector Database｜Review 与综合判断",
+        "## 1. 用一条查询重建全图",
+        "## 2. 把三个近似机制放在一起解释",
+        "## 3. 综合任务：过滤之后不足 K 条",
+        "## 4. 综合任务：模型没变，结果却变了",
+        "## 5. 综合任务：迁移成功后又出现已删除资料",
+        "## 6. 综合任务：一个分片超时",
+        "## 7. 综合任务：内存预算与更新预算发生冲突",
+        "## 8. 给自己的项目做一次口头验收"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/07-llm-foundation/README.md",
+      "bytes": 6175,
+      "sha256": "f8ef9168483aa599b00a0161d29426b844cec8ea73bd6429c1c2c906388d06f8",
+      "headings": [
+        "# LLM Foundation｜从模型机制到应用判断",
+        "## 学习前提与模块位置",
+        "## 主线与章节",
+        "## 阅读、验算与复习",
+        "## 范围与衔接",
+        "## 技术依据与维护入口"
+      ],
+      "count_lines": [
+        "Vector DB 已建立“向量如何比较与检索”的基本模型。本模块第 09 章解释向量由什么模型产生、为什么不能随意混用，并为后续 RAG 的召回与重排提供前提。首次学习不必倒回去先读整套模型训练知识。"
+      ]
+    },
+    {
+      "path": "curriculum/07-llm-foundation/labs/README.md",
+      "bytes": 3254,
+      "sha256": "8214b3a8d3a62ed48e5440aec9320021f6d2abac287a54d88c1f6030635cee21",
+      "headings": [
+        "# Lab｜把模型机制变成可检查的数值",
+        "## 运行",
+        "## 先预测，再运行",
+        "## 边界",
+        "## 图表维护（可选）"
+      ],
+      "count_lines": [
+        "| 第 05 章 `softmax` | 给所有 logits 加同一个数；改变正温度；输入零温度或非有限数 | 分布平移不变、排序与尖锐度的区别、明确异常 |",
+        "| 第 06 章 `kv-bytes` | 改变 KV 头数、所有请求长度、精度；输入负长度 | 容量单位、并发只计一次、输入校验 |",
+        "| 第 13 章 `lora-count` | 改变矩阵形状和秩 | 参数量公式与总训练显存并非同一件事 |",
+        "新增练习按“先预测、再验证”使用：第 03 章改变前馈输入，第 04 章改变两个位置的间距，第 13 章改变 LoRA 输入，第 14 章比较损失与绝对概率。先解释哪个规则改变了结果，再查看折叠答案。",
+        "第 10 章的图表读数表是绘图数据源。维护者修改它后，可在已有 Matplotlib 环境运行 `python curriculum/07-llm-foundation/labs/render_figure.py` 重新生成 SVG；需有可显示中文的字体。普通阅读和标准库测试不要求安装绘图库。测试核对图片的数据指纹，避免文字改了而图仍显示旧值；这不替代实际查看图片。"
+      ]
+    },
+    {
+      "path": "curriculum/07-llm-foundation/review/README.md",
+      "bytes": 12608,
+      "sha256": "e0f30cb32b56e244e346e78eed1139e7401ec236e53b717eed03db1d03744c30",
+      "headings": [
+        "# Review｜把模型机制连成可判断的过程",
+        "## 1. 一次回答，哪些状态真的改变了",
+        "## 2. 计算图要画出信息来源，而不只画方框",
+        "## 3. 时间与显存来自不同对象",
+        "## 4. 检索模型与生成模型怎样配合",
+        "## 5. 改什么，取决于最早的失败点",
+        "## 6. 训练方法不是互斥的产品按钮",
+        "## 7. 复习完成的检查"
+      ],
+      "count_lines": [
+        "**再换一个输入：** 使用第 03 章的前馈规则，输入 `[2,-1]` 先变成 `[h₁,−h₁−h₂,2h₂]`，再逐项做 ReLU，最后算 `[u₁+u₃,u₂−u₃]`。输出是什么？这里有没有从另一个 Token 读取数据？",
+        "都不能据此直接自动执行。需要同一组样本上的联合通过率、拒绝与超时情况、状态权限和跨字段条件；两个单独指标不能在不知道相关性的情况下直接相乘。还要区分只读问答与有副作用的写操作，按实际风险设置门槛。第 08、12 章提供推理依据，动作审批与验证归 Agent。",
+        "**迁移任务：损失变小能推出什么？** DPO 中，参考策略对好、坏回答的 log 概率均为 −2，当前策略分别为 −3、−4；β=1。计算比较分数，判断好答案的绝对概率是上升还是下降。自然对数和公式沿用第 14 章。"
+      ]
+    },
+    {
+      "path": "curriculum/08-rag/README.md",
+      "bytes": 5524,
+      "sha256": "580b0257701bffc7928048e63a70d48b05f5f95705c3052e94aad7efb4c214d0",
+      "headings": [
+        "# RAG｜从外部知识到有依据的回答",
+        "## 学习前提与模块边界",
+        "## 正文主线",
+        "## 学习、练习与回看",
+        "## 面经与技术证据"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/08-rag/examples/README.md",
+      "bytes": 6538,
+      "sha256": "ca2f4eced6fed9bfacc7463e7931faacb7181ced7920cdbd111aff7c6163d1fe",
+      "headings": [
+        "# RAG 机制实验｜排名、证据与版本状态",
+        "## 运行与重置",
+        "## 同一组数据",
+        "## 实验一：改变排序，观察改变了什么",
+        "## 实验二：为什么精排后不能立即截断",
+        "## 实验三：用同一标签比较指标",
+        "## 实验四：迟到、重复、删除与回滚",
+        "## 从机制实验到真实系统"
+      ],
+      "count_lines": [
+        "先运行默认演示。RRF 使用位置从 1 开始的倒数排名，常数取 60，预期融合顺序是 A、B、C、D。回到 [第 7 章](../docs/07-RetrievalStack.md)，核对 A 与 B 的分数是由哪两个位置贡献的。",
+        "观察默认输出：只有 A 时 Recall 为 0.5、Hit 为 1、完整覆盖为 0；A、B 都在时三者均为 1。再按 [第 10 章](../docs/10-RetrievalEvaluation.md) 验证 Precision 的固定 K 分母与 NDCG 的理想排序。"
+      ]
+    },
+    {
+      "path": "curriculum/08-rag/review/README.md",
+      "bytes": 8357,
+      "sha256": "c2ddfef0ac218d1518b893c010fa09370ecdaaa3c3f674ae077c63c3577d0739",
+      "headings": [
+        "# RAG｜Review 与综合自测",
+        "## 1. 两条链，三个“完成”",
+        "## 2. 切分不是长度问题，而是证据关系问题",
+        "## 3. 候选漏斗：不同阶段丢的东西不同",
+        "## 4. 候选到上下文：排名不等于适用性",
+        "## 5. 评测不是一个总分",
+        "## 6. 沿丢失位置排查，而不是从组件名猜原因",
+        "## 复习完成判断"
+      ],
+      "count_lines": [
+        "不能。先按稳定身份查询向量写入是否已发生，再补齐未确认项，验证新版本在各必要存储中可查询且使用兼容配置；请求只能选择已验证的完整知识代号，不能在两个版本之间随意拼接。新代号未准备好时继续服务允许使用的旧代号，或明确更新未完成；但当前撤权和删除仍须立即按安全政策处理。依据第 12 章的版本切换、写入可见性与授权分离。",
+        "不一定。物理相邻关系不能跨越到远处的适用条件；应利用章节引用、条件索引或针对高温例外的查询补充召回，再检查它们属于同一设备、版本和授权范围。必要关系不等于词向量相似或相邻位置。用包含一般规则与例外的必要事实标签评测，不能只看“命中任一相关块”。依据第 4、5、6、10 章。",
+        "不能可靠解决，因为两路在检索之前已经丢失关键约束。应保留原查询与精确错误码，确认分词和字段匹配支持该标识，再检查它是否进入候选；随后才分析融合和重排。改写不是修正用户所有表达，更不能自由替换事实标识。依据第 6、7、8 章。",
+        "去掉重复一般规则，保留当前适用版本的一般规则与例外，共 140 单位，并维护各自来源。不能仅为省预算替换成旧例外；版本和适用条件优先于方便。真实系统还需计算完整消息的模型 Token 与输出预留，而非直接套用本题抽象单位。依据第 5、8、9、12 章。",
+        "旧正确率 80%，新正确率 85%，提升 5 个百分点；18−8=10 个净改善，与总数一致。不能仅凭总分上线，权限错误可能构成硬阻断；应检查退化类型、任务分布、延迟与成本，并把回归修复后重新评测。依据第 10、11 章，业务门槛必须在看结果前定义。",
+        "至少存在两个层面的问题：证据选择阶段丢了 B；在完整上下文控制实验中，生成阶段也没有正确使用 B。需要分别修复和验证，不应把全部失败归因于重排，也不能用一次换模型成功掩盖候选选择错误。依据第 11 章。",
+        "独立解释一条正常链、一条缺证据链、一条版本切换链和一条撤权链。每次都说清楚：对象是什么、谁在做决定、依据哪些条件、发生了什么可观察结果，以及哪些结果仍未证明。再用 [机制实验](../examples/README.md) 验证可计算部分，用 [第 14 章](../docs/14-GraphRAG与AgenticRAG.md) 判断新问题是否真的需要图或动态检索。"
+      ]
+    },
+    {
+      "path": "curriculum/09-agent/README.md",
+      "bytes": 9772,
+      "sha256": "52cbae35aeb1d3ccfc82d68e04df9e37ac0170c6e928e576667423d740dbaeb9",
+      "headings": [
+        "# Agent｜从任务到可解释、可验证的执行系统",
+        "## 1. 这个模块解决什么",
+        "## 2. 在十板块中的位置",
+        "## 3. 固定课程原则",
+        "## 4. 正式学习主线",
+        "## 5. 正式课程目录",
+        "### A｜先认识任务与执行系统",
+        "### B｜工具调用怎样受控完成",
+        "### C｜控制方向与模型可见信息",
+        "### D｜执行状态与跨中断恢复",
+        "### E｜安全、能力接入与协作",
+        "### F｜诊断、评测与工程落地",
+        "## 6. 真人面经怎样影响本模块",
+        "## 7. 模块边界",
+        "## 8. Review、Interview、Products 与证据入口",
+        "## 9. 推荐学习方式",
+        "## 10. 教材状态"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/09-agent/review/README.md",
+      "bytes": 9970,
+      "sha256": "77b6ae6dfcb61e8b69df43de34a44ab3ef509104bed72b6388f89eba0e8c132b",
+      "headings": [
+        "# Agent｜Review 与综合自测",
+        "## 图 1｜最小 Runtime",
+        "## 图 2｜Context 与 State",
+        "## 图 3｜长任务正确性",
+        "## 图 4｜同一次动作的不同安全检查",
+        "## 图 5｜能力扩展",
+        "## 图 6｜Multi-Agent",
+        "## 图 7｜Production",
+        "# 综合自测",
+        "## 按薄弱主题回到正文",
+        "## 综合失败推演"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/10-system-design/README.md",
+      "bytes": 7509,
+      "sha256": "62da0077e08087b184aba92d31c7748511b5077738ee9f6259e06bfb314b494e",
+      "headings": [
+        "# System Design｜AI Application / Agent Production 系统设计",
+        "## 1. 这个模块解决什么",
+        "## 2. 在十板块中的位置",
+        "## 3. 固定课程原则",
+        "## 4. 正式学习主线",
+        "## 5. 正式课程目录",
+        "### Part A｜通用 System Design 方法",
+        "### Part B｜真人高频 Scenario Patterns",
+        "## 6. 真人面经怎样影响本模块",
+        "## 7. 模块边界",
+        "## 8. Review、Interview 与证据入口",
+        "## 9. 推荐学习方式",
+        "## 10. 教材状态"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/10-system-design/review/README.md",
+      "bytes": 7157,
+      "sha256": "39ba4e345f74c9a0212b52aef207668f26b7ea4ff69513bb01817414c5ee8fdd",
+      "headings": [
+        "# System Design｜Review 与综合自测",
+        "## 图 1｜一题 System Design 的完整思考路径",
+        "## 图 2｜State 先分三类",
+        "## 图 3｜同步与异步边界",
+        "## 图 4｜正确性闭环",
+        "## 图 5｜过载到级联故障",
+        "## 图 6｜AI-native Production Architecture",
+        "# 综合自测"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "curriculum/README.md",
+      "bytes": 3314,
+      "sha256": "b636ba8fcf916af2a74569fb0fc69ebac2ffd8c5bfdff30402f57a805309f00f",
+      "headings": [
+        "# Curriculum｜十个正式知识模块",
+        "## 推荐学习顺序",
+        "## 正文、回顾与实践分别负责什么"
+      ],
+      "count_lines": [
+        "[Practice](../practice/README.md)与课程并行，让学习转成写代码、运行和调试。 [Products](../products/README.md)沿固定源码快照理解成熟系统，不作为第11个课程模块，也不以某个产品实现替代通用机制。"
+      ]
+    },
+    {
+      "path": "guide/README.md",
+      "bytes": 1063,
+      "sha256": "4a1e412fbdc70cd78867f497ea4203c494f6ab5abd550dc0a0930f657f00395b",
+      "headings": [
+        "# Guide｜知识地图、学习路线与仓库治理",
+        "## 学习入口",
+        "## 质量治理"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "guide/audits/README.md",
+      "bytes": 902,
+      "sha256": "d3ce6a34c920a2c890f853f8d039d5128391ec453fd26e52fb4af62cbda746b8",
+      "headings": [
+        "# Quality Audits｜质量审计"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "guide/audits/history/README.md",
+      "bytes": 458,
+      "sha256": "d9f9dd03061139bbff78dda1d8f68851e9e2e5badf342885a2fa17eef1f6da70",
+      "headings": [
+        "# Audit History｜历史质量审计"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "guide/knowledge-map.md",
+      "bytes": 11147,
+      "sha256": "64a6cfa050fa5f0939062d1acf99d66b16524fbab0f05f36c8730d3958efeab5",
+      "headings": [
+        "# AI Application Engineer｜十板块知识地图",
+        "## 总路线",
+        "### 成熟产品源码层（不计入十模块）",
+        "### 横向实践轨道（不计入十模块）",
+        "## 总览",
+        "## 01. [Python Foundation](../curriculum/01-python/README.md) ✅ — 13 blocks",
+        "## 02. [FastAPI](../curriculum/02-fastapi/README.md) ✅ — 16 blocks",
+        "## 03. [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) ✅ — 22 blocks",
+        "## 04. [MySQL](../curriculum/04-mysql/README.md) — 19 blocks",
+        "## 05. [Redis](../curriculum/05-redis/README.md) ✅ — 18 blocks",
+        "## 06. [Vector Database](../curriculum/06-vector-db/README.md) ✅ — 16 blocks",
+        "## 07. [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) ✅ — 14 blocks",
+        "## 08. [RAG](../curriculum/08-rag/README.md) ✅ — 14 blocks",
+        "## 09. [Agent](../curriculum/09-agent/README.md) ✅ — 24 blocks",
+        "## 10. [System Design](../curriculum/10-system-design/README.md) ✅ — 19 blocks",
+        "## 使用规则"
+      ],
+      "count_lines": [
+        "## 01. [Python Foundation](../curriculum/01-python/README.md) ✅ — 13 blocks",
+        "## 02. [FastAPI](../curriculum/02-fastapi/README.md) ✅ — 16 blocks",
+        "## 03. [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) ✅ — 22 blocks",
+        "## 04. [MySQL](../curriculum/04-mysql/README.md) — 19 blocks",
+        "## 05. [Redis](../curriculum/05-redis/README.md) ✅ — 18 blocks",
+        "## 06. [Vector Database](../curriculum/06-vector-db/README.md) ✅ — 16 blocks",
+        "## 07. [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) ✅ — 14 blocks",
+        "## 08. [RAG](../curriculum/08-rag/README.md) ✅ — 14 blocks",
+        "## 09. [Agent](../curriculum/09-agent/README.md) ✅ — 24 blocks",
+        "## 10. [System Design](../curriculum/10-system-design/README.md) ✅ — 19 blocks",
+        "- Products 是成熟系统源码学习层，不作为第 11 个知识模块制造新的 Canonical Ownership；",
+        "- Coding 是并行实践轨道，不作为第 11 个知识模块制造新的 Canonical Ownership；",
+        "Agent 模块使用 24 章正式学习顺序；历史重组、固定实现对照与核验范围见 [Agent Reader Revision](project/agent-reader-revision.md)。"
+      ]
+    },
+    {
+      "path": "guide/learning-path.md",
+      "bytes": 12113,
+      "sha256": "4c245c2ec27a967fbbe916f9ac21a926e0bbef3bb7fa1aa1b7fcedd3badeff94",
+      "headings": [
+        "# Learning Path｜从基础到AI应用的学习路线",
+        "## 1. 先修关系决定顺序，目录数字不锁定顺序",
+        "### Backend为何接在MySQL、Redis之后",
+        "### 模块之间仍可有小而明确的桥梁",
+        "## 2. Coding与工具实践并行",
+        "## 3. 一次学习单元怎样完成",
+        "## 4. 三遍学习，各有不同任务",
+        "## 5. 13周安排示例",
+        "### 第1周",
+        "### 第2周",
+        "### 第3周",
+        "### 第4周",
+        "### 第5周",
+        "### 第6周",
+        "### 第7周",
+        "### 第8周",
+        "### 第9周",
+        "### 第10周",
+        "### 第11周",
+        "### 第12周",
+        "### 第13周",
+        "## 6. 模块收束：能做什么，而不是只读了多少",
+        "## 7. 间隔回看与时间较少时的安排",
+        "## 8. 14天面试前回看",
+        "## 9. 最终验收"
+      ],
+      "count_lines": [
+        "这条路线帮助读者把181个正文章节组织成连续学习和实践。章节数量描述范围，不代表质量验收；学习速度由已经掌握的前置与实际练习结果决定。",
+        "下面保留75个模块学习单元，加2个基础综合回顾与1个全局回顾，共78个单元。每周列6个单元；是否能按周完成取决于时间预算和实践反馈，不要求为了追表而跳过没理解的概念。"
+      ]
+    },
+    {
+      "path": "guide/project/README.md",
+      "bytes": 832,
+      "sha256": "b4f1d3b358e17c3100cd229430f3a732b1a7b436169fb7167bf559c1142f28f3",
+      "headings": [
+        "# Project Records｜仓库演进记录",
+        "## 目录内容"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "guide/terminology-glossary.md",
+      "bytes": 10645,
+      "sha256": "d8f41c4a950ab8505cea9534c79bef4814bd6393018beb4cbf126dc0014da6bb",
+      "headings": [
+        "# Terminology Glossary｜跨模块术语与边界",
+        "## 1. Context / Memory / State / History / Checkpoint",
+        "## 2. Session / Thread / Run / Turn / Step / Task / Job",
+        "## 3. Timeout / Deadline / Cancellation / Disconnect / Business Cancel",
+        "## 4. Cache / KV Cache / Semantic Cache / Retrieval Cache",
+        "## 5. Source of Truth / Primary / Derived / Ephemeral",
+        "## 6. Idempotency / Retry / Replay / Resume / Reconciliation / Compensation",
+        "## 7. Lock / Lease / Ownership / Fencing",
+        "## 8. Message / Event / Tool Result / Trace",
+        "## 9. Embedding / Vector Search / Retrieval / Rerank",
+        "## 10. Prompt / Context Engineering / Harness Engineering",
+        "## 11. Tool / MCP / Skill / Hook",
+        "## 12. Observability / Evaluation / Verification",
+        "## 13. 写作与面试表达规则",
+        "## 本轮补充：恢复与诊断的数据最小化"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "interview/README.md",
+      "bytes": 923,
+      "sha256": "726b23baad9966563fb03ebe5e88d3d21d347a0478ba4d2feeaf21aaa5eae31d",
+      "headings": [
+        "# Interview｜面试能力归一化层",
+        "## 中央 Canonical 与模块 Interview 的职责边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "interview/canonical/README.md",
+      "bytes": 2764,
+      "sha256": "6946b0074aa5adc4b2a4d6accc0b7e4bf68bd64ffaad411d6d581cc6e57ac614",
+      "headings": [
+        "# Canonical Questions｜真人面试能力归一化层",
+        "## 统计基线（Frozen Baseline）",
+        "## 十板块 Ownership",
+        "## 四种粒度",
+        "## 质量与结构入口",
+        "## 主要入口"
+      ],
+      "count_lines": [
+        "因此 235 道 Canonical 不等于 175 篇正文。"
+      ]
+    },
+    {
+      "path": "market/README.md",
+      "bytes": 3910,
+      "sha256": "00ba3f0aa396778b9b60d66c950164f2e50c31931c628d1a26daca5ee498bd4d",
+      "headings": [
+        "# Market｜AI Application / Agent 招聘市场证据层",
+        "## 1. 两种核心原始证据",
+        "### Jobs / JD",
+        "### HUMAN-A Interviews",
+        "## 2. Market 内部结构",
+        "## 3. 去重与质量原则",
+        "## 4. 与其他层的关系"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "market/analysis/README.md",
+      "bytes": 3000,
+      "sha256": "2741dc55c4c804e212d3bbac1f6423075e6ba330328488910425f0e1a6017918",
+      "headings": [
+        "# Market Analysis｜Frozen Canonical Baseline",
+        "## Frozen Baseline",
+        "## Top 20 真人面试信号",
+        "## Module evidence footprint"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "market/analysis/history/README.md",
+      "bytes": 439,
+      "sha256": "ca5dd8a80ac6c889c12d986b7f4b4c16a2b0dd92c98a3ae0a1371da075aa023e",
+      "headings": [
+        "# Market Analysis History｜历史阶段分析"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "practice/README.md",
+      "bytes": 829,
+      "sha256": "7f6b329e9e71ea589e68c8cdc5b162f703f655d0dbc7878493c3b25bdaed685c",
+      "headings": [
+        "# Practice｜横向实践体系",
+        "## 两条实践线",
+        "### 1. Coding & Problem Solving",
+        "### 2. Developer Workflow / Tooling"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "practice/coding/README.md",
+      "bytes": 7440,
+      "sha256": "0ca42c907398a5930fafecf083fa1955a5057d648afc41af634cf374ab663851",
+      "headings": [
+        "# Coding｜从程序执行到算法与工程交付",
+        "## 1. 本轨道解决什么",
+        "## 2. 九章主线与知识归属",
+        "## 3. 每章怎样使用",
+        "## 4. 动手入口",
+        "## 5. Hot100 怎样贯穿而不打断主线",
+        "## 6. 维护与验证"
+      ],
+      "count_lines": [
+        "> 面向初学者的横向实践轨道，与十个 Curriculum 知识模块并行。课程包含 9 章、1 张 Hot100 映射表、22 题基础 Notebook 与一个三文件 AI Coding 练习。",
+        "第 02 章集中讲主线与 Hot100 训练反复需要的基础操作，按所属类型组织，而非穷举接口。低频工具在具体任务需要时就地解释输入、效果与边界，例如快读中的字节、第 K 大中的 heapreplace、成对抵消中的异或；不把它们全部前移成入门负担。第 05 章介绍节点不等于已经教会树遍历；递归、DFS/BFS 的完整执行放在第 06 章。知识归属与实际解题前提需要同时成立。",
+        "[第 03 章 Notebook](exercises/03-basic-exercises.ipynb)与正文 E01–E22 一一对应：任务和样例可见，编写区与测试可运行，参考答案默认折叠。GitHub 提供静态预览，实际运行使用 JupyterLab 等环境的 Python 3 内核；空白函数不能通过测试是预期行为。",
+        "[第 09 章分页修复项目](exercises/09-ai-coding-lab/README.md)包含故意有缺陷的初始实现、验收测试与折叠参考实现。按需求调查、复现、修改并重跑，而不是直接复制答案。",
+        "官方题面与在线提交使用 [LeetCode 热题 100](https://leetcode.cn/studyplan/top-100-liked/)。ACM 和 AI Coding 的外部练习入口分别在第 04、08、09 章；不把外部平台动态题量当作课程元数据。",
+        "第 03 章是练习题、样例、测试与答案的唯一维护源。修改后执行："
+      ]
+    },
+    {
+      "path": "practice/coding/exercises/09-ai-coding-lab/README.md",
+      "bytes": 2498,
+      "sha256": "4b8e351270ac09d8076fb810df9b8022077057127578096c322c4851cce95959",
+      "headings": [
+        "# 分页修复练习｜从失败测试到最小修改",
+        "## 任务契约",
+        "## 实践流程"
+      ],
+      "count_lines": [
+        "[← 第 09 章](../../docs/09-ai-coding.md) · [Coding 首页](../../README.md)"
+      ]
+    },
+    {
+      "path": "practice/tooling/README.md",
+      "bytes": 448,
+      "sha256": "4fcf304082253e25b7befea67444dad1da14cec7d58a5edd7f782547e3f2137b",
+      "headings": [
+        "# Tooling Practice｜开发工作流",
+        "## 入口"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/README.md",
+      "bytes": 3725,
+      "sha256": "c38fb173d7a273305e230e4bc3a3f0317e2014b03a42ae5699c0c4f8002e7063",
+      "headings": [
+        "# Products｜成熟 AI 系统源码学习",
+        "## 1. 这一层解决什么",
+        "## 2. 与其他层的边界",
+        "## 3. 产品类别",
+        "## 4. 产品源码学习规则",
+        "## 5. 推荐进入方式"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/README.md",
+      "bytes": 6532,
+      "sha256": "801d954ad0dbd2fc822793ece2ab9247b460c3053fea8027b9ec737754149437",
+      "headings": [
+        "# Agent Products｜成熟 Agent 产品源码学习",
+        "## 1. 学习对象与职责",
+        "## 2. 固定学习结构",
+        "## 3. 产品目录与固定源码快照",
+        "## 4. 四个产品的架构差异",
+        "## 5. 源码事实与工程解释",
+        "## 6. 核验规则",
+        "## 7. 推荐学习方式"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/claude-code/README.md",
+      "bytes": 5057,
+      "sha256": "76a2726e28f51f757b0c19968e7ca7aa4c11b4aeb4b21a076774b93bde001578",
+      "headings": [
+        "# Claude Code｜从一次代码任务理解完整执行过程",
+        "## 学习对象与版本边界",
+        "## 核心设计",
+        "## 阅读顺序",
+        "## 必要前提",
+        "## 使用方式"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/codex/README.md",
+      "bytes": 5221,
+      "sha256": "003efcb8201a19213a089a3510fa527677c1fb774a9af67f7490bfc3394f3438",
+      "headings": [
+        "# Codex｜从源码理解持续执行的编程 Agent",
+        "## 学习对象与版本边界",
+        "## 阅读主线",
+        "## 核心设计：先认识一条最小工作链",
+        "## 怎样读代码并检验理解"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/deepseek-harness/README.md",
+      "bytes": 8677,
+      "sha256": "0c966e6a8a6daa3c493c339b8e28c022cd9505aaf754b2b3f802b45e7ef71d9d",
+      "headings": [
+        "# DeepSeek Harness｜沿一个任务理解上下文、记忆、工具与恢复",
+        "## 核心设计：先建立一个最小系统模型",
+        "## 四章怎样连起来",
+        "## 为什么它的源码分布在许多插件里",
+        "## 阅读版本与运行前提",
+        "## 第二遍怎样重建主线"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/deepseek-harness/labs/README.md",
+      "bytes": 7602,
+      "sha256": "46fa6e82733f20a420c18e85efd52f5c3516fc4e9c14d465d50e499659b6ad30",
+      "headings": [
+        "# DeepSeek Harness｜从源码判断到实际验证",
+        "## 1. 固定源码与环境",
+        "# 只读取源码、Git 状态和本机版本；不会安装依赖、修改工作区或调用模型。",
+        "## 2. 建立可复现的记录",
+        "## 3. 实验 A：补充要求何时进入请求",
+        "## 4. 实验 B：引用快照与跨会话记忆",
+        "## 5. 实验 C：执行顺序和结果传播",
+        "## 6. 实验 D：中断后的真实状态核对",
+        "## 7. 用任务结果验收，而不是只看模型结束"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/deer-flow/README.md",
+      "bytes": 9737,
+      "sha256": "ca7a8bff6ddd0e6f38ea6ca64095e22a07faec73b51edec0cdcabef1d7676fac",
+      "headings": [
+        "# DeerFlow 2.0｜沿一次任务理解智能体怎样工作",
+        "## 核心设计",
+        "## 1. 先认清四个运行对象",
+        "## 2. 一次任务怎样经过系统",
+        "## 3. 阅读主线",
+        "## 4. 用问题寻找源码",
+        "## 5. 版本与使用边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/deer-flow/labs/README.md",
+      "bytes": 4125,
+      "sha256": "312518628cbade13dfcd806a1fc9f46b3307fb1221c2a761541d3ccb6e3b4029",
+      "headings": [
+        "# DeerFlow 源码小实验｜先预测，再检查真实函数的结果",
+        "## 1. 环境与运行",
+        "## 2. 运行之前先预测",
+        "## 3. 与本机固定上游源码比较",
+        "## 4. 继续使用字节固定的真实配置实验",
+        "## 5. 下一层应该验证什么"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "products/agent/deer-flow/review/README.md",
+      "bytes": 7219,
+      "sha256": "577bdbcbe98687274568c3b3d9ddb73183085940b9b78a0477e4d894237d6112",
+      "headings": [
+        "# DeerFlow 回顾｜用状态变化重建系统",
+        "## 1. 用四个问题重新画主线",
+        "## 2. 容易混淆的状态对照",
+        "## 3. 综合任务：模型说已经完成，哪些证据够用",
+        "## 4. 换条件，检验能否迁移",
+        "## 5. 面试前重建一段完整表达"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "references/README.md",
+      "bytes": 1393,
+      "sha256": "53166c27467853bb398b5bfa9109179b7c985dd2c3ce89ef43b41706f283b321",
+      "headings": [
+        "# References｜权威技术证据层",
+        "## 索引",
+        "## 与 Curriculum、Products、Market 的边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "references/agent/README.md",
+      "bytes": 4603,
+      "sha256": "93b58e76f4287f61894068a465d829735bdedabce57cff7ecfc5dda9dea18302",
+      "headings": [
+        "# Agent｜源码与权威资料索引",
+        "## 1. 证据体系",
+        "### Tier A｜HUMAN-A 真人面试证据",
+        "### Tier B｜成熟产品固定源码快照",
+        "### Tier C｜官方文章、开放规范与原始论文",
+        "### Tier D｜课程抽象",
+        "## 2. 冲突处理顺序",
+        "## 3. Curriculum 与 Products 的证据关系",
+        "## 4. 维护规则"
+      ],
+      "count_lines": [
+        "Capability 到 Agent 24 章教材的正式映射见 [Runtime Capability Map](runtime-capability-map.md)。"
+      ]
+    },
+    {
+      "path": "references/backend-engineering/README.md",
+      "bytes": 13410,
+      "sha256": "1a0d754f8b4a375b23e7677f9ea7ffa561ed3b8b1a673b18c4ecbb1938a4bb77",
+      "headings": [
+        "# Backend Engineering｜按问题查找技术依据",
+        "## 版本与运行范围",
+        "## 按当前要回答的问题查资料",
+        "### 一次请求完成了什么，后端负责到哪里",
+        "### 哪些状态必须保存，恢复时相信哪一份",
+        "### 从字节到安全请求：TCP、TLS 与 HTTP",
+        "### 怎样传递结果，断线后怎样继续",
+        "### 并发工作由谁执行，等待放在哪里",
+        "### 连接怎样复用，容量怎样计算",
+        "### 到达速度超过处理能力时怎么办",
+        "### 等多久，超时之后还发生什么",
+        "### 怎样识别同一次操作，避免重复副作用",
+        "### 什么时候值得再试，怎样防止故障放大",
+        "### 消息怎样交付，确认到底确认了什么",
+        "### Kafka 怎样分工、保序与恢复消费",
+        "### 进程重启后，任务怎样继续推进",
+        "### 多份数据不一致时，怎样恢复业务正确性",
+        "### 谁能访问什么，权限怎样贯穿请求与任务",
+        "### 不可信输入怎样被限制在安全边界内",
+        "### 多个服务实例怎样被找到和选中",
+        "### 从慢请求的证据定位瓶颈",
+        "### 把应用故障追到 Linux 资源",
+        "### 部署、探针与停机怎样配合应用",
+        "### 配置和版本怎样安全改变",
+        "### 把通用机制映射到 Java、Spring 与 Go",
+        "## 使用参考资料时的边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "references/fastapi/README.md",
+      "bytes": 7807,
+      "sha256": "77e196ff323bf99fe0b126e8c9877c3878a2f4136e0484d2544a122ec4957429",
+      "headings": [
+        "# FastAPI｜官方资料、版本与验证边界",
+        "## 1. 版本基线",
+        "## 2. 请求、输入与输出",
+        "## 3. 依赖、资源与执行",
+        "## 4. 流式、WebSocket与取消",
+        "## 5. 外部资源、安全与上传",
+        "## 6. 验证、观测与部署",
+        "## 7. 如何阅读验证记录"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "references/llm-foundation/README.md",
+      "bytes": 10667,
+      "sha256": "b01f4faacb12c280494227563e720f7c552b38d4e2e873a25e752f9ab9deb46d",
+      "headings": [
+        "# LLM Foundation｜模型机制与应用边界的技术依据",
+        "## 适用基线",
+        "## 输入如何形成可计算的序列",
+        "## 表示、Attention 与生成",
+        "## KV、调度与显存",
+        "## 模型调用、检索与多模态",
+        "## 微调、偏好优化与蒸馏",
+        "## 验证和来源追溯",
+        "## 补充核验：量化与换出"
+      ],
+      "count_lines": [
+        "- [PyTorch torchao：Quantization-Aware Training](https://docs.pytorch.org/ao/stable/workflows/qat.html)：用于第 07 章区分 PTQ 与 QAT 的训练时机和量化误差模拟，不作为已运行训练的证据。"
+      ]
+    },
+    {
+      "path": "references/mysql/README.md",
+      "bytes": 7685,
+      "sha256": "d75681cdc6503e81878c11144c529fe8758c4ff487ade5c378f279c96f47ce9d",
+      "headings": [
+        "# MySQL｜版本与技术事实资料索引",
+        "## 1. 版本基线",
+        "## 2. 从操作到访问路径",
+        "## 3. 事务、锁与恢复",
+        "## 4. 扩展、同步与导入",
+        "## 5. 如何使用证据"
+      ],
+      "count_lines": [
+        "- [复制](https://dev.mysql.com/doc/refman/9.7/en/replication.html)与[半同步复制](https://dev.mysql.com/doc/refman/9.7/en/replication-semisync.html)：核对接收、持久化和应用阶段，以及等待超时后的边界，对应第 16 章。",
+        "- [分区概述](https://dev.mysql.com/doc/refman/9.7/en/partitioning-overview.html)：区分一台服务器内的表分区与应用跨实例分片，对应第 18 章。",
+        "- [批量加载优化](https://dev.mysql.com/doc/refman/9.7/en/optimizing-innodb-bulk-data-loading.html)：理解批量大小、索引维护和导入成本，不将文档中的特殊加载设置直接用于在线业务，对应第 15 章。",
+        "- [预处理语句](https://dev.mysql.com/doc/refman/9.7/en/sql-prepared-statements.html)：核对查询结构与参数值的区别。驱动的具体写法按所用语言查阅，对应第 04 章。",
+        "第 15–19 章中的批量写入、复制、CDC、分片与应用建模，部分会触及应用设计边界。正文只保留理解 MySQL 责任所需的前提，不把 checkpoint、cache consistency 或完整跨系统恢复平台写成 MySQL 自带能力。"
+      ]
+    },
+    {
+      "path": "references/rag/README.md",
+      "bytes": 5922,
+      "sha256": "7d70a8f3ae1a0a9f0759b2177eec9eb6391c85f26b8e86cda5f2339a93ae7c61",
+      "headings": [
+        "# RAG｜按问题查技术依据",
+        "## 通用机制与具体实现",
+        "## 课程与运行版本",
+        "## 技术结论与业务选择"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "references/redis/README.md",
+      "bytes": 7216,
+      "sha256": "d44ab045a7e1f3e25d063cd0d835f76ddcfa5bd1d700392f51ca7eaf372e205a",
+      "headings": [
+        "# Redis 官方资料｜按需要核对机制与版本",
+        "## 1. 版本口径",
+        "## 2. 会影响旧答案的变化",
+        "## 3. 命令与数据的直接依据",
+        "## 4. 多步骤、复制与恢复",
+        "## 5. 应用、消息与排障",
+        "## 6. 来源与测试各证明什么"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "references/vector-db/README.md",
+      "bytes": 10121,
+      "sha256": "93922bea6e617f69e465dea7929cd1f37b064f6d257e3d59b0efc9c847d39256",
+      "headings": [
+        "# Vector Database｜权威资料与版本边界",
+        "## 版本基线",
+        "## 谁负责生成表示，谁负责存储与服务？",
+        "## “分数”究竟是哪一个数学量？",
+        "## 什么结果能作为 ANN 的精确对照？",
+        "## 搜索范围与向量表示分别怎样改变？",
+        "## 图怎样搜索，参数约束的是哪一步？",
+        "## 何时能因探测全部列表而恢复精确距离？",
+        "## PQ 的短编码和近似距离从哪里来？",
+        "## 怎样把索引参数变成可比较的选择？",
+        "## 记录主键、向量、元数据和更新如何对应？",
+        "## 过滤进入搜索的哪个阶段？",
+        "## 逻辑布局能否代替身份授权？",
+        "## 操作确认、查询可见、删除与恢复如何区别？",
+        "## 查询、增量与历史数据由哪些层协作？",
+        "## 容量公式算的是哪一份资源？",
+        "## 怎样核验能力形态，而不是背品牌印象？",
+        "## 相似性图和业务知识图有什么不同？",
+        "## 使用资料时的边界"
+      ],
+      "count_lines": []
+    },
+    {
+      "path": "tools/README.md",
+      "bytes": 4769,
+      "sha256": "fdeaf07f2327a7a2da55e6d27359d4650c239794affd24fd1953d190ae25514f",
+      "headings": [
+        "# Tools｜研究与质量自动化脚本",
+        "## GitHub Actions Runner 策略",
+        "## 生成文件一致性",
+        "## 官方岗位采集原则"
+      ],
+      "count_lines": []
+    }
+  ],
+  "broken_file_links": [],
+  "conflict_markers": []
+}
