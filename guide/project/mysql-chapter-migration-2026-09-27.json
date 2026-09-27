@@ -1,0 +1,174 @@
+{
+  "baseline_commit": "e9af8658c0d5789a366bb964e4b12a98f6409dfe",
+  "old_chapters": 23,
+  "new_chapters": 19,
+  "mapping": [
+    {
+      "old_path": "curriculum/04-mysql/docs/01-MySQL在AI应用中的职责.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/01-数据库与关系表.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/01-数据库与关系表.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/02-SQL基础与执行链路.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/02-单表查询与增删改.md",
+        "curriculum/04-mysql/docs/03-数据类型约束与表关系.md",
+        "curriculum/04-mysql/docs/04-关联查询与分组统计.md",
+        "curriculum/04-mysql/docs/05-SQL执行与索引基础.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/02-单表查询与增删改.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/03-Index基础.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/05-SQL执行与索引基础.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/05-SQL执行与索引基础.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/04-B+Tree索引原理.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/06-B+树与数据组织.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/06-B+树与数据组织.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/05-聚簇索引与二级索引.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/06-B+树与数据组织.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/06-B+树与数据组织.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/06-联合索引与最左前缀.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/07-覆盖索引-回表-ICP.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/08-索引失效与Optimizer.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/08-执行计划与慢查询.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/08-执行计划与慢查询.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/09-EXPLAIN与SlowSQL.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/08-执行计划与慢查询.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/08-执行计划与慢查询.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/10-主键设计与索引生命周期.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/14-主键索引与表结构演进.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/14-主键索引与表结构演进.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/11-ACID与事务.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/09-事务与ACID.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/09-事务与ACID.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/12-事务隔离级别.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/10-隔离级别与MVCC.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/10-隔离级别与MVCC.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/13-MVCC-Undo-ReadView.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/10-隔离级别与MVCC.md",
+        "curriculum/04-mysql/docs/11-并发修改锁与死锁.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/10-隔离级别与MVCC.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/14-锁与死锁.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/11-并发修改锁与死锁.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/11-并发修改锁与死锁.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/15-日志与两阶段提交.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/12-日志提交与恢复.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/12-日志提交与恢复.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/16-DeepPagination与查询优化.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/13-分页与查询成本.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/13-分页与查询成本.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/17-SchemaDesign.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/03-数据类型约束与表关系.md",
+        "curriculum/04-mysql/docs/14-主键索引与表结构演进.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/03-数据类型约束与表关系.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/18-Replication与读写分离.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/16-复制与读写分离.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/16-复制与读写分离.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/19-Sharding.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/18-分片与扩容.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/18-分片与扩容.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/20-CDC与数据同步.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/17-CDC与下游同步.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/17-CDC与下游同步.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/21-BulkWrite与写入路径.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/15-批量写入与写入成本.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/15-批量写入与写入成本.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/22-AI应用数据建模.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/19-AI应用数据建模.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/19-AI应用数据建模.md"
+    },
+    {
+      "old_path": "curriculum/04-mysql/docs/23-MySQL-Redis一致性边界.md",
+      "new_paths": [
+        "curriculum/04-mysql/docs/19-AI应用数据建模.md"
+      ],
+      "redirect_default": "curriculum/04-mysql/docs/19-AI应用数据建模.md"
+    }
+  ],
+  "note": "一对多去向通过审查记录说明；旧 MySQL+Redis 一致性章只保留本地事务与权威数据边界，完整缓存一致性回到 Redis 后的 Backend 主责。当前导航指向 19 章新课程，不在 docs 留空壳章节。"
+}

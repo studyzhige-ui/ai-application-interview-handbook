@@ -1,300 +1,264 @@
 # MySQL｜Review 与综合自测
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块主页](../README.md) · [↑ Handbook](../../../README.md) · [学习路线](../../../guide/learning-path.md) · [面试表达](../interview/高频面试题.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+这是第二遍回顾，不是压缩教材。先合上正文重画关系，再用具体数据推结果；忘了某一步时回到对应章节，不要求重新背完所有名词。
 
----
+## 1. 四张回顾地图
 
-> 正文 23 章负责从 0→1 建立知识体系；本目录只负责第二遍 / 第三遍复习，**不能替代正文学习**。
-
-MySQL 最容易出现的问题不是“名词没见过”，而是：
+### 数据与查询：语义和执行是两层
 
 ```text
-B+Tree 会背
-但不会推执行路径
-
-MVCC 会背
-但不会推两个事务
-
-Redo / Undo / Binlog 会背
-但职责混在一起
-
-Sharding 会背
-但不知道为什么应该最后才学
+业务问题 → 表和关系 → SQL结果应是什么
+                         ↓
+                   可选访问路径 → 统计与成本 → 优化器选择
+                         ↓
+                   实际扫描/过滤/取行/排序 → 返回结果
+                         ↓
+                   EXPLAIN与测量 → 核对是否真的改善
 ```
 
-所以复习必须沿“因果链”进行。
+索引、覆盖、ICP并不是依次必须经过的流水线。它们描述可选择的访问路径及减少工作的方法；同一条 SQL 可能采用不同计划。
 
----
+### 事务：看版本、改记录、判结果
 
-## 1. 四张总图
-
-### 图一：查询性能链
-
-```mermaid
-flowchart LR
-    A["SQL"] --> B["Optimizer"]
-    B --> C["Access Path"]
-    C --> D["Index"]
-    D --> E["B+Tree"]
-    E --> F["Clustered / Secondary"]
-    F --> G["Composite Index"]
-    G --> H["Covering / ICP"]
-    H --> I["EXPLAIN"]
-    I --> J["Slow SQL"]
+```text
+业务不变量 → 一次事务要包含什么 → 提交或回滚
+                    ├─ 普通读取：隔离级别 → 读视图 → 可见版本
+                    ├─ 并发修改：索引路径 → 锁/条件检查 → 等待或成功
+                    └─ 失败处理：语句/事务回滚范围 → 核对未知提交结果
 ```
 
-复习顺序：
+### 恢复与传播：不要把不同“完成”混在一起
 
-`02 → 03 → 04 → 05 → 06 → 07 → 08 → 09 → 10`
-
----
-
-### 图二：事务正确性链
-
-```mermaid
-flowchart LR
-    A["Transaction"] --> B["Isolation"]
-    B --> C["MVCC"]
-    C --> D["ReadView"]
-    B --> E["Lock"]
-    E --> F["Record / Gap / Next-Key"]
-    F --> G["Deadlock"]
-    C --> H["Undo"]
-    A --> I["Redo"]
-    A --> J["Binlog"]
-    I --> K["Crash Recovery"]
-    J --> L["Replication / CDC"]
+```text
+本地修改 → 日志与提交 → 数据页逐步刷盘
+              ├─ 崩溃恢复：恢复必要状态，再处理未提交事务
+              ├─ 副本：接收日志 → 落盘 → 应用 → 可查询
+              └─ 下游：捕获变化 → 传递 → 幂等应用 → 保存消费位置
 ```
 
-复习顺序：
+### 数据分工：按谁负责判断来划边界
 
-`11 → 12 → 13 → 14 → 15`
-
----
-
-### 图三：规模增长链
-
-```mermaid
-flowchart LR
-    A["Schema"] --> B["Pagination"]
-    A --> C["Replication"]
-    C --> D["Read Scale"]
-    D --> E["Sharding"]
-    E --> F["CDC"]
-    F --> G["Bulk / Migration"]
+```text
+业务身份、约束、状态 → 关系库中的权威记录
+高频派生读取       → 可失效、可重建的缓存
+语义候选检索       → 带来源版本的检索索引
+大文件和产物       → 对象存储，关系库保留元数据/引用
 ```
 
-注意：真实学习顺序不是“因为 Sharding 高频就提前学 Sharding”，而是先理解单库，再理解副本，再理解分片。
+这是常见教学分工，不是所有产品必须使用同一套存储。关键是每类事实有明确依据，派生内容有重建和失效路径。
 
----
-
-### 图四：AI 数据层
-
-```mermaid
-flowchart LR
-    A["AI Application"] --> B["MySQL"]
-    A --> C["Redis"]
-    A --> D["Vector DB"]
-    A --> E["Object Storage"]
-    B --> F["Business Truth"]
-    C --> G["Cache / Session / Ephemeral"]
-    D --> H["Semantic Index"]
-    E --> I["Large Artifact"]
-```
-
-最重要的一句话：
-
-> **MySQL 保存结构化业务事实；Redis、Vector DB 和 Cache 层解决另外的问题。**
-
----
-
-## 2. 第一轮复习：只回答“为什么”
-
-不要看答案，口述下面问题：
+## 2. 先从结果检查基础模型
 
 <details>
-<summary>为什么 InnoDB 常使用 B+Tree，而不是红黑树？</summary>
+<summary>一张两行任务表，SELECT 只写标题列，会删除其余列吗？</summary>
 
-数据库索引面向 Page / Block I/O。B+Tree 扇出大、树高低，内部节点只保存 Key / Pointer，叶子有序且适合范围扫描；红黑树高度远大于 B+Tree，更适合内存中的指针结构而不是大规模页式磁盘索引。
+不会。它改变本次返回的列，不修改表或记录。[回看单表查询](../docs/02-单表查询与增删改.md)。
 
 </details>
 
 <details>
-<summary>为什么 Secondary Index 叶子通常保存 Primary Key？</summary>
+<summary>一名成员有两条任务，关联后出现两行姓名，是否一定是重复数据错误？</summary>
 
-因为 InnoDB 聚簇索引的叶子保存完整 Row。Secondary Index 找到目标后，可使用 Primary Key 回到 Clustered Index 取完整记录；同时主键变化会影响所有 Secondary Index，因此主键设计非常重要。
-
-</details>
-
-<details>
-<summary>为什么 RR 不能只用一句“MVCC 解决幻读”解释？</summary>
-
-普通 Consistent Read 依赖 MVCC Snapshot 保持重复读取一致；Locking Read / Range Update 还需要 Record / Gap / Next-Key Lock 控制并发插入。两类读取语义不同。
+不是。关联得到两组匹配，本例每行表示一条任务与其成员。需要成员去重或任务计数时要先明确结果形状。[回看关联查询](../docs/04-关联查询与分组统计.md)。
 
 </details>
 
 <details>
-<summary>为什么 Redo 与 Binlog 都存在？</summary>
+<summary>额度可以暂未填写，但有值时必须非负，CHECK 与 NOT NULL 应如何选择？</summary>
 
-Redo 是 InnoDB Crash Recovery / WAL 基础；Binlog 属于 Server 层，面向 Replication、PITR、CDC。职责不同，提交时需要协调二者状态。
+按题目允许缺值，不应机械加 NOT NULL；CHECK 拒绝负值，NULL 则按未知结果处理。约束应反映需求，不是越多越好。[回看约束](../docs/03-数据类型约束与表关系.md)。
+
+</details>
+
+## 3. 再用过程检查机制
+
+先口述或写出状态，再展开答案。题目使用正文已经建立的前提，不考隐藏在选读实现中的变量名。
+
+<details>
+<summary>1. 给 tasks 加了索引，SELECT * 仍慢。应该先看什么？</summary>
+
+先确认返回规模与真实计划。命中索引仍可能扫描很多索引项、回表很多次，或者在锁、连接池、网络上等待。对照 EXPLAIN 估算与实际行数，不以 key 非空作为完成标准。
+
+回看：[第 08 章](../docs/08-执行计划与慢查询.md)。
 
 </details>
 
 <details>
-<summary>为什么 Sharding 不是 MySQL 学习的前半程？</summary>
+<summary>2. 没有 ORDER BY，为什么不能拿一次显示顺序作为分页规则？</summary>
 
-因为它用巨大复杂度换容量和写扩展。必须先掌握单库 Schema / Index / Transaction / Replication，确认单节点成为真实瓶颈后，再承担跨分片 Query、Transaction、Unique、Migration 等成本。
+结果没有稳定顺序保证。分页需要显式排序，存在相同时间时增加唯一编号作为第二排序列。
+
+回看：[第 04 章](../docs/04-关联查询与分组统计.md)。
 
 </details>
 
----
+<details>
+<summary>3. LEFT JOIN 后在 WHERE 中筛右表名字，会留下未分配任务吗？</summary>
 
-## 3. 第二轮复习：自己推演执行路径
+不会。未匹配右表列为 NULL，该比较不为真，行被过滤。是否把条件放进 ON，取决于要限制匹配还是过滤最终结果。
 
-建议拿纸画出以下 8 个过程：
+回看：[第 04 章](../docs/04-关联查询与分组统计.md)。
 
-1. Secondary Index 等值查询 → 回表；
-2. Composite Index `(tenant_id,user_id,created_at)` 的范围扫描；
-3. `LIMIT 100000,20` 为什么慢；
-4. RR 下 A / B 两事务普通 SELECT 的 ReadView；
-5. `SELECT ... FOR UPDATE` 范围查询的锁语义；
-6. Deadlock 的循环等待；
-7. Commit 时 Undo / Redo / Binlog 的职责；
-8. Source → Binlog → Replica / CDC。
+</details>
 
-只要其中某一步画不出来，就回正文。
+<details>
+<summary>4. 两条联合索引 (tenant_id,status,created_at) 和 (status,tenant_id,created_at) 总是等价吗？</summary>
 
----
+不是。两列都等值时可能都服务该次查询，但只给一个条件、需要排序或分组时前缀关系不同。应从一组实际查询判断，不能只看单条等值语句。
 
-## 4. 第三轮复习：用真实面试深度验收
+回看：[第 07 章](../docs/07-联合索引覆盖与下推.md)。
 
-在 Canonical 统计基线（`S001–S279`）中，MySQL 高频 Topic 包括：
+</details>
 
-| Topic | HUMAN-A Sources |
-|---|---:|
-| Isolation Levels | 14 |
-| B+Tree | 13 |
-| Slow SQL / EXPLAIN | 11 |
-| Index Invalidation | 11 |
-| Composite Index | 10 |
-| Sharding | 10 |
-| MVCC / ReadView | 9 |
-| Covering / Back-to-table / ICP | 8 |
+<details>
+<summary>5. 查询所需列都在二级索引里，是否就说明所有情形绝无聚簇访问？</summary>
 
-但复习规则仍然是：
+覆盖描述列是否可从该索引取得。它通常减少取行，但实际 InnoDB 可见性检查等边界仍应以实现和计划为准，不能把逻辑覆盖升级成所有版本的物理零访问保证。
 
-> **频率决定“多练几遍”，不决定“删掉低频前置”。**
+回看：[第 07 章](../docs/07-联合索引覆盖与下推.md)。
 
-完整证据见：[`interview/canonical/mysql.md`](../../../interview/canonical/mysql.md)。
+</details>
 
----
+<details>
+<summary>6. 数据库有 100 万行，B+Tree 必然是三层、每查一次必然读磁盘三次吗？</summary>
 
-## 5. 四条面试追问链
+不能。页大小、键和记录宽度、填充率影响树高，Buffer Pool 又会改变实际磁盘访问。树的示意计算用于理解扇出，不是固定物理事实。
 
-### Index Chain
+回看：[第 06 章](../docs/06-B+树与数据组织.md)。
 
-```text
-为什么需要 Index
-→ 为什么 B+Tree
-→ Clustered / Secondary
-→ 为什么会回表
-→ Covering / ICP
-→ Composite / Leftmost Prefix
-→ 为什么 Optimizer 不选 Index
-→ EXPLAIN 怎么证明
-```
+</details>
 
-### Transaction Chain
+<details>
+<summary>7. 账户余额 70，要扣 80。条件 UPDATE 返回 0 行，后续该怎么办？</summary>
 
-```text
-ACID
-→ Isolation
-→ RC vs RR
-→ MVCC / ReadView
-→ Snapshot vs Locking Read
-→ Record / Gap / Next-Key
-→ Deadlock
-→ Redo / Undo / Binlog
-```
+视为扣减未成立，不写成功流水、不返回扣减成功。应用应结束或回滚本次业务单元，区分余额不足、对象不存在、版本冲突等条件。
 
-### Scale Chain
+回看：[第 09 章](../docs/09-事务与ACID.md)。
 
-```text
-慢查询
-→ Schema / Index
-→ Pagination
-→ Replication
-→ Replication Lag
-→ Sharding
-→ Cross-shard Query
-→ Re-sharding
-```
+</details>
 
-### AI Data Chain
+<details>
+<summary>8. RR 下 A 先读 100，B 改为120并提交；A 再普通 SELECT 与 FOR UPDATE 各读什么？</summary>
 
-```text
-哪些放 MySQL
-→ 哪些放 Redis
-→ 哪些放 Vector DB
-→ Document Version
-→ Agent Run / Step / Tool Event
-→ CDC
-→ Cache Consistency
-```
+在文中固定条件下，普通 SELECT 复用先前读视图得到100；锁定读读取当前可锁定记录得到120。不能把所有读取都解释成同一个旧快照。
 
----
+回看：[第 10 章](../docs/10-隔离级别与MVCC.md)。
 
-## 6. 掌握标准
+</details>
 
-一个 Topic 至少达到四层：
+<details>
+<summary>9. A 只执行 BEGIN，B 提交新值后 A 才第一次普通 SELECT，A 必然看旧值吗？</summary>
 
-```text
-L1 认识：知道名词
-L2 解释：能讲原理
-L3 推演：给 SQL / 并发顺序能分析
-L4 设计：能说 Failure / Trade-off / Scale
-```
+不必然。RR 的普通一致性读视图通常在第一次一致性读建立，不把 BEGIN 本身当作所有情况下创建快照；WITH CONSISTENT SNAPSHOT 是另一种明确用法。
 
-例如 MVCC：
+回看：[第 10 章](../docs/10-隔离级别与MVCC.md)。
 
-```text
-L1：知道 MVCC
-L2：知道 Undo + ReadView
-L3：能推 RC / RR 两个事务读什么
-L4：能解释长事务、Purge、Lost Update 边界
-```
+</details>
 
----
+<details>
+<summary>10. MVCC 能让“先读100，再写90”的两个扣减自动合成80吗？</summary>
 
-## 7. 推荐复习顺序
+不能。应用计算后的覆盖写可能丢失一次更新。可使用在数据库里计算的 UPDATE、带版本条件的更新，或在完整事务中先锁定再读写。
 
-第一次：
+回看：[第 10 章](../docs/10-隔离级别与MVCC.md)。
 
-```text
-README
-→ docs/01 ~ docs/23
-```
+</details>
 
-第二次：
+<details>
+<summary>11. 锁等待超时和死锁错误返回后，能直接认为此前所有语句都回滚了吗？</summary>
 
-```text
-本页四张图
-→ 回正文补盲点
-```
+不能。死锁通常回滚整个受害事务；默认锁等待超时通常只回滚等待语句。应用要显式决定结束和重试整个业务事务，不把剩余连接状态带回池。
 
-第三次：
+回看：[第 11 章](../docs/11-并发修改锁与死锁.md)。
 
-```text
-../interview/高频面试题.md
-→ ../interview/面试易错点.md
-```
+</details>
 
-面试前：
+<details>
+<summary>12. CHECK(credits >= 0) 能拒绝 NULL 吗？</summary>
 
-```text
-../interview/面试前速查表.md
-```
+不能单独依赖它。CHECK 接受 TRUE 或 UNKNOWN，NULL 比较可能为 UNKNOWN；必须另有 NOT NULL 来拒绝缺失值。
+
+回看：[第 03 章](../docs/03-数据类型约束与表关系.md)。
+
+</details>
+
+<details>
+<summary>13. COMMIT 回应丢了，重试为什么可能重复扣减？</summary>
+
+服务器可能已提交，只是客户端没收到结果。应使用稳定业务键查询和去重，不能把网络超时解释为数据库肯定没做。
+
+回看：[第 09 章](../docs/09-事务与ACID.md)。
+
+</details>
+
+<details>
+<summary>14. Redo 是否只记录最终提交成功的事务？</summary>
+
+不是。未提交事务的页修改也可能留下 Redo。恢复先依赖日志重建必要状态，再利用事务信息和 Undo 回滚未提交修改。
+
+回看：[第 12 章](../docs/12-日志提交与恢复.md)。
+
+</details>
+
+<details>
+<summary>15. 副本接收并落盘了日志，能立即读到主库最新行吗？</summary>
+
+不保证。还要看应用进度；半同步确认也不等于应用完成。读后写一致性应采用符合要求的路由或等待机制。
+
+回看：[第 16 章](../docs/16-复制与读写分离.md)。
+
+</details>
+
+<details>
+<summary>16. CDC 先读完全量数据，再记录日志起点，有什么风险？</summary>
+
+扫描期间的修改可能既不在快照结果里，也不在后来起点之后，形成漏变更。快照与增量必须通过协调的一致边界衔接。
+
+回看：[第 17 章](../docs/17-CDC与下游同步.md)。
+
+</details>
+
+<details>
+<summary>16. CDC 写入已成功，保存消费位置失败，应如何设计？</summary>
+
+重启后可能重放同一事件，下游应用必须可重复执行或去重。业务版本比较还要原子化，删除也要保留防旧值复活的依据。
+
+回看：[第 17 章](../docs/17-CDC与下游同步.md)。
+
+</details>
+
+<details>
+<summary>16. 分成很多表但仍放同一个实例，是否消除了实例容量限制？</summary>
+
+没有。表数变化不等于资源增加；CPU、内存、磁盘和故障域仍可能共用。先量化真实瓶颈再判断是否需要物理分片。
+
+回看：[第 18 章](../docs/18-分片与扩容.md)。
+
+</details>
+
+<details>
+<summary>16. 已经导入十批中的六批，第七批超时，重跑整个导入会怎样？</summary>
+
+前六批可能已提交，第七批结果未知。应按稳定业务键与批次进度核对，以可恢复方式续跑，而不是假设整个任务原子回滚。
+
+回看：[第 15 章](../docs/15-批量写入与写入成本.md)。
+
+</details>
+
+## 4. 三项小任务
+
+| 任务 | 成功依据 |
+|---|---|
+| 查询团队10每名成员的待办数，同时保留零任务成员。 | 说明LEFT JOIN和过滤的位置，明确使用COUNT(t.id)而不是把补出的空行计成任务。 |
+| 用A/B连接重现RR与RC的差异。 | 每次实验先重置余额、设置隔离级别，说明哪次普通读取建立视图，不混用同一连接。 |
+| 画出写入成功但确认丢失的过程。 | 区分客户端观察与数据库事实；给出稳定业务键、结果查询和安全重试条件。 |
+
+这些任务使用[实验环境](../examples/README.md)。没有实际运行MySQL时，手算与推演仍有价值，但不能写成已通过真实数据库验收。
+
+## 5. 面试前的检查顺序
+
+先给结论和适用条件，再解释一个具体过程，最后补代价与验证办法。索引题要有查询，事务题要有会话顺序，复制题要有应用进度；跨系统题先说明本地事务能保证到哪里，再指出剩余责任属于哪个组件。
+
+⚠️ 看过地图不代表会操作；能跑一条SQL也不代表解释了并发或生产成本。相关问题与来源范围见[面试题](../interview/高频面试题.md)和[冻结Canonical](../../../interview/canonical/mysql.md)。

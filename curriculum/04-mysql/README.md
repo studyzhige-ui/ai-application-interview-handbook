@@ -1,171 +1,104 @@
-# MySQL｜关系型数据、事务与查询工程
+# MySQL｜从关系表到可靠的数据操作
 
-[← AI Backend Engineering](../03-backend-engineering/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Redis →](../05-redis/README.md)
+[← FastAPI](../02-fastapi/README.md) · [↑ Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [Redis →](../05-redis/README.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
-> **教材：23 个连续知识小板块** · **HUMAN-A Canonical：26** · **独立来源覆盖：55**  
-> **质量门：✅ Granularity / Coverage / Content Depth**
+**课程范围：19 章。技术语境：MySQL Community 9.7 LTS、InnoDB。**
 
-理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
+本模块面向第一次系统学习数据库的读者。从一份团队任务清单开始，逐步理解记录如何组织、查询怎样得到结果、并发修改如何协调，以及故障和规模增长带来什么问题。阅读不以掌握某种应用编程语言为前提；动手部分以 SQL 和数据库客户端为共同界面。
 
----
-
-## 1. 这个模块解决什么
-
-理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
-
-学习目标不是记住一组名词，而是能稳定回答：
+## 1. 这条主线怎样推进
 
 ```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
+表、记录与 SQL
+      ↓
+关系、约束与查询结果
+      ↓
+索引组织与查询成本
+      ↓
+事务、并发与恢复
+      ↓
+分页、结构演进与批量写入
+      ↓
+复制、变化同步与分片
+      ↓
+应用数据建模与跨系统边界
 ```
 
----
+先会描述想要什么结果，再解释数据库怎样更有效地得到它；先理解一个数据库的提交和恢复，再讨论多份数据之间如何传播。面经追问放在相应机制之后，用来深化理解，不改变必要前置。
 
-## 2. 在十板块中的位置
+## 2. 课程目录
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → **MySQL** → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+### 把数据存好、查对
 
-模块角色：**Data / 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。**
+先建立表与 SQL 的模型，再组合关系和统计。
 
----
+1. [数据库、MySQL 与关系表](docs/01-数据库与关系表.md)
+2. [用 SQL 查询、增加、修改和删除记录](docs/02-单表查询与增删改.md)
+3. [字段、约束与表之间的关系](docs/03-数据类型约束与表关系.md)
+4. [把多张表查在一起，把多条记录汇总起来](docs/04-关联查询与分组统计.md)
 
-## 3. 固定课程原则
+### 解释查询为什么快或慢
 
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+从有序记录进入索引结构，最后用计划检验判断。
 
-同时固定区分：
+5. [从查对结果到少做工作：执行计划与索引](docs/05-SQL执行与索引基础.md)
+6. [B+ 树怎样组织数据：聚簇索引与二级索引](docs/06-B+树与数据组织.md)
+7. [联合索引怎样定位、排序和减少回表](docs/07-联合索引覆盖与下推.md)
+8. [读懂执行计划，找到查询真正慢在哪里](docs/08-执行计划与慢查询.md)
 
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
+### 协调并发并恢复修改
 
-所以本模块是 **26 道 Canonical → 23 个教材知识块**，两者不需要一一对应。
+区分业务事务、版本读取、修改冲突与故障恢复。
 
----
+9. [事务：哪些修改必须一起成立](docs/09-事务与ACID.md)
+10. [并发读取：隔离级别与 MVCC](docs/10-隔离级别与MVCC.md)
+11. [并发修改：条件更新、锁与死锁](docs/11-并发修改锁与死锁.md)
+12. [日志、提交与故障恢复](docs/12-日志提交与恢复.md)
 
-## 4. 正式学习主线
+### 让单库长期可用
 
-```text
-SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolation / MVCC / Lock / Log → Pagination / Schema → Replication / Sharding / CDC / Bulk Write → AI Data Modeling / Cache Boundary
-```
+按查询与写入需求选择分页、结构和批量边界。
 
-这个顺序按知识依赖组织，而不是按面经频率排序。
+13. [分页：先跳过，还是从上次的位置继续](docs/13-分页与查询成本.md)
+14. [数据增长以后，怎样维护主键、索引和表结构](docs/14-主键索引与表结构演进.md)
+15. [批量写入：Batch、事务与写入成本](docs/15-批量写入与写入成本.md)
 
----
+### 数据如何扩展和传播
 
-## 5. 正式课程目录
+分别理解复制、下游同步与分片的职责。
 
-### Part A｜查询与索引
+16. [复制与读写分离：多份数据何时一致](docs/16-复制与读写分离.md)
+17. [CDC：把已提交的变化可靠地交给下游](docs/17-CDC与下游同步.md)
+18. [分片：确认单机边界之后再拆数据](docs/18-分片与扩容.md)
 
-1. [MySQL 在 AI Application 中负责什么](docs/01-MySQL在AI应用中的职责.md)
-2. [SQL 基础与一条 SQL 的执行链路](docs/02-SQL基础与执行链路.md)
-3. [Index 基础：索引到底在优化什么](docs/03-Index基础.md)
-4. [为什么 InnoDB 使用 B+Tree](docs/04-B+Tree索引原理.md)
-5. [聚簇索引与二级索引](docs/05-聚簇索引与二级索引.md)
-6. [联合索引与最左前缀](docs/06-联合索引与最左前缀.md)
-7. [覆盖索引、回表与 ICP](docs/07-覆盖索引-回表-ICP.md)
-8. [索引失效与 Optimizer 成本选择](docs/08-索引失效与Optimizer.md)
-9. [EXPLAIN 与 Slow SQL 排查](docs/09-EXPLAIN与SlowSQL.md)
-10. [主键设计与索引生命周期](docs/10-主键设计与索引生命周期.md)
+### 回到应用的数据设计
 
-### Part B｜事务与并发正确性
+将身份、状态、历史、外部动作和缓存分别安排。
 
-11. [ACID 与事务边界](docs/11-ACID与事务.md)
-12. [四种事务隔离级别](docs/12-事务隔离级别.md)
-13. [MVCC、Undo 与 ReadView](docs/13-MVCC-Undo-ReadView.md)
-14. [Record / Gap / Next-Key Lock 与 Deadlock](docs/14-锁与死锁.md)
-15. [redo、undo、binlog 与两阶段提交](docs/15-日志与两阶段提交.md)
+19. [把数据库知识用在 AI 应用的数据模型中](docs/19-AI应用数据建模.md)
 
-### Part C｜数据增长与生产扩展
+## 3. 正文、实验和复习各怎样使用
 
-16. [Deep Pagination 与查询优化](docs/16-DeepPagination与查询优化.md)
-17. [Schema Design：从访问模式设计表](docs/17-SchemaDesign.md)
-18. [Replication 与读写分离](docs/18-Replication与读写分离.md)
-19. [Sharding：什么时候才需要分库分表](docs/19-Sharding.md)
-20. [CDC / Data Sync](docs/20-CDC与数据同步.md)
-21. [Bulk Write 与 MySQL Write Path](docs/21-BulkWrite与写入路径.md)
+**首次阅读看 docs。** 正文用小表、少量 SQL、状态表和时间线解释机制。参数、返回值、条件与结果都在使用位置说明；不要求先运行一整套服务。
 
-### Part D｜AI Application 数据层边界
+**需要观察时进入实验。** [实验环境](examples/README.md)集中处理连接和重置；[配套实验](examples/experiments.md)按正文问题组织 SQL 和双会话顺序。初始化、清理和自动检查不反复插进原理讲解。较长的可选实现仍贴近它服务的问题，不另建一套高级教材。
 
-22. [AI Application Data Modeling](docs/22-AI应用数据建模.md)
-23. [MySQL + Redis Consistency 的边界](docs/23-MySQL-Redis一致性边界.md)
+**第二遍用 Review。** [回顾地图与综合自测](review/README.md)帮助重建关系；[面试问题](interview/高频面试题.md)、[易错点](interview/面试易错点.md)和[速查卡](interview/面试前速查表.md)用于表达和查漏，不替代正文。
 
----
+## 4. 本模块的知识边界
 
-## 6. 真人面经怎样影响本模块
+MySQL 负责关系模型、SQL、InnoDB 索引、事务、锁、日志与数据库侧扩展机制。应用语言只影响驱动接口，不改变这里建立的基本问题。
 
-Canonical 统计基线（`S001–S279`）：本模块有 **26 道 Primary Canonical、55 个独立 HUMAN-A 招聘流程覆盖**。
+应用建模末尾只建立跨系统责任边界：InnoDB 事务不能自动提交 Redis、消息队列、向量索引或外部 API。Redis 的数据结构、TTL 与缓存行为在下一模块建立；Cache Aside、Outbox、双写失败窗口和跨系统恢复在学完 MySQL、Redis 后由 Backend 系统学习。
 
-重点市场信号包括：
+## 5. 官方资料与真人面经怎样使用
 
-- Isolation Levels
-- B+Tree
-- Slow SQL / EXPLAIN
-- Index Invalidation / Composite Index
-- Sharding
-- MVCC / Lock
+[官方资料索引](../../references/mysql/README.md)约束技术事实和适用版本。冻结 S001–S279 基线中的 **26 道 MySQL 主责题、55 个独立来源覆盖**，仍由 [Canonical](../../interview/canonical/mysql.md)维护。本课程不因重新分章改动来源数量或题目归属。
 
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
+面经帮助检验：能否根据给定数据推索引范围、比较 RC 与 RR、解释锁等待、定位慢查询、说明复制旧值与跨系统边界。面经只用于发现共同机制和追问深度，不把原题、来源编号或某一场场景直接写进学习主线。没有直接面经频率的表、NULL、关联等必要基础，同样保留并讲清。逐项教学去向与实际回读范围见[维护记录](../../guide/project/mysql-reader-revision-2026-09-27.md)。
 
----
+## 6. 怎样判断自己已经理解
 
-## 7. 模块边界
+能预测一条 SQL 的结果，说明它为什么得到这些行；能沿两个事务的时间线解释可见值或等待；能指出优化到底少做哪一步工作；能区分本地提交与外部同步完成。
 
-- InnoDB 索引、事务、MVCC、锁与日志归 MySQL。
-- DB + Cache 最终一致性的完整机制归 AI Backend Engineering。
-- Redis Lock、TTL、Cluster 归 Redis；跨组件架构选择归 System Design。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview 与证据入口
-
-| 入口 | 链接 | 用途 |
-|---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
-
-研究与质量证据：
-
-- [Canonical Questions](../../interview/canonical/mysql.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
-
----
-
-## 9. 推荐学习方式
-
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
-
-1. **第一遍：建立因果链。** 按 `docs/01 → 23` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
-
----
-
-## 10. 教材状态
-
-```text
-docs/      ✅ 01–23 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Content Depth       ✅
-```
-
-下一环：[Redis](../05-redis/README.md)。
+每章的引入、面试回答、易错点和折叠自测帮助完成这几件事。章节数量、代码能导出或静态检查通过，不等于理解或运行验收完成。实际服务器与显示验证范围另见维护记录。

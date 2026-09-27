@@ -6,7 +6,7 @@
 
 ## 总路线
 
-[Python Foundation](../curriculum/01-python/README.md) → [FastAPI](../curriculum/02-fastapi/README.md) → [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) → [MySQL](../curriculum/04-mysql/README.md) → [Redis](../curriculum/05-redis/README.md) → [Vector Database](../curriculum/06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) → [RAG](../curriculum/08-rag/README.md) → [Agent](../curriculum/09-agent/README.md) → [System Design](../curriculum/10-system-design/README.md)
+[Python Foundation](../curriculum/01-python/README.md) → [FastAPI](../curriculum/02-fastapi/README.md) → [MySQL](../curriculum/04-mysql/README.md) → [Redis](../curriculum/05-redis/README.md) → [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) → [Vector Database](../curriculum/06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) → [RAG](../curriculum/08-rag/README.md) → [Agent](../curriculum/09-agent/README.md) → [System Design](../curriculum/10-system-design/README.md)
 
 ### 成熟产品源码层（不计入十模块）
 
@@ -37,7 +37,7 @@ Programming Fundamentals → Python Coding → ACM → Data Structures → Probl
 | 01 | [Python Foundation](../curriculum/01-python/README.md) | 13 | 15 | 建立 AI Application / Agent Engineer 所需的 Python 语言、对象模型、结构化数据与并发 Runtime 基础。 |
 | 02 | [FastAPI](../curriculum/02-fastapi/README.md) | 16 | 4 | 把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。 |
 | 03 | [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) | 22 | 39 | 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。 |
-| 04 | [MySQL](../curriculum/04-mysql/README.md) | 23 | 26 | 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。 |
+| 04 | [MySQL](../curriculum/04-mysql/README.md) | 19 | 26 | 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。 |
 | 05 | [Redis](../curriculum/05-redis/README.md) | 24 | 19 | 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。 |
 | 06 | [Vector Database](../curriculum/06-vector-db/README.md) | 16 | 12 | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 |
 | 07 | [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) | 14 | 23 | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 |
@@ -77,12 +77,12 @@ Request / Network → Concurrency / Pool / Backpressure → Timeout / Retry / Id
 
 市场校准：**39 Canonical / 125 independent HUMAN-A flows**。
 
-## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 23 blocks
+## 04. [MySQL](../curriculum/04-mysql/README.md) — 19 blocks
 
 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
 
 ```text
-SQL Execution → Index / B+Tree / Optimizer / EXPLAIN → Transaction / Isolation / MVCC / Lock / Log → Pagination / Schema → Replication / Sharding / CDC / Bulk Write → AI Data Modeling / Cache Boundary
+表与 SQL → 关系、约束与统计 → 索引与执行计划 → 事务、MVCC、锁与恢复 → 分页、结构演进与批量写入 → 复制、CDC 与分片 → 应用数据建模与跨系统边界
 ```
 
 市场校准：**26 Canonical / 55 independent HUMAN-A flows**。
