@@ -38,7 +38,7 @@ README.md                   系统地图、源码快照、关键模块与阅读�
 
 | 产品 | 固定源码快照 | 学习入口 |
 |---|---|---|
-| OpenAI Codex | `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea` | [进入](codex/README.md) |
+| OpenAI Codex | `openai/codex@67a709665ac7b50311b93e32612c9a8281684787` | [进入](codex/README.md) |
 | Claude Code | `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b` | [进入](claude-code/README.md) |
 | DeepSeek Harness | `deepseek-ai/deepseek-harness@ddefc45fbc7f8e46dd73185e68295696d1297887` | [进入](deepseek-harness/README.md) |
 | DeerFlow 2.0 | `bytedance/deer-flow@e2feca1e567d9bafce657de8ad8bc668bd7ad513` | [进入](deer-flow/README.md) |

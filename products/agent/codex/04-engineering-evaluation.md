@@ -1,805 +1,316 @@
-# 04. Codex Engineering & Evaluation｜把 Context、Memory、Tool 放回完整产品里看
+# 04｜工程边界与评测：怎样证明 Agent 真的完成了工作
 
-[← Tool](03-tool-lifecycle.md) · [Codex 总览](README.md)
+[← 上一章：工具](03-tool-lifecycle.md) · [模块入口](README.md)
 
-> **源码基线：** `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea`
+假设 Codex 已经读过分页函数、写入补丁，并输出“修复完成”。随后你发现测试命令从未成功启动。哪里出了问题？不是缺少一个更漂亮的总结，而是把模型回复、工具状态和任务验收混成了一件事。
 
-前面三篇分别沿 Context（上下文）、Memory（长期记忆）和 Tool（工具）追了一条完整生命周期。
+前三章解释了信息怎样进入模型、经验怎样保存、动作怎样执行。本章把它们放回完整系统，检查服务生命周期、子 Agent、执行环境、持久化、重试与观测。最终要形成一种判断习惯：**完成声明必须由与目标相匹配的证据支持；失败则必须定位到具体边界。**
 
-但真实 Codex 不是三个模块并排摆着。它们都依附在同一个 Session（运行实例）上，和 App Server、Extension Registry（扩展注册表）、Multi-Agent（多智能体）、Code Mode（代码模式）、Exec Server（执行服务器）、Thread Store（线程存储）、State DB（状态数据库）以及 Rollout Trace（运行追踪）共同工作。
+## 1. 先看谁拥有资源，再看组件名字
 
-所以这一篇不再增加一堆新名词，而是回答一个更实际的问题：
+一次模型请求结束后，MCP 连接、命令进程、工具批准记录和活跃历史并不一定都销毁。若每一步都重新建立全部资源，会增加成本；若把本该隔离的状态无限共享，又可能串用权限和任务内容。
 
-> **如果 Codex 已经运行几十轮、连接了很多能力、拉起了子 Agent、经历过网络断开和 Context Compaction（上下文压缩），它靠什么保证还能继续运行、还能恢复、还能解释“刚才到底发生了什么”？**
+`SessionServices` 汇集会话所需服务：模型客户端、线程存储、活跃持久化句柄、MCP 运行实例、命令进程管理、指令管理、扩展数据、Agent 控制和追踪等。它的价值是表达资源归属，不是建议把所有业务逻辑塞进一个巨型对象。依据：[服务持有关系](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/state/service.rs)。
 
----
+| 生命周期 | 适合放什么 | 错放可能造成什么 |
+|---|---|---|
+| 跨轮次的执行实例 | 可复用客户端、连接拥有者、存储访问与进程管理 | 每步重复创建连接，或结束时遗漏清理 |
+| 一个 Turn | 当前输入的执行、取消与后续活动 | 把上轮的完成或取消状态带入新任务 |
+| 单次模型请求 | 本次设置、环境和工具视图 | 模型说明与实际调用解释不一致 |
+| 持久 Thread | 恢复所需历史和明确存储的状态 | 错把内存句柄当作可恢复数据 |
 
-## 1. 先看 Session 里到底装着什么
+例如，源码明确将模型客户端作为会话级资源跨 Turn 共享，MCP 运行实例承担该线程活跃连接的拥有者职责；每个 StepContext 则持有本次请求的绑定视图。复用连接与固定请求快照并不冲突：前者管理资源成本，后者保证解释一致。
 
-理解整个系统最直接的源码之一是：
+资源被某个对象持有，不代表进程崩溃后仍可使用。恢复时需要重新建立活跃资源，并从持久材料重建状态；不能把保存了一串对象名称当作恢复实现。
 
-- `codex-rs/core/src/state/service.rs`
+## 2. 扩展怎样进入执行流程，而不变成另一套主循环
 
-`SessionServices` 不是为了让我们背字段，而是揭示了一条 Thread 在 Core 运行时真正依赖哪些长期服务。
+记忆读取和技能能力不需要各自重新实现一个完整 Agent。扩展通过生命周期、上下文或工具等接口，参与已有流程。宿主保留执行主线，扩展贡献它负责的信息和能力。
 
-可以把它分成几组来理解。
+记忆扩展是具体例子：线程启动时保存配置，配置变化时更新有效状态，构造上下文时提供记忆指令，在条件满足时提供专用工具。状态放在相应扩展数据中，而不是靠全局变量猜当前线程是谁。依据：[记忆扩展安装与贡献点](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/memories/src/extension.rs)、[会话与线程扩展数据](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/state/service.rs)。
 
-### 模型与推理
+这能提高职责清晰度，但不能因此假定所有扩展互不影响。例如，一个扩展改变输入，另一个扩展根据输入作审批，顺序和更新后的参数就直接影响安全。评测应覆盖相互作用，而不只测“每个扩展单独能加载”。
 
-Session 持有一个 session-scoped `ModelClient`（会话级模型客户端）。每个 Turn 又会从它创建 turn-scoped `ModelClientSession`。
+## 3. 多 Agent 增加的是执行者，也增加了交接边界
 
-这保证长期认证、Provider（模型提供方）和连接策略可以复用，但 Turn 的 sticky routing state（粘性路由状态）不会泄漏到下一轮。
+如果任务足够大，可以让一个子 Agent 调查测试，另一个检查实现。但分页练习很小，强行拆成多个 Agent 很可能增加沟通成本；是否拆分应看工作是否能够独立推进和验收，而不是产品支持该能力就必须使用。
 
-### 能力系统
+Codex 的 `AgentControl` 是协调 Agent 树的接口，具体本地实现为 `LocalAgentControl` 与其共享运行状态。接口处理创建子线程、输入交付、恢复加载、状态观察、中断以及共享资源；它是 Rust 内部协作接口，不是一个已经实现所有远端保障的通用网络协议。依据：[AgentControl 接口](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agent/api.rs)、[本地控制实现](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agent/control.rs)。
 
-Session 同时持有：
-
-- MCP Runtime；
-- Plugins Manager（插件管理器）；
-- Skills Service（技能服务）；
-- Extension Registry；
-- Tool Search Cache；
-- Code Mode Service。
-
-也就是说，模型可调用能力不是在 `run_turn` 里临时硬编码出来的，而是 Session 长期维护能力来源，每个 Step 再根据当时状态投影出一份 Tool Router。
-
-### 执行与安全
-
-Session 还持有：
-
-- Exec Policy Manager（执行策略管理器）；
-- Approval Store（批准记录）；
-- Network Approval Service（网络批准服务）；
-- Unified Exec Process Manager（统一进程执行管理器）；
--当前 Environment 集合。
-
-所以“模型决定运行命令”只占很小一段，真正的可执行性由 Runtime 长期服务共同决定。
-
-### 持久化与诊断
-
-Session 还有：
-
-- LiveThread；
-- ThreadStore；
-- State DB；
-- Session Telemetry；
-- Analytics Client；
-- Rollout Trace Context。
-
-这说明 Codex 的一条 Thread 从一开始就是“可持久化、可观测、可恢复”的运行对象，而不是先做一个聊天循环，之后再补日志。
-
----
-
-## 2. Extension Registry 是怎样把 Memory、Skills、MCP 接进来的
-
-之前三篇里我们已经看到 Memory Extension、Skills Extension，但如果只分别看它们，很容易误以为这是几个互不相关的特例。
-
-真正的总入口之一在：
-
-- `codex-rs/app-server/src/extensions.rs`
-- `codex-rs/ext/extension-api/`
-
-App Server 会建立 `ExtensionRegistryBuilder`，再依次安装 Queue、History Notes、Goal、Git Attribution、Guardian、Memories、MCP、Web Search、Image Generation、Skills 等扩展。
-
-Extension API 允许一个扩展参与很多生命周期，而不是只能“注册一个 Tool”。
-
-例如扩展可以监听：
+一个关键区别是交付模式。仅入队消息不会自动开始工作；触发新工作的消息需要满足相应执行条件。发送返回的收据表示输入被接纳，不表示模型已经阅读、理解或完成任务。已知子 Agent 没有加载，也不等于它已经完成。
 
 ```text
-Thread Start / Resume / Stop
-Turn Start / Stop / Abort / Error
-Context contribution
-World State contribution
-Tool contribution
-Tool Start / Finish
-Token usage
-Skill invocation
-MCP server contribution
+父 Agent 提交子任务
+       ↓
+子线程接纳输入        ← 交付收据只证明到这里
+       ↓
+调度与执行开始
+       ↓
+模型、工具和验证活动
+       ↓
+返回结果与证据        ← 父 Agent 仍需判断能否整合
 ```
 
-这解释了为什么 Codex 的 Memory 能同时做到：
+因此，父 Agent 不能只看到一个子线程标识，就把该部分标成完成。它需要取得实际结果、检查失败与范围冲突，并处理关闭或后续工作。
 
-- Thread 启动时准备自己的状态；
--向 Context 注入 summary；
--注册 search / read / note Tool；
--记录使用情况。
+## 4. 子 Agent 不是天然隔离、可靠和可无限扩展
 
-也解释了 Skills 为什么既会影响 Context，又会贡献 Tool 和 World State。
+功能注册表中的通用多 Agent 能力与 Multi-Agent V2 是不同开关；在该快照中，V2 并非源码默认开启。解释某个 V2 行为前，要先确认实际生效的版本，不把最新代码路径写成所有会话共同默认。依据：[功能条件](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/features/src/lib.rs)。
 
-因此真正稳定的架构不是：
+共享预算和执行容量帮助限制任务扩张，但仍需理解接口承诺。`AgentControl` 明确说明：容量预检查不预留槽位，本地准入检查与运行计数并不是一个原子预留操作；本地完成通知是尽力交付，不是已经去重的可靠消息队列。不能将这些接口包装成“分布式任务引擎已经保证恰好执行一次”。依据：[容量与通知边界](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agent/api.rs)。
+
+派生子 Agent 时，还要明确任务范围、环境和权限。即使上下文分开，如果它们同时写同一文件，仍可能冲突。第三章中的本地工具门控也不会自动变成跨进程的业务锁。合理的工程做法是划分独占修改范围，主 Agent 在最终整合前重新检查差异与测试。
+
+这是可迁移的协作策略，不是声称 Codex 会自动替任何项目正确解决语义冲突。
+
+## 5. Code Mode 改变调用组织方式，不取消工具边界
+
+直接工具调用让模型逐次选择动作。Code Mode 允许模型用脚本组织调用、处理返回值，再交回结果；它适合减少某些重复往返，但也增加了脚本执行、等待和嵌套失败的状态。
+
+在已核验路径中，嵌套调用会回到 `ToolCallRuntime`，携带对应步骤上下文以及 Code Mode 来源信息。追踪系统还把代码单元、嵌套工具调用和最终模型可见输出分开表达。依据：[嵌套调用入口](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/code_mode/mod.rs)、[统一调用运行时](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs)、[追踪表示](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/rollout-trace/README.md)。
+
+脚本里的返回值不一定全部进入模型上下文。因此，仅看最终对话，可能看不到某次嵌套工具实际收到的完整参数和结果。排障时需要追到代码单元与嵌套调用，而不是把外层一句“执行失败”当作根因。
+
+Code Mode 与 Code Mode Host 也不是同一个开关。底层宿主能力存在，不表示该请求启用了完整 Code Mode。不要凭名称相近就推断默认行为。依据：[分别定义的功能项](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/features/src/lib.rs)。
+
+## 6. 命令在哪里执行，比命令文字更重要
+
+同一条 `python -m unittest discover -v`，在练习目录执行与在空目录执行，结果不同；在本机与另一执行环境执行，看到的文件和可用解释器也可能不同。
+
+Codex 的请求快照包括所选执行环境，各环境有工作目录、根目录、权限配置和执行能力等信息。工具编排根据环境选择沙箱与执行方式，也包含由执行器管理进程沙箱的分支。因此，不能把“模型调用命令工具”统一画成“宿主本机直接启动一个无限权限的 shell”。依据：[TurnEnvironment 与权限](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn_context.rs)、[环境相关执行分支](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/orchestrator.rs)。
+
+命令启动返回也不一定代表进程退出。源码的会话服务包含统一命令进程管理器，工具体系区分启动命令与继续写入或读取进程输出。交付测试结果时，应记录实际退出状态与完成输出，不能只记录进程标识。依据：[进程服务归属](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/state/service.rs)、[命令相关工具注册](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/spec_plan.rs)。
+
+## 7. 持久化保存哪些事实，为什么还有 flush
+
+`ThreadStore` 将线程持久化与具体介质分开。对上层而言，稳定身份是 ThreadId；实现可以负责解析为本地历史文件或其他存储。公开仓库中的本地实现使用文件与 SQLite，不能反推所有部署都使用同样介质。依据：[存储接口](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/thread-store/src/store.rs)、[本地实现](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/thread-store/src/local/mod.rs)。
+
+本地实现中，规范历史以 Rollout（运行历史记录）材料提供重放依据，可查询的线程元数据由 SQLite 等索引支持；元数据观察和历史追加不是同一个职责。不要看到列表页能显示线程标题，就推断全部模型上下文已经可靠保存。
+
+更重要的是**持久化返回语义**。某些上下文允许先入队，再通过后续持久化屏障确认完成；`Standard` 持久化则要求完成后返回。`flush_thread` 要等待排队材料达到接口要求的持久、可读状态；正常关闭需要处理待写内容；初始化失败时的 `discard_thread` 则不强制把未持久化准备数据保存下来。依据：[PersistContext、flush、shutdown 与 discard](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/thread-store/src/store.rs)。
+
+| 观察到的状态 | 可以据此断言什么 | 还不能断言什么 |
+|---|---|---|
+| 输入已在内存中接纳 | 活跃流程取得了输入 | 已经完成持久化 |
+| 允许后台持久化的调用返回 | 实现可以已将材料排队 | 未经过后续屏障的写入一定落稳 |
+| 对应 flush 成功 | 达到该存储接口约定的持久、可读边界 | 远端业务副作用也处于同一个事务 |
+| 正常关闭成功 | 关闭路径完成相应待写处理 | 崩溃路径一定有同样清理机会 |
+
+“屏障”在这里指等待此前写入完成的确认点，不是另一个模型提示。这个最小模型足以理解为什么崩溃测试和正常退出测试不能互相替代。
+
+## 8. 恢复的是历史与执行条件，不是把现实倒带
+
+设分页补丁已经写入文件，但记录工具成功结果之前进程崩溃。恢复时读到的历史可能仍像“修改尚未确认”。若直接重复原动作，就可能重复应用补丁，或者错误地覆盖用户在崩溃后补充的修改。
 
 ```text
-Core 里写 memory if
-Core 里写 skills if
-Core 里写 mcp if
+工具请求进入执行
+    ↓
+文件或外部系统发生变化
+    ↓             ← 此处崩溃：动作可能已成，历史未确认
+记录工具结果
+    ↓
+完成必要持久化
+    ↓
+后续模型判断与任务验收
 ```
 
-而是：
+这条时间线是故障分析模型，不是声称实际运行中已复现某个 Codex 缺陷。它揭示的是外部动作与内部记录不共享事务时的普遍空隙。
 
-> **Core 提供生命周期插槽，能力模块通过 Extension Registry 接入。**
+恢复后需要核对实际代码差异、当前版本和已有测试证据；对于外部服务，可能需要查询动作标识或使用业务幂等机制。Idempotency（幂等）指重复处理同一业务请求不产生额外效果，不能仅由“有重试”推导出来。通用跨系统幂等设计归 Agent 与后端课程；本章只解释 Codex 恢复不能替代这些保证。
 
-这是当前源码里非常重要的一层，也是上一版文档没有充分讲清楚的地方。
+存储接口提供恢复、历史加载、最新模型上下文加载和不同历史模式；部分能力的默认实现可以明确不支持。**存在接口方法不等于所有后端都实现相同保障。** 依据：[存储能力与默认分支](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/thread-store/src/store.rs)。
 
----
+## 9. 三种重试必须分开
 
-## 3. Multi-Agent 在 Codex 里不是“两个模型互相发 A2A 消息”
+“失败后再试”至少可能指模型请求、工具执行和后台记忆任务。它们失败的对象与副作用完全不同。
 
-Codex 当前 Multi-Agent V2 有自己的内部 Agent Control（Agent 控制）抽象。
+| 重试对象 | 处理的问题 | 不应推出的结论 |
+|---|---|---|
+| 模型传输与请求 | 连接中断或其他可重试请求错误 | 所有错误都有同一个固定次数上限 |
+| 工具执行 | 如特定沙箱拒绝后的受控再次尝试 | 任何失败都可以提高权限再做一遍 |
+| 记忆后台任务 | 提取或整理的失败、租约和后续重试条件 | 只要函数被调用就已完成记忆更新 |
 
-关键源码：
+后两种已经在前文讲过。这里专门看模型请求的 `responses_retry.rs`。它先判断错误是否可重试，再决定等待、累计次数或切换备用传输。**当前实现有一个不消耗普通有限重试计数的连接重试分支**，条件同时包括：相关功能启用、请求属于 Sampling（模型采样）、错误为 `ConnectionFailed`、不是内部会话，并且提供者不是 Amazon Bedrock。依据：[完整条件与重试顺序](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/responses_retry.rs)。
 
-- `codex-rs/core/src/agent/api.rs`
-- `codex-rs/core/src/agent/types.rs`
-- `codex-rs/core/src/tools/handlers/multi_agents_v2.rs`
-- `codex-rs/core/src/tools/multi_agent_tool.rs`
+该功能在固定快照的源码默认开启；等待从 5 秒开始递增，单次上限为 60 秒。它表达的是这个分支没有普通次数上限，不是“进程永远不会停止”或“所有 API 错误都无限重试”。其他请求错误和路径仍有各自条件。依据：[功能默认值](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/features/src/lib.rs)。
 
-`AgentControl` 管的是一棵 Agent Tree（智能体树），操作包括：
+**等待成本也要明确单位。** 仅按这段退避规则假设连续进入五次等待，不计请求本身耗时，等待累计为 `5 + 10 + 20 + 40 + 60 = 135 秒`。这不是一次真实测试结果，也不是对完成时间的保证；它说明为什么排障不能只统计模型调用次数。
 
-- spawn：创建子 Agent；
-- resume：恢复；
-- send：发送任务或消息；
-- interrupt：中断当前工作；
-- close：关闭 Agent 及其后代；
-- inspect / list / watch：查询状态；
-- admit_turn：控制树级并发容量；
-- record_usage：记录共享预算；
-- turn_finished：把完成结果送回父级和任务发起者。
+普通有限重试耗尽后还可能尝试从 WebSocket 切换到 HTTP 等备用传输，但必须按代码分支理解。不能承诺所有连接错误最终都会经过同一切换路径，也不能把传输降级说成工具副作用已经被安全重做。
 
-这里最值得注意的注释是：
+## 10. 运行事件、对话历史与诊断追踪各自证明什么
 
-> 这些 Rust contract（Rust 契约）本身不定义 wire protocol（线协议）。
+模型总结通常只描述它认为发生了什么。为了定位失败，还需要知道哪个模型请求产生哪个调用，调用在哪里执行，以及哪些结果确实进入后续请求。
 
-也就是说，Codex 内部多 Agent 协作不是简单等价于“使用某个 A2A 标准协议”。
+Rollout Trace（运行轨迹诊断）采用先记录原始事件和载荷引用、再离线归约的方式。Reducer（归约器）把事件整理成线程、轮次、模型请求、工具调用、代码单元、终端活动以及它们之间的关系。它并不把所有运行日志都伪装成模型看见的对话。依据：[追踪结构与不变量](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/rollout-trace/README.md)。
 
-它先定义 Host 内部的控制语义：成员关系、调用权限、恢复、任务投递、预算和完成通知。不同 Host 可以再决定这些操作怎样跨进程或跨服务运输。
+| 证据 | 适合回答的问题 |
+|---|---|
+| 模型侧请求与响应材料 | 模型实际得到什么输入、生成什么输出？ |
+| 工具与终端事件 | 调用是否派发、进程是否完成、执行输出是什么？ |
+| Code Mode 嵌套记录 | 哪个脚本单元触发了哪次工具调用？ |
+| 父子 Agent 关系边 | 哪个任务发给谁，哪个结果回到哪一个父线程？ |
+| 规范历史与持久化记录 | 恢复应从什么材料重建？ |
 
-### 子 Agent 本质上仍然是 Thread
+一个运行时输出存在于诊断包中，不代表同样字节已经进入模型请求；相反，模型收到截断后的结果，也不代表诊断材料不存在完整版本。必须沿具体引用核对，不能靠猜测补全证据链。
 
-Spawn 出来的 Agent 有自己的 Thread ID、Agent Path（Agent 路径）、角色和状态。
+本地诊断追踪需要显式设置相应入口，采用尽力记录；它不是默认无损审计，也不是遥测的同义词。记录失败不应使正常任务因诊断功能而失败，因此“没有追踪事件”可能意味着未启用或记录失败，而非动作一定没发生。
 
-它可以从父级 Fork 一部分历史，也可以继承环境、角色指令和共享设置。
+> ⚠️ **注意：诊断包可能包含提示、工具参数、输出和路径。** 官方说明将这条本地追踪路径与遥测区分，但这不意味着整个产品从不联网，也不意味着可以把诊断包直接公开。分享前应检查敏感内容和授权范围。
 
-所以多 Agent 不是：
+## 11. 怎样定义“分页任务完成”
+
+验收要先于完成声明。统一练习已经给出页码、每页数量、非法参数、返回列表与不修改原输入等约定。缺陷实现的问题并不只在第一页，单独修正偏移不足以证明全部约定满足。
+
+将证据分成四层，会更容易定位缺口：
+
+| 层次 | 在分页任务中的检查 | 常见误判 |
+|---|---|---|
+| 结果 | 每个约定对应的返回值或异常是否正确 | 只看模型说“已修复” |
+| 过程 | 是否读过正确文件，保留原测试，执行于正确目录 | 把未启动的测试当作测试通过 |
+| 安全与范围 | 是否仅修改允许文件，没有绕过权限或删除断言 | 结果碰巧正确，就忽略越权修改 |
+| 资源 | 工具次数、token、等待和失败重试是否合理 | 更少调用就一概认定更好 |
+
+这些维度不能互相抵消。少花 token 但改坏接口，不算更优；全部现有测试通过但越权写入远端，也不算合格交付。测试覆盖的性质之外还要保持谨慎：有限测试集不是整个软件正确性的数学证明。
+
+质量与延迟的比较也需要相同条件。假设同一组 100 个教学任务中，成功数从 60 增至 85，而单任务耗时从 60 秒增至 120 秒：成功率提高的是 25 个百分点，单任务多等待 60 秒。这些是模拟数据，不是 Codex 实测。是否值得，应结合失败代价、用户可接受等待和任务期限判断，不能仅凭“更快”或“准确率更高”选方案。
+
+另一个模型可以辅助审查，但审查模型同样可能判断错误。存在明确测试与可核对差异时，不应让一句模型评价替代它们；依赖模型评分的部分，则要另行检查评分与人工认可结果是否一致。这是评测设计原则，不表示 Codex 已内置一个保证正确的评审者。
+
+## 12. 复用已有练习，不维护另一份“差不多”的测试
+
+实际练习位于 [AI Coding 分页实验](../../../practice/coding/exercises/09-ai-coding-lab/README.md)。题面、初始实现、测试与折叠参考答案都以该目录为准。
+
+在仓库根目录打开终端后进入练习目录，再执行：
+
+```bash
+cd practice/coding/exercises/09-ai-coding-lab
+python -m unittest discover -v
+```
+
+`cd` 改变当前工作目录；`python -m unittest` 使用当前 Python 解释器运行标准库测试工具；`discover` 发现测试；`-v` 显示各测试名称。命令应看到故意有缺陷的初始实现出现失败，这是练习起点，不是要求你删除测试。
+
+第一次运行前确认文件尚未被自己的上次修复改变。需要比较原版与参考版时，将练习复制到两个独立临时目录，分别启动测试进程。参考实现从题面中带标记的答案取得，复用原测试，不在本模块维护另一套算法。这样不会因为模块缓存、前一次修改或测试被替换而混淆结果。
+
+完成练习应提交三个可检查内容：偏移和参数校验的解释、实际代码差异、同一测试文件的执行结果。可以让 Codex 参与调查和修复，但必须另外记录所用 Codex 版本、模型、权限、工作目录及实际调用证据。**本地运行 Python 参考实现，不等于完成了真实 Codex 端到端验证。**
+
+## 13. 单元测试、模拟服务与真实运行不能相互冒充
+
+阅读上游测试可以知道哪些条件被设计为检查对象；没有运行，就只是测试代码审阅。即使运行了模拟服务测试，也不能直接证明外部真实服务、多个连接或生产环境行为相同。
+
+| 验证层次 | 典型证据 | 明确的边界 |
+|---|---|---|
+| 静态与语法检查 | 文档链接、源码路径、脚本编译结果 | 不执行真实模型或工具协议 |
+| 纯函数或本地单元测试 | 分页返回值、参数错误、输入不变 | 不验证 Agent 是否会正确选择动作 |
+| 模拟模型或服务测试 | 固定响应下的请求顺序、错误和恢复分支 | 不代表真实模型行为和服务故障特征 |
+| 真实 Codex 任务 | 实际版本、配置、工具轨迹、代码差异和测试 | 一次任务不覆盖所有并发与故障条件 |
+| 多连接与跨系统故障实验 | 中断、重复交付、外部写入及恢复检查 | 仍需说明环境、负载与故障注入范围 |
+| 生产观察 | 有权限采集的真实运行指标与坏例 | 不能由其他层的通过替代 |
+
+评测报告要写清哪层执行、哪层未执行、是否跳过，以及失败是否符合实验预期。不能为了得到一串 PASS，把模拟对象悄悄换成真实服务能力的名字。
+
+## 14. 怎样用变化后的条件检验机制
+
+复习不应只重复“什么是上下文、记忆、工具”。更有区分力的任务，是改变一个条件，观察系统能否保持正确判断。
+
+**上下文实验。** 长任务中途强调“不得改公开接口”，随后发生压缩。检查后续差异是否保留接口，模型请求中还有什么约束证据，不能只看摘要长度下降。
+
+**记忆实验。** 同一任务分别使用正确经验、过时经验和禁用记忆。对比任务结果、错误经验引入和成本；不要只看检索命中率。跨项目页码约定不同，是检验适用范围的一个小例子。
+
+**执行与恢复实验。** 在工具动作之后、成功记录之前制造中断，恢复后观察是否先查真实状态；对外部非幂等动作，必须明确允许的测试环境，不能在真实用户数据上随意重复。
+
+**多 Agent 实验。** 子任务已接纳但未执行、子 Agent 未加载、完成通知未到达时，父 Agent 能否区分状态，而不是看到收据就算完成。
+
+这些是待运行的实验设计，不是实际测量结果。它们使用了正文已建立的推理前提，不要求读者先学一套未介绍的评测框架。
+
+## 15. 一条坏例怎样定位，而不是只换提示词
+
+看这个**模拟失败时间线**：模型先后提出三次相同测试命令；三次都因环境中找不到解释器而失败；随后输出“测试通过，任务完成”。
+
+首先确认命令的真实退出结果。这里没有任何一次测试成功启动，所以不能讨论“测试用例通过率提高了多少”。其次检查错误是否进入模型下一次请求，是否被截断、配错调用或被摘要误写；然后看模型是否原样重复失败，以及停止条件为什么允许无证据完成。
+
+最后才决定修复位置：执行环境配置、工具错误表示、上下文组装、停止验证或用户提示都可能参与，但不能预先认定“模型不够聪明”。修复后应把同类条件加入回归，检查是否不再产生虚假的完成声明。
+
+这是一个定位方法，不是声称 Codex 内置了能自动阻止所有错误总结的完成验证器。公开执行循环、钩子和追踪提供了实现与观察边界，最终任务质量仍需要实际证据。
+
+## 16. 第二遍复习：重建同一条任务链
 
 ```text
-一个 Prompt 里写：
-“你现在有三个专家”
+任务与明确约束
+    ↓
+指令、历史、环境和工具形成单次请求快照
+    ↓
+模型提出动作
+    ↓
+发现／路由 → 校验 → 权限与执行环境 → 工具动作
+    ↓
+结果、错误和副作用分别核对
+    ↓
+继续采样、必要压缩或结束本轮
+    ↓
+以代码差异和测试证明任务结果
+    ↓
+持久历史支持恢复；符合条件的历史再进入记忆流程
 ```
 
-而是 Runtime 真正维护多条 Thread 及其父子关系。
+对子 Agent 和 Code Mode，也沿同一问题追问：它们在哪个节点增加了一层执行或交接？信息如何回来？谁负责确认完成？不要为每一种能力重新背一套互不相连的架构图。
 
----
+## 17. 本章小结
 
-## 4. Agent Message 为什么区分 QueueOnly 和 TriggerTurn
+一个可用的编程 Agent，不只需要能调用工具，还需要明确资源归属、请求快照、执行许可、状态持久化、失败语义与完成证据。Codex 的公开实现提供这些边界的具体样本，但它不是所有部署都具备相同保证的通用生产架构。
 
-多 Agent 通信还有一个很有意思的细节。
+读源码时，既要看到已经存在的能力，也要看到条件：部分功能默认关闭，部分接口允许不支持，部分通知和诊断是尽力处理，部分重试没有普通次数上限。工程判断来自这些条件，而不是组件名称的数量。
 
-`MessageDeliveryMode` 区分：
+## 18. 🎯 面试怎么回答
 
-- `QueueOnly`：只把消息放进目标 Agent 的 mailbox（邮箱），不会唤醒空闲 Agent；
-- `TriggerTurn`：如果需要，可以启动目标 Agent 的工作。
+**问：与“LLM 加几个工具”相比，Codex 的工程复杂度在哪里？**
 
-为什么需要这个区分？
+> 🎯 复杂度在持续工作的状态和边界。一次 Turn 可以经历多次请求，每次要保持模型看到的环境和工具与调用解释一致；工具还要处理权限、并行、取消和结果回填。长任务需要压缩、持久化和恢复，但恢复历史不能代替核对外部副作用。多 Agent 与 Code Mode 增加交接层，因此必须区分输入接纳、实际执行和任务完成。最后用差异、测试与轨迹评价结果，而不是把最终回答当作证明。
 
-因为：
+**追问：有持久化和重试，为什么仍会重复执行？**
 
-> “收到一条信息”和“立刻开始一次新的模型推理”不是同一件事。
+> 🎯 因为外部动作和内部成功记录可能不在一个事务中。动作已发生而记录尚未完成时崩溃，恢复历史不能确定外部状态。应先核对已有动作，必要时使用业务幂等标识，而不是盲目重做。还要区分模型请求重试、沙箱拒绝后的工具再次尝试和后台记忆重试，它们的适用条件与副作用不同。
 
-如果任何子 Agent 消息都自动触发模型 Turn，多 Agent 系统很容易形成互相唤醒的消息风暴。
+## 19. 自测：写出证据，而不是一个结论
 
-这也是生产多 Agent 和 Demo 最大的差异之一：Runtime 必须明确消息的 delivery semantics（投递语义），而不是只有 send_message()。
+**任务一。** 子 Agent 返回输入接纳收据；父 Agent 没收到后续结果；该子 Agent 当前未加载。能否将子任务标为完成？给出需要补查的信息，并指出哪个状态不能互相替代。
 
----
+<details><summary>提示</summary>
 
-## 5. Code Mode 为什么不是“另一个模型”
+把身份存在、输入已接纳、运行已加载、模型已处理和任务通过验收分开。
 
-Codex 还有 Code Mode。
+</details>
+<details><summary>答案与解释</summary>
 
-相关源码：
+不能。应检查子任务的运行与持久记录、实际完成状态及输出证据，必要时按支持的路径加载或观察。未加载不等于已完成，收据也不等于模型已处理。即使拿到完成文本，父 Agent 仍需按任务要求验收和整合。
 
-- `codex-rs/code-mode/`
-- `codex-rs/code-mode-runtime/`
-- `codex-rs/core/src/tools/code_mode/`
+</details>
 
-模型可以生成一段受控脚本，由 Code Mode Runtime 执行。脚本内部还能继续调用 nested Tool（嵌套工具）。
+**任务二。** 工具已向外部系统写入一条记录，内部成功结果尚未完成持久化就崩溃。恢复后只看到未确认调用。提出处理顺序；再解释为什么 `flush_thread` 不能替外部服务提供业务幂等。
 
-但这些嵌套工具并不会绕开前面 Tool Lifecycle 讲过的 Runtime。
+<details><summary>答案与解释</summary>
 
-源码中的 `submit_nested_tool` 会重新构造内部 `ToolCall`，并通过 `ToolCallRuntime.handle_tool_call_with_source` 进入同一套 Tool Router / Handler 流程，只是 `ToolCallSource` 标记为 Code Mode。
+先根据已有动作标识或查询条件核对外部状态，再决定补记录、继续或安全重试。flush 确认的是线程存储的待写材料，不把外部服务纳入同一个事务，也不使重复业务请求自动无副作用。没有可核验标识时，应保留不确定状态而不是猜测成功或失败。
 
-所以：
+</details>
 
-> **Code Mode 改变的是模型如何组合工具，不是取消 Tool Runtime 的权限和执行边界。**
+**任务三。** 一个报告写着：“读取源码，找到上游恢复测试；运行 Python 分页参考答案通过；所以 Codex 多连接断线恢复和生产安全已通过。”逐项重写验证状态，给出缺失证据。
 
-为什么需要它？
+<details><summary>答案与解释</summary>
 
-假设任务需要连续做很多小数据处理：
+源码与测试文件属于阅读证据；Python 参考答案属于本地单元测试证据。真实 Codex 运行、实际模型和权限、多个连接下的故障实验、跨系统副作用恢复以及生产安全均未由此验证。报告应分别列为未执行，而不是合并为一次 PASS。
 
-```text
-读列表
-→ 调 Tool A
-→ 过滤结果
-→ 调 Tool B
-→ 再做本地转换
-```
+</details>
 
-如果每一个微小步骤都重新回模型采样，往返次数和 Context 都会增加。
+## 源码回读索引
 
-Code Mode 可以把一部分确定性组合放在受控 Runtime 里执行，只把最终有价值的结果返回模型。
+| 想回答的问题 | 固定源码入口 |
+|---|---|
+| 谁拥有连接、模型客户端与存储资源 | [state/service.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/state/service.rs) |
+| 多 Agent 交付和共享资源承诺什么 | [agent/api.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agent/api.rs)、[agent/control.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agent/control.rs) |
+| 持久化返回、flush 与恢复有什么边界 | [thread-store/src/store.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/thread-store/src/store.rs)、[local/mod.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/thread-store/src/local/mod.rs) |
+| 哪些连接失败会持续重试 | [responses_retry.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/responses_retry.rs) |
+| 运行记录与模型可见历史怎样分开 | [rollout-trace/README.md](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/rollout-trace/README.md) |
+| 怎样练习由证据支持代码修复 | [统一分页练习](../../../practice/coding/exercises/09-ai-coding-lab/README.md) |
 
----
-
-## 6. Exec Server 为什么说明 Codex 已经不只是“本机 shell Agent”
-
-Workspace 里还存在完整的：
-
-- `codex-rs/exec-server/`
-- `codex-rs/exec-server-protocol/`
-- `codex-rs/core/src/environment_selection.rs`
-
-这意味着 Codex 的执行环境不是固定等于“当前 CLI 所在机器”。
-
-Thread 可以有 Environment（环境）选择；工具执行时会带 `TurnEnvironment`，最终把文件系统、工作目录、Permission Profile 和网络能力解析到具体执行环境。
-
-因此成熟 Agent 的工具调用模型更接近：
-
-```text
-Tool Intent
-        ↓
-选择 Environment
-        ↓
-解析该环境下的 workspace roots / permission
-        ↓
-在对应 Exec Backend 中执行
-```
-
-而不是：
-
-```text
-subprocess.run(command)
-```
-
-这也是为什么 StepContext 必须保存 Environment snapshot：环境也可能在 Turn 进行过程中变化。
-
----
-
-## 7. Thread Store、Rollout 和 State DB 分别保存什么
-
-这三者经常被混成“Codex 的数据库”。
-
-源码职责其实很清楚。
-
-### Thread Store：线程存储边界
-
-`codex-rs/thread-store/README.md` 明确把 `ThreadStore` 定义成 Codex Thread 的 storage boundary（存储边界）。
-
-活跃 Thread 一般通过 `LiveThread` 持久化。它负责有序追加 canonical history，并同步 metadata。
-
-### Rollout：顺序历史记录
-
-本地实现会把 canonical history 写成 Rollout JSONL。
-
-它适合保存：
-
-- Response Item；
-- Turn lifecycle event；
-- Context checkpoint；
-- World State；
-- Compaction；
-- token usage；
--其他恢复所需顺序事实。
-
-### State DB：可查询状态
-
-SQLite State DB 更适合保存需要按条件查询的数据，例如：
-
-- Thread metadata；
-- Memory job；
--一些索引和状态。
-
-所以：
-
-```text
-Rollout
-更像“发生过什么”的顺序事实
-
-State DB
-更像“现在可查询什么”的结构化状态
-```
-
-两者可以互补。
-
-这也是为什么 Thread Store README 特别强调：raw history append（原始历史追加）本身不应该偷偷推断 metadata。推断逻辑应该在更上层完成，再显式更新 store。
-
----
-
-## 8. Resume 为什么是“恢复执行状态”，不是“重新显示聊天记录”
-
-Context 篇已经讲过 replacement-history checkpoint。
-
-放到完整产品里，Resume（恢复）还需要恢复更多东西。
-
-`ThreadManager` 和 `Session::record_initial_history` 会区分 New、Resumed、Forked 等初始历史类型。
-
-恢复时不仅重建 ContextManager，还会恢复：
-
-- previous turn settings；
-- token usage；
-- Context Window identity；
-- World State baseline；
-- Thread metadata；
--必要的 Multi-Agent / Environment 状态。
-
-这就是为什么“保存 messages 数组”无法实现同等级的 Resume。
-
-真正目标应该是：
-
-> **恢复以后，下一次模型采样的行为条件与中断前保持语义一致。**
-
-可以称为 behavioral resume equivalence（行为恢复等价性）。
-
-这比“UI 里历史消息都显示出来了”严格得多。
-
----
-
-## 9. 网络断开以后，为什么 Agent 不应该立刻失败
-
-模型请求也有自己的故障生命周期。
-
-源码：
-
-- `codex-rs/core/src/responses_retry.rs`
-- `codex-rs/core/src/client.rs`
-- `codex-rs/protocol/src/error.rs`
-
-Responses Stream（响应流）如果在完成前断开，Runtime 会先看这个错误是否可重试，再结合 server retry advice（服务端重试建议）或 backoff（退避）等待后重连。
-
-Retry（重试）有预算，不能无限循环。
-
-如果 WebSocket（长连接）连续失败，满足条件时可以 fallback（降级）到 HTTP，再继续同一个 Turn。
-
-这一层的关键原则是：
-
-> **传输故障属于 transport layer（传输层），不应该轻易升级成“整个 Agent 任务失败”。**
-
-但这只有在请求可以安全重放时才成立。涉及真实副作用的 Tool Call 则必须由 Tool 层自己保证不会因为模型 stream 重试而被重复执行。
-
----
-
-## 10. Codex 为什么需要细粒度错误分类
-
-`CodexErrorDetails` 中有很多错误类别，例如：
-
-- ContextWindowExceeded；
-- Stream；
-- ConnectionFailed；
-- RateLimitExceeded；
-- ToolCollision；
-- Sandbox；
-- Interrupted；
-- QuotaExceeded；
-- InternalAgentDied；
-- Fatal。
-
-这些不是为了报错文字更丰富，而是因为不同错误的恢复权不同。
-
-可以用三个例子理解。
-
-### ContextWindowExceeded
-
-这是上下文资源问题。更合理的方向是 Compaction / 新 Context Window，而不是盲目网络重试。
-
-### Sandbox（沙箱）Denied（拒绝）
-
-这是执行权限问题。Runtime 需要判断 Policy 是否允许更高权限；允许时才请求 Approval 或有限升级。
-
-### ConnectionFailed
-
-这是 transport 问题。可以在 retry budget 内重新连接，必要时换 HTTP。
-
-成熟 Agent 的恢复逻辑应该先问：
-
-> **这是谁的失败？这一层有没有权力修？**
-
-而不是捕获所有 Exception 然后统一 retry。
-
----
-
-## 11. Rollout Trace 为什么和普通日志不一样
-
-最值得读的诊断文档之一是：
-
-- `codex-rs/rollout-trace/README.md`
-
-它自己总结的设计思想是：
-
-> **observe first, interpret later —— 先记录，再解释。**
-
-Runtime 在线执行时，只忠实记录原始事件和大 payload 的引用；离线 reducer（归约器）再把这些证据解释成 semantic graph（语义图）。
-
-为什么不能在线直接构造最终图？
-
-因为复杂 Agent 中有很多异步时序。
-
-例如一个 Code Mode nested Tool 的 runtime start（运行开始）事件，可能先于包含该 Tool Call 的模型 response item 到达。如果在线 recorder 一看到事件就强行认定关系，容易连错。
-
-所以 Trace 先保存：
-
-- inference request / response；
-- Tool dispatch；
-- Code Cell；
-- Terminal Operation；
-- Compaction；
-- Multi-Agent spawn / message / result；
--原始 payload。
-
-离线再建立：
-
-```text
-ConversationItem
-InferenceCall
-ToolCall
-CodeCell
-TerminalOperation
-Compaction
-AgentThread
-InteractionEdge
-```
-
-这比一条“tool failed”日志丰富得多。
-
----
-
-## 12. 为什么 Trace 还要区分“模型看见的”和“Runtime 实际发生的”
-
-这是调试 Agent 时最容易混乱的地方。
-
-Code Mode 内部可能调用了很多 nested Tool，但模型可见 transcript（对话记录）里未必逐条出现这些底层 JSON。
-
-同样，Terminal Runtime（终端运行时）可能执行了很多细节，但模型最终只看到经过整理的 Tool Result。
-
-因此 Rollout Trace 明确区分：
-
-```text
-ConversationItem
-= 真正进入模型请求 / 响应的内容
-
-Runtime Objects
-= Tool、Terminal、Code Mode 等真实执行对象
-```
-
-然后用 InteractionEdge（交互边）连接它们。
-
-所以遇到 Bad Case 时可以问：
-
-> Tool 明明执行成功了，模型为什么还不知道？
-
-Trace 能帮助判断：
-
--执行本身是否发生；
--结果是否被 Runtime 接受；
--是否转成 model-visible output；
--是否进入下一次 inference request。
-
-这比只看终端日志有效得多。
-
----
-
-## 13. 多 Agent 的 Trace 为什么共享一个根证据图
-
-Spawned child agent（被创建的子 Agent）并不是完全独立的产品会话。
-
-Rollout Trace 会让子 Thread 继承 root trace writer（根追踪写入器），最终一个 trace bundle（追踪包）里可以同时看到父 Thread 和子 Thread。
-
-于是 reducer 能恢复：
-
-```text
-root spawn_agent
-        ↓
-child 收到任务
-        ↓
-child 自己的模型与 Tool
-        ↓
-child 产出结果
-        ↓
-结果通知 root
-```
-
-这对于分析：
-
-> “父 Agent 为什么最后拿到了这条错误信息？”
-
-非常关键。
-
-如果每个 Agent 只有独立日志，却没有跨 Thread interaction edge，就很难还原信息流。
-
----
-
-## 14. 大 Context、大 Tool、大 Skill、大 Memory 应该怎样扩展
-
-Codex 当前源码给出的方向非常一致：**不要因为容量变大，就取消分层和预算。**
-
-### Context 很大
-
-仍然做：
-
-- stable prefix（稳定前缀）；
-- World State diff；
-- Compaction；
-- checkpoint；
-- cache-friendly append。
-
-因为大 Context 仍然有延迟、成本、旧信息污染和恢复代价。
-
-### Tool 很多
-
-做：
-
-```text
-完整 Registry
-→ Policy / Environment 筛选
-→ Deferred
-→ tool_search
-→ 小候选集
-→ 再加载 schema
-```
-
-如果真的达到数万 Tool，可以继续升级 discovery（发现）层，例如 namespace 分层、hybrid retrieval（混合检索）或 learning-to-rank（学习排序），而不是倒退回“全部展开”。
-
-### Skill 很多
-
-继续：
-
-```text
-元数据目录
-→ 预算控制
-→ 选择具体 Skill
-→ 读取 SKILL.md
-→ 按需读取 references / scripts
-```
-
-### Memory 很多
-
-继续：
-
-```text
-原始历史越来越多
-→ 提取与整理更严格
-→ global summary 仍然有硬大小上限
-→ 只有需要时追更深证据
-```
-
-这四条看似不同，其实都在贯彻同一个系统原则：
-
-> **模型只应该看当前决策真正需要的信息，而不是 Host 已经拥有的全部信息。**
-
----
-
-## 15. 源码 Tests 和 Metrics 能证明什么
-
-Codex 没有一个单独文件叫“eval.py”就代表全部评测。
-
-验证分散在不同层。
-
-### Unit / Contract Test
-
-每个 crate 会测试自己的局部契约，例如 Tool schema、Memory read、Sandbox、Protocol。
-
-它们能证明：
-
-> 这个实现满足我们写下的局部规则。
-
-### Core Integration Test
-
-`codex-rs/core/tests/suite/` 会跨模块验证真实流程。
-
-例如 WebSocket fallback、MCP、Compaction、Sandbox、Multi-Agent 等。
-
-### Model-visible Snapshot Test
-
-很多 scenario snapshot（场景快照）直接检查模型请求里真正出现了什么。
-
-这对 Context 很重要，因为单测某个 fragment “render 成功”，并不能证明它最后真的出现在正确位置。
-
-### Metrics / Analytics
-
-Memory、Skill、Tool、Compaction 都有结构化指标。
-
-它们能回答：
-
-- 某机制有没有发生；
-- 发生了多少次；
-- 花了多少时间 / Token；
-- 哪类失败最多。
-
-### Rollout Trace
-
-当 metric 只告诉你“失败率升高”，Trace 帮你解释具体一条失败的因果链。
-
-但这些东西加起来，仍然不自动等于“Codex 任务成功率变高”。
-
----
-
-## 16. 真正的 Agent Eval 还需要任务级 Outcome
-
-源码测试更擅长验证 Runtime contract（运行时契约）。
-
-产品效果还要建立 Evaluation Harness（评测设施），让 Codex 在可重复环境里完成真实任务，再检查 Environment Outcome（环境最终结果）。
-
-例如代码修复任务应该验证：
-
-- 测试是否真的通过；
--目标 bug 是否消失；
--有没有破坏公开 API；
--有没有无关改动。
-
-而不是只看 Codex 最后说：
-
-> “修复完成。”
-
-因此一个完整 Eval 可以分四层。
-
-### Outcome：最后任务到底成没成功
-
-这是最重要的一层。
-
-### Process：过程是否退化
-
-例如虽然成功，但重复读同一文件 20 次，或者无意义调用大量 Tool。
-
-### Safety：成功是不是靠越权换来的
-
-例如有没有绕过 Approval、写到工作区外、违反网络策略。
-
-### Resource：成功的代价是否可接受
-
-包括 Token、latency（延迟）、模型调用次数、Tool 调用次数、Compaction 次数等。
-
-不能把这四类压成一个总分。
-
----
-
-## 17. Context、Memory、Tool 分别应该怎样做效果评测
-
-### Context
-
-最关键的是“长时间以后关键约束是否仍然存在”。
-
-可以构造：
-
-```text
-开头：
-“不能修改公开 API”
-
-→ 多轮 Tool
-→ 触发 Compaction
-→ 退出进程
-→ Resume
-→ 继续任务
-```
-
-最后检查 Agent 是否仍然遵守约束。
-
-这同时测试了 Context retention（约束保留）、Compaction 和 Resume。
-
-### Memory
-
-不能只测“召回率”。
-
-还要测：
-
-- 一次性要求有没有被错记成永久偏好；
-- 用户 correction 后旧事实是否复活；
-- Memory ON / OFF 是否真的改善任务；
--过期 Memory 是否造成错误决策。
-
-### Tool
-
-至少分别测：
-
-- Discovery：相关 Tool 能不能被搜到；
-- Selection：模型有没有选对；
-- Arguments：参数是否合法；
-- Safety：权限是否正确；
-- Execution：取消、超时、并发是否正确；
-- Result Reuse：模型拿到结果以后有没有正确使用。
-
-如果只统计“Tool 调用成功率”，会把很多选择错误和安全问题掩盖掉。
-
----
-
-## 18. 用一个 Bad Case 看怎样从 Trace 改系统
-
-假设线上发现：
-
-> Codex 连续三次运行同一个失败测试命令，最后还说任务完成。
-
-先不要马上改 Prompt。
-
-Rollout Trace 可以还原：
-
-```text
-Inference #1
-→ exec_command
-→ exit 1
-
-Inference #2
-→ exec_command
-→ exit 1
-
-Inference #3
-→ exec_command
-→ exit 1
-
-Inference #4
-→ final answer: done
-```
-
-然后继续问：
-
-- Tool Result 有没有真的进入模型请求？
-- exit code 是否在结果截断时丢了？
--模型是不是正确看到但错误理解？
-- Planning / stopping policy 是否允许重复无效动作？
--最终 grader 是否只看回答文字，没有检查测试状态？
-
-只有确认根因以后，才知道应该改：
-
-- Tool Result formatting；
-- Context assembly；
-- Runtime stop condition；
--模型指令；
--还是 Eval grader。
-
-修复以后，把这条线上 Bad Case 和它的变体加入回归集。
-
-这样才形成真正的数据闭环：
-
-```text
-线上失败
-→ Trace
-→ 根因定位
-→ 针对性修改
-→ Regression Eval
-→ 再上线
-```
-
----
-
-## 19. Codex 源码里最值得迁移的系统思想
-
-把所有实现细节拿掉以后，当前源码最值得带走的不是某个 Rust 类型，而是几条边界。
-
-**第一，模型只负责需要语义推理的部分。** 任务理解、代码分析、Memory consolidation、Compaction summary 可以交给模型。
-
-**第二，必须一致的部分留在 Runtime。** 权限、Tool 路由、Job lease、Context checkpoint、retry count、call/result pairing、Thread identity 不能让模型自由决定。
-
-**第三，长期系统一定要增量化。** Context 用 diff，Memory 用 workspace diff，Tool 用 deferred discovery，Resume 用 checkpoint + suffix。
-
-**第四，模型可见信息必须有预算。** Tool spec、Skill metadata、Memory summary、Tool Result 都不能无限增长。
-
-**第五，执行事实和模型视图必须分开记录。** Runtime 做了什么，不等于模型看见了什么；Rollout Trace 正是为这条边界服务。
-
-这五点是从 Codex 当前源码里抽出来的工程结论，而不是先有教材框架再把源码往里面填。
-
----
-
-## 20. 源码锚点
-
-如果要自己核验全局结构，建议按下面顺序：
-
-1. [`codex-rs/Cargo.toml`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/Cargo.toml)：完整 workspace，先确认产品真实包含哪些 crate。
-2. [`cli/src/main.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/cli/src/main.rs)：产品入口和命令面。
-3. [`app-server/src/extensions.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/app-server/src/extensions.rs)：Memory、Skills、MCP、Goal、Guardian 等怎样正式装进 Runtime。
-4. [`ext/extension-api/src/lib.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/extension-api/src/lib.rs)：扩展可以参与哪些生命周期。
-5. [`core/src/thread_manager.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/thread_manager.rs)：Thread 创建、恢复、Fork 与运行实例。
-6. [`core/src/state/service.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/state/service.rs)：一条 Session 真正持有哪些长期服务。
-7. [`core/src/agent/api.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/agent/api.rs) 与 [`tools/handlers/multi_agents_v2.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/handlers/multi_agents_v2.rs)：多 Agent 控制语义和 Tool 表面。
-8. [`core/src/tools/code_mode/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/code_mode)：Code Mode 怎样继续走统一 Tool Runtime。
-9. [`exec-server/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/exec-server)：执行环境与远端 / 本地执行边界。
-10. [`thread-store/README.md`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/thread-store/README.md)：Thread 持久化职责。
-11. [`protocol/src/error.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/protocol/src/error.rs) 与 [`core/src/responses_retry.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/responses_retry.rs)：错误分类与模型请求恢复。
-12. [`rollout-trace/README.md`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/rollout-trace/README.md)：完整诊断证据模型。
-13. [`core/tests/suite/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/tests/suite)：跨模块集成验证。
-
-回到：[Codex 系统总览](README.md)
+[← 上一章：工具](03-tool-lifecycle.md) · [返回模块入口](README.md)
