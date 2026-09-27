@@ -1,164 +1,64 @@
 # Vector Database｜向量检索与索引系统
 
-[← Redis](../05-redis/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [LLM Foundation（应用工程深度） →](../07-llm-foundation/README.md)
+[← Backend](../03-backend-engineering/README.md) · [↑ Curriculum](../README.md) · [学习路线](../../guide/learning-path.md) · [LLM Foundation →](../07-llm-foundation/README.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
-> **教材：16 个连续知识小板块** · **HUMAN-A Canonical：12** · **独立来源覆盖：37**  
-> **质量门：✅ Granularity / Coverage / Content Depth**
+本模块研究一个完整问题：**给定可比较的向量，怎样在允许的数据范围内找到近邻，并在数据持续变化时保持检索可用、可核对、可恢复。**
 
-理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。
+学习目标不是背产品参数，而是能够解释搜索过程、定位漏召回的环节，并根据数据规模、访问条件和维护要求作出选择。
 
----
+## 学习前提与边界
 
-## 1. 这个模块解决什么
+阅读正文只需要理解数组、函数、排序，以及数据库记录的基本概念。Python 用于少量可运行演示，不是向量检索机制的适用边界。无需先训练嵌入模型，也无需先安装分布式集群。
 
-理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。
+本模块先说明嵌入模型输出固定维度向量的最小模型；模型训练、双编码器与重排模型在 [LLM Foundation](../07-llm-foundation/README.md)展开。分块、混合检索、融合、重排和证据组装在 [RAG](../08-rag/README.md)展开。访问控制、更新顺序等会在当前需要处解释最小完整过程，但不重复编写整个后端可靠性课程。
 
-学习目标不是记住一组名词，而是能稳定回答：
+## 主线与目录
 
 ```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
+比较对象与规则
+      ↓
+精确答案与可接受的近似
+      ↓
+图导航 / 区域探测 / 向量压缩
+      ↓
+数据记录、合法范围与持续更新
+      ↓
+分布式结果、性能诊断与架构选择
 ```
 
----
+按下表顺序阅读。第 04 章提供索引地图，第 05～07 章分别深入三种机制；第 08 章完成一次初步选择，后续数据管理与故障条件会进一步约束这次选择。
 
-## 2. 在十板块中的位置
+| 顺序 | 章节 | 读完应能完成的判断 |
+|---:|---|---|
+| 01 | [向量数据库究竟负责什么](docs/01-VectorDB在AI应用中的职责.md) | 把模型、索引、数据库和上层回答分开 |
+| 02 | [向量空间与相似度：先把“近”说清楚](docs/02-VectorSpace与Similarity.md) | 用同一组数据计算三种排名，识别空间与阈值错误 |
+| 03 | [精确搜索与 ANN：先建立可核对的答案](docs/03-ExactSearch与ANN.md) | 建立精确对照，区分索引召回与业务相关性 |
+| 04 | [索引谱系：近似究竟发生在哪里](docs/04-ANN索引谱系.md) | 区分少看候选与近似表示，不把产品当算法 |
+| 05 | [HNSW：沿着图寻找近邻](docs/05-HNSW机制与调优.md) | 跟踪候选如何扩展，理解三个参数的不同职责 |
+| 06 | [IVF：先选区域，再找向量](docs/06-IVF原理.md) | 从区域边界解释漏召回与探测数量 |
+| 07 | [量化与 PQ：用短编码近似距离](docs/07-Quantization与PQ.md) | 手算编码、查表距离和共享码本的成本 |
+| 08 | [索引选择：把机制放回工作负载](docs/08-IndexSelection.md) | 在相同质量条件下比较时间、内存和维护成本 |
+| 09 | [向量数据建模：让结果找得到来源](docs/09-Vector数据建模.md) | 把记录、来源、版本与增删改查连接起来 |
+| 10 | [元数据过滤：在允许的范围内找近邻](docs/10-MetadataFilter.md) | 在同一合法集合内比较精确与近似结果 |
+| 11 | [分区与多租户：数据放在哪，谁可以读](docs/11-Partition与TenantIsolation.md) | 区分访问授权、数据布局与资源隔离 |
+| 12 | [索引生命周期：写入、更新、删除与重建](docs/12-VectorIndex生命周期.md) | 拆开确认、可见与回收，并处理乱序与迁移 |
+| 13 | [分布式检索：局部结果怎样组成全局答案](docs/13-分布式VectorDB.md) | 证明局部 Top-K 的条件，处理分片失败 |
+| 14 | [性能与容量：用证据定位瓶颈](docs/14-性能容量与Production诊断.md) | 分层测量延迟、吞吐、容量和更新竞争 |
+| 15 | [产品与架构选择：先决定需要哪类能力](docs/15-产品与架构选型.md) | 按所需服务能力选择库、扩展或独立数据库 |
+| 16 | [图数据库边界：相似、关系与完整系统](docs/16-GraphDB边界与系统设计.md) | 区分语义相似与显式关系，并交接到 RAG |
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → **Vector Database** → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+## 实验与复习
 
-模块角色：**Data / 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。**
+[配套实验](labs/README.md)把正文中的人工构造向量集中在一份数据文件中。无第三方依赖的数值实验用于核对计算和反例；Faiss 实验与 Qdrant 服务实验分别验证真实库和真实服务，不能互相替代，也不能用模拟结果推断生产性能。
 
----
+[Review](review/README.md)用于第二遍从空白纸重建系统和进行综合判断。[面试表达训练](interview/高频面试题.md)把机制组织成连续回答；[易错点](interview/面试易错点.md)用于纠正过度概括；[速查表](interview/面试前速查表.md)只唤起已经学过的规则。
 
-## 3. 固定课程原则
+首次阅读先自己完成章末任务，再展开提示或答案。某个任务做不出来时，按它给出的知识回看返回机制，不必反复背答案。
 
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+## 技术依据与维护入口
 
-同时固定区分：
+[References](../../references/vector-db/README.md)按问题索引官方资料，列明目标版本及使用限制。数学示例、假设工作负载与教学模拟均明确标注，不作为真实产品测试结果。
 
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
+[Canonical](../../interview/canonical/vector-db.md)保存归一化面试能力；[模块维护记录](../../guide/project/vector-db-reader-revision.md)保存审查范围、证据去向与验证状态。教学正文不以来源数量或历史质量标记代替机制解释。
 
-所以本模块是 **12 道 Canonical → 16 个教材知识块**，两者不需要一一对应。
-
----
-
-## 4. 正式学习主线
-
-```text
-Vector Space / Similarity → Exact vs ANN → HNSW / IVF / Quantization / Index Selection → Schema / Filter / Tenant → Index Lifecycle / Distributed → Performance Diagnosis / Product Boundary
-```
-
-这个顺序按知识依赖组织，而不是按面经频率排序。
-
----
-
-## 5. 正式课程目录
-
-### Part A｜Vector Space 与 ANN 基础
-
-1. [Vector DB 在 AI Application 中负责什么](docs/01-VectorDB在AI应用中的职责.md)
-2. [Vector Space & Similarity：Dimension、Normalization、Cosine / Dot / L2](docs/02-VectorSpace与Similarity.md)
-3. [Exact Search vs ANN：Top-K Ground Truth 与 Recall / Latency](docs/03-ExactSearch与ANN.md)
-
-### Part B｜ANN Index
-
-4. [ANN Index 谱系：Graph、Partition、Quantization](docs/04-ANN索引谱系.md)
-5. [HNSW：机制、M、efConstruction、efSearch 与调优](docs/05-HNSW机制与调优.md)
-6. [IVF：Coarse Quantizer、nlist 与 nprobe](docs/06-IVF原理.md)
-7. [Quantization：SQ / PQ 与压缩检索](docs/07-Quantization与PQ.md)
-8. [HNSW vs IVF 与 Index Selection](docs/08-IndexSelection.md)
-
-### Part C｜Data Model、Filter 与 Lifecycle
-
-9. [Collection / Schema / Primary Key / Metadata](docs/09-Vector数据建模.md)
-10. [Metadata Filter、Pre-filter 与 Post-filter](docs/10-MetadataFilter.md)
-11. [Partition / Namespace / Tenant Isolation](docs/11-Partition与TenantIsolation.md)
-12. [Vector Index Lifecycle：写入、删除、Compaction、Re-embedding 与 Rebuild](docs/12-VectorIndex生命周期.md)
-13. [Shard / Replica / Segment：分布式 Vector DB](docs/13-分布式VectorDB.md)
-
-### Part D｜Production 与 Architecture Boundary
-
-14. [Performance、Capacity 与 Production Diagnosis](docs/14-性能容量与Production诊断.md)
-15. [FAISS / pgvector / Elasticsearch / Milvus / Qdrant 架构选型](docs/15-产品与架构选型.md)
-16. [Graph DB vs Vector DB 与系统位置](docs/16-GraphDB边界与系统设计.md)
-
----
-
-## 6. 真人面经怎样影响本模块
-
-Canonical 统计基线（`S001–S279`）：本模块有 **12 道 Primary Canonical、37 个独立 HUMAN-A 招聘流程覆盖**。
-
-重点市场信号包括：
-
-- Vector Storage / Architecture Selection
-- HNSW 与参数
-- HNSW vs IVF / Index Selection
-- Index Lifecycle / Rebuild
-- Metadata Filter
-- Graph DB vs Vector DB
-
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
-
----
-
-## 7. 模块边界
-
-- Embedding / Reranker 模型原理归 LLM Foundation。
-- Dense / Sparse / Hybrid / RRF / Retrieval Eval 归 RAG。
-- Vector DB 负责高效可靠地存和找向量，不负责完整 Retrieval Pipeline。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview 与证据入口
-
-| 入口 | 链接 | 用途 |
-|---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
-
-研究与质量证据：
-
-- [Canonical Questions](../../interview/canonical/vector-db.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
-
----
-
-## 9. 推荐学习方式
-
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
-
-1. **第一遍：建立因果链。** 按 `docs/01 → 16` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
-
----
-
-## 10. 教材状态
-
-```text
-docs/      ✅ 01–16 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Content Depth       ✅
-```
-
-下一环：[LLM Foundation（应用工程深度）](../07-llm-foundation/README.md)。
+下一环：[LLM Foundation](../07-llm-foundation/README.md)。

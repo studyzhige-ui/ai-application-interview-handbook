@@ -1,303 +1,109 @@
-# 09｜Collection / Schema / Primary Key / Metadata
+# 09｜向量数据建模：让结果找得到来源
 
-真正的 Vector DB 记录通常不是：
+[← 08 索引选择：把机制放回工作负载](08-IndexSelection.md) · [模块目录](../README.md) · [10 元数据过滤：在允许的范围内找近邻 →](10-MetadataFilter.md)
 
-```text
-[0.1, 0.2, ...]
-```
+搜索返回记录 A，分数很好。但应用找不到对应原文，或者取到了已经改版的段落，这次搜索仍然不可用。向量数据建模要保证：**一条结果能回到正确对象、正确版本和正确访问范围。**
 
-而是：
+本章先建立记录和基础操作，再讨论集合组织；不从一张几十个字段的生产字段清单开始。
 
-```text
-ID
-Vector
-Metadata
-Version
-Business Fields
-```
+## 1. 向量对应什么对象
 
-这章开始从“ANN 算法”进入“数据库”。
+沿用团队知识库。文档 `travel` 有若干段，每段可以单独被检索。一条记录至少需要区分三个对象：原始文档、文档中的片段，以及片段所使用的表示。
 
----
+| 信息 | 具体示例 | 解决的问题 |
+|---|---|---|
+| 记录标识 | `travel:v3:chunk2:spaceA` | 精确定位一条可覆盖、读取或删除的记录 |
+| 来源标识 | `doc_id=travel`、`chunk_id=2` | 把搜索结果映射回原始资料 |
+| 来源版本 | `source_version=3` | 避免旧向量配上新原文 |
+| 向量空间 | `embedding_space=spaceA` | 确认查询表示与记录可以比较 |
+| 访问归属 | `tenant_id=alpha` | 将授权范围变成查询条件 |
+| 向量 | 教学值 `[1,0]` | 计算相似度 |
 
-## 1. 一个典型 Vector Record
+页码、章节、原文位置等信息在需要精确引用时补充。不要以为所有文档都有页码；网页可以记录段落或位置标识。元数据字段应服务查询、更新和追溯，而不是越多越好。
 
-```text
-id:            chunk_9871
-vector:        [0.12, -0.33, ...]
-tenant_id:     42
-doc_id:        doc_1001
-chunk_index:   8
-language:      zh
-kb_id:         kb_7
-version:       v3
-created_at:    ...
-```
+这些名称是业务设计示例，不是所有产品规定的字段模式。产品可能要求数值或 UUID（通用唯一标识符）主键，应用可以维护逻辑标识到物理标识的映射。例如 [Qdrant Points 文档](https://qdrant.tech/documentation/manage-data/points/)明确区分 point id、vector 与 payload（附带字段）。
 
-Vector Search 只对 `vector` 做近邻搜索，但业务查询还需要其余字段。
+## 2. 先分清几种基础操作
 
----
+以下是**操作语义示例，不是某 SDK 的代码**。初始状态中只有 A：向量 `[1,0]`，标签“制度”，来源版本 1。
 
-# 2. Collection / Table 是什么
+| 操作 | 输入 | 应观察的状态，而非只看返回值 |
+|---|---|---|
+| Insert（插入） | 新标识 C 及完整记录 | C 是否新增；重复标识如何处理要查产品 |
+| Retrieve（按标识读取） | A | A 的当前记录；未找到与请求失败不同 |
+| Search（相似搜索） | 查询向量、条件、K | 满足条件的候选及分数，不保证包括某个指定标识 |
+| Upsert（不存在则插入，存在则更新） | A 的完整新记录 | A 是否被替换或按产品规则更新，不能假定所有字段自动合并 |
+| Metadata update（元数据更新） | A 的标签改为“已修订” | 向量是否保持不变、条件查询何时反映新标签 |
+| Delete（删除） | A 或明确过滤条件 | A 何时不再返回，以及何时回收空间 |
 
-不同产品叫法不同：
+读取指定标识适合核对写入；相似搜索适合找近邻。写入成功后“搜不到 A”，可能是它不在 Top-K、被条件过滤，或还不可见，不能直接等同于写入失败。
 
-```text
-Collection
-Index
-Table
-Namespace
-```
+有些产品区分向量更新与 payload 更新，有些 upsert 需要完整记录。只传修改的一个字段，可能报错，也可能覆盖掉其他字段；必须按所用 API 的替换／合并语义编写操作。[Qdrant 的点与向量更新说明](https://qdrant.tech/documentation/manage-data/points/)是一个具体实现参照，而不是跨产品承诺。
 
-但可以先抽象成：
+## 3. 稳定标识防重复，不自动防乱序
 
-> **一组共享 Vector Dimension、Metric、Schema 和 Index Policy 的记录集合。**
+假设网络超时，客户端不知道 A 是否已经写入。使用相同标识重复提交相同内容，可以避免每次生成新标识造成重复记录。这叫幂等：同一操作重复执行，不额外产生业务效果。
 
-同一个 Collection 中最好不要混入互不兼容的：
+但版本 2 的写入完成后，延迟的版本 1 又到达，普通“最后到达者覆盖”仍可能把数据改旧。**重复安全与版本顺序是两件事。** 应通过有序消费、条件更新或版本检查阻止旧事件覆盖新状态；涉及并发写者时，版本比较与写入必须成为不可分割的一步，不能先读后写却没有冲突保护，具体恢复过程在第 12 章展开。
+
+## 4. 文档变短，旧片段不会自行消失
+
+文档版本 1 被分成三块：`travel:v1:c1`、`c2`、`c3`。版本 2 只有两块。只写入 v2 的 c1、c2，并不能推导出 v1 的三块都已经清除。
+
+一种清晰的发布方式是先完整写入新版本，核对片段清单，再把该文档的可查询版本切到 v2，随后清理旧版本。另一种是使用稳定片段标识覆盖，并显式删除不再存在的尾部片段。二者都必须知道“当前版本完整包含哪些片段”。
 
 ```text
-Embedding Model
-Dimension
-Metric
-Normalization Policy
+旧清单：c1、c2、c3
+新清单：c1、c2
+差集：  c3 需要明确退役，而不是等待 upsert 猜测
 ```
 
-否则生命周期会非常混乱。
+内容散列（content hash，也常用于校验和检查）把一段内容映射成一个便于比较的值。周期同步时，在编码模型和处理规则不变的前提下，应用可以先比较同一文档的内容散列：未变化的内容通常不必重新编码；变化了才进入处理和索引更新。散列相同不能提供绝对无碰撞保证，重要数据还应按所用算法与风险要求核验。
 
----
+但散列只回答“内容是否看起来相同”，不回答“哪一次更新更晚”。源站删掉文档后，单靠比较仍存在文档的散列也不会发现这次删除；应用还需要删除事件或完整来源清单的差集，以及来源版本。相同内容也可能属于不同文档、不同租户，不能用一个全局散列主键把它们的权限和来源错误合并。
 
-# 3. Primary Key 为什么重要
+## 5. 三种版本不要混成一个 version
 
-Vector Record 也需要稳定身份。
+来源版本表示文本事实发生变化；嵌入空间版本表示编码器、前处理、维度或距离约定改变；索引构建版本表示在同一向量集合上换了索引结构或参数。
 
-Primary Key 用于：
+例如只提高 HNSW 构建搜索宽度，可能需要重建图，但不需要重新生成文本向量。更换不兼容的嵌入模型，则需要重新编码文档，并让查询使用与目标索引配套的编码器。仅有相同维度不代表新旧空间可以混搜。
 
-```text
-Upsert
-Delete
-Dedup
-Version Replacement
-Source Mapping
-```
+## 6. Collection、Schema 与命名空间
 
-例如：
+Collection（集合）通常是保存同类向量记录的容器；Schema（模式）描述字段类型、向量维度及索引规则。Namespace（命名空间）可以用于组织不同数据范围，但不同产品对它的隔离保证并不相同。
 
-```text
-chunk_id = doc_id + content_version + chunk_index
-```
+决定是否分开存放时，先问：表示空间是否兼容？权限、生命周期和容量是否需要独立管理？没有必要为每篇文档创建一个集合；也不能把不同模型的同维向量随意放入同一个检索空间。
 
-或者使用稳定 UUID / Business ID。
+元数据的索引也有成本。经常参与租户、类型或时间过滤的字段值得按访问模式建立索引；只用于结果展示的大段文本不一定需要同等索引。要分别看“保存了该字段”“能按该字段过滤”“过滤是否有合适索引”。
 
-关键不是格式，而是：
+## 本章小结
 
-> **能不能准确找到“这一条向量对应的业务实体”。**
+可用的记录不仅有向量，还要有标识、来源、版本和访问范围。先掌握插入、读取、搜索、更新与删除的状态变化，再设计集合。稳定标识防重复，版本控制防旧数据回流；文档变短必须显式退役旧片段。
 
----
+## 🎯 面试怎么回答
 
-# 4. Metadata 是什么
+**问：向量数据库怎样建模？**
 
-Metadata 是不参与 Dense Distance 本身、但用于过滤、展示、路由和治理的结构化字段。
+我先确定检索单元是文档还是片段，再为它设计稳定标识，并保存来源位置、来源版本、嵌入空间与租户等必要元数据。写入与更新要明确替换还是合并、重复请求和乱序事件怎样处理。文档重新分块还要核对新旧片段清单并清理旧记录。集合按照表示兼容、权限、生命周期和规模组织，不按文档数量机械拆分。
 
-例如：
+## ⚠️ 易错点
 
-```text
-tenant_id
-user_id
-doc_id
-kb_id
-language
-source_type
-permission_group
-content_version
-embedding_version
-deleted
-created_at
-```
+搜索没返回某标识不等于该记录不存在；upsert 不一定是字段合并；稳定 ID 不保证版本单调；只更新向量不更新来源和权限，会产生无法引用或越权的结果。生产删除条件应包含明确租户与对象范围，不能临时省略。
 
-Metadata 不是“随便塞一点 JSON”。
+## 自测
 
-它决定后续：
+**任务。** 一个文档原有 4 块，新版本只有 3 块。程序只 upsert 了稳定标识 c1、c2、c3，并把它们的来源版本改为 2。请给出剩余错误、修复动作和验证方式。
 
-```text
-Filter
-Tenant Isolation
-Version Governance
-Incremental Update
-Deletion
-Audit
-```
+<details><summary>答案与解释</summary>
 
----
+c4 仍是旧记录，可能继续参与搜索。应根据完整新清单显式退役或删除 c4，同时确保查询只读已发布的完整版本。核对按文档列举的片段及版本，并用会命中 c4 旧内容的查询验证它不再可见；不能只看前三次 upsert 的返回值。
 
-# 5. Vector DB 里要不要存原文
-
-常见有三种思路。
-
-## 5.1 只存 Vector + ID
-
-原文回 MySQL / Object Store 取。
-
-优点：
-
-```text
-Vector Store 更轻
-Source of Truth 清晰
-```
-
-缺点：
-
-```text
-需要二次读取
-```
-
-## 5.2 Vector + Chunk Text 一起存
-
-优点：
-
-```text
-Query 结果直接可用
-减少一次 Hop
-```
-
-缺点：
-
-```text
-数据重复
-版本同步更复杂
-```
-
-## 5.3 存一部分 Retrieval Metadata
-
-折中方案。
-
-没有统一答案，取决于：
-
-```text
-数据规模
-延迟
-Source of Truth
-更新频率
-产品限制
-```
-
----
-
-# 6. 为什么不要把 Vector DB 当唯一 Source of Truth
-
-很多 Vector Index 都可以重建：
-
-```text
-Document Source
-→ Chunk
-→ Embedding
-→ Vector Index
-```
-
-因此在很多系统里：
-
-```text
-MySQL / Object Storage
-= Source of Truth
-
-Vector DB
-= Derived Retrieval Index
-```
-
-这会让：
-
-```text
-Index Corruption
-Embedding Upgrade
-Rebuild
-```
-
-更容易处理。
-
-但某些产品也可以承载更完整的主数据，是否这么设计属于 System Design。
-
----
-
-# 7. Schema 怎样围绕 Query Pattern 设计
-
-不要先列字段，再问怎么查。
-
-先列真实 Query：
-
-```text
-Q1: tenant=42, kb=7, current_version, semantic search
-Q2: user can access these permission groups
-Q3: only language=zh
-Q4: delete all chunks of doc_1001
-Q5: rebuild model_version=v2
-```
-
-再决定：
-
-```text
-哪些字段必须 Metadata Index
-哪些字段适合 Partition
-哪些字段只用于返回
-```
-
-这和关系数据库“从访问模式设计索引”的思想是相通的。
-
----
-
-# 8. Version 字段为什么是一等公民
-
-知识库不是静态的。
-
-你可能有：
-
-```text
-Document Version
-Chunking Version
-Embedding Model Version
-Index Version
-```
-
-如果不显式版本化：
-
-```text
-旧向量和新向量混搜
-旧 Chunk 未删除
-回滚困难
-```
-
-所以至少要能回答：
-
-> 这条向量是由哪一版 Source、Chunk 策略和 Embedding 生成的？
-
----
-
-# 9. 面试怎么答
-
-## Q：Vector DB 的 Schema 应该怎么设计？
-
-🎯 **建议回答**：
-
-> 我会先固定向量契约，例如 dimension、metric、embedding version，再从实际 Query Pattern 设计 Primary Key 和 Metadata。常见字段包括 tenant_id、doc_id、chunk_id、kb_id、permission、content_version、embedding_version 等。Primary Key 必须支持 Upsert/Delete 和 Source Mapping；Version 字段要支持 re-embedding 和 rebuild。Vector DB 在很多 RAG 系统里更适合作为可重建的 Retrieval Index，而不是唯一 Source of Truth。
-
----
-
-# 10. 高频易错点
-
-⚠️ **Vector DB 只需要 id + vector。** Production 通常远远不够。
-
-⚠️ **Metadata 全塞 JSON 就行。** Filter / Index / Partition 能力取决于产品和字段建模。
-
-⚠️ **向量索引就是业务 Source of Truth。** 很多系统里它是 Derived Index。
-
----
-
-# 11. 本章自测
-
-<details><summary>1. 为什么 Primary Key 对 Vector DB 也很重要？</summary>
-
-因为 Upsert、Delete、Dedup、版本替换和 Source Mapping 都依赖稳定身份。
 </details>
 
-<details><summary>2. 为什么 embedding_version 应该进入 Metadata / Schema？</summary>
+## 知识回看与权威资料
 
-因为模型升级后需要识别旧向量、控制混搜、增量重建、灰度切换和回滚。
-</details>
+回看第 2 节的状态表、第 4 节的片段差集和第 5 节的三种版本。[References：数据操作与版本](../../../references/vector-db/README.md#data-model)提供 API 语义入口；[服务实验](../labs/README.md#service)用同一数据核对实际操作。
+
+---
+
+[← 08 索引选择：把机制放回工作负载](08-IndexSelection.md) · [模块目录](../README.md) · [10 元数据过滤：在允许的范围内找近邻 →](10-MetadataFilter.md)

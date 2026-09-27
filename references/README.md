@@ -9,6 +9,7 @@
 - [Agent Runtime / Harness](agent/README.md)
 - [FastAPI](fastapi/README.md)
 - [AI Backend Engineering](backend-engineering/README.md)
+- [Vector Database](vector-db/README.md)
 - [LLM Foundation](llm-foundation/README.md)
 
 证据来源包括：

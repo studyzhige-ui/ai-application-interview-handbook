@@ -1,372 +1,176 @@
-# 02｜Vector Space & Similarity：Dimension、Normalization 与距离度量
+# 02｜向量空间与相似度：先把“近”说清楚
 
-这一章把三个原本分开的前置知识合成一个完整问题：
+[← 01 向量数据库究竟负责什么](01-VectorDB在AI应用中的职责.md) · [模块目录](../README.md) · [03 精确搜索与 ANN：先建立可核对的答案 →](03-ExactSearch与ANN.md)
 
-> **Vector DB 实际存的向量是什么？它们为什么能比较？Dimension、Normalization、Cosine / Dot / L2 又分别影响什么？**
+同一个问题，换一种距离规则，排名可能完全不同。与其先记“文本用余弦”，不如拿三条向量算一遍：到底是哪一个数改变了结果？
 
----
+本章先建立向量、模长和距离，再说明归一化带来的关系。这里的二维向量均为**教学构造数据**，只用于观察数学行为，不代表真实文本的语义质量。
 
-## 1. Vector 最直观的样子
+## 1. 维度规定形状，编码方式规定空间
 
-```text
-[0.12, -0.33, 0.98, 0.04]
-```
+向量 `[3, 4]` 有两个坐标，维度为 2。向量 `[3, 4, 5]` 有三个坐标，不能直接与它逐项计算普通点积。
 
-这是一个 4 维向量。
+不过，两组向量都具有 768 维，也不代表它们可比较。不同模型可以用完全不同的坐标表达同一段文字；同一模型改变查询前缀、文本预处理或输出维度，也可能改变比较的含义。
 
-实际 Embedding 常见是几百到几千维：
+入库前应明确一组共同约定：文档编码方式、查询编码方式、维度、是否归一化，以及采用的距离规则。后续提到“同一个表示空间”，指的就是这些条件相互兼容，不只是数组长度相同。
 
-```text
-D = 768
-D = 1024
-D = 1536
-...
-```
+### 稠密与稀疏，说的是坐标怎样分布
 
-同一个 Vector Field 中通常要求 Dimension 固定，因为 Query Vector 和 Stored Vector 必须能在同一个向量空间中比较。
+Dense Vector（稠密向量）通常在多数坐标上都有数值，例如文本嵌入模型输出的一整行浮点数。Sparse Vector（稀疏向量）的大多数坐标为零，可以只保存非零坐标的编号和值。例如 `[0, 0.7, 0, 0, 0.2]` 可以保存为“坐标 1 的值为 0.7，坐标 4 的值为 0.2”，这里坐标编号从 0 开始。
 
----
+这不表示稀疏向量的共同空间只有两维；省略的零坐标仍有含义，两条向量必须按同一坐标定义对齐。稠密或稀疏是表示的性质，不能单凭名称判断质量，也不能把某种表示与某个数据库永久绑定。词项权重和学习得到的稀疏表示如何用于多路检索，由 RAG 继续展开；本章先使用完整坐标来算清比较规则。
 
-## 2. Dimension 不只是数组长度
+## 2. 点积为什么会受模长影响
 
-如果：
+向量的 L2 模长，是各坐标平方和的平方根。例如 `[3, 4]` 的模长是 `sqrt(3² + 4²) = 5`。
+
+两个向量的 Dot Product（点积，也称内积）先逐项相乘，再求和：
 
 ```text
-v = [x1, x2, ..., xd]
+[1, 2] · [3, 4] = 1×3 + 2×4 = 11
 ```
 
-那么 `d` 就是 Dimension。
+点积不只是比较方向。把一个向量整体放大十倍，点积也会放大十倍。考虑查询 `q = [1, 0]`：
 
-它会直接影响：
+| 记录 | 向量 | 与 q 的点积 | 向量模长 |
+|---|---|---:|---:|
+| A | `[1, 0]` | 1 | 1 |
+| B | `[10, 0]` | 10 | 10 |
+| C | `[0.8, 0.6]` | 0.8 | 1 |
+
+按点积从大到小排序是 B、A、C。B 获得最高分，包含了它模长更大的影响；不能直接把这个影响解释成“语义更相关”。模型是否有意利用模长，必须看模型的训练与推荐使用方式。
+
+## 3. 余弦相似度把模长除掉了
+
+Cosine Similarity（余弦相似度）的计算方法是：
 
 ```text
-Raw Storage
-Distance Compute Cost
-Index Size
-Memory
-Network Transfer
-Cache Locality
+cos(q, x) = dot(q, x) / (norm(q) × norm(x))
 ```
 
-例如 float32：
+对前面的数据，A 和 B 都与 q 同方向，所以余弦相似度都是 1；C 的余弦相似度是 0.8。它没有因为 B 更长就给 B 更高的分数。
+
+数学上，非零实向量的余弦相似度在 −1 到 1 之间。它不是概率：“相似度 0.8”不能解释成“答案有 80% 的可能正确”。不同模型、不同资料分布、不同查询类型，也不能直接共用一个阈值。
+
+> ⚠️ 注意：零向量没有方向，公式的分母为零。不要把计算失败偷偷改成分数 0 后继续排序。应先检查编码异常、空输入处理和产品的零向量约束，明确拒绝、修复或单独处理的规则。
+
+## 4. L2 衡量的是坐标位置之差
+
+L2 Distance（欧氏距离）逐项计算差的平方，再开平方：
 
 ```text
-1536 × 4 bytes ≈ 6 KB / vector
+L2(q, x) = sqrt(sum((q_i - x_i)²))
 ```
 
-一亿条向量的 Raw Data 就已经约 600GB，还没算：
+同一组数据得到：
 
-- ID / Metadata；
-- ANN Index；
-- HNSW Graph Edge；
-- Replica；
-- Allocator / Cache；
-- Segment / Storage Engine 开销。
+| 记录 | L2 距离 | L2 距离平方 |
+|---|---:|---:|
+| A | 0 | 0 |
+| B | 9 | 81 |
+| C | 约 0.63246 | 0.4 |
 
-所以 Dimension 会直接进入容量规划。
+距离越小越近，所以 L2 排名是 A、C、B。这里 B 和 q 方向相同，却在坐标位置上离得很远。
 
----
+某些接口返回平方距离，省去开平方。例如 Faiss 的 `METRIC_L2` 返回平方 L2。由于非负数开平方是单调的，**排名不变，数值阈值却不能照抄**：真实 L2 小于 0.5，对应平方 L2 小于 0.25。[Faiss 距离语义](https://github.com/facebookresearch/faiss/wiki/MetricType-and-distances)说明了这一点。
 
-## 3. 同维度不代表同一个向量空间
+## 5. 归一化后，三个规则怎样联系起来
 
-这是最重要的工程边界之一。
+L2 Normalization（L2 归一化）是把非零向量的每个坐标除以它的模长。例如：
 
 ```text
-Model A → 768 dim
-Model B → 768 dim
+[3, 4] / 5 = [0.6, 0.8]
 ```
 
-不能因为都是 768 维，就把它们直接混进同一个索引。
-
-因为：
+方向没有变化，模长变成 1。对单位向量 q、x：
 
 ```text
-Dimension 相同
-≠
-Embedding Space 相同
+cos(q, x) = dot(q, x)
+L2(q, x)² = norm(q)² + norm(x)² - 2 dot(q, x)
+           = 2 - 2 dot(q, x)
 ```
 
-新旧模型升级时，常见做法是：
+因此，在这个条件下，**余弦从大到小、点积从大到小、L2 从小到大，给出相同的数学排序**。这是可推导的等价关系，不是“结果大概接近”。实际计算仍受浮点舍入和并列处理影响。
 
-```text
-new model
-→ re-embedding
-→ new index generation
-→ validation
-→ traffic switch
-```
+这里的“两边都是单位向量”是清楚、常用的充分条件，不必误记为任何排序等价的唯一可能条件。例如固定一次非零查询，若所有库向量模长相同，余弦与点积也只差一个共同的正因子。工程上仍应遵循模型约定，而不是据此随意改预处理。
 
-而不是新 Query 用 v2、旧 Document 仍保留 v1。
+只归一化查询、不归一化库向量，不能消除库向量模长对点积的影响。反过来，模型本来利用模长传递信息时，擅自归一化也可能损害效果。
 
----
+## 6. 运行一个最小完整计算
 
-## 4. 向量的方向与长度
-
-假设：
-
-```text
-A = [3, 4]
-||A|| = 5
-```
-
-做 L2 Normalization：
-
-```text
-A' = A / ||A|| = [0.6, 0.8]
-```
-
-归一化后：
-
-```text
-||A'|| = 1
-```
-
-方向不变，长度变成 1。
-
-这很重要，因为不同距离函数对“方向”和“长度”的关注不同。
-
----
-
-## 5. Cosine / Dot Product / L2 到底在比较什么
-
-### Cosine Similarity
-
-```text
-cos(A, B) = (A · B) / (||A|| ||B||)
-```
-
-更关注方向是否一致。
-
-### Dot Product / Inner Product
-
-```text
-A · B = Σ ai * bi
-```
-
-同时受：
-
-```text
-方向 + Norm / Magnitude
-```
-
-影响。
-
-### L2 / Euclidean Distance
-
-```text
-L2(A, B) = sqrt(Σ(ai-bi)²)
-```
-
-关注空间里的绝对距离。
-
-通常：
-
-```text
-Cosine / IP → 越大越近
-L2 → 越小越近
-```
-
-但具体数据库 API 可能返回 similarity 或 distance，所以不要假设所有 `score` 都是“越大越好”。
-
----
-
-## 6. Normalized Vector 上三种 Metric 的关系
-
-如果：
-
-```text
-||A|| = ||B|| = 1
-```
-
-那么：
-
-```text
-Cosine(A,B) = A · B
-```
-
-而且：
-
-```text
-||A-B||² = 2 - 2cos(A,B)
-```
-
-因此单位向量上：
-
-```text
-Cosine 越大
-↔ Squared L2 越小
-```
-
-近邻排序可以形成单调对应关系。
-
-注意：
-
-> 这不意味着所有数据库的 API 数值完全一样，也不意味着任何模型都应该先 Normalize。
-
----
-
-## 7. 为什么不能无脑 Normalize
-
-是否 Normalize 必须服从 Embedding Model 的契约。
-
-有些模型明确要求：
-
-```text
-normalize embeddings
-```
-
-有些模型可能让 Norm 本身包含信息。
-
-正确链路应该是：
-
-```text
-Embedding Model Contract
-→ Recommended Metric
-→ Normalization Policy
-→ Vector DB Index Metric
-```
-
-而不是写一个全局：
+下面的 Python 示例可以独立运行。它不安装模型、不调用数据库、不修改外部状态；输出只来自本章三个构造向量。`math.hypot(*x)` 计算模长，`*x` 表示把坐标作为多个参数传入。
 
 ```python
-vector = vector / norm(vector)
+import math
+
+q = (1.0, 0.0)
+vectors = {"A": (1.0, 0.0), "B": (10.0, 0.0), "C": (0.8, 0.6)}
+
+for name, x in vectors.items():
+    dot = sum(a * b for a, b in zip(q, x))
+    cosine = dot / (math.hypot(*q) * math.hypot(*x))
+    l2_squared = sum((a - b) ** 2 for a, b in zip(q, x))
+    print(name, round(dot, 3), round(cosine, 3), round(l2_squared, 3))
 ```
 
-对所有模型都处理。
-
----
-
-## 8. Metric 选错会发生什么
-
-如果模型按 Cosine 空间训练，但你把未归一化向量直接按 Inner Product 排序，可能出现：
+预期输出：
 
 ```text
-Norm 较大的 Vector
-→ Dot Product 被放大
-→ Ranking 偏离模型训练目标
+A 1.0 1.0 0.0
+B 10.0 1.0 81.0
+C 0.8 0.8 0.4
 ```
 
-这时不是 Vector DB “索引不准”，而是：
+`zip` 会在较短输入结束时停止；示例已明确双方都是二维，才可以这样写。通用实现必须先拒绝维度不一致，不能让它悄悄少算坐标。配套实验集中处理了维度、零模长和非有限数值检查，避免每段教学代码被准备逻辑淹没。
 
-> **Embedding / Normalization / Metric Contract 不一致。**
+## 7. 从数学规则到实际接口
 
-Metric 通常还是 Index Schema 的一部分，不能期待一个已经按某种 Metric 建好的 ANN Index 查询时任意切换另一种 Metric。
+返回字段叫 `score`，并不能证明“越大越近”。例如 pgvector 的 `<=>` 返回余弦**距离**，通常是 `1 − cosine`；`<#>` 返回负内积，以适应按升序使用索引。应看具体算子的定义，而不是根据字段名猜排序方向。[pgvector 0.8.6 查询说明](https://github.com/pgvector/pgvector/blob/v0.8.6/README.md#querying)给出了这些算子。
 
----
+向量维度也影响成本。未压缩 float32（32 位浮点数）的一个坐标占 4 字节，所以一条 1536 维向量的原始数值占 `1536×4=6144` 字节；一亿条占 `614,400,000,000` 字节，即 **614.4 GB，约 572.2 GiB**。GB 是十进制单位，一 GB 为 `10^9` 字节；GiB 是二进制单位，一 GiB 为 `2^30` 字节。这还没有计算标识、元数据或索引，也不等于必须全部常驻内存。压缩和磁盘存放会改变后续预算。
 
-## 9. 一个简单例子
+## 本章小结
 
-```text
-A = [1,0]
-B = [10,0]
-C = [0.8,0.6]
-```
+先确认表示空间兼容，再确定比较规则。点积保留模长影响，余弦比较方向，L2 比较坐标位置。单位化后可以推导三者的排序关系；接口返回值还可能转换成距离、平方距离或负内积，阈值与排序方向必须一起核对。
 
-Cosine：
+## 🎯 面试怎么回答
 
-```text
-cos(A,B)=1
-cos(A,C)=0.8
-```
+**问：余弦、点积和 L2 应该怎么选？**
 
-按方向 B 更接近 A。
+它们关注的几何量不同，不能脱离模型约定选择。点积同时受方向和模长影响，余弦除去模长，L2 衡量坐标差。若查询和文档向量都经过 L2 归一化，余弦等于点积，平方 L2 等于 2 减 2 倍点积，排序等价。我会核对模型推荐的编码方式、归一化和数据库算子，再用任务数据验证，而不是把“文本一定用余弦”作为规则。
 
-但 L2：
+## ⚠️ 易错点
 
-```text
-L2(A,B)=9
-L2(A,C)≈0.632
-```
+相同维度不证明同一空间；相似度不等于正确概率；相同排序不意味着阈值相同。遇到分数异常，先查维度、非有限数值、零模长、归一化和返回值定义，再怀疑索引。
 
-按绝对距离 C 更近。
+## 自测
 
-所以：
+**任务 1。** q=`[0, 2]`，U=`[0, 1]`，V=`[0, 3]`。分别给出点积、余弦、L2 的排名，并说明哪些出现并列。
 
-> **Metric 不是实现细节，而是在定义“相似”本身。**
+<details><summary>答案与解释</summary>
 
----
+点积为 2 和 6，V 在前；余弦都为 1，并列；L2 都为 1，也并列。方向相同不意味着点积相同，位置关于查询对称也可能造成距离并列。
 
-## 10. Score Threshold 为什么不能抄固定值
-
-常见错误：
-
-```text
-score > 0.8 → relevant
-```
-
-但 Score Distribution 会受：
-
-- Model；
-- Domain；
-- Query Length；
-- Normalization；
-- Metric；
-- Corpus Distribution；
-
-影响。
-
-所以阈值必须通过真实数据验证。
-
-RAG 层会进一步讨论 Retrieval Threshold / No-hit，但 Vector DB 层至少要知道：
-
-> 相似度分数没有跨模型、跨系统统一绝对语义。
-
----
-
-## 11. Vector Record 应记录哪些契约
-
-推荐至少追踪：
-
-```text
-record_id
-source_id
-embedding_model
-embedding_version
-dimension
-normalized
-metric
-content_version
-index_generation
-updated_at
-```
-
-这样模型、Chunk、Metric 或 Index 升级时，才知道哪些数据需要迁移。
-
----
-
-## 12. 高频易错点
-
-- Dimension 越高一定越好：错误。
-- 两个 768 维模型可以直接混搜：错误。
-- Cosine 和 Dot 永远相等：只有单位向量条件下成立。
-- 所有 score 都越大越好：错误。
-- Normalize 一定提升检索质量：错误。
-- 0.8 是通用相似度阈值：错误。
-
----
-
-## 13. 面试怎么答
-
-### Q：Cosine、Dot Product、L2 怎么选？
-
-> Cosine 更关注方向，Inner Product 同时受方向和向量长度影响，L2 表示欧氏距离。单位向量上 Cosine 等于 Dot Product，Squared L2 与 Cosine 之间也有单调关系。实际选型应该服从 Embedding Model 的训练契约，并确保 Normalization 和 Vector Index Metric 一致，而不是固定认为文本检索永远用 Cosine。
-
-### Q：Dimension 对系统有什么影响？
-
-> Dimension 会影响 Raw Storage、距离计算、索引大小、内存和网络成本；而且相同维度不代表相同 embedding space，因此模型升级通常需要版本化和重新 Embedding。
-
----
-
-## 14. 自测
-
-<details><summary>1. 为什么相同 Dimension 不代表新旧模型可以混搜？</summary>
-因为 Dimension 只表示数组长度，不保证两个模型学习出的空间坐标和距离关系兼容。
 </details>
 
-<details><summary>2. 为什么单位向量上 Cosine 和 Dot 等价？</summary>
-因为 Cosine 的分母 `||A||||B||` 等于 1。
+**任务 2。** 两个单位向量的余弦相似度是 0.75。请算出平方 L2 与 L2；再说明把数据库返回的 0.5 当成余弦相似度会错在哪里。
+
+<details><summary>提示</summary>
+
+先确定返回的是哪一种量，再做阈值判断。
+
 </details>
 
-<details><summary>3. Metric 选错为什么会表现成“召回变差”？</summary>
-因为近邻排序本身被改变，检索目标和 Embedding 模型训练目标不一致。
+<details><summary>答案与解释</summary>
+
+平方 L2 为 `2−2×0.75=0.5`，L2 约为 0.7071。如果接口返回平方距离，0.5 是距离平方，而不是余弦；它实际对应余弦 0.75。直接套余弦阈值会误判。
+
 </details>
+
+## 知识回看与权威资料
+
+回看第 2～5 节的同一组向量，不看结论重新计算三种排名。[实验](../labs/README.md#numeric)可核对数值与输入边界；[References：距离与表示](../../../references/vector-db/README.md#metrics)提供模型约定、Faiss 和 pgvector 返回值的核验入口。
+
+---
+
+[← 01 向量数据库究竟负责什么](01-VectorDB在AI应用中的职责.md) · [模块目录](../README.md) · [03 精确搜索与 ANN：先建立可核对的答案 →](03-ExactSearch与ANN.md)

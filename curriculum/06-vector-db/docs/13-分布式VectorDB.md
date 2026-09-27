@@ -1,343 +1,123 @@
-# 13｜Shard / Replica / Segment：分布式 Vector DB 基础
+# 13｜分布式检索：局部结果怎样组成全局答案
 
-当一个 Vector Index 放不进单机内存，或者单机 QPS / 容量不够时，就会进入分布式问题。
+[← 12 索引生命周期：写入、更新、删除与重建](12-VectorIndex生命周期.md) · [模块目录](../README.md) · [14 性能与容量：用证据定位瓶颈 →](14-性能容量与Production诊断.md)
 
-这章不学某个产品架构图，而先学稳定抽象：
+单台机器放不下全部索引，或一个节点无法承担所有查询时，可以把记录分到多台机器。但“一起返回各自最相似的几条”还不完整：局部结果够不够？一个分片超时怎么办？最近写入在不同节点上是否一致？
 
-```text
-Shard
-Replica
-Segment
-Query Fan-out
-Merge
-Rebalance
-```
+本章先用两份局部排名证明归并条件，再把读写、维护和存储放进一个可追踪的分布式过程。
 
----
+## 1. 分片和副本解决不同问题
 
-## 1. 为什么要 Shard
+Shard（分片）把完整数据横向拆开，例如 A–C 在分片 1，D–F 在分片 2。Replica（副本）则保存同一份逻辑数据的另一份可服务拷贝，用于可用性或分担读取。
 
-假设：
+增加分片可以分摊单个数据集的容量和计算，但查询可能要访问更多目标。增加副本可能分担读负载、应对节点故障，也增加存储、同步和运行成本；它不会自动减少逻辑数据总量。
 
-```text
-5 亿条向量
-× 1536 dim
-```
+副本也不是备份：错误删除可能传播到所有在线副本。备份与恢复需要独立的保留和恢复验证，不能用“有三副本”代替。
 
-单机可能面临：
+## 2. 一次分布式搜索怎样流动
+
+请求入口先确定授权范围、目标索引代和需要访问的分片，将兼容的查询向量与条件发送给它们。每个目标搜索本地可见数据，返回候选及分数；协调端检查完成状态，按统一规则合并，再返回全局结果。
 
 ```text
-Memory 不够
-Index 不够
-QPS 不够
-Build 太慢
+查询与授权条件
+      │
+      ▼
+路由／协调端 ─────> 分片1本地检索 ─┐
+      └──────────> 分片2本地检索 ─┤
+                                  ▼
+                       检查完成状态、合并、去重、取K
 ```
 
-于是把数据水平拆到多个节点：
+不应把副本当成额外独立数据重复加入结果。请求通常选择适当副本，或者按产品机制验证多副本响应；具体策略需要与一致性和可用性目标配套。
+
+## 3. 局部精确 Top-K 为什么足够
+
+假设记录唯一且分片互不重叠，所有分片使用同一查询、距离、过滤、可见快照和一致的并列排序规则。需要全局 Top-2：
+
+| 分片 | 按距离排序的完整局部结果 | 只返回局部 Top-2 |
+|---|---|---|
+| 1 | A:0.1，B:0.4，C:0.8 | A、B |
+| 2 | D:0.2，E:0.3，F:0.9 | D、E |
+
+归并 A、B、D、E 后得到 A、D。为什么不需要 C、F？如果某条记录在自己分片已经排在 K 名之后，该分片内至少有 K 条记录排在它前面，这 K 条在全局也存在，所以它不可能进入全局 Top-K。
+
+这是在明确条件下的推理，不是“通常够用”的经验。若某分片不足 K 条，返回全部合法记录即可。
+
+## 4. ANN、压缩和重复会破坏哪些前提
+
+局部 ANN 可能根本没发现本地真正近邻，全局合并无法恢复从未收到的记录。扩大各分片候选有时改善结果，但必须与全局精确基准比较，不能把精确搜索的证明当成 ANN 保证。
+
+如果不同分片使用不兼容的向量空间或不同评分约定，数值不能直接归并。独立训练的强压缩表示也可能使近似分数可比性变差，应采用兼容训练方式或原向量精算等方案验证。[Faiss FAQ](https://github.com/facebookresearch/faiss/wiki/FAQ)讨论了分布式建索引时的训练与距离比较问题。
+
+数据迁移期的重复、同一文档多个版本以及按文档分组去重，还会改变“记录唯一”的前提。例如前十个片段都属于同一篇文档，去重后只有一篇；业务要求的文档 Top-K 不是片段 Top-K 的简单别名。应明确排序单元和去重发生的位置，必要时增加候选；完整 RAG 多样性策略归 RAG。
+
+## 5. 一处分片超时，不能把未知当作没有结果
+
+假设分片 1 返回两条，分片 2 超时。协调端并不知道分片 2 没有更好的结果。把它当空集合返回“完整 Top-K”，会悄悄改变答案含义。
+
+业务可以选择整次失败、有限重试或允许部分结果，但返回状态必须说明是否完整，监控也应记录缺失分片。知识问答若接受部分证据，应避免据此声称“全库没有相关资料”。
+
+并行扇出时，检索阶段延迟近似由最慢目标加协调开销决定，而不是把所有目标耗时直接相加。增加目标数也增加碰到慢节点的机会；并发重试若没有预算，还可能放大压力。
+
+## 6. 以 Milvus 的分工理解读写与维护
+
+下面依据官方架构说明，结合 **3.0.2 发布线**理解职责，不是固定源码逐函数审计，也不表示所有部署模式都独立启动这些进程。
+
+一次写入经 Proxy（接入代理）进入系统，由 Streaming Node（流式节点）围绕日志处理新增状态，并服务 growing 数据的查询。数据转成较稳定的 sealed 历史数据后，Query Node（查询节点）加载并查询；Data Node（数据节点）承担历史数据的索引构建和合并整理。Coordinator（协调器）维护拓扑、调度与系统元信息相关工作。日志、元数据存储与对象存储分别承载不同持久状态。[官方架构说明](https://milvus.io/docs/architecture_overview.md)
 
 ```text
-Shard 1
-Shard 2
-Shard 3
-...
+应用输入：记录、向量、标量字段
+                 │
+            Proxy 接入与结果归并
+                 │
+       新增／日志路径     历史数据查询路径
+        Streaming Node       Query Node
+                 │               │
+                 └── 持久数据 ────┘
+                        ↑
+               Data Node 构建与整理
+
+Coordinator 管理拓扑和调度；元数据、WAL、对象存储承担持久状态
 ```
 
-这和普通分布式数据库的 Horizontal Sharding 思想相通。
+因此问“Milvus 存的是文件、内容还是索引”不能简单三选一：应用提交记录与字段，数据库把数据、索引和元数据组织成持久对象，并执行查询与维护；它并不因此自动承担上传 PDF 的解析、业务事实认定或原文发布流程。
 
----
+3.0 还引入面向外部湖表的 External Collection，因此也不能武断断言“所有数据都必须先复制进一份内部集合”。这里说明产品边界，不要求初学者实现湖仓集成。[3.0 正式发布说明](https://milvus.io/docs/release_notes.md)用于核验该能力与部署变化。
 
-# 2. Query 为什么需要 Fan-out
+## 7. 重平衡和恢复要维持同一逻辑答案
 
-如果 Query 不知道真正最近邻在哪个 Shard：
+扩容时可能移动数据段或分片。移动期间要保证路由知道有效位置、目标追上必要更新，并处理重叠阶段的重复。不能先删除旧位置，再希望新节点最终补齐。
 
-```text
-Query
-├─ Shard A → local Top-K
-├─ Shard B → local Top-K
-└─ Shard C → local Top-K
-        ↓
-Coordinator Merge
-        ↓
-Global Top-K
-```
+某节点重启后，内存索引、缓存和持久数据的关系也不同。即使数据未丢，重新加载和预热仍可能增加延迟。恢复测试应测可查询、数据完整、权限正确和性能恢复四个方面，而不是只看进程已经启动。
 
-这就是 Scatter-Gather。
+## 本章小结
 
-Shard 越多：
+分片拆数据，副本复制逻辑数据。局部精确 Top-K 足够的证明依赖唯一记录和统一查询条件；ANN 漏搜、不可比分数和去重会改变问题。分布式服务还需要明确不完整结果、一致性、后台维护和恢复，而不是只画多台机器。
 
-```text
-Fan-out
-Network
-Merge Cost
-Tail Latency
-```
+## 🎯 面试怎么回答
 
-都可能上升。
+**问：分布式向量库怎样返回全局 Top-K？**
 
-所以 Sharding 不是“节点越多越快”。
+先按授权和路由定位目标分片，各分片返回候选，协调端在同一评分与版本规则下归并。对于互不重叠记录的精确搜索，局部 Top-K 足够，因为局部 K 名之后的记录已经有 K 条记录排在它前面。ANN 只提供近似候选，仍要测全局召回；分片失败则不能被默认为空结果。还要处理重复、读可见性、迁移和恢复。
 
----
+## ⚠️ 易错点
 
-# 3. Partition Routing 能减少 Fan-out
+副本不等于分片，也不等于备份；局部 ANN Top-K 不享有精确证明；不同分片分数不是天然可比；部分响应不代表全库无答案。进程存活不等于数据已加载和性能已恢复。
 
-如果 Query 明确：
+## 自测
 
-```text
-tenant_id = 42
-```
+**任务。** 全局 K=3，分片 1 精确距离为 0.1、0.2、0.3、0.9；分片 2 为 0.4、0.5、0.6。每个分片只返回 2 条能否保证正确？各返回 3 条呢？随后把分片 1 改为可能漏搜的 ANN，再判断保证是否仍成立。
 
-而 tenant 42 已被路由到固定 Shard / Partition：
+<details><summary>答案与解释</summary>
 
-```text
-Query 只访问部分节点
-```
+各返回 2 条会漏掉全局第三名 0.3，不能保证。各返回 3 条，在同条件、唯一记录等前提下足够。若分片 1 改为 ANN 并漏掉 0.3，即使返回三条，协调端仍可能无法恢复正确结果，必须评价近似损失。
 
-就能减少 Scatter-Gather。
-
-所以前面的：
-
-```text
-Partition / Tenant Isolation
-```
-
-和分布式 Scale 是连在一起的。
-
----
-
-# 4. Replica 解决什么
-
-Replica 常见目的：
-
-```text
-High Availability
-Read Scale
-Fault Tolerance
-```
-
-例如：
-
-```text
-Shard 1
-├─ Replica A
-└─ Replica B
-```
-
-A 挂了：
-
-```text
-B 可以继续服务
-```
-
-或者两副本分担查询。
-
-但 Replica 会增加：
-
-```text
-Storage
-Memory
-Replication Traffic
-Update Consistency Complexity
-```
-
----
-
-# 5. Replica 不等于 Backup
-
-和 MySQL 一样：
-
-```text
-错误 Delete
-```
-
-可能被同步到所有 Replica。
-
-所以：
-
-```text
-Replica
-≠
-Backup
-```
-
-Vector Index 很多时候可重建，因此 Source of Truth 与 Rebuild Strategy 可能比传统 Backup 更重要。
-
----
-
-# 6. Segment 是什么
-
-很多 Vector DB 内部还会把一个 Shard 拆成多个 Segment：
-
-```text
-Shard
-├─ Segment 1
-├─ Segment 2
-└─ Segment 3
-```
-
-原因可能包括：
-
-```text
-Incremental Write
-Index Build
-Compaction
-Lifecycle
-Parallel Query
-```
-
-Query 可能在多个 Segment 上搜索，再 Merge。
-
-这也是为什么 Segment 数量过多可能影响性能。
-
----
-
-# 7. Shard Key 怎么选
-
-常见考虑：
-
-```text
-数据是否均匀
-Query 能否路由
-Tenant / KB 是否局部
-热点是否会倾斜
-后续是否容易扩容
-```
-
-如果简单：
-
-```text
-hash(id) % N
-```
-
-可能分布均匀，但业务 Query 每次都需要搜索所有 Shard。
-
-如果按 tenant：
-
-```text
-Query 路由很好
-```
-
-但大 Tenant 可能造成 Hot Shard。
-
-所以是典型 Trade-off。
-
----
-
-# 8. Rebalance 是什么
-
-新增节点后：
-
-```text
-旧 Shard 分布
-```
-
-可能不均匀。
-
-需要：
-
-```text
-Move Segment / Partition
-Rebuild Replica
-Update Routing
-```
-
-这就是 Rebalance。
-
-Rebalance 会占用：
-
-```text
-Network
-Disk
-CPU
-Memory
-```
-
-并可能影响 Query P99。
-
----
-
-# 9. Distributed Top-K 为什么有误差 / 成本问题
-
-如果每个 Shard 只返回：
-
-```text
-local Top10
-```
-
-Coordinator 再合并 Global Top10，通常足够吗？
-
-在很多相似度可直接比较且各 Shard Search 足够准确的情况下可以工作，但实际系统还会遇到：
-
-```text
-ANN Recall Loss per shard
-Score Calibration
-Filter
-Shard Data Skew
-```
-
-所以需要对分布式查询链整体 Benchmark。
-
----
-
-# 10. 一个节点挂了会发生什么
-
-要区分：
-
-```text
-Shard 有 Replica
-→ failover / reroute
-
-Shard 无 Replica
-→ 部分数据不可搜索
-```
-
-如果 Coordinator 选择：
-
-```text
-partial result
-```
-
-还需要明确：
-
-```text
-结果是否允许降级？
-是否标记 incomplete？
-是否重试？
-```
-
-这些属于 Vector DB 与 Backend Reliability 的交叉。
-
----
-
-# 11. 面试怎么答
-
-## Q：分布式 Vector DB 怎么扩展查询？
-
-🎯 **建议回答**：
-
-> 通常把数据水平拆成 Shard，每个 Shard 本地做 ANN Top-K，Coordinator fan-out 查询后合并成 Global Top-K。Replica 用于高可用和读扩展，Segment 则常用于增量写入、索引构建和 compaction。真正难点不是“多加机器”，而是控制 fan-out、tail latency、hot shard、rebalance 成本，以及 Filter / Tenant Routing 是否能把 Query 限制在少数 Shard。
-
----
-
-# 12. 高频易错点
-
-⚠️ **Shard 越多 Query 越快。** Fan-out 和 Tail Latency 可能更差。
-
-⚠️ **Replica 就是 Backup。** 不是。
-
-⚠️ **Partition = Shard = Segment。** 三者是不同抽象层次。
-
-⚠️ **hash(id) 最均匀，所以一定是最佳 Shard Key。** Query Routing 可能变差。
-
----
-
-# 13. 本章自测
-
-<details><summary>1. 为什么 Partition / Tenant Routing 能降低分布式 Vector Search 成本？</summary>
-
-因为它可以让 Query 只访问相关 Shard，而不是对所有节点做 Scatter-Gather。
 </details>
 
-<details><summary>2. Replica 主要解决什么，不解决什么？</summary>
+## 知识回看与权威资料
 
-主要解决可用性和读扩展；它不是历史备份，错误操作也可能同步到所有副本。
-</details>
+回看第 3 节证明及第 5 节超时场景，再用第 6 节定位数据与索引的职责。[References：分布式与 Milvus](../../../references/vector-db/README.md#distributed)提供架构和一致性依据。
+
+---
+
+[← 12 索引生命周期：写入、更新、删除与重建](12-VectorIndex生命周期.md) · [模块目录](../README.md) · [14 性能与容量：用证据定位瓶颈 →](14-性能容量与Production诊断.md)

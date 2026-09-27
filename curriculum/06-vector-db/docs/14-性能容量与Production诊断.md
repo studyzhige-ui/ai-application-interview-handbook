@@ -1,650 +1,110 @@
-# 14｜Performance、Capacity 与 Production Diagnosis
+# 14｜性能与容量：用证据定位瓶颈
 
-Vector DB 到 Production 后，不能再用一句：
+[← 13 分布式检索：局部结果怎样组成全局答案](13-分布式VectorDB.md) · [模块目录](../README.md) · [15 产品与架构选择：先决定需要哪类能力 →](15-产品与架构选型.md)
 
-> “查询很快。”
+同一个查询昨天 10 毫秒，今天 40 毫秒。可能是搜索宽度变大，也可能只是请求在队列里等了更久。若只看到“数据库慢”，很容易不断调 ANN 参数，却没有触及真正瓶颈。
 
-来描述性能。
+本章把**测什么、怎么算、按什么顺序排查**连起来。示例中的容量和延迟都是明示假设，不是实际生产测试结果。
 
-真正需要同时回答：
+## 1. 先确定计时对象
 
-```text
-Recall 够不够？
-P95 / P99 多高？
-并发上来后 QPS 与尾延迟怎么变化？
-Memory / Storage 需要多少？
-Index Build 多久？
-Update / Delete 成本多大？
-Filter 会不会把 ANN 拖慢？
-Recall 突然掉了怎么定位？
-某个 Shard 为什么特别慢？
-```
+端到端请求可能包含排队、认证、查询编码、网络、过滤、向量搜索、结果归并、原文读取和上层生成。向量库内部搜索只是其中一段。
 
-因此“容量规划”和“Production Troubleshooting”应该放在同一知识块里：
+给每次请求保存关联标识和各阶段耗时，可以看出慢在哪里。Trace（调用链记录）用于把这些阶段关联起来；指标用于观察总体分布，两者互补。
 
-> **先建立指标模型，再用同一套指标做故障定位。**
+假设总耗时从 100ms 变成 160ms，查询编码从 20ms 变成 80ms，而向量搜索始终 30ms。此时先增大索引资源没有证据支持，应该定位编码阶段的队列、模型或服务变化。
 
----
+## 2. 平均值、分位数、吞吐和并发不能混用
 
-## 1. Vector DB 的性能不是单指标
+Latency（延迟）是单次请求耗时。P95 表示观测样本中约 95% 请求不超过该值；少数慢请求可能对交互体验很重要，所以不能只报平均值。
 
-至少同时关注：
+QPS 是每秒处理或到达的请求数，需要说明口径。Concurrency（并发数）是同时在系统中的请求数。稳定状态下，平均在途数约等于到达率乘平均停留时间：若每秒 100 个请求、平均停留 0.05 秒，则约有 5 个在途请求。这不意味着设置 5 个客户端就一定能精确产生 100 QPS，也不覆盖过载排队增长的状态。
+
+超时、失败和拒绝请求不能被删除后只展示“成功延迟”。应同时报告到达量、完成量、错误与超时比例，并说明是否包括排队和重试。
+
+## 3. 原始数值容量怎样计算
+
+N 条、D 维、每个坐标 b 字节，原始数值体积为 `N×D×b`。例如一百万条、768 维、float32：
 
 ```text
-Quality
-├── ANN Recall vs Exact
-└── Filter 后有效候选质量
-
-Latency
-├── P50
-├── P95
-└── P99
-
-Throughput
-└── QPS / concurrent queries
-
-Resource
-├── Memory
-├── Storage
-├── CPU / GPU
-└── Network
-
-Lifecycle
-├── Build Time
-├── Insert / Upsert TPS
-├── Delete / Compaction
-└── Rebuild Cost
+1,000,000 × 768 × 4 = 3,072,000,000 字节
+                      = 3.072 GB
+                      ≈ 2.861 GiB
 ```
 
-如果只说“我们 5ms”，信息是不完整的。
+GB 按十进制 `10^9` 字节，GiB 按二进制 `2^30` 字节。原始公式只计算坐标，不包含主键、元数据、图边、码本、数据段、日志、缓存和工作区。
 
----
+这个数字是**未压缩数值的体积**，不是所有产品必然需要的 RAM 下限。数据可能压缩、按需读取或放在磁盘；同时系统还可能保留原始向量用于精算，令磁盘占用并不按编码比例减少。[Faiss 索引表](https://github.com/facebookresearch/faiss/wiki/Faiss-indexes)分别列出不同表示与结构的空间组成。
 
-## 2. Recall：先分清 Index Recall 和业务 Recall
+## 4. 稳态、单节点和峰值分别算
 
-Vector DB 层常用 Exact Search 做 Ground Truth：
+假设实测单份索引驻留 4GiB，相关元数据与查询工作区合计再占 2GiB。部署两份服务副本，在两个节点各驻留一份，则**每节点**初步为 6GiB，**两节点合计**为 12GiB。不能把总量和单节点量混报。
 
-```text
-Exact Top-K
-vs
-ANN Top-K
-```
+若新旧索引代同时驻留，每个节点多出一份 4GiB 索引；如果每代的元数据也独立复制，还要再加，不能只把最初总数机械乘二。重建工作区、缓存、日志缓冲和碎片另算，最后留出与实际波动相匹配的余量。
 
-例如 Exact Top10 中，ANN 找回 9 个：
+磁盘和对象存储同样独立建账：原始数据、编码、索引文件、日志、旧版本、快照各保存几份？共享对象存储不一定随查询副本等比例复制；实际拓扑决定重复项。
 
-```text
-ANN Recall@10 = 0.9
-```
+## 5. 延迟上升，沿因果分层检查
 
-这回答的是：
+| 观察到的变化 | 优先核对 | 可以验证的机制 |
+|---|---|---|
+| 数据库内耗时不变，端到端变慢 | 编码、排队、网络、原文读取 | 慢在索引之外 |
+| 距离计算或访问量增加 | efSearch、nprobe、数据量、列表倾斜 | 一次搜索做了更多工作 |
+| 带过滤慢，无过滤正常 | 合法比例、标量索引、候选预算 | 为找够合法结果扩展搜索 |
+| 冷启动慢，预热后改善 | 文件加载、缓存、随机读取 | 数据访问而非纯计算成本 |
+| 写入或整理时尾延迟升高 | CPU、IO、内存和后台并行度 | 在线与维护争抢资源 |
+| 分布式整体慢，少数目标很慢 | 分片负载、节点状态、路由 | 最慢目标拖长扇出请求 |
 
-> ANN Index 相对 Exact Nearest Neighbor 丢了多少。
+这些是诊断假设，不是看到症状就能直接下结论。修改一个变量后重测，保留修改前后相同口径的记录，才能支持归因。
 
-它不等于 RAG 的业务 Retrieval Recall，因为上层还受：
+## 6. 质量下降，先问正确对象是否存在
 
-- Embedding；
-- Chunk；
-- Query Rewrite；
-- Hybrid Retrieval；
-- Rerank；
-- Permission / Filter；
+先核对资料版本、片段完整性、权限和删除状态，再对同条件精确搜索。如果精确结果有期望对象，而 ANN 丢失，检查搜索范围、量化和索引状态；若精确结果也差，回到资料、表示与任务是否匹配。
 
-影响。
+把 Recall 低统称为索引问题会漏掉入库延迟。把模型换掉又不重建兼容向量空间，则会制造更大的不可比较问题。第 02、03、10、12 章分别提供表示、基准、过滤和可见性的检查。
 
-所以故障排查时必须先分层。
+## 7. 一个最小但可信的测量记录
 
----
+实验至少写清数据和查询如何取得、软件与硬件、索引参数、过滤分布、负载方式、预热条件、样本量及错误数。保存实际输出，不把理想值填进结果。
 
-## 3. Latency 不要只看 Average
+先做可重复的小实验建立机制，再做目标版本、真实服务和并发负载验证。模拟算法、真实库、单服务、多节点集成和生产流量是不同层次，不能互相冒充。官方基准结果也必须结合其数据、硬件和过滤条件阅读。
 
-至少看：
+## 本章小结
 
-```text
-P50
-P95
-P99
-```
+性能分析从计时范围和分布开始，容量分析从明确对象与单位开始。向量数值体积不是整机内存，稳态也不等于重建峰值。诊断要沿可见数据、搜索工作、数据访问、队列与分布式目标逐层验证，而不是看到慢就同时改所有参数。
 
-一次分布式 Vector Query 可能经过：
+## 🎯 面试怎么回答
 
-```text
-Client
-→ Router / Coordinator
-→ Metadata Filter
-→ ANN Search
-→ Shard Fan-out
-→ Result Merge
-→ Payload Fetch
-```
+**问：向量查询变慢，你怎样排查？**
 
-Average 很好，不代表 Tail Latency 好。
+先确认端到端还是数据库内变慢，比较相同负载下的延迟分布、超时和错误。数据库内再看访问量与搜索参数、过滤通过比例、冷热数据、CPU 和 IO、后台维护以及慢分片。质量下降则加同条件精确基准，先排除资料缺失、版本和可见性。每次改变一个主要变量，记录资源与召回，避免用降低质量掩盖性能问题。
 
-一个 Hot Shard、Compaction、Network Spike 或高选择性 Filter 都可能把 P99 拉高。
+## ⚠️ 易错点
 
----
+N×D×4 不是全系统 RAM；GB 与 GiB 不相同；副本和旧代不能漏算或重复算；QPS 不等于并发；成功请求均值不能掩盖超时。单用户微基准不代表生产负载能力。
 
-## 4. QPS 和 Latency 必须一起看
+## 自测
 
-单请求 5ms 并不代表：
+**任务 1。** 二百万条、384 维 float32 向量，原始数值多少字节、多少 GB？这是否已经包含两副本、图边和重建空间？
 
-```text
-1000 QPS 下仍然 5ms
-```
+<details><summary>答案与解释</summary>
 
-并发升高后会出现：
+`2,000,000×384×4=3,072,000,000` 字节，即 3.072GB。没有包含任何副本、图边或重建空间，也不能据此断言必须占用同等 RAM。
 
-- CPU Saturation；
-- Memory Bandwidth；
-- Queueing；
-- Network Saturation；
-- Hot Shard；
-- Cache Thrash。
-
-更有意义的 Benchmark 是：
-
-```text
-QPS
-→ P95 / P99 Latency Curve
-→ Recall
-```
-
-也就是说：
-
-> 吞吐、延迟和质量要一起测。
-
----
-
-## 5. Memory 怎么估
-
-最基础 Raw Vector：
-
-```text
-N × D × bytes_per_element
-```
-
-例如：
-
-```text
-100M × 1536 × 4 bytes
-≈ 614 GB
-```
-
-但 Production Memory 还要加：
-
-```text
-ANN Index
-HNSW Graph Links
-Metadata / Scalar Index
-ID / Allocator
-Cache
-Replica
-Old + New Generation during rebuild
-Headroom
-```
-
-所以：
-
-> `N × D × 4` 只是下界，不是最终容量。
-
----
-
-## 6. HNSW 为什么要单独算 Graph Overhead
-
-HNSW 每个节点还需要保存邻居关系。
-
-粗略可以想：
-
-```text
-N × average_degree × neighbor_id_size
-```
-
-还没包含：
-
-- 多层结构；
-- allocator；
-- metadata；
-- node header。
-
-这也是 HNSW “用 Memory 换 Query Performance”的真实成本。
-
----
-
-## 7. Build Cost 为什么是一等指标
-
-一个 Index 可能需要数小时甚至更久构建。
-
-要关注：
-
-```text
-Build Throughput
-CPU / GPU
-Memory Peak
-Temporary Storage
-Network
-```
-
-如果系统每天都必须 Rebuild，而一次构建就需要 12 小时，说明：
-
-```text
-Index / Lifecycle Design
-```
-
-本身已经不适合业务节奏。
-
----
-
-## 8. Dynamic Workload 还要测 Update Cost
-
-如果数据每天：
-
-```text
-+20% insert
--10% delete
-```
-
-只测静态查询没有意义。
-
-还要测：
-
-```text
-Insert TPS
-Upsert TPS
-Delete Latency
-Compaction Debt
-Index Maintenance
-Query During Write
-```
-
-Index Selection 必须考虑读写比例，而不只是查询最快值。
-
----
-
-## 9. Filter Cost 为什么经常被低估
-
-同一个 ANN Index：
-
-```text
-No Filter P95 = 10ms
-```
-
-加入：
-
-```text
-tenant_id
-permission_group
-version
-```
-
-可能变成：
-
-```text
-P95 = 40ms
-```
-
-原因可能包括：
-
-- Filter Evaluation；
-- Scalar Index 缺失；
-- Candidate 被大量过滤；
-- ANN 需要扩大 Search Work；
-- Partition Routing 不佳。
-
-所以 Benchmark 必须使用真实 Filter Distribution。
-
----
-
-## 10. 一份容量规划输入清单
-
-至少收集：
-
-```text
-Vector Count N
-Dimension D
-Element Type
-Metadata Size
-Index Type / Parameters
-Replica Count
-Expected Growth
-QPS / Concurrency
-Filter Distribution
-Recall Target
-P99 SLA
-Update TPS
-Delete Rate
-Rebuild Frequency
-```
-
-先做理论估算，再用真实 Benchmark 修正。
-
----
-
-# 11. Troubleshooting：先分类，不要先调参数
-
-Production 问题可以先分成：
-
-```text
-A. Query Latency
-B. Recall / Result Quality
-C. Memory / Storage
-D. Write / Build / Maintenance
-E. Distributed / Availability
-```
-
-不同问题要收不同证据。
-
----
-
-## 12. Query Latency 突然变慢怎么查
-
-按执行链拆：
-
-```text
-Client
-→ Coordinator
-→ Filter
-→ ANN
-→ Shard
-→ Merge
-→ Payload
-```
-
-同时观察：
-
-```text
-P50 / P95 / P99
-CPU
-Memory
-Disk / SSD
-Network
-Queue
-per-shard latency
-filter time
-compaction / rebuild activity
-```
-
-常见原因：
-
-- `efSearch` / `nprobe` 提高；
-- Filter Selectivity 改变；
-- Hot Shard；
-- Segment 太多；
-- Compaction / Rebuild 抢资源；
-- Cache Miss；
-- Network Tail。
-
----
-
-## 13. Recall 下降的四层对照法
-
-不要看到 Recall 下降就直接调 HNSW。
-
-做：
-
-```text
-1. Exact + No Filter
-2. Exact + Filter
-3. ANN + No Filter
-4. ANN + Filter
-```
-
-### Exact + No Filter 都找不到
-
-优先检查：
-
-```text
-Embedding
-Content / Chunk
-Metric
-Normalization
-Query
-```
-
-### Exact 能找到，ANN 找不到
-
-重点检查：
-
-```text
-Index Quality
-efSearch / nprobe
-Quantization
-Build Parameter
-```
-
-### No Filter 找得到，加 Filter 找不到
-
-重点检查：
-
-```text
-Filter Logic
-Tenant / ACL
-Version
-Pre/Post Filter Strategy
-```
-
-这套对照可以把“模型问题”“索引问题”“权限/过滤问题”分开。
-
----
-
-## 14. Memory 暴涨怎么查
-
-先拆来源：
-
-```text
-Raw Vector
-ANN Index
-Metadata
-Replica
-Cache
-Tombstone
-Dual Generation
-Maintenance Buffer
-```
-
-常见原因：
-
-```text
-N 增长
-Dimension 变化
-HNSW M 增大
-Replica 增加
-Tombstone 未清理
-Blue-Green v1/v2 同时存在
-Metadata 膨胀
-```
-
-尤其新旧 Index Generation 共存期间，容量可能短期接近翻倍。
-
----
-
-## 15. Index Size 一直涨但业务数据没涨
-
-检查：
-
-```text
-Deleted Ratio
-Tombstone
-Old Version
-Compaction Queue
-Small Segment
-Unused Collection
-Old Generation
-Replica Count
-```
-
-业务“活跃文档数”不等于物理 Index Size。
-
----
-
-## 16. Write / Upsert 越来越慢
-
-可能是：
-
-```text
-HNSW Graph 越来越大
-Segment Seal / Build
-Compaction
-WAL / Disk Pressure
-Hot Shard
-Metadata Index Update
-```
-
-如果 Query P99 也同时抖动，应重点检查后台 Maintenance 是否和前台抢资源。
-
----
-
-## 17. 某个 Tenant 特别慢
-
-常见：
-
-```text
-Hot Tenant
-Large Tenant
-Skewed Shard
-Complex ACL
-High-selectivity Filter
-```
-
-检查：
-
-```text
-Tenant Vector Count
-Tenant QPS
-Shard Placement
-Partition Size
-Replica Load
-```
-
-可能需要：
-
-- Dedicated Partition / Collection；
-- Re-shard；
-- Rate Limit；
-- 更合理 Tenant Routing。
-
----
-
-## 18. Rebuild 后 Recall 突变
-
-优先比对 Contract：
-
-```text
-Embedding Model Version
-Dimension
-Normalization
-Metric
-Chunk Version
-Index Parameters
-Filter Schema
-```
-
-典型事故包括：
-
-```text
-new Query Embedding + old Document Embedding
-```
-
-或：
-
-```text
-Cosine-trained Model + wrong IP/L2 setup
-```
-
-这不是单纯“ANN 参数不好”。
-
----
-
-## 19. Distributed Query 偶发超时
-
-Scatter-Gather 查询可能出现：
-
-```text
-99 个 Shard 很快
-1 个 Shard 很慢
-→ Global Query 等最慢 Shard
-```
-
-所以要看：
-
-```text
-per-shard P99
-hot shard
-network
-rebalance
-replica health
-segment count
-memory pressure
-```
-
-Tail Latency 常常由最慢分片决定。
-
----
-
-## 20. 一张 Production 排查树
-
-```text
-Vector Search Incident
-│
-├─ Quality Bad
-│  ├─ Exact bad → Model / Chunk / Metric
-│  ├─ ANN bad → Index / Parameter
-│  └─ Filter bad → ACL / Version / Filter Strategy
-│
-├─ Latency Bad
-│  ├─ Search Work ↑
-│  ├─ Filter Cost ↑
-│  ├─ Fan-out / Hot Shard
-│  └─ Maintenance Interference
-│
-├─ Memory Bad
-│  ├─ N / D ↑
-│  ├─ Graph / Replica ↑
-│  └─ Tombstone / Dual Generation
-│
-└─ Write Bad
-   ├─ Index Maintenance
-   ├─ Compaction
-   └─ Resource Saturation
-```
-
----
-
-## 21. 常见错误
-
-- QPS 越高就代表系统越快：错，要同时看 Latency / Recall。
-- Raw Vector Size 就是内存需求：严重低估。
-- Benchmark 只测 Query：动态系统还要测 Build / Update / Delete。
-- P50 好就说明用户体验稳定：P99 可能很差。
-- Recall 差就拉高 `efSearch`：可能根本是 Embedding / Filter / Version 问题。
-- Memory 涨只因为向量数量涨：Index / Replica / Tombstone / Dual Generation 都可能。
-
----
-
-## 22. 面试怎么答
-
-### Q：Vector DB 选型和压测看哪些指标？
-
-> 我会先用 Exact Search 建 ANN Ground Truth，测 Recall；再测不同并发下的 P50/P95/P99、QPS、Memory、Index Size、Build Time、Update/Delete Cost。业务有 Tenant/Permission Filter 时必须用真实 Filter 压测。容量上先用 N×D×element size 估 Raw Vector，再加 Index、Metadata、Replica 和 Headroom。
-
-### Q：Vector DB Recall 下降怎么排查？
-
-> 先用 Exact+NoFilter 判断向量空间本身是否能找到，再比较 ANN+NoFilter 判断索引 Recall，最后比较有无 Filter 判断 ACL/Version/Filter Strategy。这样能避免一上来盲调 HNSW 参数。
-
-### Q：P99 突然变差怎么查？
-
-> 我会拆 Coordinator、Filter、ANN、Shard、Merge 等阶段，看 per-shard Tail Latency、CPU/Memory/Network、后台 Compaction/Rebuild 和 Segment 数，分布式检索常被 Hot Shard 或 Maintenance 拉高尾延迟。
-
----
-
-## 23. 自测
-
-<details><summary>1. 为什么 Recall、Latency、QPS 必须一起看？</summary>
-因为增加搜索工作量可能提高 Recall 但降低吞吐、增加延迟，单独优化一个指标会隐藏代价。
 </details>
 
-<details><summary>2. 为什么容量不能只算 N×D×bytes？</summary>
-因为还要加入 ANN Index、Graph、Metadata、Replica、Allocator、Cache、旧新 Generation 与运行 Headroom。
+**任务 2。** 整体 P95 上升，单次搜索访问量不变；后台重建开始后磁盘队列明显增长。应该优先验证什么？
+
+<details><summary>答案与解释</summary>
+
+优先验证 IO 争用和等待是否导致延迟：比较重建前后读取耗时、队列、缓存与在线请求，限制后台资源后在同负载重测。暂时没有证据要求扩大搜索范围；扩大反而可能增加负载。
+
 </details>
 
-<details><summary>3. 为什么 Exact Search 是 Recall 故障定位的第一步？</summary>
-它能区分“向量空间/模型本身就找不到”和“ANN 索引把本来能找到的近邻丢了”。
-</details>
+## 知识回看与权威资料
+
+回看第 3、4 节的容量账本及第 5、6 节两条诊断线。[References：容量与诊断](../../../references/vector-db/README.md#performance)索引实际产品的统计和索引成本说明。
+
+---
+
+[← 13 分布式检索：局部结果怎样组成全局答案](13-分布式VectorDB.md) · [模块目录](../README.md) · [15 产品与架构选择：先决定需要哪类能力 →](15-产品与架构选型.md)

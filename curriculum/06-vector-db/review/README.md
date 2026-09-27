@@ -1,330 +1,125 @@
-# Vector Database｜Review 与综合自测
+# Vector Database｜Review 与综合判断
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块主页](../README.md) · [面试表达训练 →](../interview/高频面试题.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+第二遍阅读不必重新背十六章的标题。请把自己放在维护知识库的位置：同一个用户刚更新了一篇资料，随后发起搜索。你要说明返回结果为什么属于这个用户、为什么是这些记录，以及失败发生在哪一层。
 
----
+## 1. 用一条查询重建全图
 
-> Review 层把 **16 个正式知识小板块**压缩成几条可以在脑中反复推演的执行路径；正文按 `docs/01 → 16` 连续编号，与正式学习顺序一致。
->
-> 推荐顺序：**先看图回忆 → 自己口述 → 再展开答案检查。**
-
----
-
-# 1. 总图：从 Vector 到 Production Vector DB
-
-```mermaid
-flowchart LR
-    A["语义对象"] --> B["Embedding Vector"]
-    B --> C["Dimension / Normalization"]
-    C --> D["Cosine / Dot / L2"]
-    D --> E["Exact Top-K"]
-    E --> F["Scale Problem"]
-    F --> G["ANN"]
-    G --> H["HNSW / IVF / Quantization"]
-    H --> I["Schema / Metadata / Filter"]
-    I --> J["Update / Delete / Compaction"]
-    J --> K["Shard / Replica"]
-    K --> L["Product / Architecture Selection"]
-```
-
-这张图是整个模块的主干。
-
-如果某个知识点解释不出来，优先问自己：
-
-> **它是在解决哪一步的瓶颈？**
-
----
-
-# 2. 总图：Exact Search → ANN
+先遮住下图，在纸上画出资料与查询两条路径，再标出哪些对象需要版本、哪些位置需要权限、哪些步骤可能引入近似。
 
 ```text
-Exact Search
-= 全量比较
-= Ground Truth / 小规模简单可靠
-        ↓ 数据规模上升
-计算量 / Latency ↑
-        ↓
-ANN
-= 少搜索一部分候选
-= 用 Recall 换 Latency / Memory / Build Cost
+原文与业务状态 ──编码方式──> 带来源和版本的向量记录
+      │                              │
+      │                    写入 / 索引 / 删除 / 重建
+      │                              │
+      │                              ▼
+身份与权限 ──> 合法集合 E      可服务的数据视图
+                    \           /
+查询 ──兼容编码器──> 向量 + 距离规则
+                           │
+                    精确搜索作为对照
+                           │
+          HNSW 路径 / IVF 区域 / PQ 距离近似
+                           │
+              分片结果 ──合并──> 记录与分数
+                           │
+                   按版本取原文并复核
+                           │
+                   上层组织证据与回答
 ```
 
-你应该能解释：
+这里有四个不同的“对”：数据对象对、访问范围对、近邻排序对、最终证据对。某一层正确，不会自动证明另外三层正确。例如 ANN 与精确搜索完全一致，只能说明在既定表示和范围下没有这项索引误差；它不能证明嵌入模型把有用资料排到了前面。
 
-```text
-为什么 ANN 不是“更快但完全相同的 Exact Search”
-为什么 Benchmark 需要 Exact Ground Truth
-Recall@K 怎样定义
-```
+## 2. 把三个近似机制放在一起解释
 
----
+| 机制 | 为了少做什么工作 | 可能丢掉什么 | 哪种补救有用 | 哪种补救无效 |
+|---|---|---|---|---|
+| HNSW 图导航 | 少计算大量无关向量的距离 | 未沿有限搜索路径到达的近邻 | 改善图结构，扩大查询搜索宽度并复测 | 只对已有候选精算不能找回未到达节点 |
+| IVF 区域探测 | 少扫描很多倒排列表 | 未探测区域中的近邻 | 增加探测列表，检查训练分布 | 只精排已探测列表不能找回其他区域 |
+| PQ 向量压缩 | 少存储数值，降低某些距离计算成本 | 距离与排名的精度 | 增大候选集，使用保留的原向量精算 | 没有原向量却声称已恢复原始精确距离 |
 
-# 3. 总图：ANN Index 选择
+HNSW、IVF、PQ 不是只能三选一。前两种主要组织搜索，PQ 主要近似表示；组合时必须分别定位候选遗漏和距离误差。依据来自正文 [04](../docs/04-ANN索引谱系.md)、[05](../docs/05-HNSW机制与调优.md)、[06](../docs/06-IVF原理.md)、[07](../docs/07-Quantization与PQ.md)。
 
-```text
-                  ANN
-       ┌──────────┼──────────┐
-       ▼          ▼          ▼
-     Graph     Partition   Quantization
-       │          │          │
-     HNSW        IVF       SQ / PQ
-```
+## 3. 综合任务：过滤之后不足 K 条
 
-思考顺序：
+**条件。** 业务要团队 alpha 的 Top-3。已知该团队有 50 条有效记录；全库 ANN 先返回 3 条，其中只有 1 条属于 alpha。把返回条数改成 30 后得到 3 条合法记录。
 
-```text
-数据量 / 维度 / 内存
-→ Recall 目标
-→ P95 / P99 Latency
-→ 更新频率
-→ Filter Selectivity
-→ Build / Rebuild 成本
-→ Index Selection
-```
+**任务。** 判断第二次是否已经证明结果正确；给出一个可以检查索引召回的对照过程。再考虑该团队实际只剩 2 条有效记录，指标应怎样处理？
 
-不是：
+<details><summary>提示</summary>
 
-```text
-HNSW 看起来流行
-→ 就选 HNSW
-```
+先建立同一合法范围内的精确答案，再区分“返回够不够”与“近邻对不对”。
 
----
+</details>
+<details><summary>答案与解释</summary>
 
-# 4. 总图：HNSW 参数
+得到 3 条只证明数量满足要求，不证明它们是这个团队的精确近邻。固定同一数据快照、表示、距离、过滤条件和并列规则，先在 alpha 的有效记录中精确取 Top-3；再与带相同过滤约束的 ANN 结果比较。扩大全库候选可缓解后过滤损失，但没有普遍充分的固定放大倍数。
 
-```text
-M
-→ Graph Degree
-→ Memory / Build / Connectivity
+如果合法集合只剩 2 条，本任务的精确目标大小就是 2，而不是强行凑出 3 条。按正文约定用 `min(K, |E|)` 作每个查询的目标大小；空集合单独记录，不把不存在的答案当作索引漏召回。绝不能取消权限过滤来补满结果。
 
-efConstruction
-→ Build Search Breadth
-→ Build Time / Index Quality
-
-efSearch
-→ Query Search Breadth
-→ Recall / Query Latency
-```
-
-真正的调优方法：
-
-```text
-固定 Dataset + Query Set
-→ Exact Ground Truth
-→ Sweep Parameters
-→ Recall@K / P95 / Memory / QPS
-→ 找 Pareto Front
-```
-
----
-
-# 5. 总图：Filter + ANN
-
-```text
-Query
-→ Metadata Constraint
-→ ANN Search
-```
-
-但实现可能是：
-
-```text
-Pre-filter
-Post-filter
-Filter-aware ANN
-Iterative Expansion
-Partition Pruning
-```
-
-排查召回问题时画四格：
-
-```text
-Exact + No Filter
-Exact + Filter
-ANN   + No Filter
-ANN   + Filter
-```
-
-这样才能分清：
-
-```text
-Embedding / Corpus
-Filter
-ANN
-ANN + Filter interaction
-```
-
----
-
-# 6. 总图：Vector Index Lifecycle
-
-```text
-Source of Truth
-      ↓
-Chunk / Record
-      ↓
-Embedding v1
-      ↓
-Vector Index Generation A
-      ↓
-Insert / Update / Delete
-      ↓
-Tombstone / Compaction
-      ↓ model upgrade
-Embedding v2
-      ↓
-Generation B
-      ↓ validate / switch / rollback
-```
-
-必须能解释：
-
-```text
-为什么 Vector DB 往往是 Derived Index
-为什么 Delete 可能不是立即物理消失
-为什么 Re-embedding 需要 Version
-为什么 Rebuild 不能直接覆盖线上唯一 Index
-```
-
----
-
-# 7. 总图：Distributed Vector Search
-
-```text
-Query
-├─ Shard A → Local Top-K
-├─ Shard B → Local Top-K
-└─ Shard C → Local Top-K
-        ↓
-Global Merge
-        ↓
-Final Top-K
-```
-
-重点：
-
-```text
-Shard ↑
-≠ Latency 一定 ↓
-
-Fan-out / Tail Latency / Hot Shard / Merge
-都会变重要
-```
-
-Partition / Tenant Routing 的价值之一就是减少无效 Fan-out。
-
----
-
-# 综合自测
-
-<details><summary>1. 为什么 Vector DB 之前要先学 Embedding，但 Embedding Model 原理又不属于 Vector DB？</summary>
-
-Vector DB 的输入就是向量，所以必须知道向量从哪里来；但模型如何训练、怎样选择 Embedding Model 属于 LLM Foundation。Vector DB 从“给定向量后如何存、索引、检索和维护”开始负责。
 </details>
 
-<details><summary>2. Cosine 和 Dot Product 什么时候可能排序一致？</summary>
+## 4. 综合任务：模型没变，结果却变了
 
-当向量都做 L2 Normalization 时，Dot Product 等于 Cosine，因此排序一致。
+**条件。** 模型文件和维度都未变，但新版本应用只对查询向量做了 L2 归一化。数据库仍使用内积，库向量模长不同。一位同事认为：“查询更规范了，排名肯定更好。”
+
+**任务。** 对一次固定的非零查询，说明内积排名是否一定发生变化；解释为什么跨请求分数阈值仍可能失效。再说明何时能把余弦、内积与 L2 视为排序等价。
+
+<details><summary>答案与解释</summary>
+
+同一次查询除以它的正模长，所有内积分数都乘以相同的正数，所以该次查询的内积排名不变；它并没有消除库向量模长的影响，也不能证明“更好”。不同查询的缩放因子不同，因此基于旧分数定义的统一阈值可能失效。
+
+查询和库向量都单位化，是三者排序等价的常用充分条件：余弦等于内积，平方 L2 等于 `2−2×内积`。本题需要把“排名”“绝对分数”“跨请求阈值”分开。依据见正文 02，不需要从答案中首次学习新公式。
+
 </details>
 
-<details><summary>3. 为什么 Exact Search 仍然重要？</summary>
+## 5. 综合任务：迁移成功后又出现已删除资料
 
-它是小规模可靠方案，也是 ANN Recall Benchmark 的 Ground Truth 来源。
+**条件。** 新索引从位置 h 的快照建立。回填期间，旧系统删除文档 D，随后新索引切流。一小时后，新索引重新搜到了 D。操作日志显示：删除已经执行，但快照中的旧文档写入晚于删除。
+
+**任务。** 给出一个能解释此现象的执行顺序，并指出仅用相同记录 ID 重试为什么不够。修复方案必须说明快照、增量、顺序与切换对象。
+
+<details><summary>答案与解释</summary>
+
+可能顺序是：读取 D 的旧快照，执行删除，再迟到写入旧快照。稳定 ID 只防止生成多个不同 ID，不能阻止旧值覆盖新状态。需要让每个文档的版本和删除状态能参与有序应用，或使用产品支持且经过验证的条件写入；“先读版本再普通写”存在竞争窗口。
+
+新索引需要接上位置 h 之后的增量，包括删除，并保证旧回填不覆盖新状态。切换前检查增量追平、权限/版本一致与检索质量；查询编码方式与索引代际一起切换。回滚期间也要继续维护旧代际，否则旧索引可能在权限和删除状态上已经过期。依据见正文 09、12。
+
 </details>
 
-<details><summary>4. ANN 的核心 Trade-off 是什么？</summary>
+## 6. 综合任务：一个分片超时
 
-减少搜索成本换取近似误差，因此要同时看 Recall、Latency、Memory、Build / Update Cost。
+**条件。** 数据分为三个不重叠分片，每条记录只在其中一个分片。要求全局 Top-5，三个分片按同一规则精确排序。其中一个分片超时，另外两个各返回 5 条。
+
+**任务。** 正常情况下，每个分片返回 5 条为什么足够？超时情况下，从已有 10 条中选出 5 条，为什么不能称为完整的全局答案？增加剩余分片的 K 能否修复？
+
+<details><summary>答案与解释</summary>
+
+若某条记录在自己分片中排在第 5 名之后，那么同一分片已有至少 5 条在全局共同排序规则下排在它之前，因此它不可能进入全局 Top-5。这一推理要求一致的快照、过滤、计分和并列规则，而且局部结果是精确的。
+
+超时分片可能包含全局最近的记录，剩余分片返回更多条也找不回这些记录。系统应按业务要求失败、重试可用副本，或明确标记部分结果，不能把超时解释为“该分片没有匹配”。ANN 局部遗漏、压缩分数不一致和跨分片去重会另外破坏简单合并的前提。依据见正文 13。
+
 </details>
 
-<details><summary>5. HNSW 的 efSearch 调大会发生什么？</summary>
+## 7. 综合任务：内存预算与更新预算发生冲突
 
-通常搜索候选更多，Recall 上升、Latency 增加；具体曲线必须 Benchmark。
+**条件。** 一千万条 768 维 float32 向量；未压缩原始数组只保留一份。旧索引和新索引各需额外 5 GiB 元数据与图结构；进程其他开销 3 GiB。这里只计算单机这个简化布局，不加副本、不压缩，不重复保存数组。
+
+**任务。** 计算重建期间的预算；指出为什么不能直接把“稳态内存×2”作为精确结果。再考虑新旧代际各自保存一份数组，预算会怎样变化？
+
+<details><summary>答案与解释</summary>
+
+原始数组是 `10,000,000×768×4=30,720,000,000` 字节，约 28.61 GiB。共享一份数组时，简化预算约为 `28.61+5+5+3=41.61 GiB`。新旧各一份数组时，约为 `28.61×2+5+5+3=70.22 GiB`。
+
+这些都是已声明布局下的数值，不含构建临时空间与缓存峰值，不是产品实测。不能统一翻倍，因为有些资源共享，有些资源重复，还有些是构建特有的临时分配。依据见正文 07、12、14。
+
 </details>
 
-<details><summary>6. IVF 的 nprobe 控制什么？</summary>
+## 8. 给自己的项目做一次口头验收
 
-控制 Query 搜索多少个倒排 Cell。更大 nprobe 通常提高 Recall，同时增加查询工作量。
-</details>
+请用一条真实查询说明：它使用哪套向量表示，合法范围如何确定，索引近似发生在哪里，何时能看见更新，以及如何取得精确对照。如果没有做过某项实验，直接说未做，并说明需要什么测量，不补造延迟或召回数字。
 
-<details><summary>7. PQ 和 IVF 有什么本质区别？</summary>
+最后回答：“系统换成另一种产品，哪些数学与正确性规则仍然成立，哪些参数和完成语义必须重新核对？”能够分开回答这两层，才说明建立了可迁移的模型。
 
-IVF 主要减少搜索区域；PQ 主要压缩向量表示并近似距离，两者可以组合。
-</details>
-
-<details><summary>8. 为什么 Metadata Filter 可能影响 ANN Recall？</summary>
-
-Filter 会改变合法搜索空间；简单 Post-filter 可能删掉大量 Top Candidate，Pre/Filter-aware ANN 也会改变图或分区的搜索行为。
-</details>
-
-<details><summary>9. 为什么 Tenant Isolation 不能只依靠 Prompt？</summary>
-
-隔离必须由 Auth、Query Construction、Namespace / Filter、Result Audit 等系统边界保证，LLM Prompt 不是访问控制机制。
-</details>
-
-<details><summary>10. 为什么 Vector DB 常常不是 Source of Truth？</summary>
-
-向量和 Index 通常是由业务文档、Chunk、Embedding 派生，可在模型升级或损坏后重建；业务原始事实更适合保留在权威存储中。
-</details>
-
-<details><summary>11. Tombstone 为什么需要 Compaction？</summary>
-
-逻辑删除如果长期不回收，会造成存储膨胀、Segment 碎片和查询开销；Compaction 会清理废弃版本并重写有效数据。
-</details>
-
-<details><summary>12. Re-embedding 为什么不能直接把 v1 和 v2 混在同一检索空间？</summary>
-
-不同模型产生的向量空间可能不可比较；应版本化并通过新 Generation 验证后切换。
-</details>
-
-<details><summary>13. Shard 和 Partition 有什么区别？</summary>
-
-Shard 更偏底层物理水平扩展；Partition / Namespace 更偏逻辑组织和 Query Routing，具体映射取决于产品。
-</details>
-
-<details><summary>14. Replica 为什么不等于 Backup？</summary>
-
-错误写入或 Delete 也可能同步到 Replica；Backup / Source of Truth 解决的是历史恢复问题。
-</details>
-
-<details><summary>15. Vector DB 选型第一步是什么？</summary>
-
-先确定数据规模、过滤、更新、Recall、Latency、HA、运维等需求，再决定 FAISS / pgvector / Search Engine / Dedicated Vector DB，而不是先选产品再找理由。
-</details>
-
-<details><summary>16. Graph DB 和 Vector DB 的核心区别？</summary>
-
-Vector DB 主要解决相似性近邻搜索；Graph DB 主要解决显式实体关系、路径与邻接遍历。两者可以组合但不能互相简单替代。
-</details>
-
----
-
-# Review 完成标准
-
-你应该能够从空白纸画出：
-
-```text
-Vector Space
-→ Exact
-→ ANN
-→ HNSW / IVF / PQ
-→ Metadata Filter
-→ Index Lifecycle
-→ Distributed Search
-→ Product Selection
-```
-
-并能回答每一步：
-
-```text
-为什么需要？
-优化了什么？
-牺牲了什么？
-怎么验证？
-哪里会坏？
-```
+[权威资料索引](../../../references/vector-db/README.md) · [实验](../labs/README.md) · [面试表达训练](../interview/高频面试题.md)

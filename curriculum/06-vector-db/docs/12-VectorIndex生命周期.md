@@ -1,585 +1,118 @@
-# 12｜Vector Index Lifecycle：写入、删除、Tombstone、Compaction、Re-embedding 与 Rebuild
+# 12｜索引生命周期：写入、更新、删除与重建
 
-Vector DB 在 Demo 里往往只有：
+[← 11 分区与多租户：数据放在哪，谁可以读](11-Partition与TenantIsolation.md) · [模块目录](../README.md) · [13 分布式检索：局部结果怎样组成全局答案 →](13-分布式VectorDB.md)
 
-```text
-insert
-query
-```
+资料已经更新，搜索却仍然返回旧规则；删除 API 返回成功，磁盘占用却没有下降。它们不一定是同一种故障：一次操作经历了多个阶段。
 
-Production 一定会遇到：
+向量索引生命周期的主线是：**谁改变了原始事实，变更怎样进入索引，查询什么时候观察到它，旧状态什么时候被安全清理。**
 
-```text
-文档更新
-Chunk 重切
-Embedding Model 升级
-权限撤销
-删除数据
-ANN 参数调整
-索引重建
-```
+## 1. 三个完成点必须分开
 
-所以真正完整的问题是：
+| 完成点 | 可以说明什么 | 不能直接推出什么 |
+|---|---|---|
+| 请求被接受或记录 | 服务知道有这项操作 | 所有查询立刻看到结果 |
+| 在约定一致性下查询可见 | 指定读路径能观察到写入或删除 | 旧文件已经被回收 |
+| 物理空间回收 | 不再需要的表示和结构被清理 | 历史备份、缓存、其他副本全部同步删除 |
 
-> **一个向量从写入，到更新、删除、Compaction，再到全量 Rebuild，整个生命周期怎样管理？**
+这里的读取一致性，是约定查询允许看到哪个时刻的状态。例如同一写者要求读到刚写入的值，和允许读到稍早的副本，是不同要求；写者已确认成功，也不自动证明其他会话或副本已经追上。应明确读路径、允许的滞后和验证方法。
 
----
+具体 API 的成功语义必须查产品。例如 Qdrant 区分 acknowledged 与 completed；`wait=true` 要求等待操作完成，而不显式设置等待时收到的确认不代表数据已经能检索。[官方等待结果说明](https://qdrant.tech/documentation/manage-data/points/#awaiting-result)给出了这一区别。分布式副本可见性还要结合相应读写配置，不能把单节点例子推广为所有拓扑的强一致保证。
 
-## 1. Insert 不只是 Append
+> ⚠️ 注意：客户端超时表示“没有及时收到结果”，不证明服务没有执行。重试必须考虑操作幂等，并在需要时读取状态核对结果。
 
-Flat Index 中新增向量相对直接。
+## 2. 写入和持久化不是仅修改内存数组
 
-但 ANN Index 可能还要：
+一个简化存储流程可能先记录 WAL（Write-Ahead Log，预写日志），再修改可查询状态，随后组织持久数据和索引。日志的作用是让崩溃后能够恢复尚未完成整理的变更；何时确认持久化取决于实际实现与配置。
 
-```text
-HNSW → 找邻居、建立图边
-IVF  → 找最近 Centroid、进入 List
-PQ   → 生成 Quantized Code
-```
+某些系统先把新增数据放入可写区域，积累后形成较稳定的数据段，再构建索引。Segment（数据段）是数据库组织和维护数据的单位，可能一个集合里存在多个段。Milvus 的 growing／sealed 属于具体实现术语，不能认为每个向量数据库都采用同一状态机。
 
-因此写入吞吐会直接受 Index Type 影响。
+因此没有完成大型 ANN 建索引的新增数据，仍可能通过小段扫描参与查询；也可能因配置暂不被搜索。要核对实际产品，而不是只用“索引建完了吗”替代可见性测试。[Milvus 一致性说明](https://milvus.io/docs/consistency.md)解释了读取时效的不同选择。
 
----
+## 3. 更新：重复与乱序分开处理
 
-## 2. Upsert / Update 为什么比关系字段复杂
+对文档 travel 的更新事件为：版本 7 改了正文，版本 8 删除了文档。若版本 7 的重试晚于版本 8 到达，直接 upsert 会把已经删除的文档重新放回索引。
 
-一个 Vector 从：
+需要一条明确的状态规则：只接受比当前已处理版本更新的事件；相同事件重复到达不重复执行；更旧事件不得覆盖新状态。该规则可以在有序消费、条件更新或一个能够原子比较版本的权威状态层中实现。
 
 ```text
-v_old
+当前状态：travel，已处理版本8，已删除
+到达事件：版本7，更新正文
+判定：    7 < 8，不执行旧更新，仍保持已删除
 ```
 
-变成：
+普通“先读版本，再写新值”在并发下可能被另一个写者插入，不能自动保证原子性。部分产品提供条件更新；例如 Qdrant 文档标明从 1.16.0 支持基于过滤前提的条件更新，但仍需按具体 API、拓扑和冲突语义设计，而不是只存一个 version 字段就宣称安全。[官方条件更新](https://qdrant.tech/documentation/manage-data/points/#conditional-updates)是一个能力例子。
+
+即使删除了向量记录，也需要保留足以阻止过期事件重放的版本信息。保留多久由消息重放窗口、备份恢复与业务要求决定，不是一个统一天数。
+
+## 4. 删除标记与 Compaction
+
+为了避免每删除一条就立即重写整个索引或数据文件，系统可能先记录 Tombstone（删除标记）：在相应读状态生效后，将该记录排除在查询结果之外。
+
+随后通过 Compaction（合并整理）重写仍有效的数据、清理旧版本和删除项，逐步回收空间。图索引还要维护连接，或在重建时去掉不再使用的节点；具体过程由实现决定。
+
+因此“已经看不到”与“磁盘减少”是两个观察。删除标记本身也不能被描述成跨所有副本“立即不可见”。对于权限撤销等必须迅速阻断的场景，应把查询授权和缓存失效作为前置保护，再验证索引删除传播；不能等待后台空间整理来承担访问控制。
+
+## 5. 模型升级与索引重建不是同一项任务
+
+只换索引结构或构建参数，可以复用兼容的向量。换不兼容的嵌入模型、预处理或维度，需要重新编码文档，并建立匹配的查询路径。
+
+可以给可发布的一组配置命名为一个 Generation（发布代）：它明确包含查询编码方式、文档向量空间、索引集合、距离以及必要预处理。这个名称是应用的发布组织方式，不假定数据库自动提供跨这些系统的原子事务。
+
+切换时若只把集合名换到 v2，查询仍用 v1 编码，维度即使相同也可能得到无意义结果。必须让一次请求选择一套自洽配置，而不是中途读取到半新半旧的设置。
+
+## 6. 在线重建怎样避免丢掉期间更新
+
+假设旧索引持续服务，新索引要根据原始资料构建。一个可验证的过程是：
+
+1. 取得一致资料快照及其对应的变更边界，例如日志位置 h。快照与边界必须能对应；不能分别随意读两个时间戳。
+2. 用快照构建新索引，同时可靠保留 h 之后的变更。
+3. 回放新增、修改和删除，按标识与版本处理重复、乱序及并发回放。
+4. 追到明确的发布边界，核对完整片段清单、版本和关键查询；必要时通过短暂停写或严格排序解决最后一段交接。
+5. 把同一查询复制到新旧两代执行，比较质量、延迟和权限，但仍只用旧代结果对外服务；这种用于对照而不接管答案的查询称为影子查询。
+6. 切换到完整的新发布代，观察后再退役旧代。
 
 ```text
-v_new
+旧索引：持续服务 ────────────────> 保留回滚窗口 ──> 退役
+原资料：快照 h ── 后续增删日志 ──> 明确交接边界
+新索引：构建快照 ── 回放增量 ──> 验证 ──> 接管查询
 ```
 
-意味着它在向量空间中的位置改变。
+这里只建立迁移正确性模型。日志采集，以及把事实变更和待发送事件放进同一事务等可靠同步机制的完整设计归 Backend；当前必要前提是快照与增量必须连续，且删除不能漏回放。
 
-于是：
+## 7. 能保留旧索引，不等于能够回滚
 
-```text
-HNSW 邻接关系可能改变
-IVF Cell 可能改变
-Quantized Code 可能改变
-```
+新代接管后又发生了更新，若旧代停止追增量，直接切回去会读到旧事实。回滚窗口内应继续同步旧代、准备可重放日志，或明确允许的回退时效和受限策略。
 
-所以 Vector Update 常常更接近：
+重建还会同时消耗 CPU、内存、磁盘与网络。双代并存的峰值资源可能显著高于稳态；后台任务应限速，并观察在线尾延迟。验证不仅要看数量相等，还要看标识、版本、删除传播、表示匹配和权限结果。
 
-```text
-remove old index entry
-+
-insert new index entry
-```
+## 本章小结
 
-而不是简单原地改一个数组字段。
+接受请求、查询可见和物理回收是三个完成点。幂等解决重复，版本规则解决旧事件回流；模型升级还要求编码器与索引配对发布。在线重建依赖一致快照、连续增量与可靠交接，回滚则需要旧代仍能恢复到可接受状态。
 
----
+## 🎯 面试怎么回答
 
-## 3. Metadata Update 和 Vector Update 要区分
+**问：模型升级后怎样重建索引且不中断服务？**
 
-如果只修改：
+我会先判断是否改变向量空间。需要重新编码时，让旧代继续服务，用有对应日志边界的资料快照建立新代，再回放期间的增删并阻止旧版本覆盖。验证片段、版本、权限、质量和负载后，将查询编码与目标索引作为一套配置切换。回滚窗口内保留同步或可重放能力，最后退役旧代，并预留双代并存和重建的资源。
 
-```text
-permission_group
-status
-category
-```
+## ⚠️ 易错点
 
-向量内容可能没变。
+超时不是未执行；确认成功不是所有读路径已可见；逻辑删除不是立即物理擦除；稳定 ID 不能阻止旧更新复活已删文档；仅保留旧索引文件不能保证安全回滚。
 
-如果产品支持 Metadata-only Update，就不必重新 Embedding。
+## 自测
 
-但如果：
+**任务。** 新索引由日志位置 100 对应快照构建，已回放 101–150。随后位置 151 删除文档 X，位置 152 更新 Y。此时程序切换到新索引，但只补回放“新增和更新”。请指出错误、修复步骤，以及只比较记录总数为何不足。
 
-```text
-Chunk Content Changed
-```
+<details><summary>答案与解释</summary>
 
-通常需要：
+漏回放 151 的删除，X 可能继续被查询。应包含所有变更类型，按明确边界追平并处理重复／乱序，再验证 X 的删除与 Y 的版本。总数可能因另一个误删或漏增抵消，不能证明标识、版本或权限正确。切换后还需保证后续变更进入新代。
 
-```text
-re-chunk
-→ re-embed
-→ update vector
-```
-
-所以更新流程应该先判断：
-
-```text
-Content Changed?
-Metadata Only?
-Embedding Contract Changed?
-```
-
----
-
-## 4. Delete 为什么常用 Tombstone
-
-ANN Index 维护成本较高。
-
-如果每次删除都立即重写复杂图或分区结构，前台成本会很大。
-
-因此常见思路是：
-
-```text
-Delete Request
-→ logical delete / tombstone
-→ Query path 跳过
-→ background compaction / rebuild
-```
-
-这样：
-
-```text
-前台删除快
-```
-
-但代价是：
-
-```text
-旧记录仍暂时占空间
-索引里可能残留无效节点
-```
-
----
-
-## 5. Tombstone 不能无限积累
-
-假设：
-
-```text
-1 亿条记录
-3000 万条已 deleted
-```
-
-即使查询不返回它们，也可能带来：
-
-- Memory / Storage 浪费；
-- Graph / Segment 碎片；
-- 维护债务；
-- Query Path 变长；
-- Rebuild 成本累积。
-
-因此需要 Maintenance。
-
----
-
-## 6. Compaction 在做什么
-
-可以把 Compaction 理解成：
-
-```text
-整理有效数据
-→ 去掉 Tombstone / Stale Version
-→ 合并小 Segment
-→ 回收空间
-→ 生成更干净的索引结构
-```
-
-具体实现随产品变化，但目标类似：
-
-> **把在线增删改造成的碎片重新整理。**
-
----
-
-## 7. Segment 为什么重要
-
-很多 Vector DB 会把数据组织为多个 Segment，而不是一个无限大的单索引文件：
-
-```text
-Growing Segment
-→ Seal
-→ Build Index
-→ Merge / Compact
-```
-
-这种模型能把在线写入与只读/优化查询结构分离。
-
-但是 Segment 太碎会造成：
-
-```text
-更多 Fan-out
-更多 Metadata
-更多 Maintenance
-更高 Tail Latency
-```
-
----
-
-## 8. Compaction 为什么会影响前台 SLA
-
-Compaction / Rebuild 需要：
-
-```text
-CPU
-Memory
-Disk / SSD I/O
-Network
-Index Build Resource
-```
-
-太激进：
-
-```text
-Query P99 抖动
-Write Latency 上升
-```
-
-太保守：
-
-```text
-Storage 膨胀
-Tombstone 堆积
-Segment 碎片
-```
-
-所以它是 Background Maintenance Trade-off。
-
----
-
-## 9. Index Maintenance 不只是 Compaction
-
-Production 还可能包括：
-
-```text
-Index Rebuild
-Replica Repair
-Rebalance
-Segment Merge
-Index Warmup
-Cache Warmup
-Statistics Refresh
-```
-
-这些长任务应该具备：
-
-- 可观测；
-- 可限速；
-- 可取消/重试；
-- 有进度；
-- 不拖垮前台 Query。
-
----
-
-## 10. 为什么 Embedding Model 升级通常要 Re-embedding
-
-即使：
-
-```text
-Model v1 = 768 dim
-Model v2 = 768 dim
-```
-
-也不代表两个向量空间兼容。
-
-所以常见升级路径是：
-
-```text
-Source of Truth
-→ Embedding Model v2
-→ New Vector Generation
-→ New Index Generation
-```
-
-而不是：
-
-```text
-Query 用 v2
-Document 还用 v1
-```
-
----
-
-## 11. Vector Version 与 Index Version 要分开
-
-如果改变：
-
-```text
-Embedding Model
-Dimension
-Normalization
-Chunk Strategy
-```
-
-通常会改变 Vector Content，本质需要新的 Vector Generation。
-
-如果只是：
-
-```text
-HNSW M=16 → 32
-IVF nlist 改变
-```
-
-Vector 本身没变，可能只需 Rebuild ANN Index。
-
-所以至少区分：
-
-```text
-Vector Generation Version
-vs
-Index Structure Version
-```
-
----
-
-## 12. Chunk Strategy 变化为什么也会触发 Rebuild
-
-如果从：
-
-```text
-fixed 512-token chunk
-```
-
-切到：
-
-```text
-semantic / parent-child chunk
-```
-
-检索单位本身变了。
-
-需要：
-
-```text
-re-chunk
-→ new IDs
-→ re-embed
-→ rebuild index
-```
-
-因此 Vector Lifecycle 与 RAG Chunk Lifecycle 是有关联的，但 Primary 责任不同。
-
----
-
-## 13. Blue-Green Index
-
-更稳健的升级方式：
-
-```text
-Current generation v1
-        │
-        ├─ 继续正常服务
-        │
-Source of Truth
-        ↓
-Build generation v2
-        ↓
-Validation
-        ↓
-Shadow / Canary
-        ↓
-Switch Alias / Routing
-        ↓
-Keep v1 for rollback
-        ↓
-Retire old generation
-```
-
-好处：
-
-- 不把新旧 Vector 混进一个 Index；
-- 更容易验证；
-- 更容易 Rollback；
-- 切换边界清晰。
-
-代价：
-
-```text
-短期双份存储 / 内存
-```
-
----
-
-## 14. 全量 Rebuild 期间的新数据怎么办
-
-假设 Build 需要 8 小时。
-
-如果只做：
-
-```text
-T0 snapshot
-→ build 8h
-→ switch
-```
-
-T0 之后的新写入会丢失。
-
-常见思路：
-
-```text
-1. 记录 Snapshot Boundary
-2. Full Build from Snapshot
-3. 同时记录 Change Log / CDC
-4. Build 完成后 Replay Delta
-5. Catch Up
-6. Validate
-7. Switch
-```
-
-这和搜索索引、数据库迁移的思想非常接近。
-
----
-
-## 15. Delete / Update 必须有 Source Mapping
-
-一个文档可能对应很多 Chunk：
-
-```text
-doc_1001
-├── chunk_0
-├── chunk_1
-└── ...
-```
-
-如果 Vector DB 只保存随机 Vector ID，就很难：
-
-- 全量删除某文档；
-- 查找当前版本；
-- 回滚；
-- 重建；
-- 清理旧 Generation。
-
-因此 Metadata 应保留：
-
-```text
-doc_id
-chunk_id
-content_version
-embedding_version
-index_generation
-updated_at
-```
-
----
-
-## 16. Upsert 不自动解决并发一致性
-
-多个 Worker 同时更新同一文档：
-
-```text
-A writes version 7
-B writes version 8
-```
-
-如果 B 先完成、A 后到：
-
-```text
-旧版本可能覆盖新版本
-```
-
-所以还需要：
-
-```text
-version check
-job generation
-idempotency
-source-of-truth state
-```
-
-这些属于 Vector Lifecycle 与 Backend Reliability 的交界。
-
----
-
-## 17. Delete 成功后为什么仍可能搜到旧数据
-
-可能原因：
-
-- Replica Lag；
-- Cache 没失效；
-- Query 还在旧 Generation；
-- Version Filter 缺失；
-- 异步删除尚未传播；
-- Logical Delete 与 Physical Reclaim 不同阶段。
-
-所以：
-
-> `DELETE API 200` 不等于全链路已经不可见。
-
----
-
-## 18. 怎样验证一个新 Index Generation
-
-### Infrastructure Layer
-
-```text
-ANN Recall vs Exact
-Latency
-QPS
-Memory
-Build Time
-Filter Performance
-```
-
-### Retrieval / RAG Layer
-
-```text
-Relevant Document Recall
-MRR / NDCG
-Rerank Quality
-Answer Quality
-Bad Case Regression
-```
-
-第二层 Primary 属于 RAG，但 Vector DB 升级不能脱离端到端验收。
-
----
-
-## 19. Maintenance 需要监控什么
-
-可以关注：
-
-```text
-Deleted Ratio
-Tombstone Count
-Old Generation Count
-Segment Count
-Small Segment Count
-Compaction Queue
-Index Build Queue
-Disk Amplification
-Memory Growth
-Query Latency Drift
-```
-
-数据量没明显增加，但 Index Size / P99 一直涨时，Maintenance Debt 是重要排查方向。
-
----
-
-## 20. 常见错误
-
-- Upsert 一定是原地修改 ANN Index：不一定。
-- Delete 后空间会立即释放：不一定。
-- 相同 Dimension 的新模型不需要 Re-embedding：错误。
-- 改 HNSW 参数一定要重新 Embedding：通常不需要。
-- Full Build 完成就直接切，不需要追增量：会漏 Delta。
-- Logical Delete 和 Physical Reclaim 是同一时刻：错误。
-
----
-
-## 21. 面试怎么答
-
-### Q：Embedding 模型升级后怎么迁移 Vector DB？
-
-> 我会建立新 Vector / Index Generation，而不是把新旧模型向量混在一起。基于 Source of Truth 做全量 Re-embedding，同时记录 Snapshot Boundary 和增量 Change Log，完成后追平 Delta，再做 ANN 与端到端 Retrieval 验证，通过 Alias/Route 灰度切换，并保留旧 Generation 供 Rollback。
-
-### Q：Vector DB Delete 为什么还需要 Compaction？
-
-> 很多 ANN Index 会先做 Logical Delete/Tombstone，让记录立即不可见，再由后台 Compaction/Rebuild 真正回收空间并整理索引结构。这样降低前台 Delete 成本，但必须控制 Tombstone/Segment Debt。
-
----
-
-## 22. 自测
-
-<details><summary>1. 为什么 Vector Update 通常比 Metadata Update 更重？</summary>
-因为 Vector 位置改变会影响 ANN Index 结构，而 Metadata-only Update 不一定需要重建近邻关系。
 </details>
 
-<details><summary>2. 为什么要区分 Vector Generation 和 Index Version？</summary>
-Embedding/Chunk 改变会改变向量本身；HNSW/IVF 参数变化可能只改变索引结构，两种迁移成本不同。
-</details>
+## 知识回看与权威资料
 
-<details><summary>3. 为什么全量 Rebuild 要有 Delta Replay？</summary>
-因为 Build 期间业务仍会新增/修改数据，不追增量会让新 Generation 缺数据。
-</details>
+回看第 1 节三个完成点、第 3 节乱序例子以及第 6 节交接边界。[References：生命周期与一致性](../../../references/vector-db/README.md#lifecycle)区分数据库 API 保证与应用设计策略。
+
+---
+
+[← 11 分区与多租户：数据放在哪，谁可以读](11-Partition与TenantIsolation.md) · [模块目录](../README.md) · [13 分布式检索：局部结果怎样组成全局答案 →](13-分布式VectorDB.md)

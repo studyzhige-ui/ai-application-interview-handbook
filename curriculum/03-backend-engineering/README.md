@@ -1,6 +1,6 @@
 # AI Backend Engineering｜Production 后端工程底座
 
-[← FastAPI](../02-fastapi/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [MySQL →](../04-mysql/README.md)
+[← Redis](../05-redis/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Vector Database →](../06-vector-db/README.md)
 
 > **课程版本：V1** · **教材状态：✅ 完整**  
 > **教材：22 个连续知识小板块** · **HUMAN-A Canonical：39** · **独立来源覆盖：125**  
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → **AI Backend Engineering** → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → **AI Backend Engineering** → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
 模块角色：**Foundation / 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。**
 
@@ -177,4 +177,4 @@ Canonical Coverage ✅
 Content Depth       ✅
 ```
 
-下一环：[MySQL](../04-mysql/README.md)。
+下一环：[Vector Database](../06-vector-db/README.md)。
