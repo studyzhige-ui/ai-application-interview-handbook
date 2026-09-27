@@ -22,8 +22,8 @@ Section                       = 参数 / 变体 / Failure / 深挖追问
 | Python | 12-block v1 / 15 Canonical | 13 | ✅ |
 | FastAPI | ~40 outline topics / 4 Canonical | 16 | ✅ |
 | AI Backend Engineering | ~55 outline topics / 39 Canonical | 22 | ✅ |
-| MySQL | 26 Canonical | 23 | ✅ |
-| Redis | 27 old blocks / 19 Canonical | 24 | ✅ |
+| MySQL | 26 Canonical | 19 | ✅ |
+| Redis | 27 old blocks / 19 Canonical | 18 | ✅ |
 | Vector DB | 23 old blocks / 12 Canonical | 16 | ✅ |
 | LLM Foundation | 29 old blocks / 23 Canonical | 14 | ✅ |
 | RAG | 34 old blocks / 29 Canonical | 14 | ✅ |

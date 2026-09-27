@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import unquote
 import argparse, ast, re, subprocess, sys, tempfile
 ROOT=Path(__file__).resolve().parents[1]
-MODULES={'01-python':13,'02-fastapi':16,'03-backend-engineering':22,'04-mysql':23,'05-redis':24,'06-vector-db':16,'07-llm-foundation':14,'08-rag':14,'09-agent':24,'10-system-design':19}
+MODULES={'01-python':13,'02-fastapi':16,'03-backend-engineering':22,'04-mysql':19,'05-redis':18,'06-vector-db':16,'07-llm-foundation':14,'08-rag':14,'09-agent':24,'10-system-design':19}
 ALLOWED_EXAMPLES={'feedback_loop','registry_projection'}
 
 def split_fences(text):

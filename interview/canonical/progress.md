@@ -44,15 +44,15 @@ Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Froz
 | 01 | [Python Foundation](../../curriculum/01-python/README.md) | 13 | 15 | ✅ |
 | 02 | [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | 4 | ✅ |
 | 03 | [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) | 22 | 39 | ✅ |
-| 04 | [MySQL](../../curriculum/04-mysql/README.md) | 23 | 26 | ✅ |
-| 05 | [Redis](../../curriculum/05-redis/README.md) | 24 | 19 | ✅ |
+| 04 | [MySQL](../../curriculum/04-mysql/README.md) | 19 | 26 | ✅ |
+| 05 | [Redis](../../curriculum/05-redis/README.md) | 18 | 19 | ✅ |
 | 06 | [Vector Database](../../curriculum/06-vector-db/README.md) | 16 | 12 | ✅ |
 | 07 | [LLM Foundation（应用工程深度）](../../curriculum/07-llm-foundation/README.md) | 14 | 23 | ✅ |
 | 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | 29 | ✅ |
 | 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | 44 | ✅ |
 | 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 24 | ✅ |
 
-**Curriculum total：185 blocks。**
+**Curriculum total：175 blocks。**
 
 历史 v1.0 审计快照保留在 [Audits History](../../guide/audits/history/README.md)；当前质量状态以 [Final Quality Audit](../../guide/audits/final-quality-audit.md) 为准。Agent 23→24 的修订与核验范围见 [Agent Reader Revision](../../guide/project/agent-reader-revision.md)。
 

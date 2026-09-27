@@ -105,24 +105,24 @@ Hot100按已具备前置逐步练习 → 笔试 → 多文件工程任务
 2. Redis：10—12。
 3. Redis：13—15。
 4. Redis：16—18。
-5. Redis：19—21。
-6. Redis：22—24。
+5. Redis：Review，重建缓存、并发、恢复与分片的关系。
+6. Redis：命令 / 状态实验，重点验证 TTL、事务、锁与消息边界。
 
 ### 第6周
 
-1. Redis：Review与命令/状态实验。
-2. Backend：01—03。
-3. Backend：04—06。
-4. Backend：07—09。
-5. Backend：10—12。
-6. Backend：13—15。
+1. Backend：01—03。
+2. Backend：04—06。
+3. Backend：07—09。
+4. Backend：10—12。
+5. Backend：13—15。
+6. Backend：16—18。
 
 ### 第7周
 
-1. Backend：16—18。
-2. Backend：19—20。
-3. Backend：21—22。
-4. Backend：Review与故障时间线。
+1. Backend：19—20。
+2. Backend：21—22。
+3. Backend：Review。
+4. Backend：故障时间线与恢复练习。
 5. 基础综合回顾：Python、接口、事务、缓存和可靠任务。
 6. 基础综合追问：资源、超时、重复动作与恢复。
 

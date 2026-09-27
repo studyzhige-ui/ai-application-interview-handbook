@@ -11,8 +11,8 @@ EXPECTED_BLOCKS = {
     "curriculum/01-python": 13,
     "curriculum/02-fastapi": 16,
     "curriculum/03-backend-engineering": 22,
-    "curriculum/04-mysql": 23,
-    "curriculum/05-redis": 24,
+    "curriculum/04-mysql": 19,
+    "curriculum/05-redis": 18,
     "curriculum/06-vector-db": 16,
     "curriculum/07-llm-foundation": 14,
     "curriculum/08-rag": 14,
@@ -63,8 +63,8 @@ for module, expected in EXPECTED_BLOCKS.items():
     if nums != list(range(1, expected + 1)):
         errors.append(f"{module}: numbering mismatch {nums}")
 
-if total != 185:
-    errors.append(f"Curriculum total must be 185, found {total}")
+if total != 175:
+    errors.append(f"Curriculum total must be 175, found {total}")
 
 # Products are a top-level source-study layer, not a Curriculum subdirectory.
 legacy_products = ROOT / "curriculum/09-agent/products"
@@ -95,8 +95,8 @@ for product_name in ("OpenAI Codex", "Claude Code", "DeepSeek Harness", "DeerFlo
         errors.append(f"products/agent/README.md: comparison missing {product_name}")
 
 # Current-state semantic checks.
-require("guide/knowledge-map.md", "## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 23 blocks")
-forbid("guide/knowledge-map.md", "## 04. [MySQL](../curriculum/04-mysql/README.md) ✅ — 24 blocks")
+require("guide/knowledge-map.md", "## 04. [MySQL](../curriculum/04-mysql/README.md) — 19 blocks")
+require("guide/knowledge-map.md", "## 05. [Redis](../curriculum/05-redis/README.md) ✅ — 18 blocks")
 forbid("interview/canonical/progress.md", "Agent23章")
 forbid("interview/canonical/progress.md", "roadmap/documentation-style-guide.md")
 forbid("interview/canonical/schema.md", "采集阶段已经结束")
@@ -107,7 +107,7 @@ require("README.md", "products/     成熟 AI 系统怎样把这些机制组合�
 require("curriculum/09-agent/README.md", "../../products/agent/README.md")
 forbid("curriculum/09-agent/README.md", "products/codex/README.md")
 forbid("interview/canonical/module-index.md", "Frozen Research 层")
-require("guide/audits/final-quality-audit.md", "Curriculum Blocks          185")
+require("guide/audits/final-quality-audit.md", "Curriculum Blocks          175")
 require("market/analysis/knowledge-gap-analysis.md", "S280–S288")
 require("guide/audits/history/README.md", "2026-09-12")
 require("market/analysis/history/README.md", "2026-09-11")
