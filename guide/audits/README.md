@@ -9,6 +9,7 @@
 - [Content Depth Audit](content-depth-audit.md)：正文深度与完成状态；
 - [Foundation Status Audit](foundation-status-audit.md)：Foundation 三模块状态；
 - [Codex 源码与读者审查](codex-reader-source-review-2026-09-27.md)：限定 Codex 产品模块的源码依据、知识去向与分层验证；
+- [Codex 讲解精修](codex-clarity-refinement-2026-09-27.md)：正常过程前置、可观察材料、工具与记忆顺序、三维暴露及分层验收；
 - [DeepSeek Harness 讲解精修](deepseek-harness-clarity-refinement-2026-09-27.md)：正常路径前置、跨章职责、实验入口与发布事实；
 - [RAG 讲解清晰度精修](rag-clarity-refinement-2026-09-27.md)：条件支持、发布交接、图检索、机制实验与显示验证；
 - [Audit History](history/README.md)：旧版本审计快照，保留当时数字与结论。
