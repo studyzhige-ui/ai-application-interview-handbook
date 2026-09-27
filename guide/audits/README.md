@@ -10,6 +10,7 @@
 - [Foundation Status Audit](foundation-status-audit.md)：Foundation 三模块状态；
 - [Codex 源码与读者审查](codex-reader-source-review-2026-09-27.md)：限定 Codex 产品模块的源码依据、知识去向与分层验证；
 - [DeepSeek Harness 讲解精修](deepseek-harness-clarity-refinement-2026-09-27.md)：正常路径前置、跨章职责、实验入口与发布事实；
+- [RAG 讲解清晰度精修](rag-clarity-refinement-2026-09-27.md)：条件支持、发布交接、图检索、机制实验与显示验证；
 - [Audit History](history/README.md)：旧版本审计快照，保留当时数字与结论。
 
 审计文件用于验证结构、粒度、覆盖、深度与质量门，不替代 Curriculum 正文。
