@@ -12,7 +12,7 @@
 | `sync_expected_canonical_count.py` | 将 Market Analysis 的 Canonical 计数与已审核审计基线同步（跨平台） |
 | `validate_source_coverage.py` | 校验来源覆盖与映射 |
 | `validate_agent_readability.py` | 校验全仓库 Markdown 链接、Agent 教材可读性与结构 |
-| `validate_repository_semantics.py` | 校验 185-block 结构、Market / Canonical 时间边界、旧路径与章节语义漂移 |
+| `validate_repository_semantics.py` | 按实际文件与生成目录校验课程结构、Market / Canonical 时间边界、旧路径与章节语义漂移 |
 | `fetch_dynamic_official_jobs.mjs` | 从每家公司固定第一手 `job_list_url` 统一搜索、翻页并读取官方职位详情 |
 | `sync_official_2027_agent_jobs.py` | 汇总浏览器与官方 ATS/API，应用严格非算法工程 Gate，并生成 Role Family 全量 JD 层 |
 | `audit_official_2027_job_sources.py` | 分离审计“当前严格结果是否闭环”与“自动维护链路是否已完整枚举” |
@@ -25,6 +25,8 @@
 market/
 interview/canonical/
 curriculum/
+products/
+practice/
 guide/
 references/
 ```
@@ -36,10 +38,10 @@ references/
 
 工作流同时保留 Windows 与 Linux 两套执行路径，但**同一次运行只会启用其中一套**：
 
-- 仓库为 private：运行 `[self-hosted, Windows]`，用于当前本地 Runner；GitHub-hosted Linux job 在 job-level `if` 阶段直接跳过，不消耗 GitHub-hosted minutes。
+- 仓库为 private：运行 `[self-hosted, Windows]`，用于已配置的本地 Runner；GitHub-hosted Linux job 在 job-level `if` 阶段直接跳过，不消耗 GitHub-hosted minutes。
 - 仓库为 public：运行 `ubuntu-latest`，Windows self-hosted job 直接跳过。公开仓库的 PR / push 不会执行本地 Windows Runner，从而避免把公开贡献代码带到本地机器执行。
 - 两套 job 共享同一套 `tools/` 脚本、数据契约与生成结果；OS 差异只保留在 Playwright 安装、临时目录和 Git 提交 shell 等必要位置。
-- Windows Runner 需要注册到本仓库并具有默认 `self-hosted`、`Windows` labels。当前已验证 Runner `interview-handbook-local-win` 能正常接收 Actions。
+- Windows Runner 需要注册到本仓库并具有默认 `self-hosted`、`Windows` labels。Runner 的名称、在线状态与可用环境以 Actions 设置和本次运行结果为准，不从历史测试推断持续在线。
 
 ## 生成文件一致性
 
@@ -80,9 +82,9 @@ Runtime Certification 还要求本轮 Browser / Feishu / Moka 缓存通过 `gene
 <!-- outer-sync:start -->
 ## 全仓外围导航同步
 
-- [`sync_outer_navigation.py`](sync_outer_navigation.py)：扫描全部 README 和共享导航，按实际文件更新学习顺序、当前章节数、资料及维护入口；默认只预览，`--check` 检查漂移，`--apply` 才写入。
+- [`sync_outer_navigation.py`](sync_outer_navigation.py)：只读扫描全仓 Markdown 的路径、锚点与冲突残留；只在明确允许的入口页、状态页和生成索引内同步数量、顺序、正文指纹与证据入口；默认只预览，`--check` 检查漂移，`--apply` 才写入。
 - [`sync_learning_navigation.py`](sync_learning_navigation.py)：复用已有的路线与前后导航转换，保留目录标识。
-- [`test_outer_navigation.py`](test_outer_navigation.py)：验证计数、保护边界、链接解析与重复运行。
+- [`test_outer_navigation.py`](test_outer_navigation.py)：验证计数、保护边界、真实阅读顺序、链接解析、冲突示例和重复运行。
 
-同步不会重新生成 Market / Canonical、修改课程正文或自动宣称实机验证通过。
+正文、源码与实践资料可被读取和校验，但不会被同步器改写。同步不会重新生成 Market / Canonical，也不自动宣称阅读或实机验证通过。
 <!-- outer-sync:end -->

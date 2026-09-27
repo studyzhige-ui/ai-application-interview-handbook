@@ -1,6 +1,6 @@
 # AI Application Engineer｜十板块知识地图
 
-[← Handbook 总目录](../README.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [审计记录索引](audits/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
+[← Handbook 总目录](../README.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [审计记录索引](audits/README.md) · [跨模块术语表](terminology-glossary.md) · [Canonical 冻结覆盖](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
 
 > 本页按当前正式文件描述十个模块，不以历史验收状态替代后续版本验证。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
 
@@ -25,7 +25,7 @@ Curriculum 通用机制
 [Coding & Problem Solving](../practice/coding/README.md) 与知识主线并行：
 
 ```text
-Programming Fundamentals → Python Coding → ACM → Data Structures → Problem Solving → Hot100 → OA → AI Coding
+01—03：读写与追踪 Python 程序 → 04：完整输入输出 → 05—06：数据结构与算法 → 07：Hot100 练习 → 08：笔试 → 09：多文件 AI Coding
 ```
 
 它不改变十模块的 Primary Ownership / Canonical 统计，只负责把“知道”转成“能写、能跑、能调试、能交付”。Hot100 不是孤立终点，而是从基础阶段按依赖逐步嵌入；见 [Hot100 Curriculum Map](../practice/coding/hot100-map.md)。
@@ -169,7 +169,7 @@ Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → 
 - 章节数是认知闭环的结果，不是统一 KPI；
 - 第一次完整学习使用 [Learning Path](learning-path.md) 的 Curriculum → Review → Interview 三遍法；
 - 历史粒度与深度审查见 [Granularity Audit](audits/curriculum-granularity-audit.md) 与 [Content Depth Audit](audits/content-depth-audit.md)；
-- v1.0 历史基线结论见 [Final Quality Audit](audits/final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
+- v1.0 历史基线结论见 [Final Quality Audit](audits/history/final-quality-audit-2026-09-12.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
 
 
 Agent 模块使用 24 章正式学习顺序；历史重组、固定实现对照与核验范围见 [Agent Reader Revision](project/agent-reader-revision.md)。

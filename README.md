@@ -79,7 +79,7 @@ Products 不承担通用概念的 Primary Ownership，也不作为源码证据�
 
 Practice 与十个正式 Curriculum 模块并行，作为横向实践轨道，不计入 Curriculum 编号。
 
-- [Coding & Problem Solving](practice/coding/README.md)：Programming Fundamentals → ACM → DSA → Hot100 → OA → AI Coding。
+- [Coding & Problem Solving](practice/coding/README.md)：程序读写与追踪 → 完整输入输出 → 数据结构与算法 → Hot100 → 笔试 → 多文件 AI Coding。
 - [Git + GitHub Desktop](practice/tooling/git-github-desktop-guide.md)：Pull → 开发 → Diff → Commit → Push → Branch / Conflict / .gitignore 的完整初学者工作流。
 
 它回答的是：
@@ -123,6 +123,7 @@ Market 原始证据
 - [FastAPI 官方资料](references/fastapi/README.md)
 - [AI Backend Engineering 权威资料](references/backend-engineering/README.md)
 - [MySQL 官方资料](references/mysql/README.md)与[Redis 官方资料](references/redis/README.md)
+- [向量数据库](references/vector-db/README.md)、[LLM](references/llm-foundation/README.md)与[RAG](references/rag/README.md)资料
 
 **References 不创造面试频率，不增加 HUMAN-A Source Count，也不替代 Products 的完整系统源码学习。**
 

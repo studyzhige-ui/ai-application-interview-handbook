@@ -50,7 +50,7 @@ class FullFixtureTests(unittest.TestCase):
         for x in self.order:
             put(f'curriculum/{x}/README.md',f'# {x}\n\n1. [Start](docs/01-start.md)\n')
             put(f'curriculum/{x}/docs/01-start.md','# First lesson\n\nPROTECTED LESSON\n')
-        for p in ['README.md','guide/README.md','guide/project/README.md','guide/audits/README.md','tools/README.md','practice/README.md','products/README.md','products/agent/README.md']:
+        for p in ['README.md','curriculum/README.md','guide/README.md','guide/project/README.md','guide/audits/README.md','tools/README.md','practice/README.md','products/README.md','products/agent/README.md']:
             put(p,'# Index\n')
         put('guide/learning-path.md','# Path\n181个正文章节\n')
         put('guide/knowledge-map.md','# Map\n')
@@ -62,7 +62,7 @@ class FullFixtureTests(unittest.TestCase):
         put('practice/tooling/README.md','# Tooling\n')
         put('practice/coding/README.md','# Coding\n')
         put('practice/coding/docs/01-fundamentals.md','# Coding lesson\n')
-        put('products/agent/sample/README.md','# Example｜Module\nhttps://github.com/example/sample/tree/'+'a'*40+'\n')
+        put('products/agent/sample/README.md','# Example｜Module\nhttps://github.com/example/sample/tree/'+'a'*40+'\n'+''.join(f'| {i} | [Topic {i}]({i:02d}-topic.md) |\n' for i in range(1,5)))
         for i in range(1,5):put(f'products/agent/sample/{i:02d}-topic.md',f'# {i}\n')
     def apply(self,changes):
         for p,t in changes.items():self.put(p,t)
@@ -100,5 +100,59 @@ class FullFixtureTests(unittest.TestCase):
         self.put('curriculum/01-python/labs/01-example.md','# Lab\n')
         self.put('curriculum/01-python/docs/01-start.ipynb','{}')
         self.assertEqual(outer.inventory(self.root)['curriculum_chapters'],10)
+
+    def test_all_markdown_not_only_readme_is_scanned(self):
+        self.put('references/agent/source-index.md','# Index\n[bad](missing.md)\n')
+        pages=outer.validation_paths(self.root)
+        self.assertIn(self.root/'references/agent/source-index.md',pages)
+        result=outer.validate(self.root,pages)
+        self.assertIn({'page':'references/agent/source-index.md','href':'missing.md'},result['missing_paths'])
+    def test_code_fence_does_not_hide_real_conflict(self):
+        self.put('guide/check.md','```python\n<<<<<<< HEAD\na=1\n=======\na=2\n>>>>>>> other\n```\n')
+        result=outer.validate(self.root,[self.root/'guide/check.md'])
+        self.assertEqual(result['conflict_markers'],['guide/check.md'])
+    def test_only_explicit_conflict_example_is_exempt(self):
+        sample='<!-- conflict-example:start -->\n```text\n<<<<<<< HEAD\na\n=======\nb\n>>>>>>> other\n```\n<!-- conflict-example:end -->\n'
+        self.put('guide/check.md',sample)
+        self.assertEqual(outer.validate(self.root,[self.root/'guide/check.md'])['conflict_markers'],[])
+        self.put('guide/check.md',sample+'<<<<<<< unmarked\n')
+        self.assertEqual(outer.validate(self.root,[self.root/'guide/check.md'])['conflict_markers'],['guide/check.md'])
+    def test_unbalanced_conflict_example_fails(self):
+        with self.assertRaises(ValueError):outer.conflict_text('<!-- conflict-example:start -->')
+    def test_product_table_order_beats_incidental_prerequisite(self):
+        self.put('products/agent/sample/README.md','# Sample\n[Earlier example](02-topic.md)\n\n| 1 | [Context](01-topic.md) |\n| 2 | [Tool](03-topic.md) |\n| 3 | [Memory](02-topic.md) |\n| 4 | [Review](04-topic.md) |\n')
+        names=[Path(x).name for x in outer.inventory(self.root)['products'][0]['reading_order']]
+        self.assertEqual(names,['01-topic.md','03-topic.md','02-topic.md','04-topic.md'])
+    def test_unlisted_product_chapter_fails(self):
+        self.put('products/agent/sample/05-new.md','# New\n')
+        with self.assertRaises(ValueError):outer.inventory(self.root)
+    def test_body_change_invalidates_registry_without_rewriting_body(self):
+        before=outer.inventory(self.root)
+        self.apply(outer.plan(self.root,before))
+        self.put('curriculum/01-python/docs/01-start.md','# New title\nNew explanation\n')
+        after=outer.inventory(self.root)
+        self.assertNotEqual(before['modules'][0]['chapter_metadata'],after['modules'][0]['chapter_metadata'])
+        changes=outer.plan(self.root,after)
+        self.assertIn(outer.REGISTRY,changes)
+        self.assertIn(outer.INDEX,changes)
+        self.assertNotIn('curriculum/01-python/docs/01-start.md',changes)
+    def test_expanded_read_scope_does_not_expand_write_scope(self):
+        data=outer.inventory(self.root)
+        allowed={p.relative_to(self.root).as_posix() for p in outer.peripheral_paths(self.root)}|{outer.REGISTRY,outer.INDEX}
+        self.assertTrue(set(outer.plan(self.root,data))<=allowed)
+        self.assertNotIn('curriculum/01-python/docs/01-start.md',allowed)
+        self.assertNotIn('market/interviews/batch-old.md',allowed)
+    def test_missing_review_record_fails(self):
+        path=self.root/'guide/learning-order.json';data=json.loads(path.read_text())
+        data['modules'][0]['review_records']=['guide/project/absent.md']
+        self.put('guide/learning-order.json',json.dumps(data))
+        with self.assertRaises(ValueError):outer.inventory(self.root)
+    def test_status_pages_are_generated_from_files_not_fixed_175(self):
+        for path in outer.STATUS_PAGES:self.put(path,'# Status\n')
+        changes=outer.plan(self.root,outer.inventory(self.root))
+        self.assertIn('10 篇正文',changes['guide/audits/final-quality-audit.md'])
+        self.assertNotIn('175',changes['guide/audits/final-quality-audit.md'])
+        self.apply(changes)
+        self.assertEqual(outer.plan(self.root,outer.inventory(self.root)),{})
 
 if __name__=='__main__':unittest.main(verbosity=2)

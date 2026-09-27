@@ -7,18 +7,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 
-EXPECTED_BLOCKS = {
-    "curriculum/01-python": 13,
-    "curriculum/02-fastapi": 16,
-    "curriculum/03-backend-engineering": 22,
-    "curriculum/04-mysql": 19,
-    "curriculum/05-redis": 18,
-    "curriculum/06-vector-db": 16,
-    "curriculum/07-llm-foundation": 14,
-    "curriculum/08-rag": 14,
-    "curriculum/09-agent": 24,
-    "curriculum/10-system-design": 19,
-}
+# Counts come from the current files. The regenerated registry must agree;
+# frozen interview evidence remains an independent, explicitly fixed baseline.
+import json
+from sync_outer_navigation import inventory
+current_inventory = inventory(ROOT)
+EXPECTED_BLOCKS = {'curriculum/' + m['directory']: m['chapter_count']
+                   for m in current_inventory['modules']}
 FROZEN_CANONICAL_MAX_SOURCE = 279
 EXPECTED_ACTIVE_CANONICAL = 235
 
@@ -63,8 +58,8 @@ for module, expected in EXPECTED_BLOCKS.items():
     if nums != list(range(1, expected + 1)):
         errors.append(f"{module}: numbering mismatch {nums}")
 
-if total != 175:
-    errors.append(f"Curriculum total must be 175, found {total}")
+if json.loads(read("guide/navigation-index.json")) != current_inventory:
+    errors.append("learning inventory drift: run tools/sync_outer_navigation.py --apply")
 
 # Products are a top-level source-study layer, not a Curriculum subdirectory.
 legacy_products = ROOT / "curriculum/09-agent/products"
@@ -118,7 +113,7 @@ require("README.md", "products/     成熟 AI 系统怎样把这些机制组合�
 require("curriculum/09-agent/README.md", "../../products/agent/README.md")
 forbid("curriculum/09-agent/README.md", "products/codex/README.md")
 forbid("interview/canonical/module-index.md", "Frozen Research 层")
-require("guide/audits/final-quality-audit.md", "Curriculum Blocks          175")
+require("guide/audits/final-quality-audit.md", f"{total} 篇正文")
 require("market/analysis/knowledge-gap-analysis.md", "S280–S288")
 require("guide/audits/history/README.md", "2026-09-12")
 require("market/analysis/history/README.md", "2026-09-11")

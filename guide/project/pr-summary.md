@@ -1,13 +1,7 @@
-# Repository Integration Summary
+# Integration Summary｜集成核验入口
 
-[← Handbook 总目录](../../README.md) · [Current Integration Status](integration-status.md) · [Knowledge Map](../knowledge-map.md)
+[← Handbook](../../README.md) · [集成状态](integration-status.md) · [质量与验证](../audits/final-quality-audit.md)
 
-> 这个路径最初用于 Python / FastAPI / Backend 的整合 PR 摘要。当前整合已经完成，因此这里只保留一个**当前事实入口**，不再维护历史 PR 过程状态。
+课程和配套文件范围见[学习资源索引](../navigation-index.md)，阅读依赖见[学习路线](../learning-path.md)，内容验收按[专项证据](../audits/content-depth-audit.md)确认。单次发布的提交、文件差异与测试结果保留在对应 PR 和修订记录，不在本页重复维护容易过时的绿色状态。
 
-当前结果：
-
-- 十个一级模块第一版教材 ✅；
-- Foundation（Python / FastAPI / AIBE）✅；
-- 课程粒度与正文深度审计 ✅；
-- HUMAN-A `S001–S279` / 235 Canonical Frozen 基线保持不变；
-- 当前状态以 [根 README](../../README.md)、[Knowledge Map](../knowledge-map.md) 与 [Progress](../../interview/canonical/progress.md) 为准。
+Canonical `S001–S279 / 235 ACTIVE` 属于冻结统计；课程、Products 或 Practice 的修订不自动扩展该基线。正文数量、面经覆盖和读者个人完成度是三个不同问题。

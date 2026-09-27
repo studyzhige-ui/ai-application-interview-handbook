@@ -6,4 +6,6 @@
 
 - [2026-09-12 v1.0 Final Quality Audit（184-block 历史快照）](final-quality-audit-2026-09-12.md)
 
-当前结论以 [Final Quality Audit](../final-quality-audit.md) 为准。
+- [2026-09-19 声明的 Final Quality Audit（原有结论存档）](final-quality-audit-2026-09-19.md)
+
+当前验证范围以 [Final Quality Audit](../final-quality-audit.md) 为准。

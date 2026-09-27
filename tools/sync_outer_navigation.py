@@ -19,7 +19,13 @@ from urllib.parse import unquote, urlsplit
 
 REGISTRY = 'guide/navigation-index.json'
 INDEX = 'guide/navigation-index.md'
-REPORT = 'guide/project/outer-navigation-sync-2026-09-27.json'
+STATUS_PAGES = {
+    'guide/audits/final-quality-audit.md',
+    'guide/audits/content-depth-audit.md',
+    'guide/audits/curriculum-granularity-audit.md',
+    'guide/audits/foundation-status-audit.md',
+    'guide/project/integration-status.md',
+}
 DESCRIPTIONS = {
  '01-python':'名字与对象、数据容器、函数、资源和并发执行。',
  '02-fastapi':'请求与响应、数据校验、资源生命周期、流式交付与接口验证。',
@@ -130,6 +136,45 @@ def block(text: str, tag: str, heading: str, content: str) -> str:
         return re.sub(re.escape(start)+r'.*?'+re.escape(end),lambda _:replacement,text,flags=re.S)
     return text.rstrip()+'\n\n'+replacement+'\n'
 
+def chapter_order(root: Path, page: Path, docs: list[Path]) -> list[Path]:
+    """Prefer complete chapter tables, not incidental earlier prerequisite links."""
+    text=read(page)
+    tables='\n'.join(line for line in text.splitlines() if line.lstrip().startswith('|'))
+    for candidate in (tables, text):
+        ordered=[]
+        for _,href in markdown_links(candidate):
+            target=resolve(root,page,href)
+            if target and target[0] in docs and target[0] not in ordered:
+                ordered.append(target[0])
+        if set(ordered)==set(docs):return ordered
+    raise ValueError(f'Module README does not list all chapters: {page}')
+
+def metadata(root: Path, docs: list[Path]) -> list[dict]:
+    return [{'path':p.relative_to(root).as_posix(), 'title':title(p),
+             'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in docs]
+
+def support_entries(root: Path, base: Path) -> list[str]:
+    result=[]
+    for name in ('review','interview','labs','examples'):
+        directory=base/name; page=directory/'README.md'
+        if page.is_file():result.append(page.relative_to(root).as_posix())
+        elif directory.is_dir():result.append(directory.relative_to(root).as_posix()+'/')
+    return result
+
+def validation_paths(root: Path) -> list[Path]:
+    """Read-only scope: all tracked Markdown, not just generated entry pages."""
+    return sorted(p for p in tracked(root) if p.suffix.lower()=='.md' and p.is_file())
+
+def conflict_text(text: str) -> str:
+    """Only explicit, balanced teaching examples are exempt. Code fences are not."""
+    start='<!-- conflict-example:start -->'; end='<!-- conflict-example:end -->'
+    pattern=re.escape(start)+r'.*?'+re.escape(end)
+    cleaned=re.sub(pattern,'',text,flags=re.S)
+    if start in cleaned or end in cleaned:
+        raise ValueError('Unbalanced conflict-example markers')
+    return cleaned
+
+
 def inventory(root: Path) -> dict:
     modules=json.loads(read(root/'guide/learning-order.json'))['modules']
     if len(modules)!=10 or len({m['directory'] for m in modules})!=10:
@@ -139,30 +184,26 @@ def inventory(root: Path) -> dict:
         base=root/'curriculum'/m['directory']; page=base/'README.md'
         docs=sorted(p for p in (base/'docs').glob('*.md') if re.match(r'^\d+[-_]',p.name))
         if not docs: raise ValueError(f'No chapters: {base}')
-        order=[]
-        for _,href in markdown_links(read(page)):
-            target=resolve(root,page,href)
-            if target and target[0] in docs and target[0] not in order: order.append(target[0])
-        missing=[p for p in docs if p not in order]
-        if missing: raise ValueError(f'Module README does not list all chapters: {missing}')
-        support=[]
-        for folder in ['review','interview','labs','examples']:
-            p=base/folder/'README.md'
-            if p.exists(): support.append(p.relative_to(root).as_posix())
-            elif (base/folder).is_dir(): support.append((base/folder).relative_to(root).as_posix()+'/')
-        result.append({**m,'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),'reading_order':[p.relative_to(root).as_posix() for p in order],'support':support})
+        order=chapter_order(root,page,docs)
+        support=support_entries(root,base)
+        records=m.get('review_records',[])
+        for record in records:
+            if not (root/record).is_file():raise ValueError(f'Missing review evidence: {record}')
+        result.append({**m,'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),
+                       'reading_order':[p.relative_to(root).as_posix() for p in order],
+                       'chapter_metadata':metadata(root,order),'support':support})
     products=[]
     for page in sorted((root/'products/agent').glob('*/README.md')):
         docs=sorted([*page.parent.glob('[0-9][0-9]-*.md'),*(page.parent/'docs').glob('[0-9][0-9]-*.md')])
         text=read(page)
         fixed=re.search(r'https://github\.com/([^/\s]+/[^/\s]+)/(?:tree|blob|commit)/([0-9a-f]{40})',text)
-        products.append({'name':title(page).split('｜')[0], 'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),'chapters':[p.relative_to(root).as_posix() for p in docs],'source_repository':fixed.group(1) if fixed else None,'source_commit':fixed.group(2) if fixed else None,'private_mirror':('私有镜像' in text)})
+        products.append({'name':title(page).split('｜')[0], 'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),'chapters':[p.relative_to(root).as_posix() for p in docs],'reading_order':[p.relative_to(root).as_posix() for p in chapter_order(root,page,docs)],'chapter_metadata':metadata(root,docs),'support':support_entries(root,page.parent),'source_repository':fixed.group(1) if fixed else None,'source_commit':fixed.group(2) if fixed else None,'private_mirror':('私有镜像' in text)})
     coding=sorted((root/'practice/coding/docs').glob('[0-9][0-9]-*.md'))
     refs=[p.relative_to(root).as_posix() for p in sorted((root/'references').glob('*/README.md'))]
-    return {'schema_version':1,'sources':['guide/learning-order.json','curriculum/*/README.md','curriculum/*/docs/*.md','products/agent/*/README.md','products/agent/*/[0-9][0-9]-*.md','practice/coding/docs/*.md','references/*/README.md'],'curriculum_chapters':sum(m['chapter_count'] for m in result),'modules':result,'products':products,'coding_chapters':len(coding),'references':refs,'statistics_boundary':'Counts describe tracked learning files, not frozen Canonical questions or independent interview sources.'}
+    return {'schema_version':2,'sources':['guide/learning-order.json','curriculum/*/README.md','curriculum/*/docs/*.md','products/agent/*/README.md','products/agent/*/[0-9][0-9]-*.md','practice/coding/docs/*.md','references/*/README.md'],'curriculum_chapters':sum(m['chapter_count'] for m in result),'modules':result,'products':products,'coding_chapters':len(coding),'coding_metadata':metadata(root,coding),'references':refs,'statistics_boundary':'Counts describe tracked learning files, not frozen Canonical questions or independent interview sources.'}
 
 def peripheral_paths(root: Path) -> list[Path]:
-    return sorted(p for p in tracked(root) if p.suffix.lower()=='.md' and (p.name.lower()=='readme.md' or p.relative_to(root).as_posix() in ['guide/knowledge-map.md','guide/learning-path.md','guide/terminology-glossary.md',INDEX]))
+    return sorted(p for p in tracked(root) if p.suffix.lower()=='.md' and (p.name.lower()=='readme.md' or p.relative_to(root).as_posix() in {'guide/knowledge-map.md','guide/learning-path.md','guide/terminology-glossary.md',INDEX}|STATUS_PAGES))
 
 def plan(root: Path, data: dict) -> dict[str,str]:
     spec=importlib.util.spec_from_file_location('existing_navigation',root/'tools/sync_learning_navigation.py')
@@ -172,7 +213,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
     desired={}
     def put(path,text):
         if not (root/path).exists() or read(root/path)!=text: desired[path]=text
-    targets=['README.md','guide/knowledge-map.md']+[m['readme'] for m in data['modules']]
+    targets=['README.md','guide/knowledge-map.md','curriculum/README.md']+[m['readme'] for m in data['modules']]
     for path in targets:
         original=read(root/path)
         text=mod.transform(path,original,order,labels)
@@ -217,7 +258,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
             text=text.replace('[当前质量审计](audits/final-quality-audit.md)','[审计记录索引](audits/README.md)')
             text=text.replace('当前粒度与深度状态见','历史粒度与深度审查见').replace('v1.0 全仓库最终结论见','v1.0 历史基线结论见')
             text=block(text,'learning-inventory','## 当前文件范围',f'10 个课程模块合计 **{total} 篇正文**。Products 为 **{len(data["products"])} 套 / {sum(p["chapter_count"] for p in data["products"])} 篇专题正文**，Coding 为 **{data["coding_chapters"]} 篇正文**，均作为独立轨道，不加入课程章节合计。\n\n完整入口见[学习资源索引](navigation-index.md)。Canonical 列和各模块来源覆盖保留冻结基线，不能相加推算独立面经总量。')
-        else:
+        elif path.startswith('curriculum/') and path.count('/')==2:
             identifier=path.split('/')[1]
             text=text.replace('> **课程版本：V1** · **教材状态：✅ 完整**','> **课程范围：'+str(counts[identifier])+' 篇正式正文**')
             text=text.replace('> **质量门：✅ Granularity / Coverage / Content Depth**','> **质量说明：** 历史审查与当前验证范围分别记录，不以目录完整代替阅读和运行验收。')
@@ -258,11 +299,64 @@ def plan(root: Path, data: dict) -> dict[str,str]:
         intro='按记录自身的基线、日期与验证范围阅读。历史 PASS 不代表此后所有正文已经再次验收；这里只补齐索引，不改写原记录。'
         text=block(text,'records-index','## 专项记录补充索引',intro+'\n\n'+'\n'.join(items))
         put(path,text)
+    for path in sorted(STATUS_PAGES):
+        if not (root/path).is_file():continue
+        text=read(root/path)
+        if path.endswith('final-quality-audit.md'):
+            content=(f'正式课程：**{len(data["modules"])} 个模块 / {total} 篇正文**。'
+                     f'Products：**{len(data["products"])} 套 / {sum(p["chapter_count"] for p in data["products"])} 篇专题正文**。'
+                     f'Coding：**{data["coding_chapters"]} 篇正文**。\n\n'
+                     '此段由实际文件生成，只表示文档范围；检查结果与专项证据见上文。')
+            heading='## 可重建的内容范围'
+        elif path.endswith('integration-status.md'):
+            chain=' → '.join(f'[{m["label"]}]({rel(path,m["readme"])})' for m in data['modules'])
+            content=chain+f'\n\n课程合计 {total} 篇；Products 与 Coding 作为独立轨道。正文标题、阅读顺序、配套入口与内容指纹见[机器目录]({rel(path,REGISTRY)})。'
+            heading='## 正式学习主线'
+        elif path.endswith('curriculum-granularity-audit.md'):
+            rows=['| 顺序 | 模块 | 正文 | 认知主线 |','|---:|---|---:|---|']
+            for rank,m in enumerate(data['modules'],1):
+                rows.append(f'| {rank:02d} | [{m["label"]}]({rel(path,m["readme"])}) | {m["chapter_count"]} | {ROUTES[m["directory"]]} |')
+            content='\n'.join(rows)+f'\n\n合计 **{total} 篇**；章节标题和顺序可回到各模块入口逐项核对。'
+            heading='## 现有模块与认知主线'
+        else:
+            modules=data['modules'][:5] if path.endswith('foundation-status-audit.md') else data['modules']
+            rows=['| 顺序 | 模块 | 正文 | 专项记录入口（按记录自身范围） |','|---:|---|---:|---|']
+            for rank,m in enumerate(modules,1):
+                records=m.get('review_records',[])
+                links=' · '.join(f'[{title(root/r)}]({rel(path,r)})' for r in records)
+                rows.append(f'| {rank:02d} | [{m["label"]}]({rel(path,m["readme"])}) | {m["chapter_count"]} | {links or "无本轮独立专项复验记录；不继承旧版 PASS"} |')
+            content='\n'.join(rows)+'\n\n记录入口不自动授予通过状态；需要查看其基线、修改范围、实际检查和未验证项目。'
+            heading='## 课程范围与证据索引'
+        put(path,block(text,'current-scope',heading,content))
+    # All product snapshot tables are derived from the product entry pages.
+    path='references/agent/README.md'
+    if (root/path).is_file():
+        text=read(root/path)
+        for product in data['products']:
+            slug=Path(product['readme']).parent.name
+            pattern=r'^(\|[^\n]*?\|[^\n]*?\|)\s*`[0-9a-f]{40}`(\s*\|[^\n]*products/agent/'+re.escape(slug)+r'/README\.md[^\n]*$)'
+            text=re.sub(pattern,lambda m:m.group(1)+' `'+product['source_commit']+'`'+m.group(2),text,flags=re.M)
+        records={
+            'claude-code':'guide/audits/claude-code-clarity-refinement-2026-09-27.md',
+            'codex':'guide/audits/codex-clarity-refinement-2026-09-27.md',
+            'deepseek-harness':'guide/audits/deepseek-harness-clarity-refinement-2026-09-27.md',
+            'deer-flow':'guide/audits/deerflow-clarity-refinement-2026-09-27.md',
+        }
+        rows=['| 产品 | 实际阅读顺序 | 教学修订记录 |','|---|---|---|']
+        for product in data['products']:
+            slug=Path(product['readme']).parent.name
+            labels={c['path']:c['title'] for c in product['chapter_metadata']}
+            links=' → '.join(f'[{Path(c).name[:2]}]({rel(path,c)})' for c in product['reading_order'])
+            record=records.get(slug)
+            evidence=f'[修订范围与验证]({rel(path,record)})' if record and (root/record).is_file() else '见产品入口'
+            rows.append(f'| [{product["name"]}]({rel(path,product["readme"])}) | {links} | {evidence} |')
+        text=block(text,'product-evidence','## 产品阅读与修订证据', '\n'.join(rows)+'\n\n正文序号是稳定路径标识。修订记录只说明其基线与实际验证，不代表已重新检查上游全部最新变化。')
+        put(path,text)
     path='guide/README.md';text=read(root/path)
-    text=block(text,'learning-inventory','## 导航事实来源','[学习资源索引](navigation-index.md)汇总当前课程、产品、实践和资料入口；[学习顺序配置](learning-order.json)决定模块先后，[机器可读目录](navigation-index.json)由现有文件生成。\n\n维护时运行 `python tools/sync_outer_navigation.py --check` 检查漂移；先查看默认预览，再使用 `--apply` 更新。历史面经统计和正文不属于同步写入范围。')
+    text=block(text,'learning-inventory','## 导航事实来源','[学习资源索引](navigation-index.md)汇总当前课程、产品、实践和资料入口；[学习顺序配置](learning-order.json)决定模块先后，[机器可读目录](navigation-index.json)由现有文件生成。\n\n维护时运行 `python tools/sync_outer_navigation.py --check` 检查生成漂移与全仓 Markdown 本地链接；先查看默认预览，再使用 `--apply` 更新。历史面经统计和正文不属于同步写入范围。')
     put(path,text)
     path='tools/README.md';text=read(root/path)
-    text=block(text,'outer-sync','## 全仓外围导航同步','- [`sync_outer_navigation.py`](sync_outer_navigation.py)：扫描全部 README 和共享导航，按实际文件更新学习顺序、当前章节数、资料及维护入口；默认只预览，`--check` 检查漂移，`--apply` 才写入。\n- [`sync_learning_navigation.py`](sync_learning_navigation.py)：复用已有的路线与前后导航转换，保留目录标识。\n- [`test_outer_navigation.py`](test_outer_navigation.py)：验证计数、保护边界、链接解析与重复运行。\n\n同步不会重新生成 Market / Canonical、修改课程正文或自动宣称实机验证通过。')
+    text=block(text,'outer-sync','## 全仓外围导航同步','- [`sync_outer_navigation.py`](sync_outer_navigation.py)：只读扫描全仓 Markdown 的路径、锚点与冲突残留；只在明确允许的入口页、状态页和生成索引内同步数量、顺序、正文指纹与证据入口；默认只预览，`--check` 检查漂移，`--apply` 才写入。\n- [`sync_learning_navigation.py`](sync_learning_navigation.py)：复用已有的路线与前后导航转换，保留目录标识。\n- [`test_outer_navigation.py`](test_outer_navigation.py)：验证计数、保护边界、真实阅读顺序、链接解析、冲突示例和重复运行。\n\n正文、源码与实践资料可被读取和校验，但不会被同步器改写。同步不会重新生成 Market / Canonical，也不自动宣称阅读或实机验证通过。')
     put(path,text)
     path='practice/README.md';text=read(root/path)
     text=block(text,'learning-inventory','## 配套入口',f'[Coding](coding/README.md)包含 {data["coding_chapters"]} 篇正文；练习、Notebook 与渲染版本沿其模块入口使用，不重复计入 Curriculum。开发工作流见 [Tooling](tooling/README.md)。完整资源范围见[学习资源索引](../guide/navigation-index.md)。')
@@ -274,6 +368,21 @@ def plan(root: Path, data: dict) -> dict[str,str]:
     lines+=['','## Products：固定快照中的系统实践','', '| 模块 | 专题正文 | 来源边界 |','|---|---:|---|']
     for p in data['products']:
         lines.append(f'| [{p["name"]}]({rel(INDEX,p["readme"])}) | {p["chapter_count"]} | '+('学习用私有镜像，需访问权限；不等同于官方完整仓库。' if p['private_mirror'] else '固定源码快照；不代表全部环境已运行验证。')+' |')
+    lines+=['','## 正文标题与实际阅读顺序','','顺序优先读取模块 README 的完整目录表；不会被更早的先修链接或文件名字典序改变。']
+    for item in [*data['modules'],*data['products']]:
+        label=item.get('label',item.get('name',''))
+        by_path={c['path']:c for c in item['chapter_metadata']}
+        lines+=['','<details>',f'<summary>{label} · {item["chapter_count"]} 篇</summary>','']
+        for rank,chapter in enumerate(item['reading_order'],1):
+            lines.append(f'{rank}. [{by_path[chapter]["title"]}]({rel(INDEX,chapter)})')
+        for entry in item.get('support',[]):
+            name=Path(entry.rstrip('/')).parent.name if entry.endswith('README.md') else Path(entry.rstrip('/')).name
+            lines.append(f'\n配套：[{name}]({rel(INDEX,entry)})')
+        lines+=['','</details>']
+    lines+=['','<details>','<summary>Coding · 正文顺序</summary>','']
+    for rank,chapter in enumerate(data['coding_metadata'],1):
+        lines.append(f'{rank}. [{chapter["title"]}]({rel(INDEX,chapter["path"])})')
+    lines+=['','</details>']
     lines+=['','## Practice 与技术依据','',f'- [Coding](../practice/coding/README.md)：{data["coding_chapters"]} 篇正文，题单和练习由模块入口承接。','- [Git 与开发工作流](../practice/tooling/README.md)：操作指南，不计入课程章数。',f'- [References](../references/README.md)：{len(refs)} 个实际资料目录，技术事实与真人面经证据分开。','- [项目记录](project/README.md)与[审计记录](audits/README.md)：按记录的适用基线读取。','','⚠️ 章节数量和入口可达仅证明文档范围与导航一致，不等于完成初学者阅读、真实服务或生产验证。','']
     put(INDEX,'\n'.join(lines));put(REGISTRY,json.dumps(data,ensure_ascii=False,indent=2)+'\n')
     return desired
@@ -282,7 +391,7 @@ def validate(root: Path, pages: list[Path]) -> dict:
     missing=[]; bad_anchors=[]; conflicts=[]; n=0; cache={}
     for p in pages:
         text=read(p)
-        if re.search(r'^(?:<{7}|={7}|>{7})(?:\s|$)',text,re.M): conflicts.append(p.relative_to(root).as_posix())
+        if re.search(r'^(?:<{7}|={7}|>{7})(?:\s|$)',conflict_text(text),re.M): conflicts.append(p.relative_to(root).as_posix())
         for label,href in markdown_links(text):
             dest=resolve(root,p,href)
             if not dest: continue
@@ -291,7 +400,7 @@ def validate(root: Path, pages: list[Path]) -> dict:
             if fragment and target.is_file() and target.suffix=='.md':
                 if target not in cache:cache[target]=anchors(read(target))
                 if fragment not in cache[target]:bad_anchors.append({'page':p.relative_to(root).as_posix(),'href':href})
-    return {'peripheral_pages_scanned':len(pages),'local_links_checked':n,'missing_paths':missing,'unresolved_anchors':bad_anchors,'conflict_markers':conflicts}
+    return {'markdown_pages_scanned':len(pages),'peripheral_pages_scanned':len(pages),'local_links_checked':n,'missing_paths':missing,'unresolved_anchors':bad_anchors,'conflict_markers':conflicts}
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
@@ -308,7 +417,7 @@ def main():
             p=root/path;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(content,encoding='utf-8',newline='\n')
     protected=[p for p,h in before.items() if p not in changes and (not (root/p).is_file() or hashlib.sha256((root/p).read_bytes()).hexdigest()!=h)]
     if protected:raise RuntimeError('Protected content changed: '+repr(protected))
-    pages=peripheral_paths(root)
+    pages=validation_paths(root)
     if (root/INDEX).exists() and root/INDEX not in pages:pages.append(root/INDEX)
     checks=validate(root,pages)
     result={'python_version':sys.version.split()[0],'mode':'apply' if args.apply else ('check' if args.check else 'preview'),'curriculum_chapters':data['curriculum_chapters'],'module_counts':{m['directory']:m['chapter_count'] for m in data['modules']},'product_chapters':sum(p['chapter_count'] for p in data['products']),'coding_chapters':data['coding_chapters'],'changed_files':list(changes),'unchanged_protected_files':len(before)-len(set(changes)&set(before)),'protected_content_changes':protected,'idempotent':not plan(root,inventory(root)) if args.apply else None,**checks}

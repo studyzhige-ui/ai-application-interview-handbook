@@ -245,7 +245,7 @@ tests_passed?          → Verification
 最终要求：**同词先分层，再谈机制；产品名先映射到稳定概念，再讨论实现差异。**
 
 
-## 本轮补充：恢复与诊断的数据最小化
+## 14. Persistence / Resume / Compaction：恢复与诊断的数据最小化
 
 Persistence（持久化）是让选定信息活过进程重启，不是把全部内存写入存储。Resume（恢复执行）不是Summary（摘要）；Compaction（上下文压缩）只管理模型输入规模。Trace（执行追踪）用于定位阶段、耗时与失败，不是默认的恢复账本。
 
