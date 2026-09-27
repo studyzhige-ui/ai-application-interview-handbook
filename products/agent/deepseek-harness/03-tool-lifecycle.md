@@ -1,1166 +1,330 @@
-# 03. DeepSeek Harness Tool Lifecycle｜从 ToolDefinition 到 Policy、PTC、MCP 与结果回填
-
-[← Memory](02-memory-lifecycle.md) · [DeepSeek Harness 总览](README.md) · [Engineering & Evaluation →](04-engineering-evaluation.md)
-
-> **源码基线：** `deepseek-ai/deepseek-harness@ddefc45fbc7f8e46dd73185e68295696d1297887`
-
-DeepSeek Harness 的 Tool 系统最不应该被简化成：
+# 03｜一次工具调用怎样从建议变成可检查的执行
 
-> “模型输出 function call，Host 执行函数，再把字符串塞回去。”
+[← 记忆生命周期](02-memory-lifecycle.md) · [模块入口](README.md) · [下一章：工程与验证 →](04-engineering-evaluation.md)
 
-真实生命周期更像：
+模型已经决定修复分页函数，并提出读取文件、编辑公式、运行测试。你在界面上看到了工具名，这是否说明文件已经被修改？如果用户批准了编辑，但守卫随后拒绝，究竟发生了什么？如果测试输出很长，只返回一句“已完成”又会丢掉哪些证据？
 
-~~~text
-Plugin 注册 ToolDefinition
-        ↓
-Scoped Tool Registry
-        ↓
-System Prompt Assembly 读取 Tool Schemas
-        ↓
-模型产生 tool-call
-        ↓
-先 durable 写 tool/call
-        ↓
-参数校验
-        ↓
-tools/pre-execute
-        ↓
-monotonic guard
-        ↓
-必要时 Approval
-        ↓
-tools/execute wrappers
-        ↓
-Tool Body
-        ↓
-canonical JSON value
-        ↓
-tools/post-execute
-        ↓
-finalizeContent
-        ↓
-frozen final outcome
-        ↓
-durable tool/result
-        ↓
-下一 Step 的 Context
-~~~
+本章跟着一次调用走完从工具可见、参数进入、权限检查，到业务执行、结果呈现和回填的过程。**模型产生调用意图；程序判断能否执行；工具改变外部对象；结果告诉下一步发生了什么。** 这四件事不能缩成一个“Function Calling 成功”。
 
-MCP、Skill、Filesystem、Bash、Subagent 甚至 PTC（Programmatic Tool Calling，程序化工具调用）最终都复用这套控制面。
+<a id="definition"></a>
+## 1. 工具说明不是工具执行
 
----
+工具至少有两部分。第一部分面向模型：名称、描述和参数结构，告诉模型可以请求什么。第二部分是宿主中的执行实现：收到参数后真正读文件、访问服务或改变状态。
 
-## 1. Tool 怎样进入模型的能力面
+在 DSH 中，`defineTool()` 把作者写的参数声明、业务执行函数和输出定义整理为可注册工具。输出定义又包含规范值的结构约束与渲染函数。这样，模型侧看到的说明、执行侧收到的数据和最终展示的结果有明确连接，但仍各自承担不同责任。[工具定义源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/schema.ts)。
 
-### 一个 ToolDefinition 为什么同时有 Value 和 Content
+以读取分页文件为例，工具说明告诉模型需要一个路径；返回值可以保存读取结果的结构化数据；渲染函数把它变成模型容易读的文本。**声明“会读取文件”不是执行证据；参数结构正确，也不表示目标文件存在或调用者有权读取。**
 
-核心实现：
+不要把工具介绍改造成全部字段的背诵。读源码时先找三个问题的答案：模型根据什么选择它，业务函数真正操作什么，成功和失败怎样返回。只在这些问题需要时，再展开相关字段。
 
-- `packages/core/tools/`
+<a id="visibility"></a>
+## 2. 模型看到的工具为什么不一定是全局工具全集
 
-一个 Tool 最基本需要定义：
+Scope（作用域）在这里是插件与 Agent 所处的上下文层级。全局可注册通用文件工具，某个 Agent 的局部作用域可以注册自己的任务工具，也可以限制从上层继承的工具。
 
-- name；
--description；
--parameter schema；
--output schema；
--output renderer；
--`execute()`。
+当前 `view(scope)` 的规则不是简单地把所有列表相加：它先收集全局及祖先层贡献，应用沿途限制，得到允许继承的工具；再加入当前作用域自己注册的工具，同名时由当前作用域覆盖。当前层自己的注册不受这组“限制继承项”的过滤处理。因此，`restrict()` 应理解为控制继承能力的机制，而不是无论插件随后怎样注册都绝不突破的万能白名单。[作用域与限制的真实实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)。
 
-这里最值得理解的不是字段，而是：
+设全局有读取与写入工具，审阅 Agent 对继承项只保留读取。它不能因为全局实现里存在写工具就直接调用写入；但如果宿主又在审阅 Agent 本层注册了新的写工具，就必须重新审查这项局部能力。不能一边增加局部写能力，一边继续声称“已有继承过滤，所以整个 Agent 必然只读”。
 
-> **Tool 的 canonical value（规范值）和模型最终看到的 content（内容投影）是两层。**
+这也解释了子 Agent 的边界：新建一个执行作用域，只说明它有独立的局部配置和对象，不自动证明它继承父 Agent 的全部约束，更不证明它比父 Agent 权限更小。子 Agent 的能力集合和工作区权限需要单独核对。
 
-例如一个 Tool 真正返回：
+工具目录还会变化：插件卸载、MCP 重连同步、局部同名覆盖，都可能改变可见集合。模型在较早一步看过一个工具名，不代表当前时刻仍能执行。请求组装与工具执行必须使用实际生效的视图，失败时不能偷偷切到另一个同名或更高权限实现。
 
-~~~json
-{
-  "path": "/tmp/report.json",
-  "count": 42,
-  "items": [...]
-}
-~~~
+<a id="pipeline"></a>
+## 3. 一次调用的真实顺序
 
-这是 execution-local canonical JSON value。
+下面是当前工具运行链的阅读模型，保留会改变执行结论的边界，省略纯展示细节。`pre` 表示执行前策略，`post` 表示执行后策略，guard 表示允许执行前的否决检查。
 
-然后纯函数 renderer 可以把它投影成：
+```text
+模型生成工具名、调用 ID 和参数文本
+    ↓
+参数解析；建立不可变执行身份与参数快照
+    ↓
+执行前策略：allow / deny / cancel / ask
+    ↓                       ask 时先请求本次批准
+再次检查取消；allow 时检查 guard
+    ↓
+调用工具定义的 execute
+    ↓                       defineTool 在此校验参数，再调用业务函数
+业务函数返回规范值；校验并渲染结果
+    ↓
+projectContent → 执行后策略 → finalizeContent
+    ↓
+冻结最终结果，观察通知，按模型调用顺序写回结果
+```
 
-~~~text
-Found 42 items.
-Report: /tmp/report.json
-~~~
+实际代码还处理未知工具名、PTC 模式限制、异常与取消，不是每次都会走到业务函数。理解顺序时尤其不要把“把参数复制为不可变 JSON”和“参数符合某个工具的结构约束”当成同一次检查。[运行链源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)、[模型工具调度入口](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/tool-calls.ts)。
 
-供模型读取。
+### 3.1 为什么无效 JSON 不一定在最外层直接抛掉
 
-#### 为什么不直接让 Tool 返回字符串
+主循环的 `parseArguments()` 对有效 JSON 进行解析；空文本转成空对象；解析失败时保留原始字符串。这样，后续执行链还能携带这次调用的身份与原始错误输入，形成可观察的失败，而不是丢掉一次调用。
 
-因为同一个 Tool Result 可能同时服务：
+执行器随后要求参数能够无损表示为 JSON，并保存不可变快照。这只解决传递和变更问题。字符串也是合法 JSON 值，但某个工具需要的可能是包含 `path` 的对象，所以还需要工具自己的结构校验。
 
-- Model；
--PTC 程序；
--Host UI；
--Post-execute Policy；
--Telemetry；
--持久化。
+`defineTool()` 生成的 `execute` 包装函数先检查参数，失败时抛出带 `INVALID_ARGS` 的 `ToolArgsError`，通过后才调用作者的业务函数。它的并发分类包装也会先校验，无效参数按不安全并发处理。这个位置晚于执行前政策与批准流程，因此策略代码仍不能未经检查就假定 `arguments.path` 一定存在。[参数解析](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/tool-calls.ts)、[`defineTool` 的包装实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/schema.ts)。
 
-如果唯一真值就是一段自由文本：
+> **注意：结构校验不是全部业务校验。** 若声明只要求 `page` 是整数，通过校验只证明类型符合声明；大于 0 这样的范围也可以进一步写进 Schema。但目标接口是否采用从 1 开始分页、多个参数之间未表达的约束、文件当前版本是否仍可编辑，仍要由业务逻辑与权限层判断。
 
-> Programmatic consumer 无法可靠拿结构化结果。
+例如，在一个应用自己的编辑工具中，路径和预期文件版本都可能是合法字符串，但预期版本已经落后于磁盘文件。安全做法是在写入前核对实际版本，不符时给出可以指导重新读取的错误；原参数不变地重试无法修复这类冲突。这是应用工具的设计示例，不是声称 DSH 会替所有工具自动实现文件版本比较。
 
-而如果唯一真值就是复杂对象：
+### 3.2 为什么批准以后还可能不执行
 
-> 模型 Context 又可能极度膨胀。
+执行前策略可能直接允许、拒绝、取消，也可能要求批准。当前实现对 `ask` 先调用审批服务；只有得到本次允许，之后的 guard 检查才有机会放行。guard 能否决，不能借此扩大权限或改写已经记录的参数。[`prepareExecution()` 与 `serviceAsk()`](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)。
 
-所以 DSH 把：
+假设用户同意“修改分页实现”，但在等待批准期间任务进入了禁止写入的状态，后续守卫仍可拒绝。这不是“批准丢失”，而是批准只解决一个条件，不能替代执行前所有条件。
 
-~~~text
-Canonical Value
-和
-Model Projection
-~~~
+如果缺少审批服务，或请求批准的调用没有所属 Agent，要求批准的分支会失败关闭。这句话有范围：**不能扩大成“所有没有 Agent 的工具调用都会被拒绝”**。直接允许、不需要进入审批服务的调用，是另一条路径。
 
-分开。
+<a id="approval"></a>
+## 4. 政策、批准与沙箱分别守住什么
 
----
+把它们放在同一个“安全模块”里很容易丢掉边界。政策判断当前动作是否应被允许或需要询问；批准回答某个具体请求能否继续；沙箱约束进程或工具在执行期间真正能够访问的资源。模型提示词则只是向模型解释当前规则，不代替这些执行机制。
 
-### Tool Registry 也是 Scoped 的
+审批服务的当前策略只有 `ask` 与 `never`。`ask` 把请求交给配置的回答者；回答者可以是界面接入的人，也可以是受控的机器决策端。服务本身不会自动创建一个人工界面。没有可用回答者或回答者出错时，结果是不可用，动作失败关闭。
 
-`ctx.tools` 不是一个全局不可变 Map。
+`never` 的含义是**不发起交互，并拒绝需要批准的请求**，不是“自动批准”。同时，它也不等于“禁用所有工具”：原本就被政策允许、不需要审批的动作仍可按其权限执行。例如，基础配置把 `danger-full-access` 与 `approval: never` 配在一起，体现的是不再通过审批追加授权；实际资源访问范围仍取决于对应沙箱与工具配置。[审批语义](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/interaction/user-approval/README.md)、[权限预设组合](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/bundle/base/cordis.patch.yml)。
 
-Tool registration（工具注册）和 Prompt Section 一样，可以绑定 Cordis scope（作用域）。
+批准结果是 `allowed-once`（只允许本次）。它不是永久授权、可撤销授权仓库或后续相同命令的自动通行证。审批请求必须位于打开的 Turn 中，`approval/asked` 与 `approval/decided` 进入审计日志；模型通常看到的是工具最终结果与当前政策，不是人工界面的全部内容。取消请求后到达的迟答也不能复活已经取消的操作。[审批生命周期](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/interaction/user-approval/README.md)。
 
-这意味着：
+因此，验收一次写入权限应同时问：工具是否可见，政策是否允许，这次批准对应哪个调用，执行时沙箱和底层提供方允许访问什么。只在提示词里写“不要修改测试”不足以形成文件系统层的不可写保证；反过来，沙箱允许访问工作区，也不代表用户已经授权当前任务修改所有文件。
 
--全局 Tool；
--Agent-only Tool；
--某个 Preset 下的 Tool；
--临时 Plugin 提供的 Tool；
+<a id="outputs"></a>
+## 5. 工具返回值、模型文字与外部结果不是同一件事
 
-可以并存。
+DSH 的输出设计区分 canonical value（规范值）与 content（模型可见内容）。规范值供程序化调用方使用，并受输出结构约束；渲染函数把它投影为文本或其他内容块。规范值属于执行局部数据，不作为独立字段原样写入会话工具结果供之后恢复。
 
-Agent 的 Tool View（工具视图）还可以通过：
+下面是解释两者关系的教学示意，不是一个可以直接提交给 DSH 的工具注册对象：
 
-`ctx.tools.restrict(filter)`
+```text
+业务函数返回值：{ changed: true, file: "page.py", testCount: 4 }
+模型可见文字：  “已修改 page.py；执行了 4 项测试。”
+外部真实状态：  page.py 的实际内容，以及测试进程的实际执行结果
+```
 
-进一步收窄。
+前两项通过结构校验，并不能凭空证明第三项正确。工具作者仍要确保 `changed` 来源于真实文件操作，`testCount` 来源于真实测试执行。模型最终说“已完成”，也不能替代对文件 diff 和测试结果的核对。
 
-#### 为什么这对 Subagent 很重要
+执行器会对成功返回的规范值进行结构检查并渲染。`projectContent` 可以先准备执行相关内容，再进入执行后策略；策略可以保留结果、替换规范值、替换展示内容或拦截结果。替换规范值要重新校验并渲染；只替换展示内容则保留原规范值。最后的 `finalizeContent` 承担末端内容处理，再形成不可变结果。[输出与后处理实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)。
 
-一个 Parent Agent 有：
+### 5.1 只把文字打码，为什么仍可能泄漏
 
-~~~text
-Bash
-Edit
-Deploy
-DatabaseAdmin
-~~~
+假设某次读取返回了敏感信息，后处理只把模型可见文字替换成“已隐藏”。程序化调用方仍可能取得原规范值，随后通过另一段程序再次输出它。**保护模型展示内容，与限制程序能拿到什么数据，是两个安全目标。**
 
-并不意味着 Child Agent 自动拥有同样权限。
+正确的防护位置取决于威胁：不应读取的数据应在授权和执行入口阻止；程序调用方也不能获得的数据，不能仅靠修改 `content`；必须处理规范值或拒绝相应结果，并验证其他输出通道。这里是在输出结构基础上推导的安全要求，不是声称默认配置已经完成所有数据防泄漏策略。
 
-Subagent 创建时会有自己的 scope，再根据 composition / filter 形成自己的 Tool Set。
+### 5.2 结果被拦截，不意味着操作被撤销
 
-这种隔离发生在 Tool Registry 层，不只是 Prompt 里写一句：
+如果业务函数已经把文件写入磁盘，之后的策略阻止模型看到“写入成功”，文件也不会自动恢复。执行后拦截能控制继续传播的结果，不能穿越时间取消已经发生的副作用。
 
-> “你不要使用 Deploy。”
+要避免未经授权的写入，应在执行前约束；要补偿已经发生的写入，需要业务提供可验证的恢复操作。补偿也可能失败，所以不能把它描述为通用自动回滚。第四章会进一步讨论“外部写入已成功，但工具结果尚未可靠保存”的恢复问题。
 
----
+### 5.3 输出很长时，不能只留下“完成”
 
-### 模型真正看到的 Tool Schema 从哪里来
+保留策略可以把大结果放到外部存储，给模型留下定位信息和取回提示；压缩机制也可以在后续缩短工具历史。两者的作用不同：结果外部化控制进入会话的体积，历史压缩控制长会话的后续请求。都不能把必要证据无声丢弃。
 
-System Prompt Service 在：
+基础组合的溢出策略给内联结果设置 `12,500` Token 预算，另外还启用按字符保留工具结果首尾的压缩辅助组件。Token、字符和字节是不同计量对象，不能把这几个数字相互替换。[基础组合中的溢出与裁剪设置](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/bundle/base/cordis.patch.yml)。
 
-- `packages/core/system-prompt/`
+在分页任务中，一个有用的短结果至少应让后续步骤知道测试是否实际运行、怎样结束、关键失败信息在哪里，以及是否能取回更完整输出。外部资料也可能过期或保存失败，应把不可用状态明确传回，而不是伪造一个永远有效的文件路径。
 
-每次 `assemble()` 会从当前 Agent Scope 读取 Tool Schema Provider。
+<a id="cancellation"></a>
+## 6. 超时与取消怎样改变执行结论
 
-Tool Runtime 只把模型需要的部分暴露出去，例如：
+超时首先表示等待预算耗尽；取消表示调用者要求停止。两者都不自动证明业务函数尚未开始，也不保证外部操作已经停止。当前工具执行使用取消信号，并协调已经启动的工作收尾，而不是把 Promise 不再等待当成“工作消失”。[工具取消规则](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/README.md)、[执行与收尾实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)。
 
-- name；
--description；
--parameter schema。
+工具定义的 `timeoutMs` 是声明，不是注册表内置计时器。真正执行截止时间需要挂载 `dsh-tool-call-timeout-policy` 包装策略；因此判断超时行为时，必须同时检查定义与实际组合。只写一个毫秒数却未挂载执行策略，不能据此声称调用一定会按时停止。[工具层已声明的限制](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/README.md)。
 
-而这些运行时内部细节不会上 wire：
+可以分三种时点判断：
 
-- `execute` function；
--output renderer；
--timeout；
--finalizeContent；
--UI presenter。
+| 发生时点 | 可以判断什么 | 不能直接推断什么 |
+|---|---|---|
+| 调度前就取消 | 可以返回尚未分派的失败 | 其他调用也一定没有开始 |
+| 已分派，业务函数等待外部系统 | 应传递取消，并等待已启动工作结算 | 外部系统一定撤销了请求 |
+| 外部动作已完成，回填前取消 | 本轮可能以取消结束，仍需核对外部状态 | 最终显示取消就等于没有副作用 |
 
-这维持了一个清晰边界：
+比如修改文件后，运行测试的步骤被取消。你应该分别记录“文件已改”和“测试尚未得到可确认结果”，不能把整轮统一显示的取消状态解释成“仓库完全没变”。
 
-> **Wire Contract（模型协议）和 Runtime Implementation（执行实现）不是同一个对象。**
+普通工具错误会形成失败结果，模型可以据此调整参数或选择其他动作；它不必结束整个 Turn。但取消状态仍然具有约束力，不能让工具内部重试偷偷恢复已经取消的整轮任务。更不能遇到超时就无条件重复发送有副作用的操作。
 
----
+<a id="concurrency"></a>
+## 7. 并发执行为什么仍按模型顺序回填
 
-## 2. 一次 Tool Call 怎样安全地走完整 Pipeline
+模型同一步提出“读取实现文件”和“读取测试文件”，两次只读操作可能并行；提出“写入文件”后再“读取刚写的文件”，则需要注意前后依赖。DSH 使用工具的并发安全分类来组织有界并行池；未明确返回安全的调用按独占执行处理。分类失败也采取保守路径。[工具分类](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)。
 
-### 模型 Tool Call 为什么必须先写 `tool/call` 再执行
+主循环调度器让独占调用形成屏障，后续调用在实际启动前重新分类，因此工具注册或政策变化有机会影响尚未启动的调用。它并不是把整批工具无条件交给 `Promise.all()`。
 
-Tool 调度主要在：
+即使调用 B 比 A 先完成，结果也按模型原先的 A、B 顺序提交，执行前政策与后处理同样保持规定顺序；真正允许重叠的是执行体。取消后不再补充新工作，已经启动的工作先收尾，未启动调用收到相应失败结果。内部调度器故障则保留已记录事实，不编造正常结果掩盖缺口。[完整调度实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/tool-calls.ts)。
 
-- `packages/core/agent-loop/src/tool-calls.ts`
+```text
+模型提出顺序： A 读取实现文件    B 读取测试文件
+实际完成顺序： B               A
+提交结果顺序： A               B
+```
 
-当 Assistant Message 含有 Tool Calls 时，Agent Loop 会先 append：
+固定回填顺序便于重建模型看到的历史，但不等于外部执行顺序固定，更不等于自动解决共享文件竞争。如果两个写工具错误地都声明并发安全，它们仍可能覆盖同一个文件。是否安全要根据资源、操作和依赖判断，不能只看函数名里有没有 `read` 或 `write`。
 
-`tool/call`
+<a id="ptc"></a>
+## 8. PTC 改变编排方式，不改变授权归属
 
-然后才 dispatch（分发）真实执行。
+PTC 是 Programmatic Tool Calling（程序化工具调用）。原生模式中，模型逐次输出结构化工具调用；PTC 中，模型通过 `run_code` 写一小段程序，在程序内调用工具、处理返回值，最后输出需要的结果。这样可以把“读取若干结果—筛选—聚合”留在程序中，避免每个中间值都变成下一轮模型推理。
 
-这不是多余日志。
+当前工具层支持 `native`、`ptc`、`both` 三种呈现模式。`ptc` 对模型直接入口收束为 `run_code`，原有工具通过程序内的受控调用入口使用；它不意味着底层工具完全消失。模式限制也不能靠猜一个旧工具名绕过。[模式与执行范围](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/README.md)、[直接调用限制实现](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts)。
 
-假设模型调用：
+基础组合选择 Node 提供程序运行环境。这是该组合的实现选择，不意味着 PTC 的概念天然只能使用 JavaScript。每次 `run_code` 获得新的执行状态，不是带永久变量的 REPL（交互式解释器会话）。执行局部的规范值不能靠重放会话日志原样恢复；不能在第二次调用里假定第一次定义的数组仍然存在。
 
-> 删除一个远端资源。
+程序内调用工具仍经过工具运行链，不能把一段任意代码当成已经批准的超级工具。程序的执行时间预算还包括嵌套调用与批准等待；超时或被拒绝时，不能自动重放整段程序，因为前面的若干副作用可能已经完成。[PTC 的约束](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/README.md)。
 
-真实副作用发生以后，进程立刻 crash。
+下面只描述逻辑，不提供伪装成真实 SDK 的虚构方法：
 
-如果 Session 中连“模型要求执行什么”都没有：
+```text
+在本次 run_code 内：
+  调用可见的读取工具，取得结构化结果
+  在程序内筛选与分页计算
+  输出本次判断需要的小结果
 
-> Resume 根本无法判断外部世界可能发生过什么。
+下一次 run_code：
+  重新读取必要状态；不依赖上一次的内存变量
+```
 
-当前设计至少保证：
+PTC 的收益取决于中间结果规模、所需模型轮次和最终需要的证据。它不是“开启后 Token 一定更少”：工具说明、程序文本、错误修复和外层输出仍有成本，执行局部的大值也可能消耗大量内存。应在相同任务和成功标准下比较，而不是只统计模型回复次数。
 
-~~~text
-tool/call 已 durable
-        ↓
-执行开始
-        ↓
-如果正常完成
-tool/result durable
-~~~
+<a id="skills"></a>
+## 9. Skill 怎样把“如何做”交给模型
 
-Crash Recovery 后可以区分：
+Skill（技能）是可复用的任务指令，可能附带资源与脚本。Tool 是执行入口，MCP 是外部能力接入协议，Skill 则主要告诉模型在某类任务中怎样工作。加载一个 Skill 不等于已经运行其中的脚本，也不会凭空授予它要求的文件或网络权限。
 
-- Call 根本没开始；
--Call 可能开始，但没有可靠 Result；
--Call 有完整 Result。
+DSH 将技能来源、技能注册表和模型侧加载器拆开。来源可以是文件系统或其他提供方；注册表整理可用项目；`tool-skill` 在合适时机向模型提供名称与截短描述，模型再用 `skill` 工具加载全文。这个顺序把“先发现合适能力”和“再阅读具体步骤”分开。[技能服务](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/skill/skill/README.md)、[模型侧加载器](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/skill/tool-skill/README.md)。
 
-后面的 Engineering 篇会看到，这直接决定 Resume 时用什么 synthetic error 提醒模型。
+只有存在可被模型调用的技能、并且加载器注册的那个 `skill` 工具确实可见时，才会发布目录。每个合格的步骤检查目录变化；新增、删除、描述或可见性变化时追加完整替代目录。先前发布过目录后，即使变成空集合，也要发布空目录明确退役旧名称，不能只沉默不说。
 
----
+用户显式输入某个允许用户调用的 `/name`，是另一条入口：插件在已领取的直接用户消息中识别它，将相同的技能全文注入当前步骤，不要求模型再重复加载。只允许用户调用、不允许模型自主调用的技能不会被目录和工具偷偷暴露。未知名称仍可留作普通文字。[目录与显式调用边界](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/skill/tool-skill/README.md)。
 
-### Argument Validation 为什么发生在执行前，而且参数不能被任意重写
+数量增长时，分层加载只节省了“所有技能正文同时进入上下文”的成本。目录仍随技能数量增长，描述上限也只限制单项；目录反复变化还会追加新的历史消息。不能因此承诺一万个技能和十个技能有相同上下文开销。
 
-Tool Runtime 会先把模型提供的参数：
+<a id="mcp"></a>
+## 10. MCP 怎样把外部工具接到同一条执行链
 
--检查为 lossless JSON；
--按 Tool Parameter Schema 验证；
-- materialize；
--deep freeze（深冻结）。
+接入 MCP 服务不是把它的函数名直接拼进提示词。当前客户端先建立连接、完成协议协商与工具发现，再把外部工具注册到 DSH 工具体系。宿主配置的 `serverName` 与外部原始工具名共同构成身份；模型通常看到 `mcp__服务名__工具名`，远端调用仍使用原始工具名，而不是反向解析公共名称。
 
-然后才进入 Policy Pipeline。
+因此两个服务都提供 `search` 不会仅因名字相同就混在一起；同一作用域重复注册同一个服务名则会失败。工具列表更新按完整代际切换：拉取失败保留上一代，注册冲突回滚本次尝试，不留下半套新、半套旧的工具集。[客户端机制](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/mcp/mcp-client/README.md)。
 
-这有一个很成熟的设计：
+一次 MCP 工具调用仍带有 Agent、参数、取消信号和超时，返回的规范值与模型内容进入相同的后处理链。服务器报告错误时应形成失败，不会因为协议连接成功就变成业务成功。图片是否能进入上下文还取决于模型输入能力和附件功能；不支持的内容要有明确诊断，不能无声消失。
 
-> **`tools/pre-execute` 可以决定 allow / deny / ask，但不能偷偷重写已经记录和展示的 Tool Arguments。**
+连接丢失后，监督器按退避策略重连；故障期间保留的工具名可能仍可见，但调用会失败。达到恢复预算后注销该代工具，等待重新加载或重启。卸载时要取消待重连任务、关闭客户端，等待正在进行的连接尝试与同步工作收束，再注销注册项，避免旧连接稍后又把工具放回目录。[连接与注销生命周期](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/mcp/mcp-client/README.md)。
 
-为什么？
+本地 stdio（标准输入输出）服务也是一个真实子进程。当前接入会过滤环境变量中名称匹配密钥、密码、秘密、令牌模式及 `DSH_*` 的环境项，再合并明确配置的环境变量；这不是“传给子进程的环境完全为空”。外部 HTTP 服务的部署和权限也由其自身负责，客户端不会替它建立完整的服务端安全边界。
 
-因为一旦模型历史里记录：
+还要区分引用背景与 MCP 服务器指令：会话引用显式是不可信快照，MCP 客户端的服务器指令则作为文字参与已记录的系统提示。因此，启用哪个服务器、接受什么说明本身也是信任决策；不能声称所有外部文本都已经被统一降权为普通数据。[服务器上下文与环境处理](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/mcp/mcp-client/README.md)。
 
-~~~json
-{"path":"safe.txt"}
-~~~
+<a id="scale"></a>
+## 11. 工具很多时，先判断膨胀发生在哪一层
 
-而 Policy 实际偷偷执行：
+技能目录、工具 Schema（结构说明）、工具执行结果和长期历史是四种不同负担。只调一个压缩阈值，不能同时解决它们。
 
-~~~json
-{"path":"secret.txt"}
-~~~
+| 膨胀对象 | 当前可用的控制思路 | 仍需检查的边界 |
+|---|---|---|
+| Skill 正文 | 目录摘要与按需加载 | 目录数量、单项描述和多次替代消息仍有成本 |
+| 不相关的工具集合 | 按任务与作用域限制能力 | 不能遗漏必需工具，也不能忽略本层新增注册 |
+| 工具定义的呈现 | 根据路由能力使用适当的工具呈现与延迟加载 | `deferLoading` 标记不保证所有模型后端都支持 |
+| 大工具结果 | 外部化、保留关键内容、按需取回 | 不能丢失失败证据或伪造可取回性 |
+| 长会话历史 | 平衡区间压缩与最近尾部保留 | 系统头、工具定义和不可分单元有单独边界 |
 
-就会产生四套不一致：
+`defineTool` 和相关投影会保留 `deferLoading: true`，但它只是请求延迟加载定义，不证明该工具已经通过历史中的新增事件被激活。执行语义取决于模型路由的适配；路由是否拒绝该配置、忽略提示或按普通工具呈现，需要回到具体适配器核对，不能只看注册表字段。**不要把一个字段的存在讲成已经实现了通用语义工具搜索。** [参数与定义源码](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/schema.ts)、[工具层能力说明](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/README.md)。
 
--模型以为执行 safe；
--UI 展示 safe；
--Audit 记录 safe；
--真实副作用是 secret。
+在分页任务中，只需文件、搜索和测试相关能力时，没有理由同时向模型暴露所有外部业务写工具。但是否精简、怎样精简，应以任务覆盖和实际请求内容验证，而不是为了减少工具数量牺牲完成任务的必需步骤。
 
-DSH 因此把“Argument Rewrite”排除在 Pre Tool Decision 之外。
+## 本章小结
 
-历史、权限和执行必须对同一个 Call 达成一致。
+一次工具调用要依次确认身份、可见性、策略、批准、守卫、参数、业务执行和结果处理。输出文字与规范值不同，二者又都不同于外部世界的最终状态。并发、取消、PTC、Skill 与 MCP 没有改变这些基本责任，只是在发现、编排和生命周期上增加了条件。
 
----
+排障时最有用的问题不是“工具报错了吗”，而是：**停在哪一层，执行体有没有开始，外部动作是否可能完成，下一步能够依据什么事实继续？**
 
-### `tools/pre-execute` 解决什么
+## 🎯 面试怎么回答
 
-这是第一层 extensible policy（可扩展策略）。
+**Q：为什么工具调用不能只有模型输出 JSON，再调用函数？**
 
-监听器可以：
+> 🎯 模型输出只表示意图。程序还要确定工具在当前作用域是否可见，保存调用身份与参数，执行权限与批准检查，验证参数，再调用业务实现。结果需要区分失败、程序可用值与模型可见内容，并按可重建的顺序回到历史。取消和超时不能自动抹掉已经发生的副作用，所以还要记录在哪个阶段结束。DSH 的工具运行链和主循环调度器分别承担单次调用规则与同一步多调用的排序、并发和收尾。
 
-- allow；
--deny；
--cancel；
--ask。
+**Q：Skill、MCP 和 PTC 分别解决什么问题？**
 
-#### deny
+> 🎯 Skill 主要提供任务指令与资源，帮助模型知道怎样做；MCP 把外部服务的工具与资源接入宿主；PTC 让模型用程序组织多次工具调用并处理结构化中间值。加载指令不等于执行，连接协议不等于业务成功，程序化调用也不绕过权限。工具数量增长时，应分别控制目录、工具说明、结果与历史，而不是把三者当成同一种压缩方案。
 
-直接变成一个 Tool Error Result，不执行 Tool Body。
 
-#### cancel
+## ⚠️ 常见误区
 
-产生规范 cancellation result。
+| 误解 | 应怎样修正 |
+|---|---|
+| 用户批准后一定进入业务函数 | 后续取消或 guard 仍能阻止执行 |
+| `never` 表示自动批准 | 它拒绝需要审批的请求；普通已允许工具是另一条路径 |
+| 参数被冻结就是通过了结构校验 | 不可变快照与特定工具的结构约束不同 |
+| 模型内容打码就保护了所有调用方 | 程序化调用方可能仍拿到原规范值 |
+| 按顺序回填就没有并发竞争 | 实际执行仍可能重叠，共享资源需要单独判断 |
+| MCP 工具还在列表里就是连接正常 | 故障期间上一代工具可以保留，但调用失败 |
 
-#### ask
+<a id="self-test"></a>
+## 自测：用状态而不是术语作判断
 
-调用 Approval Service。
+### 任务 A：批准了却没有改文件
 
-只有：
+条件：一次编辑进入 `ask`，用户批准；之后 guard 返回拒绝原因，业务函数未调用。请写出审批记录、工具结果和文件状态三者应该怎样解释。
 
-`allowed-once`
+检查结果：不能把它归为“写入后回滚”，也不能说“批准没有生效”。
 
-才继续执行。
+<details><summary>任务 A：批准了却没有改文件｜提示</summary>
 
-其他结果：
+按真实顺序区分批准分支和后续守卫。
 
-- rejected；
--cancelled；
--unavailable；
+</details>
 
-全部 fail closed。
+<details><summary>任务 A：批准了却没有改文件｜参考答案与解释</summary>
 
-#### 为什么 missing approval 也要 deny
+批准只解决本次审批条件，会留下相应审批事实；guard 随后否决执行，工具最终返回拒绝或失败反馈，业务函数未调用，因此没有由本次业务函数产生的文件变更。这不是写入后回滚，也不要求伪造一次执行成功。
 
-Headless deployment（无界面部署）很可能没有人能弹批准框。
+</details>
 
-如果 Tool 说：
+### 任务 B：屏幕上没有秘密，程序里却有
 
-> “需要 approval。”
+条件：工具返回含测试秘密的规范值；后处理只把 `content` 改成“已隐藏”；程序化调用方随后把返回值输出。请解释为什么现有处理不够，以及应在哪里阻止泄漏。
 
-但没有 Approval Service / Answerer，然后 Runtime 默认执行：
+检查结果：必须明确指出规范值与展示内容的区别，并区分入口授权和结果传播控制。
 
-> 安全模型就失效了。
+<details><summary>任务 B：屏幕上没有秘密，程序里却有｜参考答案与解释</summary>
 
-所以“没有人能批准”不是 allow。
+只修改 `content` 保留原规范值，程序调用方仍能取得并再次传播数据。不该读取的秘密应在读取入口拦截；不允许程序取得的结果还需在规范值或拒绝结果层处理，并检查其他输出通道。只查看一张模型输出截图不足以验证防泄漏。
 
----
+</details>
 
-### 为什么 Pre-execute 后面还有 Monotonic Guard
+### 任务 C：两个读取完成顺序相反
 
-Tool Runtime 还支持：
+条件：模型按 A、B 顺序提出两个允许并行的读取调用；B 在 20 毫秒完成，A 在 100 毫秒完成。请说明结果提交顺序，以及这能否保证两个任意写操作也安全。
 
-`ctx.tools.guard()`
+检查结果：说明“执行重叠”和“回填有序”是不同维度，不以延迟数字推导性能保证。
 
-Guard（守卫）只能做一件事：
+<details><summary>任务 C：两个读取完成顺序相反｜参考答案与解释</summary>
 
-> **进一步 deny。**
+结果按 A、B 的模型顺序提交，B 的较早完成不能越过尚未就绪的 A 提交。这个规则只约束回填，不让任意写操作自动安全；共享文件依赖、覆盖和外部副作用仍需正确分类与协调。这里的毫秒是题设，不是测量值。
 
-它不能返回 allow 去覆盖前面别人的 deny。
+</details>
 
-因此它是 monotonic（单调的）。
+### 任务 D：一百个技能全部出现，为什么仍然很长
 
-假设：
+条件：目录每项描述已限制长度，正文只在选中后加载，但每次请求仍携带大量技能名称和历史目录变更。请区分本方案已经节省的成本与尚未解决的成本，并提出一个不会虚构产品能力的检查方向。
 
-~~~text
-Policy A：
-deny /etc/passwd
+检查结果：不能回答“有按需加载，所以不应占任何 Token”。
 
-Policy B：
-allow all reads
-~~~
+<details><summary>任务 D：一百个技能全部出现，为什么仍然很长｜参考答案与解释</summary>
 
-如果所有 Hook 都能自由覆盖，注册顺序可能导致：
+按需加载节省了未使用技能的完整正文成本，但目录本身随数量增长，描述上限只限制单项，历史替代消息也有成本。应查看实际请求中的目录与工具定义、任务作用域和路由支持，再决定精简或压缩；不能假定 `deferLoading` 已提供所有后端通用的语义搜索。
 
-> 最后一个 allow 把安全拒绝洗掉。
+</details>
 
-Guard 没有 allow vocabulary（允许词汇），所以只能缩小权限。
+## 源码回看：按责任找实现
 
-这是很适合安全规则 / invariant enforcement（不变量强制）的设计。
+| 要核对的问题 | 固定快照入口 |
+|---|---|
+| 参数校验何时真正发生 | [`defineTool`](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/schema.ts) |
+| 作用域、策略、guard 与结果链 | [Tool Runtime](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/tools/src/index.ts) |
+| 并行与结果顺序 | [Tool Calls 调度器](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/core/agent-loop/src/tool-calls.ts) |
+| `never` 和单次批准的含义 | [审批服务](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/interaction/user-approval/README.md) |
+| 目录如何更新、全文如何加载 | [Skill 加载器](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/skill/tool-skill/README.md) |
+| 连接、完整代际同步与注销 | [MCP 客户端](https://github.com/deepseek-ai/deepseek-harness/blob/477b4f420553e8a52c2fbccc464d7561b239c443/packages/mcp/mcp-client/README.md) |
 
----
-
-### Approval 是 Tool Pipeline 的一层，不是 Tool Runtime 本身
-
-Approval Service：
-
-- `packages/interaction/user-approval/`
-
-它回答一个封闭问题：
-
-> **这一次具体动作允许继续吗？**
-
-Outcome 只有：
-
-~~~text
-allowed-once
-rejected
-cancelled
-unavailable
-~~~
-
-没有永久授权。
-
-每个 request 会生成 ApprovalRequestId，并在 Session Log 写：
-
-~~~text
-approval/asked
-approval/decided
-~~~
-
-这些 audit events 不进入模型 Context。
-
-模型只看到最终 Tool Result。
-
-#### 为什么 Approval 不带一份完整 Tool Args 副本
-
-源码设计让 Approval Request 可以通过 `callId` 关联 UI 已经展示的 Tool Call。
-
-避免再复制一份参数。
-
-否则 UI 和 Approval Payload 之间可能产生 drift（漂移）。
-
----
-
-### Permission Preset 为什么不是新的安全机制
-
-用户界面更希望看到：
-
-~~~text
-read-only
-workspace-write
-danger-full-access
-~~~
-
-而不是分别操作：
-
-- Sandbox mode；
--Approval policy。
-
-所以：
-
-- `dsh-permission-presets`
-
-把两个独立 knob（旋钮）组合成一个 UX preset。
-
-Base bundle 的主要组合是：
-
-~~~text
-read-only
-= sandbox read-only + approval ask
-
-workspace-write
-= sandbox workspace-write + approval ask
-
-danger-full-access
-= sandbox danger-full-access + approval never
-~~~
-
-但执行时仍然分别由：
-
-- Sandbox；
--Approval；
-
-负责。
-
-这说明 Permission Preset 是：
-
-> **用户级配置组合。**
-
-不是第三套 enforcement engine。
-
----
-
-### Sandbox 管的是文件副作用，不是所有安全问题
-
-Process Sandbox：
-
-- `packages/sandbox/sandbox/`
-- `packages/sandbox/sandbox-local/`
-- `packages/sandbox/sandbox-policy/`
-
-主要模式：
-
-~~~text
-read-only
-workspace-write
-danger-full-access
-~~~
-
-当前 Sandbox vocabulary 明确主要约束：
-
-> **Filesystem Effect（文件系统副作用）。**
-
-网络访问和进程可见性不自动由这个 mode vocabulary 覆盖。
-
-所以不能说：
-
-> “进了 Sandbox 就什么都安全了。”
-
-#### per-call policy
-
-Sandbox Policy 不是一个全局开关。
-
-每次 capability call 都会 resolve：
-
-- mode；
--workspaceRoot；
--sessionId。
-
-这允许：
-
-~~~text
-Agent A:
-workspace-write /repo/a
-
-Agent B:
-read-only /repo/b
-~~~
-
-同时使用同一个 Sandbox Provider。
-
----
-
-### Local Sandbox Provider 怎样做到 fail closed
-
-当前 Local Provider 会根据平台选择：
-
-- Linux：Bubblewrap / Landlock；
-- macOS：Seatbelt；
-- Windows：ACL restricted-token backend。
-
-如果 requested mode 需要 confinement，但平台没有可用 runner：
-
-> 抛 `SANDBOX_UNAVAILABLE`。
-
-不会静默退化成 unrestricted execution。
-
-Provider 还会返回：
-
-- enforcement: full / partial；
--denial signatures；
--runner failure rules。
-
-这样 Bash Consumer 可以区分：
-
-~~~text
-命令自己失败
-
-vs
-
-Sandbox 正确阻止了文件操作
-
-vs
-
-Sandbox Runner 根本没成功启动命令
-~~~
-
-这对错误诊断非常重要。
-
----
-
-### `tools/execute` 为什么是 Around-dispatch Wrapper
-
-通过 Pre Policy 和 Guard 后，调用进入：
-
-`tools/execute`
-
-这层适合实现：
-
-- timeout；
--retry；
--metrics；
--execution wrapper。
-
-Wrapper 可以代理下游执行。
-
-唯一比较特殊的是：
-
-> 它可以临时替换 signal。
-
-但 Runtime 会重新把原 caller signal fuse（融合）回来，不能通过 Wrapper 丢掉用户取消。
-
-因此取消 authority（取消权）仍然属于上游 Caller。
-
----
-
-### Tool Body 返回以后为什么还不能立刻写 Result
-
-Tool Body 返回 canonical value 后，Runtime 还要经过：
-
-`tools/post-execute`
-
-Post Policy 可以：
-
--接受原结果；
--替换 model-facing content；
--替换 canonical value；
--附加 additional context；
--block 并变成 corrective error。
-
-#### 替换 Value 和 Content 为什么互斥
-
-如果同时说：
-
-~~~text
-value 换成 A
-content 换成 B
-~~~
-
-谁才是权威？
-
-DSH 要求一次决策只选一类：
-
--换 value：重新 schema validate，再重新 render；
--换 content：保留 canonical value，只改展示；
--block：删除 success value，变成 error。
-
-这让每一层语义保持明确。
-
----
-
-### `finalizeContent` 为什么在 Post Policy 后面
-
-某些 Tool 的最终 model content 需要结合执行后信息。
-
-例如 MCP Tool 的 canonical result 里可能包含：
-
-- text；
--image；
--resource links；
--structured content。
-
-MCP Bridge 可以先保留完整 canonical value。
-
-Post Policy 如果没有改掉结果，再由：
-
-`finalizeContent`
-
-完成最终模型投影，例如把支持的 Image 写到 Attachment Store，生成 durable reference。
-
-如果 Post Policy 已经 Block / Replace：
-
-> MCP 自己的 finalize 不应该再把旧结果强行装回来。
-
-这保证 Policy 层更 authoritative（权威）。
-
----
-
-### `tools/result` 是观察点，不是再修改点
-
-所有 normalization（规范化）完成以后，Runtime deep freeze：
-
-- ToolExecution；
-- ToolExecutionResult。
-
-然后发：
-
-`tools/result`
-
-这一步是 observe-only（只观察）。
-
-为什么？
-
-如果 Telemetry Listener、UI Listener 还能修改最终结果：
-
-> Durable `tool/result` 和不同 observer 看到的内容会不一致。
-
-所以最终观察面应该不可变。
-
----
-
-### Agent Loop 为什么并发执行，却按模型顺序提交 Result
-
-一条 Assistant Message 可能同时要求：
-
-~~~text
-Read A
-Read B
-Read C
-~~~
-
-如果 Tool 都声明 concurrency-safe（并发安全），Agent Loop 可以 bounded parallel（有界并发）执行。
-
-但 durable settlement（持久提交）仍按：
-
-> **模型 Tool Call 顺序。**
-
-也就是说：
-
-~~~text
-A、B、C 可以并发跑
-
-即使 B 先完成，
-日志仍按 A → B → C commit
-~~~
-
-这样模型历史不会因为网络 / 文件速度不同而每次产生随机顺序。
-
-#### Exclusive Tool
-
-如果某 Tool 被判定为 exclusive：
-
-> 它形成 ordering barrier（顺序屏障），单独执行。
-
-而且 Runtime 会在真正启动一个 pending call 之前重新查询 execution mode。
-
-所以 Tool Registry 在等待期间发生变化，也能影响尚未开始的调用。
-
----
-
-### Cancellation 时为什么还要给“未启动 Tool”补结果
-
-假设模型一次请求了 5 个 Tool。
-
-前两个已经启动。
-
-此时用户取消。
-
-Runtime 会：
-
--停止继续启动后续 Tool；
--等待已经开始的调用收敛；
--对从未 dispatch 的 Call 写 synthetic Tool Result：
-
-`TOOL_ABORTED_BEFORE_DISPATCH`
-
-为什么不能把后 3 个 call 留成没有 Result？
-
-因为下次 Model History 中：
-
-~~~text
-assistant: tool-call X
-但找不到对应 tool-result
-~~~
-
-会破坏 Tool Pairing invariant（工具配对不变量）。
-
-所以取消也必须让 Context 保持 protocol-valid（协议有效）。
-
----
-
-## 3. PTC：把多个 Tool 调用变成受控程序编排
-
-### PTC 是什么：让模型用代码编排 Tool，而不是一次只 Call 一个
-
-Tool Runtime 支持三种 presentation mode（呈现模式）：
-
-~~~text
-native
-ptc
-both
-~~~
-
-Native 就是普通 Function Calling。
-
-PTC = Programmatic Tool Calling（程序化工具调用）。
-
-在 PTC mode 下，模型主要看到：
-
-`run_code`
-
-以及根据当前 Tool Schemas 生成的 typed SDK（类型化 SDK）。
-
-模型可以写类似 TypeScript：
-
-~~~ts
-const a = await tools.read_file(...)
-const b = await tools.search(...)
-return { a, b }
-~~~
-
-#### 为什么这很有价值
-
-复杂任务可能需要：
-
--循环；
--条件；
--并发；
--组合多个 Tool Result。
-
-如果每一步都回模型一次：
-
-> LLM round-trip 很多。
-
-PTC 允许在一个程序里完成一段 deterministic orchestration（确定性编排）。
-
----
-
-### PTC 不是绕过 Tool Permission
-
-这是最容易误解的地方。
-
-`run_code` 里的每个 host binding call（宿主绑定调用）最终仍然重新进入普通 Tool Runtime。
-
-也就是说：
-
-~~~text
-PTC Program
-→ tools.foo()
-→ Tool Runtime
-→ pre-execute
-→ guard
-→ approval
-→ execute
-→ post-execute
-~~~
-
-所以模型不能通过：
-
-> “把危险 Tool 放进 TypeScript 里调用”
-
-绕开 Permission。
-
-PTC 只是新的 orchestration surface（编排表面），不是新的 authority（权限）。
-
----
-
-### PTC Runtime 本身又怎样隔离
-
-默认 Node PTC Runtime：
-
-- `packages/ptc-runtime/ptc-runtime-node/`
-
-每次调用启动 fresh Node process（新 Node 进程）。
-
-它有：
-
-- elapsed timeout；
--max output bytes；
--V8 heap limit；
--bounded pending host calls；
--managed process cleanup。
-
-而且使用和 Bash 相同的：
-
-- Sandbox Policy；
--Sandbox Provider。
-
-Program-visible `process.env` 会被清空，Host 和 Child 通过受限 control channel 通讯。
-
-因此 PTC 不等于：
-
-> “给模型一个无限制 node -e。”
-
-它是另一条受控执行能力。
-
----
-
-## 4. Skill：先暴露目录，再按需加载完整能力
-
-### Skill 怎样建立在 Tool Runtime 之上
-
-Skills 分为：
-
-- `dsh-skill`：Skill Registry；
--`dsh-skill-filesystem`：Filesystem Provider；
--`dsh-tool-skill`：模型可见 Loader。
-
-#### 第一阶段：只发布目录摘要
-
-Tool Skill 会在 `agent/pre-step` 读取当前可见 Skills。
-
-把：
-
-- name；
--有界 description；
-
-渲染成：
-
-`<available_skills>`
-
-并作为 durable user-role context 写入 Session。
-
-完整正文此时不进入 Context。
-
-#### 第二阶段：模型按需调用 `skill`
-
-模型判断某个 Skill 相关后：
-
-~~~text
-skill({ name })
-~~~
-
-Tool Runtime 再真正读取完整 Skill Content。
-
-#### 用户显式 `/name`
-
-如果 direct user message 明确包含一个 user-invocable Skill gesture：
-
-> 直接由 pre-step 加载完整内容。
-
-无需模型先调用 Loader。
-
-这仍然符合 Progressive Disclosure（渐进展开）。
-
----
-
-### Skill Catalog 为什么也要 durable
-
-Skill Provider 可以在运行时变化。
-
-假设 Session 开始时：
-
-~~~text
-skill A
-skill B
-~~~
-
-后来变成：
-
-~~~text
-skill B
-skill C
-~~~
-
-Tool Skill 会检测 digest 变化，写一个完整 replacement catalog message。
-
-因此 Resume 能知道：
-
-> **当时模型被告知哪些 Skill 可用。**
-
-而不是用今天磁盘上的 Skill 目录反推昨天模型知道什么。
-
-这再次体现“model-visible means logged”。
-
----
-
-## 5. MCP：外部工具怎样进入同一 Runtime
-
-### MCP Tool 怎样进入普通 Tool Runtime
-
-MCP Client：
-
-- `packages/mcp/mcp-client/`
-
-每个配置实例连接一个 MCP Server。
-
-Discovery 成功后，把远端 Tool 转成普通 DSH ToolDefinition。
-
-Model-facing name：
-
-`mcp__<serverName>__<rawName>`
-
-#### 为什么 Server Name 来自本地配置，不信远端
-
-远端 `serverInfo.name`：
-
--可能不唯一；
--可能升级后变化；
--本身也是不可信数据。
-
-所以 public tool identity（公开工具身份）由本地配置的 `serverName` 决定。
-
-Raw name 仍然只用于真正 `tools/call` Wire Protocol。
-
----
-
-### MCP Tool 更新为什么要“整代替换”
-
-MCP Server 可能动态改变 Tool List。
-
-DeepSeek Harness 不会：
-
-> 一个个边发现边覆盖当前 registry。
-
-它把一次 sync（同步）看成 generation（代）。
-
-新 Tool Set 全部成功注册后，才替换旧 generation。
-
-如果：
-
-- discovery 失败；
--同名冲突；
--schema 有问题；
-
-旧 Tool Generation 继续工作。
-
-这样不会出现：
-
-~~~text
-20 个 Tool
-更新到第 11 个失败
-→ Registry 进入半新半旧
-~~~
-
-这是很重要的原子更新策略。
-
----
-
-### MCP 断线时为什么最后已知 Tool 还先保留
-
-MCP Connection Supervisor 有 reconnect policy（重连策略）。
-
-断线时：
-
--最后已知 Tool 仍保持注册；
--调用在 outage（故障窗口）内可能失败；
--后台指数退避重连；
--成功后重新 sync Tool Generation。
-
-达到最大连续失败次数以后：
-
--Tool 才 unregister；
--停止自动重连，等待 reload / restart。
-
-这样短暂断线不会让 System Prompt Tool Schema 每几秒来回增删，减少能力面抖动和 Cache churn。
-
----
-
-### MCP Memory 为什么不需要一条特殊 Tool Pipeline
-
-Memory 篇已经讲过：
-
-> 第三方 Memory 通过 MCP。
-
-这在 Tool 架构上几乎没有特殊逻辑。
-
-Memory Provider 的：
-
-- write；
--search；
--read；
-
-最终都只是：
-
-~~~text
-MCP Tool
-→ 普通 DSH Tool Runtime
-→ 相同 Validation / Policy / Result Pipeline
-~~~
-
-这正是 Capability Seam（能力接缝）的价值：
-
-> 新领域能力不需要重新发明一套 Tool 安全模型。
-
----
-
-## 6. 把 Tool 生命周期串起来，并知道怎样验证
-
-### 一个完整 Tool Call 例子
-
-用户说：
-
-> “搜索项目里所有旧 API 的调用，然后用 Memory Server 记住迁移原则，最后修改代码。”
-
-#### 模型请求
-
-当前 Tool Schemas 包含：
-
-- grep / fs；
--MCP memory tools；
--skill；
--Bash。
-
-#### Search
-
-模型 Call 搜索 Tool。
-
-Agent Loop 先 durable：
-
-`tool/call`
-
-Runtime 校验参数。
-
-Pre Policy allow。
-
-Guard 没有拒绝。
-
-Tool Body 返回 canonical search result。
-
-Renderer 生成 model-facing content。
-
-写：
-
-`tool/result`
-
-#### Memory Write
-
-模型调用：
-
-`mcp__memory__write`
-
-MCP Bridge 仍然进入同一 Tool Pipeline。
-
-如果 Policy 要 ask：
-
-Approval Service 记录 audit 并等待 answerer。
-
-获准后执行 MCP。
-
-#### Edit
-
-文件修改进入 Sandbox Policy。
-
-当前 Session 是 workspace-write：
-
-> 允许 workspace 内副作用。
-
-修改完成后 durable result 写回。
-
-#### 下一 Step
-
-`deriveMessages()`
-
-自然看到三个 Tool Result。
-
-没有任何领域 Tool 绕过统一控制面。
-
----
-
-### Tool 应该怎样评测
-
-至少分六层。
-
-#### Schema
-
--无效 JSON 是否拒绝；
--oneOf 是否正确；
--output schema 是否真正校验；
--MCP malformed schema 是否 fail。
-
-#### Discovery / Scope
-
-- Agent restriction 是否真的同时影响 schema 和 executable lookup；
--Skill Catalog 和实际 Loader visibility 是否一致；
--MCP generation swap 是否原子。
-
-#### Policy
-
-- pre-execute deny；
--monotonic guard；
--approval unavailable；
--never policy；
--agentless call；
-
-都应该 fail closed。
-
-#### Execution
-
-- timeout；
--cancel；
--parallel / exclusive；
--Sandbox unavailable；
--MCP disconnect；
--PTC nested call。
-
-#### Persistence
-
--每个 durable `tool/call` 是否有合法 settlement；
--取消时未 dispatch call 是否补 synthetic result；
--PTC sub-dispatch logging 是否保持父子 identity。
-
-#### End-to-End
-
-最终还要测：
-
-> Tool pipeline 更严格以后，任务是不是仍然能完成。
-
-只测“安全拒绝率”也可能把系统调成什么都不做。
-
----
-
-## 7. 源码锚点
-
-1. [`packages/core/tools/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/tools/README.md)：Tool contract、PTC、Policy、Output。
-2. [`packages/core/tools/src/index.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/tools/src/index.ts)：ToolRuntime Pipeline。
-3. [`packages/core/agent-loop/src/tool-calls.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/core/agent-loop/src/tool-calls.ts)：并发调度、durable call/result、取消。
-4. [`packages/interaction/user-approval/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/interaction/user-approval/README.md)：Approval fail-closed contract。
-5. [`packages/interaction/permission-presets/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/interaction/permission-presets/README.md)：Preset 与两套机制的关系。
-6. [`docs/subsystems/sandbox.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/docs/subsystems/sandbox.md)：Process Sandbox seam。
-7. [`packages/sandbox/sandbox-policy/src/index.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/sandbox/sandbox-policy/src/index.ts)：per-call file policy。
-8. [`packages/ptc-runtime/ptc-runtime-node/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/ptc-runtime/ptc-runtime-node/README.md)：PTC 隔离执行。
-9. [`packages/skill/tool-skill/src/index.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/skill/tool-skill/src/index.ts)：Skill Catalog / Loader / direct invocation。
-10. [`packages/mcp/mcp-client/README.md`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/mcp/mcp-client/README.md)：MCP Tool identity、sync、reconnect。
-11. [`packages/mcp/mcp-client/src/tools.ts`](https://github.com/deepseek-ai/deepseek-harness/blob/ddefc45fbc7f8e46dd73185e68295696d1297887/packages/mcp/mcp-client/src/tools.ts)：MCP → ToolDefinition bridge。
-
-下一篇：[Engineering & Evaluation →](04-engineering-evaluation.md)
+继续到[工程与验证](04-engineering-evaluation.md)，把“调用结束”与“发生崩溃后能否安全继续”连起来。
