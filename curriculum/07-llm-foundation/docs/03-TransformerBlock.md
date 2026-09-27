@@ -1,295 +1,155 @@
-# 03｜Transformer Block：Architecture、FFN、Residual 与 Normalization
+# 03｜Transformer 怎样把 Token 序列变成候选分数
 
-这一章先建立一个完整 Transformer Block，再把 Attention 的细节留给下一章。
+[← Token、上下文与长文本](02-TokenContext与LongContext.md) · [模块首页](../README.md) · [Attention 与位置信息 →](04-Attention与Position.md)
 
-应用工程师不需要从头推导全部训练数学，但必须能回答：
+上一章得到了 Token ID。假设输入编号是 `[1, 4, 2]`，模型并不能把 4 比 2 大理解成“这个词更重要”。它需要先把编号变成可计算的表示，再让不同位置交换信息，最后得到下一 Token 的候选分数。
 
-```text
-一个 Token 表示进入模型后经历什么？
-Attention 和 FFN 各负责什么？
-为什么要 Residual？
-Normalization 在稳定什么？
-为什么重复很多层后模型能形成复杂表示？
+本章沿这条路径解释 Transformer Block（Transformer 的重复计算单元）。先看整体协作，第 4 章再进入 Attention 的内部计算。
+
+## 1. 从编号查到向量，而不是直接对编号做推理
+
+**向量**是一组有固定顺序的数；**矩阵**是按行、列排列的一组数。模型有一个 Token Embedding（Token 嵌入）矩阵，每个词表编号对应其中一行。读到编号，先取出对应向量。
+
+为了看清对象，下面假设词表有 6 个 Token，每个向量有 4 个分量。数值全部人为设定，不代表训练模型：
+
+| 输入位置 | Token ID | 从嵌入矩阵取到的行 |
+|---:|---:|---|
+| 0 | 1 | `[0.2, 0.1, -0.3, 0.4]` |
+| 1 | 4 | `[0.5, -0.2, 0.0, 0.1]` |
+| 2 | 2 | `[-0.1, 0.3, 0.2, 0.2]` |
+
+三个位置得到一个 `3 × 4` 的矩阵。前一个数字表示位置数，后一个表示每个位置的表示宽度。模型每层处理的这类中间表示称为 **Hidden State（隐藏状态）**，“隐藏”表示内部计算结果，不表示它是应用保存的长期记忆。
+
+同一个 Token 在最初查表时取得相同的 Token 向量；经过上下文计算后，它在不同句子中的隐藏状态可以不同。例如“苹果手机”和“切开苹果”中的相关位置，会接收到不同上下文的信息。
+
+> ⚠️ 注意：这里每个位置都有一个向量，不等于已经得到“整段文档的检索向量”。怎样把序列表示汇总成适合检索的向量，在第 9 章单独说明。
+
+## 2. 一个 Block 里，哪些操作改变什么
+
+先看常见的 **Pre-Norm（子层之前归一化）** 形式。它是本章使用的教学结构，不宣称所有 Transformer 的归一化顺序相同。
+
+```mermaid
+flowchart TD
+    H["输入 H"] --> N1["归一化"] --> A["Attention：跨位置聚合"] --> ADD1["相加"]
+    H --> ADD1
+    ADD1 --> U["中间表示 U"] --> N2["归一化"] --> F["FFN：逐位置加工"] --> ADD2["相加"]
+    U --> ADD2
+    ADD2 --> O["输出 H′"]
 ```
 
----
-
-## 1. Decoder-only LLM 的整体路径
-
-简化来看：
+两条绕过子层的连线很重要，它们就是残差路径。对应关系是：
 
 ```text
-Token IDs
-→ Token Embedding
-→ Position Information
-→ Transformer Block × N
-→ Final Norm
-→ LM Head
-→ Logits
-→ Next Token
+U  = H + Attention(Norm(H))
+H′ = U + FFN(Norm(U))
 ```
 
-现代生成式 LLM 常采用 Decoder-only Transformer，但具体实现会在 Norm、Activation、Attention、Position Encoding 等细节上不同。
+Attention 让当前位置从允许读取的其他位置聚合信息。**FFN（Feed-Forward Network，前馈网络）** 继续加工每个位置已经得到的表示。残差把原表示加回来；归一化调节表示的数值尺度。
 
-课程关心稳定的结构思想，而不是把某一个模型实现当作所有 LLM 的定律。
+原始 Transformer 论文展示了 Attention、逐位置前馈网络、残差与归一化的协作，其中采用的子层顺序与上面的 Pre-Norm 示例有所不同。读架构时要检查连线和运算顺序，不能只看组件名称。[原始结构](https://arxiv.org/html/1706.03762v7#S3)
 
----
+## 3. Attention 与 FFN 为什么都需要
 
-## 2. 一个 Transformer Block 大致有什么
+### Attention 负责从哪些位置取信息
 
-简化成：
+读到“订单 A 尚未发货，所以它……”时，“它”对应的位置需要使用前文。Attention 会为可见位置计算权重，并对这些位置携带的内容做加权汇总。权重与当前输入及已训练参数有关，不是程序员预先写好的“代词一定连到最近名词”规则。
+
+第 4 章会计算一次具体权重。这里先抓住它的作用范围：**跨位置的信息交互**。
+
+### FFN 负责加工已经汇集的信息
+
+FFN 通常在每个位置上使用同一套参数，但不直接把不同位置再混合一次。常见结构是先把表示变到更宽的内部空间，经过非线性函数，再变回原宽度。非线性使多层计算不至于退化成一个线性变换。
+
+例如表示宽度为 4，某个前馈层可以做 `4 → 12 → 4`；这些宽度是假设值。每个位置单独经过同一过程，所以输入是 `3 × 4` 时，输出仍是 `3 × 4`，可以与残差相加。
+
+**逐位置计算不等于不使用上下文。** FFN 接收的隐藏状态已经被前面的 Attention 更新，里面可以包含其他位置的信息。
+
+## 4. 残差和归一化不是可有可无的装饰
+
+### 残差保留一条直接的信息路径
+
+若某位置的原表示为 `[1, 2]`，子层算出的更新为 `[0.1, -0.4]`，残差相加后得到 `[1.1, 1.6]`，不是直接把原表示替换成 `[0.1, -0.4]`。
+
+深层网络由许多这样的更新组成。直接路径帮助信息与训练时的梯度传播，但不保证网络永远不会退化，也不意味着可以删掉子层而没有影响。
+
+### 归一化控制的是数值尺度
+
+把某位置各维度的数值缩放到较稳定的尺度，有助于后续计算。**LayerNorm（层归一化）** 通常减去均值，再除以方差加数值稳定项后的平方根，并带有可学习的缩放、偏置。**RMSNorm（均方根归一化）** 按均方根缩放，不执行相同的去均值步骤。两者不是同一个公式换名字。[RMSNorm 的定义](https://arxiv.org/abs/1910.07467)
+
+本章不要求背归一化推导，但要知道三个边界：归一化不是把所有 Token 变成同一个向量，不是把隐藏状态变成词表概率，也不是解决事实错误的验证器。Pre-Norm 与 Post-Norm 的区别要结合实际架构阅读。
+
+## 5. 位置怎样参与计算，最后又怎样输出分数
+
+仅知道有哪些 Token，还不够表达顺序。位置机制把顺序信息引入模型。某些方法在嵌入上加入位置向量；RoPE（旋转位置编码）则在 Attention 内处理参与匹配的查询与键表示（Q/K）。因此总图里可以写“引入位置机制”，却不能笼统地说所有模型都在 Token Embedding 上加位置向量。
+
+经过多层 Block 后，本例仍可得到 `3 × 4` 的隐藏状态。**LM Head（语言模型输出头）** 把每个位置的隐藏状态映射成词表分数。假设词表大小为 6，则分数矩阵是 `3 × 6`：每行对应一个位置，每列对应一个候选 Token。
+
+普通自回归生成时，使用当前最后位置的分数选择下一 Token。**Logits**就是这些尚未归一化的分数。它们可以为负，也不必加起来等于 1；第 5 章解释怎样把它们变成生成决策。
 
 ```text
-Input Hidden State
-      │
-      ├─ Norm
-      ↓
-Self-Attention
-      ↓
-+ Residual
-      │
-      ├─ Norm
-      ↓
-FFN / MLP
-      ↓
-+ Residual
-      ↓
-Output Hidden State
+N 个 Token ID
+    ↓ 查嵌入；在相应位置引入位置机制
+N × d 的隐藏状态
+    ↓ 多层 Block
+N × d 的隐藏状态
+    ↓ LM Head
+N × 词表大小 的分数
+    ↓ 读取最后位置
+下一 Token 的候选分数
 ```
 
-Attention 负责 Token 之间的信息交互；FFN 负责对每个位置的表示做非线性变换。
+## 6. 训练为什么可以并行，生成为什么仍有依赖
 
----
+训练时，一段已有文本可以同时提供多处监督信号。假设完整训练序列是 `A B C D`，把输入与希望预测的目标错开一位：
 
-## 3. Hidden State 是什么
+| 输入位置能看到的前缀 | 要预测的目标 |
+|---|---|
+| A | B |
+| A B | C |
+| A B C | D |
 
-每个 Token 在每一层都有一个向量表示：
+这些目标在训练样本中已经存在，可以在一次前向计算中计算多个位置的预测，再比较目标，形成损失。**损失**衡量预测与训练目标的差距；反向传播据此计算参数应怎样调整的梯度，优化器再更新参数。
 
-```text
-h_i^(layer)
-```
+但必须限制每个位置只读取允许的前缀，否则预测 B 时直接看到了 B，就没有学到真实生成时的任务。这个限制就是下一章的因果掩码。
 
-它不是固定不变的“Token Embedding”。
+推理时，未来 Token 尚未产生，不能直接把正确答案预先放进输入。先选择 B，再用包含 B 的前缀计算后续。这是数据依赖，不是说 Transformer 完全不能并行：同一层中多个已知位置、多个注意力头和不同请求仍可并行处理。
 
-经过每层：
+Encoder-only（仅编码器）模型常允许双向读取已给定输入；Encoder-decoder（编码器—解码器）模型先编码源输入，再让解码器生成目标。架构的可见范围与任务目标不同，不能把 Decoder-only 的因果规则当作所有模型唯一的阅读方式。
 
-```text
-Attention
-+
-FFN
-```
+## 本章小结
 
-Token 表示会不断吸收上下文信息。
+编号先查成向量，Attention 让位置之间交换信息，FFN 加工各位置已获得的表示，残差与归一化支撑深层计算，输出头最终产生词表分数。训练可以对已知序列并行监督；生成则必须尊重尚未产生的 Token 的依赖。
 
-所以同一个词在不同句子里的最终表示可以不同。
+## 🎯 面试怎么回答
 
----
+**问：Transformer 不就是 Attention 吗，FFN 和残差有什么用？**
 
-## 4. Attention 负责什么
+> Attention 负责跨位置聚合信息，FFN 对每个位置的表示做非线性加工，两者作用不同。残差把子层更新与原表示相加，保留直接的信息路径；归一化调节数值尺度。堆叠这些 Block 后，输出头把隐藏状态映射成词表分数。具体模型还要检查归一化顺序、位置机制和注意力可见范围，不能只列组件名称。
 
-Attention 的核心作用是：
+## ⚠️ 易错点
 
-> **让当前位置根据其它可见位置的信息更新自己的表示。**
+不要把隐藏维度、词表大小和序列长度混为一谈：它们分别描述每个位置的表示宽度、候选单元数量和当前位置数量。
 
-例如：
+FFN 对每个位置独立运算，不意味着它接收的是没有上下文的信息；Attention 的输出已经包含上下文。训练中的并行计算，也不等于生成时已经知道未来答案。
 
-```text
-“The animal didn't cross the street because it was tired.”
-```
+## 自测
 
-模型需要把 `it` 和前面合适的实体建立联系。
+**任务 1：** 输入 5 个 Token，隐藏宽度 8，词表大小 20。写出嵌入后、宽度不变的 Block 后、LM Head 后的矩阵形状，并指出普通生成取哪一行。
 
-具体 Q/K/V、Multi-Head 和 Causal Mask 下一章展开。
+<details><summary>答案与解释</summary>
 
----
+分别为 `5 × 8`、`5 × 8`、`5 × 20`，生成取最后一个位置对应的 20 个候选分数。Block 的内部前馈宽度可以不同，但输出要回到这里约定的隐藏宽度。
 
-## 5. FFN / MLP 负责什么
-
-Attention 混合的是不同 Token 位置的信息。
-
-FFN 通常对每个 Token 位置独立执行同一组非线性变换：
-
-```text
-h
-→ linear up projection
-→ activation / gating
-→ linear down projection
-```
-
-可以把它理解为：
-
-> Attention 决定“从哪里取信息”，FFN 进一步“加工这个位置已经拥有的信息”。
-
-现代模型常使用不同的门控 MLP 变体，具体形式随架构不同。
-
----
-
-## 6. 为什么 FFN 参数很多
-
-Transformer 中 FFN 中间维度通常比 Hidden Size 大。
-
-这使得每层拥有较强的非线性表示能力。
-
-因此模型参数量并不只来自 Attention；MLP/FFN 往往也是很大的一部分。
-
----
-
-## 7. Residual Connection 为什么重要
-
-典型结构不是：
-
-```text
-h = attention(h)
-h = ffn(h)
-```
-
-而更像：
-
-```text
-h = h + attention(...)
-h = h + ffn(...)
-```
-
-Residual 让每个子层学习：
-
-> **在已有表示基础上增加什么变化。**
-
-它有助于：
-
-- 信息直接跨层传播；
-- 深层网络优化；
-- 梯度传播；
-- 减少“每层都必须完全重建表示”的负担。
-
----
-
-## 8. Normalization 做什么
-
-LayerNorm / RMSNorm 等 Norm 机制用于控制激活尺度，帮助深层网络稳定训练和推理。
-
-应用工程深度需要知道：
-
-```text
-Norm
-≠ 把 Token 语义归一化成同一个东西
-```
-
-它是网络内部数值稳定机制。
-
-不同模型可能使用：
-
-- LayerNorm；
-- RMSNorm；
-- Pre-Norm；
-- Post-Norm。
-
-不要把某一种实现绝对化。
-
----
-
-## 9. Pre-Norm 与 Post-Norm 的直觉
-
-### Post-Norm 风格
-
-```text
-h → sublayer → add residual → norm
-```
-
-### Pre-Norm 风格
-
-```text
-h → norm → sublayer → add residual
-```
-
-现代大模型中 Pre-Norm / RMSNorm 很常见，因为深层训练稳定性较好，但课程不要求死记具体模型选择。
-
-真正要理解：
-
-> Norm 的位置会影响数值与优化行为，但不改变“Attention + FFN + Residual”这个主干。
-
----
-
-## 10. 为什么要堆很多层
-
-单层只能进行有限次数的信息交互和变换。
-
-堆叠：
-
-```text
-Block 1
-→ Block 2
-→ ...
-→ Block N
-```
-
-让 Token 表示逐层抽象。
-
-可以粗略理解为：
-
-```text
-局部模式
-→ 上下文组合
-→ 更复杂语义 / 任务表示
-```
-
-但不要把“某一层一定负责某种具体能力”说得过度确定。
-
----
-
-## 11. Parameter Count 和 Compute 的直觉
-
-模型更大通常意味着：
-
-```text
-更多 Layers
-更大 Hidden Size
-更大 FFN
-更多 Attention Heads
-```
-
-这会增加：
-
-- Weight Memory；
-- Matrix Multiplication；
-- KV Cache（受层数/头配置等影响）；
-- Serving Cost。
-
-所以 Model Size 最终会体现在应用工程的 Latency / Throughput / Cost 上。
-
----
-
-## 12. 常见错误
-
-- Transformer 就是 Attention：错误，还有 FFN、Residual、Norm、Position 等。
-- FFN 会直接让不同 Token 互相通信：主要跨 Token 交互由 Attention 完成。
-- Residual 只是为了防止模型忘记输入：过度简化，它也是深层网络优化与信息流的重要机制。
-- 所有模型都用完全相同 Transformer Block：错误。
-- 应用工程师完全不需要懂 Transformer：如果不懂，很难解释 Context、KV Cache、Serving 和长上下文成本。
-
----
-
-## 13. 面试怎么答
-
-### Q：Transformer Block 里主要有什么？
-
-> 一个现代 Decoder Block 可以抽象成 Attention 子层和 FFN/MLP 子层，并通过 Residual Connection 和 Normalization 连接。Attention 负责不同 Token 之间的信息交互，FFN 对每个位置的表示做非线性加工，Residual 和 Norm 帮助深层网络保持稳定的信息与梯度流。
-
-### Q：Attention 和 FFN 的角色有什么区别？
-
-> Attention 更像“从其它 Token 聚合哪些上下文”，FFN 更像“对当前位置聚合后的表示进一步加工”。两者重复多层后形成复杂上下文表示。
-
----
-
-## 14. 自测
-
-<details><summary>1. 为什么只讲 Attention 不能完整描述 Transformer？</summary>
-因为每层通常还包含 FFN/MLP、Residual、Normalization 和位置机制，这些共同决定模型的表达和稳定性。
 </details>
 
-<details><summary>2. Residual Connection 的核心价值是什么？</summary>
-让信息和梯度可以跨层直接流动，每个子层只需学习对已有表示的增量变换，帮助训练深网络。
+**任务 2：** 训练文本为 `A B C`。某个实现允许用位置 A 读取 B，再预测 B。它为什么可能在训练集上表现很好，却不符合真实生成条件？
+
+<details><summary>答案与解释</summary>
+
+它泄漏了目标信息。真正生成 B 时只有前缀 A 可用，不能从尚未生成的 B 读取答案。训练损失好看不代表这种计算满足生成任务。
+
 </details>
 
-<details><summary>3. Attention 和 FFN 哪一个主要负责跨 Token 信息交换？</summary>
-Attention。
-</details>
+## 知识回看与资料
+
+回看 [Token 与聊天表示](02-TokenContext与LongContext.md)。原始架构、Attention 和 FFN 的角色见 [Transformer 第 3 节](https://arxiv.org/html/1706.03762v7#S3)；要核对某个具体模型，先查其模型文档，不从这张教学图反推实现。[资料索引](../../../references/llm-foundation/README.md)

@@ -1,422 +1,165 @@
-# 13｜Fine-tuning、SFT 与 LoRA / PEFT：什么时候值得训练自己的适配层
+# 13｜SFT 与 LoRA：模型究竟学了什么，少训练哪些参数
 
-Fine-tuning 很容易被理解成：
+[← 事实错误与干预边界](12-Hallucination与干预边界.md) · [模块首页](../README.md) · [偏好优化与蒸馏 →](14-PostTraining与Distillation.md)
 
-> “Prompt 不好用，就训练一下模型。”
+客服助手已经得到正确记录，也有明确的缺失值规则，但在多种口语表达下仍不稳定地遵守任务。团队积累了经过人工核对的输入输出示例，希望让这种行为更稳定。
 
-这是危险的。
+这时可以评估微调，但需要先回答两个问题：训练样本在教什么，参数更新发生在哪里。**SFT 是学习目标与数据形式，LoRA 是限制可训练参数的一种方法，两者不是互斥方案。**
 
-真正应该建立的闭环是：
+## 1. 预训练、SFT 与一次提示有什么不同
 
-```text
-为什么需要 Fine-tuning？
-→ SFT 学什么？
-→ Full Fine-tuning 成本为什么高？
-→ LoRA / PEFT 为什么能降低成本？
-→ 数据如何决定上限？
-→ 怎样验证没有过拟合和能力退化？
-→ 什么时候 RAG / Prompt 更合适？
-```
+**Pretraining（预训练）** 在大规模数据上建立广泛表示和语言建模能力。**SFT，Supervised Fine-tuning（监督微调）** 继续训练模型，让它学习给定输入下的期望输出，例如遵循指令、抽取字段或按某种任务格式回答。
 
----
+第 11 章的 Few-shot 把示例放在当前上下文里；SFT 则通过损失和梯度更新参数。普通推理不会因为看到示例就自动把它永久写进权重。
 
-## 1. Fine-tuning 改变的是什么
+模型原有能力、训练数据和目标共同影响微调结果。SFT 不是只学“说话风格”，也可能学习任务和领域知识；但不适合代替需要逐条更新、删除、追溯和授权的实时业务数据库。
 
-Prompt / RAG 主要改变：
+## 2. 一条训练样本怎样产生学习信号
+
+假设输入包含“订单 A 未发货，预计时间为空”，期望输出为“目前无法确认送达时间”。训练按匹配的聊天模板，把输入与答案组织成 Token 序列。
+
+用教学序列表示：输入为 `[P1,P2]`，答案为 `[A1,A2,EOS]`。模型分别学习：
 
 ```text
-Inference-time Input / Context
+看见 P1、P2                 → 提高 A1 的概率
+看见 P1、P2、A1             → 提高 A2 的概率
+看见 P1、P2、A1、A2         → 提高 EOS 的概率
 ```
 
-Fine-tuning 改变：
+预测每个目标时，因果掩码禁止它读取正在预测的未来目标。因为训练答案已知，这些位置可以在同一序列计算中批量得到分数。
+
+**Loss（损失）** 衡量预测与目标的不符合程度。例如目标 Token 概率为 p，交叉熵中的对应项是 `−log(p)`：给正确目标越低概率，这一项越大。反向传播得到各可训练参数对损失的影响，即梯度；优化器据此更新参数。
+
+在常见“只训练回答”设置中，只把回答部分的 Token 作为计损失的预测目标，是否包含结束标记按任务配置；Prompt Token 的预测不计入这个目标，但 Prompt 本身仍给回答提供上下文。标签和负责预测它的位置应按前文错开一位。批量补齐的 Padding 通常也从注意力和损失计算中排除，具体由掩码控制。其他任务也可能训练全序列，不能假设所有 SFT 都使用同一种标签掩码。需要检查实际训练样本、模板、标签偏移、截断和计损失位置，而不是只看一个 CSV 有 input/output 两列。
+
+> ⚠️ 注意：如果长输入把答案部分截断，或者标签把答案错位给模型看，训练可以运行却学不到预期行为。正式训练前先检查一条经过 Tokenizer 和模板处理的完整样本。
+
+## 3. 数据为什么比“多跑几轮”更先检查
+
+对订单任务，训练数据应该同时包含正常进度、未知日期、缺订单号、冲突信息和越权请求等分支，并有明确、互相一致的答案标准。大量重复的正常样本不能替代边界覆盖。
+
+训练集用于更新参数，验证集用于选择超参数和停止时机，测试集用于最终评价。来自同一会话或模板的近重复样本应按组划分，避免模型实际上见过测试答案。保留数据来源、授权、去重与版本，防止无权使用的个人信息进入训练。
+
+如果同样输入在不同标注中一会儿允许预测日期、一会儿要求明确未知，损失下降也不会自动解决任务定义冲突。先统一规则，再讨论扩大样本或增加训练轮数。
+
+## 4. 全参数微调为什么贵
+
+**Full Fine-tuning（全参数微调）** 允许更新整个模型的大量权重。训练不仅要保存权重，还常需要梯度、优化器状态以及反向传播需要的激活；不同精度、优化器和内存策略占用不同。
+
+因此，“推理时能装下”不代表“全参数训练也装得下”。训练显存不能简单照第 07 章的权重文件大小估算，也不能把推理用的 KV Cache 公式当成训练总显存公式。
+
+**PEFT，Parameter-Efficient Fine-Tuning（参数高效微调）** 只训练一部分或新增较少参数，减少部分训练和存储成本。LoRA 是其中一种，并不是所有 PEFT 的同义词。
+
+## 5. LoRA 用两个小矩阵学习一个增量
+
+考虑一层线性变换 `y = W x`。约定输入维度为 `d_in`，输出维度为 `d_out`，则 W 的形状是 `d_out × d_in`。
+
+标准 LoRA 冻结原始 W，新增两个可训练矩阵：
 
 ```text
-Model Parameters / Adapter Parameters
+A：r × d_in       把输入映射到较小的 r 维
+B：d_out × r      再映射回输出维度
+ΔW = (α/r) × B A
+最终输出 y = W x + (α/r) × B(Ax)
 ```
 
-因此它更适合反复出现、希望模型“内化”的行为模式，例如：
+`r` 是秩预算，限制增量矩阵能够表达的低秩变化；`α/r` 是标准 LoRA 的缩放约定。存在其他缩放和初始化变体，本章不把一个公式扩展成全部实现的唯一规则。结构与标准初始化依据见 [LoRA 原论文](https://arxiv.org/html/2106.09685)。
 
-- 特定任务格式；
-- 领域语言习惯；
-- 稳定分类/抽取能力；
-- 某种交互风格；
-- Tool/Protocol 行为；
-- 小模型在特定任务上的能力适配。
+**小例子：** W 为 4×4，r=1。A 只有 1×4，B 只有 4×1；要训练的新增参数共 8 个，而 W 有 16 个。LoRA 不直接把这 16 个基础权重改成另一组数，而是学习一个受限的增量。
 
----
-
-## 2. SFT 是什么
-
-SFT = Supervised Fine-Tuning。
-
-训练数据常表示为：
+实际规模示例：W 为 4096×4096，r=8：
 
 ```text
-Input / Instruction
-→ Desired Output
+W 参数数 = 4096 × 4096 = 16,777,216
+LoRA 参数数 = 8 × 4096 + 4096 × 8 = 65,536
+可训练增量 / W = 65,536 / 16,777,216 = 0.390625%
 ```
 
-模型通过监督学习让给定输入下的输出分布更接近示范答案。
+这只比较**一层线性矩阵**的参数数量，没有计其他层、偏置、额外可训练模块、激活和优化器开销。不能写成“整个训练显存降到 0.39%”。
 
-例如：
+下面是可独立运行的算术示例，不加载权重，也不执行训练。
 
-```text
-customer message
-→ support category JSON
+<!-- example: lora-count -->
+```python
+def lora_parameter_counts(d_in: int, d_out: int, rank: int) -> tuple[int, int]:
+    if any(type(x) is not int or x <= 0 for x in (d_in, d_out, rank)):
+        raise ValueError("dimensions and rank must be positive integers")
+    if rank > min(d_in, d_out):
+        raise ValueError("this teaching example requires a low-rank factorization")
+    base = d_in * d_out
+    adapter = rank * (d_in + d_out)
+    return base, adapter
+
+assert lora_parameter_counts(4096, 4096, 8) == (16777216, 65536)
 ```
 
-或：
+这里限制 r 不超过较小维度，是本例的低秩教学条件，不宣称所有库都会拒绝更大的配置。函数返回两种参数计数，不修改输入或模型。
 
-```text
-medical note
-→ structured extraction
-```
+## 6. 为什么常把 B 初始化为零，而 A 不全为零
 
----
+标准 LoRA 的一种初始化是 A 使用小的随机值，B 为零。开始时 `BA=0`，所以在相同其他条件下，不会因新增分支立即改变原模型输出。
 
-## 3. 数据质量为什么比“多跑几个 Epoch”重要
+第一次更新中，B 可以通过已有的 A 得到梯度；由于 B 仍为零，A 的这一分支梯度最初为零。B 更新后，后续步骤就能继续学习 A。若 A、B 同时全零，这个纯线性乘积分支的两者梯度都会受对方的零值影响，难以启动学习。
 
-Fine-tuning 的上限很大程度来自训练数据。
+理解这一点，不是为了背两个初始化字段，而是看清“初始不改变输出”和“能够开始训练”怎样同时成立。具体库可能使用不同初始化策略，需要看实际配置。
 
-需要关注：
+## 7. Rank 和训练配置应该怎样判断
 
-```text
-Correctness
-Coverage
-Diversity
-Consistency
-Label Quality
-Hard Cases
-Negative Examples
-Data Leakage
-Train/Test Separation
-```
+增加 r 扩大增量可表达的空间，也增加可训练参数、存储和计算；它不保证验证集变好。目标层选择同样重要：只在部分注意力投影加入 LoRA，与同时覆盖前馈层，容量和行为都不同。
 
-如果示范本身互相矛盾：
+**Learning rate（学习率）** 控制更新步幅；过大可能破坏已有能力，过小可能学习不足。**Epoch（轮次）** 表示遍历训练数据的次数，更多轮也可能过拟合。**Batch size（批量大小）** 决定每次估计梯度所用的样本量；梯度累积可分几次小批量计算后再更新，以减少一次需要容纳的样本，但不等于完全消除长序列激活成本。
 
-```text
-same input pattern
-→ different desired behavior
-```
+应该先固定一个小规模可检查训练基线，再通过验证集决定这些配置，而不是照抄某个任务的 r、学习率与轮数。还要检查目标任务、原有能力、拒答、安全和长输入表现，不只观察训练损失。
 
-模型会学到混乱边界。
+## 8. QLoRA 与普通 LoRA 差在哪里
 
-所以：
+**QLoRA**把冻结的基础权重以低精度保存，并训练低秩适配器，以进一步降低基础权重存储成本。典型研究使用 4 bit 的基础表示，但计算、梯度和适配器并不因此全部变成 4 bit；还存在量化尺度等元数据与反量化过程。参见 [QLoRA](https://arxiv.org/abs/2305.14314) 和 [PEFT 量化说明](https://huggingface.co/docs/peft/en/developer_guides/quantization)。
 
-> **Fine-tuning 首先是 Dataset Engineering 问题。**
+可以把几个维度分开看：SFT 决定用示范答案学什么；LoRA 决定怎样限制更新参数；QLoRA 再改变基础权重的存储方式。第 07 章的部署量化关注服务中的精度与速度，不能仅凭“都出现 4 bit”就认为训练和部署完全相同。
 
----
+## 9. 适配器怎样发布与回滚
 
-## 4. 为什么必须有独立 Eval Set
+LoRA 适配器离不开匹配的基础检查点、目标层名称、形状与配置。发布时记录基础权重、Tokenizer、模板、适配器、训练数据与评测版本；不能给任意同尺寸模型挂一个适配器就认为兼容。
 
-不能：
+对合适的线性层，可将增量合并到基础权重 `W' = W + ΔW`，以避免单独计算该分支；多适配器切换、量化状态和具体实现会影响是否适合合并以及数值结果。合并前后应在同一评测上核验，不能把支持合并写成所有场景必须合并。
 
-```text
-在训练集上表现很好
-→ 宣布 Fine-tuning 成功
-```
+更换适配器会改变计算状态，旧 KV 与其他依赖模型版本的缓存要正确失效或隔离。回滚需要能够恢复基础模型与适配器的匹配组合，而不只是找回一个小文件。
 
-要留：
+## 10. 本章小结
 
-```text
-Train
-Validation
-Test / Holdout
-```
+SFT 用明确目标输出更新模型，训练质量首先取决于任务和数据。LoRA 冻结基础矩阵，学习低秩增量，减少可训练参数，但不按相同比例缩小全部训练资源。QLoRA 再压缩基础权重存储。训练、发布和回滚都必须保持模型、模板、数据与适配器的一致性。
 
-并覆盖：
+## 11. 🎯 面试怎么回答
 
-- 常见案例；
-- Hard Cases；
-- Out-of-distribution；
-- 原模型重要通用能力；
-- Safety / Refusal；
-- 格式与协议。
+**问：LoRA 的原理是什么，为什么省资源？**
 
-否则可能只是记住训练样本。
+> 对一层 W，我冻结基础权重，用两个小矩阵 A、B 学习增量，标准形式是 ΔW=(α/r)BA。新增参数从 d_out×d_in 变为 r×(d_in+d_out)，因此较小 r 时需要训练和保存的增量大幅减少，也减少对应梯度与优化器状态。但基础权重和激活仍在，不能按参数比例推断全部显存。r、目标层和数据要通过验证集选择；QLoRA 进一步量化冻结基础权重，仍不等于所有计算都是 4 bit。
 
----
+## 12. ⚠️ 易错点
 
-## 5. Full Fine-tuning 为什么贵
+- 把 SFT、LoRA、QLoRA 当成只能三选一的训练算法。
+- 几乎没有边界样本，却希望增大 rank 自动教会缺失和冲突处理。
+- 用训练损失下降或参数变少，直接宣称线上质量与成本同时改善。
+- 适配器、基础模型和旧缓存混用，却只检查文件能加载。
 
-全参数训练意味着大量 Model Weight 都参与更新。
+## 13. 自测
 
-代价包括：
+**任务 1：** 一层 W 的输入维度 1024、输出维度 2048，LoRA rank=4。给出 W、A、B 的形状和两种参数数量，再说明哪个资源结论不能从该数量直接得到。
 
-- GPU Memory；
-- Optimizer State；
-- Gradient；
-- Training Compute；
-- Checkpoint Storage；
-- Deployment / Serving Version 管理。
+<details><summary>答案与解释</summary>
 
-大模型上这个成本非常高。
+W 为 2048×1024，共 2,097,152 个参数；A 为 4×1024，B 为 2048×4，新增 12,288 个。不能据此直接给出整个模型训练显存、实际训练速度或质量提升比例。
 
-这正是 PEFT 出现的背景。
-
----
-
-## 6. PEFT 是什么
-
-PEFT = Parameter-Efficient Fine-Tuning。
-
-核心目标：
-
-> **只训练很少一部分新增或选择性参数，让大部分 Base Model 保持冻结。**
-
-这样减少：
-
-- Trainable Parameters；
-- Optimizer Memory；
-- Checkpoint Size；
-- 多任务适配成本。
-
-LoRA 是最典型方案之一。
-
----
-
-## 7. LoRA 的核心直觉
-
-原来某层权重：
-
-```text
-W
-```
-
-LoRA 不直接全量更新 W，而学习一个低秩增量：
-
-```text
-W' = W + ΔW
-ΔW = B A
-```
-
-其中 Rank `r` 远小于原矩阵维度。
-
-于是训练参数从完整大矩阵降低到两个较小矩阵。
-
-直觉上：
-
-> **很多任务适配不需要在所有方向上自由修改巨大权重，只需学习一个低秩更新空间。**
-
----
-
-## 8. Rank r 控制什么
-
-更高 Rank：
-
-```text
-Adapter Capacity ↑
-Trainable Parameters ↑
-Memory / Compute ↑
-```
-
-更低 Rank：
-
-```text
-更便宜
-但可能表达能力不足
-```
-
-不能认为：
-
-```text
-r 越大越好
-```
-
-需要用 Eval 找到任务合适点。
-
----
-
-## 9. LoRA 通常插在哪里
-
-常见目标模块可能包括：
-
-```text
-Q / K / V / O Projection
-FFN Projection
-```
-
-但具体选哪些层、哪些投影取决于模型架构与训练工具。
-
-应用工程面试不必背某个框架的参数名，应该理解：
-
-> Adapter 插入位置决定“允许模型在哪些子空间发生可训练变化”。
-
----
-
-## 10. LoRA 与 Quantization 可以结合
-
-例如 QLoRA 思路：
-
-```text
-Base Model Quantized
-+
-LoRA Adapter Trainable
-```
-
-降低 Base Weight 内存，让较小 GPU 也能完成适配。
-
-但要区分：
-
-```text
-Quantization → 表示/存储/计算精度优化
-LoRA → 参数高效训练方法
-```
-
-不是同一技术。
-
----
-
-## 11. Fine-tuning 不适合解决动态知识
-
-如果问题是：
-
-```text
-公司最新文档
-每天变化的价格
-实时库存
-用户私有数据
-```
-
-Fine-tuning 很快会过期，而且无法灵活按权限删除/更新。
-
-这类问题优先：
-
-```text
-RAG / DB / Tool
-```
-
-Fine-tuning 更适合：
-
-```text
-How to behave
-```
-
-而不是：
-
-```text
-What are today's facts
-```
-
----
-
-## 12. Catastrophic Forgetting / Capability Regression
-
-训练到特定领域后，模型可能：
-
-- 过度偏向训练格式；
-- 通用能力下降；
-- Safety 行为变化；
-- 对未见输入过拟合；
-- 输出多样性下降。
-
-所以 Eval 不只测目标任务，还要测：
-
-```text
-重要通用 Regression Set
-```
-
----
-
-## 13. 什么时候 Fine-tuning 才值得做
-
-建议先满足：
-
-```text
-1. 已有稳定 Base Model
-2. Prompt / RAG / Tool 不能经济解决
-3. Failure Pattern 可重复
-4. 有足够高质量训练数据
-5. 有独立 Eval
-6. 能承担训练与部署版本治理
-```
-
-否则先做更轻的干预。
-
----
-
-## 14. Fine-tuning 的 Production Versioning
-
-需要记录：
-
-```text
-base_model_version
-training_dataset_version
-adapter_version
-training_config
-code_version
-eval_version
-```
-
-上线要支持：
-
-```text
-A/B
-Canary
-Rollback
-```
-
-而不是“训练完覆盖旧模型”。
-
----
-
-## 15. Serving LoRA 的工程价值
-
-如果多个 Tenant / Task 共用一个 Base Model，可以：
-
-```text
-Base Model
-├── Adapter A
-├── Adapter B
-└── Adapter C
-```
-
-比部署多个完整模型副本更节省存储和显存。
-
-但 Runtime 还要解决：
-
-- Adapter Loading；
-- Cache；
-- Routing；
-- Version；
-- Tenant Isolation；
-- Batch Compatibility。
-
----
-
-## 16. 常见错误
-
-- Fine-tuning 就是把知识库背进模型：不适合作为动态事实存储。
-- 数据越多越好：脏数据和冲突数据会伤害模型。
-- Training Loss 下降就代表上线变好：必须看独立 Eval。
-- LoRA 完全等价于 Full Fine-tuning：能力/灵活性和成本不同。
-- Rank 越大越好：错误。
-- Fine-tuning 后不需要 Regression：非常危险。
-
----
-
-## 17. 面试怎么答
-
-### Q：什么时候会考虑 Fine-tuning？
-
-> 当 Prompt/RAG/Tool 已经不能经济稳定地解决一个重复行为或特定任务能力缺口，并且我有足够高质量标注数据和独立 Eval 时才会考虑。动态知识通常优先 RAG；Fine-tuning 更适合行为、格式、领域任务适配。上线还需要版本、Canary 和通用能力 Regression。
-
-### Q：LoRA 为什么省资源？
-
-> LoRA 冻结 Base Weight，只学习低秩更新矩阵 `ΔW=BA`，训练参数量和 Optimizer State 大幅减少，因此更适合大模型低成本任务适配；Rank 和插入层决定容量与成本，需要通过 Eval 选择。
-
----
-
-## 18. 自测
-
-<details><summary>1. 为什么 Fine-tuning Dataset 必须有版本？</summary>
-模型行为与训练数据强相关，版本化才能复现、比较和回滚某次适配结果。
 </details>
 
-<details><summary>2. LoRA 和 Quantization 分别解决什么？</summary>
-LoRA 解决参数高效训练；Quantization 主要降低权重/激活/KV 等表示精度和资源成本。
+**任务 2：** 新微调模型训练损失明显下降，但面对新订单编号和缺失日期时更容易编造。提出至少两项数据或评价检查，不以“继续多跑几轮”作为答案。
+
+<details><summary>答案与解释</summary>
+
+检查训练样本是否重复、模板或编号是否泄漏到验证集，缺失与冲突样本的标注是否一致；检查真实 Token 化后答案和损失位置是否正确。按任务分组比较基础模型与适配器，并在独立保留集上检验，必要时回退而不是继续拟合。
+
 </details>
 
-<details><summary>3. 为什么目标任务变好后仍要测通用 Regression？</summary>
-Fine-tuning 可能导致过拟合、遗忘或 Safety/格式行为改变，需要确认没有破坏重要原能力。
-</details>
+## 14. 知识回看与资料
+
+回看 [训练与生成的差别](03-TransformerBlock.md)、[干预选择](12-Hallucination与干预边界.md) 与 [缓存条件](06-KVCache与PrefillDecode.md)。机制查 [LoRA](https://arxiv.org/html/2106.09685)、[QLoRA](https://arxiv.org/abs/2305.14314)；代码计数由 [配套实验](../labs/README.md) 复用。本文没有执行真实训练，也没有提供虚构的 GPU 效果。

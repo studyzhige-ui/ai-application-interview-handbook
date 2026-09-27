@@ -1,162 +1,51 @@
-# LLM Foundation（应用工程深度）｜模型机制与推理基础
+# LLM Foundation｜从模型机制到应用判断
 
-[← Vector Database](../06-vector-db/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [RAG →](../08-rag/README.md)
+[← Vector DB](../06-vector-db/README.md) · [↑ Handbook 总目录](../../README.md) · [学习路线](../../guide/learning-path.md) · [RAG →](../08-rag/README.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
-> **教材：14 个连续知识小板块** · **HUMAN-A Canonical：23** · **独立来源覆盖：82**  
-> **质量门：✅ Granularity / Coverage / Content Depth**
+本模块解释大语言模型怎样处理输入、生成结果和消耗资源，以及应用工程师怎样据此选择模型、检查输出、改进任务表现。学习目标不是训练一个基础模型，而是遇到答错、变慢、超出上下文、检索效果下降或微调无收益时，能够还原过程，找到应负责的层次。
 
-以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。
+## 学习前提与模块位置
 
----
+能够读懂简单的输入、输出、列表与函数，就可以开始阅读。矩阵只用于说明“多少个位置、每个位置多少个数”，相关形状和计算会在使用处解释。正文的三个可运行示例使用 Python 标准库；Python 是便于验算的示例选择，不是模型机制只能用 Python 实现。
 
-## 1. 这个模块解决什么
+课程顺序以 [学习顺序清单](../../guide/learning-order.json) 为准：Python、FastAPI、MySQL、Redis、Backend、Vector DB、LLM Foundation、RAG、Agent、System Design。目录编号是稳定路径，不等于学习次序。
 
-以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。
+Vector DB 已建立“向量如何比较与检索”的基本模型。本模块第 09 章解释向量由什么模型产生、为什么不能随意混用，并为后续 RAG 的召回与重排提供前提。首次学习不必倒回去先读整套模型训练知识。
 
-学习目标不是记住一组名词，而是能稳定回答：
+## 主线与章节
 
-```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
-```
+先沿一次生成理解对象如何变化，再理解服务怎样调度这些计算，最后判断要改变输入、证据、模型参数还是外部执行逻辑。
 
----
-
-## 2. 在十板块中的位置
-
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → **LLM Foundation（应用工程深度）** → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
-
-模块角色：**Model Foundation / 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。**
-
----
-
-## 3. 固定课程原则
-
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
-
-同时固定区分：
-
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
-
-所以本模块是 **23 道 Canonical → 14 个教材知识块**，两者不需要一一对应。
-
----
-
-## 4. 正式学习主线
-
-```text
-Token / Context → Transformer / Attention / Position → Generation / Decoding → KV Cache / Prefill / Decode → Serving → Model API / Selection → Embedding / Reranker / Multimodal → Prompt / Factuality → Fine-tuning / Post-training
-```
-
-这个顺序按知识依赖组织，而不是按面经频率排序。
-
----
-
-## 5. 正式课程目录
-
-### Part A｜模型输入与核心计算
-
-1. [LLM Foundation 在 AI Application 中负责什么](docs/01-LLMFoundation在AI应用中的职责.md)
-2. [Token、Context Window 与 Long Context](docs/02-TokenContext与LongContext.md)
-3. [Transformer Block：Architecture、FFN、Residual、Norm](docs/03-TransformerBlock.md)
-4. [Attention 与 Position：QKV、Multi-Head、Causal Mask、RoPE](docs/04-Attention与Position.md)
-
-### Part B｜生成与 Serving
-
-5. [Autoregressive Generation：Logits、Softmax、Sampling、Decoding](docs/05-Generation与Decoding.md)
-6. [KV Cache、Prefill 与 Decode](docs/06-KVCache与PrefillDecode.md)
-7. [LLM Serving Engine：Batching、PagedAttention、Latency、Cost、Quantization](docs/07-ServingEngine与性能.md)
-
-### Part C｜应用模型能力
-
-8. [Model API、Provider Adapter 与 Model Selection](docs/08-ModelAPI与Selection.md)
-9. [Embedding 与 Reranker：Bi-Encoder / Cross-Encoder](docs/09-Embedding与Reranker.md)
-10. [Multimodal Foundation](docs/10-MultimodalFoundation.md)
-
-### Part D｜行为、事实与适配边界
-
-11. [Prompt Engineering：从提示词到可评估工程](docs/11-PromptEngineering.md)
-12. [Hallucination、Factuality 与 Prompt / RAG / Fine-tuning 边界](docs/12-Hallucination与干预边界.md)
-13. [Fine-tuning、SFT 与 LoRA / PEFT](docs/13-FineTuning与LoRA.md)
-14. [RLHF / DPO / GRPO / Distillation 的应用工程边界](docs/14-PostTraining与Distillation.md)
-
----
-
-## 6. 真人面经怎样影响本模块
-
-Canonical 统计基线（`S001–S279`）：本模块有 **23 道 Primary Canonical、82 个独立 HUMAN-A 招聘流程覆盖**。
-
-重点市场信号包括：
-
-- Prompt Engineering
-- Transformer / Attention
-- Model Selection
-- Hallucination / Factuality
-- Fine-tuning / Post-training
-- Context / KV Cache / Serving
-
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
-
----
-
-## 7. 模块边界
-
-- HNSW / IVF / Vector Filter 归 Vector DB。
-- Chunk / Hybrid / RRF / Retrieval Evaluation 归 RAG。
-- Context Compaction / Memory / Tool Protocol 归 Agent Harness；Provider Retry 归 AIBE。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview 与证据入口
-
-| 入口 | 链接 | 用途 |
+| 阶段 | 要回答的问题 | 正文章节 |
 |---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
+| 输入与计算 | 文本怎样变成模型可计算的表示？ | [01｜模型在 AI 应用中负责什么](docs/01-LLMFoundation在AI应用中的职责.md)<br>[02｜Token、上下文与长文本：先确定模型实际读到了什么](docs/02-TokenContext与LongContext.md)<br>[03｜Transformer 怎样把 Token 序列变成候选分数](docs/03-TransformerBlock.md)<br>[04｜Attention 与位置信息：算一次信息怎样汇入当前位置](docs/04-Attention与Position.md) |
+| 生成与服务 | 下一个 Token 怎样产生，时间与显存花在哪里？ | [05｜从候选分数到一段回答：生成与解码](docs/05-Generation与Decoding.md)<br>[06｜KV Cache 与 Prefill、Decode：为什么少算了，却更占显存](docs/06-KVCache与PrefillDecode.md)<br>[07｜模型服务与性能：把等待、吞吐和显存分开判断](docs/07-ServingEngine与性能.md) |
+| 模型在系统中的角色 | 怎样选择、调用、组合生成与检索模型？ | [08｜模型 API 与选型：接口调用成功以后，还要验证什么](docs/08-ModelAPI与Selection.md)<br>[09｜Embedding 与 Reranker：一段文字怎样成为可检索的向量](docs/09-Embedding与Reranker.md)<br>[10｜多模态基础：从看见一张图到给出可验证答案](docs/10-MultimodalFoundation.md) |
+| 输入与质量 | 怎样描述任务，怎样定位不可靠的回答？ | [11｜Prompt Engineering：把任务写成可检查的输入](docs/11-PromptEngineering.md)<br>[12｜事实错误与干预边界：什么时候改 Prompt，什么时候需要别的机制](docs/12-Hallucination与干预边界.md) |
+| 训练的应用边界 | 什么问题值得用数据改变模型，怎样验证收益？ | [13｜SFT 与 LoRA：模型究竟学了什么，少训练哪些参数](docs/13-FineTuning与LoRA.md)<br>[14｜后训练与蒸馏：示范、偏好和奖励分别在教什么](docs/14-PostTraining与Distillation.md) |
 
-研究与质量证据：
+## 阅读、验算与复习
 
-- [Canonical Questions](../../interview/canonical/llm-foundation.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
+第一次顺序阅读正文。每章先理解输入、动作与结果，再独立完成章末任务；答案默认折叠，面试表达直接展示。例子中的订单、价格、容量配置和评测数据均为教学假设，不代表真实生产结果。
 
----
+第二次进入 [Review：重建机制与综合判断](review/README.md)，尝试不看正文解释新的条件。需要实际验算时，使用 [机制小实验](labs/README.md)：代码直接从正文提取，不另维护一套实现。
 
-## 9. 推荐学习方式
+表达训练分别使用 [高频面试题](interview/高频面试题.md)、[面试易错点](interview/面试易错点.md) 和 [面试前速查表](interview/面试前速查表.md)。速查材料用于唤起已学知识，不代替第一次阅读。
 
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
+## 范围与衔接
 
-1. **第一遍：建立因果链。** 按 `docs/01 → 14` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
+| 本模块负责 | 需要继续学习的主责模块 |
+|---|---|
+| Token、Attention、生成、缓存、推理服务的计算与资源边界 | 通用超时、连接、队列、幂等与故障恢复进入 [Backend](../03-backend-engineering/README.md) |
+| Embedding、双塔、交叉编码、多模态表示的模型机制 | 向量索引进入 [Vector DB](../06-vector-db/README.md)；检索流水线与证据质量进入 [RAG](../08-rag/README.md) |
+| 模型请求、输出检查、Prompt、模型评测与后训练取舍 | 上下文编排、记忆、工具权限、长任务运行和动作验证进入 [Agent](../09-agent/README.md) |
 
----
+权限与外部动作检查不会因为属于其他模块而被忽略；本模块解释判断输出是否可信所需的最小边界，不展开完整执行系统。
 
-## 10. 教材状态
+## 技术依据与维护入口
 
-```text
-docs/      ✅ 01–14 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Content Depth       ✅
-```
+[LLM Foundation References](../../references/llm-foundation/README.md) 按问题组织论文、官方文档及适用版本。教学以因果 Decoder 文本生成和标准全注意力 KV 缓存为主要模型，其他架构在需要处说明差异，不把示意图当成所有模型的统一实现。
+
+[Canonical Questions](../../interview/canonical/llm-foundation.md) 保存正式题目主责和冻结统计；正式面经在 [Market](../../market/README.md)。来源追溯、阅读范围、版本核验和修改稿验收见 [模块维护记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md)，不以历史 PASS 代替对正文的理解检查。
 
 下一环：[RAG](../08-rag/README.md)。
