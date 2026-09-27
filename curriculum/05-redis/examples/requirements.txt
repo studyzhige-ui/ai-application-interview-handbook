@@ -1,0 +1,2 @@
+# Course maintainer checks use only Python standard library.
+# No application language or third-party client is required to read the curriculum.
