@@ -1,365 +1,116 @@
-# 08｜Rerank 与 Candidate Budget：从高 Recall 候选到高 Precision Evidence
+# 08｜重排与候选预算：把有限算力用在值得阅读的证据上
 
-Retriever 的目标通常是：
+[← 第 07 章](07-RetrievalStack.md) · [模块目录](../README.md) · [第 09 章 →](09-EvidenceDelivery.md)
 
-```text
-尽量别漏相关文档
-```
+混合检索已经找到 A、B、C、D，但最终可能只有很少的上下文空间。把候选全部交给生成模型并不总是合算；只拿第一条，又可能丢掉决定答案的例外 B。
 
-但最终送给 LLM 的 Evidence 目标是：
+这一章解决两个相连的问题：**怎样更细地判断已有候选与问题的关系，以及怎样把候选数量、内容长度和证据覆盖放进同一个预算。**
 
-```text
-少、准、互补、可解释
-```
+## 1. 重排为什么放在召回之后
 
-因此 Rerank 和 Top-K / Threshold / Candidate Budget 本质上属于同一个 Funnel：
+Bi-Encoder（双编码器）分别编码问题和文档，文档表示可以预计算。Cross-Encoder（交叉编码器）把问题与某个候选一起输入模型，让两者在模型内部进行更细粒度的交互，再输出相关性分数。
 
-```text
-Broad Recall
-→ Candidate Set
-→ Precise Rerank
-→ Evidence Budget
-```
+例如，问题明确说“已开通专属资源”。对 A 的独立向量，细小状态条件可能不突出；联合读取问题与 B 时，重排模型有机会发现该条件正好对应例外。但这是能力机会，不是正确性保证。[Sentence Transformers 的 Retrieve & Re-Rank 文档](https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html)说明了先高效召回，再对较小候选集联合评分的分工。
 
----
+每个问题与候选组合都需要重新评分，所以不适合不加筛选地对海量语料全部运行。候选之外的内容没有参与评分，**重排只能改变已见候选的顺序，不能修复完全漏召回。**
 
-## 1. 为什么第一阶段不直接追求最终 Top5
+## 2. 一个“Top-K”其实可能指四个不同位置
 
-如果 Retriever 只召回 5 个：
+假设稠密路取 30 条，词项路取 30 条。去重后可能只有 42 条，不是固定 60。应用可能从融合结果中选 20 条做重排，最后组装 4 个证据单元。这些数字是不同阶段的预算，不能都写成一个含混的 K。
 
-```text
-相关文档一旦排到第 6
-→ 永远无法被后续 Reranker 救回
-```
+| 预算 | 限制什么 | 太小的主要后果 |
+|---|---|---|
+| 每路召回窗口 | 每个检索器贡献哪些候选 | 正确片段进不了候选集合 |
+| 进入重排的候选数 | 进行多少次问题—候选评分 | 融合后靠后的必要证据失去机会 |
+| 重排后的保留范围 | 哪些候选进入证据选择 | 有关但不靠前的例外可能被丢弃 |
+| 最终上下文长度 | 模型实际看到多少内容 | 选中候选仍可能因长度被排除 |
 
-所以常见策略是：
+增加前一个预算，不自动增加后一个预算。若 B 在重排后第 6，而只保留前 5，后续的上下文优化仍看不到它。排错时应记录在哪一步截断，不只记录最终 K。
 
-```text
-Retriever Top50
-→ Reranker
-→ Top5 / Top10
-```
+## 3. 候选长度与截断会改变模型真正看到的内容
 
-第一阶段偏 Recall，第二阶段偏 Precision。
+重排输入包括问题、候选正文和模型所需的标记。若候选末尾才有例外，输入被截断后，模型实际评分的是“没有例外的一般规则”。最后得到高分，并不能证明完整原文适用。
 
-具体数字不是模板，要通过 Eval 选。
+可以缩小检索单元、按相关句组装重排输入，或分段评分后再回到原文；每种方案都要保留来源，并验证是否仍保住条件。不能让模型生成一个过度简化摘要后，把摘要分数当成全文可靠性。
 
----
+候选数相同，成本也可能差很多。20 个候选、每个 500 个文档 Token，合计 10000；每个 2000 则合计 40000，尚未计算被重复输入的问题与标记。它说明输入工作量变了，不意味着实际延迟一定线性增长四倍。批处理、硬件、模型和排队都会影响测量结果。
 
-## 2. Reranker 为什么更精确
+## 4. 高相关性不等于完整覆盖
 
-Cross-Encoder 类 Reranker 将：
+对退款问题，A 支持一般期限，B 支持专属资源例外。假设一个不适合本任务的重排器给出 A、C、B 的顺序，且系统过早只留前两条，就会把 B 删掉。加入重排后答案反而可能变差。
 
-```text
-Query + Candidate Text
-```
+即使重排本身合理，也可能返回很多内容相近的片段。证据选择除了单条相关性，还应检查是否覆盖了问题的不同条件、是否存在重复、是否保留例外和反证。
 
-一起输入模型，让二者在 Token 级共同建模。
+MMR（最大边际相关性）是一类兼顾相关性与多样性的选择方法：每次既奖励与问题相关，也惩罚与已选内容高度相似。它可以减少重复，但“与已选不同”不等于“刚好补齐缺失条件”。例外条款可能与一般规则非常相似，因此多样性不能代替任务覆盖检查。
 
-相比 Bi-Encoder 只比较独立向量，它通常能捕捉更细的：
+## 5. 用一个预算反例看清选择顺序
 
-- 条件关系；
-- 实体对应；
-- 否定；
-- 细粒度语义。
+设 A 占 70 个预算单位，B 占 40，C 占 60，总预算 110。这里的单位是教学成本，不是某个真实模型的 Token 统计。
 
-代价是每个 Pair 都要推理，所以只能用于较小候选集。
+A 与 B 恰好占 110，并共同回答问题。如果先按 A、C、B 的坏顺序截成 Top2，再装入预算，就可能只留下 A：C 放不下，B 又已经被截掉。结果虽未超长，证据却不完整。
 
----
+一个更合理的流程是先保留足够候选，在明确的必要条件下选择 A 与 B，再做适度去重和压缩。实际系统未必有人工标好的“必要条件”，可以用问题分解、规则或模型辅助判断，但最终仍需要评测它是否真的保住证据，不能把模型自报“完整”当成真值。
 
-## 3. Candidate Budget 是什么
+## 6. 分数门槛怎样使用才不误导
 
-整个 Retrieval Funnel 有一个隐含预算：
+某个重排器给出 0.93，不能直接解释为“答案有 93% 的概率正确”。即使输出经过 Sigmoid 等变换落在 0–1，它也未必经过本任务上的概率校准；它评的还可能只是单条相关性，而非答案是否安全、完整、有效。
 
-```text
-Dense returns N1
-Sparse returns N2
-Fusion keeps N3
-Reranker scores N4
-Final context keeps N5
-```
+阈值应按模型版本、输入方式、语言、任务和错误代价校准。换重排模型不一定要重新生成文档向量，但必须重新检查分数分布、排序质量、输入长度和门槛。不能沿用旧模型的阈值，仅因为两个输出都是小数。
 
-这些 N 不能无限增大。
+## 7. 怎样证明重排值得，故障时又怎样退
 
-Candidate 越多：
+保持候选集一致，对比不重排与重排后的排序、必要证据覆盖和最终答案，同时记录延迟与成本。将问题分成精确编号、同义表达、多条件、长文等切片，能发现平均分掩盖的退化。
 
-```text
-Recall Potential ↑
-Rerank Cost ↑
-Latency ↑
-Duplicate ↑
-Context Selection Complexity ↑
-```
+若重排服务超时，是否退回融合顺序取决于业务门槛与剩余预算。允许降级时要标记实际路径，并重新检查证据是否足够；高风险场景可转人工或说明无法可靠完成。权限检查不能作为可降级组件。
 
-所以需要 Candidate Budget。
+⚠️ **注意：重排输入也可能流向外部服务。** 若模型供应商无权处理某类资料，不能先把敏感候选发去打分，最后再删掉引用。数据处理权限要在发送前得到满足。
 
----
+## 本章小结
 
-## 4. Top-K 应该在哪里定义
+重排通过问题与候选的联合读取细化排序，代价来自每个组合的重新评分。候选数、每条长度、截断位置与最终上下文预算要分开控制。相关性、覆盖和多样性互相补充，但没有一个分数能自动代表全部质量。
 
-不同阶段有不同 K：
+## 🎯 面试怎么回答
 
-```text
-retrieval_k
-fusion_k
-rerank_k
-context_k
-```
+**问：加 Reranker 后效果变差，怎样排查？**
 
-不要只有一个全局 `top_k=5`。
+先固定候选集，确认必要证据原本是否在其中；再看重排输入是否截断了关键条件、模型是否适合领域，以及阈值是否沿用错了。然后追到重排后截断与上下文装配，看证据在哪一步消失。最后在相同数据和预算下比较不重排基线，分别报告排序、证据覆盖、答案和延迟，不能假定组件越多越好。
 
-例如：
+## ⚠️ 易错点
 
-```text
-Dense 30
-Sparse 30
-Fusion 40 unique
-Rerank 40
-Context 6
-```
+**“先取 100 再取 5 是固定最佳实践。”** 不同任务、文档长度和服务预算不同，数字需要实验依据。
 
-只是示意，不是推荐固定值。
+**“重排高分就是有答案。”** 单条相关性不说明多条件已覆盖，也不说明来源有效且允许访问。
 
----
+**“MMR 会自动保留所有必要事实。”** 它主要平衡相关性与重复性，不知道业务上的全部必需条件。
 
-## 5. Reranker Score 能直接设通用 Threshold 吗
+## 自测
 
-不建议跨模型/领域抄固定值。
+### 自测 1
 
-Score Distribution 会受：
+候选集有正确片段，重排器评分时只接收每条前 300 Token，关键例外位于第 500 Token 后。增加第一阶段召回窗口能直接解决吗？给出更针对性的检查与改动。
 
-- Reranker Model；
-- Domain；
-- Query Type；
-- Candidate Length；
-- Calibration；
+<details>
+<summary>参考答案与解释</summary>
 
-影响。
+不能直接解决输入截断。先核对实际送入重排器的文本，再尝试更合适的片段粒度或保留关键句的分段方式，并在同一问题集上验证。单纯增加候选可能只增加成本。
 
-Threshold 应根据真实 Label / Eval 校准。
-
----
-
-## 6. 为什么加 Reranker 可能反而变差
-
-常见原因：
-
-### Candidate 根本没召回 Ground Truth
-
-Reranker 无法创造不存在的候选。
-
-### Domain mismatch
-
-通用 Reranker 对专业领域相关性判断错误。
-
-### Input Truncation
-
-Chunk 太长，真正 Evidence 被截断。
-
-### Query Rewrite Drift
-
-Reranker 收到的是偏移后的 Query。
-
-### Candidate Duplicate
-
-Top Results 都是同一文档近重复片段。
-
-### Score Calibration / Top-K 不合适
-
-相关但互补的证据被过度挤掉。
-
-所以必须做 Ablation：
-
-```text
-Retriever only
-vs
-Retriever + Reranker
-```
-
----
-
-## 7. Rerank 的输入应该是什么
-
-不一定只是裸 Chunk Text。
-
-可以加入：
-
-```text
-section title
-parent heading
-source type
-```
-
-帮助判断语义。
-
-但 Metadata 太多也会占长度并干扰模型。
-
-要通过 Eval 选择。
-
----
-
-## 8. Diversity 为什么重要
-
-假设 Top5：
-
-```text
-same paragraph v1
-same paragraph v2
-same paragraph duplicated
-same paragraph overlap
-another relevant fact
-```
-
-即使前四条 score 很高，Context 信息量也很低。
-
-可以在 Rerank / Context Selection 后做：
-
-- Document Dedup；
-- Parent Merge；
-- MMR / diversity heuristic；
-- Evidence coverage optimization。
-
-目标不是“每条独立最高分”，而是：
-
-> **在有限 Context Budget 下覆盖回答所需 Evidence。**
-
----
-
-## 9. Multi-hop 问题需要什么
-
-有些问题需要两份不同 Evidence：
-
-```text
-A 的政策是什么？
-为什么它和 B 冲突？
-```
-
-单纯按每个 Chunk 独立 relevance 排序，可能只返回 A 的多个片段。
-
-需要在 Query Decomposition / Evidence Selection 中考虑：
-
-```text
-coverage across subquestions
-```
-
-这再次说明 Final Context 不应只是 `reranked[:K]`。
-
----
-
-## 10. Rerank Latency 怎么控制
-
-Rerank 成本近似随：
-
-```text
-candidate count
-× candidate length
-× model cost
-```
-
-增加。
-
-优化方向：
-
-- 更好的 first-stage Recall，减少候选；
-- Batch scoring；
-- smaller reranker；
-- early filtering；
-- cached score（只在安全条件下）；
-- route hard queries to expensive rerank。
-
----
-
-## 11. Top-K 为什么必须和 Context Budget 联动
-
-如果最终每个 Chunk 1000 Token：
-
-```text
-TopK=20
-→ 20K Token
-```
-
-如果每个 Chunk 200 Token：
-
-```text
-TopK=20
-→ 4K Token
-```
-
-所以 K 本身没有绝对意义。
-
-真正约束是：
-
-```text
-Evidence Coverage
-within
-Context Token Budget
-```
-
----
-
-## 12. No-hit 和 Reranker 的关系
-
-Reranker 可以帮助判断 Candidate 是否真正相关。
-
-如果最高结果仍低于经过 Eval 校准的可靠边界：
-
-```text
-No Hit
-→ clarify / refuse / alternate route
-```
-
-但不能用未经校准的统一阈值。
-
----
-
-## 13. Eval 应怎样验证 Candidate Funnel
-
-至少分层记录：
-
-```text
-Ground Truth in Retriever TopN?
-Ground Truth rank after Fusion?
-Ground Truth rank after Rerank?
-Ground Truth included in Context?
-```
-
-这样才能知道优化到底作用在哪一层。
-
----
-
-## 14. 常见错误
-
-- Reranker 可以救回没召回的文档：不能。
-- TopK 越大越保险：会增加噪声/成本。
-- Reranker Score 有通用阈值：错误。
-- Rerank 后直接 `[:5]` 就是最佳 Context：可能缺 Diversity/Coverage。
-- 加 Reranker 一定提升：必须做 Ablation。
-- Candidate Count 只影响 Latency，不影响质量：也会改变 Recall 和 Diversity。
-
----
-
-## 15. 面试怎么答
-
-### Q：为什么常见 Top20 再 Rerank Top5？
-
-> 第一阶段 Retriever 要保证 Recall，因此先保留较宽候选；Cross-Encoder Reranker 精度高但每个 Query-Document Pair 都要推理，只适合小候选集，再从中挑有限 Evidence。20/5 不是固定参数，要同时看 Recall、Rerank Quality、Latency、Token Budget 和 Answer Eval。
-
-### Q：Rerank 后效果反而变差怎么排查？
-
-> 先确认 Ground Truth 是否进入 Candidate Set，再看 Reranker 是否发生 Domain mismatch、输入截断、Query Drift、重复候选或 Top-K/Candidate Budget 不合理，用 Retriever-only vs Retriever+Reranker 的 Ablation 定位。
-
----
-
-## 16. 自测
-
-<details><summary>1. 为什么 Retriever Top-K 和 Context Top-K 要分开？</summary>
-前者为了候选 Recall，后者受 Context Budget、Diversity 和 Evidence Coverage 约束。
 </details>
 
-<details><summary>2. Reranker 最重要的前置条件是什么？</summary>
-相关文档必须已经进入 Candidate Set。
+### 自测 2
+
+A、B 是必要证据，成本分别为 80、35；C 无关，成本 40。预算 115，坏排序为 A、C、B。说明“先 Top2，再顺序装入”与“先检查必要覆盖，再装入”的结果差异。
+
+<details>
+<summary>参考答案与解释</summary>
+
+前者保留 A、C，装入 A 后只剩 35，C 放不下，B 已被提前删掉；后者可保留 A+B，正好 115。预算合规不等于证据完整。
+
 </details>
 
-<details><summary>3. 为什么最终选择要考虑 Diversity？</summary>
-多个高分近重复 Chunk 会浪费 Context，可能不如覆盖不同必要 Evidence。
-</details>
+## 知识回看与权威资料
+
+回看 [多路检索与融合](07-RetrievalStack.md)理解候选来自哪里；模型级分工见 [Embedding 与 Reranker](../../07-llm-foundation/docs/09-Embedding与Reranker.md)。
+
+[Sentence Transformers：Retrieve & Re-Rank](https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html)用于核对联合评分与两阶段检索分工；本文预算数字和坏排序是教学构造，不是模型基准成绩。
+
+[← 第 07 章](07-RetrievalStack.md) · [模块目录](../README.md) · [第 09 章 →](09-EvidenceDelivery.md)

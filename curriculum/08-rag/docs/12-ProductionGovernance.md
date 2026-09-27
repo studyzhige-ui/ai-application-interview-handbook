@@ -1,439 +1,147 @@
-# 12｜Production Governance：Freshness、Version、Permission、Tenant、Snapshot 与 Rollback
+# 12｜更新、权限与回滚：让用户看到正确版本的合法知识
 
-RAG 从 Demo 走向 Production 后，最大的变化之一是：
+[← 第 11 章](11-EndToEndQualityEngineering.md) · [模块目录](../README.md) · [第 13 章 →](13-ScaleCostObservability.md)
 
-> **知识不是静态文件集合，而是持续变化、受权限约束、需要可回滚的数据产品。**
+政策从 30 天改成 14 天，系统要更新知识；与此同时，一名员工被撤销权限，一份内部说明被删除。新索引上线后出现质量问题，团队准备回滚。问题来了：**回滚旧知识版本，是否也把旧权限和已删除材料一起恢复？**
 
-因此 Freshness / Incremental Update 和 Permission / Tenant 不应该割裂：它们共同定义“某个用户此刻允许看到哪一个版本的哪些证据”。
+答案应是否定的。内容版本、处理版本和当前安全状态承担不同职责。生产治理要让更新可切换、故障可恢复，同时避免恢复动作推翻已经生效的访问限制。
 
----
+## 1. 一次请求必须使用一套相互兼容的派生数据
 
-## 1. Freshness 是 RAG 的系统属性
+**知识代际**（Generation）表示一组一起构建和发布的派生数据。例如 g2 包含：按同一切分配置产生的正文、对应向量索引、词项索引，以及与这些向量匹配的查询编码配置。
 
-假设公司政策今天更新：
+若查询向量使用新模型，文档向量仍由旧模型产生，即使维数相同，也不能假设表示空间兼容。若向量返回新块 ID，正文存储只有旧块，也无法正常回取。因此代际不是给一个文件改名，而是把相互依赖的版本关系明确记录。
 
-```text
-Source v2 available at 10:00
-```
+请求开始时选定一套已发布代际，并在该请求内保持一致。普通内容切换时，进行中的请求可以按产品规则完成旧代际读取；**当前授权与删除限制不应被冻结在旧内容代际里**，它们仍需在数据使用边界核验。
 
-用户 10:05 查询，RAG 仍返回 v1。
+## 2. 单文档增量更新怎样避免空窗
 
-即使 Retriever/LLM 完全正确，也是在基于过期事实回答。
+对文档 P1 的一次正文更新，先处理新版本并生成派生片段，再核对处理完整性和查询可见性，通过后切换该文档的有效版本，最后清理不再被使用的旧派生物。
 
-所以 RAG Quality 不只有：
+不能先删掉旧块，再开始一次可能失败的解析或向量化。这样新版本构建失败时，原本能够回答的问题也会变成无答案。例外是来源已被撤回或权限已被撤销：这时应先使旧内容不可用，不能为了维持命中率继续暴露它。
 
-```text
-semantic relevance
-```
+局部增量是否可行，取决于来源能否识别稳定内容单元及其变化。更换向量模型或整体切分策略时，往往需要构建新代际，而不是只修改几条元数据。
 
-还包括：
+## 3. 重复任务与旧任务晚到，是两种问题
 
-```text
-freshness / validity
-```
+网络重试可能让同一更新执行两次，可以用“文档身份、来源修订号、处理配置、目标代际”识别同一项工作，并让重复完成不产生重复片段。这是幂等性要解决的问题。
 
----
+但假设 v3 很快处理完，v2 的慢任务随后才结束。它们不是同一工作，幂等键不同，仍可能发生旧结果覆盖新结果。写入有效状态时，还要检查任务的来源修订是否仍被允许发布，并用数据库事务、条件更新或其他明确的一致性机制阻止过时写入。
 
-## 2. 先定义 Freshness SLA
+以下状态表假设来源提供可比较的单调修订号：
 
-不同 Source 需要不同 SLA：
+| 当前记录 | 到达的任务 | 正确状态变化 |
+|---|---|---|
+| 修订 2 | 修订 3 完成 | 接受 3 |
+| 修订 3 | 修订 2 晚到 | 拒绝旧结果，仍为 3 |
+| 修订 3 | 完全相同的修订 3 重试 | 幂等确认，不重复产生副作用 |
+| 修订 3 的删除标记 | 修订 2 再次到达 | 不复活已删除来源 |
 
-```text
-产品文档 → 小时级
-政策 → 日级
-价格 → 分钟级
-库存 / 订单 → 秒级，可能不适合异步 RAG
-```
+修订号相同却正文不同，说明标识或数据出了冲突，不应悄悄接受。来源只有 ETag 或任意版本字符串时，不能直接按字典序比较；需要来源自己的顺序规则、变更日志序号或回源确认。
 
-如果要求近实时强一致，直接调用业务 DB / API 可能比异步 Embedding Pipeline 更合理。
+## 4. 全量重建时，怎样接住构建期间的变化
 
----
+假设源系统可以在变更序号 100 取得一致快照，并保留之后的变更日志。旧代际 g1 继续服务，新代际 g2 从这个快照构建。构建期间出现 101 的正文更新、102 的删除、103 的权限变更，g2 不能只包含序号 100 的状态就直接上线。
 
-## 3. 增量更新的基本链路
+一个受控过程是：
 
-```text
-Source Change
-→ Detect
-→ Parse affected document
-→ Chunk
-→ Embed
-→ Write new version
-→ Validate
-→ Make visible
-→ Retire old version
-```
+1. 记录快照对应的边界，并确认变更日志保留时间足够覆盖构建周期。
+2. 构建 g2，期间旧代际继续按已定义的更新路径服务。
+3. 从边界之后消费增量，包含修改与删除；权限变化同时进入当前授权状态。
+4. 设置切换屏障，确认新代际已追到约定位置，后续事件不会掉进旧新路由之间的缝隙。可以采用短暂协调、受控双写或其他经过验证的交接方式。
+5. 检查文档清单、实际可读性、质量与权限，再发布新代际。旧代际保留有限回退窗口，之后清理。
 
-重点：
+不能仅凭“某个时刻增量队列为空”证明追平：新的事件可能正在产生，多个系统也未必共享一个序号。多来源场景需要各自进度及明确交接条件。没有一致快照与完整日志能力时，应采用来源支持的替代方案，而不是假定上述过程天然可实现。
 
-> 不要先删旧数据，再慢慢构建新数据。
+## 5. 原子切换的边界到底在哪里
 
-否则更新过程中会产生知识空窗。
+应用可以在一个受控位置发布不可变的代际描述，再让新请求读取该描述；描述指向已经验证就绪的向量、词项与正文资源。发布指针需要明确的原子性和并发控制，客户端缓存也要有刷新策略。
 
----
+某数据库的别名切换只约束它自己的资源，不会自动把外部向量库、搜索服务、正文存储和应用缓存变成一个跨系统事务。[Elastic 的别名文档](https://www.elastic.co/docs/manage-data/data-store/aliases)说明了该产品内的切换能力；不能据此推断其他服务同时完成了切换。
 
-## 4. Blue-Green Knowledge Generation
+写入接口返回成功，也可能仅表示某种提交或接收成功，是否立即可检索要核对服务的一致性与刷新语义。发布前应实际读取和检索验证，而不只统计 HTTP 成功次数。
 
-更稳健：
+## 6. 撤权与删除为什么必须独立于回滚
 
-```text
-Index Generation v1 serving
-        │
-        ├─ build v2 in background
-        ↓
-validate v2
-        ↓
-canary / shadow
-        ↓
-switch alias / route
-        ↓
-keep v1 for rollback
-```
+假设 g1 构建时用户 u 可以访问 P1，后来撤权已经生效。即使因质量问题回滚 g1，u 也不能重新读到 P1。解决方向是把当前授权判断与当前删除状态放在独立于内容代际的控制路径上；每条检索路线、扩展、正文回取和答案缓存都必须服从它。
 
-适用于：
+删除标记也不能随旧索引一起回滚。逻辑上不可见与物理清理完成是两件事：先让新访问无法取得材料，再按数据保留策略清理索引、摘要、缓存和原始副本。处理中的旧任务还需在发布时核对来源状态，避免把已删除内容重新写回可见集合。
 
-- Embedding Model 升级；
-- Chunk Strategy 改变；
-- 大规模 Parser 升级；
-- Index Migration。
+需要明确授权的生效点和允许的传播延迟，不能把“缓存十分钟后失效”称作即时撤权。授权状态无法可靠取得时，对受保护内容应失败关闭，而不是默认允许。已发送给用户或第三方的数据也不能靠索引删除收回，因此发送前的边界尤其重要。
 
-代价是短期双份存储。
+⚠️ **注意：回滚恢复的是经过选择的服务内容与配置，不是恢复过去的访问资格。** 单纯回指旧索引，再信任里面旧的 ACL 字段，是危险的实现。
 
----
+## 7. 缓存怎样服从内容与权限变化
 
-## 5. Full Rebuild 为什么需要 Snapshot Boundary
+在线答案或检索缓存不能只用问题字符串作键。同一句“能否退款”，不同产品、历史条件、租户、权限和知识代际可能对应不同结果。缓存键或依赖记录应包含足以区分这些条件的信息。
 
-假设 Rebuild 需要 6 小时。
+权限变化可以通过授权版本或失效事件使旧缓存不可用，返回前仍按既定一致性要求核验。只加 `user_id` 不够：同一用户的角色可能改变。只加知识代际也不够：没有重建索引时照样会发生撤权。
 
-如果直接：
+回滚后不能盲目复用过去某次答案缓存。需要核对它依赖的来源是否仍有效、权限是否仍满足、查询时间条件是否一致。缓存命中是性能事件，不是合法性证明。
 
-```text
-scan current source
-→ build
-```
+## 8. 治理验收必须故意触发失败顺序
 
-构建期间 Source 继续变化，最终生成的 Index 可能是“多个时间点混合状态”。
+应测试新代际只构建一半时旧服务是否仍可用；删除后旧任务重放是否复活文档；新旧修订乱序完成是否覆盖；缓存命中后撤权是否失效；向量与正文版本不一致时是否阻止发布。
 
-因此要有：
+[配套实验](../examples/README.md)用内存状态模拟过时写入、删除标记和回滚后的访问检查。它验证状态规则，不代表真实数据库已经实现原子更新、持久恢复或多连接一致性。接入实际系统时，还要测试崩溃、重复消息、并发读写、资源切换和权限传播的真实行为。
 
-```text
-Snapshot T0
-→ Full Build
-→ Capture Delta after T0
-→ Replay Delta
-→ Catch Up
-→ Switch
-```
+## 本章小结
 
-这和数据库迁移 / CDC 思路相似。
+正文更新先构建再切换，撤回与撤权先阻止不合法使用。幂等处理重复，条件更新阻止旧任务晚到。快照与增量需要明确交接边界，单服务别名不是跨系统事务。回滚内容时，当前授权和删除限制继续生效。
 
----
+## 🎯 面试怎么回答
 
-## 6. Version 应该存在哪些层
+**问：知识库怎样增量更新并支持安全回滚？**
 
-至少可以区分：
+先保留稳定文档身份和来源修订，区分正文、权限和删除事件。新正文先处理与验证，再切有效版本；任务重试要幂等，乱序完成要用条件更新阻止旧结果覆盖。整体升级构建新代际，接住快照后的增量并按明确屏障切换。回滚只恢复内容与兼容配置，不能回滚当前授权和删除标记；缓存与旧任务也必须服从这一规则。
 
-```text
-document version
-chunk version
-embedding version
-index generation
-```
+## ⚠️ 易错点
 
-Query Trace 要记录它实际命中的版本。
+**“有幂等键就不会旧数据覆盖新数据。”** 不同修订有不同幂等键，仍需顺序或条件写入控制。
 
-否则用户说：
+**“先删旧索引能保证没有重复。”** 新构建失败时会造成服务空窗；正常更新应先构建验证再切换。
 
-> “昨天为什么回答 30 天，今天回答 14 天？”
+**“回滚旧代际就把它保存的一切状态一起恢复。”** 当前撤权、删除和安全限制不得因此失效。
 
-你无法知道两次请求分别用了哪一代知识。
+## 自测
 
----
+### 自测 1
 
-## 7. Rollback 为什么必须保留旧 Generation
+文档修订 8 先完成，修订 7 后完成；随后来源在修订 9 被删除，修订 8 又重试。逐步写出应接受或拒绝的操作，以及最终可见状态。
 
-新 Index 可能：
+<details>
+<summary>参考答案与解释</summary>
 
-- Recall 回归；
-- Parser Bug；
-- ACL 丢失；
-- Embedding 不兼容；
-- 延迟过高。
+先接受 8，拒绝晚到的 7；接受修订 9 的删除标记；拒绝旧修订 8 的重试。最终来源不可见，并保留足够顺序信息阻止复活。
 
-如果旧版本已经立即清掉，只能重新全量构建。
-
-所以可以：
-
-```text
-switch v2
-→ observe
-→ retire v1 after safety window
-```
-
----
-
-## 8. Permission 不是最后的 Post-filter
-
-多租户系统里：
-
-```text
-User A
-```
-
-只允许看到 Tenant A / 某些 Group 文档。
-
-权限必须进入 Retrieval Scope：
-
-```text
-Query
-+ tenant_id
-+ permission_scope
-+ version/time constraints
-→ Retriever
-```
-
-而不是：
-
-```text
-retrieve everything
-→ send to LLM
-→ UI hides unauthorized citation
-```
-
-因为敏感内容一旦进入模型 Context，就已经暴露。
-
----
-
-## 9. ACL 怎样传播到 Chunk
-
-Source 可能有：
-
-```text
-document-level ACL
-```
-
-派生 Chunk 必须继承或计算自己的：
-
-```text
-tenant_id
-owner
-group_ids
-classification
-visibility
-```
-
-并在每次 Rebuild/Update 中保持一致。
-
-这也是为什么 Lineage 和 Data Model 重要。
-
----
-
-## 10. Permission Change 也需要增量同步
-
-即使正文不变：
-
-```text
-user removed from group
-```
-
-RAG 可见性也必须变化。
-
-所以 Incremental Update 不只有 Content Change，还有：
-
-```text
-ACL Change
-Tenant Move
-Status Change
-Effective Date Change
-```
-
-Metadata-only Update 也可能是 Critical Freshness Event。
-
----
-
-## 11. Pre-filter vs Post-filter 的安全边界
-
-Post-filter 可能用于某些性能实现，但安全上必须保证：
-
-```text
-unauthorized text
-```
-
-不会进入后续模型 Context 或泄露给调用者。
-
-更理想是：
-
-```text
-permission-aware retrieval
-```
-
-让无权限数据尽量不成为候选。
-
----
-
-## 12. Cache 也会造成权限与 Freshness 问题
-
-例如 Semantic Cache Key 只有：
-
-```text
-query_embedding
-```
-
-可能跨：
-
-- Tenant；
-- Permission；
-- Knowledge Version；
-
-复用旧答案。
-
-Cache Key / Namespace 必须包含：
-
-```text
-security scope
-knowledge generation
-```
-
-否则新 Index 上线后仍返回旧 Cache Answer。
-
----
-
-## 13. Time-aware Retrieval
-
-对于有生效期的政策：
-
-```text
-valid_from
-valid_to
-```
-
-Query 可以带：
-
-```text
-as_of_time
-```
-
-检索当时有效版本。
-
-这对：
-
-- 审计；
-- 历史问答；
-- 金融/法律；
-
-非常有价值。
-
----
-
-## 14. Delete / Revocation 要定义传播时间
-
-当用户撤权或文档删除：
-
-```text
-多久以后必须不可检索？
-```
-
-这也是 SLA。
-
-链路可能包含：
-
-```text
-Source
-→ Event
-→ Index
-→ Replica
-→ Cache
-```
-
-任一层延迟都可能出现越权窗口。
-
-高敏场景可能需要：
-
-- 请求时实时授权；
-- Central Authorization；
-- Short Cache TTL；
-- Revocation Push。
-
----
-
-## 15. Production 对账
-
-定期检查：
-
-```text
-source document count
-vs
-manifest
-vs
-chunk count
-vs
-index count
-```
-
-还可以检查：
-
-```text
-missing latest version
-orphan chunk
-unauthorized chunk
-stale generation
-```
-
-不要等用户发现旧文档才知道同步任务失败。
-
----
-
-## 16. 监控指标
-
-可以关注：
-
-```text
-source-to-index lag
-failed ingestion jobs
-stale document count
-index generation age
-ACL sync lag
-orphan chunk count
-cache hit by generation
-rollback count
-```
-
-RAG 的 Observability 不应该只记录 Query Latency。
-
----
-
-## 17. 常见错误
-
-- 文档更新就直接覆盖旧 Vector：会有空窗/不可回滚风险。
-- Embedding Rebuild 不需要 Snapshot：会混合不同时间点状态。
-- Permission 最后再过滤即可：敏感内容可能已进入 LLM。
-- 正文没变就无需更新索引：ACL/有效期也会变。
-- 新 Generation 上线后 Cache 自然正确：Cache 也要按版本失效。
-- Delete 只删 Vector DB 就完成：还可能有 Cache/Replica/旧 Generation。
-
----
-
-## 18. 面试怎么答
-
-### Q：RAG 知识库怎么不停服更新？
-
-> 对小增量用 stable document/version 做增量 Parse/Chunk/Embed 后原子切换可见版本；大规模模型/Chunk 迁移则构建新 Index Generation，以 Snapshot Boundary 做全量，再 Replay 增量追平，通过 Eval/Canary 后切 Alias，并保留旧 Generation 供 Rollback。Query Trace 记录实际知识版本。
-
-### Q：多租户 RAG 权限怎么做？
-
-> 权限从 Source 就作为数据契约传播到 Chunk/Index，Query 带 tenant/ACL scope 做 permission-aware retrieval，无权限内容不能进入 LLM Context。还要治理 ACL Change、Cache Key、Replica/Index 同步和撤权 SLA，不能只在 UI 最后隐藏结果。
-
----
-
-## 19. 自测
-
-<details><summary>1. 为什么 Full Rebuild 要捕获 Delta？</summary>
-因为构建期间 Source 仍在变化，不追增量会让新 Generation 缺失 T0 之后的数据。
 </details>
 
-<details><summary>2. 为什么 ACL Change 也是 Freshness 问题？</summary>
-因为数据内容没变，但谁能看到它发生了变化，旧权限状态同样属于 stale knowledge state。
+### 自测 2
+
+g1 中保存用户 u 可读 P1；g2 上线后 u 被撤权；因质量问题回滚 g1。说明读缓存、父块扩展和正文回取各应遵守什么状态。
+
+<details>
+<summary>参考答案与解释</summary>
+
+都必须遵守当前已生效授权与删除状态，而不是 g1 中的历史授权。缓存命中不能绕过，父块扩展不能扩大，正文回取不能复活权限；授权服务不可靠时不能默认放行。
+
 </details>
 
-<details><summary>3. 为什么 Cache Key 需要 Knowledge Generation？</summary>
-否则新知识上线后可能继续命中旧版本生成的答案或检索结果。
+### 自测 3
+
+一个团队同时使用外部向量库、全文搜索和对象存储，只原子切换全文搜索别名便宣布“整个知识库原子升级”。指出缺少哪些核验。
+
+<details>
+<summary>参考答案与解释</summary>
+
+需要确认查询编码、向量索引、词项索引、正文和映射都指向相互兼容且可读取的代际；明确应用选择、并发请求固定代际及切换失败处理。单服务别名不覆盖另外两个系统。
+
 </details>
+
+## 知识回看与权威资料
+
+回看 [语料治理](02-CorpusGovernance.md)中的身份与版本；规模与运行时的吞吐、重试和观测接到 [第 13 章](13-ScaleCostObservability.md)。
+
+[Elastic 别名管理](https://www.elastic.co/docs/manage-data/data-store/aliases)用于核对单服务切换边界；[OWASP 提示注入防护](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)提供独立授权与最小权限的安全背景。本文代际和事件顺序是应用设计，必须在选定服务上另外验证。
+
+[← 第 11 章](11-EndToEndQualityEngineering.md) · [模块目录](../README.md) · [第 13 章 →](13-ScaleCostObservability.md)

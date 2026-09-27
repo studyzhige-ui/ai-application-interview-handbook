@@ -1,443 +1,136 @@
-# 11｜End-to-End Evaluation：Baseline、Ablation、Regression 与 Bad Case Attribution
+# 11｜端到端质量：用证据定位失败，再证明改动有效
 
-上一章建立了 Eval Dataset 和指标，这一章回答更重要的问题：
+[← 第 10 章](10-RetrievalEvaluation.md) · [模块目录](../README.md) · [第 12 章 →](12-ProductionGovernance.md)
 
-> **一次 RAG 改动到底有没有让完整系统变好？如果变差，到底坏在哪一层？**
+线上有人反馈：“我明明开通了专属资源，助手却让我直接退款。”团队可能立刻换模型、增大 Top-K、改提示词。若同时改三处，即使答案变好，也不知道哪一处起了作用，下一次类似问题仍无从判断。
 
-因此 End-to-end Eval、Experiment、Regression 和 Bad Case Attribution 应该放在一个完整质量工程闭环中。
+端到端质量工程从一次具体失败出发，沿处理链还原证据，再用受控对照检验修复。目标不是把总分调高，而是知道**为什么变好、在哪些条件下仍然会失败**。
 
----
+## 1. 先定义本次请求怎样才算成功
 
-## 1. 为什么 Retrieval 指标好不等于最终答案好
+对退款案例，成功至少包含：使用正确版本；用户有权读取所用材料；一般规则与例外都被考虑；回答不把人工复核说成已经退款；引用能支持结论。响应时间与成本也应符合产品约束。
 
-可能出现：
+正确性与忠实性要分开。例如系统检索到旧版“30 天”，回答忠实重复 30 天，但对当前问题仍可能错误。反过来，系统只提供旧版材料，模型凭记忆猜中“14 天”，结果可能正确，却没有忠于本次证据。两者都不能只看一个“答案看起来对”的分数。
 
-```text
-Recall ↑
-但 Context 变长 / 噪声 ↑
-→ Answer Quality ↓
-```
+## 2. 一张请求追踪表怎样定位信息丢失
 
-也可能：
+以下是教学构造的失败路径：
 
-```text
-Rerank NDCG ↑
-但正确 Evidence 被 Context Builder 截掉
-→ Answer Wrong
-```
-
-所以必须同时看：
-
-```text
-Retrieval Layer
-+
-Generation Layer
-+
-System Cost / Latency
-```
-
----
-
-## 2. End-to-end Eval 看什么
-
-可以包含：
-
-```text
-Answer Correctness
-Faithfulness / Groundedness
-Completeness
-Citation Correctness
-Refusal Correctness
-Latency
-Token / Model Cost
-```
-
-高风险场景还要有：
-
-- Permission leakage；
-- stale answer；
-- unsafe answer；
-- unsupported claim。
-
----
-
-## 3. Baseline 为什么重要
-
-没有 Baseline，你只知道：
-
-```text
-new score = 0.82
-```
-
-不知道：
-
-```text
-old score = 0.81 or 0.60?
-```
-
-每次实验都要明确：
-
-```text
-Baseline Configuration
-vs
-Candidate Configuration
-```
-
-并固定其它变量。
-
----
-
-## 4. Ablation 是什么
-
-假设新系统同时加入：
-
-```text
-Query Rewrite
-Hybrid
-Reranker
-Parent-child
-```
-
-最终指标提高，但你不知道是谁贡献的。
-
-Ablation 做：
-
-```text
-Baseline
-+ Rewrite only
-+ Hybrid only
-+ Reranker only
-+ Hybrid + Reranker
-...
-```
-
-这样能看到单个组件的增益与交互。
-
----
-
-## 5. 为什么一次只改一个变量
-
-如果：
-
-```text
-Chunk Size changed
-Embedding changed
-TopK changed
-Reranker changed
-```
-
-同时上线，Bad Case 时无法 Attribution。
-
-除非是完整方案 A/B，否则迭代尽量：
-
-```text
-one controlled change
-→ eval
-→ decide
-```
-
-这就是 Retrieval Engineering，而不是调参玄学。
-
----
-
-## 6. Regression Set
-
-每次重要线上错误都应该变成：
-
-```text
-query
-expected evidence / behavior
-root cause label
-```
-
-加入 Regression Set。
-
-后续任何模型/Chunk/Index/Prompt 更新都重新测试。
-
-目标：
-
-> **系统犯过的重要错误不轻易再犯。**
-
----
-
-## 7. Bad Case Attribution 的第一原则
-
-不要从“最终答案错”直接跳到某个组件。
-
-按链路逐层问：
-
-```text
-Source has answer?
-↓
-Parser preserved it?
-↓
-Chunk contains coherent evidence?
-↓
-Retriever recalled it?
-↓
-Fusion/Reranker kept it?
-↓
-Context Builder included it?
-↓
-Model followed evidence?
-↓
-Citation correct?
-```
-
-第一处失败点通常就是主要 Root Cause。
-
----
-
-## 8. 一张标准 Attribution 表
-
-| Layer | Check | Typical Fix |
+| 阶段 | 实际记录 | 判断 |
 |---|---|---|
-| Corpus | Source 是否存在答案 | Source Coverage / Freshness |
-| Parse | Ground Truth 是否保留 | Parser/OCR/Layout |
-| Chunk | Evidence 是否被切断 | Chunk Strategy / Parent-child |
-| Query | Rewrite 是否漂移 | Rewrite / Clarification |
-| Retrieval | Relevant ID 是否进入 TopN | Dense/Sparse/Hybrid |
-| Rerank | 是否被错误降权 | Model/Truncation/Candidate |
-| Context | 是否真正进入 Prompt | Budget/Dedup/Coverage |
-| Generation | 是否误读 Evidence | Prompt/Model/Verification |
-| Citation | Source 是否支持 Claim | Mapping/Verifier |
+| 权威原文 | P1@v2 中 A 与 B 都在 | 不是来源完全缺失 |
+| 解析与切分 | 两条均可回取，来源正确 | 暂未发现处理丢失 |
+| 混合候选 | A、B、C、D | 正确证据进入候选 |
+| 重排结果 | A、C、B、D | B 的排名下降 |
+| 重排后截断 | 只保留 A、C | B 首次从可用路径消失 |
+| 最终上下文 | 预算只能装入 A | 模型没看到例外 |
+| 回答 | 可以直接退款 | 缺少 B 时作了过强结论 |
 
-这个表应该成为日常 RAG Debug SOP。
+“首次丢失处”是有用的排查起点，但不表示只有一个原因。修复截断、补回 B 后，模型仍可能忽视例外；需要继续验证生成行为。
 
----
+## 3. 用对照实验，而不是猜组件责任
 
-## 9. Retrieval Bad Case 怎样进一步拆
+固定问题、权限和来源版本，将人工核对的 A+B 直接提供给生成阶段，观察是否仍答错。这类对照人为消除了前面的证据缺失，用于检验后半段，而不是给生产系统偷偷塞答案。
 
-### Exact 也找不到
+若完整证据下能答对，重点检查召回、排序和装配；若仍答错，检查提示、证据组织、模型能力与输出检查。再把同一候选分别按融合顺序和重排顺序交给后续阶段，判断重排本身是否造成退化。
 
-更像：
+做这种替换时，要记录改变了哪些输入。完整证据对照常常比真实检索容易，不能把它的分数冒充上线表现。
 
-```text
-Embedding / Chunk / Query / Metric
-```
+## 4. 低召回怎样分清表示、过滤与 ANN
 
-### Exact 找到、ANN 找不到
+首先确认应找的材料确实属于用户允许的范围，原文和片段存在，查询条件也正确。然后在**同一合法候选范围**内比较精确向量搜索与 ANN：前者找到而后者漏掉，才更支持近似索引搜索造成损失。
 
-更像：
+若精确搜索也找不到相关内容，应检查表示模型、输入前缀、文本质量、查询表达与业务相关性，而不是继续增大 ANN 参数。若材料被过滤掉，先判断过滤是正确授权还是元数据错误。
 
-```text
-Vector Index / ANN Parameter
-```
+需要比较“有无某个过滤条件”时，只能在获准的离线环境、明确可见的数据集和诊断权限下进行；也可以只调整不涉及安全的业务筛选。**不得为提升线上召回取消租户或访问限制。** 邻接模块中的通用过滤实验，应带着这一边界使用。
 
-### No-filter 找到、Filter 后找不到
+## 5. 消融实验怎样帮助决定组件去留
 
-更像：
+Ablation（消融）是有控制地去掉或替换一个因素，观察结果变化。可比较词项单路、稠密单路、混合；固定候选再比较有无重排；固定输入再比较两种上下文组织。
 
-```text
-Permission / Version / Metadata Filter
-```
+这不是要求永远只改变一个参数。真实发布可以包含一组相关修改，但应尽量通过中间对照解释它们的贡献和交互。候选窗口、模型版本、切分、问题集同时改变时，不能只把收益归因于其中一个喜欢的组件。
 
-### Retriever 找到、Reranker 掉了
+保存配置、数据版本与每题差异，比只保存总平均更有用。一个总体上升的方案仍可能把所有精确编号问题做坏。
 
-更像：
+## 6. 如何报告收益，而不把百分比说错
 
-```text
-Reranker Domain / Truncation / Score
-```
+假设同一批 100 个可回答样本，基线正确 70 个，新方案正确 78 个：正确率提高 **8 个百分点**；相对正确率增幅是 `8/70≈11.4%`。这两个表达不是同一件事。
 
-这种分层能避免盲目调一个参数。
+还应查看具体样本：可能是修复 10 个、退化 2 个，而不是所有样本都变好。报告切片、错误类型、运行成本和样本规模；少量样本上的小差异不应被写成稳定生产收益。需要更强结论时，增加代表性样本或采用成对重采样等方法估计变化的不确定性。
 
----
+用户是否采用答案、是否减少人工处理时间也有价值，但这些指标受业务流程影响。不能用点击率替代答案正确性，更不能把模型自评分当成用户已经采纳。
 
-## 10. Generation Bad Case 怎样拆
+## 7. 回归集合、发布门槛与线上验证
 
-如果正确 Evidence 已在 Prompt：
+把已经确认的失败加入回归集合，确保同类问题不轻易复发；同时保留未参与调参的测试集，避免反复针对固定题目修补后把记忆效果当成泛化。
 
-检查：
+发布门槛应按风险定义。除总体质量外，还应检查权限泄露、旧版本残留、无答案时编造、关键例外丢失以及不可接受的延迟。安全失败不能通过更多简单题答对来“平均掉”。
 
-- Prompt 是否要求 Grounding；
-- Evidence 是否冲突；
-- Context 是否太长；
-- 关键证据位置；
-- Model Capability；
-- Query 是否多义；
-- Answer Format / Tool；
-- 是否需要 Verification。
+先在相同输入上做影子比较，即新方案处理请求但不影响正式回答；它仍会消耗计算并接触数据，因此也要满足权限和成本约束。再按产品风险决定是否小范围实际服务，观察真实分布下的质量、尾延迟和错误率。无需把某个固定流量比例当成普遍规则。
 
-这时继续调 Retriever 可能没有意义。
+## 8. 生成质量与运行质量怎样一起归因
 
----
+RAG 可能内容正确但经常超时，也可能响应很快却经常缺证据。一个成熟报告应分别列出完成率、质量、时延与成本，并说明质量指标是否只统计完成请求。否则系统可以通过拒绝困难问题，使“已回答正确率”看起来异常高。
 
-## 11. No-answer Case 必须单独测
+故障注入可以验证重排不可用、索引部分失败和授权服务故障时的行为，但模拟故障只证明被测试路径符合预期，不等于真实分布式环境已验证。真实服务、多连接并发和生产流量都需要独立记录。
 
-很多系统只评：
+## 本章小结
 
-```text
-知识库里有答案的 Query
-```
+端到端排错沿来源、处理、候选、排序、上下文和生成逐层检查；首次丢失处是起点，不是唯一根因证明。对照与消融帮助解释改动，分层指标和每题差异防止平均分掩盖风险。运行完成率与答案质量必须同时报告。
 
-于是模型学会“永远回答”。
+## 🎯 面试怎么回答
 
-还需要：
+**问：RAG 答错了，怎样系统优化？**
 
-```text
-unanswerable
-out-of-domain
-permission denied
-stale/conflicting source
-```
+先定义这道题应使用的版本、权限和必要证据，再沿 Trace 找它们在哪一层缺失或被误用。用完整证据对照检查生成，用精确检索与 ANN 对照检查索引近似损失，用固定候选的有无重排对照检查排序。每轮保留简单基线，记录每题变化、切片、成本和延迟；通过回归与发布门槛后，再做符合权限边界的线上验证。
 
-评估：
+## ⚠️ 易错点
 
-```text
-Refusal Precision
-Refusal Recall
-Unsupported Answer Rate
-```
+**“第一个错误就是唯一根因。”** 后面可能还有独立失败，修复后必须重新走完整链路。
 
----
+**“没有过滤能找到，就应该取消过滤。”** 可能恰好是过滤正确阻止了越权材料，只能在授权诊断范围内比较。
 
-## 12. A/B 与 Offline Eval 的关系
+**“正确率提高 8 个百分点等于提高 8%。”** 相对增幅需要除以原正确率，报告时应说明分母。
 
-Offline Eval：
+## 自测
 
-- 快；
-- 可重复；
-- 适合大量实验。
+### 自测 1
 
-Online A/B：
+100 个相同问题，旧方案对 80 个，新方案对 84 个，其中修复 7 个、退化 3 个。计算百分点变化与相对正确率增幅，并说明还需观察什么。
 
-- 反映真实流量；
-- 能看到任务成功和用户行为；
-- 风险更高、噪声更多。
+<details>
+<summary>参考答案与解释</summary>
 
-合理流程：
+提高 4 个百分点，相对增幅为 4/80=5%。还需检查 3 个退化样本所属类型、风险、成本和延迟，以及样本代表性与波动，不能只展示净增。
 
-```text
-Offline Gate
-→ Shadow / Canary
-→ A/B
-→ Production Monitor
-```
-
-不是直接把未经验证的检索配置全量上线。
-
----
-
-## 13. 需要同时看成本
-
-方案 A：
-
-```text
-quality +1%
-latency +200%
-cost +300%
-```
-
-不一定值得。
-
-实验报告最好同时包含：
-
-```text
-Quality Delta
-P95 / P99 Delta
-Token Delta
-Model Cost
-Index Cost
-Failure Slice
-```
-
-最终选择 Pareto 更合理的方案。
-
----
-
-## 14. Version Lock
-
-复现一次 Eval 需要记录：
-
-```text
-corpus snapshot
-parser/chunker version
-embedding/index version
-retrieval config
-reranker version
-prompt/model version
-judge version
-```
-
-否则两次跑分差异可能根本不是你以为的那个变量。
-
----
-
-## 15. Bad Case Taxonomy
-
-建议给 Case 打标签：
-
-```text
-SOURCE_MISSING
-PARSE_ERROR
-CHUNK_BOUNDARY
-QUERY_DRIFT
-RETRIEVAL_MISS
-FILTER_ERROR
-RERANK_ERROR
-CONTEXT_DROP
-MODEL_UNGROUNDED
-CITATION_ERROR
-STALE_DATA
-PERMISSION_ERROR
-```
-
-长期统计各类比例，才能知道团队应该优先优化哪一层。
-
----
-
-## 16. Evaluation Flywheel
-
-```text
-Production Trace
-→ Bad Case
-→ Human / Judge Review
-→ Root Cause
-→ Add Regression Case
-→ Improve Component
-→ Offline Eval
-→ Deploy
-→ More Production Evidence
-```
-
-这是成熟 RAG 最重要的持续迭代机制之一。
-
----
-
-## 17. 常见错误
-
-- Retrieval 指标提升就宣布 RAG 提升：不完整。
-- 四个组件一起改然后比较总分：很难 Attribution。
-- 只测 Answerable Query：会导致过度回答。
-- Bad Case 直接换 Embedding：没有分层证据。
-- Regression 只看总体平均：要看 Slice 和 Critical Case。
-- Eval 不记录版本：无法复现。
-
----
-
-## 18. 面试怎么答
-
-### Q：RAG 怎么证明优化有效？
-
-> 先固定 Evaluation Dataset 和版本化 Baseline，分层看 Retrieval Metrics 与最终 correctness/faithfulness/citation，同时记录 latency/cost。组件优化用 Ablation 隔离变量，通过 Offline Regression 后再 Canary/A-B。线上 Bad Case 按 Source→Parse→Chunk→Query→Retrieval→Rerank→Context→Generation→Citation 找第一失败层，并回流 Regression Set。
-
-### Q：RAG 召回不准怎么定位？
-
-> 先确认 Source/Parser/Chunk 是否存在 Ground Truth，再比较 Exact vs ANN、有无 Filter、Retriever vs Reranker 的结果，逐层排除 Embedding、Index、Filter、Rerank，而不是先盲调 TopK 或 efSearch。
-
----
-
-## 19. 自测
-
-<details><summary>1. 为什么 Ablation 比“新版整体更好”更有价值？</summary>
-因为它能定位每个组件的独立贡献和交互，避免不知道提升来自哪里。
 </details>
 
-<details><summary>2. Bad Case Attribution 的第一步是什么？</summary>
-确认权威 Source 中是否本来就存在正确答案；没有的话后续 Retrieval 不可能修复。
+### 自测 2
+
+补回缺失证据后，生成模型仍然无视“仅管理员可操作”的条件。此前检索截断是唯一问题吗？给出下一项有控制的实验。
+
+<details>
+<summary>参考答案与解释</summary>
+
+不是。可固定同一完整证据与问题，比较更清晰的条件组织或不同生成配置，并核对输出是否受到条件约束。改变输入时记录差异，不把检索修复当成生成阶段已验证。
+
 </details>
 
-<details><summary>3. 为什么 No-answer Query 必须加入 Regression？</summary>
-否则系统可能在有答案 Case 上表现很好，却在无证据时持续 Hallucinate。
+### 自测 3
+
+一种模型只回答最简单的 20% 请求，已回答正确率 98%；另一种回答 90%，已回答正确率 93%。能否只凭 98% 宣布前者更好？
+
+<details>
+<summary>参考答案与解释</summary>
+
+不能。需要同时比较覆盖/完成率、拒答适当性、全量任务效用、各切片风险和成本，并说明质量分母。困难请求被排除会显著改变已回答正确率。
+
 </details>
+
+## 知识回看与权威资料
+
+回看 [检索评测](10-RetrievalEvaluation.md)理解指标分母；更新与发布过程进入 [生产治理](12-ProductionGovernance.md)。
+
+[《信息检索导论》排序评测](https://nlp.stanford.edu/IR-book/html/htmledition/evaluation-of-ranked-retrieval-results-1.html)用于理解统一评测范围；[模型评审研究](https://arxiv.org/abs/2306.05685)用于校准自动评分。本文排错表和收益数字均为教学对照。
+
+[← 第 10 章](10-RetrievalEvaluation.md) · [模块目录](../README.md) · [第 12 章 →](12-ProductionGovernance.md)

@@ -1,213 +1,155 @@
 # RAG｜Review 与综合自测
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块目录](../README.md) · [机制实验](../examples/README.md) · [面试表达](../interview/高频面试题.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+这份复习材料用于第二遍重建关系，而不是代替正文。先不看图，尝试从一个用户问题画出数据流，再用图检查遗漏。下面的综合情境改变了正文条件，推理所需机制均已在主线建立。
 
----
-
-> 第一遍按 `../README.md` 的 **14 个 Production RAG 子系统**学习；这里用于第二遍把它们压缩成少数几条 Pipeline，并用更细的自测题检查理解。
-
----
-
-## 图 1｜完整 Production RAG
+## 1. 两条链，三个“完成”
 
 ```mermaid
 flowchart LR
-    A["Source"] --> B["Corpus Governance"]
-    B --> C["Document Processing"]
-    C --> D["Chunking"]
-    D --> E["Index"]
-    Q["User Query"] --> F["Query Planning"]
-    F --> G["Retrieval Stack"]
-    E --> G
-    G --> H["Rerank / Candidate Budget"]
-    H --> I["Context / Evidence"]
-    I --> J["Grounded Generation"]
-    J --> K["Citation"]
-    K --> L["Evaluation / Trace"]
+    S[权威来源] --> P[解析与切分]
+    P --> I[构建并验证索引]
+    I --> V[激活知识版本]
+    U[用户问题] --> A[确定条件与当前授权]
+    A --> R[授权范围内检索]
+    V --> R
+    R --> C[选择和补全证据]
+    C --> G[生成并核对引用]
 ```
 
-核心问题：每一层失败时，下一层能不能补救？大多数情况下不能完全补救，所以要分层 Attribution。
+源文档更新完成、索引写入完成、用户已经能查到新版本，是三个不同的时刻。每个箭头都需要说明传递的对象与确认条件；“任务入队成功”不能替代最终可见性。
 
----
+**综合任务：** P1 的新版本已保存在文档系统；解析完成，词项索引已更新，向量索引写入超时且结果未知。是否可以宣布知识已全部更新？请给出确认顺序和不破坏旧版本的处理方式。
 
-## 图 2｜Chunking 的核心矛盾
+<details><summary>提示</summary>
+
+先区分数据到达、可查询与跨存储版本一致，再考虑重试是否会重复写入。
+
+</details>
+<details><summary>参考答案与解释</summary>
+
+不能。先按稳定身份查询向量写入是否已发生，再补齐未确认项，验证新版本在各必要存储中可查询且使用兼容配置；请求只能选择已验证的完整知识代号，不能在两个版本之间随意拼接。新代号未准备好时继续服务允许使用的旧代号，或明确更新未完成；但当前撤权和删除仍须立即按安全政策处理。依据第 12 章的版本切换、写入可见性与授权分离。
+
+</details>
+
+## 2. 切分不是长度问题，而是证据关系问题
 
 ```mermaid
 flowchart TD
-    A["Chunk Too Large"] --> A1["Semantic Mixing"]
-    A --> A2["Context / Rerank Cost"]
-    B["Chunk Too Small"] --> B1["Lost Context"]
-    B --> B2["Boundary Failure"]
-    C["Design"] --> D["Strategy + Size + Overlap"]
-    D --> E["Parent / Neighbor / Hierarchy"]
+    X[过大的块] --> N[混合主题与输入浪费]
+    Y[过小的块] --> B[条件或例外被切断]
+    T[源结构与真实问题] --> K[选择检索粒度]
+    K --> E[父块或邻居补全]
+    E --> M[同版本合并与再次授权]
+    M --> Q[受预算约束的完整证据]
 ```
 
-不要背固定 512 Token；要用真实 Query/Eval 找 Operating Point。
+检索单位、上下文单位和引用单位可以不同。扩大块与扩大 overlap 都不是无条件修复：它们增加的内容可能与本题无关，也可能仍覆盖不到远处例外。
 
----
+**综合任务：** 一份设备手册第 2 页给一般操作，第 18 页给高温环境例外。查询明确涉及高温，系统命中第 2 页。把相邻一块补进来足够吗？还缺哪种关系与验证？
 
-## 图 3｜Query → Candidate Funnel
+<details><summary>参考答案与解释</summary>
+
+不一定。物理相邻关系不能跨越到远处的适用条件；应利用章节引用、条件索引或针对高温例外的查询补充召回，再检查它们属于同一设备、版本和授权范围。必要关系不等于词向量相似或相邻位置。用包含一般规则与例外的必要事实标签评测，不能只看“命中任一相关块”。依据第 4、5、6、10 章。
+
+</details>
+
+## 3. 候选漏斗：不同阶段丢的东西不同
 
 ```mermaid
 flowchart LR
-    Q["Original Query"] --> P["Rewrite / Clarify / Decompose"]
-    P --> D["Dense"]
-    P --> S["BM25 / Sparse"]
-    D --> F["Fusion / RRF"]
+    Q[原问题及硬条件] --> D[语义召回]
+    Q --> S[词项召回]
+    D --> F[排名融合]
     S --> F
-    F --> R["Rerank"]
-    R --> C["Candidate Budget"]
+    F --> R[有限候选重排]
+    R --> C[上下文选择]
+    C --> E[最终证据]
 ```
 
-必须能解释：Rewrite Drift、Dense/Sparse 互补、RRF 为什么不直接加 Score、Reranker 为什么救不回漏召回。
+每条路线都在授权范围内执行。原问题不能被改写结果覆盖，检索分数不能被解释成答案概率，重排不能恢复从未进入候选的内容。
 
----
+**综合任务：** 查询中包含精确错误码 `ERR-7B`。改写模型把它改成“网络异常”，Dense 和词项两路都只收到改写后的问题。增加 RRF 权重或换大重排模型，能可靠解决吗？应该先改哪里？
 
-## 图 4｜Candidate → Evidence
+<details><summary>参考答案与解释</summary>
+
+不能可靠解决，因为两路在检索之前已经丢失关键约束。应保留原查询与精确错误码，确认分词和字段匹配支持该标识，再检查它是否进入候选；随后才分析融合和重排。改写不是修正用户所有表达，更不能自由替换事实标识。依据第 6、7、8 章。
+
+</details>
+
+## 4. 候选到上下文：排名不等于适用性
 
 ```mermaid
 flowchart TD
-    A["Reranked Candidates"] --> B["Dedup / Merge"]
-    B --> C["Version / Permission Check"]
-    C --> D["Token Budget"]
-    D --> E["Evidence Coverage / Diversity"]
-    E --> F["Stable Source IDs"]
-    F --> G["LLM Context"]
-    G --> H["Citation Mapping"]
+    R[合法候选] --> V[版本与条件检查]
+    V --> M[去重及父块邻居补全]
+    M --> A[补全文本再次授权]
+    A --> B[整体输入预算]
+    B --> C[证据编号与来源映射]
+    C --> G[生成与逐结论核对]
 ```
 
-`retriever[:5]` 不是完整 Context Construction。
+有引用只说明某个来源被指向；还要判断该来源是否适用、当前是否允许读取，以及它是否真的支持对应结论。压缩后剩下的句子也必须保留条件、否定词和例外。
 
----
+**综合任务：** 可用证据预算 150 单位。一般规则 80、重复的一般规则 70、例外 60。前两条排名最高，第三条是回答问题必需的例外。如何组织上下文？能否把旧版 40 单位的例外替代当前版以节约预算？
 
-## 图 5｜Evaluation 分层
+<details><summary>参考答案与解释</summary>
+
+去掉重复一般规则，保留当前适用版本的一般规则与例外，共 140 单位，并维护各自来源。不能仅为省预算替换成旧例外；版本和适用条件优先于方便。真实系统还需计算完整消息的模型 Token 与输出预留，而非直接套用本题抽象单位。依据第 5、8、9、12 章。
+
+</details>
+
+## 5. 评测不是一个总分
 
 ```mermaid
 flowchart TD
-    A["Eval Dataset"] --> B["Retrieval Metrics"]
-    A --> C["Answer Metrics"]
-    B --> D["Recall / MRR / NDCG"]
-    C --> E["Correctness / Faithfulness / Citation"]
-    D --> F["Baseline / Ablation"]
-    E --> F
-    F --> G["Regression"]
+    D[问题与适用范围标签] --> R[召回及排名指标]
+    D --> E[必要事实覆盖]
+    D --> A[答案正确与证据支持]
+    D --> S[权限及拒答边界]
+    R --> C[同基线对照]
+    E --> C
+    A --> C
+    S --> C
+    C --> P[质量延迟成本联合判断]
 ```
 
----
+RR 只看第一条相关结果；完整性要检查全部必要证据。忠实于错误或过期材料，仍可能答错；恰好答对但没有检索证据支持，也不能证明 RAG 链路可靠。
 
-## 图 6｜Bad Case Attribution
+**综合任务：** 旧方案在固定 200 个问题中答对 160 个；新方案答对 170 个。新增正确 18 个，旧正确退化 8 个，其中 3 个是重要权限问题。请计算百分点提升，并判断能否仅凭总分上线。
+
+<details><summary>参考答案与解释</summary>
+
+旧正确率 80%，新正确率 85%，提升 5 个百分点；18−8=10 个净改善，与总数一致。不能仅凭总分上线，权限错误可能构成硬阻断；应检查退化类型、任务分布、延迟与成本，并把回归修复后重新评测。依据第 10、11 章，业务门槛必须在看结果前定义。
+
+</details>
+
+## 6. 沿丢失位置排查，而不是从组件名猜原因
 
 ```mermaid
 flowchart TD
-    A["Answer Wrong"] --> B{"Source 有答案？"}
-    B -->|"否"| B1["Corpus Coverage"]
-    B -->|"是"| C{"Parser 保留？"}
-    C -->|"否"| C1["Parsing"]
-    C -->|"是"| D{"Chunk 完整？"}
-    D -->|"否"| D1["Chunking"]
-    D -->|"是"| E{"Retriever 找到？"}
-    E -->|"否"| E1["Query / Retrieval"]
-    E -->|"是"| F{"Rerank/Context 保留？"}
-    F -->|"否"| F1["Ranking / Budget"]
-    F -->|"是"| G["Generation / Grounding"]
+    W[答案错误] --> S{适用来源有答案吗}
+    S -->|没有| S0[补来源或承认不足]
+    S -->|有| P{解析和切分保留了吗}
+    P -->|没有| P0[检查结构条件与例外]
+    P -->|有| R{进入合法候选了吗}
+    R -->|没有| R0[检查查询过滤及检索]
+    R -->|有| C{进入最终上下文了吗}
+    C -->|没有| C0[检查重排去重及预算]
+    C -->|有| G[检查生成解释与引用支持]
 ```
 
----
+失败可能不止一个；找到第一处缺口后，应以受控输入验证后续阶段。不能为了诊断而把无权材料发给重排或生成服务。
 
-# 综合自测
+**综合任务：** 最终回答遗漏 B。Trace 显示融合候选包含 A、B、C，重排后 A、C、B，上下文只放 A。把已授权的 A+B 直接提供给同一生成配置后，模型仍忽略 B。是否只有重排问题？
 
-<details><summary>1. 为什么 RAG 不等于 Vector DB？</summary>
-Vector DB 负责向量存储/ANN/Filter；RAG 还包含 Corpus、Parsing、Chunk、Query Planning、Hybrid/Rerank、Context、Citation、Eval 和 Freshness。
+<details><summary>参考答案与解释</summary>
+
+至少存在两个层面的问题：证据选择阶段丢了 B；在完整上下文控制实验中，生成阶段也没有正确使用 B。需要分别修复和验证，不应把全部失败归因于重排，也不能用一次换模型成功掩盖候选选择错误。依据第 11 章。
+
 </details>
 
-<details><summary>2. 为什么先做 Corpus Audit？</summary>
-因为 Source、格式、版本、重复、权限和更新频率会决定整个 Ingestion 与 Retrieval 设计，脏 Corpus 会污染后续所有组件。
-</details>
+## 复习完成判断
 
-<details><summary>3. Chunk Size 为什么没有通用答案？</summary>
-它受 Query 粒度、答案跨度、文档结构、Embedding/Reranker 长度、Context Budget 和指标共同影响。
-</details>
-
-<details><summary>4. Parent-child 解决什么矛盾？</summary>
-用小 Child 做精准召回，命中后扩展较大的 Parent/Neighbor 给模型更完整上下文。
-</details>
-
-<details><summary>5. Query Rewrite 最大风险是什么？</summary>
-Query Drift：改写后的 Query 偏离用户原意，所以要保留原 Query 并通过 Eval 对比。
-</details>
-
-<details><summary>6. Dense 与 BM25 为什么常组合？</summary>
-Dense 擅长语义/同义，BM25 擅长精确词、ID、稀有术语，两者 failure mode 互补。
-</details>
-
-<details><summary>7. RRF 为什么适合异构 Retriever？</summary>
-它主要基于各路 Rank，而不是不可直接比较的原始 Score Scale。
-</details>
-
-<details><summary>8. Reranker 为什么不能修复 Retriever 漏召回？</summary>
-它只能给 Candidate Set 里的文档重排，没进入候选的正确文档根本看不到。
-</details>
-
-<details><summary>9. Candidate Top-K 为什么不等于 Context Top-K？</summary>
-最终 Context 还受 Token Budget、Diversity、Evidence Coverage、Version、Permission 和去重约束。
-</details>
-
-<details><summary>10. Citation 为什么需要稳定 Source Mapping？</summary>
-防止模型自由编造引用，并支持从 Claim 追到 Chunk、Document Version 和原始 Source。
-</details>
-
-<details><summary>11. Recall@K、MRR、NDCG 分别更关注什么？</summary>
-Recall 看相关证据进入前 K 的覆盖；MRR 强调第一条相关结果位置；NDCG 适合多级相关性和整体排名质量。
-</details>
-
-<details><summary>12. LLM Judge 为什么不能直接当 Ground Truth？</summary>
-Judge 也有偏差、Prompt 敏感和版本漂移，需要人工标注集校准。
-</details>
-
-<details><summary>13. 为什么要做 Ablation？</summary>
-隔离 Query Rewrite、Hybrid、Rerank 等组件的独立贡献，避免多个改动同时发生后无法 Attribution。
-</details>
-
-<details><summary>14. RAG Bad Case 第一问是什么？</summary>
-权威 Source 中是否本来存在正确答案；不存在的话后续组件不可能召回。
-</details>
-
-<details><summary>15. Freshness 为什么不仅是正文更新？</summary>
-ACL、有效期、Tenant、状态变化也会改变“此刻允许检索的知识”。
-</details>
-
-<details><summary>16. 为什么大规模 Rebuild 需要 Snapshot + Delta Replay？</summary>
-构建期间 Source 继续变化，不追增量会让新 Generation 缺少构建开始之后的数据。
-</details>
-
-<details><summary>17. Permission 为什么不能等生成后再做？</summary>
-无权限内容一旦进入 Reranker/LLM Context 就已经发生敏感数据暴露风险。
-</details>
-
-<details><summary>18. GraphRAG 解决的主要问题是什么？</summary>
-显式实体/关系、多跳关系和全局结构问题；它不是所有 RAG 的默认替代方案。
-</details>
-
-<details><summary>19. Agentic RAG 与普通 RAG 最大区别？</summary>
-Agent Runtime 可以根据中间证据决定是否继续、改写、换路由或调用其它工具；控制面属于 Agent Harness，检索质量仍属于 RAG。
-</details>
-
-<details><summary>20. 怎样证明一次 RAG 优化真的有效？</summary>
-版本化 Baseline + 固定 Eval Dataset + Retrieval/Answer/Latency/Cost 指标 + Ablation + Regression，再进入 Canary/A-B，并把线上 Bad Case 回流测试集。
-</details>
-
----
-
-第二遍完成标准：你应该能不看文档画出：
-
-```text
-Source → Process → Chunk
-Query → Dense/Sparse → Fusion → Rerank
-Candidate → Context → Grounding/Citation
-Eval → Regression → Bad Case
-Freshness / Permission / Observability
-```
+独立解释一条正常链、一条缺证据链、一条版本切换链和一条撤权链。每次都说清楚：对象是什么、谁在做决定、依据哪些条件、发生了什么可观察结果，以及哪些结果仍未证明。再用 [机制实验](../examples/README.md) 验证可计算部分，用 [第 14 章](../docs/14-GraphRAG与AgenticRAG.md) 判断新问题是否真的需要图或动态检索。
