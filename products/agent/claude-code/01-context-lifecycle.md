@@ -1,479 +1,193 @@
-# 01. Claude Code Context Lifecycle｜模型每一轮到底看见什么
+# 01. 上下文生命周期｜模型这一轮究竟看见什么
 
-[← Claude Code 总览](README.md) · [Memory →](02-memory-lifecycle.md)
+[← 模块入口](README.md) · [记忆 →](02-memory-lifecycle.md)
 
-> **源码镜像基线：** `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`
+> 源码快照：`studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。文中的状态图是解释实现的教学模型，不是可直接运行的源码副本。
 
-Claude Code 的 Context（上下文）不能理解成“System Prompt + 全部聊天记录”。
+## 1. 从一个连续任务开始
 
-真正进入模型请求之前，Runtime（运行时）会把很多来源合起来：System Prompt（系统提示）、CLAUDE.md、当前 Git / Environment 状态、用户输入、历史 Tool Result（工具结果）、动态加载的项目规则、Memory、Skill、MCP Tool，以及当前已经通过 Tool Search 发现的工具。与此同时，它还会不断把过大的历史结果裁小、删除、折叠或总结。
+假设项目的分页函数把第一页算成了第二页。用户交给 Claude Code 的任务是：
 
-因此源码真正回答的问题是：
+> 修复分页错误。公开函数的参数和返回类型不能改变；不要删除原测试；最后报告实际运行的测试。
 
-> **怎样让模型在每一次采样时看到“足够继续任务、又没有无限增长”的当前工作视图，同时尽量保持 Prompt Cache（提示缓存）稳定？**
+初始数据是 `[10, 20, 30]`，每页两个元素。页码从 1 开始，因此第一页应返回 `[10, 20]`，第二页返回 `[30]`，第三页返回 `[]`。这个例子复用 [AI Coding 章节](../../../practice/coding/docs/09-ai-coding.md) 的分页情境；本章不再实现分页，而是观察执行系统怎样把需求、代码和测试结果送给模型。
 
----
+模型第一次请求可能还不知道函数在哪个文件。它先要求搜索和读取；程序执行工具，把结果放入下一次请求，模型才据此决定修改位置。如果测试输出很长，后面的请求又不能无条件携带所有原文。
 
-## 1. 两条产品入口最后都汇入同一个 `query()`
+因此，上下文管理解决的不是“怎样存一段聊天”，而是：**每次作决定之前，哪些信息必须可见，哪些可以压缩，哪些应保留获取原文的途径。**
 
-交互式 CLI 和 Headless（无界面） / SDK（开发工具包）的入口并不一样。
+## 2. 先把四种状态分开
 
-交互式 REPL 在 `screens/REPL.tsx` 中维护 UI 与会话状态。用户提交以后，它会拿到最新的 Tool、MCP Client、Permission Context（权限上下文），并发读取默认 System Prompt、User Context（用户上下文）和 System Context（系统上下文），最后调用：
+这里把 *Context* 译为上下文，特指一次模型请求能够使用的信息。它与下面几种状态不同。
 
-~~~text
-query({
-  messages,
-  systemPrompt,
-  userContext,
-  systemContext,
-  canUseTool,
-  toolUseContext,
-  querySource,
-})
-~~~
+| 对象 | 分页任务中的例子 | 改变它意味着什么 |
+|---|---|---|
+| 程序持有的会话消息 | 用户要求、模型工具调用、工具结果、内部事件 | 改变程序组织后续执行的材料 |
+| 本次请求的模型输入 | 项目指令、必要历史、工具说明、经过处理的测试输出 | 改变模型这一轮据以判断的内容 |
+| Transcript，会话持久记录 | 磁盘上的消息、消息标识及恢复相关记录 | 改变退出进程后能够重建的历史 |
+| 文件与外部系统状态 | 修复后的源码文件、已经创建的远端记录 | 真实操作已经发生，不随消息删除自动撤销 |
 
-`QueryEngine.ts` 则是无 UI / SDK 会话包装器。它长期保存 conversation messages（会话消息）、File State Cache（文件状态缓存）和 usage（用量），每次 `submitMessage()` 也会进入同一个 `query()`。
+例如，程序把旧测试日志替换为较短的引用，并不意味着原日志文件被删除。反过来，一份文件已修改成功，也不意味着它的最新内容一直留在模型上下文里。
 
-所以 Context 生命周期真正共享的核心不是 REPL 或 QueryEngine，而是：
+在 [`query.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts) 中，`messagesForQuery` 从有效历史构造，随后经过结果预算与压缩处理；会话持久化由 [`utils/sessionStorage.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts) 承担。不能因为它们都处理“消息”，就推断磁盘、界面和 API 请求始终相同。
 
-- `query.ts`
-- `services/api/claude.ts`
+## 3. 用户的一轮任务可以包含多次模型请求
 
-前者决定“这一轮送什么”，后者决定“怎样把这些内容编码成 Claude API 请求”。
+交互式入口有 REPL，即读取用户输入、执行并展示结果的终端界面；程序化会话还有 `QueryEngine`。它们管理各自的会话状态，再进入查询执行过程。主线源码是 [`QueryEngine.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/QueryEngine.ts) 与 [`query.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts)。
 
----
+`query()` 是异步生成器：调用方能够陆续取得事件和消息，不必等整项任务结束才收到所有结果。实际主循环在 `queryLoop()` 的 `while (true)` 中，通过状态更新和继续迭代推进；不能把它描述为每次工具返回都递归调用一次 `query()`。
 
-## 2. System Prompt、User Context、System Context 为什么分三路
+分页任务的一轮输入，可以展开成这样的过程：
 
-REPL 源码会分别调用：
+1. 程序组织第一次模型请求。模型知道用户约束和可用工具，但尚未读到分页实现。
+2. 模型返回读取文件的 `tool_use`，即带工具名称、参数和调用标识的请求。模型自己没有执行文件读取。
+3. 程序执行工具，将对应 `tool_result` 写入后续消息。这个结果通过调用标识与原请求配对。
+4. 程序组织下一次模型请求。模型读到真实实现，提出修改或测试操作。
+5. 若仍需工具或允许的恢复步骤，循环继续；满足结束条件时返回。轮数、预算、取消和停止钩子等也会影响终止，不能只用“输出了自然语言”判断完成。
 
-~~~text
-getSystemPrompt(...)
-getUserContext()
-getSystemContext()
-~~~
+每次请求前重新组织输入，正是动态注入、压缩和工具目录变化能够生效的位置。
 
-最后再通过 `buildEffectiveSystemPrompt` 和 `appendSystemContext` 等函数组合。
+> ⚠️ 模型说“已修复”只是响应内容。函数是否改对、测试是否执行，必须分别看文件差异与执行结果；请求循环结束不等于业务验收通过。
 
-这几份 Context 的职责并不相同。
+## 4. 信息从哪里来，又怎样进入请求
 
-### System Prompt：长期的 Agent 行为规则
+在这个任务中，信息有几种不同用途。用户消息说明目标和约束；项目指令说明仓库约定；工具结果提供刚刚观察到的代码与测试事实；工具说明告诉模型怎样提出下一次操作。它们不应混成一段无法追溯来源的文本。
 
-System Prompt 主要描述 Claude Code 的角色、工作方法、可用能力与行为边界。它会受到默认产品 Prompt、custom system prompt、append system prompt 和当前 main-thread agent definition（主线程智能体定义）的共同影响。
+源码中能看到 `systemPrompt`、`userContext`、`systemContext` 和消息数组等不同输入。`query.ts` 将相关材料交给 API 层；[`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts) 再整理消息和工具定义，形成真正的请求。变量叫“上下文”并不意味着它一定作为独立的 API 角色发送，要追到序列化位置才能判断模型实际收到的结构。
 
-因为 System Prompt 位于 Prompt Cache 的高价值稳定前缀，所以源码对它的变化非常敏感。后面会看到 Claude Code 甚至专门记录 System Prompt hash（哈希）来解释 cache break（缓存断裂）。
+### 项目指令不是一次性搜遍全盘
 
-### User Context：和用户 / 项目相关但不是普通聊天消息的内容
+`CLAUDE.md` 用来承载人工维护的项目指令。目录作用域很重要：仓库根目录的约定可能适用于整个项目，子目录约定则在进入相应工作范围时有意义。镜像中的附件与嵌套指令加载逻辑会维护 `loadedNestedMemoryPaths`，避免同一份指令在繁忙会话中反复注入；它与“最近读过哪些普通文件”的缓存不是同一个用途。实现入口见 [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts)。
 
-`context.ts::getUserContext()` 会加载 CLAUDE.md 相关内容，并加入当前日期等用户级上下文。
+因此，排查“模型没有遵守某个子目录要求”时，应先确认该文件是否处于有效作用域、触发路径是否发生、内容是否真正进入请求，再讨论模型是否忽略了已收到的指令。
 
-这类信息的特点是：它影响本次模型工作，但不应该被误解成用户刚刚说的一条聊天消息。
+[官方记忆文档](https://code.claude.com/docs/en/memory)同样区分项目指令与自动记忆，并说明指令文本不是程序级强制执行。正文以固定镜像解释实现，不把更新的指令文件发现规则反推到这个未确认发行号的快照。
 
-### System Context：当前环境状态
+> ⚠️ 把“禁止删除原测试”写进指令可以影响模型判断，却不能代替文件权限、受保护路径和交付审查。文本约束与程序强制检查是不同的保障。
 
-`getSystemContext()` 可以包含 Git status（Git 状态）等环境快照。
+## 5. 请求变长时，先处理哪一种压力
 
-它表示的是**当前工作区现在是什么状态**。这和“过去发生过什么”的 Transcript History（会话历史）属于不同信息类型。
+长任务里最先失控的未必是用户聊天，可能是一条非常大的测试日志。把所有内容立即交给摘要模型，会增加成本，也可能把错误堆栈里最关键的细节概括掉。
 
----
+`query.ts` 中的顺序表达了一种更细的处理方式：先取得压缩边界后的有效历史，再处理工具结果预算；在启用相应能力时进行历史裁剪；执行微压缩；在功能开关允许时投影局部折叠视图；最后判断是否需要自动压缩。
 
-## 3. CLAUDE.md 是 Context 指令系统，不等于长期 Auto Memory
+```text
+有效历史
+  │
+  ├─ 工具结果预算：处理过大的工具输出
+  ├─ 历史裁剪：功能启用且满足条件时移除部分历史
+  ├─ 微压缩：按实现路径处理旧工具结果
+  ├─ 局部折叠：功能启用时投影更短的历史视图
+  └─ 自动压缩判断：仍有压力时组织替代历史
+                 │
+            API 请求整理
+```
 
-Claude Code 的 `context.ts` 会通过 `getMemoryFiles()`、`filterInjectedMemoryFiles()` 等路径加载 CLAUDE.md。
+这是**调用次序与条件关系**，不是每一轮必定执行的流水线。某个阶段可以不做任何修改；普通微压缩与缓存编辑也不能写成两个必然依次执行的压缩层。实际调用顺序见 [`query.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts)，微压缩入口见 [`services/compact/microCompact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/microCompact.ts)。
 
-源码沿用了 “memory file” 这个历史命名，但教学上必须把语义说清楚：
+### 工具结果预算：短表示与原始材料分开
 
-> **CLAUDE.md 主要是项目 / 用户指令系统，而不是“模型从聊天中自动学习出的长期个人记忆”。**
+例如测试命令返回了大段重复日志。模型需要的是失败用例、断言差异和定位线索，不一定需要每条重复进度信息。工具结果存储与预算处理可以用受控表示代替过大的内容，并保留继续读取材料的途径。
 
-例如项目里写：
+镜像的 `applyToolResultBudget()` 在微压缩前调用；相关状态未提供时可以不启用。结果替换是否记录到持久历史，还取决于查询来源：需要恢复的主会话、子智能体路径，与临时辅助查询并不完全相同。实现见 [`utils/toolResultStorage.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolResultStorage.ts) 和调用它的 `query.ts`。
 
-~~~markdown
-所有 Python 命令统一用 uv。
-修改 API 后必须运行 integration tests。
-~~~
+> ⚠️ 外部化只解决上下文负担，不保证材料永远可取。若日志文件被清理、权限变化或引用失效，模型只能看到短表示。涉及关键判断时，要确认剩余信息足够，或重新读取权威材料。
 
-它更像 repository instructions（仓库指令）。它的可信来源是项目文件，不是过去对话的记忆提取。
+### 历史裁剪与局部折叠：必须区分源码可见范围
 
-这和后面 Memory 篇中的 `memdir/MEMORY.md`、`extractMemories`、`autoDream` 是不同系统。
+History Snip 表示历史裁剪，删除的是选中的历史区间，而不一定是整个最旧前缀。它受 `HISTORY_SNIP` 控制。Context Collapse 表示局部上下文折叠，查询入口展示了受 `CONTEXT_COLLAPSE` 控制的投影调用：模型可以看到短视图，界面保存的完整历史不必同时被替换。
 
----
+这些入口证明存在相应的条件调用关系，不足以单独证明所有构建都包含它们，也不足以证明某个未展开的内部选择算法。本模块对局部折叠只解释可见调用边界，不补画“自动找出最不重要片段”的实现。
 
-## 4. CLAUDE.md 不是只在会话开始时加载一次
+## 6. 微压缩为什么还要考虑提示缓存
 
-Claude Code 还有一层更动态的 nested memory / instructions（嵌套指令）。
+Prompt Cache，即提示缓存，复用稳定输入前缀的计算结果。它不是把旧回答直接返回的答案缓存，也不负责保存用户记忆。
 
-实现主要在：
+设想两次请求共享前面的项目指令、工具定义和历史，只在末尾追加了一条测试结果。稳定前缀有利于复用计算。如果每次为了缩短输入都修改很早的历史，虽然文本更短，却可能损失前缀复用。具体是否命中还取决于服务端行为，不能只凭“看起来相同”下结论。
 
-- `utils/attachments.ts`
-- `utils/claudemd.ts`
+普通微压缩与 Cached Microcompact（使用缓存编辑的微压缩路径）因此有不同处理位置。镜像包含用工具调用标识组织缓存编辑、延后读取实际删除 token 用量的分支；本地消息表示与服务端有效输入不必同时发生相同的文本替换。实际边界见 [`services/compact/microCompact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/microCompact.ts) 与 [`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts)。
 
-当模型打开或操作某个文件时，Runtime 可以沿文件所在路径加载与这个目录相关的 CLAUDE.md 和 conditional rules（条件规则）。
+这里最重要的判断是：**不要拿界面显示的历史长度，直接代替某次 API 请求的有效上下文；也不要拿本地修改量，直接代替缓存节省量。**
 
-源码明确维护加载顺序：
+缓存失效诊断还有自己的证据。`promptCacheBreakDetection.ts` 比较客户端可见的请求状态，例如系统提示、工具定义和模型相关设置。客户端状态没有变化只能缩小排查范围，不能单独证明具体是哪台服务端、哪一次路由或淘汰导致了未命中。实现索引见[缓存失效诊断源码](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/promptCacheBreakDetection.ts)。
 
-~~~text
-Managed / User 条件规则
-        ↓
-从 CWD 向目标文件逐层目录：
-CLAUDE.md + 无条件规则 + 条件规则
-        ↓
-CWD 以上层级：
-只处理相应条件规则
-~~~
+## 7. 完整压缩要保住“继续做事”的条件
 
-而且只有目标路径在当前允许工作区内时才会注入。
+当较小范围的处理仍不足以满足输入预算时，自动压缩会考虑建立更短的后续历史。触发条件与上下文窗口、输出预留、配置和已有处理结果有关，不应把某个经验百分比写成所有模型和版本的固定规则。失败也需要计数与限制，不能每轮无限重复摘要请求。入口见 [`services/compact/autoCompact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/autoCompact.ts)。
 
-为什么要动态加载？假设一个大型 monorepo：
+在分页任务中，压缩后仍需要的不是“讨论了分页”这句概括，而是足以继续工作的状态：
 
-~~~text
-/
-├── CLAUDE.md
-├── backend/
-│   └── CLAUDE.md
-└── ios/
-    └── CLAUDE.md
-~~~
+| 要保留的内容 | 缺失后的具体后果 |
+|---|---|
+| 公开参数和返回类型不能改变 | 模型可能通过改接口规避原缺陷 |
+| 第一页与第二页的预期结果 | 无法判断偏移修复是否符合原任务 |
+| 已修改的位置与尚未验证的内容 | 把计划做的事误当成已做，或重复修改 |
+| 原测试不能删除 | 可能通过削弱测试制造“通过” |
+| 必要的工具发现状态及继续读取线索 | 后续无法正确恢复已发现能力或证据 |
 
-用户只改 backend 时，没有必要一开始就把 iOS 的全部约束塞给模型。真正访问 backend 文件后，再把相关局部规则引入 Context，信息密度更高。
+这是摘要正确性的任务级要求，不保证模型每次摘要都自动满足它。
 
-### 为什么还要单独记录 `loadedNestedMemoryPaths`
+源码中，压缩结果经 `buildPostCompactMessages()` 组织为边界、摘要及保留材料，再进入后续请求。Session Memory（会话摘要）还可能参与某些压缩路径，但它是维持当前任务连续性的材料，不等于跨会话长期知识库。具体构造见 [`services/compact/compact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts)；会话摘要与长期记忆的区别在下一篇用同一个任务展开。
 
-Claude Code 的 File State Cache 是有界 LRU（最近最少使用缓存）。如果只靠它判断“某个 CLAUDE.md 是否已经加载”，缓存淘汰以后同一指令可能被重复注入。
+## 8. 为什么摘要正确，恢复后仍可能出错
 
-源码因此增加一个不会因为 LRU 淘汰而丢失的 path set（路径集合）专门去重。
+压缩不仅影响自然语言。会话记录还需要表达“新历史从哪里接上”，工具系统需要保留“已经发现哪些工具”等协议状态。
 
-这个细节很能说明成熟 Context 系统的特点：
+假设旧历史是 `A → B → C`，压缩后得到摘要 `S`，保留最近消息 `C`，随后产生新消息 `D`。如果持久化程序错误地让 `D` 接回旧父链，重启后可能绕过摘要边界，把本应不再进入请求的旧历史重新加载进来。因此，压缩视图与恢复语义必须协调；并不是生成一份摘要文件就结束了。父链的实际处理见 [`utils/sessionStorage.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts)。
 
-> **Context 注入不仅要考虑“读什么”，还要考虑“怎样避免同一事实因为缓存机制反复进入模型”。**
+工具发现状态也有同样的问题。一个工具被搜索到之后，其引用会影响后续工具定义的加载。如果压缩把发现记录丢掉，模型可能又不能正常使用已经找到的能力。相关实现通过消息中的发现信息和压缩边界元数据恢复集合，见 [`utils/toolSearch.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts)。这里先记住：上下文里有自然语言，也有会改变后续执行条件的结构化信息。
 
----
+## 9. 沿任务排查，而不是只换摘要提示词
 
-## 5. 进入 `queryLoop` 后，先瘦身历史，再发模型请求
+分页任务在压缩后改坏了接口，可以沿以下顺序定位：
 
-`query.ts` 中最值得学习的一段，是每次循环进入 API 调用前的处理顺序。
+1. 找到原始约束，确认它来自用户输入还是项目指令。若是子目录指令，确认加载条件确实发生。
+2. 检查压缩前实际可见材料。约束若根本没有进入请求，不能把责任归到摘要模型。
+3. 比较压缩结果与后续请求。摘要有约束但请求没有，问题可能在视图选择、拼接或恢复。
+4. 检查工具操作和文件差异。约束仍在而操作违反它，属于执行判断或约束检查问题。
+5. 若只在重启后出现，核查恢复父链、结果替换和目录相关状态，而不是只检查当前界面文字。
 
-当前源码近似：
+这条排查链分别观察信息产生、选择、变换、交付和使用，能把同一个“忘记了”的现象拆成不同原因。
 
-~~~text
-已有 messages
-        ↓
-取 compact boundary 之后仍然有效的历史
-        ↓
-Tool Result Budget
-        ↓
-History Snip（若启用）
-        ↓
-Microcompact
-        ↓
-Context Collapse（若启用）
-        ↓
-Auto Compact
-        ↓
-拼 System / User Context
-        ↓
-构造 Claude API request
-~~~
+## 本章小结
 
-这里没有一个单一的“压缩算法”。
+一次用户任务包含多次模型请求。程序在每次请求前形成模型视图，通过结果预算、条件性的历史处理和必要压缩控制输入；持久会话记录负责恢复，真实工具副作用则另有状态。理解上下文的关键不是记住全部压缩名称，而是能说明某次处理改了什么、留下什么、恢复时依赖什么。
 
-Claude Code 更像在不同成本层级上逐步处理 Context：
+## 🎯 面试怎么回答
 
-> **能局部删的先局部删；能保留结构的先保留结构；只有仍然过大时才做更重的全量摘要。**
+**问：Claude Code 怎样处理长任务上下文？**
 
----
+> 🎯 它不是只在消息过长时生成一次摘要。查询循环先从有效历史构造本次输入，处理工具结果预算，再按功能与触发条件执行裁剪、微压缩或其他投影，必要时建立完整压缩后的历史。不同处理可能影响本地消息、服务端有效输入和缓存，不能混为一层。正确性还要看任务约束、工具发现状态以及恢复父链是否保留；最终用继续执行后的任务结果验证，而不是只看摘要更短。
 
-## 6. Tool Result Budget：先处理最容易膨胀的东西
+## ⚠️ 高频易错点
 
-Coding Agent 的 Context 中，最容易突然变大的通常不是用户聊天，而是 Tool Result。
+- 会话有记录，不代表它进入了本次请求；界面可见也不代表服务端有效上下文相同。
+- 一个用户轮次可以包含多次模型调用；源码主循环不是工具调用后的递归函数链。
+- 功能开关后的调用入口，不等于该能力在所有发行版本默认启用。
+- 缩短上下文不等于减少真实错误。关键约束丢失后，后续调用再便宜也可能做错任务。
 
-例如测试输出几万行、Grep 找到大量匹配、Web / MCP 返回超大 JSON，或者 shell 输出完整构建日志。
+## 本章自测
 
-`query.ts` 在 Microcompact 前先调用 `applyToolResultBudget`。
+**任务一：区分状态。** 初始约束是“不改接口”，压缩摘要中仍有这条要求；重启后发出的实际请求没有摘要，而磁盘记录仍在。请指出已经确认的事实、优先检查的环节，以及为什么不能据此断言模型能力不足。答案应至少区分磁盘记录、恢复后的历史与本次请求。
 
-原因是：
+<details><summary>提示</summary>
 
-> 如果一个单独 Tool Result 已经异常巨大，就没必要先让更复杂的 Compaction 机制为它付费。
+不要从最终错误直接跳到摘要质量。先沿产生、恢复、选择、发送的顺序定位信息第一次消失的位置。
 
-这层处理还可以把替换记录持久化，保证 Resume 后看到的仍然是经过相同 content replacement（内容替换）的历史，而不是重新把原始超大结果塞回来。
+</details>
 
-因此 Tool Result Budget 既是 Context 优化，也是持久化语义的一部分。
+<details><summary>参考答案与解释</summary>
 
----
+已确认摘要生成时保留了约束，也确认记录未丢；未确认的是恢复过程是否选中了正确历史，以及 API 组装是否发送了它。优先检查压缩边界、父链和恢复后消息，再检查请求投影。模型没有收到约束时，不能把未遵守该约束当成模型已经看到却不理解的证据。
 
-## 7. Snip 和 Microcompact：不是每次都需要“总结整段对话”
+</details>
 
-### History Snip：直接裁掉不再需要的中间历史
+**任务二：换一个条件。** 本次没有发生完整压缩，只把一条大工具输出替换为文件引用。文件随后被清理。模型需要原输出中的精确错误行才能继续。请说明哪一步失去了证据、是否需要恢复整个聊天历史，以及两种可行的处理方式。
 
-History Snip（历史裁剪）是 feature-gated（功能开关控制）的路径。
+<details><summary>参考答案与解释</summary>
 
-它可以删除历史中间的部分，而不是从头到某个点全部摘要。
+问题在引用对应的材料不可用，不必先恢复整段聊天。可以从保留的权威位置重新读取原日志，或在条件允许且操作安全时重新执行测试取得新证据。不能编造原日志内容；重新执行得到的是新一次结果，应保留其执行条件，不能伪装成旧结果。
 
-这对工具密集型长任务很有价值：有些早期 Observation（观察结果）已经完全被后面的状态覆盖，继续保存意义不大。
+</details>
 
-但删除中间段会给 Resume 带来麻烦：后文 Engineering 篇会看到，Claude Code 的 transcript 是 `parentUuid` 链，Snip 必须把被删除区间两侧重新接起来，否则恢复会沿旧父链把被裁掉内容找回来，甚至把后续消息变成孤链。
-
-### Microcompact：优先清理旧 Tool Result
-
-`services/compact/microCompact.ts` 专门针对可以局部压缩的 Tool output。
-
-源码列出的典型可处理对象包括 Read、shell、Grep / Glob、Web Search / Fetch、Edit / Write 等。
-
-它的目标不是生成一个“整个会话摘要”，而是把已经失去高价值的旧工具细节从 Context 中拿掉。
-
-这符合 Coding Agent 的信息衰减规律：
-
-~~~text
-最初：
-测试有 47 个失败
-
-后来：
-只剩 1 个失败
-~~~
-
-到了后期，最初那 47 个失败的完整堆栈通常不再值得继续占用大量 Context。
-
----
-
-## 8. Cached Microcompact：Claude Code 对 Prompt Cache 的一个关键优化
-
-普通 Microcompact 会修改要发送的 Context。
-
-但源码中还有 Cached Microcompact（缓存微压缩），用于支持 cache editing（缓存编辑）的模型路径。
-
-这里最值得理解的是：
-
-> **它可以请求服务端删除旧的缓存 Tool Result，而本地 messages 不发生同样的内容改写。**
-
-`query.ts` 对这一点有非常明确的注释：cached microcompact 主要通过 `tool_use_id` 操作，并把 pending cache edits（待执行缓存编辑）交给 API 层。
-
-这样做的价值是：
-
-~~~text
-本地 transcript 保留完整事件
-        ↓
-服务端缓存前缀只删除低价值旧 Tool Result
-        ↓
-尽量不重写剩余前缀
-        ↓
-减少 cache miss 风险
-~~~
-
-这和“先生成一段新摘要，然后把所有历史替换掉”是完全不同的工程路径。
-
-因此 Prompt Cache 不是 Compaction 之后才考虑的性能指标，它直接影响 Claude Code 选择哪种压缩方式。
-
----
-
-## 9. Context Collapse：能核实接口，但不能脑补缺失内部实现
-
-当前镜像中的 `query.ts` 会在 Auto Compact 前调用 Context Collapse：
-
-~~~text
-contextCollapse.applyCollapsesIfNeeded(...)
-~~~
-
-Session Storage 还会持久化 Context Collapse commit 和 staged snapshot；Resume 时 `sessionRestore.ts` 会恢复这些记录。
-
-这说明 Context Collapse 确实参与了：
-
-~~~text
-运行时 Context 投影
-+
-持久化
-+
-Resume
-~~~
-
-但本镜像没有包含被引用的 `services/contextCollapse/*` 具体实现文件。
-
-因此我们能确定：
-
-> 它是一个在 Auto Compact 前运行、支持持久化恢复的粒度化 Context 折叠层。
-
-但不能声称知道缺失模块内部具体如何评分、如何生成 summary、如何调度 agent。文档到这里必须停在真实证据边界。
-
----
-
-## 10. Auto Compact：当局部瘦身不够时，才进入完整摘要迁移
-
-`services/compact/autoCompact.ts` 决定是否需要自动完整压缩。
-
-它不只是一个 token threshold（Token 阈值）。
-
-当前源码还会处理用户 / 配置是否禁用、当前 query source 是否允许、Context Collapse 是否已经负责主动 headroom（预留空间）、连续 Compaction failure（压缩失败），以及 Session Memory 是否可以先承担一部分压缩。
-
-特别值得注意的是 circuit breaker（熔断器）。
-
-源码记录连续失败次数，达到一定次数后不会在每个循环里继续疯狂尝试同样的 Auto Compact。注释明确提到，反复失败曾导致巨大的 API 浪费。
-
-所以成熟 Compaction 控制器不仅要问：
-
-> “现在够不够长？”
-
-还要问：
-
-> “这个恢复动作刚才已经失败几次了，继续尝试还有没有意义？”
-
----
-
-## 11. Standard Compact：用 forked agent 做语义总结，再建立新的边界
-
-标准 `compact.ts` 会启动一个 forked agent（分叉智能体）来总结历史。
-
-这条路径非常依赖 Prompt Cache。
-
-源码注释提到：Compaction fork 会显式共享 Prompt Cache；过去实验如果禁用共享，会出现非常高的 cache miss，并产生昂贵的新 cache creation（缓存创建）。
-
-因此完整压缩流程不是简单：
-
-~~~text
-history → summary
-~~~
-
-更接近：
-
-~~~text
-当前历史
-→ 选择需要总结 / 保留的部分
-→ forked compact query
-→ 得到 summary
-→ buildPostCompactMessages
-→ 产生 compact boundary
-→ 后续 API 只看 boundary 后的新上下文
-~~~
-
-如果连 compact request 自己都 prompt-too-long，源码还会按 API round group（API 轮组）逐步截掉最老部分再重试，而不是直接崩溃。
-
----
-
-## 12. Compact Boundary 为什么同时影响 UI、API 和 Resume
-
-Compaction 成功后会产生 compact boundary message（压缩边界消息）。
-
-它至少承担三种职责。
-
-**对 API**，`query.ts` 每次都从最近有效 compact boundary 后取消息，因此旧历史不会继续发给模型。
-
-**对 UI**，REPL 普通模式可以把当前消息列表重置到新边界；Fullscreen 模式为了 scrollback（回看）可以保留有限的压缩前历史，但源码仍然给这个 UI 历史设置上限，避免多天 Session 让 React 处理无限数组。
-
-**对 Transcript**，`recordTranscript` 对 boundary 前后的 `parentUuid` 关系做特殊处理，确保 Resume 时新的消息链真正从 compact 后状态继续，而不是又连回旧历史。
-
-所以 compact boundary 不是“UI 显示一条已压缩”。
-
-它是：
-
-> **模型历史、界面历史和持久化历史共同认可的一条语义边界。**
-
----
-
-## 13. Tool Search discovery 为什么还要跨 Compaction 保存
-
-Claude Code 的 Deferred Tool（延迟工具）使用 `tool_reference` 让模型动态发现工具。
-
-问题是：
-
-~~~text
-模型已经通过 ToolSearch 找到 mcp__calendar__create_event
-        ↓
-后面发生完整 Compaction
-        ↓
-包含 tool_reference 的旧消息被摘要掉
-        ↓
-系统会不会忘记这个 Tool 已经发现过？
-~~~
-
-`utils/toolSearch.ts::extractDiscoveredToolNames` 对这个问题有专门处理。
-
-Compact boundary 的 metadata 会携带：
-
-`preCompactDiscoveredTools`
-
-恢复模型可见 Tool Set 时，会把 Compaction 前已经发现的 Tool 加回来。
-
-这说明 Context Compaction 不能只保留自然语言“任务摘要”。
-
-它还要保留那些**决定未来模型协议状态的结构化信息**。
-
----
-
-## 14. Prompt Cache 不只是“命中率”，Claude Code 还会诊断为什么断了
-
-Claude Code 对 Prompt Cache 有专门的两阶段诊断：
-
-- `services/api/promptCacheBreakDetection.ts`
-
-发请求前，`recordPromptState` 会记录影响缓存的可见状态，例如 System Prompt、Tool Schema、model、cache_control、beta headers、fast mode、effort 和其他 request body 状态。
-
-这里不是要我们背字段，而是说明：
-
-> **Claude Code 把“Prompt 为什么变了”做成了可观测状态。**
-
-响应回来以后，`checkResponseForCacheBreak` 会比较本次和上次的 cache read tokens。
-
-如果 cache read 明显下降，它会尝试解释：
-
-- model 是否变了；
-- System Prompt 是否变了；
-- Tool Schema 是否增删 / 改动；
-- cache scope / TTL 是否变化；
-- beta 是否变化；
--还是客户端没有任何可见变化，更像服务端路由 / eviction（淘汰）。
-
-Cached Microcompact 造成的预期 cache deletion 会被单独识别，不误报成 cache break。
-
-这是一种非常成熟的 Context Observability（上下文可观测性）：
-
-> 不只是看“缓存差了”，而是把缓存退化和具体 Prompt 状态变化关联起来。
-
----
-
-## 15. 用一个任务把完整 Context 生命周期串起来
-
-用户输入：
-
-> “修复这个 flaky test，不能修改 API；如果相关目录有 CLAUDE.md，按里面的规则做。”
-
-REPL 构建当前 ToolUseContext、System Prompt、User Context 和 System Context。顶层 CLAUDE.md 进入 User Context。
-
-第一次 `queryLoop` 发现历史还很短，不需要 Auto Compact。模型看到测试工具，决定运行测试。
-
-Tool Result 很大，但仍在预算内，写回 messages。
-
-模型随后读取 `backend/payments/test_x.py`。这个文件路径触发 nested memory attachment，Runtime 发现 `backend/payments/CLAUDE.md`，把局部项目规则动态加入 Context，并记录已经加载过该路径。
-
-任务继续很久，旧测试输出开始占大量 Context。Microcompact 清理了已经失去价值的 Tool Result；如果支持 Cached Microcompact，还可以通过 cache editing 删除缓存中的旧结果而保持本地 transcript 不变。
-
-再继续增长时，Auto Compact 启动 forked agent 生成 summary，产生 compact boundary。Tool Search 已发现的 MCP Tool 集合被放进 boundary metadata，以免压缩后忘记。
-
-进程退出以后 Resume，Transcript loader 根据 compact boundary 与 parent chain 重建“当前真正有效的历史”，而不是把压缩前所有消息重新送进 API。
-
-最终正确性并不只是：
-
-> “压缩成功了。”
-
-而是：
-
-> **经过动态规则加载、很多 Tool Result、局部压缩、完整压缩和 Resume，最初‘不能修改公开 API’以及真正相关的目录规则仍然影响模型后续行为。**
-
-这才是 Context Lifecycle 应该评测的目标。
-
----
-
-## 16. 源码锚点
-
-建议按调用顺序回读：
-
-1. [`screens/REPL.tsx`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/screens/REPL.tsx)：交互式请求怎样准备 Context 并进入 `query()`。
-2. [`QueryEngine.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/QueryEngine.ts)：Headless / SDK 会话状态。
-3. [`query.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts)：完整 Context 瘦身与 Agent Loop。
-4. [`context.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/context.ts)：System / User Context 和 CLAUDE.md 入口。
-5. [`utils/attachments.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts)：动态 nested instructions、Memory / Skill attachments。
-6. [`services/compact/microCompact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/microCompact.ts)：Microcompact / Cached Microcompact。
-7. [`services/compact/autoCompact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/autoCompact.ts)：Auto Compact 决策和失败熔断。
-8. [`services/compact/compact.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts)：完整 summary compaction。
-9. [`services/api/claude.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts)：真正 Claude API request、Tool Schema、cache_control、cache_edits。
-10. [`services/api/promptCacheBreakDetection.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/promptCacheBreakDetection.ts)：Prompt Cache break 归因。
-11. [`utils/sessionStorage.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts)：compact / snip 对持久化链的影响。
-12. [`utils/toolSearch.ts`](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts)：discovered Tool 怎样跨 Compaction 保留。
-
-下一篇：[Claude Code Memory Lifecycle →](02-memory-lifecycle.md)
+[下一篇：记忆怎样跨轮次与会话发挥作用 →](02-memory-lifecycle.md)
