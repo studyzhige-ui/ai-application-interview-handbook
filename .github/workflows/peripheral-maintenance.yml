@@ -1,0 +1,55 @@
+name: Peripheral maintenance snapshot
+on:
+  push:
+    branches: [docs/peripheral-sync-20260928]
+    paths: [.github/workflows/peripheral-maintenance.yml]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  snapshot:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","Windows"]') || fromJSON('["ubuntu-latest"]') }}
+    timeout-minutes: 10
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Export tracked files and inspect branch ancestry
+        shell: python
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          import json, os, pathlib, subprocess, urllib.request, urllib.parse
+          repo=os.environ['REPOSITORY']
+          def api(path):
+              req=urllib.request.Request('https://api.github.com/repos/'+repo+'/'+path, headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json','User-Agent':'handbook-peripheral-audit'})
+              with urllib.request.urlopen(req) as response: return json.load(response)
+          def pages(path):
+              result=[]
+              for n in range(1,101):
+                  part=api(path+('&' if '?' in path else '?')+'per_page=100&page='+str(n))
+                  result.extend(part)
+                  if len(part)<100: return result
+              raise RuntimeError('Pagination bound exceeded')
+          main=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+          branches=pages('branches'); prs=pages('pulls?state=all')
+          audit={'main_sha':main,'branches':[],'open_prs':[p['number'] for p in prs if p['state']=='open']}
+          for b in branches:
+              name=b['name']; sha=b['commit']['sha']
+              ancestor=subprocess.run(['git','merge-base','--is-ancestor',sha,main],capture_output=True).returncode==0
+              matches=[{'number':p['number'],'title':p['title'],'merged_at':p['merged_at'],'merge_sha':p['merge_commit_sha'],'head_sha':p['head']['sha'],'state':p['state']} for p in prs if p['head']['ref']==name and p['head']['sha']==sha]
+              audit['branches'].append({'name':name,'sha':sha,'ancestor_of_main':ancestor,'prs':matches})
+          out=pathlib.Path('_peripheral_audit'); out.mkdir(exist_ok=True)
+          (out/'branch-audit.json').write_text(json.dumps(audit,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
+          subprocess.run(['git','archive','--format=zip','--output='+str(out/'main-snapshot.zip'),main],check=True)
+          print(json.dumps(audit,ensure_ascii=False,indent=2))
+      - uses: actions/upload-artifact@v4
+        with:
+          name: peripheral-main-snapshot
+          path: _peripheral_audit/
+          retention-days: 7
