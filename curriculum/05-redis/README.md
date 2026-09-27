@@ -1,175 +1,83 @@
-# Redis｜缓存、短状态与分布式协调
+# Redis｜从存取数据到缓存、并发与恢复
 
-[← MySQL](../04-mysql/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [Vector Database →](../06-vector-db/README.md)
+[← MySQL](../04-mysql/README.md) · [课程目录](../README.md) · [学习路线](../../guide/learning-path.md) · [Backend →](../03-backend-engineering/README.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
-> **教材：24 个连续知识小板块** · **HUMAN-A Canonical：19** · **独立来源覆盖：69**  
-> **质量门：✅ Granularity / Coverage / Content Depth**
+Redis 可以保存常用数据副本，也可以供多个应用共享计数、会话和短期记录。本课程从键、值和操作开始，逐步解释这些用途怎样实现，何时会失效，以及丢失、并发和恢复会改变什么。
 
-掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。
+**不预设应用开发语言。** 正文中的 Redis 命令不属于 Python、Java 或某种框架；任何语言的客户端都需要理解同样的数据规则。阅读时先看过程、预测结果，不必先安装工具或读完长脚本。
 
----
+课程目标版本为 **Redis Open Source 8.10.2**。正文区分通用机制、版本相关能力和业务策略，官方资料见[版本与参考入口](../../references/redis/README.md)。具体命令和客户端实验在[独立实验室](examples/README.md)承接。
 
-## 1. 这个模块解决什么
-
-掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。
-
-学习目标不是记住一组名词，而是能稳定回答：
+## 1. 沿一个问题逐步深入
 
 ```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
+Redis 是什么 → 怎样存取 → 何时过期或淘汰
+    → 怎样用缓存减少重复读取 → 失效和更新后怎么办
+    → 请求怎样执行、内存怎样使用、多步操作怎样组合
+    → 重启怎样恢复、副本怎样接替、数据怎样分片
+    → 锁、消息、限流与会话怎样正确使用
+    → 如何定位问题并完成一份设计
 ```
 
----
+先看见数据怎样变化，再学习内部实现和分布式行为。章节不按命令名单或面经热度排列，也不把安装命令和工具参数当作每章的进入门槛。
 
-## 2. 在十板块中的位置
+## 2. 正式阅读顺序
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → **Redis** → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+### 认识数据与生命周期
 
-模块角色：**Data / 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。**
+[01｜Redis 是什么，为什么系统里还需要它](docs/01-Redis是什么.md)  
+[02｜同一份数据，怎样保存才方便使用](docs/02-键与常用数据类型.md)  
+[03｜数据什么时候应该消失](docs/03-过期与内存淘汰.md)  
 
----
+### 围绕一份缓存理解读取、更新和失效
 
-## 3. 固定课程原则
+[04｜把 Redis 用作缓存：读与更新怎样配合](docs/04-缓存读取与更新.md)  
+[05｜缓存帮不上忙时，怎样保护数据来源](docs/05-缓存故障与流量保护.md)  
+[06｜本地缓存与 AI 结果缓存：什么可以复用](docs/06-多级缓存与结果复用.md)  
 
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+### 理解执行成本与多步修改
 
-同时固定区分：
+[07｜Redis 为什么快，请求又为什么会慢](docs/07-执行模型与Pipeline.md)  
+[08｜内存怎样花出去：编码、大小与数据表示](docs/08-内部编码与数据规模.md)  
+[09｜多步修改怎样避免互相干扰](docs/09-事务与服务端逻辑.md)  
 
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
+### 理解恢复、副本和分片
 
-所以本模块是 **19 道 Canonical → 24 个教材知识块**，两者不需要一一对应。
+[10｜服务重启后，数据从哪里回来](docs/10-持久化与恢复.md)  
+[11｜有了副本，故障时怎样接替服务](docs/11-复制与Sentinel.md)  
+[12｜一台装不下以后，数据怎样分到多台](docs/12-Cluster与分片.md)  
 
----
+### 组合机制，解释实际状态与故障
 
-## 4. 正式学习主线
+[13｜锁过期了，旧工作者为什么还可能继续](docs/13-分布式锁.md)  
+[14｜消息发出以后，怎样知道还有什么没做](docs/14-通知与Streams.md)  
+[15｜多个服务怎样共同守住一份限额](docs/15-共享限流.md)  
+[16｜登录、最近消息和任务进度应该怎样保存](docs/16-会话与运行状态.md)  
+[17｜出问题时，从哪里找到证据](docs/17-安全与问题定位.md)  
+[18｜从需求出发，完成一份 Redis 设计](docs/18-综合设计与回顾.md)  
 
-```text
-Key / Data Structure / Encoding → Runtime / TTL / Eviction → Cache Failure / HotKey → RDB / AOF / Replication / Sentinel / Cluster → Transaction / Pipeline / Lua / Distributed Lock → Streams / Session / Rate Limit / Troubleshooting
-```
+## 3. 读、练、回顾分别做什么
 
-这个顺序按知识依赖组织，而不是按面经频率排序。
+正文先解释一个问题和它的过程，再用少量命令、对照表或时间线帮助核对。每章的小结、面试回答、易错点和折叠自测，都对应已经展开的核心概念。
 
----
+[实验室](examples/labs.md)保存连续操作、逐条回复和完整 Lua。理解某项机制后再运行对应组；较长实现没有被删除，但不要求为了看懂缓存或锁先学习整段程序。
 
-## 5. 正式课程目录
+[Review](review/README.md)用于第二遍重建关系和推演故障；[面试题](interview/高频面试题.md)、[易错点](interview/面试易错点.md)和[速查卡](interview/面试前速查表.md)分别训练表达、纠偏和回忆，不替代正文。
 
-### Part A｜数据模型与 Runtime
+## 4. 面经怎样帮助学习
 
-1. [Redis 在 AI Application 中负责什么](docs/01-Redis在AI应用中的职责.md)
-2. [Keyspace、Command 与基本执行模型](docs/02-Keyspace与Command模型.md)
-3. [String / Hash / List / Set / ZSet](docs/03-核心数据结构.md)
-4. [Bitmap / Bitfield / HyperLogLog / Geo / Stream](docs/04-扩展数据结构.md)
-5. [底层编码与内存模型](docs/05-底层编码与内存模型.md)
-6. [Redis Runtime 与性能模型：为什么快、Event Loop 与阻塞边界](docs/06-RedisRuntime与性能模型.md)
+真人问题用于检验主线是否覆盖真正会出错的机制，例如缓存副本为何重新变旧、在线数据迁移怎样处理并发更新、租约过期后的旧执行者为何仍危险，以及有限窗口与完整历史有什么差别。具体公司、数字和题面保留在证据与 interview 层，不作为课程目录或正文标题。
 
-### Part B｜内存生命周期与 Cache
+问题在机制所属位置深化，不另开“最新面经补充篇”。Redis 的冻结主责索引仍见 [Canonical](../../interview/canonical/redis.md)；该索引的来源计数不是全部当前面经的重新统计。本次稿件的实际审阅、证据继承与未完成核验，放在[维护记录](../../guide/project/redis-reader-restructure-2026-09-27.md)，不要求读者先读审查日志。
 
-7. [TTL 与过期删除](docs/07-TTL与过期删除.md)
-8. [maxmemory、Eviction 与内存压力](docs/08-Eviction与内存管理.md)
-9. [Cache 设计与故障模式：Key、TTL、穿透、击穿与雪崩](docs/09-Cache设计与缓存故障.md)
-10. [BigKey 与 HotKey](docs/10-BigKey与HotKey.md)
+## 5. 本模块与其他模块的分工
 
-### Part C｜Persistence、HA 与 Scale
+本模块讲清 Redis 数据模型、期限、执行、持久化、复制、分片与相应操作边界。涉及业务数据库，只交代当前理解必须知道的角色；数据库内部事务由 MySQL 展开，跨系统的可靠任务与一致性组合由 Backend 承接。
 
-11. [RDB 与 AOF](docs/11-RDB与AOF.md)
-12. [Replication：Primary / Replica](docs/12-Replication.md)
-13. [Sentinel 与自动 Failover](docs/13-Sentinel.md)
-14. [Redis Cluster、Hash Slot 与 Reshard](docs/14-Cluster与HashSlot.md)
+Agent 的记忆、工具和恢复属于上层执行语义，Redis 可以作为存储或协调的一部分，不代替这些设计。搜索和向量是 Redis 也具备的产品能力，但采用哪种索引与检索策略，应按任务需要到对应课程深入，而不是把本模块写成全部产品功能目录。
 
-### Part D｜原子性与分布式协调
+## 6. 实验与验证边界
 
-15. [Transaction：MULTI / EXEC / WATCH](docs/15-Transaction与WATCH.md)
-16. [Pipeline：降低 RTT，不等于 Transaction](docs/16-Pipeline.md)
-17. [Lua / Redis Functions 与服务器端原子逻辑](docs/17-Lua与Functions.md)
-18. [Redis 分布式锁：Acquire、Lease、Renewal、Failover 与 Fencing](docs/18-分布式锁与正确性.md)
+正文中的小例子和实验室使用统一命令源。离线检查能发现结构、预期和算术错误；真实命令结果、Lua、持久化与故障切换需要各自的运行环境验证。当前交付的实际执行记录随修订包附带，不用“命令写完整”冒充“已经跑过”。
 
-### Part E｜Backend / AI 场景
-
-19. [Pub/Sub、Streams 与消息边界](docs/19-PubSub与Streams.md)
-20. [Multi-level Cache 与 Semantic / Result Cache](docs/20-多级缓存与语义缓存.md)
-21. [Session、Conversation 与 Agent State Store 边界](docs/21-Session与AgentState.md)
-22. [Redis 实现 Rate Limit](docs/22-Redis限流.md)
-23. [Security、Latency 与 Production Troubleshooting](docs/23-Security与Troubleshooting.md)
-24. [Redis in AI System Design](docs/24-Redis在AI系统设计中的位置.md)
-
----
-
-## 6. 真人面经怎样影响本模块
-
-Canonical 统计基线（`S001–S279`）：本模块有 **19 道 Primary Canonical、69 个独立 HUMAN-A 招聘流程覆盖**。
-
-重点市场信号包括：
-
-- Distributed Lock 与 Correctness
-- Cache Penetration / Breakdown / Avalanche
-- Core Data Structures
-- BigKey / HotKey
-- Lua / Atomicity
-- HA / Cluster
-
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
-
----
-
-## 7. 模块边界
-
-- Redis 数据结构、TTL、持久化、高可用与锁实现归 Redis。
-- DB + Cache 一致性、通用 Rate Limit 与 MQ 选型归 AI Backend Engineering。
-- Agent Checkpoint / Resume 的执行语义归 Agent Harness。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview 与证据入口
-
-| 入口 | 链接 | 用途 |
-|---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
-
-研究与质量证据：
-
-- [Canonical Questions](../../interview/canonical/redis.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
-
----
-
-## 9. 推荐学习方式
-
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
-
-1. **第一遍：建立因果链。** 按 `docs/01 → 24` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
-
----
-
-## 10. 教材状态
-
-```text
-docs/      ✅ 01–24 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Content Depth       ✅
-```
-
-下一环：[Vector Database](../06-vector-db/README.md)。
+章节编号表达阅读顺序，不表达验证等级。能解释为什么选、怎样发生、失败后还知道什么，并用适当实验核对，才是本模块的学习目标。
