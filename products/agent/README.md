@@ -47,7 +47,7 @@ README.md                   系统地图、源码快照、关键模块与阅读�
 
 ## 4. 四个产品的架构差异
 
-四个产品都实现了 Context、Tool、Persistence、Permission 和 Multi-Agent 等能力，但它们围绕不同的运行中心组织这些机制。
+四个学习模块使用相同的观察问题进行对照；具体能力是否实现、默认开启或可用，须以各自固定快照和入口条件判断，不能从同名栏目推导能力等价。
 
 | 产品 | 核心架构 | 状态与模型视图 | 关键边界 |
 |---|---|---|---|
@@ -100,3 +100,14 @@ Prompt 中出现但没有安装入口、调用方或测试支持的概念，不�
 本目录的学习目标是：
 
 > **输入怎样变成模型可见上下文，长期信息怎样变成记忆，可执行能力怎样安全地变成工具，以及整个系统怎样在失败、超大规模与长期运行下保持可恢复、可诊断、可验证。**
+
+<!-- product-inventory:start -->
+## 模块范围与访问边界
+
+- [Claude Code](claude-code/README.md)：4 篇专题正文，快照 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。
+- [Codex](codex/README.md)：4 篇专题正文，快照 `openai/codex@67a709665ac7b50311b93e32612c9a8281684787`。
+- [DeepSeek Harness](deepseek-harness/README.md)：4 篇专题正文，快照 `deepseek-ai/deepseek-harness@477b4f420553e8a52c2fbccc464d7561b239c443`。
+- [DeerFlow 2.0](deer-flow/README.md)：4 篇专题正文，快照 `bytedance/deer-flow@e2feca1e567d9bafce657de8ad8bc668bd7ad513`。
+
+Claude Code 使用学习用私有源码镜像，需相应访问权限；它不等同于可直接构建的官方完整仓库。其他产品也应区分源码快照、安装版本与实际运行验证。
+<!-- product-inventory:end -->

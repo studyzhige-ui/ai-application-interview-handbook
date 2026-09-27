@@ -95,8 +95,19 @@ for product_name in ("OpenAI Codex", "Claude Code", "DeepSeek Harness", "DeerFlo
         errors.append(f"products/agent/README.md: comparison missing {product_name}")
 
 # Current-state semantic checks.
-require("guide/knowledge-map.md", "## 04. [MySQL](../curriculum/04-mysql/README.md) — 19 blocks")
-require("guide/knowledge-map.md", "## 05. [Redis](../curriculum/05-redis/README.md) ✅ — 18 blocks")
+# Validate every current module heading against the explicit learning order.
+# Directory IDs are stable identifiers, not display ranks or quality badges.
+import json
+learning_order = json.loads(read("guide/learning-order.json"))["modules"]
+knowledge_map = read("guide/knowledge-map.md")
+for rank, item in enumerate(learning_order, 1):
+    directory = item["directory"]
+    expected = EXPECTED_BLOCKS["curriculum/" + directory]
+    pattern = (rf"^## {rank:02d}\. \[[^\]]+\]\(\.\./curriculum/"
+               + re.escape(directory)
+               + rf"/README\.md\) — {expected} 章$")
+    if len(re.findall(pattern, knowledge_map, re.M)) != 1:
+        errors.append(f"knowledge-map: heading/order/count mismatch for {directory}")
 forbid("interview/canonical/progress.md", "Agent23章")
 forbid("interview/canonical/progress.md", "roadmap/documentation-style-guide.md")
 forbid("interview/canonical/schema.md", "采集阶段已经结束")

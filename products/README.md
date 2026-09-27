@@ -68,3 +68,14 @@ Agent 类别包含四套成熟源码学习基线：
 Products 建议在对应 Curriculum 模块建立完整知识主线并完成 Review 后进入。Agent 产品的统一入口是 [Agent Products](agent/README.md)。
 
 第一次阅读一套产品时，优先保持产品内部的连续顺序，不按自己熟悉的术语跳着找文件；完成一套产品后，再进行跨产品比较。
+
+<!-- product-inventory:start -->
+## 模块范围与访问边界
+
+- [Claude Code](agent/claude-code/README.md)：4 篇专题正文，快照 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。
+- [Codex](agent/codex/README.md)：4 篇专题正文，快照 `openai/codex@67a709665ac7b50311b93e32612c9a8281684787`。
+- [DeepSeek Harness](agent/deepseek-harness/README.md)：4 篇专题正文，快照 `deepseek-ai/deepseek-harness@477b4f420553e8a52c2fbccc464d7561b239c443`。
+- [DeerFlow 2.0](agent/deer-flow/README.md)：4 篇专题正文，快照 `bytedance/deer-flow@e2feca1e567d9bafce657de8ad8bc668bd7ad513`。
+
+Claude Code 使用学习用私有源码镜像，需相应访问权限；它不等同于可直接构建的官方完整仓库。其他产品也应区分源码快照、安装版本与实际运行验证。
+<!-- product-inventory:end -->

@@ -18,3 +18,11 @@ Guide 负责跨模块导航与整个知识系统的一致性，不承载具体�
 - [Project Records](project/README.md)：迁移、专项修订和集成等项目演进记录。
 
 开发工作流与版本管理实践统一维护在 [Practice / Tooling](../practice/tooling/README.md)。
+
+<!-- learning-inventory:start -->
+## 导航事实来源
+
+[学习资源索引](navigation-index.md)汇总当前课程、产品、实践和资料入口；[学习顺序配置](learning-order.json)决定模块先后，[机器可读目录](navigation-index.json)由现有文件生成。
+
+维护时运行 `python tools/sync_outer_navigation.py --check` 检查漂移；先查看默认预览，再使用 `--apply` 更新。历史面经统计和正文不属于同步写入范围。
+<!-- learning-inventory:end -->

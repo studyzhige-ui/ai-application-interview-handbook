@@ -76,3 +76,13 @@ Role Family 去重 + 第一方 JD 正文
 审计分离三层状态：**Company Scan Coverage** 表示固定 69 家都有第一方招聘入口；**Target JD Presence** 表示 `HAS_TARGET_JDS / ZERO_TARGET_JDS / NEEDS_ENUMERATION`；**Recurring Runtime Certification** 表示本轮定时采集器已经实际完成该公司的分页 / 关键词穷举。三者不能互相冒充。
 
 Runtime Certification 还要求本轮 Browser / Feishu / Moka 缓存通过 `generated_at` freshness gate；过期缓存可以保留历史证据，但不能把本轮 Runtime 标成 `ENUMERATED`。
+
+<!-- outer-sync:start -->
+## 全仓外围导航同步
+
+- [`sync_outer_navigation.py`](sync_outer_navigation.py)：扫描全部 README 和共享导航，按实际文件更新学习顺序、当前章节数、资料及维护入口；默认只预览，`--check` 检查漂移，`--apply` 才写入。
+- [`sync_learning_navigation.py`](sync_learning_navigation.py)：复用已有的路线与前后导航转换，保留目录标识。
+- [`test_outer_navigation.py`](test_outer_navigation.py)：验证计数、保护边界、链接解析与重复运行。
+
+同步不会重新生成 Market / Canonical、修改课程正文或自动宣称实机验证通过。
+<!-- outer-sync:end -->

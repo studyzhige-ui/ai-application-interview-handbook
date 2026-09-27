@@ -2,7 +2,7 @@
 
 > 面向 **AI Application / AI Agent Engineer** 求职的一套 beginner-first 学习、成熟系统源码研读、工程实践、市场研究与面试训练系统。
 
-> **课程：✅ 10 个正式 Curriculum 模块 / V1** · **Products：✅ 4 个成熟 Agent 产品源码学习基线** · **市场：🟢 JD + HUMAN-A 持续监测** · **面试能力层：235 ACTIVE Canonical（统计基线见 Interview）**
+> **课程：10 个模块 / 175 篇正文** · **Products：4 套固定源码快照学习模块** · **市场：JD + HUMAN-A 证据** · **面试能力：235 ACTIVE Canonical（冻结统计基线见 Interview）**
 
 ## 快速入口
 
@@ -43,20 +43,20 @@ tools/        研究与质量分析怎样自动化
 
 ## 2. Curriculum｜十个正式知识模块
 
-| # | 模块 | 一句话职责 |
+| 学习顺序 | 模块 | 一句话职责 |
 |---:|---|---|
-| 01 | [Python Foundation](curriculum/01-python/README.md) | Python 语言、对象模型、结构化数据与并发 Runtime 基础 |
-| 02 | [FastAPI](curriculum/02-fastapi/README.md) | 把 Python Runtime 组织成可校验、可 Streaming、可部署的 AI Service |
-| 03 | [AI Backend Engineering](curriculum/03-backend-engineering/README.md) | 把模型、数据与 Agent Runtime 连接成可靠 Production Backend |
-| 04 | [MySQL](curriculum/04-mysql/README.md) | 结构化事实、事务、索引、并发与规模增长 |
-| 05 | [Redis](curriculum/05-redis/README.md) | Cache / Session / Rate Limit / Coordination 与内存生命周期 |
-| 06 | [Vector Database](curriculum/06-vector-db/README.md) | Embedding、ANN、过滤、索引生命周期与分布式 Vector DB |
-| 07 | [LLM Foundation](curriculum/07-llm-foundation/README.md) | Token、Transformer、Generation、KV Cache、Serving 与模型选择 |
-| 08 | [RAG](curriculum/08-rag/README.md) | Knowledge → Retrieval → Evidence → Evaluation 的完整链路 |
-| 09 | [Agent](curriculum/09-agent/README.md) | Loop、Tool、Context、Memory、State、Permission、Trace、Eval、Multi-Agent |
-| 10 | [System Design](curriculum/10-system-design/README.md) | 把前九个模块组合为可容量估算、可恢复、可观测、可演进系统 |
+| 01 | [Python Foundation](curriculum/01-python/README.md) | 名字与对象、数据容器、函数、资源和并发执行。 |
+| 02 | [FastAPI](curriculum/02-fastapi/README.md) | 请求与响应、数据校验、资源生命周期、流式交付与接口验证。 |
+| 03 | [MySQL](curriculum/04-mysql/README.md) | 表与查询、索引、事务、并发、恢复与数据增长。 |
+| 04 | [Redis](curriculum/05-redis/README.md) | 数据操作、生命周期、缓存、原子修改、持久化与高可用。 |
+| 05 | [AI Backend Engineering](curriculum/03-backend-engineering/README.md) | 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。 |
+| 06 | [Vector Database](curriculum/06-vector-db/README.md) | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
+| 07 | [LLM Foundation](curriculum/07-llm-foundation/README.md) | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
+| 08 | [RAG](curriculum/08-rag/README.md) | 从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。 |
+| 09 | [Agent](curriculum/09-agent/README.md) | 从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。 |
+| 10 | [System Design](curriculum/10-system-design/README.md) | 从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。 |
 
-正式顺序与 Module Exit Gate 见 [Learning Path](guide/learning-path.md)。
+目录编号是稳定路径标识；表格按推荐学习顺序排列。正式顺序与 Module Exit Gate 见 [Learning Path](guide/learning-path.md)。
 
 ---
 
@@ -122,6 +122,7 @@ Market 原始证据
 - [Agent Runtime / Harness 证据](references/agent/README.md)
 - [FastAPI 官方资料](references/fastapi/README.md)
 - [AI Backend Engineering 权威资料](references/backend-engineering/README.md)
+- [MySQL 官方资料](references/mysql/README.md)与[Redis 官方资料](references/redis/README.md)
 
 **References 不创造面试频率，不增加 HUMAN-A Source Count，也不替代 Products 的完整系统源码学习。**
 
@@ -157,3 +158,11 @@ Market 原始证据
 ```
 
 目录结构本身体现知识模型：**Curriculum 负责通用知识主干，Products 负责成熟系统理解，Practice 负责能力落地，Market 负责招聘证据，Interview 负责能力归一化，References 负责技术事实，Guide 负责导航与治理，Tools 负责自动化。**
+
+<!-- learning-inventory:start -->
+## 内容范围与验证边界
+
+课程正文数量由实际文件计算；Products 和 Coding 不计入这 175 篇。完整入口与数量见[学习资源索引](guide/navigation-index.md)。
+
+课程完成状态、源码阅读、数值实验、真实服务验证与生产验证分别以对应模块的记录为准；冻结面经统计不因文档重排而重算。
+<!-- learning-inventory:end -->

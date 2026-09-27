@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "sources": [
+    "guide/learning-order.json",
+    "curriculum/*/README.md",
+    "curriculum/*/docs/*.md",
+    "products/agent/*/README.md",
+    "products/agent/*/[0-9][0-9]-*.md",
+    "practice/coding/docs/*.md",
+    "references/*/README.md"
+  ],
+  "curriculum_chapters": 175,
+  "modules": [
+    {
+      "directory": "01-python",
+      "label": "Python",
+      "readme": "curriculum/01-python/README.md",
+      "chapter_count": 13,
+      "reading_order": [
+        "curriculum/01-python/docs/01-python基础与对象模型.md",
+        "curriculum/01-python/docs/02-核心数据类型与容器.md",
+        "curriculum/01-python/docs/03-可变对象-对象身份-深浅拷贝.md",
+        "curriculum/01-python/docs/04-函数-参数-作用域-闭包.md",
+        "curriculum/01-python/docs/05-lambda-推导式-常用内置函数.md",
+        "curriculum/01-python/docs/06-迭代器-生成器-yield.md",
+        "curriculum/01-python/docs/07-装饰器-上下文管理器.md",
+        "curriculum/01-python/docs/08-面向对象-魔术方法.md",
+        "curriculum/01-python/docs/09-异常-文件-模块与导入.md",
+        "curriculum/01-python/docs/10-结构化数据-JSON与校验.md",
+        "curriculum/01-python/docs/11-内存管理-垃圾回收-GIL.md",
+        "curriculum/01-python/docs/12-线程-进程-协程-async-await.md",
+        "curriculum/01-python/docs/13-常见数据结构与复杂度.md"
+      ],
+      "support": [
+        "curriculum/01-python/review/README.md",
+        "curriculum/01-python/interview/"
+      ]
+    },
+    {
+      "directory": "02-fastapi",
+      "label": "FastAPI",
+      "readme": "curriculum/02-fastapi/README.md",
+      "chapter_count": 16,
+      "reading_order": [
+        "curriculum/02-fastapi/docs/01-FastAPI职责与ASGI请求链路.md",
+        "curriculum/02-fastapi/docs/02-Routing与APIContract.md",
+        "curriculum/02-fastapi/docs/03-Pydantic与数据契约.md",
+        "curriculum/02-fastapi/docs/04-Dependency与Middleware.md",
+        "curriculum/02-fastapi/docs/05-ResourceLifecycle.md",
+        "curriculum/02-fastapi/docs/06-AsyncExecution与BlockingBoundary.md",
+        "curriculum/02-fastapi/docs/07-Streaming与SSE.md",
+        "curriculum/02-fastapi/docs/08-WebSocket与EventProtocol.md",
+        "curriculum/02-fastapi/docs/09-Security与TenantContext.md",
+        "curriculum/02-fastapi/docs/10-ExternalResourceIntegration.md",
+        "curriculum/02-fastapi/docs/11-BackgroundTask与Upload.md",
+        "curriculum/02-fastapi/docs/12-TimeoutCancellation与Disconnect.md",
+        "curriculum/02-fastapi/docs/13-Testing.md",
+        "curriculum/02-fastapi/docs/14-Observability与Performance.md",
+        "curriculum/02-fastapi/docs/15-Deployment与GracefulShutdown.md",
+        "curriculum/02-fastapi/docs/16-AIServicePatterns.md"
+      ],
+      "support": [
+        "curriculum/02-fastapi/review/README.md",
+        "curriculum/02-fastapi/interview/",
+        "curriculum/02-fastapi/examples/README.md"
+      ]
+    },
+    {
+      "directory": "04-mysql",
+      "label": "MySQL",
+      "readme": "curriculum/04-mysql/README.md",
+      "chapter_count": 19,
+      "reading_order": [
+        "curriculum/04-mysql/docs/01-数据库与关系表.md",
+        "curriculum/04-mysql/docs/02-单表查询与增删改.md",
+        "curriculum/04-mysql/docs/03-数据类型约束与表关系.md",
+        "curriculum/04-mysql/docs/04-关联查询与分组统计.md",
+        "curriculum/04-mysql/docs/05-SQL执行与索引基础.md",
+        "curriculum/04-mysql/docs/06-B+树与数据组织.md",
+        "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md",
+        "curriculum/04-mysql/docs/08-执行计划与慢查询.md",
+        "curriculum/04-mysql/docs/09-事务与ACID.md",
+        "curriculum/04-mysql/docs/10-隔离级别与MVCC.md",
+        "curriculum/04-mysql/docs/11-并发修改锁与死锁.md",
+        "curriculum/04-mysql/docs/12-日志提交与恢复.md",
+        "curriculum/04-mysql/docs/13-分页与查询成本.md",
+        "curriculum/04-mysql/docs/14-主键索引与表结构演进.md",
+        "curriculum/04-mysql/docs/15-批量写入与写入成本.md",
+        "curriculum/04-mysql/docs/16-复制与读写分离.md",
+        "curriculum/04-mysql/docs/17-CDC与下游同步.md",
+        "curriculum/04-mysql/docs/18-分片与扩容.md",
+        "curriculum/04-mysql/docs/19-AI应用数据建模.md"
+      ],
+      "support": [
+        "curriculum/04-mysql/review/README.md",
+        "curriculum/04-mysql/interview/",
+        "curriculum/04-mysql/examples/README.md"
+      ]
+    },
+    {
+      "directory": "05-redis",
+      "label": "Redis",
+      "readme": "curriculum/05-redis/README.md",
+      "chapter_count": 18,
+      "reading_order": [
+        "curriculum/05-redis/docs/01-Redis是什么.md",
+        "curriculum/05-redis/docs/02-键与常用数据类型.md",
+        "curriculum/05-redis/docs/03-过期与内存淘汰.md",
+        "curriculum/05-redis/docs/04-缓存读取与更新.md",
+        "curriculum/05-redis/docs/05-缓存故障与流量保护.md",
+        "curriculum/05-redis/docs/06-多级缓存与结果复用.md",
+        "curriculum/05-redis/docs/07-执行模型与Pipeline.md",
+        "curriculum/05-redis/docs/08-内部编码与数据规模.md",
+        "curriculum/05-redis/docs/09-事务与服务端逻辑.md",
+        "curriculum/05-redis/docs/10-持久化与恢复.md",
+        "curriculum/05-redis/docs/11-复制与Sentinel.md",
+        "curriculum/05-redis/docs/12-Cluster与分片.md",
+        "curriculum/05-redis/docs/13-分布式锁.md",
+        "curriculum/05-redis/docs/14-通知与Streams.md",
+        "curriculum/05-redis/docs/15-共享限流.md",
+        "curriculum/05-redis/docs/16-会话与运行状态.md",
+        "curriculum/05-redis/docs/17-安全与问题定位.md",
+        "curriculum/05-redis/docs/18-综合设计与回顾.md"
+      ],
+      "support": [
+        "curriculum/05-redis/review/README.md",
+        "curriculum/05-redis/interview/",
+        "curriculum/05-redis/examples/README.md"
+      ]
+    },
+    {
+      "directory": "03-backend-engineering",
+      "label": "Backend",
+      "readme": "curriculum/03-backend-engineering/README.md",
+      "chapter_count": 22,
+      "reading_order": [
+        "curriculum/03-backend-engineering/docs/01-AIBackend职责与RequestPath.md",
+        "curriculum/03-backend-engineering/docs/14-DataLayering与StateOwnership.md",
+        "curriculum/03-backend-engineering/docs/02-TCPTLS与HTTPVersions.md",
+        "curriculum/03-backend-engineering/docs/03-ServiceCommunication与StreamingReliability.md",
+        "curriculum/03-backend-engineering/docs/04-Concurrency与ThreadPool.md",
+        "curriculum/03-backend-engineering/docs/05-ConnectionPool与ResourceCapacity.md",
+        "curriculum/03-backend-engineering/docs/06-Backpressure与RateLimit.md",
+        "curriculum/03-backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md",
+        "curriculum/03-backend-engineering/docs/09-APIIdempotency与SideEffect.md",
+        "curriculum/03-backend-engineering/docs/08-RetryCircuitBreaker与Failover.md",
+        "curriculum/03-backend-engineering/docs/10-MQ与DeliverySemantics.md",
+        "curriculum/03-backend-engineering/docs/11-KafkaPartition与Backlog.md",
+        "curriculum/03-backend-engineering/docs/12-ReliableAsyncTask.md",
+        "curriculum/03-backend-engineering/docs/13-Consistency与Compensation.md",
+        "curriculum/03-backend-engineering/docs/15-AuthSession与TenantBoundary.md",
+        "curriculum/03-backend-engineering/docs/21-BackendSecurity.md",
+        "curriculum/03-backend-engineering/docs/16-ServiceDiscovery与LoadBalancing.md",
+        "curriculum/03-backend-engineering/docs/17-Observability与PerformanceDiagnosis.md",
+        "curriculum/03-backend-engineering/docs/18-LinuxTroubleshooting.md",
+        "curriculum/03-backend-engineering/docs/19-ContainerK8s与Deployment.md",
+        "curriculum/03-backend-engineering/docs/20-ConfigRelease与ServiceEvolution.md",
+        "curriculum/03-backend-engineering/docs/22-CrossLanguageRuntimeMapping.md"
+      ],
+      "support": [
+        "curriculum/03-backend-engineering/review/README.md",
+        "curriculum/03-backend-engineering/interview/",
+        "curriculum/03-backend-engineering/examples/README.md"
+      ]
+    },
+    {
+      "directory": "06-vector-db",
+      "label": "Vector DB",
+      "readme": "curriculum/06-vector-db/README.md",
+      "chapter_count": 16,
+      "reading_order": [
+        "curriculum/06-vector-db/docs/01-VectorDB在AI应用中的职责.md",
+        "curriculum/06-vector-db/docs/02-VectorSpace与Similarity.md",
+        "curriculum/06-vector-db/docs/03-ExactSearch与ANN.md",
+        "curriculum/06-vector-db/docs/04-ANN索引谱系.md",
+        "curriculum/06-vector-db/docs/05-HNSW机制与调优.md",
+        "curriculum/06-vector-db/docs/06-IVF原理.md",
+        "curriculum/06-vector-db/docs/07-Quantization与PQ.md",
+        "curriculum/06-vector-db/docs/08-IndexSelection.md",
+        "curriculum/06-vector-db/docs/09-Vector数据建模.md",
+        "curriculum/06-vector-db/docs/10-MetadataFilter.md",
+        "curriculum/06-vector-db/docs/11-Partition与TenantIsolation.md",
+        "curriculum/06-vector-db/docs/12-VectorIndex生命周期.md",
+        "curriculum/06-vector-db/docs/13-分布式VectorDB.md",
+        "curriculum/06-vector-db/docs/14-性能容量与Production诊断.md",
+        "curriculum/06-vector-db/docs/15-产品与架构选型.md",
+        "curriculum/06-vector-db/docs/16-GraphDB边界与系统设计.md"
+      ],
+      "support": [
+        "curriculum/06-vector-db/review/README.md",
+        "curriculum/06-vector-db/interview/",
+        "curriculum/06-vector-db/labs/README.md"
+      ]
+    },
+    {
+      "directory": "07-llm-foundation",
+      "label": "LLM Foundation",
+      "readme": "curriculum/07-llm-foundation/README.md",
+      "chapter_count": 14,
+      "reading_order": [
+        "curriculum/07-llm-foundation/docs/01-LLMFoundation在AI应用中的职责.md",
+        "curriculum/07-llm-foundation/docs/02-TokenContext与LongContext.md",
+        "curriculum/07-llm-foundation/docs/03-TransformerBlock.md",
+        "curriculum/07-llm-foundation/docs/04-Attention与Position.md",
+        "curriculum/07-llm-foundation/docs/05-Generation与Decoding.md",
+        "curriculum/07-llm-foundation/docs/06-KVCache与PrefillDecode.md",
+        "curriculum/07-llm-foundation/docs/07-ServingEngine与性能.md",
+        "curriculum/07-llm-foundation/docs/08-ModelAPI与Selection.md",
+        "curriculum/07-llm-foundation/docs/09-Embedding与Reranker.md",
+        "curriculum/07-llm-foundation/docs/10-MultimodalFoundation.md",
+        "curriculum/07-llm-foundation/docs/11-PromptEngineering.md",
+        "curriculum/07-llm-foundation/docs/12-Hallucination与干预边界.md",
+        "curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md",
+        "curriculum/07-llm-foundation/docs/14-PostTraining与Distillation.md"
+      ],
+      "support": [
+        "curriculum/07-llm-foundation/review/README.md",
+        "curriculum/07-llm-foundation/interview/",
+        "curriculum/07-llm-foundation/labs/README.md"
+      ]
+    },
+    {
+      "directory": "08-rag",
+      "label": "RAG",
+      "readme": "curriculum/08-rag/README.md",
+      "chapter_count": 14,
+      "reading_order": [
+        "curriculum/08-rag/docs/01-RAG职责与完整链路.md",
+        "curriculum/08-rag/docs/02-CorpusGovernance.md",
+        "curriculum/08-rag/docs/03-DocumentProcessing.md",
+        "curriculum/08-rag/docs/04-ChunkingDesign.md",
+        "curriculum/08-rag/docs/05-AdvancedChunkStructure.md",
+        "curriculum/08-rag/docs/06-QueryPlanning.md",
+        "curriculum/08-rag/docs/07-RetrievalStack.md",
+        "curriculum/08-rag/docs/08-Rerank与CandidateBudget.md",
+        "curriculum/08-rag/docs/09-EvidenceDelivery.md",
+        "curriculum/08-rag/docs/10-RetrievalEvaluation.md",
+        "curriculum/08-rag/docs/11-EndToEndQualityEngineering.md",
+        "curriculum/08-rag/docs/12-ProductionGovernance.md",
+        "curriculum/08-rag/docs/13-ScaleCostObservability.md",
+        "curriculum/08-rag/docs/14-GraphRAG与AgenticRAG.md"
+      ],
+      "support": [
+        "curriculum/08-rag/review/README.md",
+        "curriculum/08-rag/interview/",
+        "curriculum/08-rag/examples/README.md"
+      ]
+    },
+    {
+      "directory": "09-agent",
+      "label": "Agent",
+      "readme": "curriculum/09-agent/README.md",
+      "chapter_count": 24,
+      "reading_order": [
+        "curriculum/09-agent/docs/01-AgentSystemAndResponsibilities.md",
+        "curriculum/09-agent/docs/02-WorkflowAutonomyAndRuntimeBoundary.md",
+        "curriculum/09-agent/docs/03-AgentLoopAndExecutionScopes.md",
+        "curriculum/09-agent/docs/04-ToolContractAndValidation.md",
+        "curriculum/09-agent/docs/05-ToolRegistrationAndDiscovery.md",
+        "curriculum/09-agent/docs/06-ToolExecutionAndFailure.md",
+        "curriculum/09-agent/docs/07-ToolConcurrencyAndCancellation.md",
+        "curriculum/09-agent/docs/08-PlanningGoalAndControl.md",
+        "curriculum/09-agent/docs/09-ContextAssemblyAndCache.md",
+        "curriculum/09-agent/docs/10-CompactionAndContinuation.md",
+        "curriculum/09-agent/docs/11-MemoryLifecycle.md",
+        "curriculum/09-agent/docs/12-StateHistoryAndPersistence.md",
+        "curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md",
+        "curriculum/09-agent/docs/14-PermissionApprovalAndSandbox.md",
+        "curriculum/09-agent/docs/15-InjectionAndContainment.md",
+        "curriculum/09-agent/docs/16-MCPArchitectureAndLifecycle.md",
+        "curriculum/09-agent/docs/17-SkillsHooksAndExtensions.md",
+        "curriculum/09-agent/docs/18-RoutingAndProviderResilience.md",
+        "curriculum/09-agent/docs/19-MultiAgentAndA2A.md",
+        "curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md",
+        "curriculum/09-agent/docs/21-EvaluationBenchmarkAndImprovement.md",
+        "curriculum/09-agent/docs/22-CodingAgentDelivery.md",
+        "curriculum/09-agent/docs/23-ProductionRuntime.md",
+        "curriculum/09-agent/docs/24-FrameworkSelection.md"
+      ],
+      "support": [
+        "curriculum/09-agent/review/README.md",
+        "curriculum/09-agent/interview/"
+      ]
+    },
+    {
+      "directory": "10-system-design",
+      "label": "System Design",
+      "readme": "curriculum/10-system-design/README.md",
+      "chapter_count": 19,
+      "reading_order": [
+        "curriculum/10-system-design/docs/01-SystemDesign职责与答题框架.md",
+        "curriculum/10-system-design/docs/02-Requirement与SLO.md",
+        "curriculum/10-system-design/docs/03-Workload与CapacityEstimation.md",
+        "curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md",
+        "curriculum/10-system-design/docs/05-DataFlow与StateMachine.md",
+        "curriculum/10-system-design/docs/06-Cache与HotPath.md",
+        "curriculum/10-system-design/docs/07-PartitionRouting与Fanout.md",
+        "curriculum/10-system-design/docs/08-Consistency与Idempotency.md",
+        "curriculum/10-system-design/docs/09-QueueBackpressure与LongRunningTask.md",
+        "curriculum/10-system-design/docs/10-Reliability与Overload.md",
+        "curriculum/10-system-design/docs/11-MultiTenancy与Security.md",
+        "curriculum/10-system-design/docs/12-ObservabilityEvaluation与Evolution.md",
+        "curriculum/10-system-design/docs/13-HighConcurrencyTransactionalSystems.md",
+        "curriculum/10-system-design/docs/14-RealtimeReadHeavySystems.md",
+        "curriculum/10-system-design/docs/15-LargeScaleDataProcessingSystems.md",
+        "curriculum/10-system-design/docs/16-LLMGateway与MultiTenantAIPlatform.md",
+        "curriculum/10-system-design/docs/17-EnterpriseRAGSystemDesign.md",
+        "curriculum/10-system-design/docs/18-ProductionAgentBackend.md",
+        "curriculum/10-system-design/docs/19-VerticalAIAgentPatterns.md"
+      ],
+      "support": [
+        "curriculum/10-system-design/review/README.md",
+        "curriculum/10-system-design/interview/"
+      ]
+    }
+  ],
+  "products": [
+    {
+      "name": "Claude Code",
+      "readme": "products/agent/claude-code/README.md",
+      "chapter_count": 4,
+      "chapters": [
+        "products/agent/claude-code/01-context-lifecycle.md",
+        "products/agent/claude-code/02-memory-lifecycle.md",
+        "products/agent/claude-code/03-tool-lifecycle.md",
+        "products/agent/claude-code/04-engineering-evaluation.md"
+      ],
+      "source_repository": "studyzhige-ui/claude-code-source-private",
+      "source_commit": "58231dcce408f805c645cfbc352d2876b517223b",
+      "private_mirror": true
+    },
+    {
+      "name": "Codex",
+      "readme": "products/agent/codex/README.md",
+      "chapter_count": 4,
+      "chapters": [
+        "products/agent/codex/01-context-lifecycle.md",
+        "products/agent/codex/02-memory-lifecycle.md",
+        "products/agent/codex/03-tool-lifecycle.md",
+        "products/agent/codex/04-engineering-evaluation.md"
+      ],
+      "source_repository": "openai/codex",
+      "source_commit": "67a709665ac7b50311b93e32612c9a8281684787",
+      "private_mirror": false
+    },
+    {
+      "name": "DeepSeek Harness",
+      "readme": "products/agent/deepseek-harness/README.md",
+      "chapter_count": 4,
+      "chapters": [
+        "products/agent/deepseek-harness/01-context-lifecycle.md",
+        "products/agent/deepseek-harness/02-memory-lifecycle.md",
+        "products/agent/deepseek-harness/03-tool-lifecycle.md",
+        "products/agent/deepseek-harness/04-engineering-evaluation.md"
+      ],
+      "source_repository": "deepseek-ai/deepseek-harness",
+      "source_commit": "477b4f420553e8a52c2fbccc464d7561b239c443",
+      "private_mirror": false
+    },
+    {
+      "name": "DeerFlow 2.0",
+      "readme": "products/agent/deer-flow/README.md",
+      "chapter_count": 4,
+      "chapters": [
+        "products/agent/deer-flow/01-context-lifecycle.md",
+        "products/agent/deer-flow/02-memory-lifecycle.md",
+        "products/agent/deer-flow/03-tool-lifecycle.md",
+        "products/agent/deer-flow/04-engineering-evaluation.md"
+      ],
+      "source_repository": "bytedance/deer-flow",
+      "source_commit": "e2feca1e567d9bafce657de8ad8bc668bd7ad513",
+      "private_mirror": false
+    }
+  ],
+  "coding_chapters": 9,
+  "references": [
+    "references/agent/README.md",
+    "references/backend-engineering/README.md",
+    "references/fastapi/README.md",
+    "references/llm-foundation/README.md",
+    "references/mysql/README.md",
+    "references/rag/README.md",
+    "references/redis/README.md",
+    "references/vector-db/README.md"
+  ],
+  "statistics_boundary": "Counts describe tracked learning files, not frozen Canonical questions or independent interview sources."
+}

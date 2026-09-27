@@ -1,0 +1,57 @@
+{
+  "python_version": "3.12.3",
+  "mode": "apply",
+  "curriculum_chapters": 175,
+  "module_counts": {
+    "01-python": 13,
+    "02-fastapi": 16,
+    "04-mysql": 19,
+    "05-redis": 18,
+    "03-backend-engineering": 22,
+    "06-vector-db": 16,
+    "07-llm-foundation": 14,
+    "08-rag": 14,
+    "09-agent": 24,
+    "10-system-design": 19
+  },
+  "product_chapters": 16,
+  "coding_chapters": 9,
+  "changed_files": [
+    "guide/project/README.md"
+  ],
+  "unchanged_protected_files": 511,
+  "protected_content_changes": [],
+  "idempotent": true,
+  "peripheral_pages_scanned": 65,
+  "local_links_checked": 1127,
+  "missing_paths": [],
+  "unresolved_anchors": [],
+  "conflict_markers": [],
+  "all_synchronized_pages": [
+    "README.md",
+    "curriculum/01-python/README.md",
+    "curriculum/09-agent/README.md",
+    "curriculum/10-system-design/README.md",
+    "guide/README.md",
+    "guide/audits/README.md",
+    "guide/knowledge-map.md",
+    "guide/learning-path.md",
+    "guide/navigation-index.json",
+    "guide/navigation-index.md",
+    "guide/project/README.md",
+    "practice/README.md",
+    "products/README.md",
+    "products/agent/README.md",
+    "references/README.md",
+    "tools/README.md"
+  ],
+  "main_baseline": "e36d24ecd32f5827ae538dfa1f11b566186f891a",
+  "protected_diff_vs_latest_main": [],
+  "regression_checks": {
+    "outer_navigation": 14,
+    "existing_learning_order": 6,
+    "llm_standard_library": 36,
+    "handbook_structure": "passed",
+    "repository_semantics": "passed"
+  }
+}

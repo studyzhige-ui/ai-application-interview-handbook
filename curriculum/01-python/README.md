@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-**Python Foundation** → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+**Python Foundation** → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
 Python 是后续模块的语言与运行时基础。前几章用数字、文本、名单等小例子解释规则；学会规则后，再连接检索、模型接口、工具参数等工程场景，不把后续模块知识作为第一章的隐藏门槛。
 
