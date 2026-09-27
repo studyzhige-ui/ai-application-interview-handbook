@@ -12,3 +12,15 @@
 - [Audit History](history/README.md)：旧版本审计快照，保留当时数字与结论。
 
 审计文件用于验证结构、粒度、覆盖、深度与质量门，不替代 Curriculum 正文。
+
+<!-- records-index:start -->
+## 专项记录补充索引
+
+按记录自身的基线、日期与验证范围阅读。历史 PASS 不代表此后所有正文已经再次验收；这里只补齐索引，不改写原记录。
+
+- [DeerFlow｜读者优先修订与源码核验记录](deerflow-reader-first-2026-09-27.md)
+- [DeepSeek Harness｜读者优先修订与验证记录](deepseek-harness-reader-first-2026-09-27.md)
+- [Coding 小节讲解与排版复审｜2026-09-24](coding-subsection-clarity-2026-09-24.md)
+- [Coding 阅读架构审查｜2026-09-23](coding-reader-first-2026-09-23.md)
+- [Final Quality Audit｜v1.0 终局质量审计](history/final-quality-audit-2026-09-12.md)
+<!-- records-index:end -->

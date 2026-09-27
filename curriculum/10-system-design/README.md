@@ -1,10 +1,10 @@
 # System Design｜AI Application / Agent Production 系统设计
 
-[← Agent Harness / Runtime](../09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md)
+[← Agent](../09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
+> **课程范围：19 篇正式正文**  
 > **教材：19 个连续知识小板块** · **HUMAN-A Canonical：24** · **独立来源覆盖：71**  
-> **质量门：✅ Granularity / Coverage / Content Depth**
+> **质量说明：** 历史审查与当前验证范围分别记录，不以目录完整代替阅读和运行验收。
 
 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
 
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → **System Design**
+[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → **System Design**
 
 模块角色：**Integration / 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。**
 

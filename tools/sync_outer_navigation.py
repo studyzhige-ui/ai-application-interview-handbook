@@ -90,6 +90,7 @@ def markdown_links(text: str):
 def resolve(root: Path, page: Path, href: str):
     value=urlsplit(href)
     if value.scheme or value.netloc: return None
+    if not value.path: return page.resolve(),unquote(value.fragment)
     base=root if value.path.startswith('/') else page.parent
     return (base/unquote(value.path).lstrip('/')).resolve(),unquote(value.fragment)
 
@@ -252,7 +253,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
         base=text.split('<!-- records-index:start -->')[0]
         linked={resolve(root,root/path,h)[0] for _,h in markdown_links(base) if resolve(root,root/path,h)}
         records=[p for p in (root/path).parent.rglob('*.md') if p.name!='README.md' and p not in linked]
-        records.sort(key=lambda p:(re.findall(r'20\d{2}-\d{2}-\d{2}',p.name) or ['0000'])[0],reverse=True)
+        records.sort(key=lambda p:((re.findall(r'20\d{2}-\d{2}-\d{2}',p.name) or ['0000'])[0],p.as_posix()),reverse=True)
         items=[f'- [{title(p)}]({rel(path,p.relative_to(root).as_posix())})' for p in records]
         intro='按记录自身的基线、日期与验证范围阅读。历史 PASS 不代表此后所有正文已经再次验收；这里只补齐索引，不改写原记录。'
         text=block(text,'records-index','## 专项记录补充索引',intro+'\n\n'+'\n'.join(items))
@@ -314,7 +315,7 @@ def main():
     if args.report:
         args.report.parent.mkdir(parents=True,exist_ok=True);args.report.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')
     print(json.dumps(result,ensure_ascii=False,indent=2))
-    if checks['missing_paths'] or checks['conflict_markers']:return 2
+    if checks['missing_paths'] or checks['unresolved_anchors'] or checks['conflict_markers']:return 2
     if args.apply and not result['idempotent']:return 2
     return 1 if args.check and changes else 0
 

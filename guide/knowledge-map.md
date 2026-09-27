@@ -1,8 +1,8 @@
 # AI Application Engineer｜十板块知识地图
 
-[← Handbook 总目录](../README.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [当前质量审计](audits/final-quality-audit.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
+[← Handbook 总目录](../README.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [审计记录索引](audits/README.md) · [跨模块术语表](terminology-glossary.md) · [课程进度](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
 
-> 十个一级模块已经全部完成第一版系统教材。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
+> 本页按当前正式文件描述十个模块，不以历史验收状态替代后续版本验证。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
 
 ## 总路线
 
@@ -32,54 +32,47 @@ Programming Fundamentals → Python Coding → ACM → Data Structures → Probl
 
 ## 总览
 
-| # | 模块 | Blocks | Canonical | 核心角色 |
+| 学习顺序 | 模块 | 正文章节 | Canonical | 核心角色 |
 |---:|---|---:|---:|---|
-| 01 | [Python Foundation](../curriculum/01-python/README.md) | 13 | 15 | 建立 AI Application / Agent Engineer 所需的 Python 语言、对象模型、结构化数据与并发 Runtime 基础。 |
-| 02 | [FastAPI](../curriculum/02-fastapi/README.md) | 16 | 4 | 把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。 |
-| 03 | [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) | 22 | 39 | 把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。 |
-| 04 | [MySQL](../curriculum/04-mysql/README.md) | 19 | 26 | 理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。 |
-| 05 | [Redis](../curriculum/05-redis/README.md) | 18 | 19 | 掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。 |
-| 06 | [Vector Database](../curriculum/06-vector-db/README.md) | 16 | 12 | 理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。 |
-| 07 | [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) | 14 | 23 | 以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。 |
-| 08 | [RAG](../curriculum/08-rag/README.md) | 14 | 29 | 把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。 |
-| 09 | [Agent](../curriculum/09-agent/README.md) | 24 | 44 | 从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。 |
-| 10 | [System Design](../curriculum/10-system-design/README.md) | 19 | 24 | 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。 |
+| 01 | [Python Foundation](../curriculum/01-python/README.md) | 13 | 15 | 名字与对象、数据容器、函数、资源和并发执行。 |
+| 02 | [FastAPI](../curriculum/02-fastapi/README.md) | 16 | 4 | 请求与响应、数据校验、资源生命周期、流式交付与接口验证。 |
+| 03 | [MySQL](../curriculum/04-mysql/README.md) | 19 | 26 | 表与查询、索引、事务、并发、恢复与数据增长。 |
+| 04 | [Redis](../curriculum/05-redis/README.md) | 18 | 19 | 数据操作、生命周期、缓存、原子修改、持久化与高可用。 |
+| 05 | [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) | 22 | 39 | 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。 |
+| 06 | [Vector Database](../curriculum/06-vector-db/README.md) | 16 | 12 | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
+| 07 | [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) | 14 | 23 | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
+| 08 | [RAG](../curriculum/08-rag/README.md) | 14 | 29 | 从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。 |
+| 09 | [Agent](../curriculum/09-agent/README.md) | 24 | 44 | 从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。 |
+| 10 | [System Design](../curriculum/10-system-design/README.md) | 19 | 24 | 从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。 |
 
 ---
 
-## 01. [Python Foundation](../curriculum/01-python/README.md) ✅ — 13 blocks
+## 01. [Python Foundation](../curriculum/01-python/README.md) — 13 章
+<a id="01-python-foundation---13-blocks"></a>
 
-建立 AI Application / Agent Engineer 所需的 Python 语言、对象模型、结构化数据与并发 Runtime 基础。
+名字与对象、数据容器、函数、资源和并发执行。
 
 ```text
-Object Model / Containers → Function / Scope → Iterator / Context Manager → OOP / Protocol → Structured Data → Memory / GIL → Thread / Process / asyncio → Data Structure
+数据与对象 → 函数与执行 → 对象协作与输入边界 → 运行机制、并发与成本
 ```
 
 市场校准：**15 Canonical / 15 independent HUMAN-A flows**。
 
-## 02. [FastAPI](../curriculum/02-fastapi/README.md) ✅ — 16 blocks
+## 02. [FastAPI](../curriculum/02-fastapi/README.md) — 16 章
+<a id="02-fastapi---16-blocks"></a>
 
-把 Python Runtime 能力组织成可校验、可 Streaming、可部署的 HTTP / ASGI AI Service。
+请求与响应、数据校验、资源生命周期、流式交付与接口验证。
 
 ```text
-ASGI Request Lifecycle → API Contract / Validation → DI / Middleware / Resource Lifecycle → Async Boundary → SSE / WebSocket → Security / External Resource → Cancellation → Testing / Observability / Deployment → AI Service Patterns
+请求与数据契约 → 依赖、资源与执行 → 流式交付与访问控制 → 外部工作、取消与退出 → 测试、部署与综合实践
 ```
 
 市场校准：**4 Canonical / 3 independent HUMAN-A flows**。
 
-## 03. [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) ✅ — 22 blocks
+## 03. [MySQL](../curriculum/04-mysql/README.md) — 19 章
+<a id="04-mysql--19-blocks"></a>
 
-把 FastAPI、数据系统、模型服务与 Agent Runtime 可靠地连接成可控、可恢复、可观测的 Production Backend。
-
-```text
-Request / Durable State → Network / Streaming → Concurrency / Pool / Backpressure → Deadline / Idempotency / Retry → MQ / Kafka / Durable Task → Consistency / Permission / Security → Discovery / Observability / Linux / K8s → Config / Evolution → Cross-language Runtime Mapping
-```
-
-市场校准：**39 Canonical / 125 independent HUMAN-A flows**。
-
-## 04. [MySQL](../curriculum/04-mysql/README.md) — 19 blocks
-
-理解结构化业务事实怎样持久化，以及查询、事务、并发、日志与规模增长时的正确性和性能。
+表与查询、索引、事务、并发、恢复与数据增长。
 
 ```text
 表与 SQL → 关系、约束与统计 → 索引与执行计划 → 事务、MVCC、锁与恢复 → 分页、结构演进与批量写入 → 复制、CDC 与分片 → 应用数据建模与跨系统边界
@@ -87,62 +80,79 @@ Request / Durable State → Network / Streaming → Concurrency / Pool / Backpre
 
 市场校准：**26 Canonical / 55 independent HUMAN-A flows**。
 
-## 05. [Redis](../curriculum/05-redis/README.md) ✅ — 18 blocks
+## 04. [Redis](../curriculum/05-redis/README.md) — 18 章
+<a id="05-redis---18-blocks"></a>
 
-掌握 Redis 数据结构、内存生命周期、持久化、高可用、原子性与它在 Cache / Session / Rate Limit / Coordination 中的边界。
+数据操作、生命周期、缓存、原子修改、持久化与高可用。
 
 ```text
-Key / Data Structure / Encoding → Runtime / TTL / Eviction → Cache Failure / HotKey → RDB / AOF / Replication / Sentinel / Cluster → Transaction / Pipeline / Lua / Distributed Lock → Streams / Session / Rate Limit / Troubleshooting
+数据与生命周期 → 缓存读取、更新与失效 → 执行成本与多步修改 → 持久化、复制与分片 → 消息、状态与故障判断
 ```
 
 市场校准：**19 Canonical / 69 independent HUMAN-A flows**。
 
-## 06. [Vector Database](../curriculum/06-vector-db/README.md) ✅ — 16 blocks
+## 05. [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) — 22 章
+<a id="03-ai-backend-engineering---22-blocks"></a>
 
-理解向量空间、ANN 索引、过滤、索引生命周期与分布式 Vector DB，能基于 Recall / Latency / Memory / Update 约束做架构选择。
+在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。
 
 ```text
-Vector Space / Similarity → Exact vs ANN → HNSW / IVF / Quantization / Index Selection → Schema / Filter / Tenant → Index Lifecycle / Distributed → Performance Diagnosis / Product Boundary
+请求责任与持久状态 → 网络与流式交付 → 执行者、容量与等待预算 → 操作身份、幂等与重试 → 消息、可靠任务与一致性 → 安全、观测、部署与演进
+```
+
+市场校准：**39 Canonical / 125 independent HUMAN-A flows**。
+
+## 06. [Vector Database](../curriculum/06-vector-db/README.md) — 16 章
+<a id="06-vector-database---16-blocks"></a>
+
+向量比较、精确与近似检索、索引、过滤、版本和维护。
+
+```text
+向量、距离与精确基线 → 图、倒排与压缩索引 → 索引选择 → 数据、过滤与版本 → 分布式执行、评测与维护
 ```
 
 市场校准：**12 Canonical / 37 independent HUMAN-A flows**。
 
-## 07. [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) ✅ — 14 blocks
+## 07. [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) — 14 章
+<a id="07-llm-foundation应用工程深度---14-blocks"></a>
 
-以应用工程深度理解 Token、Transformer、Generation、KV Cache、Serving、模型选择与 Prompt / Fine-tuning 的边界。
+从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。
 
 ```text
-Token / Context → Transformer / Attention / Position → Generation / Decoding → KV Cache / Prefill / Decode → Serving → Model API / Selection → Embedding / Reranker / Multimodal → Prompt / Factuality → Fine-tuning / Post-training
+Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预
 ```
 
 市场校准：**23 Canonical / 82 independent HUMAN-A flows**。
 
-## 08. [RAG](../curriculum/08-rag/README.md) ✅ — 14 blocks
+## 08. [RAG](../curriculum/08-rag/README.md) — 14 章
+<a id="08-rag---14-blocks"></a>
 
-把 Knowledge Source 变成可追溯 Evidence，并通过 Retrieval / End-to-end Evaluation 证明回答质量真的提升。
+从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。
 
 ```text
-Corpus Governance → Document Processing → Chunk Design → Query Planning → Dense / Sparse / Hybrid / Fusion → Rerank / Candidate Budget → Evidence / Grounding / Citation → Retrieval & E2E Evaluation → Production Governance / Scale → GraphRAG / Agentic RAG
+任务与语料 → 解析、清洗与切分 → 查询与检索 → 融合、重排与证据组装 → 回答、引用与评测 → 权限、版本和生产治理
 ```
 
 市场校准：**29 Canonical / 88 independent HUMAN-A flows**。
 
-## 09. [Agent](../curriculum/09-agent/README.md) ✅ — 24 blocks
+## 09. [Agent](../curriculum/09-agent/README.md) — 24 章
+<a id="09-agent---24-blocks"></a>
 
-从 Agent Loop 出发，构建 Tool、Context、Memory、State、Permission、Checkpoint、Trace、Eval 与 Multi-Agent 的可恢复执行系统。
+从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。
 
 ```text
-Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assembly / Compaction → Memory / Session / Checkpoint → Permission / Sandbox / Injection → MCP / Skills / Hooks / Routing → Multi-Agent / A2A → Trace / Eval / Coding Agent → Production Runtime / Framework Mapping
+任务与执行角色 → 工具契约、发现与受控执行 → 计划、上下文与记忆 → 状态、持久化与恢复 → 安全、协议、扩展与协作 → 诊断、评测与工程落地
 ```
 
 市场校准：**44 Canonical / 166 independent HUMAN-A flows**。
 
-## 10. [System Design](../curriculum/10-system-design/README.md) ✅ — 19 blocks
+## 10. [System Design](../curriculum/10-system-design/README.md) — 19 章
+<a id="10-system-design---19-blocks"></a>
 
-把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
+从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。
 
 ```text
-Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cache / Partition → Consistency / Queue → Reliability / Security → Observability / Evaluation / Cost / Evolution → High-concurrency / Realtime / Data Processing / LLM Gateway / Enterprise RAG / Production Agent Cases
+需求与容量 → API、状态和数据 → 缓存、分区与协作 → 一致性、队列、安全与可靠性 → 观测、评估和演进 → 综合系统方案
 ```
 
 市场校准：**24 Canonical / 71 independent HUMAN-A flows**。
@@ -158,8 +168,16 @@ Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cach
 - 跨模块问题只在 Primary Module 维护完整机制；
 - 章节数是认知闭环的结果，不是统一 KPI；
 - 第一次完整学习使用 [Learning Path](learning-path.md) 的 Curriculum → Review → Interview 三遍法；
-- 当前粒度与深度状态见 [Granularity Audit](audits/curriculum-granularity-audit.md) 与 [Content Depth Audit](audits/content-depth-audit.md)；
-- v1.0 全仓库最终结论见 [Final Quality Audit](audits/final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
+- 历史粒度与深度审查见 [Granularity Audit](audits/curriculum-granularity-audit.md) 与 [Content Depth Audit](audits/content-depth-audit.md)；
+- v1.0 历史基线结论见 [Final Quality Audit](audits/final-quality-audit.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
 
 
 Agent 模块使用 24 章正式学习顺序；历史重组、固定实现对照与核验范围见 [Agent Reader Revision](project/agent-reader-revision.md)。
+
+<!-- learning-inventory:start -->
+## 当前文件范围
+
+10 个课程模块合计 **175 篇正文**。Products 为 **4 套 / 16 篇专题正文**，Coding 为 **9 篇正文**，均作为独立轨道，不加入课程章节合计。
+
+完整入口见[学习资源索引](navigation-index.md)。Canonical 列和各模块来源覆盖保留冻结基线，不能相加推算独立面经总量。
+<!-- learning-inventory:end -->

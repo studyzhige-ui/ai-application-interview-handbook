@@ -2,7 +2,7 @@
 
 [← RAG](../08-rag/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [System Design →](../10-system-design/README.md)
 
-> **课程版本：V1** · **教材状态：✅ 完整**  
+> **课程范围：24 篇正式正文**  
 > **教材：24 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**  
 > **教学结构：展开式解释 + 过程图 + 连续例子 + Failure 边界 + 章末四部分训练。**
 
@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → **Agent** → [System Design](../10-system-design/README.md)
+[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → **Agent** → [System Design](../10-system-design/README.md)
 
 模块角色：**Agent Runtime / 从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。**
 
@@ -55,7 +55,7 @@ Section = 参数 / 变体 / Failure / 深挖追问
 ## 4. 正式学习主线
 
 ```text
-Agent Boundary / Loop → Tool Runtime → Planning / Control → Context Assembly / Compaction → Memory / Session / Checkpoint → Permission / Sandbox / Injection → MCP / Skills / Hooks / Routing → Multi-Agent / A2A → Trace / Eval / Coding Agent → Production Runtime / Framework Mapping
+任务与执行角色 → 工具契约、发现与受控执行 → 计划、上下文与记忆 → 状态、持久化与恢复 → 安全、协议、扩展与协作 → 诊断、评测与工程落地
 ```
 
 这个顺序按知识依赖组织，而不是按面经频率排序。

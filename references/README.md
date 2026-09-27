@@ -6,12 +6,16 @@
 
 ## 索引
 
-- [Agent Runtime / Harness](agent/README.md)
-- [FastAPI](fastapi/README.md)
-- [AI Backend Engineering](backend-engineering/README.md)
-- [Vector Database](vector-db/README.md)
-- [LLM Foundation](llm-foundation/README.md)
-- [RAG](rag/README.md)
+| 资料入口 | 用途 |
+|---|---|
+| [FastAPI](fastapi/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [MySQL](mysql/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [Redis](redis/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [Backend](backend-engineering/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [Vector DB](vector-db/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [LLM Foundation](llm-foundation/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [RAG](rag/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [Agent 与产品源码](agent/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 
 证据来源包括：
 
