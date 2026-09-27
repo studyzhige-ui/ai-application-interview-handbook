@@ -1,325 +1,197 @@
-# Redis｜Review 与综合自测
+# Redis｜用几条关系重新理解全章
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块主页](../README.md) · [面试表达](../interview/高频面试题.md) · [实验室](../examples/labs.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+这里用于第二遍回顾。先合上答案，用自己的话说明箭头、条件和失败后果；说不清时回到对应章节，不重新背一遍命令目录。
 
----
-
-> 先完成 `docs/01 → 24`，再用这里压缩知识。
->
-> Review 的作用不是替代正文，而是检查你能否把 24 个知识小板块重新串成少数几条因果链。
-
-## 1. 建议复习节奏
+## 1. 一份数据的全貌
 
 ```text
-首次系统学习
-→ D+1 回忆总图
-→ D+3 做自测
-→ D+7 口述追问链
-→ 面试前看速查表
+谁拥有、以哪里为准
+        ↓
+选择键与值类型 → 常用读取和修改
+        ↓
+生命周期：保留、过期、淘汰、删除
+        ↓
+故障以后：重建副本，还是恢复唯一记录？
 ```
 
-每次复习不要先展开答案。
+类型解决怎样操作，期限解决何时有效，恢复解决故障后还剩下什么。一个字段叫 status 并不会自动告诉你它是哪一种状态。
 
----
+## 2. 一个缓存请求的正常与异常路径
 
-# 2. 总图一：Redis 从 Key 到 Runtime
+| 路径 | 要检查的关系 |
+|---|---|
+| 命中 → 返回 | 是否适合当前身份、版本和新鲜度 |
+| 未命中 → 回源 → 回填 | 是否重复重建，下游是否承受得住 |
+| 更新来源 → 失效副本 | 删除失败、旧读晚回填有无处理 |
+| 缓存整体故障 | 不能无条件把所有请求转给来源 |
 
-```mermaid
-flowchart LR
-    A["Keyspace"] --> B["Typed Value"]
-    B --> C["Redis Command"]
-    C --> D["Main Command Execution"]
-    D --> E["Event Loop"]
-    E --> F["I/O Multiplexing"]
-    B --> G["String / Hash / List / Set / ZSet"]
-    B --> H["Bitmap / HLL / Geo / Stream"]
-```
+穿透、击穿和雪崩不是三种命令，而是这条路径上不同的失效原因。多级缓存增加副本，语义缓存放宽匹配，两者又各增加一种需要验证的责任。
 
-口述时至少回答：
+## 3. 执行、原子性与恢复不是同一维度
 
-```text
-为什么 Redis 不只是 KV？
-为什么单个 Command 容易保持原子？
-为什么慢命令会拖住其它请求？
-I/O Multiplexing 解决的到底是哪一层问题？
-```
+| 机制 | 主要作用 | 不提供的保证 |
+|---|---|---|
+| Pipeline | 减少逐条等待 | 不保证整批原子或自动回滚 |
+| MULTI/EXEC | 连续执行已排队命令 | 不提供通用运行错误回滚 |
+| WATCH | 检查观察期间的变化 | 不阻止其他写入 |
+| Lua | 在服务端组合有限判断和修改 | 不自动保护外部动作或重复调用 |
+| RDB/AOF | 保存本机恢复依据 | 不代替独立历史备份 |
+| 复制与切换 | 维护副本并恢复服务 | 不自动变成零丢失强一致 |
 
----
+## 4. 两条值得重新画的时间线
 
-# 3. 总图二：一个 Key 的生命周期
+**缓存：** A 读旧值 → B 改正式数据并删缓存 → A 才回填。解释为什么两个参与者各自完成了动作，最终副本仍可能是旧的。
 
-```mermaid
-flowchart LR
-    A["Write Key"] --> B["In Memory"]
-    B --> C{"TTL exists?"}
-    C -->|"yes"| D["Lazy / Active Expiration"]
-    C -->|"no"| E["Stay until delete / eviction"]
-    B --> F{"Memory pressure?"}
-    F -->|"yes"| G["Eviction Policy"]
-    D --> H["Removed"]
-    G --> H
-```
+**锁：** A 获得有限租期 → A 暂停 → 租期结束、B 接手 → A 恢复。解释为什么安全删除锁不等于阻止 A 继续写下游；再说明下游版本检查需要什么前提。
 
-必须分清：
+## 5. 消息与状态的四个不同事实
 
-```text
-Expiration
-≠
-Eviction
-```
+消息已收到、工作已完成、消费组已确认、原事件已删除，是四个可以分开发生的动作。类似地，最近窗口、完整历史和恢复检查点，也不能因为都存了一组 ID 就互相替代。
 
----
+## 综合自测
 
-# 4. 总图三：可靠性演进
+<details><summary>1. Hash 和 String JSON 怎样选择？</summary>
 
-```mermaid
-flowchart LR
-    A["Memory Dataset"] --> B["RDB / AOF"]
-    B --> C["Restart Recovery"]
-    A --> D["Replication"]
-    D --> E["Replica"]
-    E --> F["Sentinel Failover"]
-    E --> G["Cluster"]
-    G --> H["Hash Slot / Sharding"]
-```
+先看应用是整体读取替换，还是经常按字段修改。不要仅依据哪个类型听起来更高级；还要考虑对象规模与期限。
 
-口述重点：
-
-```text
-Persistence
-≠ Replication
-≠ High Availability
-≠ Sharding
-≠ Backup
-```
-
----
-
-# 5. 总图四：并发控制工具箱
-
-```mermaid
-flowchart LR
-    A["One atomic command"] --> B["Best when enough"]
-    C["MULTI / EXEC / WATCH"] --> D["Optimistic transaction"]
-    E["Pipeline"] --> F["Reduce RTT"]
-    G["Lua / Functions"] --> H["Server-side atomic logic"]
-    I["Distributed Lock"] --> J["Cross-process mutual exclusion"]
-    J --> K["Lease / Renewal / Fencing"]
-```
-
-最容易说错的是：
-
-```text
-Pipeline ≠ Transaction
-Transaction ≠ MySQL Transaction
-Lock ≠ Idempotency
-TTL ≠ Lock Correctness
-```
-
----
-
-# 6. 总图五：AI Application 中 Redis 的位置
-
-```mermaid
-flowchart TD
-    A["FastAPI / Agent Service"] --> B["Redis"]
-    A --> C["MySQL"]
-    A --> D["Vector DB"]
-    B --> B1["Session"]
-    B --> B2["Cache"]
-    B --> B3["Rate Limit"]
-    B --> B4["Hot Runtime State"]
-    C --> C1["Business Source of Truth"]
-    D --> D1["Semantic Retrieval"]
-```
-
----
-
-# 7. 关键追问链
-
-## Cache
-
-```text
-为什么用 Cache？
-→ Cache Aside 怎么读？
-→ TTL 怎么定？
-→ 穿透/击穿/雪崩怎么区分？
-→ BigKey/HotKey 怎么治理？
-→ Redis 故障后 DB 会不会被打爆？
-→ DB + Cache 一致性怎么做？
-```
-
-最后一问 Primary 在 AI Backend Engineering。
-
-## Distributed Lock
-
-```text
-SET NX PX 怎么加锁？
-→ 为什么 Value 要唯一？
-→ 为什么不能直接 DEL？
-→ TTL 到期但任务没结束怎么办？
-→ Renewal 还会失败吗？
-→ Failover 会不会双持锁？
-→ Fencing Token 怎么保护下游？
-→ 这个场景真的需要 Redis Lock 吗？
-```
-
-## HA
-
-```text
-RDB/AOF 是什么？
-→ Replication 怎么同步？
-→ Replica Lag 怎么办？
-→ Primary 挂了谁切换？
-→ Sentinel 和 Cluster 区别？
-→ Cluster 如何分片？
-→ 为什么 Cluster 仍不强一致？
-```
-
----
-
-# 8. 自测
-
-<details>
-<summary>1. Redis 为什么快？</summary>
-
-内存访问、高效原生数据结构、mostly single-threaded 的核心命令执行减少共享状态锁竞争、Event Loop/I/O Multiplexing 管理大量连接；但慢命令、BigKey、fork、Swap 等仍会制造延迟。
+回看 [02｜同一份数据，怎样保存才方便使用](../docs/02-键与常用数据类型.md)。
 
 </details>
 
-<details>
-<summary>2. Redis 整个进程只有一个线程吗？</summary>
+<details><summary>2. GET 得到空回复，能确定商品不存在吗？</summary>
 
-不是。核心命令执行长期主要采用单线程串行模型，但后台工作以及现代版本部分网络 I/O 会使用额外线程。
+只能说明这次没有取得缓存值。业务是否存在要看权威来源；负缓存还需与正常未命中区分。
 
-</details>
-
-<details>
-<summary>3. Expiration 和 Eviction 有什么区别？</summary>
-
-Expiration 由 Key 的 TTL 语义触发；Eviction 是达到 maxmemory 后为腾出空间主动淘汰 Key。
+回看 [04｜把 Redis 用作缓存：读与更新怎样配合](../docs/04-缓存读取与更新.md)。
 
 </details>
 
-<details>
-<summary>4. 穿透、击穿、雪崩如何快速区分？</summary>
+<details><summary>3. 有十分钟 TTL 的键，两分钟后消失，是否就是 Redis 出错？</summary>
 
-不存在数据持续绕过缓存是穿透；单个热点 Key 失效造成并发回源是击穿；大量 Key 同时失效或 Redis 整体故障造成大范围回源是雪崩。
+可能被主动删除、修改了期限，或被内存策略淘汰。TTL 不保护键免于其他删除路径。
 
-</details>
-
-<details>
-<summary>5. BigKey 和 HotKey 有什么不同？</summary>
-
-BigKey 是 Value/Collection 太大；HotKey 是访问流量太集中。Cluster 能分散 Keyspace，但不能自动拆一个 HotKey。
+回看 [03｜数据什么时候应该消失](../docs/03-过期与内存淘汰.md)。
 
 </details>
 
-<details>
-<summary>6. RDB 和 AOF 的核心区别是什么？</summary>
+<details><summary>4. 负缓存怎样保护不存在的商品，新建商品时又要注意什么？</summary>
 
-RDB 是时间点 Snapshot；AOF 是写操作日志，恢复时 Replay。数据安全窗口、文件体积和恢复成本不同。
+短暂记录明确不存在，减少重复查库；新建后要考虑失效旧负结果，否则会在其期限内继续看不到新商品。
 
-</details>
-
-<details>
-<summary>7. Replication 为什么不是强一致？</summary>
-
-默认主要异步复制，Primary 可能在 Replica 尚未同步时就确认写入；Failover 时存在最近写丢失窗口。
+回看 [05｜缓存帮不上忙时，怎样保护数据来源](../docs/05-缓存故障与流量保护.md)。
 
 </details>
 
-<details>
-<summary>8. Sentinel 和 Cluster 的区别是什么？</summary>
+<details><summary>5. 为什么缓存命中率很高仍可能出现严重问题？</summary>
 
-Sentinel 为非分片 Primary/Replica 提供监控和自动 Failover；Cluster 进一步把 Keyspace 分成 Hash Slot，由多个 Primary 分片并提供 Failover。
+命中可能陈旧或越权，也可能只剩少量但昂贵的回源打满来源。还需看正确性、回源代价和尾延迟。
 
-</details>
-
-<details>
-<summary>9. Redis Cluster 为什么有 Hash Tag？</summary>
-
-让多个 Key 根据 `{...}` 中相同内容落到同一个 Hash Slot，以支持需要同节点执行的 Multi-key、Transaction 或 Lua 操作。
+回看 [06｜本地缓存与 AI 结果缓存：什么可以复用](../docs/06-多级缓存与结果复用.md)。
 
 </details>
 
-<details>
-<summary>10. Redis Transaction 能像 MySQL 一样回滚吗？</summary>
+<details><summary>6. 许多连接同时在线，是否意味着服务器并行修改同样多份数据？</summary>
 
-不能这样理解。MULTI/EXEC 保证 queued commands 连续执行，但运行时命令错误通常不会让已经成功的命令自动通用回滚。
+连接并发与命令执行不同。事件循环发现就绪连接，普通数据操作仍有自己的执行路径和排队。
 
-</details>
-
-<details>
-<summary>11. Pipeline 和 Transaction 有什么区别？</summary>
-
-Pipeline 主要减少网络 RTT；Transaction 关注执行连续性和 WATCH 乐观并发控制。Pipeline 本身不是事务。
+回看 [07｜Redis 为什么快，请求又为什么会慢](../docs/07-执行模型与Pipeline.md)。
 
 </details>
 
-<details>
-<summary>12. Lua 最大的优点和风险是什么？</summary>
+<details><summary>7. Pipeline 断开后可以无条件重发全部 INCR 吗？</summary>
 
-优点是把多步骤 read-modify-write 放服务器端原子执行并减少 RTT；风险是长脚本占用主要命令执行路径，阻塞其它客户端。
+不能。部分请求可能已执行，只是回复没收到；重发可能重复增加，应按业务标识与操作语义核对。
 
-</details>
-
-<details>
-<summary>13. Redis Lock 为什么需要唯一 Token？</summary>
-
-释放/续约时要证明当前锁仍属于自己，防止旧客户端误删或续约别人后来获得的新锁。
+回看 [07｜Redis 为什么快，请求又为什么会慢](../docs/07-执行模型与Pipeline.md)。
 
 </details>
 
-<details>
-<summary>14. TTL 为什么不能保证分布式锁正确？</summary>
+<details><summary>8. 一个大值和一个热值，为什么可能需要不同处理？</summary>
 
-旧 Owner 可能暂停超过 TTL；锁过期后新 Owner 获得锁，旧 Owner 恢复后仍可能继续产生业务副作用。
+前者主要增加每次读取、释放、传输成本，后者集中流量；拆大小、减少访问或分散写入的作用不同。
 
-</details>
-
-<details>
-<summary>15. Fencing Token 解决什么？</summary>
-
-为每次锁持有生成单调版本，让下游拒绝旧版本 Owner 的 stale write，真正把过期 Owner 挡在被保护资源之外。
+回看 [08｜内存怎样花出去：编码、大小与数据表示](../docs/08-内部编码与数据规模.md)。
 
 </details>
 
-<details>
-<summary>16. Pub/Sub 和 Stream 最大区别是什么？</summary>
+<details><summary>9. WATCH 冲突和事务内命令运行失败有什么区别？</summary>
 
-Pub/Sub 是在线广播，离线订阅者错过历史消息；Stream 有持久 Entry、Consumer Group、Pending/Ack，更适合可靠消费。
+WATCH 冲突会让这组提交不执行；运行中一项失败则不自动撤销其他成功项。不能统一描述成回滚。
 
-</details>
-
-<details>
-<summary>17. Semantic Cache 比 Exact Cache 多了什么风险？</summary>
-
-可能发生 False Semantic Hit：Query 看起来相似但真实意图、Tenant、权限或知识版本不同，导致错误复用答案。
+回看 [09｜多步修改怎样避免互相干扰](../docs/09-事务与服务端逻辑.md)。
 
 </details>
 
-<details>
-<summary>18. Agent State 和 Agent Memory 是一回事吗？</summary>
+<details><summary>10. 有副本、有持久化，为什么仍需备份与恢复演练？</summary>
 
-不是。State 是某次运行当前执行位置/Owner/Lease 等；Memory 是 Agent 跨轮/跨任务保留和召回的信息语义。Redis 只是潜在存储后端。
+误写和误删除可能进入副本及持久文件；独立历史恢复点与验证过的恢复步骤才能应对这些问题。
 
-</details>
-
-<details>
-<summary>19. Redis 做 Rate Limit 挂了怎么办？</summary>
-
-必须预先定义 Fail-open / Fail-closed 或本地 fallback，取决于限流是普通流量保护、成本控制还是安全/额度硬边界。
+回看 [10｜服务重启后，数据从哪里回来](../docs/10-持久化与恢复.md)。
 
 </details>
 
-<details>
-<summary>20. Redis 在 AI 系统里最重要的设计问题是什么？</summary>
+<details><summary>11. 五个 Sentinel 中两个同意下线，就能一定切主吗？</summary>
 
-明确每类 Key 的 Source of Truth、可重建性、TTL、大小/热度上界、持久性和故障降级；不要把所有“状态”都默认丢进 Redis。
+故障判断的 quorum 与负责执行切换的多数授权是不同条件。两个可能满足 quorum=2，但不足五个中的多数。
+
+回看 [11｜有了副本，故障时怎样接替服务](../docs/11-复制与Sentinel.md)。
+
+</details>
+
+<details><summary>12. 所有相关键都加同一个 Hash Tag，有什么代价？</summary>
+
+可让多键同槽操作，但会集中数据和流量，牺牲分片均衡。标签不是越统一越好。
+
+回看 [12｜一台装不下以后，数据怎样分到多台](../docs/12-Cluster与分片.md)。
+
+</details>
+
+<details><summary>13. 锁已经过期，但旧工作者没停。它为何可能继续产生副作用？</summary>
+
+Redis 中的键失效不会停止外部进程。需要下游条件检查、可验证版本或幂等设计，不仅是安全释放。
+
+回看 [13｜锁过期了，旧工作者为什么还可能继续](../docs/13-分布式锁.md)。
+
+</details>
+
+<details><summary>14. 消息已执行但还没 XACK，接管者应做什么？</summary>
+
+先按稳定业务标识核对是否已完成，再决定补做或确认。接管本身不保证旧工作者停止，也不证明工作从未发生。
+
+回看 [14｜消息发出以后，怎样知道还有什么没做](../docs/14-通知与Streams.md)。
+
+</details>
+
+<details><summary>15. 全局速率与本地并发限制能否互相替代？</summary>
+
+不能。它们限制不同对象，而且本地状态没有全局视角。需要明确时间范围、归属与共享更新规则。
+
+回看 [15｜多个服务怎样共同守住一份限额](../docs/15-共享限流.md)。
+
+</details>
+
+<details><summary>16. 一个固定大小的最近消息窗口，能恢复窗口之外的全部离线事件吗？</summary>
+
+只能恢复当前保存窗口。完整补齐需要足够历史与位置；不能把重新显示页面说成无丢失重放。
+
+回看 [16｜登录、最近消息和任务进度应该怎样保存](../docs/16-会话与运行状态.md)。
+
+</details>
+
+<details><summary>17. 扫描结束就能证明在线迁移期间没有遗漏更新吗？</summary>
+
+不能。扫描不是快照，复制期间的更新和删除还需跟踪，且必须确认切读切写边界。
+
+回看 [17｜出问题时，从哪里找到证据](../docs/17-安全与问题定位.md)。
+
+</details>
+
+<details><summary>18. 设计里不使用 Redis Cluster 或分布式锁，是否说明没学完整？</summary>
+
+不是。关键是解释是否需要这些机制及其代价，而不是把全部组件写进同一份方案。
+
+回看 [18｜从需求出发，完成一份 Redis 设计](../docs/18-综合设计与回顾.md)。
 
 </details>
