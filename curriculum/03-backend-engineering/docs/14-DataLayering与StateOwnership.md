@@ -1,337 +1,105 @@
-# 14. Data Layering 与 State Ownership：MySQL / Redis / Session / Runtime State
+# 哪些状态必须保存，恢复时相信哪一份
 
-> 这一章解决一个经常被低估的问题：**状态应该放哪里？谁才是最终事实？**
+[← 一次请求完成了什么，后端负责到哪里](01-AIBackend职责与RequestPath.md) · [模块主页](../README.md) · [从字节到安全请求：TCP、TLS 与 HTTP →](02-TCPTLS与HTTPVersions.md)
 
-## 1. 不同存储不是“谁快用谁”
+任务 `job-42` 的执行进程重启后，内存里的“做到第几步”消失了。数据库还留着文档，缓存里还有旧结果，事件系统里也可能有消息。恢复时究竟相信哪份？如果没有事先约定，重启后的程序就只能猜。
 
-常见系统：
+**状态归属**回答两个具体问题：一项事实由谁负责确认；其他副本丢失或冲突时，从哪里恢复。这里先确定责任，不急着搭建所有存储组件。
 
-```text
-MySQL
-Redis
-Object Storage
-Vector DB
-MQ
-Agent Runtime Store
-```
+## 1. 从“能不能重建”区分状态
 
-每个系统应该承担不同角色。
+文档原文、成员权限和处理结果可能是用户付出成本获得的事实，丢失后不能靠重新查询缓存找回。它们需要符合业务要求的持久存储、备份与恢复方案。**Source of truth（权威事实来源）** 不是“永不失败的数据库”，而是在冲突和恢复时被指定为裁决依据的记录。
 
----
+缓存中的文档摘要可以由原文重新生成；检索索引可以由文档及其版本重建。这类内容是**派生状态**。它们可重建不表示可以任意过时：如果权限已经被撤销，旧索引里的文档仍可能造成数据泄露，读取时还需要权限边界。
 
-## 2. Source of Truth
+| 本例信息 | 权威记录或责任主体 | 副本丢失后的做法 |
+|---|---|---|
+| 文档、版本、团队归属 | 业务存储中的文档记录 | 从经过验证的备份或副本恢复 |
+| 一次操作是否已提交 | 操作结果或业务账本 | 查询原记录，不能靠重新执行猜测 |
+| 文档摘要缓存 | 文档和摘要算法版本 | 重新计算；期间按策略回源或拒绝 |
+| 待执行任务及检查点 | 持久任务记录 | 执行者重新领取并核对完成位置 |
+| 一条正在传输的连接 | 当前实例的内存和网络状态 | 建立新连接，不能恢复旧套接字本身 |
 
-Source of Truth 是出现冲突时最终应该相信的事实来源。
+**检查点（checkpoint）** 记录某项执行已经安全完成到哪里。例如“前 5000 行已经入库”必须与对应数据的提交边界相符。只把内存计数器写成 5000，却没有保证那 5000 行提交，不是可靠检查点。
 
-例如用户余额：
+## 2. 根据责任选择存储，而不是根据产品名猜可靠性
 
-```text
-MySQL = durable business truth
-Redis = cache
-```
+关系数据库适合用记录、关系、约束和事务维护业务事实。缓存服务适合低延迟访问及短期共享状态，但其持久化、复制、过期与淘汰配置会影响丢失风险。不能把“用了 Redis”简单解释成一定易失，也不能把“打开了持久化”解释成任意故障都不丢。
 
-如果二者不一致，通常应以 MySQL 为准，再修复 Cache。
+对象存储通常负责大文件；业务记录保存文件标识、版本、大小及可访问范围。消息系统负责把工作或事件交给执行者，不能只因消息已发出就认定业务已完成。检索索引帮助按内容查找，不能代替权限记录和原始文档。每个组件只在自己的边界内作保证。
 
-如果角色没定义，就会出现：
+本课程示例选择“关系表保存文档与任务、缓存保存可重建结果”，是业务设计选择，不是所有系统的唯一答案。若某系统把 Session（登录会话）保存在 Redis，丢失的后果可能是用户重新登录；若把唯一订单记录也放进去，恢复要求就完全不同。
 
-```text
-DB says A
-Redis says B
-Which one wins?
-```
+## 3. 什么是无状态实例
 
----
+两个 API 实例 A、B 都能查询同一份持久任务记录，客户端下次请求到 B 也能知道 `job-42` 的状态，这叫业务层的**无状态化**。它不是说进程里没有任何状态：连接池、执行中的请求和本地缓存仍然存在。
 
-## 3. MySQL 适合什么
+区别在于，实例是不是长期业务事实的唯一持有者。如果任务只放在 A 的字典里，即使负载均衡总把用户送到 A，也只是暂时绕开共享状态问题。A 故障后，粘性路由无法从空内存中恢复任务。
 
-典型：
+## 4. 版本把“哪份较新”变成可判断的条件
 
-- durable business entity；
-- transaction；
-- audit trail；
-- relational constraint；
-- source of truth。
+文档从版本 3 更新为版本 4。事件携带 `doc_id=doc-42, version=4`，下游可以判断自己是否已处理这个变化。如果只传“这个文档变了”，下游可能还要回源查具体版本；事件乱序时，也更难判断该接受还是忽略。
 
-例如：
+但是版本号只有在规则可靠时才有意义。递增、重置、删除后重建、并发分配都要有约束；不同文档的版本 4 与版本 5 没有共同的先后含义。时间戳也不是天然的全局因果顺序，不同机器的时钟可能不一致。
 
-```text
-user
-order
-subscription
-task metadata
-billing record
-```
+> ⚠️ 如果版本防护只存于会被淘汰的缓存中，缓存丢失后连“已见过版本 4”也会消失。旧的版本 3 可能重新被接纳。判断依据的生命周期必须覆盖它要防护的时间窗口。
 
-MySQL 章节负责 Index / Transaction / Lock 等内部机制。
+## 5. 从丢失后果推导恢复要求
 
----
+先问能接受丢多少已确认数据，以及多久恢复服务。**RPO（恢复点目标）** 描述允许的数据回退量，通常按时间衡量；**RTO（恢复时间目标）** 描述服务恢复的目标时间。它们是业务目标，不是声明后自动兑现的能力。
 
-## 4. Redis 适合什么
+假设文档允许最多回退 5 分钟、服务要求 30 分钟内恢复，仍须演练：备份是否完整，密钥能否取得，恢复后任务是否重复执行，索引怎样追上，权限是否恢复到一致状态。备份文件存在不证明这些步骤能在 30 分钟内完成。目标与演练实测应分开记录。
 
-典型：
+本地实验用真实 SQLite 文件保存操作、文档与待发事件，用进程退出后的再次读取观察持久记录。它不验证服务器集群、备份、断电恢复或 RPO/RTO；实验范围见 [配套实验](../examples/README.md)。
 
-- cache；
-- short-lived state；
-- session；
-- quota / rate limit；
-- ephemeral coordination；
-- hot progress；
-- distributed lock 辅助。
+## 本章小结
 
-但 Redis 快不代表：
+先指定业务事实、操作结果、执行进度与派生数据的责任，再选择存储。无状态实例不保存唯一的长期业务事实；缓存和索引能否重建、版本信息能保存多久，直接决定恢复是否有依据。
 
-> 所有状态都应该扔 Redis。
+## 🎯 面试怎么答
 
-如果一个状态丢失后无法从其它地方恢复，就必须认真评估 durability 和 audit requirement。
+**MySQL、Redis、消息队列和任务检查点怎样分工？**
 
----
+> 我先按丢失后果划分状态。业务事实与重复操作结果需要可靠记录；缓存和索引通常由事实重建；消息负责交付，不代表业务完成；检查点记录已确认的执行进度。具体产品能承担哪些责任，还要结合事务、复制、持久化和淘汰配置验证，不能仅按快慢选择。
 
-## 5. Session State
+## ⚠️ 易错点
 
-Session 可能包含：
+> ⚠️ 进程无状态不等于没有连接池或在途请求；粘性路由不能替代恢复依据。
 
-```text
-login session
-shopping flow
-chat session metadata
-agent session pointer
-```
+> ⚠️ 检查点是执行记录，不自动替代已对外生效的业务账本。
 
-多实例服务不能把它只存在进程内：
+## 本章自测
 
-```text
-request 1 → instance A
-request 2 → instance B
-```
+先写判断和依据，再展开提示或答案。
 
-如果只有 A 内存有状态，B 无法继续。
-
-常见方案：
-
-- external session store；
-- signed token 中携带有限状态；
-- sticky session（谨慎）；
-- durable DB + hot Redis。
-
----
-
-## 6. Sticky Session 的边界
-
-Load Balancer 让同一用户尽量回到同一实例。
-
-优点：
-
-- 减少外部 Session Store 访问；
-- 某些长连接场景简单。
-
-缺点：
-
-- 实例故障状态丢失；
-- 扩容/缩容不平衡；
-- failover 麻烦；
-- 不利于真正 Stateless。
-
-因此 Sticky Session 不应该成为“把重要状态留在内存”的借口。
-
----
-
-## 7. Runtime State vs Business State
-
-Agent 场景尤其要区分。
-
-### Business State
-
-```text
-order created
-payment success
-ticket opened
-```
-
-通常需要 durable source of truth。
-
-### Runtime State
-
-```text
-current step
-pending tool
-last event cursor
-context snapshot
-```
-
-可能由 Agent Runtime / Checkpoint Store 管理。
-
-不要把 Runtime Checkpoint 当作业务数据库。
-
----
-
-## 8. Cache State
-
-Cache 应该满足：
-
-> 丢了可以从 Source of Truth 重建。
-
-如果 Cache 丢失会让业务永久丢数据，那它已经不是“仅 Cache”。
-
-这是判断某个 Redis Key 是否设计合理的一个很好问题。
-
----
-
-## 9. Derived State
-
-很多系统保存派生状态：
-
-```text
-search index
-vector index
-materialized view
-cache
-analytics projection
-```
-
-它们应该记录：
-
-- source identity；
-- source version；
-- processing version；
-- rebuild strategy。
-
-RAG 章节已经用 Document Lineage / Generation 深入讲过。
-
----
-
-## 10. State Lifetime
-
-状态不仅有“放哪里”，还有“活多久”。
-
-| 状态 | 常见生命周期 |
-|---|---|
-| Auth Access Token | 短 |
-| Login Session | 小时/天 |
-| Cache | 秒/分钟/小时 |
-| Job Progress | 任务期间 |
-| Audit Record | 长期 |
-| Agent Event | 根据 Replay / Audit 需求 |
-
-TTL 是业务语义，不只是省内存。
-
----
-
-## 11. Multi-tenant Key Design
-
-任何共享存储都要问：
-
-```text
-tenant_id 在哪里？
-```
-
-例如 Redis：
-
-```text
-tenant:{tenant_id}:session:{session_id}
-```
-
-DB：
-
-```text
-tenant_id column / schema / database boundary
-```
-
-Vector DB：
-
-```text
-tenant filter / collection / partition
-```
-
-不能只在 API 层校验 Tenant，然后下层查询忘记过滤。
-
----
-
-## 12. Data Layering Example
-
-AI SaaS：
-
-```text
-MySQL
-├─ user / tenant
-├─ kb metadata
-├─ run/task durable status
-└─ billing
-
-Redis
-├─ session
-├─ hot cache
-├─ rate limit
-├─ short progress
-└─ coordination
-
-Object Storage
-└─ uploaded source files
-
-Vector DB
-└─ retrieval index
-
-Agent Checkpoint Store
-└─ runtime execution state
-```
-
-这个分层比“MySQL + Redis + Vector DB 都会用”更重要。
-
----
-
-## 13. Failure Recovery
-
-问每种状态：
-
-```text
-Redis flush 以后怎么恢复？
-DB backup restore 以后 derived index 怎么重建？
-Vector index rebuild 时新数据怎么办？
-Agent checkpoint 丢失是否影响业务事实？
-```
-
-能回答这些，才真正知道 State Ownership。
-
----
-
-## 14. 🎯 面试怎么答
-
-**问：MySQL 和 Redis 怎么分工？**
-
-可以回答：
-
-> 我不会按“慢/快”简单区分。MySQL 更适合 durable 业务事实、事务和审计；Redis 更适合 Cache、Session、Rate Limit、短期状态和协调。关键是先定义 Source of Truth：Cache 丢失后应该能从 Durable State 重建。对于 Agent，还要把 Business State 和 Runtime Checkpoint 分开，不能用 Redis/Checkpoint 随意替代业务事实库。
-
----
-
-## 15. ⚠️ 易错点
-
-- Redis 快 ≠ 所有状态都放 Redis；
-- Session ≠ 必须 Sticky；
-- Agent Checkpoint ≠ Business DB；
-- Cache 丢失无法恢复时，它已经不是普通 Cache；
-- Tenant Isolation 不能只在 API 层做一次。
-
----
-
-## 16. 本章自测
+### 1. 用户完成付费生成后，唯一结果只在设置一小时 TTL 的缓存中。缓存丢失后无法重建。请指出状态归属错误，并给出修正方向。
 
 <details>
-<summary>1. 如何判断一个 Redis Key 是 Cache 还是 Source of Truth？</summary>
+<summary>提示</summary>
 
-问它丢失后是否可以从其它 Durable Source 重建。如果无法重建且业务永久丢失，它就承担了事实存储职责，需要按 durability / backup / audit 标准设计。
+先判断这份数据实际上是事实还是可丢弃的副本。
 
 </details>
 
 <details>
-<summary>2. 为什么 Agent Checkpoint 不应该直接当业务订单状态？</summary>
+<summary>参考答案与解释</summary>
 
-Checkpoint 记录执行 Runtime，可能被压缩、清理或按 Run 生命周期管理；订单属于长期业务事实，需要独立事务、审计和一致性语义。
+它承担唯一业务结果职责，却被按可过期缓存处理。应保存符合业务持久要求的结果与操作记录，再把缓存作为副本；仅延长 TTL 不能消除故障和淘汰风险。
+
+</details>
+
+### 2. A、B 两实例共享数据库，但 A 把 job-42 的进度只存内存。A 重启后 B 能查询文档，却不知道任务做到哪里。这是否已经实现可靠任务？
+
+<details>
+<summary>提示</summary>
+
+文档状态与执行进度是不同事实。
 
 </details>
 
 <details>
-<summary>3. Multi-tenant Isolation 为什么要贯穿存储层？</summary>
+<summary>参考答案与解释</summary>
 
-如果只有 API 层检查 Tenant，下层某个 Query / Cache Key / Vector Filter 漏掉 tenant_id，就可能产生跨租户数据泄漏。
+没有。数据库中的文档存在不代表每个任务阶段已确认完成。需持久化阶段和检查点，并按业务提交核对可恢复位置；不能从连接是否存在推断任务状态。
 
 </details>

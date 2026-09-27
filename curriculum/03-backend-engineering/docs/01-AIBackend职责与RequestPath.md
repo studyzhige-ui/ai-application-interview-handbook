@@ -1,336 +1,126 @@
-# 01. AI Backend Engineering 的职责与完整 Request Path
+# 一次请求完成了什么，后端负责到哪里
 
-> 这一章先回答：**为什么学完 FastAPI 还需要 AI Backend Engineering？**
+[模块主页](../README.md) · [哪些状态必须保存，恢复时相信哪一份 →](14-DataLayering与StateOwnership.md)
 
-## 1. 从“一个接口”到“一个生产服务”
+用户把一份文档交给团队知识库。页面先显示“已接收”，随后显示“处理中”，最后显示“可以检索”。这三句话不是同一个结果：文件可能已经存好，处理任务可能还在排队，检索索引也可能尚未更新。
 
-Demo 常常是：
+后端首先要做的不是选择组件，而是让这些说法对应真实状态：谁有权提交，服务接受了什么，哪一步已经完成，发生故障后从哪里查证。这里把 **Backend（后端）** 理解为服务端接收请求、协调数据与计算、执行权限和资源限制、对外提供可核验结果的部分。模型生成只是其中一种工作。
 
-```text
-Client
-→ FastAPI
-→ LLM
-→ Response
-```
+## 1. 沿一份文档走完最小过程
 
-生产系统更接近：
+先只设三类对象。`team-a` 是经过身份校验得到的团队范围；`doc-42` 是文档；`job-42` 是一次处理任务。文档版本变化可能产生新任务，所以不要让“文档”和“某次处理”共用一个含义模糊的编号。
 
-```text
-Client
-  ↓
-DNS / TCP / TLS
-  ↓
-CDN / LB / Gateway
-  ↓
-API Service
-  ├─ MySQL
-  ├─ Redis
-  ├─ Vector DB
-  ├─ LLM Provider
-  ├─ MQ / Worker
-  └─ External Tool
-  ↓
-Streaming / JSON / Task Status
-```
+1. 客户端提交文档信息。服务检查身份、大小与格式，再判断该成员是否有权修改这份文档。知道编号不代表拥有权限。
+2. 服务把必须保留的信息提交到存储中。如果承诺接受一项可靠任务，就要有之后能够重新找到的任务记录，而不是只有进程内变量。
+3. 执行者领取任务，读取输入、完成处理，并记录处理结果。它可能与接收请求的进程不同。
+4. 客户端按任务编号查询。只有满足业务定义的完成条件，服务才展示成功；否则返回处理中、失败或需要核对的状态。
 
-真正困难的问题通常不再是“怎么调用 SDK”，而是：
+这是一个职责模型，不要求每个小项目都安装消息队列。最小实现也可以由数据库保存任务、执行者定期领取。是否引入队列，要由吞吐、通知延迟、重放等要求决定。
 
-- 哪个依赖先超时？
-- 谁拥有最终状态？
-- 连接池满了怎么办？
-- Retry 会不会重复执行？
-- 下游变慢时上游如何限流？
-- Worker 崩溃后任务怎样恢复？
-- 一个请求慢，到底慢在网络、DB、模型还是队列？
+## 2. 三种返回方式，改变的是用户如何等待
 
-这些问题就是 AI Backend Engineering 的核心。
+| 方式 | 同一连接中得到什么 | 连接结束以后需要什么 |
+|---|---|---|
+| 请求—响应 | 一次查询结果或已完成的短操作结果 | 已提交的数据仍可再次查询 |
+| 流式响应 | 一段段内容、进度或事件 | 按业务决定是否继续计算、是否保留事件 |
+| 接受长期任务 | 接受状态和任务编号 | 持久任务状态、执行者和查询入口 |
 
----
+**Streaming（流式传输）** 解决结果逐步到达，不自动解决进程崩溃恢复。**异步任务**解决提交者不用一直等待，也不意味着任务本身变快。两者可以组合：长期任务持续执行，用户通过一条随时可重连的流观察它。
 
-## 2. 一次请求到底经过哪些层
+HTTP `202 Accepted` 表达已经接受但尚未完成处理，不是“任务必定成功”的证明。接口应说明查询地址及状态含义。[HTTP 202 语义](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.3)
 
-把浏览器调用 `/chat` 展开：
+## 3. 请求经过的每一段，都可能有自己的等待
+
+浏览器首先把域名解析成可连接的地址，再建立或复用连接。请求可能先到反向代理，再到应用，随后等待数据库连接、执行 SQL、调用模型，最后传回结果。
 
 ```text
-URL
-↓
-DNS Resolve
-↓
-TCP / QUIC Connection
-↓
-TLS Handshake（HTTPS）
-↓
-HTTP Request
-↓
-Load Balancer / Gateway
-↓
-Application Process
-↓
-Authentication / Validation
-↓
-Business Service
-↓
-Downstream Calls
-↓
-Persistence / Cache / Model / Tool
-↓
-Response / Stream
+客户端
+  │ 请求及凭证
+  ▼
+代理或网关 ── 选择一个应用实例
+                   │
+                   ▼
+              应用校验与调度
+              ├─ 等待可用资源
+              ├─ 读取或提交数据
+              └─ 调用模型或其他服务
+                   │
+                   ▼
+               响应或事件
 ```
 
-任何一层都可能失败。
+**反向代理**替后面的服务接收连接并转发请求；**网关**通常还集中承担路由、认证接入或流量策略。它们可以由同一软件承担，不是必须拆成两个产品。应用实例是运行中的一份服务进程或部署副本，不是业务任务本身。
 
-因此 Production 思维不是只问：
+教学假设：一次请求总共花 1 秒，其中排队 600 毫秒、数据库 100 毫秒、模型调用 250 毫秒、其余 50 毫秒。即使把数据库耗时减半，总时间也只是从 1000 降到 950 毫秒。只有把等待拆开，才能知道优化作用在哪一步；“换更快的框架”并没有直接消除这 600 毫秒排队。
 
-> “功能有没有实现？”
+## 4. 执行完成与用户知道完成，是两件事
 
-而要继续问：
+服务已经提交文档，但发回结果时网络断开。此时数据库里有新文档，客户端却只看到超时。客户端不能据此判断“没保存”，服务也不能因为客户端重试就无条件再做一次副作用。
 
-> “这个链路中有哪些 Failure Boundary？”
+| 观察位置 | 能确定的事实 | 不能据此确定的事实 |
+|---|---|---|
+| 客户端收到超时 | 在自己的等待预算内没有拿到结果 | 服务端完全没执行 |
+| 数据库提交成功 | 这次本地事务已提交 | 外部系统和客户端都已获知 |
+| 收到任务编号 | 服务按接口语义接受了任务 | 任务所有阶段均成功 |
 
----
+**副作用**是改变外部可观察状态的动作，例如更新文档、扣减余额、发送通知。**结果未知**不是一种确定失败，而是调用者暂时不能区分“没执行”和“执行了但没收到结果”。后续的操作标识、幂等和状态查询，就是从这个问题自然产生的。
 
-## 3. 四类资源
+## 5. 当前需要掌握的前提，怎样连接后续机制
 
-一个后端服务最终都受有限资源约束。
+阅读本模块前，应能理解数据库的提交、回滚、唯一约束和条件更新，以及缓存过期后需要重新读取原始数据。这些前提分别在 [MySQL](../../04-mysql/README.md) 和 [Redis](../../05-redis/README.md) 建立。本模块会就地复述与当前故障有关的最小规则，但不重新讲索引内部结构。
 
-### 3.1 Compute
+框架负责把请求交给函数、管理资源入口；后端设计还要决定总共接受多少工作、如何记录已完成的动作、失败后按什么依据恢复。Agent 的动态规划和工具选择则属于 [Agent](../../09-agent/README.md)。即使动作由模型提出，最终的数据访问和副作用仍必须接受服务端权限检查。
 
-- CPU；
-- Python Worker / Thread；
-- Process；
-- GPU / External Model Capacity。
+最小验收不是“能返回一段文字”，而是选一条正常路径和一条失败路径，都能说清输入、状态变化、用户看见的结果及证据。接下来先明确哪些状态不能丢，再讨论连接和执行如何围绕这些状态工作。
 
-### 3.2 Memory
+## 本章小结
 
-- Request Buffer；
-- Queue；
-- Cache；
-- 大文件；
-- Agent Context / Runtime State。
+从用户承诺反推服务职责：请求是否被接受、业务是否已提交、客户端是否收到结果必须分别判断。短请求、流式连接和长期任务有不同生命周期；后端把它们与权限、资源和可恢复状态连接起来。
 
-### 3.3 Connection
+## 🎯 面试怎么答
 
-- DB Connection；
-- HTTP Connection；
-- Redis Connection；
-- SSE / WebSocket 长连接。
+**一个能够调用大模型的接口，离可靠后端还差什么？**
 
-### 3.4 Downstream Capacity
+> 我会先定义接受、完成和失败分别代表什么，再沿请求检查身份权限、输入校验、资源等待、数据提交和外部调用。长工作需要独立的持久任务状态。网络超时只说明没及时收到结果，有副作用时还需要操作标识、状态查询和安全重试，最后用正常与故障测试证明这些行为。
 
-即使自己的服务还有资源，下游也可能只有：
+## ⚠️ 易错点
 
-```text
-LLM Provider 100 concurrent requests
-DB Pool 50 connections
-Vector DB 200 QPS
-Tool API 20 QPS
-```
+> ⚠️ 返回 202 不是完成任务；生成一个 UUID 也不等于持久化或创建幂等。
 
-所以“自己还能接请求”不等于“系统还能安全处理请求”。
+> ⚠️ 框架能够处理并发，不代表数据库、模型配额和等待队列没有上限。
 
----
+## 本章自测
 
-## 4. 三种工作类型
+先写判断和依据，再展开提示或答案。
 
-### 同步短请求
-
-```text
-request
-→ query/cache/model
-→ response
-```
-
-适合在 request lifecycle 内完成。
-
-### Streaming 请求
-
-```text
-request
-→ long-lived connection
-→ event / token / state delta
-→ finish
-```
-
-需要管理：
-
-- disconnect；
-- heartbeat；
-- producer/consumer speed；
-- cleanup。
-
-### Long-running Task
-
-```text
-POST /jobs
-→ 202 Accepted + task_id
-→ queue / worker
-→ persisted state
-→ poll / SSE status
-```
-
-它不是“HTTP 请求等久一点”，而是另一种 Runtime Model。
-
----
-
-## 5. State Ownership
-
-设计任何 Backend 前都应先问：
-
-> **最终事实到底存在哪里？**
-
-例如 Agent Ingestion：
-
-```text
-MySQL: task metadata / durable status
-Redis: hot progress / lease / ephemeral state
-MQ: delivery
-Vector DB: retrieval index
-Object Storage: source file
-```
-
-如果把这些角色混在一起，恢复语义会很模糊。
-
-### 一个常见反例
-
-只把任务状态放 Redis：
-
-```text
-queued → running → done
-```
-
-Redis 重启、Key 过期或误删以后，任务是否真的完成就失去了可靠依据。
-
-如果任务完成事实需要审计与恢复，通常应该有 durable source of truth。
-
----
-
-## 6. Normal Path 之后必须画 Failure Path
-
-正常路径：
-
-```text
-API
-→ LLM
-→ DB
-→ Success
-```
-
-至少继续问：
-
-```text
-LLM timeout?
-DB commit fail?
-client disconnect?
-retry?
-worker crash?
-partial success?
-```
-
-这就是后面 Timeout、Retry、Idempotency、MQ、Compensation 存在的原因。
-
----
-
-## 7. AI Backend 的特殊点
-
-AI Service 和普通 CRUD Backend 有共同工程基础，但也有几个更突出的特征：
-
-### 长尾延迟明显
-
-模型调用可能从几百毫秒到几十秒。
-
-### Streaming 常见
-
-连接持续时间更长，占用资源更久。
-
-### 外部依赖多
-
-一个请求可能同时依赖：
-
-```text
-LLM + Retrieval + Redis + Tool API + DB
-```
-
-### 成本本身是资源
-
-除了 CPU / Memory，还需要关注：
-
-```text
-Token
-Embedding
-Rerank
-Model Request
-Tool Request
-```
-
-### Side Effect 更复杂
-
-Agent 可能调用支付、邮件、工单、文件修改等有副作用 Tool。
-
-所以 Retry / Cancellation 的正确性要求更高。
-
----
-
-## 8. 最小 Production Checklist
-
-面对任意 AI Backend，至少能回答：
-
-```text
-入口协议是什么？
-状态在哪里？
-并发上限在哪里？
-连接池多大？
-Timeout 多久？
-Retry 哪些错误？
-是否幂等？
-Queue 会不会无限长？
-如何取消？
-如何恢复？
-Trace 如何串起来？
-如何扩容？
-权限在哪里执行？
-```
-
----
-
-## 9. 🎯 面试怎么答
-
-**问：AI Backend Engineering 和 FastAPI 有什么区别？**
-
-可以回答：
-
-> FastAPI 主要解决 HTTP/ASGI 框架层的请求、校验、依赖、Streaming 和应用生命周期；AI Backend Engineering 解决跨框架的 Production 问题，例如连接池、Backpressure、Timeout、Retry、Idempotency、MQ、缓存一致性、服务发现、部署和可观测性。它关注的是系统在故障、并发和规模扩大后仍然可控。
-
----
-
-## 10. ⚠️ 易错点
-
-- “加一个 Redis 就是生产化”——不是；
-- “异步就能提高所有吞吐”——不是；
-- “队列可以吸收无限流量”——不是；
-- “Retry 是可靠性的默认增强”——可能反而造成雪崩；
-- “多副本就自动高可用”——如果共享依赖先饱和，多副本也无效。
-
----
-
-## 11. 本章自测
+### 1. 服务提交文档后连接断开。客户端重发创建请求。请分别列出客户端知道的事实、服务端必须查的记录和可能的重复风险。
 
 <details>
-<summary>1. 为什么 Long-running Task 不应该理解成“HTTP 请求多等一会儿”？</summary>
+<summary>提示</summary>
 
-因为长任务需要独立的持久状态、Queue/Worker、取消、恢复、重试、Lease 等生命周期语义。HTTP Connection 只是与用户交互的 Transport，不能承担任务本身的 durable execution。
+把“执行”和“结果传达”分开。
 
 </details>
 
 <details>
-<summary>2. 为什么“服务 CPU 还有余量”不代表系统还能继续接流量？</summary>
+<summary>参考答案与解释</summary>
 
-瓶颈可能在连接池、DB、LLM Provider、Queue、外部 Tool 等其它有限资源。Production Capacity 取决于整条依赖链，而不是单个进程 CPU。
+客户端只知道没收到结果。服务端要按同一逻辑操作查询已提交记录；若每次重发都当成新操作，可能重复创建或计费。不能仅因超时认定第一次没做。
+
+</details>
+
+### 2. 一次请求的排队、SQL、模型耗时分别为 700、100、200 毫秒。只把 SQL 降到 50 毫秒，总时延是多少？还需什么证据决定下一步？
+
+<details>
+<summary>提示</summary>
+
+这组教学数据按串行且无重叠计算。
 
 </details>
 
 <details>
-<summary>3. State Ownership 为什么是后端设计的前置问题？</summary>
+<summary>参考答案与解释</summary>
 
-因为 Retry、恢复、一致性和审计都需要知道哪个系统保存最终事实。如果状态角色混乱，系统在 Partial Failure 后无法判断真正结果。
+总计 950 毫秒，只减少 50 毫秒。应查看排队位置、资源持有时间、到达速率与处理速率；不能单凭总耗时断言 CPU 或数据库不足。
 
 </details>

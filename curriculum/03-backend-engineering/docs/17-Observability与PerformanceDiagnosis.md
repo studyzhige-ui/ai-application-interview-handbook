@@ -1,443 +1,119 @@
-# 17. Observability、SLO 与 Performance Diagnosis
+# 从慢请求的证据定位瓶颈
 
-> Monitoring 告诉你“已知指标是否异常”；Observability 更强调：**面对一个没预先写好 Dashboard 的新问题，能否从系统输出推断内部发生了什么。**
+[← 多个服务实例怎样被找到和选中](16-ServiceDiscovery与LoadBalancing.md) · [模块主页](../README.md) · [把应用故障追到 Linux 资源 →](18-LinuxTroubleshooting.md)
 
-## 1. 三类核心 Signal
+同事把 SQL 从 800 毫秒优化到 50 毫秒，接口却仍然需要 2 秒。数据库确实变快了，但接口还可能在等连接池、其他服务、序列化或排队。诊断必须把“我改过哪里”换成“用户这一次到底在等什么”。
 
-OpenTelemetry 的通用模型包括：
+本章所有数值案例都是可手算的教学数据，不是某个真实线上服务的监控结果。
 
-```text
-Trace
-Metric
-Log
-```
+## 1. 先定义要观测的结果与人群
 
-并通过 Context / Baggage 等关联上下文。
+对问答服务，HTTP 成功率、首段结果延迟、完整回答延迟、业务完成率可能分别重要。返回 200 却一直没有内容，或返回 202 后任务永久排队，都不能只凭入口成功率认定体验良好。
 
-三者不是互相替代。
+SLI（服务水平指标）是实际测量的结果，SLO（服务水平目标）是约定的目标。假设一个月有 1,000,000 次符合统计范围的请求，目标是其中至少 99.9% 满足成功条件，则该口径允许不满足条件的次数为 `1,000,000×0.001=1,000`。这不是自动等同于某个停机分钟数；按请求与按时间统计是不同分母。
 
-### Metric
+目标需说明窗口、排除规则、失败定义和采样。只观察成功请求耗时，会把超时的最慢部分漏掉；只观察入口 HTTP，又会漏掉后台任务与流式中断。[SRE 监控原则](https://sre.google/sre-book/monitoring-distributed-systems/)
 
-适合趋势和告警：
+## 2. 指标看趋势，日志记事件，追踪还原过程
 
-```text
-QPS
-error_rate
-P95 / P99
-queue_depth
-pool_utilization
-```
+**Metric（指标）** 把许多观测聚合成时间序列，例如请求数、队列长度与延迟分布；**Log（日志）** 记录具体事件；**Trace（分布式追踪）** 用 Span（一次操作区间）及其关联表达一次工作跨越哪些步骤。[OpenTelemetry Signals](https://opentelemetry.io/docs/concepts/signals/)
 
-### Log
+例如慢请求的 Trace 标识关联 API、数据库和模型调用，日志再带上 task_id 与 operation_key，帮助定位某次重试。但这些高基数字段不应随意作为每条指标的标签：每个独特组合都可能创建新的时间序列，导致存储和查询成本膨胀。
 
-适合离散事件与上下文：
+要记录能够回答问题的信息，而不是完整复制用户正文、令牌或模型上下文。采样追踪可能漏掉具体请求，因此还要结合聚合指标、错误采样与必要审计记录，不能把“没找到 Trace”当作“没有发生”。
 
-```text
-request failed
-worker reclaimed task
-cache invalidation failed
-```
+## 3. 用一条时间线解释这两秒
 
-### Trace
+假设同一个请求、同一测量时钟下记录到以下串行阶段：
 
-适合跨服务时序和依赖定位：
+| 阶段 | 开始到结束 | 用时 |
+|---|---|---:|
+| 等待数据库连接 | 0–1,000ms | 1,000ms |
+| 执行 SQL | 1,000–1,050ms | 50ms |
+| 等待并读取模型响应 | 1,050–1,900ms | 850ms |
+| 整理并返回响应 | 1,900–2,000ms | 100ms |
 
-```text
-Gateway
-→ API
-→ Retrieval
-→ LLM
-→ Tool
-```
+主要等待在连接池与模型，而非 SQL。接着分别检查连接持有时间、是否漏归还、请求是否在事务内等待模型，以及模型侧限额和耗时。先获得证据，再决定增加池、缩短持有、限制流入还是接受外部延迟。
 
----
+并行阶段不能直接相加。例如两路检索同时运行 120ms 和 200ms，合流至少受较慢分支约束，但端到端还包含调度、合并和前后阶段。不同机器的墙钟可能有偏差，跨进程图上的空白也不能无条件当成真实网络延迟。
 
-## 2. Structured Logging
+## 4. 分位数不能随意相加或平均
 
-不要：
+P99 表示在明确样本与定义下，约 99% 的观测不超过对应阈值。接口 P99 不是各依赖 P99 的总和，因为这些极慢观测不一定出现在同一请求；不同实例的 P99 也不能简单平均得到整个服务的 P99。
 
-```text
-something failed
-```
+需要跨实例聚合分布时，可以用具备适当边界与聚合方式的直方图；具体实现和近似误差应按监控系统核对。[Prometheus 直方图与摘要](https://prometheus.io/docs/practices/histograms/)
 
-更好：
+平均值则可以在同一统计口径下用总耗时除以总次数。10 个任务平均 1 秒，另 90 个平均 3 秒，整体均值为 `(10×1+90×3)÷100=2.8 秒`，不是 `(1+3)÷2=2 秒`。在线统计只需保存计数与总和即可更新累计平均，不必保存所有原始任务；但它不能由此恢复 P99，也不能在没有时间窗口数据时回答“最近五分钟”。
 
-```json
-{
-  "level": "ERROR",
-  "request_id": "req_123",
-  "tenant_id": "t_9",
-  "task_id": "job_42",
-  "error_type": "PROVIDER_TIMEOUT",
-  "provider": "x",
-  "latency_ms": 3200
-}
-```
+若要按分钟观察趋势，可以保留有限窗口的分桶计数、总和与延迟分布。这个选择控制内存，但必须保留足以回答目标指标的信息，不能为了省内存让指标改变含义。
 
-关键是字段可以检索和聚合。
+## 5. 把证据、假设与下一步验证分开
 
----
+| 已观察到的证据 | 可提出的假设 | 应继续验证 |
+|---|---|---|
+| 连接等待长、SQL 短 | 连接持有过久或预算不足 | 持有区间、释放路径、总连接预算 |
+| CPU 低、队列不断增大 | 等待下游或人为并发限制 | 在途数、下游耗时、限额与锁等待 |
+| 重试增多、总调用数上升 | 多层重试放大故障 | 同一操作的尝试链与各层策略 |
+| 新版本失败高于旧版本 | 新逻辑或流量差异 | 可比样本、配置版本、相同输入回放 |
 
-## 3. Request ID vs Trace ID
+一个读数通常不能唯一确定根因。“CPU 不高，所以扩容”或“某次 GC 恰好发生，所以都是 GC”都跳过了验证。优先选择能区分多个假设的测量，再做边界可控的修改。
 
-### Request ID
+## 6. 性能优化最后仍要证明业务没有变坏
 
-应用级一次入口请求的相关标识。
+减少模型调用或删去校验可能让接口更快，也可能降低结果质量或安全性。应该同时记录端到端延迟、任务完成、成本、质量与错误边界，按实际用户容忍度做取舍。
 
-### Trace ID
+压测要说明并发模型、到达方式、数据分布、预热、超时和拒绝是否计入结果。只在客户端等待前一请求后再发下一请求，可能低估系统在固定高到达速率下的排队压力。实验结果必须与测量口径一起交付，不能只给“QPS 提升一倍”。
 
-分布式 Trace 的全链路标识。
+## 本章小结
 
-一个用户动作也可能触发多个异步 Task，所以还可能有：
+观测从用户结果和统计口径开始。指标、日志与 Trace 相互补足；时间线定位等待，分布分析解释尾延迟，验证区分假设。性能修改必须同时守住正确性、质量与成本边界。
 
-```text
-run_id
-task_id
-message_id
-```
+## 🎯 面试怎么答
 
-不要把所有 ID 混成一个字符串。
+**SQL 已优化，但接口仍慢，怎样继续定位？**
 
----
+> 沿同一次请求拆分排队、连接等待、SQL、外部调用、序列化和响应阶段，区分串行与并行。用指标看范围，用 Trace 和日志关联具体样本，再检查池持有、阻塞、重试和下游限制。不能把各阶段 P99 相加，也不能只统计成功请求证明全链路变快。
 
-## 4. Span
+## ⚠️ 易错点
 
-Trace 由 Span 组成：
+> ⚠️ 返回 200、202 或首字节很快，不证明业务已完整完成。
 
-```text
-HTTP request span
-├─ auth span
-├─ DB span
-├─ retrieval span
-├─ LLM span
-└─ tool span
-```
+> ⚠️ 不同实例的 P99 不能简单平均；成功请求样本可能漏掉最慢超时。
 
-每个 Span 可记录：
+> ⚠️ 在线累计平均只需总和与计数，但不能因此计算窗口 P99。
 
-- start / end；
-- status；
-- attributes；
-- events；
-- parent-child relationship。
+## 本章自测
 
-这样才能做 Bottleneck Attribution。
+先写判断和依据，再展开提示或答案。
 
----
-
-## 5. Metrics：平均值为什么不够
-
-平均延迟 200ms 可能掩盖：
-
-```text
-95% = 50ms
-5% = 3s
-```
-
-用户对尾延迟更敏感。
-
-所以常看：
-
-```text
-P50
-P95
-P99
-```
-
-尤其 AI Service 长尾明显。
-
----
-
-## 6. RED / USE 思想
-
-服务入口常看 RED：
-
-```text
-Rate
-Errors
-Duration
-```
-
-资源常看 USE：
-
-```text
-Utilization
-Saturation
-Errors
-```
-
-例如 DB Pool：
-
-```text
-utilization = active / max
-saturation = acquire wait / queue
-errors = acquire timeout
-```
-
----
-
-## 7. AI-specific Metrics
-
-除了普通 Backend：
-
-```text
-TTFT
-TPOT / stream rate
-input_tokens
-output_tokens
-model_cost
-retrieval_latency
-rerank_latency
-tool_latency
-agent_steps
-```
-
-还要记录版本：
-
-```text
-model_version
-prompt_version
-retrieval_version
-agent_version
-```
-
-否则 Bad Case 无法复现。
-
----
-
-## 8. SLI / SLO
-
-### SLI
-
-实际测量指标：
-
-```text
-request success rate
-P95 latency
-freshness lag
-```
-
-### SLO
-
-期望目标：
-
-```text
-99.9% requests success
-95% chat requests TTFT < 2s
-```
-
-SLO 帮助回答：
-
-> 什么时候系统算“够好”？
-
-没有目标的指标只是数据。
-
----
-
-## 9. Error Budget
-
-如果 SLO 是 99.9%，就允许有限失败窗口。
-
-Error Budget 的工程意义是平衡：
-
-```text
-reliability
-vs
-release velocity
-```
-
-当预算消耗过快：
-
-- 降低发布频率；
-- 修可靠性；
-- 限制高风险 Feature。
-
----
-
-## 10. Performance Diagnosis：从总延迟拆阶段
-
-不要看到：
-
-```text
-P99 = 8s
-```
-
-就说“模型慢”。
-
-拆：
-
-```text
-Gateway        30ms
-Queue Wait    900ms
-DB             50ms
-Retrieval     300ms
-Rerank        500ms
-LLM TTFT     1800ms
-LLM stream   4000ms
-Serialize      20ms
-```
-
-根因可能是 Queue，而不是模型。
-
----
-
-## 11. Pool / Queue / Downstream 联动
-
-典型 Timeline：
-
-```text
-DB latency ↑
-→ connection hold time ↑
-→ pool utilization ↑
-→ acquire wait ↑
-→ request P99 ↑
-```
-
-如果只看 API P99，无法知道原因。
-
-所以 Metrics 设计必须覆盖关键资源。
-
----
-
-## 12. Distributed Trace 的 Context Propagation
-
-跨 HTTP/RPC：
-
-```text
-trace context header
-→ downstream span
-```
-
-跨 MQ：
-
-```text
-message metadata
-→ consumer creates child / linked span
-```
-
-如果 Trace Context 不传播，异步链会断掉。
-
----
-
-## 13. Sampling
-
-全量 Trace 可能成本太高。
-
-可以：
-
-- head sampling；
-- tail sampling；
-- error-biased sampling；
-- tenant / route sampling。
-
-但不要把所有异常都采样掉。
-
-Production 调试最有价值的往往正是高延迟和失败 Trace。
-
----
-
-## 14. Log 中不能放什么
-
-禁止或谨慎：
-
-- Password；
-- Access Token；
-- API Key；
-- Secret；
-- 完整隐私数据；
-- 敏感 Prompt / Tool Payload。
-
-Observability 不能成为数据泄漏通道。
-
----
-
-## 15. Performance Regression
-
-上线新版本后：
-
-```text
-P99 1.5s → 4s
-```
-
-诊断：
-
-```text
-compare version tag
-↓
-trace stage breakdown
-↓
-queue/pool/resource
-↓
-new code path
-↓
-rollback / fix
-```
-
-所以所有 Telemetry 最好带：
-
-```text
-service_version
-config_version
-model_version
-```
-
----
-
-## 16. AI Bad Case 与 Backend Trace
-
-用户说“回答质量变差”时，可能是：
-
-- retrieval stale；
-- model fallback；
-- timeout 导致 skip rerank；
-- tool failure；
-- context truncated；
-- degraded mode。
-
-因此 AI Evaluation 与 Backend Observability 必须能关联同一个 `run_id / trace_id`。
-
----
-
-## 17. 🎯 面试怎么答
-
-**问：线上接口突然变慢怎么排查？**
-
-可以回答：
-
-> 先确认是整体还是某 Route/Tenant/Version，再看 P50/P95/P99、Error Rate 和 QPS；随后用 Trace 拆 Gateway、Queue、DB、Cache、Retrieval、Model、Tool 各阶段。同步检查 Pool Utilization、Queue Depth、CPU/Memory、Downstream Latency 和 Retry Rate。最后结合版本/配置变更定位 Regression，而不是只盯应用 CPU。
-
----
-
-## 18. ⚠️ 易错点
-
-- Log 多 ≠ Observability 好；
-- Average Latency ≠ 用户体验；
-- Trace ID ≠ Task ID；
-- SLO ≠ 所有请求必须 100% 成功；
-- Sampling ≠ 随便丢数据；
-- AI Quality Bad Case 不一定是模型问题。
-
----
-
-## 19. 本章自测
+### 1. 某服务 A 组有 20 个任务，平均 2 秒；B 组有 80 个，平均 7 秒。请计算总平均，并判断这两个均值能否推出整体 P99。
 
 <details>
-<summary>1. Metrics、Logs、Traces 分别最擅长什么？</summary>
+<summary>提示</summary>
 
-Metrics 看趋势和告警；Logs 看离散事件细节；Traces 看一次请求跨组件的时序与依赖。三者通过 Context 关联才能高效排障。
+先还原两组总耗时。
 
 </details>
 
 <details>
-<summary>2. 为什么必须监控 Queue Wait 和 Pool Acquire Wait？</summary>
+<summary>参考答案与解释</summary>
 
-很多长尾延迟来自任务开始执行前的等待。如果只看 DB/Model 执行时间，会错过真正的 Saturation 点。
+总耗时为 20×2+80×7=600 秒，100 个任务平均 6 秒。均值没有保留分布，无法推出整体 P99。
+
+</details>
+
+### 2. 连接等待 900ms、SQL 30ms，开发者准备把连接池翻倍。请给出一个可能有效的条件、一个可能恶化的条件，以及需要补的证据。
+
+<details>
+<summary>提示</summary>
+
+本地池与下游容量要同时成立。
 
 </details>
 
 <details>
-<summary>3. AI Service 为什么要记录 model/prompt/retrieval version？</summary>
+<summary>参考答案与解释</summary>
 
-没有版本信息就无法复现历史 Bad Case，也无法判断质量/延迟 Regression 是否由 Model、Prompt 或 Retrieval 变更引起。
+下游尚有容量、只是本地合理限额过低时可能有效；若持有泄漏或数据库已饱和，翻倍可能放大压力。补看持有时间、归还路径、总连接预算、数据库负载与调用队列。
 
 </details>

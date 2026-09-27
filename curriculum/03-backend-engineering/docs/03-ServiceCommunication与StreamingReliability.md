@@ -1,413 +1,113 @@
-# 03. HTTP / RPC / MQ 与 Streaming Reliability
+# 怎样传递结果，断线后怎样继续
 
-> 这一章回答：**服务之间到底应该同步调用、RPC，还是发消息？Streaming 断了以后又该怎么办？**
+[← 从字节到安全请求：TCP、TLS 与 HTTP](02-TCPTLS与HTTPVersions.md) · [模块主页](../README.md) · [并发工作由谁执行，等待放在哪里 →](04-Concurrency与ThreadPool.md)
 
-## 1. 三种通信不是互相替代
+文档处理需要 40 秒。用户不想盯着空白页面，但刷新页面也不应该重新创建一次任务。要解决这两个问题，必须分开“工作怎样执行”和“结果怎样传给用户”。连接是观察通道，不是任务本身。
 
-```text
-HTTP / REST
-RPC / gRPC
-MQ / Event
-```
+## 1. 先选交互关系，再选协议
 
-它们解决的问题不同。
+立即查询任务状态，可以用一次 HTTP 请求。客户端每隔几秒查询一次叫**轮询**，实现简单，但更新频率和请求量需要权衡。服务器不断推送进度，可以用 **SSE（服务器发送事件）**。双方持续互发数据，例如语音和实时控制，可以用 **WebSocket（双向通信连接）**。
 
-| 维度 | HTTP / REST | RPC / gRPC | MQ / Event |
-|---|---|---|---|
-| 交互 | 请求/响应 | 请求/响应 | 异步消息 |
-| Schema | 通常较松 | 通常更强 | 事件契约 |
-| 耦合 | 调用方知道服务 | 调用方知道服务/IDL | Producer/Consumer 可解耦 |
-| 延迟 | 低到中 | 常偏低 | 有排队延迟 |
-| Failure | 直接暴露 | 直接暴露 | 延迟暴露、重试/重复 |
-| 适合 | 公共 API、服务调用 | 内部高性能服务 | 异步任务、削峰、事件传播 |
+**RPC（远程过程调用）** 让调用方像调用远处的方法一样提交请求；gRPC 是具体实现，支持接口定义、消息序列化和不同流式调用方式。它通常使用 HTTP/2，所以“HTTP 与 RPC 二选一”不是严谨分类。应比较接口约束、客户端生态、通信方向和故障处理，而不是只比较名字。[gRPC 调用模型](https://grpc.io/docs/what-is-grpc/core-concepts/)
 
-不要用一句“MQ 解耦，所以 MQ 最好”。
+**MQ（消息队列或消息系统）** 让生产者把工作或事件交给系统，再由消费者处理，减少双方在同一时刻可用的要求。它不是所有同步调用的替代品：用户仍可能通过 HTTP 查询最终状态，消费者也可能继续调用 gRPC 服务。
 
----
+## 2. SSE 发出的究竟是什么
 
-## 2. 同步调用什么时候最自然
-
-例如：
+下面是完整的一条 SSE 事件示意，不是 Python 程序。服务设置 `Content-Type: text/event-stream`，并用空行结束一条事件：
 
 ```text
-Chat API
-→ Auth Service
-→ Retrieval Service
-→ LLM Provider
-→ Response
+id: 18
+event: progress
+data: {"task_id":"job-42","completed_rows":5000}
+
 ```
 
-用户正在等待结果，而且后续逻辑需要前一步返回值，此时同步 Request/Response 很自然。
+`id` 是事件标识，`event` 是类型，`data` 是内容。它们由业务约定，与 TCP 序列号无关。浏览器原生 EventSource 在连接恢复时可以携带 `Last-Event-ID`，服务器可以据此决定后续发送什么；标准并不自动替服务器保存历史事件。[SSE 的事件格式与重连](https://html.spec.whatwg.org/multipage/server-sent-events.html)
 
-优点：
+事件必须及时刷新经过代理的缓冲区，否则服务器虽然不断写数据，用户仍可能一大段一大段地收到。生产链路要分别验证应用写出、代理转发和客户端接收，不能只打印“yield 了”就认为用户已经看到。
 
-- 调用链直观；
-- Error 立即传播；
-- 编程模型简单。
+## 3. 重连、重放与恢复是三个动作
 
-缺点：
+用户看到事件 18 后断线，再连到另一个实例。要可靠继续，本例约定任务记录是持久的，事件按任务分配递增编号，而且客户端保存自己**已应用**到页面状态的游标。
 
-- 下游慢会直接拖慢上游；
-- 深调用链更容易 Timeout；
-- Retry 可能层层放大；
-- Availability 强耦合。
+1. 客户端发送 `job-42` 及已应用游标 18；服务器重新验证该用户能否访问这项任务。
+2. 服务器确认保留范围。如果 19、20 仍在，就从 19 开始补发，而不是重新执行任务。
+3. 客户端按事件编号处理重复。收到同一事件两次，不把进度加两次；本例事件描述的是“累计完成 5000 行”，不是无条件“再加 5000”。
+4. 补完后继续接收新事件；任务状态决定它是否已经结束，而不是连接是否刚建立。
 
----
+**重连**只恢复通道；**重放**补发保存的事件；**恢复执行**则让任务从已确认检查点继续工作。这三个动作可能一起发生，也可能只发生前两个。
 
-## 3. RPC / gRPC 为什么存在
+> ⚠️ 原生 EventSource 的最后事件编号反映浏览器接收/处理协议事件的位置，不是你的业务事务提交确认。如果应用需要“用户界面或客户端存储已可靠应用”的确认，必须另行设计应用游标与重放协议，不能直接把 Last-Event-ID 当业务 ACK。
 
-RPC 让调用像函数：
+## 4. 历史已经过期，不能静默假装补齐
 
-```text
-embedding_service.embed(request)
-```
+假设只保留事件 100 到 120，而客户端带来游标 18。只发送 100 到 120 会漏掉中间状态。服务可以明确返回“游标过期”，再提供带版本的完整状态快照；客户端用快照重建，再从快照对应的位置继续。快照与后续事件的衔接也要有边界，避免读取快照时产生的更新又被漏掉。
 
-但实际上跨越网络。
+事件保留是成本与恢复窗口的选择。并非所有 token 都必须永久保存；纯展示的中间文本、业务进度与不可丢失的操作结果可以有不同保留策略。最终结果必须能按任务查到，不能只存在已经断开的流中。
 
-成熟 RPC 往往强调：
+## 5. 心跳说明连接有动静，不证明任务有进展
 
-- IDL / Schema；
-- Code Generation；
-- Deadline；
-- Metadata；
-- Streaming；
-- Status Code。
+代理可能因长时间无数据而断开连接。SSE 可以发送以冒号开头的注释作为保活数据；WebSocket 有协议级 ping/pong 机制。心跳周期要结合代理和网络的空闲超时验证，不能规定一个数字就适合所有链路。
 
-优势是内部服务契约清晰、序列化高效。
+收到心跳只表明相关连接或进程还在响应。若任务卡在数据库锁等待，心跳仍可能正常，所以还应观察“最后进度更新时间”。反过来，心跳丢失也不证明外部动作没执行。[WebSocket 控制帧](https://www.rfc-editor.org/rfc/rfc6455.html#section-5.5)
 
-代价是：
+## 6. 断线以后，是继续工作还是取消
 
-- 强 Schema Governance；
-- 客户端/服务端版本兼容；
-- Debug 与跨语言工具链复杂度。
+一次临时问答可在用户离开后尝试取消，以节省资源；已经接受的文件处理任务可能需要继续，供用户稍后查询。策略由业务承诺决定，不由 SSE 或 WebSocket 自动决定。
 
----
+取消请求与取消完成也不同。关闭观察连接应释放该连接对应的响应流和客户端资源，但不必把持久任务标成取消成功。涉及外部副作用时，还要核对动作是否已发生。每次重连、查询和取消，都要重新执行授权，不因第一次连接验证过就永久放行。
 
-## 4. 为什么需要 MQ
+## 本章小结
 
-当调用方不必等待任务真正完成，或者需要吸收突发流量时：
+协议选择先看交互方向、结果时机与接口约束。重连只恢复通道；可恢复体验还需要持久任务、事件或快照、应用游标、重复处理和权限检查。心跳不等于进度，断线也不自动决定取消。
 
-```text
-API
-→ task record
-→ MQ
-→ Worker
-→ result store
-```
+## 🎯 面试怎么答
 
-MQ 带来的不是“自动可靠”，而是：
+**SSE 断开后怎样续传？**
 
-- temporal decoupling；
-- buffering；
-- consumer scaling；
-- replay / retry capability；
-- producer 与 worker 生命周期解耦。
+> 先把执行任务和观察连接分开。重新连接时验证访问权限，按任务与游标补发仍保留的事件，客户端去重；游标超出保留范围时明确返回快照恢复流程。浏览器的 Last-Event-ID 不是业务提交确认，任务是否继续或取消则由业务语义决定。
 
-代价是：
+## ⚠️ 易错点
 
-- duplicate delivery；
-- ordering；
-- backlog；
-- eventual consistency；
-- observability 更难。
+> ⚠️ HTTP、RPC 和消息不是完全互斥的技术层；gRPC 可以建立在 HTTP 之上。
 
-后面会专门讲 MQ Reliability。
+> ⚠️ 每次连接成功都重新启动任务，会把用户刷新变成重复执行。
 
----
+> ⚠️ 有心跳不能证明执行有进展；有断线也不能证明副作用没发生。
 
-## 5. Streaming Transport：SSE vs WebSocket
+## 本章自测
 
-这部分 FastAPI 已经从框架实现角度讲过，这里只看通用通信语义。
+先写判断和依据，再展开提示或答案。
 
-### SSE
-
-```text
-Client → HTTP Request
-Server → event stream → Client
-```
-
-适合：
-
-- token streaming；
-- agent progress；
-- server push；
-- 单向事件为主。
-
-### WebSocket
-
-```text
-Client ⇄ Server
-```
-
-适合：
-
-- voice realtime；
-- 双向控制；
-- interrupt / approval；
-- interactive agent session。
-
-选型核心不是“谁更新”，而是通信方向和状态模型。
-
----
-
-## 6. Streaming Connection ≠ Durable Run
-
-这是 AI Backend 很重要的一条边界。
-
-错误模型：
-
-```text
-WebSocket connected = Agent running
-WebSocket disconnected = Agent cancelled
-```
-
-Production 更常见：
-
-```text
-Durable Run State
-      │
-      ├─ SSE Client A
-      ├─ SSE Client B
-      └─ WebSocket Client C
-```
-
-Transport 可以断开、重连；Run State 不应该自动消失。
-
-这与 Agent Harness 的 Checkpoint / Resume 对接。
-
----
-
-## 7. Heartbeat 解决什么
-
-长连接可能出现：
-
-- NAT / Proxy idle timeout；
-- Client 网络切换；
-- Half-open connection；
-- Server 进程异常。
-
-Heartbeat 主要帮助：
-
-```text
-connection liveness
-+ idle keepalive
-+ failure detection
-```
-
-它不是业务一致性协议。
-
----
-
-## 8. Reconnect 与 Resume 是两件事
-
-Reconnect：
-
-```text
-重新建立 Transport Connection
-```
-
-Resume：
-
-```text
-从上次已经确认的业务位置继续
-```
-
-例如 Event Protocol：
-
-```json
-{
-  "event_id": 128,
-  "run_id": "run_42",
-  "type": "tool_result",
-  "payload": {}
-}
-```
-
-Client 记录：
-
-```text
-last_event_id = 128
-```
-
-重连：
-
-```text
-GET /runs/run_42/events?after=128
-```
-
-这才是应用层 Resume。
-
----
-
-## 9. Resume 的前提：事件必须有稳定身份
-
-只传：
-
-```text
-token A
-token B
-token C
-```
-
-很难可靠 Resume。
-
-更成熟的是：
-
-```text
-Run ID
-Event ID / Sequence
-Event Type
-Timestamp
-Payload
-```
-
-必要时再有：
-
-```text
-Snapshot Version
-Cursor
-Ack
-```
-
----
-
-## 10. Ordering 问题
-
-如果不同 Worker 并发产生 Event：
-
-```text
-Tool A finished
-Tool B finished
-Model delta
-State update
-```
-
-“到达顺序”未必等于“业务顺序”。
-
-因此要明确：
-
-- 是否要求 global order；
-- 只要求 per-run order；
-- 是否允许 concurrent branch；
-- UI 怎样 merge。
-
-不要把 TCP 的字节顺序当成整个分布式系统的业务顺序。
-
----
-
-## 11. Duplicate Event
-
-重连、重放、MQ At-least-once 都可能让 Event 重复。
-
-Client 可以利用：
-
-```text
-(run_id, event_id)
-```
-
-做去重。
-
-Server 端副作用仍需要自己的 Idempotency Key。
-
----
-
-## 12. Error Contract
-
-Streaming 一旦开始，不能假设还能随意改 HTTP Status。
-
-所以 Event Protocol 常需要：
-
-```text
-error
-retryable
-fatal
-run_failed
-run_cancelled
-```
-
-例如：
-
-```json
-{
-  "type": "error",
-  "code": "PROVIDER_TIMEOUT",
-  "retryable": true,
-  "message": "model provider timed out"
-}
-```
-
----
-
-## 13. HTTP / RPC / MQ 如何一起用
-
-真实系统经常不是三选一：
-
-```text
-Client
-  ↓ HTTP
-API Service
-  ↓ RPC
-Retrieval Service
-  ↓
-LLM Provider
-
-API Service
-  ↓ MQ
-Async Ingestion Worker
-```
-
-选型依据应是：
-
-```text
-调用方是否必须同步拿结果？
-是否要 Buffer？
-是否需要 Replay？
-Schema 耦合能否接受？
-Failure 要怎样暴露？
-```
-
----
-
-## 14. 🎯 面试怎么答
-
-**问：HTTP、RPC、MQ 怎么选？**
-
-可以回答：
-
-> 我先看交互语义。需要同步请求/响应且接口对外时 HTTP 最自然；内部服务强契约和低延迟调用可以考虑 RPC；任务不要求调用方同步等待、需要削峰、消费者独立扩展或故障后重放时更适合 MQ。MQ 不代表自动可靠，它会引入重复、顺序、积压和最终一致性问题，需要额外设计。
-
----
-
-## 15. ⚠️ 易错点
-
-- WebSocket ≠ Durable Session；
-- Heartbeat ≠ Exactly-once；
-- Reconnect ≠ Resume；
-- MQ ≠ 不丢消息；
-- RPC ≠ 没有网络 Failure；
-- TCP order ≠ 分布式业务 global order。
-
----
-
-## 16. 本章自测
+### 1. 客户端已应用事件 18，服务器只保留 100～120。请设计不会静默漏状态的恢复结果，并说明此时是否要重新运行任务。
 
 <details>
-<summary>1. 为什么 Agent 长任务不能把 WebSocket Connection 当作唯一状态？</summary>
+<summary>提示</summary>
 
-连接是易失 Transport；网络切换、Proxy、客户端刷新都可能让连接中断。长任务应该有独立 durable run state，Connection 只是订阅/控制通道。
+考虑完整快照与后续事件之间的版本边界。
 
 </details>
 
 <details>
-<summary>2. Reconnect 与 Resume 的区别是什么？</summary>
+<summary>参考答案与解释</summary>
 
-Reconnect 只是重新建连接；Resume 还需要知道上次消费到哪个业务 Event 或 Task State，并从该位置继续。
+应明确游标过期，返回可验证版本的状态快照及继续订阅位置，客户端重建后接续。单纯观察历史不足不构成重新执行理由；任务若已完成，应查询既有结果。
+
+</details>
+
+### 2. 同一任务的两个事件都表示“累计完成 5000 行”。网络重放导致客户端收到两次，页面该显示多少？若事件含义是“增加 5000”又需什么？
+
+<details>
+<summary>提示</summary>
+
+先读事件的状态语义，再决定如何应用。
 
 </details>
 
 <details>
-<summary>3. MQ 为什么可以削峰但不能无限吸收流量？</summary>
+<summary>参考答案与解释</summary>
 
-Queue 仍受磁盘、内存、Broker、Retention 和消费者吞吐限制。长期生产率大于消费率时 Backlog 必然持续增长，最终必须限流、扩容或降级。
+累计状态应显示 5000，而不是 10000。增量事件必须按事件身份去重，或用版本条件防止重复应用；仅维持一条连接不够。
 
 </details>

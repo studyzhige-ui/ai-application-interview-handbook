@@ -1,391 +1,149 @@
-# 04. Concurrency Execution Model：Process / Thread / Coroutine / Thread Pool
+# 并发工作由谁执行，等待放在哪里
 
-> Python 已经讲过这些 Runtime Primitive。本章不重复语言语义，而是回答：**一个 Backend Service 怎样把有限 CPU、Thread、Process 和 Coroutine 组织成可控的执行容量？**
+[← 怎样传递结果，断线后怎样继续](03-ServiceCommunication与StreamingReliability.md) · [模块主页](../README.md) · [连接怎样复用，容量怎样计算 →](05-ConnectionPool与ResourceCapacity.md)
 
-## 1. Concurrency 与 Parallelism
+处理一份文档时，服务大部分时间可能在等网络模型返回。只服务一个用户会浪费等待时间；同时接受十万项工作又会挤满内存。并发设计要回答的不是“能开多少协程”，而是哪些工作可以交错进行、由谁执行、排队有多长、何时释放资源。
 
-### Concurrency
+## 1. 先区分同时推进与同时计算
 
-多个任务在同一时间段交错推进。
+**并发**指多项工作在一段时间内交错推进；**并行**指同一时刻有多个执行单元真正做计算。单个线程可以在等待网络时切换到别的工作，但不能因此把一个 CPU 核变成多个核。
 
-### Parallelism
+**进程**提供独立的地址空间与资源边界；**线程**是进程内由操作系统调度的执行路径，通常共享该进程的内存；**协程**保存一项可暂停工作的执行位置，由相应调度机制恢复。协程轻量不表示它执行的网络、内存和外部调用也没有成本。
 
-多个任务真正同时执行。
+两个线程同时执行“读取计数、加一、写回”时，可能都读到旧值。单次读取或写入安全，不代表这整组操作原子。需要锁把检查与修改保护起来，或使用能够直接表达原子条件修改的存储操作。锁的保护范围应对应共同数据，不要为了安全把所有无关请求也串成一条队伍。
 
-```text
-Concurrency = scheduling problem
-Parallelism = execution capacity problem
-```
+### 进程隔离以后，数据怎样交换
 
-AI Backend 常同时面对：
+两个进程不能因为变量同名就看到同一对象。传递数据可以用管道、套接字或显式共享内存：前两种传消息，共享内存则让双方访问同一片区域，但仍要同步并发读写。IPC（进程间通信）描述这类交换，不等同于“天然有持久化的消息队列”。一个进程退出后，内存中的未保存工作依然可能消失。
 
-- 大量 I/O 并发；
-- 少量 CPU-heavy parsing / OCR / compression；
-- 外部 Provider 限流；
-- 同步 SDK；
-- Worker 数量与 Memory 约束。
+普通程序主要在用户态执行；读取套接字、访问文件等操作会通过系统调用请求内核服务。进入内核态是执行权限边界的变化，调度到另一个线程则是执行者变化；二者相关但不是同一件事。同步系统调用可能等待，异步 I/O 则让程序在就绪后继续处理，不能把“进入内核”直接等同于“线程必定切走”。[Linux 系统调用接口](https://man7.org/linux/man-pages/man2/syscalls.2.html)
 
----
+读写锁允许多个只读者共同访问，但写者需要排他。它适用于读取期间数据确实不变、读取比例较高等条件，不保证总比互斥锁快。读者改动数据、先读后升级为写而未重新核对状态，都会破坏原先判断；持续读流量是否饿死写者，还取决于具体公平策略。选择锁之前先画清楚哪些操作必须共同成立。
 
-## 2. Process、Thread、Coroutine 放到 Service 里看
+## 2. 异步等待什么时候能让出执行权
 
-### Process
+以 Python asyncio 的事件循环为例，协程等待支持异步的 I/O 操作时，可以暂停，让循环运行其他已就绪的任务。若在协程里直接调用阻塞的同步 SDK，执行这个调用的线程仍会一直等待，别的协程不能靠函数名里的 `async` 得到执行机会。
 
-优点：
+**事件循环**负责调度就绪任务和等待 I/O 事件，不负责自动把任意同步函数变成非阻塞。判断一个调用是否适合直接放进异步主路径，应查看它是否实际让出执行权、是否有对应异步接口。
 
-- 隔离强；
-- 多核 CPU；
-- 单 Process 崩溃影响边界更清楚。
+CPU 密集任务则要另看并行模型。常规启用 GIL 的 CPython 对纯 Python 字节码有线程执行限制；原生扩展是否释放 GIL、解释器是否为自由线程构建，都可能改变结论。因此不能把“Python 线程永远没用”或“多开线程一定加速计算”当通用答案。[Python 线程与 GIL](https://docs.python.org/3.13/library/threading.html#gil-and-performance-considerations)
 
-成本：
+## 3. 线程池复用执行者，不承诺等待队列有界
 
-- Memory duplication；
-- IPC；
-- Pool / Client 每 Process 一份；
-- 启动成本。
+**线程池**保存一组可复用线程。提交任务后，空闲线程可以立即执行；没有空闲线程时，任务可能进入等待队列。不同库的排队方式、扩容规则和拒绝策略不同，不能把 Java 的全部池参数照搬到 Python。
 
-### Thread
+教学设置：2 个线程，同时最多接纳 5 项未结束工作。
 
-适合：
+| 已提交状态 | 执行中 | 等待中 | 新提交 |
+|---|---:|---:|---|
+| 最初两项进入 | 2 | 0 | 仍可接纳 |
+| 再进入三项 | 2 | 3 | 再来一项应拒绝 |
+| 一项真正结束 | 2 或更少 | 2 或更少 | 释放一个接纳名额 |
 
-- Blocking I/O；
-- 同步 SDK bridge；
-- 某些释放 GIL 的 Native Work。
+这里有两个上限：线程数控制执行者；接纳容量控制执行中加等待中的总数。如果只用 semaphore（信号量）保护运行区，却预先创建十万个等待这个信号量的任务，仍然可能占满内存。需要在创建或提交大量工作之前控制入口。
 
-风险：
+## 4. 超时不等于线程已经停下
 
-- thread explosion；
-- lock contention；
-- context switch；
-- ThreadLocal 泄漏。
+调用方等待 Future（未来结果对象）超过预算，可以不再等待。但同步函数可能仍在执行。Python 的 `Future.cancel()` 不能取消已开始运行的任务；`shutdown(cancel_futures=True)` 也主要取消尚未开始的任务。[Future 取消与关闭语义](https://docs.python.org/3.13/library/concurrent.futures.html)
 
-### Coroutine
+若调用方一超时就释放“下游并发名额”，旧线程还在发请求，新线程又进入，下游实际并发就会超过承诺。应把名额释放绑定到**真实工作终结**，而不是调用方退出等待。
 
-适合大量 awaitable I/O。
+实验实现将名额归还注册为 Future 的完成回调。下面是统一实现中的原样片段；完整导入与运行入口在 [配套实验](../examples/README.md)，不是可单独粘贴执行的脚本。
 
-优势：
-
-- 轻量；
-- 单 Event Loop 可以管理大量等待任务。
-
-风险：
-
-- blocking call 会污染整个 Loop；
-- task 数量仍然不能无限；
-- downstream capacity 不会因为 coroutine 轻量而变大。
-
----
-
-## 3. 为什么“10000 个 Coroutine”仍可能拖死系统
-
-Coroutine 自己很轻，但它们最终可能同时：
-
-```text
-10000 HTTP requests
-10000 DB waits
-10000 LLM calls
-10000 pending buffers
-```
-
-下游和连接池不可能无限承载。
-
-因此 Async Service 必须继续设计：
-
-- Semaphore；
-- Connection Pool；
-- Queue；
-- Rate Limit；
-- Backpressure。
-
----
-
-## 4. Thread Pool 的核心模型
-
-抽象：
-
-```text
-Submit Task
-↓
-Queue
-↓
-Worker Thread
-↓
-Run
-↓
-Result
-```
-
-三个关键资源：
-
-```text
-Worker Count
-Queue Capacity
-Task Runtime
-```
-
-### Queue 无限长有什么问题
-
-如果输入速度持续大于消费速度：
-
-```text
-queue depth ↑
-wait time ↑
-memory ↑
-timeout ↑
-```
-
-最终任务开始执行时可能已经没有业务价值。
-
-所以 Thread Pool 不能只讨论线程数，还要讨论 Queue 与 Reject Policy。
-
----
-
-## 5. Thread Pool Size 怎样思考
-
-不要背：
-
-> CPU 核数 × 2
-
-这种单一公式。
-
-先分类：
-
-### CPU-heavy
-
-线程再多也不会线性提升吞吐，甚至增加切换。
-
-### I/O-heavy
-
-线程大量时间等待，可以允许更多并发，但仍受：
-
-- FD；
-- DB / HTTP Pool；
-- Memory；
-- Downstream QPS。
-
-真实调优应该通过 Load Test 找到：
-
-```text
-Throughput
-Latency
-CPU
-Context Switch
-Queue Depth
-Downstream Saturation
-```
-
-的拐点。
-
----
-
-## 6. Reject Policy 为什么重要
-
-当 Pool + Queue 满：
-
-```text
-new task
-↓
-accept?
-reject?
-caller runs?
-drop?
-```
-
-真正问题是：
-
-> 系统过载时，要把压力放在哪里？
-
-常见思路：
-
-- fail fast；
-- 429 / 503；
-- degrade；
-- caller throttling；
-- bounded queue。
-
-最危险的是：
-
-> 无限 Queue，把 Overload 伪装成“暂时还没报错”。
-
----
-
-## 7. Process Pool 的边界
-
-CPU-heavy 任务：
-
-```text
-PDF parsing
-OCR post-processing
-large JSON transformation
-compression
-local ML inference
-```
-
-可以考虑 Process Pool 或独立 Worker。
-
-但需要考虑：
-
-- serialization；
-- copy cost；
-- process startup；
-- memory；
-- crash isolation；
-- cancellation。
-
-如果任务持续几十秒甚至几分钟，独立 Task Worker 往往比 Request 内 ProcessPool 更清晰。
-
----
-
-## 8. Async + Sync SDK 怎样共存
-
-AI Service 很常见：
-
-```text
-async endpoint
-→ sync vendor SDK
-```
-
-错误做法：
-
+<!-- snippet: bounded_executor -->
 ```python
-async def handler():
-    result = blocking_sdk.call()
+class BoundedExecutor:
+    """workers 限制执行线程；capacity 限制已接收但尚未终结的任务总数。"""
+
+    def __init__(self, workers: int, capacity: int) -> None:
+        if workers < 1 or capacity < workers:
+            raise ValueError("需要 capacity >= workers >= 1")
+        self._pool = ThreadPoolExecutor(max_workers=workers)
+        self._slots = BoundedSemaphore(capacity)
+        self._lock = Lock()
+        self._closed = False
+
+    def submit(self, fn: Callable[..., T], *args: object) -> Future[T]:
+        with self._lock:
+            if self._closed:
+                raise RuntimeError("executor 已关闭")
+            if not self._slots.acquire(blocking=False):
+                raise Overloaded("执行中与等待中的任务总数已到上限")
+            try:
+                future = self._pool.submit(fn, *args)
+            except BaseException:
+                self._slots.release()
+                raise
+            future.add_done_callback(lambda _future: self._slots.release())
+            return future
+
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+        self._pool.shutdown(wait=True, cancel_futures=True)
 ```
+<!-- /snippet -->
 
-可能阻塞 Event Loop。
+`capacity` 数的是未终结任务，`workers` 数的是执行线程。提交抛异常时立刻归还名额；等待中的任务取消成功也会完成 Future；正在执行的任务则要真正返回或抛异常后才归还。这里选择“立即拒绝”是教学策略，也可以改为有截止时间的等待，但不能退回无限队列。
 
-桥接方式：
+## 5. 资源交叉等待，还可能形成死锁
 
-```text
-async request
-→ thread pool offload
-→ blocking SDK
-```
+线程池只有一个线程。任务 A 占着它，提交任务 B 后同步等待 B 的结果。B 排在队列里等线程，A 又等 B，双方无法推进。这种等待环不靠增大一点超时就变成正确结构。
 
-但 Thread Pool 也要有容量上限。
+类似地，持有数据库连接后等待模型，可能长期占住连接；持有锁再做外部请求，可能把短暂保护扩成不可控等待。缩短持有范围，把必须共同成立的修改保持在短边界里，并避免在耗尽的执行池内阻塞等待同池新任务。
 
-如果所有请求都 offload：
+多个并发分支失败时，还需要定义其余分支是否取消、等待清理或继续产生部分结果。取消只能作为请求向下传播；各层仍要确认其负责的资源何时关闭，副作用是否需要核对。[asyncio 的任务取消](https://docs.python.org/3.13/library/asyncio-task.html#task-cancellation)
 
-```text
-Thread Pool saturated
-→ Queue
-→ Request latency
-→ Timeout
-```
+## 本章小结
 
-问题只是从 Event Loop 移到了 Thread Pool。
+并发利用等待间隙，并行利用多个执行单元。执行线程数、已接纳任务数和下游调用数是不同容量；超时只终止等待时，必须把资源归还绑定到真实执行结束。
 
----
+## 🎯 面试怎么答
 
-## 9. Worker Process 与 Pool 的乘法效应
+**线程池大小和拒绝策略应该怎样设计？**
 
-例如：
+> 先看任务的计算与等待比例、下游容量和资源持有时间，再确定执行者数量；同时限制等待队列或总在途数，并定义过载时的拒绝或有界等待。池内不能同步等同一耗尽池的新任务。调用者超时不一定停止工作，所以并发名额要在实际工作终结后归还。
 
-```text
-4 API workers
-× 20 thread pool workers
-= 最多 80 threads
-```
+## ⚠️ 易错点
 
-如果每 Process 还创建：
+> ⚠️ async 函数中的阻塞调用仍可能阻塞事件循环。
 
-```text
-DB Pool 20
-HTTP Pool 100
-```
+> ⚠️ 限制运行区而无限创建等待任务，不是有界接纳。
 
-总资源也会乘上 Worker 数。
+> ⚠️ 取消 Future 的返回值要检查，不能把发出取消请求写成已停止外部工作。
 
-所以部署参数不能单独调。
+## 本章自测
 
----
+先写判断和依据，再展开提示或答案。
 
-## 10. AI 场景：并发调用多个 Tool
-
-假设一个 Agent Step 同时有 20 个 Tool Call：
-
-错误：
-
-```python
-await asyncio.gather(*all_tools)
-```
-
-如果 100 个用户同时跑：
-
-```text
-100 × 20 = 2000 tool calls
-```
-
-正确思路：
-
-```text
-Per-run concurrency
-+ Global concurrency
-+ Per-provider concurrency
-+ Per-tenant concurrency
-```
-
-多层容量共同约束。
-
----
-
-## 11. Failure Timeline
-
-典型雪崩：
-
-```text
-Provider 变慢
-→ Thread / Coroutine 持有时间增长
-→ Pool Saturation
-→ Queue 增长
-→ Request Timeout
-→ Client Retry
-→ Load 更高
-```
-
-这条链会贯穿后面几章。
-
----
-
-## 12. 🎯 面试怎么答
-
-**问：Thread Pool 参数怎么设计？**
-
-可以回答：
-
-> 我不会只给固定公式。先看任务是 CPU 还是 I/O，再看 Task Runtime、输入速率、Queue 容量和 Downstream Capacity。Pool 大小要结合 Load Test 观察吞吐、P95/P99、CPU、Context Switch、Queue Depth 和下游饱和点。Queue 也应该有界，过载时需要 Reject / Backpressure，而不是无限堆积。
-
----
-
-## 13. ⚠️ 易错点
-
-- Coroutine 多 ≠ Downstream Capacity 变大；
-- Thread Pool ≠ 无限线程；
-- Process Pool ≠ 没有 IPC 成本；
-- 多 Worker ≠ 参数线性增加；
-- offload blocking call ≠ blocking 问题消失，只是换了资源池。
-
----
-
-## 14. 本章自测
+### 1. 2 个线程、总接纳上限 5，已有 2 项运行和 3 项等待。一个运行任务的调用方超时，但该线程仍阻塞。第六项是否可接受？写出名额释放条件。
 
 <details>
-<summary>1. 为什么 Async Service 仍然需要并发上限？</summary>
+<summary>提示</summary>
 
-Coroutine 轻量只减少等待任务的调度成本，下游连接、QPS、Memory、Provider Capacity 仍然有限。无限并发会把压力转移到 Pool、Queue 或 Downstream。
+观察工作终结，而不是观察客户端等待结束。
 
 </details>
 
 <details>
-<summary>2. 为什么 Thread Pool Queue 不应该无限长？</summary>
+<summary>参考答案与解释</summary>
 
-持续过载时 Queue 会让等待时间和内存不断增长，任务真正开始时可能已超过 Deadline，并导致 Retry 和级联故障。
+不能。5 项都尚未终结，调用方超时没有空出容量。名额应在任务完成、失败或尚未运行的任务被成功取消后释放。
+
+</details>
+
+### 2. 只有一个线程的池中，A 提交 B 并同步等待 B。请画出等待关系，并给出不依赖“多加一个线程”的改法。
+
+<details>
+<summary>提示</summary>
+
+谁持有唯一执行者，谁又等待这个执行者？
 
 </details>
 
 <details>
-<summary>3. 4 个 Worker × DB Pool 20 意味着什么？</summary>
+<summary>参考答案与解释</summary>
 
-通常意味着每个 Worker 各自持有一个 Pool，理论总连接上限可能接近 80，而不是整个服务只有 20。部署时必须按总实例/进程数量计算依赖容量。
+A 持有线程并等待 B，B 等线程。可在 A 内直接调用可串行完成的步骤，或让调度层在 A 返回后提交 B，避免执行池内部阻塞等待同池任务。
 
 </details>

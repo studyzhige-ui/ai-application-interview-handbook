@@ -11,6 +11,7 @@
 - [Claude Code Reader Revision](claude-code-reader-revision.md)
 - [Vector DB Reader Revision](vector-db-reader-revision.md)
 - [RAG Reader Revision](rag-reader-revision.md)
+- [Backend Reader Revision](backend-reader-revision-2026-09-27.md)
 - [Integration Status](integration-status.md)
 - [PR Summary](pr-summary.md)
 

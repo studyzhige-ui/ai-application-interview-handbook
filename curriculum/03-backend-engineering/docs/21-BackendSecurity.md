@@ -1,410 +1,111 @@
-# 21. Backend Security：SSRF / CSRF / SQLi / XSS / Secret / Trust Boundary
+# 不可信输入怎样被限制在安全边界内
 
-> Backend Security 的核心不是背漏洞名，而是理解：**不可信数据从哪里进入、在哪里被解释、能触达什么能力、怎样限制爆炸半径。**
+[← 谁能访问什么，权限怎样贯穿请求与任务](15-AuthSession与TenantBoundary.md) · [模块主页](../README.md) · [多个服务实例怎样被找到和选中 →](16-ServiceDiscovery与LoadBalancing.md)
 
-## 1. 先画 Trust Boundary
+资料助手允许用户提交网页地址，后端下载后解析；还允许导出文档并调用命令行转换工具。这些功能都很正常，危险来自同一个变化：用户提供的数据开始决定服务器访问哪里、查询什么、执行什么。
 
-典型 AI Backend：
+本章从这种数据跨越权限边界的过程理解常见风险。目标是限制可执行能力与验证防护，不提供攻击载荷或把安全扫描当作课程实验。
 
-```text
-User Input
-  ↓
-API
-  ↓
-Database / Redis / Vector DB
-  ↓
-LLM / Tool / URL Fetcher / File Parser
-  ↓
-External Network
-```
+## 1. 输入通过格式校验，不等于执行可以被授权
 
-每跨一层都要问：
+一个 URL 可以符合语法，却指向内部管理服务；一个文件名可以是字符串，却包含不允许的路径；一个金额可以是合法整数，却超出用户额度。格式校验、业务校验、授权与资源限制分别处理不同问题。
 
-```text
-这段数据可信到什么程度？
-谁验证？
-谁编码？
-能访问什么？
-```
+设计接口时尽量暴露明确业务能力，例如“转换本任务已上传的 PDF”，而不是“执行任意命令并自行指定路径”。服务端根据经过授权的对象记录确定真实路径和允许动作，用户输入只填入被允许的参数位置。
 
----
+## 2. SQL 参数化把数据与语句结构分开
 
-## 2. SQL Injection
+字符串拼接会让用户输入参与 SQL 语句结构。参数化查询则把语句模板与数据值分开，由驱动负责绑定。例如实验使用 `WHERE doc_id=? AND tenant=?` 的同类参数绑定方式，而不是把文档名直接拼进 SQL。[OWASP SQL 注入防护](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)
 
-错误：
+占位符通常用于**值**，不是随意替换表名、列名或排序方向。需要让用户选择排序时，应把有限选项映射到服务端固定列名；不能把“已经使用占位符”扩大成所有动态 SQL 都安全。数据库账号的最小权限还能限制错误发生后的影响。
 
-```python
-sql = f"SELECT * FROM users WHERE name = '{name}'"
-```
+参数化也不解决越权。合法的 `SELECT` 如果没有团队边界，仍可能把别人数据返回。语法安全与对象授权必须一起成立。
 
-用户输入进入 SQL Syntax。
+## 3. SSRF 是服务器被引导去访问不该访问的目标
 
-正确核心：
+SSRF（服务端请求伪造）的执行者是服务器：用户给出一个地址，服务以自己的网络位置去请求。若服务能访问内部接口或云环境凭证入口，风险会超出普通网页下载。
 
-```text
-Parameterized Query
-```
+防护应结合功能选择：仅允许固定供应商时，用明确允许列表；确需访问公开地址时，限制协议与端口，校验解析后的所有目标地址，处理 IPv4/IPv6、域名解析变化和重定向，并在实际连接或网络出口实施相应限制。[OWASP SSRF 防护](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)
 
-让：
+只检查原始字符串不够。地址第一次看起来安全，重定向可能换目标；检查时和连接时的解析结果也可能不同。较稳妥的结构是在受限下载服务或出口代理中统一控制访问、响应体大小、耗时和内容类型，不把内网访问权交给任意输入。
 
-```text
-SQL Structure
-和
-User Data
-```
+> ⚠️ 示例没有实现通用安全 URL 下载器。只展示一个正则表达式或 IP 判断函数，不能宣称覆盖全部 SSRF 边界。
 
-分离。
+## 4. CSRF 与 XSS，不要和 SSRF 混在一起
 
-ORM 也不是万能安全层；如果自己拼 Raw SQL 仍可能注入。
+CSRF（跨站请求伪造）利用的是浏览器可能自动携带目标站点凭证。用户已经登录服务，在其他站点触发请求时，服务若仅凭 Cookie 就接受敏感修改，可能把非用户意图当成有效操作。
 
----
+防护按应用模型组合 CSRF Token、来源检查、适当的 SameSite Cookie 策略和敏感操作确认；状态修改不应藏在本应安全的 GET 中。CORS（跨源资源共享）主要约束浏览器跨源读取等行为，不是后端对象权限，也不能单独充当通用 CSRF 防护。[OWASP CSRF 防护](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
 
-## 3. XSS
+XSS（跨站脚本）则让不可信内容进入页面可执行上下文。模板自动转义、与输出位置匹配的编码和必要的 HTML 清理，使数据继续作为数据。将模型生成的 HTML 直接插入页面，也需要这条边界；内容安全策略可做纵深防护，不代替正确处理内容。[OWASP XSS 防护](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
 
-攻击者让恶意内容进入浏览器可执行上下文。
+三者的主体不同：SSRF 是服务器请求目标，CSRF 是浏览器带着凭证发送非预期请求，XSS 是不可信脚本在页面上下文执行。先认主体，再选防护，才能避免拿 CORS 去解决服务器访问内网。
 
-后端常见职责：
+## 5. 命令、文件与容器都要限制真实能力
 
-- 明确 Content-Type；
-- 安全输出数据；
-- 不把用户内容当 HTML/Script；
-- 配合前端 Context-aware Encoding / CSP。
+调用命令行时优先避免 shell，使用固定程序和参数数组；但这只减少 shell 解释，不自动阻止参数被目标程序当作危险选项。仍要约束参数语义、固定工作目录、最小权限、资源上限，并在适用时使用结束选项标记。[OWASP 命令注入防护](https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html)
 
-AI 生成内容同样是不可信输出。
+文件操作应使用服务端生成或映射的对象路径，校验目录边界、符号链接与解压后路径，限制文件大小、数量和展开比例。分块上传还要限制任务总量，而不只是每个分块大小；合并完成前验证分块归属、顺序与完整性，失败后按任务记录清理临时对象，避免删掉其他上传任务的数据。
 
-不要因为内容来自 LLM 就直接 `innerHTML`。
+容器可以隔离进程视图和资源，但不是无条件安全沙箱。特权模式、宿主目录、容器运行时控制接口、过大的凭证权限和内核漏洞都可能扩大逃逸或远程执行的后果。减少这些能力，比仅在程序中禁止几个关键词更可靠。[Kubernetes 安全检查表](https://kubernetes.io/docs/concepts/security/security-checklist/)
 
----
+## 6. 密钥与审计也属于生命周期
 
-## 4. CSRF
+密钥从受控配置或密钥服务注入，按用途和环境隔离，轮换时定义新旧密钥共存与撤销过程。日志、Trace、异常堆栈和模型上下文不应泄露完整凭证。不能为了排障把全部请求头和用户文档长期记录下来。[OWASP 密钥管理](https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html)
 
-浏览器会自动携带 Cookie，因此恶意页面可能诱导用户浏览器向目标站点发请求。
+Agent 选择了某个工具，不意味着服务器可以跳过这些规则。模型输出是待校验的提议：权限、对象范围、参数、预算、批准与提交条件要由确定性代码在执行边界落实。只把“不要泄露数据”写进提示词，挡不住具有过大导出权限的实际工具。
 
-防护通常包括：
+安全验收要同时检查允许路径与拒绝路径：合法团队能读自己的资料，跨团队不能读；允许的文件能转换，越出目录或超过资源预算的输入会被明确拒绝；失败不遗留敏感临时文件。这里只定义可验证目标，不把实验中未运行的网络、浏览器或容器行为计为通过。
 
-- SameSite Cookie；
-- CSRF Token；
-- Origin / Referer 验证；
-- 不把危险操作设计成 GET。
+## 本章小结
 
-如果 API 只使用不会被浏览器自动附带的 Authorization Header，威胁模型不同，但仍要正确处理 CORS / Token Storage。
+安全边界应限制不可信输入能影响的目标与能力。参数化、授权、出口控制、浏览器防护、文件与进程隔离各解决不同问题；提示词、格式校验或容器名称不能代替实际执行边界。
 
----
+## 🎯 面试怎么答
 
-## 5. SSRF
+**给 Agent 提供网页读取和工具执行能力时，主要安全措施是什么？**
 
-AI / Agent Backend 特别常见：
+> 把能力收窄到明确业务动作，校验主体、资源与参数；网页访问在解析、重定向、连接与出口层限制目标，文件和命令使用受控路径、固定程序与最小权限。敏感写操作绑定具体批准，限制时间和资源，保护密钥并记录可审计但不过量的证据。模型建议不能直接成为执行授权。
 
-```text
-user asks model to fetch URL
-→ backend HTTP client
-→ arbitrary network target
-```
+## ⚠️ 易错点
 
-攻击者可能访问：
+> ⚠️ SSRF、CSRF 和 XSS 的执行主体不同，不能用同一层配置替代各自防护。
 
-- localhost；
-- cloud metadata；
-- internal admin service；
-- private IP；
-- file/protocol handlers。
+> ⚠️ 参数化 SQL 不替代租户授权；shell=False 不替代参数语义校验。
 
----
+> ⚠️ 限制单个文件或分块，不等于限制一次任务的总体资源消耗。
 
-## 6. SSRF 防护
+## 本章自测
 
-常见思路：
+先写判断和依据，再展开提示或答案。
 
-```text
-allowlist domains / schemes
-resolve and validate IP
-block private / loopback / link-local ranges
-limit redirects
-network egress policy
-separate fetcher sandbox
-response size/time limit
-```
-
-注意 DNS rebinding / redirect 可能让“第一次校验 URL”不够。
-
-更强的设计是：
-
-> 让 Fetcher 运行在本身就无法访问敏感网络的环境。
-
-这叫 Capability Reduction。
-
----
-
-## 7. Secret Management
-
-Secret 包括：
-
-- DB Password；
-- API Key；
-- OAuth Client Secret；
-- Signing Key；
-- cloud credential。
-
-不要：
-
-- commit 到 Git；
-- bake 进 Docker Image；
-- 写进日志；
-- 返回前端；
-- 放 Prompt。
-
----
-
-## 8. Secret Lifecycle
-
-真正的 Secret 管理包括：
-
-```text
-provision
-→ distribute
-→ use
-→ rotate
-→ revoke
-→ audit
-```
-
-“放环境变量”只解决一部分 Distribution 问题，不是完整生命周期。
-
----
-
-## 9. Log Redaction
-
-日志最容易泄漏：
-
-```text
-Authorization header
-Cookie
-API key
-Prompt with personal data
-Tool payload
-```
-
-应该在 Logging Layer 做：
-
-- field allowlist；
-- redact / hash；
-- sampling；
-- access control；
-- retention policy。
-
-Observability 和 Privacy 必须一起设计。
-
----
-
-## 10. Reverse Shell / Command Injection
-
-危险：
-
-```python
-os.system(user_input)
-```
-
-或 Agent Tool：
-
-```text
-shell(command_from_model)
-```
-
-模型输出不能作为可信 Command。
-
-需要：
-
-- structured command schema；
-- allowlist；
-- no shell when possible；
-- sandbox；
-- permission / approval；
-- resource limit。
-
----
-
-## 11. Container Escape 的直觉
-
-Container 不是绝对安全边界。
-
-风险来自：
-
-- privileged container；
-- host mount；
-- Docker socket；
-- kernel vulnerability；
-- excessive capabilities。
-
-所以 Sandbox 设计要贯彻 Least Privilege。
-
----
-
-## 12. Least Privilege
-
-每个组件只获得它真正需要的能力。
-
-例如 URL Fetcher：
-
-```text
-can access public internet
-cannot access DB subnet
-cannot read secret store
-cannot execute shell
-```
-
-Tool Worker：
-
-```text
-only scoped credential
-only target tenant
-only necessary filesystem path
-```
-
-即使 Prompt Injection 成功，攻击面也被限制。
-
----
-
-## 13. Input Boundary
-
-外部输入包括：
-
-```text
-HTTP body
-file
-URL
-MQ message
-LLM output
-tool output
-web content
-```
-
-每种输入都可能不可信。
-
-所以必须：
-
-```text
-parse
-→ validate schema
-→ validate business invariant
-→ authorize
-→ execute
-```
-
-Python Structured Output 章节已经讲过同一模型。
-
----
-
-## 14. Output Boundary
-
-服务输出也可能危险：
-
-- XSS；
-- CSV injection；
-- secret leakage；
-- prompt leakage；
-- stack trace；
-- internal hostname。
-
-错误响应不要把完整 Exception / SQL / Token 返回用户。
-
----
-
-## 15. Multi-tenant Security
-
-最严重的事故之一：跨租户数据访问。
-
-必须从：
-
-```text
-Auth Principal
-→ tenant_id
-→ DB query
-→ Cache key
-→ Vector filter
-→ MQ task
-→ Tool credential
-```
-
-全链传递。
-
-任何一层遗漏都可能造成泄漏。
-
----
-
-## 16. AI 场景：Prompt Injection 进入 Backend
-
-Prompt Injection 本身归 Agent Security 深讲，但 Backend 必须提供硬边界：
-
-```text
-untrusted text
-→ model asks tool
-→ server permission check
-→ scoped credential
-→ sandbox
-→ audit
-```
-
-不能让 Prompt 决定真实权限。
-
----
-
-## 17. Security Failure 要可观测
-
-记录：
-
-```text
-auth denied
-permission denied
-ssrf blocked
-invalid schema
-secret access
-high-risk approval
-```
-
-但不能把 Secret 本身记录进去。
-
----
-
-## 18. 🎯 面试怎么答
-
-**问：什么是 SSRF，AI Agent 为什么更容易遇到？**
-
-可以回答：
-
-> SSRF 是服务端根据不可信输入去访问攻击者指定的网络目标，可能穿透到 localhost、内网或 cloud metadata。Agent 经常有 URL Fetch / Browser Tool，模型还会处理不可信网页内容，所以风险更突出。我会限制协议和目标、验证解析后的 IP、限制 Redirect，更重要的是用 Network Egress / Sandbox 让 Fetcher 本身无法访问敏感网络，并限制响应大小、时间和 Credential。
-
----
-
-## 19. ⚠️ 易错点
-
-- ORM ≠ 永远没有 SQL Injection；
-- CORS ≠ CSRF 防护本身；
-- Container ≠ 安全沙箱；
-- LLM Output ≠ Trusted Input；
-- Secret 放 Env ≠ 完整 Secret Management；
-- Prompt “禁止危险操作” ≠ Authorization。
-
----
-
-## 20. 本章自测
+### 1. 下载服务检查初始 URL 属于公开网站，然后无条件跟随重定向。请指出还可能越过的边界，并给出两层防护位置。
 
 <details>
-<summary>1. 为什么 SSRF 最强的防护往往不是 URL 字符串校验？</summary>
+<summary>提示</summary>
 
-URL 解析、DNS、Redirect 都可能绕过简单字符串规则。更可靠的是同时限制目标和网络能力，让 Fetcher 所在环境根本无法访问敏感内网/metadata，并遵循最小权限。
+初始地址不是所有后续实际连接地址。
 
 </details>
 
 <details>
-<summary>2. 为什么 LLM 输出也要 Schema / Business / Permission Validation？</summary>
+<summary>参考答案与解释</summary>
 
-模型输出是概率性、不可信数据，可能受 Prompt Injection 或 hallucination 影响。只有经过结构、业务和权限校验后才能执行真实副作用。
+后续重定向或重新解析可能改变实际目标。应校验每次目标与解析结果，并在受控下载器、出口代理或网络策略层限制实际可达地址及资源消耗。
+
+</details>
+
+### 2. 转换工具使用参数数组、不调用 shell，但允许用户指定任意输出路径和程序选项。可以认定安全吗？请提出可检查的收窄规则。
+
+<details>
+<summary>提示</summary>
+
+没有 shell 仍有目标程序和文件系统的能力。
 
 </details>
 
 <details>
-<summary>3. 为什么日志也属于 Security Boundary？</summary>
+<summary>参考答案与解释</summary>
 
-日志可能长期保存且被更多人员/系统访问，如果记录 Token、Secret、隐私 Prompt，会成为独立泄漏面，因此必须 Redaction、Access Control 和 Retention 治理。
+不能。固定允许的选项与输出目录，用服务端任务身份映射路径，检查最终路径及链接边界，设置时间、文件量与权限上限，并验证越界输入被拒绝。
 
 </details>

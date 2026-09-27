@@ -1,428 +1,133 @@
-# 09. Production API、Idempotency 与 Side Effect Safety
+# 怎样识别同一次操作，避免重复副作用
 
-> Production API 最危险的不是“返回 500”，而是**调用方不知道到底执行没执行，于是 Retry 以后把副作用做了两次。**
+[← 等多久，超时之后还发生什么](07-TimeoutDeadline与ErrorTaxonomy.md) · [模块主页](../README.md) · [什么时候值得再试，怎样防止故障放大 →](08-RetryCircuitBreaker与Failover.md)
 
-## 1. 先区分 Read 与 Side Effect
+客户端创建文档后没有收到响应，于是再发一次。服务收到的字节是两份，用户的意图却只有一次。幂等设计先要识别“同一次操作”，再决定重复到达时能否重用结果；只加锁或随机生成编号，都没有回答这个问题。
 
-Read：
+## 1. 幂等描述效果，不要求每次响应完全相同
 
-```text
-GET user profile
-query order
-retrieve document
-```
+**幂等（idempotency）** 指重复执行同一请求，其预期业务效果与执行一次相同。HTTP 中 PUT、DELETE 和安全方法具有相应幂等语义；第一次删除可能返回成功，第二次返回不存在，响应不同并不自动破坏“资源已删除”的效果。[HTTP 幂等方法](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2)
 
-重复执行通常问题较小。
+POST 本身不向通用客户端承诺幂等，但业务可以为创建操作设计稳定键与结果记录。相反，把扣款塞进 GET 并不会因为方法名字而变安全。接口实现必须遵守它宣称的语义。
 
-Side Effect：
+本课程的文档保存接口选择更强的返回策略：在保留窗口内，同键同参数返回原先保存的结果。这是接口约定，不是所有幂等操作都必须逐字返回相同响应。
 
-```text
-create order
-charge card
-send email
-create ticket
-modify file
-invoke tool
-```
+## 2. 什么信息能够代表同一次操作
 
-重复执行可能造成真实损失。
+本例由客户端在第一次提交前生成操作键，超时重试仍使用同一键。服务按 `团队 + 操作类型 + 操作键` 确定作用域，并保存影响业务结果的规范化参数摘要。
 
----
+| 再次到达的请求 | 处理原则 |
+|---|---|
+| 同作用域、同键、同参数，已有结果 | 验证权限后返回既有结果 |
+| 同作用域、同键、不同参数 | 明确参数冲突，不能偷偷执行另一件事 |
+| 同作用域、同键，还在处理 | 返回处理中或进行有界等待，不并行重复执行 |
+| 新键 | 按新的业务操作处理，仍受业务唯一约束限制 |
 
-## 2. HTTP Method 的 Idempotent 语义
+参数摘要帮助发现“同一个键被误用于另一份输入”。哪些字段参与摘要、空值与默认值如何规范化，需要写明，不能直接假定所有语言序列化出来的 JSON 都一样。团队范围应来自可信身份，不是未经验证的请求体。
 
-从协议语义看，某些 Method 设计为幂等，例如 GET / PUT / DELETE；POST 通常不保证。
+操作记录保留多久，决定重复保护窗口。保留一天却允许三天后无约束重放，旧键可能被当成新操作。可采用更长保存、业务唯一约束或明确禁止超过窗口的自动重试。具体供应商也会定义自己的保留和错误重用规则，必须逐个核对。[Stripe 的幂等请求规则示例](https://docs.stripe.com/api/idempotent_requests)
 
-但：
+## 3. 本地业务修改，怎样和防重记录一起成立
 
-> HTTP Method 的规范语义不等于你的业务实现自动安全。
-
-例如 DELETE 如果同时“扣积分”就破坏了预期语义。
-
-API 设计必须让 Method 与业务行为匹配。
-
----
-
-## 3. Idempotency 的核心定义
-
-对同一个**业务操作**重复提交多次，最终效果与执行一次相同。
-
-注意不是：
-
-> “重复请求永远返回 200”。
-
-而是：
+两次并发请求不能都先查询“没有记录”，然后各自修改业务。应让存储在竞争发生时作出唯一决定，例如给操作作用域建立唯一约束。逻辑过程如下，它不是可独立执行的 SQL 脚本：
 
 ```text
-same logical operation
-→ only one side effect
+开始本地事务
+  争取写入唯一操作记录
+  更新本地业务数据
+  保存该操作的确定结果
+提交事务
+提交成功后才对外报告已完成
 ```
 
----
+这些修改必须落在**同一个可原子提交的存储边界**内。提交前失败，则业务与操作记录一起回滚；提交后响应丢失，重试可读到已经保存的结果。遇到唯一冲突时，调用方应正确结束失败事务，再按数据库可见性规则核对已有记录，不能继续基于旧快照认定“没有结果”。[InnoDB 提交与回滚](https://dev.mysql.com/doc/refman/9.7/en/innodb-autocommit-commit-rollback.html)
 
-## 4. Idempotency Key
+[配套实验](../examples/README.md)用 SQLite 文件把文档修改、操作结果和待发事件放进同一事务，并测试六个连接同时提交同一键。它显式用 SQLite 写事务串行化保护查询后写入；这不是 InnoDB 行锁实现，不能照抄 SQL 后就宣称完成 MySQL 并发验收。
 
-Client 为一个逻辑操作生成稳定 Key：
+## 4. 外部副作用为什么不能用同一结论
 
-```text
-Idempotency-Key: 8a0e...
-```
+假设业务还要向外部系统发送付费通知：
 
-Server 记录：
+| 时刻 | 外部系统 | 本地操作记录 |
+|---|---|---|
+| 1 | 尚未收到 | 处理中 |
+| 2 | 已发送通知并扣费 | 仍在等待响应 |
+| 3 | 外部响应丢失，本地进程重启 | 没有确定结果 |
 
-```text
-key
-request fingerprint
-status
-result
-created_at
-```
+重新执行外部动作，可能再发一条通知；直接写失败，也可能把已经完成的事实隐藏掉。本地事务无法回滚外部已经发送的通知。
 
-重复请求：
+可行依据包括外部服务接受同一稳定幂等键、可查询的外部操作编号，或能核对业务账本的补偿与人工处理流程。一次查询暂时“没找到”也可能与正在执行的旧请求竞争，不能不看外部系统保证就立即重做。结果不明时保留 `unknown` 或待核对状态，比虚假的成功或失败更诚实。
 
-```text
-same key + same request
-→ return saved / current result
-```
+> ⚠️ 处理中记录的租约到期，只说明原执行者的当前权利需要重新评估，不证明它从未执行外部动作。重新领取之前仍要处理动作结果未知的问题。
 
-Stripe 的 API 是成熟实践之一：同一个 Idempotency Key 用于安全重试，并校验重复 Key 的参数一致性。
+## 5. 锁、幂等与条件更新分别防什么
 
-但具体保留时间等是产品策略，不能当成所有系统通用标准。
+锁减少同一时刻进入临界区的执行者；锁释放后，同一请求仍能再次拿锁。幂等记录识别跨时间的重复操作；版本条件则拒绝基于旧状态的修改。三者可以组合，但不能相互代替。
 
----
+例如两名编辑者都读到文档版本 3，分别使用新操作键 K1 和 K2 提交修改。两次请求不是重复请求，幂等记录不会合并它们。若接口要求防止覆盖他人的修改，应让请求携带 `expected_version=3`，并把这个条件放进实际数据库更新：先成功的一次将版本改成 4，后到的一次仍要求版本 3，影响行数为 0，应报告版本冲突而不是覆盖。预期版本也应参与操作参数摘要，不能在同键重试时悄悄更改。
 
-## 5. 为什么要校验 Request Fingerprint
+配套实验的 `save_document` 只演示同键防重与本地事务：新键会形成新的文档版本，**没有实现上述编辑冲突检查**。将它用于多人编辑时，需要补上预期版本条件及冲突测试，不能把“两个新键都提交成功”当成已经避免了旧内容覆盖。
 
-错误场景：
+再看任务接管：A 曾持有任务租约，B 后来取得新代际。A 的旧写回要靠资源检查代际拒绝；B 如果收到重复通知，又要靠稳定业务操作键避免重复效果。只有“拿到锁”一个日志，无法证明这两个问题都已经解决。
 
-```text
-Key = abc
-Request 1: charge $10
-Request 2: charge $100
-```
+## 6. 对象编号与操作编号怎样选择
 
-如果只按 Key 去重，第二个请求可能错误复用第一个结果。
+数据库自增 ID 容易集中保证唯一，但生成依赖数据库。随机 UUID 便于多节点独立生成，但唯一性依赖空间和随机质量，仍应有业务约束。UUIDv7 带有时间有序布局，不应把所有 UUID 都说成完全无时间顺序；它也不是严格的全局因果时钟。[UUID 类型与 v7](https://www.rfc-editor.org/rfc/rfc9562.html#section-5.7)
 
-所以通常需要比较：
+时间、节点标识和序列号组合的分布式 ID，需要处理同节点身份冲突、时钟回退及单位时间内序列耗尽。编号生成正确，仍不等于业务去重：每次重试都生成新 UUID，恰好会把同一次操作变成多个不同编号。
 
-```text
-operation
-resource
-critical parameters
-```
+`doc_id` 标识文档，`task_id` 标识一次执行，`operation_key` 标识一次逻辑业务操作，`request_id` 标识一次网络尝试。把它们分开，才能同时追踪重试和防止重复。
 
-同 Key 不同参数应拒绝。
+## 本章小结
 
----
+幂等先定义操作身份和作用域，再把本地业务效果与结果记录原子提交。外部副作用跨过本地事务边界后，必须依赖外部幂等、结果查询或核对流程；锁、版本和随机编号各自解决不同问题。
 
-## 6. Idempotency Record 的状态机
+## 🎯 面试怎么答
 
-不要只有：
+**如何保证一个有副作用的接口在客户端重试时不重复执行？**
 
-```text
-key exists / not exists
-```
+> 先用可信作用域内的稳定操作键识别同一次请求，并比较关键参数。纯本地修改让唯一操作记录、业务效果和结果在同一事务提交；重试返回原结果或处理中。外部动作不能靠本地记录保证一次，应使用外部幂等键或查询核对，结果未知时不盲目重做，并明确记录保留与重放窗口。
 
-更完整：
+## ⚠️ 易错点
 
-```text
-RECEIVED
-→ PROCESSING
-→ SUCCEEDED
-→ FAILED_RETRYABLE / FAILED_FINAL
-```
+> ⚠️ 随机对象 ID 不自动识别重试；分布式锁释放后仍可重复执行。
 
-如果 Worker Crash 在 PROCESSING：
+> ⚠️ 幂等的预期效果相同，不要求所有 HTTP 响应码都相同。
 
-```text
-下一次请求
-→ 判断 Lease / timeout
-→ reclaim or inspect side effect
-```
+> ⚠️ 租约过期与一次查询没查到，都不能单独证明旧外部动作不存在。
 
-否则可能永远卡住。
+## 本章自测
 
----
+先写判断和依据，再展开提示或答案。
 
-## 7. Idempotency 与并发重复请求
-
-两个相同请求同时到达：
-
-```text
-A ---->
-B ---->
-```
-
-如果都是：
-
-```python
-if not exists(key):
-    execute()
-```
-
-会 Race。
-
-需要原子 Claim：
-
-```text
-unique constraint
-transaction
-atomic insert
-CAS
-```
-
-谁成功创建 Idempotency Record，谁获得执行权。
-
----
-
-## 8. Exactly-once 为什么很难
-
-跨网络、跨 DB、跨 MQ 时：
-
-```text
-execute side effect
-→ persist dedupe state
-```
-
-两个步骤之间可能 Crash。
-
-反过来：
-
-```text
-persist done
-→ side effect
-```
-
-也可能 Crash。
-
-因此现实系统常采用：
-
-```text
-at-least-once delivery
-+ idempotent consumer
-+ reconciliation
-```
-
-而不是宣称“真正 Exactly Once Everything”。
-
-某些系统能在特定边界内提供 exactly-once semantics，但不能把局部语义推广成整个跨系统业务链的绝对保证。
-
----
-
-## 9. Unknown Outcome 的处理
-
-例如支付：
-
-```text
-request sent
-→ timeout
-```
-
-不能立即假设失败。
-
-更安全：
-
-```text
-query operation status by idempotency key / order id
-→ if completed: reuse result
-→ if not started: retry
-→ if uncertain: reconcile
-```
-
-这也是为什么“查询接口”很重要。
-
----
-
-## 10. Idempotency Key 谁生成
-
-### Client-generated
-
-适合用户操作：
-
-```text
-Create Order
-```
-
-Client Retry 时保持 Key。
-
-### Server-generated Operation ID
-
-适合系统先创建 Task：
-
-```text
-POST /jobs
-→ job_id
-```
-
-后续所有执行围绕同一个 `job_id`。
-
-不要每次 Retry 重新生成新 ID，否则服务端无法判断是同一逻辑操作。
-
----
-
-## 11. API Versioning
-
-Production API 会演进。
-
-要考虑：
-
-- Path / Header Version；
-- Backward Compatibility；
-- Schema Additive Change；
-- Deprecation；
-- Client Rollout；
-- Event Schema Version。
-
-不要一看到字段变化就做 `/v2`，但也不能无限破坏旧客户端。
-
----
-
-## 12. Error Contract 与 Idempotency
-
-重复请求如果第一次结果未知：
-
-Server 最好能够返回：
-
-```text
-processing
-succeeded
-failed final
-conflict
-```
-
-而不是每次都重新执行。
-
-例如：
-
-```json
-{
-  "operation_id": "op_123",
-  "status": "processing"
-}
-```
-
----
-
-## 13. Agent Tool Side Effect
-
-Agent Tool 调用：
-
-```text
-send_email(to, content)
-```
-
-模型可能：
-
-- Retry；
-- Loop；
-- Resume；
-- duplicate tool call；
-- timeout 后再调用。
-
-Tool Runtime 应传递稳定 Operation Key：
-
-```text
-run_id + step_id + tool_call_id
-```
-
-后端再把它映射成业务幂等语义。
-
-这与 Agent Harness 的 Tool Side Effect / Checkpoint 对接。
-
----
-
-## 14. Idempotency 和 Distributed Lock 的区别
-
-Lock：
-
-```text
-同一时刻谁能执行
-```
-
-Idempotency：
-
-```text
-同一个逻辑操作重复到来是否会产生重复效果
-```
-
-拿锁以后执行两次，仍可能重复副作用。
-
-所以 Lock 不能替代 Idempotency。
-
----
-
-## 15. Result Retention
-
-Idempotency Record 不可能永远保存。
-
-需要定义：
-
-```text
-业务重复窗口
-数据保留期
-存储成本
-Key reuse rule
-```
-
-如果记录已经过期，再次收到旧 Key，要有清晰语义。
-
----
-
-## 16. Metrics
-
-```text
-idempotency_hit_rate
-in_progress_conflict
-duplicate_prevented
-unknown_outcome_count
-reconciliation_needed
-operation_latency
-```
-
-这些指标能直接反映 Retry 是否在产生重复风险。
-
----
-
-## 17. 🎯 面试怎么答
-
-**问：如何保证一个 POST 请求 Retry 时不重复下单？**
-
-可以回答：
-
-> Client 为一个逻辑下单操作使用稳定 Idempotency Key。Server 用唯一约束或原子写入 Claim 这个 Key，并保存请求指纹、执行状态和结果。重复 Key 且参数一致时复用原结果或返回当前状态，不再次执行副作用。还要处理执行成功但响应丢失、PROCESSING 时进程崩溃等 Unknown Outcome，通过状态查询、Lease 和 Reconciliation 恢复。
-
----
-
-## 18. ⚠️ 易错点
-
-- POST ≠ 天生不可能幂等；
-- Lock ≠ Idempotency；
-- Unique ID ≠ Idempotency Key；
-- 同 Key 不校验参数有风险；
-- Retry 生成新 Key 会破坏幂等；
-- Exactly-once 不能轻易跨系统承诺。
-
----
-
-## 19. 本章自测
+### 1. 同一团队先用键 K 保存 doc-42 的内容 A，再用键 K 保存内容 B。请给出第二次结果，并解释为什么不能直接覆盖第一次记录。
 
 <details>
-<summary>1. 为什么 Idempotency Record 需要 PROCESSING 状态？</summary>
+<summary>提示</summary>
 
-因为并发重复请求可能在第一个请求尚未完成时到达；状态机可以区分“已经成功”和“正在执行”，并支持 Crash 后 Reclaim / Reconciliation。
+一个操作键的含义不能在重试中变更。
 
 </details>
 
 <details>
-<summary>2. 为什么 Distributed Lock 不能替代 Idempotency？</summary>
+<summary>参考答案与解释</summary>
 
-锁只限制并发时谁先执行。锁释放后同一个操作仍可能再次执行；幂等关注重复逻辑请求的最终副作用是否只发生一次。
+应返回参数冲突，保留第一次结果。直接覆盖会失去识别旧请求和重放结果的依据，也可能让超时重试变成新的业务动作。
+
+</details>
+
+### 2. 通知系统已经发信，本地在保存结果前崩溃。租约过期后新执行者接手。请列出安全继续需要的外部能力；若都没有，应如何呈现状态？
+
+<details>
+<summary>提示</summary>
+
+区分重新取得执行权与知道动作是否完成。
 
 </details>
 
 <details>
-<summary>3. 服务端执行成功但响应丢失后该怎么办？</summary>
+<summary>参考答案与解释</summary>
 
-Client 用同一个 Idempotency Key 重试或查询 Operation Status，Server 返回已保存结果/状态，而不是直接再执行一次副作用。
+需要稳定外部幂等键、可可靠查询的操作状态或可核对的业务记录等依据。都没有时应保留结果未知并进入人工或业务核对，不能承诺重做既不漏又不重。
 
 </details>

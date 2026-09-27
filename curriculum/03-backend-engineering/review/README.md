@@ -1,256 +1,181 @@
-# AI Backend Engineering｜Review 与综合自测
+# Review｜从一次失败重建后端主线
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[模块主页](../README.md) · [机制实验](../examples/README.md) · [表达训练](../interview/高频面试题.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+第二遍不要从组件名单开始。先选择一个业务操作，画出谁相信哪份状态、谁占着什么资源、在哪个位置失去证据，再决定需要哪种恢复机制。
 
----
-
-> Review 不是重新读 22 章，而是要求你从空白纸画出 Production Backend 的几条主线。
-
----
-
-## 总图 1：一次请求怎样从正常路径走向雪崩
+## 1. 同一次操作的四种事实
 
 ```mermaid
 flowchart TD
-    A["Client Request"] --> B["Gateway / Service"]
-    B --> C["Pool / Downstream"]
-    C --> D{"Downstream 变慢？"}
-    D -->|否| E["正常返回"]
-    D -->|是| F["连接持有时间增加"]
-    F --> G["Pool / Queue Saturation"]
-    G --> H["Timeout"]
-    H --> I["Retry"]
-    I --> J["Load Amplification"]
-    J --> G
-    G --> K["Backpressure / Load Shedding / Degradation"]
+    A[请求进入] --> B[持久接受任务]
+    B --> C[执行具体动作]
+    C --> D[记录可查询结果]
+    D --> E[调用方得到响应]
+    C --> U[动作可能完成 但结果记录缺失]
+    U --> V[先核对外部结果 再决定恢复]
 ```
 
-复习时必须能解释：为什么 Retry 不是 Timeout 的天然解药。
+“已接受”“已执行”“有持久结果”“客户端知道结果”可以发生在不同时间。数据库内部可以用一笔事务合并部分状态变化；外部动作不能仅靠本地事务被包成原子操作。消息确认、TCP 确认和业务确认各自观察的对象也不同。
 
----
+## 2. 用一张关系表判断工具负责什么
 
-## 总图 2：Reliable Remote Call
+| 机制 | 能确定的事 | 仍需别的机制确定的事 |
+|---|---|---|
+| 在途接纳上限 | 已接收未终结的工作不会无限增加 | 单次任务成本、跨实例总预算 |
+| 截止时间 | 这条调用链何时不再值得继续等待 | 下游动作是否已发生、资源是否真的终结 |
+| 唯一键与本地事务 | 本库内重复操作和相关修改的提交关系 | 外部供应商是否接受了动作 |
+| MQ 确认 | 某次交付在相应协议层的进度 | 业务事务、结果可见与用户观察 |
+| 租约与代际 | 哪个执行尝试可被本资源接受 | 不检查代际的外部资源是否被旧执行者修改 |
+| 缓存与版本 | 在明确保存版本依据时拒绝部分旧更新 | 版本记录被淘汰后的旧值回填、复制延迟 |
+| 探针与摘流 | 控制器观察到的健康与路由资格 | 已有连接、传播延迟、长任务是否可恢复 |
 
-```mermaid
-flowchart LR
-    A["Deadline"] --> B["Error Taxonomy"]
-    B --> C{"Retryable?"}
-    C -->|否| D["Fail / Business Reject"]
-    C -->|是| E["Backoff + Jitter"]
-    E --> F["Retry Budget"]
-    F --> G["Circuit Breaker"]
-    G --> H["Fallback / Degradation"]
-    H --> I["Observability"]
-```
+## 3. 综合自测：改条件，而不是复述原句
 
----
+以下均为教学场景。请先列出状态和可检查结论，答案只负责核对推理。
 
-## 总图 3：Side Effect Safety
+### 1. 吞吐降低时，原容量计划还成立吗？
 
-```mermaid
-flowchart TD
-    A["Request / Message"] --> B["Stable Operation ID"]
-    B --> C["Idempotency Claim"]
-    C --> D["Execute Side Effect"]
-    D --> E["Persist Result / Status"]
-    E --> F{"Response Lost / Crash?"}
-    F -->|是| G["Retry with Same Key"]
-    G --> C
-    F -->|否| H["Return Result"]
-```
+一条队列已有 12,000 项工作。原来每秒能处理 300 项、新到达 100 项；现在下游限流使处理能力下降到 80 项/秒。每个排队对象占 4 KiB。请计算原清空时间、现在一分钟后的积压和新增内存，并说明哪项措施能先阻止继续增长。
 
-要能继续回答：如果 Side Effect 成功但状态没写成功怎么办？
+回看：[连接怎样复用，容量怎样计算](../docs/05-ConnectionPool与ResourceCapacity.md) · [到达速度超过处理能力时怎么办](../docs/06-Backpressure与RateLimit.md)
 
----
+<details>
+<summary>提示</summary>
 
-## 总图 4：Reliable Long-running Task
+使用净消耗率，不用总处理率。
 
-```mermaid
-flowchart TD
-    A["POST /jobs"] --> B["Task Record"]
-    B --> C["Outbox / MQ"]
-    C --> D["Worker Claim"]
-    D --> E["Lease + Heartbeat"]
-    E --> F["Checkpoint / Progress"]
-    F --> G{"Worker Crash?"}
-    G -->|是| H["Lease Expire / Reclaim"]
-    H --> D
-    G -->|否| I["Persist Result"]
-    I --> J["Poll / SSE / Event"]
-```
-
----
-
-## 总图 5：State Ownership / Consistency
-
-```mermaid
-flowchart LR
-    A["Business Truth"] --> B["MySQL / Durable Store"]
-    B --> C["Cache / Derived State"]
-    B --> D["Outbox / Event"]
-    D --> E["Search / Vector / Cache Update"]
-    C --> F{"Divergence?"}
-    E --> F
-    F -->|是| G["Retry / Version / Reconciliation"]
-    G --> C
-```
-
----
-
-## 总图 6：Production Runtime
-
-```mermaid
-flowchart TD
-    A["Service Instance"] --> B["Readiness"]
-    B --> C["Load Balancer"]
-    C --> D["Request"]
-    D --> E["Trace / Metric / Log"]
-    D --> F["DB / Redis / Provider"]
-    F --> E
-    A --> G["Config / Feature Flag"]
-    A --> H["CPU / Memory / FD / Pool"]
-    H --> E
-    A --> I["Graceful Shutdown"]
-```
-
----
-
-## 总图 7：Security Boundary
-
-```mermaid
-flowchart LR
-    A["Untrusted Input"] --> B["Parse / Validate"]
-    B --> C["Authenticate"]
-    C --> D["Authorize / Tenant"]
-    D --> E["Least-Privilege Capability"]
-    E --> F["DB / Network / Tool"]
-    F --> G["Audit / Redaction"]
-```
-
----
-
-# 综合自测
-
-### 1. 为什么 Pool 满了不能第一反应调大？
-<details><summary>查看参考答案</summary>
-Pool 满可能只是下游变慢、连接泄漏、事务太长的结果。先看 acquire wait、hold time 和 downstream latency；盲目调大可能把更多压力打到 DB/Provider。
 </details>
 
-### 2. Rate Limit 与 Concurrency Limit 的区别？
-<details><summary>查看参考答案</summary>
-Rate Limit 控制单位时间进入量；Concurrency Limit 控制同时在飞的任务数。AI Provider 经常同时有两种约束。
+<details>
+<summary>参考答案与解释</summary>
+
+原来 12,000÷(300−100)=60 秒。现在每秒净增 20 项，一分钟后 13,200 项，比原来增加 1,200×4 KiB=4,800 KiB，约 4.69 MiB。要先使被接纳速率低于可持续处理能力或恢复有效处理能力；增加队列只是推迟溢出。
+
 </details>
 
-### 3. Deadline 为什么比层层独立 Timeout 更适合分布式链路？
-<details><summary>查看参考答案</summary>
-Deadline 表示全链路绝对预算，向下传播剩余时间，避免每层都重新获得完整 Timeout 导致总时延不断叠加。
+### 2. 本地事务成功，客户端却收到失败。
+
+文档、操作结果和 Outbox 已一起提交，返回响应时连接断开。客户端同键同参数重试。请写出应返回的结果以及是否新增事件。再把相同键的文档内容改掉，判断处理方式。
+
+回看：[怎样识别同一次操作，避免重复副作用](../docs/09-APIIdempotency与SideEffect.md) · [消息怎样交付，确认到底确认了什么](../docs/10-MQ与DeliverySemantics.md) · [进程重启后，任务怎样继续推进](../docs/12-ReliableAsyncTask.md)
+
+<details>
+<summary>提示</summary>
+
+关注持久操作记录，而不是客户端看见的状态。
+
 </details>
 
-### 4. 什么错误不应该 Retry？
-<details><summary>查看参考答案</summary>
-Schema/参数错误、权限拒绝、明确业务拒绝等永久错误。Retry 前必须先做 Error Taxonomy。
+<details>
+<summary>参考答案与解释</summary>
+
+先查回原结果，不新增事件。相同键不同参数应拒绝冲突，不能默默复用旧结果。新业务意图使用新键；Outbox 已提交仍不表示消息已经发出。
+
 </details>
 
-### 5. Jitter 为什么必要？
-<details><summary>查看参考答案</summary>
-只有指数退避时，大量 Client 仍会在相同时间点同步重试；Jitter 打散波峰，减少再次同时冲击下游。
+### 3. 租约与资源边界换了。
+
+A 已向供应商发起外部写入，响应丢失。A 的本地租约过期后 B 取得新代际。供应商既不检查代际，也没有可查询操作键。能否凭 B 的新代际宣称安全重做？说明缺什么能力。
+
+回看：[怎样识别同一次操作，避免重复副作用](../docs/09-APIIdempotency与SideEffect.md) · [进程重启后，任务怎样继续推进](../docs/12-ReliableAsyncTask.md) · [多份数据不一致时，怎样恢复业务正确性](../docs/13-Consistency与Compensation.md)
+
+<details>
+<summary>提示</summary>
+
+把本地 UPDATE 与外部请求分开。
+
 </details>
 
-### 6. Retry 为什么必须和 Idempotency 一起讨论？
-<details><summary>查看参考答案</summary>
-对有副作用操作，第一次可能已成功但响应丢失，Retry 会重复执行；稳定 Operation Key 和服务端幂等语义用于消除重复效果。
+<details>
+<summary>参考答案与解释</summary>
+
+不能。新代际只能保护实际检查它的资源，供应商可能已经执行 A 的动作。缺少供应商防重或结果查询依据时，应保留未知状态并采取人工核对或业务补偿策略；不能假造 exactly-once 保证。
+
 </details>
 
-### 7. MQ 的 At-least-once 会带来什么工程要求？
-<details><summary>查看参考答案</summary>
-消息可能重复投递，因此 Consumer 必须幂等，且要设计 attempt、DLQ、Backoff、Ordering 与 Reconciliation。
+### 4. 一条缓存记录并不是完整的恢复依据。
+
+数据库已到版本 8，旧读请求仍持有版本 7。缓存先记住版本 8，随后数据和版本记录一起被淘汰。旧读者试图填入版本 7。仅比较“缓存现有版本”能否阻止？
+
+回看：[多份数据不一致时，怎样恢复业务正确性](../docs/13-Consistency与Compensation.md) · [哪些状态必须保存，恢复时相信哪一份](../docs/14-DataLayering与StateOwnership.md)
+
+<details>
+<summary>提示</summary>
+
+比较依赖的高水位还存在吗？
+
 </details>
 
-### 8. Consumer Lag 高为什么不能直接“加 Consumer”？
-<details><summary>查看参考答案</summary>
-如果 Consumer 数已达到 Partition 数、存在 Hot Partition、下游变慢或 Poison Message，加 Consumer 未必有效；要先做瓶颈归因。
+<details>
+<summary>参考答案与解释</summary>
+
+不能，缺失记录无法证明已经见过 8。要保存可依赖的版本依据、核对事实源或采用明确的失效修复方案。额外还要考虑读到复制旧值的情况；TTL 只能限制部分驻留时间，不自动消除重填窗口。
+
 </details>
 
-### 9. Outbox 解决了什么？
-<details><summary>查看参考答案</summary>
-把业务状态与待发送 Event 放在同一 DB Transaction 中，避免 DB 成功但 MQ publish 丢失。Relay 仍可能重复发送，所以 Consumer 继续需要幂等。
+### 5. 权限在排队期间改变。
+
+员工有权创建导出任务，任务排队时被移出团队。工作者随后领取，结果链接也可能被缓存。请列出必须重新判断的边界，不要求实现完整权限服务。
+
+回看：[谁能访问什么，权限怎样贯穿请求与任务](../docs/15-AuthSession与TenantBoundary.md) · [不可信输入怎样被限制在安全边界内](../docs/21-BackendSecurity.md)
+
+<details>
+<summary>提示</summary>
+
+创建、执行、获取结果是不同时间的访问。
+
 </details>
 
-### 10. Lease 与 Heartbeat 为什么不能替代 Idempotency？
-<details><summary>查看参考答案</summary>
-Lease 解决执行权随时间过期；旧 Worker 可能已经产生副作用再失联，新 Worker Reclaim 后仍可能重复，因此还要 Idempotency/Fencing/Status Verification。
+<details>
+<summary>参考答案与解释</summary>
+
+创建时确定可信身份和资源范围；执行前按业务规则复核仍可执行的权限；结果查询和下载继续授权，缓存不能只按文档或任务ID跨用户复用。审批也应绑定动作与输入版本，不能把旧批准扩展成任意新动作。
+
 </details>
 
-### 11. Cache 最终一致性靠什么“最终”？
-<details><summary>查看参考答案</summary>
-必须有明确收敛机制，例如 Retry、TTL、Outbox/CDC、Version、Reconciliation；不能只是希望它自己恢复。
+### 6. SQL 优化没有解决接口慢。
+
+同一请求串行耗时为等连接 1,000 ms、SQL 50 ms、模型 850 ms、组装响应 100 ms。原 SQL 为 800 ms。求当前总耗时与继续将 SQL 降为 10 ms 的收益，并说明接下来观察什么。
+
+回看：[连接怎样复用，容量怎样计算](../docs/05-ConnectionPool与ResourceCapacity.md) · [从慢请求的证据定位瓶颈](../docs/17-Observability与PerformanceDiagnosis.md) · [把应用故障追到 Linux 资源](../docs/18-LinuxTroubleshooting.md)
+
+<details>
+<summary>提示</summary>
+
+先画该请求时间线，别相加不同样本的 P99。
+
 </details>
 
-### 12. Compensation 与 Rollback 的区别？
-<details><summary>查看参考答案</summary>
-Rollback 是事务内撤销；Compensation 是新的业务动作，例如退款、释放库存、发纠正通知，且补偿本身也可能失败。
+<details>
+<summary>参考答案与解释</summary>
+
+当前 2,000 ms；继续优化 SQL 只减少 40 ms，即当前总耗时的 2%。先看连接持有时间、池等待、并发和模型调用；不是盲目扩池。这个加法只适用于同一串行请求，不适用于并行分支或各阶段独立分位数。
+
 </details>
 
-### 13. Source of Truth 为什么必须提前定义？
-<details><summary>查看参考答案</summary>
-发生冲突或恢复时需要知道相信哪份状态；否则 Cache、DB、Runtime State 之间无法确定谁覆盖谁。
+### 7. 发布窗口比任务短。
+
+Pod 停机宽限 30 秒，preStop 已耗费 8 秒，任务还需 20 分钟。请说明当前进程最多还有怎样的预算、什么时候停止接纳，以及如何避免把发布变成任务丢失。
+
+回看：[进程重启后，任务怎样继续推进](../docs/12-ReliableAsyncTask.md) · [部署、探针与停机怎样配合应用](../docs/19-ContainerK8s与Deployment.md) · [配置和版本怎样安全改变](../docs/20-ConfigRelease与ServiceEvolution.md)
+
+<details>
+<summary>提示</summary>
+
+摘流和终止存在传播与并发，不是完美串行。
+
 </details>
 
-### 14. Authentication / Authorization / Approval 怎么区分？
-<details><summary>查看参考答案</summary>
-Authentication 确认身份；Authorization 判断是否有权限；Approval 是有权限后某次高风险动作是否仍需人工确认。
+<details>
+<summary>参考答案与解释</summary>
+
+宽限不是等 preStop 完才重新计时，余量约 22 秒且还要预留清理。进入终止时就限制新工作，并为传播期间的请求定义处理方式；长任务靠持久状态和恢复协议继续，不指望在该 Pod 上等完。已有连接、旧 Worker 和新版本输入兼容仍需检查。
+
 </details>
 
-### 15. Stateless Service 是否真的没有状态？
-<details><summary>查看参考答案</summary>
-仍有 Pool、Local Cache、In-flight Request 等进程状态；“Stateless”主要指实例不是长期业务事实的唯一拥有者，任意副本可处理请求。
-</details>
+## 4. 怎样记录真实薄弱点
 
-### 16. Readiness 与 Liveness 的区别？
-<details><summary>查看参考答案</summary>
-Readiness 判断是否接流量；Liveness 判断实例是否无法恢复需要重启。临时下游慢不应轻易触发 Liveness Restart。
-</details>
+把错误写成“我混淆了哪两个状态，漏了哪个条件”，例如把请求取消当成工作结束，或把 MQ 重复消息 ID 当成业务操作身份。随后回到对应正文和实验验证，不用再抄一遍术语定义。
 
-### 17. 为什么增加 API Pod 可能让系统更差？
-<details><summary>查看参考答案</summary>
-更多 Pod 会增加 DB/Redis/Provider 并发；如果共享依赖已经饱和，会加速下游过载。
-</details>
-
-### 18. 为什么 P99 比平均延迟重要？
-<details><summary>查看参考答案</summary>
-平均值会掩盖尾部慢请求；用户体验和资源持有时间经常由 P95/P99 长尾决定。
-</details>
-
-### 19. Trace 为什么需要跨 MQ 传播 Context？
-<details><summary>查看参考答案</summary>
-异步 Worker 与原 HTTP Request 不在同一进程/时间，如果 Message Metadata 不带 Trace Context，链路会断开，无法归因一次业务操作的完整路径。
-</details>
-
-### 20. Dynamic Config 为什么需要 last-known-good？
-<details><summary>查看参考答案</summary>
-新配置可能非法或让服务退化；先验证再原子切换，并保留上一版本，可以在 Config Center/新配置故障时回退。
-</details>
-
-### 21. 为什么 Prompt 不能当 Authorization？
-<details><summary>查看参考答案</summary>
-Prompt 是模型行为约束，不是可信安全边界。真实 Tool/数据访问必须由服务器端身份、Policy、Scope 和最小权限执行。
-</details>
-
-### 22. SSRF 为什么在 Agent 场景风险更高？
-<details><summary>查看参考答案</summary>
-Agent 常有 URL Fetch/Browser Tool，模型还会处理不可信网页内容；攻击者可诱导服务端请求内网/metadata，所以需要目标验证与网络 Egress 隔离。
-</details>
-
-### 23. ThreadLocal 与 Python contextvars 为什么只能做概念映射？
-<details><summary>查看参考答案</summary>
-它们都可承载请求上下文，但生命周期、调度和传播机制不同。跨语言学习应该映射问题，而不是假设实现等价。
-</details>
-
-### 24. 一次 Production Incident 的最小排障链是什么？
-<details><summary>查看参考答案</summary>
-先限定范围和最近变更，再看 Rate/Error/Duration、Queue/Pool、CPU/Memory/FD、Downstream Latency，用 Trace 拆阶段并验证 Root Cause，最后观察修复后指标恢复。
-</details>
+综合判断能走通以后，再加入 Java、Spring 或 Go 的具体实现差异：代理是否经过、线程上下文何时清理、运行时如何调度。对应关系只帮助迁移问题，不表示各生态行为完全相同。
