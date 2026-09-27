@@ -6,7 +6,7 @@
 
 记录日期：2026-09-27。任务先按“仅形成修改稿”完成审查、改写与本地验证，随后获得明确授权创建 commit、PR 并合并 main。本记录随该次 RAG 发布进入仓库，不再把本轮状态描述为“仅有本地修改稿”。
 
-审查开始基线为 `41c42937c720517781cf29bd61566260766d7729`，当时 RAG 目录树为 `6fb5d2812420a394802f8ac3417331f59f52cd7b`，14 个正文路径保持不变。发布前重新读取 main 时，仓库先前进到 `157bc4bfaa34efdf611b8fa2f858d9123ad22c13`（LLM Foundation #19），随后继续前进到 `3ce872df106556bb87ea3b7ea218459c25318689`。提交级比较显示，并行工作包含 Vector DB、Claude Code、Codex、DeepSeek Harness 与 Redis 交叉链接等更新；没有改动本轮 RAG 正文，但改动了 `references/README.md` 与 `guide/project/README.md` 两个共享索引。发布稿以最新 main 为父提交，保留 Vector DB、LLM Foundation 及其他并行项目记录，只追加 RAG 入口；没有用审查阶段的共享文件快照覆盖并行成果。
+审查开始基线为 `41c42937c720517781cf29bd61566260766d7729`，当时 RAG 目录树为 `6fb5d2812420a394802f8ac3417331f59f52cd7b`，14 个正文路径保持不变。发布前重新读取 main 时，仓库先前进到 `157bc4bfaa34efdf611b8fa2f858d9123ad22c13`（LLM Foundation #19），随后继续前进到 `07e014c9d1899c0c93f12265570f63dcbce64032`。提交级比较显示，并行工作包含 Vector DB、Claude Code、Codex、DeepSeek Harness、DeerFlow 与 Redis 交叉链接等更新；没有改动本轮 RAG 正文，但改动了 `references/README.md` 与 `guide/project/README.md` 两个共享索引。发布稿以最新 main 为父提交，保留 Vector DB、LLM Foundation 及其他并行项目记录，只追加 RAG 入口；没有用审查阶段的共享文件快照覆盖并行成果。
 
 原始 RAG blob SHA 与交付文件哈希保存在本轮交付清单中，用于审计审查基线；发布分支最初从 `157bc4bf...` 创建，在 main 继续前进后重新对齐到最新发布基线，再生成 RAG 提交。RAG 正文没有同期冲突。
 
@@ -141,4 +141,4 @@ RAG-030 的 MOVED 兼容记录保留，Codebase Retrieval 的完整主责仍交�
 
 现行学习顺序源把 MySQL、Redis 放在 Backend 前；本模块入口服从该源。已读到的 Agent 入口及 Integration Status 中仍有旧的全模块顺序文本，属于既有导航残留，本轮记录而未顺手覆盖其他对话的共享修改。因此不宣称全仓导航已经全面一致。Vector DB 的无过滤诊断需明确受授权离线环境这一边界；RAG 已在 11 章说明，但未改写 Vector DB 正文。
 
-本轮发布期间多次 fresh-read main：先识别 `157bc4bfaa34efdf611b8fa2f858d9123ad22c13` 的 LLM Foundation 并行修改，随后在 main 前进到 `3ce872df106556bb87ea3b7ea218459c25318689` 后重新比较提交范围并 fresh-read 两个共享索引。发布提交以该最新 main 为父提交，保留并行入口，只追加 RAG 入口，而不是用历史共享文件覆盖。今后继续修改本模块时仍应 fresh-read main，核对目标文件是否出现新的并行改动；不匹配时先整合，不能用历史快照强制覆盖。
+本轮发布期间多次 fresh-read main：先识别 `157bc4bfaa34efdf611b8fa2f858d9123ad22c13` 的 LLM Foundation 并行修改，随后在 main 前进到 `07e014c9d1899c0c93f12265570f63dcbce64032` 后重新比较提交范围并 fresh-read 两个共享索引。发布提交以该最新 main 为父提交，保留并行入口，只追加 RAG 入口，而不是用历史共享文件覆盖。今后继续修改本模块时仍应 fresh-read main，核对目标文件是否出现新的并行改动；不匹配时先整合，不能用历史快照强制覆盖。
