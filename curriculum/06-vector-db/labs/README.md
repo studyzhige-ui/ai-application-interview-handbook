@@ -13,12 +13,14 @@
 
 ```bash
 python curriculum/06-vector-db/labs/numeric_lab.py
-python -m unittest discover -s curriculum/06-vector-db/labs -p "test_numeric_lab.py" -v
+python -m unittest discover -s curriculum/06-vector-db/labs -p "test_*.py" -v
 ```
 
 预期可检查结果：全库平方 L2 前三是 A、C、F，alpha 前三是 A、C、D；全库余弦先取三条再过滤只剩 A、C。图宽度 1 返回 A，宽度 2 返回 T；IVF 探测一个列表返回 4，两个列表返回 5.1；PQ 近似距离为 0.30，原始平方距离为 0.15。删除版本 8 后，迟到版本 7 不被状态模拟接受。
 
 测试还直接提取正文 02、03 的 Python 代码块并执行，而不是维护第二份相同程序。其余测试复用 `numeric_lab.py` 中的函数，核对输入边界、并列、空目标和新情境。若移动正文代码，应同步检查提取测试，而不是删除断言。
+
+`test_reader_refinement.py` 直接读取第 06 章的中心训练输入、更新表与新条件自测，核对分配和均值；再读取第 09 章状态表中的向量，核对更新前后的距离排名。中心手算应得到 1、9，新条件得到 2、10；记录示例在完整 upsert 后返回 C，仅改标签且不加标签过滤时仍返回 A。这些仍是数值和顺序演示，不是实际数据库 CRUD、索引训练或并发测试。
 
 **结果边界。** 这些测试通过，证明的是指定数值与单进程模拟行为，不证明 Faiss、数据库并发、持久化或 RAG 效果。输出到屏幕的 JSON 不是持久化业务状态。
 
