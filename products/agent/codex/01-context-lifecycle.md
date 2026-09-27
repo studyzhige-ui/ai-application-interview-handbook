@@ -1,509 +1,236 @@
-# 01. Codex Context Lifecycle｜一次模型请求到底是怎样被“编译”出来的
+# 01｜上下文：一次任务怎样变成连续的模型请求
 
-[← Codex 总览](README.md) · [Memory →](02-memory-lifecycle.md)
+[← 模块入口](README.md) · [下一章：记忆 →](02-memory-lifecycle.md)
 
-> **源码基线：** `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea`
+用户说：“分页函数第一页返回错了，请修复，但不要改变公开接口。”模型第一次需要知道需求、工作目录和可用工具；读过文件后，第二次需要知道实现和失败测试；改完代码后，下一次需要知道测试结果。**这些请求属于同一个任务，但输入不应该机械地完全相同。**
 
-如果只看最终发给模型的 HTTP / WebSocket 请求，很容易误以为 Codex 的上下文管理就是：
+本章追踪这条变化链。分页数据沿用[统一练习](../../../practice/coding/exercises/09-ai-coding-lab/README.md)：`items = [10, 20, 30]`，默认每页两项，第一页应返回 `[10, 20]`。下面的调用次序是教学推演，不是已采集的 Codex 运行日志。
+
+## 1. 先区分任务、执行实例和一次模型请求
+
+在 Codex 中，用户可以恢复一段对话，但恢复前后的进程不是同一个。一次用户输入又可能引发多次模型调用。因此，不能用一个“会话”统称全部层次。
+
+| 对象 | 在本任务中的作用 | 不应混同的东西 |
+|---|---|---|
+| Thread（对话线程） | 把这段持续工作的历史组织在同一身份下 | 当前进程、某一次 HTTP 请求 |
+| Session（核心执行实例） | 持有运行中的历史、服务和执行控制 | 所有历史永久存储的唯一位置 |
+| Turn（交互轮次） | 处理一次输入及其后续模型、工具活动 | 一次模型采样 |
+| StepContext（单次请求快照） | 固定这一请求使用的设置、环境、指令和工具视图 | 整个任务始终不变的全局配置 |
+
+例如，“先读实现，再改偏移，再运行测试”可以在一个 Turn 内经过多次采样。模型输出工具调用后，核心执行工具，记录结果，然后再次请求模型。真正的循环在 [`session/turn.rs::run_turn`](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs)；客户端对外还使用 Thread、Turn、Item（轮次中的交互条目）组织交互，不能把内部 Rust 类型机械等同于所有客户端协议对象。
+
+**一次回答结束与任务验收通过也不同。** 循环还会检查工具后续、待处理输入和停止钩子。停止钩子能够要求补充工作；即使本轮正常结束，仍需由测试和实际差异证明分页修复正确。
+
+## 2. 历史里有什么，不等于这次全部发给模型
+
+先把三个问题分开：发生过什么、为恢复保存什么、下一次模型需要看什么。
+
+读取文件和运行测试会产生结果；用户也可能更改约束。核心把这些内容组织为有类型的历史条目，而不是无结构地拼接一大段聊天文本。组装下一次请求时，还要考虑模型支持的输入类型、工具调用与结果的对应关系，以及上下文容量。
 
 ```text
-instructions
-+ messages
-+ tools
+用户输入、工具结果、指令和环境变化
+                    ↓
+             运行中的结构化历史
+                    ↓
+        为当前模型准备可发送的历史视图
+                    ↓
+       连同基础指令、工具说明组成请求
 ```
 
-源码真正复杂的地方恰好发生在这之前。
+在 `run_turn` 中，核心从历史生成 `for_prompt(...)` 视图，再交给采样请求。`ContextManager` 除了模型窗口中的条目，还单独保留宿主掌握的事实和审核相关状态。因此，“历史可恢复”“当前模型看见”“权限审核需要保留”不是同一个集合。依据：[请求组装调用处](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs)、[历史与保留事实](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/context_manager/history.rs)。
 
-Codex 要先回答很多运行时问题：这条 Thread（线程，会话容器）之前有没有历史？当前是什么模型？工作目录和权限有没有变化？AGENTS.md 是否变了？本轮显式提到了哪个 Plugin（插件）或 Skill（技能）？某个 MCP Server 是否已经启动？过去 Memory（长期记忆）是否应该注入？这次采样能看到哪些 Tool（工具）？旧历史离 Context Window（上下文窗口）上限还有多远？
+以分页任务为例，模型读到的测试摘要可能只保留失败名称和断言差异，而诊断材料还需要保存原输出。摘要适合继续推理，却不能据此声称完整原始日志已经永久保存；具体留存由对应存储和追踪实现负责。
 
-因此更准确的说法是：
+## 3. 指令怎样进入请求：先认识来源，再看刷新
 
-> **Codex 不是“拼 Prompt”，而是在每一次模型采样前，把 Session（运行实例）中分散的状态编译成一个当下有效的模型视图。**
+用户的“不要改公开接口”是任务约束。项目中的 `AGENTS.md` 可以描述代码约定和测试方法。宿主还可以提供用户级、线程级指令。这些内容的来源、适用范围和更新方式不同，不能只因为都是字符串就当作等价材料。
 
-下面就沿这条真实生命周期往下走。
+`AgentsMdManager` 将相关来源解析为已经应用的指令快照。它在启动或请求边界刷新，而不是让一个工具调用一边执行，一边随意改换它依据的指令。刷新过程大致是：
 
----
+1. 串行进入刷新流程，避免两个刷新同时提交互相不一致的结果。
+2. 取得来源与已应用快照；需要调用外部指令提供者时，不长时间持有内部状态锁。
+3. 根据环境选择和项目可信级别判断是否重新发现项目指令，读取用户级和线程级提供者的内容。
+4. 校验后才替换已应用快照；未变化时复用允许复用的缓存。
 
-## 1. 一条用户输入先进入 Turn，而不是直接进入 Prompt
+这里“提供者”指负责取得指令的程序接口，“快照”指已经取得并用于执行的内容，两者不能互换。子 Agent 可以继承已应用内容；线程提供者只有明确允许共享时才随之继承。依据：[指令管理器及继承条件](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agents_md_manager.rs)。
 
-对 App Server 来说，客户端先通过协议发起 `TurnStart`。对 Core 来说，真正推进 Agent 工作的是 `run_turn`。
+> ⚠️ **注意：请求边界刷新不等于每次重新读取所有文件。** 项目发现有缓存条件；不能仅凭编辑了磁盘文件，就断言正在进行的请求已经看见新内容。反过来，权限或可信环境收紧时，也不能继续使用原先可读、后来不可读的指令。管理器会先使相关缓存失效，避免刷新失败或取消后仍泄露旧内容。
 
-关键源码：
+指令优先级也不是安全隔离本身。把外部文件中的“忽略用户要求”当作普通待分析内容，与真正授权程序修改权限，是两件不同的事。模型层要保留来源区别，执行层还要做权限检查；第三章会沿一次工具调用解释执行边界。
 
-- `codex-rs/app-server-protocol/src/protocol/v2/turn.rs`
-- `codex-rs/app-server/src/request_processors/turn_processor.rs`
-- `codex-rs/core/src/session/turn.rs`
+## 4. 为什么还需要 StepContext
 
-这里有一个初学者很容易误解的地方：Codex 的 Turn（轮次）不是“一次模型 API 调用”。
+假设模型已经看见某个读取工具的参数与工作目录，尚未返回调用时，用户更换了执行环境。如果运行时拿旧说明解释模型输出，却在新环境执行，就可能读错文件，甚至越过原本的权限范围。
 
-一次 Turn 可能长这样：
+MCP（模型上下文协议）用于连接宿主与外部工具、资源；这里先关心连接与工具目录怎样被固定到一次请求。
+
+`StepContext` 把一次请求的设置、环境、MCP 连接绑定及其工具目录、工具路由和已加载指令绑定到一起。随后执行该请求产生的工具调用时，继续持有同一份快照。**模型看见的能力，与解释这次调用所依据的能力，应当相符。** 依据：[单次请求快照](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/step_context.rs)、[工具调用保留原快照](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs)。
+
+这不是说整个 Turn 的设置永远不能变。`TurnContext` 中同时存在初始设置和供下一步捕获的设置；单次请求使用自己的不可变版本。旧调用方仍有读取初始 Turn 设置的兼容路径，源码也保留了尚待迁移的说明。不能把设计方向写成“所有调用方已经完成迁移”。依据：[初始设置与下一步设置](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn_context.rs)。
+
+下面是教学时间线：
+
+| 时刻 | 已发生的事情 | 应怎样理解 |
+|---|---|---|
+| A | 请求捕获环境 E1、工具目录 T1 | 这次请求的解释依据已经确定 |
+| B | 模型正在生成，用户提交环境变更 | 不能把已经发送的请求变成“从未见过 E1” |
+| C | 原请求产生调用 | 调用仍有它所来源的 StepContext；是否取消或允许动作还受执行控制约束 |
+| D | 下一次请求捕获新状态 | 可以使用 E2、T2，并把必要变化告诉模型 |
+
+快照解决一致解释，不授予永久权限。取消、审批和环境自身的强制约束仍然存在。
+
+## 5. 环境变化为什么使用基线和差异
+
+分页任务进行到一半，用户把工作目录切到另一个项目。模型需要知道这个变化，但通常不需要再次接收所有未变化的环境说明。Codex 保留用于比较的上下文基线，并在合适的边界记录变化。
+
+`reference_context_item` 用于设置比较，`world_state_baseline` 用于世界状态比较。这里的 World State（环境与能力状态）不是全世界的知识，而是宿主为当前工作组织的相关运行条件。两次状态相同，没必要反复制造相同的更新；基线不存在时，则需要重新注入相应完整信息。依据：[基线字段及失效条件](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/context_manager/history.rs)、[逐步记录状态变化](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs)。
+
+这种增量方式的前提是：模型仍然拥有理解差异所需的原状态。若压缩或回退已经移走相关基础内容，就不能只发一句“其他不变”。因此，比较基线必须随历史替换一起处理，不能当作永不过期的性能缓存。
+
+## 6. 一次完整请求怎样准备出来
+
+把前面的对象放回分页任务，第一次调用前需要确定：任务约束是修复第一页；执行目录在哪里；项目要求怎样测试；当前有哪些可用工具。这里的“准备”不等于直接执行修改。
+
+之后，每次采样沿同一条主线推进：
+
+1. 接纳当前允许处理的输入，并记录相关钩子产生的信息。
+2. 捕获该请求的 StepContext，使设置、环境与工具视图相互一致。
+3. 记录需要让模型知道的状态变化。
+4. 从运行中历史生成当前模型支持的输入视图。
+5. 发出模型请求，接收文字和结构化调用。
+6. 执行允许的工具，记录结果，再判断继续、压缩或结束。
+
+源码还包含采样前压缩、输入等待和不同来源的特殊路径，不能把上述教学主线当作所有分支完全相同的伪代码。尤其在采样前压缩失败时，新输入尚未进入通常的历史路径，核心会专门保留输入，避免用户需求随着失败一起丢失。依据：[输入保留与循环](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs)。
+
+第一次读完 `pagination.py` 后，模型能够算出：`page=1`、`page_size=2` 时，旧表达式得到 `start=2`，所以拿到 `[30]`。它需要的是实现与任务约定之间的差异，不是重复收到整个项目的无关文件。
+
+## 7. 工具结果进入上下文，还要保持什么关系
+
+一次工具调用和它的结果通过 `call_id` 关联。它的作用类似一张收据上的单号：多次读取、测试甚至并行调用发生时，不能凭结果出现的顺序猜它属于哪个请求。
+
+历史经过中断、回退或筛选后，可能留下只有调用没有结果，或者只有结果没有调用的情况。`normalize.rs` 负责相关规范化：对于缺失结果的函数调用，可以补入表示中止的合成结果；没有对应调用的孤立结果则按规则处理。工具搜索等不同协议类型还有各自的表示，不能都当成普通文本结果。依据：[配对与规范化](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/context_manager/normalize.rs)。
+
+> ⚠️ **注意：补出 `aborted` 是修复模型输入结构，不是重新执行工具。** 它既不是成功收据，也不能证明原工具在外部系统中完全没有产生效果。恢复后的任务仍须核对真实状态。
+
+大结果还有容量问题。测试日志可能包含大量重复栈信息，工具结果的模型视图可以按预算截断；结果本身也可以携带影响后续历史截断的预算元数据。预算应保住本次判断所需的退出状态、失败位置和关键差异，而不是只留下最前面的漂亮提示。具体工具输出与历史封装见 [AnyToolResult](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)。
+
+“摘要加原始材料位置”是一种可迁移的工程策略，但不能因此推断 Codex 的每个工具都自动把完整结果保存成永久文件。需要回查原始材料时，应先确认它确实可取、路径仍然有效且有读取权限。
+
+## 8. 稳定前缀怎样帮助缓存，但不能替代上下文选择
+
+连续模型请求往往共享基础指令和较早历史。若内容与标识保持稳定，服务端更有机会复用前缀计算；反复给相同内容生成随机标识，则可能破坏这种复用。
+
+一个很具体的源码细节是：规范化产生的合成结果使用从来源条目标识推导的稳定标识，注释明确说明这是为了在重复规范化、重试和恢复时保持提示缓存复用。它支持的是“稳定请求表示有价值”，不是“任意请求都保证缓存命中”。依据：[合成标识与缓存说明](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/context_manager/normalize.rs)。
+
+前缀缓存减少重复计算；答案缓存直接复用旧答案；上下文筛选减少无关输入。三者处理的对象不同。即使前缀计算可以复用，过时的项目约定仍可能误导模型，过大的输入仍然占用上下文窗口，所以不能用“有缓存”替代选择和更新。
+
+## 9. 容量预算为什么不只看历史长度
+
+请求需要为指令、历史、工具说明、工具结果以及模型继续生成留出空间。工具目录很大，即使用户只说一句话，也可能占用大量容量；反过来，历史很多却经过合适的压缩，当前输入未必很大。
+
+token 是模型处理输入与生成时使用的计数单位，不等于字符数。用一个**教学预算，不是 Codex 默认值**说明计算：假设某次规划的窗口为 32,000 token，预留生成空间 6,000 token，额外安全余量 2,000 token，则可分配给输入的预算为：
 
 ```text
-用户：修复测试失败
-        ↓
-模型第一次采样：先运行测试
-        ↓
-exec_command
-        ↓
-工具结果：3 个测试失败
-        ↓
-模型第二次采样：读取相关文件
-        ↓
-文件工具结果
-        ↓
-模型第三次采样：修改代码并再次测试
-        ↓
-最终回答
+32,000 − 6,000 − 2,000 = 24,000 token
 ```
 
-这些采样和工具交互仍然属于同一个 Turn。
+若固定指令和工具说明已占 5,000 token，历史与新工具结果合计就只能再使用约 19,000 token。这里的数字都是假设；实际计数还受模型分词、输入类型与服务端统计方式影响，不能把字符数直接当成精确 token 数。
 
-这也解释了为什么 `run_turn` 很长：它既要接收最初用户输入，也要处理工具回填、用户中途 steer（追加指令）、网络重试和中途上下文压缩。
+Codex 会结合当前窗口状态和配置决定是否触发后续压缩。采样后需要继续工作且达到条件时，可以滚动到新的上下文窗口；手动压缩和轮次前后的自动压缩也有不同路径。依据：[窗口判断的调用位置](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs)。
 
-### Turn 开始时先做什么
+## 10. 压缩不是在末尾加一段摘要
 
-`run_turn` 并不会第一行就把用户文字塞进历史。
+如果原历史已经太长，再追加摘要只会更长。Compaction（上下文压缩）需要构造替换后的历史，让后续模型用更小的输入继续工作。
 
-它先处理一批“如果不提前做，后面会破坏一致性”的事情，例如：
-
-- 处理上一轮异步 Hook（钩子）留下的结果；
-- 检查是否需要在新输入进入前先压缩旧上下文；
-- 从用户输入里找显式 Plugin / MCP / Skill 依赖；
-- 确定本轮需要等待哪些 MCP Server；
-- 捕获本轮第一份 StepContext。
-
-这里最值得理解的是 pre-turn compaction（轮次开始前压缩）。
-
-假设旧历史已经接近模型上限。如果先把新用户消息写进去，再发现“装不下”，Runtime 就需要撤销刚刚写入的状态。Codex 选择先检查旧窗口，在必要时先压缩，再继续记录新输入。
-
-因此源码里对失败路径有专门处理：即使压缩失败，也不能把用户刚提交的输入弄丢。
-
-这不是 Prompt 技巧，而是状态一致性问题。
-
----
-
-## 2. StepContext 为什么存在：它把“模型看到的世界”冻结下来
-
-一条 Turn 可能执行很久。期间很多东西会变化：
-
-- MCP Server 从未启动变成 ready；
-- Tool Catalog（工具目录）刷新；
-- 用户切换环境；
-- Permission Profile（权限配置）变化；
-- Plugin / Skill 选择变化；
-- 用户追加新的 steer 输入。
-
-如果 Codex 每次真正执行 Tool 时都去读取“此刻最新配置”，会出现一个很危险的时间差：
+Codex 的压缩流程包含触发原因、压缩前后钩子、摘要生成、替换历史、检查点元数据以及后续上下文注入方式。压缩策略还取决于所用提供者的能力；普通压缩路径与远端压缩路径不能当作同一个接口。这里先跟踪它们共同必须解决的状态关系，不把提供者内部算法补画成公开代码。
 
 ```text
-模型在 10:00 看到了 Tool schema v1
-        ↓
-10:00:02 配置刷新成 v2
-        ↓
-10:00:03 模型刚才生成的 Tool Call 才开始执行
-        ↓
-如果直接读最新配置，它会按 v2 执行
-```
-
-于是模型作决定时看到的能力，和 Runtime 真正执行的能力，不再是同一个世界。
-
-Codex 用 `StepContext` 解决这个问题。
-
-源码位置：
-
-- `codex-rs/core/src/session/step_context.rs`
-- `codex-rs/core/src/session/turn.rs`
-- `codex-rs/core/src/tools/parallel.rs`
-
-可以把它理解成：
-
-> **一次模型采样以及这次采样派生出的工具调用，共享同一张运行时快照。**
-
-快照里会绑定这次采样真正使用的模型设置、Environment（执行环境）、Permission（权限）和 `ToolRouter`（工具路由器）。
-
-后面 Tool Call 即使稍晚执行，也会拿着产生它的那个 `StepContext`，而不是随意读取新配置。
-
-这也是为什么本文不会把 `StepContext` 简单翻译成“Agent 的一个步骤”。它的核心作用不是表示业务进度，而是保证 **time-of-decision（模型决策时刻）和 time-of-execution（工具执行时刻）的一致性**。
-
----
-
-## 3. 初始上下文从哪里来：不是一份巨大的 System Prompt
-
-真正组装初始模型上下文的关键函数之一是：
-
-`Session::build_initial_context_with_world_state`
-
-源码位置：
-
-- `codex-rs/core/src/session/mod.rs`
-
-这个函数最能说明 Codex 的 Context Architecture（上下文架构）为什么不是字符串拼接。
-
-它会从多个生产者收集 Rendered Fragment（渲染片段），再根据角色和语义合并成模型消息。下面按“这些信息为什么存在”解释，而不是按字段罗列。
-
-### 基础指令：模型本身应该怎样工作
-
-`BaseInstructions` 是请求级基础指令。它和历史消息分开存在。
-
-源码里还有 `get_prompt_base_instructions`：有些配置只改变“这一请求如何渲染基础指令”，却不修改已经持久化、也不修改 Fork（分叉）继承的原始指令。
-
-这体现了一个重要边界：
-
-> **持久状态是什么，和这一请求怎样呈现它，是两件事。**
-
-### Developer Instructions：当前产品或任务额外规定什么
-
-Turn 可以带 Developer Instructions（开发者指令）。
-
-普通情况下，它们会进入开发者消息。Guardian（安全审查 Agent）等特殊内部 Session 会把某些 policy（策略）单独放成一条 developer message（开发者消息），方便审计，也避免和其他能力说明揉成一块。
-
-### Extension Context：Memory、Skills 等扩展怎样进来
-
-Codex 的 Extension API（扩展接口）允许扩展提供 Context。
-
-例如 Skills Extension 和 Memories Extension 都实现了 `ContextContributor`。
-
-它们可以向三个不同位置贡献内容：
-
-- DeveloperPolicy：开发者策略；
-- DeveloperCapabilities：开发者能力说明；
-- ContextWindow：上下文窗口相关提示。
-
-因此 Memory 和 Skills 不是 Core 里几个特判的 `if memory {...}`。它们通过正式扩展点加入 Context 编译流程。
-
-### WorldState：当前运行环境发生了什么
-
-`WorldState`（世界状态）保存那些“会变化、而模型有时需要知道”的运行环境信息。
-
-例如模型切换、多 Agent 模式、运行环境与其他扩展生成的状态，都可以通过 World State 渲染为模型可见片段。
-
-它和普通聊天历史最大的不同是：
-
-> 聊天历史描述“发生过什么”，World State 描述“现在是什么状态”。
-
-这两类信息更新方式也不同。
-
----
-
-## 4. 为什么 Codex 不会每轮把 World State 全部重发
-
-如果每次采样都重新生成一份完整“当前世界说明”，会有两个问题。
-
-第一，浪费 Token。第二，也是更隐蔽的问题：Prompt Cache（提示缓存）会变得很差，因为早期上下文不断变化。
-
-Codex 因此维护 reference context（参考上下文基线）和 World State baseline（世界状态基线）。
-
-关键源码：
-
-- `Session::record_context_updates_and_set_reference_context_item`
-- `codex-rs/core/src/context/world_state/`
-- `codex-rs/core/src/context_manager/updates.rs`
-
-第一次真正建立模型上下文时，没有旧基线：
-
-```text
-没有 reference context
-        ↓
-构造完整 World State
-        ↓
-渲染完整初始 Context
-        ↓
-把这份 World State 记成 baseline
-        ↓
-记录 TurnContextItem
-```
-
-后续 Turn 再开始时：
-
-```text
-重新计算当前 World State
-        ↓
-和 baseline 比较
-        ↓
-只生成变化部分
-        ↓
-把差异追加进模型历史
-```
-
-所以正常路径是“增量追加”，不是“重新写一遍过去”。
-
-这一点不是我们的教材推导。Codex 仓库根目录自己的 `AGENTS.md` 就明确要求：model-visible context（模型可见上下文）应尽量增量构建，避免不必要改写导致 cache miss（缓存失效），而自动注入的内容必须有硬上限。
-
-换句话说，Prompt Cache 不是最后再加的一项性能优化，它反过来影响了 Context 的数据结构。
-
----
-
-## 5. History 是怎样进入下一次模型请求的
-
-Codex 用 `ContextManager` 管理模型相关的 canonical history（规范历史）。
-
-关键源码：
-
-- `codex-rs/core/src/context_manager/`
-- `codex-rs/history/`
-
-这里要和两样东西区分开。
-
-`ThreadStore / Rollout` 是持久化边界，负责以后能恢复；`Rollout Trace` 是诊断证据；`ContextManager` 才是 Runtime 当前真正拿来构造模型历史的对象。
-
-普通情况下，历史是追加的：
-
-```text
-用户消息
-→ 模型 Tool Call
-→ Tool Result
-→ 模型下一次输出
-→ ...
-```
-
-只有明确的 Context Window 重置、Compaction 或恢复重建，才会走 `replace_annotated` 这类替换路径。
-
-### 为什么还需要 normalize（规范化）
-
-真实 Agent 历史可能出现不完整结构。
-
-例如模型已经产生了 Function Call（函数调用），用户却马上取消；或者旧 Provider（模型提供方）留下了当前模型不支持的媒体项。
-
-如果下一次请求直接把这些不完整对象发送出去，Responses API 可能拒绝，模型也可能错误理解。
-
-因此 `context_manager/normalize.rs` 会修复历史协议结构，例如：
-
-- 给缺失的 Tool Result 补一个结构化 aborted output（中止结果）；
-- 去掉找不到对应 Tool Call 的孤立 output；
-- 处理当前模型不支持的媒体内容。
-
-这说明 Context 管理不仅是“删旧消息”，还要维护 **对话协议本身的结构合法性**。
-
----
-
-## 6. Tool Result 为什么也是 Context 的一部分
-
-很多初学者把 Tool System 和 Context System 分开学，容易漏掉最关键的一步：
-
-> 工具执行结束以后，结果必须重新进入模型可见历史，否则下一次模型根本不知道现实世界发生了什么。
-
-真实链路是：
-
-```text
-模型请求 N
+旧模型窗口
+    ↓ 选取压缩输入并生成摘要
+准备替换历史及其元数据
     ↓
-模型返回 function_call(call_id = c1)
+更新运行中的历史和可恢复记录
     ↓
-ToolRouter 找到执行器
+按照所处阶段补回必要指令、环境和当前任务
     ↓
-Runtime 执行
-    ↓
-生成 FunctionCallOutput(call_id = c1)
-    ↓
-记录到 ContextManager
-    ↓
-模型请求 N+1
+继续请求模型
 ```
 
-所以 Tool Call 的 `call_id`（调用标识）不仅是日志字段，它是上下文协议里把“动作”和“观察结果”连起来的关联键。
+关键区别在于压缩发生的时机。采样前或手动压缩可以清空相关比较基线，让下一次常规轮次重新注入初始上下文；轮次中途压缩不能等待一个并不存在的新用户输入，而要把当前步骤的必要上下文放进替换历史的合适位置。源码用 `InitialContextInjection` 明确区分这些情况，并说明替换时要让运行中和持久化后的历史保持一致。依据：[压缩注入与元数据](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/compact.rs)。
 
-取消也必须产生结果，原因也是一样：如果留下一个只有 Call、没有 Output 的历史，下次模型就面对一个未闭合动作。
+分页任务的摘要至少应让下一步区分：已经修正的是偏移公式，参数校验是否也修了，哪些测试真正运行过，以及“不要改变公开接口”是否仍然有效。“分页已处理”太模糊，可能使模型跳过尚未完成的校验。
 
-Tool Lifecycle 那篇会继续讲执行细节；这里先记住一件事：
+> ⚠️ **注意：替换过程一致，不保证摘要语义无损。** 结构化宿主事实、原始证据与任务状态不能全部依赖一段模型摘要。`ContextManager` 将部分宿主事实和审核状态与模型窗口分开保存，但这不意味着所有任务细节都会自动得到同样保护。
 
-> **Agent 的 Context 是不断被现实执行结果改写的，不是用户和模型之间的纯文本聊天记录。**
+## 11. 压缩失败和恢复会话，各自需要核对什么
 
----
+压缩模型请求失败时，首先要知道失败发生在哪个阶段。采样前失败需要保留尚未正常记入历史的新输入；轮次中失败可能阻止继续采样；本轮已经完成后的压缩失败，则不应被描述成已经完成的任务结果自动作废。`run_turn` 对这些位置有不同处理，不能只概括为“失败就重试”。依据：[各阶段错误处理](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs)。
 
-## 7. Prompt Cache 到底缓存什么：不要和历史持久化混在一起
+恢复 Thread 解决的是重新取得历史和必要状态。它不等于回到原进程内存，也不等于把磁盘上的代码撤回到检查点时刻。分页函数可能已经改过，测试却没来得及把结果记录下来；恢复后应先读实际代码并检查测试是否需要重跑，而不是根据旧摘要重复改同一处。
 
-Codex 源码里至少有三件经常被一起叫“缓存”的机制，但它们其实不同。
+这里还要区分压缩后的**模型视图恢复**和工具的**外部状态核对**。前者保证模型收到可以继续工作的输入；后者确认实际文件、进程或远端动作处于什么状态。第四章用故障时间线进一步分析它们之间的空隙。
 
-### Prompt Cache Key：给服务端稳定的缓存亲和键
+## 12. 本章小结
 
-`ModelClient::prompt_cache_key` 会为请求选择稳定 key（键）。
+上下文不是把所有可用文本装进请求，而是为下一次模型判断形成一致、有预算、可追溯的输入。Thread 组织持续工作，Session 承担活跃执行，Turn 可以包含多个步骤，StepContext 固定单次请求的条件。历史投影、调用结果配对、状态差异和压缩共同决定模型到底看见什么。
 
-普通根 Session 通常和当前 session identity（会话身份）绑定；一些内部 Session 会结合内部来源和 parent thread（父线程）来形成 key。
+最重要的边界是：模型窗口、宿主保留的事实、持久历史和外部真实状态并不相同。它们可以相互提供证据，但不能相互冒充。
 
-它解决的是：
+## 13. 🎯 面试怎么回答
 
-> 这些请求应该尽量落到同一个 Prompt Cache 亲和范围里。
+**问：Codex 怎样管理长任务的上下文，而不只是不断追加消息？**
 
-但同一个 key 不保证缓存一定命中。如果前缀文本每次都变，服务端仍然无法复用大量 prefill（前缀计算）。
+> 🎯 它先把历史和单次模型请求区分开。每次采样捕获 StepContext，使设置、环境、工具目录与后续调用使用同一份视图；再记录必要的状态变化，从历史生成适合当前模型的输入。工具调用与结果需要保持对应，大结果受到预算约束。窗口接近限制时，压缩会替换历史，并按发生阶段补回必要上下文，而不是简单追加摘要。恢复时还要核对外部状态，因为历史可恢复不代表工具副作用已经回滚。
 
-这就是为什么前面 World State 要做增量更新。
+**追问：压缩前后结构一致，是否就能证明正确？**
 
-### WebSocket continuation：同一 Turn 内复用上一次 Responses 状态
+> 🎯 不能。结构一致说明配对、检查点和注入关系没有破坏；语义上仍要检查关键约束、未完成动作和证据是否保留。可以改变一个任务条件，观察压缩后是否仍作出正确判断，并把失败纳入回归，而不是只看 token 是否下降。
 
-`ModelClientSession` 是 Turn-scoped（轮次级）的模型会话对象。
+## 14. 自测：用新条件重建流程
 
-源码位置：
+**任务一。** 请求 A 已捕获项目 P1 的工具目录；模型生成期间用户切换到 P2。请分别说明 A 的调用应依据哪份解释视图，下一次请求应捕获什么，以及为什么仍需独立检查执行许可。验收答案必须区分“快照一致性”和“授权”，不能只说“全部使用最新状态”。
 
-- `codex-rs/core/src/client.rs`
+<details><summary>提示</summary>
 
-它会保存上一份完整 request、上一份 response 和 `x-codex-turn-state`。如果下一次请求只是上一请求的兼容增量，就可以使用 continuation（续写）能力，避免重新发送不必要的部分。
+把“模型已经看见什么”与“宿主下一步准备什么”分开，再检查快照是否能替代取消与权限控制。
 
-源码会逐项比较模型、instructions、tools、reasoning、service tier 等属性，确认当前请求仍与上一请求兼容。
+</details>
+<details><summary>答案与解释</summary>
 
-### ThreadStore：完全不是 Prompt Cache
+A 的调用保留产生它的 StepContext，避免用 P2 的说明解释模型依据 P1 生成的参数。下一次请求可以捕获 P2 的环境与能力。是否继续执行 A，要服从取消、审批与执行环境约束；保留快照并不意味着无条件执行旧动作。
 
-ThreadStore 保存的是以后 Resume / Fork 所需的长期状态。
+</details>
 
-因此：
+**任务二。** 历史中保留了调用 `c7`，没有对应结果，磁盘文件却已经变化。输入规范化补出 `aborted` 后，能否宣布修改未发生？请给出恢复时的两个检查动作，以及这条合成结果能证明的范围。
 
-```text
-Prompt Cache
-= 服务模型推理效率
+<details><summary>提示</summary>
 
-WebSocket continuation
-= 服务同一 Turn 内增量请求
+一个是模型协议问题，一个是文件系统事实问题。
 
-ThreadStore
-= 服务长期恢复
-```
+</details>
+<details><summary>答案与解释</summary>
 
-三者不能混成“Codex 有缓存”。
+不能。合成结果只修复可发送的调用与结果结构，不撤销文件修改。应读取实际文件或差异确认修改范围，并运行相关测试或核对已有可靠测试记录。不能把缺少成功收据当作没有副作用，也不能把文件变化直接当作已正确完成。
 
----
+</details>
 
-## 8. Context Window 变大以后，Codex 怎样决定要不要压缩
+**任务三。** 教学窗口改成 40,000 token，预留生成 8,000，安全余量 2,000，固定指令和工具说明占 7,000。历史与新结果最多可规划多少？即使容量足够，为什么仍要检查旧约定？
 
-`session/context_window.rs` 并不是简单计算：
+<details><summary>答案与解释</summary>
 
-```text
-模型上限 - 当前 tokens
-```
+可规划 `40,000 − 8,000 − 2,000 − 7,000 = 23,000 token`。这只是教学预算；实际计数须按所用模型确认。容量够只说明装得下，不说明材料仍正确或有助于判断；过时约定需要更新，不能依赖缓存继续使用。
 
-源码还会考虑：
+</details>
 
-- model effective context window（模型有效窗口）；
-- auto compact limit（自动压缩阈值）；
--阈值按 Total 还是 BodyAfterPrefix 计算；
-- server prefill；
-- hard full-window limit；
--当前 context window identity。
+## 源码回读索引
 
-为什么会有 `BodyAfterPrefix` 这种概念？
+| 想核验的问题 | 固定源码入口 | 阅读重点 |
+|---|---|---|
+| 一轮中何时继续、压缩或结束 | [session/turn.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/turn.rs) | `run_turn`，输入保留、步骤捕获、后续与停止分支 |
+| 单次请求绑定哪些状态 | [step_context.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/session/step_context.rs) | 设置、环境、工具路由与指令快照 |
+| 指令怎样刷新和继承 | [agents_md_manager.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/agents_md_manager.rs) | 缓存失效、校验、已应用内容和提供者 |
+| 历史与宿主事实怎样分离 | [history.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/context_manager/history.rs) | 条目、保留事实、比较基线 |
+| 不完整调用怎样形成可发送输入 | [normalize.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/context_manager/normalize.rs) | 合成结果、孤立结果、稳定标识 |
+| 压缩为什么区分发生阶段 | [compact.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/compact.rs) | 替换历史与初始上下文注入 |
 
-因为一部分前缀是稳定且不适合压缩的，例如长期 instructions 和固定能力说明。真正不断增长的是后面的历史 body（主体）。
-
-如果每次都按总 Token 数触发，就可能因为稳定前缀本身较大而过早压缩。
-
-因此成熟 Context Budget（上下文预算）真正要问的是：
-
-> **哪些部分是稳定前缀？哪些部分会增长？哪些部分允许被压缩？**
-
----
-
-## 9. Compaction 不是只有“让模型写摘要”这一种实现
-
-Codex 当前源码至少有三条相关路径。
-
-### Local Compaction：本地编排摘要压缩
-
-`codex-rs/core/src/compact.rs`
-
-Runtime 会复制当前历史，加入专门的压缩请求，让模型生成 summary（摘要），再把需要保留的用户上下文与摘要重新组成一份 replacement history（替代历史）。
-
-关键产物不是那段 summary 本身，而是：
-
-> **一份以后可以直接作为新上下文基线的 replacement history。**
-
-### Remote Compaction V2：由模型服务提供远端压缩
-
-`codex-rs/core/src/compact_remote_v2.rs`
-
-Provider 支持时，Codex 可以调用专门的 Responses Compaction 能力。
-
-虽然实现位置不同，但它仍然进入同一套生命周期：有 trigger（触发原因）、phase（发生阶段）、analytics（分析事件）和最后的 history replacement（历史替换）。
-
-### Token Budget：直接开始新的上下文窗口
-
-`codex-rs/core/src/compact_token_budget.rs`
-
-某些情况下并不要求先生成一段文本摘要，而是创建新的 Context Window，再重新注入当前需要的初始上下文。
-
-所以更准确的定义是：
-
-> **Compaction 是“从旧上下文窗口迁移到一个更小、仍可继续工作的模型状态”的过程。摘要只是其中一种迁移手段。**
-
----
-
-## 10. 为什么压缩以后还能 Resume：因为它被做成了 Checkpoint
-
-如果 Compaction 只修改内存里的 `ContextManager`，进程一退出，这次压缩就没有长期意义。
-
-因此成功压缩还会持久化 `CompactedItem`，现代路径可以保存 `replacement_history`。
-
-恢复逻辑在：
-
-- `codex-rs/core/src/session/rollout_reconstruction.rs`
-- `codex-rs/thread-store/src/local/model_context.rs`
-
-Resume（恢复）时，Codex 不会永远从第一条 Rollout JSONL 开始重放。
-
-它会从尾部向前寻找最新、仍然有效的 replacement-history checkpoint（替代历史检查点）。找到以后：
-
-```text
-replacement_history
-= 新历史基线
-
-checkpoint 之后仍然存活的 rollout suffix
-= 需要继续重放的增量
-```
-
-比这个 checkpoint 更早的原始历史，不再需要逐条参与模型上下文重建。
-
-这就是为什么 Context Compaction 和 Persistence（持久化）不能分开理解：前者提供新的模型历史基线，后者让这份基线在进程退出后仍然可恢复。
-
-### Fork 和 Rollback 为什么更难
-
-Fork（分叉）要求子 Thread 只继承父 Thread 某个截止点；Rollback（回滚）则可能删除最近若干真实用户 Turn。
-
-因此恢复时不仅要找“最新 checkpoint”，还要确认这个 checkpoint 是否仍属于 surviving segment（仍然有效的历史片段）。
-
-同时 World State 还有 full snapshot（完整快照）和 merge patch（合并补丁），Compaction 又会让旧 baseline 失效。
-
-所以恢复真正重建的是：
-
-> **模型历史 + 当前 World State + Turn 设置 + Context Window 身份 + Token 状态。**
-
-不是简单“把聊天记录读回来”。
-
----
-
-## 11. 用一条完整例子把 Context 生命周期串起来
-
-假设用户说：
-
-> “修复支付模块的测试失败，不要改变公开 API。”
-
-第一次采样前，Codex 先确认旧上下文是否需要压缩，然后捕获 StepContext。Session 从 Developer Instructions、项目 AGENTS.md、当前 Environment、Permission、Memory、Skills 等来源构建初始上下文；World State 建立 baseline；Tool Router 同时生成本轮模型可见工具。
-
-模型决定先运行测试。Tool 执行后，失败日志以 Tool Result 的形式进入历史。
-
-第二次采样时，Codex不会重新把所有环境说明和 AGENTS.md 从头拼一遍，而是沿着已有 history 追加新结果；只有 World State 或 TurnContext 真正发生变化时，才追加相应差异。
-
-如果经过很多工具调用后 Context 太长，Runtime 会根据 Provider 与 Feature 选择 Local Compaction、Remote Compaction 或新的 Token-Budget Window。压缩成功后，新 replacement history 被安装进 ContextManager，同时作为 checkpoint 写入持久化记录。
-
-进程退出后再 Resume，Runtime 从最近仍有效的 replacement-history checkpoint 加后续增量重建 Session。模型继续工作时，仍应知道最开始那个“不要改变公开 API”的约束。
-
-这最后一句其实就是 Context 系统最重要的效果指标：
-
-> **经过工具调用、压缩、进程退出和恢复以后，决定未来行为的关键约束仍然不能丢。**
-
-这也是为什么 Context Evaluation（上下文评测）应该测约束保留和恢复等价性，而不是只看“摘要读起来顺不顺”。
-
----
-
-## 12. 源码锚点与阅读建议
-
-如果要自己回源码验证，建议按调用顺序读，而不是按文件夹随机浏览：
-
-1. [`app-server-protocol/src/protocol/v2/turn.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/app-server-protocol/src/protocol/v2/turn.rs)：产品层 Turn 请求长什么样。
-2. [`core/src/session/turn.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/turn.rs)：真正的 Agent Turn 循环。
-3. [`core/src/session/mod.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/mod.rs)：初始 Context、World State 更新、历史持久化。
-4. [`core/src/context/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/context)：不同 Context Fragment 的真实类型。
-5. [`ext/extension-api/src/contributors/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/extension-api/src/contributors)：扩展怎样参与 Context。
-6. [`core/src/context_manager/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/context_manager)：规范历史、差异和 normalize。
-7. [`core/src/client.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/client.rs)：Prompt Cache、WebSocket continuation、请求发送。
-8. [`core/src/session/context_window.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/context_window.rs)：Token 与窗口判断。
-9. [`core/src/compact.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/compact.rs)、[`compact_remote_v2.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/compact_remote_v2.rs)、[`compact_token_budget.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/compact_token_budget.rs)：三类窗口迁移。
-10. [`core/src/session/rollout_reconstruction.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/session/rollout_reconstruction.rs)：压缩后的恢复闭环。
-
-下一篇：[Codex Memory Lifecycle →](02-memory-lifecycle.md)
+[← 模块入口](README.md) · [下一章：记忆 →](02-memory-lifecycle.md)

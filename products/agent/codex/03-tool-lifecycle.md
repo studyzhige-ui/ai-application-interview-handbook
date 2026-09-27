@@ -1,654 +1,240 @@
-# 03. Codex Tool Lifecycle｜一个模型动作怎样变成真实、受控的执行
+# 03｜工具：从模型提出动作，到受控执行与结果回填
 
-[← Memory](02-memory-lifecycle.md) · [Codex 总览](README.md) · [Engineering & Evaluation →](04-engineering-evaluation.md)
+[← 上一章：记忆](02-memory-lifecycle.md) · [模块入口](README.md) · [下一章：工程与评测 →](04-engineering-evaluation.md)
 
-> **源码基线：** `openai/codex@75db67bbc6a18200b52698c8870adaedd7746dea`
+在分页任务中，模型说“运行测试”不会自动让 Python 开始执行。它必须发出宿主能够解释的调用；宿主还要确认工具存在、参数可解释、动作允许，再执行并把结果返回给模型。
 
-Tool（工具）是 Coding Agent 最容易被低估的一部分。
+本章沿这条链解释 Codex。核心问题不是工具名字有多少，而是：**模型知道某个能力，是否就能执行它？一个调用失败，为什么有时可以修正，有时必须终止？**
 
-从模型视角看，它似乎只做了一件事：
+## 1. 注册、暴露、授权和执行是四个状态
 
-```text
-调用 exec_command({"cmd": "pytest"})
-```
+假设宿主具有执行命令的能力。它可以存在于代码中，却没有在本次请求中启用；也可以被模型看见，但特定目录的写入仍被禁止。
 
-但从 Codex Runtime（运行时）看，这个动作真正落地之前，至少要回答：
+| 状态 | 它回答的问题 | 不足以证明什么 |
+|---|---|---|
+| 注册 | 运行时能否按工具标识找到对应实现？ | 不证明模型已经看见工具 |
+| 暴露 | 本次请求通过哪个入口让模型使用它？ | 不证明所有参数和资源均获授权 |
+| 授权与约束 | 这次具体动作是否允许，是否需要批准？ | 不证明执行已经成功 |
+| 执行与回填 | 实现实际做了什么，结果怎样回到历史？ | 不证明整个任务的业务目标已满足 |
 
-- 这个工具是谁注册的；
-- 本轮模型为什么能看见它；
-- 当前权限允许执行到什么范围；
-- 参数有没有被 Hook（钩子）修改；
-- MCP Server 是否已经 ready；
-- 需要不需要 Approval（用户批准）；
-- 应该进入哪个 Sandbox（沙箱）；
-- 有没有网络权限；
-- 能不能和其他 Tool 并发；
-- 用户这时取消怎么办；
-- 结果太大怎么办；
-- 最终怎样让模型知道执行结果。
+Codex 的 `ToolExecutor` 将工具标识、说明与可执行实现关联起来；核心的 `CoreToolRuntime` 在此之上补充钩子、就绪等待和观测等宿主职责。它们是接口，不是要求读者逐个背诵的字段表。依据：[共享执行接口](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/tools/src/tool_executor.rs)、[核心工具运行接口](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)。
 
-因此 Tool Lifecycle（工具生命周期）不是“函数调用”，而是一条完整的控制链。
+将说明与执行实现关联，有助于避免“模型看见一个签名，宿主却执行另一个实现”。但这种关联不替代参数校验，也不能自动证明工具描述真实、安全或足够清晰。
 
----
+## 2. 本次可用工具怎样组装
 
-## 1. 先把三个问题分开：系统有什么、模型看到什么、Runtime 允许什么
+`build_tool_router` 根据当前请求的模型、环境、MCP 绑定和相关策略收集工具。来源包括核心工具、MCP 工具、扩展工具和动态工具；模型托管的能力还可能以单独的规格加入请求。随后确定有效暴露方式，形成路由。依据：[工具计划构建](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/spec_plan.rs)。
 
-这是理解 Codex Tool System 最关键的一步。
+这里的 MCP（Model Context Protocol，模型上下文协议）提供一种连接外部能力的协议方式；“用 MCP 接入”和“调用一定安全”没有必然关系。动态工具也只是来源不同，并不天然绕过宿主控制。
 
-### 系统有什么能力
+注册时，工具策略可以排除不允许的名称。外部工具的重复名称和保留名称也有处理，不能让一个后注册的外部实现悄悄覆盖已有命令执行工具。依据：[注册策略与名称冲突](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)。
 
-Codex 会把可执行能力注册到 `ToolRegistry`（工具注册表）。
+这解释了一个常见排障顺序：先确认来源已经接通，再看工具是否成功注册、是否被策略过滤、怎样暴露，以及当前模型是否支持该入口。不是搜索不到工具就立即断言连接器损坏。
 
-能力来源很多，例如：
+## 3. 为什么工具存在，却不全部放在首个请求里
 
-- Core 内置工具；
-- MCP Tool；
-- Extension Tool（扩展工具）；
-- Dynamic Tool（动态工具）；
-- Hosted Model Tool（模型服务侧工具）；
-- Code Mode（代码模式）需要的内部执行能力。
+假设接入了几个应用，每个都有几十个工具。首个请求若包含全部参数说明，会占用上下文，也增加模型在相似名称间误选的机会。对于分页任务，绝大多数应用能力并不相关。
 
-“注册了”只说明：
+Codex 为工具区分直接暴露、延迟发现、仅供 Code Mode 使用以及隐藏等方式。`Direct` 直接出现在模型工具列表；`Deferred` 先注册，等搜索发现后再把相关规格交给模型；带 `ModelOnly` 的变体不提供给嵌套 Code Mode 调用；`Hidden` 不向模型暴露。Code Mode 指通过脚本组织工具动作的执行表面，第四章再解释它的调度与失败问题。依据：[暴露类型及可用表面](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/tools/src/tool_executor.rs)。
 
-> **Host（宿主程序）知道这个工具是谁、它的 schema（参数结构）是什么、最后应该调用哪个执行器。**
+可以用两个维度理解，而不是背六个枚举值：模型是否直接看到，模型是否能够先搜索或通过脚本间接调用。最终暴露还受本次工具计划调整，例如 MCP 配置可以明确省略某些表面。
 
-### 模型这轮能看到什么
+> ⚠️ **注意：隐藏不是安全沙箱。** 不把工具放进当前提示，有助于控制能力入口和上下文规模，但实际授权仍应检查具体动作与资源。不能仅凭模型看不见某个描述，就宣布外部系统不可能被访问。
 
-真正给模型的是 `ToolRouter.model_visible_specs()`。
+## 4. tool_search 实际搜索什么
 
-这是一份经过当前 StepContext、Feature、Policy、Tool Mode 和 AllowedTools 共同筛选后的模型可见工具集。
+`tool_search` 搜索的是延迟工具的元数据，不是替用户执行那些工具。当前实现从注册表取得可延迟发现的工具信息，构造 BM25 文本检索索引，再把匹配结果整理成可加载的工具规格。依据：[搜索实现与缓存](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/handlers/tool_search.rs)。
 
-所以：
+BM25 是一种词项匹配排序方法。此处只需要理解：工具名称与描述必须表达它真正做的事，查询中的词与这些材料越匹配，越有机会找到适当能力。不能把这段实现讲成“必定使用向量嵌入理解全部语义”。
 
-```text
-Registry 里存在
-≠
-模型这轮可见
-```
+设教学任务需要读取某个外部应用里的说明，合理过程是：先搜索相应读取能力，拿到匹配工具的参数说明，构造读取调用，执行后再查看结果。搜索命中只完成了发现阶段；它既不是已读取正文，也不是已批准后续写入。
 
-### Runtime 最终允许什么
+搜索还会检查空查询与零数量等无效条件，并根据延迟工具集合及来源信息决定缓存是否可复用。缓存只复用检索结构，不意味着目录变化永远被忽略。工具数量、说明大小和搜索返回规模仍然影响上下文与选择质量；评测应观察是否找对能力，而不只是是否返回了若干条目。
 
-即使模型已经看见并选择了一个 Tool，也还没有获得“执行授权”。
+**版本边界尤其重要：** 旧 `ToolSearch` 功能开关在注册表中是兼容空项，不能继续把它当作实际启停入口。但工具搜索的实际可用性仍检查模型的 `supports_search_tool` 与命名空间工具条件；当前注册表也可能没有可供发现的工具。因此，“旧开关不再控制”不等于“每次请求都能发现所有工具”。依据：[功能声明](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/features/src/lib.rs)、[search_tool_enabled 与暴露策略](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/spec_plan.rs)。
 
-真实执行还要经过：
+## 5. Skill 为什么不是另一个工具函数
 
-- 参数与 payload（负载）检查；
-- Hook；
-- Approval；
-- Guardian（安全审查）；
-- Permission Profile（权限配置）；
-- Sandbox；
-- Network Policy（网络策略）。
+工具说明解决“能执行什么动作、参数是什么”；Skill（技能包）主要提供“完成一类任务应怎样工作”的指令，并可以附带参考资料、脚本和资源。选择技能，不等于执行了它涉及的全部动作。
 
-因此更完整的三层结构是：
+Codex 的技能目录向模型提供名称、描述和来源定位。来源可能是宿主文件、执行环境拥有的包、云端包或自定义资源，不应全部转换成一个凭空猜出的本地路径。目录中的使用指导要求：选中技能后完整读取它的 `SKILL.md`，再按路由读取与任务有关的材料；分页读取要继续到结束。依据：[技能目录与渐进披露指导](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/skills/src/catalog_prompt.rs)。
+
+Progressive Disclosure（渐进披露）在这里是“不要一开始加载所有无关资源”，不是“已选中的关键指令只读前半段”。例如选中测试技能后，要知道它要求在哪个目录运行、怎样保留原测试和如何提交证据；若只读标题就行动，可能遗漏这些条件。
+
+这些是源码提供给模型的行为指导，不是模型永远遵守的形式化证明。真正运行脚本或调用服务时，仍会进入相应工具执行路径。工具、技能和钩子可以配合，但职责不能互相替代。
+
+例如技能要求“只读，不修改文件”，仅把这句话移到更高优先级提示，并不能证明文件不会被写入。需要硬性限制时，应让实际工具权限与执行环境落实只读边界，再测试模型尝试写入时能否被阻止。这是安全设计的判断原则，不是声称技能文本会自动生成全部权限配置。
+
+## 6. 一个调用怎样到达实现
+
+把分页任务中的“运行测试”沿调用链展开。以下是执行过程说明，不是可直接复制到某个 API 的 JSON 请求。
 
 ```text
-Capability Registry
-系统知道有哪些能力
-        ↓
-Model-visible Projection
-这一轮告诉模型哪些能力
-        ↓
-Execution Authorization
-模型选中以后，Runtime 再判断这次具体动作能否执行
+模型产生结构化调用及调用标识
+                ↓
+按照本次 StepContext 中的路由寻找工具
+                ↓
+检查载荷类型，运行适用的执行前钩子
+                ↓
+工具解析与校验参数，处理许可和执行环境
+                ↓
+实现执行动作，生成输出或错误
+                ↓
+运行适用的执行后钩子，记录生命周期与结果
+                ↓
+按调用标识回填历史，供下一次模型请求使用
 ```
 
-这三层如果混在一起，就很容易出现“只要从 Prompt 里隐藏工具就安全”这种错误设计。
+工具调用不能只剩一个函数名。调用标识关联请求与结果，参数告诉实现具体对什么做什么，StepContext 保留模型生成这次调用时所依据的工具与环境视图。没有这些信息，多个相同工具并行执行时，很难解释结果属于哪一次动作。依据：[调用调度](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs)、[注册表派发与结果封装](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)。
 
----
+Schema（结构约束）可以说明字段类型和必填项，但“字符串格式正确”不代表命令有意义或访问对象获准。参数解析、业务含义校验与资源权限应分别判断。这里不声称所有工具共用一个万能校验器；具体实现仍要读对应处理函数。
 
-## 2. ToolExecutor 是什么：把“模型说明”和“真实执行器”绑在一起
+## 7. 执行前钩子能改变什么，为什么要重新检查输入
 
-共享 Tool 抽象主要在：
+Hook（钩子）是在生命周期某个位置调用的附加逻辑。执行前钩子可以阻止动作，也可能给出更新后的输入。注册表会据此重建调用，再交给工具处理；不能仍按旧参数批准，却执行改写后的危险参数。依据：[执行前钩子及输入重建](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)。
 
-- `codex-rs/tools/src/tool_executor.rs`
+在分页任务中，“运行当前目录测试”与“先删除测试目录再运行测试”即使使用同一个命令工具，也不是相同动作。模型选择正确工具，只通过了能力选择；实际参数仍决定它会做什么。
 
-`ToolExecutor`（工具执行器）并不只是一个函数指针。
+若钩子阻止执行，模型可以获得阻止原因；此时处理函数尚未执行。若更新后的输入无法重建，也应按失败处理，而不是默默忽略修改继续运行。这些位置的错误与工具已经运行后的错误，副作用风险不同。
 
-它至少把几件事绑定到一起：
+## 8. 审批、执行策略和沙箱怎样分工
 
-- 这个工具叫什么；
-- 给模型看的 `ToolSpec`（工具说明）是什么；
-- 它默认应该怎样暴露；
-- 它是否支持并行调用；
-- 真正的 `handle()` 实现是什么。
+Approval（审批）决定具体动作是否需要获得批准；Sandbox（沙箱）限制程序实际可访问的文件、网络或其他资源；执行策略还可以直接判定禁止某个动作。它们不是三个名称不同的同一开关。
 
-Core 又在此基础上增加 `CoreToolRuntime`，提供 Codex Runtime 特有能力，例如：
+`ToolOrchestrator` 对适用的执行工具组织审批要求、环境与沙箱选择、执行尝试以及特定拒绝后的处理。其依据来自本次步骤设置和所选执行环境，包括工作目录、根目录与权限配置。依据：[执行编排](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/orchestrator.rs)。
 
-- 这个 spec 是否可以复用；
-- MCP 工具属于哪个 server；
-- 执行前是否需要等某个服务 ready；
-- 怎样生成 Hook 输入；
-- Hook 修改参数以后怎样重新构造调用；
-- 怎样记录 telemetry（遥测）；
-- 结果被接受后要不要额外登记。
+| 分支 | 在动作发生前应作出的判断 |
+|---|---|
+| 明确禁止 | 直接拒绝，不把再次询问当作绕过策略的方法 |
+| 需要批准 | 对准备执行的具体动作请求批准，未通过则不执行 |
+| 可以跳过普通审批 | 仍遵守资源约束；严格自动审核模式还有相应审核分支 |
+| 执行环境施加限制 | 即使逻辑层允许，实际文件或网络访问仍可能被限制 |
 
-为什么要把 spec 和 runtime 绑在一起？
+例如，用户允许修复 `pagination.py`，并不自动允许删除不相关文件、推送远端或调用外部付费服务。宿主必须将任务授权与实际能力范围对应起来，而不是从一句“帮我修复”推导无限权限。
 
-因为一个很危险的系统结构是：
+> ⚠️ **注意：不弹审批框不等于解除沙箱。** 同样，本地进程沙箱也不是所有远端服务的撤销机制。MCP 工具产生的外部动作，需要其自身权限和业务边界，不能由本地目录限制代为证明安全。
 
-```text
-A 表：给模型看的 tool schema
-B 表：真正执行的函数
-```
+## 9. 沙箱拒绝后的再次尝试，为什么不是万能重试
 
-如果两边版本漂移，模型看到的参数契约和 Runtime 真正接受的参数可能不一致。
+假设测试命令访问了被限制的资源，返回的是沙箱拒绝。编排器会识别这个具体错误，再检查工具是否允许相应升级、审批策略是否允许、执行环境是否能够放宽，以及网络拒绝是否具有可审批的上下文。满足条件才考虑再次尝试。一般解析错误或普通执行错误，不会因为进入了同一个函数就自动获得更高权限。依据：[拒绝后的条件与第二次尝试](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/orchestrator.rs)。
 
-Codex 的 Tool Runtime 设计尽量让“说明”和“执行”属于同一个工具对象，再由 Router 在每次 Step 上做最终投影。
+而且“已经批准过一次”不是普遍的免审理由。严格自动审核模式下，最初批准覆盖受沙箱约束的尝试，放宽沙箱需要重新审核；带网络批准上下文的情况也有额外处理。不要只读文件开头的概括性注释，就省略实际分支。
 
----
+这类重试解决的是执行策略变化，不是分页算法错误，也不是“远端写入超时后安全重做”。后两种分别需要修复逻辑和核对副作用，第四章会把它们与模型请求重试区分开。
 
-## 3. 一个 Step 的 Tool Set 是怎样生成的
+## 10. 并行为什么需要显式声明
 
-关键入口是：
+同时读两个互不影响的文件，通常比串行读取更快；同时修改同一个文件，却可能互相覆盖。不能只因为工具是异步函数，就认为所有调用都适合并行。
 
-- `codex-rs/core/src/tools/spec_plan.rs::build_tool_router`
+`ToolExecutor` 默认不声明支持并行。调度时，允许并行的工具取得共享执行门控的读锁，不允许并行的调用取得写锁；持有读锁的调用可以共同执行，写锁与这些读锁互斥。工具就绪等待发生在取得执行门控之前，避免一个尚未准备好的连接长期占住执行通道。依据：[并行声明](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/tools/src/tool_executor.rs)、[就绪等待与读写锁](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs)。
 
-一次 Step 捕获时，Runtime 会从多个来源收集工具。
+这里的锁作用于共享该执行门控的调用，不是全机器或所有 Agent 的分布式锁。另一个进程照样可能修改同一份文件。所以“本地调度不会同时运行某类调用”与“整个项目没有并发写入风险”必须分开。
 
-先有 Core Tool，然后接入 MCP Tool，再接 Extension Tool 和 Dynamic Tool，最后把一些模型服务原生工具一起纳入计划。
+模型返回多个调用后，完成时间和用于组装结果的顺序也可能不同。源码在结果准备好时记录事件，采样循环再按所需顺序收集；这也是要用调用标识，而不是仅凭日志相邻位置关联结果的原因。
 
-这一步不是简单 concatenate（拼接数组）。中间还会处理：
+## 11. 取消怎样进入等待和执行过程
 
-- `AllowedTools`（允许工具集合）；
-- 同名冲突；
--当前模型支持什么 Tool Mode；
--哪些 Tool 应直接暴露；
--哪些 Tool 应延迟发现；
--Code Mode 应该拿到哪些嵌套能力；
--App / Connector Policy。
+取消令牌使调度器可以在等待工具任务与收到取消之间作出选择。如果工具已经到达终态或任务已经完成，会取得实际结果；否则尝试中止任务并形成中止输出，还通知相应生命周期观察者。依据：[取消竞争与中止结果](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs)。
 
-最后得到一份 `ToolRouter`。
+这段逻辑说明“取消和完成可能同时接近发生”，不能把取消信号视为瞬间把全部世界恢复原样。例如补丁已经写入磁盘，随后用户取消；停止后续执行不代表补丁自动撤销。又如远端请求已经发出，取消本地等待也未必能取消远端动作。
 
-可以把它看成：
+恢复时应该把状态分成：尚未执行、已知成功、已知失败、已执行但结果未知。最后一类特别危险，因为重复动作可能造成两次副作用。用一条统一的“已取消”文本抹平这些差别，会误导后续模型。
 
-> **“这一份 StepContext 下，模型和 Runtime 对 Tool 世界的共同契约。”**
+## 12. 哪些错误反馈模型，哪些错误终止执行
 
-前一篇说过，Tool Call 后面会保留产生它的 `StepContext`。所以即使 Tool Catalog 后来刷新，旧调用也不会随便套用新 Router。
+源码不是把所有错误一律打印出来继续循环。注册表和调用运行时区分可反馈模型的错误与致命错误。
 
----
+| 已核验的具体情况 | 当前处理 | 为什么值得区分 |
+|---|---|---|
+| 路由中找不到指定工具 | `RespondToModel`，反馈给模型 | 可以重新发现工具或调整计划 |
+| 工具收到与实现不相容的载荷类型 | `Fatal`，向外传播致命错误 | 是内部调用关系异常，不只是缺一个字段 |
+| 执行前钩子阻止动作 | 反馈模型，处理函数未执行 | 可以解释限制，不应伪造执行结果 |
+| 普通非致命工具错误 | 转成关联该调用的失败结果 | 模型可根据错误修正下一步 |
+| 工具任务异常退出、无法取得结果 | 致命错误路径 | 不能继续假装执行链完整 |
 
-## 4. ToolExposure 为什么不是简单的 visible / hidden
+依据：[查找与载荷类型检查](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)、[错误回填与致命传播](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs)。
 
-Codex 当前源码中，工具暴露方式不止“看得见”和“看不见”。
+“反馈模型”也不保证模型会修好。工程上仍要观察重复失败、参数是否改变、是否需要用户介入。把同一失败调用原样重复几次，然后生成“已完成”，不构成恢复机制。
 
-共享 `ToolExposure` 包含 Direct、Deferred、DirectModelOnly、DeferredModelOnly、CodeModeOnly、Hidden 等形态。
+## 13. 结果被阻止，为什么不等于动作被撤销
 
-不需要死记这些枚举。更重要的是理解它们在回答三个问题：
+执行后钩子运行时，工具可能已经写入文件或产生外部动作。它可以拒绝结果继续进入模型，或者附加反馈；无法仅靠拒绝结果，把已经发生的动作回滚。
 
-### 要不要一开始就把 schema 发给模型
+源码明确区分这两件事：执行生命周期可以记录已经完成，而执行后钩子阻止结果时仍向模型返回错误。`AnyToolResult` 随后把被接受的结果按调用标识封装回历史，必要时附带截断元数据。依据：[执行后钩子与结果封装](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs)。
 
-Direct（直接暴露）的 Tool 会进入初始模型工具列表。
+分页案例中，补丁成功写入后结果被钩子阻止，下一步应先读取差异，而不是直接再次应用同一补丁。对于远端写入，还需要服务返回的标识或查询接口确认实际状态。这是由源码时序推导的工程判断，不是声称所有工具自带通用回滚。
 
-### 能不能以后通过搜索再发现
+## 14. 把完整链条放回分页修复
 
-Deferred（延迟暴露）的 Tool 不一开始展开完整 schema，但可以通过 `tool_search` 找到。
+沿统一练习，能够形成下面的证据链。每一步都必须区分提出动作和完成动作。
 
-### 能不能给 Code Mode 内部脚本调用
+| 步骤 | 输入或动作 | 可检查的结果 |
+|---|---|---|
+| 理解任务 | 读取练习约定及原测试 | 知道页码、每页数量、非法参数和输入不变等要求 |
+| 定位问题 | 读取 `pagination.py`，运行原测试 | 解释旧偏移为何错，并记录真实失败，不删除断言 |
+| 修改 | 对允许范围生成最小补丁 | 实际差异包含偏移与必要参数检查，没有无关改动 |
+| 验证 | 在正确目录执行同一测试文件 | 区分未启动、运行失败与全部通过 |
+| 交付 | 汇总代码差异和测试证据 | 不把模型总结或工具返回值单独当成完成证明 |
 
-有些 Tool 适合普通模型调用，有些也允许 Code Mode 内嵌调用，有些只给其中一个 surface（暴露面）。
+本表不是规定所有模型必须选择完全相同的工具顺序，而是说明正确交付需要哪些事实成立。第四章给出对比缺陷版与参考实现的运行步骤和证据要求，并明确它与真实 Codex 执行的区别。
 
-因此 ToolExposure 解决的是：
+## 15. 本章小结
 
-> **一个已经注册的能力，应该在哪个模型交互面上出现。**
+完整工具链包含来源接入、注册、有效暴露、发现、调用解释、参数处理、授权、执行、结果处理与历史回填。StepContext 让单次请求的工具视图与执行解释保持一致；并行、取消和错误分支则决定这条链怎样应对现实的不确定性。
 
-这对大规模 Tool Catalog 尤其重要。
+最容易造成事故的混淆，是把“找到工具”当作“已获授权”，把“返回错误”当作“没有副作用”，以及把“阻止结果”当作“撤销动作”。这些边界比记住更多工具名称重要。
 
----
+## 16. 🎯 面试怎么回答
 
-## 5. 为什么几千个 MCP Tool 不应该全部塞进首轮请求
+**问：Codex 中一次 Tool Calling 怎样完整发生？**
 
-MCP（Model Context Protocol，模型上下文协议）让外部 Server 提供 Tool。
+> 🎯 宿主先根据本次模型、环境和策略组装工具路由，决定哪些工具直接可见、哪些延迟发现。模型提出结构化调用后，运行时使用产生该调用的 StepContext 找到实现，检查载荷类型，运行适用的执行前钩子，再由工具处理参数、权限和真实执行。结果经执行后处理，按调用标识回填历史，模型据此决定下一步。链路还要处理就绪等待、并发门控、取消和错误分类；并不是模型输出 JSON 后直接调用一个不受控的函数。
 
-Codex 会把 MCP Server 返回的工具转换成自己的 `ToolInfo` 和 `McpHandler`，再注册进 Tool Registry。
+**追问：工具返回错误，直接重试可以吗？**
 
-相关源码：
+> 🎯 先定位失败阶段。参数错误可以修正；明确禁止不能靠重试绕过；特定沙箱拒绝只有满足策略与审批条件才重新尝试；工具已产生副作用但结果丢失时，要先核对真实状态。执行后钩子拒绝结果也不撤销动作。是否重试取决于条件和副作用，不取决于错误文字是否看起来临时。
 
-- `codex-rs/codex-mcp/`
-- `codex-rs/core/src/mcp_tool_exposure.rs`
-- `codex-rs/core/src/tools/handlers/mcp.rs`
+## 17. 自测：用失败位置判断下一步
 
-如果一个用户连接了很多应用，一个 Server 又暴露很多 Tool，最直接的实现会变成：
+**任务一。** 一个工具在注册表中存在，暴露方式为 `Deferred`，首次模型工具列表中没有它。搜索没有命中时，列出三个不同层次的检查，不能直接把结论写成“连接器没接通”。
 
-```text
-所有 MCP Tool schema
-→ 每一轮全部发给模型
-```
+<details><summary>答案与解释</summary>
 
-这会迅速增加 Context、破坏 Prompt Cache，并增加模型选错工具的概率。
+检查模型和命名空间条件是否支持搜索入口；检查当前路由是否保留该工具及其延迟暴露方式；检查查询与实际名称、描述是否匹配。必要时继续核对来源是否就绪和策略过滤。注册、暴露与检索是不同层次，搜索失败不能单独定位连接故障。
 
-所以当 Tool Search（工具搜索）开启时，Codex 可以把 MCP Tool 默认放到 Deferred 暴露面。
+</details>
 
-模型第一轮只需要知道存在 `tool_search`。
+**任务二。** 调用已经写入文件，执行后钩子阻止结果。模型只看见一个错误。提出安全的下一步，并解释为什么它不同于执行前钩子阻止动作。
 
-当它确实需要“日历”能力时：
+<details><summary>提示</summary>
 
-```text
-模型调用 tool_search("calendar create event")
-        ↓
-Runtime 在 deferred catalog 里检索
-        ↓
-返回少量匹配 Tool 的 LoadableToolSpec
-        ↓
-模型再选择具体工具
-```
+找出“处理函数是否已经运行”这一分界。
 
-这才是“注册很多能力但不把全部 schema 一次塞进 Prompt”的真实实现。
+</details>
+<details><summary>答案与解释</summary>
 
----
+先读取实际文件和差异，确认修改是否完成及是否符合要求，再决定后续动作。执行后阻止的是结果使用，文件可能已改变；执行前阻止时处理函数尚未运行，通常没有这次处理函数的副作用。仍不能把这个局部结论扩展为此前从未发生任何动作。
 
-## 6. tool_search 当前怎样找工具：BM25 只是实现，不是架构本身
+</details>
 
-当前固定快照中：
+**任务三。** 两个工具 A、B 声明支持并行，C 不支持；它们共享同一个执行门控。另一进程 D 正在编辑同一文件。说明 A/B/C 的互斥关系，并指出该门控不能证明的事情。
 
-- `codex-rs/core/src/tools/handlers/tool_search.rs`
+<details><summary>答案与解释</summary>
 
-使用 BM25（基于词频与逆文档频率的稀疏检索算法）为 Deferred Tool 建索引。
+A 与 B 可以共同持有读锁；C 需要写锁，与 A/B 的持锁执行互斥。该门控不覆盖另一进程 D，也不能证明两个“支持并行”的实现没有业务冲突。声明、调度锁范围和共享资源一致性仍要分别检查。
 
-它不会只索引一句 description（描述）。
+</details>
 
-以 MCP Tool 为例，search text（搜索文本）会组合：
+## 源码回读索引
 
-- 工具规范名；
-- callable name；
-- MCP Server 名；
-- title；
-- description；
-- Connector 名；
-- namespace（命名空间）说明；
-- Plugin display name；
-- input schema 的字段名。
+| 要核验的问题 | 固定源码入口 |
+|---|---|
+| 说明、执行与暴露怎样关联 | [tool_executor.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/tools/src/tool_executor.rs) |
+| 工具来自哪里、如何筛选 | [spec_plan.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/spec_plan.rs) |
+| 延迟发现搜索什么 | [tool_search.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/handlers/tool_search.rs) |
+| 技能目录怎样引导读取与使用 | [catalog_prompt.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/ext/skills/src/catalog_prompt.rs) |
+| 钩子、名称冲突、错误与结果 | [registry.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/registry.rs) |
+| 审批、沙箱和有条件的再次尝试 | [orchestrator.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/orchestrator.rs) |
+| 并行门控、取消和致命错误传播 | [parallel.rs](https://github.com/openai/codex/blob/67a709665ac7b50311b93e32612c9a8281684787/codex-rs/core/src/tools/parallel.rs) |
 
-所以用户说“创建日历事件”时，搜索不必精确命中某一句描述。
-
-### 为什么还有 ToolSearchHandlerCache
-
-每个 Step 都可能重新生成 Tool Router，但 Tool Catalog 很多时候并没有变化。
-
-如果每次都为几千个 Tool 重建 BM25 索引，会浪费 CPU。
-
-因此 `ToolSearchHandlerCache` 会复用稳定 Runtime 的索引；只有动态 Tool metadata（元数据）或候选来源真的变化时才重建。
-
-这里要区分：
-
-> Tool Search Cache 是本地目录索引缓存，不是 Prompt Cache。
-
-### 不要把“BM25”泛化成 Codex 的永恒设计
-
-源码事实是：这个固定 commit 当前使用 BM25。
-
-工程层面真正稳定的设计思想是：
-
-```text
-完整 Tool Registry
-→ 只给模型少量可见入口
-→ 需要时检索候选工具
-→ 再加载具体 schema
-```
-
-未来检索算法换成 hybrid retrieval（混合检索）也不会改变这个架构边界。
-
----
-
-## 7. 为什么还要给 MCP spec 设置硬大小上限
-
-Deferred 已经能减少首轮 Tool 数量，但还不够。
-
-某些 Agent Plugin MCP spec 在当前源码里还有明确字节预算：
-
-- 单个 spec 不能无限大；
-- 一组相关 spec 的累计体积也不能无限增长；
-- 超出预算的工具可以保持注册，但不进入模型可见面。
-
-相关代码在：
-
-- `codex-rs/core/src/mcp_tool_exposure.rs`
-
-这和 Context 篇的原则完全一致：
-
-> **任何自动进入 model-visible context 的内容都必须有硬上限。**
-
-大 Context Window 并不是“可以不做预算”的理由。
-
----
-
-## 8. Skill 为什么不是另一种 Tool
-
-Codex 还有 Skills（技能）系统：
-
-- `codex-rs/skills/`
-- `codex-rs/ext/skills/`
-
-Tool 回答的是：
-
-> **Runtime 能执行什么动作？**
-
-Skill 更接近：
-
-> **在某类任务里，模型应该怎样组织动作、遵守哪些工作流程、什么时候读取哪些参考材料。**
-
-例如一个“创建专业 PPT”的 Skill 可能告诉模型：
-
-- 先读模板；
-- 再分析内容结构；
-- 用哪个脚本生成；
-- 最后怎样检查版式。
-
-真正执行文件、脚本或外部服务，仍然依赖 Tool。
-
-因此：
-
-```text
-Skill
-= 使用能力的方法与知识包
-
-Tool
-= Runtime 可以执行的动作接口
-```
-
-两者会配合，但不是一回事。
-
----
-
-## 9. 大量 Skill 怎样避免吃光 Context
-
-Codex 自带的 Skill Creator 说明和 `ext/skills/src/render.rs` 都明确采用 progressive disclosure（渐进式展开）。
-
-模型不是一开始看到每个 Skill 的全部文件。
-
-而是：
-
-```text
-第一层：name + description
-用于发现这个 Skill 是否相关
-        ↓
-第二层：SKILL.md
-真正决定使用以后才读取
-        ↓
-第三层：references / scripts / assets
-执行过程中需要哪一份再读取哪一份
-```
-
-第一层 catalog（目录）本身也有预算。
-
-当前源码会根据：
-
--显式配置的 token budget；
--模型 Context Window 的一定比例；
--默认字符预算；
-
-决定最多展示多少 Skill metadata（技能元数据）。
-
-当空间不够时，先缩短 description；再不够才省略部分 Skill。并且 description 预算是近似公平分配，不让第一个 Skill 把剩余空间全部占完。
-
-这就是为什么“几千 Skill 怎么办”的答案不能是：
-
-> “换一个 1M Context 的模型。”
-
-成熟实现首先要做能力目录的渐进展开。
-
----
-
-## 10. 模型发出 Tool Call 以后，真正执行前发生什么
-
-模型输出会先被 `ToolRouter::build_tool_call` 转成 Codex 内部统一的 `ToolCall`。
-
-无论 Responses API 返回的是 Function Call、Custom Tool Call 还是 Tool Search Call，Runtime 都会把它标准化成：
-
-- tool name；
-- call id；
-- payload；
--必要的加密参数信息。
-
-然后 Registry 开始真正 dispatch（分发）。
-
-### 第一道门：这个 Tool 是否真的存在、payload 类型是否匹配
-
-如果模型调用一个没有注册的工具，Runtime 不会靠名字猜。
-
-如果一个只接受 Function payload 的 Handler 收到了完全不同类型的 payload，也不会继续“尽量执行”。
-
-这种协议层不一致通常应该被视为严重错误。
-
-### 第二道门：PreToolUse Hook
-
-Tool 可以生成 Hook-facing input（面向钩子的输入）。
-
-Hook 可以：
-
-- 放行；
-- 阻止；
-- 甚至修改 Tool Input。
-
-MCP Handler 就支持把 Hook 改写后的 JSON 参数重新序列化，再进入后续执行。
-
-但这也意味着：Hook 之后的参数仍然要经过真正 Handler 与权限系统，而不能因为“原参数已经检查过”就跳过安全边界。
-
----
-
-## 11. Approval、Permission、Sandbox 为什么是三件不同的事
-
-模型选择 Tool 以后，`ToolOrchestrator` 才真正决定怎样运行。
-
-源码：
-
-- `codex-rs/core/src/tools/orchestrator.rs`
-
-这里容易把几个概念混在一起。
-
-### Approval：用户愿不愿意让这次动作发生
-
-例如某个命令需要扩大权限，Runtime 可能向用户请求批准。
-
-Approval 解决的是：
-
-> **用户授权。**
-
-### Permission Profile：这个 Thread（线程） / Environment（环境） 最多允许什么
-
-即使用户没有被弹窗询问，系统也有一份结构化权限范围，例如 workspace read/write、网络等。
-
-Permission 解决的是：
-
-> **系统能力上限。**
-
-### Sandbox：这次进程实际上被怎样隔离
-
-最终命令还要在某种沙箱里运行，例如 Linux / Windows 对应的隔离实现。
-
-Sandbox 解决的是：
-
-> **技术执行边界。**
-
-所以一条安全链更接近：
-
-```text
-模型建议执行
-→ Policy 判断是否允许
-→ 必要时请求 Approval
-→ 根据 Permission Profile 计算文件 / 网络能力
-→ 选择 Sandbox
-→ 真正启动进程
-```
-
-不能用 Prompt 里的“请谨慎操作”代替这些 Runtime 控制。
-
----
-
-## 12. Sandbox Denied 为什么有时还会再试一次
-
-第一次在受限 Sandbox 中执行失败，不一定说明用户请求本身非法。
-
-可能只是当前命令需要访问一个被沙箱拦住、但用户确实可以授权的资源。
-
-因此 `ToolOrchestrator` 会区分：
-
-- Policy 明确禁止；
-- 只是当前 Sandbox 权限不足。
-
-只有后者，并且当前 approval policy（批准策略）允许时，Runtime 才可能请求更高权限，再做有限的 escalation retry（权限升级重试）。
-
-这条原则非常重要：
-
-> **Retry 能扩大执行环境，但不能扩大 Policy 本身。**
-
-如果 Policy 已经说 Forbidden（禁止），不能通过多试几次把它绕过去。
-
----
-
-## 13. 并发 Tool 是怎样控制的
-
-`ToolCallRuntime` 在同一 Step 上共享一个读写锁。
-
-源码：
-
-- `codex-rs/core/src/tools/parallel.rs`
-
-如果一个 Tool 声明支持 parallel tool calls（并行工具调用），它拿 read lock（读锁），多个并行安全 Tool 可以同时执行。
-
-不支持并行的 Tool 拿 write lock（写锁），会等其他并发工作结束，并阻止新的并行调用进入。
-
-所以 `supports_parallel_tool_calls` 不是一句给模型看的描述，它真正影响 Runtime 调度。
-
-为什么不能所有 Tool 都并发？
-
-因为有些工具会竞争同一个外部状态，例如：
-
-- 同时修改同一个文件；
-- 同时操作一个终端 Session；
-- 同时改变共享环境。
-
-并发安全是执行器的性质，不是模型自己猜出来的。
-
----
-
-## 14. 用户取消以后，为什么还要生成 Tool Result
-
-Tool Call 会绑定 CancellationToken（取消令牌）。
-
-如果用户在执行过程中取消：
-
-```text
-Tool Call 已经写进模型历史
-        ↓
-Runtime 中止执行任务
-        ↓
-如果什么都不记录
-        ↓
-历史里只剩 Call，没有 Result
-```
-
-下一轮模型就会面对一个悬空动作。
-
-因此 Codex 会尽量产生结构化 `AbortedToolOutput`（工具中止输出），并完成对应 call id 的结果。
-
-对于 `exec_command`，结果甚至会带运行了多久以及“aborted by user”之类的信息。
-
-这说明取消不是：
-
-> “把 future kill 掉就完了。”
-
-取消也必须维护 Context 协议一致性。
-
----
-
-## 15. Tool 执行失败以后，为什么有些错误给模型看，有些直接终止
-
-Codex Tool Error（工具错误）区分可反馈给模型的失败和 Runtime fatal（致命）失败。
-
-如果只是：
-
-- 参数错误；
-- 文件不存在；
-- 某个 Tool 业务执行失败；
-
-模型仍然可能换参数或换方法继续任务，所以 Runtime 可以把错误包装成失败 Tool Result，再交给下一次采样。
-
-但如果是：
-
-- 不可能出现的 payload 类型；
-- Tool task 本身崩坏；
-- 核心协议 invariant（不变量）被破坏；
-
-再把它伪装成“普通工具失败”会掩盖系统错误。
-
-所以成熟 Agent 不是“所有 Exception 都塞给模型继续修”。
-
-更准确的原则是：
-
-> **模型只能修复它拥有决策权的错误；Runtime 自身已经失去可信状态时应该 fail fast（快速失败）。**
-
----
-
-## 16. Tool Result 怎样完成生命周期
-
-正常 Handler 返回的结果还要经过最后几步，才算真正结束。
-
-Runtime 会：
-
--记录 Tool lifecycle；
--执行 PostToolUse Hook（工具执行后钩子）；
--补充 ToolResultMetadata（工具结果元数据）；
--根据输出策略做必要截断；
--转换成 Responses API 可消费的 output item；
--写入 canonical history；
--触发下一次模型采样。
-
-这也是为什么“工具执行成功”不等于“Agent 已经知道成功”。
-
-只有结果真正写回历史，下一轮模型才知道现实世界已经变化。
-
-如果一个 destructive action（有副作用的动作）已经成功，但结果在进入历史前丢失，模型甚至可能重复执行同一动作。
-
-所以 Tool Lifecycle 的最后一个工程边界不是 function return，而是：
-
-> **结果安全地成为下一次模型决策的 Observation（观察）。**
-
----
-
-## 17. 用一个例子串完整 Tool Lifecycle
-
-用户说：
-
-> “运行测试并修复失败，但如果需要访问工作区外文件先问我。”
-
-模型第一轮看到 `exec_command`，决定运行测试。
-
-这份 Tool Call 来自产生它的 StepContext。Router 把 Responses 输出解析成内部 ToolCall。Registry 确认工具存在、payload 合法。
-
-PreToolUse Hook 如果配置了审查逻辑，可以先观察命令。
-
-ToolOrchestrator 计算：当前命令只需要 workspace 内权限，所以不需要额外 Approval，使用当前 Permission Profile 对应的 Sandbox。
-
-命令执行后，测试输出很长。Runtime 对结果进行有界处理，把关键内容变成 Tool Result，关联原 call id，写进历史。
-
-下一次模型看到失败信息，决定读取工作区外的一份配置。Runtime 判断这超出当前权限，于是发起 Approval。用户拒绝后，这次工具调用以明确失败结果回填。
-
-模型因此知道：
-
-> 不是文件不存在，而是权限没有获批。
-
-它可以改用工作区内信息继续，而不是无限重试。
-
-这才是一个完整的 Tool Call：从“模型提出动作”一直到“动作结果成为新 Context”。
-
----
-
-## 18. 源码锚点
-
-建议按这条顺序验证：
-
-1. [`tools/src/tool_executor.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/tools/src/tool_executor.rs)：ToolExecutor 与 ToolExposure 的共享契约。
-2. [`core/src/tools/spec_plan.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/spec_plan.rs)：一次 Step 怎样汇总并筛选工具。
-3. [`core/src/tools/registry.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/registry.rs)：注册、Hook、dispatch。
-4. [`core/src/tools/router.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/router.rs)：模型 Tool Call 如何变成内部调用。
-5. [`core/src/mcp_tool_exposure.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/mcp_tool_exposure.rs)：MCP Tool 的暴露策略和 spec 大小预算。
-6. [`core/src/tools/handlers/tool_search.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/handlers/tool_search.rs)：Deferred Tool 的 BM25 搜索。
-7. [`core/src/tools/handlers/mcp.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/handlers/mcp.rs)：MCP Handler、ready 等待和结果处理。
-8. [`ext/skills/src/extension.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/skills/src/extension.rs)：Skill 怎样同时参与 Context 与 Tool。
-9. [`ext/skills/src/render.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/ext/skills/src/render.rs)：Skill Catalog 的上下文预算。
-10. [`core/src/tools/orchestrator.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/orchestrator.rs)：Approval、Permission、Sandbox、Network 和 escalation。
-11. [`core/src/tools/parallel.rs`](https://github.com/openai/codex/blob/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/core/src/tools/parallel.rs)：并发、取消、Tool Result。
-12. [`exec-server/`](https://github.com/openai/codex/tree/75db67bbc6a18200b52698c8870adaedd7746dea/codex-rs/exec-server)：真正的执行环境和文件系统隔离。
-
-下一篇：[Codex Engineering & Evaluation →](04-engineering-evaluation.md)
+[← 上一章：记忆](02-memory-lifecycle.md) · [下一章：工程与评测 →](04-engineering-evaluation.md)
