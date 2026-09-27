@@ -6,7 +6,7 @@
 
 ## 1. 版本口径
 
-课程固定 **Redis Open Source 8.10.2**，官方稳定版发布于 **2026-09-17**，前稿版本核验日期 **2026-09-26**；本轮保持该固定目标，不因写作重组改动版本。不要与 Redis Software、Cloud 的版本号混用，也不假设每种托管服务开放全部管理命令。
+课程固定 **Redis Open Source 8.10.2**，官方稳定版发布于 **2026-09-17**，本轮终审核验日期为 **2026-09-27**；继续保持该固定目标，不因写作重组改动版本。不要与 Redis Software、Cloud 的版本号混用，也不假设每种托管服务开放全部管理命令。
 
 - [8.10.2 官方发布](https://github.com/redis/redis/releases/tag/8.10.2)：版本、修复与升级依据。
 - [固定版本配置](https://github.com/redis/redis/blob/8.10.2/redis.conf)：核对实际默认值，而不只看最新在线页面。
@@ -23,6 +23,7 @@
 | Functions | 7 起的命名库管理，不是永不丢的 EVALSHA 缓存 | [Functions](https://redis.io/docs/latest/develop/programmability/functions-intro/) |
 | 多段 AOF | 7 起应考虑基线、增量与清单，不随意复制一份旧式文件 | [Persistence](https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/) |
 | 条件删除 | 8.4 起 `DELEX ... IFEQ` 可表达比较后删除；旧版本用经过校验的短 Lua | [DELEX](https://redis.io/docs/latest/commands/delex/) |
+| 原子计数 + 边界 + 期限 | 8.8 起 `INCREX` 可把增减、上下界与过期控制组合成一条命令，适合固定窗口等计数场景；业务窗口语义仍需自行定义 | [INCREX](https://redis.io/docs/latest/commands/increx/) |
 | Hash template | 8.10.2 配置中 `hash-min-template-entries` 为 0 时关闭自动转换；不是所有 Hash 必然使用 | [固定 redis.conf](https://github.com/redis/redis/blob/8.10.2/redis.conf) |
 | 产品能力 | Redis 8 发行能力包含搜索、JSON 与向量等，教材模块职责不能用来否认产品功能 | [Redis 项目](https://github.com/redis/redis) |
 | 安全修复 | 8.10.2 涉及 ACL 检查和 Cluster 总线安全等；新增选择不等于默认自动启用 | [Release](https://github.com/redis/redis/releases/tag/8.10.2) |
@@ -56,7 +57,7 @@
 
 - [Pub/Sub](https://redis.io/docs/latest/develop/pubsub/)、[XREADGROUP](https://redis.io/docs/latest/commands/xreadgroup/)、[XACK](https://redis.io/docs/latest/commands/xack/)、[XAUTOCLAIM](https://redis.io/docs/latest/commands/xautoclaim/)：在线广播、交付、确认与接管分别核对。
 - [Client-side caching](https://redis.io/docs/latest/develop/reference/client-side-caching/)：跟踪与失效通知，不替代客户端恢复策略。
-- [INCR](https://redis.io/docs/latest/commands/incr/)：计数与原子过期组合的动机；具体限流规则由课程明确声明。
+- [INCR](https://redis.io/docs/latest/commands/incr/) 与 [INCREX](https://redis.io/docs/latest/commands/increx/)：计数、期限与边界怎样组合；具体算法选择仍由 Backend 定义。
 - [Security](https://redis.io/docs/latest/operate/oss_and_stack/management/security/)、[ACL](https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/)：网络、服务账户与权限。
 - [Latency](https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/)、[SLOWLOG](https://redis.io/docs/latest/commands/slowlog-get/)：计时范围和诊断成本。
 - [Aerospike 存储](https://aerospike.com/docs/database/manage/planning/ssd)、[主索引配置](https://aerospike.com/docs/database/manage/namespace/primary-index/)：只用于选型问题所需的最小对照，不作无条件性能排名。

@@ -20,8 +20,8 @@ VALID-UNMAPPED       1（S271）
 | [Python Foundation](python.md) | 15 | 13 | [教材 README](../../curriculum/01-python/README.md) |
 | [FastAPI](fastapi.md) | 4 | 16 | [教材 README](../../curriculum/02-fastapi/README.md) |
 | [AI Backend Engineering](ai-backend-engineering.md) | 39 | 22 | [教材 README](../../curriculum/03-backend-engineering/README.md) |
-| [MySQL](mysql.md) | 26 | 23 | [教材 README](../../curriculum/04-mysql/README.md) |
-| [Redis](redis.md) | 19 | 24 | [教材 README](../../curriculum/05-redis/README.md) |
+| [MySQL](mysql.md) | 26 | 19 | [教材 README](../../curriculum/04-mysql/README.md) |
+| [Redis](redis.md) | 19 | 18 | [教材 README](../../curriculum/05-redis/README.md) |
 | [Vector Database](vector-db.md) | 12 | 16 | [教材 README](../../curriculum/06-vector-db/README.md) |
 | [LLM Foundation（应用工程深度）](llm-foundation.md) | 23 | 14 | [教材 README](../../curriculum/07-llm-foundation/README.md) |
 | [RAG](rag.md) | 29 | 14 | [教材 README](../../curriculum/08-rag/README.md) |
@@ -37,7 +37,7 @@ Curriculum Block   = 完整教材认知闭环
 Interview Drill    = 训练时可以再次细分的真实问法
 ```
 
-因此 235 道 Canonical 不等于 185 篇正文。
+因此 235 道 Canonical 不等于 175 篇正文。
 
 ## 质量与结构入口
 

@@ -4,14 +4,14 @@
 
 审计日期：2026-09-19
 
-> **结论：✅ 当前七层信息架构与 185-block Curriculum 结构一致。**  
+> **结论：✅ 当前七层信息架构与 175-block Curriculum 结构一致。**  
 > 本文件描述当前仓库；2026-09-12 的 v1.0 / 184-block 历史审计原样归档，不再用旧快照代表当前版本。
 
 ## 1. 当前结构基线
 
 ```text
 正式 Curriculum 模块        10
-Curriculum Blocks          185
+Curriculum Blocks          175
 ACTIVE Canonical           235
 Frozen Canonical HUMAN-A   279（S001–S279）
 Market HUMAN-A             288（S001–S288，29 Batch，审计时点）
@@ -36,15 +36,15 @@ tools/        可复现分析与质量验证
 | 01 | Python Foundation | 13 | 01–13 |
 | 02 | FastAPI | 16 | 01–16 |
 | 03 | AI Backend Engineering | 22 | 01–22 |
-| 04 | MySQL | 23 | 01–23 |
-| 05 | Redis | 24 | 01–24 |
+| 04 | MySQL | 19 | 01–19 |
+| 05 | Redis | 18 | 01–18 |
 | 06 | Vector Database | 16 | 01–16 |
 | 07 | LLM Foundation | 14 | 01–14 |
 | 08 | RAG | 14 | 01–14 |
 | 09 | Agent | 24 | 01–24 |
 | 10 | System Design | 19 | 01–19 |
 
-**Total = 185。**
+**Total = 175。**
 
 Agent 的 24 章结构是当前正式结构；23 章与 184-block 只出现在明确标注的历史修订 / 审计快照中。
 
@@ -72,7 +72,7 @@ Market S280+
 
 - 根 README 与一级目录 README 使用七层职责模型；
 - 十个 Module README 的 Curriculum 数量与实际 `docs/` 一致；
-- MySQL 为 23 blocks，Agent 为 24 blocks；
+- MySQL 为 19 blocks，Redis 为 18 blocks，Agent 为 24 blocks；
 - Agent Interview 中章节显示编号与目标 `docs/NN-...` 对齐；
 - README 本地链接已逐个复核，无断链；
 - 全仓库 Markdown 链接继续由 `.github/workflows/validate-handbook.yml` 自动检查。
@@ -131,7 +131,7 @@ JD、HUMAN-A、官方资料与教材不再放在同一抽象层，也不互相�
 
 ```text
 Information Architecture     PASS
-Curriculum Count             185 / 185
+Curriculum Count             175 / 175
 Agent Chapter Count           24 / 24
 Canonical Frozen Baseline    235 / S001–S279
 Market / Canonical Boundary  PASS
