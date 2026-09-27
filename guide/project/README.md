@@ -22,6 +22,7 @@
 
 按记录自身的基线、日期与验证范围阅读。历史 PASS 不代表此后所有正文已经再次验收；这里只补齐索引，不改写原记录。
 
+- [Vector DB Reader Revision｜向量数据库模块维护记录](vector-db-reader-revision-draft-snapshot-2026-09-27.md)
 - [Redis｜从零基础阅读过程重组课程](redis-reader-restructure-2026-09-27.md)
 - [全仓外围导航同步｜2026-09-27](outer-navigation-sync-2026-09-27.md)
 - [MySQL 读者视角重组记录｜2026-09-27](mysql-reader-revision-2026-09-27.md)
