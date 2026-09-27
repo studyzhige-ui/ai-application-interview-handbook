@@ -1,284 +1,216 @@
-# 02｜Memory Lifecycle：一句话怎样成为可修订的长期记忆
+# 02｜记忆：从一次对话到可维护的长期事实
 
-[← 上下文生命周期](01-context-lifecycle.md) · [模块入口](README.md) · [下一章：工具生命周期 →](03-tool-lifecycle.md)
+[← 上下文](01-context-lifecycle.md) · [DeerFlow 总览](README.md) · [下一篇：工具 →](03-tool-lifecycle.md)
 
-上一章已经区分了会话状态和本次模型请求。这里继续问：用户今天说的一句话，为什么能影响下一次会话？哪些话又不应该留下来？
+用户在支付页任务中说了两种话：“这次只做最小修复”和“我的长期习惯是先解释风险，再给方案”。它们都值得当前模型注意，但不该拥有相同的保存期限。
 
-沿用支付服务排障的教学场景。同一位用户先说：
+前者是这次任务的约束；后者才可能适用于以后不相关的任务。长期记忆的难点不在于把一句话写进文件，而在于**判断它是否值得跨会话复用，并在写错、过期、冲突或删除时仍然保持可控**。
 
-> “处理代码问题时，我通常希望先看最小修改，避免无关重构。”
+## 1. 先分清记忆接口、记忆实现与会话历史
 
-随后在支付项目中补充：
+DeerFlow 用 `MemoryManager` 定义主系统与记忆后端之间的接口。自动写入提交一段对话，默认注入读取一段可用于模型上下文的文本，主动搜索则返回检索结果。接口本身不要求后端必须采用向量数据库，甚至不要求每种后端都存“事实”对象。
 
-> “这个实验分支可以重构支付适配层，但公开接口不能变。”
+默认实现 DeerMem 才负责对话过滤、后台队列、模型提取、事实存储、检索和维护。OpenViking、Honcho、Mem0、Noop 等后端可以通过同一接口接入，但能力不能仅凭名字推定一致。工具模式要求后端真正实现搜索；事实增删改属于可选能力，不支持时应返回明确错误，而不是假装操作成功。[后端接口与能力检查](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/manager.py#L112-L310)
 
-第一句可能是跨任务有用的习惯；第二句包含项目和当前实验的限制。把两句都写进同一个“用户喜欢什么”的字段，甚至用后一句删除前一句，都会把局部例外变成全局偏好。
+会话历史则属于另一条路径：`messages` 和 `summary_text` 用于继续当前工作。把当前任务摘要存到检查点，不等于已经把它提取为跨会话的用户知识。第一篇中的冻结记忆消息，也只是某次读取结果的副本，不是记忆后端本身。
 
-本章追踪的不是“把聊天存下来”，而是**候选信息经过筛选、持久化、召回、纠正和维护后，怎样有限地影响未来请求**。文中对这两句话的分类是教学判断；真实提取模型的输出仍需验证，不能假设模型每次都会分对。
+## 2. 谁的记忆，属于哪个智能体
 
-## 1. 先分清三种会被称作“记忆”的数据
+记忆读写至少要明确用户和智能体两个维度。用户 `u1` 的偏好不能被 `u2` 召回；同一个用户用于通用工作与某个专用智能体的事实，也要按真实作用域组织。
 
-| 数据 | 例子 | DeerFlow 中的用途 |
+默认 DeerMem 将用户级摘要与智能体级事实分开。用户摘要用于跨智能体的高层背景；具体事实存放在选定智能体的桶中。调用没有指定 `agent_name` 时，DeerMem 会解析到默认智能体桶，不能把接口里的 `None` 一概翻译成“对全部智能体事实做操作”。事实上，读取默认记忆与清空用户全部记忆，对 `None` 的具体处理就不同，必须看调用入口。[默认桶解析与注入](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py#L54-L65) · [管理操作](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py#L492-L585)
+
+进入原始线程或计时器以后，不应重新从一个碰巧存在的全局变量猜用户身份。入队对象直接携带 `user_id`、`agent_name`、`thread_id` 和可用的追踪身份，使异步写入仍对应原来的用户与会话。[队列对象](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/queue.py#L47-L117)
+
+## 3. 自动模式和工具模式，改变的是读写路径
+
+`memory.enabled` 控制记忆机制，`memory.injection_enabled` 控制自动注入，`memory.mode` 选择运行方式。这几个开关不是同义词。该快照共享配置的默认模式是 `middleware`，但自定义智能体还可以关闭自己的记忆能力。[共享配置](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/config/memory_config.py#L54-L119)
+
+| 模式 | 写入怎样触发 | 模型一般先看到什么 |
 |---|---|---|
-| 会话状态 | 本次任务消息、当前待办、已完成的委派 | 让同一会话继续运行，由检查点保存 |
-| 会话摘要 | “已经定位适配器超时，尚未验证修复” | 在历史压缩后延续当前任务，不自动成为长期用户事实 |
-| 长期记忆 | “用户通常希望先看最小代码修改” | 经过记忆后端写入和召回，在后续任务中作为背景数据使用 |
+| `middleware`，自动模式 | 运行结束后由 MemoryMiddleware 提交对话，后端异步提取 | 在允许注入时，用户级摘要与选定智能体的有界事实 |
+| `tool`，工具模式 | 模型显式调用 `memory_add`、`memory_update`、`memory_delete` 等 | DeerMem 默认注入用户摘要，详细事实留给 `memory_search` |
 
-同一句内容可以出现在不止一处，但三者不能靠名字互相替代。`summary_text` 是会话压缩的结果；默认 DeerMem 后端保存的共享摘要和事实，是另一个子系统的持久数据。压缩会话时调用记忆提取入口，也不意味着把整份会话摘要复制成长期事实。[会话摘要实现说明][summary-doc]、[记忆入口][memory-manager]和[压缩前记忆钩子][memory-flush]分别定义这些边界。
+工具模式避免同一批详细事实既自动注入，又经搜索重复返回。但“工具模式绝不自动写”也不是普遍结论：某些依赖会话提取的后端通过 `requires_passive_writes_in_tool_mode` 声明仍需要被动写入。真正生效的链路由模式、后端能力和组装条件共同决定。[模式组装](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py#L644-L669) · [DeerMem 读取分工](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py#L296-L343)
 
-DeerFlow 还把“谁决定何时读写”与“后端怎样存”分开。主运行流程使用 `MemoryManager`，这是记忆后端共同遵守的接口；默认实现是 DeerMem。换成其他后端，不应该让上下文中间件直接操作它的数据库。反过来，也不能因为接口里出现了管理方法，就认定每个后端都实现了所有增删改查：部分方法是可选能力，未实现时会明确报错。[接口及能力校验][memory-manager]
+## 4. 自动写入：先筛选，再排队，不让每次工具往返都提取记忆
 
-## 2. 先确定谁的记忆，再决定是否提取
+主智能体完成一轮工作后，`MemoryMiddleware.after_agent` 提交消息给后端。DeerMem 不会把所有内部轨迹都送给记忆模型，而是先保留适合提取的用户与最终助手消息，过滤内部消息和无信息量的确认；若缺少用户或助手一方，也可能直接跳过。
 
-用户 A 与用户 B 都可能有一个名为 `reviewer` 的 Agent。仅按 Agent 名存储，两个用户就会混在一起；仅按 Thread 存储，又难以跨会话复用。因此，记忆调用要携带服务端解析的 `user_id` 和当前 `agent_name`，`thread_id` 用来关联信息来自哪个会话。
+接着识别偏好、纠正、确认等信号。这些信号用于队列接纳与提取提示，不是“已确认真相”。例如“好的”一般不值得单独提取；“以后一直先解释风险”更值得处理；“这次结果不错”则不应自动晋升为终身偏好。[预处理](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py#L202-L295) · [自动写入入口](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/memory_middleware.py)
 
-这里存在两种不同的“范围”：
+### 4.1 去抖合并的是哪一份输入
 
-- **存储隔离范围**决定读写哪个用户、哪个 Agent 的桶。
-- **信息适用范围**决定一句话描述的是用户长期习惯、某个项目，还是当前任务。
+去抖（debounce）表示不在每次更新到来时立即处理，而是等待一个间隔，将连续更新合并。DeerMem 按 `(thread_id, user_id, agent_name)` 识别同一目标。正常更新到来时，用最新完整上下文替换该目标尚未处理的正常更新，并合并已经识别的信号。
 
-自动提取中标记 `scope=user` 的意思是“这条描述属于用户层面的信息”，不是“允许把它写到所有用户或所有 Agent 的共享空间”。默认 DeerMem 的事实仍按用户和 Agent 分桶；共享摘要则位于用户层。[身份、路径和提取规则][memory-notes]
+设连续两次运行都提交了会话：第一次包含 A、B，第二次包含 A、B、C、D。若第一份仍在等待，处理最新完整输入比重复提取两份更合理。源码的计时器属于这条队列，不能从这个身份键进一步推断每个会话都有独立计时器。[去抖与接纳实现](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/queue.py#L97-L228)
 
-在 Gateway 路径中，身份来自可信鉴权结果，不能接受客户端随意声称的用户 ID。源码还处理独立 LangGraph 调用和嵌入式调用的身份来源，使中间件与工具使用同一个有效用户。
+队列达到普通深度限制时，可以拒绝新的无信号更新；相同键合并不增加深度，带信号和紧急更新仍会被接纳。因此配置的普通队列深度不是所有类型任务都绝不突破的内存硬上限。被拒绝的正常更新不会直接使主任务失败，后续会话重新提交且水位未前进时，还有再次提取的机会；用户不再继续或原消息已消失时，不能保证自动补回。
 
-> **⚠️ 注意：目录里有用户 ID，不等于部署已经具备多租户安全。** 无鉴权模式使用 `default` 用户；自定义绝对 `storage_path` 可以绕过默认的按用户存储根目录。共享部署必须同时检查鉴权入口、路径选择和管理接口，不能只看文件夹名称。[身份与存储约定][memory-notes]
+### 4.2 为什么水位不能只记“上次处理到第 20 条”
 
-身份还必须在入队时确定。延迟提取发生时，原 HTTP 请求可能已经结束；后台定时器不能再靠当时的请求上下文猜“这是谁的对话”。这也是 `MemoryMiddleware` 在排队时携带用户身份的原因。
+压缩会删掉历史开头。原来的第 20 条，可能在新列表中根本不是第 20 条。若仅保存数组索引，下一次就可能越过尚未提取的消息。
 
-## 3. 被动提取与显式工具：控制权在哪里
+DeerMem 水位记录最后提取消息的身份，优先使用消息 ID，没有 ID 时才退回类型与内容。找到该身份，就处理其后的内容；找不到则重新提供完整列表，宁可重复判断，不静默跳过。水位保存在有界进程内缓存中，重启或淘汰会失去它，因此并不是跨进程的“精确一次”提取记录。[消息身份](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L822-L868) · [水位使用](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L1595-L1740)
 
-默认配置启用 Memory，并采用 `middleware` 模式。这个“默认”来自配置类，不代表所有部署都保持它；实际行为还受用户配置、Agent 配置和后端能力影响。[共享配置类][memory-config]
+### 4.3 紧急路径为什么与普通待处理项共存
 
-### 3.1 被动模式：运行结束后准备候选材料
+压缩前提交的紧急消息，只是即将离开历史的一个子集。它不能替换仍在队列中的正常完整会话，否则尚未提取的尾部也可能丢失。因此队列还用 `bypass_watermark` 区分普通与紧急项，紧急提取不读取或推进正常水位。
 
-在 `middleware` 模式中，记忆中间件从本轮会话准备适合提取的用户消息与最终助手消息，再交给后端。助手的临时推理、工具的整段返回值，不应该仅因为在消息列表里就全部当作用户事实。
+但两类队列项都在进程内存里。`add_nowait` 的含义是立即安排处理，不是等待事实写完；它与 `shutdown_flush` 的尽力排空，均不把队列升级为持久任务系统。[紧急队列与处理](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/queue.py#L1-L206)
 
-主 Agent 不需要先选择一个 `memory_add` 工具，后台提取仍可能发生。它适合减少用户反复设置偏好的负担，但也带来一项额外责任：自动提取必须判断信息是否适合长期保留，而不能把“出现过”当作“应当记住”。
+## 5. 提取：模型判断语义，程序检查它提交的候选
 
-### 3.2 工具模式：模型在任务中显式决定何时操作
+真正的记忆模型结合对话和现有记忆，提出摘要变化、新事实、删除、确认或合并建议。程序随后验证输出结构，再应用更新。
 
-`tool` 模式提供 `memory_search`、`memory_add`、`memory_update`、`memory_delete`。例如，用户要求“把我通常使用的测试框架改为 pytest”，模型可以在本轮明确发起修改，并接收操作结果。
+这里要分清两个错误。“用户说的是一次性要求，模型却理解成长期偏好”是语义错误；“模型输出了半截 JSON 或非法置信度”是结构错误。修复后者不能自动解决前者。
 
-工具模式并不等于“完全没有自动写入”。后端可声明自己需要被动会话提取，组装代码会为这类后端保留相应中间件。默认 DeerMem 的模式行为与远程后端的能力声明不能混写成一条无例外的规则。[组装条件][assembly]与[后端能力声明][memory-manager]
+### 5.1 一条候选事实怎样被挡下
 
-两种模式的注入也不同。对默认 DeerMem：
+自动提取的事实携带 `scope`（适用范围）、`durability`（是否适合长期保存）和 `authority`（信息角色）。下面保留该快照的实际门控函数；类型导入和常量一并给出，便于独立观察。它只返回拒绝原因或 `None`，**没有保存文件，也没有修改输入字典**。
 
-| 模式 | 背景注入内容 | 事实怎样被使用 |
-|---|---|---|
-| `middleware` | 用户共享摘要与当前 Agent 的事实，受注入预算限制 | 在构造记忆背景时选择 |
-| `tool` | 用户共享摘要 | 事实通过 `memory_search` 按需检索，避免同一批事实同时注入和检索 |
+<!-- source-example: fact_scope_gate -->
+```python
+from typing import Any
 
-这里描述的是 DeerMem 的 `get_context()`，不是所有记忆后端必须遵守的内部格式。[实际读取代码][deermem]
+_FACT_CLASSIFICATION_FIELDS = ("scope", "durability", "authority")
 
-### 3.3 三个关闭开关不是同一个动作
 
-`memory.injection_enabled: false` 只表示不构造整块自动注入的记忆背景，不代表停止后端写入，也不等于卸载记忆工具。全局 `memory.enabled: false` 控制整个记忆机制的调用入口；单个 Custom Agent 的 `memory_enabled: false` 则只关闭该 Agent 的记忆读取、被动写入、工具和压缩前提取，日期上下文仍保留。
+def _normalize_gate_label(value: Any) -> str | None:
+    """Normalize a model-produced scope-gate label without validating policy."""
+    if not isinstance(value, str):
+        return None
+    normalized = value.strip().lower()
+    return normalized or None
 
-已有会话切换到单 Agent 禁用时，DynamicContext 会删除自己拥有的、带服务端标记的冻结记忆消息；不会因此删除真实用户消息或其他 Agent 的持久事实。**停用读取不是清空存储，清空存储也不是清除所有历史副本。**[组装与禁用规则][agent-notes]、[消息清理实现][dynamic]
 
-## 4. 从会话到队列：接受了工作，不等于记住了事实
-
-假设用户连续发送两轮消息，每次都立即调用提取模型，会重复处理大量历史，也可能让短时间内的修正互相竞争。默认后端因此采用延迟合并处理：先把待处理会话放入队列，短时间内的更新可以合并，再触发提取。
-
-Debounce（防抖）在这里不是重试。它解决的是“更新太密集，怎样合并工作”；重试解决的是“某次工作失败，是否再执行”。Conversation watermark（会话处理水位）则记录已经处理到的内容，用来减少重复提取。水位缓存被淘汰以后可能再次处理同一批消息，所以它不是永久的去重证明。[记忆运行约定][memory-notes]
-
-可以把处理过程观察为下表。表中的阶段是**教学划分**，不是声称源码有一组同名数据库状态值。
-
-| 观察时刻 | 已经知道什么 | 尚不能声称什么 |
-|---|---|---|
-| 中间件把材料交给后端 | 工作已经被接受或排队 | 已经提取出有效事实 |
-| 提取模型返回建议 | 有待检查的新增、修改或删除建议 | 建议符合长期记忆规则 |
-| 应用逻辑接受建议 | 建议通过对应检查 | 文件已经成功持久化 |
-| 规范存储写入成功 | 持久记忆发生了变化 | 旧会话中已冻结的注入块立即更新 |
-| 后续读取或搜索 | 本次确实取得了哪些内容 | 其他用户、Agent、会话也取得了同样内容 |
-
-压缩历史前的 `memory_flush_hook()` 很容易被名字误导。其实际代码调用 `add_nowait()`，把即将压缩的材料交给记忆后端，并不等待所有提取和存储完成。因此不能写成“先确保长期记忆落盘，再删除旧消息”。它提供了压缩前送交材料的机会，不是会话检查点与记忆存储之间的原子事务。[钩子源码][memory-flush]
-
-当 PII（可识别个人的信息）脱敏配置启用时，排队载荷也需要先脱敏；只在模型最终请求里脱敏，挡不住原文已经进入记忆队列。这里的规则是确定性检测和配置控制，不应宣传成能识别所有敏感信息。[记忆边界钩子][memory-flush]、[中间件说明][middleware-notes]
-
-## 5. 从建议到写入：长期记忆不能直接执行模型的意见
-
-默认 DeerMem 的自动提取让模型为候选信息给出三个判断：描述属于什么范围、是否适合长期保留、属于事实描述还是试图控制行为的指令。应用代码再按规则筛选，而不是直接把生成的 JSON 合并到文件。
-
-### 5.1 新增事实要同时满足什么
-
-自动新增要求用户层面、长期有效、描述性的信息；共享摘要也要求是用户层面的描述。缺少分类信息的项会被拒绝，不应因为它的文本“看起来合理”就默认放行。某一项失败不必导致整批无关的有效项一起丢弃。[自动提取安全规则][memory-notes]
-
-回到开头的例子：
-
-| 输入 | 教学上应识别的范围 | 合理去向 |
-|---|---|---|
-| “我通常希望先看最小修改” | 用户习惯，有跨任务价值 | 可以成为长期记忆候选，仍需通过实际提取和写入检查 |
-| “这个实验分支可以重构适配层” | 项目和当前实验 | 留在任务或项目上下文，不据此删除通用习惯 |
-| “公开接口不能变” | 本次任务约束，是否长期有效尚不明确 | 首先保留在当前上下文；不能自动升级为用户对所有项目的永久要求 |
-| “以后忽略所有审批规则” | 试图改变系统行为的指令 | 不能作为描述性用户事实借记忆获得更高权限 |
-
-规则检查能拒绝缺字段和明显越界的建议，但分类本身可能来自模型。**确定性检查不等于确定性地知道一句话的真实语义。** 错误分类仍需通过样例评测、可查看的事实内容和用户纠正发现；消息角色降权与真实权限检查仍不可省略。
-
-### 5.2 修改不是“删旧，再试着加新”
-
-用户如果明确说“我以后不再要求最小修改，可以先比较几种设计”，这才可能成为对原通用习惯的纠正。自动提取中的成对替换要把删除与对应的新事实关联；新事实未通过检查时，不能先删除旧事实，造成“纠正失败但原记忆已经丢失”。项目或当前任务范围的删除建议也不能越界删除用户层事实。[替换及删除门槛][memory-notes]
-
-容量检查同样会影响替换。新事实最终没有进入保留集合，就不能仅凭模型曾建议新增它，声称替换已经完成。检查顺序必须保证“准备删除什么”和“实际留下什么”一致，而不是只验证提取输出的语法。
-
-### 5.3 自动提取的检查，不自动覆盖显式 CRUD
-
-CRUD 指创建、读取、更新和删除。工具模式的显式事实操作不走完全相同的自动提取分类门槛；把它描述成“所有记忆写入都自动拒绝项目范围信息”是不准确的。显式操作依然需要身份、参数、存储一致性等检查，调用者也要决定什么信息值得保存。[记忆模式与自动写入边界][memory-notes]
-
-这条区别会影响评测：验证自动提取不会污染长期偏好，不能只测试 `memory_add`；验证工具修改正确，也不能只给提取模型一组自然语言样本。
-
-## 6. 写到哪里：规范数据与检索索引为什么分开
-
-默认 DeerMem 的持久记忆不是一个无限增长的聊天 JSON。用户共享摘要、修订信息和时间戳在 `memory.json` 中，事实则按 Agent 放在独立 Markdown 文件中，每个文件包含事实内容与 YAML 头部元数据。[存储布局][memory-notes]
-
-```text
-users/<user_id>/
-├─ memory.json                         用户共享摘要及修订信息
-└─ agents/<agent_name>/facts/
-   └─ <哈希前缀>/<fact-id>.md           一条事实的规范内容
+def _fact_scope_gate_reason(fact: dict[str, Any]) -> str | None:
+    """Return the deterministic rejection reason for a model-extracted fact."""
+    if any(_normalize_gate_label(fact.get(field)) is None for field in _FACT_CLASSIFICATION_FIELDS):
+        return "missing"
+    if _normalize_gate_label(fact.get("scope")) != "user":
+        return "scope"
+    if _normalize_gate_label(fact.get("durability")) != "durable":
+        return "durability"
+    if _normalize_gate_label(fact.get("authority")) != "descriptive":
+        return "authority"
+    return None
 ```
 
-没有显式 Agent 名时，默认事实桶使用保留名称 `__default__`。这并不意味着事实属于所有用户；它仍在有效用户的存储范围内。
+输入 `{"scope": "thread", "durability": "durable", "authority": "descriptive"}` 会返回 `"scope"`。输入三项分别为 `user`、`durable`、`descriptive` 时返回 `None`，表示**这一道分类检查**没有拒绝，不表示整条事实已经通过全部验证，更不表示已经持久化。[原函数](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L138-L167)
 
-独立事实文件让定点修改不必每次重写全部事实。但“一个文件一次替换”仍不足以解决并发：两个会话可能同时读取同一旧修订，然后分别提交修改。后写入者若完全覆盖前者，会产生丢失更新。
+这种检查让“只属于本任务”“权限指令”等被正确分类的候选不能直接进入长期用户事实。但分类仍由模型产生：若模型错误标注，程序不会凭标签自动理解全部自然语言。记忆保持低权威角色，工具另有授权，是不能省掉的下一层保护。
 
-DeerMem 用用户范围的锁、共享修订号、事实修订和恢复记录组织写入。可以把修订理解为“我修改时依据的是哪个版本”：定点操作只有在原事实前提仍成立时才可以重试套用；基于完整快照的操作遇到冲突，要重新读取并重新计算，不能把旧快照换个修订号硬写进去。冲突有专门的错误类型，Gateway 将对应冲突映射为 HTTP 409；存储损坏不是“没有记忆”，不能静默清空后继续。[持久化与冲突约定][memory-notes]、[公开错误类型][memory-manager]
+### 5.2 删除和替换不能只执行一半
 
-检索索引是另一类数据。默认检索适配器使用 SQLite FTS5（全文检索），其索引可以从规范事实重建。索引出错不能反过来证明事实文件已经不存在；适配器失败时，代码保留规范内容的子串检索作为退路。[实际检索代码][deermem]
+结构解析要求有效的更新对象。新事实为空、类型错误、置信度非法或替换项损坏时，需要拒绝对应变化；不能因为旧事实删除项格式完整，就在替代事实无效时先删掉旧内容。
 
-> **⚠️ 注意：检索失败与规范存储损坏不是同一种故障。** 前者可能重建派生索引后恢复；后者需要保留原始文件并诊断，不能通过删除规范记忆“修好”搜索。
+程序还对摘要更新、矛盾删除等设置相应门控，不能把“新增事实有检查”误当成所有破坏性操作已经安全。输入给提取模型的既有记忆也做转义，不让旧记忆中的标签破坏数据分区。[结构规范化](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L138-L320) · [提取提示构造](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L1299-L1405)
 
-## 7. 召回到模型：找到、选中、注入是三步
+自动提取的门控也不能不加说明地套到显式工具写入上。`memory_add` 是另一条用户或模型主动操作路径，需要按自己的参数、身份和存储校验判断，不是先虚构一段对话再经过完全相同的提取过程。
 
-检索至少有三个不同结果：存储中存在一条事实，搜索把它排进结果，模型请求真的包含了它。某条事实未出现在请求里，可能是作用域不匹配、查询没命中、排序靠后或超出注入预算，不一定是写入丢失。
+## 6. 保存：兼容 API 的 JSON 形状，不等于全部事实都在一个 JSON 文件
 
-默认 DeerMem 的 `search()` 在索引路径无结果时也可以尝试子串匹配；返回结果按有效用户与 Agent 的范围组织。可选的相关性策略会使用有界的词项重合、权重和多样性选择，但它是显式启用的替代策略，不能把默认后端概括成“向量数据库语义检索”。[搜索与注入选择代码][deermem]
+在该快照的默认文件存储中，用户级 `memory.json` 保存用户与历史摘要；智能体事实各自以 Markdown 文件保存。为了兼容调用者，`get_memory` 等接口仍可以返回带 `facts` 数组的文档形状。
 
-构造注入文本时还要考虑预算。需要保证的类别与普通候选竞争的部分，可能使用不同的分配规则；一条很长的事实不能因为置信度高就无限占据提示词。首次启用记忆背景时，当前真实用户问题可作为相关性排序的查询线索；这并不改变上一章的冻结行为：**同一会话已经注入的旧记忆块，不会因为后台新增事实就每轮自动重建。**[读取格式化入口][deermem]、[动态上下文实现][dynamic]
+因此，看见 API 返回 JSON，不能推出底层就是一个大 JSON 文件；看到搜索索引，也不能把它当作事实的唯一来源。事实文件与摘要是规范数据，索引可以重建。[存储定义](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/storage.py#L1-L96)
 
-所以，在工具模式中“事实刚刚修改成功，但这一轮仍看到旧的背景”需要拆开调查。先确认规范存储是否更新，再看使用的是旧注入块还是新的 `memory_search` 结果。不能以背景文本尚未变化，直接重复写一遍相同事实。
+### 6.1 并发更新为什么要检查版本
 
-记忆注入保持在用户数据角色，不能获得系统规则的权限。“以前记住过”只说明历史来源，并不说明它永远正确或能覆盖当前任务与审批限制。
+设提取器读取了版本 10，准备合并两条偏好；与此同时，用户手工纠正了其中一条并提交为版本 11。提取器不能直接把基于版本 10 的整份结果覆盖回去。
 
-## 8. 长期维护：删除、确认、去重和容量不是一回事
+DeerMem 区分共享清单版本冲突和事实版本冲突。对基于整份快照生成的提取决定，发生相应清单冲突后，会重新读取最新记忆，再把同一组提取建议应用到新快照，有限次重试；删除、合并、容量淘汰因此都重新基于新状态计算。这不是重新调用模型，亦不是任意冲突都无条件重试。[提取提交](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L1441-L1547)
 
-### 8.1 被访问，不等于被用户再次确认
+显式新增也可能遇到两个调用同时检查“没有重复”，然后同时写入。工具层提前查重只能节省工作，存储提交路径仍须针对最新快照复核；不能把调用前检查当成并发保证。新增后若容量策略立刻淘汰了这条低优先级事实，也不能返回一个不存在的 ID 并声称“已记住”。[新增的复核与结果](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L1150-L1200)
 
-搜索结果被使用，说明它可能有用；用户明确确认，才是对事实继续成立的证据。源码将访问热度与确认处理分开。相关策略启用时，搜索实际返回的事实才记录访问热度；自动注入和 `get_context()` 不因为重复使用同一背景就不断增加热度。侧边元数据也不应改写规范事实的修订和时间戳。[确认及侧边数据规则][memory-notes]、[搜索实际分支][deermem]
+### 6.2 旧配置和旧文件不是直接丢弃的理由
 
-否则会出现反馈循环：某条旧记忆因为已在提示词中而频繁被使用，又因为频繁使用被误认为真实和新鲜，最终更难淘汰。
+共享记忆配置只保留启用、模式、注入、退出预算和后端选择等公共字段。DeerMem 的容量、提取模型、去抖等参数放在 `memory.backend_config`。已知旧顶层字段有带警告的兼容迁移，不能把“已迁到后端配置”写成“旧键立即全部失效”。
 
-### 8.2 去重减少重复，不负责证明新旧事实一致
+尤其旧 `storage_path` 若指向 `.json` 文件，与新配置作为根目录的含义不同，程序会特殊处理并警告。迁移已有摘要遇到不能安全合并的冲突时，也不能把损坏或冲突数据当空记忆覆盖。[配置兼容](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/config/memory_config.py#L164-L247) · [存储冲突](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/storage.py#L51-L69)
 
-近似去重是可选策略。它以确定性的词项相似度处理同类别的近似新增项，避免换一种说法就新增一条；不能据此解决否定、条件变化或时间变化。成对替换不会简单走同一近似合并路径，待删除目标也不能随意成为合并目标。[写入侧去重规则][memory-notes]
+## 7. 召回：自动注入和主动搜索有不同任务
 
-合并和过期审查同样有边界。合并要求来源事实真实存在且分组不重叠；过期审查针对符合年龄等条件的事实，并有保护类别和每轮删除限制。不是让模型一次回答“哪些记忆没用了”，就直接清空对应文件。
+`get_context` 回答“默认给模型多少长期背景”。DeerMem 在注入预算中组织摘要和事实；开启与查询相关的排序后，还可综合词项相关度、置信度及多样性。没有查询时保留对应的默认排序语义。这里的词项相关排序不是“已经调用语义向量模型”。
 
-### 8.3 容量满了以后，要解释谁被留下
+`search` 回答“现在需要进一步找哪些事实”。该快照中，开启相关性策略时走作用域内的确定性排序；否则尝试检索适配器，无结果或可降级的适配器故障时，再使用不区分大小写的子串匹配。它不是把所有策略无条件串成固定的三段流水线。[注入与检索分支](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py#L296-L474)
 
-容量淘汰的默认策略以置信度为依据；`hybrid-v1` 是可选的综合策略，额外考虑确认新鲜度与访问热度。Shadow mode（影子模式）可以记录两个策略的分歧，但仍按现行策略实际执行。不能把“记录了新策略的选择”写成“新策略已经生效”。[容量与影子模式][memory-notes]
+这也解释“索引坏了可以降级”的边界：只要规范事实还能安全读取，就有替代检索路径；如果规范存储自身已损坏，不能悄悄返回空数组并声称用户没有记忆。需要记忆才可执行的后端，还可以要求读取失败中止，而不是继续无记忆运行。[公开错误分类](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/manager.py#L112-L221)
 
-不同入口应共用容量规则，否则自动提取遵守上限，而导入或工具新增悄悄绕过，系统仍然会无限增长。评估时需要分别检查自动、手工、工具和导入入口，而不是只测试一种。
+## 8. 维护：纠正、确认、合并、过期和容量不是同一种操作
 
-## 9. 结束生命周期：清理和停机究竟保证什么
+**纠正**处理冲突。用户说“以后不用先列风险，直接给方案”，可能需要替换原有长期偏好；但“这次直接给方案”只改变当前任务，不能据此删除普遍偏好。解释适用范围，比机械执行“最后一句覆盖前一句”更重要。
 
-`cancel_by_agent` 只取消指定用户范围内仍在防抖队列中等待的项目；已经被处理循环取出的工作，不会因此被自动中断。于是“先取消排队，再清空事实”并不能单独证明某个正在进行的提取稍后不会再写入。这类管理操作需要结合活动任务、写入版本和停止新工作的顺序验证。[队列取消边界][memory-notes]
+**再次确认**提高一条既有事实的稳定性。它可以更新最近确认时间和确认次数，不必新建同义事实。**去重和合并**则减少冗余：提取结果可以先做同类近重复判断，多条事实的归并还需要合法来源标识与适用条件。手工事实会在提取提示中标为较高信任，但这仍然不等于模型永远不能误解它。[确认与候选规范化](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L83-L320) · [手工事实与提取提示](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L1299-L1405)
 
-优雅停机为待处理记忆提供有限的排空时间。共享配置中的默认预算是 30 秒，允许范围为 1 到 300 秒；超时仍未完成的尾部工作可能丢失。这个预算是应用停机时愿意等待多久，不是模型请求必然能在多久内完成，更不是持久任务队列提供的跨进程保证。[停机预算源码][memory-config]
+**过期复查**不意味着一到日期就自动删除。事实可有预计有效天数，超过复查窗口后再成为候选；配置中的受保护类别、单次移除上限等约束继续生效。**容量淘汰**则由每个作用域的 `max_facts` 等配置触发，按所选策略考虑置信度、确认、访问等信息。访问热度属于辅助数据，写入失败不能反过来让已经查到的事实不可用。[过期与合并候选](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L680-L812) · [容量与辅助记录](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L886-L967)
 
-容器的退出宽限期还要容纳其他清理工作，不能直接把两者都设为 30 秒就宣称可靠。已读源码约定还区分检索预热等待、规范记忆排空和索引连接关闭；这些步骤有各自职责。[启动和关闭次序][memory-notes]
+上传事件还有独立的寿命问题。“用户本次上传了某路径的 PDF”通常是会话局部事件，文件以后可能不存在；“用户常处理 PDF”才可能成为跨任务背景。DeerMem 提取提交路径会清理上传相关的会话性描述，不能把临时路径当长期可靠证据。[提交清理](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/updater.py#L1441-L1547)
 
-旧格式迁移是另一类风险操作。它需要停止写入、备份并校验，失败时保留不能安全迁移的材料，而不是当作旧文件全部删除。旧版部分顶层配置会被自动迁移到 `backend_config` 并告警；“旧写法”并不等于“这一版本立即报错失效”。[配置迁移实现][memory-config]、[存储迁移约定][memory-notes]
+## 9. 删除、清空和退出要追到队列与资源
 
-最后，删除长期事实不自动删除已经进入会话检查点的旧注入文本、用户原话、日志或备份。真正的数据删除需求必须逐种存储确认，不能把一个 `memory_delete` 成功结果解释成所有副本均已擦除。
+工具模式下，修改或删除通常先搜索得到事实 ID，再调用相应工具。更新结果必须区分“没找到”“不支持”“版本冲突”和“已经持久化”，不能用统一成功文案掩盖差异。[记忆工具](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/tools.py)
 
-## 10. 小结：用一条信息重新走一遍
+清空作用域时，DeerMem 在清空前后取消相同作用域的待处理提取，减少旧计时器把已清事实写回的机会。这个可见调用链证明的是**待处理项取消**；是否还阻止所有已经在执行的写入，要继续检查存储与调用方的并发保证，不能仅凭两个取消调用作全局承诺。
 
-一句用户表述先被绑定到可信身份和本次会话，然后进入后端处理。默认自动路径提出候选并检查适用范围、长期价值与描述性；通过的变化还要在存储版本约束下写入。之后，召回依据用户和 Agent 范围、查询与预算选择内容，模型只把它当作背景数据。
+正常退出会给 `shutdown_flush` 一个有上限的排空预算，已经在处理的工作也需计入。返回成功应意味着预算内真正排空；超时或进程被强制终止仍可能丢掉尾部。随后关闭派生检索资源。主任务完成、队列为空、后端关闭、全部事实已保存，是应分别观察的状态。[清空与退出](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py#L505-L585)
 
-纠正要保护替换关系，访问不能冒充确认，索引可以重建但规范事实不能随便删除。关闭注入、禁用记忆、取消排队、清空存储、停止服务，是五种后果不同的动作。
+## 10. 怎样验证记忆有用，而不是只验证存得更多
+
+本例至少需要覆盖以下判断：长期习惯被正确提取，一次性“不要发布”不被误当永久偏好；`u2` 搜不到 `u1` 的事实；更正后不继续召回冲突旧事实；检索适配器不可用时不谎报规范数据丢失；队列未提交时不宣称已记住。
+
+还要观察最终任务：使用记忆是否减少无谓询问，是否引入过期偏好错误，以及额外输入、提取调用与时延是否值得。可设计相同任务在记忆开关前后的对照，但没有实测数据就不能给出提升比例。本组 [源码小实验](labs/README.md) 只运行上面的确定性门控函数，语义提取、多用户服务与真实模型效果需要另一层测试。
+
+## 本章小结
+
+DeerFlow 的记忆系统将主系统接口与默认 DeerMem 实现分开。一次对话先经过筛选和队列，再由模型提出更新、由程序验证并提交，之后才有可召回的长期事实。维护必须同时关心作用域、错误、冲突、寿命和删除；任何一步“已经调用”都不等于最终存储已经完成。
 
 ## 🎯 面试怎么回答
 
-**Q：DeerFlow 的长期记忆为什么不是简单地保存聊天历史？**
+**Q：怎样设计短期到长期记忆的晋升？**
 
-> 它把会话继续运行的状态与跨任务复用的记忆分开。默认 DeerMem 通过中间件接收经过筛选的会话，让提取模型提出信息更新，再用适用范围、长期有效性和描述性等规则检查自动写入。共享摘要与 Agent 事实有不同存储位置，事实写入还受修订和容量约束。读取时按照用户、Agent、查询和预算选择，最后以低权限背景数据进入请求。历史里出现过一句话，只是提取的材料，不足以证明它应该长期保存。
+> 先区分当前任务状态和跨任务仍有价值的用户信息。DeerMem 会过滤对话，由模型提出长期事实，再检查范围、持久性和信息角色，经过存储版本检查后提交。以后按作用域与预算召回，还要支持更正、确认、合并和过期复查。自动提取会误判，所以不能把模型给出的分类标签当作语义真理，也不能让记忆成为权限来源。
 
-**Q：用户说“这个项目可以重构”，能否据此删除“通常希望最小修改”的记忆？**
+**Q：使用后台队列后，记忆更新就可靠吗？**
 
-> 不能直接删除。两句话的适用范围不同，项目内例外没有否定跨任务的通用习惯。应在当前任务或项目上下文保留例外。只有用户明确修改通用偏好，并且替换建议通过写入检查，才应更新长期事实；替换失败不能留下“旧事实已删、新事实未写”的中间结果。此外，还要区分规范存储已经更新与旧会话的冻结注入文本尚未更新。
-
-**Q：怎样验证“记忆已关闭”而不是只看到界面没有展示？**
-
-> 先确定关闭的是注入、单个 Agent，还是全局机制，再检查对应入口。关闭注入仍可能写入或提供工具；单 Agent 禁用应停止读取、被动提取、工具和压缩前提取，同时保留日期。已有会话要检查带服务端标记的旧记忆是否被移除。最后分别检查持久事实、队列和检查点，不能用界面隐藏或一条配置值代替实际行为验证。
+> 要说明队列的介质与确认点。默认 DeerMem 是进程内去抖队列，接收不代表落盘；正常更新可能在后续轮次重新提交，紧急压缩路径则给即将删除的消息一次提取机会。正常退出可以限时排空，但崩溃仍可能丢队列。需要更强保证时，要另外设计持久接收、幂等与恢复，而不是把现有队列描述成精确一次。
 
 ## ⚠️ 高频易错点
 
-- **把入队当落盘。** 压缩前 `add_nowait()` 不等待全部记忆更新完成。
-- **把范围当权限。** `scope=user` 是语义分类，不是跨用户写入授权；用户 ID 也不能来自不可信请求字段。
-- **把检索结果当确认。** 访问热度、置信度和用户确认表达不同信息，不能互相替代。
-- **把禁用当删除。** 停止未来读写，不会自动擦除旧检查点和备份；取消待处理队列也不等于停止在途工作。
+- **把所有 `None` 都解释成全局。** 默认桶读取与清空所有智能体事实必须按入口分别确认。
+- **把 JSON API 当成文件布局。** 兼容返回值与规范事实的存储形态可以不同。
+- **把通过门控当成已保存。** 分类检查、完整验证和存储提交是三个不同阶段。
 
-## 自测：先判断状态，再看解释
+## 本章自测
 
-### 任务一：哪一项应该修改长期偏好？
-
-初始条件：用户 A 的 `reviewer` Agent 中保存“处理代码通常先做最小修改”。输入依次为“本项目允许内部重构”和“以后所有代码评审先比较几种设计，不再默认最小改动”。请分别说明信息适用范围、是否构成长久偏好的纠正，并说明替换的新项被拒绝时旧项是否应该删除。
-
-可检查结果：必须给出两次输入的不同去向，并明确一次失败替换的持久结果；不要求预测提取模型必然输出哪些字段。
+**任务 A：** 输入候选 `{"scope":"user","durability":"temporary","authority":"descriptive"}`。预测本章函数的返回值，说明它是否修改输入、是否产生磁盘写入。随后把 `durability` 改为 `durable`，解释为何 `None` 也不能证明语义正确。可运行核对见源码小实验。
 
 <details>
-<summary>本项目例外与明确修改通用习惯，分别应该怎样处理？</summary>
+<summary>任务 A 提示</summary>
 
-第一句只改变项目内的任务条件，不足以删除通用偏好。第二句明确修改跨任务习惯，可以作为长期纠正候选。成对替换仍需检查；新事实不被接受时，应保留原事实，不能完成一半替换。两次操作都只发生在有效用户与当前 Agent 的存储范围内。
+按条件的实际顺序读返回语句，再检查函数是否含存储调用。
+
+</details>
+<details>
+<summary>任务 A 答案与解释</summary>
+
+第一次返回 `durability`，不修改输入，也不写文件。第二次返回 `None`，仅表示该函数接受这组三项标签；模型可能错误分类原话，其他验证和提交也尚未发生。
 
 </details>
 
-### 任务二：搜索没有结果，是写入失败吗？
-
-初始条件：规范事实文件存在，用户和 Agent 范围正确，检索适配器损坏，当前会话已经有旧的冻结记忆块。请按顺序指出该检查哪些数据，并说明重建索引、重新搜索和重新打开会话各自可能改变什么。
-
-可检查结果：答案应区分规范存储、派生索引、搜索结果和请求内冻结背景，不能以一次空搜索结果决定删除文件。
+**任务 B：** 自动提取读了版本 10，用户显式修改后存储成为版本 11。题设明确使用具备清单版本检查的提取提交路径。请说明发生冲突后哪些工作重做、哪些不应凭空宣称重做，并解释为什么不能把旧文件直接覆盖回去。
 
 <details>
-<summary>规范事实存在但搜索异常时，怎样区分存储、检索和注入问题？</summary>
+<summary>任务 B 提示</summary>
 
-先检查规范事实和作用域，再检查索引及回退检索。重建索引修复派生数据，不修改事实的真实性；重新搜索产生本次结果，不保证改写旧会话的注入块。新的会话可以重新选择背景，但也受注入配置与预算限制。现有事实无需因为索引故障被删除。
+回看 `_finalize_update`：更新建议是在循环外解析，还是每次冲突重新调用模型？
+
+</details>
+<details>
+<summary>任务 B 答案与解释</summary>
+
+发生相应清单版本冲突后，重新读取最新记忆，重新应用同一组已解析的提取建议，有限次重试提交。不能宣称该循环重新调用了模型。直接写回旧快照会抹掉并发修改，尤其会让删除、合并和容量判断基于过期事实。
 
 </details>
 
-### 任务三：清空以后为什么又出现一条事实？
-
-初始条件：更新任务已经从防抖队列取出，管理员随后调用取消待处理队列并清空规范事实；在途提取稍后返回。请说明仅靠取消队列为什么不足，并列出验证删除效果时至少要观察的三类状态。
-
-可检查结果：必须识别在途任务不是待处理项，区分未来写入、规范存储与旧历史副本；不要声称源码已经提供全系统原子擦除。
-
-<details>
-<summary>取消待处理队列后，在途写入与旧会话副本为什么仍需单独处理？</summary>
-
-取消只命中仍在队列中的项，不会中断已经取出的工作。需要阻止或协调后续写入，再确认规范存储结果；同时检查旧会话检查点和其他留存副本。存储修订机制有助于发现冲突，但不能在没有验证具体操作前假设它完成了全系统删除事务。
-
-</details>
-
-## 源码索引：带着问题定位
-
-| 想核实的问题 | 入口 |
-|---|---|
-| 后端共同接口、能力与错误类型 | [MemoryManager][memory-manager] |
-| 哪些开关是共享配置、旧配置怎样兼容 | [MemoryConfig][memory-config] |
-| 当前 Agent 的事实怎样注入和搜索 | [DeerMem 实现][deermem] |
-| 压缩前究竟等待了什么 | [memory_flush_hook][memory-flush] |
-| 身份、存储、迁移、维护与关闭的实现约定 | [Memory 维护说明][memory-notes] |
-
-[下一章：工具生命周期 →](03-tool-lifecycle.md)
-
-[summary-doc]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/docs/summarization.md
-[memory-manager]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/manager.py
-[memory-flush]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/summarization_hook.py
-[memory-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/AGENTS.md
-[memory-config]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/config/memory_config.py
-[assembly]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py
-[agent-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/AGENTS.md
-[dynamic]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/dynamic_context_middleware.py
-[middleware-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/AGENTS.md
-[deermem]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deer_mem.py
+下一篇：[03｜工具生命周期 →](03-tool-lifecycle.md)

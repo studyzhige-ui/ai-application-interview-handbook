@@ -1,290 +1,250 @@
-# 03｜Tool Lifecycle：一个工具调用怎样从“可选”走到“已执行”
+# 03｜工具：从可发现能力到受控副作用
 
-[← 记忆生命周期](02-memory-lifecycle.md) · [模块入口](README.md) · [下一章：恢复与工程验证 →](04-engineering-evaluation.md)
+[← 记忆](02-memory-lifecycle.md) · [DeerFlow 总览](README.md) · [下一篇：工程与评测 →](04-engineering-evaluation.md)
 
-排查支付超时时，模型可能提出三个动作：读取监控、修改文件、把结论发送到外部系统。它们都可以包装成工具，但后果不同：读取可能泄露信息，写文件改变工作区，发送消息则在系统外留下动作。
+用户让智能体查询监控、修复支付页，但不要发布。模型提出 `write_file` 调用后，事情还没有发生：程序需要检查目标文件、权限和执行环境，工具真正返回后，模型才获得新的观察。
 
-因此，一个工具调用不能只解释为“模型生成函数名，Python 执行函数”。需要回答：工具从哪里来，模型为什么看得见它，参数最终指向什么，谁允许这次调用，失败结果怎样返回，以及真实资源何时释放。
+同样，配置了一个发布工具，不代表本轮模型应该看见它；模型看见了，也不代表这次调用获准执行。读 DeerFlow 工具源码，先把**存在、可见、允许执行和实际完成**四个状态拆开。
 
-本章用一条调用链组织这些问题。示例中的监控工具名称、文件内容和权限集合均为**教学假设**；提到的 DeerFlow 类和控制顺序则对应固定源码。没有运行的外部动作不会被写成成功案例。
+## 1. 工具怎样进入这次运行
 
-## 1. 先把工具定义与一次调用分开
+`get_available_tools` 汇合配置工具、内建工具、MCP 工具、ACP 外部智能体工具和插件贡献。MCP（模型上下文协议）在这里用于标准化接入外部能力；ACP（Agent Client Protocol，智能体客户端协议）工具则把一个外部智能体封装为可调用能力，不能与本地原生子任务直接画等号。
 
-工具定义向模型描述“这项能力叫什么、接收什么参数”；工具调用则是在某个用户、会话和时间点，用具体参数请求执行一次。定义本身通常不应该包含用户密钥；用户身份和凭据由执行环境解析。
+并不是所有工具都由这个函数一次性加入。主智能体组装还会按条件追加记忆、项目文档和任务连续性等工具。因此要追“本次到底有哪些工具”，需要读工具汇合函数，也要读调用它的工厂。[候选工具汇合](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/tools/tools.py#L104-L330) · [项目工具追加](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py#L185-L218)
 
-设想工具定义中有 `read_metrics(service, window)`，模型本轮提出读取支付服务最近十分钟的监控。四份数据不是一回事：
+### 1.1 配置名字、模型说明与执行名字必须对齐
 
-| 数据 | 教学例子 | 用途 |
-|---|---|---|
-| 工具描述与参数结构 | `service` 是服务名，`window` 是时间范围 | 让模型选择工具并组织参数 |
-| 本次调用 | 名称、具体参数、调用 ID | 告诉执行系统本次请求做什么 |
-| 运行身份与配置 | 有效用户、会话、连接及秘密凭据 | 决定这次调用能否、以及以谁的身份执行 |
-| 工具结果 | 成功内容或错误，并关联调用 ID | 让模型知道这次动作得到什么结果 |
+工具说明包括名字、参数结构和用途，模型据此选择调用；程序按实际工具对象的名字执行。配置中的名字与 `BaseTool.name` 不一致时，该实现会警告，并以实际名字绑定，不能误写成“一发现不同就拒绝启动”。同名候选会按实现的优先次序去重，不能让模型收到含义不确定的重复说明。
 
-模型提出调用不表示函数已经运行。结构正确不表示业务允许；工具返回成功也不一定意味着任务最终完成。DeerFlow 的工具组装、调用包装和结果元数据分别承担这些职责。[工具组装说明][tools-notes]、[运行中间件说明][middleware-notes]
+视觉工具只在模型声明支持视觉时加入。`write_file` 的描述也可能根据**已构造模型的实际输出上限**附上写入长度提示；组装器复制工具后修改描述，避免把一个模型的预算写到共享单例，污染另一模型。这种字符数提示是启发式换算，不是每种语言都精确成立的 token 计数。[身份、去重与描述生成](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/tools/tools.py#L149-L330)
 
-## 2. 工具从哪里来，为什么不会全部暴露给模型
+### 1.2 本地沙箱的名字不等于安全隔离
 
-`get_available_tools()` 汇集配置定义的工具、启用的 MCP 工具、框架内置工具，以及满足条件的委派等工具。MCP 是 Model Context Protocol，模型上下文协议；这里重点是它为外部能力提供发现和调用接口，不把协议本身当作权限系统。
+`LocalSandboxProvider` 在宿主环境执行，本身不是安全隔离边界。DeerFlow 默认隐藏这条模式下的宿主 Bash，只有明确允许才暴露；这不是“已经有一条安全的本地 Sandbox Bash，因此去掉多余 Host Bash”。
 
-某些工具还受产品运行条件约束。例如，普通会话读取能力需要宿主提供读取器；批量委派工具只有在实际安装了对应提交服务时才出现。仅在仓库里找到函数，不能说明普通 Lead Agent 的每次运行都会获得它。[组装条件与宿主能力][tools-notes]
+允许执行命令之前，必须明确它会落在哪个环境、能接触哪些文件和网络。AIO、E2B、OpenSandbox 等提供者具有各自实现与限制，换提供者不能自动推导所有安全和持久语义不变。[本地 Bash 门控](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/sandbox/security.py)
 
-接下来还需要区分三个集合：
+## 2. 工具很多时，为什么先给索引，再给完整说明
 
-1. **已构造的工具集合**：程序已经有对应可调用对象。
-2. **本次请求的工具集合**：模型本次收到哪些工具描述。
-3. **本次允许执行的调用**：在具体身份、参数与策略下，哪些动作可以真正运行。
-
-第二个集合通常比第一个小，第三个又不是简单的名称列表，因为同名工具对不同目标、不同用户可能有不同结论。第一次读源码时，沿这三个集合分别找生产者与消费者，比统计有多少工具类更有价值。
-
-### 2.1 延迟发现降低描述开销，不发放权限
-
-当工具很多时，全部参数结构会挤占模型请求。Deferred tools（延迟暴露工具）把部分工具描述推迟到真正需要时加载，`tool_search` 让模型先找能力，再把找到的工具加入后续请求。这种 Promotion（提升为可见工具）改变的是可见性，不是授权。
-
-若某项工具被活动 Skill 的策略移除，搜索得到它也不能恢复其业务权限；MCP 路由筛选与延迟工具筛选还要按组装约束组合，而不能让后执行的筛选意外恢复前面移除的工具。[实际组装顺序][assembly]、[Skill 工具规则][skill-declarations]
-
-“模型猜到了隐藏工具的名字”也是同一个问题。把描述藏起来能降低误选，但执行入口仍必须检查调用；否则可见性过滤只是界面效果。
-
-## 3. Skill 怎样影响工具：先区分发现、激活和限制
-
-Skill（技能）提供完成某类任务的方法和相关材料，不等于一个远程工具。启用某 Skill，让它可以被发现，并不会自动让它的所有指令占据每次请求，也不会立即激活其工具限制。
-
-DeerFlow 的 `SkillToolPolicyMiddleware` 将用户显式斜杠激活的 Skill，或已经进入 `skill_context` 的 Skill 作为活动策略来源。显式激活优先：同一运行中再被动读取另一个 Skill，不能借此扩大显式激活的权限范围。活动引用存在但无法安全解析时，策略保留框架安全工具，而不是回退为所有业务工具都可用。[策略来源与失败分支源码][skill-policy]
-
-### 3.1 没写限制与明确空列表为什么不同
-
-`allowed-tools` 没有声明，表示该 Skill 没有提供显式工具限制；声明为空列表，表示其显式业务工具集合为空。把二者都写成 Python 的“空值”，会丢掉重要语义。
-
-若多个被动加载的 Skill 共同参与策略，源码对其**显式声明取并集**。一旦存在显式声明，没有声明的旧 Skill 不再贡献“全部工具”；它不能把显式限制冲掉。框架还保留 `describe_skill`、`read_file`、`review_skill_package`、`tool_search` 这组支持发现和受控读取的内置工具。[集合计算的实际代码][skill-declarations]
-
-下面只比较假设的业务工具集合，暂不把框架内置工具放进表中：
-
-| 活动 Skill | 声明 | 汇总结果 |
-|---|---|---|
-| A | 未声明 | 没有显式限制，保持兼容行为 |
-| A | `[]` | 显式业务集合为空 |
-| A、B | A 允许 `read_metrics`；B 未声明 | 只由 A 的显式声明贡献 `read_metrics` |
-| A、B | A 允许 `read_metrics`；B 允许 `read_logs` | 显式声明并集为两项 |
-
-这不是“所有权限都取并集”。不同策略层仍是独立限制：Skill 允许某工具，不代表用户授权层、目标资源检查或沙箱也允许它。
-
-### 3.2 跨策略层是同时满足，不是任意一个允许就通过
-
-假设某次读取监控同时受到工具配置、当前 Skill 和用户授权的限制，判断可以写成：
+假设 MCP 工具很多，而用户只需要查询支付错误。每次都把所有参数结构塞进模型输入，会占用本可用于任务和证据的空间。DeerFlow 的延迟发现机制保留执行端的工具注册，却暂时隐藏未展开工具的完整说明。
 
 ```text
-工具确实可执行
-并且当前策略允许选择它
-并且用户有权访问实际目标
-并且运行资源满足执行条件
+组装：执行端注册 MCP 工具
+   │
+   ├─ 模型先得到有界的发现入口和目录信息
+   │
+   ▼
+tool_search 或基于路由提示的自动展开
+   │
+   ▼
+ThreadState.promoted 记录本目录下已展开的名字
+   │
+   ▼
+下一次请求加入相应完整工具说明
+   │
+   ▼
+真正调用时，仍检查发现状态和独立授权
 ```
 
-这是对多道检查关系的教学概括，不是某个源码函数直接返回四个集合的交集。例如授权可能检查文件路径或服务名，而不仅是工具名称。没有活动 Skill 限制时，并不意味着用户授权也被关闭。
+这里的 promotion 可以理解为“从目录项展开成可使用的工具定义”，不是给用户授予业务权限。`tool_search` 支持精确选名、限定名字关键词等检索方式；自动路由读取当前用户请求，按路由元数据展开少量相关工具，本身不执行业务操作。[发现实现](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/tools/builtins/tool_search.py) · [自动路由](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/mcp_routing_middleware.py)
 
-工具描述中的“仅允许读取”也不是最终安全保证。真正执行前的检查，必须对本次调用再次作出判断。[授权与工具中间件][middleware-notes]
+### 2.1 为什么展开状态还要记目录哈希
 
-## 4. 执行前先解析目标：产物句柄不是权限凭证
+假设历史记录说工具 `monitor_search` 已展开，但服务器更新了这个名字对应的参数与含义。不能仅因名字一样，就沿用旧状态。
 
-长路径或远程结果引用反复出现在上下文中既费空间，也容易抄错。DeerFlow 可以从工具结果捕获轻量产物引用，保存在 `ThreadState.tool_artifacts` 中，并向模型投影 `art_` 开头的短句柄。
+目录哈希用来标识一组工具定义。下面是该快照的实际状态合并函数，连同所需类型一起保留。输入是旧展开状态和新状态；返回新状态，代码本身不执行工具，不访问模型。
 
-假设本 Agent 的登记表已经包含以下映射；句柄仅为教学输入，不表示一次真实捕获生成了这个值：
+<!-- source-example: promoted_tools -->
+```python
+from typing import TypedDict
 
-```text
-art_a1b2c3d4  →  /mnt/user-data/outputs/payment-report.md
+
+class PromotedTools(TypedDict):
+    catalog_hash: str
+    names: list[str]
+
+
+def merge_promoted(existing: PromotedTools | None, new: PromotedTools | None) -> PromotedTools | None:
+    """Reducer for deferred-tool promotions, scoped by catalog hash.
+
+    - new None/empty -> preserve existing (node didn't touch promotions).
+    - catalog_hash changed -> replace wholesale, dropping stale names (prevents a
+      persisted bare name from exposing a different tool after catalog drift).
+    - same catalog_hash -> union names, dedupe, preserve order.
+    """
+    if not new:
+        return existing
+    if existing is None or existing.get("catalog_hash") != new["catalog_hash"]:
+        return {
+            "catalog_hash": new["catalog_hash"],
+            "names": list(dict.fromkeys(new["names"])),
+        }
+    return {
+        "catalog_hash": existing["catalog_hash"],
+        "names": list(dict.fromkeys(existing["names"] + new["names"])),
+    }
 ```
 
-模型随后提交 `read_file`，参数中的路径是 `art_a1b2c3d4`。`ArtifactResolutionMiddleware` 在本次请求参数中把句柄解析成真实引用，再把同一份解析后的参数交给后续授权和执行。它不会因此改写历史消息里的原始调用。[解析源码][artifact-resolution]
+旧值是 `{"catalog_hash":"A","names":["search"]}`，新值是 `{"catalog_hash":"A","names":["search","read"]}` 时，得到 A 目录下的 `search, read`。新值若属于 B 目录且只有 `export`，则只保留 B 的 `export`，不会把 A 的 `search` 带过去。传入 `None` 表示不更新，会返回原对象；不要误认成“清空工具”。[原类型与合并函数](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/thread_state.py#L139-L163)
 
-顺序不能反过来。授权若只检查“这是一个格式合法的 art 句柄”，执行阶段才把它替换成敏感路径，就没有检查真正的访问目标。实际组装约束使解析位于授权、沙箱审计、先读后写和进度控制之前，而工具收据层仍在外层观察结果。[产物中间件次序][artifact-doc]
+这只是状态合并。执行时，`DeferredToolFilterMiddleware` 还会检查状态中的哈希是否匹配当前目录。即使模型从历史猜到了一个未展开工具名，也会收到错误消息，而不是绕过发现路径直接执行。[可见性与执行双检查](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/deferred_tool_filter_middleware.py)
 
-未知或已经过期的句柄会返回错误 `ToolMessage`，不执行工具，也不会猜一个近似路径。模型看不到某个句柄与句柄已经过期是两回事：投影预算可能省略一部分条目，但它们只要仍在状态登记表中就仍可解析。
+## 3. Skill 提供做事方法，但不能自行创造权限
 
-产物登记表的另一条重要边界是 **Agent 本地性**。父 Agent 的表不会整体复制给子 Agent，子 Agent 的表也不会自动合并回来。父句柄作为 `task` 参数时会先解析为具体引用；子 Agent 返回报告时需要给出具体路径或其他可用引用，不能把自己的短句柄当作父 Agent 已经认识的编号。[委派范围][artifact-doc]
+Skill（技能）通常是一份 `SKILL.md` 加相关资源。目录先告诉模型技能的名字、用途和位置，详细正文及资源按需要读取。它与 Tool 的关系不是两个同义词：技能可以教模型怎样组合工具，工具才由程序实际执行。
 
-> **⚠️ 注意：句柄是标识符，不是授权。** 能解析出路径，只说明系统知道它指向什么。实际用户是否可读、目标是否仍存在、内容是否符合预期，仍需要后续检查。
+启用或安装一个技能，只代表它可以被发现。用户显式 `/skill-name`，或模型实际读取了技能文件，才形成对应的激活依据。显式选择由 `SkillActivationMiddleware` 加载技能正文；被动读取则通过工具结果中的可靠来源信息捕获引用，不相信外部工具自己伪造“技能已读”标记。[激活与策略](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/skill_tool_policy_middleware.py#L37-L179) · [技能读取来源标记](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py#L97-L165)
 
-## 5. 真实执行：参数校验、授权、沙箱各负责什么
+### 3.1 allowed-tools 的边界要读完整
 
-参数校验回答“调用是否符合输入结构”；授权回答“这个调用者能否对这个目标做这个动作”；沙箱回答“即使工具执行了，进程和文件访问被限制在哪里”。三者处理不同错误，不能互相替代。
+技能可声明 `allowed-tools`，限制允许的工具。该快照有几条不能省略的分支：
 
-DeerFlow 可以组合授权提供者与独立 Guardrail（额外执行检查）。当相应配置开启时，能力筛选与执行检查复用授权提供者，但执行检查仍使用具体调用条件。额外 Guardrail 可继续拒绝一个授权层允许的操作。一个特殊的、确实由延迟发现机制生成的 `tool_search` 可以避免重复的授权提供者调用；这不是同名工具的一般豁免，更不是绕过所有检查。[运行中间件的具体条件][middleware-notes]
+| 条件 | 技能策略的结果 |
+|---|---|
+| 没有激活技能，或激活集合都未声明 allowed-tools | 保留该层的兼容性不限工具行为；其他授权照常生效 |
+| 至少一个激活技能有明确声明 | 合并明确声明；未声明的技能不会抹掉已有约束 |
+| 用户本轮显式 slash 激活技能 | 该策略优先，随后被动读第二个技能不能扩大它 |
+| 活动引用存在但无法解析或授权 | 该层降到框架保留工具集合，而不是开放全部工具 |
 
-SandboxAudit（沙箱命令审计）还会分类 shell 和文件操作，提供防御与审计线索。但其命令识别是启发式规则，不是完整 shell 解释器；不能把它当作操作系统级隔离。`LocalSandbox` 直接在宿主环境运行，不能仅凭类名承诺容器或虚拟机级保护。隔离强度要由实际 Sandbox Provider（沙箱提供者）的部署决定。[运行架构][architecture]、[审计边界][middleware-notes]
+多个被动激活技能的明确声明采用并集，不是默认为交集。`read_file`、`describe_skill`、`review_skill_package`、`tool_search` 是该技能策略的保留工具；“保留”不意味着绕过沙箱或其他授权读取任意资源。[声明合并规则](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/skills/tool_policy.py) · [活动策略解析](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/skill_tool_policy_middleware.py#L79-L221)
 
-配置不同不意味着概念失效。例如关闭授权强制检查时，系统仍可能需要解析用户身份来选择文件和凭据；“有身份”与“已强制执行访问策略”要分别验证。
+技能策略既过滤模型看到的工具，也在真正调用时检查。连 `tool_search` 返回的参数说明与展开名字也需过滤；否则发现入口就可能把被禁止的工具重新带回来。某一模型请求形成的决策带有组装实例的归属标记，不能仅凭客户端同名字段或过期缓存冒充有效策略。
 
-## 6. 修改文件前，为什么必须读到当前版本
+> ⚠️ **提示中的限制不是执行授权。** “不要发布”写进技能可以帮助模型规划，但危险工具仍需要程序侧限制。反过来，把用户编写的全部技能内容提升成系统指令，也不等于正确的安全设计。
 
-模型已经在两轮前读过报告，现在准备再追加一段。期间另一个动作可能已经改过文件，或者第一次追加已经成功，只是模型没有注意到。直接写入会造成覆盖或重复段落。
+### 3.2 Secret 绑定的是这次请求，不是技能永久拥有宿主环境
 
-`ReadBeforeWriteMiddleware` 为文件修改建立版本门槛：`read_file` 的结果携带内容哈希标记；修改已有文件的 `write_file` 与 `str_replace` 要求最近的读取标记与当前文件版本一致。写操作本身不更新读取标记；旧的读取结果被会话摘要移除后，标记也随之失去作用。[版本门槛源码][read-write]
+技能可以声明需要哪些 Secret（秘密凭证）。实际值由本次请求运行上下文提供，激活路径根据技能启用状态、允许列表、显式或自主激活规则等筛选。不能因为磁盘上存在某个技能，就把宿主进程所有环境变量交给它。
 
-### 6.1 一条可逐步检查的状态轨迹
+凭证名可以用于诊断缺少哪项配置；凭证值不应写入普通审计文本。技能更新、停用或当前请求没有提供相应凭证时，不能沿用一次历史激活永久获得的权限。[激活与秘密绑定](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/skill_activation_middleware.py)
 
-以下是纸上状态推演，假设门槛启用，文件可正常读取，且只有这条受控路径在修改文件。`h0`、`h1` 是不同内容的哈希标签，不是实际摘要值。
+## 4. 从一个调用提议到真实执行，要经过哪些检查
 
-| 步骤 | 操作 | 文件与读取标记 | 预期判断 |
-|---|---|---|---|
-| 初始 | 文件内容是 `A` | 文件为 `h0`，没有读取标记 | 不应直接修改已有文件 |
-| 1 | `read_file` 读取 `A` | 文件为 `h0`，标记为 `h0` | 可以据此准备修改 |
-| 2 | 受控写入把 `A` 改为 `AB` | 文件变为 `h1`，标记仍为 `h0` | 写入完成，但旧标记失效 |
-| 3 | 不重读就再次追加 `B` | 文件为 `h1`，标记为 `h0` | 第二次修改被阻止 |
-| 4 | 重读当前 `AB` | 新标记为 `h1` | 应根据已含 `B` 的事实重新判断，不是机械重复追加 |
+以“修改现有支付页文件”为例，模型先产生工具名和参数，随后才进入包装链。各层回答不同的问题：
 
-门槛解决“是否依据当前版本修改”，不直接替模型决定第二次修改是否合理。读到最新内容后仍提出错误修改，依然需要验证修改目标与测试结果。
+| 层次 | 它要确认什么 |
+|---|---|
+| 参数与业务输入 | 参数可解析吗，目标和操作是否有意义 |
+| 发现与技能限制 | 这个工具已展开吗，当前技能允许吗 |
+| 产品授权与护栏 | 当前身份可使用这项能力吗，策略是否拒绝 |
+| 沙箱与路径 | 操作实际发生在哪，能接触什么资源 |
+| 文件新鲜度 | 修改现有文件之前，模型是否看过当前版本 |
+| 结果规范化与收据 | 发生了什么，怎样让下一轮模型与产品记录理解它 |
 
-如果同一条模型消息包含两个并发写调用，仅先各自检查哈希是不够的：两个调用都可能在文件改变前看到 `h0`，然后都通过。源码因此按范围与路径将**检查和实际执行一起串行化**，读取与标记也位于协调范围内。第二个调用再次检查时，已经能观察到第一个写入造成的变化。[临界区与标记规则][read-write]
+这是职责表，不是伪造一条全部组件都必经的固定线性顺序。实际安装取决于配置；外层可以提前拒绝，后面的工具正文根本不会运行。授权提供者通过适配器复用 GuardrailMiddleware 的拒绝和错误语义，执行护栏与沙箱边界仍是独立责任。[真实构建顺序](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py#L202-L420)
 
-### 6.2 必须讲清的失败边界
+## 5. 先读后写怎样防止基于旧文件反复修改
 
-这不是整个文件系统的事务锁，也不覆盖任意外部进程或通过其他工具执行的写入。无法检查文件时，包括二进制内容、沙箱异常和某些以 `Error:` 字符串表示读取失败的情况，门槛会放行，让实际工具产生自己的结果。这是 Fail-open（检查失败时放行）的明确设计，不应把它宣传成任何场景都拒绝未知版本。[源码的不变量与错误分支说明][read-write]
+假设文件内容为版本 A，模型先 `read_file`，工具结果上记下当前完整内容的 SHA-256。稍后准备 `write_file` 或 `str_replace` 时，门控重新检查文件哈希：如果仍是 A，可以继续；若被其他调用改成 B，旧标记失效，模型需要重读。
 
-被门槛拦截的长写入参数，还可以在**后续模型请求副本**里被省略，避免失败的大段载荷持续占用上下文；原状态、收据和事件记录不因此被改写。它与上一章的长期记忆删除、第一章的规范会话压缩不是同一种操作。
+一次写入不会替模型刷新“已经读过”标记。成功写入改变内容后，下一次修改需要重新读取；如果写入后字节完全相同，哈希未变，不能把这条规则夸大为“任何写调用无条件废除全部标记”。部分区间读取也可以记录当前文件版本，这不表示模型已经理解整份文件的每一行。[检查与标记](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py#L291-L419)
 
-## 7. MCP 调用：凭据、连接和长任务分别有生命周期
+### 5.1 两个并发写为什么还需要锁
 
-### 7.1 发现工具时使用的凭据，不一定适合执行调用
+同一条模型响应可以包含多个工具调用。如果两个修改都先检查 A，然后同时写入，就算每个检查单独正确，整体也会失去保护。DeerFlow 用同一作用域、规范化路径的锁覆盖检查和执行，读取与标记也在相同保护下进行。
 
-MCP 工具可以在启动或首次使用时被发现，但真实调用发生在某个具体用户的运行中。用统一发现凭据替所有用户执行，可能把不同租户的请求送到同一个权限身份下。
+但这个锁是进程内机制，且只覆盖接入它的工具路径。它不是任意编辑器、外部进程或其他宿主写入者共同遵守的分布式文件事务。不能据此宣称并行智能体永远不会丢更新。[锁与异步取消处理](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py#L97-L289)
 
-源码支持静态请求头、OAuth、按用户配置的凭据、按本次请求携带的秘密值。组合启用时，这些来源有明确覆盖顺序；后两种解决用户或请求差异，而不是把密钥放进模型参数。按请求映射缺少所需秘密值时，默认拒绝，除非明确配置允许透传；不能静默降级为更高权限的发现凭据。[MCP 凭据规则][mcp-notes]
+### 5.2 这道门不是普遍的 fail-closed 安全边界
 
-错误处理也可能泄密。非法换行或空白等凭据值如果交给底层 HTTP 库，库的异常可能包含原始请求头，随后进入模型可见工具错误。源码因此在共同请求头边界检查，并只报告缺少哪个键或哪类配置错误，不回显秘密值。**不把密钥写进正常日志还不够，异常路径同样要检查。**
+| 检查时发生的情况 | 该门控的实际处理 |
+|---|---|
+| 文件存在且可检查，缺少当前版本读取标记 | 返回错误，不进入写工具正文 |
+| 文件不存在 | 放行，创建或替换是否可行由工具判断 |
+| 普通检查故障，或返回 `Error:` 等无法检查内容 | fail-open：放行，让工具产生自己的结果或错误 |
+| 沙箱授权明确拒绝 | 返回授权错误，不把它混成可放行检查故障 |
 
-### 7.2 stdio 连接池不仅按工具服务器命名
+因此“DeerFlow 修改任何文件都必须先读，否则绝不执行”是错误概括。这是有具体适用条件的新鲜度护栏，不能替代授权和隔离。被该门确实拦住的大写入参数，会在后续模型视图中省去；保存的原参数仍留作相应证据，但不得把未执行写入表述成文件已经改变。[实际分支](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py#L291-L378)
 
-stdio 指通过子进程的标准输入输出通信。某些服务器的会话有状态，不能每次调用都无条件换一个进程，也不能让不同用户共享同一状态。DeerFlow 的池使用服务器、作用域和所属事件循环共同定位会话；同一个循环内可共享初始化，不同活跃循环不能因服务器和作用域同名就互相取消连接。[会话池约定][mcp-notes]
+## 6. 沙箱是需要管理的资源，不是每次调用的装饰对象
 
-因此，循环所有者关闭前需要清理仍在运行的会话任务。只从缓存字典删除一项，不代表管道和子进程已经关闭。容量上限、淘汰、断连恢复和关闭也都是池的职责，不是工具名称注册后的附属细节。
+沙箱中间件负责获取、复用和释放执行环境，状态保存标识，不保存不可序列化的提供者对象。默认 `lazy_init=True` 时，普通共享视图可以推迟到工具调用才实际获取；需要策略范围内的技能文件投影时，可能提前取得环境，防止旧的宽权限视图沿检查点继续使用。
 
-HTTP/SSE 调用的连接方式不同，不能照搬 stdio 的常驻进程模型。初始化超时与工具执行超时也应分开：连接尚未建立时，重试的是建立连接；工具提交已经发出但响应丢失时，可能面对的是结果未知，而不是“什么都没发生”。
+并发主智能体与子智能体分别持有执行租约。一个子任务结束，不能关闭其他子任务仍在使用的沙箱。最后持有者释放可以把远程环境放回暖池，提供者关闭才是另一层最终清理；release 不一定等于销毁容器或删除所有文件。[沙箱生命周期](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/sandbox/middleware.py#L51-L240)
 
-### 7.3 普通工具结果与持久长任务不是同一种返回
+取消时，还要等待已交给工作线程的同步文件或命令操作结束，再释放其持有资源。取消等待者不会自动杀掉那个线程；过早释放会让“已终止”子任务继续使用失效环境。租约只解决资源所有权，不会自动撤销命令已产生的副作用。
 
-DeerFlow 有可选的持久 MCP 长任务服务：提交后保存本地任务 ID 与远端句柄的映射，由模型循环外的服务轮询、请求取消和通知。它要求 SQL 持久化与实际驱动，并受启动配置约束；不能仅因为存在任务相关类型就断言任意 MCP 工具都自动变成可恢复后台任务。[长任务的启用条件][mcp-notes]
+## 7. MCP 会话为什么要有明确的所有者
 
-取消接口记录“已请求取消”，与远端真正进入 `cancelled` 状态是两件事。提交成功而本地持久化失败时，服务会尝试补偿取消，但补偿也可能失败。这正说明网络动作和本地事务之间没有自动获得一个跨系统原子提交。[长任务错误处理约定][mcp-notes]
+查询无状态接口可以每次重新连接，但浏览器类 MCP 服务可能把已打开页面保存在会话里。第二次“点击”若连到新会话，就找不到第一次打开的页面。
 
-## 8. 执行以后，结果怎样回填而不失真
+池化路径用服务器、用户与线程作用域，以及拥有它的事件循环共同标识连接。同一事件循环的连续调用可以复用服务端状态；不同循环使用不同会话。该快照的同步包装每次运行新的事件循环，因此不能承诺同步工具调用间仍保留浏览器状态。[会话池边界](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/mcp/session_pool.py#L1-L37)
 
-一次普通工具结果通过 `ToolMessage` 与调用 ID 关联。有些操作还要同时更新图状态，使用 `Command` 携带状态更新和对应消息。只监听某一种直接字符串返回，会漏掉后一类结果。
+### 7.1 为什么创建和关闭都交给同一个任务
 
-工具异常一般被规范成错误结果，让模型能根据参数问题、权限拒绝、资源问题等决定下一步；这不是让所有异常都重试。取消和中断有自己的控制语义，不能当作一个“请模型继续修复”的普通错误吞掉。[结果规范化与控制路径][middleware-notes]
+MCP ClientSession 使用的异步上下文有任务归属要求：进入与退出取消作用域需要由同一任务完成。让调用 A 创建、调用 B 直接执行退出，可能触发运行错误。
 
-### 8.1 规范错误要告诉模型哪类动作仍有意义
+DeerFlow 为连接建立专门的 owner task（拥有者任务）：进入上下文、初始化、把连接登记到池，然后等待关闭信号，最后由自己退出。其他调用者借用会话或发出关闭信号，不接管其退出动作。初始化完成与登记入池在同一临界区内完成，因此返回成功连接时，它已经有人负责回收。[拥有者任务](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/mcp/session_pool.py#L162-L230)
 
-| 观察到的情况 | 有意义的下一步 | 不应该做什么 |
-|---|---|---|
-| 参数格式或枚举值错误 | 根据结构要求修正参数 | 原样无限重试 |
-| 当前用户无权访问 | 停止越权动作，寻找授权范围内的替代方案 | 换一个同义工具名绕过 |
-| 文件版本已经改变 | 重读当前内容并重新计算修改 | 继续使用旧的写入载荷 |
-| 外部写操作发出后超时 | 先查询实际结果或使用业务幂等机制核对 | 直接认定失败并再执行一次 |
-| 用户取消 | 停止新的工作并协调在途资源清理 | 把取消包装成工具错误后继续循环 |
+同一个键并发创建时，共享尚未完成的创建结果，避免重复连接；池按容量淘汰，旧连接退出时还要确认自己仍是当前项，不能误删后来替换的新连接。检测到明确传输断开时，会清理对应连接并抛出原错误；这不是无条件重放可能有副作用的工具调用。[调用与断连](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/mcp/session_pool.py#L104-L157)
 
-这张表是基于已建立边界的工程判断，不代表 DeerFlow 内置了每项业务的幂等查询接口。
+### 7.2 外部工具生成的文件也要接回工作区
 
-### 8.2 收据记录系统观察到的调用，不证明整个业务已完成
+stdio MCP 子进程可能输出截图、导出文件等。桥接路径会处理工作目录、临时目录及虚拟路径，尽量让输出进入线程可访问的数据树；已有明确环境配置与不同服务行为仍需按实现核对，不能把这些默认安排说成能强制任意 MCP Server 的全部输出位置。
 
-`ToolReceiptMiddleware` 记录工具名、状态、参数和输出摘要等可核对信息，并能处理直接 `ToolMessage` 与 `Command.update.messages`。它需要在会短路的执行门槛外面：授权拒绝、先读后写阻止等情况即使没有进入真实函数，也应留下“被拒绝”的观察结果。[收据与执行包装次序][middleware-notes]
+从外部返回一个宿主路径，到模型能够 `read_file`、前端能够访问产物，中间还有路径映射、权限与文件存在性。路径字符串看起来正确并不足够。[MCP 工具桥接](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/mcp/tools.py)
 
-收据可以帮助判断“模型说读过文件，是否有对应调用结果”，但不能仅靠一次成功状态证明内容正确、文件永久存在、外部动作只执行一次。副作用已经发生但响应丢失时，成功收据可能根本没有产生；相反，文本内容看起来成功也不能替代结构化状态。
+## 8. 工具返回后，观察、证据与任务成功仍然不同
 
-收据投影有预算，保留的编号可能从 `r24` 开始，而不是永远从 `r1` 开始。验证子 Agent 引用时，要使用它回答时真正可见的那组收据，不能拿压缩后重新编号的列表对号入座。[收据快照与引用规则][middleware-notes]
+普通执行异常会被 `ToolErrorHandlingMiddleware` 转成带对应调用 ID 的错误 `ToolMessage`，模型可以修正参数或换路径。LangGraph 的暂停等控制流要继续传播，不能包装成普通业务错误。取消也不能被通用重试吞掉。[错误与控制流](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py#L64-L201)
 
-### 8.3 工具输出在不同边界有不同形态
+ToolMessage 告诉模型“观察到了什么”；Tool Receipt（工具收据）记录某次执行的身份、参数和结果证据；Run Journal 则把相应事件接入产品历史。这些是不同表示，不能保证每处都保存完全相同的全文。外层收据要能看到被策略提前拒绝的结果，否则日志中会缺少一次真实拒绝。[收据安装位置](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py#L270-L390)
 
-远程内容可能先进行不可信标签处理，过大的结果可能外部化，模型请求里又可能省略已过时的写入参数。因此，“工具原始输出”“状态中保存的结果”“模型本次看到的文字”需要分别观察。源码为结果变换记录有序元数据，避免观察者仅凭文字猜结果经过了什么处理。[变换记录与预算][middleware-notes]
+大结果之后还可能被外置或裁剪。对于已经成功的外部动作，回填超时也不能证明动作没发生；重新执行之前应核对实际状态，必要时依赖业务幂等或补偿。这是工程设计要求，不是声明所有 DeerFlow 工具已经具备统一的外部幂等保证。
 
-产物捕获则在 `before_model` 读取状态中的已规范化结果，提取轻量引用；它不是把每次 `ToolMessage` 再强行包成一个 `Command`。错误结果不会因为文本中出现文件路径，就自动成为成功产物。[产物捕获阶段][artifact-doc]
+`task` 从父模型看也是工具，但它启动一套独立子智能体执行。父级工具返回中的“子任务完成”还需结合停止原因、收据和验收条件判断；详细的上下文隔离、容量与持久批任务在工程篇统一建立，不把 ToolMessage 的文字当最终完成证明。
 
-## 9. 小结：用五个问题检查一条工具链
+## 本章小结
 
-一次调用先要有真实能力，再形成模型可见描述。模型提出具体参数后，系统解析引用，并在本次身份和实际目标上进行执行检查。通过之后才进入真实工具；结果无论成功、错误或被阻止，都需要保持与调用的对应关系。最后还要协调连接、子进程和沙箱等资源的生命周期。
-
-阅读或设计这条链时，可以连续问：**能力从哪里来？模型看到了什么？真正执行了什么参数？谁允许了它？什么证据说明执行结果？** 延迟发现、Skill、句柄、沙箱、收据分别回答其中一部分，没有哪一项能独自完成全部职责。
+工具生命周期包括能力组装、按需展开、策略限制、实际执行和结果回填。DeerFlow 将模型可见性与执行检查同时落在程序中，又为文件新鲜度、沙箱和 MCP 会话分别管理边界。理解它的关键是每一层实际保证什么，尤其不要把发现当授权、把资源释放当副作用回滚、把收据当业务验收。
 
 ## 🎯 面试怎么回答
 
-**Q：为什么动态发现了一个工具，仍然不能直接执行？**
+**Q：Skill 或 MCP 数量太多，怎样避免上下文膨胀？**
 
-> 动态发现主要控制模型上下文中的工具描述，让模型按需看到能力，而不是一次加载全部结构。真实执行还需要检查当前 Skill、用户权限和具体目标。DeerFlow 将已构造、模型可见和执行允许分开；搜索提升可见性不能恢复被策略移除的工具。即使模型猜到了名称，也不能因此绕过执行入口的检查。
+> 我会分开能力目录、完整说明和真实执行。DeerFlow 可先保留目录入口，让工具搜索或路由按需展开 MCP 定义，技能正文也按需加载。展开状态关联目录哈希，避免升级后沿用旧定义。但缩短说明不是安全措施的全部：真正调用时仍检查展开状态、技能限制、授权和沙箱，搜索返回本身也不能恢复被禁止的工具。
 
-**Q：先读后写怎样防止重复修改？有什么边界？**
+**Q：修改前强制读文件，能解决并发与安全问题吗？**
 
-> 它把读取时的内容哈希附在工具结果上，修改已有文件前比较当前版本。写入不刷新读取标记，因此连续修改通常需要重新读取。检查与执行按范围和路径共同串行化，避免两个并发写都基于同一个旧版本通过。但它只覆盖相应受控工具路径，不是全文件系统事务；无法检查文件时还有明确的放行分支，所以仍要依赖真实沙箱、内容验证和业务测试。
-
-**Q：有工具收据，为什么还需要结果验证？**
-
-> 收据证明运行系统观察到某次调用及其结果元数据，适合核对执行轨迹和引用。但工具成功不等于业务目标完成，网络超时也不证明外部没有执行。应根据任务验证真实文件、测试结果或远端状态，并对有副作用的重试使用业务层幂等或对账，而不是把收据当成跨系统事务保证。
+> 它能减少基于旧内容的重复修改。DeerFlow 将读取标记放在工具消息中，用内容哈希检查新鲜度，再用进程内锁覆盖门控和执行。但它只覆盖特定工具和接入路径，普通检查失败还有放行分支；因此不是跨进程文件事务，更不是完整安全隔离。权限、路径、外部写入者以及最终文件验证仍需分别考虑。
 
 ## ⚠️ 高频易错点
 
-- **把 Skill 并集误写成所有权限并集。** 多个显式 Skill 声明可取并集，不代表用户授权与沙箱限制可以被其中任一层覆盖。
-- **把短句柄当跨 Agent 通用编号。** 父子登记表不自动互通；句柄能解析也不代表有访问权限。
-- **把版本门槛当强隔离。** 它有明确覆盖工具和无法检查时的边界，不能约束任意宿主进程。
-- **把超时直接归为可重试失败。** 副作用是否发生需要核对，取消请求也不等于远端取消已经完成。
+- **只隐藏说明，不检查执行。** 模型仍可能从历史或猜测中得到工具名。
+- **把激活技能的并集说成交集。** slash 优先、显式声明并集和框架保留工具都要按该版本解释。
+- **把 LocalSandbox 当成容器安全边界。** 名字里有 sandbox 不代表宿主命令已隔离。
+- **把重连当成安全重试。** 接口断开不证明外部动作尚未发生。
 
-## 自测：沿调用链推导
+## 本章自测
 
-### 任务一：求出可见候选，再判断可执行性
-
-假设所有相关配置均已启用。被动活动 Skill A 显式允许 `read_metrics`，Skill B 没有声明 `allowed-tools`，当前用户只能读取 `orders` 服务。模型想调用 `read_metrics(service="payments")`。
-
-任务：先给出活动 Skill 的业务工具集合，再判断 B 是否取消限制、工具可见是否代表本次调用被授权。可检查结果必须区分名称限制与目标资源限制，不把框架内置工具混进题目要求的业务集合。
+**任务 A：** 旧展开状态属于目录 A，包含 `read`；新状态属于 B，只包含 `export`。预测函数返回值，再判断“export 已展开但技能只允许 read”时能否执行。第一问检查状态，第二问必须明确是哪一层拒绝。
 
 <details>
-<summary>旧 Skill 未声明限制，能否让 payments 监控调用通过？</summary>
+<summary>任务 A 提示</summary>
 
-不能。显式声明存在时，B 不贡献“全部工具”，业务集合只有 `read_metrics`。名称可见不等于用户对 `payments` 有权限；题设只允许 `orders`，因此不能执行这次访问。需要在权限内调整目标或停止，不能靠加载另一个 Skill 越权。
+先运行合并函数，再把 DeferredToolFilter 与 SkillToolPolicy 分开判断。
+
+</details>
+<details>
+<summary>任务 A 答案与解释</summary>
+
+新状态只保留 B 的 `export`，A 的旧名字不继承。展开只满足发现条件；技能策略不允许 `export`，因此可见性和执行阶段仍应拒绝它。不能因合并函数返回了名字就断言工具能够执行。
 
 </details>
 
-### 任务二：同一条模型消息并发追加两次
-
-初始文件为 `A`，读取标记为其当前哈希，两个写调用都想追加 `B`。假设只走受控工具、文件可检查、版本门槛启用，写入确实改变内容。
-
-任务：分别说明“只给写操作加锁”和“检查与写操作一起加锁”会有什么差别。可检查结果应解释第二个调用何时读到新版本，并说明不能把最终内容 `ABB` 当作必然成功结果。
+**任务 B：** 现有文件没有读取标记，但门控读取时出现普通 I/O 故障，未发生 SandboxAuthorizationError。工具正文尚未调用。请预测门控结果，说明什么仍未知，并给出需要核对的后续证据。
 
 <details>
-<summary>为什么锁只保护文件写入，而不保护版本检查，仍会出错？</summary>
+<summary>任务 B 提示</summary>
 
-仅锁写入时，两个调用可能提前都拿旧哈希通过检查，然后依次追加。检查和执行共同串行化后，第一个追加使文件哈希改变，第二个进入时发现旧读取标记不再匹配，被要求重新读取。读取后是否还需要追加，仍需根据实际内容重新判断。
+区分“确认文件存在且未读”和“无法检查文件”两个分支。
+
+</details>
+<details>
+<summary>任务 B 答案与解释</summary>
+
+按该实现的普通检查失败分支放行，随后由工具执行并给出结果。此时不能说已写成，也不能说被新鲜度门拦住。还要检查工具结果、收据以及目标文件；实际授权仍由对应层决定。
 
 </details>
 
-### 任务三：子 Agent 返回一个父 Agent 不认识的句柄
-
-初始条件：子 Agent 返回“报告在 `art_1234abcd`”，父 Agent 的登记表中没有该句柄，句柄解析功能开启。父 Agent 随后把该值传给 `read_file`。
-
-任务：说明是否应该执行读取，怎样取得可验证的结果，为什么不应该猜一个同名路径。可检查结果应明确登记表范围、未知句柄错误和具体引用的后续核对。
-
-<details>
-<summary>父 Agent 收到子 Agent 本地句柄后，正确的恢复动作是什么？</summary>
-
-解析应返回未知或过期句柄错误，不执行工具。需要让子 Agent 给出具体路径或其他可用引用，再由父 Agent 在自己的权限与实际存储条件下读取、验证。子 Agent 说“已完成”并没有把自己的登记表和文件访问权限自动转给父 Agent。
-
-</details>
-
-## 源码索引：按发生顺序定位
-
-| 问题 | 入口 |
-|---|---|
-| 工具来自哪里，哪些需要宿主能力 | [工具系统说明][tools-notes] |
-| 活动 Skill 怎样决定限制 | [Skill 策略中间件][skill-policy]与[集合计算][skill-declarations] |
-| 句柄怎样变成实际参数 | [ArtifactResolutionMiddleware][artifact-resolution] |
-| 文件版本与并发检查怎样协调 | [ReadBeforeWriteMiddleware][read-write] |
-| 凭据、连接池、持久 MCP 任务有哪些条件 | [MCP 生命周期说明][mcp-notes] |
-| 错误、收据、产物与模型视图怎样组合 | [中间件次序][middleware-notes]与[产物边界][artifact-doc] |
-
-[下一章：恢复与工程验证 →](04-engineering-evaluation.md)
-
-[tools-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/tools/AGENTS.md
-[middleware-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/AGENTS.md
-[assembly]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py
-[skill-declarations]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/skills/tool_policy.py
-[skill-policy]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/skill_tool_policy_middleware.py
-[artifact-resolution]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/artifact_resolution_middleware.py
-[artifact-doc]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/TOOL_ARTIFACTS.md
-[architecture]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/docs/ARCHITECTURE.md
-[read-write]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/read_before_write_middleware.py
-[mcp-notes]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/mcp/AGENTS.md
+下一篇：[04｜工程与评测 →](04-engineering-evaluation.md)
