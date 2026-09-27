@@ -8,7 +8,7 @@
 
 - [Canonical Questions](canonical/README.md)
 - [Module Index](canonical/module-index.md)
-- [Progress](canonical/progress.md)
+- [冻结审核基线与覆盖记录](canonical/progress.md)
 
 ## 中央 Canonical 与模块 Interview 的职责边界
 

@@ -1,33 +1,19 @@
-# Curriculum & Canonical Progress｜正式状态
+# Canonical Progress｜冻结基线与覆盖记录
 
-[← Canonical Questions](README.md) · [↑ Handbook 总目录](../../README.md) · [Knowledge Map](../../guide/knowledge-map.md) · [Learning Path](../../guide/learning-path.md) · [Market](../../market/README.md)
+[← Canonical](README.md) · [Handbook](../../README.md) · [课程与配套索引](../../guide/navigation-index.md) · [质量与验证](../../guide/audits/final-quality-audit.md) · [Market](../../market/README.md)
 
-> **Repository-first：当前仓库文件高于历史聊天、旧 PR 描述与阶段性摘要。**
+本页记录 Canonical 的冻结审核基线与覆盖口径，不记录课程正文的实时数量、读者个人进度或全部课程的质量通过状态。
 
 ## 1. Market 与 Canonical 使用不同时间口径
 
-```text
-Market HUMAN-A
-= Continuous Monitoring
-= 当前总量与下一 Source ID 以 market/README.md / monitoring/inbox.md 为准
+Market 持续收集 HUMAN-A，实时范围与下一 Source ID 以[市场入口](../../market/README.md)和[收件箱](../../market/monitoring/inbox.md)为准。`S280+` 可以是合法市场证据，但在 periodic Canonical review 完成前不改变冻结频次。
 
-Frozen Canonical Baseline
-= S001–S279
-= 235 ACTIVE Canonical
-= 278 Mapped + 1 VALID-UNMAPPED（S271）
+原记录在 2026-09-19 描述了 `S001–S288 / 29 Batch`；这是该日期的市场快照，不代表 Canonical 扩展到 S288，也不作为后续市场实时计数。
 
-S280+
-= 合法 Market Evidence
-= 等待 periodic Canonical review
-= 在 review 完成前不改变 Frozen Source Count / Frequency
-```
-
-截至 2026-09-19，Market 正式库已到 `S001–S288 / 29 Batch`；这一数字用于描述当前证据库，不等于 Canonical 已扩展到 S288。
-
-## 2. Frozen Canonical Baseline ✅
+## 2. Frozen Canonical Baseline
 
 ```text
-HUMAN-A in baseline        279 / 279
+HUMAN-A in baseline        279 / 279（S001–S279）
 ACTIVE Canonical          235 / 235
 Mapped Sources            278
 VALID-UNMAPPED              1（S271）
@@ -35,54 +21,24 @@ Unexpected uncovered        0
 Source Count mismatch       0
 ```
 
-Phase 1 Canonicalization ✅ · Phase 2A Global Merge/Split ✅ · Phase 2B Frozen Market Analysis ✅
+Phase 1 归一化、Phase 2A 合并与拆分、Phase 2B 冻结分析均属于该审核基线。具体依据见[全局审计](global-audit.md)、[来源覆盖](source-coverage-audit.md)与[统计分析](../../market/analysis/README.md)。这些数字不因教材改名、分章或代码示例修订而调整。
 
-## 3. Curriculum Build ✅
+## 3. Curriculum 与学习使用层
 
-| # | Module | Curriculum | Canonical | Status |
-|---:|---|---:|---:|---|
-| 01 | [Python Foundation](../../curriculum/01-python/README.md) | 13 | 15 | ✅ |
-| 02 | [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | 4 | ✅ |
-| 03 | [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) | 22 | 39 | ✅ |
-| 04 | [MySQL](../../curriculum/04-mysql/README.md) | 19 | 26 | ✅ |
-| 05 | [Redis](../../curriculum/05-redis/README.md) | 18 | 19 | ✅ |
-| 06 | [Vector Database](../../curriculum/06-vector-db/README.md) | 16 | 12 | ✅ |
-| 07 | [LLM Foundation（应用工程深度）](../../curriculum/07-llm-foundation/README.md) | 14 | 23 | ✅ |
-| 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | 29 | ✅ |
-| 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | 44 | ✅ |
-| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 24 | ✅ |
+正式模块及正文标题、阅读顺序、Review、Interview、实验入口集中在[学习资源索引](../../guide/navigation-index.md)。先修关系见[学习路线](../../guide/learning-path.md)，内容审查按[模块专项证据](../../guide/audits/content-depth-audit.md)读取。它们不能由本页冻结覆盖数字推导。
 
-**Curriculum total：175 blocks。**
+Coding 与 Tooling 由[Practice](../../practice/README.md)承接；固定源码对照由[Products](../../products/README.md)承接。Bridge Labs 与跨模块 Mock Interview 的建设需要明确对应交付物，不因存在规划名就标记为已完成。
 
-历史 v1.0 审计快照保留在 [Audits History](../../guide/audits/history/README.md)；当前质量状态以 [Final Quality Audit](../../guide/audits/final-quality-audit.md) 为准。Agent 23→24 的修订与核验范围见 [Agent Reader Revision](../../guide/project/agent-reader-revision.md)。
+## 4. 同步边界
 
-## 4. Learning & Interview Usage Layer
+课程修订同步正文关联、导航、术语和外围生成源，不自动运行一次新的面经统计审核。只有正式审核改变冻结基线时，才一并更新 Canonical 字段、Ownership、频次与分析数据，并保留审核依据。
 
-| Layer | Status | Entry |
-|---|---|---|
-| 正式学习路线 | ✅ | [13 周标准 / 8 周加速 / 14 天冲刺](../../guide/learning-path.md) |
-| Coding / Tooling Practice | ✅ | [Practice](../../practice/README.md) |
-| Bridge Labs | ⏳ | 待建设：把多个模块组合成真实工程任务 |
-| Cross-module Mock Interview | ⏳ | 待建设：用真实连续追问训练跨模块迁移 |
+完整知识体系与初学者的依赖关系决定首次学习主线；真人面经校准复习权重、真实问法和追问深度。Canonical、能力机制与教材 Markdown 保持各自粒度。
 
-第一次系统学习按 Curriculum 知识依赖顺序进行；HUMAN-A Heat 只调整 Review / Interview 权重。
-
-## 5. 固定课程原则
-
-> **完整知识体系与初学者 0→1 的认知依赖决定教材主干；真人面经只校准复习权重、真实问法、追问深度与 Failure / Scale / Evaluation 强度。**
-
-> **Canonical / Capability / Curriculum Markdown 使用不同粒度。**
-
-## 6. 强制同步清单
-
-每次新增、重组或更新一个一级模块，至少核验：
-
-1. 模块 `README.md`、`review/README.md` 与模块 Interview；
-2. 根 `README.md`、`guide/knowledge-map.md`、`guide/learning-path.md`；
-3. 本文件、`module-index.md`、`interview/canonical/README.md`；
-4. `guide/documentation-style-guide.md` 与相关 Audits / Project Records；
-5. 自动生成 `market/analysis/` 文件的**生成源**；
-6. 本地 Markdown 链接、实际章节数量、Frozen / Current / Historical 时间语义；
-7. 运行中的自动任务是否仍引用有效目录。
-
-后续工作重点是使用层建设、Market 持续监测、periodic Canonical review 与质量维护；不存在未撰写的正式一级 Curriculum 模块。
+<!-- 历史章节链接兼容；本页只描述冻结覆盖。 -->
+<a id="2-frozen-canonical-baseline-"></a>
+<a id="3-curriculum-build-"></a>
+<a id="4-learning--interview-usage-layer"></a>
+<a id="5-固定课程原则"></a>
+<a id="6-强制同步清单"></a>
+<a id="curriculum--canonical-progress正式状态"></a>

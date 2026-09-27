@@ -51,10 +51,10 @@ README.md                   系统地图、源码快照、关键模块与阅读�
 
 | 产品 | 核心架构 | 状态与模型视图 | 关键边界 |
 |---|---|---|---|
-| [OpenAI Codex](codex/README.md) | Thread / Session / Turn / StepContext 构成 Agent Core，Extension Registry 接入额外能力 | StepContext 固定单次采样的执行条件；History、Thread Store、Rollout、State DB、Trace 分工 | Core 执行语义与 Extension 能力分离 |
-| [Claude Code](claude-code/README.md) | REPL / QueryEngine 汇入 `query() / queryLoop()` | Transcript 保留可恢复历史；每轮重新生成经过压缩、缓存和能力筛选的 Model View | 持久 Transcript 与 API-bound Context 分离 |
-| [DeepSeek Harness](deepseek-harness/README.md) | Cordis Profile / Bundle 组装 Plugin Tree；Agent Loop 本身也是 Plugin | SessionEvent Log 保存持久事实；Surface 是模型可见投影 | Plugin 生命周期、持久事实与模型视图分离 |
-| [DeerFlow 2.0](deer-flow/README.md) | Gateway + LangGraph / LangChain Agent + Ordered Middleware | ThreadState 经 Middleware 投影成请求；Checkpoint 保存 continuation state，Run Journal 保存 execution evidence | 基础 Agent 执行、Middleware Runtime 与产品运行证据分层 |
+| [OpenAI Codex](codex/README.md) | 围绕一条用户请求反复组装输入、调用模型、处理工具结果 | 一次 Turn 可以跨多次模型调用；模型输入、工作历史、持久记录分别承担职责 | 工具许可不等于执行成功；上下文压缩不等于长期记忆 |
+| [Claude Code](claude-code/README.md) | 沿一个代码任务理解输入、工具调用和结果回填 | 保存的对话记录不等于每次完整发送给模型的内容；项目约定与反馈各有保存和注入条件 | 私有学习镜像不等于可构建的官方完整源码；批准必须针对实际执行内容 |
+| [DeepSeek Harness](deepseek-harness/README.md) | 插件装配 Agent、Session 和工具，使一次任务经过多轮工作 | 会话记录输入、结果和执行边界；每次请求只取需要的表示 | Profile 与插件入口决定能力是否安装；恢复记录不代表允许重做副作用 |
+| [DeerFlow 2.0](deer-flow/README.md) | 从 Gateway 默认内嵌运行路径进入 RunWorker，再由 Agent 与有序中间件协作 | Thread、Run、ThreadState 与 ModelRequest 分开；检查点和运行证据服务不同问题 | 默认路径与可选执行模式分开；子任务返回结果后仍要检查验收条件 |
 
 各产品 README 负责展开本产品的对象模型、真实请求链和源码边界；Context、Memory、Tool、Permission、Recovery 等专题进入对应生命周期文档。
 

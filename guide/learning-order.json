@@ -4,43 +4,73 @@
   "modules": [
     {
       "directory": "01-python",
-      "label": "Python"
+      "label": "Python",
+      "review_records": [
+        "guide/project/python-reader-revision.md"
+      ]
     },
     {
       "directory": "02-fastapi",
-      "label": "FastAPI"
+      "label": "FastAPI",
+      "review_records": [
+        "guide/project/fastapi-core-scope-review-2026-09-26.md",
+        "guide/project/fastapi-interview-alignment-2026-09-26.md"
+      ]
     },
     {
       "directory": "04-mysql",
-      "label": "MySQL"
+      "label": "MySQL",
+      "review_records": [
+        "guide/project/mysql-reader-revision-2026-09-27.md"
+      ]
     },
     {
       "directory": "05-redis",
-      "label": "Redis"
+      "label": "Redis",
+      "review_records": [
+        "guide/project/redis-reader-restructure-2026-09-27.md"
+      ]
     },
     {
       "directory": "03-backend-engineering",
-      "label": "Backend"
+      "label": "Backend",
+      "review_records": [
+        "guide/audits/backend-clarity-refinement-2026-09-28.md"
+      ]
     },
     {
       "directory": "06-vector-db",
-      "label": "Vector DB"
+      "label": "Vector DB",
+      "review_records": [
+        "guide/project/vector-db-reader-revision.md"
+      ]
     },
     {
       "directory": "07-llm-foundation",
-      "label": "LLM Foundation"
+      "label": "LLM Foundation",
+      "review_records": [
+        "guide/project/llm-foundation-clarity-refinement-2026-09-27.md"
+      ]
     },
     {
       "directory": "08-rag",
-      "label": "RAG"
+      "label": "RAG",
+      "review_records": [
+        "guide/audits/rag-clarity-refinement-2026-09-27.md"
+      ]
     },
     {
       "directory": "09-agent",
-      "label": "Agent"
+      "label": "Agent",
+      "review_records": [
+        "guide/project/agent-reader-revision.md"
+      ]
     },
     {
       "directory": "10-system-design",
-      "label": "System Design"
+      "label": "System Design",
+      "review_records": []
     }
-  ]
+  ],
+  "evidence_boundary": "Review records describe their own revision and validation scope; existence of a record is not a current all-pass status."
 }

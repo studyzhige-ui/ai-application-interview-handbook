@@ -7,7 +7,7 @@ Guide 负责跨模块导航与整个知识系统的一致性，不承载具体�
 ## 学习入口
 
 - [Knowledge Map](knowledge-map.md)：十模块职责、依赖、Products 与实践层的关系。
-- [Learning Path](learning-path.md)：正式学习顺序、标准/加速/冲刺节奏、Exit Gate 与成熟源码学习入口。
+- [Learning Path](learning-path.md)：前置关系、三遍学习、13 周安排示例、Exit Gate 与源码学习入口。
 - [Products](../products/README.md)：成熟 AI 系统源码学习总入口。
 - [Terminology Glossary](terminology-glossary.md)：跨模块稳定术语。
 - [Documentation Style Guide](documentation-style-guide.md)：文档写作与结构规范。
@@ -24,5 +24,5 @@ Guide 负责跨模块导航与整个知识系统的一致性，不承载具体�
 
 [学习资源索引](navigation-index.md)汇总当前课程、产品、实践和资料入口；[学习顺序配置](learning-order.json)决定模块先后，[机器可读目录](navigation-index.json)由现有文件生成。
 
-维护时运行 `python tools/sync_outer_navigation.py --check` 检查漂移；先查看默认预览，再使用 `--apply` 更新。历史面经统计和正文不属于同步写入范围。
+维护时运行 `python tools/sync_outer_navigation.py --check` 检查生成漂移与全仓 Markdown 本地链接；先查看默认预览，再使用 `--apply` 更新。历史面经统计和正文不属于同步写入范围。
 <!-- learning-inventory:end -->

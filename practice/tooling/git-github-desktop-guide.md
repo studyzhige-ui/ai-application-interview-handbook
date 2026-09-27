@@ -467,6 +467,7 @@ compare: docs/add-checklist    提供修改的来源分支
 
 打开文件，可能看到：
 
+<!-- conflict-example:start -->
 ```text
 <<<<<<< HEAD
 练习时间：周日上午
@@ -474,6 +475,7 @@ compare: docs/add-checklist    提供修改的来源分支
 练习时间：周六上午
 >>>>>>> practice/saturday
 ```
+<!-- conflict-example:end -->
 
 在这次普通 Merge 中：
 

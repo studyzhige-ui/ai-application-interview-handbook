@@ -4,7 +4,7 @@
 
 > **用途：Agent Runtime 的技术证据与版本边界。** 本目录校准源码事实、开放规范和工程原则，不创建 HUMAN-A 面试证据，也不改变 Canonical Source Count。
 
-**综合证据核验日期：2026-09-21。Codex 与 DeerFlow 源码专项核验：2026-09-27；其余产品沿用各自固定快照。**
+各项技术结论按对应资料或产品记录的固定提交与核验范围阅读。综合资料、源码快照和后续教学修订分别定版本；索引同步日期不冒充重新核验上游源码的日期。
 
 ## 1. 证据体系
 
@@ -71,6 +71,8 @@ Tier D 不是新的事实来源，而是把 A+B+C 抽象为 beginner-first 的�
 
 ---
 
+<a id="reader-revision-20260917"></a>
+
 ## 3. Curriculum 与 Products 的证据关系
 
 ```text
@@ -85,7 +87,7 @@ Products
 └─ 沿真实源码还原完整系统
 ```
 
-Capability 到 Agent 24 章教材的正式映射见 [Runtime Capability Map](runtime-capability-map.md)。
+Capability 到 Agent 教材的正式映射见 [Runtime Capability Map](runtime-capability-map.md)。旧的 `reader-revision-20260917` 锚点保留给课程引用；历史修订依据见[Agent 修订记录](../../guide/project/agent-reader-revision.md)，产品行为仍认各自固定快照。
 
 ---
 
@@ -101,3 +103,16 @@ Capability 到 Agent 24 章教材的正式映射见 [Runtime Capability Map](run
 版本敏感结论必须显式记录 repo、commit 与核验日期。Products 与源码索引各自固定版本；切换快照时先比较源码变化，再更新对应结论。
 
 项目级修订与历史核验记录统一维护在 [Guide / Project Records](../../guide/project/README.md)。
+
+<!-- product-evidence:start -->
+## 产品阅读与修订证据
+
+| 产品 | 实际阅读顺序 | 教学修订记录 |
+|---|---|---|
+| [Claude Code](../../products/agent/claude-code/README.md) | [01](../../products/agent/claude-code/01-context-lifecycle.md) → [02](../../products/agent/claude-code/02-memory-lifecycle.md) → [03](../../products/agent/claude-code/03-tool-lifecycle.md) → [04](../../products/agent/claude-code/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/claude-code-clarity-refinement-2026-09-27.md) |
+| [Codex](../../products/agent/codex/README.md) | [01](../../products/agent/codex/01-context-lifecycle.md) → [03](../../products/agent/codex/03-tool-lifecycle.md) → [02](../../products/agent/codex/02-memory-lifecycle.md) → [04](../../products/agent/codex/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/codex-clarity-refinement-2026-09-27.md) |
+| [DeepSeek Harness](../../products/agent/deepseek-harness/README.md) | [01](../../products/agent/deepseek-harness/01-context-lifecycle.md) → [02](../../products/agent/deepseek-harness/02-memory-lifecycle.md) → [03](../../products/agent/deepseek-harness/03-tool-lifecycle.md) → [04](../../products/agent/deepseek-harness/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/deepseek-harness-clarity-refinement-2026-09-27.md) |
+| [DeerFlow 2.0](../../products/agent/deer-flow/README.md) | [01](../../products/agent/deer-flow/01-context-lifecycle.md) → [02](../../products/agent/deer-flow/02-memory-lifecycle.md) → [03](../../products/agent/deer-flow/03-tool-lifecycle.md) → [04](../../products/agent/deer-flow/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/deerflow-clarity-refinement-2026-09-27.md) |
+
+正文序号是稳定路径标识。修订记录只说明其基线与实际验证，不代表已重新检查上游全部最新变化。
+<!-- product-evidence:end -->

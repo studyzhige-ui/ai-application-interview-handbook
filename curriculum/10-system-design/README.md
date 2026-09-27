@@ -155,7 +155,7 @@ docs/      ✅ 01–19 连续
 review/    ✅
 interview/ ✅
 Canonical Coverage ✅
-Content Depth       ✅
+Content Depth       按专项记录的适用范围判断，不继承旧版通过状态
 ```
 
-整套十板块已学完，可以进入全局 Review / 面试训练。
+完成本模块的理解与实践检查后，可进入全局 Review 和面试训练；读完入口不等于完成整套课程。

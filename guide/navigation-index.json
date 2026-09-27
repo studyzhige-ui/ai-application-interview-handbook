@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "sources": [
     "guide/learning-order.json",
     "curriculum/*/README.md",
@@ -14,6 +14,9 @@
     {
       "directory": "01-python",
       "label": "Python",
+      "review_records": [
+        "guide/project/python-reader-revision.md"
+      ],
       "readme": "curriculum/01-python/README.md",
       "chapter_count": 13,
       "reading_order": [
@@ -31,6 +34,73 @@
         "curriculum/01-python/docs/12-线程-进程-协程-async-await.md",
         "curriculum/01-python/docs/13-常见数据结构与复杂度.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/01-python/docs/01-python基础与对象模型.md",
+          "title": "01. Python 基础、对象模型与语言选择",
+          "sha256": "77542d0550848a40caae126cac50c23c370689a36f6ea05a494425858283939e"
+        },
+        {
+          "path": "curriculum/01-python/docs/02-核心数据类型与容器.md",
+          "title": "02. 核心数据类型、容器、Hash 与切片成本",
+          "sha256": "d0f4e3158a84e612b2f28b60dc02c457a38ecff224f05cef6c470e958ce46264"
+        },
+        {
+          "path": "curriculum/01-python/docs/03-可变对象-对象身份-深浅拷贝.md",
+          "title": "03. 可变对象、对象身份与深浅拷贝",
+          "sha256": "915d6e89703bf60ef9c25619da66ebc6b6077a9536fbf1c0abbbbf6412b5994d"
+        },
+        {
+          "path": "curriculum/01-python/docs/04-函数-参数-作用域-闭包.md",
+          "title": "04. 函数、参数、作用域与闭包",
+          "sha256": "bf5477acfda914740cf571350c29029849857324709fa25df8bedad884772abf"
+        },
+        {
+          "path": "curriculum/01-python/docs/05-lambda-推导式-常用内置函数.md",
+          "title": "05. Lambda、推导式与常用内置函数",
+          "sha256": "d49070bf157e351a4f3836322719ef7a67024fb0b95efcb4127a3d0460f1e987"
+        },
+        {
+          "path": "curriculum/01-python/docs/06-迭代器-生成器-yield.md",
+          "title": "06. 迭代器、生成器与 yield",
+          "sha256": "d5ea4e63463ed1ddaaf749c7701f3a235e245b797371a01f171107303e25201d"
+        },
+        {
+          "path": "curriculum/01-python/docs/07-装饰器-上下文管理器.md",
+          "title": "07. 装饰器与上下文管理器",
+          "sha256": "71bf02e6f370d54246258cf60f25340024ea02939dc3db8d80b56cb0360514e7"
+        },
+        {
+          "path": "curriculum/01-python/docs/08-面向对象-魔术方法.md",
+          "title": "08. 面向对象、Duck Typing、Protocol 与魔术方法",
+          "sha256": "3b3aaba7b814fadce8dfec4ca8790ce8ed955fa8be5c95ffcd7f81c8875d580e"
+        },
+        {
+          "path": "curriculum/01-python/docs/09-异常-文件-模块与导入.md",
+          "title": "09. 异常、文件、模块与导入",
+          "sha256": "9efc493310ac29e222bce04f2905e08076a2aacae539c59ed885b3b059649733"
+        },
+        {
+          "path": "curriculum/01-python/docs/10-结构化数据-JSON与校验.md",
+          "title": "10. 结构化数据、JSON 与校验",
+          "sha256": "084b70d53d9c494cd7d325a7126c566f255be6603fc4785a9f127406f700c709"
+        },
+        {
+          "path": "curriculum/01-python/docs/11-内存管理-垃圾回收-GIL.md",
+          "title": "11. 内存管理、垃圾回收与 GIL",
+          "sha256": "b97f91837da62f96cd6b28d93133ac155183abca86ad0ff3c1d6dbe30644a781"
+        },
+        {
+          "path": "curriculum/01-python/docs/12-线程-进程-协程-async-await.md",
+          "title": "12. 线程、进程、协程与 async/await",
+          "sha256": "f5fd4bbfdbc27732d21945d0464b43a17bc299e8c112156dcff13f384b5f828b"
+        },
+        {
+          "path": "curriculum/01-python/docs/13-常见数据结构与复杂度.md",
+          "title": "13. 常见数据结构与复杂度",
+          "sha256": "e2aab6238dbcc8bba921c6c2c15111d8e08db768b92c5ae3dc33665965c3742f"
+        }
+      ],
       "support": [
         "curriculum/01-python/review/README.md",
         "curriculum/01-python/interview/"
@@ -39,6 +109,10 @@
     {
       "directory": "02-fastapi",
       "label": "FastAPI",
+      "review_records": [
+        "guide/project/fastapi-core-scope-review-2026-09-26.md",
+        "guide/project/fastapi-interview-alignment-2026-09-26.md"
+      ],
       "readme": "curriculum/02-fastapi/README.md",
       "chapter_count": 16,
       "reading_order": [
@@ -59,6 +133,88 @@
         "curriculum/02-fastapi/docs/15-Deployment与GracefulShutdown.md",
         "curriculum/02-fastapi/docs/16-AIServicePatterns.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/02-fastapi/docs/01-FastAPI职责与ASGI请求链路.md",
+          "title": "01｜从一个可访问的接口理解请求与响应",
+          "sha256": "55f190884b104b20e39ba7c6da5d9d4d8e4043b22c216efa1675f205e881744c"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/02-Routing与APIContract.md",
+          "title": "02｜路由与参数：请求怎样变成函数输入",
+          "sha256": "a3c5b48249633780d6285aad80feb385ed1c8199753756ae9c523210bd012454"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/03-Pydantic与数据契约.md",
+          "title": "03｜数据契约：校验输入、限制输出、解释错误",
+          "sha256": "0a05ecb1cf15c3fab2a106567b206d3f098c83fb3bb23b3c08029b519fbe6dc9"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/04-Dependency与Middleware.md",
+          "title": "04｜依赖与中间件：复用前提，不隐藏执行过程",
+          "sha256": "40dddb86278f042ac9976e5e5641eda2bea6cc61c5387598e67be8cba8115ee3"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/05-ResourceLifecycle.md",
+          "title": "05｜资源生命周期：何时取得，何时归还",
+          "sha256": "9070ade37623d8d3adf1fdeabd72d4866bf4c0ecaad5d2c44ea08871673f26a2"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/06-AsyncExecution与BlockingBoundary.md",
+          "title": "06｜异步与并发：等待时谁在继续工作",
+          "sha256": "83b86db3e6fddae86fe197e2904fcbded7c920e9f74fe5d2ae11433985ac64be"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/07-Streaming与SSE.md",
+          "title": "07｜流式响应：逐步交付结果与 SSE 事件",
+          "sha256": "eaf7e87358671115941f4fbce69820ea86d29521bffb65f29df2e8273acc914b"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/08-WebSocket与EventProtocol.md",
+          "title": "08｜WebSocket：让双方在连接中持续交流",
+          "sha256": "df251e34a8aee219b7d2b4c3c7dcfc0539568bd60b67ae1d3981efd60df8db2c"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/09-Security与TenantContext.md",
+          "title": "09｜认证、授权与租户：让访问范围可信",
+          "sha256": "d3e9e1622193f43153791851aac1e9f9290070365aab5f3b3af593b20f197143"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/10-ExternalResourceIntegration.md",
+          "title": "10｜连接外部服务：客户端、业务与协议适配",
+          "sha256": "65bb0ce59eddfe8927c3232eb405b612f5e1743b06de8bb7eb47e92ca2e6a8d8"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/11-BackgroundTask与Upload.md",
+          "title": "11｜上传与后台任务：接收完成不等于处理完成",
+          "sha256": "79003d4e4227248b9d055b0bc959121dd4b0f83dfb4cf3f6da6cb721e9fd395c"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/12-TimeoutCancellation与Disconnect.md",
+          "title": "12｜超时、断开与取消：请求结束之后发生什么",
+          "sha256": "903edb40c2c56798d7810b730d8b5e546c892f49dd0f4f20c107cce85feda70b"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/13-Testing.md",
+          "title": "13｜测试：让成功、拒绝与失败都有证据",
+          "sha256": "8adfd4e1103a5934127f3403271d3230cfac2b0c3c52cba52fdf2f7e07104063"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/14-Observability与Performance.md",
+          "title": "14｜观测与性能：把慢请求拆成可定位的时间",
+          "sha256": "24f469b8ff623af842cb686530aac3bc8fb99a7609b952a079da43ff1d77c697"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/15-Deployment与GracefulShutdown.md",
+          "title": "15｜部署与退出：从一个进程到多个实例",
+          "sha256": "b66c3037902e7397a418dc0569588e5a0d7180e699481a8c6a566ec3765e38aa"
+        },
+        {
+          "path": "curriculum/02-fastapi/docs/16-AIServicePatterns.md",
+          "title": "16｜综合实作：把问答与执行任务接成可验证 API",
+          "sha256": "48cdd4cd2dd98b4affc6e2c84240562d1aaecbb7e18106aa578f23cdf52a0b62"
+        }
+      ],
       "support": [
         "curriculum/02-fastapi/review/README.md",
         "curriculum/02-fastapi/interview/",
@@ -68,6 +224,9 @@
     {
       "directory": "04-mysql",
       "label": "MySQL",
+      "review_records": [
+        "guide/project/mysql-reader-revision-2026-09-27.md"
+      ],
       "readme": "curriculum/04-mysql/README.md",
       "chapter_count": 19,
       "reading_order": [
@@ -91,6 +250,103 @@
         "curriculum/04-mysql/docs/18-分片与扩容.md",
         "curriculum/04-mysql/docs/19-AI应用数据建模.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/04-mysql/docs/01-数据库与关系表.md",
+          "title": "01｜数据库、MySQL 与关系表",
+          "sha256": "39222b94c67edf88ea0c8917cdb4fb1ea43832158cce15b364bfa420aa3a0386"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/02-单表查询与增删改.md",
+          "title": "02｜用 SQL 查询、增加、修改和删除记录",
+          "sha256": "3f35a9dbc4003bc7d3ee0900f280400ca5703454dd8e8f420b1af4f00d7f04c1"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/03-数据类型约束与表关系.md",
+          "title": "03｜字段、约束与表之间的关系",
+          "sha256": "07544cba28468d69e5735b885ab154c4948c2f9febc39cdd87287d7eab308164"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/04-关联查询与分组统计.md",
+          "title": "04｜把多张表查在一起，把多条记录汇总起来",
+          "sha256": "47926e4664b00d490fb29326df579e38b16202d51bc708dfc022129e7c9372c8"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/05-SQL执行与索引基础.md",
+          "title": "05｜从查对结果到少做工作：执行计划与索引",
+          "sha256": "234bfc6e2c22d9fbdf4085672a8853ed5f52c7800c88895e183fa988c8954f02"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/06-B+树与数据组织.md",
+          "title": "06｜B+ 树怎样组织数据：聚簇索引与二级索引",
+          "sha256": "3e42c8cc778301d0f8aab89db480190e78ae34c2d278de1858c82337110d531d"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md",
+          "title": "07｜联合索引怎样定位、排序和减少回表",
+          "sha256": "05df4620ceb0f3ab71706ac750f48548761615f93441aab994fb5b10ae6bccb5"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/08-执行计划与慢查询.md",
+          "title": "08｜读懂执行计划，找到查询真正慢在哪里",
+          "sha256": "2577fa8b6face03382d4ad5233319a5914e91b75d5532278a0c1bd749855baad"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/09-事务与ACID.md",
+          "title": "09｜事务：哪些修改必须一起成立",
+          "sha256": "6167da681fabe09f7cbd4f850323eae3f5b14bfb162f0cef9f2edb6c1ece8863"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/10-隔离级别与MVCC.md",
+          "title": "10｜并发读取：隔离级别与 MVCC",
+          "sha256": "aebd1042fc2ae25ee543b0fcc2113d1e32812326366e722b4092f0f04c2084c8"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/11-并发修改锁与死锁.md",
+          "title": "11｜并发修改：条件更新、锁与死锁",
+          "sha256": "ec161a27e29efe32e7b73443d57eb49cac761a7b9b91fc0199f766b9dab5a32f"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/12-日志提交与恢复.md",
+          "title": "12｜日志、提交与故障恢复",
+          "sha256": "e4fa045cb4abaef9be44d55719b5c6105d7b53633a4db4fac62193287058bbd8"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/13-分页与查询成本.md",
+          "title": "13｜分页：先跳过，还是从上次的位置继续",
+          "sha256": "96a50b4886d72e3009cd056be1319471f07b31e7ea4a189162522a1927439da8"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/14-主键索引与表结构演进.md",
+          "title": "14｜数据增长以后，怎样维护主键、索引和表结构",
+          "sha256": "0f4c810d48da0787ea14fdd424784c6cc371cf7ad65b390b3e281a7b2a326f55"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/15-批量写入与写入成本.md",
+          "title": "15｜批量写入：Batch、事务与写入成本",
+          "sha256": "606f53b3bd179eca8d9f52497f79947d776842153dec5098f63b3ef22ff34f2e"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/16-复制与读写分离.md",
+          "title": "16｜复制与读写分离：多份数据何时一致",
+          "sha256": "14925bfa73160344690c047ba0d111302bea1bcf730aa6165ef29b883bdb0050"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/17-CDC与下游同步.md",
+          "title": "17｜CDC：把已提交的变化可靠地交给下游",
+          "sha256": "0927b69d1b2e68397ba3595a5d13e60acecc2d81a2f08ad3fd4c339d7eb99cad"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/18-分片与扩容.md",
+          "title": "18｜分片：确认单机边界之后再拆数据",
+          "sha256": "c81f56626807ab7e299fa804ea273fbf6cb46c0d5310d3bccdb7f24b32fcd4cd"
+        },
+        {
+          "path": "curriculum/04-mysql/docs/19-AI应用数据建模.md",
+          "title": "19｜把数据库知识用在 AI 应用的数据模型中",
+          "sha256": "2db193c861eb3b0345bdbab4894c23a569a25ddcf7e9b338e1c99f29a021bbaf"
+        }
+      ],
       "support": [
         "curriculum/04-mysql/review/README.md",
         "curriculum/04-mysql/interview/",
@@ -100,6 +356,9 @@
     {
       "directory": "05-redis",
       "label": "Redis",
+      "review_records": [
+        "guide/project/redis-reader-restructure-2026-09-27.md"
+      ],
       "readme": "curriculum/05-redis/README.md",
       "chapter_count": 18,
       "reading_order": [
@@ -122,6 +381,98 @@
         "curriculum/05-redis/docs/17-安全与问题定位.md",
         "curriculum/05-redis/docs/18-综合设计与回顾.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/05-redis/docs/01-Redis是什么.md",
+          "title": "01｜Redis 是什么，为什么系统里还需要它",
+          "sha256": "8acabb154ffdda3761ee8e631b3b247d2b4c65c39b6d42d2b85ad704850ede7d"
+        },
+        {
+          "path": "curriculum/05-redis/docs/02-键与常用数据类型.md",
+          "title": "02｜同一份数据，怎样保存才方便使用",
+          "sha256": "53adb31dd1a6572072219bf4b6b77c08a0de66b0db96d3a0db5b566a8093dde9"
+        },
+        {
+          "path": "curriculum/05-redis/docs/03-过期与内存淘汰.md",
+          "title": "03｜数据什么时候应该消失",
+          "sha256": "1c400f6b7af069f8bae450d209285cd42eab729ec84ff4af30424606e401a4cc"
+        },
+        {
+          "path": "curriculum/05-redis/docs/04-缓存读取与更新.md",
+          "title": "04｜把 Redis 用作缓存：读与更新怎样配合",
+          "sha256": "9493aff9d19a45775d904a708eab2feb2ab09204ad4c29d233d2d17fd70f0d37"
+        },
+        {
+          "path": "curriculum/05-redis/docs/05-缓存故障与流量保护.md",
+          "title": "05｜缓存帮不上忙时，怎样保护数据来源",
+          "sha256": "01b3b3f4ab7897bd932b73644a70cf5cdf3f7e52742b5e2a61ef87bb511dfafe"
+        },
+        {
+          "path": "curriculum/05-redis/docs/06-多级缓存与结果复用.md",
+          "title": "06｜本地缓存与 AI 结果缓存：什么可以复用",
+          "sha256": "06fe1a6cf1d3af657b89f72c025c80eea9c76f569a455b6c9896d44bcec856b3"
+        },
+        {
+          "path": "curriculum/05-redis/docs/07-执行模型与Pipeline.md",
+          "title": "07｜Redis 为什么快，请求又为什么会慢",
+          "sha256": "479c49d581d15153e7dfb16016d9bc2cb8374e5808a9a88fa8bc66b91ad56c34"
+        },
+        {
+          "path": "curriculum/05-redis/docs/08-内部编码与数据规模.md",
+          "title": "08｜内存怎样花出去：编码、大小与数据表示",
+          "sha256": "b9bc6d2945db51ad6e920bc9513429c35831a1a018188ade914f9c6d8eff84a2"
+        },
+        {
+          "path": "curriculum/05-redis/docs/09-事务与服务端逻辑.md",
+          "title": "09｜多步修改怎样避免互相干扰",
+          "sha256": "5de93f213b9d4cbcb4a9cc4a6c41ddc9da3542b21912ac68db5774b2c0b10cd1"
+        },
+        {
+          "path": "curriculum/05-redis/docs/10-持久化与恢复.md",
+          "title": "10｜服务重启后，数据从哪里回来",
+          "sha256": "ac66002dc3d0b9b35b3bfc917c21080bbe0b8ce43e37e9b67d92840fced91d6f"
+        },
+        {
+          "path": "curriculum/05-redis/docs/11-复制与Sentinel.md",
+          "title": "11｜有了副本，故障时怎样接替服务",
+          "sha256": "d9496403776a933a01fe9d09b6b7e46eba5624e452edd1d6c0cd0042f18a5079"
+        },
+        {
+          "path": "curriculum/05-redis/docs/12-Cluster与分片.md",
+          "title": "12｜一台装不下以后，数据怎样分到多台",
+          "sha256": "cac551e13239c9df01b7dd02239f0391773548a0620e3d76a78b30941e15b37b"
+        },
+        {
+          "path": "curriculum/05-redis/docs/13-分布式锁.md",
+          "title": "13｜锁过期了，旧工作者为什么还可能继续",
+          "sha256": "205359d461b3e2935804579ee5a69782df9cbbc4a1eda32a17a3487d300f173a"
+        },
+        {
+          "path": "curriculum/05-redis/docs/14-通知与Streams.md",
+          "title": "14｜消息发出以后，怎样知道还有什么没做",
+          "sha256": "f672186006f4e44d4ab3610fc3cf9a86e34cb0c936ce07e96440c88c34baf4d0"
+        },
+        {
+          "path": "curriculum/05-redis/docs/15-共享限流.md",
+          "title": "15｜多个服务怎样共同守住一份限额",
+          "sha256": "a29e7c83c4895c01f92f9816d25f2bff5a341d921f3886ec79799d95285eb8d0"
+        },
+        {
+          "path": "curriculum/05-redis/docs/16-会话与运行状态.md",
+          "title": "16｜登录、最近消息和任务进度应该怎样保存",
+          "sha256": "e5ba17bf4d4691ea058593e8022e14b6d6fd11ca88915e83f2d3f3bd9487fc6e"
+        },
+        {
+          "path": "curriculum/05-redis/docs/17-安全与问题定位.md",
+          "title": "17｜出问题时，从哪里找到证据",
+          "sha256": "35bab1846fdbc825ede6f72b4614aa49168195f867cf93ad4991ee6dfe1935ed"
+        },
+        {
+          "path": "curriculum/05-redis/docs/18-综合设计与回顾.md",
+          "title": "18｜从需求出发，完成一份 Redis 设计",
+          "sha256": "846cdde672c11ff772b0ae74164429af0684f5607ec1c7e277e25499ca654b67"
+        }
+      ],
       "support": [
         "curriculum/05-redis/review/README.md",
         "curriculum/05-redis/interview/",
@@ -131,6 +482,9 @@
     {
       "directory": "03-backend-engineering",
       "label": "Backend",
+      "review_records": [
+        "guide/audits/backend-clarity-refinement-2026-09-28.md"
+      ],
       "readme": "curriculum/03-backend-engineering/README.md",
       "chapter_count": 22,
       "reading_order": [
@@ -157,6 +511,118 @@
         "curriculum/03-backend-engineering/docs/20-ConfigRelease与ServiceEvolution.md",
         "curriculum/03-backend-engineering/docs/22-CrossLanguageRuntimeMapping.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/03-backend-engineering/docs/01-AIBackend职责与RequestPath.md",
+          "title": "一次请求完成了什么，后端负责到哪里",
+          "sha256": "71143e28d0ae8dde403af47df730859e069c72384acfb1075774ef8c660498e5"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/14-DataLayering与StateOwnership.md",
+          "title": "哪些状态必须保存，恢复时相信哪一份",
+          "sha256": "de5c1235c63360a204485af322b57cbbd7df70824ff1f794f9c2c3654380551d"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/02-TCPTLS与HTTPVersions.md",
+          "title": "从字节到安全请求：TCP、TLS 与 HTTP",
+          "sha256": "4db27eb649e6ca17611566476855be7e41e223a604dd7861cfbc15401aed7d41"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/03-ServiceCommunication与StreamingReliability.md",
+          "title": "怎样传递结果，断线后怎样继续",
+          "sha256": "a2c30eac5952ecfce4aaf47a8ec1e08716af415f00b5c5a68851749e686cacc0"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/04-Concurrency与ThreadPool.md",
+          "title": "并发工作由谁执行，等待放在哪里",
+          "sha256": "9e986da8994c7db16a6da7b78a34a18655e3e434c3c4dcb9783c9adbed736cd7"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/05-ConnectionPool与ResourceCapacity.md",
+          "title": "连接怎样复用，容量怎样计算",
+          "sha256": "5dbbe3b3f4e7273ca3ea1af600d6d625e7b8dd931e72efdff913c1722c8c620e"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/06-Backpressure与RateLimit.md",
+          "title": "到达速度超过处理能力时怎么办",
+          "sha256": "c8497006e00fec36ecfedf15702dffb1472705e0158a9ca5a8cd82a6319f9e6b"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md",
+          "title": "等多久，超时之后还发生什么",
+          "sha256": "fbd57c9c06309b82ca308513633b61c43a9b928140dc6652736c8f4b60262795"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/09-APIIdempotency与SideEffect.md",
+          "title": "怎样识别同一次操作，避免重复副作用",
+          "sha256": "a4700f374f9e6be3067679a2c54863391a1b5bdb0846a8d9cabf4b8877885fe4"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/08-RetryCircuitBreaker与Failover.md",
+          "title": "什么时候值得再试，怎样防止故障放大",
+          "sha256": "71b4e31ed1afb129465d66df471701c9e11e109a040ee7b044e39b9df3784ba7"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/10-MQ与DeliverySemantics.md",
+          "title": "消息怎样交付，确认到底确认了什么",
+          "sha256": "48d8722386add89440104b9b0ee482cb0070c17074d66b96a95ba207993964da"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/11-KafkaPartition与Backlog.md",
+          "title": "Kafka 怎样分工、保序与恢复消费",
+          "sha256": "4cb14b914f1591ae0058ac973109986c74975f5709cdeab95209b6d5de5e1179"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/12-ReliableAsyncTask.md",
+          "title": "进程重启后，任务怎样继续推进",
+          "sha256": "2cf3678c304932173d1e9ea99ade4d16439356b3723da58ad2508e6c4fd7e42a"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/13-Consistency与Compensation.md",
+          "title": "多份数据不一致时，怎样恢复业务正确性",
+          "sha256": "ae4995b83b2cfbb7887af884f8c24b42241e5103ac95c030c174c3e997592877"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/15-AuthSession与TenantBoundary.md",
+          "title": "谁能访问什么，权限怎样贯穿请求与任务",
+          "sha256": "758ecfcf005146c1c51d43baead5ba3364a049bb5153ce85b92978939f873fcd"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/21-BackendSecurity.md",
+          "title": "不可信输入怎样被限制在安全边界内",
+          "sha256": "ff78ea27990cdd463f4fb9704db8f49136a4564048fe0357ad059bd3c36cfcba"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/16-ServiceDiscovery与LoadBalancing.md",
+          "title": "多个服务实例怎样被找到和选中",
+          "sha256": "5a4b46b7f251e8724587fba6e7f58af52c2fdb49cccb599424fb4f7946b813df"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/17-Observability与PerformanceDiagnosis.md",
+          "title": "从慢请求的证据定位瓶颈",
+          "sha256": "2e90f5eb2180d9e38cbd4d0f3081de5d9d9308fc4b9b63692c37db46d7aff1b2"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/18-LinuxTroubleshooting.md",
+          "title": "把应用故障追到 Linux 资源",
+          "sha256": "6150c91776568e11873c66821b5b685b22f2764f4bcafe0578b558858ff82dae"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/19-ContainerK8s与Deployment.md",
+          "title": "部署、探针与停机怎样配合应用",
+          "sha256": "3a19a3e0674135edd5f7597dd28334c3c84bedc8f08ff0906f3ef803ead89648"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/20-ConfigRelease与ServiceEvolution.md",
+          "title": "配置和版本怎样安全改变",
+          "sha256": "e7da2388a3153133cfcf4c3c3f7576fae5c7b83525db61a16b57c32e4671a77e"
+        },
+        {
+          "path": "curriculum/03-backend-engineering/docs/22-CrossLanguageRuntimeMapping.md",
+          "title": "把通用机制映射到 Java、Spring 与 Go",
+          "sha256": "85b7443c47b5bee649e279dddb5b921082919c79d9de16f82a593ced8011ac75"
+        }
+      ],
       "support": [
         "curriculum/03-backend-engineering/review/README.md",
         "curriculum/03-backend-engineering/interview/",
@@ -166,6 +632,9 @@
     {
       "directory": "06-vector-db",
       "label": "Vector DB",
+      "review_records": [
+        "guide/project/vector-db-reader-revision.md"
+      ],
       "readme": "curriculum/06-vector-db/README.md",
       "chapter_count": 16,
       "reading_order": [
@@ -186,6 +655,88 @@
         "curriculum/06-vector-db/docs/15-产品与架构选型.md",
         "curriculum/06-vector-db/docs/16-GraphDB边界与系统设计.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/06-vector-db/docs/01-VectorDB在AI应用中的职责.md",
+          "title": "01｜向量数据库究竟负责什么",
+          "sha256": "57d8727d69b0f62268510cf0db5f201c46632eb59fcbffbc92588198df36f183"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/02-VectorSpace与Similarity.md",
+          "title": "02｜向量空间与相似度：先把“近”说清楚",
+          "sha256": "a87449d7979f8f873ac97898352bfe60f4556d64678fd7e924d980a2add6f335"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/03-ExactSearch与ANN.md",
+          "title": "03｜精确搜索与 ANN：先建立可核对的答案",
+          "sha256": "a11d3ca985efdd245c9bdc7c6373252b8f7047c9357e9c344c5f1374b3e81c22"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/04-ANN索引谱系.md",
+          "title": "04｜索引谱系：近似究竟发生在哪里",
+          "sha256": "740cd7d67bddefbaff3648173ba8b2016322366e3a251d4c281c0296883172e6"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/05-HNSW机制与调优.md",
+          "title": "05｜HNSW：沿着图寻找近邻",
+          "sha256": "271d88780e07cd3e6907872fc17cc817a5da4b486ceee681dbe3d1c69dce24aa"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/06-IVF原理.md",
+          "title": "06｜IVF：先选区域，再找向量",
+          "sha256": "7b5284681319ff35941821a498207d7400b0c4d8b9457b1d774366aea219738c"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/07-Quantization与PQ.md",
+          "title": "07｜量化与 PQ：用短编码近似距离",
+          "sha256": "5f32b2a2169aa0ca0ebf7f433ff7056772bc49768f7c8e54ef80e800fa0edef9"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/08-IndexSelection.md",
+          "title": "08｜索引选择：把机制放回工作负载",
+          "sha256": "2bffaefbc15e3f2a603f4ad834557f50f98652a8cd9258da5a40aaee34413486"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/09-Vector数据建模.md",
+          "title": "09｜向量数据建模：让结果找得到来源",
+          "sha256": "ff115c0f64262bf6e78c46b4444bd6624a21dedcb36df98f854a19c25b464c28"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/10-MetadataFilter.md",
+          "title": "10｜元数据过滤：在允许的范围内找近邻",
+          "sha256": "570ea3230f8a8deab9d493e53e151469541829d46612bb8b1be868c55706e723"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/11-Partition与TenantIsolation.md",
+          "title": "11｜分区与多租户：数据放在哪，谁可以读",
+          "sha256": "81618c1382dec514ea84c25466d125cb3ffa4526f9ebe10a9d3a582a80b25032"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/12-VectorIndex生命周期.md",
+          "title": "12｜索引生命周期：写入、更新、删除与重建",
+          "sha256": "0b3e276f7ad4acc1c688a4b29652b927ab772de7fcd0d238618118014ca03344"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/13-分布式VectorDB.md",
+          "title": "13｜分布式检索：局部结果怎样组成全局答案",
+          "sha256": "82610add65999bab0bab5a27e162578718cbd17a3b4825ab93a8088fa03e2179"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/14-性能容量与Production诊断.md",
+          "title": "14｜性能与容量：用证据定位瓶颈",
+          "sha256": "ffaa1bb0bf1977122e535b530d891f96e96b46bf2bbdc9639fc714415571128a"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/15-产品与架构选型.md",
+          "title": "15｜产品与架构选择：先决定需要哪类能力",
+          "sha256": "b755db3d37e40e91f99e42706c7d6448933345673c177fdc98f945bbd3c90e4d"
+        },
+        {
+          "path": "curriculum/06-vector-db/docs/16-GraphDB边界与系统设计.md",
+          "title": "16｜图数据库边界：相似、关系与完整系统",
+          "sha256": "81d873fa405286e12d727e26ac81900be01c11e4c2f364b88257c7dd5136d1d7"
+        }
+      ],
       "support": [
         "curriculum/06-vector-db/review/README.md",
         "curriculum/06-vector-db/interview/",
@@ -195,6 +746,9 @@
     {
       "directory": "07-llm-foundation",
       "label": "LLM Foundation",
+      "review_records": [
+        "guide/project/llm-foundation-clarity-refinement-2026-09-27.md"
+      ],
       "readme": "curriculum/07-llm-foundation/README.md",
       "chapter_count": 14,
       "reading_order": [
@@ -213,6 +767,78 @@
         "curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md",
         "curriculum/07-llm-foundation/docs/14-PostTraining与Distillation.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/07-llm-foundation/docs/01-LLMFoundation在AI应用中的职责.md",
+          "title": "01｜模型在 AI 应用中负责什么",
+          "sha256": "82c48ca160b95d3e1509452ccf2bfd5d8e9e1881d76f3f7b37439e86be00cfdc"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/02-TokenContext与LongContext.md",
+          "title": "02｜Token、上下文与长文本：先确定模型实际读到了什么",
+          "sha256": "42a8bab7a27ee2dcf15024afba9e5089fe4b4b7fba9eeb7b5b6956db3a82ef35"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/03-TransformerBlock.md",
+          "title": "03｜Transformer 怎样把 Token 序列变成候选分数",
+          "sha256": "ba18a6c98e01e1ba1778d5e5f80ba801b840e2b1c418c21b8c309ec335cf1318"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/04-Attention与Position.md",
+          "title": "04｜Attention 与位置信息：算一次信息怎样汇入当前位置",
+          "sha256": "8ef4fb39f3293815a43203425c1e68c50bf8aece9045a1860f6ab0d31f70f092"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/05-Generation与Decoding.md",
+          "title": "05｜从候选分数到一段回答：生成与解码",
+          "sha256": "5b53161c728017c0abe38fb17929e0bbae0e1f72d3958a69933a7b607f0b23ba"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/06-KVCache与PrefillDecode.md",
+          "title": "06｜KV Cache 与 Prefill、Decode：为什么少算了，却更占显存",
+          "sha256": "1326f1a83c5ab3c3fb636d588bb90a0281f71279802d6c116e26a381fa29b3df"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/07-ServingEngine与性能.md",
+          "title": "07｜模型服务与性能：把等待、吞吐和显存分开判断",
+          "sha256": "8f94fffca44a70928eade59c864f613ca0c203cfb242a5d2475bac4fdd17827a"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/08-ModelAPI与Selection.md",
+          "title": "08｜模型 API 与选型：接口调用成功以后，还要验证什么",
+          "sha256": "1451d075a6e9578fd62a7d5255df8b2a41a279476f9f1e2a91444ee96acaa789"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/09-Embedding与Reranker.md",
+          "title": "09｜Embedding 与 Reranker：一段文字怎样成为可检索的向量",
+          "sha256": "e0df1ae45e4fa1d418ff41140b6b8594215d39b56445b36b87f5cfbf2e5fee00"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/10-MultimodalFoundation.md",
+          "title": "10｜多模态基础：从看见一张图到给出可验证答案",
+          "sha256": "f2e2e6570ba23411e52fef552f5c53ce995e09d23f37f24ea170e09f77fed14f"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/11-PromptEngineering.md",
+          "title": "11｜Prompt Engineering：把任务写成可检查的输入",
+          "sha256": "bdc44108e20177df00118f141f68caf7867d427d79f583d8aa66e778de12d30f"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/12-Hallucination与干预边界.md",
+          "title": "12｜事实错误与干预边界：什么时候改 Prompt，什么时候需要别的机制",
+          "sha256": "d394bf46b411a0eda48a70850daaaf1c290ef05117955b7250f943e33793333c"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md",
+          "title": "13｜SFT 与 LoRA：模型究竟学了什么，少训练哪些参数",
+          "sha256": "6fa5ac42537879133c6cbe1d3061c730a254719de00f6fe17a8272c002cc0d38"
+        },
+        {
+          "path": "curriculum/07-llm-foundation/docs/14-PostTraining与Distillation.md",
+          "title": "14｜后训练与蒸馏：示范、偏好和奖励分别在教什么",
+          "sha256": "c4d31b850e43164f942f2815ac52c74937f47d9e11b78e35c3fd71164f910c1f"
+        }
+      ],
       "support": [
         "curriculum/07-llm-foundation/review/README.md",
         "curriculum/07-llm-foundation/interview/",
@@ -222,6 +848,9 @@
     {
       "directory": "08-rag",
       "label": "RAG",
+      "review_records": [
+        "guide/audits/rag-clarity-refinement-2026-09-27.md"
+      ],
       "readme": "curriculum/08-rag/README.md",
       "chapter_count": 14,
       "reading_order": [
@@ -240,6 +869,78 @@
         "curriculum/08-rag/docs/13-ScaleCostObservability.md",
         "curriculum/08-rag/docs/14-GraphRAG与AgenticRAG.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/08-rag/docs/01-RAG职责与完整链路.md",
+          "title": "01｜RAG 职责与完整链路：把外部事实变成有依据的回答",
+          "sha256": "3d0f80db93883dbc424b6029506f11043bbbd790076d8c51e725fd8725cabdbd"
+        },
+        {
+          "path": "curriculum/08-rag/docs/02-CorpusGovernance.md",
+          "title": "02｜语料治理：先确定哪些知识可信、有效、可见",
+          "sha256": "562e8e86fa00664cab28eb2eedb6e6128bbbf417e5a2fefd5e4c74a5048f97fb"
+        },
+        {
+          "path": "curriculum/08-rag/docs/03-DocumentProcessing.md",
+          "title": "03｜文档解析：从页面外观恢复可检索的内容",
+          "sha256": "3aaf4e03e8ec1b9c3ce07a720bcc10879d5d1dbb111acf80ed6274acc87c9923"
+        },
+        {
+          "path": "curriculum/08-rag/docs/04-ChunkingDesign.md",
+          "title": "04｜切分设计：怎样保留一个问题需要的完整语义",
+          "sha256": "3cbc5a08abc7bce8fea61da3db53b7327c46cdc88950ecb77df2c26a0382a465"
+        },
+        {
+          "path": "curriculum/08-rag/docs/05-AdvancedChunkStructure.md",
+          "title": "05｜块之间的关系：小块检索，大块补全",
+          "sha256": "0159d500a7694ba4bdf79ec58b06049e5a594f289dbe42a70b9c59fa062422a4"
+        },
+        {
+          "path": "curriculum/08-rag/docs/06-QueryPlanning.md",
+          "title": "06｜查询规划：把用户的话变成可执行的检索请求",
+          "sha256": "62d3eb7f5310076f939b68258578c5b0fc1ebc2d6d50deb8b05900b2f4b6cefb"
+        },
+        {
+          "path": "curriculum/08-rag/docs/07-RetrievalStack.md",
+          "title": "07｜多路检索与融合：让语义和词项互相补位",
+          "sha256": "f14a601d9ee5dfd8797ad09ab435d24ae4c99f0e3b7a2faff912ffb67e2e7bfc"
+        },
+        {
+          "path": "curriculum/08-rag/docs/08-Rerank与CandidateBudget.md",
+          "title": "08｜重排与候选预算：把有限算力用在值得阅读的证据上",
+          "sha256": "a389b75ef60d4c83f207218bf380681754daabeef2bb7e840e48cbed6926e03f"
+        },
+        {
+          "path": "curriculum/08-rag/docs/09-EvidenceDelivery.md",
+          "title": "09｜证据交付：从候选片段到可追溯的答案",
+          "sha256": "0445ac3ee9be49488e95cd790427ffbafad38540db80f5edc1fda2229bbfad63"
+        },
+        {
+          "path": "curriculum/08-rag/docs/10-RetrievalEvaluation.md",
+          "title": "10｜检索评测：分数到底衡量了什么",
+          "sha256": "85ee36cda5b200869bd15f9eb086bafc04e681f76ff41a55c10e16f7f98a91ff"
+        },
+        {
+          "path": "curriculum/08-rag/docs/11-EndToEndQualityEngineering.md",
+          "title": "11｜端到端质量：用证据定位失败，再证明改动有效",
+          "sha256": "11a8aa064c57710a5f099487d37884f7f62a72d960987310b1dea3af1244b1c2"
+        },
+        {
+          "path": "curriculum/08-rag/docs/12-ProductionGovernance.md",
+          "title": "12｜更新、权限与回滚：让用户看到正确版本的合法知识",
+          "sha256": "6e1b3c48dd260c87eb14c421cbf099c1ed6db8d15f7a7283f63484fa9236f62e"
+        },
+        {
+          "path": "curriculum/08-rag/docs/13-ScaleCostObservability.md",
+          "title": "13｜规模、成本与可观测性：让链路能持续运行",
+          "sha256": "a48b519c3716430a7741a9a1de5538bf6dc8207e5b24eaacd34a947070eff969"
+        },
+        {
+          "path": "curriculum/08-rag/docs/14-GraphRAG与AgenticRAG.md",
+          "title": "14｜GraphRAG 与 Agentic RAG：何时需要结构，何时需要继续搜索",
+          "sha256": "53e97107b3d0d09bc7d8e5ff7ebe453f3e17ce52c0fbf55968128be9db79f04b"
+        }
+      ],
       "support": [
         "curriculum/08-rag/review/README.md",
         "curriculum/08-rag/interview/",
@@ -249,6 +950,9 @@
     {
       "directory": "09-agent",
       "label": "Agent",
+      "review_records": [
+        "guide/project/agent-reader-revision.md"
+      ],
       "readme": "curriculum/09-agent/README.md",
       "chapter_count": 24,
       "reading_order": [
@@ -277,6 +981,128 @@
         "curriculum/09-agent/docs/23-ProductionRuntime.md",
         "curriculum/09-agent/docs/24-FrameworkSelection.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/09-agent/docs/01-AgentSystemAndResponsibilities.md",
+          "title": "01. Agent 系统的全貌：模型之外，谁把任务做完",
+          "sha256": "8bda8d29726bf5daac1d2ae356db7eb162ca0d4e58cb5162aacdc229eb296bc8"
+        },
+        {
+          "path": "curriculum/09-agent/docs/02-WorkflowAutonomyAndRuntimeBoundary.md",
+          "title": "02. Workflow、Agent 与自主权：执行角色的边界",
+          "sha256": "73852a206f8226ca18d30711bdaf1ce7049c84cc26f4745dd5037e20ec70a57e"
+        },
+        {
+          "path": "curriculum/09-agent/docs/03-AgentLoopAndExecutionScopes.md",
+          "title": "03. Agent Loop：Session、Run、Turn、Step 与执行事件",
+          "sha256": "98d8b6063720b192f49d1143a7d196ce4abad7e67b8151bb59a2aeae9737f22d"
+        },
+        {
+          "path": "curriculum/09-agent/docs/04-ToolContractAndValidation.md",
+          "title": "04. Tool Contract：工具说明、参数与语义校验",
+          "sha256": "c4005b9c4664871ef16bfc8339e43f4dc45cde67f38ebb6762ec875fe9237022"
+        },
+        {
+          "path": "curriculum/09-agent/docs/05-ToolRegistrationAndDiscovery.md",
+          "title": "05. Tool Registry：工具注册、模型可见说明与按需发现",
+          "sha256": "4fa10952d2f3d5e1b05b4569bc1ced3d9d5657c015dd16b74c56be49f33331a8"
+        },
+        {
+          "path": "curriculum/09-agent/docs/06-ToolExecutionAndFailure.md",
+          "title": "06. Tool Execution：结果回填、错误分类与有限恢复",
+          "sha256": "a125548809c5a43a82f81de8cae25cc15ffd28c9bef90528425bf683da4af747"
+        },
+        {
+          "path": "curriculum/09-agent/docs/07-ToolConcurrencyAndCancellation.md",
+          "title": "07. Tool Control：副作用、并发、取消与进度",
+          "sha256": "770b159af826cb73983a819e0f9695d0f9260344ad519a34c3f23e7fafaf9206"
+        },
+        {
+          "path": "curriculum/09-agent/docs/08-PlanningGoalAndControl.md",
+          "title": "08. Planning / ReAct：计划、目标、停止与预算",
+          "sha256": "f15f695f1ffeab9e9ea17984a1b6143ec87e798fa200e692587fe406f0b6a71d"
+        },
+        {
+          "path": "curriculum/09-agent/docs/09-ContextAssemblyAndCache.md",
+          "title": "09. Context Assembly：上下文编排、缓存与结果外部化",
+          "sha256": "2f0b4be5643b0f7d226f3a9a119f28aa9a8322294c7979c938744c703fa8ed1b"
+        },
+        {
+          "path": "curriculum/09-agent/docs/10-CompactionAndContinuation.md",
+          "title": "10. Context Compaction：压缩、替代历史与继续执行",
+          "sha256": "691864b32ad0e1e046d343b8393ff1f0916f416d7d838fcc97c9e8c57f9641a9"
+        },
+        {
+          "path": "curriculum/09-agent/docs/11-MemoryLifecycle.md",
+          "title": "11. Memory：提取、召回、更新、纠错与遗忘",
+          "sha256": "6ea9d653d5d55816461ae0e43ac43cd15a1a3a4cdfb838e81c1bff1f7b4329aa"
+        },
+        {
+          "path": "curriculum/09-agent/docs/12-StateHistoryAndPersistence.md",
+          "title": "12. State / Persistence：程序怎样记住当前工作",
+          "sha256": "25deb11316bb60a9cfa61dc165c8aa6a836ee243e4c3858ef3cb3e18e46fc7eb"
+        },
+        {
+          "path": "curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md",
+          "title": "13. Checkpoint / Resume：检查点、恢复、分叉与重放",
+          "sha256": "008e0097c14e63e2c0ed52de4db867cad3b1f4bf71fba002a828297767161122"
+        },
+        {
+          "path": "curriculum/09-agent/docs/14-PermissionApprovalAndSandbox.md",
+          "title": "14. Permission / Approval / Sandbox：政策、批准与隔离",
+          "sha256": "2e9efd4b0e8190bcbf397a2a9fec8e80318712d319263bb32dbcf699119bb080"
+        },
+        {
+          "path": "curriculum/09-agent/docs/15-InjectionAndContainment.md",
+          "title": "15. Guardrails：提示注入、秘密保护与风险控制",
+          "sha256": "3b75333cea3fa376839025e7daad961f7d5173618bc38f23fa559e6fe1755aac"
+        },
+        {
+          "path": "curriculum/09-agent/docs/16-MCPArchitectureAndLifecycle.md",
+          "title": "16. MCP：从 Host / Client / Server 到完整协议往返",
+          "sha256": "4fd1b159f6449e88f3314a654b16ac3fb932ce8132ab83926e1fdb9fe66cfea6"
+        },
+        {
+          "path": "curriculum/09-agent/docs/17-SkillsHooksAndExtensions.md",
+          "title": "17. Skills / Hooks / Plugins：能力扩展与生命周期",
+          "sha256": "7b678c026ec6a03c47446627ed4459fac954f24713c64c14d49051421a8e6fb7"
+        },
+        {
+          "path": "curriculum/09-agent/docs/18-RoutingAndProviderResilience.md",
+          "title": "18. Routing：意图、模型适配与供应商容错",
+          "sha256": "cd3fad9de1e28809090a630556cd24b902c4b389ca5cdc5ebb2364076ca13d68"
+        },
+        {
+          "path": "curriculum/09-agent/docs/19-MultiAgentAndA2A.md",
+          "title": "19. Multi-Agent / A2A：内部协作与跨系统任务",
+          "sha256": "52ee7cd5dd2f5df428cec27ea42f5acdaf74d832048870a91cb56f8ea5da325b"
+        },
+        {
+          "path": "curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md",
+          "title": "20. Trace / Replay：记录必要证据，定位具体问题",
+          "sha256": "18e96134c4ced134c0e82449f88c3dae92165abed898f16cbed05dd700d6054c"
+        },
+        {
+          "path": "curriculum/09-agent/docs/21-EvaluationBenchmarkAndImprovement.md",
+          "title": "21. Agent Evaluation、Benchmark 与 Data Flywheel",
+          "sha256": "cd892f1471e75af34ab799a941293f3c0722873632a3f0b62d9bc00e81c12839"
+        },
+        {
+          "path": "curriculum/09-agent/docs/22-CodingAgentDelivery.md",
+          "title": "22. Coding Agent：Repo Understanding → Patch → Test → Verify",
+          "sha256": "f7ad58f3da9753952581bb75a235c76b26d7c69e0e3fa808cb19d71f4fa65676"
+        },
+        {
+          "path": "curriculum/09-agent/docs/23-ProductionRuntime.md",
+          "title": "23. Production Agent：从单进程到可运营执行系统",
+          "sha256": "1f6f628ad4450afa67b84835f346d62b625cf549255a1f5cd07045622c14f126"
+        },
+        {
+          "path": "curriculum/09-agent/docs/24-FrameworkSelection.md",
+          "title": "24. Framework Mapping：按核心语义比较框架与自研",
+          "sha256": "07487ec5d62124922fdc636dbc461ce586430b8cef58071588b2e8704544e37b"
+        }
+      ],
       "support": [
         "curriculum/09-agent/review/README.md",
         "curriculum/09-agent/interview/"
@@ -285,6 +1111,7 @@
     {
       "directory": "10-system-design",
       "label": "System Design",
+      "review_records": [],
       "readme": "curriculum/10-system-design/README.md",
       "chapter_count": 19,
       "reading_order": [
@@ -308,6 +1135,103 @@
         "curriculum/10-system-design/docs/18-ProductionAgentBackend.md",
         "curriculum/10-system-design/docs/19-VerticalAIAgentPatterns.md"
       ],
+      "chapter_metadata": [
+        {
+          "path": "curriculum/10-system-design/docs/01-SystemDesign职责与答题框架.md",
+          "title": "01｜System Design 的职责与完整答题框架",
+          "sha256": "90e042a585913e38fd8cc0d283ad3e7b573a229e376a0361b2cccbd2e69ef391"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/02-Requirement与SLO.md",
+          "title": "02｜Requirement、SLO、Constraint 与 Scope",
+          "sha256": "9779d722c0355ae3c31d6f124677dd20d249b46853e8817e1465227fa97eb87e"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/03-Workload与CapacityEstimation.md",
+          "title": "03｜Workload、Capacity、Hotspot 与数量级估算",
+          "sha256": "677382191505e3f179888e78ca490c4c6d0edb6021563fe7878c1b54c185d7e1"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md",
+          "title": "04｜API、Data Model 与 State Ownership",
+          "sha256": "40bcccae3023faecec37c0fb6f00d000f229d1c49204d616a4cd96df5b192e10"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/05-DataFlow与StateMachine.md",
+          "title": "05｜Sync / Async、Data Flow 与 State Machine",
+          "sha256": "91042639751176b3b77827f1543162c0639db4e00c472b70fdd38ace40942372"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/06-Cache与HotPath.md",
+          "title": "06｜Cache、Hot Path 与 Read / Write Path",
+          "sha256": "a26d4b44d0d3bc53d3e8dddf3c9cc651a9e618f15eb15fcb6e3afde19429fba0"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/07-PartitionRouting与Fanout.md",
+          "title": "07｜Partition、Routing、Fan-out 与 Rebalance",
+          "sha256": "15aecda331b6c71765fd3e79f04ba6f501a20077833f17dc2449a0ddda0b1ef1"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/08-Consistency与Idempotency.md",
+          "title": "08｜Consistency、Idempotency、Transaction 与 Compensation",
+          "sha256": "4bc7cb76c9eeccfddd07a052296272116f0295025f484d9c943cbef56a1824db"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/09-QueueBackpressure与LongRunningTask.md",
+          "title": "09｜Queue、Backpressure 与 Long-running Task",
+          "sha256": "667fa5610aeb38677a09fc3e00124b95d1bda6440ac19026e3db23460c554142"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/10-Reliability与Overload.md",
+          "title": "10｜Timeout、Retry、Failover、Degradation 与 Load Shedding",
+          "sha256": "fcfeafdddcf74ae657d6e8eed1170908e82d0a5612bf3194ce68c1d48a9428cd"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/11-MultiTenancy与Security.md",
+          "title": "11｜Multi-tenancy、Security、Permission 与 Isolation",
+          "sha256": "80356d7fb9b9e3d1b671b584396c4ece61c8e789f4d6faa855c8496f58f3b426"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/12-ObservabilityEvaluation与Evolution.md",
+          "title": "12｜Observability、Evaluation、Cost 与 Evolution",
+          "sha256": "bb921797f9f91059c575ba2a4fc4381e61d7bbb51fa83cfccc95cfb117e4f40c"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/13-HighConcurrencyTransactionalSystems.md",
+          "title": "13｜High-concurrency Transactional Systems：秒杀、库存、Rate Limit、Token Refresh",
+          "sha256": "06bba1b0ba2e372e4c8b858ff566883145472cca04813c2ad1280cb9e456e788"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/14-RealtimeReadHeavySystems.md",
+          "title": "14｜Realtime Read-heavy Systems：排行榜、Feed、Autocomplete、Notification",
+          "sha256": "d79d46761ab132fcc800485a55af477671e57d9438cc0323177cc203ae0ab9cd"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/15-LargeScaleDataProcessingSystems.md",
+          "title": "15｜Large-scale Data & Processing：10TB Storage、Migration、Dedup、Large-file",
+          "sha256": "3e38788d05259077e677ce43c84229e7908c7248e2985116dbddd3921dfa4bfa"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/16-LLMGateway与MultiTenantAIPlatform.md",
+          "title": "16｜LLM Gateway 与 Multi-tenant AI Platform",
+          "sha256": "d9e2aa87c774ca797222de4303e316d12be0cadd49d742bdbc1438537a33351a"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/17-EnterpriseRAGSystemDesign.md",
+          "title": "17｜Enterprise / Large-scale RAG System Design",
+          "sha256": "e57850dd4c385f9071e4643cd7ad1b39b608faa72efb2521c2178441228fdc08"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/18-ProductionAgentBackend.md",
+          "title": "18｜Production Agent Backend 与 Long-running Agent",
+          "sha256": "c2f39f28ddd0f66d4d7fadd58d2915d9bee0e0defa26d6bf6796b589cb0870c3"
+        },
+        {
+          "path": "curriculum/10-system-design/docs/19-VerticalAIAgentPatterns.md",
+          "title": "19｜Vertical AI Agent Patterns：Analysis、Customer Service、Multimodal、Game、Content",
+          "sha256": "845c6bab0e263702649a89c41b64c50526a530f6e2d1d6e780f8aed801d65a92"
+        }
+      ],
       "support": [
         "curriculum/10-system-design/review/README.md",
         "curriculum/10-system-design/interview/"
@@ -325,6 +1249,35 @@
         "products/agent/claude-code/03-tool-lifecycle.md",
         "products/agent/claude-code/04-engineering-evaluation.md"
       ],
+      "reading_order": [
+        "products/agent/claude-code/01-context-lifecycle.md",
+        "products/agent/claude-code/02-memory-lifecycle.md",
+        "products/agent/claude-code/03-tool-lifecycle.md",
+        "products/agent/claude-code/04-engineering-evaluation.md"
+      ],
+      "chapter_metadata": [
+        {
+          "path": "products/agent/claude-code/01-context-lifecycle.md",
+          "title": "01. 上下文生命周期｜模型这一轮究竟看见什么",
+          "sha256": "8708649f2deeda4c7f4122d1688b11f87e161c28216b54806c0b347b55723a9c"
+        },
+        {
+          "path": "products/agent/claude-code/02-memory-lifecycle.md",
+          "title": "02. 记忆生命周期｜什么值得留下，下一次怎样正确使用",
+          "sha256": "339ebc3b67d33d8c1533271df3fc65ccda36480433f43809ede6ad3d77fc2a5d"
+        },
+        {
+          "path": "products/agent/claude-code/03-tool-lifecycle.md",
+          "title": "03. 工具生命周期｜从知道能力到确认动作完成",
+          "sha256": "85b3e8fdf48e1109ede805df40d466454d767c081ef4fb9a0b0302ad602ae23a"
+        },
+        {
+          "path": "products/agent/claude-code/04-engineering-evaluation.md",
+          "title": "04. 恢复、协作与验证｜怎样证明长任务做对了",
+          "sha256": "5a43deb4b1caf1019978db098450570fc38c5a1d3ff15db18ee9bc62434952ed"
+        }
+      ],
+      "support": [],
       "source_repository": "studyzhige-ui/claude-code-source-private",
       "source_commit": "58231dcce408f805c645cfbc352d2876b517223b",
       "private_mirror": true
@@ -339,6 +1292,35 @@
         "products/agent/codex/03-tool-lifecycle.md",
         "products/agent/codex/04-engineering-evaluation.md"
       ],
+      "reading_order": [
+        "products/agent/codex/01-context-lifecycle.md",
+        "products/agent/codex/03-tool-lifecycle.md",
+        "products/agent/codex/02-memory-lifecycle.md",
+        "products/agent/codex/04-engineering-evaluation.md"
+      ],
+      "chapter_metadata": [
+        {
+          "path": "products/agent/codex/01-context-lifecycle.md",
+          "title": "上下文｜一次任务怎样变成连续的模型请求",
+          "sha256": "23929e67281151e325d9a7182ee0d87a0f44ae98b54cd5494e0ffef106e45c19"
+        },
+        {
+          "path": "products/agent/codex/02-memory-lifecycle.md",
+          "title": "记忆｜历史怎样变成可以复用、也可以纠正的经验",
+          "sha256": "d4d282a137337a519075347297c82491e2c4376294e27d5bf13bed36f625b18c"
+        },
+        {
+          "path": "products/agent/codex/03-tool-lifecycle.md",
+          "title": "工具｜从模型提出动作，到受控执行与结果回填",
+          "sha256": "1f9eec6ee7bcede7fef788b34ed8995d2f59636e41a54165bf44a9979e44b727"
+        },
+        {
+          "path": "products/agent/codex/04-engineering-evaluation.md",
+          "title": "工程与评测｜任务怎样持续运行，怎样证明真的完成",
+          "sha256": "a16b2d17f419dc9dd8d009c6fcb1feecabe861ba126bcb874f2606c4c1f87e77"
+        }
+      ],
+      "support": [],
       "source_repository": "openai/codex",
       "source_commit": "67a709665ac7b50311b93e32612c9a8281684787",
       "private_mirror": false
@@ -352,6 +1334,37 @@
         "products/agent/deepseek-harness/02-memory-lifecycle.md",
         "products/agent/deepseek-harness/03-tool-lifecycle.md",
         "products/agent/deepseek-harness/04-engineering-evaluation.md"
+      ],
+      "reading_order": [
+        "products/agent/deepseek-harness/01-context-lifecycle.md",
+        "products/agent/deepseek-harness/02-memory-lifecycle.md",
+        "products/agent/deepseek-harness/03-tool-lifecycle.md",
+        "products/agent/deepseek-harness/04-engineering-evaluation.md"
+      ],
+      "chapter_metadata": [
+        {
+          "path": "products/agent/deepseek-harness/01-context-lifecycle.md",
+          "title": "01｜上下文生命周期：模型这一轮究竟看见什么",
+          "sha256": "99aedbc97fc2ed56009249c661f2a998207b087820f49cb78736e13d73f4b863"
+        },
+        {
+          "path": "products/agent/deepseek-harness/02-memory-lifecycle.md",
+          "title": "02｜记忆怎样跨过一轮对话，又在哪些地方失效",
+          "sha256": "b7ad14b1bad8e02dad617be55fcffd20c2132e9511f391c4f7eab1423d0ee927"
+        },
+        {
+          "path": "products/agent/deepseek-harness/03-tool-lifecycle.md",
+          "title": "03｜一次工具调用怎样从建议变成可检查的执行",
+          "sha256": "6fcc6a1b07705c370acae10dd62e00db2b87eb94b28bc4619fb5285b32e1511f"
+        },
+        {
+          "path": "products/agent/deepseek-harness/04-engineering-evaluation.md",
+          "title": "04｜中断以后怎样安全继续，又怎样证明任务真的完成",
+          "sha256": "c9dd13b213260e40e62ddd492e3a544f2610d16002c998cd312fa55c35f960c6"
+        }
+      ],
+      "support": [
+        "products/agent/deepseek-harness/labs/README.md"
       ],
       "source_repository": "deepseek-ai/deepseek-harness",
       "source_commit": "477b4f420553e8a52c2fbccc464d7561b239c443",
@@ -367,12 +1380,91 @@
         "products/agent/deer-flow/03-tool-lifecycle.md",
         "products/agent/deer-flow/04-engineering-evaluation.md"
       ],
+      "reading_order": [
+        "products/agent/deer-flow/01-context-lifecycle.md",
+        "products/agent/deer-flow/02-memory-lifecycle.md",
+        "products/agent/deer-flow/03-tool-lifecycle.md",
+        "products/agent/deer-flow/04-engineering-evaluation.md"
+      ],
+      "chapter_metadata": [
+        {
+          "path": "products/agent/deer-flow/01-context-lifecycle.md",
+          "title": "01｜上下文：从会话状态到模型真正看到的内容",
+          "sha256": "431ff8b255fd06974b5d682f2bf4d5a33994d7d49ba3e761d9d484a8106ec8f8"
+        },
+        {
+          "path": "products/agent/deer-flow/02-memory-lifecycle.md",
+          "title": "02｜记忆：从一次对话到可维护的长期事实",
+          "sha256": "c473dab6fdb07633fb75695135c5185164b03dabf8423d840449cfc4a01170ee"
+        },
+        {
+          "path": "products/agent/deer-flow/03-tool-lifecycle.md",
+          "title": "03｜工具：从可发现能力到受控副作用",
+          "sha256": "36b6a531241207ff4e7a5b5481c75f7e683808d27cdb7f072e1ba557144e080b"
+        },
+        {
+          "path": "products/agent/deer-flow/04-engineering-evaluation.md",
+          "title": "04｜工程与评测：怎样继续、恢复并证明结果",
+          "sha256": "971527acb46787d0222999acf1a1b94c950e8f64174b7511926a7b259d5d5684"
+        }
+      ],
+      "support": [
+        "products/agent/deer-flow/review/README.md",
+        "products/agent/deer-flow/labs/README.md"
+      ],
       "source_repository": "bytedance/deer-flow",
       "source_commit": "e2feca1e567d9bafce657de8ad8bc668bd7ad513",
       "private_mirror": false
     }
   ],
   "coding_chapters": 9,
+  "coding_metadata": [
+    {
+      "path": "practice/coding/docs/01-programming-fundamentals.md",
+      "title": "01｜程序基础：让 Python 一步一步替你做事",
+      "sha256": "6257ebddaf21edf250f3294e2dbf836c6f033148405c74407b3309748b4a17a5"
+    },
+    {
+      "path": "practice/coding/docs/02-python-coding-basics.md",
+      "title": "02｜数据类型与容器：给数据选一个合适的组织方式",
+      "sha256": "6d718cd8e2db57e3d3d778231f9fc2aa6e8d8a68a7cf3b25bf651fc2c96b7be7"
+    },
+    {
+      "path": "practice/coding/docs/03-basic-exercises.md",
+      "title": "03｜基础练习：读题、实现、测试、解释",
+      "sha256": "15d0aa43368fe347ade2243aa2a576d1b0da674af2eabae378cf91e734805408"
+    },
+    {
+      "path": "practice/coding/docs/04-acm-input-output.md",
+      "title": "04｜完整输入输出：把数据协议翻译成程序",
+      "sha256": "94bcc23d18890fbc0c4bea464855ed09e275f8925761f6b68bf25bd363956db4"
+    },
+    {
+      "path": "practice/coding/docs/05-data-structures.md",
+      "title": "05｜数据结构：从操作需求到结构选择",
+      "sha256": "141303a89187189498fa2f25a1c8d1ada58a73c1919efcced8decaf38be70ecf"
+    },
+    {
+      "path": "practice/coding/docs/06-problem-solving-and-algorithms.md",
+      "title": "06｜算法推导：从正确做法到减少重复工作",
+      "sha256": "3e6738ba9adbef1b97cad56ff52e0cff9a5722e5bd649c957e4116d89f2f7223"
+    },
+    {
+      "path": "practice/coding/docs/07-hot100.md",
+      "title": "07｜Hot100 综合训练：把专题知识变成可调用能力",
+      "sha256": "acd7293ac5f67852a62830d12045ba53ab025943071ffb1b6bb22431caaefd81"
+    },
+    {
+      "path": "practice/coding/docs/08-online-assessment.md",
+      "title": "08｜在线笔试：把算法放进完整交付约束",
+      "sha256": "b32be8ad6e2aafbfd7c910b6f4aa793b9ea11dc310d78e0e2471add8aa8d120e"
+    },
+    {
+      "path": "practice/coding/docs/09-ai-coding.md",
+      "title": "09｜AI Coding：从可复现失败到可验证交付",
+      "sha256": "8ee6053ea40d1b4a21728328f396c04a770bc2c8bfdbe35a0d9f473c236c956d"
+    }
+  ],
   "references": [
     "references/agent/README.md",
     "references/backend-engineering/README.md",

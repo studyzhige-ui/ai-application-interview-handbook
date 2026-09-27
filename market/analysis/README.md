@@ -54,4 +54,4 @@
 | Agent Harness / Runtime | 44 | 166 | 741 | 30 | 35 |
 | System Design | 24 | 71 | 81 | 3 | 24 |
 
-当前 Curriculum 状态以 `interview/canonical/progress.md` 与 `guide/knowledge-map.md` 为准；当前 Gap 见 `market/analysis/knowledge-gap-analysis.md`，Phase 2B 历史 Gap 见 `market/analysis/history/`。本自动生成 README 不重复维护易过期的 Market 总量或课程下一步。
+当前 Curriculum 范围与阅读顺序以 `guide/navigation-index.md` 为准，验证边界见 `guide/audits/final-quality-audit.md`；`interview/canonical/progress.md` 只记录冻结审核覆盖；当前 Gap 见 `market/analysis/knowledge-gap-analysis.md`，Phase 2B 历史 Gap 见 `market/analysis/history/`。本自动生成 README 不重复维护易过期的 Market 总量或课程下一步。

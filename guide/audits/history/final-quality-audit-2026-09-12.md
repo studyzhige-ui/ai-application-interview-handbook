@@ -1,10 +1,10 @@
 # Final Quality Audit｜v1.0 终局质量审计
 
-> **当前Agent为24章。** 旧23章/184篇结论为历史记录；本轮185篇结构及Agent保留检查见[修订记录](../project/agent-reader-revision.md)，不以历史PASS替代新版本教学判断。
+> **当前Agent为24章。** 旧23章/184篇结论为历史记录；本轮185篇结构及Agent保留检查见[修订记录](../../project/agent-reader-revision.md)，不以历史PASS替代新版本教学判断。
 
-> **2026-09-17读者修订说明：** 先前的完成/深度结论不足以证明初学者可理解性。main的Agent23章已依据实际读者反馈重写，保留章末三件套并补官方/源码过程；本轮验收范围见[阅读修订](../project/agent-reader-revision.md)。历史PASS保留为记录，不替代新的学习效果测试。
+> **2026-09-17读者修订说明：** 先前的完成/深度结论不足以证明初学者可理解性。main的Agent23章已依据实际读者反馈重写，保留章末三件套并补官方/源码过程；本轮验收范围见[阅读修订](../../project/agent-reader-revision.md)。历史PASS保留为记录，不替代新的学习效果测试。
 
-[← Handbook 总目录](../../README.md) · [十板块知识地图](../knowledge-map.md) · [术语表](../terminology-glossary.md) · [正文深度审计](content-depth-audit.md)
+[← Handbook 总目录](../../README.md) · [十板块知识地图](../../knowledge-map.md) · [术语表](../../terminology-glossary.md) · [正文深度审计](../content-depth-audit.md)
 
 更新日期：2026-09-12
 
@@ -258,7 +258,7 @@ System Design
 
 终审发现仓库虽然局部用词已经稳定，但缺少一个跨十板块的正式冲突消解入口。
 
-已新增：[`terminology-glossary.md`](../terminology-glossary.md)。
+已新增：[`terminology-glossary.md`](../../terminology-glossary.md)。
 
 统一的高风险术语包括：
 

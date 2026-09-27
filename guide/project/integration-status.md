@@ -1,21 +1,27 @@
-# Repository Integration Status｜当前仓库整合状态
+# Repository Integration｜课程、产品与实践的集成入口
 
-[← Handbook 总目录](../../README.md) · [Knowledge Map](../knowledge-map.md) · [Progress](../../interview/canonical/progress.md)
+[← Handbook](../../README.md) · [学习资源索引](../navigation-index.md) · [质量与验证](../audits/final-quality-audit.md)
 
-> **状态：✅ 十个一级模块已完成整合与第一版系统教材建设。** 本文件不再作为“Python 迁移进度”日志，而记录当前仓库的一体化状态。
+本页提供整合后的职责关系、阅读入口和验证边界。模块专项修订保存在本目录与[审计目录](../audits/README.md)，不把首版完成记录当成后续全部版本的质量结论。
 
-## 当前十板块
+## 八层职责
 
-[Python](../../curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-fastapi/README.md) → [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) → [MySQL](../../curriculum/04-mysql/README.md) → [Redis](../../curriculum/05-redis/README.md) → [Vector DB](../../curriculum/06-vector-db/README.md) → [LLM Foundation](../../curriculum/07-llm-foundation/README.md) → [RAG](../../curriculum/08-rag/README.md) → [Agent](../../curriculum/09-agent/README.md) → [System Design](../../curriculum/10-system-design/README.md)
+Curriculum 建立通用模型；Products 在固定源码里对照实现；Practice 将理解转成代码与开发操作。Market 保存招聘证据，Interview 归一化面试能力，References 约束技术事实；Guide 维护导航与审查，Tools 负责可复现生成和检查。
 
-## Integration 已完成的内容
+## 维护中的边界
 
-- 原独立 Python Handbook 已迁入并升级为 13-block Foundation；
-- FastAPI 与 AI Backend Engineering 已从课程骨架补成正式教材；
-- Data / LLM / RAG / Agent 模块完成粒度与深度统一；
-- System Design 作为最终 Integration 模块完成；
-- Market HUMAN-A 持续监测；当前总量以 [`market/README.md`](../../market/README.md) 为准；
-- Canonical Frequency 使用冻结 `S001–S279 / 235 ACTIVE` 基线，不因教材重组或单日新增自动改变；
-- README / Knowledge Map / Progress / Module Index 使用统一状态口径。
+正文、Review、Interview、labs/examples 在模块入口相互衔接。跨模块顺序由前置关系决定，模块内部顺序以其 README 为准。课程目录完整不等于实验运行、内容审查或生产验证已经完成。
 
-历史 Python 独立仓库可以继续作为历史版本，但本仓库是当前 AI Application Interview Handbook 的主维护入口。
+面经统计继续使用 `S001–S279 / 235 ACTIVE` 冻结基线；市场总量以[Market](../../market/README.md)为准。冻结的[Canonical 覆盖记录](../../interview/canonical/progress.md)不承担当前课程进度。
+
+## 发布依据
+
+从最新 `main` 读取受影响文件，只合并经过检查的差异。生成文件与生成源一起更新，合并后再次核验。分支完成任务后清理；不因名称像旧分支就丢弃未保留的成果。具体外围同步与分支核对见[2026-09-28 审查记录](../audits/peripheral-sync-2026-09-28.md)。
+
+<!-- current-scope:start -->
+## 正式学习主线
+
+[Python](../../curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-fastapi/README.md) → [MySQL](../../curriculum/04-mysql/README.md) → [Redis](../../curriculum/05-redis/README.md) → [Backend](../../curriculum/03-backend-engineering/README.md) → [Vector DB](../../curriculum/06-vector-db/README.md) → [LLM Foundation](../../curriculum/07-llm-foundation/README.md) → [RAG](../../curriculum/08-rag/README.md) → [Agent](../../curriculum/09-agent/README.md) → [System Design](../../curriculum/10-system-design/README.md)
+
+课程合计 175 篇；Products 与 Coding 作为独立轨道。正文标题、阅读顺序、配套入口与内容指纹见[机器目录](../navigation-index.json)。
+<!-- current-scope:end -->

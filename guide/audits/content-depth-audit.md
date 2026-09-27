@@ -1,57 +1,40 @@
-# Curriculum Content Depth Audit｜正文深度最终口径
+# Curriculum Content Depth｜验收标准与模块证据
 
-> **2026-09-27：** MySQL 已重组为 19 章，Redis 已重组为 18 章；十模块当前共 175 个正文知识块。结构计数只描述当前仓库，不以历史 PASS 或文件大小证明读者理解。MySQL / Redis 修订范围分别见对应 project 记录。
+[← Handbook](../../README.md) · [学习资源索引](../navigation-index.md) · [粒度与边界](curriculum-granularity-audit.md) · [质量入口](final-quality-audit.md)
 
-[← Handbook 总目录](../../README.md) · [Knowledge Map](../knowledge-map.md) · [Granularity Audit](curriculum-granularity-audit.md)
-
-> 当前十个一级模块共 **175 个正文知识块**。本文件统一记录完成状态；文件大小只用于发现异常，不作为质量结论。
+正文深度由读者能否建立模型、推演过程和识别边界判断，不由字数、标题数、章节数或文件大小决定。下面的记录入口指出“在哪里查看该次审查”，不是统一 PASS 标签。
 
 ## 验收标准
 
-一个知识块应覆盖其主题所需要的大部分：
+一个知识块围绕可独立理解的问题展开：先说明为什么需要，再解释规则和机制，用给足输入的例子追踪过程，展示失败条件与取舍，最后以小结、口述、易错点和默认折叠自测收束。不同主题按需要组织，不机械套相同章节模板。
 
-```text
-为什么需要
-→ 准确定义 / Mental Model
-→ 机制 / 数据流 / 算法
-→ Failure / Trade-off
-→ Production / AI Application 场景
-→ 模块边界
-→ 面试表达 / 易错点 / 深挖
-→ 折叠自测
-```
+简单主题可以较短；复杂子系统只有概览或字段清单不能算讲透。代码检查、结构检查和阅读审查分别记录；课程示例、真实服务与生产实验分开报告。
 
-窄主题可以较短；大型 Production 子系统如果只有概览则不能通过。
+## 如何读取专项记录
 
-## 当前状态
+先看记录的基线、覆盖章节、保留与修改判断，再看测试环境和未验证项。一个旧稿快照、一次链接检查或局部解释修订，都不能冒充整门课程重验。System Design 没有本轮独立专项复验记录时，明确保留这个限制，不沿用旧版绿色状态。
 
-| 模块 | Blocks | Numbering | Quality Status |
-|---|---:|---|---|
-| [Python Foundation](../../curriculum/01-python/README.md) | 13 | ✅ `01–13` | ✅ PASS |
-| [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | ✅ `01–16` | ✅ PASS |
-| [AI Backend Engineering](../../curriculum/03-backend-engineering/README.md) | 22 | ✅ `01–22` | ✅ PASS |
-| [MySQL](../../curriculum/04-mysql/README.md) | 19 | ✅ `01–19` | ✅ PASS |
-| [Redis](../../curriculum/05-redis/README.md) | 18 | ✅ `01–18` | ✅ PASS |
-| [Vector Database](../../curriculum/06-vector-db/README.md) | 16 | ✅ `01–16` | ✅ PASS |
-| [LLM Foundation（应用工程深度）](../../curriculum/07-llm-foundation/README.md) | 14 | ✅ `01–14` | ✅ PASS |
-| [RAG](../../curriculum/08-rag/README.md) | 14 | ✅ `01–14` | ✅ PASS |
-| [Agent](../../curriculum/09-agent/README.md) | 24 | ✅ `01–24` | ✅ PASS |
-| [System Design](../../curriculum/10-system-design/README.md) | 19 | ✅ `01–19` | ✅ PASS |
+## 历史与后续
 
-**当前正文总量：175 blocks。**
+Python 的基础覆盖整改、MySQL 与 Redis 的 reader-first 重组、Agent 的协议与扩展分章等历史事实保留在各自项目记录。它们说明内容演进，不改变冻结的面经统计。
 
-## 验收历史说明
+后续修订遵循“确定认知闭环 → 修改正文与配套 → 检查示例和导航 → 内容审查 → 记录适用范围”。学习反馈继续进入下一次修订，不以既有完成标记阻止改进。
 
-- Python：保留 v1 主干后做 Canonical Coverage / Depth Remediation；
-- FastAPI / AIBE / System Design：首版即按当前粒度和深度标准建设；
-- Redis：24→18 完成 reader-first 重组并做精准终审；Vector DB / LLM / RAG 保留既有颗粒度整改结论；
-- MySQL：23→19 完成 reader-first 重组，保留 SQL、索引、事务、恢复与规模演进主线；
-- Agent Harness：47→23 完成粒度收敛与深写；随后为分离 MCP 协议生命周期与 Skills / Hooks / Extensions 扩展生命周期调整为 24 章，并重新核对内容去向与证据。
+<!-- current-scope:start -->
+## 课程范围与证据索引
 
-## 后续规则
+| 顺序 | 模块 | 正文 | 专项记录入口（按记录自身范围） |
+|---:|---|---:|---|
+| 01 | [Python](../../curriculum/01-python/README.md) | 13 | [Python Reader Revision｜读者可理解性与课程重组记录](../project/python-reader-revision.md) |
+| 02 | [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | [FastAPI 核心范围与表达复核｜2026-09-26](../project/fastapi-core-scope-review-2026-09-26.md) · [FastAPI｜递进落点与真人面经校验记录](../project/fastapi-interview-alignment-2026-09-26.md) |
+| 03 | [MySQL](../../curriculum/04-mysql/README.md) | 19 | [MySQL 读者视角重组记录｜2026-09-27](../project/mysql-reader-revision-2026-09-27.md) |
+| 04 | [Redis](../../curriculum/05-redis/README.md) | 18 | [Redis｜从零基础阅读过程重组课程](../project/redis-reader-restructure-2026-09-27.md) |
+| 05 | [Backend](../../curriculum/03-backend-engineering/README.md) | 22 | [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md) |
+| 06 | [Vector DB](../../curriculum/06-vector-db/README.md) | 16 | [Vector DB Reader Revision｜向量数据库模块维护记录](../project/vector-db-reader-revision.md) |
+| 07 | [LLM Foundation](../../curriculum/07-llm-foundation/README.md) | 14 | [LLM Foundation｜讲解清晰度精修与验收](../project/llm-foundation-clarity-refinement-2026-09-27.md) |
+| 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | [RAG｜讲解清晰度精修验收](rag-clarity-refinement-2026-09-27.md) |
+| 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | [Agent 内容保留、教学修订与发布记录](../project/agent-reader-revision.md) |
+| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 无本轮独立专项复验记录；不继承旧版 PASS |
 
-```text
-先定认知闭环 → 写正文 → QA 找异常 → 人工复核 → 再标记完成
-```
-
-自动检查只负责发现异常，不能代替人工判断。
+记录入口不自动授予通过状态；需要查看其基线、修改范围、实际检查和未验证项目。
+<!-- current-scope:end -->

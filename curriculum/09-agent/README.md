@@ -185,7 +185,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canoni
 
 1. **第一遍：建立因果链。** 按 `docs/01 → 24` 连续阅读，不按高频题跳章。
 2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：进入成熟实现。** 进入 [Agent Products](../../products/agent/README.md)，选择 Codex、Claude Code、DeepSeek Harness、DeerFlow 中的一套或多套，按 Context → Memory → Tool → Engineering & Evaluation 连续阅读，把通用概念映射到真实源码。
+3. **第三遍：进入成熟实现。** 进入 [Agent Products](../../products/agent/README.md)，选择 Codex、Claude Code、DeepSeek Harness、DeerFlow 中的一套或多套，按各产品 README 的实际阅读主线连续阅读（Codex 为上下文 → 工具 → 记忆 → 工程与评测），把通用概念映射到真实源码。
 4. **第四遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答，并把成熟产品源码实现作为工程例证。
 5. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
 

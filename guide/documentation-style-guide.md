@@ -1,6 +1,6 @@
 # Documentation Style Guide｜README 与状态描述规范
 
-[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Final Quality Audit](audits/final-quality-audit.md) · [Terminology Glossary](terminology-glossary.md) · [Progress](../interview/canonical/progress.md)
+[← Handbook 总目录](../README.md) · [Knowledge Map](knowledge-map.md) · [Final Quality Audit](audits/final-quality-audit.md) · [Terminology Glossary](terminology-glossary.md) · [Canonical 冻结覆盖](../interview/canonical/progress.md)
 
 > 目标：让任何人打开任意一级模块或核心状态页，都能使用同一种信息架构理解“这是什么、职责是什么、从哪里开始、边界在哪里”。
 
@@ -57,10 +57,11 @@ README 采用稳定陈述式语言，优先写：
 状态使用名词化、可核验的元数据，而不是过程叙事：
 
 ```text
-课程版本：V1
-教材状态：✅ 完整
-统计基线：S001–S279
-资料核验日期：2026-09-11
+课程范围：由正式文件生成的正文清单
+检查对象：明确到路径、提交或固定版本
+验证范围：结构 / 阅读审查 / 示例 / 真实服务分别记录
+统计基线：S001–S279（冻结）
+资料核验日期：记录实际核验日期，不以文案修改日期代替
 ```
 
 不要写成：
@@ -75,26 +76,11 @@ README 采用稳定陈述式语言，优先写：
 
 `guide/project/` 与 `guide/audits/` 的职责本身就是记录历史演进与审计，因此可以描述迁移、修订和历史状态；但其 README 仍应先定义“这个目录是什么”，具体过程进入目录中的记录文件。
 
-## 一级模块 README 固定结构
+## 一级模块 README 必要信息
 
-```text
-# Module｜一句话角色
-上一模块 · Handbook 总目录 · Learning Path · 下一模块
-课程版本 / 教材规模 / Canonical / Source Coverage
+模块入口让读者看懂任务、必要前置、阅读主线、正文入口、配套练习和边界即可，不规定十个固定栏目。已有清楚的五段主线不必扩成治理清单；内容多时用表格帮助选择，不堆叠版本、热度和完成徽章。
 
-1. 这个模块解决什么
-2. 在十板块中的位置
-3. 固定课程原则
-4. 正式学习主线
-5. 正式课程目录
-6. HUMAN-A 怎样影响本模块
-7. 模块边界
-8. Review / Interview / Evidence 入口
-9. 推荐学习方式
-10. 教材状态
-```
-
-- Learning Path 是推荐使用方式，不是模块元数据；一级模块 README / Review README 只保留简洁入口，不写死 Week / Session，避免绑定某一种学习节奏。
+页首保留总目录、上一模块与下一模块的简洁导航；章内顺序按知识依赖，不按路径数字自动重排。Review、Interview、labs/examples 只在实际存在时链接。Learning Path 提供可选学习节奏，不在模块与 Review 中写死 Week / Session。
 
 ## Review README 固定结构
 
@@ -107,22 +93,23 @@ README 采用稳定陈述式语言，优先写：
 ## 根 README / Knowledge Map
 
 - 十个一级模块名称必须直接可点击；
-- 所有模块使用同一列信息：角色、Blocks、Canonical、状态；
+- 同一张表内的列含义一致；根入口优先保留职责与可点击模块，数量汇总由文件生成。Canonical 仅在需要说明冻结复习权重时列出，不要求所有表都有状态徽章；
 - 根 README 只定义仓库、信息架构、主要入口和层级关系，不写迁移过程；
 - 详细内容进入模块 README。
 
-## 状态源优先级
+## 事实来源按问题区分
 
-```text
-当前仓库文件
-> Progress / Knowledge Map / Module README
-> 历史审计记录
-> 聊天摘要 / 旧 PR 描述
-```
+实际文件决定内容范围；`guide/learning-order.json` 决定跨模块顺序，各模块 README 决定章内主线。`guide/navigation-index.json` 是可重新生成的目录和正文指纹，不是另一份手工真相。
+
+源码行为认对应固定提交；技术版本认对应资料记录；Canonical 认冻结审核基线。专项审查的通过结论只适用于记录中的文件与环境。聊天摘要、旧 PR 描述与旧绿色状态不能覆盖这些事实来源。
 
 ## 同步规则
 
-模块状态改变时，至少核验：根 README、模块 README、Review README、Knowledge Map、Progress、Module Index、Canonical README、自动生成 Analysis README 的生成源、本地 Markdown 链接，以及是否需要更新 Final Quality Audit / Terminology Glossary 中的跨模块边界。
+修改课程后，核对模块 README、Review、Interview、实验与资料入口，再检查根 README、课程首页、知识地图、学习路线、术语表、质量总览和集成状态。更新正文数量、标题或顺序时运行 `python tools/sync_outer_navigation.py --apply`，并以 `--check` 确认生成结果没有漂移。
+
+全仓 Markdown 只读扫描与生成写入范围必须分开：扫描课程、产品、实践、资料、治理和历史链接，不意味着允许生成器改写这些正文。历史记录只能修复移动后的导航或补充明确的适用边界，不把今天的数字写回旧事实。
+
+只有面经审核基线真的改变时才更新 Canonical 和对应分析生成源；普通课程修订必须保持冻结统计。合并前重新核对 `main`，按文件差异保留并行成果；后继稿替代旧分支时记录确切提交和覆盖证据。
 
 ## 正文可理解性与证据规则
 
