@@ -6,7 +6,7 @@
 
 ## 学习前提与模块位置
 
-能够读懂简单的输入、输出、列表与函数，就可以开始阅读。矩阵只用于说明“多少个位置、每个位置多少个数”，相关形状和计算会在使用处解释。正文的三个可运行示例使用 Python 标准库；Python 是便于验算的示例选择，不是模型机制只能用 Python 实现。
+能够读懂简单的输入、输出、列表与函数，就可以开始阅读。向量、矩阵形状、加权变换与概率计算会在首次使用处通过小例子解释，不要求先修完整的线性代数或模型训练课程。正文的三个可运行示例使用 Python 标准库；Python 是便于验算的示例选择，不是模型机制只能用 Python 实现。
 
 课程顺序以 [学习顺序清单](../../guide/learning-order.json) 为准：Python、FastAPI、MySQL、Redis、Backend、Vector DB、LLM Foundation、RAG、Agent、System Design。目录编号是稳定路径，不等于学习次序。
 
@@ -28,7 +28,7 @@ Vector DB 已建立“向量如何比较与检索”的基本模型。本模块�
 
 第一次顺序阅读正文。每章先理解输入、动作与结果，再独立完成章末任务；答案默认折叠，面试表达直接展示。例子中的订单、价格、容量配置和评测数据均为教学假设，不代表真实生产结果。
 
-第二次进入 [Review：重建机制与综合判断](review/README.md)，尝试不看正文解释新的条件。需要实际验算时，使用 [机制小实验](labs/README.md)：代码直接从正文提取，不另维护一套实现。
+第二次进入 [Review：重建机制与综合判断](review/README.md)，尝试不看正文解释新的条件。需要实际验算时，使用 [机制小实验](labs/README.md)：三个函数直接从正文提取，新增数值表也由测试回读核对，不另维护一套正文算法。
 
 表达训练分别使用 [高频面试题](interview/高频面试题.md)、[面试易错点](interview/面试易错点.md) 和 [面试前速查表](interview/面试前速查表.md)。速查材料用于唤起已学知识，不代替第一次阅读。
 
@@ -46,6 +46,6 @@ Vector DB 已建立“向量如何比较与检索”的基本模型。本模块�
 
 [LLM Foundation References](../../references/llm-foundation/README.md) 按问题组织论文、官方文档及适用版本。教学以因果 Decoder 文本生成和标准全注意力 KV 缓存为主要模型，其他架构在需要处说明差异，不把示意图当成所有模型的统一实现。
 
-[Canonical Questions](../../interview/canonical/llm-foundation.md) 保存正式题目主责和冻结统计；正式面经在 [Market](../../market/README.md)。来源追溯、阅读范围、版本核验和修改稿验收见 [模块维护记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md)，不以历史 PASS 代替对正文的理解检查。
+[Canonical Questions](../../interview/canonical/llm-foundation.md) 保存正式题目主责和冻结统计；正式面经在 [Market](../../market/README.md)。来源追溯、阅读范围、版本核验和修改稿验收见 [系统优化记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md) 与 [讲解清晰度验收记录](../../guide/project/llm-foundation-clarity-refinement-2026-09-27.md)。这些记录说明实际检查范围，不代替阅读理解验收。
 
 下一环：[RAG](../08-rag/README.md)。

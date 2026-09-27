@@ -30,8 +30,8 @@
 | 要核对的问题 | 主要来源 | 使用时注意 |
 |---|---|---|
 | Q/K/V、缩放、Mask、FFN、多头与残差 | [Attention Is All You Need](https://arxiv.org/html/1706.03762v7) | 原论文图与现代 Pre-Norm 模型并非同一归一化顺序；正文明确区分 |
-| RMSNorm 与 LayerNorm 的差别 | [Root Mean Square Layer Normalization](https://arxiv.org/abs/1910.07467) | 归一化对象不是词表概率，不与 softmax 混淆 |
-| RoPE 怎样引入位置关系 | [RoFormer](https://arxiv.org/abs/2104.09864) | 理解旋转点积的相对位置结构，不据此承诺无限外推 |
+| RMSNorm 与 LayerNorm 的差别 | [Layer Normalization](https://arxiv.org/abs/1607.06450)、[RMSNorm](https://arxiv.org/abs/1910.07467) | 对照去均值与均方根缩放；正文简化算例不包含全部可学习参数，归一化结果不是词表概率 |
+| RoPE 怎样引入位置关系 | [RoFormer](https://arxiv.org/abs/2104.09864) | 理解旋转点积的相对位置结构；90° 的二维演算只是便于手算，不是实际频率配置，也不据此承诺无限外推 |
 | Greedy、Sampling、Beam 等生成策略 | [Transformers 5.17.0：Generation strategies](https://huggingface.co/docs/transformers/v5.17.0/en/generation_strategies) | 默认值可能来自具体模型配置，不把库文档的一组缺省值当成所有托管 API 的默认值 |
 | 为什么一次验证能接受多个候选 Token | [Fast Inference from Transformers via Speculative Decoding](https://arxiv.org/abs/2211.17192) | 经典方法在条件满足时保持目标分布；不把这一结论推广到所有近似实现、硬件逐位复现或固定加速比 |
 
@@ -63,15 +63,16 @@
 
 | 要核对的问题 | 主要来源 | 使用时注意 |
 |---|---|---|
-| 低秩增量、参数量与初始化 | [LoRA](https://arxiv.org/html/2106.09685) | 正文按标准增量形式推导；参数量比例不是总训练显存比例 |
+| 低秩增量、参数量与初始化 | [LoRA](https://arxiv.org/html/2106.09685) | 正文按标准增量形式推导；低秩限制属于新增权重而非整个模型，参数量比例不是总训练显存比例 |
 | 冻结量化基础权重如何参与微调 | [QLoRA](https://arxiv.org/abs/2305.14314)、[PEFT：Quantization](https://huggingface.co/docs/peft/en/developer_guides/quantization) | 仅用于机制和边界；未提供绑定某个 PEFT 运行版本的训练脚本 |
-| RLHF 背景及 DPO 的相对偏好目标 | [Direct Preference Optimization](https://arxiv.org/html/2305.18290) | 偏好对、参考策略与数据假设不能省略；标注偏好不等于事实真值 |
+| 经典 RLHF 中生成、奖励、价值与参考模型怎样分工 | [InstructGPT](https://arxiv.org/abs/2203.02155)、[PPO](https://arxiv.org/abs/1707.06347) | 区分采样策略快照与固定参考策略；裁剪目标不是所有参数或概率变化的硬性上限 |
+| RLHF 背景及 DPO 的相对偏好目标 | [Direct Preference Optimization](https://arxiv.org/html/2305.18290) | 偏好对、参考策略与数据假设不能省略；相对目标改善不保证偏好回答的绝对概率上升，标注偏好不等于事实真值 |
 | GRPO 为什么用组内相对奖励 | [DeepSeekMath](https://arxiv.org/html/2402.03300v3) | 组内标准化数值只是教学演算；实际更新还涉及策略比率、约束等条件 |
 | 教师分布能如何向目标模型迁移 | [Distilling the Knowledge in a Neural Network](https://arxiv.org/abs/1503.02531) | 原始分布蒸馏与仅使用教师文本的路线要区分；拿不到 logits 时不能假装已获得教师概率 |
 
 ## 验证和来源追溯
 
-[模块维护记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md) 区分技术核验、源材料回读、示例运行与尚未验证的环境。[正文小实验](../../curriculum/07-llm-foundation/labs/README.md) 不访问外部模型。真人面经仍以 [Market](../../market/README.md) 为正式证据层，不用这些技术文档增加来源数或改变冻结题目统计。
+[系统优化记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md) 与 [讲解清晰度验收记录](../../guide/project/llm-foundation-clarity-refinement-2026-09-27.md) 分别保存各轮实际范围，区分技术核验、源材料回读、示例运行与尚未验证的环境。[正文小实验](../../curriculum/07-llm-foundation/labs/README.md) 不访问外部模型。真人面经仍以 [Market](../../market/README.md) 为正式证据层，不用这些技术文档增加来源数或改变冻结题目统计。
 
 ## 补充核验：量化与换出
 
