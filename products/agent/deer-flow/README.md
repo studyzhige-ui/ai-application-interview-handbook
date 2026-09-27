@@ -1,101 +1,96 @@
-# DeerFlow｜沿一次任务理解上下文、记忆、工具与恢复
+# DeerFlow 2.0｜沿一次任务理解智能体怎样工作
 
-[← Agent 产品源码学习](../README.md) · [↑ Products](../../README.md) · [Agent 课程](../../../curriculum/09-agent/README.md) · [技术资料](../../../references/agent/README.md)
+[← Agent 产品源码学习](../README.md) · [通用 Agent 课程](../../../curriculum/09-agent/README.md) · [技术证据索引](../../../references/agent/README.md)
 
-DeerFlow 是本模块的源码学习对象。我们沿同一次任务，观察用户输入怎样变成模型请求，长期偏好怎样被提取和召回，工具怎样获得可见性并经过执行检查，以及任务中断后系统究竟能恢复什么。
+DeerFlow 是能够调用工具、处理文件并委派子任务的智能体系统。本组文档沿它的真实实现，学习一个用户请求怎样变成模型输入、工具操作、可继续的会话状态和可核对的执行记录。它是产品源码学习，不把 DeerFlow 的选择当成所有 Agent 的唯一标准。
 
-学习重点不是背中间件名称，而是能够追踪：**一份信息由谁产生、在哪一步被读取、是否写入持久状态、失败以后还剩下什么。**
-
-## 从一个具体任务进入
-
-设想用户在支付服务项目中提出：
-
-> “分析支付超时，先查监控和当前代码。不要修改公开接口；先给最小修复方案。把排查结果保存到本会话工作目录。”
-
-这是一组贯穿四章的**教学输入**，不是上游真实生产事故。监控工具、文件内容和执行结果会在使用处明确给出假设；正文不把纸上推演写成已经运行成功的记录。
-
-只画“用户 → 模型 → 工具 → 回答”，不足以解释这个任务。模型调用监控工具前，系统要决定是否向它暴露该工具、当前用户是否允许调用；大量日志返回后，需要控制下一次请求的大小；用户取消时，聊天状态可以恢复，但已经写出的文件或发出的请求不一定撤销。
-
-因此，本模块先建立同一条执行主线，再分别沿信息、长期记忆、工具和恢复追踪。
+**阅读前提：** 能理解 Python 函数、字典、异常和异步调用；知道模型可以返回工具调用，而工具由程序执行。需要回补时，先读 [Agent Loop](../../../curriculum/09-agent/docs/03-AgentLoopAndExecutionScopes.md) 和 [工具执行](../../../curriculum/09-agent/docs/06-ToolExecutionAndFailure.md)。本组仍会就地解释检查点、中间件和作用域，不要求先背完框架 API。
 
 ## 核心设计
 
-### 先认清参与者，再看执行顺序
+假设用户提出一个任务：
 
-| 对象 | 在这个任务中负责什么 | 不要混同于什么 |
-|---|---|---|
-| Thread，会话 | 把用户的多轮交互及其状态关联起来 | 一次模型请求 |
-| Run，一次运行 | 承接本次输入，组织模型与工具循环，最终完成、失败、中断或取消 | 工具的一次调用 |
-| Lead Agent，主智能体 | 根据模型输出继续调用工具、委派任务或给出回答 | 所有产品接口和后台服务 |
-| Middleware，中间件 | 在特定阶段处理输入、模型请求、工具执行或结束工作 | 一定会按同一方向执行的统一流水线 |
-| Checkpoint，检查点 | 保存智能体继续运行需要的状态 | 文件系统快照或外部操作的撤销记录 |
-| Run Journal，运行事件记录 | 保存产品可查看的语义事件和执行线索 | 模型的完整逐 token 输出 |
+> 分析支付页重复提交的问题，必要时查询监控。这次只做最小修复，不要发布。我的长期习惯是先解释风险，再给方案。
 
-这里的“状态”是系统保存的数据；“上下文”是某次模型调用真正收到的数据。两者有重叠，但并不相等。例如，项目资料索引可以临时加入模型请求，而不复制到每个检查点。
+这是贯穿四篇正文的**教学场景**，不是上游生产案例或实测结果。我们把示例用户、会话和运行分别记为 `u1`、`t1`、`r1`。
 
-默认服务入口是 Gateway（网关）。它在 FastAPI 服务内组织运行，主智能体由 `assemble_lead_agent()` 组装；`make_lead_agent()` 则保留返回裸 Graph（执行图）的兼容入口。直接调用工厂，不等于已经安装了 Gateway 的用户鉴权、历史接口和前端。[架构说明][architecture]与[组装源码][assembly]分别提供服务视角和实际入口。
+模型可以判断下一步应查日志还是读代码，却不会自动保存进度、打开一个安全的执行环境，或保证“不要发布”在长对话后仍有效。DeerFlow 在模型外组织这些责任：网关接纳请求，运行工作器组装主智能体，LangChain / LangGraph 执行模型与工具循环，中间件在明确时点处理输入、权限、状态和结果。默认完整产品入口是嵌入运行环境的 Gateway（网关），不是另起一套裸 LangGraph Server。[源码入口与部署边界](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/docs/ARCHITECTURE.md)
 
 ```text
-用户提交本轮输入
-        │
-        ▼
-Gateway 确定用户、会话、运行及本轮配置
-        │
-        ▼
-组装主智能体：模型、工具和带条件的中间件
-        │
-        ▼
-构造模型请求 ◄───────────────┐
-        │                     │
-        ▼                     │
-模型给出回答，或提出工具调用   │
-        │                     │
-        ├─ 工具调用 → 检查 → 执行 → 结果回填
-        │
-        └─ 结束、失败、中断或取消
-                  │
-                  ▼
-           保存状态、记录事件、清理资源
+用户请求
+   │
+   ▼
+Gateway：确认用户与会话，创建本次 Run
+   │
+   ▼
+Run Worker：取得配置，组装主智能体
+   │
+   ▼
+LangChain / LangGraph 执行骨架
+   ├─ 中间件准备本轮 ModelRequest
+   ├─ 模型回答，或提出 Tool Call
+   ├─ 程序检查调用，执行工具，回填结果
+   └─ 继续下一次模型调用，或结束
+   │
+   ├─ Checkpoint：保存以后继续所需的状态
+   ├─ Run Journal：记录执行事件
+   ├─ Workspace / 外部服务：承接真实副作用
+   └─ DeerMem：在允许时异步提取长期用户信息
 ```
 
-这是逻辑总图，不是全部回调的逐行顺序。第 01 章会解释为什么请求包装、工具包装和模型调用后的回调不能机械按目录顺序阅读。
+图中的几条保存路径不能互相代替。检查点中有“已经写文件”的消息，不保证文件还在；日志中有一次工具成功事件，也不自动证明文件内容符合业务要求。
 
-## 阅读主线与每章产出
+## 1. 先认清四个运行对象
 
-| 顺序 | 入口 | 学完后应能解释 |
+| 对象 | 在本例中是什么 | 为什么需要单独区分 |
+|---|---|---|
+| Thread（会话容器） | 用户围绕支付问题持续交谈的 `t1` | 可以承载多次用户请求和多次运行 |
+| Run（一次运行） | 处理本次请求的 `r1` | 有独立身份、预算、取消和结束状态 |
+| ThreadState（会话状态） | 消息、历史摘要、委派记录及文件环境标识等 | 决定智能体接下来怎样继续，不等于全部都发送给模型 |
+| ModelRequest（一次模型请求） | 循环中某一次真正送入模型的消息和工具说明 | 是从状态与本次运行条件组装出的视图，可以临时增删内容 |
+
+“Turn”在不同框架和界面中含义并不统一。本文说“用户轮次”时，指一次用户输入及其处理；说“模型调用”时，明确指一次模型请求，避免把工具循环次数与用户轮次数混算。[状态定义](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/thread_state.py) · [主智能体组装](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py)
+
+## 2. 一次任务怎样经过系统
+
+**接纳。** 网关确认用户身份和会话归属，并固定本次运行所需的项目等服务端上下文。来自客户端的同名字段不能因此成为身份或权限依据。示例中的“不要发布”属于用户任务约束；它与服务器对发布工具的授权，是需要同时满足的不同限制。
+
+**组装。** 主智能体工厂选择实际模型、工具集合和中间件。配置中存在某能力，不等于本次运行一定启用：图片工具取决于模型视觉能力，记忆取决于开关与后端，子任务还受本次委派政策和执行容量限制。`LeadAgentAssembly` 可以携带组装描述信息，帮助解释两次运行究竟哪里不同。[组装与条件安装](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py#L486-L770)
+
+**准备模型输入。** 程序把近期消息、必要历史、长期记忆和本轮工具说明组织成请求。某些内容进入检查点，某些只在请求中出现。模型不是每次直接读取所有磁盘数据，也不是每轮都重新检索整份长期记忆。
+
+**执行与回填。** 模型提出工具名和参数后，程序仍要检查发现状态、技能限制、授权及实际执行边界。工具返回 `ToolMessage`（工具结果消息），模型据此继续。工具异常、策略拒绝和用户取消具有不同语义，不能一律解释成“再试一次”。[共同工具执行链](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/middlewares/tool_error_handling_middleware.py)
+
+**结束与保存。** 主任务结束、长期记忆入队、事实落盘和外部动作完成，不是同一个时间点。恢复时也必须分别核对这些对象，而不是仅看一条 `completed` 状态。[记忆队列](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/memory/backends/deermem/deermem/core/queue.py) · [检查点访问器](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/runtime/checkpoint_state.py)
+
+## 3. 阅读主线
+
+| 顺序 | 正文 | 读完能够解释的问题 |
 |---:|---|---|
-| 01 | [上下文生命周期](01-context-lifecycle.md) | 同一份历史怎样形成不同模型请求；压缩保留什么；临时注入为什么不应变成持久权威 |
-| 02 | [记忆生命周期](02-memory-lifecycle.md) | 偏好怎样经过队列、提取、校验、保存、召回和纠正；为什么提交更新不等于已经记住 |
-| 03 | [工具生命周期](03-tool-lifecycle.md) | 注册、发现、模型可见与允许执行的区别；文件版本、产物句柄、MCP 连接怎样影响一次调用 |
-| 04 | [工程边界与验证](04-engineering-evaluation.md) | 检查点、事件、文件和外部副作用怎样分开恢复；子智能体怎样隔离；怎样设计分层测试 |
+| 1 | [上下文：从会话状态到模型真正看到的内容](01-context-lifecycle.md) | 哪些信息要保存，哪些只临时加入；历史太长时怎样继续而不破坏协议 |
+| 2 | [记忆：从一次对话到可维护的长期事实](02-memory-lifecycle.md) | 什么值得长期记住，何时真正写成，怎样召回、纠错、隔离和删除 |
+| 3 | [工具：从可发现能力到受控副作用](03-tool-lifecycle.md) | 为什么看见工具不等于获准执行；技能、会话池与文件修改怎样协同 |
+| 4 | [工程与评测：怎样继续、恢复并证明结果](04-engineering-evaluation.md) | 检查点、日志、子任务、取消和外部状态怎样共同决定可靠性 |
 
-第一次阅读按表中顺序；第二遍先做第 04 章的综合故障推演，再回到解释不清的具体章节。各章的面试回答组织已经学过的知识，不承担补讲前置的责任。
+第一遍连续读正文及其小结；第二遍用 [总图与综合自测](review/README.md) 重建主线；动手时进入 [源码小实验](labs/README.md)。实验只验证标明的函数和条件，不把纯函数测试当成完整 DeerFlow 服务验收。
 
-进入本模块前，应能看懂函数调用、字典、异常和 `async/await`，并理解模型通过工具名称及参数提出调用、宿主程序实际执行工具这一基本分工。通用机制可回看 [Agent 课程](../../../curriculum/09-agent/README.md)；不要求先掌握 DeerFlow 的全部类名，也不要求在阅读之前部署整套服务。
+## 4. 用问题寻找源码
 
-## 怎样边读边验证
+| 你正在追的问题 | 首先读哪里 | 再追到哪里 |
+|---|---|---|
+| 谁决定这次使用哪些组件 | `agents/lead_agent/agent.py` | `agents/factory.py` 与共同中间件构建器 |
+| 历史怎样变成模型输入 | `dynamic_context_middleware.py` | `durable_context_middleware.py`、`summarization_middleware.py` |
+| 对话何时变成长期事实 | `memory_middleware.py` | `agents/memory/manager.py`、DeerMem 的 queue / updater / storage |
+| 模型为什么看不见或不能使用某个工具 | `tools/tools.py` | DeferredToolFilter、SkillToolPolicy、Guardrail 与 sandbox |
+| 子任务结束后能相信什么 | `tools/builtins/task_tool.py` | `subagents/executor.py`、收据检查和验收条件检查 |
+| 取消或重启后怎样继续 | `runtime/runs/worker.py` | CheckpointStateAccessor、RunJournal 与 RunEventStore |
 
-每次挑一条具体路径，写下初始条件，预测状态变化，再去源码中找到决定该变化的分支。例如，“工具已经被发现，但当前 Skill 不允许它”应该在哪一步停止？“摘要生成成功，但记忆更新仍在排队”能否宣称长期记忆已经落盘？
+上表中包内路径的共同前缀是 `backend/packages/harness/deerflow/`。详细结论的链接放在相应正文附近；架构说明用于找入口，具体分支以同一快照的实现与调用方为准。
 
-第 04 章提供共用的源码实验入口、验收条件和记录方式。源码阅读、手工推演、单元测试、真实模型调用与跨系统验证分别记录；某一层通过，不替其他层背书。
+## 5. 版本与使用边界
 
-## 源码版本与学习边界
+本组固定学习 [bytedance/deer-flow 的 `e2feca1e567d9bafce657de8ad8bc668bd7ad513` 快照](https://github.com/bytedance/deer-flow/tree/e2feca1e567d9bafce657de8ad8bc668bd7ad513)。DeerFlow 2.0 是产品代际名称；该快照的应用包声明 `2.2.0-dev`，harness 包声明 `2.1.0`，两者都要求 Python `>=3.12`。应用版本、包版本和精确提交不能混用，更不能把开发快照称为已发布稳定版。[应用声明](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/pyproject.toml) · [harness 声明](https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/pyproject.toml)
 
-| 维度 | 本模块采用的基线 |
-|---|---|
-| 上游仓库 | `bytedance/deer-flow` |
-| 固定源码 | `e2feca1e567d9bafce657de8ad8bc668bd7ad513` |
-| 核验日期 | 2026-09-27 |
-| 产品代际称呼 | DeerFlow 2.0 |
-| 后端项目声明版本 | `2.2.0-dev`，不是已发布稳定版本的承诺 |
-| 后端 Python 要求 | `>=3.12`；实际执行环境另行记录 |
+本文不以旧版深度研究工作流解释这套实现，也不对其他产品作未经同版本核验的能力排名。通用机制回到 Agent 课程；其他产品差异回到 [产品总入口](../README.md)。阅读范围、问题去向、实测环境与未验证项见 [维护记录](../../../guide/audits/deerflow-reader-first-2026-09-27.md)。
 
-项目版本与 Python 要求来自固定快照的 [`backend/pyproject.toml`][pyproject]。各章源码链接均固定到该提交；示例配置、可选后端、直接嵌入与 Gateway 服务的行为不能任意混用。
-
-本模块覆盖四条学习主线涉及的实现与边界，不宣称逐文件审完上游全部功能，也不把某个产品选择提升为所有 Agent 的通用标准。具体审查范围、面经知识去向、验证结果和未验证项见[本轮核验记录](../../../guide/audits/deerflow-reader-first-2026-09-27.md)。
-
-开始阅读：[01｜上下文生命周期 →](01-context-lifecycle.md)
-
-[architecture]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/docs/ARCHITECTURE.md
-[assembly]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/packages/harness/deerflow/agents/lead_agent/agent.py
-[pyproject]: https://github.com/bytedance/deer-flow/blob/e2feca1e567d9bafce657de8ad8bc668bd7ad513/backend/pyproject.toml
+下一篇：[01｜上下文生命周期 →](01-context-lifecycle.md)
