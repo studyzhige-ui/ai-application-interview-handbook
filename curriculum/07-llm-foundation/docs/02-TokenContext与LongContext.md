@@ -1,321 +1,142 @@
-# 02｜Token、Context Window 与 Long Context：从输入单位到上下文预算
+# 02｜Token、上下文与长文本：先确定模型实际读到了什么
 
-AI Application 里所有“上下文太长、成本太高、信息放不下”的问题，最前面都要先理解三个概念：
+[← 模型在应用中负责什么](01-LLMFoundation在AI应用中的职责.md) · [模块首页](../README.md) · [Transformer 怎样加工序列 →](03-TransformerBlock.md)
 
-```text
-Token
-→ Token Budget
-→ Context Window
-```
+应用里有一段一万字的文档，模型标称支持一万个 Token。能直接放进去吗？即使文档本身放得下，再加上问题、聊天历史、工具说明和输出空间，也可能超过限制。
 
-这一章把原先分开的 Tokenization、Context Budget 和 Long Context 合成一个完整输入模型。
+本章先把“文字长度”转成“模型实际输入”，再计算一次请求的预算。只有知道模型究竟读到了哪些内容，才有条件判断后面的回答和延迟。
 
----
+## 1. Token 是文本单元，Token ID 是编号
 
-## 1. Token 是什么
+**Tokenizer（分词器）** 按照自己的词表和规则，把文本转换成一串 Token ID。词表是模型可处理的离散单元集合；ID 只是该集合中的编号，不是语义坐标，也不是相似度。
 
-LLM 不直接处理“汉字、单词、句子”，而是先通过 Tokenizer 把文本转成 Token ID：
+一个 Token 可能对应完整词、词的一部分、标点或一段字节。相同文字换一个分词器，切法和编号都可能不同。空格、大小写、中文、代码及罕见字符也会影响切分，不能把“一个汉字”固定等同于“一个 Token”。[官方计数说明](https://help.openai.com/en/articles/4936856-understanding-and-counting-tokens)
 
-```text
-Text
-→ Tokenizer
-→ Token IDs
-→ Embedding
-→ Transformer
-```
+为什么不直接按单词切？这样词表可能很大，遇到新词也难处理。全部按字符或字节切，又可能让常见表达占用很长的序列。**子词切分**是在词表规模和序列长度之间做折中：常见片段可以合并，陌生词仍可以拆开表示。
 
-Token 可以是：
+### 用一个小词表理解合并规则
 
-- 一个完整词；
-- 子词片段；
-- 标点；
-- 汉字或字节片段；
-- 特殊控制符。
+下面是用于手算的字符级 BPE 示例，不是真实模型的分词结果。BPE 是 Byte Pair Encoding（字节对编码）；实际系统可以在字节等基础单元上工作，这里用字母演示“按已学习的规则合并”。
 
-所以：
+已给定按优先级排列的三条规则：先把 `l + o` 合成 `lo`，再把 `lo + w` 合成 `low`，最后把 `e + r` 合成 `er`。
 
 ```text
-1 token ≠ 1 word
-1 token ≠ 1 character
+输入：lower
+初始：l | o | w | e | r
+第一步：lo | w | e | r
+第二步：low | e | r
+第三步：low | er
 ```
 
-不同模型的 Tokenizer 不同，同一段文本的 Token 数也可能不同。
+得到的是两个 Token，不是两个语义向量。随后分词器查词表，才得到它们对应的 ID。训练分词器时从语料得到合并规则；**使用已经训练好的分词器时，不会因这一条新请求再学习一套词表。** 真实编码还可能有正规化、预切分和特殊 Token 等步骤。[BPE 过程](https://huggingface.co/learn/llm-course/chapter6/5)
 
----
+> ⚠️ 注意：模型权重与分词器必须匹配。即使两个分词器都返回整数列表，同一个编号也可能表示不同单元。不能把“接口类型相同”当成“输入含义相同”。
 
-## 2. Token 为什么是工程成本单位
+## 2. 聊天请求还需要变成模型接受的序列
 
-模型调用成本和性能通常直接受 Token 数影响：
+应用传的是带角色的消息，例如用户问题、助手回答和工具结果；底层模型仍需要一套明确的序列表示。**Chat Template（聊天模板）** 会把角色边界、消息内容、轮次结束等信息转换为模型训练时使用的格式。
+
+因此，数 `content` 字段里的文字通常不足以得到完整请求的 Token 数。工具定义、规定输出字段与类型的格式说明（Schema）、模板标记和其他模态输入也可能占用预算。不同模型不一定使用同一种模板，更不能把某一家 API 的字段与优先级硬套到所有模型。[聊天模板说明](https://huggingface.co/docs/transformers/v5.17.0/en/chat_templating)
+
+实际计数应针对**最终序列化后的输入**。本地模型用匹配版本的分词器和处理器；托管 API 优先使用它提供的完整输入计数能力，并在调用后核对实际 usage。字符长度估算可以预警，不能充当精确的容量证明。
+
+## 3. 上下文窗口、输出上限和长期记忆是三件事
+
+**Context Window（上下文窗口）** 描述一次处理能够容纳的上下文范围。对本课程讨论的、输入与生成共享窗口的自回归模型，规划时可以写成：
 
 ```text
-Input Tokens
-+
-Output Tokens
+输入 Token 数 + 计划输出上限 + 安全余量 ≤ 上下文窗口
 ```
 
-会影响：
+还要单独检查“计划输出上限”没有超过模型或接口允许的最大输出。安全余量是应用策略，用来应对估算误差或额外标记，不是模型额外赠送的容量。
 
-- Context 是否放得下；
-- Prefill 计算；
-- KV Cache 占用；
-- 网络 Payload；
-- API Cost；
-- TTFT；
-- Agent 长任务可持续性。
+对具有内部推理 Token 的接口，输出预算可能同时包含内部推理与可见回答；不能只根据最终展示的几十个字计算，也不能把已经包含在输出 usage 中的推理 Token 再加一次。具体字段和额度遵循该接口。[OpenAI 的输入、输出与推理 Token 区分](https://help.openai.com/en/articles/4936856-understanding-and-counting-tokens)
 
-因此 Token Count 是 AI Application 的基础容量单位，而不是 NLP 细节。
+长期记忆则是应用在请求之间保存的状态。保存了聊天记录，不代表当前请求已经把它们全部发送给模型；模型曾经读过某条信息，也不代表删除它后仍能在下一次无状态请求中准确使用。
 
----
+## 4. 算一次完整预算，而不是只算正文
 
-## 3. Context Window 是什么
+以下全部是教学假设，不对应某款商用模型或真实计费记录。设窗口为 8,192 Token，最终输入各部分已经按匹配的分词器计数：
 
-可以把一次模型调用看成：
+| 输入部分 | Token 数 |
+|---|---:|
+| 应用回答要求 | 400 |
+| 保留的聊天历史 | 1,600 |
+| 当前用户问题 | 200 |
+| 选入的文档证据 | 3,000 |
+| 工具及格式说明 | 500 |
+| 聊天边界等模板标记 | 92 |
+| **输入合计** | **5,792** |
+
+准备保留 1,800 Token 输出和 200 Token 安全余量：
 
 ```text
-System Instruction
-+ Developer / Policy Context
-+ User Messages
-+ Conversation History
-+ Retrieved Documents
-+ Tool Results
-+ Memory
-+ Generated Output Reserve
+总占用 = 5,792 + 1,800 + 200 = 7,792 Token
+剩余量 = 8,192 - 7,792 = 400 Token
 ```
 
-这些共同竞争有限的 Context Window。
+第一轮可以进入预算。但下一轮追加了 700 Token 工具结果，其他部分不变，需求就变成 8,492 Token，超出 300 Token。**“上一轮能运行”不能证明追加状态后的下一轮仍能运行。**
 
-如果模型最大上下文是 `C`：
+这时应先按任务价值调整输入：去掉重复证据、选择更相关的文档片段，或者把已确认的历史状态压缩成有来源的摘要。不能只从最后一条消息截去 300 Token，因为那可能恰好删掉当前问题、否定条件或工具结果的关键字段。
 
-```text
-Input Tokens + Output Reserve <= C
-```
+> ⚠️ 注意：超过窗口后的行为不是通用规则。有的接口拒绝请求，有的配置允许截断；应用必须核对实际设置。不能静默截断后仍宣称模型“看过全文”。
 
-不能把整个 Window 全塞满输入，否则模型没有足够空间生成输出。
+缓存命中也不改变这个容量判断。复用已处理前缀可能减少重复计算或改变计费，但同一前缀依然是模型当前上下文的一部分。缓存机制见第 6 章。
 
----
+## 5. 放得下，为什么还可能用不好
 
-## 4. Context Budget 不只是“不能超长度”
+容量解决的是“能接收多少”，不是“每条信息都会被稳定利用”。长输入会增加待处理的信息，也可能带入互相矛盾或无关的证据。关于信息位置，Lost in the Middle（中间信息利用不足）研究在特定模型和长上下文任务中观察到了位置敏感性；它不是“所有模型的中间区域都完全不可见”的定律。[论文与实验条件](https://arxiv.org/abs/2307.03172)
 
-即使还没超过硬上限，也存在软预算问题：
+可以这样验证自己的任务，而不是套用结论：保持问题、正确证据和干扰材料不变，只把正确证据放在开头、中间和末尾，比较答案正确率和引用是否支持结论。若模型在中间位置更容易漏掉条件，再进一步调整证据组织和模型选择。
 
-```text
-更多 Context
-→ 更多 Prefill Compute
-→ 更高成本
-→ 更高 KV Cache 占用
-→ 更长 TTFT
-→ 更复杂 Attention
-```
+长上下文也不会自动替代 RAG。检索还负责在大规模资料中选择相关内容，处理新鲜度、权限和来源引用。反过来，短而完整的一份资料可以直接放入上下文；不能把“必须先建一个向量库”当成所有场景的起点。
 
-而且更多内容不一定带来更好答案。
+## 6. 输入长与输出长，会造成不同成本
 
-所以正确问题不是：
+长输入需要模型处理更多已有位置，并保存相应推理状态；长输出则需要持续生成。两者都可能增加成本，但对延迟的影响不相同。下一章解释输入怎样被加工，第 6～7 章再用缓存与时间线区分这两种负担。
 
-> “还能不能再塞 20K Token？”
+多轮应用还要留意工具返回全文、重复粘贴日志、把所有历史消息原样带回等增长来源。这里先建立“每次提交前重新核算”的规则；长期状态怎样摘要、保存与恢复，由 Agent 的上下文和记忆机制负责。
 
-而是：
+## 本章小结
 
-> **“这 20K Token 是否真的值得占用 Context Budget？”**
+先用匹配分词器识别实际序列，再把消息、模板、证据、工具说明和输出空间一起计入预算。窗口容量、信息利用质量和应用长期记忆各有边界。超过窗口是容量问题，放得下却漏掉条件是质量问题，诊断时不能混为一谈。
 
----
+## 🎯 面试怎么回答
 
-## 5. 长上下文为什么不等于无限记忆
+**问：模型支持长上下文，为什么还要做 Token Budget？**
 
-Long Context 解决的是：
+> 因为标称窗口不是可以全部塞入文档的免费空间。我会计算最终序列化输入，包含历史、工具说明和模板，再预留输出及必要余量，同时检查单独的输出上限。多轮追加结果后要重新算。放得下之后还要评测证据位置和干扰信息的影响；更大窗口不自动提供权限、新鲜度、引用或长期记忆。
 
-```text
-一次调用能看到更多 Token
-```
+## ⚠️ 易错点
 
-它不自动解决：
+一个汉字不固定对应一个 Token，ID 的大小也不表达语义相近程度。计数和后续向量表示必须区分。
 
-- 跨 Session 长期记忆；
-- 信息选择；
-- 过期事实；
-- 权限；
-- Context Compression；
-- 多任务状态；
-- 数据持久化。
+把缓存 Token 从上下文长度中减掉，会低估容量；把推理 Token 在总输出之外重复计入，又会高估费用。先读清接口 usage 各字段是否为子集。
 
-因此：
+## 自测
 
-```text
-Long Context
-≠ Long-term Memory
-```
+**任务 1：** 教学模型窗口为 16,384 Token，输入 12,000，输出预留 3,500，安全余量 400。先算剩余量；再追加 600 Token 工具结果，说明是否超限、超多少。假设所有数字已准确计数，且没有其他输入变化。
 
-Agent Harness 会进一步学习 Memory、Compaction 和 State。
+<details><summary>答案与解释</summary>
 
----
+最初剩余 16,384 − 12,000 − 3,500 − 400 = 484 Token。追加后需求超过窗口 116 Token。需要减少或重新组织输入，或者降低经过任务验证的输出预留；不能把缓存命中视为额外容量。
 
-## 6. Lost in the Middle 的直觉
-
-长 Context 中，模型对所有位置的信息利用能力并不天然均匀。
-
-工程上经常观察到：
-
-```text
-相关证据存在于 Context
-≠ 模型一定可靠使用它
-```
-
-尤其当 Context 中包含：
-
-- 大量无关内容；
-- 多份相似证据；
-- 冲突指令；
-- 很长 Tool Result；
-- 关键事实被淹没在中间位置；
-
-模型可能出现检索/利用下降。
-
-所以 Context Engineering 的目标之一是提高：
-
-```text
-Information Density
-```
-
-而不是只扩大 Window。
-
----
-
-## 7. 为什么 RAG 仍然有价值
-
-即使模型 Context 很长，RAG 仍可帮助：
-
-```text
-从大知识库选少量相关证据
-→ 控制 Token Cost
-→ 提高相关信息密度
-→ 附带 Source / Citation
-→ 管理 Freshness / Permission
-```
-
-所以：
-
-```text
-Long Context
-≠ RAG 失去意义
-```
-
----
-
-## 8. 为什么 Agent 更容易遇到 Context Pressure
-
-普通 Chat 主要积累 Message。
-
-Agent 还会积累：
-
-```text
-Tool Calls
-Tool Results
-Plans
-File Contents
-Search Results
-Memory
-Runtime State Projection
-```
-
-尤其 Coding Agent 中，一个大文件或终端输出可能一次消耗大量 Token。
-
-因此成熟 Agent Runtime 会设计：
-
-- Tool Result Offloading；
-- Context Selection；
-- Compaction；
-- Summary / Artifact Reference；
-- Cache-aware Assembly。
-
-这些属于 Agent Harness，但基础仍是这里的 Token Budget。
-
----
-
-## 9. Context 预算怎么估
-
-一个实用模板：
-
-```text
-Maximum Context
-- Output Reserve
-- System / Policy Reserve
-- Tool Schema / Protocol Reserve
-= Dynamic Context Budget
-```
-
-Dynamic Context 再分配给：
-
-```text
-Conversation
-Retrieval
-Memory
-Tool Results
-Task Artifacts
-```
-
-而不是让每个组件无限追加。
-
----
-
-## 10. Token Cost 和 Latency 的关系
-
-### Input Token 增加
-
-主要增加：
-
-```text
-Prefill Work
-TTFT
-KV Cache Allocation
-Input Cost
-```
-
-### Output Token 增加
-
-Autoregressive Decode 是逐 Token 生成，因此会直接增加：
-
-```text
-Generation Time
-TPOT × Token Count
-Output Cost
-```
-
-所以“限制输出长度”常常是最直接的成本/延迟优化手段之一。
-
----
-
-## 11. 常见错误
-
-- 字符数可以直接等于 Token 数：错。
-- Context Window 越大，答案必然越好：错。
-- 只要没超过硬上限，就无需做 Context Budget：错。
-- Long Context 可以替代 Memory：错。
-- RAG 在百万 Token Context 后没意义：过度简化。
-- Agent 只要保存完整聊天历史就能长期运行：错。
-
----
-
-## 12. 面试怎么答
-
-### Q：Context Window 是什么？
-
-> Context Window 是模型一次 Forward/Generation 可处理的 Token 总预算，输入消息、系统指令、检索结果、Tool Result 以及输出空间都会竞争它。工程上不仅要防止超过硬限制，还要控制 TTFT、KV Cache、成本和信息密度，所以会做 Context Selection、RAG、Compaction 等治理。
-
-### Q：Long Context 能替代 RAG 吗？
-
-> 不能简单替代。Long Context 提高单次可见容量，但 RAG 还承担知识选择、Freshness、Permission、Citation 和成本控制，而且长 Context 中相关信息不一定被模型稳定利用。
-
----
-
-## 13. 自测
-
-<details><summary>1. 为什么必须预留 Output Tokens？</summary>
-因为 Context Window 是输入和生成共享的总预算，输入占满后模型没有足够空间输出。
 </details>
 
-<details><summary>2. 为什么 Agent 比普通 Chat 更容易超 Context？</summary>
-因为除了消息还会累积 Tool Result、文件、搜索结果、计划、Memory 和 Runtime State。
+**任务 2：** 一份文档在同一模型、同一问题下，放在不同位置时答案不同。当前请求都未超过窗口。请设计一个最小对照，并说明它能验证什么、不能验证什么。
+
+<details><summary>提示</summary>
+
+只改变一个因素，保留正确证据及其条件；不要同时换模型和删掉干扰材料。
+
 </details>
 
-<details><summary>3. Long Context 与 Long-term Memory 的核心差异是什么？</summary>
-前者是单次调用可见容量；后者涉及跨调用的持久化、选择、更新和召回机制。
+<details><summary>答案与解释</summary>
+
+固定问题、内容、生成设置和模型版本，只移动正确证据的位置，并做足够重复或样本比较。这能检查该任务分布中的位置敏感性，不能证明所有模型都存在相同程度的缺陷，也不能把没有超限等同于完整可靠利用。
+
 </details>
+
+## 知识回看与资料
+
+回看 [第 1 章的输入与事实边界](01-LLMFoundation在AI应用中的职责.md)。精确请求表示查 [Chat templates](https://huggingface.co/docs/transformers/v5.17.0/en/chat_templating)，分词机制查 [BPE](https://huggingface.co/learn/llm-course/chapter6/5)，更多条件说明见 [References](../../../references/llm-foundation/README.md)。

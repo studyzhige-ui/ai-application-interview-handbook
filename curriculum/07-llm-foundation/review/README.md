@@ -1,239 +1,180 @@
-# LLM Foundation（应用工程深度）｜Review 与综合自测
+# Review｜把模型机制连成可判断的过程
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块首页](../README.md) · [表达训练](../interview/高频面试题.md) · [机制小实验](../labs/README.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+复习时先遮住图后的解释，回答每条边“谁把什么交给了谁”。如果只能复述名词，而说不清对象在哪里改变，就沿回看链接补上那一步。这里的新情境只使用正文已经建立的规则。
 
----
-
-> 第一遍按 `../README.md` 的 **14 个知识小板块**建立体系；Review 层按因果链压缩机制，不逐章复制正文。
->
-> 教材是 14 个知识块，不代表自测只能有 14 题。这里仍保持更细的问题粒度，用来检查你是否真的掌握机制。
-
----
-
-## 图 1｜Text → Token → Transformer → Next Token
+## 1. 一次回答，哪些状态真的改变了
 
 ```mermaid
 flowchart LR
-    A["Raw Text"] --> B["Tokenizer"]
-    B --> C["Token IDs"]
-    C --> D["Embedding + Position"]
-    D --> E["Transformer Blocks"]
-    E --> F["Hidden State"]
-    F --> G["LM Head"]
-    G --> H["Logits"]
-    H --> I["Decoding"]
-    I --> J["Next Token"]
-    J --> E
+    A[消息与任务材料] --> B[匹配模型的模板与 Tokenizer]
+    B --> C[Token ID 序列]
+    C --> D[Token 表示与 Transformer]
+    D --> E[下一位置的 logits]
+    E --> F[解码选择]
+    F --> G[已选 Token]
+    G --> H[加入已生成序列]
+    H --> D
+    G --> I[解码为文本或工具请求]
+    I --> J[应用检查与授权执行]
 ```
 
-你应该能解释：Token 为什么是成本单位、Context Window 怎么被多个组件共享、为什么输出要逐 Token 生成。
+这张图的循环不是“把所有旧计算无条件重做”。KV 缓存复用的对象在第 3 节展开。一次普通生成不会因此修改训练好的权重；输出一段工具参数也不会自动完成外部操作。
 
----
+**先口述：** 输入一条查询订单的消息，模型输出“退款成功”。从图上说明：哪些环节可以证明它确实完成了退款，哪些环节只能证明生成了这句话？
 
-## 图 2｜Transformer Block
+回看：第 01 章负责模型与应用的分工，第 02 章负责输入如何表示，第 05 章负责生成循环，第 08 章负责响应与动作的边界。
+
+## 2. 计算图要画出信息来源，而不只画方框
 
 ```mermaid
 flowchart LR
-    A["Hidden State"] --> B["Norm"]
-    B --> C["Self-Attention"]
-    C --> D["Residual"]
-    D --> E["Norm"]
-    E --> F["FFN / MLP"]
-    F --> G["Residual"]
-    G --> H["Next Layer"]
-```
-
-记住：
-
-```text
-Attention → 跨 Token 信息交互
-FFN       → 位置内非线性加工
-Residual  → 信息/梯度直通
-Norm      → 数值稳定
-RoPE      → Position 进入 Attention
-```
-
----
-
-## 图 3｜QKV、Causal 与 KV Cache
-
-```mermaid
-flowchart TD
-    X["Hidden State"] --> Q["Q"]
-    X --> K["K"]
-    X --> V["V"]
-    Q --> S["QK Score"]
+    X[当前位置及可见历史的隐藏表示] --> Q[Q：当前查找方向]
+    X --> K[K：各位置的匹配特征]
+    X --> V[V：各位置提供的内容]
+    Q --> S[匹配分数与缩放]
     K --> S
-    S --> M["Causal Mask"]
-    M --> P["Softmax"]
-    P --> O["Weighted Values"]
+    M[因果与填充掩码] --> S
+    S --> P[softmax 权重]
+    P --> O[对 V 加权求和]
     V --> O
-    K --> C["KV Cache"]
-    V --> C
+    O --> R[残差与逐位置变换]
 ```
 
-重点追问：为什么缓存 K/V、为什么 Context 越长 KV Cache 越大、GQA/MQA 为什么能降低缓存压力。
+Q、K、V 来自学习到的投影，不是人为指定哪个词是主语。某位置因果上不可见时，掩码应使它的权重为零；不是仅把它的原分数乘成零。残差路径、归一化、FFN 与多个 Head 的合成回到第 03、04 章看，不把本图视为完整网络实现。
 
----
+**迁移任务：** 某个不可见位置的 V 从 `[1,1]` 改为 `[1000,1000]`。其他输入保持不变，正确掩码下当前输出应否改变？若发生改变，应先检查哪里？
 
-## 图 4｜Prefill / Decode / Serving
+<details><summary>答案与解释</summary>
+
+不应改变。先检查该位置的注意力权重是否确实为零、掩码方向是否正确，以及它是否通过其他未屏蔽的输入路径泄露信息。仅观察最终答案不够，要回到可见性和加权过程。
+
+</details>
+
+## 3. 时间与显存来自不同对象
 
 ```mermaid
 flowchart LR
-    A["Prompt"] --> B["Prefill"]
-    B --> C["KV Cache"]
-    C --> D["Decode Step"]
-    D --> E["Stream Token"]
-    D --> C
-    F["Many Requests"] --> G["Continuous Batching"]
-    G --> D
-    C --> H["Paged KV Management"]
+    P[完整输入] --> F[Prefill：计算各层输入表示和 K/V]
+    F --> T[选择第一个输出 Token]
+    F --> C[历史 K/V]
+    T --> D[送入已选 Token，计算新的 Q/K/V]
+    C --> D
+    D --> N[选择下一个 Token]
+    D --> U[追加本步 K/V]
+    U --> C
+    N --> D
 ```
 
-```text
-Input Length  → Prefill / TTFT / KV Memory
-Output Length → Decode Steps / TPOT / Cost
-Concurrency   → KV Cache / Scheduler Pressure
-```
+图中“选择 Token”与“把它送回模型”是两个时刻。刚从输入最后位置的 logits 选出的第一个输出 Token，通常尚未进入该请求的 KV 缓存。停止前最后选出的 Token 也不一定再被送回。估算上限仍可以保守使用输入加输出预算。
 
----
+**迁移任务 A：** 使用标准全注意力 KV 的模型有 24 层、4 个 KV Head、每个 Head 64 个数，缓存每个数占 2 字节。两个请求已缓存长度分别为 2,048 与 4,096。计算原始 KV 大小；把 KV Head 改成 8 个后又是多少？其他开销不计。
 
-## 图 5｜Model Access & Selection
+<details><summary>提示</summary>
 
-```mermaid
-flowchart TD
-    A["Task Eval"] --> B["Model Candidates"]
-    B --> C["Quality"]
-    B --> D["Latency / Cost"]
-    B --> E["Context / Tool / JSON / Vision"]
-    B --> F["Provider Capacity / Reliability"]
-    C --> G["Provider Adapter / Model Routing"]
-    D --> G
-    E --> G
-    F --> G
-```
+一层同时保存 K 和 V；按两个请求的长度之和计算，不把并发数再次乘进去。
 
-最终看的是：
+</details>
+<details><summary>答案与解释</summary>
 
-```text
-Cost per Successful Task
-```
+每 Token 为 `2×24×4×64×2=24,576` 字节。总长 6,144，大小为 150,994,944 字节，即 144 MiB。KV Head 翻倍，大小变为 288 MiB。这里没有计入权重、激活、元数据、分页尾块或其他请求；更改头数也是模型架构条件变化，不是对既有模型随便改一个参数。
 
-而不是单纯排行榜或 Token 单价。
+</details>
 
----
+**迁移任务 B：** 一次请求在第 0.6 秒收到首个输出 Token，第 3.6 秒收到第 61 个、也是最后一个 Token，第 3.8 秒收到完成事件。计算 TTFT、平均 TPOT 和客户端完成延迟。若网络把每三个 Token 合成一个分片，还能把分片间隔叫作 ITL 吗？
 
-## 图 6｜Embedding → Retrieval → Rerank
+<details><summary>答案与解释</summary>
+
+TTFT 为 0.6 秒，平均 TPOT 为 `(3.6−0.6)/(61−1)=0.05` 秒，即 50 毫秒；到完成事件为 3.8 秒。分片不是 Token，只有分片时间戳不能恢复真实逐 Token 间隔。要声明测量位置和事件定义。
+
+</details>
+
+回看第 06 章的缓存对象、第 07 章的测量口径。Continuous Batching 解决调度空位，PagedAttention 解决 KV 的组织与访问，FlashAttention 减少注意力计算中的内存读写；不要互换它们的作用对象。
+
+## 4. 检索模型与生成模型怎样配合
 
 ```mermaid
 flowchart LR
-    Q["Query"] --> E["Bi-Encoder"]
-    E --> V["Query Vector"]
-    D["Documents"] --> I["Precomputed Embeddings"]
-    I --> R["Fast Retriever"]
-    V --> R
-    R --> C["Candidate Set"]
-    C --> X["Cross-Encoder Reranker"]
-    X --> T["Precise Ranking"]
+    D[文档] --> DE[文档编码与池化]
+    DE --> IDX[已建立的向量索引]
+    Q[查询] --> QE[查询编码与池化]
+    QE --> RET[候选召回]
+    IDX --> RET
+    RET --> PAIR[查询与每篇候选联合评分]
+    Q --> PAIR
+    PAIR --> E[选中的证据]
+    E --> GEN[生成模型阅读证据]
+    Q --> GEN
 ```
 
-核心：Bi-Encoder 适合大规模召回；Cross-Encoder 更精细但每个 Pair 都要重新推理。
+双塔编码能预先处理文档，因为编码文档时不需要知道本次查询。交叉编码需要查询与候选共同参与，计算次数随候选数增长。生成阶段还必须正确理解所选证据，前两步的指标不能替代最终任务正确性。
 
----
+**迁移任务：** 更换 Embedding 模型后向量仍是 768 维，却发现检索突然恶化。当前只重算了查询向量，历史文档向量未动。是否应该先扩大 HNSW 搜索范围？按先后说明检查办法。
 
-## 图 7｜Prompt / RAG / Fine-tuning Decision
+<details><summary>答案与解释</summary>
+
+先确认查询和文档是否在同一模型、同一编码约定的向量空间；同维不代表兼容。用少量已知相关文档按新模型重算，并检查模板、池化、归一化和截断。再比较一致空间中的精确搜索与 ANN；只有确认损失主要由近似搜索带来，才进一步调整索引。完整重建和版本切换归 Vector DB，召回质量归 RAG。
+
+</details>
+
+回看第 09 章；多模态时还要区分“跨模态相似检索”和“理解图表并正确计算”，见第 10 章。
+
+## 5. 改什么，取决于最早的失败点
 
 ```mermaid
 flowchart TD
-    A["效果不好"] --> B{"Instruction / format?"}
-    B -->|"是"| C["Prompt / Schema"]
-    B -->|"否"| D{"Missing dynamic/private knowledge?"}
-    D -->|"是"| E["RAG / Tool"]
-    D -->|"否"| F{"Stable repeated behavior gap?"}
-    F -->|"是"| G["Fine-tuning / LoRA"]
-    F -->|"否"| H["Model / Context / Verification"]
+    F[收集失败样本及当时输入] --> E[有效证据是否到达模型]
+    E -->|没有| R[检查事实源、检索、权限与输入预算]
+    E -->|有| B[任务规则与所需行为是否清楚]
+    B -->|不清楚| P[改 Prompt 并回归]
+    B -->|清楚| C[检查计算、表达、输出及外部动作]
+    C --> T[稳定行为缺口且数据充分时评估训练]
+    C --> V[确定性校验、工具结果或人工确认]
 ```
 
----
+这不是僵硬的先后清单。例如明显的权限漏洞需要立即在应用层阻断，不能等 Prompt 和微调都试过。图的用途是避免用改模型掩盖数据或执行错误。
 
-# 综合自测
+**迁移任务 A：** 文档明确说明退货期为 30 天，但模型输入中只剩“请回答退货政策”，系统误答成 7 天。换一个更强模型后偶尔答对了。应怎样判断这是否修复？
 
-<details><summary>1. Context Window 为什么不是免费容量？</summary>
-长输入会增加 Prefill、KV Cache、TTFT、成本和信息噪声；能放下不代表模型会稳定利用。
+<details><summary>答案与解释</summary>
+
+关键证据在输入组装前后丢失，应检查实际发送内容、截断和预算。偶然答对可能依赖参数中的旧知识，不证明系统能稳定使用授权的当前版本。修复后要以不同产品、不同有效期和冲突版本验证证据确实到达并支持回答。
+
 </details>
 
-<details><summary>2. Attention 和 FFN 的核心分工是什么？</summary>
-Attention 负责跨 Token 聚合上下文；FFN 对每个位置的表示做非线性加工。
+**迁移任务 B：** 一个模型生成的 JSON 100% 可解析，订单状态只有 75% 正确；另一个模型 96% 可解析，状态为 94% 正确。允许自动执行更新吗？这些指标是否足够直接选出胜者？
+
+<details><summary>答案与解释</summary>
+
+都不能据此直接自动执行。需要同一组样本上的联合通过率、拒绝与超时情况、状态权限和跨字段条件；两个单独指标不能在不知道相关性的情况下直接相乘。还要区分只读问答与有副作用的写操作，按实际风险设置门槛。第 08、12 章提供推理依据，动作审批与验证归 Agent。
+
 </details>
 
-<details><summary>3. Causal Mask 为什么必要？</summary>
-让当前位置不能在训练时看到未来 Token，使训练信息边界与真实自回归生成一致。
+## 6. 训练方法不是互斥的产品按钮
+
+用一段话连接以下对象，而不是只背展开名：示范回答、偏好对、奖励、可训练参数、教师输出。
+
+| 数据或限制 | 对应判断 |
+|---|---|
+| 有高质量目标回答 | 可以评估 SFT，但要检查截断、训练目标与数据泄漏 |
+| 只允许训练少量参数 | 可以评估 LoRA；它可以与 SFT 等目标组合 |
+| 有同一输入的可靠偏好对 | 可以评估 DPO，不能把偏好标注当事实真值 |
+| 可采样且有可信奖励 | 可以评估相应强化学习方法，检查奖励被取巧的风险 |
+| 希望把教师能力迁移给目标模型 | 可以评估蒸馏，先确认能取得哪种教师信号 |
+
+**迁移任务：** 教师只提供文本输出，不提供 logits，教师和学生还使用不同 Tokenizer。有人建议“把 Token 概率逐项相除就能蒸馏”。指出前提问题，并给出可实施的路线。
+
+<details><summary>答案与解释</summary>
+
+没有可用的教师概率，而且词表中的位置也不对应，不能直接逐项计算分布损失。可以构建任务输入，用教师生成候选回答，依据可信规则、测试或人工审查过滤，转换成学生可用的训练样本。保留与训练不同来源的测试集，分别验证效果、延迟、成本和失败边界。具体数据授权仍需确认。
+
 </details>
 
-<details><summary>4. Temperature、Top-k、Top-p 分别控制什么？</summary>
-Temperature 调整分布尖锐程度；Top-k 固定保留前 k 个候选；Top-p 保留累计概率达到阈值的动态集合。
-</details>
+回看第 13、14 章。课程小实验只能核对数值关系，不能证明某次真实微调或强化学习训练有效。
 
-<details><summary>5. Temperature=0 是否保证事实正确？</summary>
-不保证。它降低随机性，但最高概率续写本身仍可能是错误事实。
-</details>
+## 7. 复习完成的检查
 
-<details><summary>6. KV Cache 为什么能加速？</summary>
-历史 Token 的 K/V 可以复用，新 Token 无需每步重新计算全部历史 K/V。
-</details>
+选一个自己的失败案例，提交一份简短复盘：当时的输入与约束、最早偏离预期的步骤、能区分两种可能原因的实验，以及实际结果和未验证范围。没有真实运行记录时，可以做明确标注的教学推演，不把它写成项目业绩。
 
-<details><summary>7. Prefill 与 Decode 最大区别是什么？</summary>
-Prefill 一次处理完整输入、并行度较高；Decode 逐 Token 串行生成并持续读取历史 KV。
-</details>
-
-<details><summary>8. Continuous Batching 为什么适合 LLM Serving？</summary>
-不同请求输出长度不同，完成请求可以动态退出、新请求立即加入，提高 GPU 利用率。
-</details>
-
-<details><summary>9. PagedAttention 解决什么？</summary>
-主要解决动态 KV Cache 的内存分配与碎片问题，不是另一套 Attention 数学公式。
-</details>
-
-<details><summary>10. Quantization 为什么不一定更快？</summary>
-速度依赖硬件、Kernel、反量化和 Workload；Memory 更小不自动等于端到端更快。
-</details>
-
-<details><summary>11. 为什么模型选型要看 Cost per Successful Task？</summary>
-便宜模型如果错误率高、反复重试，最终完成一个正确任务的成本可能更高。
-</details>
-
-<details><summary>12. Bi-Encoder 与 Cross-Encoder 为什么组合？</summary>
-前者可预计算文档向量做大规模召回，后者对少量候选联合编码做更精细排序。
-</details>
-
-<details><summary>13. Prompt、RAG、Fine-tuning 的主要边界是什么？</summary>
-Prompt 解决任务表达/约束；RAG/Tool 提供动态或私有知识；Fine-tuning 稳定改变行为和特定任务能力。
-</details>
-
-<details><summary>14. 为什么 Fine-tuning 不适合存最新公司政策？</summary>
-知识会快速变化且需要权限/删除/引用，更适合外部 Retrieval/Tool 而不是反复写入模型参数。
-</details>
-
-<details><summary>15. LoRA 为什么参数高效？</summary>
-冻结 Base Weight，只训练低秩增量矩阵，大幅减少可训练参数和 Optimizer State。
-</details>
-
-<details><summary>16. 为什么必须记录 Model / Prompt / Adapter Version？</summary>
-没有版本就无法复现 Regression、比较 Eval 或安全回滚。
-</details>
-
----
-
-第二遍复习完成标准：你应该能不看文档画出：
-
-```text
-Token → Transformer → Attention → Generation
-Prefill → KV Cache → Decode → Serving
-Model Selection
-Embedding → Reranker
-Prompt / RAG / Fine-tuning Boundary
-```
+[权威资料索引](../../../references/llm-foundation/README.md) 用于核对机制和版本；[高频面试题](../interview/高频面试题.md) 用于把理解组织成可追问的表达。

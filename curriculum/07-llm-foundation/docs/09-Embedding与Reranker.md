@@ -1,341 +1,155 @@
-# 09｜Embedding 与 Reranker：Bi-Encoder / Cross-Encoder 的分工
+# 09｜Embedding 与 Reranker：一段文字怎样成为可检索的向量
 
-Embedding Model 和 Reranker 经常一起出现在 RAG，但它们解决的是两个不同阶段的问题：
+[← 模型 API 与选型](08-ModelAPI与Selection.md) · [模块首页](../README.md) · [多模态输入与失败定位 →](10-MultimodalFoundation.md)
 
-```text
-Embedding / Bi-Encoder
-→ 大规模快速召回
+用户问“订单怎么还没到”，文档写的是“物流延迟处理办法”。两段文字词面不同，却应当互相匹配。向量数据库能够快速找相近向量，但这些向量为什么会相近，不是数据库决定的。
 
-Cross-Encoder / Reranker
-→ 小候选集精细排序
-```
+本章从文字经过模型的过程出发，解释整段向量如何产生，再看为什么常用一个模型召回、一种更细的模型重排。已有向量距离知识可回看 Vector DB；本章不重复 ANN 索引实现。
 
-这一章只讲模型基础；Hybrid、RRF、Top-K Pipeline 和端到端 Retrieval Evaluation 仍属于 RAG。
+## 1. Token 的输入向量与整段检索向量不是同一个对象
 
----
+第 03 章的 Embedding 表按 Token ID 查出输入向量。它服务于模型内部计算，并不自动产生适合语义检索的整段表示。
 
-## 1. Embedding Model 在做什么
-
-Embedding Model 把文本、图片或其它对象映射到固定维向量：
+常见文本向量模型的路径是：
 
 ```text
-Object
-→ Encoder
-→ Vector
+一段文本
+    ↓ 使用匹配的 Tokenizer
+Token 序列
+    ↓ 编码模型利用上下文加工
+每个位置的隐藏表示
+    ↓ 池化或指定位置读取；必要时再投影
+一个定长段落向量
+    ↓ 按模型约定归一化
+用于检索的向量
 ```
 
-目标是让某种“语义相关关系”能在向量空间中通过距离/相似度表达。
+**Pooling（池化）** 把多个位置的表示汇总成一个向量。例如均值池化对有效位置逐维求平均；CLS 池化读取特定汇总位置；某些因果模型使用最后一个有效位置。这些选择必须与模型的训练和配置匹配，不能随意替换后仍声称得到同一种表示。[Sentence Transformers 的模型组成文档](https://www.sbert.net/docs/sentence_transformer/usage/custom_models.html)将 Transformer、Pooling、Dense 和 Normalize 明确区分。
 
-它并不是把每个概念转换成可人工解释的独立坐标。
+## 2. 用两维示例看清池化和归一化
 
----
+假设编码器对两个有效 Token 输出 `[1,2]` 和 `[3,0]`，另一个补齐位置是 `[100,100]`。这些都是人为设定的数值，不是语义模型实测。
 
-## 2. Bi-Encoder 为什么适合大规模检索
-
-Query 和 Document 分别编码：
+均值池化应忽略补齐位置：
 
 ```text
-q → Encoder → v_q
-
-doc → Encoder → v_d
+逐维平均：[(1+3)/2, (2+0)/2] = [2,1]
+L2 范数：sqrt(2²+1²) = sqrt(5)
+单位化后：[2/sqrt(5), 1/sqrt(5)] ≈ [0.8944,0.4472]
 ```
 
-Document Vector 可以提前离线计算并存入 Vector DB。
+如果错误地把补齐位置算进去，结果会变成 `[104/3,102/3]`，有效信息被补齐值污染。因此批处理时要用有效位置掩码，而不是“无论多少行都平均”。真实模型的补齐表示不必是零，也不应靠猜测排除。
 
-在线 Query 只需：
+**L2 归一化**把向量长度变成 1，常用于令点积与余弦相似度对应。它不保证向量本身表达了正确语义；零向量也不能直接除以零做单位化。是否归一化、用哪种距离，由该模型与检索配置共同决定。
+
+## 3. 为什么相关文字会变近
+
+网络能够输出一个向量，并不代表这个向量天然适合当前领域。关键在训练目标。
+
+一种常见方式是 **对比学习（contrastive learning）**：给定查询，让正确相关文档的相似度相对更高，让不相关文档的相似度相对更低。训练利用这些差异调整编码器参数，而不是由人手动规定某一维必须表示“物流”。
+
+例如训练样本可能包含：
+
+| 查询 | 正例 | 容易混淆的负例 |
+|---|---|---|
+| 订单迟迟未到怎么办 | 物流延迟处理办法 | 退款到账延迟说明 |
+
+负例同样包含“延迟”，但对应不同业务。**Hard Negative（难负例）** 指看起来相似却不符合当前目标的样本，它有助于训练区分边界；前提是标注确实正确，不能把真正相关文档误当负例。
+
+这类目标使相关性逐步反映在向量空间中，但训练领域、语言、文本长度和样本标注都会影响泛化。不是维度越高就必然更好，也不是随意拿生成模型某层平均一下就得到优质检索模型。双塔句向量训练可参考 [Sentence-BERT](https://arxiv.org/abs/1908.10084)。
+
+## 4. Bi-Encoder 为什么适合大规模召回
+
+**Bi-Encoder（双编码器或双塔）** 分别编码查询和文档，再用向量相似度比较。两路可能共享权重，也可能按任务训练为不同编码器；重要特点是文档表示不依赖当前这一个查询，所以可以提前计算。
 
 ```text
-encode query once
-→ ANN search existing vectors
+离线：文档 → 编码 → 文档向量 → 建索引
+在线：查询 → 编码 → 查询向量 → 检索相近文档
 ```
 
-因此可以扩展到大量文档。
+例如有一百万个文档片段，不必每次查询都把它们与查询拼起来重新运行模型。文档更新时再对变更部分重编码，查询侧只产生当前向量，向量索引负责快速找候选。
 
-这就是 Bi-Encoder 的最大工程优势：
+代价是独立编码时不能针对当前查询逐 Token 比较每篇文档。固定维度需要压缩文本信息，对否定、数字、实体和细粒度条件的判断可能不够准确。模型也有最大输入长度，超长段落可能被截断；截断策略与分块设计需要配合，而不是先把整本书交给编码器再假设信息都保留了。
 
-> **Document 表示可预计算。**
+## 5. Cross-Encoder 为什么更适合少量候选
 
----
-
-## 3. Query Encoder 和 Document Encoder 不一定完全一样
-
-有些模型使用共享 Encoder，但需要不同 Prefix：
+**Cross-Encoder（交叉编码器）** 将查询与候选文档一起输入，让它们在模型内部交互，再输出相关性分数。它有机会直接比较“查询里的迟到”与“文档中的物流而非退款”。
 
 ```text
-query: ...
-passage: ...
+同一个查询 ─┬→ [查询, 文档 A] → 联合编码 → 分数 A
+            ├→ [查询, 文档 B] → 联合编码 → 分数 B
+            └→ [查询, 文档 C] → 联合编码 → 分数 C
 ```
 
-有些体系可能使用不同参数的双塔。
+文档 B 对当前查询的分数依赖这一对输入，不能只靠事先存一个固定文档向量就完成全部工作。候选越多，总推理成本通常越高；批处理可以提高利用率，但没有让计算凭空消失。两种架构差别见 [Sentence Transformers 的 Cross-Encoder 说明](https://www.sbert.net/examples/cross_encoder/applications/README.html)。
 
-所以必须遵循模型契约：
+工程上常用双塔先召回少量候选，再用交叉编码器重排。**Reranker（重排器）是系统职责，不等于唯一模型架构**：交叉编码器很常见，也存在生成式或其他重排方式。本章比较的是常见机制，不宣称所有重排器内部相同，或在每个任务上一定更准。
+
+## 6. 召回上限与分数边界
+
+假设唯一能回答问题的文档是 D，但第一阶段只返回 A、B、C。再强的重排器只看这三项，也无法把 D 排到第一。
 
 ```text
-Query Preprocess
-Document Preprocess
-Normalization
-Metric
+候选集合中有没有正确证据？ → 检查召回
+已有正确证据却排不前？     → 检查排序
+排前后仍答错？             → 继续检查证据组装与生成
 ```
 
-Vector DB 只负责存储和搜索，不知道你是否用错模型输入协议。
+重排提高的是给定候选中的排序质量，不能补回从未看到的对象。完整候选预算、融合与评价在 RAG 模块展开；这里保留这个必要条件。
 
----
+相似度和重排分数也不应混用。某模型输出 0.8，可能只是排序分数或 logit；即使经过 Sigmoid（一种将实数压到 0 与 1 之间的函数）映射到 0–1，也不自动成为经过校准的“80% 相关概率”。不同模型、不同任务的分数尺度往往不同，不能把余弦 0.8 与重排 0.8 直接平均或比较大小。
 
-## 4. Embedding 质量怎么评估
+## 7. 怎样检查模型与向量库是否配套
 
-不能只看：
+向量维度相同，只说明可以放进同样形状的数组，不证明它们来自同一语义空间。更换编码器、池化、归一化或查询指令，都可能改变向量的意义。
 
-```text
-“感觉语义挺像”
-```
+查询和文档需要遵守该模型约定。例如有些模型要求查询加用途说明而文档不加，有些训练的两路编码器本就不同。正确规则是“按模型设计配套”，不是“所有场合都给查询文档加同一个前缀”。
 
-应使用与你业务一致的数据：
+更换模型时，应保留模型、Tokenizer、池化与归一化版本，重新编码必要语料并验证；不要把新查询向量直接放进旧模型构建的库，除非已经证明兼容。向量索引重建、版本切换与回滚归 Vector DB，本章解释为什么需要这些动作。
 
-```text
-Query
-Relevant Document / Pair Label
-```
+## 8. 效果不好时，先拆开模型问题与索引问题
 
-然后测：
+先在可管理的小语料上做**精确向量检索**，排除 ANN 近似造成的遗漏，再比较不同编码器、池化或输入处理。如果精确检索也找不到正确文档，可能是语料、问题标注、分块或模型表示不适合，不应先不断增加 HNSW 的搜索参数。
 
-- Recall@K；
-- MRR / NDCG（具体归 RAG）；
-- Domain Slice；
-- Hard Negative；
-- 多语言/长短 Query；
-- 真实 Filter 场景。
+若精确结果很好、ANN 丢了正确候选，则回到索引参数和过滤机制排查。若召回已有答案但重排把它压下去，再检查重排输入截断、查询文档顺序、模型匹配和分数使用。
 
-Embedding Benchmark 和 ANN Recall 要分开：
+选模型时比较真实领域的召回与排序质量、语言覆盖、输入长度、批处理吞吐、向量维度与存储成本。公开基准可以筛选候选，不能替代业务验证。
 
-```text
-Exact Vector Search 质量
-≠
-ANN Index Recall
-```
+## 9. 本章小结
 
----
+整段检索向量通常由上下文表示经过训练匹配的池化或读取方式得到，不是 Token ID 的平均值。双塔让文档向量可预计算，适合召回；交叉编码器把查询与文档联合处理，适合对候选做细排。模型表示、索引近似、候选完整性和分数尺度，需要分别验证。
 
-## 5. Embedding Model 选型看什么
+## 10. 🎯 面试怎么回答
 
-至少关注：
+**问：一段话分词以后，怎样得到一个向量？Embedding 和 Reranker 又有什么不同？**
 
-```text
-Retrieval Quality
-Domain Fit
-Language Coverage
-Dimension
-Input Length
-Latency
-Batch Throughput
-Cost
-Normalization / Metric Contract
-Deployment / Privacy
-```
+> Tokenizer 先得到离散 ID，编码模型把每个位置加工成带上下文的隐藏表示，再按训练匹配的均值、CLS、末位置等方式汇总或读取，必要时投影和归一化，形成定长向量。检索双塔分别编码查询和文档，文档可以提前建库；常见交叉编码重排器把查询文档一起输入，细粒度交互更多，但每个候选对都要计算，所以通常只处理召回后的少量候选。前者没召回正确证据，后者就无法凭空补救。
 
-Dimension 大并不自动表示质量更好。
+## 11. ⚠️ 易错点
 
----
+- 把输入 Token Embedding 表与训练好的整段检索向量混为一谈。
+- 平均所有位置却不去掉 Padding；或任意更换池化方式而不验证。
+- 向量维度相同就混用模型版本，或者把分数直接当事实置信度。
+- 用 ANN 参数调优补救所有问题，没有先建立精确检索对照。
 
-## 6. 为什么 Dense Embedding 不是万能的
+## 12. 自测
 
-Dense Semantic Retrieval 擅长：
+**任务 1：** 两个有效位置表示为 `[2,0]`、`[0,2]`，另有一个 Padding 位置 `[9,9]`。求有效位置的均值池化与 L2 单位化结果。指出直接平均三行错在哪里。
 
-- 同义表达；
-- 语义相似；
-- 概念性 Query。
+<details><summary>答案与解释</summary>
 
-但可能在这些场景吃亏：
+均值是 `[1,1]`，范数为 sqrt(2)，单位化约为 `[0.7071,0.7071]`。直接平均三行把无效补齐位置也当作语义信息，得到的向量不再是有效位置的均值。
 
-- 精确术语；
-- ID / Code / Error Message；
-- 人名 / SKU；
-- 稀有 Keyword；
-- 数字匹配。
-
-因此 RAG 常结合 Sparse/BM25 与 Hybrid Retrieval。
-
----
-
-## 7. Cross-Encoder 为什么更准但更贵
-
-Bi-Encoder 分别编码 Query 和 Document：
-
-```text
-q → vector
-
-D → vector
-```
-
-Cross-Encoder 则把两者一起输入模型：
-
-```text
-[q, document]
-→ model jointly attends both
-→ relevance score
-```
-
-它可以建模更细的 Token-to-Token 交互，因此通常排序精度更强。
-
-但代价是：
-
-> **每个 Query-Document Pair 都要重新 Forward。**
-
-如果有 1 亿文档，不可能在线对全部做 Cross-Encoder。
-
----
-
-## 8. Reranker 的典型位置
-
-因此常见两阶段：
-
-```text
-Fast Retriever
-→ Top 20 / 50 / 100 candidates
-→ Reranker
-→ Top 5 / 10
-```
-
-第一阶段追求：
-
-```text
-Recall
-```
-
-第二阶段追求：
-
-```text
-Precision / Ranking Quality
-```
-
-具体候选数、Top-K 和是否 Hybrid 属于 RAG Pipeline。
-
----
-
-## 9. 为什么 Rerank 不能救回未召回的文档
-
-如果正确文档根本没有进入 Candidate Set：
-
-```text
-Retriever misses relevant doc
-→ Reranker never sees it
-```
-
-那么 Reranker 再强也无能为力。
-
-所以 Debug 时要先问：
-
-```text
-Ground Truth in Candidate Set?
-```
-
-再判断 Ranking。
-
----
-
-## 10. Reranker 输入长度与截断
-
-Cross-Encoder 通常有输入长度限制。
-
-如果候选文档很长：
-
-```text
-query + long chunk
-→ truncate
-```
-
-可能把真正相关证据截掉。
-
-因此 Chunk Size、Reranker Max Length、Candidate Content 之间要一起设计。
-
----
-
-## 11. Reranker 也有 Domain Shift
-
-一个通用 Reranker 在法律、医疗、代码等领域未必同样有效。
-
-因此“加了 Rerank 就一定提升”是错误的。
-
-需要验证：
-
-```text
-Baseline Retriever
-vs
-Retriever + Reranker
-```
-
-在真实 Query Set 上的变化。
-
----
-
-## 12. Cross-Encoder 和 LLM Judge 的区别
-
-Reranker 通常针对：
-
-```text
-Query-Document Relevance
-```
-
-做高效评分。
-
-LLM Judge 可以评更复杂维度，但：
-
-- 成本更高；
-- Latency 更高；
-- 稳定性/偏差不同。
-
-不能把所有“模型打分”都混成同一个概念。
-
----
-
-## 13. Embedding 与 Reranker 的版本治理
-
-Production 应记录：
-
-```text
-embedding_model_version
-reranker_version
-preprocess_version
-metric
-normalization
-```
-
-Embedding Model 更新往往需要 Re-embedding / Index Generation；Reranker 更新通常不要求重建向量，但需要重新做 Ranking Regression。
-
----
-
-## 14. 常见错误
-
-- Embedding Dimension 越大质量一定越高：错。
-- Vector DB 检索差就一定是 ANN 问题：可能是 Embedding。
-- Cross-Encoder 可以直接搜全库：通常成本不可接受。
-- 加 Reranker 一定更好：必须评估 Domain Fit。
-- Reranker 能救回没召回的文档：不能。
-- Embedding Model 和 Reranker 升级生命周期完全一样：不同。
-
----
-
-## 15. 面试怎么答
-
-### Q：Bi-Encoder 和 Cross-Encoder 区别？
-
-> Bi-Encoder 分别编码 Query 和 Document，文档向量可以预计算，因此适合大规模 ANN Retrieval；Cross-Encoder 把 Query 和 Candidate 一起输入模型，能做更细粒度交互，排序通常更准但每个 Pair 都要重新推理，所以常用于小候选集 Rerank。
-
-### Q：为什么先 Top20 再 Rerank Top5？
-
-> 第一阶段用便宜 Retriever 保证候选 Recall，第二阶段用更贵但精细的 Reranker 提升排序 Precision。具体 20/5 不是固定答案，要通过 Recall、Ranking Quality、Latency 和 Cost Eval 决定。
-
----
-
-## 16. 自测
-
-<details><summary>1. 为什么 Bi-Encoder 可扩展到大规模文档？</summary>
-因为 Document Embedding 可以离线预计算，在线只编码 Query 并搜索已有向量。
 </details>
 
-<details><summary>2. 为什么 Reranker 无法修复第一阶段漏召回？</summary>
-因为它只能给已经进入 Candidate Set 的文档重新排序。
+**任务 2：** 旧文档库与新查询编码器都输出 768 维。检索质量突然下降，调大 ANN 搜索范围没有改善。说明至少两项应先核对的条件，以及为什么 768 维相同不足以证明兼容。
+
+<details><summary>答案与解释</summary>
+
+先核对编码器与 Tokenizer 版本、两路用途前缀、池化和归一化；同时做小语料精确检索对照。维度只定义数组形状，模型训练决定空间含义，不同模型可输出同维但互不匹配的空间。
+
 </details>
 
-<details><summary>3. Embedding Model 升级和 Reranker 升级的主要运维差异是什么？</summary>
-Embedding 变化通常需要重新生成文档向量和新索引；Reranker 变化主要影响在线排序模型和回归验证。
-</details>
+## 13. 知识回看与资料
+
+回看 [Transformer 隐藏表示](03-TransformerBlock.md)；距离与索引回看 [Vector DB](../../06-vector-db/README.md)；候选预算和完整检索评价进入 [RAG](../../08-rag/README.md)。原理查 [Sentence-BERT](https://arxiv.org/abs/1908.10084)、[模型组成](https://www.sbert.net/docs/sentence_transformer/usage/custom_models.html) 和 [Cross-Encoder](https://www.sbert.net/examples/cross_encoder/applications/README.html)。

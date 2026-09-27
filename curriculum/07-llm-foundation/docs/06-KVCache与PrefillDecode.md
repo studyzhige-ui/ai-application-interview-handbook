@@ -1,322 +1,152 @@
-# 06｜KV Cache、Prefill 与 Decode：LLM 推理的两阶段模型
+# 06｜KV Cache 与 Prefill、Decode：为什么少算了，却更占显存
 
-如果只懂 Transformer，却不懂推理时的 **KV Cache / Prefill / Decode**，就很难解释：
+[← 从分数到生成结果](05-Generation与Decoding.md) · [模块首页](../README.md) · [模型服务与性能判断 →](07-ServingEngine与性能.md)
 
-```text
-为什么长 Prompt 会让 TTFT 变慢？
-为什么长输出特别耗时？
-为什么并发时 KV Cache 会成为显存瓶颈？
-为什么 Agent 的 Context 越长，Serving 越难？
-```
+输入一份长文档后，只生成十个字，第一段等待仍然很长；让模型继续写几千字，首段等待变化不大，总耗时却增加很多。原因不只是“Token 多”，而是输入处理和后续生成做的工作不同。
 
-这三个概念本来就是同一条推理链。
+本章沿一次普通因果语言模型请求，看清哪些计算能够复用、缓存何时增长，再据此估算显存。计算公式限定为**每层保存完整历史 K/V 的标准注意力缓存**，不套用到滑动窗口、潜在压缩缓存、状态空间模型等不同结构。
 
----
+## 1. 历史 K/V 为什么可以不重新算
 
-## 1. 为什么 Autoregressive Generation 会重复用历史 Token
+上一章中，生成 C 后，序列从 `[A, B]` 变成 `[A, B, C]`。如果每次都从 A 开始重新运行，就会重复计算 A、B 在各层的表示和投影。
 
-每生成一个新 Token，都需要让当前位置 Attention 到之前的 Context。
+在因果注意力下，A 的表示不能使用后来的 B、C；B 也不能使用后来的 C。**当模型参数、前缀 Token、位置和注意力规则不变时，追加后续 Token 不会改变旧位置已经算出的 K/V。** 因此可以把它们保存下来。
 
-假设已经有：
+新位置 C 仍要产生自己的 Q、K、V。它的 Q 与可见历史 K 匹配，再把历史 V 加权汇总。缓存省掉旧位置的重复投影和前缀计算，并没有取消读取历史信息的工作。机制参见 [Transformers Cache explanation](https://huggingface.co/docs/transformers/v5.17.0/en/cache_explanation)。
 
-```text
-Token 1 ... Token 1000
-```
+为什么常缓存 K/V 而不是 Q？后续位置要查的是旧位置的“匹配键”和“内容”。旧位置的 Q 是它当时查询其他位置所用的向量，通常不参与新位置的注意力输出，所以没有同样的复用需求。
 
-生成 Token 1001 时，会用到历史位置的 K / V。
+> ⚠️ 注意：因果条件很重要。双向编码器中的旧位置可能受新增内容影响，不能直接照搬这种“追加后旧状态不变”的缓存规则。
 
-生成 Token 1002 时，同样还会用到前 1001 个位置的 K / V。
+## 2. 用时间表看 Prefill 和 Decode
 
-如果每一步都重新计算历史所有 Token 的 K/V，会造成大量重复计算。
+**Prefill（输入预填充）** 处理已有输入，在各层建立前缀 K/V，并计算最后一个输入位置的词表分数。**Decode（后续解码阶段）** 反复处理新选出的 Token，复用已有 K/V 来选择再下一个 Token。
 
-所以引出：
+假设输入长度为 3，普通生成路径要返回三枚 Token `y1、y2、y3`：
 
-```text
-KV Cache
-```
+| 步骤 | 本次送入模型的内容 | 计算后缓存长度 | 根据分数选出的结果 |
+|---|---|---:|---|
+| Prefill | 3 枚输入 Token | 3 | y1 |
+| 第一次后续计算 | y1 | 4 | y2 |
+| 第二次后续计算 | y2 | 5 | y3 |
 
----
+如果此时停止，y3 已经被选中并可以返回，但还没有作为新输入通过各层，所以这个时刻缓存长度为 5，而不是 6。继续生成时才把 y3 送入并追加其 K/V。
 
-## 2. KV Cache 缓存什么
+这个区别用来理解状态，不要求所有服务暴露同样的内部计数。容量规划一般会按输入加最大输出预留，以免追求精确到最后一枚 Token 而低估峰值。
 
-在每一层 Attention 中，历史 Token 的 Key / Value 一旦计算完，在后续 Decode 中通常可以复用。
+## 3. 输入可以批量处理，输出有先后依赖
 
-于是：
+Prefill 时已有输入全部已知。实现可以把很多位置放在同一次批量计算中，同时通过因果掩码保持可见性边界。后续普通 Decode 必须先知道 y1 才能处理 y1 并选 y2，因此有顺序依赖。
 
-```text
-Past Tokens
-→ K/V tensors
-→ cache
+长输入通常增加 Prefill 工作量；长输出增加后续步骤。随着历史变长，后续步骤读取的 K/V 也会更多。不能把“缓存命中”解释成“继续生成与输入长度无关”。
 
-New Token
-→ compute only new Q/K/V
-→ attend to cached K/V
-```
+Prefill 常能形成较大的矩阵计算；小批量 Decode 常受权重和 KV 读取带宽限制。但这是典型负载下的判断，不是硬定律：批量、硬件、模型结构、量化和调度都会改变瓶颈。应测实际工作负载，不用阶段名称替代性能证据。
 
-核心价值：
+## 4. 缓存到底保存多少数据
 
-> **用显存换取 Decode 阶段少做大量重复计算。**
-
----
-
-## 3. KV Cache 为什么会变成资源瓶颈
-
-它的大小大致随以下因素增长：
+对各层配置相同、每枚 K/V 元素占相同字节数的标准完整缓存：
 
 ```text
-Batch / Concurrent Sequences
-× Sequence Length
-× Number of Layers
-× KV Heads
-× Head Dimension
-× Precision
+KV 字节数
+= 2 × 层数 × KV 头数 × 每头维度 × 每元素字节数 × 所有活跃序列的缓存长度之和
 ```
 
-所以：
+`2` 表示 K 和 V 两份。序列长度不同时，应该求和，不能无说明地用某个平均长度当峰值。以下是**假设配置的算术示例**：32 层、8 个 KV 头、每头 128 维、每元素 2 字节。
 
 ```text
-Context 越长
-并发越高
-模型越深
+每枚 Token 的 KV：2 × 32 × 8 × 128 × 2 = 131,072 字节 = 128 KiB
+一条 8,192 Token 序列：131,072 × 8,192 = 1,073,741,824 字节 = 1 GiB
+四条同长度序列：4 GiB
 ```
 
-KV Cache 占用越大。
+这里 `KiB=1024` 字节，`GiB=1024³` 字节。公式只算 KV 数据，不含权重、激活、分页尾块、工作空间、运行库和分配开销；也未计入前缀共享、压缩或卸载的收益。不能把 4 GiB 当成模型服务的总显存。
 
-这也是为什么超长上下文 Agent 在高并发 Serving 中很贵。
+下面是可独立运行的容量计算，不分配真实 GPU 显存。
 
----
+<!-- example: kv-bytes -->
+```python
+def kv_bytes(layers: int, kv_heads: int, head_dim: int,
+             element_bytes: int, lengths: list[int]) -> int:
+    sizes = (layers, kv_heads, head_dim, element_bytes)
+    if any(type(x) is not int or x <= 0 for x in sizes):
+        raise ValueError("model dimensions and element_bytes must be positive integers")
+    if any(type(x) is not int or x < 0 for x in lengths):
+        raise ValueError("cache lengths must be non-negative integers")
+    return 2 * layers * kv_heads * head_dim * element_bytes * sum(lengths)
 
-## 4. Prefill 是什么
-
-第一次收到完整 Prompt：
-
-```text
-System + User + History + Retrieval + Tool Context
+assert kv_bytes(32, 8, 128, 2, [8192]) == 1024 ** 3
+assert kv_bytes(32, 8, 128, 2, [8192, 8192, 8192, 8192]) == 4 * 1024 ** 3
 ```
 
-模型需要一次处理整个输入序列，为每个位置建立 Hidden State 和 KV Cache。
+函数返回整数形式的字节数，不修改长度列表；空列表表示没有活跃序列，结果为 0。它故意要求整数字节精度，不用它直接计算 4 bit 缓存的打包和量化元数据。
 
-这个阶段叫：
+## 5. MHA、GQA、MQA 为什么影响缓存
 
-```text
-Prefill
-```
+第 04 章区分了查询头与 KV 头。这里把差别代入同一公式：
 
-它的特征是：
+| 结构示例 | Q 头数 | KV 头数 | 相同长度下的 KV 大小比例 |
+|---|---:|---:|---:|
+| MHA，多头注意力 | 32 | 32 | 32 |
+| GQA，分组查询注意力 | 32 | 8 | 8 |
+| MQA，多查询注意力 | 32 | 1 | 1 |
 
-- 输入 Token 多；
-- 大量矩阵计算可以并行；
-- Context 越长，Prefill 越贵；
-- 主要影响 TTFT。
+GQA 让一组 Q 头共用 K/V，MQA 是所有 Q 头共用一组 K/V。因此这里决定缓存规模的是 **KV 头数**，不是简单使用 Q 头数。
 
----
+同样的每头维度、层数和精度下，示例 GQA 的 KV 是 MHA 的四分之一。它不是服务端任意改一个头数参数就能无损获得的收益；模型架构和训练需要与之匹配。参见 [GQA 原论文](https://arxiv.org/abs/2305.13245)。
 
-## 5. Decode 是什么
+## 6. 单请求缓存、前缀复用和业务记忆不是同一层
 
-Prefill 完成后，开始逐 Token 生成：
+**单请求 KV Cache**复用本次生成已经计算的历史状态。**跨请求前缀缓存**尝试在请求之间复用相同前缀的结果，例如重复出现的系统说明或长文档开头。它通常要求匹配 Token 序列及影响计算的模型及附加的微调权重、位置等条件；相同文字但不同模板、模型或微调权重版本不一定可复用。
 
-```text
-next token
-→ append
-→ next token
-→ append
-```
+前缀命中主要减少已经缓存部分的输入计算，不会把后续输出直接变成已完成文本，也不会把该前缀从上下文窗口中“删除”。服务是否提供折扣、如何计费是独立的接口规则。
 
-每一步通常只处理新 Token，但要读取历史 KV Cache。
+**Agent 长期记忆**则是应用保存并选择用户事实、任务状态和历史证据的机制。KV 可能被释放、抢占或失效，并不承担可修订、可追溯的业务记忆责任。相似问题的最终答案缓存又是另一种应用缓存，需要额外检查事实新鲜度与权限。
 
-Decode 的特征：
+> ⚠️ 注意：可复用不等于可跨租户共享。隐私、缓存命中时序泄露和权限隔离需要单独设计。不能因为底层能共享显存块，就跳过业务数据边界。
 
-- 严格 Autoregressive；
-- 每步计算量较小但次数很多；
-- 常更受 Memory Bandwidth / KV Cache 访问影响；
-- 主要影响 TPOT / Tokens per second。
+## 7. 请求结束以后，资源并不靠“网页关了”自动证明释放
 
----
+运行中的请求结束或被服务端确认取消后，服务应结束该序列，并释放或归还其活跃缓存资源。跨请求前缀缓存可能按缓存策略继续保留可复用块，这与“请求仍在运行”不同。
 
-## 6. Prefill 和 Decode 为什么性能特征不同
+浏览器断开、应用超时、取消信号送达模型服务，以及模型服务实际停止计算，是不同事件。排障时要检查请求标识、服务端活动序列和资源变化，不能只看到客户端报错就认定 GPU 工作已经停止。完整取消传播与可靠性归 Backend 和 Agent，本章保留资源语义。
 
-可以简单记：
+显存不足时，不同实现可能拒绝新请求、暂停并重算部分请求，或卸载部分状态。第 07 章以明确版本说明一种实际调度策略，不把它写成所有引擎共有的默认行为。
 
-| 阶段 | 主要输入 | 特征 | 典型用户指标 |
-|---|---|---|---|
-| Prefill | 整段 Prompt | 计算密集、并行度高 | TTFT |
-| Decode | 每次 1 个新 Token | 串行依赖、KV 访问重 | TPOT / Output TPS |
+## 8. 本章小结
 
-因此一个 Serving Engine 会对两种阶段做不同优化。
+缓存成立的原因是因果前缀的旧状态在追加内容后保持不变。Prefill 建立输入状态并提供首枚输出的分数；后续 Decode 处理新 Token 并持续读写 KV。缓存用显存换重复计算，长输入、长输出和并发都会影响容量；实际模型结构与缓存布局决定公式是否适用。
 
----
+## 9. 🎯 面试怎么回答
 
-## 7. TTFT 与 TPOT
+**问：KV Cache 为什么加速，又为什么会限制并发？**
 
-### Time To First Token
+> 对固定因果前缀，旧位置在各层的 K/V 不受后续 Token 影响，所以可以保存并复用。新位置只计算自己的投影，再读取历史 K/V 做注意力，避免重复运行整个前缀。代价是缓存随层数、KV 头数、头维度、数据精度以及活跃序列长度之和增长。估算标准完整缓存时，要同时计入 K 和 V，再加权重和运行开销；GQA、分页和量化分别影响不同部分，不能混成一种优化。
 
-```text
-Request arrival
-→ Queue
-→ Prefill
-→ First Token
-```
+## 10. ⚠️ 易错点
 
-TTFT 受：
+- 把 KV Cache 当成最终文本或长期记忆；它保存的是计算中间状态。
+- 以为有缓存就不需要读取历史。历史注意力仍有成本。
+- 把 Q 头数直接当 KV 头数，或把 GiB 与十亿字节混用。
+- 用标准完整缓存公式估算所有新架构，却没有核对滑动窗口、压缩状态和不同层配置。
 
-- Prompt Length；
-- Queue；
-- Prefill Batch；
-- Model Size；
-- Hardware；
+## 11. 自测
 
-影响。
+**任务 1：** 标准缓存配置为 16 层、4 个 KV 头、每头 64 维、每元素 2 字节。两条序列的缓存长度为 1024 和 3072。计算 KV 字节数与 MiB；再判断每条序列都预留 4096 Token 时，预留容量是多少。不包含其他开销。
 
-### Time Per Output Token
+<details><summary>答案与解释</summary>
 
-首 Token 后：
+每 Token 为 2×16×4×64×2=16,384 字节。当前总长 4096，对应 67,108,864 字节，即 64 MiB。两条各预留 4096，总长 8192，需要 128 MiB。当前使用量和为上限预留的容量不同。
 
-```text
-Token 2
-Token 3
-...
-```
-
-平均每个输出 Token 的耗时常用 TPOT 观察。
-
-所以：
-
-```text
-长 Prompt → TTFT 压力
-长 Output → TPOT × Token Count
-```
-
----
-
-## 8. 为什么长 Context 会同时拖累体验和容量
-
-长 Context 不只是多付 Input Token 钱。
-
-还意味着：
-
-```text
-Prefill Compute ↑
-KV Cache ↑
-TTFT ↑
-GPU Memory Pressure ↑
-Max Concurrent Sequences ↓
-```
-
-所以 Agent Harness 做 Compaction / Tool Result Offloading，不只是为了防止硬 Context Overflow，也是在治理 Serving Capacity。
-
----
-
-## 9. Prefix / Prompt Cache 的直觉
-
-很多请求可能共享相同前缀：
-
-```text
-same system prompt
-same tool definitions
-same long document prefix
-```
-
-如果 Serving Provider 支持 Prefix / Prompt Cache，可以复用部分前缀计算或缓存结果，降低重复 Prefill 成本。
-
-但具体缓存粒度、生命周期和计费依 Provider / Engine 而异。
-
-应用层只需掌握：
-
-> **稳定前缀有潜在复用价值，因此 Context Assembly 的顺序和稳定性可能影响 Cache Hit。**
-
----
-
-## 10. KV Cache 和 Application Cache 不是一回事
-
-### KV Cache
-
-```text
-模型推理内部
-保存历史 Attention K/V Tensor
-```
-
-### Response Cache / Semantic Cache
-
-```text
-应用层
-保存整个请求结果或语义相近请求结果
-```
-
-两者层级完全不同。
-
----
-
-## 11. GQA / MQA 为什么和 KV Cache 有关
-
-传统 Multi-Head Attention 每个 Head 都有独立 K/V，会让 Cache 很大。
-
-MQA / GQA 通过让多个 Query Head 共享更少的 KV Head，降低：
-
-```text
-KV Cache Memory
-Memory Bandwidth
-```
-
-这是现代 Serving 中很重要的模型架构优化。
-
-应用工程师不必推导完整矩阵，但需要理解：
-
-> 模型 Attention Architecture 会影响 Serving Memory Footprint。
-
----
-
-## 12. Streaming 和 Decode
-
-API Streaming 通常是在 Decode 产生 Token 后尽快把它推给客户端：
-
-```text
-Decode Token
-→ Server Event / Chunk
-→ Client render
-```
-
-Streaming 不会让模型本身总生成时间消失，但可以显著改善：
-
-```text
-Perceived Latency
-```
-
-所以 AI Backend 会关心 TTFT 和 Stream Backpressure。
-
----
-
-## 13. 常见错误
-
-- KV Cache 缓存的是模型最终答案：错误。
-- KV Cache 让 Decode 完全不需要 Attention：错误，仍要让新 Query 读取历史 K/V。
-- Prefill 和 Decode 性能完全一样：错误。
-- Context Window 越大只影响输入费用：还影响 Prefill 和 KV Cache。
-- Streaming 能降低模型总 Decode 计算量：通常不能，它主要改善用户感知。
-
----
-
-## 14. 面试怎么答
-
-### Q：KV Cache 为什么能加速 LLM 推理？
-
-> Autoregressive Decode 每一步都会再次用到历史 Token 的 Key/Value。KV Cache 保存各层历史 K/V，使新 Token 只计算自己的新 K/V，再读取缓存进行 Attention，避免每一步重新计算整个历史序列。代价是显存占用随序列长度和并发增长。
-
-### Q：Prefill 和 Decode 有什么区别？
-
-> Prefill 一次处理完整 Prompt，计算并行度高、主要影响 TTFT；Decode 逐 Token 生成，有严格串行依赖并反复读取 KV Cache，主要影响 TPOT 和输出吞吐。两阶段的瓶颈和 Serving 优化策略不同。
-
----
-
-## 15. 自测
-
-<details><summary>1. 为什么长 Context 会降低可承载并发？</summary>
-因为每个请求的 KV Cache 更大，占用更多 GPU Memory，使同时可驻留的 Sequence 数减少。
 </details>
 
-<details><summary>2. 为什么 Output 很长时主要看 Decode 而不是 Prefill？</summary>
-因为每个输出 Token 都要进行一个新的 Autoregressive Decode Step，数量随输出长度线性增加。
+**任务 2：** 输入有 100 枚 Token，普通路径已经选出第一枚输出，但没有把它再次送入模型。给出当前缓存长度；说明更换 LoRA 适配器后能否不经检查继续沿用旧 KV。
+
+<details><summary>答案与解释</summary>
+
+标准路径当前缓存为 100。第一枚输出在下一步被处理后才新增缓存。更换适配器可能改变各层表示，旧缓存的计算条件已变，不能盲目复用；必须由实现核对兼容性并重建或隔离。
+
 </details>
 
-<details><summary>3. KV Cache 和 Redis Semantic Cache 有什么根本区别？</summary>
-前者是模型内部 Attention 中间张量缓存，后者是应用层结果复用机制。
-</details>
+## 12. 知识回看与资料
+
+回看 [Attention 的可见范围](04-Attention与Position.md) 与 [生成的顺序依赖](05-Generation与Decoding.md)。权威解释见 [Transformers 5.17.0 缓存机制](https://huggingface.co/docs/transformers/v5.17.0/en/cache_explanation) 和 [GQA](https://arxiv.org/abs/2305.13245)。上述算术可由 [配套实验](../labs/README.md) 重跑；它不是显存实测。

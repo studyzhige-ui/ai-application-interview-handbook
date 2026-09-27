@@ -1,548 +1,158 @@
-# 10｜Multimodal Foundation：从视觉输入到可验证的多模态系统
+# 10｜多模态基础：从看见一张图到给出可验证答案
 
-> 本章不把多模态讲成“给 LLM 多传一个 image 字段”。目标是建立应用工程层的完整心智模型：**模态输入怎样被编码 → 怎样占用 Context / Compute → 怎样与语言表示对齐 → 什么任务该用 OCR / Parser / Vision → 失败发生在哪一层 → 怎样评估与上线。**
+[← Embedding 与 Reranker](09-Embedding与Reranker.md) · [模块首页](../README.md) · [把 Prompt 变成可评估输入 →](11-PromptEngineering.md)
 
----
+用户上传一张销售图表，问：“第二季度比第一季度增长多少？”系统回答 50%，但正确结果是 20%。直接换一个“推理更强”的模型之前，要先查它究竟读到了什么：是把 120 看成了 150，还是把另一条曲线的数据当成了销售额？
 
-## 1. 多模态模型解决什么
+多模态是让文本以外的信息参与模型计算，例如图像、音频、视频与文档版面。本章用图表和长文档解释表示、预算、证据定位与失败边界，不把多模态等同于给文本接口增加一个图片字段。
 
-纯文本 LLM 的主要输入是 Token。多模态模型把更多信息源纳入同一次推理，例如：
+## 1. 图像怎样变成模型能使用的表示
 
-```text
-Text
-Image
-Audio
-Video
-Document Layout
-```
-
-稳定抽象不是某一种具体架构，而是：
+一种常见视觉语言模型路径是：
 
 ```text
-Raw Modality
-→ Modality-specific preprocessing / encoder
-→ Feature / Token Representation
-→ Alignment / Projection / Fusion
-→ Language-model reasoning space
-→ Generation / Structured Output / Tool Decision
+原始图像
+   ↓ 缩放、裁剪或切块
+视觉编码器
+   ↓ 得到若干视觉特征向量
+投影或其他融合模块
+   ↓ 形成语言模型能利用的表示
+与问题文本共同参与计算
+   ↓ 回答、结构化结果或工具请求
 ```
 
-具体模型可能使用 Projection、Adapter、Cross-Attention、Unified Tokenization 或其它方案；应用工程师要掌握的是**输入怎样变成模型可以联合推理的表示，以及这个过程引入什么成本和 Failure**。
+**Vision Encoder（视觉编码器）** 处理图像内容；**Projector（投影模块）** 可以通过学习到的映射，把视觉特征变成与语言模型连接所需的维度和表示。另一些架构使用交叉注意力、适配器或更统一的编码方式，不能把这一条示意路径当成所有模型的固定源码。
 
----
+维度接得上，只说明计算能进行。要让视觉内容与语言语义对应，还需要图文配对、匹配或对比训练，以及按指令回答图像问题等训练。训练数据和目标不同，即使都宣称支持图像，模型也可能分别擅长照片描述、小字识别、图表或界面理解。架构实例见 [Visual Instruction Tuning](https://arxiv.org/abs/2304.08485)。
 
-## 2. 视觉输入怎样进入语言模型
+## 2. 看见、对应、推理是不同步骤
 
-一个常见直觉：
+继续使用教学图表：第一季度销售额 100 万元，第二季度 120 万元；图中还画了另一条代表访问量的曲线，其第二季度数值为 150。问题只问销售额。
 
-```text
-Image
-  ↓
-Resize / Tile / Patch
-  ↓
-Vision Encoder
-  ↓
-Visual Features
-  ↓
-Projector / Adapter / Fusion
-  ↓
-Language Model Hidden Space
-  ↓
-Reasoning / Generation
-```
+| 步骤 | 应得到什么 | 可能出现的错误 |
+|---|---|---|
+| 感知 Perception | 读到 100、120、150、图例和单位 | 小字被读错、数值漏读 |
+| 证据对应 Grounding | 把销售额图例连到 100、120 那条曲线 | 把访问量的 150 当销售额 |
+| 推理 Reasoning | `(120−100)/100 = 0.20` | 分母用错，或直接报告增加 20 万等于 20% |
+| 结果表达 | 增长 20%，注明依据的图表位置 | 单位、百分号或字段填错 |
 
-因此模型不是“直接看像素然后说话”。
+这里的 Grounding 指把结论对应到具体输入证据，不是简单地“模型会输出引用”。存在图号却引用到另一张图，仍然对应失败。
 
-这里至少有三个不同层次：
+不能观察到模型的真实内部状态时，不应说“内部已经算对，只是输出错”。可以通过要求返回可检查的读数、证据区域和计算结果，结合确定性计算来定位最早可观察的偏差。
 
-```text
-Perception
-= 看见了什么
+## 3. 图像数量和分辨率也是预算条件
 
-Alignment
-= 视觉表示能否进入语言语义空间
+图像经过预处理后可能形成视觉块、图像 Token 或其他表示。更高分辨率、更多裁片和更多图片往往带来更多计算；是否以及怎样占用语言序列、如何计费，需要看具体架构和接口。
 
-Reasoning
-= 基于已识别信息能否正确推理
-```
+因此，不能把“一张图等于固定多少文字 Token”当成通用公式，也不能把“最高分辨率”当成无需权衡的质量最优解。小字任务可能需要局部高清裁片，而整张高分辨率背景未必提供同等价值。
 
-这三个层次必须分开排障。
+可以先保留全图用于定位，再给关键区域的高清裁片，同时保存裁片与原图的映射。若只截取数值、丢掉图例和单位，像素更多也可能答错。输入预算的作用是保留完成当前任务需要的证据，不是单纯压缩到最小文件。
 
-例如模型答错图表问题，不一定是“推理能力差”，也可能最早就把坐标轴、图例或小字识别错了。
+## 4. 200 页 PDF 应该怎样处理
 
----
+假设只需要回答一本 200 页报告中的某个财务表。把所有页面都截图传入，会反复处理大量无关像素，还可能让真正证据难以定位。
 
-## 3. Visual Token / Multimodal Budget
+更合理的候选流程是：
 
-视觉输入最终也要占用模型的计算与上下文预算。
+1. 先识别文件是否有可提取的原生文本、表格和版面；扫描页才依情况使用 OCR。
+2. 保留页面、区域、阅读顺序与标题关系，让结果可检索。
+3. 根据问题选择相关页、表格或图表区域。
+4. 给模型所需文字、表格结构和原图证据，而不是机械只选一种表示。
+5. 将答案定位回原始页面或区域，再检查数值、单位和引用。
 
-高分辨率、多图、长文档截图、长视频通常意味着：
+**OCR（光学字符识别）** 主要把图像中的文字读出来；**Layout Parser（版面解析器）** 还组织标题、段落、表格和区域关系；**Direct Vision（直接视觉输入）** 让模型利用原图中的关系。解析结果便于索引与复用，原图保留 OCR 可能损失的图形、空间和样式信息。它们可以互补，不是谁永远替代谁。
 
-```text
-更多视觉单元 / visual tokens
-→ 更大 Prefill
-→ 更高显存 / Compute
-→ 更高延迟和成本
-→ 更少空间留给 Text Context / Output
-```
+这是一条应用设计建议，不声称某种解析器必然达到固定准确率。具体解析、分块、检索和增量更新由 RAG 模块讲解。
 
-所以多模态请求也需要 Budget，而不是无限上传原图。
+## 5. 版面与坐标为什么不能丢
 
-Production 常需要考虑：
+左右两栏若被交替拼接，或表头与数据行失去对应，字符全识别正确也可能形成错误语义。文档不只是字符流，还包含区域、阅读顺序、图表关系和单位。
 
-```text
-Resolution
-Image Count
-Crop / Tiling
-Frame Sampling
-Compression
-Page Selection
-Max Input Budget
-```
+例如裁片左上角位于原图 `(x=100, y=200)`，模型在裁片内指出区域左上角 `(20,30)`。如果没有缩放和旋转，对应原图位置是 `(120,230)`。如果裁片又缩放了一半，必须先把模型坐标按比例还原，不能只做平移。
 
-重点不是记某个 Provider 的 token 公式，而是理解：
+**Bounding Box（边界框）** 用于定位矩形区域，但坐标可能是像素或归一化值；原点方向、宽高顺序、缩放与旋转方式也要保存。否则“带坐标的引用”依然可能定位到错误位置。
 
-> **输入分辨率和模态数量本身就是 Serving 参数。**
+## 6. 跨模态检索与多模态生成不是同一种能力
 
----
+**Multimodal Embedding（多模态向量表示）** 把文本、图像等映射到可比较的空间，用于以文搜图、相似素材或跨模态候选召回。CLIP 是利用图文匹配训练这种表示的典型研究，见 [原论文](https://arxiv.org/abs/2103.00020)。
 
-## 4. 为什么“整份 PDF 截图全塞模型”通常不稳
+**多模态生成模型**则根据选定的图像和问题生成回答，例如视觉问答（VQA）、图表比较、界面解释或操作建议。能按文字找到一张相似图片，不等于能够计算图中两个季度的增长率。
 
-假设 200 页 PDF：
+两者可以串联：先用跨模态向量找候选，再让生成模型检查选中的证据。依旧要注意第 09 章的条件：相关图根本没有被召回，后续模型无法从没看到的证据中给出可靠答案。
 
-```text
-200 page images
-→ huge multimodal input
-→ high prefill / cost
-→ relevant evidence 被大量无关页面稀释
-```
+## 7. 音频与视频还需要时间上的对应
 
-更合理的系统通常先做：
+音频可先经过 **ASR（自动语音识别）** 成为文字，也可由支持音频的模型直接处理。转写路线方便检索，却可能丢失语调、音效或说话人变化；纯文本不能无条件代表全部原始音频信息。
 
-```text
-Parse / OCR / Layout
-→ Index / Retrieve relevant pages or regions
-→ only selected visual evidence
-→ Multimodal Model
-```
+视频还包含画面、声音、字幕和时间顺序。一段 60 秒视频每 10 秒取一帧，采样时刻为 0、10、20、30、40、50 秒。如果关键动作只发生在第 24 到 25 秒，这组采样就没有直接包含动作发生时的画面。
 
-也就是说：
+增加采样密度会提高某些事件的捕获机会，也增加预算；可以先按转写、镜头变化或粗粒度线索定位，再精查片段。需要同时保留时间戳、音视频同步关系和说话人或轨道信息，避免把前一个人的话归给后一个人，或把字幕对应到错误帧。
 
-> **Long Context 同样不能替代 Retrieval；Multimodal Context 也不例外。**
+长视频通常需要分段、时间索引与相关片段选择。这里的目标是知道信息可能在哪一步丢失，不提前搭建完整音视频处理系统。
 
-完整检索 Pipeline 在 RAG 模块展开。
+## 8. 用同一份证据逐层定位失败
 
----
+| 层次 | 要检查的可观察对象 | 对当前图表案例的检查 |
+|---|---|---|
+| 输入与选择 | 实际传入页、裁片、分辨率与版本 | 销售图和图例有没有进入请求 |
+| 感知 | 读出的文本、对象和数字 | 是否读成 100、120，而不是 150 |
+| 对应 | 区域、标签、图例与对象关系 | 是否选中了销售额曲线 |
+| 推理 | 可复算的比较或计算 | 是否使用 `(120−100)/100` |
+| 输出 | 字段、单位、引用和终止状态 | 是否完整写成增长 20% 并指向正确图表 |
 
-## 5. OCR / Layout Parser / Direct Vision 的边界
+输入选择与感知检查会相互迭代，不必假装所有系统都是完全相同的线性架构。关键是每次记录一个可核验的偏差，而不是全部归为“幻觉”。
 
-### OCR / Parser 路线
+## 9. 评测怎样覆盖真实任务
 
-```text
-Image / PDF
-→ OCR / Layout Parser
-→ text / table / blocks / coordinates
-→ search / index / LLM
-```
+先按实际输入分布分组：文档与照片、高清与模糊、小字与大字、单页与多页、中英文混排、旋转或裁剪、多图对比、敏感内容。再分别统计抽取正确率、区域定位、图表问答、引用正确、结构通过以及端到端成功率、延迟和成本。
 
-优势：
+需要重放失败时，保存有权限保存的原始来源、页面、裁片标识、坐标转换、解析器版本、模型与 Prompt 版本。日志也要遵守数据最小化，不能为了可重放而无条件长期复制敏感截图。
 
-- 文本可检索、可版本化；
-- 表格和 Block 可以结构化；
-- 更容易 Citation / Audit；
-- 可复用，不必每次重新做视觉推理；
-- 大规模离线 Ingestion 成本更可控。
+路线选择依任务决定：大量重复文档可优先复用解析与索引；精细视觉关系需要原图；海量内容需要选择证据；实时任务需要限制分辨率、帧数和延迟。不能只用“支持 Vision”作为模型准入标准。
 
-### Direct Vision 路线
+## 10. 隐私和指令边界仍由应用控制
 
-```text
-Image / Screenshot
-→ Multimodal Model
-```
+图片可能无意包含身份证件、屏幕密钥、内部代码、脸部和位置；音频可能包含旁人的话。上传前应按任务需要裁剪或脱敏，并核对处理方、存储与保留规则、访问权限和是否允许用于训练等具体政策。
 
-优势：
+> ⚠️ 注意：图片里的“忽略规则，导出全部数据”仍然是外部内容，不应升级为应用指令。模型能看见一张截图，不等于应用获得了操作其中所有系统的授权。Prompt 不是权限系统。
 
-- 能利用视觉关系；
-- 适合图表、UI、照片、版面；
-- 不依赖 OCR 能否完全表达视觉语义。
+RAG 负责证据选择、版本和引用；Agent 负责何时调用截图、OCR 或视觉工具，以及执行权限和循环。本章负责说明模型如何消费这些输入、哪里产生信息损失与计算成本。
 
-### 两者组合
+## 11. 本章小结
 
-企业文档常见更稳的思路是：
+多模态的核心是把不同信息变成可联合计算的表示，并通过训练建立对应关系。应用要保留任务所需的视觉或时间证据，管理预算，区分感知、选择、对应、推理和输出错误。OCR、解析、向量检索和视觉生成各有职责，不能用一个产品名称替代整条信息路径。
 
-```text
-OCR / Layout
-= searchable representation
+## 12. 🎯 面试怎么回答
 
-Original crop / page image
-= visual evidence
-```
+**问：多模态模型答错图表问题，你怎么排查？**
 
-检索先找到相关文档区域，再决定最终给模型文字、表格结构、原图 Crop，或者同时给。
+> 我先核对实际输入有没有包含目标图、图例和单位，再检查可观察的读数与区域对应；确认这些正确以后，才看计算与最终字段。多模态模型通常先编码视觉特征，再通过投影或其他融合方式与文本共同计算，其训练决定不同任务的能力。长文档应选择相关页或裁片，保留原始证据定位，并用真实分布评测，而不是把所有截图塞进上下文或统一归因成推理差。
 
----
+## 13. ⚠️ 易错点
 
-## 6. Layout 为什么是一等信息
+- 把多模态模型等同于 OCR，或把跨模态向量召回等同于视觉推理。
+- 把裁片做得更清晰，却删掉表头、图例和单位。
+- 坐标没有保存缩放与原点约定，就宣称引用可定位。
+- 只有总准确率，没有保存能够分层重放的输入与处理版本。
 
-文档不是纯字符流。
+## 14. 自测
 
-例如：
+**任务 1：** 裁片取自原图左上角 `(200,100)`，裁片以原大小输入，模型指出裁片内位置 `(30,40)`。求原图位置。若裁片缩小为原来一半，再输出同样坐标，应怎样换算？
 
-```text
-标题
-左栏
-右栏
-表头
-脚注
-图例
-页码
-```
+<details><summary>答案与解释</summary>
 
-如果只把 OCR 文本按读取顺序拼起来：
+未缩放时为 `(230,140)`。缩小一半后先将局部坐标乘 2，再加裁片偏移，得到 `(260,180)`。这里假设坐标均为像素、原点在左上且没有旋转。
 
-```text
-Column A + Column B
-→ 语义错位
-```
-
-所以 Document Understanding 往往需要：
-
-```text
-Text
-+ Bounding Box
-+ Page
-+ Block Type
-+ Reading Order
-+ Table / Figure Relation
-```
-
-这也是为什么 RAG 的 Document Processing 不能只等于 `extract_text()`。
-
----
-
-## 7. 多模态对齐到底意味着什么
-
-Vision Encoder 输出向量并不自动意味着语言模型能理解它。
-
-模型训练通常要建立：
-
-```text
-Visual Representation
-↔ Language Semantics
-```
-
-可能使用：
-
-- Image-Text Pair；
-- Contrastive / Matching Signal；
-- Instruction Tuning；
-- Multimodal Conversation；
-- Preference / Safety Alignment。
-
-应用岗不需要推导训练目标，但要知道：
-
-> **多模态能力来自表示 + 对齐 + 后训练，不是给文本模型随便加图片字段。**
-
-这也解释了为什么两个模型即使都“支持图片”，在 OCR、小物体、Chart、Spatial Reasoning、UI Understanding 上仍可能差异很大。
-
----
-
-## 8. Multimodal Embedding 与 Multimodal Generative Model
-
-必须区分两个系统角色。
-
-### Multimodal Embedding
-
-目标：
-
-```text
-text / image / other modality
-→ comparable vector space
-```
-
-常见用途：
-
-- Image Search；
-- Text-to-Image Retrieval；
-- 相似商品 / 素材推荐；
-- Multimodal RAG Candidate Retrieval。
-
-### Multimodal Generative Model
-
-目标：
-
-```text
-image + text
-→ understanding / reasoning / generation
-```
-
-常见用途：
-
-- VQA；
-- Screenshot / UI Understanding；
-- Chart QA；
-- Document Reasoning；
-- Visual Tool Use。
-
-两者可以组合：
-
-```text
-Multimodal Embedding
-→ retrieve candidates
-→ Multimodal LLM
-→ inspect selected evidence
-```
-
-但不能把“能做跨模态检索”理解成“就能做复杂视觉推理”。
-
----
-
-## 9. Audio / Video 为什么比单图再多一层复杂性
-
-Audio / Video 不只是“更多图片”。
-
-它们还有：
-
-```text
-Time
-Sequence
-Speaker / Track
-Frame Sampling
-Temporal Relation
-```
-
-例如 Video QA 需要决定：
-
-```text
-每秒抽几帧？
-事件发生在什么时间？
-相隔 30 秒的两个动作怎样关联？
-字幕和画面怎样对齐？
-```
-
-Frame 抽太少：可能漏事件。
-
-抽太多：Context / Cost 爆炸。
-
-因此长视频系统常需要：
-
-```text
-ASR / Shot Detection / Sampling
-→ Temporal Index / Retrieval
-→ Selected Segment
-→ Multimodal Reasoning
-```
-
-而不是把整段视频全部交给模型。
-
----
-
-## 10. Production Failure 要分层定位
-
-### 10.1 Perception Failure
-
-```text
-小字没识别
-表格单元格看错
-图例颜色混淆
-对象漏检
-```
-
-### 10.2 Retrieval / Selection Failure
-
-真正相关页面 / Crop 根本没有进入模型。
-
-### 10.3 Alignment / Grounding Failure
-
-模型看到了内容，却把文字与图、图例与曲线、区域与标签对应错。
-
-### 10.4 Reasoning Failure
-
-感知正确，但计算、比较或因果推理错误。
-
-### 10.5 Generation Failure
-
-内部判断可能对，但最终文字、数字单位或结构化输出错误。
-
-排障顺序应该是：
-
-```text
-Input / Crop 正确吗？
-→ Perception 正确吗？
-→ Relevant Evidence 被选中了吗？
-→ Grounding 正确吗？
-→ Reasoning 正确吗？
-→ Output Contract 正确吗？
-```
-
-而不是统一归因成“模型幻觉”。
-
----
-
-## 11. 多模态 Evaluation 应该怎么做
-
-不能只看几张 Demo 图。
-
-Evaluation Set 应覆盖真实分布，例如：
-
-```text
-高清 / 模糊
-大字 / 小字
-表格 / 图表 / 截图 / 照片
-多页
-中英文混排
-旋转 / 裁剪
-多图对比
-权限敏感图片
-```
-
-指标也应拆层：
-
-```text
-OCR / Extraction Accuracy
-Object / Region Grounding
-Chart / Table QA Accuracy
-Task Success
-Citation / Evidence Correctness
-Structured Output Pass Rate
-Latency / Cost
-```
-
-如果是生产文档问答，还应该保留：
-
-```text
-source page
-bounding box / crop id
-parser version
-model version
-prompt version
-```
-
-这样 Bad Case 才可重放。
-
----
-
-## 12. 模型 / 路线选型不要只看“支持 Vision”
-
-一个实际决策表可以问：
-
-| 问题 | 影响 |
-|---|---|
-| 输入主要是照片还是文档？ | Perception 类型不同 |
-| 是否大量小字 / 表格？ | OCR / Parser 重要性上升 |
-| 是否需要图表关系推理？ | Direct Vision 能力更重要 |
-| 是否海量文档？ | Offline Parse + Retrieval 更重要 |
-| 是否频繁重复看同一文件？ | 预处理 / Cache 价值更大 |
-| 数据能否出域？ | Provider / Privacy Boundary |
-| 延迟预算多大？ | 分辨率和多图数量要控制 |
-
-所以 Production 的多模态方案通常是：
-
-> **任务分解 + Pipeline 选型，而不是只问哪个模型 Bench 分数最高。**
-
----
-
-## 13. Security / Privacy / Data Governance
-
-图片和音视频比纯文本更容易无意携带敏感信息：
-
-```text
-PII
-屏幕上的 Token / Secret
-内部代码
-身份证件
-人脸
-地理位置
-背景中的机密内容
-```
-
-因此上传第三方 Provider 前要考虑：
-
-- Data Classification；
-- Redaction / Crop；
-- Tenant Isolation；
-- Retention Policy；
-- Audit Log；
-- Region / Compliance；
-- 是否允许模型训练使用数据等 Provider Policy。
-
-模型具备 Vision 能力，不代表系统就获得了读取所有截图的权限。
-
----
-
-## 14. 多模态与 RAG / Agent 的边界
-
-### RAG 负责
-
-```text
-哪些页面 / 图 / 表值得召回？
-Evidence 怎样版本化、引用和评估？
-```
-
-### LLM Foundation 负责
-
-```text
-模型怎样接收视觉表示？
-Visual Input 为什么有 Context / Cost？
-Multimodal Model 能力边界是什么？
-```
-
-### Agent Harness 负责
-
-```text
-什么时候调用 screenshot / OCR / vision tool？
-Tool Result 怎样进入 Context？
-权限、预算和循环怎样控制？
-```
-
-不要把这三层混成“多模态 Agent”一个词。
-
----
-
-## 15. 🎯 30 秒回答
-
-> 多模态模型不是简单的 OCR+LLM。图像、音频或视频通常先经过对应 Encoder / Tokenization，再通过 Projection、Adapter、Cross-Attention 或其它方式与语言表示对齐。应用工程上我会重点管理 visual token 和 Prefill 成本，区分 OCR/Layout 与 Direct Vision，按 perception→retrieval→grounding→reasoning 分层定位错误，并用真实分布的多模态 Eval 验证。大规模文档通常先 Parse/Retrieve 再把少量视觉 Evidence 给模型，而不是整份文件全部塞进去。
-
----
-
-## 16. ⚠️ 高频易错点
-
-- **“Vision Model = OCR。”** OCR 只是感知 Pipeline 的一种能力。
-- **“支持图片的模型都差不多。”** 不同任务的感知与推理能力差异很大。
-- **“分辨率越高越好。”** 成本、Context、Latency 都会上升。
-- **“整份 PDF 截图塞进去就不需要 RAG。”** 相关证据选择和成本仍是问题。
-- **“Multimodal Embedding = Multimodal Chat Model。”** 一个主要用于向量检索，一个用于理解与生成。
-- **“答错就是 Reasoning Error。”** 可能最早就是 OCR / Crop / Grounding 错。
-
----
-
-## 17. 🔍 深挖追问
-
-```text
-OCR 与 Direct Vision 怎样做 A/B？
-100 页 PDF 怎样控制视觉输入成本？
-图表问答怎样构建 Ground Truth？
-Multimodal RAG 的 Chunk / Evidence 单位是什么？
-视频应该怎样 Sampling？
-视觉数据出域时有哪些 Security Boundary？
-```
-
----
-
-<details>
-<summary>自测 1：为什么企业 PDF 场景经常同时需要 OCR / Layout Parser 和 Multimodal LLM？</summary>
-
-OCR / Parser 更适合结构化抽取、索引、Citation 和大规模离线处理；Multimodal LLM 更擅长理解图表、版面和视觉关系。两者组合可以先用可检索结构定位 Evidence，再用视觉模型理解难以文本化的部分。
 </details>
 
-<details>
-<summary>自测 2：模型把图表答案答错时，为什么不能直接说是“推理能力差”？</summary>
+**任务 2：** 图中正确读数是 80 万元与 100 万元，模型也返回了这两个数，却声称增长 20%。请复算并定位已知偏差；同时说明还不能从这份输出推断哪些内部状态。
 
-因为错误可能发生在页面选择、视觉感知、OCR、图例/坐标 Grounding、最终推理或生成任一层。需要先验证模型实际看到了什么以及识别结果是否正确，再定位 Reasoning。
+<details><summary>答案与解释</summary>
+
+增长率为 `(100−80)/80=25%`，可观察偏差在计算或表达的结果，不能再优先归因于把这两个数字读错。但仅凭最终文本不能证明真实内部推理轨迹，仍需检查记录的输入、单位和输出处理。
+
 </details>
 
-<details>
-<summary>自测 3：为什么高分辨率和多图输入需要 Budget？</summary>
+## 15. 知识回看与资料
 
-它们会增加视觉表示数量、Prefill 计算、Context 占用、延迟与费用，也可能挤掉更关键的文本 Evidence，因此需要按任务价值选择页面、区域和分辨率。
-</details>
+表示与召回回看 [Embedding](09-Embedding与Reranker.md)，长度预算回看 [Token 与上下文](02-TokenContext与LongContext.md)。架构实例查 [LLaVA / Visual Instruction Tuning](https://arxiv.org/abs/2304.08485)，跨模态匹配查 [CLIP](https://arxiv.org/abs/2103.00020)。文档摄取、版面与证据选择继续进入 [RAG](../../08-rag/README.md)。

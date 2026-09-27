@@ -1,315 +1,156 @@
-# 04｜Attention 与 Position：QKV、Multi-Head、Causal Mask 与 RoPE
+# 04｜Attention 与位置信息：算一次信息怎样汇入当前位置
 
-这一章回答 Transformer 里最常被问的一组问题：
+[← Transformer 怎样加工序列](03-TransformerBlock.md) · [模块首页](../README.md) · [从分数到生成结果 →](05-Generation与Decoding.md)
 
-```text
-Q / K / V 是什么？
-Attention 为什么能让 Token 看上下文？
-为什么需要 Multi-Head？
-生成模型为什么要 Causal Mask？
-没有 RNN 后，顺序信息从哪里来？
-RoPE 又解决什么？
-```
+在“订单 A 尚未发货”后继续回答时，模型需要让当前位置使用前面关于订单的描述。上一章把这一步称为 Attention（注意力）。这里不把它拟人化为“模型认真看了哪里”，而是计算一次：哪些位置能参加，权重怎样得到，传过来的究竟是什么。
 
-这些概念本质上属于同一个“Token 怎样有条件地读取其它位置”的知识闭环。
+## 1. Q、K、V 是三种投影，不是三个不同的词
 
----
+每个位置已有一个隐藏状态。**投影**是用训练得到的矩阵把它转换成另一组数值表示。常见 Self-Attention（自注意力）从同一组隐藏状态生成：
 
-## 1. Self-Attention 的核心问题
+| 表示 | 名称 | 在计算中的作用 |
+|---|---|---|
+| Q | Query，查询 | 当前要与哪些位置匹配 |
+| K | Key，键 | 各位置用于参与匹配的表示 |
+| V | Value，值 | 匹配后真正被加权传递的内容 |
 
-给定当前位置 Token 的表示，模型要决定：
+写成矩阵就是 `Q = H W_Q`、`K = H W_K`、`V = H W_V`。三个投影矩阵是参数；Q/K/V 是本次输入经过它们计算得到的状态。
 
-> **我应该从其它可见 Token 中读取多少信息？**
+为什么区分 K 与 V？计算“应从这里取多少信息”和计算“这里传递什么信息”可以使用不同表示，不必强迫同一组数同时承担两种任务。它们的含义来自训练，不存在固定规则说某一维必然表示“订单是否发货”。
 
-Self-Attention 把同一组 Hidden State 映射成：
+## 2. 从匹配分数到信息汇总
 
-```text
-Q = Query
-K = Key
-V = Value
-```
+对当前位置的一行 Query，普通缩放点积注意力依次做四步：
 
-可以先用数据库类比理解：
+1. 与每个可见 Key 做点积，得到匹配分数。
+2. 除以 Key 维度的平方根，调节分数尺度。
+3. 用 Softmax 把分数变成非负、总和为 1 的权重。
+4. 用这些权重对 Value 向量求加权和。
 
-```text
-Query  = 我正在找什么
-Key    = 每个位置拿什么和 Query 匹配
-Value  = 匹配后真正取回什么信息
-```
+**点积**就是对应分量相乘后相加。例如 `[1, 2]` 与 `[3, 4]` 的点积是 `1×3 + 2×4 = 11`。
 
-这只是直觉类比，不是严格等价。
+**Softmax**不是只选一个最大值。给定分数 `s₁…sₙ`，第 i 个权重为 `exp(sᵢ) / Σ exp(sⱼ)`，其中 `exp(s)` 表示 e 的 s 次方。分数越大，权重通常越大；所有权重一起决定输出。
 
----
+完整矩阵公式为：
 
-## 2. Attention Score 怎么形成
+$$
+\operatorname{Attention}(Q,K,V)=\operatorname{softmax}\left(\frac{QK^T}{\sqrt{d_k}}+M\right)V
+$$
 
-简化形式：
+`Kᵀ` 是把 K 的行列转置，使每个 Query 能与各个 Key 做点积。`d_k` 是一个 Key 的维度；`M` 是掩码，允许的位置加 0，禁止的位置加负无穷。Softmax 按每个 Query 对应的一行执行。[公式和掩码依据](https://arxiv.org/html/1706.03762v7#S3.SS2)
+
+## 3. 一个可手算的因果注意力例子
+
+假设有位置 0、1、2。要计算位置 1 的输出；采用因果注意力，所以它能读位置 0 和自己，不能读未来的位置 2。下面的投影结果是**人为构造的教学数值**，不是实际语言模型的运行结果：
 
 ```text
-score(i,j) = Qi · Kj / sqrt(dk)
+当前位置的 Q = [1, 0]，Key 维度 d_k = 2
+
+位置       K           V
+ 0      [1, 0]      [2, 0]
+ 1      [0, 1]      [0, 4]
+ 2      [1, 1]      [100, 100]
 ```
 
-然后经过 Softmax：
+第一步，Q 与三个 K 的点积分别是 `[1, 0, 1]`。第二步，除以 `√2`，得到约 `[0.7071, 0, 0.7071]`。第三步，把未来位置的分数设为负无穷：
 
 ```text
-weight(i,j) = softmax(score)
+有效分数 = [0.7071, 0, -∞]
+指数值   ≈ [2.0281, 1, 0]
+权重     ≈ [0.6698, 0.3302, 0]
 ```
 
-最后：
+最后对 V 加权，而不是对 K 或 Token ID 加权：
 
 ```text
-output_i = Σ weight(i,j) * Vj
+输出 ≈ 0.6698 × [2, 0] + 0.3302 × [0, 4] + 0 × [100, 100]
+     ≈ [1.3395, 1.3210]
 ```
 
-也就是当前位置 i 对其它位置 j 的 Value 做加权汇总。
+未来位置的 Value 很大，但不影响结果，因为它的权重被屏蔽为 0。反过来，即使一个位置的 K 匹配得很好，它传来的内容仍由 V 决定。
 
----
+为什么除以 `√d_k`？在各分量近似独立、零均值、单位方差的直观假设下，点积方差会随维度增大。过大的分数差可能让 Softmax 极度偏向少数位置、梯度很小。这个缩放用于控制尺度，不是把结果自动变成概率；概率归一化仍由 Softmax 完成。
 
-## 3. 为什么要除以 sqrt(dk)
+> ⚠️ 注意：把禁止位置的分数设为 0，不等于屏蔽。`exp(0)=1`，它仍会获得权重。常见做法是在 Softmax 前加负无穷，或使用能实现等价语义的掩码接口；具体布尔掩码中 True 表示允许还是禁止，要查看所用 API。
 
-维度变大时 Dot Product 数值范围容易变大，Softmax 可能过度尖锐，梯度和数值稳定性变差。
+## 4. 因果掩码与补齐掩码为什么不同
 
-Scaling：
+**Causal Mask（因果掩码）** 限制未来位置。在训练时，即使完整答案已放在同一个张量里，位置 i 也只能读取 `≤ i` 的输入，再预测下一个位置。
 
-```text
-1 / sqrt(dk)
-```
+**Padding Mask（补齐掩码）** 屏蔽为了组成批次而补上的无效位置。例如一个序列有 3 个 Token，另一个只有 1 个，为了排成相同宽度而加的两个空位不应被当成真实内容。
 
-用于控制 Score 尺度。
+二者可以同时存在，但解决的问题不同：一个限制时间上的信息边界，一个标识没有有效输入的位置。实际计算必须保证有效 Query 至少有可读取的位置；整行都被屏蔽时，直接按普通 Softmax 公式计算可能得到无效数值。
 
-应用工程面试通常理解这个原因即可，不需要完整统计推导。
+这也解释了“训练并行但不偷看”的含义：多个位置的运算可以同时进行，每一行仍遵守自己的可见范围。
 
----
+## 5. 多头不是给每个头分配一个人工角色
 
-## 4. Self-Attention 为什么比 RNN 更适合并行
+**Multi-Head Attention（多头注意力）** 让不同投影产生多组 Q/K/V，各组独立计算注意力，再把输出拼接并投影回隐藏宽度。
 
-RNN 通常有时间依赖：
+如果隐藏宽度为 8，使用 2 个头，每个头输出 4 个分量，拼接后仍有 8 个分量。不同头可以学习不同的关系表示，但不能据此宣称“第一头专门看语法、第二头专门看订单状态”。
 
-```text
-h1 → h2 → h3 → ...
-```
+增加头数也不等于免费增加能力：在固定隐藏宽度下，每头宽度会改变，参数组织、计算和实际效果都需要一起看。**Attention 权重只是内部计算的一部分，不能直接当成整个模型答案的因果解释。**
 
-Attention 在训练/Prefill 时可以一次计算序列中大量 Token 之间的关系，因此更适合矩阵并行计算。
+常见的 MHA 为每个 Query 头配备各自的 K/V；GQA（分组查询注意力）让多个 Query 头共享一组 K/V；MQA（多查询注意力）进一步共享单组 K/V。它们对缓存的影响会在第 6 章计算，不能把 GQA 当作给任何已训练模型随手打开的无损开关。
 
-但这不代表生成阶段也能一次生成所有 Token，因为 Autoregressive Decode 仍然是逐 Token 依赖。
+## 6. 模型怎样知道顺序：从位置向量到 RoPE
 
----
+如果仅把一组 Token 表示交给注意力，而没有能表达顺序的机制，就难以区分相同内容的不同排列。位置机制让“出现在哪里、彼此相隔多远”参与计算。
 
-## 5. Multi-Head Attention 为什么需要多个 Head
+一种方法是把位置向量加到 Token 表示；相对位置方法则让位置差影响关系分数。**RoPE（Rotary Positional Embedding，旋转位置编码）** 采用另一种常见方式：按位置对 Q、K 的成对分量做旋转。
 
-单个 Attention Head 只有一套投影空间。
+把二维旋转记作 `R(θ)`：它把一个向量转过角度 θ，不是给向量加一个整数位置。若位置 m 的 Q 旋转 `mθ`，位置 n 的 K 旋转 `nθ`，点积可以写成：
 
-Multi-Head 允许不同 Head 学习不同的关系模式：
+$$
+(R(m\theta)q)^T(R(n\theta)k)=q^T R((n-m)\theta)k
+$$
 
-```text
-Head 1 → 某类局部关系
-Head 2 → 某类长距离依赖
-Head 3 → 某类实体/语法关联
-...
-```
+右边出现了位置差 `n−m`。高维表示中可以对多组分量使用不同频率，让位置关系进入匹配计算。这是理解 RoPE 的核心，不需要先手写完整 GPU 实现。[RoFormer 论文](https://arxiv.org/abs/2104.09864)
 
-不要把每个 Head 固定解释成人类可命名功能；更稳妥的说法是：
+RoPE 不意味着任意长序列都能可靠处理。训练覆盖的长度、扩展或缩放方法、模型质量以及服务端资源都有约束；修改配置里的最大长度，不等于验证了长文本能力。
 
-> 多头让模型在多个子空间并行建模不同关系，再合并结果。
+## 7. 二次增长发生在哪里，优化又改变什么
 
----
+有 N 个位置时，全注意力要考虑每个 Query 对各 Key 的关系，分数规模是 `N × N`。输入从 1,000 增到 2,000 个位置，成对关系数从一百万增到四百万。
 
-## 6. Causal Mask 为什么生成模型必须有
+但不能把“数学上有 N² 个关系”直接说成“任何实现都必须把完整 N² 矩阵同时存进显存”。FlashAttention 等实现通过分块与更少的内存读写计算精确注意力；它改变执行方式，不等于把全注意力改成只看局部。滑动窗口或稀疏注意力则会改变哪些位置参与计算，需要按架构说明。[FlashAttention](https://arxiv.org/abs/2205.14135)
 
-训练 Decoder-only LLM 时，位置 i 不应该偷看未来 Token。
+缓存又是另一件事：因果条件下，未来 Token 不会改变已经处理的前缀状态，因此历史 K/V 有复用机会。下一章先明确生成步骤，第 6 章再把这条性质接到缓存上。
 
-因此 Attention Matrix 会屏蔽：
+## 本章小结
 
-```text
-j > i
-```
+Q/K 计算匹配，Softmax 得到权重，V 负责传递内容；掩码在归一化前限制可见位置。多头提供多组关系表示，位置机制让顺序参与匹配。计算关系的数量、实际显存分配和历史状态缓存是不同问题，不能用一个“Attention 优化”含糊带过。
 
-形成：
+## 🎯 面试怎么回答
 
-```text
-Token 1: 看 1
-Token 2: 看 1,2
-Token 3: 看 1,2,3
-...
-```
+**问：Q/K/V 怎样协作，为什么要掩码和缩放？**
 
-这就是 Causal Mask。
+> 同一隐藏状态经过不同投影得到 Q/K/V。Query 与各 Key 点积后按每头维度缩放，再屏蔽不允许读取的位置，经过逐行 Softmax 得到权重，对 Value 加权求和。缩放控制分数尺度；因果掩码防止当前位置读取未来，补齐掩码排除无效空位。多头重复这一过程并合并输出，RoPE 等位置机制则让位置信息进入匹配。
 
-没有它，训练时模型可能读取答案后面的 Token，推理时却没有这些信息，训练目标会失真。
+## ⚠️ 易错点
 
----
+Q、K、V 不是三个词，K 不是最终被汇总的内容。掩码也不能用“把分数设为零”来随意替代。
 
-## 7. Padding Mask 与 Causal Mask 不一样
+全注意力的关系数二次增长，不代表所有实现都物化完整分数矩阵。内核优化、稀疏可见范围、K/V 共享和缓存复用，要分别说明条件。
 
-### Padding Mask
+## 自测
 
-屏蔽 Batch 中补齐长度的无效 Padding Position。
+**任务 1：** 某一行两个可见位置的匹配分数相等，Value 分别为 `[2, 4]`、`[6, 0]`。另一个位置被因果掩码禁止。计算可见位置权重与输出；再把禁止位置 Value 改成 `[10⁹, 10⁹]`，结果会变吗？
 
-### Causal Mask
+<details><summary>答案与解释</summary>
 
-屏蔽未来位置。
+两个可见权重各为 0.5，输出为 `[4, 2]`。禁止位置权重为 0，修改它的 Value 不改变结果。这检验的是掩码和加权对象，不需要知道真实语言含义。
 
-它们解决两个不同问题，不能混为一谈。
-
----
-
-## 8. Attention 为什么需要位置信息
-
-纯 Attention 对 Token 集合本身并没有天然的序列顺序概念。
-
-例如：
-
-```text
-A B C
-C B A
-```
-
-如果没有任何 Position Signal，模型难以区分顺序关系。
-
-因此需要 Positional Encoding。
-
----
-
-## 9. Absolute Position 与 Relative Position 直觉
-
-一种思路是给每个位置加入：
-
-```text
-position 0
-position 1
-position 2
-```
-
-的表示。
-
-另一种思路更强调 Token 之间的相对位置关系。
-
-现代大模型中 RoPE 是非常常见的一种机制。
-
----
-
-## 10. RoPE 的核心直觉
-
-RoPE = Rotary Positional Embedding。
-
-它不是简单：
-
-```text
-Token Embedding + Position Vector
-```
-
-而是把位置编码融入 Q / K 的旋转变换，让 Attention Score 能表达相对位置关系。
-
-从应用工程角度，需要理解：
-
-```text
-Position
-→ influences Q/K geometry
-→ influences Attention score
-```
-
-而不需要手推完整复数旋转公式。
-
----
-
-## 11. RoPE 和 Long Context 的关系
-
-模型训练时通常有一定位置分布和长度范围。
-
-把 Context Window 扩得远超训练范围时，即使工程上能够分配更大的 KV Cache，也不代表模型对超长位置仍保持同等质量。
-
-因此长上下文能力同时涉及：
-
-- Position Encoding；
-- Training / Fine-tuning Length；
-- RoPE Scaling 等扩展技术；
-- Attention Compute；
-- KV Cache；
-- 信息利用能力。
-
-不能只看 API 的 `max_context_tokens`。
-
----
-
-## 12. Attention 的计算成本直觉
-
-朴素 Full Attention 对长度 `L` 的 Attention Matrix 规模近似：
-
-```text
-L × L
-```
-
-所以序列变长时，Prefill Attention 的计算和内存压力会显著增加。
-
-现代系统会通过：
-
-- FlashAttention；
-- GQA / MQA；
-- Sliding Window；
-- Sparse / Local Attention；
-- Kernel Optimization；
-
-等方式优化。
-
-这些不是本模块必须全部深入的算法，但需要知道：
-
-> Context Length 会真实影响推理资源，而不是一个免费的配置值。
-
----
-
-## 13. QKV 和 KV Cache 的关系
-
-Autoregressive 生成时，历史 Token 的 K / V 在后续 Decode 中会反复使用。
-
-因此可以缓存历史 K/V：
-
-```text
-KV Cache
-```
-
-避免每生成一个新 Token 都重新计算历史所有位置的 K/V。
-
-所以理解 QKV 是理解 KV Cache 的直接前置。
-
----
-
-## 14. 常见错误
-
-- Q/K/V 是三个不同 Token：错，是同一 Hidden State 经过不同投影。
-- Attention 就是相似度搜索：有类似直觉，但包含 Learnable Projection、Softmax、Value Aggregation 等，不等同 Vector DB。
-- Multi-Head 每个 Head 都有固定人类语义：过度解读。
-- Causal Mask 是为了忽略 Padding：错。
-- RoPE 只是给 Token 加位置编号：不准确。
-- Context Window 大小只由 RoPE 决定：错误。
-
----
-
-## 15. 面试怎么答
-
-### Q：Q、K、V 怎么理解？
-
-> Self-Attention 会把每个位置的 Hidden State 投影成 Query、Key、Value。Query 与其它位置的 Key 计算相关度，经 Softmax 得到权重，再对对应 Value 加权聚合，从而让当前位置吸收其它可见 Token 的信息。
-
-### Q：为什么需要 Causal Mask？
-
-> Autoregressive 模型训练时当前位置只能使用自己和过去 Token，不能看到未来答案，因此通过 Causal Mask 屏蔽未来位置，使训练时的信息边界与真实生成一致。
-
-### Q：RoPE 在做什么？
-
-> RoPE 把 Position 信息编码进 Q/K 的旋转变换，使 Attention Score 能感知相对位置关系。它是现代 LLM 位置建模的常见方案，也和 Long Context 扩展能力有关，但 Context 上限不只由 RoPE 决定。
-
----
-
-## 16. 自测
-
-<details><summary>1. Q/K/V 为什么来自同一个输入却要三套投影？</summary>
-因为“当前要找什么”“拿什么匹配”“最终取回什么信息”是三个不同角色，Learnable Projection 让模型学习不同空间。
 </details>
 
-<details><summary>2. Multi-Head 的主要价值是什么？</summary>
-让模型在多个子空间并行建模不同关系，再合并结果，提高表达能力。
+**任务 2：** 有人把未来位置的分数设为 0，并说“这样就没有贡献”。给出反例，再分别说明因果掩码与补齐掩码限制什么。
+
+<details><summary>答案与解释</summary>
+
+若可见位置分数也为 0，Softmax 会给这个所谓“禁止位置”非零权重。因果掩码排除未来信息，补齐掩码排除无效空位。可使用加负无穷等正确实现，但要核对具体 API 的布尔约定。
+
 </details>
 
-<details><summary>3. 为什么理解 QKV 后自然会引出 KV Cache？</summary>
-Decode 时历史 Token 的 K/V 会被后续每个新 Token 重复读取，因此缓存它们可以避免重复计算。
-</details>
+## 知识回看与资料
+
+回看 [Block 的隐藏状态与残差连线](03-TransformerBlock.md)。本章数值可以在完成第 5 章后用 [配套实验](../labs/README.md)核算；公式、RoPE、GQA 与内核优化的分工见 [References](../../../references/llm-foundation/README.md)。

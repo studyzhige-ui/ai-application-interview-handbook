@@ -1,408 +1,174 @@
-# 08｜Model API、Provider Adapter 与 Model Selection
+# 08｜模型 API 与选型：接口调用成功以后，还要验证什么
 
-应用工程师实际使用 LLM 时，接触到的不是裸 Transformer，而是一层 Provider API：
+[← 模型服务与性能判断](07-ServingEngine与性能.md) · [模块首页](../README.md) · [Embedding 与 Reranker →](09-Embedding与Reranker.md)
+
+应用要把一段客服留言转换成“订单号、问题类型、需要补充的信息”。模型 A 很便宜，却经常把缺失订单号补成一个看似合理的编号；模型 B 单价更高，但少了重试和人工纠正。应该选哪个？
+
+先不能只比较价格。我们要确定任务成功的含义，再看请求怎样组织、响应怎样验证，最后比较在同一批任务上付出的总成本。API 适配和模型选型因此是同一条链上的两个问题。
+
+## 1. 请求表达的不只是用户那一句话
+
+**Model API** 是应用与模型服务交换输入、生成约束和结果的接口。聊天接口常用 **Message（消息）** 表示不同来源的内容：用户请求、应用设置的规则、模型先前输出、工具返回的事实等。
+
+例如当前任务需要三类信息：
+
+| 信息 | 示例 | 来源与用途 |
+|---|---|---|
+| 任务规则 | 缺失订单号写 null，不得猜测 | 应用定义的任务要求 |
+| 当前留言 | “我的快递还没到” | 用户待处理数据 |
+| 输出约定 | order_id、issue、missing_fields | 应用准备解析的结果结构 |
+
+一些服务使用 system、developer、user、assistant、tool 等角色，但不是所有接口都提供同一组角色或同一优先级规则。自部署模型还需要匹配其 **Chat Template（聊天模板）**，把消息转换成它训练时识别的特殊 Token 和文本序列。
+
+因此，“用同一套消息”不等于底层 Token 序列相同。模板错配、重复加入特殊 Token 或缺失生成起始标记，都可能改变表现。机制与示例见 [Transformers 5.17.0 Chat templates](https://huggingface.co/docs/transformers/v5.17.0/en/chat_templating)。
+
+## 2. 适配器应该统一共同部分，保留真实差异
+
+**Provider Adapter（服务商适配器）** 把应用的共同需求转换成具体 API 调用，并将响应归一成应用理解的状态。它不是把所有厂商差异都藏起来。
+
+假设应用提出：“必须输出符合 Schema 的对象，支持取消，并报告用量。”适配层需要先检查候选模型是否具备这些能力。模型不支持某个必要约束时，应明确拒绝该配置，或执行经过评测的降级方案；不能悄悄删除参数后宣称请求仍满足原约定。
+
+适配层至少保留这些信息的语义：消息与来源、模型标识、采样与输出预算、需要的结构约束、完整或流式结果、终止状态、Token 用量，以及厂商原始请求标识和必要元数据。具体字段名按接口映射，不要求上层复制每家完整 API。
+
+**能力（capability）** 在这里指“这个模型和端点实际支持什么”，例如图像输入、工具调用或某种结构约束。**兼容接口**只说明调用形状相近，不证明能力、价格、截断方式和异常完全一致。
+
+## 3. 响应状态、结构与业务正确性要分开检查
+
+收到 200 响应，最多先说明 HTTP 请求得到了成功响应。应用还要沿下面的过程处理：
+
+1. 判断生成状态：正常完成、达到上限、拒绝、取消，还是服务端错误。
+2. 对完整结果做结构解析：是不是预期对象，字段类型是否符合要求。
+3. 对字段做业务验证：订单号是否存在、是否属于当前用户、结论是否有依据。
+4. 需要外部动作时，再经过权限与执行检查；模型返回动作请求不代表执行成功。
+
+**JSON Mode** 通常关注有效 JSON；**Structured Outputs（结构化输出）** 可进一步按支持的 Schema 约束结果。两者不能一概视为等价；Schema 能检查其可表达的结构、类型和取值约束，但不能据此判断订单是否真实存在。服务还可能拒绝或因长度限制产生不完整结果，必须保留独立分支。具体事实参见 [OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs)。
+
+下列是**应用侧期望结果示例，不是已执行 API 的回包**：
+
+```json
+{"order_id": null, "issue": "delivery_delay", "missing_fields": ["order_id"]}
+```
+
+留言没有订单号，写 null 才符合约定；随便写出一个格式正确的订单号，结构合法但业务错误。
+
+## 4. 流式工具参数不能边收到边执行
+
+假设服务把一条工具请求分三段传来：先是工具名称，再是订单号的半段字符串，最后才有剩余参数和调用完成事件。前两段只能用于组装缓冲区，不能提交数据库操作。
 
 ```text
-Messages / Role
-→ Model API
-→ Provider Adapter
-→ Model
-→ Response / Usage / Tool Call
+收到增量片段
+    ↓
+按调用标识组装内容
+    ↓
+确认本次调用完整
+    ↓
+解析与业务校验
+    ↓
+权限批准与真实执行
+    ↓
+用执行结果决定后续状态
 ```
 
-因此“怎样调用模型”和“怎样选择模型”应该在同一个工程闭环中学习。
+同一次响应可能包含多个调用，必须按各自标识组装，不能把所有文本拼成一条请求。遇到传输中断，应保留“未完成”状态。重试是否安全取决于请求类型和执行状态；尤其不能因为模型调用失败，就重复提交已完成的外部写操作。完整幂等与恢复由 Backend、Agent 负责。
 
----
+## 5. 模型选型先定义任务与门槛
 
-## 1. Model API 在抽象什么
+参数规模、上下文上限和公开榜单可以帮助筛选候选，但选型问题最终是：“在我的输入分布和约束下，这个模型是否满足目标？”
 
-不同 Provider 的 API 形态不同，但常见输入都可以抽象为：
+以客服抽取为例，可以先定义：
+
+| 维度 | 可检查条件 | 为什么要单独记录 |
+|---|---|---|
+| 字段质量 | 正确抽取明确存在的订单号；缺失时不编造 | 格式通过不代表字段正确 |
+| 结构与状态 | Schema 通过，拒绝和截断得到正确处理 | 应用必须消费得了结果 |
+| 鲁棒性 | 口语、错别字、很长输入、恶意指令、空信息 | 常规样本不能代表失败边界 |
+| 延迟与容量 | 指定负载下的首段、完整耗时和错误率 | 单个空载演示不代表服务能力 |
+| 成本与约束 | 每个成功任务成本、数据处理与部署要求 | 最便宜单次调用不一定最便宜交付 |
+
+安全、数据驻留或许可证等实际要求应按具体提供方及合同核验。本章不替用户推定某个模型必然满足合规条件。
+
+模型的预训练规模和指令训练影响能力；不同尺寸可能有不同质量、显存和延迟。**Base Model（基础检查点）** 与经过指令训练的聊天模型，也不是只换一个名称：训练目标和可直接响应的任务不同。不能用“参数更多”替代这些差别。
+
+## 6. 测试集怎样避免只证明几个演示很好看
+
+先收集真实任务类型，再按它们的条件分层。对当前例子，至少区分订单号存在或缺失、单订单或多订单、正常或冲突事实、短输入或长输入，以及可能混入指令的数据。
+
+**开发集**用于调 Prompt、选模型和分析错误；**保留测试集（holdout）** 在方案确定后评价泛化，不能反复查看答案并针对性修改。来自同一会话、同一模板的近重复样本应按组划分，避免训练或优化见过的内容泄漏到测试集。
+
+测试集没有脱离任务分布的万能题数。小样本可帮助发现机制性错误，但罕见失败、分组差异与小幅提升需要更多证据。报告总数、各分组覆盖、失败数和不确定性；不要把 20 个相似样本全对直接写成“生产准确率 100%”。
+
+比较模型时保持相同的输入事实、评判标准和预算；必要时为各模型使用合理的匹配模板，但要把差异记录下来。质量提升是否来自模型本身，还是来自额外上下文、更多重试或更长输出，需要分别判断。
+
+## 7. 成对比较与 Elo 能说明什么
+
+开放式回答不总有唯一标准答案。可以把两个候选模型对同一问题的输出匿名给评审，按明确标准选择更好的一项，也允许平局。**Pairwise Comparison（成对比较）** 降低了直接给绝对分数的负担，但仍可能受输出先后、长度、评审偏好和样本类型影响。
+
+**Elo** 是根据成对结果更新相对评级的方法。一种常见更新形式是：
 
 ```text
-model
-messages / input
-system / instruction
-sampling config
-tools / schemas
-response format
-streaming
-max output
-metadata
+新评级 = 旧评级 + K ×（实际结果 − 按当前评级预测的结果）
 ```
 
-输出通常包含：
+`K` 控制每场结果的影响，赢、平、负可以分别记为 1、0.5、0。这里说明的是相对评级的用途，不规定某个评测平台必须使用此实现。
 
-```text
-text / content
-structured output
-tool call
-finish reason
-usage / token accounting
-provider metadata
-```
+在应用评测中，首先交换输出顺序、隐藏模型名称、明确评分维度，并检查各任务分组，而不是只保留一个总 Elo。相对胜出不等于通过事实正确性、安全性或外部动作成功的绝对门槛。成对评测的模型评审偏差可参考 [MT-Bench 与 Chatbot Arena 研究](https://arxiv.org/abs/2306.05685)。
 
-应用层不应该把业务逻辑直接绑死到某个 Provider 的字段名。
+## 8. 怎样计算每个成功任务的成本
 
----
+成本可以包含模型调用、重试、额外检索或工具、基础设施及人工处理。先声明包含哪些，不把未计入成本说成不存在。
 
-## 2. Message Role 为什么重要
+下面仅比较**假设的模型调用费用**，不是实时价格：两模型各处理相同的 100 个任务，重试也计入调用数。
 
-常见逻辑角色包括：
+| 模型 | 总调用数 | 每次调用平均费用（假设） | 最终成功任务数 | 模型调用总费用 | 每成功任务费用 |
+|---|---:|---:|---:|---:|---:|
+| A | 130 | ¥0.010 | 80 | ¥1.30 | ¥0.01625 |
+| B | 105 | ¥0.014 | 98 | ¥1.47 | ¥0.01500 |
 
-```text
-System / Developer Instruction
-User Input
-Assistant History
-Tool Result
-```
+成功任务按业务任务去重计数，不把一次重试当成又完成了一个新任务。如果业务要求成功率至少 95%，A 首先未通过质量门槛，不应仅凭便宜单价入选。若最终没有一个成功任务，单位成功成本应记为不适用或无穷大，不能除以零后报低价。
 
-不同模型和 Provider 对 Role / Instruction 的实际支持与优先级可能不同。
+按 Token 计费时，将普通输入、命中的缓存输入、输出等实际计费类别分别乘对应单价。**缓存输入若已经包含在输入总量中，就要先拆分，不能再当成额外输入重复相加。** 推理 Token 是否计入输出、工具费用怎样计入，都依具体 API 的用量和账单定义核对。
 
-课程要记的是：
+## 9. 路由、回退与版本怎样落地
 
-> **Prompt 不只是一个字符串，而是有协议结构和信任层级的输入。**
+可以让简单、低风险任务走便宜模型，困难或高风险任务进入更强模型或人工流程，但路由规则本身也会出错。应同时测路由命中、误分流和完整任务结果。回退模型需要满足相同的必要能力，例如不能从要求 Schema 的路径静默退到只会自由文本的端点。
 
-Agent Harness 中还会进一步区分 Tool Protocol、Permission 和 Untrusted Content。
+为了复现实验，至少保存模型与提供方标识、可用的快照版本、自部署权重和 Tokenizer 版本、Prompt 与 Schema 版本、采样配置、输入证据版本，以及发生的重试和路由。托管别名可能变化；没有可固定快照时，记录调用日期和可见元数据，并安排回归，不宣称完全可复现。
 
----
+## 10. 本章小结
 
-## 3. Provider Adapter 为什么存在
+模型接口负责交换输入与结果，应用负责理解终止状态、验证字段和确认动作。适配器不能掩盖能力差异。选型以真实任务门槛为起点，用有代表性的独立评测、明确的延迟口径和成功任务成本做判断，而不是追求某个单一榜单分数。
 
-如果业务代码直接到处写：
+## 11. 🎯 面试怎么回答
 
-```python
-provider_a.chat(...)
-provider_b.responses(...)
-provider_c.generate(...)
-```
+**问：你怎么选模型，而不是凭感觉换一个更大的？**
 
-会造成：
+> 我先把目标任务和必须满足的约束写成可检查条件，用真实样本覆盖正常、缺失、冲突、长输入和失败场景。比较时固定证据与评分口径，分别检查字段正确、结构通过、工具行为、延迟和可靠性，再把重试计入成功任务成本。公开榜单只作初筛；开放式结果可以盲测成对比较，但不能替代事实和安全门槛。最后记录模型、模板、Prompt 与数据版本，通过保留集和回归再发布。
 
-- 字段差异扩散；
-- Streaming 逻辑重复；
-- Error Mapping 混乱；
-- Usage 统计不统一；
-- Tool Call / Structured Output 难切换；
-- Model Routing 困难。
+## 12. ⚠️ 易错点
 
-所以通常需要内部统一契约：
+- 只统一 API 字段，就说模型完全可替换。
+- 用 JSON 可解析代替事实正确，或用工具调用生成代替工具执行成功。
+- 调过多轮 Prompt 后，仍把同一批调试样本叫独立测试集。
+- 只计算第一次调用费用，不计失败、重试和人工纠正。
 
-```text
-Internal Model Request
-        ↓
-Provider Adapter
-        ↓
-Provider-specific Request
-```
+## 13. 自测
 
-返回也统一成内部 Response / Event Model。
+**任务 1：** A、B 各处理 50 个不同业务任务。A 总调用费用 ¥3，成功 40 个；B 总费用 ¥3.3，成功 48 个。计算模型调用层面的单位成功成本。若业务要求成功率至少 90%，哪一个具备入选资格？
 
----
+<details><summary>答案与解释</summary>
 
-## 4. Adapter 不应该过度抽象
+A 为 ¥0.075，B 为 ¥0.06875。成功率分别为 80% 与 96%，只有 B 达到给定门槛。这里尚未计其他成本和统计不确定性，不能自动推断长期生产结果。
 
-错误做法是为了“统一”而把所有 Provider 能力压成最小公约数。
-
-更好的结构是：
-
-```text
-Stable Common Core
-+
-Capability / Feature Flags
-+
-Provider-specific Extension Escape Hatch
-```
-
-例如：
-
-```text
-supports_tool_call
-supports_json_schema
-supports_reasoning_effort
-supports_prompt_cache
-supports_image_input
-```
-
-这样既能统一基础路径，又不丢掉重要能力。
-
----
-
-## 5. Model Selection 不是“选最强模型”
-
-真正选型至少看：
-
-```text
-Task Quality
-Latency / TTFT / TPOT
-Cost
-Context Window
-Output Limit
-Tool Calling Reliability
-Structured Output Reliability
-Multimodal Capability
-Safety / Compliance
-Regional / Data Policy
-Rate Limit / Capacity
-Provider Reliability
-```
-
-“Benchmark 分数最高”只是一个输入。
-
----
-
-## 6. 先按 Task 定义 Quality
-
-不同任务的质量指标不同：
-
-### Classification / Routing
-
-```text
-Accuracy
-F1
-Confusion Matrix
-```
-
-### Structured Extraction
-
-```text
-Schema Validity
-Field Accuracy
-Retry Rate
-```
-
-### Coding
-
-```text
-Tests Pass
-Patch Acceptance
-Regression
-```
-
-### RAG QA
-
-```text
-Groundedness
-Answer Correctness
-Citation
-Retrieval Interaction
-```
-
-### Agent
-
-```text
-Task Success
-Tool Correctness
-Step Count
-Cost
-Recovery
-```
-
-因此 Model Selection 必须基于自己的 Task Eval。
-
----
-
-## 7. Model Capability Matrix
-
-可以维护一张内部表：
-
-| Model | Quality | TTFT | Cost | Context | Tool | JSON | Vision |
-|---|---:|---:|---:|---:|---|---|---|
-| A | high | medium | high | large | yes | yes | yes |
-| B | medium | low | low | medium | yes | yes | no |
-| C | high | high | medium | large | no | yes | yes |
-
-然后根据任务路由。
-
-注意：这些值要由真实 Evaluation / Production Telemetry 更新，而不是永久硬编码。
-
----
-
-## 8. Small Model vs Large Model
-
-不是所有请求都值得用最大模型。
-
-常见思路：
-
-```text
-cheap / fast model
-→ simple routing / extraction / classification
-
-stronger model
-→ complex reasoning / difficult coding / ambiguous task
-```
-
-如果简单任务占大多数，分层路由可以显著降低成本和延迟。
-
-但 Model Routing 本身需要：
-
-- Eval；
-- Fallback；
-- Route Error 监控；
-- Provider Failure Handling。
-
-完整 Runtime 路由在 Agent / Backend 模块继续学习。
-
----
-
-## 9. Context Window 大不代表更适合任务
-
-一个模型 Context 更大，但可能：
-
-- 更贵；
-- TTFT 更高；
-- Tool Calling 较弱；
-- 任务质量未提升；
-- Long Context 利用并不稳定。
-
-所以不能用：
-
-```text
-context length
-```
-
-作为模型“更高级”的单一指标。
-
----
-
-## 10. Cost 怎么估
-
-API 模型常按：
-
-```text
-Input Tokens
-Output Tokens
-Cached Tokens
-```
-
-或不同能力组合计费。
-
-单请求预估可以抽象：
-
-```text
-cost ≈ input_tokens * input_price
-     + output_tokens * output_price
-     + optional tool / media / cache costs
-```
-
-Production 更重要的是：
-
-```text
-Cost per Successful Task
-```
-
-而不是只看每百万 Token 单价。
-
-如果便宜模型重试三次，最终可能更贵。
-
----
-
-## 11. Reliability 也是 Model Selection 指标
-
-需要关注：
-
-```text
-Rate Limit
-Timeout
-5xx
-Streaming Disconnect
-Schema Failure
-Tool Call Failure
-Regional Availability
-Version Change
-```
-
-模型质量再强，如果容量不稳定，也可能不适合核心在线路径。
-
----
-
-## 12. Model Version 为什么要显式记录
-
-Provider 可能更新底层模型或 Alias。
-
-Production Eval 应记录：
-
-```text
-provider
-model_id
-model_version / snapshot if available
-prompt_version
-sampling_config
-request trace
-```
-
-否则 Regression 出现后很难复现。
-
----
-
-## 13. Streaming 的 Provider 差异
-
-不同 Provider 可能把 Streaming Event 表示成：
-
-- Text Delta；
-- Tool Call Delta；
-- Reasoning/Metadata Event；
-- Usage Final Event；
-- Error Event。
-
-Adapter 应把这些转换成内部 Event Model，而不是让 UI / Agent Runtime 直接依赖厂商格式。
-
----
-
-## 14. Fallback 与 Multi-provider
-
-多 Provider 可以提高韧性，但不是简单：
-
-```text
-A error → B
-```
-
-还要处理：
-
-- Prompt / Role 差异；
-- Tool Schema 支持差异；
-- Model Quality 差异；
-- Context Limit；
-- Output Format；
-- Idempotency / Duplicate Request；
-- Cost Accounting。
-
-完整 Retry / Circuit Breaker 属于 AI Backend Engineering。
-
----
-
-## 15. 常见错误
-
-- Provider Adapter 就是把 API 名字改成一样：过于浅。
-- 选最强模型就行：忽略成本、延迟、容量和协议可靠性。
-- Benchmark 榜单能直接替代业务 Eval：错误。
-- Context 最大的模型一定更好：错误。
-- 每百万 Token 最便宜就最省钱：应看成功任务成本和重试。
-- Model Alias 永远不变：错误，生产系统要记录版本与回归。
-
----
-
-## 16. 面试怎么答
-
-### Q：模型怎么选型？
-
-> 我会先把业务任务定义成可评估指标，再同时比较质量、TTFT/TPOT、Cost、Context、Tool/Structured Output 能力、Multimodal、安全合规和 Provider Capacity。最终看 Cost per Successful Task，而不是只看模型排行榜或 Token 单价；简单任务可以用小模型，复杂任务路由到强模型，但路由本身也要做 Eval 和 Fallback。
-
-### Q：为什么要做 Provider Adapter？
-
-> 为了把业务/Agent Runtime 和厂商 API 字段、Streaming Event、Error、Usage、Tool Call 差异隔离，同时保留 capability flags 避免被最低公约数限制。这样模型替换、Fallback、Telemetry 和测试都更可控。
-
----
-
-## 17. 自测
-
-<details><summary>1. 为什么 Model Selection 必须先定义 Task Quality？</summary>
-因为不同任务成功标准不同，不先定义指标就无法比较模型质量和成本。
 </details>
 
-<details><summary>2. 为什么 Adapter 不能只暴露“所有 Provider 都支持的最小集合”？</summary>
-会丢失重要厂商能力，因此应有稳定公共核心 + Capability/Extension。
+**任务 2：** 两个模型在成对评测中，较长的回答总是获胜，但订单号正确率没有提高。提出至少两项排查，并说明为什么总 Elo 不能直接作为上线依据。
+
+<details><summary>答案与解释</summary>
+
+可隐藏名称、交换顺序，检查评审是否偏好长度，并把事实正确性独立评分；按任务类型查看是否某类样本支配总分。相对风格偏好不等于订单抽取准确率，也不代表已满足安全、延迟和成本门槛。
+
 </details>
 
-<details><summary>3. 为什么成本应看 Cost per Successful Task？</summary>
-因为低单价模型如果错误率/重试率高，最终完成一个正确任务的总成本可能更高。
-</details>
+## 14. 知识回看与资料
+
+计费与长度先回看 [Token 预算](02-TokenContext与LongContext.md)，延迟口径回看 [模型服务与性能](07-ServingEngine与性能.md)。接口事实查 [Chat templates](https://huggingface.co/docs/transformers/v5.17.0/en/chat_templating)、[Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs)；成对评价查 [MT-Bench 研究](https://arxiv.org/abs/2306.05685)。这里给出的订单任务与费用均为教学假设。
