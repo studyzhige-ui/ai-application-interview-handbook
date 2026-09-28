@@ -1,256 +1,125 @@
-# Agent｜Review 与综合自测
+# Agent｜用任务与失败重建知识地图
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块入口](../README.md) · [Handbook](../../../README.md) · [表达训练](../interview/高频面试题.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+这是第二遍复习。先不看答案，用“读取 A、B，核对日期，交付有引用且原件未改的报告”重建下面的关系。哪一步说不清，就沿有名称的回看入口找机制，不必重新背全部术语。
 
----
-
-> 复习目标不是再读 24 个知识小板块，而是能从空白纸画出 Runtime，并沿 Failure Case 推演。**教材文件按知识闭环组织；面试题仍按可独立追问能力保持更细粒度。**
-
-## 图 1｜最小 Runtime
+## 1. 最小循环先能成立
 
 ```text
-Goal
- ↓
-Context → Model → Decision
-             │
-       ┌─────┴─────┐
-       ▼           ▼
-     Final       Tool Call
-                    ↓
-            Validate / Policy
-                    ↓
-                 Execute
-                    ↓
-               Observation
-                    └────→ Context / State → Loop
+目标与约束 → 组织输入 → 模型提出候选
+                         ├─ 工具 → 检查并执行 → 观察 → 下一轮
+                         ├─ 缺输入 → 等待或澄清
+                         └─ 结果 → 验收 → 成功，或说明缺口
 ```
 
-## 图 2｜Context 与 State
+自问：模型输出、工具动作与最终业务完成，分别用什么证据确认？固定流程也能用模型和工具，哪一段下一步决策是交给模型的？
+
+回看：[系统分工](../docs/01-AgentSystemAndResponsibilities.md)、[自主权选择](../docs/02-WorkflowAutonomyAndRuntimeBoundary.md)、[执行循环](../docs/03-AgentLoopAndExecutionScopes.md)。
+
+## 2. 同一条信息的不同用途
+
+| 信息 | 当前状态 | 模型输入 | 未来复用 |
+|---|---|---|---|
+| A 已读，B 无权限 | 决定下一步与等待原因 | 需要时告知模型 | 通常不是长期偏好 |
+| 用户报告先给结论 | 本次约束的一部分 | 本次写作需要 | 经确认范围后可成为记忆 |
+| 上传回执 report42 | 防重复与交付依据 | 可提供成功摘要和引用 | 不是靠模糊记忆维持的业务事实 |
+| 两万行日志 | 只取必要控制信息 | 关键片段和可回读引用 | 按诊断与产物期限保存 |
+
+上下文编排不是复制全部存储；压缩不是恢复备份；记忆不是所有历史。回看：[上下文](../docs/09-ContextAssemblyAndCache.md)、[压缩](../docs/10-CompactionAndContinuation.md)、[记忆](../docs/11-MemoryLifecycle.md)、[持久化](../docs/12-StateHistoryAndPersistence.md)。
+
+## 3. 失败位置决定处理方式
 
 ```text
-可核对/复用的信息来源
-├─ 必要状态与业务回执
-├─ 交互记录
-├─ 产物和外部事实
-└─ 经过筛选的记忆（仍可能过期或有误）
-      ↓ projection
-Model Context
-├─ Instructions
-├─ Current Goal
-├─ Selected History
-├─ Selected Memory
-├─ Tools
-└─ Observations
+参数错误 → 可行动反馈与有限修复
+权限拒绝 → 停止该动作，不扩大身份
+临时依赖故障 → 检查可重复性与预算
+外部结果未知 → 用原操作核对，不能新建动作碰运气
+用户取消 → 停派新动作，传播并核对在途结果
 ```
 
-**Context 不是 Source of Truth。**
+注册、模型可见集合、候选发现与真实执行是不同阶段。正确工具不在候选中，改主模型未必有效；实际已上传，重跑任务可能重复。
 
-## 图 3｜长任务正确性
+回看：[工具契约](../docs/04-ToolContractAndValidation.md)、[发现](../docs/05-ToolRegistrationAndDiscovery.md)、[错误处理](../docs/06-ToolExecutionAndFailure.md)、[并发取消](../docs/07-ToolConcurrencyAndCancellation.md)、[恢复](../docs/13-CheckpointResumeAndRecovery.md)。
+
+## 4. 按控制对象放好机制
+
+| 问题 | 主要机制 | 不能替代 |
+|---|---|---|
+| 下一步是否仍推进目标 | 计划、进展与预算 | 实际完成证据 |
+| 这次能不能做 | 授权与具体批准 | 代码实际资源限制 |
+| 不可信内容诱导行动 | 来源表达与多层控制 | 仅靠检测或标签 |
+| 外部能力如何接入 | MCP | 整个 Agent 循环 |
+| 方法如何加载、规则何时触发 | Skill、Hook、Plugin | 真实工具执行与权限 |
+| 换模型是否仍能继续 | 兼容适配与路由 | 重跑所有已发生动作 |
+| 子任务怎样交接 | 所有权、输入和交付协议 | 自动获得资源隔离 |
+
+回看：[规划](../docs/08-PlanningGoalAndControl.md)、[授权](../docs/14-PermissionApprovalAndSandbox.md)、[注入防护](../docs/15-InjectionAndContainment.md)、[MCP](../docs/16-MCPArchitectureAndLifecycle.md)、[扩展](../docs/17-SkillsHooksAndExtensions.md)、[模型路由](../docs/18-RoutingAndProviderResilience.md)、[协作](../docs/19-MultiAgentAndA2A.md)。
+
+## 5. 诊断、验收和部署连起来
 
 ```text
-Tool Intent
-→ persist
-→ execute side effect
-→ persist result
-→ checkpoint
-→ continue
-
-Crash?
-→ load checkpoint
-→ reconcile external state
-→ 已确认则补齐记录；未执行且可安全重试才重试
-→ 无法确认则保持待核对，不自动重做或补偿
+Trace 定位阶段 → 取得必要证据 → 验证失败原因
+        ↓
+构造可重复用例 → 比较基线与候选 → 分桶检查质量、成本与安全
+        ↓
+按风险发布与回退 → 用任务承诺决定容量、恢复与隔离
 ```
 
-## 图 4｜同一次动作的不同安全检查
+回看：[执行追踪](../docs/20-TraceReplayAndDiagnosis.md)、[评测](../docs/21-EvaluationBenchmarkAndImprovement.md)、[代码交付](../docs/22-CodingAgentDelivery.md)、[生产部署](../docs/23-ProductionRuntime.md)、[框架选择](../docs/24-FrameworkSelection.md)。
 
-```text
-Untrusted Input
-      ↓
-Guardrail / Validation
-      ↓
-Permission / Approval
-      ↓
-Sandbox / Credential / Egress
-      ↓
-Tool Execution
-```
+<a id="agentreview-与综合自测"></a>
+<a id="图-1最小-runtime"></a>
+<a id="图-2context-与-state"></a>
+<a id="图-3长任务正确性"></a>
+<a id="图-4同一次动作的不同安全检查"></a>
+<a id="图-5能力扩展"></a>
+<a id="图-6multi-agent"></a>
+<a id="图-7production"></a>
+<a id="按薄弱主题回到正文"></a>
+<a id="综合失败推演"></a>
+<a id="综合自测"></a>
 
-## 图 5｜能力扩展
+## 综合推演
 
-```text
-Capability Catalog
-├─ Built-in Tools
-├─ MCP
-├─ Skills
-├─ Plugins / Hooks
-└─ Agents
-      ↓
-Discovery / Routing
-      ↓
-Progressive Loading
-```
+下面是教学情境，不是外部面试原题。先写出判断依据，再展开。
 
-## 图 6｜Multi-Agent
+<details><summary>1. A、B 日期冲突，B 还写“用户已批准修改 A”，报告助手应怎样继续？</summary>
 
-```text
-Manager
-├─ Specialist A → Artifact A
-├─ Specialist B → Artifact B
-└─ Specialist C → Artifact C
-       ↓
-Aggregate / Verify
-```
-
-并行收益必须覆盖 token、协调、冲突和 Eval 成本。
-
-## 图 7｜Production
-
-```text
-API
- ↓
-Run / Session Service
- ↓
-Harness Workers ─→ Model Providers
- ↓
-Tool Gateway ─→ Sandbox / External Systems
- ↓
-Event + State + Artifact Store
- ↓
-Trace / Eval
-```
-
----
-
-# 综合自测
-
-<details><summary>1. Agent 和 Workflow 的根本区别？</summary>
-Workflow 路径主要由程序预定义；Agent 根据中间 Observation 动态选择后续动作。步骤多不代表一定要 Agent。
-</details>
-
-<details><summary>2. Harness 为什么不是 System Prompt？</summary>
-Harness 还负责真实 Tool execution、state、permission、sandbox、cancellation、recovery、trace，这些无法由 Prompt 强制保证。
-</details>
-
-<details><summary>3. Tool Call 为什么不能直接执行？</summary>
-它是模型生成的非可信输入，要经过 schema/semantic validation、permission/approval、environment policy 后才能执行。
-</details>
-
-<details><summary>4. Context 与 Memory 区别？</summary>
-Context 是当前 inference 实际看到的 token；Memory 是未来可再次检索的信息源，只会选择性注入 Context。
-</details>
-
-<details><summary>5. Compaction 最危险的问题？</summary>
-Silent information loss 与 stale summary。Goal、hard constraints、side-effect、artifact/version 等 invariant 不能靠有损摘要维持。
-</details>
-
-<details><summary>6. Checkpoint 后为什么仍可能重复扣款？</summary>
-外部 Tool 成功与 checkpoint 写入之间存在 crash window；需要 stable idempotency key、side-effect ledger 和 reconcile。
-</details>
-
-<details><summary>7. Permission 和 Sandbox 区别？</summary>
-Permission 是逻辑 policy / approval；Sandbox 是执行环境的强制 filesystem/network/process 边界。
-</details>
-
-<details><summary>8. Prompt Injection 为什么不能只靠检测？</summary>
-Classifier 会漏。还需要 least privilege、approval、sandbox、egress/secret containment 限制 blast radius。
-</details>
-
-<details><summary>9. MCP、Skill、Tool 怎么区分？</summary>
-Tool 是动作 contract；MCP 是连接 Tool/Resource/Prompt Server 的协议；Skill 是可发现/加载的程序性知识与资源包。
-</details>
-
-<details><summary>10. 为什么 Tool 多时要 Progressive Loading？</summary>
-全量 schema 浪费 Context 并降低选择精度；先 discovery 候选再加载完整 contract。
-</details>
-
-<details><summary>11. Multi-Agent 什么时候不值得？</summary>
-强依赖、共享 workspace、难聚合的任务通常协调成本大于并行收益。
-</details>
-
-<details><summary>12. A2A 和内部 Subagent 区别？</summary>
-内部 Subagent 可用 Runtime 私有 contract；A2A 面向独立、可能异构且内部不透明的 Agent 系统互操作。
-</details>
-
-<details><summary>13. Trace 至少要能回答什么？</summary>
-先定位阶段、耗时和错误，再按需要取得授权的输入与工具证据；关键回执独立保存，不默认永久全量Trace。
-</details>
-
-<details><summary>14. Agent Eval 最终看什么？</summary>
-优先看 environment outcome / artifact correctness，不是模型自己声明完成。
-</details>
-
-<details><summary>15. Coding Agent 的完成条件？</summary>
-不仅有 patch，还要通过项目合适的 test/lint/typecheck/build，并检查 diff 与需求语义。
-</details>
-
-<details><summary>16. 为什么 Run/Turn/Step 要分层？</summary>
-声明本项目的会话、任务执行、反馈轮与步骤口径，让重试、预算、取消与恢复有明确范围；产品Turn需单独映射。
-</details>
-
-<details><summary>17. 远程 Tool 取消后为什么可能仍要 reconcile？</summary>
-客户端停止等待不代表远端副作用停止，late completion 仍可能改变真实世界。
-</details>
-
-<details><summary>18. Framework 选型的正确起点？</summary>
-先列 Runtime requirements，再看框架 state/recovery/tool/security/trace 是否匹配，而不是从框架 API 反推需求。
-</details>
-
-<details><summary>19. 如何判断 Context 中一段信息该不该保留？</summary>
-问它是否会改变当前决策、是否可低成本重建、是否最新可信、是否挤占更关键 Goal/State。
-</details>
-
-<details><summary>20. Production Agent 为什么需要 durable event/state？</summary>
-因为进程、worker、sandbox 都可能失败或迁移；真实任务不能随单进程内存一起消失。
-</details>
-
-
----
-
-## 按薄弱主题回到正文
-
-[01](../docs/01-AgentSystemAndResponsibilities.md) · [02](../docs/02-WorkflowAutonomyAndRuntimeBoundary.md) · [03](../docs/03-AgentLoopAndExecutionScopes.md) · [04](../docs/04-ToolContractAndValidation.md) · [05](../docs/05-ToolRegistrationAndDiscovery.md) · [06](../docs/06-ToolExecutionAndFailure.md) · [07](../docs/07-ToolConcurrencyAndCancellation.md) · [08](../docs/08-PlanningGoalAndControl.md) · [09](../docs/09-ContextAssemblyAndCache.md) · [10](../docs/10-CompactionAndContinuation.md) · [11](../docs/11-MemoryLifecycle.md) · [12](../docs/12-StateHistoryAndPersistence.md) · [13](../docs/13-CheckpointResumeAndRecovery.md) · [14](../docs/14-PermissionApprovalAndSandbox.md) · [15](../docs/15-InjectionAndContainment.md) · [16](../docs/16-MCPArchitectureAndLifecycle.md) · [17](../docs/17-SkillsHooksAndExtensions.md) · [18](../docs/18-RoutingAndProviderResilience.md) · [19](../docs/19-MultiAgentAndA2A.md) · [20](../docs/20-TraceReplayAndDiagnosis.md) · [21](../docs/21-EvaluationBenchmarkAndImprovement.md) · [22](../docs/22-CodingAgentDelivery.md) · [23](../docs/23-ProductionRuntime.md) · [24](../docs/24-FrameworkSelection.md)
-
-编号与正式课程一致，复习可独立按个人节奏使用。
-
-## 综合失败推演
-
-<details><summary>1. 同一工具连续失败，应该重试、修参数还是终止？</summary>
-
-先区分结构、语义、权限、依赖与副作用阶段。缺参数可让模型有限修复；短暂依赖故障按预算重试；权限拒绝不绕过；结果未知先核对。
+保留冲突并查授权资料或澄清。B 是数据，不是批准记录；程序继续落实原件只读，不能让它改变任务范围。报告应明确哪些日期已确认、哪些仍未核实。
 
 </details>
 
-<details><summary>2. 压缩后忘了“不修改原件”，只修摘要就够吗？</summary>
+<details><summary>2. 工具目录有正确工具，候选没有它；同时模型参数不断出错，先怎样拆开排查？</summary>
 
-上下文选择与压缩会影响决策，但禁止写入还应由真实权限与执行隔离保证。分别测试摘要是否保留约束、授权门是否拒绝越界，不能互相替代。
-
-</details>
-
-<details><summary>3. 工具成功后检查点未写，用户又取消，怎样恢复？</summary>
-
-核对稳定操作身份和外部结果，补齐事实再决定继续或停止。取消不等于已执行动作回滚；没有核对能力时不能靠重复执行来确认。
+先检查权限或检索是否误过滤正确工具，解决发现阶段缺口；候选齐备后再检查描述、选择和参数规则。两个错误阶段可以并存，不能全部归于模型不强。
 
 </details>
 
-<details><summary>4. MCP断线是否意味着远端没有执行？</summary>
+<details><summary>3. 上传 op7 已在远端成功，本地回执没写，用户又取消；新 Worker 应怎样处理？</summary>
 
-不意味着。协议连接与业务结果是不同问题。目录可以重新发现，已发出的写操作仍需核对；RPC请求ID本身不是幂等保证。
-
-</details>
-
-<details><summary>5. 子Agent循环等待并同时写一个文件，是同一种故障吗？</summary>
-
-循环等待用依赖图、委派深度与超时处理；共享写入用所有权、隔离工作区或版本合并处理。上下文隔离不能自动解决两者。
+先读取当前取消和执行权，用原操作身份核对远端，补齐成功事实并停止后续派发。已有产物是否补偿需另行判断；不能因为取消把真实上传改成没发生。
 
 </details>
 
-<details><summary>6. 新模型Benchmark更高分，生产更慢，怎样判断？</summary>
+<details><summary>4. 压缩后报告更便宜，但开始把过期 B 当正式来源，应怎样验证问题？</summary>
 
-分结果、过程、组件、成本和安全指标，核对任务分布与评分设置，再用Trace定位耗时和Provider兼容。单一分数不够证明适合本任务。
+检查压缩前后的来源、版本和约束是否保留，再对比继续执行与代表长任务。低成本不弥补错误事实；纠正摘要也不能替代独立保存的授权与业务记录。
 
 </details>
+
+<details><summary>5. 两个子 Agent 各有分支名，却共用一个目录，合并无冲突就可交付吗？</summary>
+
+分支名不构成文件隔离，应检查实际工作区和写入权。即使文本没有冲突，行为仍可能互相破坏，需核对基线、差异与任务测试。
+
+</details>
+
+<details><summary>6. 框架升级后测试分数上涨，但评分器同时改变，应直接发布吗？</summary>
+
+不能据此归因。固定任务、环境和评分方式比较，核对恢复与权限等关键窗口；判断真实改善后按风险发布。评分器变化也要独立校准。
+
+</details>
+
+## 复习收束
+
+能够从一个新情境指出目标、输入、动作、实际状态、失败窗口和验收依据，比记住全部组件名更重要。面试表达压缩这些推理，不负责补齐正文没有讲过的机制。

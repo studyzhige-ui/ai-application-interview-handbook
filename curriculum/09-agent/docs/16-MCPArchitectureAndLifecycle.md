@@ -1,30 +1,32 @@
 # 16. MCP：从 Host / Client / Server 到完整协议往返
 
+[← 上一章](15-InjectionAndContainment.md) · [Agent 目录](../README.md) · [下一章 →](17-SkillsHooksAndExtensions.md)
+
 你已经会注册自己的工具了。可是每个AI应用都要接文件、工单和数据库，难道每一边都重新写一套通信约定？
 
 > MCP标准化的是应用与外部能力之间发现、请求、结果返回的共同语言。
 
 先看参与者和一次往返，再看版本、传输与出错处理。它不是新模型，也不是Agent主循环。
 
-[← 上一章](15-InjectionAndContainment.md) · [Agent 目录](../README.md) · [下一章 →](17-SkillsHooksAndExtensions.md)
+
 
 ---
 
+<a id="legacy-16-05"></a>
 <a id="section-1"></a>
+<a id="core-1"></a>
 
 ## 1. MCP先给清楚定义
 
-<a id="legacy-16-05"></a>
-
-MCP（Model Context Protocol，模型上下文协议）是连接AI应用与外部系统的开放标准。它规定参与者怎样发现能力、请求工具、读取资源和获取提示模板，**不规定Agent应该怎样规划、使用记忆或管理整个任务**。本章主要依据用户指定的官方`2026-07-28`架构文档，旧协议差异单独标明。
+MCP（Model Context Protocol，模型上下文协议）是连接AI应用与外部系统的开放标准。它规定参与者怎样发现能力、请求工具、读取资源和获取提示模板，**不规定Agent应该怎样规划、使用记忆或管理整个任务**。本章采用官方 `2026-07-28` 协议作为学习基线，关键行为核验于 2026-09-28，旧协议差异单独标明。
 
 没有MCP，你也能写`read_file()`或调用企业HTTP API；只是每个应用与每个外部系统可能各写一套接入。MCP把公共交互格式标准化，让应用不必为每个服务器重新发明发现与调用协议。业务API本身、真实授权和Agent Loop并没有因此消失。
 
-没有MCP时，GitHubAdapter、SlackAdapter、DatabaseAdapter、NotionAdapter可能各写一套公共交互；标准化减少重复接入，但底层业务API和真实授权仍需要实现。
 
 ---
 
 <a id="section-2"></a>
+<a id="core-2"></a>
 
 ## 2. Host、Client、Server究竟是谁
 
@@ -45,11 +47,11 @@ Host通常为每个Server建立对应Client。Client不是“使用这个产品�
 
 ---
 
+<a id="legacy-16-06"></a>
 <a id="section-3"></a>
+<a id="core-3"></a>
 
 ## 3. Tools、Resources、Prompts各提供什么
-
-<a id="legacy-16-06"></a>
 
 | 原语 | 核心含义 | 例子 | 常用交互 |
 |---|---|---|---|
@@ -64,6 +66,7 @@ Host通常为每个Server建立对应Client。Client不是“使用这个产品�
 ---
 
 <a id="section-4"></a>
+<a id="core-4"></a>
 
 ## 4. 一次完整工具调用：发现不是执行
 
@@ -113,6 +116,7 @@ MCP目录包含说明和输入Schema，不是把服务器函数源码下载到�
 ---
 
 <a id="section-5"></a>
+<a id="core-5"></a>
 
 ## 5. 不要混写2025与2026生命周期
 
@@ -130,11 +134,11 @@ MCP目录包含说明和输入Schema，不是把服务器函数源码下载到�
 
 ---
 
+<a id="legacy-16-07"></a>
 <a id="section-6"></a>
+<a id="core-6"></a>
 
 ## 6. 传输是什么，安全又是什么
-
-<a id="legacy-16-07"></a>
 
 Stdio（标准输入输出）通常连接本地子进程；Streamable HTTP（可流式HTTP）用于HTTP请求及可选事件流。JSON-RPC规定消息的含义，传输负责搬运。SSE（服务器发送事件）是可能使用的流式机制，不是MCP本身。启动本地Server意味着运行软件，仍要审查来源和权限；远程访问还要处理认证、TLS与令牌范围。
 
@@ -150,133 +154,102 @@ Stdio（标准输入输出）通常连接本地子进程；Streamable HTTP（可
 
 ---
 
+<a id="human-a"></a>
 <a id="section-7"></a>
+<a id="core-7"></a>
 
 ## 7. 从协议回到执行系统
 
-MCP目录只提供能力说明。模型候选仍由宿主校验与授权，通过Client调用Server，结果再规范化回填。协议断线不保证远端动作没发生，按[工具错误](06-ToolExecutionAndFailure.md)和[恢复](13-CheckpointResumeAndRecovery.md)核对；下一章解释Skill（技能包）和Hook（生命周期钩子）如何利用这些能力，不再重复协议全过程。
+MCP目录只提供能力说明。模型候选仍由宿主校验与授权，通过Client调用Server，结果再规范化回填。协议断线不保证远端动作没发生，按[工具错误](06-ToolExecutionAndFailure.md)和[恢复](13-CheckpointResumeAndRecovery.md)核对。
 
 官方入口：[2026-07-28架构](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture) · [工具规范](https://modelcontextprotocol.io/specification/2026-07-28/server/tools) · [旧版初始化](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)。版本事实和教学例子分开。
 
 ---
 
-<a id="human-a"></a>
+<a id="summary"></a>
 
-## 8. HUMAN-A 信号
+## 本章小结
 
-本章主要承接`AGENT-023` MCP协议（20个来源）与`AGENT-024`能力边界；工具发现还对应`AGENT-021`。完整问法和频次见[研究题库](../../../interview/canonical/agent-harness.md)。新增协议解释不新增真人来源。
+MCP 规定 AI 应用与外部能力怎样发现、请求和返回。Host 决定任务和模型可见范围，Client 承担协议通信，Server 提供实际能力。模型调用表示与 MCP 请求是两层，发现不等于执行，版本和授权仍需分别核对。
 
----
-
+<a id="9-面试怎么答"></a>
+<a id="qhostclientserver怎么区分"></a>
+<a id="qmcp原理为什么不能只背initialize"></a>
+<a id="qmcp工具太多时怎么办"></a>
+<a id="qmcp是什么解决什么"></a>
+<a id="q模型调用mcp工具的完整链路是什么"></a>
 <a id="interview"></a>
 
-## 9. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：MCP是什么，解决什么？
+### MCP 是什么，为什么不是 Agent 框架？
 
-🎯 **30 秒回答**：
+它是 AI 应用连接外部工具、资源和提示模板的开放协议，减少重复接入约定。它不定义整个 Agent 的规划、状态和循环；Host 仍需决定如何把能力接入任务并控制授权。
 
-> MCP是连接AI应用与外部系统的开放协议标准，定义能力发现、工具调用、资源读取和提示模板等交互。它减少重复接入代码，不规定Agent怎么规划，也不自动提供业务授权。Host仍负责把协议能力接到模型与执行循环。
+### Host、Client、Server 怎样协作？
 
-### Q：Host、Client、Server怎么区分？
+Host 是 AI 应用，内部 Client 与某个 Server 通信；Server 可本地或远程提供能力。Client 发现工具，Host 转为模型说明；模型提出候选后 Host 检查，再由 Client 发协议调用，结果回到 Host 并关联模型请求。
 
-🎯 **30 秒回答**：
+### 为什么不能把 initialize 写成所有版本的唯一流程？
 
-> Host是整个AI应用，Client是Host内连接某Server的协议组件，Server是提供工具、资源或模板的程序，可以本地或远程。模型通常由Host另外调用，不等于MCP Client或Server。一个Host可以有多个Client分别连接多个Server。
+2025-11-25 有初始化协商；本章的 2026-07-28 请求自带版本与能力元数据，Server 必须实现 server/discover，Client 可选择是否先调用。应先核对实际协议与 SDK 支持，再描述生命周期。
 
-### Q：模型调用MCP工具的完整链路是什么？
+### MCP 连接断开，可以直接认为远端没执行吗？
 
-🎯 **30 秒回答**：
+不能。连接状态与业务结果不同。已发出的写操作仍要按原操作身份核对；JSON-RPC 请求 ID 用于关联请求响应，不自动提供业务幂等。
 
-> Client发现Server工具，Host把允许的说明转换成模型API格式；模型产生候选调用，Host校验与授权后让Client发送tools/call；Server执行并返回，Host把结果关联原模型调用并回填。发现返回Schema，不是下载函数源码或自动执行。
-
-### Q：MCP原理为什么不能只背initialize？
-
-🎯 **30 秒回答**：
-
-> initialize属于明确版本的生命周期。2026-07-28官方架构强调请求自带版本能力元数据和可选Client调用server/discover，Server必须实现发现方法。教学要区分旧新版本，核心仍是协议兼容、能力发现和受控调用。不能拿旧教程当所有版本的唯一流程。
-
-### Q：MCP工具太多时怎么办？
-
-🎯 **30 秒回答**：
-
-> Host可以维护完整目录而只向本轮模型暴露相关少量说明，先发现候选再加载具体Schema。兼顾候选召回、Token成本、版本与权限；Server目录存在不意味着所有工具都应对当前任务可见。
-
----
-
+<a id="10-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 10. 高频易错点
+## ⚠️ 易错点
 
-⚠️ **MCP = Agent Framework。** MCP 不负责 Agent Loop。
+> ⚠️ Client 是宿主中的协议组件，不是使用产品的人，也不等于 LLM。
 
-⚠️ **Skill = Tool。** Skill 更接近程序性任务包。
+> ⚠️ tools/list 返回能力说明，真正执行需要 tools/call；目录存在不代表当前用户可以调用。
 
-⚠️ **Hook 可以随便改变 State（状态）。** 无约束 Hook 会制造隐藏控制流。
+> ⚠️ clientInfo 是软件身份信息，不是用户认证凭证；Server 与 Host 都要落实各自授权。
 
-⚠️ **所有 Tool Schema 全量注入更稳。** 规模大时会增加 Context 和选择混乱。
+> ⚠️ 协议无状态不等于业务无状态，长任务、资源和外部写入仍可能需要可靠状态。
 
-⚠️ **MCP Client就是LLM。** 它是Host中的协议组件，LLM另由Host调用。
-
-⚠️ **MCP Server只能远程部署。** 本地进程也可以提供MCP。
-
-⚠️ **tools/list会运行所有工具。** 它发现说明，执行需tools/call。
-
-⚠️ **clientInfo证明了用户身份。** 只是兼容/诊断元数据，认证另行处理。
-
-⚠️ **MCP等于SSE。** 协议语义与传输机制不同。
-
-⚠️ **协议无状态等于业务没有状态。** 资源与长任务可以有状态，不同抽象层。
-
-⚠️ **Skill和Hook都是工具的一种名字。** 它们分别管理知识使用与生命周期扩展。
-
----
-
+<a id="11-本章自测"></a>
 <a id="self-test"></a>
 
-## 11. 本章自测
+## 本章自测
 
-<details><summary>1. 你的应用连文件和工单两个Server，通常需要几个Client？</summary>
+<details><summary>1. 文件 Server 在本机子进程运行，它还是 MCP Server 吗？</summary>
 
-通常分别建立对应Client，由一个Host管理；用户和LLM不是这两个Client对象。
-
-</details>
-
-<details><summary>2. tools/list返回read_document Schema，模型立刻能执行Python函数吗？</summary>
-
-不能。模型只生成调用请求，Host经授权路由到Client，Server才真正执行实现。函数代码留在执行端。
+是。角色由协议职责决定，不由是否远程部署决定；运行本地软件仍需审查来源和权限。
 
 </details>
 
-<details><summary>3. 为什么resources/read后还需要Host处理内容？</summary>
+<details><summary>2. 模型返回 read_document(A)，为什么不能说它已经直接调用 MCP Server？</summary>
 
-读取返回材料不等于自动编排进模型输入，Host需检查权限、相关性、预算与来源，并决定何时给模型使用。
-
-</details>
-
-<details><summary>4. 把MCP的RPC id用作跨重试业务幂等键一定够吗？</summary>
-
-不一定。RPC id关联一次请求响应；逻辑动作身份和去重语义需由业务接口明确，网络重试可能使用不同RPC请求。
+这是模型 API 的调用候选。宿主要校验与授权，再让 MCP Client 发送对应协议请求，Server 才实际执行。
 
 </details>
 
-<details><summary>5. 2026文档写server/discover mandatory，Client是否每次都必须先调用？</summary>
+<details><summary>3. 对 2026-07-28，Client 是否必须先调用 server/discover？</summary>
 
-Server必须实现它，Client调用是可选的兼容发现步骤；请求本身携带版本能力信息，不能把服务端实现要求误读成每次调用的强制握手。
-
-</details>
-
-<details><summary>6. 为什么两份旧源码不能证明当前所有MCP能力？</summary>
-
-源码固定在具体提交，功能和协议版本可能不同。本章用它们说明Host接入责任，具体当前协议字段和方法以官方版本文档核验。
+不必须先调用，但 Server 必须实现它。请求携带版本与相关能力，Client 也可以直接请求并处理不支持版本的错误。
 
 </details>
 
-<details><summary>7. MCP能处理长任务，所以A2A就没有意义了吗？</summary>
+<details><summary>4. 工具返回 input_required，用户拒绝提供信息，应当当作网络异常重试吗？</summary>
 
-不等价。能力调用与独立Agent间委派/任务交付关注不同责任，协议功能有重叠时应按接口抽象、对象和交互需要比较，而不是按一个是否异步的特征选择。
+不应。它要求补充输入，不是短暂传输故障。应停止该动作或澄清，不能让模型猜凭证或绕过拒绝。
 
 </details>
+
+<a id="8-human-a-信号"></a>
+<a id="references"></a>
+
+## 知识回看与权威资料
+
+- [MCP 2026-07-28 架构](https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture)：核对角色、请求元数据与发现。
+- [工具规范](https://modelcontextprotocol.io/specification/2026-07-28/server/tools)：核对目录、调用及结果语义。
+- [2025-11-25 生命周期](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle)：对照旧版初始化，而不混用两代流程。
+- [工具发现](05-ToolRegistrationAndDiscovery.md)：协议目录取得以后，Host 怎样选择模型本轮可见工具。
+
 
 ---
 

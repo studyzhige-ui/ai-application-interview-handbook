@@ -1,60 +1,39 @@
-# 03. Agent Loop：Session、Run、Turn、Step 与执行事件
-
-有了目标，工作并不会自己向前走。模型提议读文件、程序真的读到内容之后，还需要把结果送回去，让下一步随观察改变。
-
-> 这条“判断—行动—观察—再判断”的反馈，才是我们要解释的执行循环。
+# 03. Agent Loop：观察怎样改变下一步
 
 [← 上一章](02-WorkflowAutonomyAndRuntimeBoundary.md) · [Agent 目录](../README.md) · [下一章 →](04-ToolContractAndValidation.md)
 
----
+模型提出“读取 A”，程序读到了“发布日期待确认”。如果程序只把这句话打印到终端，没有让下一次模型请求得到它，模型就没有获得新证据。
 
-<a id="section-1"></a>
+反馈循环的关键不是反复调用模型，而是让已发生的行动进入后续判断，并让停止有明确原因。
 
-## 1. 先讲人话：Agent 的核心不是“会调用 Tool”，而是会循环推进任务
-
+<a id="1-先讲人话agent-的核心不是会调用-tool而是会循环推进任务"></a>
+<a id="9-runtime-state-应该有什么"></a>
 <a id="legacy-03-01"></a>
+<a id="legacy-03-09"></a>
+<a id="section-1"></a>
+<a id="section-9"></a>
+<a id="core-1"></a>
 
-最小 Agent Loop 可以画成：
+## 1. 先把一轮拆成三个动作
 
-```text
-Goal / User Input
-      ↓
-Build Context
-      ↓
-Model Decision
-      ↓
-┌───────────────┬─────────────────┐
-│ Final Answer  │ Tool / Delegate │
-└──────┬────────┴────────┬────────┘
-       │                 ↓
-       │             Execute
-       │                 ↓
-       │            Observation
-       │                 ↓
-       └──────────── Continue Loop
-```
+**一轮反馈** 包含判断、行动和观察：程序先把当前目标与必要信息交给模型；模型提出行动；程序检查并执行，把结果带回来。只有这样，下一轮才能基于新信息而不是重复猜测。
 
-普通 LLM Call 到 `Model Output` 就结束；Agent Runtime（运行时执行系统） 还要解释：
+| 时刻 | 程序已知状态 | 本次决定 | 状态如何变化 |
+|---|---|---|---|
+| 开始 | 尚未读 A | 请求读取 A | 准备一次工具调用 |
+| 工具结束 | A 的内容已返回 | 还没有新的模型决定 | 将内容记入观察 |
+| 下一次请求 | 模型输入包含 A 的内容 | 提交结果或继续查证 | 验收、继续或等待 |
 
-```text
-输出是不是 Tool Call？
-要不要执行？
-执行结果如何变成下一轮 Observation？
-State 怎样更新？
-什么时候结束？
-```
+程序保存的状态，不会自动进入模型。真实接入时，需要按模型接口把选中的信息编码成请求；这是[上下文编排](09-ContextAssemblyAndCache.md)负责的工作。
 
-因此 Loop 是 Harness 的控制骨架。
-
----
-
-<a id="section-2"></a>
-
-## 2. 一个最小可运行的 Agent Loop
-
+<a id="2-一个最小可运行的-agent-loop"></a>
 <a id="legacy-03-02"></a>
+<a id="section-2"></a>
+<a id="core-2"></a>
 
-下面是**标准库教学例子**：模型决定用固定函数模拟，不调用真实模型、不访问网络。目的只在于看清“观察回填以后，下一次决策才会改变”。
+## 2. 看一个能够运行的反馈例子
+
+下面用固定函数代替模型，用内存里的 A 代替文件。它不访问网络，没有真实模型，也不实现生产恢复；只观察“结果回填以后，决定发生变化”。Python 是演示载体，前面的过程不依赖某种编程语言。
 
 ```python
 # runnable-example: feedback_loop
@@ -86,584 +65,193 @@ def run_report():
 assert run_report() == '发布日期待确认'
 ```
 
-真实模型不是读取Python变量：程序还要把选中的观察编码成下一次请求。第09章解释状态怎样投影为上下文。
+保存为 `feedback_loop.py` 后运行 `python feedback_loop.py`。原例用断言检查返回值；没有报错表示这个条件成立，不表示调用了真实模型。也可以在最后加 `print(run_report())`，观察 `发布日期待确认`。
 
----
+顺着程序追踪：
 
-<a id="section-3"></a>
+1. `observations` 为空，`decide` 提出读 A。
+2. 程序检查工具名与材料名，将读取内容追加到观察列表。
+3. 下一轮 `decide` 能看到这条观察，返回完成候选。
+4. 程序检查候选确实来自刚才的读取，才返回；最多三轮的限制另行阻止无限执行。
 
-## 3. 为什么要分 Run / Turn / Step
+> ⚠️ 这个固定决策函数本身不是自主模型。测试通过只证明反馈连通与有限停止，不能证明真实模型会选对工具，也不能证明报告语义正确。
 
-<a id="legacy-03-03"></a>
-
-为讲清故障发生在哪，本章先使用下列**自建运行时的工作约定**：Session 是连续会话，Run 是为一个目标启动的一次执行，Turn 是一次“模型决策—动作—观察”的循环轮次，Step 是其中的操作。用户输入称为“用户交互”，避免又叫同一种 Turn。
-
-```text
-Session：这个项目的持续会话
-└─ Run：本次整理报告
-   ├─ Turn 1：决定读 A → 读取 → 接收结果
-   │  ├─ Step：模型请求
-   │  └─ Step：工具调用与结果登记
-   └─ Turn 2：发现日期冲突 → 读 B → 接收结果
-```
-
-这棵树让你能说“第二轮读取失败，但这次报告任务还可继续”，而不是所有问题都叫“会话失败”。**它不是全行业统一对象模型。** 业务的一次任务也可能暂停后继续同一 Run，或因用户明确要求从头做而创建新 Run；需项目自己定义。
-
-### 对照产品语义，不强制一一对应
-
-| 对象体系 | 含义 | 与教学树的关系 |
-|---|---|---|
-| Codex Thread | 持续对话容器 | 类似会话作用域 |
-| Codex Turn | 用户输入发起的一段 Agent 工作，可含多次推理和工具交互 | 常覆盖教学例子中的整个执行段，而非单次模型调用 |
-| Codex Item | 消息、工具行动等有类型项目 | 不是每条生命周期事件；一个 Item 可产生多个事件 |
-| Claude Code 快照的 conversation / `submitMessage()` | 会话对象持有跨调用数据，提交消息推进交互 | 内部循环次数不应直接当用户 Turn 数 |
-
-面试时先说“在我的实现里 Turn 指……”，再对照产品。清楚的自定义树可以帮助理解，但错误映射会让后面的取消与恢复范围混乱。
-
-Run需要能关联目标、状态、起止时间、预算及当前进度。这些信息服务任务控制，而不是要求每个字段都永远保存。
-
----
-
-<a id="section-4"></a>
-
-## 4. 为什么这个分层对 Failure 很重要
-
+<a id="11-loop-什么时候继续什么时候停止"></a>
+<a id="4-为什么这个分层对-failure-很重要"></a>
+<a id="8-state-machineloop-不只是-while-true"></a>
 <a id="legacy-03-04"></a>
-
-假设：
-
-```text
-Run = 修复 issue #123
-Turn = 检查修复结果的反馈轮
-Step = run_tests
-```
-
-如果测试超时：
-
-```text
-Step failed
-```
-
-不代表：
-
-```text
-Run failed
-```
-
-Runtime 可以：
-
-```text
-Step Failure
-→ retry / repair / alternate tool
-→ continue same Run
-```
-
-这就是为什么错误语义必须有执行层级。
-
----
-
-<a id="section-5"></a>
-
-## 5. Runtime 不是只有 Message，还需要 Event
-
-<a id="legacy-03-05"></a>
-
-Model-visible Message 常见：
-
-```text
-system
-user
-assistant
-function/tool call
-tool result
-```
-
-但 Runtime 还需要记录模型看不见的事实：
-
-```text
-run_started
-tool_queued
-permission_requested
-permission_granted
-tool_started
-tool_progress
-checkpoint_written
-compaction_started
-compaction_finished
-cancel_requested
-run_finished
-```
-
-所以应区分：
-
-```text
-Model Message
-= 给模型看的输入 / 输出表示
-
-Runtime Event
-= 系统真实发生过的事实
-```
-
-二者可以相关，但不能等同。
-
----
-
-<a id="section-6"></a>
-
-## 6. Event 为什么最好是结构化的
-
-<a id="legacy-03-06"></a>
-
-不要只记：
-
-```text
-"tool failed"
-```
-
-至少应保留：
-
-```json
-{
-  "event_type": "tool_finished",
-  "run_id": "r_123",
-  "turn_id": "t_9",
-  "step_id": "s_31",
-  "tool_call_id": "call_7",
-  "tool_name": "run_tests",
-  "status": "failed",
-  "error_kind": "timeout",
-  "duration_ms": 30012
-}
-```
-
-结构化 Event 才能支持：
-
-- Trace（执行追踪）；
-- Replay（重放）；
-- Debug；
-- Metrics；
-- Eval；
-- Incident Analysis。
-
----
-
-<a id="section-7"></a>
-
-## 7. Correlation ID 为什么关键
-
-<a id="legacy-03-07"></a>
-
-Model 发出：
-
-```text
-Tool Call A
-Tool Call B
-```
-
-如果 Runtime 只把两个 Result 按时间塞回去，而没有 `call_id`，并发时很容易错配。
-
-稳定关系应该是：
-
-```text
-ToolCall(call_id = c17)
-        ↓
-ToolStarted(c17)
-        ↓
-ToolProgress(c17)
-        ↓
-ToolResult(c17)
-```
-
-`call_id` 是 Tool protocol 的相关性键。
-
-ID回答“是哪一件事”，版本回答“采用哪份定义或内容”。模型call_id关联调用与结果；operation_id可标识同一逻辑动作；attempt_id区分重试尝试。不是每个ID都要有复杂版本树。
-
----
-
-<a id="section-8"></a>
-
-## 8. State Machine：Loop 不只是 while True
-
 <a id="legacy-03-08"></a>
-
-一个 Run 可以显式建成状态机：
-
-```text
-CREATED
-  ↓
-RUNNING
-  ├─→ WAITING_TOOL
-  ├─→ WAITING_APPROVAL
-  ├─→ PAUSED
-  └─→ RUNNING
-        ↓
-   COMPLETED / FAILED / CANCELLED
-```
-
-状态机的价值是：
-
-```text
-允许哪些 Transition？
-Crash 后在哪恢复？
-取消时清理什么？
-Approval 后回到哪里？
-```
-
-如果没有明确状态机，长任务常出现“数据库里 status 是 running，但 worker 已经死了”这类幽灵状态。
-
----
-
-<a id="section-9"></a>
-
-## 9. Runtime State 应该有什么
-
-<a id="legacy-03-09"></a>
-
-State（状态）不是“所有字段的名字”。在报告例子里，程序需要知道任务是否继续、哪些文件已读、正等待什么、预算是否够用。这些影响下一步的当前情况就是状态，Plan只是其中可能包含的一部分。
-
-一个简化模型：
-
-```python
-# 状态示意：只保存会影响下一步选择的信息，不代表全部字段都要永久持久化。
-from dataclasses import dataclass, field
-
-@dataclass
-class RunState:
-    run_id: str  # 关联这一次任务执行
-    goal: str
-    status: str = "running"
-    step_count: int = 0  # 已推进步数，用于限制与诊断
-    last_tool_call_id: str | None = None
-    artifacts: list[str] = field(default_factory=list)
-    unresolved_errors: list[str] = field(default_factory=list)
-```
-
-这不是 Memory（记忆）。
-
-它描述：
-
-> **现在执行到哪里、已经发生了什么、接下来还能做什么。**
-
----
-
-<a id="section-10"></a>
-
-## 10. 新用户指令怎样进入正在运行的 Agent
-
-<a id="legacy-03-10"></a>
-
-这是 `AGENT-042` Dynamic Instruction / Steering 的核心。
-
-错误做法：
-
-```text
-用户追加一句话
-→ 直接塞到当前 Model Call 尾部
-→ 希望模型自己理解优先级
-```
-
-更稳妥：
-
-```text
-New User Instruction
-→ Runtime Event
-→ 判断当前 Step 是否可中断
-→ 更新 Goal / Constraint Snapshot
-→ 取消或完成当前 Tool
-→ 下一 Planning Boundary 生效
-```
-
-关键在于：
-
-> 新指令不仅是 Message，也是 State Transition 输入。
-
-模型当前已发出的请求不能被客户端从中间随意修改。新输入应先由应用接收，再由运行时决定何时生效。
-
-| 新输入意图 | 可采用的行为 | 用户应该看到什么 |
-|---|---|---|
-| 新增无关任务 | 排队到当前任务结束后新建执行 | 已排队，而非假装立即处理 |
-| 补充当前任务信息 | 放入待处理输入，在下一次安全决策点追加 | 已接收，后续将使用 |
-| 修改约束，例如“不要写文件” | 更新约束；按风险中断或等待当前动作结束 | 明确已经发生的动作和生效边界 |
-| 明确取消 | 停止派发新动作并传播取消 | 取消中与真正结束分开 |
-
-“安全决策点”通常是一次模型/工具阶段完成、控制权回到运行时的时刻。若写入已经提交，新约束不能倒流时间撤销它。07章详细讲传播和迟到结果。
-
-<details>
-<summary>具体落点：Codex 的排队/steer 与 Claude Code 的循环输入</summary>
-
-Codex App Server 对正在运行的 Turn 提供 `turn/steer`（追加引导输入），并用预期 Turn 标识避免把新输入送给已结束或被替换的一轮；`turn/interrupt`用于中断。固定源码的 `session/turn.rs`检查待处理输入，决定是否还有后续工作。这个接口语义不同于“开始第二个同时修改同一状态的执行”。
-
-用户提供的 Claude Code 快照中，`query.ts`在工具调用完成后读取按优先级筛选的排队输入，将符合当前Agent范围的内容作为附件加入后续消息，避免把普通用户消息插进未完成的工具请求/结果之间。Slash命令不按普通文本在轮中取出，需走自己的命令处理入口；`Tool.ts`另外提供工具中断行为。官方工作过程也说明用户可随时中断以引导方向。但具体界面是否排队、立即打断，取决于入口和运行模式，不能承诺所有客户端完全一样。
-
-</details>
-
----
-
-<a id="section-11"></a>
-
-## 11. Loop 什么时候继续，什么时候停止
-
 <a id="legacy-03-13"></a>
+<a id="section-11"></a>
+<a id="section-4"></a>
+<a id="section-8"></a>
+<a id="core-3"></a>
 
-最小规则：
+## 3. 停止原因不是一个 done
 
-```text
-Model Final Answer
-→ 可能停止
+循环可能交付结果，也可能尚未完成就停止。至少要让调用方区分下面几种情况：
 
-Tool Call
-→ 执行后继续
-
-Recoverable Failure
-→ 修复 / 重试 / 换路后继续
-
-Fatal Failure
-→ 停止
-
-Human Approval Required
-→ Pause
-
-Cancel Requested
-→ Cancel
-```
-
-“可能停止”是因为 Final Answer 本身还可能需要 Outcome Verification。
-
-例如 Coding Agent 说：
-
-> “已经修复。”
-
-Runtime 不应该只信它的文字，而要检查：
+| 条件 | 应表达的结果 | 能否当作任务成功 |
+|---|---|---|
+| 候选结果满足任务验收 | 成功 | 可以，仍披露验证范围 |
+| 缺关键输入或等待批准 | 等待或暂停 | 不可以 |
+| 用户要求停止 | 取消中，随后确认取消范围 | 不可以 |
+| 时间、调用次数或费用耗尽 | 预算停止 | 不可以 |
+| 不可恢复错误 | 失败 | 不可以 |
 
 ```text
-tests_passed?
-diff_exists?
-requested_file_changed?
-acceptance_criteria_met?
+模型决定
+  ├─ 工具候选 → 检查并执行 → 观察回填 → 下一轮
+  ├─ 澄清请求 → 保存等待原因 → 等待输入
+  └─ 完成候选 → 验收
+                  ├─ 通过 → 成功退出
+                  └─ 未通过 → 有预算则修正，否则说明缺口后停止
 ```
 
----
+一次测试工具超时，不一定要把整个报告任务判为失败；也不能因为模型结束生成，就直接认为业务完成。继续资格由当前错误、任务范围和剩余预算共同决定。
 
-<a id="section-12"></a>
+<a id="3-为什么要分-run--turn--step"></a>
+<a id="legacy-03-03"></a>
+<a id="section-3"></a>
+<a id="对照产品语义不强制一一对应"></a>
+<a id="core-4"></a>
 
-## 12. 产品实现与官方资料对照（按需展开）
+## 4. 用执行范围说明“哪里出了问题”
 
-<details>
-<summary>源码证据：Claude Code</summary>
-
-<a id="legacy-03-11"></a>
-
-固定快照中 `QueryEngine`：
-
-- 一个 conversation 拥有 query lifecycle / session state；
-- 每次 `submitMessage()` 开启新的 turn；
-- messages、file cache、usage 等跨 turn 保留；
-- 配置显式存在 `maxTurns`、`maxBudgetUsd`、`abortController`、tools、agents 与 permission callback。
-
-这支持一个稳定课程抽象：
+本书采用一组工作定义：**Session** 是持续会话；**Run** 是为一个目标发起的执行；**Turn** 是一次判断—行动—观察反馈轮；**Step** 是其中的操作。用户的一次输入称为“用户交互”，不再与反馈轮混叫。
 
 ```text
-Conversation Runtime
-= Turn Lifecycle
-+ Persistent State
-+ Capability Set
-+ Budget
-+ Cancellation
+Session：同一项目的持续会话
+└─ Run：这次报告任务
+   ├─ Turn 1：请求并读取 A
+   │  ├─ Step：模型请求
+   │  └─ Step：工具执行与结果登记
+   └─ Turn 2：根据 A 决定后续工作
 ```
 
-</details>
+这使我们能准确说“工具步骤失败，任务仍可继续”。它不是行业统一对象树。例如 Codex 的 Turn 可以覆盖一次用户输入后的多次推理和工具交互；应用对照产品时，应查作用域，而不是把同名字强行对应。[产品对象对照](../../../references/agent/implementation-notes.md#chapter-03)只作选读。
 
-<details>
-<summary>源码证据：Codex</summary>
+<a id="5-runtime-不是只有-message还需要-event"></a>
+<a id="6-event-为什么最好是结构化的"></a>
+<a id="7-correlation-id-为什么关键"></a>
+<a id="legacy-03-05"></a>
+<a id="legacy-03-06"></a>
+<a id="legacy-03-07"></a>
+<a id="section-5"></a>
+<a id="section-6"></a>
+<a id="section-7"></a>
+<a id="core-5"></a>
 
-<a id="legacy-03-12"></a>
+## 5. 消息给模型看，事件帮助程序管理执行
 
-固定 Codex 快照中，Context Compaction（上下文压缩） 相关代码直接引用：
+模型消息记录输入、输出和工具交互。程序事件还会记录排队、工具开始、批准到达、取消请求等事情。这些事会影响控制，但不必全部送进模型。
+
+以两个工具并行为例，后发出的工具可能先结束。因此需要**调用标识 `call_id`** 把结果关联到正确请求，不能按到达顺序猜配对。
 
 ```text
-Session
-StepContext
-TurnContext
-WorldState
-EventMsg
+请求 c1：读 A ─────────→ 结果 c1：A 的内容
+请求 c2：读 B ─→ 结果 c2：B 的内容
 ```
 
-Tool Router（路由器） 中 `ToolCall` 也携带 `call_id`，再构造带 Session / StepContext / CancellationToken 的 Invocation（调用实例）。
+同一个调用可以有开始、进度和结束多个事件。事件只需记录实际管理需要的信息；如何持久保存、跨进程恢复，在状态与恢复章节处理，不要求这个最小循环先建立完整事件数据库。
 
-这说明成熟 Runtime 会显式区分：
+<a id="10-新用户指令怎样进入正在运行的-agent"></a>
+<a id="legacy-03-10"></a>
+<a id="section-10"></a>
+<a id="core-6"></a>
 
-```text
-长期 Session
-→ 当前 Turn
-→ 当前 Step / Invocation
-→ Event / Tool Call
-```
+## 6. 运行中收到新指令，什么时候生效
 
-而不是把一切折叠成 Chat History（历史记录）。
+已发出的模型请求通常不能在中间随意插入文字。应用先接收新输入，再判断它是在补充材料、改变约束、取消任务，还是提出另一项工作。
 
-产品对照不能把同名词硬套教学树：Codex公开交互以Thread/Turn/Item表达，一次Turn可含多次推理和工具交互；Item的开始、增量、完成可以形成多个事件。
+补充信息可以在当前模型或工具阶段结束、控制权回到运行时后加入下一次请求；无关任务可以排队。若新约束是“不要发送报告”，程序应立即阻止尚未派发的发送，并根据当前动作是否可中断处理正在执行的部分。
 
-</details>
+**收到新指令、让新指令生效、撤销已经发生的动作，是三件事。** 邮件已经发出，不能靠把新消息放进历史假装它没有发生。取消传播与迟到结果的具体处理见[工具并发与取消](07-ToolConcurrencyAndCancellation.md)。
 
-具体实现以[固定源码与官方索引](../../../references/agent/README.md#reader-revision-20260917)为准。这里区分源码事实、功能开关与教学建议，不把一条实现路径当作所有产品默认行为。
+<a id="summary"></a>
 
----
+## 本章小结
 
-<a id="human-a"></a>
+反馈循环通过观察更新下一步判断；执行范围说明失败发生在哪里；消息与事件服务不同对象。成功必须经过验收，等待、取消和预算停止都应有自己的结果语义。
 
-## 13. HUMAN-A 信号
-
-高频 Canonical：
-
-- `AGENT-003` Agent Loop / Runtime：36 来源；
-- `AGENT-004` Message / Event Model：8 来源；
-- `AGENT-006` Stop / Dead Loop：15 来源；
-- `AGENT-042` Dynamic Instruction / Steering：1 个高价值完整流程。
-
-真实追问通常是：
-
-```text
-Loop 怎么跑？
-→ Tool Result 怎么回来？
-→ State 放哪？
-→ Dead Loop 怎么停？
-→ 中途追加指令怎么办？
-→ 怎样恢复 / Eval？
-```
-
----
-
+<a id="-继续追问与下一步"></a>
+<a id="14-面试怎么答"></a>
+<a id="qagent-运行中用户追加消息能直接修改当前模型输入吗"></a>
+<a id="qmessage-和-event-的区别为什么重要"></a>
+<a id="qsessionrunturnstep-怎么区分"></a>
+<a id="q怎样描述一个最小-agent-loop"></a>
+<a id="q怎样解释一个完整agent-loop"></a>
 <a id="interview"></a>
 
-## 14. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：怎样解释一个完整Agent Loop？
+### 一个最小 Agent Loop 怎样推进？
 
-🎯 **30 秒回答**：
+程序组织输入，请模型提出行动或完成候选；行动经检查执行后形成观察，进入下一次判断。完成候选按任务标准验收。循环另外检查等待、取消、错误和预算，不能只依赖模型主动结束。
 
-> Agent Loop 是 Goal 驱动的多步控制循环：Runtime 组装 Context，请模型决定 Final Answer、Tool 或 Delegate，执行动作后把 Observation（观察结果） 和 State Transition 记录下来，再进入下一轮。Production（生产环境） 里还要把 Session、Run、Turn、Step 分层，并用结构化 Event 和 correlation id 表达 Tool、Approval（批准）、Checkpoint（检查点）、Cancel 等事实，这样才能做恢复、Trace 和 Eval。
+### Message 与 Event 有什么区别？
 
-### Q：怎样描述一个最小 Agent Loop？
+Message 是模型交互表示，Event 记录程序发生的事情，例如排队、授权和工具进度。一次调用可以对应多个事件。用调用标识关联结果，不需要把所有事件都送给模型。
 
-🎯 **30 秒回答**：
+### Session、Run、Turn、Step 有统一定义吗？
 
-> 程序构造上下文并调用模型，分辨工具、澄清或完成候选。工具经过受控执行后形成观察，更新进展再请求下一次决策；完成候选经过任务验收后才能成功。循环还应有停止原因，不能把等待用户、预算耗尽和成功都当作同一种 done。
+没有必须通用的同一对象树。应先说明项目自己的会话、任务、反馈轮和步骤口径，再对照产品的作用域与生命周期，不能因为名称相同就认为取消和恢复范围相同。
 
-### Q：Session、Run、Turn、Step 怎么区分？
-
-🎯 **30 秒回答**：
-
-> 我会先声明项目定义：Session 是会话，Run 是一次目标执行，Turn 可定义成一次决策反馈周期，Step 是内部操作。但 Codex 的 Turn 是一次用户请求及后续工作，可含多次模型调用，并使用 Item 表示类型化项目。应映射职责，不强制给所有产品套同一棵树。
-
-### Q：Agent 运行中用户追加消息，能直接修改当前模型输入吗？
-
-🎯 **30 秒回答**：
-
-> 已发送请求通常不能原地插入。应用先接收输入，区分新任务、补充、约束变更或取消，再排队、在下一决策点追加，或中断。需要绑定目标执行身份，防止误送；已发生的副作用不会因为新消息自动撤销。
-
-### Q：Message 和 Event 的区别为什么重要？
-
-🎯 **30 秒回答**：
-
-> 模型消息表达输入输出内容；运行事件还包括排队、授权、执行开始和检查点等程序事实。一个工具调用可能对应多个事件。用调用标识关联并发结果，而不是依赖文本或时间顺序；诊断事件也不必全部加入模型上下文。
-
-### 🔍 继续追问与下一步
-
-```text
-Tool Contract 为什么必须独立设计？
-Tool Schema 谁校验？
-并发 Tool Call 怎样相关联？
-Step Failure 和 Run Failure 怎样区分？
-怎样用 Event Log 做 Replay？
-```
-
-下一章正式进入 Tool Runtime。
-
----
-
+<a id="15-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 15. 高频易错点
+## ⚠️ 易错点
 
-⚠️ 把 Run / Session / Message 全叫 Memory；
+> ⚠️ 结果只打印而不回填，下一次模型调用未必知道工具做过什么。
 
-⚠️ 把 Chat History 当作 Runtime State；
+> ⚠️ `return` 只代表当前函数结束，是否业务成功还要看终止原因和验收。
 
-⚠️ Tool Result 没有 call id；
+> ⚠️ 新消息到达不等于外部动作已停止，已经发生的结果仍要如实记录。
 
-⚠️ 只有字符串日志，没有结构化 Event；
-
-⚠️ `while True` 没有 Stop / Budget（预算） / Cancel；
-
-⚠️ Agent 说完成就直接标记 Run Completed。
-
-⚠️ **Turn 在所有产品里都等于一次模型调用。** 必须查看产品定义；Codex Turn可含多次推理与工具交互。
-
-⚠️ **新消息总应立即打断所有动作。** 先识别意图和当前动作是否可安全中断。
-
-⚠️ **循环 return 就是业务成功。** 可能等待、取消、耗尽预算；要有明确终态及验收。
-
-⚠️ **事件越多，模型越懂运行过程。** 很多事件服务程序或排障，全部喂模型会制造噪声。
-
----
-
+<a id="16-本章自测"></a>
 <a id="self-test"></a>
 
-## 16. 本章自测
+## 本章自测
 
-<details><summary>1. 为什么 Tool Result 不是普通 Assistant Message？</summary>
+<details><summary>1. 删除例子中追加观察的语句，会发生什么？</summary>
 
-因为它有明确的 Tool Call 来源、call_id、执行状态和 Runtime 语义，需要与具体 Invocation 相关联；模型可见表示只是其中一个 projection。
-
-</details>
-
-<details><summary>2. 为什么 Run / Step 分层对重试很重要？</summary>
-
-因为一个 Step 的可恢复失败不应自动把整个 Run 判死。Runtime 需要知道失败发生在哪一层，才能决定 Retry（重试）、Repair、Fallback（备用或降级路径） 或终止。
+每次 decide 都看见空观察，重复提出读取；达到三轮上限后抛出预算耗尽错误，而不是成功返回。
 
 </details>
 
-<details><summary>3. Runtime Event 与 Message 最大区别是什么？</summary>
+<details><summary>2. c2 比 c1 先结束，怎样避免 A、B 内容错配？</summary>
 
-Message 主要服务模型输入输出；Event 记录系统真实发生的执行事实，包含很多模型不必看见但恢复、审计、指标和 Replay 必须知道的信息。
-
-</details>
-
-<details><summary>4. 一次 Codex Turn 可否读取文件三次？</summary>
-
-可以。Turn 包含用户请求后的一段 Agent 工作，模型可多次请求工具。每个工具项目及其事件有各自身份；不能把三次调用解释成必然三个 Codex Turn。
+每条结果携带对应调用标识，按 c1、c2 关联原请求，而不是按到达次序排序后配对。
 
 </details>
 
-<details><summary>5. 两次读取先后反转返回，会混吗？</summary>
+<details><summary>3. 模型交了无引用报告，预算又已耗尽，应记录成功吗？</summary>
 
-正确协议用调用标识匹配请求和结果，不靠返回顺序。若只按时间追加两段无标识文本，模型可能误以为 B 的结果属于 A。
-
-</details>
-
-<details><summary>6. 用户说“稍后再检查 D”，必须取消正在读 A 吗？</summary>
-
-不必。若不改变当前安全边界，可以排队到合适的决策点。应用应明确接收与执行的差别，而不是让用户以为新任务已立即开始。
+不能。报告不满足验收；应说明未完成的引用要求以及预算停止原因，可以交付明确标识的部分结果。
 
 </details>
 
-<details><summary>7. 用户说“别发送报告”，但发送已成功，应怎样显示？</summary>
+<details><summary>4. 用户说“停止发送”，发送请求已发出但没有回执，能显示“没有发送”吗？</summary>
 
-停止后续发送，核对既有回执，并告知已发送这一事实；不能只显示已取消就暗示发送被撤回。是否有撤回或补救能力由外部系统决定。
-
-</details>
-
-<details><summary>8. 一次参数错误使 Step 失败，Run 一定失败吗？</summary>
-
-不一定。可纠正错误能在预算内反馈后继续；不应重启整段任务或丢失已有进展。安全拒绝与系统损坏则有不同控制策略。
+不能。可以停止后续派发并请求取消，但原动作结果仍未知，需查询回执或按业务流程核对。
 
 </details>
 
-<details><summary>9. 需要保存模型的全部隐藏推理才能理解循环吗？</summary>
+<a id="03-agent-loopsessionrunturnstep-与执行事件"></a>
+<a id="12-产品实现与官方资料对照按需展开"></a>
+<a id="13-human-a-信号"></a>
+<a id="human-a"></a>
+<a id="legacy-03-11"></a>
+<a id="legacy-03-12"></a>
+<a id="section-12"></a>
+<a id="references"></a>
 
-不需要，也不能假设能取得。应记录必要的可观察输入、候选动作、实际执行结果和停止原因，用它们解释程序路径。
+## 知识回看与权威资料
 
-</details>
+- [工具契约](04-ToolContractAndValidation.md)：理解候选执行之前具体检查什么。
+- [状态与持久化](12-StateHistoryAndPersistence.md)：区分当前控制信息和需要跨重启保留的事实。
+- [Agents SDK 的执行循环](https://openai.github.io/openai-agents-python/running_agents/)：用一种官方实现对照循环，而非将本书术语树当其对象模型。
+
 
 ---
 

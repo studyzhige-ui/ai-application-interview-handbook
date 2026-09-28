@@ -1,619 +1,190 @@
-# 08. Planning / ReAct：计划、目标、停止与预算
-
-Agent 能调用 Tool 以后，很快就会遇到第二个问题：
-
-> **它下一步应该做什么？什么时候应该继续，什么时候必须停？**
-
-这一章把 Planning、ReAct、Goal Control、Stop Condition 和 Budget（预算） 放在同一个知识小板块，是因为它们共同解决一个问题：
-
-> **怎样让 Agent 的控制循环朝目标推进，而不是无限行动、来回震荡或偏离任务。**
+# 08. 计划与停止：让每一步朝目标推进
 
 [← 上一章](07-ToolConcurrencyAndCancellation.md) · [Agent 目录](../README.md) · [下一章 →](09-ContextAssemblyAndCache.md)
 
----
+计划写着“读 A、读 B、生成报告”。执行时 A 已经读完，B 却没有权限。如果助手仍机械执行下一项，计划只是一个漂亮清单；如果它开始研究不相关资料，任务又偏离了。
 
-<a id="section-1"></a>
+规划的作用，是让下一步依据目标和新观察发生变化。它不要求每项任务先生成一份长计划。
 
-## 1. 先讲人话：Planning 不是“先写一份超长计划”
-
+<a id="1-先讲人话planning-不是先写一份超长计划"></a>
 <a id="legacy-08-01"></a>
+<a id="section-1"></a>
+<a id="core-1"></a>
 
-Plan写“准备怎么做”，State（状态）写“现在实际怎样”。计划是先读A再读B，状态却可能是A已读、B无权限。计划必须跟随观察调整，而不是模型自己给自己的完成证明。
+## 1. 计划描述打算，状态描述实际情况
 
-最小 Agent Loop 已经是：
+| 项目 | 当前内容 | 用来决定什么 |
+|---|---|---|
+| 目标 | 核对发布日期并交报告 | 哪些行动值得做 |
+| 约束 | 只读授权材料，不修改原件 | 哪些行动不能做 |
+| 计划 P1 | 先 A，后 B，再汇总 | 原本准备怎样推进 |
+| 实际状态 | A 已读，B 被拒绝 | 原计划哪里已经不成立 |
+| 计划 P2 | 用 A 形成草稿，向用户请求 B 的资料 | 在现有范围内怎样继续 |
 
-```text
-Observe current state
-→ Model decides next action
-→ Runtime executes
-→ New observation
-→ Decide again
-```
+更新计划不能把“准备读取”变成“已读取”。完成标记应由实际结果支持，而不是模型为了清空待办自行勾选。
 
-Planning 只是让“下一步决策”更有结构。
+程序可以替换当前计划视图，同时在历史中追加“由 P1 调整为 P2”的记录。**当前清单可以更新，过去发生的交互不必回头改写。** 新任务开始时也要清楚关联新计划，不让旧任务的未决条目混入。
 
-有的任务适合：
-
-```text
-边观察边行动
-```
-
-有的任务适合：
-
-```text
-先拆目标
-→ 再按阶段执行
-→ 中途根据新证据重规划
-```
-
-所以不要把 Planning 理解成：
-
-> Agent 一开始必须生成一个十步计划，然后一字不改地照着执行。
-
-真正的 Runtime（运行时执行系统） 需要的是：
-
-```text
-Goal
-+ Current State
-+ Evidence
-+ Constraints
-+ Remaining Budget
-→ Next Action / Replan / Stop
-```
-
----
-
-<a id="section-2"></a>
-
-## 2. ReAct 解决什么问题
-
-<a id="legacy-08-02"></a>
-
-ReAct 的稳定抽象是：
-
-```text
-Reason / Decide
-→ Act
-→ Observe
-→ Continue
-```
-
-它的价值不在于把模型的私有推理过程暴露出来，而在于说明：
-
-> **Agent 的决策应该能使用环境返回的新 Observation（观察结果），而不是一次模型调用决定全部未来动作。**
-
-例如查线上故障：
-
-```text
-先查日志
-→ 日志显示 DB timeout
-→ 再查 DB metrics
-→ metrics 显示 connection pool exhausted
-→ 再检查 pool / concurrency
-```
-
-第二步取决于第一步结果。
-
-这类任务天然适合迭代式 Agent Loop。
-
-Tier C 中 ReAct 原始论文和 Anthropic `Building effective agents` 都支持这种“行动—观察—继续决策”的课程抽象。
-
----
-
-<a id="section-3"></a>
-
-## 3. Plan-Execute-Replan 什么时候更合适
-
-<a id="legacy-08-03"></a>
-
-如果任务具有明显阶段：
-
-```text
-理解需求
-→ 修改 5 个文件
-→ 跑 Test
-→ 修复失败
-→ 最终总结
-```
-
-可以让 Runtime 维护显式计划：
-
-```text
-PlanItem
-- id
-- description
-- status: pending/running/done/blocked
-- evidence
-```
-
-执行过程中：
-
-```text
-Plan
-→ Execute one step
-→ Observe
-→ Update state
-→ Replan if needed
-```
-
-这比“计划一次，然后永不更新”更适合动态环境。
-
----
-
-<a id="section-4"></a>
-
-## 4. Goal Control：Agent 怎么知道自己还在做原任务
-
-<a id="legacy-08-04"></a>
-
-Long-running Agent 很容易出现 Goal Drift：
-
-```text
-原目标：修复登录超时
-
-中途：发现日志系统有问题
-→ 开始重构日志模块
-→ 又发现依赖版本旧
-→ 开始升级依赖
-→ 原任务被遗忘
-```
-
-Runtime 可以把 Goal 拆成三层：
-
-```text
-Primary Goal
-Acceptance Criteria
-Constraints / Non-goals
-```
-
-例如：
-
-```text
-Primary Goal:
-修复登录接口 P99 timeout
-
-Acceptance Criteria:
-- 原有测试通过
-- 新增超时回归测试
-- P99 降到目标范围
-
-Non-goal:
-- 不重构整个认证系统
-```
-
-这样每次重新规划时都能问：
-
-```text
-这个动作是否直接推进 Acceptance Criteria？
-```
-
-这里要分两个视图。程序的“当前计划”可以被新版本清单替换；会话历史中的“模型曾提出计划P1，随后调整为P2”则是已经发生的记录。二者不矛盾。更新计划通常通过一条新消息或工具调用追加到历史，程序据此更新当前视图，而不是回头改写每一条旧消息。
-
-```text
-用户任务U1
-→ 模型调用更新计划(P1)
-→ 工具确认
-→ 读取A获得新证据
-→ 模型调用更新计划(P2：B受阻，先整理A)
-→ 工具确认
-→ 按P2继续
-```
-
-下一个任务U2可以产生P3。程序应把它关联新任务，清楚结束或替换旧计划；不能让旧任务未完成的条目无声混入新任务。历史怎样成为下一次输入、压缩以后怎样保留当前计划，见下一章与第10章。这里先掌握“**当前视图可更新，旧消息通常追加保留**”。
-
----
-
-<a id="section-5"></a>
-
-## 5. Stop Condition 不是只有 `max_steps`
-
-<a id="legacy-08-05"></a>
-
-一个成熟 Runtime 至少有三类停止条件。
-
-### 5.1 成功停止
-
-```text
-Acceptance Criteria satisfied
-→ produce final answer / artifact
-```
-
-### 5.2 无法继续
-
-例如：
-
-```text
-缺权限
-缺关键输入
-外部服务持续失败
-用户必须确认高风险动作
-```
-
-此时应该：
-
-```text
-Pause / Ask / Escalate
-```
-
-而不是继续随机尝试。
-
-### 5.3 强制停止
-
-```text
-max_turns
-max_tool_calls
-max_cost
-max_tokens
-wall_clock_timeout
-retry_budget
-```
-
-Claude Code 固定源码索引里，`QueryEngine` 配置明确存在 `maxTurns`、`maxBudgetUsd`、`fallbackModel`、`abortController` 等边界。课程抽象因此是：
-
-> **Budget 属于 Runtime 控制面，不只是 Provider（模型服务方） billing。**
-
----
-
-<a id="section-6"></a>
-
-## 6. Budget 应该是多维的
-
-<a id="legacy-08-06"></a>
-
-不要只有：
-
-```text
-max_steps = 20
-```
-
-更完整的预算可以是：
-
-```text
-Turn Budget
-Tool-call Budget
-Token Budget
-Cost Budget
-Time Budget
-Retry Budget
-Sub-agent Budget
-```
-
-伪代码：
-
-```python
-# 控制示意：多维预算限制继续工作，耗尽预算不应被标成任务成功。
-from dataclasses import dataclass
-
-@dataclass
-class RunBudget:
-    max_turns: int
-    max_tool_calls: int
-    max_cost_usd: float
-    deadline: float
-    max_retries: int
-```
-
-每次行动前：
-
-```text
-check budget
-→ allowed: continue
-→ near limit: prefer cheaper / shorter path
-→ exhausted: stop with explicit reason
-```
-
----
-
-<a id="section-7"></a>
-
-## 7. Dead Loop / Oscillation 怎么检测
-
-<a id="legacy-08-07"></a>
-
-真人面经 `AGENT-006` 直接追问 Dead Loop / Oscillation。
-
-常见模式：
-
-```text
-Tool A fails
-→ model calls Tool B
-→ B says use A
-→ model calls A again
-→ repeat
-```
-
-或者：
-
-```text
-search(query1)
-→ no result
-→ rewrite(query1)
-→ search(query1)
-→ no result
-```
-
-Runtime 可以维护：
-
-```text
-recent action signatures
-state hash
-no-progress counter
-same-error counter
-repeated tool-argument pattern
-```
-
-例如：
-
-```python
-# 控制示意：多维预算限制继续工作，耗尽预算不应被标成任务成功。
-if repeated_signature_count(tool_name, args_hash) >= 3:
-    emit("loop_detected")
-    force_replan_or_stop()
-```
-
-注意：
-
-> Loop Detection 不是简单“同一个 Tool 不能调用两次”。
-
-合法任务可能需要连续分页、重试或多次搜索。
-
-真正应该检测的是：
-
-```text
-状态没有实质推进
-+
-动作模式重复
-```
-
----
-
-<a id="section-8"></a>
-
-## 8. Dynamic Instruction / Steering 怎么进入当前 Run
-
-<a id="legacy-08-08"></a>
-
-用户可能在 Agent 执行中补一句：
-
-> “别改数据库，只改应用层。”
-
-新指令不能只是追加到聊天记录末尾，然后假设模型自然理解。
-
-Runtime 需要决定：
-
-```text
-这是补充信息？
-修改约束？
-替换目标？
-要求取消当前 Tool？
-```
-
-然后更新：
-
-```text
-Run State / Constraints
-→ 后续 Planning
-```
-
-如果当前 Tool 是 destructive operation，还可能需要先 Cancellation / Approval（批准）。
-
-这对应 HUMAN-A `AGENT-042` Dynamic Instruction / Steering。
-
-“顺便检查D”通常可以排队到安全边界，“不要发送报告”可能要求停止尚未开始的发送。先识别消息影响，既不每条消息都杀掉当前工具，也不无条件拖到整项任务结束。
-
----
-
-<a id="section-9"></a>
-
-## 9. Planning Failure Timeline
-
-<a id="legacy-08-09"></a>
-
-一个典型失败：
-
-```text
-T0  Agent 制定计划：修改 A → B → C
-T1  修改 A 后环境发生变化
-T2  旧计划中的 B 已不再成立
-T3  Runtime 仍机械执行 B
-T4  产生无效甚至破坏性修改
-```
-
-真正的问题不是“LLM 不聪明”，而是：
-
-```text
-Plan 被当成 immutable script
-```
-
-更稳的设计：
-
-```text
-每个阶段完成
-→ Observe new state
-→ Validate next step precondition
-→ continue / replan
-```
-
-合法分页会反复调用同一工具，但游标和新结果在变化；参数变化却一直得到同类错误才可能是振荡。联合观察、状态进展和预算判定，而不是仅比较函数名。
-
----
-
-<a id="section-10"></a>
-
-## 10. Framework 不应该决定你的 Planning 模型
-
-<a id="legacy-08-10"></a>
-
-LangGraph、OpenAI Agents SDK 或其它框架都能表达某些控制流，但课程顺序应该反过来：
-
-```text
-先定义：
-Goal / State / Stop / Budget / Replan semantics
-        ↓
-再选框架 primitive
-```
-
-而不是：
-
-```text
-框架有 Planner Node
-→ 所以系统必须有 Planner Node
-```
-
----
-
+<a id="10-framework-不应该决定你的-planning-模型"></a>
+<a id="2-react-解决什么问题"></a>
+<a id="3-plan-execute-replan-什么时候更合适"></a>
 <a id="human-a"></a>
+<a id="legacy-08-02"></a>
+<a id="legacy-08-03"></a>
+<a id="legacy-08-10"></a>
+<a id="section-10"></a>
+<a id="section-2"></a>
+<a id="section-3"></a>
+<a id="core-2"></a>
 
-## 11. HUMAN-A 信号
+## 2. 边观察边行动，和先计划再执行
 
-#### HUMAN-A
+**ReAct** 将推理与行动交替组织，让后续判断能够使用环境返回的观察。[原始论文](https://arxiv.org/abs/2210.03629)讨论的重点是这种交互，不是要求应用展示模型的私有思考。
 
-本章主要承接：
+例如排查登录慢：先查日志，发现数据库超时，再查连接池，才决定是否调查连接泄漏。第二步取决于第一步，而不是一开始就知道所有后续动作。
 
-- `AGENT-005`：ReAct / Plan-Execute-Replan / Planner-Executor（执行器）-Critic；
-- `AGENT-006`：Stop Condition / Dead Loop；
-- `AGENT-007`：Goal Drift；
-- `AGENT-042`：Dynamic Steering。
+**Plan–Execute–Replan（计划—执行—重规划）** 更强调显式阶段：先列要验证的问题，完成一个阶段后检查证据，再调整剩余步骤。长报告或多文件修改需要用户观察进度时，清楚的计划项尤其有用。
 
-#### Claude Code 固定源码快照
+二者可以组合：总体有阶段，阶段内部按观察选择工具。简单任务也可以只在每轮隐式决定下一步，不需要独立 Planner 服务。需要 Critic（检查角色）时，应让它针对明确标准核查证据；增加一个“自我反思”模型，不会自动证明结论正确，也会增加成本。
 
-`QueryEngine` 索引确认存在：
+<a id="4-goal-controlagent-怎么知道自己还在做原任务"></a>
+<a id="8-dynamic-instruction--steering-怎么进入当前-run"></a>
+<a id="legacy-08-04"></a>
+<a id="legacy-08-08"></a>
+<a id="section-4"></a>
+<a id="section-8"></a>
+<a id="core-3"></a>
 
-```text
-maxTurns
-maxBudgetUsd
-fallbackModel
-abortController
-```
+## 3. 防止把相关问题变成无限新任务
 
-这支持“控制循环 + Budget + Cancellation 是 Harness 一级能力”的实现事实。
+原目标是修复登录超时，途中发现日志格式不好，又开始重构日志和升级全部依赖。这些工作可能有价值，却不一定属于本次任务。
 
-#### Tier C
+把目标分成三项，能让规划有检查依据：
 
-- ReAct 原始论文：Reason/Act/Observation 交替；
-- Anthropic `Building effective agents`：区分 workflow 与 agent，并强调从简单可组合模式开始。
+- **要完成什么**：修复指定登录超时。
+- **怎样算完成**：复现用例通过，相关测试不退化，约定环境下时延达标。
+- **本次不做什么**：不重构整个认证系统，不顺便升级无关依赖。
 
-这些证据用于课程设计，不改变 HUMAN-A Source Count。
+每次重规划，问“这项动作会补上哪条验收证据”。无法说明时，先记录发现或请求用户扩大范围，而不是偷偷改变目标。
 
----
+用户运行中补充约束，也需要更新程序控制。例如“不要发送报告”不仅要进入后续模型输入，还应阻止尚未开始的发送。已发生动作不能因计划改了而撤销。
 
+<a id="7-dead-loop--oscillation-怎么检测"></a>
+<a id="9-planning-failure-timeline"></a>
+<a id="legacy-08-07"></a>
+<a id="legacy-08-09"></a>
+<a id="section-7"></a>
+<a id="section-9"></a>
+<a id="core-4"></a>
+
+## 4. 没有进展，比工具重复更值得警惕
+
+同一个搜索工具可以合法调用多次：分页游标改变、取得新资料，都说明工作在推进。反过来，工具名称不断变化，也可能一直绕圈。
+
+| 观察 | 是否有进展 | 合理处理 |
+|---|---|---|
+| 同一工具翻到下一页并获得新记录 | 有 | 在预算内继续 |
+| 同一查询反复返回相同空结果 | 通常没有 | 改策略、澄清或停止 |
+| A 工具让用 B，B 又让用 A | 可能振荡 | 检查依赖与必要输入 |
+| 参数不断换写法，始终无权限 | 没有合法进展 | 停止该动作，不绕过拒绝 |
+
+程序可以记录最近动作特征、同类错误次数和状态变化，设置连续无进展阈值。阈值是工程策略，不是“同一工具超过两次必错”。同时保留总预算，防止检测遗漏后无限运行。
+
+<a id="5-stop-condition-不是只有-max_steps"></a>
+<a id="51-成功停止"></a>
+<a id="52-无法继续"></a>
+<a id="53-强制停止"></a>
+<a id="6-budget-应该是多维的"></a>
+<a id="legacy-08-05"></a>
+<a id="legacy-08-06"></a>
+<a id="section-5"></a>
+<a id="section-6"></a>
+<a id="core-5"></a>
+
+## 5. 停止条件与预算一起设计
+
+成功停止需要满足验收；缺关键输入可以等待；权限不允许时停止相应动作；用户取消或预算耗尽时要明确说明未完成范围。
+
+预算至少考虑当前任务实际消耗的资源：模型调用或工具次数、总时间、费用、重试。存在子任务时，子任务预算不能绕过父任务总额度。
+
+例如教学任务最多读取 6 次、总时长 2 分钟。读完 4 次后只剩 5 秒，而下一次调用预计会超过截止时间，就不应仅因为次数还没到上限而继续。
+
+**行动前检查资格，行动后登记真实消耗。** 临近上限可以选择更小的读取范围或提交明确的部分结果，但不能为了省费用省略必要验收。模型服务的账单限制也不能代替应用自己的任务停止规则。
+
+<a id="summary"></a>
+
+## 本章小结
+
+计划要依据实际状态调整，目标与非目标约束调查范围。检测无进展而不是机械禁止重复工具；总时间、费用和调用预算兜底。停止要说明原因，不能把耗尽预算当成功。
+
+<a id="12-面试怎么答"></a>
+<a id="qagent-怎样避免无限循环"></a>
+<a id="qreact-和-plan-execute-replan-怎么选"></a>
+<a id="q怎样检测agent死循环"></a>
+<a id="q计划更新会不会破坏prompt-cache"></a>
+<a id="q计划说done了为什么不能直接结束"></a>
 <a id="interview"></a>
 
-## 12. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：Agent 怎样避免无限循环？
+### ReAct 和先计划再执行怎样选择？
 
-🎯 **30 秒回答**：
+下一步高度依赖观察时，反馈式行动更自然；有明确阶段和进度需求时，显式计划便于管理。两者可以组合，规划层数由任务需要决定，不是越多越好。
 
-> 我不会只放一个 `max_steps`。Runtime 会同时维护明确 Goal 和 Acceptance Criteria，并设置 turn、tool、time、cost、retry 等硬预算；运行中记录最近动作、错误和状态变化，如果发现相同 Tool+Arguments 或同类错误反复出现但状态没有推进，就触发 loop detection，让模型 replan、向用户求助或停止。这样既有硬上限，也有 no-progress 的软检测。
+### 怎样防止 Agent 陷入循环？
 
-### Q：ReAct 和 Plan-Execute-Replan 怎么选？
+设置硬预算，并观察动作、错误和状态是否持续没有进展。合法分页允许重复工具；反复同一无效请求应触发换策略、澄清或停止，权限拒绝不能用重规划绕过。
 
-🎯 **30 秒回答**：
+### 计划更新后历史也需要覆盖吗？
 
-> ReAct 更适合下一步高度依赖环境 Observation 的任务；Plan-Execute-Replan 更适合有明显阶段、需要进度跟踪的长任务，但计划必须允许根据新状态重规划，而不是一次生成后机械执行。
+不必。当前计划视图更新为新清单，历史可以追加计划变更及原因。后续模型需要知道哪个计划有效，但不应把过去准备做的事改写成真实已完成。
 
-### Q：计划更新会不会破坏Prompt Cache？
-
-🎯 **30 秒回答**：
-
-> 要区分更新当前计划视图和改写历史。常见做法把新计划作为新消息或工具调用追加到尾部，程序更新当前视图，尽量保留已有前缀；若把可变计划每轮重写在最前面则会影响前缀复用。实际还受工具集合、系统指令、压缩和供应商缓存规则影响。
-
-### Q：怎样检测Agent死循环？
-
-🎯 **30 秒回答**：
-
-> 结合最近动作签名、相同错误和实际进展，而不是禁止重复工具。分页有新数据可以继续；反复同查询无结果应计为无进展，要求换策略、澄清或停止。总时间和费用预算兜底，但不能只加大步数掩盖循环。
-
-### Q：计划说done了，为什么不能直接结束？
-
-🎯 **30 秒回答**：
-
-> done首先是声明。应检查报告、引用、测试或业务回执是否满足验收；如果没有证据，状态仍未完成。程序可以拒绝完成候选并把缺口反馈给模型，或在无法推进时结束为未完成而非伪造成功。
-
----
-
+<a id="13-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 13. 高频易错点
+## ⚠️ 易错点
 
-⚠️ **Planning = 一次生成完整计划。** 错，动态任务需要 Replan。
+> ⚠️ Plan 只是状态的一部分，等待中的工具、实际回执和取消意图不能靠清单替代。
 
-⚠️ **max_steps 就能解决 Loop。** 只能兜底，不能发现 no-progress。
+> ⚠️ Critic 的判断也可能错误，应校准检查标准，不把“再次自评”当独立事实。
 
-⚠️ **模型自己说 done 就算完成。** 应由 Acceptance Criteria / Verification 判断。
+> ⚠️ 次数未耗尽不代表可以继续，总截止时间、权限和费用约束也必须满足。
 
-⚠️ **Budget 只有 Token。** 还包括 Tool、时间、成本、Retry（重试）、Sub-agent 等。
-
-⚠️ **Plan等于全部State。** Plan只记录未来步骤与清单状态，不包含全部活动调用、结果和授权。
-
-⚠️ **新计划必须覆盖旧模型消息。** 通常追加更新事件并替换当前视图，两者分开。
-
-⚠️ **ReAct必须输出私有思考。** 关键是行动与观察反馈，不需要展示隐藏推理。
-
-⚠️ **预算耗尽也是完成。** 它只是停止原因，应明确未完成状态。
-
-⚠️ **每个Agent都需要独立Planner服务。** 简单任务可隐式规划，按任务需要选择。
-
----
-
+<a id="14-本章自测"></a>
 <a id="self-test"></a>
 
-## 14. 本章自测
+## 本章自测
 
-<details><summary>1. 为什么 Stop Condition 和 Evaluation 有关系？</summary>
+<details><summary>1. 计划写 B 已完成，但工具实际返回无权限，应相信哪一个？</summary>
 
-因为“是否完成”不能只靠模型自报，需要可验证 Acceptance Criteria。很多任务的停止其实依赖结果验证，而不是自然语言中的“完成了”。
-
-</details>
-
-<details><summary>2. Dead Loop 检测为什么不能简单禁止重复 Tool Call？</summary>
-
-因为分页、分片搜索、Retry 等合法流程本来就可能多次调用同一 Tool。应该结合参数签名、状态变化和 no-progress 判断是否真正震荡。
+真实工具结果决定执行事实。应更正计划状态，在允许范围内请求资料、部分交付或停止，不能把模型勾选当回执。
 
 </details>
 
-<details><summary>3. 用户中途修改需求时 Runtime 应做什么？</summary>
+<details><summary>2. 连续三次调用同一个工具，每次游标和结果都变化，是死循环吗？</summary>
 
-先分类新指令是补充信息、约束变更、目标替换还是取消信号，再更新 Run State / Constraints，并决定是否需要取消当前动作或重新规划。
-
-</details>
-
-<details><summary>4. 读B被拒绝后，计划里应改什么？</summary>
-
-把B标为受阻，并说明影响的验收条件，再选择澄清、授权或部分交付。不要把它当普通临时错误无限重试，也不能直接标完成。
+不能仅凭工具重复判断。检查是否取得新数据、是否推进目标，以及仍有多少预算。
 
 </details>
 
-<details><summary>5. 计划从P1改到P2，P1是否必须删除？</summary>
+<details><summary>3. 修登录故障时发现无关依赖过旧，应直接升级全部依赖吗？</summary>
 
-不必。当前计划视图指向P2，历史保留P1到P2的变化；上下文过长时才选择性压缩。保留历史不代表每轮必须注入全部历史。
-
-</details>
-
-<details><summary>6. 调用同一搜索工具五次是否一定是死循环？</summary>
-
-不是。如果查询和证据不断推进，可能合理。要看无进展、重复输入和相同错误，而不是只统计工具名。
+不应。先判断是否与当前验收有关；无关发现可以记录或请求另行授权，避免目标漂移和无关回归风险。
 
 </details>
 
-<details><summary>7. 多了模型规划，任务质量却不变而成本翻倍，怎么办？</summary>
+<a id="08-planning--react计划目标停止与预算"></a>
+<a id="11-human-a-信号"></a>
+<a id="claude-code-固定源码快照"></a>
+<a id="tier-c"></a>
+<a id="references"></a>
 
-与确定性基线比较，在没有质量或能力收益的范围移除不必要规划。Agent化不是越多越好。
+## 知识回看与权威资料
 
-</details>
+- [ReAct 原始论文](https://arxiv.org/abs/2210.03629)：理解推理与行动反馈的组织方式。
+- [上下文编排与缓存](09-ContextAssemblyAndCache.md)：计划变更怎样被下一次请求看见，以及何时影响前缀复用。
+- [固定规划与预算对照](../../../references/agent/implementation-notes.md#chapter-08)：区分产品配置和通用控制原则。
 
-<details><summary>8. 用户要求只读，计划中出现修改原件，谁来阻止？</summary>
-
-模型可收到约束，但真正阻止需要工具权限和资源访问边界；规划检查及时发现问题，执行门不能依赖模型始终听话。
-
-</details>
-
-<details><summary>9. Codex update_plan返回确认，模型还能知道清单内容吗？</summary>
-
-它刚提交的工具调用包含计划参数，历史中有这段信息；确认结果不必重复整个清单。不能从短确认推断计划丢了，也不能推断它被固定在System Prompt。
-
-</details>
 
 ---
 

@@ -1,206 +1,116 @@
-# Agent｜从任务到可解释、可验证的执行系统
+# Agent｜从任务到可验证的执行
 
-[← RAG](../08-rag/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md) · [System Design →](../10-system-design/README.md)
+[← RAG](../08-rag/README.md) · [Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [System Design →](../10-system-design/README.md)
 
-> **课程范围：24 篇正式正文**  
-> **教材：24 个连续知识小板块** · **HUMAN-A Canonical：44** · **独立来源覆盖：166**  
-> **教学结构：展开式解释 + 过程图 + 连续例子 + Failure 边界 + 章末四部分训练。**
+模型可以提出下一步，但程序必须把允许的动作做出来，把结果带回来，并判断任务是否真的完成。本模块沿这一条反馈主线，学习工具、上下文、记忆、状态、安全、恢复和评测。
 
-从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。
+适合已经理解模型基本输入输出、接口与权限、数据库和缓存基本用途的学习者。进入时不要求掌握 Agent 框架；概念不绑定某种编程语言，两段 Python 标准库例子只是可选的可观察实验。
 
----
-
-## 1. 这个模块解决什么
-
-从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。
-
-学习目标不是记住一组名词，而是能稳定回答：
+## 学习主线
 
 ```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
+任务与自主权 → 反馈循环 → 工具说明、发现与执行
+→ 计划和模型输入 → 记忆、状态与恢复
+→ 权限、协议与扩展 → 协作 → 诊断、评测与交付
 ```
 
----
-
-## 2. 在十板块中的位置
-
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → **Agent** → [System Design](../10-system-design/README.md)
-
-模块角色：**Agent Runtime / 从任务与执行角色出发，理解工具、上下文、记忆、状态、安全和恢复；用可核对的产品过程与每章训练把概念落地。**
-
----
-
-## 3. 固定课程原则
-
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
-
-同时固定区分：
-
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
-
-所以本模块是 **44 道 Canonical → 24 个教材知识块**，两者不需要一一对应。
-
----
-
-## 4. 正式学习主线
-
-```text
-任务与执行角色 → 工具契约、发现与受控执行 → 计划、上下文与记忆 → 状态、持久化与恢复 → 安全、协议、扩展与协作 → 诊断、评测与工程落地
-```
-
-这个顺序按知识依赖组织，而不是按面经频率排序。
-
----
-
-## 5. 正式课程目录
-
-章节按认知依赖与内容边界组织。MCP 独立讲清协议往返；Skill / Hook / Plugin 单独讲扩展生命周期；其余主题在章内依次说明定义、过程、失败边界与实现对照。
-
-### A｜先认识任务与执行系统
-
-1. [Agent 系统的全貌：模型之外，谁把任务做完](docs/01-AgentSystemAndResponsibilities.md)
-
-2. [Workflow、Agent 与自主权：执行角色的边界](docs/02-WorkflowAutonomyAndRuntimeBoundary.md)
-
-3. [Agent Loop：Session、Run、Turn、Step 与执行事件](docs/03-AgentLoopAndExecutionScopes.md)
-
-### B｜工具调用怎样受控完成
-
-4. [Tool Contract：工具说明、参数与语义校验](docs/04-ToolContractAndValidation.md)
-
-5. [Tool Registry：工具注册、模型可见说明与按需发现](docs/05-ToolRegistrationAndDiscovery.md)
-
-6. [Tool Execution：结果回填、错误分类与有限恢复](docs/06-ToolExecutionAndFailure.md)
-
-7. [Tool Control：副作用、并发、取消与进度](docs/07-ToolConcurrencyAndCancellation.md)
-
-### C｜控制方向与模型可见信息
-
-8. [Planning / ReAct：计划、目标、停止与预算](docs/08-PlanningGoalAndControl.md)
-
-9. [Context Assembly：上下文编排、缓存与结果外部化](docs/09-ContextAssemblyAndCache.md)
-
-10. [Context Compaction：压缩、替代历史与继续执行](docs/10-CompactionAndContinuation.md)
-
-11. [Memory：提取、召回、更新、纠错与遗忘](docs/11-MemoryLifecycle.md)
-
-### D｜执行状态与跨中断恢复
-
-12. [State / Persistence：程序怎样记住当前工作](docs/12-StateHistoryAndPersistence.md)
-
-13. [Checkpoint / Resume：检查点、恢复、分叉与重放](docs/13-CheckpointResumeAndRecovery.md)
-
-### E｜安全、能力接入与协作
-
-14. [Permission / Approval / Sandbox：政策、批准与隔离](docs/14-PermissionApprovalAndSandbox.md)
-
-15. [Guardrails：提示注入、秘密保护与风险控制](docs/15-InjectionAndContainment.md)
-
-16. [MCP：从 Host / Client / Server 到完整协议往返](docs/16-MCPArchitectureAndLifecycle.md)
-
-17. [Skills / Hooks / Plugins：能力扩展与生命周期](docs/17-SkillsHooksAndExtensions.md)
-
-18. [Routing：意图、模型适配与供应商容错](docs/18-RoutingAndProviderResilience.md)
-
-19. [Multi-Agent / A2A：内部协作与跨系统任务](docs/19-MultiAgentAndA2A.md)
-
-### F｜诊断、评测与工程落地
-
-20. [Trace / Replay：记录必要证据，定位具体问题](docs/20-TraceReplayAndDiagnosis.md)
-
-21. [Agent Evaluation、Benchmark 与 Data Flywheel](docs/21-EvaluationBenchmarkAndImprovement.md)
-
-22. [Coding Agent：Repo Understanding → Patch → Test → Verify](docs/22-CodingAgentDelivery.md)
-
-23. [Production Agent：从单进程到可运营执行系统](docs/23-ProductionRuntime.md)
-
-24. [Framework Mapping：按核心语义比较框架与自研](docs/24-FrameworkSelection.md)
-
----
-
-## 6. 真人面经怎样影响本模块
-
-Canonical 统计基线（`S001–S279`）：本模块有 **44 道 Primary Canonical、166 个独立 HUMAN-A 招聘流程覆盖**。
-
-重点市场信号包括：
-
-- Context Compaction
-- Agent Loop
-- Memory Architecture
-- Tool Calling / Failure
-- Multi-Agent
-- Agent Evaluation
-- Framework Selection
-
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
-
----
-
-## 7. 模块边界
-
-- Prompt Engineering 归 LLM Foundation；Harness 负责跨轮、跨 Tool、跨 State 的执行。
-- RAG 负责 Evidence Quality；Agent Harness 决定何时检索、如何继续执行。
-- 通用 MQ / Retry / Idempotency 归 AIBE；Agent 只讲其 Runtime 特化语义。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview、Products 与证据入口
-
-| 入口 | 链接 | 用途 |
-|---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 成熟产品源码 | [Agent Products](../../products/agent/README.md) | 沿固定源码快照学习完整 Production Agent 怎样组合本模块机制 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
-
-研究与质量证据：
-
-- [Canonical Questions](../../interview/canonical/agent-harness.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [权威技术 / 源码资料索引](../../references/agent/README.md)：只校准技术事实，不改变 HUMAN-A 频率；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
-
----
-
-## 9. 推荐学习方式
-
-每章采用轻松引入、逐层解释、过程图、例子与失败边界，不压成结论提纲。章末固定**HUMAN-A信号 → 面试怎么答 → 高频易错点 → 本章自测**：🎯面试答案直接显示，⚠️易错点逐条提醒，只有自测答案和可选产品实现折叠。代码只用于明确的教学目的，并有注释及适用边界。
-
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
-
-1. **第一遍：建立因果链。** 按 `docs/01 → 24` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：进入成熟实现。** 进入 [Agent Products](../../products/agent/README.md)，选择 Codex、Claude Code、DeepSeek Harness、DeerFlow 中的一套或多套，按各产品 README 的实际阅读主线连续阅读（Codex 为上下文 → 工具 → 记忆 → 工程与评测），把通用概念映射到真实源码。
-4. **第四遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答，并把成熟产品源码实现作为工程例证。
-5. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
-
----
-
-## 10. 教材状态
-
-```text
-docs/      ✅ 01–24 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Technical Validation 以证据索引标注的固定源码快照与官方版本为准
-```
-
-读者可理解性专项记录：[Agent Reader Revision](../../guide/project/agent-reader-revision.md)。
-
-下一环：[System Design](../10-system-design/README.md)。
+## 正式章节
+
+### A｜先走通一项任务
+
+| 章 | 要理解的问题 |
+|---:|---|
+| 01 | [Agent 系统的全貌：模型之外，谁把任务做完](docs/01-AgentSystemAndResponsibilities.md) |
+| 02 | [Workflow 与 Agent：哪些决定交给模型](docs/02-WorkflowAutonomyAndRuntimeBoundary.md) |
+| 03 | [Agent Loop：观察怎样改变下一步](docs/03-AgentLoopAndExecutionScopes.md) |
+
+### B｜把工具调用变成受控执行
+
+| 章 | 要理解的问题 |
+|---:|---|
+| 04 | [工具契约：模型提出什么，程序检查什么](docs/04-ToolContractAndValidation.md) |
+| 05 | [工具注册与发现：程序有的，不一定都给模型看](docs/05-ToolRegistrationAndDiscovery.md) |
+| 06 | [工具结果与失败：谁来修，怎样继续](docs/06-ToolExecutionAndFailure.md) |
+| 07 | [工具并发与取消：快一点，不等于可以乱序](docs/07-ToolConcurrencyAndCancellation.md) |
+
+### C｜选择下一步及模型所需信息
+
+| 章 | 要理解的问题 |
+|---:|---|
+| 08 | [计划与停止：让每一步朝目标推进](docs/08-PlanningGoalAndControl.md) |
+| 09 | [上下文编排：模型这一刻到底收到什么](docs/09-ContextAssemblyAndCache.md) |
+| 10 | [上下文压缩：缩短输入以后，怎样继续做对](docs/10-CompactionAndContinuation.md) |
+| 11 | [记忆：把有用经验带到以后，也能纠错和忘记](docs/11-MemoryLifecycle.md) |
+
+### D｜保存与恢复工作
+
+| 章 | 要理解的问题 |
+|---:|---|
+| 12 | [状态与持久化：程序怎样知道工作做到哪里](docs/12-StateHistoryAndPersistence.md) |
+| 13 | [检查点与恢复：保存之后、崩溃之前发生了什么](docs/13-CheckpointResumeAndRecovery.md) |
+
+### E｜安全接入与协作
+
+| 章 | 要理解的问题 |
+|---:|---|
+| 14 | [权限、批准与沙箱：一次动作要过几道不同的门](docs/14-PermissionApprovalAndSandbox.md) |
+| 15 | [提示注入与信息保护：资料为什么不能变成命令](docs/15-InjectionAndContainment.md) |
+| 16 | [MCP：从 Host / Client / Server 到完整协议往返](docs/16-MCPArchitectureAndLifecycle.md) |
+| 17 | [Skills、Hooks 与 Plugins：知识怎样加载，规则怎样触发](docs/17-SkillsHooksAndExtensions.md) |
+| 18 | [路由与模型适配：换一条路径，不能丢掉任务保证](docs/18-RoutingAndProviderResilience.md) |
+| 19 | [多 Agent 协作：交出去的是任务，不是全部控制权](docs/19-MultiAgentAndA2A.md) |
+
+### F｜验证、交付与实现选择
+
+| 章 | 要理解的问题 |
+|---:|---|
+| 20 | [执行追踪：先定位卡在哪，再取需要的证据](docs/20-TraceReplayAndDiagnosis.md) |
+| 21 | [Agent 评测：怎样证明修改真的更好](docs/21-EvaluationBenchmarkAndImprovement.md) |
+| 22 | [Coding Agent：从理解仓库到交付可验证修改](docs/22-CodingAgentDelivery.md) |
+| 23 | [生产运行：从任务承诺推导部署，而不是先画微服务](docs/23-ProductionRuntime.md) |
+| 24 | [框架选型：先问要保证什么，再看谁能实现](docs/24-FrameworkSelection.md) |
+
+## 怎样学习与回看
+
+第一遍沿主线理解每个动作及结果，用章末自测检查能否推导。第二遍用 Review 重建关系，再用集中问题训练口述；产品源码用于对照真实实现，不作为首次理解的隐藏前提。
+
+| 入口 | 用途 |
+|---|---|
+| [综合复习](review/README.md) | 用任务和失败重建机制关系 |
+| [面试表达](interview/高频面试题.md) | 逐题练习判断、原因和边界 |
+| [易错点](interview/面试易错点.md) | 从各章同一来源回顾误区 |
+| [回顾卡](interview/面试前速查表.md) | 临时唤醒已学知识 |
+| [Agent Products](../../products/agent/README.md) | 进入固定源码中的完整系统 |
+| [技术资料](../../references/agent/README.md) | 核对版本与事实，选择实现选读 |
+
+## 模块边界
+
+模型生成机制由 LLM Foundation 讲解，检索证据质量由 RAG 讲解；Agent 负责它们如何参与反馈执行。通用事务、队列与幂等机制在 Backend 维护，本模块解释模型与工具执行带来的状态、恢复和授权边界。需要的最小前提仍在使用处说明。
+
+MCP 采用明确的 2026-07-28 学习基线并对照旧版生命周期，A2A 对照 1.0.0 发布规范。框架网站、安装版本和产品源码快照分别核对；不因存在配置项就保证所有环境行为相同。
+
+<a id="1-这个模块解决什么"></a>
+<a id="10-教材状态"></a>
+<a id="2-在十板块中的位置"></a>
+<a id="3-固定课程原则"></a>
+<a id="4-正式学习主线"></a>
+<a id="5-正式课程目录"></a>
+<a id="6-真人面经怎样影响本模块"></a>
+<a id="7-模块边界"></a>
+<a id="8-reviewinterviewproducts-与证据入口"></a>
+<a id="9-推荐学习方式"></a>
+<a id="agent从任务到可解释可验证的执行系统"></a>
+<a id="a先认识任务与执行系统"></a>
+<a id="b工具调用怎样受控完成"></a>
+<a id="c控制方向与模型可见信息"></a>
+<a id="d执行状态与跨中断恢复"></a>
+<a id="e安全能力接入与协作"></a>
+<a id="f诊断评测与工程落地"></a>
+
+## 维护与验证依据
+
+本模块包含 24 篇正文。可运行小例子只验证本地反馈与工具映射，不代表已运行真实模型、网络工具或生产恢复实验。
+
+[精修范围与验证记录](../../guide/project/agent-clarity-refinement-2026-09-28.md)说明基线、保留迁移与实际检查；[证据及兼容映射](../../guide/project/agent-clarity-mapping-2026-09-28.json)用于持续维护，不在正文重复来源统计。
+
+维护生成配套时运行 `python tools/sync_agent_materials.py --check`；结构、内部引用和两个本地例子通过 `python tools/validate_agent_readability.py --run-examples` 检查。自动检查不代替读者验收。

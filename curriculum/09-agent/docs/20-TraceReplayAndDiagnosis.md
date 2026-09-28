@@ -1,705 +1,223 @@
-# 20. Trace / Replay：记录必要证据，定位具体问题
-
-Agent 出问题时，如果你只有：
-
-```text
-request failed
-```
-
-几乎没有办法定位。
-
-因为一次 Agent Run 可能经历：
-
-```text
-Context Assembly
-→ Model Call
-→ Tool Selection
-→ Permission
-→ Tool Execution
-→ Tool Result
-→ State Transition
-→ Compaction
-→ Model Call
-→ Subagent
-→ Final Answer
-```
-
-所以 Production（生产环境） Agent 需要的不只是普通日志，而是：
-
-> **能关联模型调用、工具结果与状态变化，先定位阶段，再按问题取得必要证据的执行轨迹。**
+# 20. 执行追踪：先定位卡在哪，再取需要的证据
 
 [← 上一章](19-MultiAgentAndA2A.md) · [Agent 目录](../README.md) · [下一章 →](21-EvaluationBenchmarkAndImprovement.md)
 
----
+用户说报告一直显示处理中。可能是模型在等回复、工具卡住、等待批准，也可能报告已经上传成功，只是本地没记下回执。
 
-<a id="section-1"></a>
+如果日志只有一句 request failed，很难判断下一步该做什么。追踪的目的，是把一次任务的阶段和相关动作连起来，而不是默认永久保存全部消息。
 
-## 1. Log、Metric、Trace 各解决什么
-
-<a id="legacy-19-01"></a>
-
-报告两分钟没完成，先分清在排队、等模型、等工具还是等批准。Trace（执行追踪）先帮助定位阶段，不要求一开始复制全部文件和Prompt。
-
-### Log
-
-```text
-某个时刻发生了什么
-```
-
-例如：
-
-```text
-provider timeout
-permission denied
-```
-
-### Metric
-
-```text
-整体系统趋势
-```
-
-例如：
-
-```text
-agent_success_rate
-p95_tool_latency
-context_compaction_rate
-```
-
-### Trace
-
-```text
-一次 Run 的因果执行链
-```
-
-例如：
-
-```text
-Run
-└─ Turn
-   ├─ Context Build
-   ├─ Model Call
-   ├─ Tool Call
-   │  └─ Tool Execution
-   └─ State Update
-```
-
-三者互补。
-
----
-
-<a id="section-2"></a>
-
-## 2. Trace Identity
-
-<a id="legacy-19-02"></a>
-
-ID按实际对象选用。小系统先用运行与操作ID即可，有并行和跨服务才增加相应关系；一个运行的配置可以引用一次，不必各事件重复正文。
-
-建议保持层级 ID：
-
-```text
-session_id
-run_id
-turn_id
-step_id
-model_call_id
-tool_call_id
-subagent_run_id
-```
-
-以及：
-
-```text
-parent_span_id
-correlation_id
-```
-
-这样才能把：
-
-```text
-Tool Result
-```
-
-准确连回：
-
-```text
-哪次 Tool Call
-```
-
-而不是靠字符串搜索。
-
----
-
-<a id="section-3"></a>
-
-## 3. 一个 Agent Span 可按诊断需要记录什么
-
-<a id="legacy-19-03"></a>
-
-| 数据类别 | 为什么保存 | 通常怎样保留 | 丢失会怎样 |
-|---|---|---|---|
-| 恢复与业务记录 | 知道取消、待定操作、成功回执 | 按业务可靠性保存，关键写入不可依赖诊断采样 | 可能重复或错误执行 |
-| 产物与证据 | 用户取回报告、核验引用 | 内容存一份，按权限/期限提供引用 | 交付或验证受阻 |
-| Trace / Log（追踪/日志） | 定位阶段、耗时与错误 | 结构化摘要、采样、脱敏、保留期限 | 诊断信息减少，通常不应改变业务状态 |
-| Debug snapshot（调试快照） | 深查特定坏案例 | 明确授权、短期、有限原始输入 | 不应作为所有任务默认前提 |
-
-同一个operation_id可以把Trace关联到可靠回执，而不是把完整回执、Prompt、文件和密钥重复存每个Span。关键安全审计若有不可丢要求，应单独定义审计通道与可靠性，不能把一般诊断Trace改名后就满足要求。
-
-不同 Span 类型字段不同。
-
-### Model Span
-
-```text
-model/provider
-input token count
-output token count
-latency
-finish reason
-context generation
-selected tools
-cost
-```
-
-### Tool Span
-
-```text
-tool name
-argument fingerprint
-permission decision
-start/end
-result status
-external ref
-side-effect class
-```
-
-### Context Span
-
-```text
-context source counts
-selected tokens
-compaction generation
-cache hit
-memory/retrieval refs
-```
-
-### State Span
-
-```text
-from_status
-to_status
-state_version
-checkpoint_id
-```
-
-以上字段是诊断菜单而非默认全量Schema。排查工具延迟未必需要客户原文；排查模型选错才进一步取得经授权的相关输入。关键回执独立可靠保存，不依赖诊断采样。
-
----
-
-<a id="section-4"></a>
-
-## 4. OpenAI Agents SDK Tracing 给出的证据
-
-<a id="legacy-19-05"></a>
-
-官方 Tracing 文档覆盖：
-
-```text
-task
-agent
-turn
-generation
-tool
-guardrail
-handoff
-```
-
-这说明成熟 Agent Framework 会把 Trace 设计成 Runtime（运行时执行系统） 一等能力，而不是应用自行 print。
-
-课程不要求使用某个 SDK，但要掌握这个层次模型。
-
-SDK的敏感数据收集、导出和保留配置需要实际检查；Tracing不是业务会话存储或事务账本。
-
----
-
-<a id="section-5"></a>
-
-## 5. 为什么要记录“模型看到什么”
-
+<a id="5-为什么要记录模型看到什么"></a>
+<a id="8-trace-如何定位agent-卡住"></a>
 <a id="legacy-19-06"></a>
-
-假设 Agent 错误调用 Tool：
-
-```text
-delete_file("prod.env")
-```
-
-只看 Tool Log：
-
-```text
-model called delete_file
-```
-
-你不知道：
-
-```text
-Context 是否被 injection？
-旧 Summary 是否错误？
-Tool Description 是否误导？
-User 是否刚刚批准？
-```
-
-所以 Debug 需要：
-
-```text
-Model-visible Context Evidence
-```
-
-但不能因此把所有敏感 Prompt 永久明文存储。
-
-```text
-用户：报告一直显示处理中
-→ 查询权威任务状态：waiting_tool(op7)
-→ Trace定位：上传Span等待很久，重试次数已达预算
-→ 操作记录显示：已提交，无回执
-→ 查询下游：report42已存在
-→ 补齐业务状态，停止重复上传
-→ 调查为何回执写入失败，构造回归用例
-```
-
-这里Trace负责指路，下游与操作记录负责确认事实。若Trace丢了一段，仍应能安全核对op7；若关键回执只存在被采样丢掉的Trace，数据设计就错了。
-
-模型选错工具则不同：先看当时可见工具集合及配置引用，再在授权范围内调取输入片段，比较描述是否歧义、候选是否缺失。**不同问题需要不同证据，不需要每次默认保存所有东西。**
-
----
-
-<a id="section-6"></a>
-
-## 6. Trace 与 Privacy 冲突
-
-<a id="legacy-19-07"></a>
-
-完整 Trace 可能含：
-
-```text
-PII
-secret
-private source code
-customer document
-tool arguments
-```
-
-因此 Observability 也要有安全设计：
-
-```text
-redaction
-encryption
-access control
-retention
-sampling
-tenant isolation
-```
-
-可以同时保留：
-
-```text
-hash / metadata / structure
-```
-
-而不保存完整敏感内容。
-
-一次Run可以记录一份配置引用（模型、指令、工具集合的适用版本），各Span引用同一配置；状态并发更新才使用revision，工具协议改变才记录契约版本。并非每个事件都要有独立版本，更不需要每条日志重复配置全文。
-
-引用只能找到内容，不能保证内容永远存在。需要长期可验证的对象，应规定不可变快照或保留期限；不需要原样重演的诊断任务，可以保存脱敏摘要而不是原件。删除、用户隐私和组织合规可能比排障便利更重要，要明确数据目的。
-
----
-
-<a id="section-7"></a>
-
-## 7. Replay 有三种不同含义
-
-<a id="legacy-19-08"></a>
-
-#### Evidence Replay
-
-重新查看：
-
-```text
-当时 Context / Tool / State 是什么
-```
-
-最安全。
-
-#### Model Replay
-
-使用相同输入重新调用模型。
-
-问题：
-
-```text
-模型版本变了
-sampling 非确定
-provider behavior 变化
-```
-
-所以不一定完全复现。
-
-#### Side-effect Replay
-
-重新执行 Tool。
-
-高风险：
-
-```text
-会再次发邮件 / 改 DB / 调付款
-```
-
-默认不能把 Replay（重放） 等同于“重跑整个 Agent”。
-
----
-
-<a id="section-8"></a>
-
-## 8. Trace 如何定位“Agent 卡住”
-
 <a id="legacy-19-09"></a>
+<a id="section-5"></a>
+<a id="section-8"></a>
+<a id="core-1"></a>
 
-典型症状：
-
-```text
-Run 20 分钟没结束
-```
-
-Trace 可以检查：
+## 1. 从一个卡住的报告开始排查
 
 ```text
-Model latency?
-Tool hanging?
-Repeated tool calls?
-Waiting approval?
-Subagent unfinished?
-Compaction loop?
-Queue / provider throttling?
+用户反馈：一直处理中
+→ 查权威任务状态：waiting_tool，操作 op7
+→ 看执行轨迹：上传阶段长时间没有完成
+→ 查可靠操作记录：请求已发出，无回执
+→ 按 op7 查询下游：report42 已存在
+→ 补齐业务状态，再调查回执为何未保存
 ```
 
-如果只有最终 request latency：
+这里 **Trace（执行追踪）** 帮助找到阶段；操作记录和下游确认真实结果。即使 Trace 少了一段，也不应因此重新上传。业务恢复依据不能只存在可能采样的诊断记录中。
+
+另一个问题是模型选错工具。这时先查看本次允许的工具集合，再在授权范围内取得相关输入和说明，检查候选是否缺失、描述是否歧义。**不同问题需要不同证据**，不必一开始就调取所有客户原文。
+
+<a id="1-logmetrictrace-各解决什么"></a>
+<a id="2-trace-identity"></a>
+<a id="legacy-19-01"></a>
+<a id="legacy-19-02"></a>
+<a id="log"></a>
+<a id="metric"></a>
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="trace"></a>
+<a id="core-2"></a>
+
+## 2. 日志、指标和追踪分别回答什么
+
+| 类型 | 主要问题 | 报告任务中的例子 |
+|---|---|---|
+| Log（日志） | 某时发生了什么 | 工具被拒绝、请求超时 |
+| Metric（指标） | 一组任务表现怎样 | 成功率、排队时延、单位任务成本 |
+| Trace（追踪） | 这一次经过哪些相关阶段 | 模型请求、上传、核对回执的关系 |
+
+一个 Trace 可以包含多个 **Span（阶段记录）**，表示某段工作及其开始、结束和结果。父子关系表示调用结构，调用标识关联工具请求与返回；不必凭模糊字符串或时间先后猜关系。
 
 ```text
-无法判断卡在哪里
+报告 Run
+├─ 组织上下文
+├─ 模型请求
+├─ 读取工具 c1
+├─ 模型请求
+└─ 上传工具 c2
+   └─ 外部请求 op7
 ```
 
----
+最小系统可以先用任务和操作 ID；跨服务或并行增加后，再补所需父子关联。不是每个事件都必须有七种 ID。
 
-<a id="section-9"></a>
-
-## 9. Token / Cost 异常怎么定位
-
-<a id="legacy-19-10"></a>
-
-例如：
-
-```text
-同类任务 token cost 突然 ×5
-```
-
-Trace 要能看到：
-
-```text
-context source tokens
-history growth
-memory injection
-retrieval size
-tool schema size
-tool result size
-compaction count
-subagent count
-```
-
-这样才能知道：
-
-```text
-是模型变贵
-还是 Context 膨胀
-```
-
----
-
-<a id="section-10"></a>
-
-## 10. Context Management 自己也需要 Observability
-
-<a id="legacy-19-11"></a>
-
-Codex `compact.rs` Source Index 已确认有 Compaction（上下文压缩） Analytics：
-
-```text
-trigger
-reason
-phase
-status
-context tokens
-summary tokens
-latency
-```
-
-这支持一个重要原则：
-
-> **Context Management 不是黑盒 preprocessing，它本身也要被 Trace / Metric。**
-
-例如可以看：
-
-```text
-compaction_rate
-post_compaction_failure_rate
-context_tokens_before/after
-```
-
----
-
-<a id="section-11"></a>
-
-## 11. Agent Trace Schema 示例
-
+<a id="11-agent-trace-schema-示例"></a>
+<a id="3-一个-agent-span-可按诊断需要记录什么"></a>
+<a id="4-openai-agents-sdk-tracing-给出的证据"></a>
+<a id="6-trace-与-privacy-冲突"></a>
+<a id="context-span"></a>
+<a id="legacy-19-03"></a>
+<a id="legacy-19-05"></a>
+<a id="legacy-19-07"></a>
 <a id="legacy-19-12"></a>
+<a id="model-span"></a>
+<a id="section-11"></a>
+<a id="section-3"></a>
+<a id="section-4"></a>
+<a id="section-6"></a>
+<a id="state-span"></a>
+<a id="tool-span"></a>
+<a id="core-3"></a>
 
-下面是帮助理解关联的示意结构。按问题选择字段和保留范围，不作为每个事件永久全量记录的模板。
+## 3. 为诊断选择字段，不用字段多代替问题清楚
 
-```python
-# 诊断事件示意：按排障需要选择关联字段；不默认附带全部消息或秘密。
-TraceEvent(
-    event_id="evt_1",
-    run_id="run_1",
-    turn_id="turn_3",
-    step_id="step_7",
-    type="tool_call",
-    parent_id="model_6",
-    timestamp=...,
-    attributes={...},
-)
-```
+| 阶段 | 常用观察 | 可以定位什么 |
+|---|---|---|
+| 模型 | 实际模型、输入输出量、时延、终止原因 | 模型慢、输入变大或能力不兼容 |
+| 工具 | 调用标识、工具身份、状态、时长、必要产物引用 | 执行失败、等待或结果缺失 |
+| 上下文 | 各来源大小、采用的版本、压缩前后量 | 重复注入、旧信息或过度裁剪 |
+| 控制 | 状态变化、取消、等待和恢复位置 | 长期等待、循环或错误恢复 |
 
-核心目标：
+配置可以按运行记录一次引用，各 Span 不必复制整份 Prompt 和工具清单。引用要有相应保留策略：今天能找到的文件，明天被覆盖或删除后，未必仍能解释过去。
 
-```text
-结构化
-可关联
-可查询
-可采样
-可脱敏
-```
+“模型看到了什么”有时非常重要，但不意味着所有任务都要默认全量明文存储。应按目的选择脱敏片段、结构、摘要或受控快照，并明确谁能访问、保存多久。
 
----
+> ⚠️ SDK 的默认配置不一定等于你的隐私要求。例如 Agents SDK 的 tracing 文档说明敏感数据可受 trace_include_sensitive_data 控制；采用前需核对实际默认值和导出配置，不能假定默认已经脱敏。
 
-<a id="section-12"></a>
+<a id="10-context-management-自己也需要-observability"></a>
+<a id="9-token--cost-异常怎么定位"></a>
+<a id="legacy-19-10"></a>
+<a id="legacy-19-11"></a>
+<a id="section-10"></a>
+<a id="section-9"></a>
+<a id="core-4"></a>
 
-## 12. Observability 不应该和 Evaluation 混为一谈
+## 4. 追踪如何区分不同原因
 
+同类任务成本突然增加，可以按来源分解：是模型单价变化、历史重复发送、工具说明增加、大日志回填，还是子 Agent 数量失控？总 Token 一个数字不够，需要能关联到具体阶段。
+
+报告不结束，则检查是在等批准、等工具、反复搜索无结果，还是压缩失败又重新尝试。每一种情况有自己的控制机制，不能统一“增加 max_steps”。
+
+恢复以后重复上传，还要查操作记录与接管过程；不能只根据最后一个模型回答认定是“模型记错”。追踪用于形成待验证原因，根因结论仍需要相关代码、状态和可复现实验支持。
+
+<a id="7-replay-有三种不同含义"></a>
+<a id="evidence-replay"></a>
+<a id="legacy-19-08"></a>
+<a id="model-replay"></a>
+<a id="section-7"></a>
+<a id="side-effect-replay"></a>
+<a id="core-5"></a>
+
+## 5. 重放之前，先说明重放什么
+
+| 重放类型 | 做什么 | 风险与限制 |
+|---|---|---|
+| 证据回看 | 查看当时保存的消息、状态或产物 | 受权限、脱敏和保留期限限制 |
+| 模型重演 | 用选定输入再请求模型 | 版本、采样与服务变化可能产生不同结果 |
+| 动作重做 | 再次执行工具 | 可能再次发邮件、改文件或扣款 |
+
+查看旧证据，不等于重新执行副作用。诊断系统应明确哪些工具被模拟、哪些真实运行；不能给“Replay”按钮一个默认重跑全部任务的含义。
+
+同样，脱敏数据足以定位阶段，却未必能够原样重现模型选择。应在报告中说明可观察范围，不为了完美复现无条件扩大敏感数据收集。
+
+<a id="12-observability-不应该和-evaluation-混为一谈"></a>
 <a id="legacy-19-13"></a>
+<a id="section-12"></a>
+<a id="core-6"></a>
 
-Observability：
+## 6. 从诊断走向可重复验证
 
-```text
-告诉你发生了什么
-```
+找到问题后，提取必要条件形成回归用例。例如“工具成功、本地回执保存失败”可以在受控环境注入该窗口；“旧摘要覆盖新约束”可以保存最小输入对照，而不必长期保留全部生产对话。
 
-Evaluation：
+Trace 说明发生了什么，Evaluation（评测）判断是否满足任务要求。它们可以共享证据，但有追踪不等于已有评分标准。必须在下一章把验收、样本、评分器和比较方法明确起来。
 
-```text
-判断结果好不好
-```
+<a id="summary"></a>
 
-Trace 是 Evaluation 的重要原始数据，但：
+## 本章小结
 
-```text
-有 Trace
-≠ 有好 Eval
-```
+追踪先帮助定位任务阶段，再按问题取得授权证据。业务事实、产物和诊断分别管理；重放分清证据回看、模型重演与动作重做。诊断结论还要转成可重复条件验证。
 
-下一章进入 Evaluation。
-
----
-
-<a id="section-13"></a>
-
-## 13. 产品实现与官方资料对照（按需展开）
-
-<details>
-<summary>Codex Rollout Trace 的源码证据</summary>
-
-<a id="legacy-19-04"></a>
-
-固定 Codex Source Index 中 `codex-rs/rollout-trace/README.md` 明确区分：
-
-```text
-exact raw payload evidence
-ConversationItem
-ToolCall
-CodeCell / TerminalOperation
-InteractionEdge
-```
-
-稳定课程抽象：
-
-> Trace应保留足够的关联结构来定位信息流；需要深查时按授权取得输入证据，不默认保存全部原文。
-
-这直接服务：
-
-```text
-Debug
-Replay
-Evaluation
-Incident Analysis
-```
-
-源码存在raw payload证据视图，不证明所有构建默认完整采集。学习其关联能力，不把产品可选调试设施当所有应用必须永久全存的要求。
-
-</details>
-
-具体实现以[固定源码与官方索引](../../../references/agent/README.md#reader-revision-20260917)为准。这里区分源码事实、功能开关与教学建议，不把一条实现路径当作所有产品默认行为。
-
----
-
-官方核对入口（2026-09-17，协议/产品按文中注明版本）：[Agents SDK Tracing](https://openai.github.io/openai-agents-python/tracing/)。
-
----
-
-<a id="human-a"></a>
-
-## 14. HUMAN-A 信号
-
-`AGENT-043` Execution Trace / Observability 有 7 个独立来源，并且真实面试直接追：
-
-```text
-step/model/tool/state 级 Trace
-卡住定位
-失败定位
-延迟
-Token 异常
-Replay / Debug
-```
-
-这说明 Agent Observability 已经从“锦上添花”进入 Production 必答。
-
----
-
+<a id="15-面试怎么答"></a>
+<a id="qagent-trace-应该记录什么"></a>
+<a id="qagent卡住怎样排查"></a>
+<a id="qtracehistorycheckpoint如何区分"></a>
+<a id="q为什么每个事件不需要自己的版本"></a>
+<a id="q保存原始请求能否保证重现"></a>
 <a id="interview"></a>
 
-## 15. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：Agent Trace 应该记录什么？
+### Agent 卡住怎样排查？
 
-🎯 **30 秒回答**：
+先看权威任务状态和等待原因，再用 Trace 定位模型、工具、批准、子任务或压缩阶段；涉及外部动作时用可靠操作记录核对结果。不能直接从头重跑。
 
-> 我会用 run/turn/step/model-call/tool-call 的层级 ID 做结构化 trace。先记录阶段、状态、耗时、错误类别及必要关联引用；按具体故障取得授权的输入和工具证据，不默认复制全部原始内容。Trace 要能支持 debug 和 replay，但敏感 Prompt/Tool 参数要做 redaction、加密和 retention 控制。它和普通日志不同，重点是重建一条 Run 的因果执行链。
+### Trace 需要保存全部 Prompt 吗？
 
-### Q：Trace、History、Checkpoint如何区分？
+不默认需要。先按诊断目的记录关联、阶段、状态和配置引用，必要时在授权范围取得脱敏输入或有限快照。保留期限、访问与删除要明确，关键回执另行可靠保存。
 
-🎯 **30 秒回答**：
+### Trace 和 Eval 有什么区别？
 
-> Trace解释执行路径与耗时，History（历史记录）记录交互，Checkpoint（检查点）保存可恢复的执行位置与状态引用。它们可共享标识但可靠性和保留目的不同。被采样的Trace不能是关键回执唯一来源，完整聊天也不自动等于恢复状态。
+Trace 解释发生了什么，Eval 依据任务标准判断做得怎样。轨迹可以提供评测证据，但不自动形成正确的评分规则或证明任务成功。
 
-### Q：Agent卡住怎样排查？
-
-🎯 **30 秒回答**：
-
-> 先查权威任务状态和等待对象，再用Trace定位排队、模型、工具、审批或保存阶段。针对未知外部结果核对下游而不是直接重试；针对上下文问题再看受权输入快照。修复后把具体失败窗口做成回归测试。
-
-### Q：为什么每个事件不需要自己的版本？
-
-🎯 **30 秒回答**：
-
-> 唯一ID标识事件，版本解决对象变化或兼容性。配置可在Run引用一次，状态revision用于并发，工具版本用于契约变化。应让字段服务具体判断，不因可能排障就每条事件复制所有内容。
-
-### Q：保存原始请求能否保证重现？
-
-🎯 **30 秒回答**：
-
-> 只能重建部分输入条件。模型服务版本、采样、外部数据和执行环境可能变化；应说明重演范围，必要时固定数据和模拟工具。精确重现不是Trace自动承诺，且原始请求的隐私成本需要单独授权。
-
----
-
+<a id="16-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 16. 高频易错点
+## ⚠️ 易错点
 
-⚠️ **Agent Observability = print Tool Call。** 缺 Context / State（状态） / Model / Correlation。
+> ⚠️ 诊断采样丢失一个 Span，不应该使业务成功回执同时消失。
 
-⚠️ **Trace 越完整越好。** 敏感数据和存储成本需要治理。
+> ⚠️ 有原始输入不保证模型重演得到相同输出，版本和随机性仍需记录。
 
-⚠️ **Replay 就是重新运行 Tool。** 外部副作用可能重复。
+> ⚠️ Replay 可能只是查看证据，也可能产生新动作，界面和测试必须明确区别。
 
-⚠️ **有 Trace 就有 Eval。** Trace 是证据，不是评价标准。
-
-⚠️ **Trace是恢复数据库。** 它通常允许采样和过期，关键业务状态另存。
-
-⚠️ **Context/Prompt必须每个Span全量记录。** 可以引用一次受控配置，深度快照按需要采集。
-
-⚠️ **有完整日志就能重现外部世界。** 外部服务与模型有变化和不确定性。
-
-⚠️ **所有数据保留越久越好。** 成本、隐私、权限与保留目的都需明确。
-
-⚠️ **诊断日志失败应一律终止业务。** 通常不应；真正强制可靠的审计/回执需独立规定。
-
----
-
+<a id="17-本章自测"></a>
 <a id="self-test"></a>
 
-## 17. 本章自测
+## 本章自测
 
-<details><summary>1. 为什么 Tool Call 必须有 correlation id？</summary>
+<details><summary>1. 页面卡住但下游已存在 report42，为什么不应该直接重跑任务？</summary>
 
-因为异步、并行和 Multi-Agent 环境下 Tool Result 必须准确关联到产生它的 Call，不能只靠顺序或文本猜测。
-
-</details>
-
-<details><summary>2. 为什么要记录 Context Generation / Compaction Generation？</summary>
-
-同一个 Run 在不同 compaction 后模型看到的上下文可能不同；记录 generation 才能解释某次错误决策使用了哪一版 Context。
+真实动作已经发生。先按原操作身份补齐状态并排查回执问题，重跑可能创建重复报告。
 
 </details>
 
-<details><summary>3. 为什么 Side-effect Replay 风险最高？</summary>
+<details><summary>2. 总 Token 翻倍，应先取得哪些证据，而不是立刻换模型？</summary>
 
-它会真正再次执行外部动作，可能重复付款、消息、写入，因此 Debug Replay 应优先重放证据和状态，而不是默认重跑副作用。
-
-</details>
-
-<details><summary>4. 耗时排查第一步需要下载全部客户文件吗？</summary>
-
-通常不需要。先看阶段时延、队列与错误率定位瓶颈，再决定必要的细节证据。
+比较输入来源大小、重复历史、工具说明、结果量、压缩次数与子任务数量，定位增长发生在哪一段。
 
 </details>
 
-<details><summary>5. Trace采样丢了op7记录，还能安全恢复吗？</summary>
+<details><summary>3. 对旧 Trace 点重放，怎样避免重复发送邮件？</summary>
 
-如果关键操作记录和回执另行可靠保存，可以；如果只有Trace保存，则恢复设计不合格。
-
-</details>
-
-<details><summary>6. 一个Run里模型配置没变，为什么不用每条日志复制全文？</summary>
-
-保存一次不可变配置引用就能关联，重复全文增加费用与泄漏面，不增加等价信息。
+默认采用证据回看或模拟工具；真实动作重做必须另行确认权限、幂等和当前环境，不能与诊断回看混用。
 
 </details>
 
-<details><summary>7. 用户要求删除数据，调试快照也应检查吗？</summary>
+<a id="13-产品实现与官方资料对照按需展开"></a>
+<a id="14-human-a-信号"></a>
+<a id="20-trace--replay记录必要证据定位具体问题"></a>
+<a id="human-a"></a>
+<a id="legacy-19-04"></a>
+<a id="section-13"></a>
+<a id="references"></a>
 
-应按数据治理范围处理，包括诊断快照、索引和导出；不能只删除业务表却在日志永久保留。
+## 知识回看与权威资料
 
-</details>
+- [Agents SDK tracing](https://openai.github.io/openai-agents-python/tracing/)：核对采集、敏感信息与导出配置。
+- [状态与持久化](12-StateHistoryAndPersistence.md)：区分诊断和可靠任务记录。
+- [固定追踪实现对照](../../../references/agent/implementation-notes.md#chapter-20)：观察实际关联模型，而非要求所有运行永久保存原始载荷。
 
-<details><summary>8. 模型重演应该用线上付款工具吗？</summary>
-
-不应默认这样做。通常隔离或模拟副作用工具，真实行动必须有独立授权与幂等保证。
-
-</details>
-
-<details><summary>9. 只保存脱敏快照，是否不能做任何Debug？</summary>
-
-仍能定位许多控制、结构和协议问题；部分语义问题可能需要更详细受权材料。要诚实说明诊断范围，而不是因此默认全量收集。
-
-</details>
 
 ---
 

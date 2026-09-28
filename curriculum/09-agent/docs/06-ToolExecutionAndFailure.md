@@ -1,562 +1,214 @@
-# 06. Tool Execution：结果回填、错误分类与有限恢复
-
-模型终于选对工具，不代表任务从此一帆风顺。参数可能错，服务可能超时，返回结果也可能不可用。重要的不只是捕获异常，而是知道错误发生在哪一步、谁能够修复它。
+# 06. 工具结果与失败：谁来修，怎样继续
 
 [← 上一章](05-ToolRegistrationAndDiscovery.md) · [Agent 目录](../README.md) · [下一章 →](07-ToolConcurrencyAndCancellation.md)
 
----
+工具可能选对了，却仍没有取得可用结果。文件不存在、参数类型错、没有权限和上传响应丢失，都可以表现为“工具失败”，但下一步完全不同。
 
-<a id="section-1"></a>
+这一章沿一次调用找出失败位置，再决定让模型改参数、让程序重试、向用户澄清，还是停止并核对已发生的动作。
 
-## 1. 一次完整 Tool Execution
-
+<a id="1-一次完整-tool-execution"></a>
+<a id="2-executor-为什么不应该直接暴露原始函数"></a>
 <a id="legacy-06-01"></a>
-
-调用可以在不同位置失败：请求形状、业务含义、权限、外部执行和结果可用性。先看一次正常调用经过哪些边界，才能知道错误应该交给模型、程序、用户还是诊断系统。
-
-```text
-Model emits Tool Call
-        ↓
-Parse / Normalize
-        ↓
-Resolve Runtime Handler
-        ↓
-Validate Arguments
-        ↓
-Permission / Policy
-        ↓
-Execute
-        ↓
-Normalize Result / Error
-        ↓
-Emit Runtime Event / Trace
-        ↓
-Project model-visible Tool Result
-        ↓
-Return Observation to Loop
-```
-
-任何一步都可能失败。
-
----
-
-<a id="section-2"></a>
-
-## 2. Executor 为什么不应该直接暴露原始函数
-
 <a id="legacy-06-02"></a>
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="core-1"></a>
 
-如果 Runtime（运行时执行系统） 只是：
+## 1. 正常调用先经过一条完整路径
 
-```python
-# 仅展示裸函数调用：省略了授权、结果语义、超时和副作用判断。
-result = func(**args)
+```text
+模型提出调用
+→ 解析名称和参数
+→ 找到真实处理器
+→ 校验规则、业务条件与权限
+→ 执行
+→ 检查结果
+→ 记录必要状态
+→ 向模型回填可用观察
 ```
 
-它很难统一：
+应用通常把调用标识、任务身份、可信用户和截止时间与业务参数一起交给执行器。这些信息构成一次**调用实例（Invocation）**。例如同样是读取 A，属于哪个任务、允许等多久、结果送回哪次请求，都不是文件名本身能表达的。
 
-- timeout；
-- cancellation；
-- trace；
-- retry；
-- result size；
-- post-hook；
-- sandbox；
-- metrics；
-- external context 标记。
+执行器负责统一这些运行规则，而不是让业务代码各自随意调用函数。实现可以很轻，但不能遗漏真正影响正确性的边界。
 
-更合理的是显式 Invocation（调用实例）：
-
-```python
-# 调用数据示意：标识关联本次执行；期限与租户由宿主用于控制，并非都发给模型。
-from dataclasses import dataclass
-
-@dataclass
-class ToolInvocation:
-    call_id: str
-    tool_name: str
-    args: dict
-    run_id: str
-    step_id: str
-    deadline_ms: int | None
-    tenant_id: str
-```
-
-Executor（执行器） 接收 Invocation，而不是只接收业务参数。
-
----
-
-<a id="section-3"></a>
-
-## 3. Tool Result 不是一段字符串
-
+<a id="3-tool-result-不是一段字符串"></a>
+<a id="4-为什么日志模型输出host-metadata-应分层"></a>
 <a id="legacy-06-03"></a>
-
-一个稳定 Result 可以区分：
-
-```text
-model_visible_content
-status
-structured_data
-artifacts
-retryable
-host_metadata
-trace_fields
-```
-
-例如：
-
-```json
-{
-  "status": "failed",
-  "error_kind": "timeout",
-  "summary": "tests exceeded 60s",
-  "artifact_ref": "logs/test-call-31.txt",
-  "retryable": true
-}
-```
-
----
-
-<a id="section-4"></a>
-
-## 4. 为什么日志、模型输出、Host Metadata 应分层
-
 <a id="legacy-06-04"></a>
+<a id="section-3"></a>
+<a id="section-4"></a>
+<a id="core-2"></a>
 
-同一次 Tool Output 可能需要三个 projection：
+## 2. 结果对谁可见，决定保留什么
 
-```text
-Model
-→ 只需要足够继续决策的信息
+假设一次测试命令退出码为 1，输出两万行日志。其中包含两条失败断言，也有内部路径。
 
-Log / Telemetry
-→ 需要诊断摘要，但不能泄露 secret / 大媒体
+| 接收者 | 需要什么 | 不应该默认得到什么 |
+|---|---|---|
+| 模型 | 测试失败、关键断言、必要引用 | 全量日志、凭证或无关内部细节 |
+| 程序 | 调用标识、状态、产物引用等控制信息 | 仅一段无法判断成功失败的文字 |
+| 用户界面 | 进度、结果和可理解的缺口 | 内部堆栈和隐私信息 |
+| 诊断系统 | 排障所需信息与关联关系 | 无期限保存全部敏感原文 |
 
-Host
-→ 可保存完整 artifact id、内部 metadata、security label
-```
+面向不同接收者提供不同表示，就是结果投影。大日志可以保存为有访问权限和保留期限的产物，模型只得到关键片段及引用。
 
-把三者混成一个字符串会产生：
+> ⚠️ 工具返回 HTTP 200，只说明这一层请求成功。若约定应生成报告但报告不存在，仍要报告结果契约失败，不能显示任务完成。
 
-- Secret 泄露；
-- Context 爆炸；
-- Debug 信息不足；
-- Replay（重放） 不可靠。
-
-内部错误可能带服务地址或令牌。日志在受控范围保留排障线索，模型只接收可行动的脱敏说明。Projection（投影）就是面向不同使用者提供不同表示，不是再复制一份全文。
-
----
-
-<a id="section-5"></a>
-
-## 5. Failure Classification
-
+<a id="5-failure-classification"></a>
 <a id="legacy-06-05"></a>
+<a id="section-5"></a>
+<a id="core-3"></a>
 
-建议至少区分：
+## 3. 按失败位置决定处理者
 
-```text
-InvalidArguments
-SchemaMismatch
-PermissionDenied
-ToolUnavailable
-Timeout
-Cancelled
-ExecutionError
-DependencyError
-ResultValidationError
-FatalRuntimeError
-```
+| 情况 | 首先由谁处理 | 合理下一步 |
+|---|---|---|
+| 参数无法解析、违反 Schema | 参数校验层 | 给模型简短规则反馈，有限修复 |
+| 目标不存在、资料不足 | 业务工具与任务逻辑 | 换合法目标、澄清或部分交付 |
+| 权限拒绝 | 授权层 | 停止该动作，不换身份绕过 |
+| 临时限流或网络异常 | 适配器 | 检查重试资格和预算 |
+| 等待人工批准 | 运行控制 | 暂停，不当作错误反复调用 |
+| 用户取消 | 运行控制 | 停止新派发，处理当前活动 |
+| 处理器 Bug、状态损坏 | 宿主维护与隔离机制 | 保留诊断，停止或隔离 |
+| 请求已发出，结果未知 | 操作核对流程 | 查询原操作，或按有效幂等契约安全重试 |
 
-不同错误对应不同恢复策略。
+不是每次内部重试都要告诉模型；短暂读取失败后程序成功取得结果，可以只提供最终观察。但最终失败不能被吞掉，否则模型会在“资料已取得”的错误前提下继续。
 
-| 发生的事 | 首先由谁处理 | 是否给模型 | 下一步 |
-|---|---|---|---|
-| 参数少字段、格式错误 | 校验层 | 可给简短修复提示 | 有限次重新构造参数 |
-| 业务对象不存在/资料不足 | 工具适配与任务逻辑 | 可提供安全的业务反馈 | 换合法输入、澄清或部分交付 |
-| 临时网络错误、限流 | 适配器 | 通常先由程序按预算恢复，最终再反馈 | 仅对安全可重复的请求有限重试 |
-| 无权限 | 权限层 | 告知拒绝或需确认，但不暴露秘密 | 停止该动作，不能换身份绕过 |
-| 人工批准尚未到达 | 运行时 | 可显示等待，不是错误修复 | 暂停并等待 |
-| 用户取消 | 控制层 | 必要时记录取消观察 | 停派新任务、传播取消 |
-| 状态损坏、处理器程序Bug | 宿主/运行时 | 不把堆栈交模型无限自救 | 停止或隔离，报错给维护者 |
-| 请求已发出，但是否成功未知 | 业务核对流程 | 告知结果未确认 | 查回执/幂等键，不能盲重试 |
-
-程序内部一次重试成功，不必把每次超时堆给模型。反过来，模型已经需要决定“继续还是请求用户帮助”时，不能吞掉最终失败使其以为工具成功。
-
----
-
-<a id="section-6"></a>
-
-## 6. Repair、Retry、Fallback、Fail 不是一回事
-
+<a id="6-repairretryfallbackfail-不是一回事"></a>
+<a id="fail"></a>
+<a id="fallback"></a>
 <a id="legacy-06-06"></a>
+<a id="repair"></a>
+<a id="retry"></a>
+<a id="section-6"></a>
+<a id="core-4"></a>
 
-### Repair
+## 4. 修参数、重试和后备，是不同动作
 
-模型生成的参数错：
+**Repair（修复）** 改变错误参数，例如把数组改为规定的字符串。**Retry（重试）** 再次尝试同一个请求，用来应对可能消失的临时故障。**Fallback（后备）** 选择另一条仍满足要求的路径。没有安全可行的路径时，应该停止或请求帮助。
 
-```text
-Invalid Arguments
-→ structured feedback
-→ model repairs arguments
-```
+例如查询 A 得到“编号格式错误”，等待一秒再发原请求没有帮助；应修参数。只读查询暂时限流，有限退避可能有帮助。资料服务持续不可用，可以选择已授权的等价来源，但不能为了成功改变任务权限。
 
-### Retry
+**重试次数应在确认可以重试以后才讨论。** 临时错误、动作安全可重复、仍有总时间和次数预算，缺一项都不能直接套“重试三次”。
 
-相同请求可能因临时故障成功：
-
-```text
-429 / transient network / temporary unavailable
-→ backoff
-→ retry
-```
-
-### Fallback
-
-当前能力失败，换另一能力：
-
-```text
-provider A unavailable
-→ provider B
-```
-
-### Fail
-
-继续执行没有意义或风险过大：
-
-```text
-permission denied
-invalid invariant
-irrecoverable state corruption
-```
-
----
-
-<a id="section-7"></a>
-
-## 7. Retry Eligibility 必须先判断幂等与副作用
-
+<a id="7-retry-eligibility-必须先判断幂等与副作用"></a>
+<a id="8-timeout-也不是一种简单失败"></a>
 <a id="legacy-06-07"></a>
-
-错误做法：
-
-```python
-# 反例：下面的函数形状有效，但重试策略错误。不要用于真实写入。
-async def unsafe_retry(call_tool):
-    for _ in range(3):
-        try:
-            return await call_tool()
-        except Exception:
-            # 错误点：吞掉异常且未区分授权、参数、未知副作用等失败。
-            pass
-```
-
-如果 Tool 是：
-
-```text
-send_email
-create_order
-charge_card
-publish_release
-```
-
-第一次可能已经成功，只是 Response 丢了。
-
-盲重试会制造重复副作用。
-
-所以：
-
-```text
-Failure
-→ Did execution start?
-→ Could side effect have committed?
-→ Is call idempotent?
-→ Is there an idempotency key / operation ledger?
-→ Retry eligibility
-```
-
-参数校验前拒绝，通常尚无副作用，可以让模型有限改参；上传超时可能已经成功，不能用一次新上传来“确认”。两种失败不由相同重试逻辑处理。
-
----
-
-<a id="section-8"></a>
-
-## 8. Timeout 也不是一种简单失败
-
 <a id="legacy-06-08"></a>
+<a id="section-7"></a>
+<a id="section-8"></a>
+<a id="core-5"></a>
 
-至少区分：
+## 5. 超时最重要的是：是否可能已经执行
 
-```text
-Queue Timeout
-Connect Timeout
-Execution Timeout
-Result Read Timeout
-Overall Deadline
-```
-
-Execution Timeout 最危险，因为：
+连接尚未建立、等待队列超时、服务执行超时、读取响应超时和整个任务到期，发生的位置不同。它们不都意味着远端没有做事。
 
 ```text
-Client 认为超时
-≠ Server 一定停止执行
+上传请求发出 → 远端已创建 report42 → 响应丢失 → 本地超时
 ```
 
-所以副作用 Tool 要继续考虑 operation id / status query / idempotency。
+此时直接生成新操作编号再上传，可能创建第二份报告。正确处理是保留原操作身份，查询回执；若下游支持仍在有效期内的幂等键，可以使用同一个键和一致请求重试。既不能查询也不能安全去重时，就保持结果未知并请求核对。
 
----
+这与普通只读查询不同。**重试安全来自动作和下游契约，不来自某个错误码。** 500、429、timeout 都不能单独决定是否安全。
 
-<a id="section-9"></a>
+完整操作记录与跨重启核对在[检查点与恢复](13-CheckpointResumeAndRecovery.md)展开；本章只决定失败之后应走哪条处理路径。
 
-## 9. 错误反馈给模型应该“可行动”
-
+<a id="10-result-validation"></a>
+<a id="11-pre--post-tool-hook-为什么很有用"></a>
+<a id="9-错误反馈给模型应该可行动"></a>
 <a id="legacy-06-09"></a>
-
-低质量：
-
-```text
-Tool failed: 500
-```
-
-高质量：
-
-```json
-{
-  "error_kind": "file_not_found",
-  "path": "src/foo.py",
-  "retryable": false,
-  "suggestion": "search repository for the symbol before reading a path"
-}
-```
-
-但也不能泄露：
-
-- internal secret；
-- stack trace 中的凭证；
-- 不应模型可见的 policy detail。
-
----
-
-<a id="section-10"></a>
-
-## 10. Result Validation
-
 <a id="legacy-06-10"></a>
-
-Tool 自己返回成功，也可能结果不可用：
-
-```text
-HTTP 200 but empty body
-command exit 0 but expected artifact missing
-JSON parses but field invariant broken
-```
-
-所以执行后还能有：
-
-```text
-Execution Success
-→ Result Validation
-→ Accepted Result / Rejected Result
-```
-
----
-
-<a id="section-11"></a>
-
-## 11. Pre / Post Tool Hook 为什么很有用
-
 <a id="legacy-06-11"></a>
+<a id="section-10"></a>
+<a id="section-11"></a>
+<a id="section-9"></a>
+<a id="core-6"></a>
 
-Pre Tool：
+## 6. 给模型的信息必须能支持一个合法下一步
 
-```text
-rewrite input
-block dangerous action
-inject environment
-```
+“失败：500”通常不够。更好的反馈是“未取得资料，服务暂时不可用；不要当作空文档，可以稍后重试或请求用户提供材料”。参数错误则指出具体字段、期望范围，不附带内部令牌和敏感堆栈。
 
-Post Tool：
+执行前钩子可以补充检查或阻止动作，执行后钩子可以校验结果、脱敏和记录审计。但**执行后才拦截结果，不会撤销已经发生的外部动作**。需要阻止发送时，检查必须位于发送之前。
 
-```text
-validate result
-redact
-attach context
-record audit
-```
+如果结果无法用于任务，例如退出码为 0 却没有预期文件，应返回明确的产物缺口；不要仅让模型多试几遍，尤其不能重复高风险动作来碰运气。
 
-但要注意：
+<a id="summary"></a>
 
-> Post Tool Hook（生命周期钩子） 如果 block，实际外部副作用可能已经发生。
+## 本章小结
 
-不能把“结果没有回给模型”误解成“Tool 没执行”。
+先判断失败发生在哪、是否可能产生副作用，再决定由谁恢复。模型适合修可行动的输入，程序负责权限、预算和执行控制；未知结果需要核对，不应伪装成失败或成功。
 
----
-
-<a id="section-12"></a>
-
-## 12. 产品实现与官方资料对照（按需展开）
-
-<details>
-<summary>源码证据：Codex</summary>
-
-<a id="legacy-06-12"></a>
-
-固定快照中：
-
-- `ToolRouter` 把 `ResponseItem` 规范化成带 `tool_name / call_id / payload` 的 `ToolCall`；
-- `ToolRegistry` 负责 dispatch；
-- `CoreToolRuntime` / `ToolExecutor` 提供统一执行接口；
-- `FunctionCallError` 至少区分 `RespondToModel` 与 `Fatal`；
-- Registry（注册表） 执行链有 pre/post tool hooks、telemetry、tool lifecycle notification；
-- `ToolOutput` 区分 log representation、model-facing response 与 host metadata。
-
-这些实现非常清楚地表明：
-
-> Tool Execution 是一个受控调用生命周期，而不是函数调用语法糖；它不天然提供跨系统原子事务。
-
-</details>
-
-具体实现以[固定源码与官方索引](../../../references/agent/README.md#reader-revision-20260917)为准。这里区分源码事实、功能开关与教学建议，不把一条实现路径当作所有产品默认行为。
-
----
-
-<a id="human-a"></a>
-
-## 13. HUMAN-A 信号
-
-- `AGENT-020` Tool Call Failure Handling：27 来源；
-- `AGENT-038` Runtime Resilience Policy：15 来源；
-- Verified Chain 多次出现 `Tool Failure → Retry/Fallback → Permission/Stop`。
-
-这里必须保持两个层级：
-
-```text
-本章
-= 单次 Tool Invocation 的错误语义
-
-后续 Routing / Resilience 章
-= 跨 Tool / Model / Provider 的整体恢复策略
-```
-
----
-
+<a id="-继续追问与下一步"></a>
+<a id="14-面试怎么答"></a>
+<a id="q一次工具调用怎样从请求走到可用结果"></a>
+<a id="q哪些错误可以自动重试"></a>
+<a id="q工具http成功但没有生成目标文件怎么办"></a>
+<a id="q工具出错后所有错误都交给模型吗"></a>
+<a id="q怎样设计工具结果的多种表示"></a>
 <a id="interview"></a>
 
-## 14. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：一次工具调用怎样从请求走到可用结果？
+### 工具失败怎样分类？
 
-🎯 **30 秒回答**：
+按解析与规则、业务输入、权限、临时依赖、取消、宿主故障和未知副作用分开。分类的目的是确定处理者与下一步，不是列一串异常类名。
 
-> 一次 Tool Call 应被 Runtime 当成完整 Invocation：解析、路由、参数校验、授权、执行、结果校验、Trace（执行追踪），再把规范化 Observation（观察结果） 回填给模型。失败要分类，Invalid Arguments 更适合 Repair，临时依赖故障才可能 Retry（重试）；涉及副作用时必须先判断幂等、执行是否已开始以及结果是否只是丢失，不能见异常就盲重试。
+### 哪些调用可以自动重试？
 
-### Q：工具出错后，所有错误都交给模型吗？
+错误有恢复可能，动作安全可重复或下游支持有效的幂等契约，且剩余时间和重试预算允许时才重试。写操作结果未知时先核对，或在同一幂等键下安全重试，不能改成新业务操作。
 
-🎯 **30 秒回答**：
+### 为什么工具成功后还要校验结果？
 
-> 不是。可修复参数或业务信息不足，可以提供简短反馈让模型选择合法下一步；临时传输故障通常先由程序有限恢复；权限拒绝、取消和宿主故障由控制系统处理。必须区分模型、运行状态、用户界面与诊断通道，并脱敏，不能让模型拿内部堆栈无限重试。
+传输成功、命令退出和业务产物完整是不同条件。应检查结果约定，再把可用观察回填；工具完成仍不等于整个任务通过验收。
 
-### Q：哪些错误可以自动重试？
-
-🎯 **30 秒回答**：
-
-> 不仅看错误码。需要同时确认错误可能是暂时的、动作可安全重复或下游支持幂等、先前结果不是尚未核对的未知写入，并且剩余deadline和重试预算允许。500、429或timeout都不自动保证安全；未知副作用应先核对。
-
-### Q：工具HTTP成功但没有生成目标文件怎么办？
-
-🎯 **30 秒回答**：
-
-> 这只说明请求层完成，工具结果契约未满足。程序应检查预期产物或业务状态，再把明确的失败或缺口回填；不能把HTTP200、退出码0与任务验收成功混在一起。也不应随意重复有副作用的动作来碰运气。
-
-### Q：怎样设计工具结果的多种表示？
-
-🎯 **30 秒回答**：
-
-> 内部结果保留程序需要的状态与回执；模型侧保留足够继续工作的摘要和引用；Trace侧记录耗时、阶段与错误类别，敏感载荷按需授权保存。这样既能调试，又不让日志无限膨胀或把秘密和大输出注入上下文。
-
-### 🔍 继续追问与下一步
-
-```text
-两个 Tool 可以并发吗？
-写文件 Tool 和读文件 Tool 怎样调度？
-用户取消时怎样传播？
-后台 Tool 怎样汇报进度？
-```
-
-下一章进入 Side Effect / Concurrency / Cancellation。
-
----
-
+<a id="15-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 15. 高频易错点
+## ⚠️ 易错点
 
-⚠️ Exception = Retry——错；
+> ⚠️ 捕获所有异常然后重试，会把权限拒绝、程序 Bug 和未知写入混在一起。
 
-⚠️ Timeout = Tool 没执行——错；
+> ⚠️ 本地停止等待不表示远端停止执行。对写操作，先确认真实结果。
 
-⚠️ HTTP 200 = Result 可用——错；
+> ⚠️ 后置检查能拒绝结果进入模型，却不能自动回滚已发送的邮件或已提交的数据。
 
-⚠️ Post Hook Block = 副作用没发生——错；
-
-⚠️ Tool Output = Log String——错。
-
-⚠️ **异常都可让模型自己修。** 模型不能修复凭证权限、宿主状态损坏或已发生的外部动作。
-
-⚠️ **timeout表示没有执行。** 可能已成功但回包丢失，需核对。
-
-⚠️ **工具自己说可重试就立即重试。** 需要可信程序结合副作用与预算判定。
-
-⚠️ **日志、用户消息、模型Tool Result可以共用全部原始内容。** 它们的权限、长度与用途不同，应分别投影。
-
----
-
+<a id="16-本章自测"></a>
 <a id="self-test"></a>
 
-## 16. 本章自测
+## 本章自测
 
-<details><summary>1. 自测：为什么 Timeout 后最危险的是直接 Retry 写操作？</summary>
+<details><summary>1. 参数类型错，原样重发三次，为什么通常没有意义？</summary>
 
-因为 Timeout 只代表调用方没及时拿到结果，外部系统可能已经提交副作用。没有 idempotency key、operation status 或 ledger 时直接重试可能造成重复写。
-
-</details>
-
-<details><summary>2. 参数缺失和HTTP临时断连，为什么处理不同？</summary>
-
-缺参需要改变候选；临时断连可能重试原请求。把缺参请求原样重复只会继续失败，把网络错误都交模型重新规划也会增加成本和不确定性。
+同一数据仍违反规则。应提供字段级反馈让模型修复，或由用户补充，而不是等待后重复错误。
 
 </details>
 
-<details><summary>3. 权限拒绝后模型提议调用另一个同能力工具，可以吗？</summary>
+<details><summary>2. 上传超时，但用原操作编号能查到 report42，应该再上传吗？</summary>
 
-只有另一个动作本身在合法范围内才可执行，不能把替代工具当作绕过权限的方式。授权应针对真实目标和身份，而非仅针对工具名字。
-
-</details>
-
-<details><summary>4. 邮件发送超时，重试前问什么？</summary>
-
-问请求是否可能已到下游、能否用稳定操作身份查询结果、下游是否支持幂等。不能每次生成新邮件ID再发送，否则查询与去重关系会丢失。
+不应创建新上传。核对返回对象确实属于原操作，补齐本地成功记录，再继续后续任务。
 
 </details>
 
-<details><summary>5. 工具错误能否直接包含环境变量？</summary>
+<details><summary>3. 只读查询暂时限流，剩余时间不足以完成下一次等待，怎么办？</summary>
 
-不应。模型反馈和用户错误只需可行动信息；内部诊断也需要脱敏、访问控制及短保留。凭证不能因为调试方便而扩散。
-
-</details>
-
-<details><summary>6. 工具执行成功与任务成功哪里不同？</summary>
-
-工具只完成局部契约，如读取文本或生成文件；任务还要检查整体目标，如来源支持结论。局部结果是完成证据之一，不是全部验收。
+即使动作可重试也没有预算，应停止、延期或反馈暂时不可用，不能突破总截止时间。
 
 </details>
 
-<details><summary>7. 发生不可恢复状态损坏，应该要求模型换Prompt吗？</summary>
+<a id="06-tool-execution结果回填错误分类与有限恢复"></a>
+<a id="12-产品实现与官方资料对照按需展开"></a>
+<a id="13-human-a-信号"></a>
+<a id="human-a"></a>
+<a id="legacy-06-12"></a>
+<a id="section-12"></a>
+<a id="references"></a>
 
-不应该。它是程序正确性问题，应停止或隔离受影响执行并由维护者处理。继续让模型调用工具可能扩大损坏，不能用自然语言自救代替可信状态检查。
+## 知识回看与权威资料
 
-</details>
+- [工具契约](04-ToolContractAndValidation.md)：回看输入与结果的检查责任。
+- [取消与迟到结果](07-ToolConcurrencyAndCancellation.md)：理解停止等待和外部执行的差别。
+- [固定执行器实现](../../../references/agent/implementation-notes.md#chapter-06)：观察错误分类、结果投影和执行钩子的具体落点。
+
 
 ---
 

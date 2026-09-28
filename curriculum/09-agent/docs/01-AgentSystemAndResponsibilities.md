@@ -1,807 +1,208 @@
 # 01. Agent 系统的全貌：模型之外，谁把任务做完
 
-让模型回答一个问题，通常只需要一次请求。可当你说“读资料、找矛盾、补证据，最后交一份报告”时，事情就不一样了：
+[← RAG](../../08-rag/README.md) · [Agent 目录](../README.md) · [下一章 →](02-WorkflowAutonomyAndRuntimeBoundary.md)
 
-> 模型可以提出下一步，可是谁真正去做、检查结果，并把工作继续下去？
+你把两份资料交给助手，要求整理一份有引用的报告。第一份写“周三发布”，第二份写“周五发布”。助手不能只是挑一句更顺眼的回答：它可能需要查明哪份更新、补充证据，并说明仍未确认的地方。
 
-这一章先把这些角色放在同一张图上，之后再逐个打开工具、上下文、状态和安全机制，不急着背组件名单。
+模型可以提出这些判断，但读取资料、保存报告、检查引用的动作，要由程序真正完成。我们先沿着这项工作看清各个角色，再给它们命名。
 
-[Agent 目录](../README.md) · [下一章 →](02-WorkflowAutonomyAndRuntimeBoundary.md)
-
----
-
-<a id="section-1"></a>
-
-## 1. 先讲人话：Model 很聪明，但它不会替你经营一次“执行”
-
+<a id="1-先讲人话model-很聪明但它不会替你经营一次执行"></a>
+<a id="7-一个-ai-应用场景企业知识库-agent"></a>
 <a id="legacy-01-01"></a>
-
-先把Agent想成一个正在工作的助手，而不是某个模型名字。读文件的是程序，推理下一步的是模型，显示进度和交付报告的是应用。**同一件工作由不同角色接力完成**，后面各章都从这条接力关系展开。
-
-一次普通 LLM Call 很像：
-
-```text
-Input
-  ↓
-Model
-  ↓
-Output
-```
-
-如果只是：
-
-- 总结一段文本；
-- 分类；
-- 改写；
-- 生成一个短答案；
-
-这个模型调用本身可能已经够了。
-
-但一个 Agent 任务可能是：
-
-```text
-“阅读这个仓库，找到 Bug，修改代码，运行测试，失败就修，最后给我可交付结果。”
-```
-
-这时真正发生的是：
-
-```text
-理解 Goal
-→ 读仓库
-→ 决定下一步
-→ 调搜索 / 文件 / Shell Tool
-→ 接收 Tool Result
-→ 更新状态
-→ 再次决策
-→ 修改文件
-→ 跑 Test
-→ 失败
-→ 判断是否 Retry / 改路
-→ 继续
-→ 验证 Done
-→ 输出结果
-```
-
-模型只负责其中一部分：**根据当前上下文做推理和决策。**
-
-其它事情必须由软件系统负责。
-
-这个围绕模型、工具、状态、上下文和执行环境建立起来的系统，就是本课程所说的：
-
-> **Agent Harness / Runtime（运行时执行系统）。**
-
----
-
-<a id="section-2"></a>
-
-## 2. 一个实用定义
-
-<a id="legacy-01-02"></a>
-
-不要把 Harness 记成某个框架名。
-
-本课程使用这个工程定义：
-
-> **Agent Harness / Runtime 是模型之外，负责组织 Context、维护执行 State（状态）、驱动 Agent Loop、暴露和执行 Tools、实施 Permission（权限） / Sandbox（沙箱）、处理失败与恢复，并记录 Trace（执行追踪） / Eval Evidence 的运行时系统。**
-
-可以画成：
-
-```text
-                         User / Goal
-                              │
-                              ▼
-                    ┌───────────────────┐
-                    │ Agent Harness     │
-                    │ / Runtime         │
-                    └─────────┬─────────┘
-                              │
-          ┌───────────────────┼────────────────────┐
-          ▼                   ▼                    ▼
-       Context              State                Policy
-          │                   │                    │
-          └──────────┬────────┴──────────┬─────────┘
-                     ▼                   ▼
-                   Model              Tools
-                     │                   │
-                     └─────── Loop ──────┘
-                              │
-                              ▼
-                    Event / Trace / Eval
-```
-
-注意：
-
-```text
-Model ≠ Agent Harness
-Agent Framework ≠ Agent 本身
-Tool Calling ≠ 完整 Agent Runtime
-Memory ≠ 所有 State
-```
-
-这些边界后面会逐章拆开。
-
-### 先有任务，再决定需要多少执行设施
-
-例如“读取授权的A、B两份文件，写带引用的报告，不修改原件”。这已经包含三个问题：做什么、允许做什么、怎样算做好。
-
-| 要求 | 谁落实 | 为什么模型一句话不够 |
-|---|---|---|
-| 读取授权材料 | 工具程序与文件权限 | 模型说能读不等于真实身份有权读 |
-| 发现冲突后继续调查 | 模型提出方向，循环执行 | 一次回答不会自动取得后续证据 |
-| 交付可下载报告 | 应用与产物存储 | “已保存”不等于文件存在 |
-| 不修改原件 | 可用工具与执行隔离 | 不能只依赖模型记住一句禁止事项 |
-
-如果一次读取就能生成合格结果，固定流程可能已足够。只有确实需要根据反馈选行动，才引入动态循环。长期记忆、多Agent、独立队列都不是凑齐才能叫Agent的必选配置。
-
----
-
-<a id="section-3"></a>
-
-## 3. 为什么“Model + API”还不够
-
-<a id="legacy-01-03"></a>
-
-假设你直接写：
-
-```python
-# 片段示意：只发起一次模型请求，尚未处理工具执行与反馈循环。
-response = client.responses.create(
-    model="some-model",
-    input=user_input,
-)
-```
-
-这只是一次 inference。
-
-一旦任务进入多步执行，就会出现一组新的工程问题。
-
-### 3.1 下一步由谁驱动？
-
-模型说：
-
-```text
-我要调用 read_file(path="src/app.py")
-```
-
-谁来：
-
-- 解析这次 Tool Call；
-- 找到真实 Tool；
-- 校验参数；
-- 判断权限；
-- 执行；
-- 把结果回填给模型；
-- 决定是否继续下一轮？
-
-答案不是模型，而是 Runtime。
-
----
-
-### 3.2 Context 越来越长怎么办？
-
-Agent 每做一步都会生成新信息：
-
-```text
-user message
-assistant reasoning / decision
-tool call
-tool result
-new file content
-new error log
-new test output
-...
-```
-
-如果全部无限追加：
-
-```text
-history ↑
-context tokens ↑
-latency ↑
-cost ↑
-noise ↑
-最终撞 Context Window
-```
-
-因此 Harness 必须承担：
-
-- Context Assembly；
-- Token Budget（预算）；
-- Tool Result Offloading；
-- Compaction（上下文压缩）；
-- Memory（记忆） Retrieval；
-- stale context 控制。
-
----
-
-### 3.3 Tool 有副作用怎么办？
-
-读文件和删生产数据不是一个风险等级：
-
-```text
-read_file
-vs
-rm -rf
-vs
-send_email
-vs
-transfer_money
-```
-
-成熟 Runtime 必须把：
-
-```text
-Capability Selection
-Permission Decision
-Human Approval
-Sandbox Enforcement
-```
-
-分开处理。
-
----
-
-### 3.4 中途崩了怎么办？
-
-长任务可能运行几十分钟甚至几小时。
-
-如果进程在第 37 步崩溃：
-
-```text
-重新从第 1 步开始？
-```
-
-通常不可接受。
-
-尤其如果第 20 步已经发出外部副作用：
-
-```text
-创建工单成功
-↓
-Checkpoint 写失败
-↓
-服务崩溃
-↓
-Resume 后再次创建工单？
-```
-
-这会直接引出：
-
-- Checkpoint（检查点）；
-- Resume（恢复执行）；
-- Idempotency；
-- Side-effect Ledger；
-- Compensation。
-
-这些都属于 Runtime 问题。
-
----
-
-### 3.5 Agent 说“完成了”，真的完成了吗？
-
-Agent 输出：
-
-```text
-“修复完成，所有测试通过。”
-```
-
-不能直接当作事实。
-
-Harness 还需要建立：
-
-```text
-Test Result
-Diff
-Exit Code
-Artifact
-Environment Outcome
-Trace
-Eval
-```
-
-去验证它真的完成了任务。
-
-这也是为什么 Coding Agent 的质量不能只看最终自然语言回答。
-
----
-
-<a id="section-4"></a>
-
-## 4. 八组执行责任：检查清单，不是八个必部署服务
-
-<a id="legacy-01-04"></a>
-
-下面的Plane是责任分组：应用承接任务，运行系统驱动执行，接口连接能力，资源承载事实与动作。几个分组可以由同一进程实现。这是一份防止遗漏责任的检查清单，不是要求再背一套八层架构。
-
-为了后面学习不混乱，可以把 Runtime 拆成八个 Plane。
-
-| Plane | 核心职责 | 典型问题 |
-|---|---|---|
-| Control Plane | 驱动 Loop / Step / Stop | 下一步是什么？何时停止？ |
-| Context Plane | 组装模型本轮看到的信息 | 哪些 history / tool / memory 放进去？ |
-| State Plane | 保存当前执行事实 | 任务做到哪？哪些 artifact 已生成？ |
-| Capability Plane | 管理 Tool / Skill（技能包） / MCP / Agent | 当前有哪些能力？怎样发现？ |
-| Execution Plane | 真正执行命令 / API / Tool | 在哪里跑？超时怎么办？ |
-| Safety Plane | Permission / Approval（批准） / Sandbox | 这次动作可不可以做？能碰什么资源？ |
-| Coordination Plane | Subagent（子Agent） / Handoff（控制权交接） / Ownership | 谁负责哪个子任务？怎样避免冲突？ |
-| Observability & Eval Plane | Trace / Replay（重放） / Outcome | 为什么失败？真的做对了吗？ |
-
-💡 **新手理解**：
-
-> Model 更像“决策器”；Harness 更像“操作系统 + 调度器 + 安全层 + 记录系统”的组合。
-
-这不是说 Harness 真的是 OS，而是强调：**它负责把模型决策变成受控执行。**
-
----
-
-<a id="section-5"></a>
-
-## 5. 一个最小 Runtime 长什么样
-
-<a id="legacy-01-05"></a>
-
-先看顺序，不急着读代码：
-
-```text
-接收任务 → 保存当前目标
-            ↓
-组织模型输入 → 模型建议下一步
-            ↓
-      ┌─────┴────────┐
-    请求工具       提交答案
-      ↓              ↓
-校验并执行       按任务条件验收
-      ↓              ↓
-记录观察再循环    交付/补充/停止
-```
-
-这里已经有State（当前工作状态）、Loop（循环）、Registry（工具目录）、Dispatch（分发）、Observation（观察）和Stop（停止）。它仍不是生产系统：权限、超时、取消、结果过大、跨重启恢复与副作用正确性，还需要后面逐项展开。
-
-第03章提供有注释的最小反馈循环。这里不再放一段省略大量保障、却声称生产可用的代码。
-
----
-
-<a id="section-6"></a>
-
-## 6. Model 和 Harness 到底各负责什么
-
-<a id="legacy-01-06"></a>
-
-这是面试里非常重要的边界。
-
-| 问题 | 更偏 Model | 更偏 Harness |
-|---|---:|---:|
-| 理解自然语言目标 | ✅ | 提供上下文 |
-| 推理下一步行动 | ✅ | 控制可选能力 |
-| 生成 Tool Call | ✅ | 校验与执行 |
-| Tool 是否有权限执行 | ❌ | ✅ |
-| 命令是否在 Sandbox 中 | ❌ | ✅ |
-| 保存 Session State | ❌ | ✅ |
-| Context 如何裁剪 | 可协助摘要 | ✅ 决定策略 |
-| Crash 后如何 Resume | ❌ | ✅ |
-| 外部副作用是否重复 | ❌ | ✅ |
-| 记录完整 Trace | ❌ | ✅ |
-| 判断最终 Outcome | 可参与 Judge | ✅ 组织证据 |
-
-⚠️ **面试易错点**：
-
-不要说：
-
-> “Agent 的 Memory、Tool、Loop 都是模型能力。”
-
-模型可能具备 Tool Use 能力，但：
-
-> **Tool 能否被调用、如何执行、调用结果如何进入下一轮、失败后怎样恢复，是 Runtime 的实现责任。**
-
-表中的责任划分是建议与保证的区别：模型可以建议“值得重试”，真正重试仍由程序检查预算、权限以及动作是否已经发生。不同章节再次提到某个检查时，应先看它在阻止哪一种后果。
-
----
-
-<a id="section-7"></a>
-
-## 7. 一个 AI 应用场景：企业知识库 Agent
-
 <a id="legacy-01-09"></a>
+<a id="section-1"></a>
+<a id="section-7"></a>
+<a id="core-1"></a>
 
-用户问：
+## 1. 先看一次工作怎样完成
+
+设定一个小任务：读取已授权的 A、B 两份文件；核对发布日期；输出带来源的报告；不得修改原件。这里的 A、B 是教学材料名，不是某个平台的接口。
+
+| 顺序 | 模型作出的判断 | 程序实际做的事 | 得到的新信息 |
+|---|---|---|---|
+| 1 | 需要先读 A | 检查权限，读取 A | A 写着周三发布 |
+| 2 | 还需要另一份依据 | 读取 B，把结果送回模型 | B 写着周五，但没有更新时间 |
+| 3 | 目前不能确定哪份有效 | 根据任务允许范围查询补充材料，或向用户澄清 | 获得新依据，或确认存在缺口 |
+| 4 | 形成报告候选 | 检查引用、产物与任务范围，再交付 | 合格报告，或明确说明的部分结果 |
+
+第一步读取结果会影响第二步以后怎么做。这种根据中间观察调整行动的反馈，就是本模块要建立的核心直觉。
+
+**模型提出下一步，程序执行允许的动作，动作结果再成为模型下一次判断的依据。** 模型返回一句“已保存”，不会自动在磁盘上产生文件；程序必须真正写入，并确认用户能够访问它。
+
+> ⚠️ 文件中写“允许修改原件”，也不能改变用户给定的只读约束。资料是被处理的内容，不自动拥有给程序授权的资格。
+
+<a id="2-一个实用定义"></a>
+<a id="6-model-和-harness-到底各负责什么"></a>
+<a id="legacy-01-02"></a>
+<a id="legacy-01-06"></a>
+<a id="section-2"></a>
+<a id="section-6"></a>
+<a id="先有任务再决定需要多少执行设施"></a>
+<a id="core-2"></a>
+
+## 2. 给刚才的角色命名
+
+**模型（Model）** 接收一次输入，生成文字或行动候选。**工具（Tool）** 让程序可以执行一项具体能力，例如读取文件或查询工单。**观察结果（Observation）** 是动作之后返回的信息，例如文件内容、查询为空或权限拒绝。
+
+应用还需要一段程序：组织输入、请求模型、检查候选、调用工具，再决定继续、等待还是结束。本书把这些实际推进工作的机制称为 **Runtime（运行时）**；把模型外围的工具、上下文、控制、安全和验证组合称为 **Harness（执行支撑系统）**。这两个词在产品文档中可能重叠，不是全行业统一且互斥的两层。
+
+| 职责 | 报告任务中的含义 | 不等于什么 |
+|---|---|---|
+| 上下文 | 模型这次实际收到的目标、资料和工具说明 | 数据库存着的一切 |
+| 状态 | 程序知道 A 已读、B 待查、报告尚未验收 | 模型的一段自述 |
+| 执行控制 | 允许什么动作，何时继续、等待或停止 | 一直请求模型直到它说完成 |
+| 验证 | 引用是否存在，结论是否有依据，原件是否未改 | 只检查输出文字流畅 |
+
+这些是分工，不是部署清单。一个小程序可以同时承担几项职责；以后独立扩容或隔离时才有必要拆成不同服务。
+
+<a id="3-为什么model--api还不够"></a>
+<a id="31-下一步由谁驱动"></a>
+<a id="32-context-越来越长怎么办"></a>
+<a id="33-tool-有副作用怎么办"></a>
+<a id="34-中途崩了怎么办"></a>
+<a id="35-agent-说完成了真的完成了吗"></a>
+<a id="legacy-01-03"></a>
+<a id="section-3"></a>
+<a id="core-3"></a>
+
+## 3. 从“生成答案”到“推进任务”，多了哪些保证
+
+资料已经齐全，只需摘要时，一次模型调用加输出检查可能足够。需要继续取得材料、观察失败并改变行动时，就不能只写“调用模型，然后返回文字”。
+
+以 B 无权读取为例：程序应记录拒绝，告诉模型目前缺少哪类证据；模型可以请求用户补充，不能自己换一个身份重新读取。若报告已生成但引用失效，程序应返回具体缺口，让模型补充或明确部分交付，而不是把工具成功当成整个任务成功。
+
+再考虑中断。只读查询失败，可能可以重做；邮件已发送而回执丢失，直接重做就可能发两遍。因此“失败以后继续”需要区分已经发生了什么，不能只增加重试次数。这里先认识这个问题，完整恢复机制在[检查点与恢复](13-CheckpointResumeAndRecovery.md)中展开。
+
+**完成标准应来自任务，而不是来自模型的自信程度。** 报告任务至少检查文件可读、引用可定位、结论与证据相符、没有越权修改。机械检查与内容判断各有范围；某项检查通过，不等于证明所有要求都满足。
+
+<a id="5-一个最小-runtime-长什么样"></a>
+<a id="legacy-01-05"></a>
+<a id="section-5"></a>
+<a id="core-4"></a>
+
+## 4. 用一张反馈图连起来
 
 ```text
-“检查最近一周所有高优先级客户工单，找出重复问题，生成修复建议，并为确认的问题创建 Jira。”
+接收目标与约束
+      ↓
+组织本次模型输入
+      ↓
+模型提出下一步
+      ├─ 请求工具 → 校验与执行 → 记录观察 ─┐
+      │                                    │
+      │             ← 重新组织输入 ────────┘
+      ├─ 缺少必要输入 → 等待或澄清
+      └─ 提交结果 → 按任务标准验收
+                       ├─ 满足要求 → 交付
+                       └─ 有缺口 → 补充、部分交付或停止
 ```
 
-如果只靠 Model：
+“继续”也要有边界。用户取消、费用达到上限、持续没有进展，都可以要求停止；它们不是成功的同义词。界面应该准确说明为什么停下，以及已经完成了哪些部分。
 
-```text
-模型不知道去哪里查工单
-模型不能真正创建 Jira
-模型无法知道已经创建了哪些 Jira
-模型不能保证重复执行不会创建重复工单
-```
-
-Harness 需要负责：
-
-```text
-1. 建立 Run
-2. 装载用户 / tenant / permission
-3. 暴露 ticket_search / jira_create 等 Tool
-4. 组装 Context
-5. 调 Model
-6. 执行搜索 Tool
-7. 记录结果
-8. 如果要创建 Jira，触发 Approval
-9. 执行有副作用 Tool
-10. 记录 idempotency key / external id
-11. Checkpoint
-12. 验证最终输出
-13. 写 Trace / Eval Evidence
-```
-
-这就是“AI 应用开发”真正进入工程系统的地方。
-
----
-
-<a id="section-8"></a>
-
-## 8. Harness、Backend、Framework 不要混在一起
-
+<a id="4-八组执行责任检查清单不是八个必部署服务"></a>
+<a id="8-harnessbackendframework-不要混在一起"></a>
+<a id="harness-vs-agent-framework"></a>
+<a id="harness-vs-普通-backend"></a>
+<a id="legacy-01-04"></a>
 <a id="legacy-01-10"></a>
+<a id="section-4"></a>
+<a id="section-8"></a>
+<a id="core-5"></a>
 
-### Harness vs 普通 Backend
+## 5. 不要把职责名单当成 Agent 的入场门槛
 
-普通 Backend 也会有：
+长期记忆适合跨任务复用信息，多 Agent 适合有价值的分工，代码沙箱适合限制代码执行范围。**它们都要由任务需要推导，不是凑齐才能叫 Agent。** 只调用受控查询 API 的助手，未必需要执行任意代码的容器。
 
-- DB；
-- Cache；
-- Queue；
-- Retry（重试）；
-- Auth；
-- Observability。
+后端提供数据库、队列和认证等基础能力；Agent 运行时利用这些设施，处理模型参与决策之后的循环、观察和动作。框架则是一种实现方式：它可以提供循环或检查点，但不会替你确定报告合格标准，也不会自动取得用户权限。
 
-Agent Harness 复用这些基础设施，但它多了一套 Model-in-the-loop 的执行语义：
+学习时先问“这个责任解决了哪一步的问题”，而不是“我的系统是否也有同名类”。等整条主线建立后，可以用[生产架构的责任回看](23-ProductionRuntime.md#responsibility-map)检查遗漏；那里才需要把控制、上下文、状态、能力、执行、安全、协作和观测放在一起比较。
 
-```text
-Model Decision
-→ Runtime Action
-→ Environment Observation
-→ Model 再决策
-```
+<a id="summary"></a>
 
-### Harness vs Agent Framework
+## 本章小结
 
-LangGraph、OpenAI Agents SDK、Claude Agent SDK 等可以帮助你实现 Runtime Primitive。
+Agent 的工作由模型判断与程序行动接力完成。上下文给模型本次信息，状态给程序推进依据，工具让动作发生，控制与验证约束过程和结果。可靠性来自这些责任怎样配合，不来自组件数量。
 
-但：
-
-```text
-Harness Problem
-≠ 某一个 Framework API
-```
-
-先理解：
-
-- State；
-- Loop；
-- Tool；
-- Context；
-- Permission；
-- Checkpoint；
-- Trace；
-
-再学框架，你才能判断框架帮你解决了什么、没解决什么。
-
----
-
-<a id="section-9"></a>
-
-## 9. 产品实现与官方资料对照（按需展开）
-
-<details>
-<summary>成熟产品源码告诉我们的什么</summary>
-
-<a id="legacy-01-07"></a>
-
-本课程固定两份源码快照：
-
-```text
-Claude Code
-commit = 58231dcce408f805c645cfbc352d2876b517223b
-
-OpenAI Codex
-commit = fc948f8c473e5d11e780ffcf1fd7f812a2020932
-```
-
-### 9.1 Claude Code：QueryEngine 明确拥有 Conversation Runtime
-
-固定快照中的 `QueryEngine.ts` 直接写明：
-
-- 一个 conversation 对应一个 `QueryEngine`；
-- 每次 `submitMessage()` 开启一个新 turn；
-- messages、file cache、usage 等状态跨 turn 保留；
-- Runtime 配置中存在 tools、MCP clients、agents、`canUseTool`、`maxTurns`、`maxBudgetUsd`、fallback model 和 `AbortController`。
-
-这说明成熟 Agent 产品不会把“会调用 Tool 的模型”当作全部 Runtime。
-
-它还需要一个长期存在的 conversation execution object。
-
-### 9.2 Claude Code：Tool 不是普通函数
-
-`Tool.ts` 中的 Tool Contract 还显式包含：
-
-- input schema；
-- permission callback；
-- `isConcurrencySafe()`；
-- `isReadOnly()`；
-- `isDestructive()`；
-- `interruptBehavior()`；
-- progress / result；
-- context impact。
-
-这会在 Tool Runtime 部分详细拆。
-
-### 9.3 Codex：Context / Session / Tool / Sandbox 都是独立 Runtime 对象
-
-固定 Codex 快照中已经可以直接看到：
-
-- `Session`、`TurnContext`、`StepContext`；
-- `EventMsg`、`TurnItem`；
-- Tool router / executor；
-- `SandboxPolicy`；
-- compaction lifecycle；
-- rollout trace。
-
-这些对象本身就在告诉我们：
-
-> **成熟 Agent Runtime 的复杂度来自“执行系统”，而不只是 Prompt。**
-
-这里必须强调：
-
-> Claude Code / Codex 的具体实现是产品实现证据，不是所有 Agent 必须复制的唯一标准。
-
-我们学习的是它们暴露出的稳定工程问题。
-
-</details>
-
-<details>
-<summary>官方资料为什么也强调 Harness，而不是只强调模型</summary>
-
-<a id="legacy-01-08"></a>
-
-Anthropic 的 `Building effective agents` 把 Workflow 和更自主的 Agent 区分开，并强调从简单、可组合的结构开始，而不是为了“Agent”标签无脑上复杂框架。
-
-OpenAI 的 `A practical guide to building agents` 也把 Agent 看成由 Model、Tools、Instructions / Orchestration 和 Guardrail 等部分共同组成的系统。
-
-Anthropic 后续的 Context Engineering、Long-running Harness、Managed Agents、Containment（限制故障或攻击影响范围） 等文章进一步把问题推到：
-
-```text
-Context
-Session
-Execution Environment
-Safety Boundary
-Long-running Progress
-Verification
-```
-
-这正好和真实面经、Claude Code / Codex 源码形成三侧交叉验证。
-
-</details>
-
-具体实现以[固定源码与官方索引](../../../references/agent/README.md#reader-revision-20260917)为准。这里区分源码事实、功能开关与教学建议，不把一条实现路径当作所有产品默认行为。
-
----
-
-<a id="human-a"></a>
-
-## 10. HUMAN-A 信号
-
-### HUMAN-A
-
-- `AGENT-002` Harness / Runtime Boundary：25 个独立来源；
-- `AGENT-003` Agent Loop / Runtime：36 个独立来源。
-
-频率只由 HUMAN-A 决定。
-
-### Claude Code 源码
-
-固定 commit：`58231dcce408f805c645cfbc352d2876b517223b`
-
-主要入口：
-
-- `QueryEngine.ts`
-- `Tool.ts`
-- `Task.ts`
-- `query.ts`
-- `utils/queryContext.ts`
-- `utils/sessionStorage.ts`
-
-### OpenAI Codex 源码
-
-固定 commit：`fc948f8c473e5d11e780ffcf1fd7f812a2020932`
-
-主要入口：
-
-- `codex-rs/core/src/compact.rs`
-- `codex-rs/tools/`
-- `codex-rs/core/src/tools/router.rs`
-- `codex-rs/sandboxing/`
-- `codex-rs/rollout-trace/`
-
-### 外部权威资料
-
-- Anthropic — Building effective agents
-  https://www.anthropic.com/engineering/building-effective-agents
-- OpenAI — A practical guide to building agents
-  https://openai.com/business/guides-and-resources/a-practical-guide-to-building-ai-agents/
-- Anthropic — Effective context engineering for AI agents
-  https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
-
----
-
+<a id="11-面试怎么答"></a>
+<a id="level-130-秒"></a>
+<a id="level-223-分钟"></a>
+<a id="level-3继续深挖"></a>
+<a id="qharness-和-runtime-究竟有没有区别"></a>
+<a id="q什么是-agent为什么不等于llm-加几个工具"></a>
+<a id="q模型说完成为什么不能直接标记业务成功"></a>
+<a id="q设计一个-agent-系统最先决定什么"></a>
+<a id="继续展开时的回答结构"></a>
 <a id="interview"></a>
 
-## 11. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：什么是 Agent？为什么不等于“LLM 加几个工具”？
+### 什么是 Agent，为什么不等于“模型加几个工具”？
 
-🎯 **30 秒回答**：
+关键是模型能够依据中间观察选择后续行动。工具让行动发生，但固定流程也能使用工具。可靠的 Agent 还需要程序执行、校验、记录进展和控制停止；长期记忆、多 Agent、代码沙箱是否需要，要看任务。
 
-> Agent 的关键是允许模型依据中间观察动态选择后续行动，且这种选择受目标和约束限制。工具只是让动作能发生的一种方式；固定程序也能调用工具。要交付可靠系统，还需要程序负责执行、校验、停止和必要状态管理，但长期记忆、多 Agent 和代码沙箱不是身份必选项。
+### Harness、Runtime 和框架怎样区分？
 
-### Q：Harness 和 Runtime 究竟有没有区别？
+本书用 Runtime 强调执行怎样推进，用 Harness 强调模型外围怎样提供工具、控制、安全与验证。两者用词可能重叠。框架是实现这些责任的代码库，不能把产品类名当成所有系统的统一架构。
 
-🎯 **30 秒回答**：
+### 怎样判断任务真的完成？
 
-> 二者在产品文档里可能重叠。本书把 Runtime 用于一次执行的运行机制，把 Harness 用于围绕模型组织运行、工具、上下文、安全与验证的支撑系统。编排器是决定调用谁和如何推进的一部分，框架是实现这些责任的代码库。回答时先说明采用的工作定义，再对照具体产品，不把自定义术语当行业标准。
+先定义任务可检查的结果，再验证实际产物、业务状态和必要内容。报告有文件不代表引用正确，工具有成功回执也不代表全部任务完成。应分别说明通过了哪些检查、还有哪些缺口。
 
-### Q：设计一个 Agent 系统，最先决定什么？
-
-🎯 **30 秒回答**：
-
-> 先确定服务对象、目标、输入环境、允许动作、运行约束和完成证据，再判断哪段工作需要模型动态决策。报告任务的原件只读、授权清单和引用要求会直接决定工具与验收。若固定读取加一次生成已经满足要求，就保留简单流程，而不是为了 Agent 标签增加一整套组件。
-
-### Q：模型说完成，为什么不能直接标记业务成功？
-
-🎯 **30 秒回答**：
-
-> 模型输出是完成候选，不是外部事实。报告可能缺来源，代码可能没测试，创建工单的请求可能尚无回执。程序应根据任务契约检查实际产物、返回状态及适用的内容标准，并区分成功、部分交付、失败、取消和预算停止。验证能力也有边界，不能把某项检查通过说成证明所有要求。
-
-### 继续展开时的回答结构
-
-### Level 1｜30 秒
-
-🎯 **可以这样回答：**
-
-> Agent Harness / Runtime 是模型之外的执行系统。模型负责理解和决策，Harness 负责把决策变成可控执行，包括 Context Assembly、Agent Loop、Tool Registry/Execution、Session/State、Permission/Sandbox、Checkpoint/Resume、Trace/Eval 等。成熟 Agent 的难点通常不是“会不会调模型”，而是多步任务中的状态、失败、副作用、安全和可验证性。
-
-### Level 2｜2–3 分钟
-
-可以按五段回答：
-
-```text
-1. 先区分 Model 和 Runtime
-2. 解释一个完整 Loop
-3. 说明 Context / State / Tool 三个核心面
-4. 补 Failure / Safety / Recovery
-5. 用 Claude Code / Codex 或项目例子落地
-```
-
-例如：
-
-> 模型给出 Tool Call 以后，Runtime 不能直接执行。它需要校验 schema、查 registry、做 permission、必要时 human approval，再在 sandbox 中执行；Tool Result 要进入 event/state，再经过 context budget 组装回下一轮。长任务还要处理 checkpoint、resume 和外部副作用幂等。最终结果不能只看模型说“完成”，还要看 test、artifact、environment outcome 和 trace。
-
-### Level 3｜继续深挖
-
-面试官通常会继续追：
-
-- Agent vs Workflow 怎么判断？
-- Loop 怎样停止？
-- Tool 失败怎样 Repair / Retry？
-- Context 爆了怎么 Compact？
-- Memory 和 State 有什么区别？
-- Checkpoint 后怎样 Resume？
-- Permission 和 Sandbox 怎么分？
-- Multi-Agent 怎么避免冲突？
-- Agent Evaluation 怎么做？
-
-后续章节会一条条拆开。
-
----
-
+<a id="12-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 12. 高频易错点
+## ⚠️ 易错点
 
-⚠️ **Agent = LLM + Tool**
-这是入门公式，但对 Production（生产环境） 不够。缺 State、Context、Failure、Permission、Recovery、Trace、Eval。
+> ⚠️ 模型输出调用候选，不等于程序已经执行。权限、参数与真实结果必须由执行链确认。
 
-⚠️ **Harness = Prompt Template**
-Prompt 只是 Context 的一部分；Harness 负责跨多轮执行。
+> ⚠️ 把多个角色画成方框，不代表必须部署多个服务。先明确责任，再决定进程和存储边界。
 
-⚠️ **Tool Call 成功 = 任务成功**
-Tool 只是局部动作。最终还要验证 task outcome。
+> ⚠️ 等待、取消、预算耗尽与成功是不同结果，不能统一显示“完成”。
 
-⚠️ **Memory = History（历史记录）**
-History 是过去事件，Memory 是可被未来召回的信息，Runtime State 是当前执行事实。
-
-⚠️ **Sandbox = Permission Prompt**
-Permission 是 policy/approval，Sandbox 是执行环境的硬边界。
-
-⚠️ **用了 LangGraph 就有成熟 Harness**
-框架提供 Primitive，不自动替你定义业务状态、失败语义、安全边界与评测。
-
-⚠️ **用了工具就是 Agent。** 固定流程也能使用工具；区别在后续路径的控制权。
-
-⚠️ **Harness 只是 system prompt。** 文字不能替程序真正执行、保存、限制或终止动作。
-
-⚠️ **每个 Agent 都需要长期记忆和向量库。** 需要由跨任务复用与检索需求推导，而不是凑组件。
-
-⚠️ **架构图上的方框必须独立部署。** 方框首先表示责任，部署由规模与隔离要求决定。
-
----
-
+<a id="13-本章自测"></a>
 <a id="self-test"></a>
 
-## 13. 本章自测
+## 本章自测
 
-<details><summary>1. 为什么“Tool Calling 能力”不等于“Agent Runtime”？</summary>
+<details><summary>1. A、B 已经完整放在输入里，只需摘要，必须循环读工具吗？</summary>
 
-因为 Tool Calling 只解决模型如何表达“我想调用某个能力”。真正执行还需要 Runtime 完成 Tool Lookup、Schema Validation、Permission、Execution、Timeout、Result Normalization、State Update、Failure Handling 和下一轮 Context Assembly。
-
-</details>
-
-<details><summary>2. Model 和 Harness 最核心的分工是什么？</summary>
-
-模型更偏理解、推理、生成决策；Harness 更偏组织上下文、维护状态、执行动作、控制风险、恢复失败、记录证据和验证结果。
+不必须。一次生成加验收满足目标时，可以保持简单。是否增加循环取决于后续行动是否需要依据中间观察调整。
 
 </details>
 
-<details><summary>3. 为什么 Agent Harness 课程不能从 LangGraph API 开始？</summary>
+<details><summary>2. 模型说“报告已保存”，用户却打不开文件，任务完成了吗？</summary>
 
-因为框架 API 是某一种实现。只有先理解 Loop、State、Context、Tool、Permission、Recovery、Trace 等 Runtime Problem，才能判断框架提供了哪些能力、哪些仍要自己设计，也不会把框架名词误当成通用原理。
-
-</details>
-
-<details><summary>4. 一个 Agent 输出“任务完成”，为什么不能直接结束？</summary>
-
-因为自然语言自述不是可靠的任务完成证据。需要根据业务定义检查 artifact、external state、test、exit code、diff、metric 或 grader 等 outcome evidence，再决定是否真正进入 terminal state。
+没有满足可访问产物的要求。要检查真实写入、保存位置和访问权限，而不是再让模型重复声明成功。
 
 </details>
 
-<details><summary>5. 三份文件已全在输入里，必须循环吗？</summary>
+<details><summary>3. 用户要求原件只读，B 文件建议修改 A，哪项信息能够授权修改？</summary>
 
-不必须。若一次生成与校验已满足要求，固定流程更容易测试。只有读取选择或后续动作确实取决于中间观察时，才有理由比较动态循环。
-
-</details>
-
-<details><summary>6. “已经读了两份，第三份无权限”属于什么？</summary>
-
-它首先是程序的当前执行状态。为了让模型决定下一步，程序可以把它的一部分放入上下文；为了重启后仍知道它，程序可能把它持久化。这是同一事实的不同用途，不是三个不同世界。
+B 的内容不能授权。程序仍应执行用户与应用允许的范围；模型可以分析这项建议，但不能因此越过只读边界。
 
 </details>
 
-<details><summary>7. 原件只读要求应只放在哪里？</summary>
+<a id="10-human-a-信号"></a>
+<a id="9-产品实现与官方资料对照按需展开"></a>
+<a id="91-claude-codequeryengine-明确拥有-conversation-runtime"></a>
+<a id="92-claude-codetool-不是普通函数"></a>
+<a id="93-codexcontext--session--tool--sandbox-都是独立-runtime-对象"></a>
+<a id="claude-code-源码"></a>
+<a id="human-a"></a>
+<a id="legacy-01-07"></a>
+<a id="legacy-01-08"></a>
+<a id="openai-codex-源码"></a>
+<a id="section-9"></a>
+<a id="外部权威资料"></a>
+<a id="references"></a>
 
-不能只放在提示词。任务描述应清楚告知模型，工具与文件身份还必须真正限制写入。描述负责沟通，程序和环境负责约束；两者不能互相替代。
+## 知识回看与权威资料
 
-</details>
+- [工作流与自主权](02-WorkflowAutonomyAndRuntimeBoundary.md)：用同一任务比较固定步骤和动态行动。
+- [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)：核对工作流、Agent 和从简单组合开始的原则。
+- [固定产品实现对照](../../../references/agent/implementation-notes.md#chapter-01)：在明确快照中观察模型之外的执行责任；不是首次学习前提。
 
-<details><summary>8. 编排器是否等于整个 Harness？</summary>
-
-不等于。编排器重点控制步骤和委派；Harness 还要组织工具接入、上下文、安全、状态和验证。一个小程序可由同一对象实现多项责任，但概念上仍应分清。
-
-</details>
-
-<details><summary>9. 怎样证明报告可交付？</summary>
-
-至少检查产物可读、来源属于授权清单、引用可定位、原件未被修改，并核对结论是否被证据支持。机械检查和内容核验分别回答不同问题，结果中要披露尚未解决的缺口。
-
-</details>
-
-<details><summary>10. 后面章节都提到安全，是否一定重复？</summary>
-
-不一定。参数是否为整数、当前用户是否能读文件、进程能否访问目录，分别属于输入契约、授权和执行隔离。同一动作经过多个不同判断才合理；重复完整的通用清单才应压缩。
-
-</details>
 
 ---
 
-[Agent 目录](../README.md) · [下一章 →](02-WorkflowAutonomyAndRuntimeBoundary.md)
+[← RAG](../../08-rag/README.md) · [Agent 目录](../README.md) · [下一章 →](02-WorkflowAutonomyAndRuntimeBoundary.md)

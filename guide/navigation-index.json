@@ -985,122 +985,122 @@
         {
           "path": "curriculum/09-agent/docs/01-AgentSystemAndResponsibilities.md",
           "title": "01. Agent 系统的全貌：模型之外，谁把任务做完",
-          "sha256": "8bda8d29726bf5daac1d2ae356db7eb162ca0d4e58cb5162aacdc229eb296bc8"
+          "sha256": "fc9819f36313b01587828326b1f00ad89ea35f140e1e17700a42237f3f0e4067"
         },
         {
           "path": "curriculum/09-agent/docs/02-WorkflowAutonomyAndRuntimeBoundary.md",
-          "title": "02. Workflow、Agent 与自主权：执行角色的边界",
-          "sha256": "73852a206f8226ca18d30711bdaf1ce7049c84cc26f4745dd5037e20ec70a57e"
+          "title": "02. Workflow 与 Agent：哪些决定交给模型",
+          "sha256": "818eef772464421be6e5dc4cf0227f0cd6e22b1993a1795930146f38ffc109d2"
         },
         {
           "path": "curriculum/09-agent/docs/03-AgentLoopAndExecutionScopes.md",
-          "title": "03. Agent Loop：Session、Run、Turn、Step 与执行事件",
-          "sha256": "98d8b6063720b192f49d1143a7d196ce4abad7e67b8151bb59a2aeae9737f22d"
+          "title": "03. Agent Loop：观察怎样改变下一步",
+          "sha256": "a5d2ccbaecb5bdd89a30c03d45d9111c400d393092d517f6eb3b6eb63f548613"
         },
         {
           "path": "curriculum/09-agent/docs/04-ToolContractAndValidation.md",
-          "title": "04. Tool Contract：工具说明、参数与语义校验",
-          "sha256": "c4005b9c4664871ef16bfc8339e43f4dc45cde67f38ebb6762ec875fe9237022"
+          "title": "04. 工具契约：模型提出什么，程序检查什么",
+          "sha256": "e66bc12c4fa3d2794d50a164e04c4a2c997cc32dec2c6d1e9fe7191bf272117a"
         },
         {
           "path": "curriculum/09-agent/docs/05-ToolRegistrationAndDiscovery.md",
-          "title": "05. Tool Registry：工具注册、模型可见说明与按需发现",
-          "sha256": "4fa10952d2f3d5e1b05b4569bc1ced3d9d5657c015dd16b74c56be49f33331a8"
+          "title": "05. 工具注册与发现：程序有的，不一定都给模型看",
+          "sha256": "3e1c5a797be99b35e675228cabc5af6ea193f90982835b65c8a3c2dfa159392c"
         },
         {
           "path": "curriculum/09-agent/docs/06-ToolExecutionAndFailure.md",
-          "title": "06. Tool Execution：结果回填、错误分类与有限恢复",
-          "sha256": "a125548809c5a43a82f81de8cae25cc15ffd28c9bef90528425bf683da4af747"
+          "title": "06. 工具结果与失败：谁来修，怎样继续",
+          "sha256": "c0c383252e57b2818936cd925f8387051b90dac01149ff9a9908d9ce913a87c9"
         },
         {
           "path": "curriculum/09-agent/docs/07-ToolConcurrencyAndCancellation.md",
-          "title": "07. Tool Control：副作用、并发、取消与进度",
-          "sha256": "770b159af826cb73983a819e0f9695d0f9260344ad519a34c3f23e7fafaf9206"
+          "title": "07. 工具并发与取消：快一点，不等于可以乱序",
+          "sha256": "98b0f83eb347fd8796fc6ec335d47f66be281da0278829667998c93c6194832b"
         },
         {
           "path": "curriculum/09-agent/docs/08-PlanningGoalAndControl.md",
-          "title": "08. Planning / ReAct：计划、目标、停止与预算",
-          "sha256": "f15f695f1ffeab9e9ea17984a1b6143ec87e798fa200e692587fe406f0b6a71d"
+          "title": "08. 计划与停止：让每一步朝目标推进",
+          "sha256": "1cd46a5725553024216e425819ceab78d3b4d1eb325823d7dc4e93eb2d4dece0"
         },
         {
           "path": "curriculum/09-agent/docs/09-ContextAssemblyAndCache.md",
-          "title": "09. Context Assembly：上下文编排、缓存与结果外部化",
-          "sha256": "2f0b4be5643b0f7d226f3a9a119f28aa9a8322294c7979c938744c703fa8ed1b"
+          "title": "09. 上下文编排：模型这一刻到底收到什么",
+          "sha256": "f80c1417267a3fbae970b2cfb717cc3104389e88f1fbe0b0cf37e30e9027716a"
         },
         {
           "path": "curriculum/09-agent/docs/10-CompactionAndContinuation.md",
-          "title": "10. Context Compaction：压缩、替代历史与继续执行",
-          "sha256": "691864b32ad0e1e046d343b8393ff1f0916f416d7d838fcc97c9e8c57f9641a9"
+          "title": "10. 上下文压缩：缩短输入以后，怎样继续做对",
+          "sha256": "93d8bf00c39a8d5cac7c1d0e94eb0e438f13c45c1f29ac716d8725e88f414185"
         },
         {
           "path": "curriculum/09-agent/docs/11-MemoryLifecycle.md",
-          "title": "11. Memory：提取、召回、更新、纠错与遗忘",
-          "sha256": "6ea9d653d5d55816461ae0e43ac43cd15a1a3a4cdfb838e81c1bff1f7b4329aa"
+          "title": "11. 记忆：把有用经验带到以后，也能纠错和忘记",
+          "sha256": "cef8072e8e0c673d33646ed31358d5eba61112bd0fef128a1d4923609b03c3bf"
         },
         {
           "path": "curriculum/09-agent/docs/12-StateHistoryAndPersistence.md",
-          "title": "12. State / Persistence：程序怎样记住当前工作",
-          "sha256": "25deb11316bb60a9cfa61dc165c8aa6a836ee243e4c3858ef3cb3e18e46fc7eb"
+          "title": "12. 状态与持久化：程序怎样知道工作做到哪里",
+          "sha256": "3a00303b0068d16c02551cd50ed93e6685346e9b52f2abc96a937c9aad8352c2"
         },
         {
           "path": "curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md",
-          "title": "13. Checkpoint / Resume：检查点、恢复、分叉与重放",
-          "sha256": "008e0097c14e63e2c0ed52de4db867cad3b1f4bf71fba002a828297767161122"
+          "title": "13. 检查点与恢复：保存之后、崩溃之前发生了什么",
+          "sha256": "85ee91621b7fddde5d0b72049d62fd08d831591a590959299f4a9cdf7158b6c6"
         },
         {
           "path": "curriculum/09-agent/docs/14-PermissionApprovalAndSandbox.md",
-          "title": "14. Permission / Approval / Sandbox：政策、批准与隔离",
-          "sha256": "2e9efd4b0e8190bcbf397a2a9fec8e80318712d319263bb32dbcf699119bb080"
+          "title": "14. 权限、批准与沙箱：一次动作要过几道不同的门",
+          "sha256": "6f7caee705446b603529bcca5f53dd77f2a170590f8bcdc50f8e91c7ef10b481"
         },
         {
           "path": "curriculum/09-agent/docs/15-InjectionAndContainment.md",
-          "title": "15. Guardrails：提示注入、秘密保护与风险控制",
-          "sha256": "3b75333cea3fa376839025e7daad961f7d5173618bc38f23fa559e6fe1755aac"
+          "title": "15. 提示注入与信息保护：资料为什么不能变成命令",
+          "sha256": "42bab9df9ba71db5d1163b73e3f093820ff8f76d82123d35ad0fec3b5de8557e"
         },
         {
           "path": "curriculum/09-agent/docs/16-MCPArchitectureAndLifecycle.md",
           "title": "16. MCP：从 Host / Client / Server 到完整协议往返",
-          "sha256": "4fd1b159f6449e88f3314a654b16ac3fb932ce8132ab83926e1fdb9fe66cfea6"
+          "sha256": "a0236a6229b148a9537ca213f7621998fed65fcc3ab1e584fdcc076c9d96e77a"
         },
         {
           "path": "curriculum/09-agent/docs/17-SkillsHooksAndExtensions.md",
-          "title": "17. Skills / Hooks / Plugins：能力扩展与生命周期",
-          "sha256": "7b678c026ec6a03c47446627ed4459fac954f24713c64c14d49051421a8e6fb7"
+          "title": "17. Skills、Hooks 与 Plugins：知识怎样加载，规则怎样触发",
+          "sha256": "ad6294923e78c29b9c24a3c1588ed6110eea27c54e8ccfef05111ebf5fd12f44"
         },
         {
           "path": "curriculum/09-agent/docs/18-RoutingAndProviderResilience.md",
-          "title": "18. Routing：意图、模型适配与供应商容错",
-          "sha256": "cd3fad9de1e28809090a630556cd24b902c4b389ca5cdc5ebb2364076ca13d68"
+          "title": "18. 路由与模型适配：换一条路径，不能丢掉任务保证",
+          "sha256": "2ff349680676926031af1bec0338a73d1ab92b4c97734829dd8cb95ac99fba16"
         },
         {
           "path": "curriculum/09-agent/docs/19-MultiAgentAndA2A.md",
-          "title": "19. Multi-Agent / A2A：内部协作与跨系统任务",
-          "sha256": "52ee7cd5dd2f5df428cec27ea42f5acdaf74d832048870a91cb56f8ea5da325b"
+          "title": "19. 多 Agent 协作：交出去的是任务，不是全部控制权",
+          "sha256": "eedae12110aa0fd39af69789ebd64a8cceb6e7f370ab28ec69a53cd8c0ef342f"
         },
         {
           "path": "curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md",
-          "title": "20. Trace / Replay：记录必要证据，定位具体问题",
-          "sha256": "18e96134c4ced134c0e82449f88c3dae92165abed898f16cbed05dd700d6054c"
+          "title": "20. 执行追踪：先定位卡在哪，再取需要的证据",
+          "sha256": "72a21a847f40f808ef4b3c7b29364b485eb5955e5589b65dbb8314907e00fd60"
         },
         {
           "path": "curriculum/09-agent/docs/21-EvaluationBenchmarkAndImprovement.md",
-          "title": "21. Agent Evaluation、Benchmark 与 Data Flywheel",
-          "sha256": "cd892f1471e75af34ab799a941293f3c0722873632a3f0b62d9bc00e81c12839"
+          "title": "21. Agent 评测：怎样证明修改真的更好",
+          "sha256": "b5e375783dcca08809126461ad53eff49b48eeea92d42f0ab7aed11f5a81fc41"
         },
         {
           "path": "curriculum/09-agent/docs/22-CodingAgentDelivery.md",
-          "title": "22. Coding Agent：Repo Understanding → Patch → Test → Verify",
-          "sha256": "f7ad58f3da9753952581bb75a235c76b26d7c69e0e3fa808cb19d71f4fa65676"
+          "title": "22. Coding Agent：从理解仓库到交付可验证修改",
+          "sha256": "300c4cf61dbc1abc2542c211b36fcc95f289aecb70cf87bdc66636b9eb68f32e"
         },
         {
           "path": "curriculum/09-agent/docs/23-ProductionRuntime.md",
-          "title": "23. Production Agent：从单进程到可运营执行系统",
-          "sha256": "1f6f628ad4450afa67b84835f346d62b625cf549255a1f5cd07045622c14f126"
+          "title": "23. 生产运行：从任务承诺推导部署，而不是先画微服务",
+          "sha256": "bf02d1b026490982b5fea92b1e9eed14484b34765f67561bf0e06cdaa005c4d9"
         },
         {
           "path": "curriculum/09-agent/docs/24-FrameworkSelection.md",
-          "title": "24. Framework Mapping：按核心语义比较框架与自研",
-          "sha256": "07487ec5d62124922fdc636dbc461ce586430b8cef58071588b2e8704544e37b"
+          "title": "24. 框架选型：先问要保证什么，再看谁能实现",
+          "sha256": "0474cc6ec7a989b4e6c0eead435b541fe9927a2240f68f70b76d611fadc15f2e"
         }
       ],
       "support": [

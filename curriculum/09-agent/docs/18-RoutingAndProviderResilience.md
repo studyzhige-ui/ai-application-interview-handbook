@@ -1,704 +1,222 @@
-# 18. Routing：意图、模型适配与供应商容错
-
-Agent Runtime（运行时执行系统） 往往不是：
-
-```text
-所有请求
-→ 同一个模型
-→ 同一个 Tool Set
-```
-
-而是需要决定：
-
-```text
-这是哪类任务？
-需要哪种能力？
-应该用哪个模型 / Provider？
-失败后能不能换模型？
-Tool Protocol 不一样怎么办？
-```
-
-这一章把 Intent Routing、Model Routing、Provider（模型服务方） Adapter 和 Resilience 放在一起，是因为它们共同决定：
-
-> **一次 Agent Run 选择哪条执行路径，并在模型/Provider 失败时怎样保持语义一致。**
+# 18. 路由与模型适配：换一条路径，不能丢掉任务保证
 
 [← 上一章](17-SkillsHooksAndExtensions.md) · [Agent 目录](../README.md) · [下一章 →](19-MultiAgentAndA2A.md)
 
----
+主模型暂时不可用，备用模型更便宜，但只能返回文本，不支持当前工具调用。只替换模型名字，报告任务就能继续吗？
 
-<a id="section-1"></a>
+路由不仅决定把请求交给谁，还要检查对方能否保留当前任务的输入、动作和结果语义。
 
-## 1. Routing 至少有三层
-
+<a id="1-routing-至少有三层"></a>
+<a id="2-intent-recognition-可以有多种实现"></a>
+<a id="agent-自主-tool-selection"></a>
+<a id="capability-routing"></a>
+<a id="intent-routing"></a>
 <a id="legacy-17-01"></a>
-
-路由就是决定交给谁，但这个谁可能是业务流程、工具或模型服务。三个候选集合、错误后果和验证方式不同，先区分对象，再选规则、分类器或模型。
-
-### Intent Routing
-
-```text
-用户想做什么？
-```
-
-例如：
-
-```text
-Q&A
-code edit
-search
-billing
-support escalation
-```
-
-### Capability Routing
-
-```text
-这个任务需要哪些 Tool / Skill / Agent？
-```
-
-### Model / Provider Routing
-
-```text
-哪种模型足够完成任务？
-```
-
-可能考虑：
-
-```text
-quality
-latency
-cost
-context length
-tool support
-multimodal
-region/compliance
-```
-
-三者不要混成一个 `router_llm()`。
-
----
-
-<a id="section-2"></a>
-
-## 2. Intent Recognition 可以有多种实现
-
 <a id="legacy-17-02"></a>
+<a id="llm-router"></a>
+<a id="model--provider-routing"></a>
+<a id="rule"></a>
+<a id="section-1"></a>
+<a id="section-2"></a>
+<a id="small-classifier"></a>
+<a id="core-1"></a>
 
-HUMAN-A `AGENT-045` 直接比较：
+## 1. 先分清正在选择什么
 
-```text
-Rule
-Small Model
-LLM Classification
-Tool-schema autonomous selection
-```
+| 路由对象 | 要决定的问题 | 例子 |
+|---|---|---|
+| 意图或业务流程 | 用户需要哪类工作 | 普通问答、报告调查、人工处理 |
+| 能力 | 当前任务允许使用什么工具或技能 | 资料读取、引用核查 |
+| 模型与供应商 | 哪个服务能完成这一步 | 文本分类、带工具的调查、图片理解 |
 
-没有一种方案永远最好。
+三者可以组合，但错误后果不同。问答误分到报告流程可能浪费资源；误分到能够删除数据的路径则涉及权限。路由结果不能独自授予用户没有的能力。
 
-### Rule
+意图规则稳定时，可使用明确命令或规则；标签稳定且有数据时，可比较小分类器；开放表达可以使用模型。工具说明已经足以让模型选动作时，也不一定另设意图分类服务。
 
-优点：
-
-```text
-快
-可解释
-稳定
-```
-
-适合明确协议：
-
-```text
-/command
-固定 route
-明显 keyword / tenant policy
-```
-
-### Small Classifier
-
-适合：
-
-```text
-标签稳定
-数据充足
-需要低延迟
-```
-
-### LLM Router
-
-适合：
-
-```text
-意图开放
-语言复杂
-需要语义理解
-```
-
-但成本和不确定性更高。
-
-### Agent 自主 Tool Selection
-
-当 Tool Schema 已经足够表达能力时，模型可以直接选择 Tool，不一定需要独立 intent classifier。
-
----
-
-<a id="section-3"></a>
-
-## 3. Router 也需要 Evaluation
-
-<a id="legacy-17-03"></a>
-
-不要只说：
-
-> “我们用 LLM 做 Intent，效果不错。”
-
-至少建立：
-
-```text
-labeled routing dataset
-confusion matrix
-per-intent precision / recall
-fallback rate
-unknown rate
-latency
-cost
-```
-
-更重要的是：
-
-```text
-routing error 的 downstream impact
-```
-
-例如：
-
-```text
-普通问答错路由到 destructive agent
-```
-
-比：
-
-```text
-FAQ 被路由到 generic chat
-```
-
-风险高得多。
-
-因此不同 intent 可以有不同 error cost。
-
----
-
-<a id="section-4"></a>
-
-## 4. Model Routing 的目标是什么
-
+<a id="4-model-routing-的目标是什么"></a>
 <a id="legacy-17-04"></a>
+<a id="section-4"></a>
+<a id="core-2"></a>
 
-不是单纯：
+## 2. 模型选择先过硬条件，再比较质量和成本
 
-```text
-便宜任务用小模型
-难任务用大模型
-```
+先检查模型是否支持当前必须的能力：工具调用、输入模态、结构化结果、上下文限制，以及部署区域等约束。硬条件不满足，就不能因为价格低而选它。
 
-更完整的决策函数：
-
-```text
-Task Complexity
-+ Required Capability
-+ Risk
-+ Context Length
-+ Tool Compatibility
-+ Latency SLO
-+ Cost Budget
-→ Model Route
-```
-
-例如：
+再用代表任务比较结果质量、时延、每个合格任务的总成本。小模型单次便宜，却需要更多重试和人工返工，未必整体更省。
 
 ```text
-classification
-→ small model
-
-complex code refactor
-→ stronger model
-
-image understanding
-→ multimodal model
+当前任务要求：带工具调查 + 保留引用 + 输入可容纳
+         ↓
+先过滤不兼容候选
+         ↓
+在剩余模型中比较质量、延迟与成本
+         ↓
+记录实际选择及必要降级信息
 ```
 
-Capability compatibility（能力兼容）包括工具调用格式、结构化输出、图片/文件、上下文限制和所需推理能力。先剔除不满足硬约束的候选，再比较任务质量、时延和费用。Provider adapter（供应商适配器）统一请求/响应边界，但不能假装所有差异都不存在。
+模型 A 支持工具，模型 B 只输出文本。B 不能直接接管尚需工具的循环；只有存在经过验证的等价流程，或明确改成部分交付，才可以作为后备。不能丢掉关键能力仍显示成功。
 
-例如模型A返回一组工具调用，模型B只支持文本。把同一消息原样发B不叫可靠降级，应转换到经过验证的可用流程或显式失败；不能静默把关键功能丢掉后仍宣称任务成功。模型版本变更需要代表任务回归，但不必把全部Schema每条日志复制一次，可记录所用配置引用。
-
----
-
-<a id="section-5"></a>
-
-## 5. Provider Adapter 为什么是 Runtime 能力
-
+<a id="5-provider-adapter-为什么是-runtime-能力"></a>
+<a id="6-provider-adapter-应统一什么不统一什么"></a>
+<a id="7-claude-code-的实现信号"></a>
 <a id="legacy-17-05"></a>
-
-不同 Provider 可能在：
-
-```text
-message format
-tool call shape
-structured output
-stream event
-usage field
-finish reason
-error code
-context limit
-```
-
-上不同。
-
-如果业务代码到处直接写 Provider-specific 逻辑：
-
-```text
-Agent Loop 会被污染
-```
-
-更稳：
-
-```text
-Normalized Runtime Request
-        ↓
-Provider Adapter
-        ↓
-Provider API
-        ↓
-Normalized Runtime Event
-```
-
----
-
-<a id="section-6"></a>
-
-## 6. Provider Adapter 应统一什么，不统一什么
-
 <a id="legacy-17-06"></a>
-
-应该统一：
-
-```text
-message / tool call semantic
-usage
-stream events
-error category
-cancellation
-```
-
-不应该强行抹平：
-
-```text
-某 Provider 独有 capability
-不同上下文限制
-不同 Tool 约束
-不同 reasoning / caching feature
-```
-
-正确做法：
-
-```text
-Common Interface
-+ Capability Metadata
-```
-
-而不是最低公分母 API。
-
----
-
-<a id="section-7"></a>
-
-## 7. Claude Code 的实现信号
-
 <a id="legacy-17-07"></a>
+<a id="section-5"></a>
+<a id="section-6"></a>
+<a id="section-7"></a>
+<a id="core-3"></a>
 
-固定 Source Index 确认 `QueryEngine` 配置存在：
+## 3. 适配器统一含义，不假装接口完全相同
 
-```text
-fallbackModel
-```
+**Provider adapter（供应商适配器）** 把内部请求转为供应商格式，再把响应转回运行时能够处理的事件和结果。
 
-这支持一个实现事实：
+应明确处理消息、工具调用、调用关联、流式片段、终止原因、错误类别和使用量。模型特有能力则保留能力说明，不把所有接口强压成只能收发字符串。
 
-> 成熟 Runtime 会把 Model / Provider Failure 后的 fallback 纳入 Harness 控制面。
+| 差异 | 适配要处理什么 | 不应怎么做 |
+|---|---|---|
+| 工具参数与结果格式不同 | 转换并维持关联 | 原样拼接孤立工具结果 |
+| 流式响应中断 | 区分部分输出与完整调用 | 把半截参数直接执行 |
+| 上下文窗口不同 | 重新计量和选择输入 | 只换模型名然后反复重试超长请求 |
+| 供应商特有状态或缓存标识 | 按实际接口解释与转换 | 假设另一家一定认识这些对象 |
 
-但具体 fallback 条件不能仅凭这一字段推断，本章只使用这个已核验边界。
+适配器存在，不代表所有能力能够互换。需要保留无法转换的明确失败路径。
 
----
-
-<a id="section-8"></a>
-
-## 8. Runtime Resilience 先做 Error Classification
-
+<a id="11-circuit-breaker-在-agent-runtime-中怎么用"></a>
+<a id="8-runtime-resilience-先做-error-classification"></a>
+<a id="9-retry-eligibility-为什么比-retry-count-更重要"></a>
 <a id="legacy-17-08"></a>
-
-Provider / Tool 失败不能全部：
-
-```text
-retry 3 times
-```
-
-至少区分：
-
-```text
-Transient
-Rate Limited
-Timeout
-Context Too Large
-Invalid Request
-Auth / Permission
-Provider Outage
-Model Unsupported Capability
-Content / Policy Rejection
-```
-
-然后定义：
-
-```text
-retryable?
-backoff?
-fallback?
-rebuild context?
-ask user?
-fail run?
-```
-
-这对应 HUMAN-A `AGENT-038` Runtime Resilience Policy。
-
-此处处理依赖故障和供应商差异；第06章已处理单次工具错误。不能因为模型服务失败，就从头重跑已经产生外部动作的整个任务。
-
----
-
-<a id="section-9"></a>
-
-## 9. Retry Eligibility 为什么比 Retry Count 更重要
-
 <a id="legacy-17-09"></a>
-
-例如：
-
-```text
-429 Rate Limit
-→ retry with backoff / alternate provider
-```
-
-而：
-
-```text
-400 invalid tool schema
-→ retry 原请求没有意义
-```
-
-又例如：
-
-```text
-context_length_exceeded
-→ 应 compact / trim / offload
-```
-
-不是：
-
-```text
-sleep 1s 再发一次
-```
-
----
-
-<a id="section-10"></a>
-
-## 10. Model Failover 会不会改变结果语义
-
-<a id="legacy-17-10"></a>
-
-如果：
-
-```text
-Model A 支持 Tool X
-Model B 不支持
-```
-
-简单 Failover 会破坏 Run。
-
-所以 Route / Failover 前要检查：
-
-```text
-capability compatibility
-context limit
-structured output support
-tool protocol
-policy
-```
-
-可以维护：
-
-```python
-# 能力声明示意：路由先检查实际支持范围，不能只替换模型名。
-ModelCapability(
-    tool_calling=True,
-    vision=False,
-    max_context=128000,
-    structured_output=True,
-)
-```
-
-Retry（重试）针对有资格重试的短暂错误；Circuit breaker（熔断）在持续失败时暂时减少对故障依赖的调用；Fallback（后备方案）换一个可接受的路径。这些通用算法归AI Backend，本章关心它们对Agent语义的影响。
-
-```text
-一次模型请求失败
-→ 判断是限流/临时网络还是参数/能力错误
-→ 在总Deadline内有限重试，避免多层放大
-→ 可用后备模型须满足当前能力与输入限制
-→ 保留已经发生的工具动作，不从任务起点重跑
-→ 记录降级及质量影响，无法满足要求则明确停止
-```
-
-熔断不是遇到一次失败就永久禁用，后备也不是无限嵌套供应商。重试预算、健康恢复探测和降级质量都应可观察，但执行过的写操作必须回到第13章核对。
-
-<details>
-<summary>实际产品中的选项与边界</summary>
-
-Claude Code用户快照QueryEngine配置包含fallbackModel，`query.ts`在流式fallback时处理旧尝试留下的助手项与工具结果，避免把孤立结果混进新尝试。这个实现提醒我们：模型切换不仅改名字，还涉及历史关联与已经执行的工作；不能从配置字段推断所有业务动作都能安全重跑。
-
-Codex固定`build_prompt`取当前模型/步骤设置与工具Router（路由器），`context_window.rs`按模型预算判断，模型变化时上下文处理可能不同。App Server与模型提供者适配层具有各自接口，不是“所有模型返回文本就能直接互换”。具体默认路由规则以产品配置和源码分支为准。
-
-</details>
-
----
-
-<a id="section-11"></a>
-
-## 11. Circuit Breaker 在 Agent Runtime 中怎么用
-
 <a id="legacy-17-11"></a>
+<a id="section-11"></a>
+<a id="section-8"></a>
+<a id="section-9"></a>
+<a id="core-4"></a>
 
-如果某 Provider 持续：
+## 4. 重试、熔断与后备分别改变什么
 
-```text
-timeout
-5xx
-```
+一次短暂限流可以按总截止时间有限退避；无效 Schema 原样重试不会变对；上下文过长应处理输入；权限或策略拒绝不能通过换供应商绕过。
 
-继续每个 Run 都试一次：
+**Circuit breaker（熔断）** 在依赖持续失败时暂时减少请求，并按规则探测恢复；它不是永久禁用。**Fallback（后备）** 换到仍满足要求的路径；它与重试同一请求不同。
 
-```text
-延迟累积
-成本增加
-线程/连接堆积
-```
+通用退避、熔断算法归后端课程。本章额外检查的是：换模型后当前输入还能否解释，工具是否兼容，以及已经执行的动作是否会被重新触发。
 
-可以：
+> ⚠️ 模型请求失败，不意味着之前的工具动作全部失败。不能从任务起点重跑已经上传、发送或扣款的工作。
 
-```text
-Closed
-→ failures threshold
-→ Open
-→ skip provider
-→ Cooldown
-→ Half-open probe
-```
-
-通用 Circuit Breaker 机制 Primary 在 AI Backend Engineering；这里关注它如何影响 Agent Routing / Run semantics。
-
----
-
-<a id="section-12"></a>
-
-## 12. Fallback 不应该静默
-
+<a id="10-model-failover-会不会改变结果语义"></a>
+<a id="12-fallback-不应该静默"></a>
+<a id="legacy-17-10"></a>
 <a id="legacy-17-12"></a>
+<a id="section-10"></a>
+<a id="section-12"></a>
+<a id="core-5"></a>
 
-假设：
+## 5. 切换模型时，保住已经发生的事实
 
-```text
-强模型失败
-→ 自动切弱模型
-```
-
-如果任务是：
+假设模型 A 已经请求上传，上传成功后下一次模型请求超时。后备 B 应收到“上传已确认、产物 report42、还需检查引用”的有效状态，不应被重新给一个空任务要求从头完成。
 
 ```text
-修改生产权限配置
+请求失败 → 判断错误类别
+→ 检查剩余总预算
+→ 选择兼容后备或明确停止
+→ 保留已发生工具动作和有效消息关联
+→ 重建可被新模型理解的输入
+→ 继续并记录实际模型、原因与结果影响
 ```
 
-风险可能不可接受。
+同一请求在适配器、SDK、网关各重试三次，会放大总调用数。应明确重试责任和总预算，避免多个层次互相不知道对方已经重试。
 
-因此 Route Policy 可以是：
+降级不应在诊断中不可见。低风险任务是否需要逐次通知用户可由产品决定；质量、权限或交付能力发生实质变化时，应说明变化，不能默默降低要求。
 
-```text
-low-risk task → silent fallback allowed
-high-risk task → require user / operator confirmation
-```
-
-同时 Trace（执行追踪） 必须记录：
-
-```text
-requested model
-actual model
-fallback reason
-```
-
----
-
-<a id="section-13"></a>
-
-## 13. Routing Failure Timeline
-
-<a id="legacy-17-13"></a>
-
-```text
-T0 Intent Router 把“删除账号”识别成“查询账号”
-T1 Runtime 加载 read-only tool set
-T2 Agent 无法完成
-T3 自动 fallback 到 generic agent
-T4 generic agent 获得更宽 Tool Set
-T5 高风险动作绕过原 route policy
-```
-
-说明：
-
-> Routing 不只是 UX 分类，还会影响 Capability / Permission（权限） Boundary。
-
----
-
+<a id="13-routing-failure-timeline"></a>
+<a id="3-router-也需要-evaluation"></a>
 <a id="human-a"></a>
+<a id="legacy-17-03"></a>
+<a id="legacy-17-13"></a>
+<a id="section-13"></a>
+<a id="section-3"></a>
+<a id="core-6"></a>
 
-## 14. HUMAN-A 信号
+## 6. 分别评估路由与最终任务
 
-本章主要承接：
+用带标签的代表请求检查各意图的准确率、漏分和未知输入；用混淆矩阵观察错误去向。还要按错误后果比较风险，不能让大量简单问答掩盖少量高风险误路由。
 
-- `AGENT-032` Model Routing / Runtime Adapter：9 个来源；
-- `AGENT-038` Runtime Resilience Policy：15 个；
-- `AGENT-045` Intent Recognition / Routing：11 个。
+能力路由检查正确工具是否进入候选，模型路由检查兼容性、质量与总成本。对后备路径加入限流、超长、流式中断和不支持工具的用例，观察是否保持原任务边界。
 
-真实追问会从“怎么分类意图”继续到：
+只有最终成功率，没有实际路由与降级记录，很难区分是模型选择错误、候选遗漏还是执行故障。
 
-```text
-准确率低怎么办？
-数据少怎么办？
-模型切换 Tool Protocol 怎么适配？
-Provider 挂了怎么办？
-```
+<a id="summary"></a>
 
----
+## 本章小结
 
+先确定选择的对象，再检查硬能力与权限，最后比较质量和成本。适配统一语义但保留差异；重试和后备都不能抹掉已经发生的动作，也不能借机扩大权限。
+
+<a id="15-面试怎么答"></a>
+<a id="qagent-router-怎么设计"></a>
+<a id="qagent路由至少分哪几类"></a>
+<a id="qprovider-失败怎么-fallback"></a>
+<a id="q为什么adapter不应抹平全部供应商差异"></a>
+<a id="q如何评估router"></a>
 <a id="interview"></a>
 
-## 15. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：Agent Router 怎么设计？
+### 模型路由考虑哪些因素？
 
-🎯 **30 秒回答**：
+先满足工具、模态、上下文和部署等硬条件，再比较代表任务的质量、时延和总成本。还要考虑风险和当前状态，不能只用“难任务大模型、简单任务小模型”。
 
-> 我会先区分 intent、capability 和 model routing。稳定且高风险的规则优先 deterministic rule；开放语义可以用 classifier/LLM；如果 Tool schema 已足够表达能力，也可让模型直接选 Tool。Router 必须有 labeled eval、confusion matrix 和 fallback/unknown path。Model route 再结合质量、延迟、成本、context、tool support 和 risk，Provider 差异通过 adapter 归一化，但保留 capability metadata。
+### Provider 失败后怎样降级？
 
-### Q：Provider 失败怎么 Fallback？
+先分类错误并检查总预算，再选择兼容路径。切换时保留有效消息关联与已经完成的工具动作；无法保持关键能力就明确停止或部分交付，而不是从头重跑。
 
-🎯 **30 秒回答**：
+### Adapter 应该统一什么？
 
-> 先分类 error，只有 transient/rate-limit 等 retryable failure 才 backoff；context overflow 应触发 compaction，不是重试；fallback 前检查 Tool/Context/Structured Output 等 capability compatibility，高风险任务不能静默降级，并在 Trace 记录实际模型和原因。
+统一运行时需要理解的请求、工具关联、流式事件、错误和计量，同时保留能力差异。无法支持的模态或工具不能靠一个统一函数签名假装存在。
 
-### Q：Agent路由至少分哪几类？
-
-🎯 **30 秒回答**：
-
-> 入口意图路由选择业务流程，模型路由选择满足能力与质量约束的模型，能力路由把请求分发到工具处理器。它们输入、输出和风险不同，应分别评估，不用一个LLM分类节点包办所有责任。
-
-### Q：如何评估Router？
-
-🎯 **30 秒回答**：
-
-> 对意图用标注集、混淆矩阵、未知意图/澄清率及风险加权下游影响；对模型用代表性任务质量、能力兼容、延迟、费用和失败率；对工具路由检查处理器、权限和版本正确性。
-
-### Q：为什么Adapter不应抹平全部供应商差异？
-
-🎯 **30 秒回答**：
-
-> 真正不支持的能力不能被包装成支持。适配器应统一能统一的结构，同时显式暴露限制和错误，让上层选择可用路径，否则静默降级会破坏任务语义。
-
----
-
+<a id="16-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 16. 高频易错点
+## ⚠️ 易错点
 
-⚠️ **所有 Intent 都用 LLM Router。** Rule / classifier 可能更稳定便宜。
+> ⚠️ 分类结果不是授权凭证，错误路由不得扩大可执行能力。
 
-⚠️ **所有错误重试三次。** Invalid request / context error 需要修输入。
+> ⚠️ 400、上下文超长与短暂限流处理不同，不能全部套相同次数重试。
 
-⚠️ **Model Fallback 只要 API 格式一样就行。** Capability 可能不兼容。
+> ⚠️ 流式响应中断后的半截工具参数不是可执行调用，必须等完整并校验。
 
-⚠️ **Provider Adapter 应把所有特性抹平。** 应保留 capability metadata。
-
-⚠️ **Router一律用最大LLM。** 先规则与简单基线，有复杂语言需求再比较模型。
-
-⚠️ **Fallback只是换模型名。** 上下文和能力契约可能不兼容。
-
-⚠️ **模型错误就重启整个Agent。** 会重复已完成工具和副作用。
-
-⚠️ **总体分类准确率高就够。** 高风险类别误路由与未知意图也需验证。
-
----
-
+<a id="17-本章自测"></a>
 <a id="self-test"></a>
 
-## 17. 本章自测
+## 本章自测
 
-<details><summary>1. Intent Routing 和 Tool Selection 有什么区别？</summary>
+<details><summary>1. 备用模型不支持工具，当前任务还需读取资料，应直接切换吗？</summary>
 
-Intent Routing 是把请求识别成任务类别或处理路径；Tool Selection 是在当前能力集中选择具体动作。某些场景模型可以直接 Tool Selection，不需要独立意图分类层。
-
-</details>
-
-<details><summary>2. 为什么 context_length_exceeded 不应该直接 Retry？</summary>
-
-输入本身超限，重发不会改变条件。应该 trim/offload/compact 或换支持更长 Context 的兼容模型。
+不能仅替换模型名。需要有经过验证的可行流程，否则停止或明确部分交付，不能宣称任务继续等价。
 
 </details>
 
-<details><summary>3. 为什么高风险任务的 Model Fallback 需要更谨慎？</summary>
+<details><summary>2. 上传已成功，随后模型调用失败，为什么不能整项重跑？</summary>
 
-模型能力、工具遵循和安全行为可能不同；静默降级可能改变执行风险和正确性，需要显式 policy 或人工确认。
-
-</details>
-
-<details><summary>4. 明确/report命令是否需要LLM路由？</summary>
-
-通常规则更直接稳定。只有命令内部仍有语义不确定性时才需要进一步模型判断。
+模型失败不改变外部上传事实。应保留回执和当前进度，新模型从有效状态继续，避免重复动作。
 
 </details>
 
-<details><summary>5. A支持工具，B不支持，B更便宜是否就可做后备？</summary>
+<details><summary>3. 便宜模型单次费用减半，但重试次数翻倍且质量下降，能直接认为更优吗？</summary>
 
-不能直接替换。硬能力不满足，需经过验证的替代流程或明确失败。
-
-</details>
-
-<details><summary>6. 模型调用超时，之前已发送邮件，能重跑整段吗？</summary>
-
-不能。之前的写入是独立事实，应保留并核对；恢复当前模型请求与重做所有任务不是一回事。
+不能。应比较每个合格任务的总成本、时延与人工处理，单次价格不足以支持选择。
 
 </details>
 
-<details><summary>7. 熔断和权限拒绝可以同样自动恢复吗？</summary>
+<a id="14-human-a-信号"></a>
+<a id="18-routing意图模型适配与供应商容错"></a>
+<a id="references"></a>
 
-不同。熔断针对依赖健康可探测恢复；权限拒绝需授权依据变化，不能靠重试绕过。
+## 知识回看与权威资料
 
-</details>
+- [工具失败](06-ToolExecutionAndFailure.md)：回看单次工具调用的重试资格。
+- [上下文编排](09-ContextAssemblyAndCache.md)：模型切换前重新计量与组织输入。
+- [固定供应商适配对照](../../../references/agent/implementation-notes.md#chapter-18)：检查具体产品后备路径，不从一个配置字段推断全部行为。
 
-<details><summary>8. 路由低置信度为什么允许澄清？</summary>
-
-澄清可以降低错误动作风险，未知请求不应被强行塞入已知流程。需要把澄清成本与误路由代价一起评估。
-
-</details>
-
-<details><summary>9. 模型升级后只跑一个正常例子够吗？</summary>
-
-不够，应覆盖工具格式、长上下文、结构化输出、错误和代表领域任务；升级可能改变质量与恢复边界。
-
-</details>
 
 ---
 
