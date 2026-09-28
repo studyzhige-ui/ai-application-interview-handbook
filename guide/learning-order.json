@@ -70,7 +70,8 @@
       "directory": "10-system-design",
       "label": "System Design",
       "review_records": [
-        "guide/audits/system-design-reader-first-2026-09-28.md"
+        "guide/audits/system-design-reader-first-2026-09-28.md",
+        "guide/audits/system-design-clarity-refinement-2026-09-28.md"
       ]
     }
   ],

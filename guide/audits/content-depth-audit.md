@@ -34,7 +34,7 @@ Python 的基础覆盖整改、MySQL 与 Redis 的 reader-first 重组、Agent �
 | 07 | [LLM Foundation](../../curriculum/07-llm-foundation/README.md) | 14 | [LLM Foundation｜讲解清晰度精修与验收](../project/llm-foundation-clarity-refinement-2026-09-27.md) |
 | 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | [RAG｜讲解清晰度精修验收](rag-clarity-refinement-2026-09-27.md) |
 | 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | [Agent 内容保留、教学修订与发布记录](../project/agent-reader-revision.md) |
-| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | [System Design｜读者优先修订与分层验证记录](system-design-reader-first-2026-09-28.md) |
+| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | [System Design｜读者优先修订与分层验证记录](system-design-reader-first-2026-09-28.md) · [System Design｜讲解清晰度精修与迁移练习验证](system-design-clarity-refinement-2026-09-28.md) |
 
 记录入口不自动授予通过状态；需要查看其基线、修改范围、实际检查和未验证项目。
 <!-- current-scope:end -->

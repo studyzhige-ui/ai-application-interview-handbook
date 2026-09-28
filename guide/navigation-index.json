@@ -1112,7 +1112,8 @@
       "directory": "10-system-design",
       "label": "System Design",
       "review_records": [
-        "guide/audits/system-design-reader-first-2026-09-28.md"
+        "guide/audits/system-design-reader-first-2026-09-28.md",
+        "guide/audits/system-design-clarity-refinement-2026-09-28.md"
       ],
       "readme": "curriculum/10-system-design/README.md",
       "chapter_count": 19,
@@ -1156,17 +1157,17 @@
         {
           "path": "curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md",
           "title": "04｜API 与数据模型：谁拥有事实，谁可以改变它",
-          "sha256": "a491b7f15edb60097cacc66b409cd4716857cd4c962b2458d28c2b90a0cd06c9"
+          "sha256": "d13ba04508997c841c278742d3f81ba3d256b41949012dae3cac8cf6da5869a4"
         },
         {
           "path": "curriculum/10-system-design/docs/05-DataFlow与StateMachine.md",
           "title": "05｜数据流与状态机：请求被接受以后，谁继续把它做完",
-          "sha256": "f2a18e1d2dce696a47e88a935465c4b85b1b16b8fe715fbdabe9e99bada699e0"
+          "sha256": "2e2dee779fc5c2510090266d84d506708e83e31ce621ad956e3e0c36d5b3a7fd"
         },
         {
           "path": "curriculum/10-system-design/docs/06-Cache与HotPath.md",
           "title": "06｜缓存与热点：省下重复工作之后，怎样处理旧结果和回源",
-          "sha256": "6273077ae9a87b7048e9eabd2a9a3b92945bae77ffadfcbfb2b6bc9068b8bc22"
+          "sha256": "3b8b441012acc8492677560b7bf01fd098482aebf7b3a9161e3c03de1104a6db"
         },
         {
           "path": "curriculum/10-system-design/docs/07-PartitionRouting与Fanout.md",
@@ -1181,7 +1182,7 @@
         {
           "path": "curriculum/10-system-design/docs/09-QueueBackpressure与LongRunningTask.md",
           "title": "09｜队列与长任务：积压怎样形成，工作者怎样安全接管",
-          "sha256": "f01ebe90962fafdc5f843475ada1a646c69864a8f3af5a6bff7ce494f4d59a2b"
+          "sha256": "295e562742ff6bfe763ca64b7e728a4a90968fb1c5e547db96d82881d36a5dd2"
         },
         {
           "path": "curriculum/10-system-design/docs/10-Reliability与Overload.md",
@@ -1191,7 +1192,7 @@
         {
           "path": "curriculum/10-system-design/docs/11-MultiTenancy与Security.md",
           "title": "11｜多租户与安全：同一套服务怎样守住不同用户的边界",
-          "sha256": "663b491e1cec29a31c1aab01015060ce2eac114d50d238332dc654c4ed79848b"
+          "sha256": "091e1b0623b7ea0cccd0764c95242f00fcc2a8790a0b64adb799e5fbf84e6248"
         },
         {
           "path": "curriculum/10-system-design/docs/12-ObservabilityEvaluation与Evolution.md",
@@ -1206,32 +1207,32 @@
         {
           "path": "curriculum/10-system-design/docs/14-RealtimeReadHeavySystems.md",
           "title": "14｜实时读模型：怎样让用户看到正确的最近数据",
-          "sha256": "6bdc682f42d2e26ff8eeffba34ff3ca0310dcd60c52d1c3106130b9284f83b62"
+          "sha256": "661e988ee4aea791866ed14360f2e3adac559607379dfa08be9186ca615c199a"
         },
         {
           "path": "curriculum/10-system-design/docs/15-LargeScaleDataProcessingSystems.md",
           "title": "15｜大规模数据处理：让容量、查询与恢复共同成立",
-          "sha256": "45d9b1f4490c66da15cd6bfb2aed306f58cf0b0139b2f3a7a1734543f4bfb7a7"
+          "sha256": "7183f0ef8081ae58122053f7b7388cc9f4bdfeb924c855ff660e09d34fe82faf"
         },
         {
           "path": "curriculum/10-system-design/docs/16-LLMGateway与MultiTenantAIPlatform.md",
           "title": "16｜LLM 网关：把模型选择、交付和费用放进同一条请求链",
-          "sha256": "2145a94a281047c0a02d11c845124c9e1b0bb7eca8663711743e56a77991952a"
+          "sha256": "b1b388abe4143a182b3fc800c1a4e54a5773a9aae6a7e0c69845fd94eb9efb3b"
         },
         {
           "path": "curriculum/10-system-design/docs/17-EnterpriseRAGSystemDesign.md",
           "title": "17｜企业 RAG：把知识更新、在线回答与权限治理组合起来",
-          "sha256": "393aea38438e53c9b7b0d9c86bcabf0f5d8fd65791740ac99adbf1168cf4b8e7"
+          "sha256": "2093609ac6a6e41ca2e5e309ccaf576c1199173dfb7df22bc187d0d487d1f5a9"
         },
         {
           "path": "curriculum/10-system-design/docs/18-ProductionAgentBackend.md",
           "title": "18｜生产级 Agent 后端：让一次长任务跨越断线、重启与批准",
-          "sha256": "6ab87e80baf950498041d74cdd9d96089bf81ba2ff5b2536a9d618f4bd5e8328"
+          "sha256": "21404f2fb986958e06730116e0dcf350758039a4eb58838ced38d2deb090d109"
         },
         {
           "path": "curriculum/10-system-design/docs/19-VerticalAIAgentPatterns.md",
           "title": "19｜垂直 AI 系统：从领域规则推导证据、工具与验收",
-          "sha256": "9df4d6ff8f1e601375ad87041ba4f700982599fefc9a0b80ae5da844b09dc227"
+          "sha256": "2b379b5782cf774bad6bfbe96b0ccabe12a5d5b3f247ab5dfc3dda06f1fcab1d"
         }
       ],
       "support": [

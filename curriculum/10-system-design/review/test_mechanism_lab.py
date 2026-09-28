@@ -336,5 +336,98 @@ class ExternalActionTests(unittest.TestCase):
             record.reconcile("receipt-2")
 
 
+class TransferTests(unittest.TestCase):
+    """Changed-condition examples reuse the same models and scenario source."""
+    def test_window_change_of_order_not_identity(self):
+        spec = load_scenarios()["window"]
+        source = RecentProjection(3)
+        received = RecentProjection(3, order="first_received")
+        for raw in spec["events"]:
+            source.apply(Event(**raw))
+            received.apply(Event(**raw))
+        scope = spec["scope"]
+        self.assertEqual([e.sequence for e in source.snapshot(*scope)], [104, 103, 102])
+        self.assertEqual([e.sequence for e in received.snapshot(*scope)], [99, 104, 102])
+        self.assertFalse(received.apply(Event(**spec["events"][0])))
+        self.assertEqual([e.sequence for e in received.snapshot(*scope)], [99, 104, 102])
+
+    def test_order_mode_validation(self):
+        with self.assertRaises(ValueError):
+            RecentProjection(3, order="unknown")
+
+    def test_queue_recovery_loses_capacity(self):
+        cfg = deepcopy(load_scenarios()["workload"])
+        self.assertEqual(fluid_queue(**load_scenarios()["queue"])["backlog"], 600)
+        cfg["mean_seconds_per_call"] = 20
+        result = capacity(cfg)
+        self.assertEqual(result["ideal_capacity_per_second"], 15)
+        self.assertEqual(result["model_calls_per_second"] - result["ideal_capacity_per_second"], 5)
+
+    def test_tiered_storage_changed_retention(self):
+        s = load_scenarios()["transfer"]["tiered_storage"]
+        hot = Decimal(s["compressed_fraction"]) * s["daily_tb"] * s["hot_days"] * s["hot_copies"]
+        archive = Decimal(s["compressed_fraction"]) * s["daily_tb"] * s["archive_days"] * s["archive_copies"]
+        self.assertEqual((hot, archive, hot + archive), (105, 115, 220))
+
+    def test_vector_generation_coexistence(self):
+        s = load_scenarios()["transfer"]["vector_rebuild"]
+        old = s["chunks"] * s["old_dimensions"] * s["bytes_per_dimension"]
+        new = s["chunks"] * s["new_dimensions"] * s["bytes_per_dimension"]
+        self.assertEqual((old, new, old + new), (4096000000, 8192000000, 12288000000))
+
+    def test_budget_two_claimants_and_unknown(self):
+        s = load_scenarios()["transfer"]["budget_competition"]
+        ledger = BudgetLedger(s["limit"])
+        ledger.reserve("earlier", s["prior_spent"])
+        ledger.settle("earlier", s["prior_spent"])
+        ledger.reserve("K", s["reserve_each"])
+        with self.assertRaises(Conflict):
+            ledger.reserve("L", s["reserve_each"])
+        ledger.mark_unknown("K")
+        self.assertEqual((ledger.spent, ledger.held, ledger.available), (20, 50, 30))
+        ledger.settle("K", s["confirmed_k"])
+        self.assertFalse(ledger.settle("K", s["confirmed_k"]))
+        with self.assertRaises(Conflict):
+            ledger.reserve("L", s["reserve_each"])
+        self.assertEqual((ledger.spent, ledger.held, ledger.available), (55, 0, 45))
+        self.assertNotIn("L", ledger.operations)
+
+    def test_revenue_same_metric_after_refund(self):
+        s = load_scenarios()["transfer"]["revenue"]
+        previous = s["previous_a"] + s["previous_b"]
+        current_b = s["current_gross_b"] - s["confirmed_refund_b"]
+        current = s["current_net_a"] + current_b
+        self.assertEqual((current_b, current), (250, 850))
+        self.assertEqual(Decimal(current - previous) / previous, Decimal("-0.15"))
+
+    def test_capstone_capacity_changes(self):
+        s = load_scenarios()["transfer"]["capstone"]
+        cfg = deepcopy(load_scenarios()["workload"])
+        cfg["requests_per_second"]["create"] = s["normal_rate"]
+        cfg["slots"] = s["slots"]
+        cfg["mean_seconds_per_call"] = s["mean_seconds"]
+        result = capacity(cfg)
+        self.assertEqual((result["mean_inflight_calls"], result["ideal_capacity_per_second"]), (40, 12))
+        queue = fluid_queue(s["normal_rate"], s["burst_rate"], result["ideal_capacity_per_second"], s["burst_seconds"])
+        self.assertEqual((queue["backlog"], queue["net_drain_rate"], queue["drain_seconds"]), (120, 4, 30))
+        cfg["mean_seconds_per_call"] = s["slow_seconds"]
+        slow = capacity(cfg)
+        self.assertEqual(slow["ideal_capacity_per_second"], 6)
+        self.assertEqual(s["normal_rate"] - slow["ideal_capacity_per_second"], 2)
+
+    def test_visible_interview_and_retained_teaching_columns(self):
+        from pathlib import Path
+        module = Path(__file__).resolve().parents[1]
+        interview = (module / "interview" / "高频面试题.md").read_text(encoding="utf-8")
+        self.assertEqual(interview.count("**参考回答**"), 38)
+        self.assertNotIn("<details>", interview)
+        for path in sorted((module / "docs").glob("*.md")):
+            text = path.read_text(encoding="utf-8")
+            with self.subTest(path=path.name):
+                for marker in ("## 本章小结", "## 🎯", "## ⚠️", "## 本章自测"):
+                    self.assertIn(marker, text)
+                self.assertEqual(text.count("<details>"), text.count("</details>"))
+
+
 if __name__ == "__main__":
     unittest.main()

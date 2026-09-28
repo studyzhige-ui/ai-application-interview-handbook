@@ -120,8 +120,11 @@ class RecentProjection:
     retention strategy. Sequence numbers are unique inside each trusted scope.
     The model demonstrates isolation of data; it does not authenticate callers.
     """
-    def __init__(self, limit: int) -> None:
+    def __init__(self, limit: int, *, order: str = "source") -> None:
         self.limit = integer(limit, "limit", positive=True)
+        if order not in {"source", "first_received"}:
+            raise ValueError("order must be source or first_received")
+        self.order = order
         self.events: dict[tuple[str, str, str], Event] = {}
         self.sequences: dict[tuple[str, str, int], str] = {}
 
@@ -142,7 +145,11 @@ class RecentProjection:
         identity(tenant, "tenant")
         identity(user, "user")
         rows = (e for e in self.events.values() if (e.tenant, e.user) == (tenant, user))
-        return sorted(rows, key=lambda e: e.sequence, reverse=True)[:self.limit]
+        if self.order == "source":
+            return sorted(rows, key=lambda e: e.sequence, reverse=True)[:self.limit]
+        # Dict insertion order models one consumer's FIRST receipt order only.
+        # apply() never reinserts a duplicate. This is NOT a distributed clock.
+        return list(rows)[::-1][:self.limit]
 
 
 @dataclass
