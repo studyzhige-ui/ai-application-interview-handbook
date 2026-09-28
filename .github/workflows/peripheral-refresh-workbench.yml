@@ -1,0 +1,44 @@
+name: Peripheral refresh workbench
+on:
+  push:
+    branches: [docs/peripheral-agent-system-sync-20260928]
+    paths: [.github/workflows/peripheral-refresh-workbench.yml]
+permissions:
+  contents: read
+  pull-requests: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Export current tree and recent change evidence
+        shell: python
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          import json, os, pathlib, subprocess, urllib.request
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'peripheral-refresh'; out.mkdir()
+          def git(*args): return subprocess.check_output(['git',*args],text=True)
+          def api(path):
+              req=urllib.request.Request('https://api.github.com/repos/'+os.environ['REPOSITORY']+'/'+path,headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'})
+              with urllib.request.urlopen(req,timeout=60) as r: return json.load(r)
+          main=git('rev-parse','HEAD').strip()
+          assert main=='6b49c76a9c1229177d34acb9b6d85bfdd626a4e9'
+          subprocess.run(['git','archive','--format=zip','--output='+str(out/'main.zip'),main],check=True)
+          subprocess.run(['git','archive','--format=zip','--output='+str(out/'previous-sync.zip'),'a6b51b9f00bf3fe7910cfe4ca248e80545f566e3'],check=True)
+          (out/'changes.diff').write_text(git('diff','a6b51b9f00bf3fe7910cfe4ca248e80545f566e3',main),encoding='utf-8')
+          (out/'commits.txt').write_text(git('log','--oneline','a6b51b9f00bf3fe7910cfe4ca248e80545f566e3..'+main),encoding='utf-8')
+          (out/'branches.json').write_text(json.dumps(api('branches?per_page=100'),ensure_ascii=False,indent=2))
+          (out/'pulls.json').write_text(json.dumps(api('pulls?state=all&per_page=100'),ensure_ascii=False,indent=2))
+          print(main)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: peripheral-refresh-snapshot
+          path: ${{ runner.temp }}/peripheral-refresh/
+          retention-days: 7
