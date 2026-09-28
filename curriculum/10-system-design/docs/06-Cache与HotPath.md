@@ -1,346 +1,141 @@
-# 06｜Cache、Hot Path 与 Read / Write Path
+# 06｜缓存与热点：省下重复工作之后，怎样处理旧结果和回源
 
-> **本章定位：System Design 组合层。** 这里训练的是“何时把 Cache 放进架构、Read/Write Path 怎样组合、Hot Path 与降级怎样决策”。Redis 的 Cache/TTL/击穿/雪崩机制回到 [Redis Cache Design](../../05-redis/docs/05-缓存故障与流量保护.md)；跨 MySQL + Redis 的一致性机制回到 [AIBE Consistency & Compensation](../../03-backend-engineering/docs/13-Consistency与Compensation.md)。
+<a id="06cachehot-path-与-read--write-path"></a>
 
-Cache 不是“系统慢了就加 Redis”，而是对**访问路径和状态语义**的重新设计。
+[← 上一章](05-DataFlow与StateMachine.md) · [模块入口](../README.md) · [下一章 →](07-PartitionRouting与Fanout.md)
 
-真正的问题是：
+报告助手每秒有 60 次状态查询。一个正在生成的任务可能被多个页面重复查询，而状态只偶尔改变。缓存似乎很合适：让许多读取复用一次结果。但如果用户取消了任务，页面仍看到“运行中”，这份快结果还算正确吗？
 
-> **什么数据值得缓存？谁是 Source of Truth？读写怎样经过 Cache？失效、热点和故障时系统怎么退化？**
+缓存设计需要同时说明节省了什么工作、允许旧多久，以及缓存不可用时系统怎样继续运行。
 
----
+## 1. 先确定值得缓存的路径
 
-## 1. 先找 Hot Path
+**热点路径（hot path）**是高频、延迟敏感或代价昂贵的执行路径，不一定就是代码最多的函数。判断依据应是测量：状态查询是否真的给数据库造成压力？相同报告是否被重复读取？缓存命中后是否还要进行昂贵授权？
 
-Hot Path 是最频繁、最敏感的请求路径。
+设 60 次状态查询每秒，缓存命中率为 90%，忽略后台刷新与重试时，读数据库约为 `60 × (1 - 0.9) = 6 次/秒`。如果请求几乎从不重复，缓存只会增加一次查询、存储成本和一致性责任。
 
-例如电商：
+缓存对象也可以是解析后的文档、确定性计算结果或检索候选，不限于整份回答。越接近最终答案，复用需要满足的条件通常越多：用户范围、来源版本、模型与提示配置都可能影响适用性。
 
-```text
-商品详情 Read
-≫ 商品编辑 Write
-```
+## 2. Cache-aside 的最小过程
 
-例如 AI Gateway：
+**旁路缓存（cache-aside）**让应用在读取时先查缓存，未命中再读权威存储，并把结果放入缓存：
 
 ```text
-Model Invocation
-≫ Model Config Update
+读取任务 J
+  ├─ 缓存存在且适用：返回缓存内容
+  └─ 不存在或不适用：读任务数据库，写入缓存，再返回
 ```
 
-例如 RAG：
+写入时，本例先提交数据库，再使对应缓存失效。这个顺序便于从数据库恢复，但不提供跨数据库与缓存的原子性。Azure 的模式说明也明确提醒：cache-aside 本身不保证缓存与数据源一致。[Cache-aside 模式](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
 
-```text
-Online Query
-≫ Corpus Rebuild
-```
+**TTL（存活时间）**规定单条缓存多久过期，是一种限制陈旧时间和回收空间的工具；它不是“数据更新后立即失效”的证明。
 
-Cache 的价值通常来自：
+## 3. 为什么删掉缓存后，旧值还会回来
 
-```text
-Repeated Read
-+
-Expensive Recompute / Remote Call
-+
-Acceptable Staleness
-```
+设 J 的数据库状态从版本 7 更新为版本 8：
 
----
+| 时刻 | 读取者 A | 写入者 B | 可见结果 |
+|---|---|---|---|
+| t1 | 缓存未命中，读取数据库版本 7 | — | A 拿到旧值但尚未回填 |
+| t2 | — | 提交数据库版本 8 | 数据库已经更新 |
+| t3 | — | 删除缓存 | 缓存为空 |
+| t4 | 把之前读到的版本 7 放回缓存 | — | 旧状态再次出现 |
 
-# 2. Cache 之前先定义 SoT
+所以“先更新数据库，再删除缓存”不是严格一致性的完整证明。延迟删除可能缩小某些窗口，但依赖时间假设，不能凭固定 sleep 消除任意慢读取者。
 
-常见：
+可以按业务要求选择不同强度：允许短暂陈旧时，使用 TTL、失效重试和监控；不能接受旧值覆盖时，让缓存写入受版本或失效代际约束；关键安全判断直接核对权威状态，或使用满足要求的一致性读取协议。
 
-```text
-MySQL = Source of Truth
-Redis = Cache
-```
+**仅把版本号放进缓存值还不够。** 回填者必须有办法判断自己手里的版本是否已经失效，并在写入边界原子检查。否则数据库是 8、空缓存仍可能接受 7。具体缓存一致性实现由 Redis 与后端模块深入讲解；系统设计要说明所选机制兑现了哪种承诺。
 
-或者：
+## 4. 过期时，怎样避免一百个请求同时回源
 
-```text
-Object Store = Source
-Vector Index = Derived Index
-Redis = Result Cache
-```
+缓存 J 恰好过期，100 个读取者同时未命中。若都查数据库，缓存反而制造了集中回源。**请求合并（singleflight / request coalescing）**让一个执行者获取结果，其余等待者复用结果，可以减少同一时刻的重复工作。
 
-如果 Cache 和 SoT 冲突，必须知道谁最终胜出。
+这个机制需要说明等待上限、执行者失败后的接管，以及适用范围。进程内合并只能约束本进程；十个实例仍可能各发一次回源。分布式协调更强，却新增租约、失联和陈旧执行者的问题，不能无条件优于本地方案。
 
----
+同时到期的许多键属于另一种集中失效。可以给 TTL 添加适度随机偏移、提前刷新热点，并限制后台刷新并发。但用户已经撤权或文档已经删除时，不能为了“旧值可用”继续返回受限制内容。
 
-# 3. Cache Aside 的基本路径
+## 5. 热点、穿透和容量淘汰不是同一个问题
 
-读：
+| 现象 | 主要原因 | 应优先观察与处理 |
+|---|---|---|
+| 单键很热 | 大量请求集中读取一个对象 | 本地只读副本、请求合并、分层缓存或入口限制 |
+| 大量不存在的键 | 请求不能命中正常缓存 | 输入校验、适当的空结果缓存、限流 |
+| 大量键同时失效 | 过期或清空形成回源峰值 | 分散过期、限制回源、分批预热 |
+| 缓存持续淘汰 | 工作集超过容量或对象过大 | 对象大小、命中率、淘汰率与访问分布 |
 
-```text
-Read Cache
-→ Hit: Return
-→ Miss: Read DB
-       → Populate Cache
-       → Return
-```
+空结果缓存也需要 TTL：刚才不存在，不代表新建后仍不存在。布隆过滤器可把部分确定不存在的键挡在回源之前，但它可能误判“存在”，不能代替数据库存在性、权限和入口限流。集合更新未及时反映到过滤器时，还可能错误地拦住新对象；“算法对已正确加入元素没有假阴性”不等于整个更新系统永远不漏。[Bloom Filter 的产品语义](https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/)
 
-写：
+读热点可以复制，因为多个读副本可以返回允许陈旧的数据；同一库存的写热点却不能随便复制计数后各自扣减。写热点必须回到状态拥有者、原子修改或守恒配额的设计。
 
-```text
-Write DB
-→ Invalidate Cache
-```
+## 6. 缓存挂了，数据库能否直接接住全部请求
 
-它简单，但并不自动提供强一致。
+原先每秒 60 次查询，数据库只承受约 6 次。缓存故障后直接回源，流量可能接近原来的十倍。如果数据库无法承受，就会形成缓存故障、数据库变慢、查询超时和重试的连锁反应。
 
----
+应在回源路径上设置并发和排队上限，优先服务关键请求，必要时明确拒绝或返回业务允许的旧只读结果。恢复缓存也要分批预热，不能把全部热门键同时重建。
 
-# 4. 为什么“更新 DB 后删 Cache”仍有窗口
+设计降级时要说清楚“旧什么”：任务普通进度可以短暂滞后，当前授权不能因为缓存失效而省略，已撤回报告也不能作为旧结果继续返回。这些边界由业务要求决定，不由缓存可用性决定。
 
-并发下可能出现：
+## 7. 一个缓存键需要区分哪些结果
 
-```text
-Reader miss
-→ 读到旧 DB 值
-Writer 更新 DB
-→ delete cache
-Reader 把旧值写回 cache
-```
+报告答案缓存只使用 `query_hash`，会让不同团队的相同问题发生碰撞。即使加上用户 ID，用户角色改变后仍可能命中过去的答案。
 
-实际概率和具体流程有关，但核心结论是：
+可以让缓存身份或依赖记录包含：团队与有效权限范围、问题及影响答案的条件、知识代际与文档版本、相关模型和提示配置。**这不是要求所有键都塞入所有字段**，而是逐项判断哪些条件会改变结果，并建立失效或重新验证方法。
 
-> Cache 与 DB 是两个状态系统，双写天然存在失败和竞态窗口。
+返回缓存前的当前权限判断不能被省略。高敏感内容如果不能可靠取得授权状态，应按已定义的安全策略停止返回；缓存命中率不是越权的理由。
 
-所以设计要先问：
+## 8. 怎样证明缓存值得保留
 
-```text
-允许旧多久？
-错误影响多大？
-能否靠 TTL / Version / Retry / Reconciliation？
-是否需要直接绕过 Cache？
-```
+比较缓存前后时，同时看数据库实际负载、请求分布、命中率、P95/P99 延迟、回源失败率、对象大小、陈旧结果以及失效修复积压。命中率提高但用户延迟不降，可能只是缓存了便宜路径，真正瓶颈仍在模型生成。
 
----
+验证还应故意安排本章 t1—t4 的回填顺序、集中失效、回源失败和撤权后命中。只测“第二次查询更快”，没有覆盖缓存新增的正确性与恢复责任。
 
-# 5. Cache 的三类 Failure
+## 本章小结
 
-## Penetration
+缓存用可控的复用换取延迟与成本收益，也引入陈旧、回填竞争和集中回源。先选真正昂贵的热点，再确定新鲜度、失效和权限边界；命中、失效、故障与恢复都要有限制。版本、TTL 和合并请求只有放进完整协议才有保证。
 
-请求本来就不存在的数据：
+## 🎯 面试怎么答
 
-```text
-Cache miss
-→ DB miss
-→ 每次都打 DB
-```
+**问：缓存设计除了提高命中率，还应该讲什么？**
 
-可考虑：
+> 我会明确权威来源、缓存结果的适用条件和可接受陈旧时间，沿读未命中、写后失效和慢读取回填推演竞争。热点用请求合并或只读副本，但回源、刷新和故障恢复都有容量上限。权限与撤回单独校验，再用负载、延迟和错误状态验证缓存的净收益。
 
-- Negative Cache；
-- Bloom Filter；
-- Input Validation。
+## ⚠️ 容易混淆的地方
 
-## Breakdown / Stampede
+- TTL 约束缓存条目的寿命，不自动证明从源更新开始计时的严格新鲜度上限。
+- 值里带版本不等于旧回填已被拒绝，需要实际比较与原子写保护。
+- 读热点复制与写热点分摊有不同正确性要求，不能套用同一方案。
 
-一个 Hot Key 过期，大量请求同时回源。
+## 本章自测
 
-可考虑：
+### 1. 60 次查询/秒、90% 命中率，缓存失效后命中率降到 50%。忽略刷新与重试，数据库读取变为多少？相对原先放大多少？
 
-- Request Coalescing；
-- Mutex / Singleflight；
-- Logical Expiry；
-- Stale-while-revalidate。
+<details><summary>提示</summary>
 
-## Avalanche
+先分别计算两种未命中率，不把命中率下降直接当作负载倍数。
 
-大量 Key 同期失效或整个 Cache Layer 不可用。
-
-可考虑：
-
-- TTL Jitter；
-- Degradation；
-- Rate Limit；
-- DB Protection。
-
----
-
-# 6. HotKey 不是平均 QPS 问题
-
-假设：
-
-```text
-总 QPS 100K
-```
-
-如果一个明星商品承担：
-
-```text
-30K QPS
-```
-
-即使集群平均很轻，单 Key / 单 Shard 仍可能成为热点。
-
-常见治理：
-
-```text
-Local Cache
-Key Replication / Read Replica
-Request Coalescing
-Shard Hot Data
-Rate Limit
-Precompute
-```
-
-但每种方案都改变一致性和失效成本。
-
----
-
-# 7. Multi-level Cache
-
-例如：
-
-```text
-Process Local Cache
-→ Redis
-→ DB
-```
-
-优点：
-
-- 本地读极快；
-- Redis 压力降低。
-
-代价：
-
-```text
-多一层失效
-多一层版本
-多实例一致性更难
-```
-
-所以本地 Cache 常需要：
-
-```text
-short TTL
-version
-pub/sub invalidation
-periodic refresh
-```
-
-而不是永久相信广播一定送达。
-
----
-
-# 8. Write Path 也可能需要 Cache / Buffer
-
-高写入系统可能：
-
-```text
-Client
-→ Memory / Log / Queue
-→ Batch Flush
-→ Durable Store
-```
-
-这已经不是普通 Read Cache，而是写缓冲。
-
-此时要回答：
-
-```text
-进程崩溃会丢多少？
-什么时候算写成功？
-Buffer 满了怎么办？
-Flush 失败怎么办？
-```
-
-所以不要把所有 Memory Layer 都叫“缓存”。
-
----
-
-# 9. AI 系统的 Cache Key 更复杂
-
-Answer / Retrieval Cache 可能依赖：
-
-```text
-normalized_query
-model_version
-prompt_version
-index_generation
-permission_scope
-tenant_id
-retrieval_config
-```
-
-如果只用：
-
-```text
-hash(query)
-```
-
-可能复用到：
-
-- 旧知识；
-- 错模型；
-- 错权限；
-- 错 Tenant。
-
----
-
-# 10. 什么时候不要 Cache
-
-如果数据：
-
-```text
-变化极快
-错误代价极高
-请求几乎不重复
-回源本身很便宜
-```
-
-Cache 可能收益很小，反而增加一致性风险。
-
-例如某些余额 / 权限判断，不应该为了几十毫秒盲目做长 TTL Cache。
-
----
-
-# 11. Cache 故障时的设计
-
-问：
-
-```text
-Redis 整体不可用
-→ 所有流量直接打 DB？
-```
-
-如果答案是“是”，可能发生二次雪崩。
-
-更成熟：
-
-```text
-Cache failure detected
-→ Concurrency Limit
-→ Rate Limit / Load Shed
-→ Serve stale where safe
-→ Bypass only critical paths
-→ Recover gradually
-```
-
-Failure 不能只看 Cache 自己，还要看下游保护。
-
----
-
-# 12. 🎯 面试怎么答
-
-> 我会先找 Hot Path 和重复读，再确认 Cache 是否真的有收益，并明确 Source of Truth。设计时不仅画 Hit/Miss，还会定义 TTL、Version、Invalidation 和 Cache Failure 的下游保护。对 HotKey 会看实际 Key Distribution，而不是平均 QPS。AI 系统的 Cache Key 还要带 Model、Prompt、Index Generation、Tenant 和 Permission Scope，避免复用陈旧或越权结果。
-
----
-
-# 13. 本章自测
-
-<details><summary>1. 为什么 Cache Aside 不等于强一致？</summary>
-因为 Cache 和数据库是两个独立状态系统，写入、删除、回填之间存在并发和失败窗口。
 </details>
 
-<details><summary>2. Redis 故障后为什么不能无脑全部回源 DB？</summary>
-Cache 平时可能吸收了大量流量，全部回源可能让 DB 立刻过载，引发级联故障。
+<details><summary>参考答案与解释</summary>
+
+原先 6 次/秒，之后 30 次/秒，放大 5 倍。数据库保护应按剩余容量限制回源，而不是等到缓存完全失效才处理。
+
 </details>
 
-<details><summary>3. 为什么 Answer Cache 必须带 Permission Scope？</summary>
-相同 Query 对不同用户可访问的知识不同，如果忽略权限维度，可能跨用户复用受保护答案。
+### 2. 读取者拿到版本 7 后暂停，写入者提交版本 8 并删除缓存，读取者随后回填 7。请指出普通删除为什么失败，并给出两种不同强度的处理方向。
+
+<details><summary>提示</summary>
+
+明确业务允许短暂陈旧，还是要求拒绝这种旧写入。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+删除只移除了当时的缓存，无法阻止尚在途的旧读取。允许陈旧可用有界 TTL、失效重试和监测；要求拒绝旧回填则需要可比较的当前版本或失效代际，并在写入边界原子校验，或者关键读取回到权威状态。
+
+</details>
+
+---
+
+[← 上一章](05-DataFlow与StateMachine.md) · [模块入口](../README.md) · [下一章 →](07-PartitionRouting与Fanout.md)

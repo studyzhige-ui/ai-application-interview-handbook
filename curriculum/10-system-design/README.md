@@ -1,161 +1,74 @@
-# System Design｜AI Application / Agent Production 系统设计
+# System Design｜从业务承诺到可验证的 AI 系统方案
 
-[← Agent](../09-agent/README.md) · [↑ Handbook 总目录](../../README.md) · [Learning Path](../../guide/learning-path.md)
+[← Agent](../09-agent/README.md) · [课程目录](../README.md) · [Handbook](../../README.md) · [学习路线](../../guide/learning-path.md)
 
-> **课程范围：19 篇正式正文**  
-> **教材：19 个连续知识小板块** · **HUMAN-A Canonical：24** · **独立来源覆盖：71**  
-> **质量说明：** 历史审查与当前验证范围分别记录，不以目录完整代替阅读和运行验收。
+系统设计把接口、存储、模型、检索和执行机制放在同一组业务约束里，说明用户能得到什么、工作怎样完成，以及失败后怎样保持正确。学习目标是能够推导一套方案，解释替代方案和代价，并设计能够检验承诺的实验，而不是记住一幅组件图。
 
-把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
+## 学习前提与边界
 
----
+推荐先掌握请求与响应、事务与唯一约束、缓存、异步任务，以及模型、RAG 和 Agent 的基本过程。必要回看入口为 [Backend](../03-backend-engineering/README.md)、[RAG](../08-rag/README.md)和 [Agent](../09-agent/README.md)。各章仍会建立当前问题所需的最小模型，不要求先搭建所有服务。
 
-## 1. 这个模块解决什么
+数据库内部、消息协议与框架 API 在对应模块深入学习；本模块重点是跨组件的数据责任、容量、故障边界和取舍。所有示例业务、负载、价格和结果均明确作为教学假设，不代表已运行的生产系统。
 
-把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。
+## 正文主线
 
-学习目标不是记住一组名词，而是能稳定回答：
+先从报告助手的一次提交建立需求、容量和状态；再讨论数据怎样被缓存、分区、协作与保护；最后改变场景，用同一套机制推导高并发、实时数据、模型网关、企业 RAG 和长期 Agent。
 
 ```text
-为什么需要它？
-→ 核心机制怎样工作？
-→ 正常路径怎样流动？
-→ Failure / Trade-off 在哪里？
-→ Production 场景怎样验证与排障？
-→ 面试官继续追问时怎样解释边界？
+用户动作与完成条件
+    ↓
+工作量、资源和状态责任
+    ↓
+正常数据流与协作边界
+    ↓
+正确性、过载、权限与恢复
+    ↓
+观察、评估与安全演进
+    ↓
+在不同业务条件下组合与取舍
 ```
 
----
+文件路径保留稳定编号。以下目录和章首、章末导航共同表达实际阅读顺序。
 
-## 2. 在十板块中的位置
+| 顺序 | 知识章 | 需要解决的问题 |
+|---:|---|---|
+| 01 | [01｜系统设计：从用户的一次操作推导整套方案](docs/01-SystemDesign职责与答题框架.md) | 怎样从用户的一次操作推导方案，而不是先选组件？ |
+| 02 | [02｜需求与 SLO：怎样把“好用”变成可检查的承诺](docs/02-Requirement与SLO.md) | 如何定义成功、统计窗口、分母与不能降低的正确性要求？ |
+| 03 | [03｜工作负载与容量：把请求换算成资源和费用](docs/03-Workload与CapacityEstimation.md) | 怎样把入口请求换算成调用、并发、Token、存储、带宽和费用？ |
+| 04 | [04｜API 与数据模型：谁拥有事实，谁可以改变它](docs/04-API数据模型与StateOwnership.md) | 对象、操作、任务分别怎样识别，恢复时相信哪一份状态？ |
+| 05 | [05｜数据流与状态机：请求被接受以后，谁继续把它做完](docs/05-DataFlow与StateMachine.md) | 受理、执行、完成和取消怎样分别成为可观察的事实？ |
+| 06 | [06｜缓存与热点：省下重复工作之后，怎样处理旧结果和回源](docs/06-Cache与HotPath.md) | 缓存怎样节省工作，又怎样在更新、失效和热点下出错？ |
+| 07 | [07｜分区、路由与聚合：数据拆开后，一次查询要找谁](docs/07-PartitionRouting与Fanout.md) | 怎样根据访问方式拆数据，并判断跨分片合并是否完整？ |
+| 08 | [08｜一致性与幂等：怎样守住不可破坏的业务条件](docs/08-Consistency与Idempotency.md) | 并发、重复和结果未知分别需要什么正确性机制？ |
+| 09 | [09｜队列与长任务：积压怎样形成，工作者怎样安全接管](docs/09-QueueBackpressure与LongRunningTask.md) | 处理能力不足时工作怎样排队，崩溃后由谁继续？ |
+| 10 | [10｜可靠性与过载：失败时怎样保护剩余的成功机会](docs/10-Reliability与Overload.md) | 慢依赖怎样导致级联故障，何时拒绝、重试、降级或恢复？ |
+| 11 | [11｜多租户与安全：同一套服务怎样守住不同用户的边界](docs/11-MultiTenancy与Security.md) | 数据、权限、执行环境和资源配额怎样形成完整隔离？ |
+| 12 | [12｜观测、评测与演进：怎样证明方案有效，怎样安全改变它](docs/12-ObservabilityEvaluation与Evolution.md) | 如何定位慢与错，证明优化有效，并安全改变系统？ |
+| 13 | [13｜高并发交易：让有限资源只被合法消耗一次](docs/13-HighConcurrencyTransactionalSystems.md) | 库存、限额、共享凭证和二维码怎样竞争有限的执行资格？ |
+| 14 | [14｜实时读模型：怎样让用户看到正确的最近数据](docs/14-RealtimeReadHeavySystems.md) | 最新消息、排行榜、Feed、联想和通知怎样得到及时且正确的视图？ |
+| 15 | [15｜大规模数据处理：让容量、查询与恢复共同成立](docs/15-LargeScaleDataProcessingSystems.md) | 大数据怎样存、查、迁移、去重和分块处理？ |
+| 16 | [16｜LLM 网关：把模型选择、交付和费用放进同一条请求链](docs/16-LLMGateway与MultiTenantAIPlatform.md) | 模型能力、配额、流式交付和费用怎样形成统一入口？ |
+| 17 | [17｜企业 RAG：把知识更新、在线回答与权限治理组合起来](docs/17-EnterpriseRAGSystemDesign.md) | 企业知识怎样在规模、质量、版本和权限之间保持一致？ |
+| 18 | [18｜生产级 Agent 后端：让一次长任务跨越断线、重启与批准](docs/18-ProductionAgentBackend.md) | 长时间 Agent 怎样跨连接、执行者与部署继续工作？ |
+| 19 | [19｜垂直 AI 系统：从领域规则推导证据、工具与验收](docs/19-VerticalAIAgentPatterns.md) | 垂直业务怎样分配确定性计算、模型判断和人工责任？ |
 
-[Python Foundation](../01-python/README.md) → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → **System Design**
+## 学习、练习与回看
 
-模块角色：**Integration / 把前九个模块组合成可容量估算、可扩展、可恢复、可观测、可验证、可演进的完整系统。**
+第一次沿正文阅读，先说明输入、状态变化与结果，再改变一个条件，检查原结论是否仍成立。章末“🎯 面试怎么答”组织已经讲过的机制；自测先给完整任务，提示与参考答案分别折叠。
 
----
+| 入口 | 用途 |
+|---|---|
+| [Review 与综合自测](review/README.md) | 用六张关系图重建主线，再做跨章节推演 |
+| [机制实验](review/README.md#机制实验) | 核对容量、积压、窗口、防重、代际、预算与二维码状态 |
+| [高频面试题](interview/高频面试题.md) | 沿具体问法与连续追问练习有条件的回答 |
+| [面试易错点](interview/面试易错点.md) | 纠正把不同事实、时间窗口或保证范围混在一起的说法 |
+| [面试前速查表](interview/面试前速查表.md) | 快速唤起机制，不能替代首次学习 |
+| [技术参考](references.md) | 按具体问题查官方语义、适用范围和课程中的使用位置 |
 
-## 3. 固定课程原则
+机制实验选择 Python 3.13 标准库，属于本地确定性模型，不依赖数据库或模型账号；它不证明真实数据库并发、消息交付或供应商行为。目标环境、实际执行和未验证范围见[模块审查记录](../../guide/audits/system-design-reader-first-2026-09-28.md)。
 
-> **知识依赖顺序优先；真人面经只调整复习权重、真实问法和追问深度，不能反过来打乱初学者从 0→1 的主干。**
+## 证据与完成标准
 
-同时固定区分：
+[Market](../../market/README.md)保存正式真人面经，[Canonical](../../interview/canonical/system-design.md)保存归一化问法及其冻结统计。它们校准岗位关注的问题和追问条件，不作为技术答案的证明，也不决定初学者的章节顺序。
 
-```text
-Canonical Question = 可独立追问的面试能力
-Capability Primitive = 更细的工程机制
-教材 Markdown = 一个完整认知闭环
-Section = 参数 / 变体 / Failure / 深挖追问
-```
-
-所以本模块是 **24 道 Canonical → 19 个教材知识块**，两者不需要一一对应。
-
----
-
-## 4. 正式学习主线
-
-```text
-Requirement / SLO → Workload / Capacity → API / Data / State → Flow / Cache / Partition → Consistency / Queue → Reliability / Security → Observability / Evaluation / Cost / Evolution → High-concurrency / Realtime / Data Processing / LLM Gateway / Enterprise RAG / Production Agent Cases
-```
-
-这个顺序按知识依赖组织，而不是按面经频率排序。
-
----
-
-## 5. 正式课程目录
-
-### Part A｜通用 System Design 方法
-
-1. [System Design 的职责与完整答题框架](docs/01-SystemDesign职责与答题框架.md)
-2. [Requirement、SLO、Constraint 与 Scope](docs/02-Requirement与SLO.md)
-3. [Workload、Capacity、Hotspot 与数量级估算](docs/03-Workload与CapacityEstimation.md)
-4. [API、Data Model 与 State Ownership](docs/04-API数据模型与StateOwnership.md)
-5. [Sync / Async、Data Flow 与 State Machine](docs/05-DataFlow与StateMachine.md)
-6. [Cache、Hot Path 与 Read / Write Path](docs/06-Cache与HotPath.md)
-7. [Partition、Routing、Fan-out 与 Rebalance](docs/07-PartitionRouting与Fanout.md)
-8. [Consistency、Idempotency、Transaction 与 Compensation](docs/08-Consistency与Idempotency.md)
-9. [Queue、Backpressure 与 Long-running Task](docs/09-QueueBackpressure与LongRunningTask.md)
-10. [Timeout、Retry、Failover、Degradation 与 Load Shedding](docs/10-Reliability与Overload.md)
-11. [Multi-tenancy、Security、Permission 与 Isolation](docs/11-MultiTenancy与Security.md)
-12. [Observability、Evaluation、Cost 与 Evolution](docs/12-ObservabilityEvaluation与Evolution.md)
-
-### Part B｜真人高频 Scenario Patterns
-
-13. [High-concurrency Transactional Systems：秒杀、库存、Rate Limit、Token Refresh](docs/13-HighConcurrencyTransactionalSystems.md)
-14. [Realtime Read-heavy Systems：排行榜、Feed、Autocomplete、Notification](docs/14-RealtimeReadHeavySystems.md)
-15. [Large-scale Data & Processing：10TB Storage、Migration、Dedup、Large-file](docs/15-LargeScaleDataProcessingSystems.md)
-16. [LLM Gateway 与 Multi-tenant AI Platform](docs/16-LLMGateway与MultiTenantAIPlatform.md)
-17. [Enterprise / Large-scale RAG System Design](docs/17-EnterpriseRAGSystemDesign.md)
-18. [Production Agent Backend 与 Long-running Agent](docs/18-ProductionAgentBackend.md)
-19. [Vertical AI Agent Patterns：Analysis、Customer Service、Multimodal、Game、Content](docs/19-VerticalAIAgentPatterns.md)
-
----
-
-## 6. 真人面经怎样影响本模块
-
-Canonical 统计基线（`S001–S279`）：本模块有 **24 道 Primary Canonical、71 个独立 HUMAN-A 招聘流程覆盖**。
-
-重点市场信号包括：
-
-- Production / Long-running Agent Backend
-- Flash Sale / Inventory
-- Enterprise RAG
-- Multi-tenant AI Platform
-- Large-scale Data / Migration
-- Vertical AI Agent Scenarios
-
-这些信号决定**哪里必须讲得更深、真实面试会怎么问、Failure / Scale / Evaluation 会追到哪一层**；它们不负责决定章节先后，也不会删除低频但必要的前置知识。
-
----
-
-## 7. 模块边界
-
-- System Design 负责组合与决策，不重复单点机制的完整原理。
-- Timeout / Retry / Queue / Backpressure 的机制归 AIBE。
-- MySQL / Redis / Vector / RAG / Agent 的内部机制回到对应 Primary Module。
-
-跨模块问题只保留理解所需的桥梁；完整机制在 Primary Module 维护一份。
-
----
-
-## 8. Review、Interview 与证据入口
-
-| 入口 | 链接 | 用途 |
-|---|---|---|
-| Review | [总图与综合自测](review/README.md) | 第二遍复习：从空白纸重建主线 |
-| 高频面试题 | [进入](interview/高频面试题.md) | 用真实问法训练口述与追问 |
-| 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化、过时或边界错误表达 |
-| 面试前速查 | [进入](interview/面试前速查表.md) | 面试前快速回忆 |
-
-研究与质量证据：
-
-- [Canonical Questions](../../interview/canonical/system-design.md)：市场真实问法与 Source Count；
-- [Verified Follow-up Chains](../../market/analysis/follow-up-chains.md)：回到原始 HUMAN-A 核验的真实递进；
-- [Frequency Ranking](../../market/analysis/frequency-ranking.md)：复习热度参考；
-- [Curriculum Granularity Audit](../../guide/audits/curriculum-granularity-audit.md)：为什么教材文件数不等于 Canonical 数；
-- [Content Depth Audit](../../guide/audits/content-depth-audit.md)：完成与深度验收口径。
-
----
-
-## 9. 推荐学习方式
-
-> 可选：如需整体学习节奏与复习方法，可参考 [Learning Path](../../guide/learning-path.md)；也可以按自身基础调整进度，首次学习建议保持本模块章节顺序。
-
-1. **第一遍：建立因果链。** 按 `docs/01 → 19` 连续阅读，不按高频题跳章。
-2. **第二遍：重画主线。** 进入 [Review](review/README.md)，不看正文先自己解释正常路径、Failure 与 Trade-off。
-3. **第三遍：面试化。** 用高频题、易错点和速查表训练 30 秒回答与深挖回答。
-4. **项目复盘：** 把自己的真实项目映射到本模块主线，说明为什么这样设计、哪里会坏、怎样验证。
-
----
-
-## 10. 教材状态
-
-```text
-docs/      ✅ 01–19 连续
-review/    ✅
-interview/ ✅
-Canonical Coverage ✅
-Content Depth       按专项记录的适用范围判断，不继承旧版通过状态
-```
-
-完成本模块的理解与实践检查后，可进入全局 Review 和面试训练；读完入口不等于完成整套课程。
+完成本模块意味着能独立解释一次正常过程、指出失败窗口、给出带单位的估算，并面对新条件修正方案。目录完整、代码能运行和旧版审计通过，都不能单独证明已经达到这个目标。
