@@ -69,7 +69,9 @@
     {
       "directory": "10-system-design",
       "label": "System Design",
-      "review_records": []
+      "review_records": [
+        "guide/audits/system-design-reader-first-2026-09-28.md"
+      ]
     }
   ],
   "evidence_boundary": "Review records describe their own revision and validation scope; existence of a record is not a current all-pass status."
