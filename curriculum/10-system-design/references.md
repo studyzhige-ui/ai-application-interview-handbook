@@ -22,6 +22,7 @@
 | 观察服务与安全发布 | 12 | [Google SRE，Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/) | 配合[Canarying Releases](https://sre.google/workbook/canarying-releases/)；指标、灰度和质量门的阈值须按业务验证。 |
 | Refresh Token 轮换与重复使用风险 | 13 | [RFC 9700，OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/rfc/rfc9700.html) | 轮换可使旧令牌失效；刷新结果未知时不能假定旧令牌总能安全重试。 |
 | SSE 断线后的事件身份 | 14 | [HTML Living Standard，Server-sent events](https://html.spec.whatwg.org/multipage/server-sent-events.html) | Last-Event-ID 支持发送恢复位置；服务端日志保留和补发协议仍需应用实现。 |
+| 行式与列式的数据访问范围 | 15 | [Amazon Redshift，Columnar storage](https://docs.aws.amazon.com/redshift/latest/dg/c_columnar_storage_disk_mem_mgmnt.html) | 支持按列读取相关数据块的解释；三行教学表不是实测性能，覆盖索引等也会影响读取成本。 |
 | 大对象分块上传与校验 | 15 | [Amazon S3，Multipart upload overview](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html) | 分块对象 ETag 不一定是完整对象的 MD5；上传完成也不等于后续处理成功。 |
 | 流式结果与用量记录 | 16 | [OpenAI API，Chat resource reference](https://developers.openai.com/api/reference/resources/chat) | 该接口 include_usage 的最终统计块可能因断线缺失；不能把缺失记为零费用或套用到所有供应商。 |
 
