@@ -1,0 +1,35 @@
+name: Peripheral recheck workbench
+on:
+  push:
+    branches: [docs/peripheral-recheck-20260928]
+    paths: [.github/workflows/peripheral-recheck.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 83e5f314d43dd4d73335a2c5268f0103710178d5
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Export immutable baseline and exact change list
+        shell: python
+        run: |
+          import json, os, pathlib, subprocess
+          out=pathlib.Path(os.environ['RUNNER_TEMP'])/'peripheral-recheck'
+          out.mkdir(exist_ok=True)
+          base='83e5f314d43dd4d73335a2c5268f0103710178d5'
+          def git(*args): return subprocess.check_output(['git',*args],text=True)
+          assert git('rev-parse','HEAD').strip()==base
+          subprocess.run(['git','archive','--format=zip','--output='+str(out/'main.zip'),base],check=True)
+          (out/'since-first-sync.diff').write_text(git('diff','a6b51b9f00bf3fe7910cfe4ca248e80545f566e3',base),encoding='utf-8')
+          (out/'latest-sync.diff').write_text(git('diff',base+'^',base),encoding='utf-8')
+          (out/'manifest.json').write_text(json.dumps({'main':base,'tree':git('rev-parse','HEAD^{tree}').strip(),'log':git('log','--format=%H %s','-5')},indent=2),encoding='utf-8')
+      - uses: actions/upload-artifact@v4
+        with:
+          name: peripheral-recheck-baseline
+          path: ${{ runner.temp }}/peripheral-recheck/
+          retention-days: 7
