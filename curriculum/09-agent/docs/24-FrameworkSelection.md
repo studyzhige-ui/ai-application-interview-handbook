@@ -37,7 +37,7 @@
 
 在 OpenAI Agents SDK 中，Agent 主要配置指令、模型、工具、交接与输出要求；Runner 推进模型、工具和角色交接的循环。函数包装可以帮助生成工具说明，业务权限和幂等仍由应用明确。[Running agents](https://openai.github.io/openai-agents-python/running_agents/)说明实际运行流程。
 
-**Session**管理跨运行的会话项；**RunState**承载中断运行所需状态，可以参与批准后继续。它们目的不同，不应从“用了 SQLiteSession”直接推导任意外部动作恰好一次。[Sessions](https://openai.github.io/openai-agents-python/sessions/)和[HITL](https://openai.github.io/openai-agents-python/human_in_the_loop/)应分别核对。
+**Session** 管理跨运行的会话项；**RunState** 承载中断运行所需状态，可以参与批准后继续。它们目的不同，不应从“用了 SQLiteSession”直接推导任意外部动作恰好一次。[Sessions](https://openai.github.io/openai-agents-python/sessions/)和[HITL](https://openai.github.io/openai-agents-python/human_in_the_loop/)应分别核对。
 
 SDK 还可能提供沙箱、更多集成和持久执行适配；具体能力按所安装版本和官方文档确认。这里讲的是核心对象职责，不把一份简表当成产品功能上限。
 
@@ -48,9 +48,9 @@ SDK 还可能提供沙箱、更多集成和持久执行适配；具体能力按�
 
 ## 3. LangGraph：显式描述状态怎样流过步骤
 
-LangGraph 用 **StateGraph（状态图）**描述 Node（节点）和 Edge（边）。节点读取状态并返回更新，边决定后续位置；**Reducer（合并规则）**规定并行或多次更新怎样组合。节点可以是普通程序、模型或工具，不是每个节点都必须是 Agent。
+LangGraph 用 **StateGraph（状态图）** 描述 Node（节点）和 Edge（边）。节点读取状态并返回更新，边决定后续位置；**Reducer（合并规则）** 规定并行或多次更新怎样组合。节点可以是普通程序、模型或工具，不是每个节点都必须是 Agent。
 
-**Checkpointer**按图执行边界保存状态，通常由 thread_id 关联；**Store**可保存跨线程复用的数据，例如用户偏好。把偏好存进去，不代表模型自动知道，节点仍要读取并编排。
+**Checkpointer** 按图执行边界保存状态，通常由 thread_id 关联；**Store** 可保存跨线程复用的数据，例如用户偏好。把偏好存进去，不代表模型自动知道，节点仍要读取并编排。
 
 `interrupt()`暂停等待外部输入，恢复时可能从节点开头执行，而不是回到任意程序行。中断前发生的副作用仍要幂等或可核对。并行阶段还要按官方持久化语义理解已完成写入与失败部分的恢复。[Persistence](https://docs.langchain.com/oss/python/langgraph/persistence)与[Interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts)是这类选择的重要核对入口。
 
@@ -117,7 +117,7 @@ LangGraph 用 **StateGraph（状态图）**描述 Node（节点）和 Edge（边
 
 观察调用是否正确关联、批准对象是否变化、节点是否重跑、旧 Worker 是否仍能写入，以及能否导出恢复需要的状态。模型切换还要核对工具、输入模态和消息兼容。
 
-**Escape hatch（接管或扩展入口）**指关键路径不符合需求时，应用能否替换执行器、重试、状态存储、权限或观测，而不是被迫绕过整个框架。不是每项能力都必须手写，但要知道真正需要接管时有没有可靠路径。
+**Escape hatch（接管或扩展入口）** 指关键路径不符合需求时，应用能否替换执行器、重试、状态存储、权限或观测，而不是被迫绕过整个框架。不是每项能力都必须手写，但要知道真正需要接管时有没有可靠路径。
 
 只有正常演示通过，不能宣称恢复和生产选型完成。未验证条件应写进决策记录，避免把“官方支持”当成本应用已验证。
 

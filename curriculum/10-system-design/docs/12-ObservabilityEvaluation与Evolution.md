@@ -1,388 +1,127 @@
-# 12｜Observability、Evaluation、Cost 与 Evolution
+# 12｜观测、评测与演进：怎样证明方案有效，怎样安全改变它
 
-> **本章定位：System Design 组合层。** 这里负责把 Observability、Evaluation、Cost 与 Evolution 组合成系统闭环。通用 Metrics/Logs/Trace 回到 [AIBE Observability](../../03-backend-engineering/docs/17-Observability与PerformanceDiagnosis.md)；Retrieval / End-to-end Quality 回到 [RAG Evaluation](../../08-rag/docs/10-RetrievalEvaluation.md) 与 [RAG Quality Engineering](../../08-rag/docs/11-EndToEndQualityEngineering.md)；Agent Trace / Eval 回到 [Agent Trace](../../09-agent/docs/20-TraceReplayAndDiagnosis.md) 与 [Agent Evaluation](../../09-agent/docs/21-EvaluationBenchmarkAndImprovement.md)。
+<a id="12observabilityevaluationcost-与-evolution"></a>
 
-系统设计最后一环不是“架构图画完”，而是：
+[← 上一章](11-MultiTenancy与Security.md) · [模块入口](../README.md) · [下一章 →](13-HighConcurrencyTransactionalSystems.md)
 
-> **上线后怎样知道它有没有达到目标、坏在哪、花了多少钱，以及怎样安全地继续演进。**
+新检索方案上线后，HTTP 成功率仍然是 99.9%，平均延迟还降低了，但用户投诉报告引用不支持结论。服务“没报错”，并不等于任务完成得更好。
 
----
+系统设计的最后一步不是再画一个监控框，而是决定收集什么证据、怎样定位第一处偏离、用哪些条件批准发布或回滚。
 
-## 1. Observability 不等于“有日志”
+## 1. 把运行质量与业务结果分开测
 
-至少要有三类信号：
+运行指标观察系统是否及时处理请求，例如延迟、请求量、错误和资源饱和度；业务与 AI 质量指标观察结果是否满足任务，例如引用是否支持结论、工具是否操作了正确对象、报告是否完成用户要求。[SRE：监控分布式系统](https://sre.google/sre-book/monitoring-distributed-systems/)
 
-```text
-Metrics
-Logs
-Trace
-```
+例如 1,000 项受理任务中，950 项产出可读报告，900 项通过业务验收。报告生成完成率是 95%，按全部受理任务计算的业务成功率是 90%；若只在已生成报告中评测，则是 `900 / 950 ≈ 94.74%`。两种分母回答不同问题，不能混用来美化结果。
 
-它们分别回答：
+需要人工批准或仍在合法等待窗口内的任务，应按事先定义的成熟样本规则评估，不把尚未到期的任务直接当失败，也不能无限排除长期未完成任务。
 
-```text
-系统整体怎么样？
-某个事件发生了什么？
-一次请求跨组件经历了什么？
-```
+## 2. Metrics、Logs 与 Trace 怎样互补
 
----
+**指标（metrics）**提供数量与分布，帮助发现异常；**日志（logs）**记录具体事件和必要上下文；**链路追踪（trace）**把同一次请求或任务经过的阶段关联起来。它们各有用途，不需要把所有原始内容复制三份。
 
-# 2. Golden Signals
+任务 J 可以关联 request、run、step 与外部操作身份，记录模型、提示、工具和索引版本，保存阶段开始结束、状态变化、重试与结果分类。敏感正文和秘密值按权限与保留策略处理。
 
-常见可以从：
+将每个 request_id 或完整问题文字作为时序指标标签，会产生大量独特标签组合，增加采集与查询负担。细粒度身份适合日志与 Trace；指标按有限且有意义的维度聚合，例如服务、阶段和错误类型。
 
-```text
-Latency
-Traffic
-Errors
-Saturation
-```
+## 3. 从一条慢请求找关键路径
 
-建立基础服务视图。
+假设鉴权 20 毫秒，两个检索分支并行耗时 80 和 140 毫秒，合并 10 毫秒，模型生成 900 毫秒，其他开销暂忽略。关键路径为 `20 + max(80, 140) + 10 + 900 = 1,070 毫秒`，不是把两个并行分支都加进去的 1,150 毫秒。
 
-但 AI 系统还需要质量信号。
+如果只优化 80 毫秒分支，整体可能几乎不变，因为它不是并行阶段的最长分支。若模型生成占绝大多数等待，提升缓存或改检索之前要确认能减少多少端到端成本。
 
----
+同样，记录的阶段时长需要注明是否包含排队、网络和子调用；重复包含会造成错误归因。
 
-# 3. Stage-level Trace
+## 4. AI 流水线要定位第一处证据丢失
 
-一个 RAG 请求：
+报告引用错误，可以按实际对象逐段核对：来源是否正确且有效，解析是否保留表格关系，检索是否找到必要证据，重排是否把证据丢掉，上下文是否截断例外，生成是否忠实使用证据。
 
-```text
-API
-→ Query Rewrite
-→ Retrieval
-→ Rerank
-→ LLM
-```
+若相关来源根本没有入库，调大模型温度或改提示词无法补回缺失的事实。若检索已经找到正确片段，但生成错误引用，则不能只报告 Recall 提升就宣称端到端成功。
 
-如果只记录：
+节点指标用于定位，不应替代完整任务指标。只有在明确定义了各阶段条件概率与依赖关系时，才可以讨论它们的组合；不能把几个独立测试集上的“准确率”直接相乘当作真实业务成功率。
 
-```text
-request = 3.2s
-```
+## 5. 评测集怎样支撑一次决策
 
-不知道慢在哪里。
+先固定评测问题、适用语料版本、权限范围、预期证据或可检查结果，并保留典型失败与长尾案例。不要只用开发时反复调过的例子证明泛化。
 
-更好：
+比较 A、B 方案时，同一批问题、相同或可解释的环境和预算更利于定位差异。对随机输出应重复测量并报告波动，不能把一次小样本提升说成稳定收益。
 
-```text
-rewrite=100ms
-retrieval=80ms
-rerank=700ms
-llm_ttft=1.4s
-decode=900ms
-```
+离线评测可以较安全地比较质量与成本；在线灰度能观察真实流量影响，但需要停止条件。**影子流量（shadow traffic）**只旁路观察，不代表可以重复发送邮件、支付或写生产数据库。影子执行应禁用副作用，或写入真正隔离的测试资源。
 
-System Design 需要按关键阶段切 Span。
+比较质量与延迟时，还要回到用户等待方式。假设同一代表性测试集上，A 平均 15 秒、任务成功率 70%，B 平均 75 秒、成功率 92%。这只说明在该测试条件下观察到 22 个百分点差异，不说明所有用户都值得多等一分钟。现场查询与允许异步完成的正式报告可以使用不同路径；先核对样本规模、错误严重性、尾延迟、成本和用户实际完成率，再做受控灰度。质量门也应分别检查各阶段与完整任务，不能让一个自评模型独自批准自己的结果。[灰度发布的验证思路](https://sre.google/workbook/canarying-releases/)
 
----
+## 6. 版本记录帮助归因，不保证完全重放
 
-# 4. Metric 必须有合适维度
+一份结果应能追到所用模型、提示、工具契约、来源与索引版本，以及关键输入和实际外部回执。这样才能区分“模型变了”“来源更新了”和“工具返回变了”。
 
-AI Gateway 总 P99 正常，但：
+但固定版本并不意味着可以重现全部世界状态。模型服务可能有随机性，外部工具数据会变化，时间与调度也会影响结果。重放应区分：只展示历史事实、用保存的工具结果重建推理、重新调用真实工具。第三种可能产生新副作用，需要重新授权与隔离。
 
-```text
-model=A   P99 500ms
-model=B   P99 12s
-```
+## 7. 发布与回滚先定义兼容边界
 
-如果只看总平均会被掩盖。
+增加字段时先部署能理解新旧数据的读取者，再写入新格式；删除字段前确认旧读取者和旧检查点不再依赖它。长任务可能跨越部署，所以任务状态版本与恢复兼容性也属于发布验收。
 
-常见维度：
+切换模型或索引前定义质量、延迟、错误、费用和权限门槛。回滚只能恢复仍兼容且经过核验的内容与配置；旧索引保留并不证明它仍包含必要增量，更不能把旧 ACL 一起恢复。
 
-```text
-route
-model
-tenant
-tool
-shard
-region
-error_type
-```
+重要设计选择可以保存在简短决策记录中：约束、备选方案、为何选择、接受的代价、何种信号会触发重新评估。它服务后续判断，不是为了写文档而记录每次参数调整。
 
-但 Label Cardinality 过高也会增加监控成本。
+## 8. 验证矩阵要区分证明层次
 
----
+| 验证 | 能提供什么证据 | 不能自动证明什么 |
+|---|---|---|
+| 手算与确定性模型 | 数量关系、状态转移和不变量 | 真实并发、持久化和网络行为 |
+| 单元与接口测试 | 指定输入、边界和接口约定 | 多服务在真实故障下的整体行为 |
+| 集成与故障注入 | 指定数据库、队列、供应商边界 | 未覆盖环境与故障模式 |
+| 负载与恢复演练 | 特定负载下的容量、尾延迟和恢复 | 所有未来流量、生产长期稳定性 |
+| 用户验收与线上观测 | 真实任务效果和持续变化 | 未观察人群和未出现风险 |
 
-# 5. SLO 与 Alert
+本课程配套实验属于第一层和部分单元测试。课程中的计算、状态推演与设计方案可作为后续实作条件，但不能写成已经部署和验证过的生产系统。
 
-Alert 不应该是：
+## 本章小结
 
-```text
-CPU > 80% 就报警
-```
+有效设计需要运行、质量与成本三类证据。用同一任务关联状态与关键路径，定位第一处失败，再用可比较的评测批准变化。版本服务归因，重放区分是否重新执行；发布、回滚与验证报告都要明确边界。
 
-更应该围绕用户可见问题：
+## 🎯 面试怎么答
 
-```text
-SLO burn rate
-error rate
-P99
-queue age
-freshness lag
-failed task rate
-```
+**问：怎样证明一次 AI 系统优化有效？**
 
-CPU 是原因候选，不一定是用户问题本身。
+> 我先定义任务成功、延迟和成本的口径及分母，固定可比较的评测条件，再沿 Trace 定位第一处质量或性能瓶颈。离线比较后用受控灰度验证，影子流量隔离副作用，设定停止和回滚条件。报告区分模型实验、真实集成、负载和生产观察，不用 HTTP 200 或一次平均值改善替代业务成功。
 
----
+## ⚠️ 容易混淆的地方
 
-# 6. Evaluation 是 AI 系统的“功能正确性监控”
+- 不同分母的成功率不可直接比较，并行阶段时长不能机械累加。
+- 影子流量不允许重复产生真实副作用，重放也不必等于重新执行。
+- 保存版本、测试通过和目录完整都不等于已经完成生产与读者验收。
 
-传统系统可能：
+## 本章自测
 
-```text
-200 OK
-```
+### 1. 鉴权 30 毫秒，两个检索分支并行分别 100、200 毫秒，合并 20 毫秒，生成 750 毫秒。忽略其他开销，端到端多久？把 100 毫秒分支优化到 20 毫秒，整体下降多少？
 
-就算接口成功。
+<details><summary>提示</summary>
 
-但 AI 系统：
+关键路径等待并行分支中的最长者。
 
-```text
-HTTP 200
-但答案错了
-```
-
-仍然失败。
-
-所以还需要：
-
-```text
-Task Success
-Faithfulness
-Retrieval Recall
-Tool Accuracy
-Schema Pass Rate
-Human Escalation Rate
-```
-
-这就是为什么 Evaluation 必须进入 System Design，而不是模型团队的附录。
-
----
-
-# 7. Online 与 Offline Evaluation
-
-## Offline
-
-```text
-固定 Dataset
-→ Regression
-→ Baseline Comparison
-```
-
-适合发布前。
-
-## Online
-
-```text
-A/B
-User Feedback
-Outcome Metric
-Production Sample Review
-```
-
-适合验证真实流量。
-
-两者需要结合。
-
----
-
-# 8. Cost Model
-
-系统成本不只是机器。
-
-AI Application 常包括：
-
-```text
-LLM input/output token
-Embedding
-Rerank
-Vector storage
-GPU
-Object storage
-Network egress
-Queue / Worker
-Observability
-```
-
-所以最好建立：
-
-```text
-cost / request
-cost / tenant
-cost / successful outcome
-```
-
-而不是只看月度总账单。
-
----
-
-# 9. Cost 与 Architecture Trade-off
-
-例如：
-
-```text
-Rerank Top100
-```
-
-可能质量更高，但：
-
-```text
-Latency ↑
-Cost ↑
-```
-
-需要实验找：
-
-```text
-Top20 vs Top50 vs Top100
-```
-
-的 Pareto Point。
-
-同理：
-
-```text
-large model for all requests
-```
-
-可能被：
-
-```text
-routing + small model + fallback
-```
-
-替代。
-
----
-
-# 10. Version 是 Observability 的一部分
-
-Trace 最好记录：
-
-```text
-service_version
-model_version
-prompt_version
-index_generation
-schema_version
-feature_flag
-```
-
-否则发布后 Quality 下降，无法知道哪次变更导致。
-
----
-
-# 11. Safe Rollout
-
-新版本不要默认：
-
-```text
-100% traffic immediately
-```
-
-可以：
-
-```text
-shadow
-canary
-1%
-10%
-50%
-100%
-```
-
-同时观察：
-
-```text
-error
-latency
-quality
-cost
-```
-
-AI Pipeline 更应该做 Regression / Canary，因为模型和 Prompt 行为变化不总是类型系统能发现。
-
----
-
-# 12. Data / Index Migration
-
-Schema / Embedding / Index 升级常需要：
-
-```text
-build new generation
-→ backfill
-→ delta catch-up
-→ validate
-→ switch read pointer
-→ rollback window
-→ cleanup old
-```
-
-而不是在线原地改完就祈祷。
-
----
-
-# 13. Capacity Feedback Loop
-
-生产系统应形成：
-
-```text
-Measure
-→ Forecast
-→ Load Test
-→ Capacity Plan
-→ Deploy
-→ Measure Again
-```
-
-Google SRE 也强调不要把过去的容量比率永久当事实，代码和流量会变化。
-
----
-
-# 14. Incident 后要转成系统改进
-
-例如一次 Queue 堆积事故：
-
-不要只说：
-
-```text
-扩容了
-```
-
-还应问：
-
-```text
-为什么没提前看到？
-为什么 Admission Control 没生效？
-Retry 是否放大？
-Alert 是否太晚？
-能否自动降级？
-```
-
-Observability 的价值是让系统可学习。
-
----
-
-# 15. 🎯 面试怎么答
-
-> 我会把 Observability 和 Evaluation 当成架构本身的一部分。传统指标看 latency、traffic、error、saturation，AI 系统还要看 retrieval/tool/task quality。Trace 会记录 stage latency 和 model/prompt/index/version，方便 Bad Case Replay。成本会归一到 request/tenant/outcome。上线采用 canary + regression，数据或索引升级用 new generation + validation + cutover + rollback，而不是直接原地替换。
-
----
-
-# 16. 本章自测
-
-<details><summary>1. 为什么 AI API 返回 200 仍可能算失败？</summary>
-因为模型可能给出错误、无依据或工具执行失败但被包装成正常文本，所以需要质量和任务成功指标。
 </details>
 
-<details><summary>2. 为什么 Trace 要记录 Prompt / Model / Index Version？</summary>
-AI 输出高度依赖这些版本，没有版本无法复现 Bad Case，也无法把质量回归归因到具体变更。
+<details><summary>参考答案与解释</summary>
+
+总计 30 + 200 + 20 + 750 = 1,000 毫秒。短分支优化后最长仍为 200，按给定模型整体不下降。
+
 </details>
 
-<details><summary>3. 为什么 Migration 常用 new generation 而不是原地更新？</summary>
-这样可以独立构建、校验、灰度切换并保留回滚窗口，降低半更新状态的风险。
+### 2. 1,000 项受理任务中 800 项生成报告，其中 760 项通过质量验收。团队说成功率 95%。请给出两种合法口径，并指出还缺哪种信息。
+
+<details><summary>提示</summary>
+
+95% 的分母是哪一个集合？
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+生成报告中的质量通过率为 760/800=95%；按全部受理任务算业务成功率为 760/1000=76%。还要说明统计窗口、任务是否已到验收时点、失败与未完成原因，以及样本范围。
+
+</details>
+
+---
+
+[← 上一章](11-MultiTenancy与Security.md) · [模块入口](../README.md) · [下一章 →](13-HighConcurrencyTransactionalSystems.md)

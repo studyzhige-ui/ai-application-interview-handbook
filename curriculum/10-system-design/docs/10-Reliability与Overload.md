@@ -1,356 +1,129 @@
-# 10｜Timeout、Retry、Failover、Degradation 与 Load Shedding
+# 10｜可靠性与过载：失败时怎样保护剩余的成功机会
 
-> **本章定位：System Design 组合层。** 这里把 Deadline、Retry、Failover、Degradation、Load Shedding 组合成系统级 Failure Strategy；这些 Primitive 的完整机制与错误语义回到 [AIBE Timeout / Deadline](../../03-backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md) 和 [AIBE Retry / Circuit Breaker / Failover](../../03-backend-engineering/docs/08-RetryCircuitBreaker与Failover.md)。
+<a id="10timeoutretryfailoverdegradation-与-load-shedding"></a>
 
-可靠系统不是“所有请求都成功”，而是：
+[← 上一章](09-QueueBackpressure与LongRunningTask.md) · [模块入口](../README.md) · [下一章 →](11-MultiTenancy与Security.md)
 
-> **在依赖变慢、部分节点故障、流量超载时，系统不会因为自我放大把小故障变成全站级联故障。**
+模型服务变慢后，API 等得更久；客户端以为失败，开始重试；工作者也在重试。很快，原本每秒 20 次的生成调用变成更多在途请求，队列和连接一起被占满。
 
-Google SRE 对 Cascading Failure 的核心提醒就是：Overload、Retry 和资源争用会形成正反馈。
+可靠性并不总是“再试一次、再加一个副本”。首先要限制故障能够消耗的资源，让仍有机会完成的请求得到服务。
 
----
+## 1. 一次请求只能花一份等待预算
 
-## 1. Timeout 是资源保护，不只是用户体验
+**超时（timeout）**限制某次等待的持续时间；**截止时间（deadline）**限制整项工作最晚何时结束。若每一层都重新获得完整的十秒超时，三层串行调用可能让用户等远超十秒。
 
-如果没有 Timeout：
+例如某个同步查询总预算为 1 秒，前面鉴权和检索已经用了 300 毫秒，后面最多只剩 700 毫秒，还需要给序列化、发送和清理留出空间。把剩余预算向下传递，而不是每个依赖独立再等 1 秒。
 
-```text
-Request
-→ Slow Dependency
-→ Worker / Connection 一直占用
-→ Pool Exhaustion
-→ 新请求也开始排队
-```
+预算是设计选择，不能把各阶段 P99 直接相加后当作端到端 P99。并行步骤、阶段相关性和不同样本集合都会影响分位数。实际应追踪同一次请求的端到端延迟与关键路径。
 
-所以每个外部调用都应有：
+## 2. 决定是否重试，先回答三个问题
 
-```text
-Connect Timeout
-Read Timeout
-Overall Deadline
-```
+一是错误是否可能短暂消失，二是同一操作重试是否安全，三是总预算内是否还有值得尝试的机会。
 
-并和上层 SLO 对齐。
+| 现象 | 默认判断方向 | 继续前需要的条件 |
+|---|---|---|
+| 参数不合法 | 不原样重试 | 修正输入 |
+| 当前无权限 | 不绕过权限重试 | 取得合法授权或停止 |
+| 短暂连接故障 | 可能重试 | 副作用可防重、预算尚足 |
+| 依赖返回限流 | 减速，而不是立即加压 | 遵守适用的等待提示与配额 |
+| 外部效果未知 | 先核对 | 稳定操作身份、可靠结果查询或外部幂等 |
 
----
+重试间隔可使用递增退避并加随机扰动，避免许多请求在同一时刻再次冲向依赖。还要限制最大次数、累计等待和整体重试流量。具体错误码的含义以调用协议为准，不能把所有 5xx 都解释为“服务端肯定没做”。
 
-# 2. Deadline 要向下传播
+若上层最多尝试 3 次、下层每次又尝试 3 次，同一个业务请求可能造成 9 次下游尝试。明确主要重试责任层，可以避免多层独立重试放大故障。[SRE：级联故障](https://sre.google/sre-book/addressing-cascading-failures/)
 
-假设 API 总预算：
+## 3. 熔断与隔离分别保护什么
 
-```text
-2s
-```
+**熔断（circuit breaker）**在依赖持续失败时暂时停止或减少对它的请求，过一段时间用受控探测判断是否恢复。它减少无效等待，不证明被熔断的业务已经完成，也不能代替幂等和结果核对。
 
-不能让：
+**隔离**限制某类工作能够占用的资源。例如批量文档解析与在线状态查询不共用一个没有上限的执行池，可以避免大文件处理占满所有查询线程。隔离的边界可以是并发槽位、队列、进程或独立实例，强度由故障与成本要求决定。
 
-```text
-DB 2s
-LLM 10s
-Tool 5s
-```
+隔离过细也会浪费空闲容量；熔断阈值过于敏感可能因少量噪声频繁开关。先定义保护目标，再通过真实负载和失败注入验证，不把“配了熔断器”当成可靠性结论。
 
-各自独立。
+## 4. 接不住时，拒绝在哪里发生很重要
 
-更合理：
+**准入控制（admission control）**决定是否接受新的工作；**负载丢弃（load shedding）**在过载时拒绝部分请求，保护剩余请求。越早发现容量不足，越少浪费已经投入的解析、检索和模型计算。
 
-```text
-request_deadline
-→ child call receives remaining budget
-```
+报告任务在正式受理前检查租户在途上限和必要预算，超额时返回明确拒绝。不能先无限创建“已接受”任务，再无声删除积压。已经接受的任务，应按承诺继续、取消或转入可解释的失败处理。
 
-否则上层已经超时，下游还在浪费资源。
+可优先保护状态查询、取消和故障诊断入口。若这些控制功能也被昂贵生成任务堵住，用户既无法知道情况，也无法停止继续消耗资源。[SRE：处理过载](https://sre.google/sre-book/handling-overload/)
 
----
+## 5. 降级必须保留不可妥协的条件
 
-# 3. Retry 什么时候有效
+**优雅降级（graceful degradation）**是有选择地降低非关键能力，例如生成简版报告、暂停低优先级批处理、返回标明版本的旧公开数据。它不是把所有失败都转成 HTTP 200。
 
-更适合：
+必须先区分可降级质量与不能降低的正确性、安全性。模型换成便宜版本可以作为业务策略，但仍要满足最低回答质量；鉴权不可用时直接放行，不是可接受的“保可用”。
 
-```text
-Transient Network Error
-503
-Connection Reset
-Rate Limit with Retry-After
-```
+返回降级结果应可识别，监控也要单独记录。否则整体成功率看起来不变，却已经不能完成用户真正需要的工作。
 
-不适合：
+## 6. 故障转移不是无条件换一家继续拼接
 
-```text
-Invalid Input
-Permission Denied
-Business Rejection
-Permanent Not Found
-```
+**故障转移（failover）**把新工作或可安全继续的工作交给备用依赖。备用模型需要满足上下文长度、工具调用、输出格式、区域与质量要求，不能只因接口字段相似就认为兼容。
 
-先做 Error Taxonomy，再决定 Retry。
+流式回答已经向用户发出一半时，直接接上另一模型的一半文本，可能产生语义矛盾或重复工具操作。可以结束当前尝试并明确重试，或使用事先设计的分段恢复协议；不要把不同尝试伪装成同一连续回答。
 
----
+客户端断开也不保证供应商立即停止计算或不再计费。取消结果、最终用量和外部操作状态需要按供应商协议核对。
 
-# 4. Exponential Backoff + Jitter
+## 7. 副本、备份和恢复目标怎样配合
 
-如果 10000 个 Client 同时失败后：
+副本帮助抵御某些节点故障，却可能同步复制误删或错误写入。备份提供另一个恢复依据，但只有真正恢复并验证过，才能知道它是否可用。
 
-```text
-1 秒后同时重试
-```
+**RTO（恢复时间目标）**表示期望在故障后多长时间内恢复所需服务；**RPO（恢复点目标）**表示允许恢复到多早的数据状态，通常用时间距离表达潜在数据损失范围。例如目标 RPO 为 5 分钟，不是“最多丢 5 条记录”；高流量业务五分钟可能包含很多操作。
 
-会形成同步重试洪峰。
+还要定义故障域：同机房的三个副本，可能一起受机房故障影响。跨区部署则新增延迟、复制和成本取舍。恢复验证应包括读写、权限、未完成任务、操作记录与派生索引，而不是只检查进程启动。
 
-因此常见：
+## 8. 恢复完成后，仍要控制流量
 
-```text
-backoff = exponential delay + random jitter
-```
+依赖刚恢复时，积压任务、客户端重试和正常新请求会同时到来。逐步放量、限制重试预算、按租户调度，才能避免恢复即再次过载。
 
-目标不是“更慢”，而是：
+故障演练应记录具体初始负载、注入故障、拒绝比例、成功延迟、积压消化、未知操作数量与恢复时间。重试次数减少却失败比例上升，可能是合理保护，也可能是阈值错误；必须结合用户目标判断。
 
-> **让恢复流量分散，避免再次同时打爆依赖。**
+## 本章小结
 
----
+可靠性从有限预算开始：传播剩余等待时间，在安全且值得时重试，通过隔离、准入与丢弃限制故障范围。降级不能绕过安全和正确性；故障转移要考虑兼容与已交付内容，恢复则需要实际数据与业务验证。
 
-# 5. Retry Budget
+## 🎯 面试怎么答
 
-即使单次请求最多重试 3 次，系统级仍可能放大：
+**问：系统在过载和依赖故障时怎样保持可靠？**
 
-```text
-Gateway retry
-Service retry
-SDK retry
-Client retry
-```
+> 先限制每项工作的 deadline、并发和重试预算，避免多层重试放大。入口按剩余容量受理，关键控制功能与昂贵任务隔离；降级保留权限和业务不变量。备用依赖需要能力与质量兼容，未知副作用先核对；按 RTO/RPO 做恢复演练，并控制积压重新放量。
 
-最坏可能指数放大。
+## ⚠️ 容易混淆的地方
 
-所以要考虑：
+- 超时不证明对方未执行，熔断也不解决已经发生的副作用。
+- 降低质量与绕过权限不是同一种降级。
+- 副本不是备份，备份存在也不等于恢复已验证。
 
-```text
-Only one layer retries
-or
-shared retry budget
-```
+## 本章自测
 
-避免多层同时重试。
+### 1. 一个操作总 deadline 为 2 秒，前面已用 1.6 秒，下一次调用至少需要 0.5 秒才能产生有用结果。应继续完整重试吗？请求还有 3 次重试额度是否改变答案？
 
----
+<details><summary>提示</summary>
 
-# 6. Circuit Breaker
+重试次数预算与剩余时间预算要同时满足。
 
-当依赖明显失败：
-
-```text
-Closed
-→ failures exceed threshold
-→ Open
-→ fast fail
-→ after cooldown Half-open
-→ probe
-```
-
-价值：
-
-```text
-减少无意义调用
-保护线程/连接
-给下游恢复时间
-```
-
-但 Threshold 配错会误伤，因此不是万能开关。
-
----
-
-# 7. Failover 不等于没有损失
-
-Primary 故障切到 Replica：
-
-```text
-availability ↑
-```
-
-但可能面对：
-
-```text
-replication lag
-recent write loss
-cache cold
-connection reconnect
-route convergence
-```
-
-所以 Failover 需要明确：
-
-```text
-RTO
-RPO
-read/write consistency
-```
-
----
-
-# 8. Failure Domain
-
-Google Cloud 的可靠性指南强调：
-
-```text
-resource
-zone
-region
-```
-
-可以看成不同 Failure Domain。
-
-如果两份 Replica 都在同一故障域：
-
-```text
-同一故障可能一起失效
-```
-
-因此冗余必须结合业务 SLO 决定是否跨进程、机器、AZ、Region。
-
----
-
-# 9. Graceful Degradation
-
-系统过载时不一定要：
-
-```text
-100% feature
-or
-500 error
-```
-
-可以：
-
-```text
-关闭推荐
-降低 Search Candidate
-跳过昂贵 Rerank
-降级小模型
-返回 stale cache
-只保核心功能
-```
-
-关键是提前定义：
-
-> 哪些功能是 Must-have，哪些是 Best-effort。
-
----
-
-# 10. Load Shedding
-
-当容量已满，继续接所有请求会导致：
-
-```text
-Queue ↑
-Latency ↑
-Timeout ↑
-Retry ↑
-Load ↑
-→ Cascading Failure
-```
-
-更合理是：
-
-```text
-reject low-priority / excess traffic early
-```
-
-保护一部分请求成功，而不是所有请求一起慢死。
-
-Google SRE 也强调过载后应只接受当前能够处理的工作。
-
----
-
-# 11. Admission Control
-
-进入昂贵系统前先判断：
-
-```text
-quota
-concurrency
-priority
-cost budget
-tenant fairness
-```
-
-例如 LLM Gateway：
-
-```text
-request
-→ auth
-→ quota
-→ concurrency admission
-→ model call
-```
-
-而不是调用 Provider 后才发现超配额。
-
----
-
-# 12. Bulkhead / Isolation
-
-如果所有任务共享一个 Worker Pool：
-
-```text
-slow video processing
-```
-
-可能占满 Pool，让轻量请求也无法执行。
-
-可以按：
-
-```text
-workload type
-tenant
-priority
-model
-```
-
-分离资源池，降低故障传播。
-
----
-
-# 13. Recovery 也要限速
-
-依赖恢复后，如果：
-
-```text
-积压 Queue
-+ Retry
-+ Cache Miss
-```
-
-瞬间全部恢复流量，可能再次打崩。
-
-所以需要：
-
-```text
-ramp-up
-warm-up
-retry rate limit
-queue drain control
-```
-
-恢复本身也是一种高峰。
-
----
-
-# 14. 🎯 面试怎么答
-
-> 我会从 End-to-end Deadline 开始，把剩余时间向下游传播；Retry 只针对 transient error，并用 exponential backoff + jitter，同时防止多层 Retry 放大。依赖持续失败时可以 Circuit Break / Fast Fail。系统进入 Overload 后要优先 Admission Control 和 Load Shedding，而不是让 Queue、Timeout、Retry 形成正反馈。高可用还要按 Failure Domain 设计冗余，并明确 RTO/RPO 和 Failover 后的一致性边界。
-
----
-
-# 15. 本章自测
-
-<details><summary>1. 为什么 Retry 会导致级联故障？</summary>
-下游变慢时重试会增加额外流量，使已经过载的依赖更忙，产生 Timeout→Retry→更高 Load 的正反馈。
 </details>
 
-<details><summary>2. 为什么恢复后也需要限速？</summary>
-故障期间可能积压大量 Queue、Retry 和 Cache Miss，若一次性放开，会形成恢复洪峰再次击穿依赖。
+<details><summary>参考答案与解释</summary>
+
+不应启动明知超出剩余 0.4 秒的完整尝试。还有次数额度不代表有足够时间；应结束当前尝试或进入事先约定的异步处理，而不是悄悄延长用户承诺。
+
 </details>
 
-<details><summary>3. Failover 为什么还要关心 RPO？</summary>
-如果副本存在复制延迟，切换后可能缺少最近写入；RPO 描述可接受的数据损失范围。
+### 2. 系统目标 RPO 为 5 分钟，实际只恢复到故障前 12 分钟；应用已经启动且健康检查通过。能宣布达标吗？还缺什么验证？
+
+<details><summary>提示</summary>
+
+启动成功、恢复耗时和恢复数据位置是不同指标。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+不能，实际恢复点落后 12 分钟，未达到 RPO。还应检查业务读写、权限、操作身份与未完成任务，以及实际 RTO；健康检查通过不能替代数据和业务核验。
+
+</details>
+
+---
+
+[← 上一章](09-QueueBackpressure与LongRunningTask.md) · [模块入口](../README.md) · [下一章 →](11-MultiTenancy与Security.md)

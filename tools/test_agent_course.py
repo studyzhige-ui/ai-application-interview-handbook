@@ -33,7 +33,10 @@ class RenderInspection(HTMLParser):
     def __init__(self):
         super().__init__()
         self.counts = {}; self.details = []; self.bad = []; self.ids = []
+        self.code_depth = 0
     def handle_starttag(self, tag, attrs):
+        if tag in ('code', 'pre'):
+            self.code_depth += 1
         self.counts[tag] = self.counts.get(tag, 0) + 1
         attributes = dict(attrs)
         if 'id' in attributes:
@@ -48,11 +51,17 @@ class RenderInspection(HTMLParser):
             else:
                 self.details[-1] += 1
     def handle_endtag(self, tag):
+        if tag in ('code', 'pre'):
+            self.code_depth -= 1
         if tag == 'details':
             if not self.details:
                 self.bad.append('unmatched details close')
             elif self.details.pop() != 1:
                 self.bad.append('details must have exactly one summary')
+
+    def handle_data(self, data):
+        if self.code_depth == 0 and '**' in data:
+            self.bad.append('unparsed strong-emphasis marker')
 
 
 class FeedbackTests(unittest.TestCase):
@@ -184,6 +193,18 @@ class TeachingStructureTests(unittest.TestCase):
         values = {label.strip(): int(value) for label, value in rows}
         self.assertEqual(sum(values[k] for k in ('指令','目标与状态','近期历史','记忆与检索证据','工具说明','工具结果')), values['输入小计'])
         self.assertEqual(values['输入小计'] + values['输出预留'] + values['安全余量'], values['合计'])
+    def test_cjk_strong_emphasis_regression(self):
+        renderer = MarkdownIt('commonmark', {'html': True})
+        samples = [
+            ('**Checkpoint（检查点）**保存状态', True),
+            ('**Checkpoint（检查点）** 保存状态', False),
+            ('`**literal code**`', False),
+        ]
+        for text, should_fail in samples:
+            with self.subTest(text=text):
+                parser = RenderInspection(); parser.feed(renderer.render(text)); parser.close()
+                self.assertEqual(bool(parser.bad), should_fail)
+
     def test_markdown_rendering_and_fold_structure(self):
         renderer = MarkdownIt('commonmark', {'html': True}).enable('table')
         for n, text in TEXTS.items():

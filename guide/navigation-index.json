@@ -985,17 +985,17 @@
         {
           "path": "curriculum/09-agent/docs/01-AgentSystemAndResponsibilities.md",
           "title": "01. Agent 系统的全貌：模型之外，谁把任务做完",
-          "sha256": "8f3d4e9e94cca971f0ca7896b38f7b819e4bf3810fd724d38dff5ed6a1b00db4"
+          "sha256": "fc9819f36313b01587828326b1f00ad89ea35f140e1e17700a42237f3f0e4067"
         },
         {
           "path": "curriculum/09-agent/docs/02-WorkflowAutonomyAndRuntimeBoundary.md",
           "title": "02. Workflow 与 Agent：哪些决定交给模型",
-          "sha256": "e7dd102d277cff7964f165e26b3e47bf53438abb384bc6f6801e9c5225ab0899"
+          "sha256": "818eef772464421be6e5dc4cf0227f0cd6e22b1993a1795930146f38ffc109d2"
         },
         {
           "path": "curriculum/09-agent/docs/03-AgentLoopAndExecutionScopes.md",
           "title": "03. Agent Loop：观察怎样改变下一步",
-          "sha256": "dd96ea4d14ca56e5f74d7fc6e30f26d410752b9a5ce700735c1e639a627ae9de"
+          "sha256": "a5d2ccbaecb5bdd89a30c03d45d9111c400d393092d517f6eb3b6eb63f548613"
         },
         {
           "path": "curriculum/09-agent/docs/04-ToolContractAndValidation.md",
@@ -1005,12 +1005,12 @@
         {
           "path": "curriculum/09-agent/docs/05-ToolRegistrationAndDiscovery.md",
           "title": "05. 工具注册与发现：程序有的，不一定都给模型看",
-          "sha256": "e8b4a6294ea4a2cf7c20b4607c7696ee40dcf15e1670a4853802dbd71c69f5eb"
+          "sha256": "3e1c5a797be99b35e675228cabc5af6ea193f90982835b65c8a3c2dfa159392c"
         },
         {
           "path": "curriculum/09-agent/docs/06-ToolExecutionAndFailure.md",
           "title": "06. 工具结果与失败：谁来修，怎样继续",
-          "sha256": "0f4af6e345eb9aabab4a20f29de87d08510f0e4da40f8e2059ffc2ea1de72dd9"
+          "sha256": "c0c383252e57b2818936cd925f8387051b90dac01149ff9a9908d9ce913a87c9"
         },
         {
           "path": "curriculum/09-agent/docs/07-ToolConcurrencyAndCancellation.md",
@@ -1020,17 +1020,17 @@
         {
           "path": "curriculum/09-agent/docs/08-PlanningGoalAndControl.md",
           "title": "08. 计划与停止：让每一步朝目标推进",
-          "sha256": "6be207a8e5bd624326f9a6e54925cf1329b4b9c546087dfa34d589d3721e9add"
+          "sha256": "1cd46a5725553024216e425819ceab78d3b4d1eb325823d7dc4e93eb2d4dece0"
         },
         {
           "path": "curriculum/09-agent/docs/09-ContextAssemblyAndCache.md",
           "title": "09. 上下文编排：模型这一刻到底收到什么",
-          "sha256": "1e341ce00fdc3c90b84a380f6136a1288125d89e380838b03d5b481942138c29"
+          "sha256": "f80c1417267a3fbae970b2cfb717cc3104389e88f1fbe0b0cf37e30e9027716a"
         },
         {
           "path": "curriculum/09-agent/docs/10-CompactionAndContinuation.md",
           "title": "10. 上下文压缩：缩短输入以后，怎样继续做对",
-          "sha256": "375d98066a451cae636e1605d49f2ba6b346e4b818d88c0f7612d68a4e9247ac"
+          "sha256": "93d8bf00c39a8d5cac7c1d0e94eb0e438f13c45c1f29ac716d8725e88f414185"
         },
         {
           "path": "curriculum/09-agent/docs/11-MemoryLifecycle.md",
@@ -1040,17 +1040,17 @@
         {
           "path": "curriculum/09-agent/docs/12-StateHistoryAndPersistence.md",
           "title": "12. 状态与持久化：程序怎样知道工作做到哪里",
-          "sha256": "7064db59552bc2c81d69d2c36363520be42e7bf93ce90266952c1c2544a2bbd2"
+          "sha256": "3a00303b0068d16c02551cd50ed93e6685346e9b52f2abc96a937c9aad8352c2"
         },
         {
           "path": "curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md",
           "title": "13. 检查点与恢复：保存之后、崩溃之前发生了什么",
-          "sha256": "474229c0c4ea77d3ff0b753072a562a9125e881d790319dce8b9b14a34101b8c"
+          "sha256": "85ee91621b7fddde5d0b72049d62fd08d831591a590959299f4a9cdf7158b6c6"
         },
         {
           "path": "curriculum/09-agent/docs/14-PermissionApprovalAndSandbox.md",
           "title": "14. 权限、批准与沙箱：一次动作要过几道不同的门",
-          "sha256": "970c2fbe7407b3ea8d92208f29db07cc96ababc188b3260f05048f698c7ca8f5"
+          "sha256": "6f7caee705446b603529bcca5f53dd77f2a170590f8bcdc50f8e91c7ef10b481"
         },
         {
           "path": "curriculum/09-agent/docs/15-InjectionAndContainment.md",
@@ -1065,27 +1065,27 @@
         {
           "path": "curriculum/09-agent/docs/17-SkillsHooksAndExtensions.md",
           "title": "17. Skills、Hooks 与 Plugins：知识怎样加载，规则怎样触发",
-          "sha256": "92d4da016067686f6d5ca2a0315a852e7e5457cb3426d2dba46d16285e4f9e06"
+          "sha256": "ad6294923e78c29b9c24a3c1588ed6110eea27c54e8ccfef05111ebf5fd12f44"
         },
         {
           "path": "curriculum/09-agent/docs/18-RoutingAndProviderResilience.md",
           "title": "18. 路由与模型适配：换一条路径，不能丢掉任务保证",
-          "sha256": "675b66aa485d1d4c8c59f50bb1cb975f3f7d23a0ab539ed69c1c5eb2a24eac76"
+          "sha256": "2ff349680676926031af1bec0338a73d1ab92b4c97734829dd8cb95ac99fba16"
         },
         {
           "path": "curriculum/09-agent/docs/19-MultiAgentAndA2A.md",
           "title": "19. 多 Agent 协作：交出去的是任务，不是全部控制权",
-          "sha256": "f1d8719e68c93225611a447b0ff130f95dca339dde326d65d0c7bef795bf92ca"
+          "sha256": "eedae12110aa0fd39af69789ebd64a8cceb6e7f370ab28ec69a53cd8c0ef342f"
         },
         {
           "path": "curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md",
           "title": "20. 执行追踪：先定位卡在哪，再取需要的证据",
-          "sha256": "c188505e1b60b73e629fe8880edbb856c658ff2314cdede2226a4f0d0aad8b13"
+          "sha256": "72a21a847f40f808ef4b3c7b29364b485eb5955e5589b65dbb8314907e00fd60"
         },
         {
           "path": "curriculum/09-agent/docs/21-EvaluationBenchmarkAndImprovement.md",
           "title": "21. Agent 评测：怎样证明修改真的更好",
-          "sha256": "aae20e768d7073b689e9458674e31cb62c674a8233615660b74d355389da0a78"
+          "sha256": "b5e375783dcca08809126461ad53eff49b48eeea92d42f0ab7aed11f5a81fc41"
         },
         {
           "path": "curriculum/09-agent/docs/22-CodingAgentDelivery.md",
@@ -1100,7 +1100,7 @@
         {
           "path": "curriculum/09-agent/docs/24-FrameworkSelection.md",
           "title": "24. 框架选型：先问要保证什么，再看谁能实现",
-          "sha256": "279b03a119a8aa78698115c083267f8b44d48bbb27993ba10bbed0da5600d972"
+          "sha256": "0474cc6ec7a989b4e6c0eead435b541fe9927a2240f68f70b76d611fadc15f2e"
         }
       ],
       "support": [
@@ -1111,7 +1111,9 @@
     {
       "directory": "10-system-design",
       "label": "System Design",
-      "review_records": [],
+      "review_records": [
+        "guide/audits/system-design-reader-first-2026-09-28.md"
+      ],
       "readme": "curriculum/10-system-design/README.md",
       "chapter_count": 19,
       "reading_order": [
@@ -1138,98 +1140,98 @@
       "chapter_metadata": [
         {
           "path": "curriculum/10-system-design/docs/01-SystemDesign职责与答题框架.md",
-          "title": "01｜System Design 的职责与完整答题框架",
-          "sha256": "90e042a585913e38fd8cc0d283ad3e7b573a229e376a0361b2cccbd2e69ef391"
+          "title": "01｜系统设计：从用户的一次操作推导整套方案",
+          "sha256": "b5c7f793fe05711622e78663528d2d1f2818aefca53c983724d9c4824e332058"
         },
         {
           "path": "curriculum/10-system-design/docs/02-Requirement与SLO.md",
-          "title": "02｜Requirement、SLO、Constraint 与 Scope",
-          "sha256": "9779d722c0355ae3c31d6f124677dd20d249b46853e8817e1465227fa97eb87e"
+          "title": "02｜需求与 SLO：怎样把“好用”变成可检查的承诺",
+          "sha256": "c7281c412377bae419dd6e9159a6acf0d764f449de50659c4a6b5675e0817707"
         },
         {
           "path": "curriculum/10-system-design/docs/03-Workload与CapacityEstimation.md",
-          "title": "03｜Workload、Capacity、Hotspot 与数量级估算",
-          "sha256": "677382191505e3f179888e78ca490c4c6d0edb6021563fe7878c1b54c185d7e1"
+          "title": "03｜工作负载与容量：把请求换算成资源和费用",
+          "sha256": "970dccd73adcec00e326363f1952be53c62a4f0b59735dc2583894c3383b969d"
         },
         {
           "path": "curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md",
-          "title": "04｜API、Data Model 与 State Ownership",
-          "sha256": "40bcccae3023faecec37c0fb6f00d000f229d1c49204d616a4cd96df5b192e10"
+          "title": "04｜API 与数据模型：谁拥有事实，谁可以改变它",
+          "sha256": "a491b7f15edb60097cacc66b409cd4716857cd4c962b2458d28c2b90a0cd06c9"
         },
         {
           "path": "curriculum/10-system-design/docs/05-DataFlow与StateMachine.md",
-          "title": "05｜Sync / Async、Data Flow 与 State Machine",
-          "sha256": "91042639751176b3b77827f1543162c0639db4e00c472b70fdd38ace40942372"
+          "title": "05｜数据流与状态机：请求被接受以后，谁继续把它做完",
+          "sha256": "f2a18e1d2dce696a47e88a935465c4b85b1b16b8fe715fbdabe9e99bada699e0"
         },
         {
           "path": "curriculum/10-system-design/docs/06-Cache与HotPath.md",
-          "title": "06｜Cache、Hot Path 与 Read / Write Path",
-          "sha256": "a26d4b44d0d3bc53d3e8dddf3c9cc651a9e618f15eb15fcb6e3afde19429fba0"
+          "title": "06｜缓存与热点：省下重复工作之后，怎样处理旧结果和回源",
+          "sha256": "6273077ae9a87b7048e9eabd2a9a3b92945bae77ffadfcbfb2b6bc9068b8bc22"
         },
         {
           "path": "curriculum/10-system-design/docs/07-PartitionRouting与Fanout.md",
-          "title": "07｜Partition、Routing、Fan-out 与 Rebalance",
-          "sha256": "15aecda331b6c71765fd3e79f04ba6f501a20077833f17dc2449a0ddda0b1ef1"
+          "title": "07｜分区、路由与聚合：数据拆开后，一次查询要找谁",
+          "sha256": "74e88cacaffb8dbb8c2e68070653188720e4253532a5e7f0719c30508bc1e2be"
         },
         {
           "path": "curriculum/10-system-design/docs/08-Consistency与Idempotency.md",
-          "title": "08｜Consistency、Idempotency、Transaction 与 Compensation",
-          "sha256": "4bc7cb76c9eeccfddd07a052296272116f0295025f484d9c943cbef56a1824db"
+          "title": "08｜一致性与幂等：怎样守住不可破坏的业务条件",
+          "sha256": "45b31d327d3063f1b75d3791951d1a95bbde17347ea2e2c8a6d6cc9f0e32ac40"
         },
         {
           "path": "curriculum/10-system-design/docs/09-QueueBackpressure与LongRunningTask.md",
-          "title": "09｜Queue、Backpressure 与 Long-running Task",
-          "sha256": "667fa5610aeb38677a09fc3e00124b95d1bda6440ac19026e3db23460c554142"
+          "title": "09｜队列与长任务：积压怎样形成，工作者怎样安全接管",
+          "sha256": "f01ebe90962fafdc5f843475ada1a646c69864a8f3af5a6bff7ce494f4d59a2b"
         },
         {
           "path": "curriculum/10-system-design/docs/10-Reliability与Overload.md",
-          "title": "10｜Timeout、Retry、Failover、Degradation 与 Load Shedding",
-          "sha256": "fcfeafdddcf74ae657d6e8eed1170908e82d0a5612bf3194ce68c1d48a9428cd"
+          "title": "10｜可靠性与过载：失败时怎样保护剩余的成功机会",
+          "sha256": "4762e9edc3f3ed92e5e13674d223ccb94b78cab966e1ceed8b25c0079c65adfa"
         },
         {
           "path": "curriculum/10-system-design/docs/11-MultiTenancy与Security.md",
-          "title": "11｜Multi-tenancy、Security、Permission 与 Isolation",
-          "sha256": "80356d7fb9b9e3d1b671b584396c4ece61c8e789f4d6faa855c8496f58f3b426"
+          "title": "11｜多租户与安全：同一套服务怎样守住不同用户的边界",
+          "sha256": "663b491e1cec29a31c1aab01015060ce2eac114d50d238332dc654c4ed79848b"
         },
         {
           "path": "curriculum/10-system-design/docs/12-ObservabilityEvaluation与Evolution.md",
-          "title": "12｜Observability、Evaluation、Cost 与 Evolution",
-          "sha256": "bb921797f9f91059c575ba2a4fc4381e61d7bbb51fa83cfccc95cfb117e4f40c"
+          "title": "12｜观测、评测与演进：怎样证明方案有效，怎样安全改变它",
+          "sha256": "6f36eb2ccc4813e57212cde95e1faebfbd5f2ad46d2946d323fff4f71fa0623d"
         },
         {
           "path": "curriculum/10-system-design/docs/13-HighConcurrencyTransactionalSystems.md",
-          "title": "13｜High-concurrency Transactional Systems：秒杀、库存、Rate Limit、Token Refresh",
-          "sha256": "06bba1b0ba2e372e4c8b858ff566883145472cca04813c2ad1280cb9e456e788"
+          "title": "13｜高并发交易：让有限资源只被合法消耗一次",
+          "sha256": "03c36498b8fd48729645e4f5a5b3bebba97b84a5ee69140818cdec47dfab3999"
         },
         {
           "path": "curriculum/10-system-design/docs/14-RealtimeReadHeavySystems.md",
-          "title": "14｜Realtime Read-heavy Systems：排行榜、Feed、Autocomplete、Notification",
-          "sha256": "d79d46761ab132fcc800485a55af477671e57d9438cc0323177cc203ae0ab9cd"
+          "title": "14｜实时读模型：怎样让用户看到正确的最近数据",
+          "sha256": "6bdc682f42d2e26ff8eeffba34ff3ca0310dcd60c52d1c3106130b9284f83b62"
         },
         {
           "path": "curriculum/10-system-design/docs/15-LargeScaleDataProcessingSystems.md",
-          "title": "15｜Large-scale Data & Processing：10TB Storage、Migration、Dedup、Large-file",
-          "sha256": "3e38788d05259077e677ce43c84229e7908c7248e2985116dbddd3921dfa4bfa"
+          "title": "15｜大规模数据处理：让容量、查询与恢复共同成立",
+          "sha256": "45d9b1f4490c66da15cd6bfb2aed306f58cf0b0139b2f3a7a1734543f4bfb7a7"
         },
         {
           "path": "curriculum/10-system-design/docs/16-LLMGateway与MultiTenantAIPlatform.md",
-          "title": "16｜LLM Gateway 与 Multi-tenant AI Platform",
-          "sha256": "d9e2aa87c774ca797222de4303e316d12be0cadd49d742bdbc1438537a33351a"
+          "title": "16｜LLM 网关：把模型选择、交付和费用放进同一条请求链",
+          "sha256": "2145a94a281047c0a02d11c845124c9e1b0bb7eca8663711743e56a77991952a"
         },
         {
           "path": "curriculum/10-system-design/docs/17-EnterpriseRAGSystemDesign.md",
-          "title": "17｜Enterprise / Large-scale RAG System Design",
-          "sha256": "e57850dd4c385f9071e4643cd7ad1b39b608faa72efb2521c2178441228fdc08"
+          "title": "17｜企业 RAG：把知识更新、在线回答与权限治理组合起来",
+          "sha256": "393aea38438e53c9b7b0d9c86bcabf0f5d8fd65791740ac99adbf1168cf4b8e7"
         },
         {
           "path": "curriculum/10-system-design/docs/18-ProductionAgentBackend.md",
-          "title": "18｜Production Agent Backend 与 Long-running Agent",
-          "sha256": "c2f39f28ddd0f66d4d7fadd58d2915d9bee0e0defa26d6bf6796b589cb0870c3"
+          "title": "18｜生产级 Agent 后端：让一次长任务跨越断线、重启与批准",
+          "sha256": "6ab87e80baf950498041d74cdd9d96089bf81ba2ff5b2536a9d618f4bd5e8328"
         },
         {
           "path": "curriculum/10-system-design/docs/19-VerticalAIAgentPatterns.md",
-          "title": "19｜Vertical AI Agent Patterns：Analysis、Customer Service、Multimodal、Game、Content",
-          "sha256": "845c6bab0e263702649a89c41b64c50526a530f6e2d1d6e780f8aed801d65a92"
+          "title": "19｜垂直 AI 系统：从领域规则推导证据、工具与验收",
+          "sha256": "9df4d6ff8f1e601375ad87041ba4f700982599fefc9a0b80ae5da844b09dc227"
         }
       ],
       "support": [

@@ -1,332 +1,138 @@
-# 04｜API、Data Model 与 State Ownership
+# 04｜API 与数据模型：谁拥有事实，谁可以改变它
 
-一个系统设计如果说不清：
+<a id="04apidata-model-与-state-ownership"></a>
 
-> **状态到底属于谁、谁能修改、谁只是缓存或派生副本？**
+[← 上一章](03-Workload与CapacityEstimation.md) · [模块入口](../README.md) · [下一章 →](05-DataFlow与StateMachine.md)
 
-后面的 Consistency、Retry、Cache、Failover 基本都会乱。
+用户提交生成任务后，浏览器显示“处理中”；工作者已经生成报告，查询接口却仍然返回“排队中”。三处信息不一致时，应该相信哪一份？如果回答只是“把它们同步一下”，仍然没有决定由谁裁定任务结果。
 
----
+先确定业务对象和权威记录，再设计 API。否则接口很容易只是把几张表暴露出去，却没有表达用户的操作、正确结果和失败边界。
 
-## 1. API 先表达业务，不要先暴露存储细节
+## 1. 先从用户动作找到对象
 
-例如创建任务：
+报告助手至少涉及文档、任务、报告版本和一次发送操作。它们不能合成一条不断增长的聊天记录：同一文档可以产生多次报告，同一报告可能有多个版本，用户也可能合法地发送给不同收件人。
 
-```http
-POST /tasks
-```
+| 对象 | 稳定身份 | 需要保存的事实 | 为什么不能只存在页面里 |
+|---|---|---|---|
+| 来源文档 | `document_id` | 所属团队、来源修订、删除状态 | 重建索引、引用和权限判断依赖它 |
+| 生成任务 | `job_id` | 输入版本、状态、结果位置 | 断线、重启后还要查询或继续 |
+| 报告版本 | `report_id + version` | 内容、来源、校验结果 | 批准和发送必须指向确切内容 |
+| 发送操作 | `operation_id` | 收件人、报告版本、外部结果 | 超时后要判断同一动作是否完成 |
 
-比：
+这些字段的必要性来自业务要求，不是固定数据库模板。暂时没有发送功能，就不需要先实现外部发送账本；一旦承诺可恢复发送，操作记录就不是可有可无的日志。
 
-```http
-POST /mysql/task_table/insert
-```
+## 2. 权威状态与派生状态，按恢复方式区分
 
-更合理。
+**权威状态（source of truth）** 是发生冲突时用于裁定事实的记录。例如任务数据库提交“报告 r7 已通过校验”，缓存仍是“运行中”，应从任务记录修复缓存。权威记录本身也需要满足约定的持久化与复制条件，不能因为被叫作权威就自动不丢数据。
 
-API Contract 应围绕：
+**派生状态** 可以按明确规则从权威来源重新生成，例如报告搜索索引、任务状态缓存。它可以延迟，但必须知道从哪里重建、如何识别版本以及怎样发现长期未收敛。
 
-```text
-Resource
-Command
-Status
-Error
-Idempotency
-Pagination / Cursor
-Version
-```
+**临时状态** 丢失后可以按业务约定重新获得或放弃，例如一次 HTTP 连接的发送缓冲。这个分类不是按产品名划分：Redis 可以存缓存，也可能承担某项业务的唯一状态；数据库也可能只存可重建索引。
 
-设计。
+> ⚠️ **会过期，不等于可以随便丢。** 登录会话撤销记录、工作者租约和断点进度都可能影响安全或恢复。只有在明确丢失后的行为之后，才能把某个状态视为可丢弃；不能把所有 Session、Lease、Progress 一概归为临时数据。
 
----
+判断一份状态时，逐步问：丢了能否重建？重建依据还在不在？重建期间能否服务？会不会重复外部动作？这些问题比“它放在内存还是数据库”更接近设计本身。
 
-# 2. 先画核心实体
+## 3. State Owner 不是“只有一台机器”
 
-例如 Long-running Agent：
+**状态拥有者（state owner）** 指有权决定某项状态变化的服务或协议边界。报告生成服务可以有许多实例，但它们需要通过同一个受控存储边界竞争更新任务，不能每个实例各凭内存决定“自己已经成功”。
 
-```text
-User
-Workspace
-AgentRun
-AgentStep
-ToolCall
-Checkpoint
-Artifact
-```
+例如工作者读到任务版本 7，准备把结果改为 r7；此时取消请求先把版本改为 8。工作者提交时要求“当前版本仍为 7”，条件不满足，就不能覆盖取消决定。这种**条件更新**把“先读再写”变成“只有读到的前提仍成立才写”。
 
-再定义关系：
+实际 SQL、事务隔离和锁的机制由 [MySQL](../../04-mysql/README.md) 主讲；此处需要理解的最小模型是：**检查前提与写入结果必须在存储认可的一次原子操作或事务里完成**。先在程序里比较，再无条件写入，仍然有竞争窗口。
 
-```text
-Workspace owns AgentRun
-AgentRun has many AgentStep
-AgentStep may create ToolCall
-AgentRun points to latest Checkpoint
-```
+版本决定写入是否过时，操作编号决定请求是否重复，它们解决不同问题。两个新操作可能同时基于旧版本；同一个操作也可能因网络重试到达多次。
 
-这比直接说“用 Redis 存状态”更重要。
+## 4. API 表达业务动作，不只表达表的增删
 
----
+可以先写最小接口约定，而不绑定 Web 框架：
 
-# 3. Source of Truth 是什么
+| 请求 | 本例的业务含义 | 成功响应证明什么 |
+|---|---|---|
+| `POST /jobs` | 接受一项生成请求 | 已建立可查询的任务，不代表已生成报告 |
+| `GET /jobs/{id}` | 查看允许访问的任务 | 返回权威任务状态及已确认的结果引用 |
+| `POST /jobs/{id}/cancel` | 请求停止后续工作 | 已记录取消请求，不代表外部动作被撤销 |
+| `POST /reports/{id}/send` | 发送指定版本给指定收件人 | 按发送协议返回已确认结果或明确的处理中状态 |
 
-可以把它理解成：
+`POST /jobs` 可以返回 `202 Accepted` 和 `job_id`，但 **HTTP 202 只表示请求已被接受处理，不保证处理最终完成**。本课程额外约定：返回前先可靠保存任务身份，使客户端之后能查询。这个保证来自应用实现，不是状态码自动提供的。[HTTP 202 语义](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.3)
 
-> **当多个副本冲突时，最终以谁为权威。**
+错误也属于 API 约定：输入不合法时给出字段错误，未授权时不执行动作，状态版本冲突时要求重新读取，容量不足时明确拒绝而不是伪造任务成功。是否向未授权调用方透露资源存在，应由安全策略决定。
 
-例如 RAG：
+## 5. 区分对象身份、操作身份与尝试身份
 
-```text
-Object Storage / Business DB
-= Source of Truth
+用户第一次发送 r7 使用操作键 K，网络超时后再次提交时仍用 K；网络请求本身可以分别有 request-1 和 request-2，方便追踪两次尝试。
 
-Vector DB
-= Derived Retrieval Index
+服务器在可信的团队和操作类型范围内识别 K，并绑定“报告 r7、收件人 A、相关选项”的规范化参数摘要。再次收到 K 时：
 
-Redis
-= Cache / Hot State
-```
+1. 先确认当前调用者仍有权查看或继续该操作。
+2. 参数相同且结果已确定，按接口约定返回已有结果。
+3. 参数相同但仍在处理中，返回处理中或有界等待。
+4. 参数不同，报告冲突，不能把 K 改成另一件事。
 
-如果 Source of Truth 不明确：
+这称为**业务幂等设计**：多次请求不会把同一逻辑动作变成多个业务效果。它不等于所有 HTTP 响应必须逐字相同，也不等于锁住一次函数就永久防重。详细实现回看 [后端幂等与副作用](../../03-backend-engineering/docs/09-APIIdempotency与SideEffect.md)。供应商的键保留窗口和错误结果复用规则应分别核对，不能从本例推断通用默认值。[Stripe 幂等请求](https://docs.stripe.com/api/idempotent_requests)
 
-```text
-Redis 有值
-MySQL 也有值
-Vector DB 还有版本
-```
+## 6. 列表 API 怎样保持可继续阅读
 
-发生冲突时没人知道听谁的。
+任务列表按创建时间从新到旧排列时，仅按时间分页会遇到多个任务时间相同的情况。使用稳定排序键 `(created_at, job_id)`，下一页从上一页最后一项之后继续；数据库索引需要支持对应的团队过滤与排序。
 
----
+假设同一时间有任务 103、102、101，按 ID 降序排列。第一页返回 103、102，游标记录时间和 102；下一页应包含 101，而不是重新从该时间的第一项开始。
 
-# 4. Primary State、Derived State、Ephemeral State
+游标还应绑定筛选条件、排序方式和授权范围，不能让用户更换团队参数后沿用旧游标。它不是权限凭证。动态列表也不天然是一致快照：新任务插入、旧任务删除或排序字段变化，都需要明确“实时继续浏览”还是“固定快照导出”的语义。
 
-## Primary State
+## 7. 数据生命周期决定删除与迁移
 
-业务事实：
+报告内容可以放在对象存储，数据库只保存版本、校验和及位置。成功写入一个临时文件不等于可对外引用：先确认对象完整并可读，再让任务状态指向它；失败产生的孤立对象由清理流程处理。
 
-```text
-订单
-余额
-权限
-任务最终状态
-```
+保留期限也要按对象分别定义。结果文件可以到期清理，但需要继续防止旧操作重放时，不能同时随意删除所有操作身份。删除文档还要使缓存、索引和引用遵守当前撤回状态；保留审计信息不代表继续向普通用户提供原文。
 
-## Derived State
+模式升级时，先让新旧程序都能理解过渡数据，再迁移并核验，最后删除旧字段。版本号帮助归因和恢复，**记录版本并不能保证模型输出、外部状态和执行时机完全可重放**。
 
-可从 Primary 重建：
+## 本章小结
 
-```text
-Cache
-Search Index
-Vector Index
-Materialized View
-Ranking Snapshot
-```
+先用业务动作识别对象，再区分权威、派生和可丢弃状态。API 需要表达受理、完成、冲突和取消的不同含义；操作身份处理重复，版本条件处理过时写入。分页、保留与迁移也必须服从同一套身份和权限边界。
 
-## Ephemeral State
+## 🎯 面试怎么答
 
-短生命周期执行状态：
+**问：怎样从需求推导 API 和数据模型？**
 
-```text
-Session
-Lease
-Progress
-Temporary Buffer
-```
+> 我先列用户动作及必须跨重启保留的事实，确定每项状态的拥有者和可重建副本。再写接口成功、处理中、冲突和失败分别证明什么。重复请求沿用业务操作键，状态更新检查版本；列表游标绑定排序与范围，删除和迁移同时考虑派生状态与保留期限。
 
-不同状态的 Durability / Consistency 要求不同。
+## ⚠️ 容易混淆的地方
 
----
+- 使用数据库或 Redis 不自动决定谁是权威，必须定义冲突时的裁定和恢复方向。
+- 租约、会话和进度是否可丢，取决于安全与恢复承诺，不能按名称判断。
+- 202、页面显示完成和外部动作完成，是三种不同证据。
 
-# 5. State Ownership 比“数据库选型”更重要
+## 本章自测
 
-例如订单系统：
+### 1. 任务 J 的数据库版本为 8、状态为 CANCEL_REQUESTED；工作者仍拿着版本 7，准备写 SUCCEEDED。提交条件应该是什么，冲突后能否直接把条件改成 8 重试？
 
-```text
-Order Service
-→ owns order lifecycle
-```
+<details><summary>提示</summary>
 
-Inventory Service：
+版本代表做出决定时依赖的状态，不只是一个要更新的数字。
 
-```text
-→ owns inventory
-```
-
-不要让两个服务都直接修改同一业务状态，否则：
-
-```text
-谁校验 invariant？
-谁发事件？
-谁补偿？
-```
-
-都会模糊。
-
----
-
-# 6. 一个写请求要写清 State Transition
-
-不要只画：
-
-```text
-API → DB
-```
-
-例如 Notification：
-
-```text
-CREATED
-→ QUEUED
-→ SENDING
-→ SENT
-       ↘ FAILED_RETRYABLE
-       ↘ FAILED_FINAL
-```
-
-状态机能直接帮助回答：
-
-- 重复 Worker 怎么办；
-- Resume 从哪里开始；
-- 哪些状态允许 Retry；
-- 用户看到的状态是什么。
-
----
-
-# 7. API 的 Idempotency Contract 要尽早定义
-
-创建资源时：
-
-```http
-POST /orders
-Idempotency-Key: abc
-```
-
-服务端需要决定：
-
-```text
-同一个 Key + 同参数
-→ 返回同一结果
-
-同一个 Key + 不同参数
-→ Reject
-```
-
-Stripe 的公开 API 就使用这种思路来支持安全重试。
-
-Idempotency 不是最后加一个 Redis Lock 就完成，而是 API Contract 的一部分。
-
----
-
-# 8. Pagination 也属于 API/Data Model 联合设计
-
-如果列表接口：
-
-```http
-GET /events?offset=1000000
-```
-
-随着数据增长可能越来越慢。
-
-如果业务适合：
-
-```text
-cursor = (created_at, id)
-```
-
-可以使用 Keyset / Cursor Pagination。
-
-这要求 API 与索引设计一起考虑。
-
----
-
-# 9. Schema Version / API Version
-
-长期系统一定会演进。
-
-例如 Tool Result 从：
-
-```json
-{"text": "..."}
-```
-
-升级到：
-
-```json
-{"text": "...", "citations": [], "version": 2}
-```
-
-需要考虑：
-
-```text
-Old Client
-Old Event
-Old Checkpoint
-Old Worker
-```
-
-是否还能读取。
-
-System Design 不一定每题都展开 Migration，但成熟设计应该意识到 Version 是状态契约的一部分。
-
----
-
-# 10. 多租户系统一定要把 Tenant 放进数据模型
-
-不要只在 UI 层说：
-
-> 当前登录用户属于 tenant A。
-
-数据层至少要能回答：
-
-```text
-tenant_id 在哪里？
-Partition / Index 是否带 tenant？
-Unique Key 是全局还是 tenant-scoped？
-Cache Key 是否隔离？
-Trace 是否带 tenant？
-```
-
-否则很容易跨租户污染。
-
----
-
-# 11. AI Application 的特殊状态
-
-还要显式建模：
-
-```text
-model_version
-prompt_version
-embedding_version
-index_generation
-agent_run_id
-checkpoint_version
-permission_scope
-```
-
-因为 AI 系统的输出不仅依赖业务数据，也依赖模型和 Pipeline 版本。
-
-Bad Case Replay 如果没有这些版本信息，很难复现。
-
----
-
-# 12. 🎯 面试怎么答
-
-> 我会先定义 API 和核心实体，再明确每类状态是 Primary、Derived 还是 Ephemeral，并指定唯一 State Owner。写路径用状态机表达，而不是只画“服务写数据库”。对于创建类 API，我会尽早定义 Idempotency Contract；多租户系统则让 tenant_id 进入 Primary Key、Cache Key、Filter 和 Trace。AI 系统还需要版本化 Model、Prompt、Embedding、Index 和 Checkpoint，否则无法回放和迁移。
-
----
-
-# 13. 本章自测
-
-<details><summary>1. 为什么 Cache 不应该默认成为 Source of Truth？</summary>
-Cache 主要用于性能，通常允许失效、重建和淘汰；如果把它当权威状态，需要额外承担持久性、一致性和恢复责任。
 </details>
 
-<details><summary>2. 为什么状态机有助于 Retry？</summary>
-它让系统知道当前执行到了哪个状态、哪些步骤已经产生副作用，从而决定重试、Resume 或补偿，而不是整条流程重新执行。
+<details><summary>参考答案与解释</summary>
+
+要求任务仍处于允许完成的状态且版本为 7，原子检查后写入。条件失败时重新读取并按取消协议核对已发生工作；不能把版本机械改为 8，因为业务前提已经改变。
+
 </details>
 
-<details><summary>3. 为什么 AI Bad Case 需要记录版本？</summary>
-相同 Query 在不同 Model、Prompt、Index、Embedding 版本下可能得到不同结果；没有版本就无法复现。
+### 2. 同一团队先用键 K 发送报告 r7 给 A，随后用 K 发送 r8 给 B。请给出第二次操作结果，并解释为什么只比较 report_id 不够。
+
+<details><summary>提示</summary>
+
+发送的内容版本和收件人都影响外部效果。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+拒绝键与参数冲突，不发送。稳定报告 ID 可能包含多个版本，且同一版本可发送给不同收件人；操作参数摘要必须包含所有影响本次业务效果的字段。
+
+</details>
+
+---
+
+[← 上一章](03-Workload与CapacityEstimation.md) · [模块入口](../README.md) · [下一章 →](05-DataFlow与StateMachine.md)

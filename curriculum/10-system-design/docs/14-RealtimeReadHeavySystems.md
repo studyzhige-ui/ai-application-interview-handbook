@@ -1,426 +1,144 @@
-# 14｜Realtime Read-heavy Systems：排行榜、Feed、Autocomplete、Notification
+# 14｜实时读模型：怎样让用户看到正确的最近数据
 
-这一章训练另一类常见系统：
+<a id="14realtime-read-heavy-systems排行榜feedautocompletenotification"></a>
 
-> **读远多于写，用户对延迟敏感，但允许一定 Freshness Lag；真正难点是热点、Fan-out、排序和实时更新成本。**
+[← 上一章](13-HighConcurrencyTransactionalSystems.md) · [模块入口](../README.md) · [下一章 →](15-LargeScaleDataProcessingSystems.md)
 
-对应真人 Scenario：
+系统通过消息不断更新每个用户的动态列表，只显示最近 20 条。消息可能重复、乱序，浏览器也可能断线。用一个队列加一个 Redis 列表，能否自然保证“每个人都看到自己的最新 20 条”？
 
-```text
-SD-002 Realtime Ranking
-SD-003 Autocomplete / Fuzzy Search
-SD-004 Feed / Following
-SD-005 Notification Platform
-```
+本章先完成这一条端到端路径，再比较排行榜、Feed、联想搜索和通知。共同问题是把持续变化的事实投影成便于读取的结果，并说明新鲜度与交付边界。
 
----
+## 1. 先定义“最近”和“属于谁”
 
-## 1. 共同抽象：Read-heavy + Derived View
+本例选择**源系统为每个用户分配的单调序号**作为业务顺序，不按消息到达消费者的先后排序。事件具有稳定 `event_id`、可信的团队与用户范围、序号和内容引用；同一事件重投沿用身份。
 
-这些系统通常都有：
+如果源系统没有统一顺序，就必须另外规定按事件时间、服务端接收时间或其他规则排序，并处理并列、时钟偏差与迟到事件。不能让“最近”同时表示三种时间。
 
-```text
-Primary Data
-→ Async / Incremental Processing
-→ Derived Read Model
-→ Very Fast Query
-```
+**读模型（read model）**是为读取预先组织的派生数据。本例的最近 20 条窗口可以从可靠事件记录重建，因此窗口不是唯一历史。保留完整历史多久由业务决定，但不能只保留 20 条，又承诺随意重放任意旧游标。
 
-例如排行榜：
+## 2. 一条事件怎样变成可查询的列表
 
 ```text
-score events
-→ aggregate
-→ ranking view
-→ Top-N read
+业务服务提交事件事实
+    ↓
+可靠派发到消息系统
+    ↓
+消费者校验身份、范围与重复
+    ↓
+按用户顺序更新持久读模型和处理进度
+    ↓
+刷新缓存，并通知在线客户端有变化
+    ↓
+客户端按当前权限读取快照或增量
 ```
 
-Feed：
+事件事实与可靠派发可复用[数据流章](05-DataFlow与StateMachine.md)的 Outbox 模型。消费者需要把去重记录、窗口更新和可恢复进度放在明确的一致性边界内；缓存或推送失败时，可从已提交读模型修复，而不是丢掉业务事实。
 
-```text
-post
-→ fan-out / index
-→ user feed view
-→ paginated read
-```
+只用缓存存最近列表是否足够，取决于丢失后是否允许空窗、是否还有可靠来源可重建。要求持久恢复时，要明确权威事件或持久读模型的位置。
 
-Autocomplete：
+## 3. 用三条窗口手算重复与乱序
 
-```text
-source entities
-→ search index / prefix structure
-→ low-latency suggestion
-```
+为了在纸上看清过程，暂把窗口从 20 缩为 3；算法仍按同一规则取最大的 N 个序号。输入都属于同一用户：
 
-核心不是“Redis/ES 哪个更强”，而是读模型怎样维护。
+| 到达事件 | 处理前 | 正确处理后 | 原因 |
+|---|---|---|---|
+| e101，序号 101 | 空 | 101 | 第一个事件 |
+| e103，序号 103 | 101 | 103、101 | 按业务序号而非到达顺序 |
+| e102，序号 102 | 103、101 | 103、102、101 | 迟到事件插到正确位置 |
+| e103 重投 | 103、102、101 | 不变 | 稳定事件身份防重 |
+| e104，序号 104 | 103、102、101 | 104、103、102 | 超过窗口后移出最旧项 |
+| e99，序号 99 | 104、103、102 | 不变 | 迟到但不属于最近三条 |
 
----
+去重不能只检查“是否还在当前窗口”：事件已经被移出后仍可能重投。可以依赖源序号、合适的去重记录或可重建投影规则，具体保留范围要覆盖允许重放时间。同一事件 ID 却携带不同内容，应当报告数据冲突，而不是悄悄覆盖。
 
-# 2. 排行榜：ZSet 只是一个实现，不是全部设计
+配套实验直接使用[同一份事件数据与投影函数](../review/README.md#机制实验)。它验证排序、重复、冲突和用户隔离，不实现真实消息消费事务。
 
-Redis ZSet 很适合：
+## 4. 顺序分区与热点用户
 
-```text
-member + score
-→ rank / top N
-```
+按用户键将事件路由到同一有序消费范围，便于处理该用户的连续变化，但只保证对应范围内的顺序，不是全局顺序。一个极热用户也可能让该分区成为瓶颈。
 
-但系统设计还要问：
+需要分拆时，先判断更新能否独立合并。最近 N 条可以按稳定序号合并候选，但状态覆盖、计数回撤和同对象多版本更新可能需要额外条件。不能只增加消费者，就假设同一用户的变化仍按原顺序应用。
 
-```text
-分数从哪来？
-允许多久延迟？
-排行榜按全局 / region / category？
-Top100 和个人 rank 都要吗？
-历史榜单怎么保存？
-```
+检查处理进度时还要区分“见过序号 104”和“连续处理到 104”。若 102 尚未处理，不能只记录最大见过序号就跳过空洞。
 
----
+## 5. 断线后，重建的是视图，不是业务操作
 
-# 3. Global Ranking 的 HotKey / Hot Shard
+客户端携带最后看到的游标重新连接。服务在当前授权下提供后续增量；若游标太旧或存在空洞，则返回重新同步要求，客户端获取最新快照。
 
-如果全世界都更新：
+快照与增量需要有交接边界。例如在序号 104 的快照基础上，继续订阅 105 及以后；若先读快照、后订阅，中间的变化没有被保存或补发，就会漏更新。可以用可靠事件游标或“先订阅缓冲，再取快照并去重”的明确协议解决，不能依靠时间碰巧没有变化。
 
-```text
-global_ranking
-```
+WebSocket 适合需要持续双向交互的场景，SSE 常用于服务端推送，轮询实现简单但有请求与新鲜度开销。选择依据是交互方向、更新频率、连接规模和恢复要求，不是“长连接一定更实时”。客户端还要处理重复事件、重连退避和凭证过期。[SSE 标准](https://html.spec.whatwg.org/multipage/server-sent-events.html)
 
-一个 Key / Shard 可能成为热点。
+## 6. 排行榜与 Feed：同一读模型的两种变化
 
-可以考虑：
+排行榜按分数而非源序号排序，需要明确分数更新是绝对值替换还是增量累计；重复的“加 10 分”不能执行两次。并列分数需要稳定裁定，实时榜与结算榜可以有不同新鲜度和持久化要求。分片 Top K 的条件回看[分区章](07-PartitionRouting与Fanout.md)。
 
-```text
-sharded partial ranking
-→ periodic merge
-→ global snapshot
-```
+Feed（关注流）还要回答事件该送给哪些人。**写扩散**在发布时预先更新关注者的收件箱，读取简单但大号发布代价高；**读扩散**在读取时汇总关注对象，写入轻但读取聚合更重。可以对普通用户与极热作者采用不同策略，但删除、权限变化与分页必须在最终读取时保持适用。
 
-或者按：
+例如一个作者有一千万关注者，而大部分当天不阅读，逐个预写可能浪费；若每个读者都关注几千个活跃作者，纯读时聚合又可能过重。取舍来自实际分布，而不是统一选“推”或“拉”。
 
-```text
-region / category
-```
+## 7. 联想搜索：旧响应不能覆盖新输入
 
-先分区。
+输入框先输入 `ca`，随后输入 `car`。`car` 请求先返回，较慢的 `ca` 后返回；若页面按到达顺序展示，会把新结果覆盖成旧结果。
 
-代价是 global rank 不再每次都绝对实时。
+**防抖（debounce）**等待输入暂时稳定再发请求，减少数量，但不证明响应有序。客户端应为查询分配递增请求序号，只展示仍对应当前输入的结果；取消旧请求可以节省资源，但也不能替代响应适用性判断。
 
----
+前缀、拼音、代码和中间子串匹配需要不同索引或规范化方式。先明确搜索语义、更新频率、语言与排序，再选择索引；不要为了一个搜索框同时引入所有搜索引擎。常见查询可缓存，但缓存键包含影响结果的条件与适用范围。
 
-# 4. Ranking 的 Freshness Trade-off
+## 8. 通知平台：已受理、已送达与已读不是同一状态
 
-如果业务允许：
+通知包含可靠写入与外部副作用，并不只是读多系统。业务服务提交“需要通知”，通知服务建立稳定通知身份并选择渠道，供应商受理后保存外部结果；重试沿用适用的去重身份。
 
-```text
-5s stale
-```
+供应商接受邮件或推送，只证明进入其处理范围；设备送达回执、用户点击或已读是不同证据，有些渠道无法提供全部阶段。状态模型只记录实际能证明的状态，不能把“调用成功”写成“用户已读”。
 
-可以批量聚合减少写压力。
+渠道切换也可能导致重复触达。邮件结果未知时再发短信，是一种业务策略，不是无损恢复；需要明确优先级、时限、退订、限流和可接受的重复范围。
 
-如果必须：
+## 本章小结
 
-```text
-每次分数变化立即全局准确
-```
+实时系统先定义顺序、范围与权威事实，再维护可恢复的读模型。最近窗口、排行榜和 Feed 都需要处理重复、迟到与权限；连接只负责交付，快照与增量还要有交接协议。联想搜索防旧响应，通知则分别记录受理、送达和已读证据。
 
-成本会显著上升。
+## 🎯 面试怎么答
 
-所以先定义：
+**问：用 MQ 更新每个用户最近 20 条数据，怎样保证正确并支持断线恢复？**
 
-> 实时到底是 10ms、1s 还是 1min？
+> 我先定义用户范围和源顺序，保存稳定事件身份及可恢复来源。消费者在明确提交边界维护去重、窗口与进度，乱序按序号合并，重复不改变结果。缓存和推送是派生交付；重连根据游标补增量，超出窗口就快照重同步，快照与后续事件有连续交接，并始终校验当前权限。
 
----
+## ⚠️ 容易混淆的地方
 
-# 5. Feed：Fan-out on Write vs Fan-out on Read
+- 消息到达顺序不必等于业务顺序，最大见过序号也不代表连续完成进度。
+- 防抖减少请求，不能阻止旧响应晚到覆盖新输入。
+- 通知调用成功不等于送达，更不等于已读；窗口保存 20 条也不等于拥有完整重放历史。
 
-## Fan-out on Write
+## 本章自测
 
-作者发帖：
+### 1. 窗口大小为 3，按源序号降序。收到 101、103、102、重复 103、104、99，最终序号是什么？99 是否应该因为最后到达就进入窗口？
 
-```text
-Post
-→ push to follower inbox / feed
-```
+<details><summary>提示</summary>
 
-优点：
+本章选择源序号，而不是消费者接收时间。
 
-```text
-read fast
-```
-
-问题：
-
-```text
-celebrity with 100M followers
-→ huge write amplification
-```
-
-## Fan-out on Read
-
-用户打开 Feed：
-
-```text
-read followed authors
-→ merge recent posts
-```
-
-优点：写轻。
-
-问题：读时 Merge 重。
-
-真实系统常 Hybrid：
-
-```text
-normal users → push
-celebrity → pull
-```
-
----
-
-# 6. Feed Pagination
-
-Offset 很深会越来越贵。
-
-更适合：
-
-```text
-cursor = (timestamp, id)
-```
-
-但要考虑：
-
-```text
-新内容插入
-删除
-排序稳定性
-```
-
-Cursor 应和排序字段、索引设计一致。
-
----
-
-# 7. Autocomplete 先明确搜索语义
-
-面试里 `SD-003` 不只是 Prefix。
-
-可能要求：
-
-```text
-code
-name
-pinyin
-prefix
-infix
-fuzzy typo
-```
-
-这些能力对应不同 Index / Analyzer。
-
-例如：
-
-```text
-prefix trie / completion index
-n-gram
-inverted index
-pinyin field
-```
-
-不要把所有需求都塞一个 SQL LIKE `%keyword%`。
-
----
-
-# 8. Autocomplete 的低延迟路径
-
-典型：
-
-```text
-keystroke
-→ debounce client
-→ query service
-→ in-memory / search index
-→ TopK suggestions
-```
-
-需要控制：
-
-```text
-per-user request rate
-cache hot prefix
-result size
-P99
-```
-
-因为一次用户输入可能产生很多请求。
-
----
-
-# 9. Fuzzy Search 的成本
-
-越宽松的匹配：
-
-```text
-recall ↑
-compute ↑
-noise ↑
-```
-
-所以常见：
-
-```text
-prefix first
-→ fuzzy fallback
-```
-
-或不同字段权重。
-
-真正要通过点击率/成功率/latency 验证，不是“支持越多匹配越好”。
-
----
-
-# 10. Notification Platform 的 Read-heavy / Async 混合
-
-通知系统不只是“发消息”。
-
-可以拆：
-
-```text
-Create Notification
-→ Template Resolve
-→ Recipient Resolve
-→ Channel Route
-→ Async Delivery
-→ Status / Retry
-```
-
-Channel：
-
-```text
-Email
-SMS
-Push
-Webhook
-```
-
-每个 Provider 都有自己的：
-
-```text
-rate limit
-error semantics
-idempotency
-```
-
----
-
-# 11. Notification 的可靠投递
-
-需要区分：
-
-```text
-accepted
-sent to provider
-delivered to user
-read by user
-```
-
-这些状态不是同一回事。
-
-如果 Provider Timeout：
-
-```text
-可能已接受但响应丢失
-```
-
-需要 provider message id / idempotency / status query。
-
----
-
-# 12. Dedup 与 Preference
-
-通知可能被重复事件触发。
-
-可用：
-
-```text
-notification_key
-= business_event + recipient + template/version
-```
-
-去重。
-
-同时要处理：
-
-```text
-user opt-out
-quiet hours
-channel preference
-tenant policy
-```
-
-这属于业务状态，不是 MQ 自己解决。
-
----
-
-# 13. 这类系统的共同 Observability
-
-重点：
-
-```text
-Read P99
-Cache Hit Rate
-Fan-out Size
-Index Freshness
-Hot Key / Hot Prefix
-Delivery Success
-Queue Age
-Dedup Rate
-```
-
-不同系统还要加质量指标：
-
-```text
-Feed engagement
-Autocomplete click / accept rate
-Notification conversion / complaint
-```
-
----
-
-# 14. 真人面经怎样影响本章
-
-排行榜、Autocomplete、Feed、Notification 的独立来源不算最高，但它们覆盖了四种典型 Read Model。
-
-因此保留为综合 Pattern，而不是拆成四篇“标准答案”。
-
-面试重点通常会从：
-
-```text
-正常路径
-→ Hotspot / Fan-out
-→ Freshness
-→ Pagination
-→ Failure
-```
-
-继续深入。
-
----
-
-# 15. 🎯 面试怎么答
-
-> Read-heavy 系统我会先区分 Primary State 和 Derived Read Model，再用允许的 Freshness 换取低延迟。排行榜关注 HotKey 和分片聚合；Feed 重点比较 fan-out on write/read，并对 Celebrity 做 Hybrid；Autocomplete 根据 prefix/infix/fuzzy 语义选择索引，并控制 keystroke QPS；Notification 则用 Durable Task State 管理多 Provider 投递、Retry 和 Dedup。共同点是必须监控 Derived View 的 Freshness 和热点，而不是只看数据库 QPS。
-
----
-
-# 16. 本章自测
-
-<details><summary>1. 为什么 Celebrity Feed 常用 Hybrid Fan-out？</summary>
-对普通作者 push 能让读很快，但超大粉丝作者 push 会产生巨大写放大，因此可以对大作者在读时 pull。
 </details>
 
-<details><summary>2. Autocomplete 为什么适合 Client Debounce？</summary>
-每个键盘输入都立即请求会产生高 QPS 和无效中间查询，Debounce 可以减少不必要请求。
+<details><summary>参考答案与解释</summary>
+
+最终是 104、103、102。重复 103 不增加项数，99 虽最后到达却更旧，不进入窗口。
+
 </details>
 
-<details><summary>3. Notification 的“发送成功”为什么要拆状态？</summary>
-服务接收任务、Provider 接受、最终设备送达、用户阅读是不同阶段，需要不同证据和重试策略。
+### 2. 客户端得到截至 104 的快照，开始订阅时服务已经产生 105 和 106。仅从“订阅建立之后”接收是否安全？请给出恢复依据。
+
+<details><summary>提示</summary>
+
+快照和实时订阅之间可能有空窗。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+不安全，会漏 105、106。应从快照游标 104 之后的可靠日志补齐，或按明确的订阅缓冲与快照去重协议交接；游标超出保留窗口时重新同步，不能假装连续。
+
+</details>
+
+---
+
+[← 上一章](13-HighConcurrencyTransactionalSystems.md) · [模块入口](../README.md) · [下一章 →](15-LargeScaleDataProcessingSystems.md)

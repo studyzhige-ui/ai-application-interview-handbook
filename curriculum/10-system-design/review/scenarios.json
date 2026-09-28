@@ -1,0 +1,32 @@
+{
+  "notice": "全部为教学假设；不是生产测量或供应商价格。",
+  "workload": {
+    "requests_per_second": {"status": 60, "report": 20, "create": 20},
+    "response_bytes": {"status": 1000, "report": 40000, "create": 2000},
+    "input_tokens_per_call": 3000,
+    "output_tokens_per_call": 500,
+    "mean_seconds_per_call": 10,
+    "slots": 300,
+    "input_cost_per_million": "1",
+    "output_cost_per_million": "4",
+    "metadata_bytes_per_job": 2000,
+    "retention_days": 30,
+    "copies": 3
+  },
+  "queue": {"normal_rate": 20, "burst_rate": 40, "capacity": 30, "burst_seconds": 60},
+  "window": {
+    "scope": ["team-a", "user-1"],
+    "production_requirement_limit": 20,
+    "hand_worked_limit": 3,
+    "events": [
+      {"tenant": "team-a", "user": "user-1", "event_id": "e101", "sequence": 101, "content": "record-101"},
+      {"tenant": "team-a", "user": "user-1", "event_id": "e103", "sequence": 103, "content": "record-103"},
+      {"tenant": "team-a", "user": "user-1", "event_id": "e102", "sequence": 102, "content": "record-102"},
+      {"tenant": "team-a", "user": "user-1", "event_id": "e103", "sequence": 103, "content": "record-103"},
+      {"tenant": "team-a", "user": "user-1", "event_id": "e104", "sequence": 104, "content": "record-104"},
+      {"tenant": "team-a", "user": "user-1", "event_id": "e99", "sequence": 99, "content": "record-99"}
+    ]
+  },
+  "budget": {"limit": "100", "operation_key": "K", "reservation": "30", "actual": "22"},
+  "qr": {"expires_at": 100, "browser": "browser-a"}
+}

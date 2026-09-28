@@ -1,320 +1,157 @@
-# 05｜Sync / Async、Data Flow 与 State Machine
+# 05｜数据流与状态机：请求被接受以后，谁继续把它做完
 
-系统设计的第三张核心图不是组件图，而是：
+<a id="05sync--asyncdata-flow-与-state-machine"></a>
 
-> **数据到底怎样流、哪些步骤同步等待、哪些步骤异步解耦、失败时状态停在哪里。**
+[← 上一章](04-API数据模型与StateOwnership.md) · [模块入口](../README.md) · [下一章 →](06-Cache与HotPath.md)
 
----
+生成报告需要十秒，而提交接口只允许等待几百毫秒。把耗时工作移到工作者以后，用户很快拿到了任务编号，却有一部分任务永远停在“排队中”。为什么“加了队列”仍然丢工作？
 
-## 1. Sync Path 解决“现在就要答案”
+需要沿一次请求追踪三件事：输入交给了谁，哪些事实已经保存，发生中断后由谁根据什么记录继续。
 
-同步链路典型：
+## 1. 同步与异步，区别在等待责任
 
-```text
-Client
-→ API
-→ Validate
-→ DB Read / Tool Call
-→ Build Response
-```
+**同步交付**让当前请求等待处理结果；**异步交付**先接受工作，再通过任务查询或事件通知交付结果。异步不是把总工作量变小，也不一定缩短任务完成时间，它把用户等待与后台执行解耦。
 
-适合：
+报告助手采用异步生成，是因为任务耗时、需要查询进度，并承诺浏览器断线后不丢任务。一个仅需几十毫秒的只读查询则可以同步完成。不要只因某函数写成 `async`，就把它描述成可跨进程恢复的任务系统。
 
-- 用户必须立即看到结果；
-- 下游延迟可控；
-- 操作链较短；
-- 失败可以直接反馈调用方。
-
-代价是：
+最小数据流可以画成：
 
 ```text
-每多一个同步依赖
-→ Tail Latency 变长
-→ Failure Coupling 变强
+客户端提交输入
+    ↓
+API 校验身份、参数和当前容量
+    ↓
+可靠保存任务身份及待派发事实
+    ├─ 返回任务编号
+    └─ 派发者通知工作者
+             ↓
+         工作者领取、执行、保存结果
+             ↓
+         客户端查询结果或接收更新提示
 ```
 
----
+返回编号之后，系统仍欠用户一个明确终态，或一个需要用户介入的可解释状态。
 
-# 2. Async Path 解决“可以稍后完成”
+## 2. 先保存任务再发消息，哪里会断
 
-例如视频处理：
+假设任务数据库和消息系统各自能独立提交，但没有共同事务：
 
-```text
-POST /videos
-→ persist task
-→ enqueue
-→ return 202 + task_id
+| 顺序 | 已发生的事 | 此刻进程退出的后果 |
+|---|---|---|
+| 1 | 数据库提交任务 J | 若尚未发消息，可能没有工作者知道 J |
+| 2 | 消息系统接受 J | 工作者可能领取，也可能尚未领取 |
+| 3 | API 返回 J | 响应丢失时，客户端不知道任务已受理 |
 
-Worker
-→ transcode
-→ extract metadata
-→ save result
-```
+把顺序倒过来也有问题：消息先成功，数据库失败，工作者收到一个没有正式任务记录的编号。
 
-用户再：
+一种解决方法是**事务发件箱（transactional outbox）**：在同一数据库事务中保存任务 J 和“需要派发 J”的记录。单独的派发者读取这些记录、向消息系统发送，收到确认后再标记派发进度。数据库提交成功后，即使原请求进程退出，待发事实仍然存在。[AWS 事务发件箱模式](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)
 
-```text
-GET /tasks/{id}
-```
+这不是每个系统必需的新组件。如果工作者直接扫描数据库中的待执行任务，并有可靠领取协议，就不一定需要另一套消息系统。选型取决于吞吐、延迟、运维和故障边界，而不是看到图里有队列就必须部署。
 
-或者接收 Webhook / SSE。
+> ⚠️ **Outbox 没有让消息只出现一次。** 消息已被接收，但派发者在记“已发送”前退出，恢复后可能再发一次。任务领取和业务效果仍需防重；发件箱解决的是“业务提交后没有可恢复派发依据”的窗口。
 
----
+## 3. 命令、事件与状态分别表达什么
 
-# 3. Async 不是“更快”，而是解耦等待
+“请生成任务 J”是**命令**，表达希望执行的动作；“任务 J 已完成并提交报告 r7”是**事件**，表达已经成立的事实；数据库里 `status=SUCCEEDED` 是当前可查询的**状态**。
 
-用户看到的提交延迟可能更低，但真实任务仍要执行。
+命令可能被拒绝，事件必须有事实依据。用户点击取消产生的是取消请求，不是已经取消的事件；工作者写出报告文件，也还不等于报告完成事件，因为可能尚未校验或提交任务结果。
 
-异步带来的新问题：
+事件驱动系统不必永久保存所有 Token 或每个进度百分点。应保存恢复、审计和用户承诺所需的关键事实，临时显示事件可按单独策略保留。
 
-```text
-Queue
-Retry
-Duplicate Delivery
-Out-of-order
-Task State
-Worker Crash
-Backpressure
-```
+## 4. 状态机让合法变化看得见
 
-所以不能把“丢进 MQ”当完成设计。
+**状态机**规定对象有哪些状态，以及哪些条件下允许从一个状态变成另一个状态。报告任务的一个最小模型如下：
 
----
+| 当前状态 | 触发条件 | 下一状态 | 必须一并记录的事实 |
+|---|---|---|---|
+| QUEUED | 工作者合法领取 | RUNNING | 执行者、领取代际、租约 |
+| RUNNING | 报告已持久保存且校验通过 | SUCCEEDED | 确切报告版本和结果位置 |
+| RUNNING | 发生不可恢复错误 | FAILED | 错误分类及已完成工作 |
+| QUEUED / RUNNING / WAITING_APPROVAL | 接受取消请求 | CANCEL_REQUESTED | 取消原因与请求身份 |
+| CANCEL_REQUESTED | 已阻止后续步骤并核对在途工作 | CANCELLED | 已停止范围及残留外部效果 |
+| RUNNING | 需要用户批准才能继续 | WAITING_APPROVAL | 待批准的确切动作 |
+| WAITING_APPROVAL | 当前批准有效且执行权有效 | RUNNING | 批准人与动作绑定信息 |
 
-# 4. 先画 Data Flow，再选 Queue
+并非每项任务都要经历表中全部状态。失败、取消与成功是不同分支；不要把所有状态串成一条箭头链。批准等待也通常不应占着昂贵模型连接。
 
-错误顺序：
+状态变化需要在存储中检查前提。两个工作者不能同时把同一任务从 QUEUED 领取成功；迟到的进度更新不能把终态退回 RUNNING。领取代际的具体恢复边界在[队列与长任务](09-QueueBackpressure与LongRunningTask.md)继续推演。
 
-```text
-我们用 Kafka
-→ 看能做什么
-```
+## 5. 从一条正常路径推导失败路径
 
-正确顺序：
+取任务 J，初始为 QUEUED，输入固定为文档版本 d3：
 
-```text
-谁产生事件？
-谁消费？
-是否要 Replay？
-是否要求 Ordering？
-允许重复吗？
-消息保留多久？
-峰值多大？
-```
+1. 工作者 A 领取 J，保存 RUNNING 与领取代际 11。
+2. A 读取 d3，生成报告临时对象 r7。
+3. A 校验引用、内容格式和结果可读性。
+4. A 在有效代际下提交 `SUCCEEDED + r7`。
+5. 通知服务提示客户端重新读取 J。
 
-再决定 MQ / Stream / Task Queue。
+第 2 步后退出，会留下尚未被任务引用的临时对象；清理器可以按保留规则处理。第 4 步后退出但通知未发，任务已经成功，客户端查询仍能得到结果。不能因为页面没收到提示，就让生成工作重新执行。
 
----
+输入也要固定到适用版本，否则同一任务第一次读 d3，恢复后悄悄读 d4，结果可能变成另一份报告。确实要改用新输入，应记录一次明确的任务更新或新任务。
 
-# 5. Event 和 Command 要区分
+## 6. 断线恢复的是交付，不一定是执行
 
-## Command
+浏览器重新连接时，先读取权威任务快照，再按服务支持的事件游标继续接收变化。**事件序号表示交付位置，不是“重新执行到这一轮”。**
 
-表达：
+SSE 的 `Last-Event-ID` 可以携带客户端最后收到的事件 ID，但服务必须自己保留和解释事件，才能实现重放；协议不会自动建立持久事件日志。[HTML 标准：Server-sent events](https://html.spec.whatwg.org/multipage/server-sent-events.html)
 
-> 请某个能力执行动作。
+如果旧游标已超出保留窗口，应返回明确的重新同步要求，让客户端取得最新快照，而不是假装中间没有变化。事件重放可能重复，客户端用稳定事件身份去重；事件中的敏感数据仍要按当前身份授权。
 
-例如：
+## 7. 取消不是时间倒流
 
-```text
-GenerateInvoice(order_id)
-```
+用户取消时，先阻止新的昂贵步骤或外部动作，再向可取消的子调用传播取消，最后核对已发生的工作并保存终态。
 
-## Event
+假设发送请求已经交给外部邮件系统。即使本地连接被关闭，也不能证明邮件未发送。此时应继续查询或登记结果未知，必要时进入人工核对。可以告诉用户“已停止后续处理，已提交的邮件无法保证撤回”，不能只把状态改成 CANCELLED 就宣称一切回滚。
 
-表达：
+普通报告生成与外部发送应分别建模：停止生成通常可以丢弃未发布结果；已发送的通知却属于另一个系统里的事实。取消语义要在真正的不可逆边界说明，而不是只在接口文档写“支持取消”。
 
-> 某件事已经发生。
+## 本章小结
 
-例如：
+异步交付转移了等待责任，没有消除执行责任。持久任务与可恢复派发依据保证工作能被继续发现；状态机约束合法变化；结果提交、通知交付和外部动作分别需要自己的证据。恢复先读事实，取消先阻止新动作，再核对在途效果。
 
-```text
-OrderPaid(order_id)
-```
+## 🎯 面试怎么答
 
-如果所有消息都叫“event”，很容易模糊 Ownership。
+**问：为什么有队列仍然需要任务状态和恢复设计？**
 
----
+> 队列只负责一部分交付。任务受理、派发、领取、结果提交之间存在独立故障窗口。我会保存可查询的任务和派发依据，使用条件状态变化防止重复推进；允许重复消息但不重复业务效果。断线只重建交付位置，取消则区分尚未开始、可中断和已产生外部效果的工作。
 
-# 6. State Machine 是长流程的骨架
+## ⚠️ 容易混淆的地方
 
-例如文件处理：
+- 进程内异步函数不会自动变成跨重启的可靠任务。
+- 消息确认、结果提交、页面收到通知不能互相替代。
+- 事件重放可以重复显示信息，不能据此重新执行有副作用的步骤。
 
-```text
-UPLOADED
-→ VALIDATING
-→ PARSING
-→ PROCESSING
-→ COMPLETED
-```
+## 本章自测
 
-失败分支：
+### 1. 任务 J 与 Outbox 已提交；消息系统接受派发后，派发者在记录确认前退出。恢复后会发生什么？请说明哪层负责发现工作、哪层负责防止重复效果。
 
-```text
-VALIDATING_FAILED
-PROCESSING_RETRYABLE
-PROCESSING_FAILED
-CANCELLED
-```
+<details><summary>提示</summary>
 
-State Machine 让：
+分别看任务、待发记录、消息和业务结果，不把它们当作同一次提交。
 
-- API 知道展示什么；
-- Worker 知道能不能 Claim；
-- Retry 知道从哪一步继续；
-- 运维知道卡在哪里。
-
----
-
-# 7. Exactly-once 通常不该轻易承诺
-
-很多系统更现实的模式是：
-
-```text
-at-least-once delivery
-+
-idempotent consumer
-+
-durable state transition
-```
-
-因为：
-
-```text
-Worker 完成副作用
-→ Ack 前崩溃
-→ Message redelivery
-```
-
-如果 Consumer 不幂等，就重复执行。
-
----
-
-# 8. Outbox 思想解决什么
-
-经典问题：
-
-```text
-DB commit 成功
-但 publish event 失败
-```
-
-于是业务状态已经变化，但下游永远不知道。
-
-Outbox 思想：
-
-```text
-同一 DB Transaction
-├─ write business row
-└─ write outbox row
-
-后续 Publisher
-→ read outbox
-→ publish
-→ mark sent
-```
-
-它不等于全局强一致，但能减少“DB 成功 / Event 丢失”的双写窗口。
-
----
-
-# 9. Fan-out / Fan-in
-
-一个任务可能并行调用：
-
-```text
-Search A
-Search B
-Search C
-```
-
-然后合并：
-
-```text
-Fan-out
-→ partial results
-→ Fan-in
-```
-
-需要定义：
-
-```text
-全部成功才算成功？
-允许 Partial？
-Deadline 到了怎么办？
-慢分支要不要 Cancel？
-```
-
-RAG Hybrid、Agent Multi-tool、聚合 API 都会遇到。
-
----
-
-# 10. Cancellation 必须进入 Data Flow
-
-用户断开不一定意味着：
-
-```text
-所有后台副作用都应该停止
-```
-
-例如：
-
-```text
-支付已经提交
-```
-
-不能因为 HTTP Disconnect 就随便回滚。
-
-要区分：
-
-```text
-Cancelable Compute
-Committed Side Effect
-Durable Async Job
-```
-
-Cancellation 是业务语义，不只是 `task.cancel()`。
-
----
-
-# 11. Workflow 的每一步要记录什么
-
-Long-running Task 建议有：
-
-```text
-run_id
-step_id
-status
-attempt
-input_ref
-output_ref
-started_at
-finished_at
-error
-lease_owner
-version
-```
-
-否则任务跑几小时后失败，很难 Resume 或 Debug。
-
----
-
-# 12. 🎯 面试怎么答
-
-> 我会先把主流程画成同步和异步两部分：用户必须立刻知道的放 Sync Path，耗时、可延迟或需要削峰的工作进入 Durable Async Path。异步链路会显式设计任务状态机、幂等 Consumer、Retry、Lease 和 Backpressure，而不是只说“加 MQ”。如果业务状态和 Event 必须一起可靠地产生，我会考虑 Outbox 等模式。最后对 Fan-out、Partial Result 和 Cancellation 定义清楚语义。
-
----
-
-# 13. 本章自测
-
-<details><summary>1. 为什么 MQ 不能自动保证业务 Exactly-once？</summary>
-消息可能重复投递，Consumer 可能在副作用成功后 Ack 前崩溃，因此业务层仍需要幂等和持久状态。
 </details>
 
-<details><summary>2. Outbox 主要修复什么窗口？</summary>
-业务 DB 已提交但消息发布失败，导致下游永久漏事件的窗口。
+<details><summary>参考答案与解释</summary>
+
+Outbox 仍显示待发，因此可能再次派发。它保证有继续工作的依据，不保证无重复。工作者以稳定任务身份、条件领取和业务操作记录识别重复，结果与外部效果还需要各自的幂等或核对机制。
+
 </details>
 
-<details><summary>3. 为什么 Cancellation 不能只绑定 HTTP 连接？</summary>
-因为请求可能已经触发不可逆或需要完成的业务副作用，连接断开不等于这些工作可以安全取消。
+### 2. 报告已成功提交，浏览器最后看到 RUNNING，随后重连。应重新生成报告，还是重新读取状态？若事件游标已过期，怎样处理？
+
+<details><summary>提示</summary>
+
+页面展示不是权威任务事实，旧游标也不保证日志还在。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+先授权并读取任务快照，返回已提交报告；无需重做生成。游标过期时明确要求重新同步快照，重新建立后续事件订阅，不承诺补齐已清理的所有进度事件。
+
+</details>
+
+---
+
+[← 上一章](04-API数据模型与StateOwnership.md) · [模块入口](../README.md) · [下一章 →](06-Cache与HotPath.md)

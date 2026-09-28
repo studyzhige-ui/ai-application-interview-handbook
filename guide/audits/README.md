@@ -21,6 +21,7 @@
 
 按记录自身的基线、日期与验证范围阅读。历史 PASS 不代表此后所有正文已经再次验收；这里只补齐索引，不改写原记录。
 
+- [System Design｜读者优先修订与分层验证记录](system-design-reader-first-2026-09-28.md)
 - [外围文档同步｜2026-09-28](peripheral-sync-2026-09-28.md)
 - [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md)
 - [DeerFlow｜读者优先修订与源码核验记录](deerflow-reader-first-2026-09-27.md)
