@@ -164,6 +164,17 @@ class FullFixtureTests(unittest.TestCase):
         self.assertIn('(../curriculum/10-system-design/references.md)',changes['references/README.md'])
         self.apply(changes)
         self.assertEqual(outer.plan(self.root,outer.inventory(self.root)),{})
+    def test_reference_summary_counts_entries_not_directories(self):
+        self.put('curriculum/10-system-design/references.md','# System Design｜References\n')
+        data=outer.inventory(self.root)
+        self.assertEqual(len(data['references']),3)
+        self.assertEqual(data['curriculum_chapters'],10)
+        changes=outer.plan(self.root,data)
+        index=changes[outer.INDEX]
+        self.assertIn('3 个资料入口（含集中资料目录与模块内参考页）',index)
+        self.assertNotIn('3 个实际资料目录',index)
+        self.apply(changes)
+        self.assertEqual(outer.plan(self.root,outer.inventory(self.root)),{})
     def test_module_local_reference_links_are_validated(self):
         self.put('curriculum/10-system-design/references.md','# Sources\n[broken](missing.md)\n')
         checks=outer.validate(self.root,outer.validation_paths(self.root))
