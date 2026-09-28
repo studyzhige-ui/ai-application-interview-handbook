@@ -1,0 +1,40 @@
+name: Apply and validate Agent reader refinement
+on:
+  push:
+    branches: [work/agent-clarity-20260928]
+    paths: [_agent_refine/**, .github/workflows/agent-reader-apply.yml, tools/test_agent_course.py, tools/validate_agent_readability.py, tools/sync_agent_materials.py]
+permissions:
+  contents: write
+concurrency:
+  group: agent-reader-refinement-20260928
+  cancel-in-progress: false
+jobs:
+  refine:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","Windows"]') || 'ubuntu-latest' }}
+    timeout-minutes: 15
+    env:
+      PYTHONUTF8: '1'
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        if: ${{ !github.event.repository.private }}
+        with:
+          python-version: '3.12'
+      - name: Prepare isolated validation environment
+        shell: pwsh
+        run: |
+          $venv = Join-Path $env:RUNNER_TEMP 'agent-reader-validation-20260928'
+          python -m venv $venv
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $py = if ($IsWindows) { Join-Path $venv 'Scripts/python.exe' } else { Join-Path $venv 'bin/python' }
+          & $py -m pip install --disable-pip-version-check -r tools/agent-validation-requirements.txt
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          "AGENT_VALIDATION_PYTHON=$py" >> $env:GITHUB_ENV
+      - name: Apply exact drafts, validate and commit only the work branch
+        shell: pwsh
+        run: |
+          & $env:AGENT_VALIDATION_PYTHON _agent_refine/apply.py
+          exit $LASTEXITCODE

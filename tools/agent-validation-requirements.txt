@@ -1,0 +1,3 @@
+# Validation only; not required for reading or the two standard-library examples.
+jsonschema>=4.20,<5
+markdown-it-py>=3,<5
