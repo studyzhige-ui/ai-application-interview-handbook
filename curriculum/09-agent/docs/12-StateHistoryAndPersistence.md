@@ -1,90 +1,19 @@
-# 12. State / Persistence：程序怎样记住当前工作
-
-Agent 系统一旦不再是“一次请求、一次回答”，就必须明确：
-
-> **一次会话到底是什么？哪些状态跨 Turn 保存？哪些只是临时 Context？多用户之间怎样隔离？**
-
-如果只写：
-
-```text
-conversation_id -> Redis
-```
-
-远远不够。
-
-这一章的目标是建立 Runtime（运行时执行系统） State（状态） Plane 的最小模型。
+# 12. 状态与持久化：程序怎样知道工作做到哪里
 
 [← 上一章](11-MemoryLifecycle.md) · [Agent 目录](../README.md) · [下一章 →](13-CheckpointResumeAndRecovery.md)
 
----
+报告任务已读完 A、B，正在等上传回执。页面断线了，程序重启了，另一个请求又要求取消。新的处理者需要知道什么，才能不重传、不漏掉取消，也不把未完成的报告交出去？
 
-<a id="section-1"></a>
+先确定这些会影响下一步的信息，再决定保存在哪里。这比一开始问“Session 放 Redis 还是 MySQL”更有用。
 
-## 1. Session 是什么
-
+<a id="1-session-是什么"></a>
 <a id="legacy-12-01"></a>
+<a id="section-1"></a>
+<a id="core-1"></a>
 
-你让助手读A、B、C并写报告。第一次调用读完A，下一次该读B还是重新读A？用户这时取消，程序该停止哪个正在等待的调用？报告已生成，但引用检查没通过，界面该显示完成吗？这些问题的答案就是程序的State（状态）：**继续或停止工作时，需要知道的当前情况。**
+## 1. 状态是当前情况，不是所有字段的集合
 
-Plan（计划）是“准备先A后B”；状态还包含“A已成功、B正在等结果、当前不允许写原件、报告尚未验收”。因此“当前执行事实”不是让你背一个抽象名词，而是上述能驱动程序判断的信息。状态也包含`UNKNOWN`等认识边界——程序不知道结果，不应擅自把它写成失败。
-
-Session 可以理解为：
-
-> **一段连续交互的 Runtime 容器。**
-
-至少通常会有：
-
-```text
-session_id
-user / tenant / workspace identity
-created_at
-last_active_at
-runtime config snapshot
-history / event reference
-current run state
-memory namespace
-permission context
-```
-
-Session 不等于一条聊天记录，也不等于一个 HTTP connection。
-
----
-
-<a id="section-2"></a>
-
-## 2. Run / Turn / Step 再复习
-
-<a id="legacy-12-02"></a>
-
-第03章使用的教学口径是：
-
-```text
-Session（持续会话）
-└─ Run（一个目标的执行）
-   └─ Turn（模型决策—动作—观察的反馈轮）
-      └─ Step（其中具体步骤）
-```
-
-它帮助说明一个工具步骤失败不等于整个任务结束。Codex的Thread/Turn/Item是产品对象，一次Turn可跨多次推理和工具交互；Claude的submitMessage与内部循环计数也不应强制映射。本章只决定哪些状态跨交互、跨进程保存，不另造一套同名定义。
-
----
-
-<a id="section-3"></a>
-
-## 3. State 应该保存什么
-
-<a id="legacy-12-03"></a>
-
-| 当前情况 | 下一步如何受影响 | 是否一定需要跨重启保存 |
-|---|---|---|
-| 已读A，结果可以廉价重读 | 可以读B或重读A | 取决于恢复成本 |
-| 正在等待一次报告上传的结果 | 不能直接再上传新副本 | 高风险，需操作身份和核对依据 |
-| 用户取消任务 | 不应继续派发新动作 | 若任务跨进程运行，通常需要 |
-| 当前HTTP连接的socket对象 | 用来推送界面消息 | 不宜原样存，重连时重新建立 |
-| 临时Token估算 | 帮助本次预算检查 | 可重新计算，不必每次落盘 |
-| 已确认交付报告的产物引用 | 让用户访问和核验 | 按业务交付期限保存 |
-
-有了这些理由，再看一个**教学用最小记录**：
+**State（状态）**是程序继续、停止或判断结果时需要知道的当前情况。计划只是一部分：它写准备怎么做，状态还要包含已经发生的结果和仍不知道的事情。
 
 ```json
 {
@@ -96,590 +25,200 @@ Session（持续会话）
 }
 ```
 
-它的意思是“这是report-7，A/B读完了，草稿存在，上传结果还没确定”。这不是生产必填Schema，也没要求保存每段日志。不同任务需要不同记录；能用它决定下一步，才说明字段有价值。
+这份教学记录表示：A、B 已读，草稿存在，上传结果尚未确定。它不代表通用生产 Schema；真正的字段由任务承诺决定。
 
-Runtime State 的目标不是“保存所有文本”，而是支持：
+`UNKNOWN` 也可以是合法状态，表示程序不知道外部结果。把未知写成失败并重新上传，会丢掉这个重要认识边界。
 
-```text
-下一步正确决策
-恢复
-取消
-审计
-并发控制
-```
-
-可以分几类。
-
-### 3.1 Identity State
-
-```text
-session_id
-run_id
-turn_id
-current_step_id
-```
-
-### 3.2 Control State
-
-```text
-status
-current_goal
-plan
-budget
-retry_count
-active_tool_call
-```
-
-### 3.3 Environment State Reference
-
-```text
-workspace_id
-sandbox_id
-artifact ids
-file generation
-```
-
-### 3.4 Safety State
-
-```text
-permission mode
-approved action ids
-policy version
-```
-
-### 3.5 Progress State
-
-```text
-completed steps
-pending steps
-blocked reason
-```
-
-这些分类是检查遗漏的菜单，不是每个Agent必须存的表。先定义重启后还承诺继续什么，再确定必要事实。短暂只读问答与会持续发邮件的长任务，保存要求显然不同。
-
----
-
-<a id="section-4"></a>
-
-## 4. History 应该是事件流，而不是“一个超长字符串”
-
-<a id="legacy-12-04"></a>
-
-更稳妥的模型：
-
-```text
-Event 1: UserMessage
-Event 2: ModelOutput
-Event 3: ToolCall
-Event 4: ToolResult
-Event 5: Approval
-Event 6: StateTransition
-```
-
-每条事件有：
-
-```text
-event_id
-session_id
-run_id
-turn_id
-timestamp
-type
-payload
-correlation_id
-```
-
-这样 Trace（执行追踪）、Replay（重放）、Checkpoint（检查点） 才有可靠基础。
-
-这里不是要求所有应用都做完整事件溯源。简单应用可以保存当前状态与必要交互；需要由事件重建时才定义可靠事件流。诊断Trace不能成为关键回执唯一来源。
-
----
-
-<a id="section-5"></a>
-
-## 5. Snapshot 与 Event Log 怎么配合
-
-<a id="legacy-12-05"></a>
-
-如果每次恢复都从第 1 条 Event 重放：
-
-```text
-session 越长
-→ replay 越慢
-```
-
-一种常见设计是：
-
-```text
-Durable Event Log
-+
-Periodic State Snapshot
-```
-
-恢复时：
-
-```text
-load latest snapshot
-→ replay newer events
-```
-
-这里是通用架构模式，不声称 Claude Code / Codex 一定使用同样的数据存储实现。
-
----
-
-<a id="section-6"></a>
-
-## 6. Persistence 不等于把 Context 存下来
-
+<a id="3-state-应该保存什么"></a>
+<a id="31-identity-state"></a>
+<a id="32-control-state"></a>
+<a id="33-environment-state-reference"></a>
+<a id="34-safety-state"></a>
+<a id="35-progress-state"></a>
+<a id="6-persistence-不等于把-context-存下来"></a>
+<a id="legacy-12-03"></a>
 <a id="legacy-12-06"></a>
+<a id="section-3"></a>
+<a id="section-6"></a>
+<a id="core-2"></a>
 
-Persistence（持久化）就是把需要跨进程或机器故障保留的数据写入具有相应可靠性保证的存储。Python变量只在进程内；程序重启变量会消失。写文件、事务提交到数据库或保存对象都是可能方式，但要理解实际写入成功、同步和备份策略，而不是认为调用`save()`便永不丢。
+## 2. 哪些信息需要活过重启
 
-状态是**内容是什么**，持久化是**怎么让部分内容活过重启**。并非所有状态都应持久化：连接、锁对象和协程不能靠JSON原样恢复；可以保存“等待operation7”并在新进程建立新连接核对结果。
+**Persistence（持久化）**回答如何把必要信息保存到具有相应可靠性保证的存储。状态是内容，持久化是保存方式；不能把所有内存对象原样存成 JSON，就认为程序可以从原指令继续运行。
 
-| 载体 | 适合承担 | 要检查的边界 |
+| 当前信息 | 重启后为何需要 | 常见处理 |
 |---|---|---|
-| 进程内存 | 活动连接与可重建缓存 | 进程结束就丢 |
-| 本地文件/SQLite | 单机历史与任务记录 | 原子写、并发、磁盘与备份 |
-| 事务数据库 | 多Worker任务状态和操作账本 | 事务边界与并发更新 |
-| 对象/产物存储 | 大文件、报告、日志产物 | 权限、保留期限和引用可解析性 |
-| Redis | 快速短期状态或配置得当的持久用途 | TTL、淘汰、持久化与故障丢失窗口 |
+| 上传操作身份与回执 | 避免重复创建报告 | 可靠保存并可核对 |
+| 用户取消意图 | 防止恢复后继续已取消工作 | 跨进程任务通常需要持久保存 |
+| 报告产物引用 | 用户仍要访问与验收 | 按交付期限保存 |
+| 可廉价重读的资料 | 恢复时可能重取 | 取决于版本与重算承诺 |
+| 活动 socket、协程、进程对象 | 不能原样在新进程使用 | 重建连接与环境 |
+| 临时 Token 估算 | 可重新计算 | 未必逐次落盘 |
 
-不是所有Agent都需要数据库。不能承诺跨重启恢复的小工具可以从头开始；需要长任务恢复时再明确保存责任。
+存储返回成功也有明确条件，要理解事务、同步和备份策略。已经学过的数据库与 Redis 可靠性知识，决定这里实际能够承诺多少恢复能力。
 
-错误思维：
+<a id="2-run--turn--step-再复习"></a>
+<a id="4-history-应该是事件流而不是一个超长字符串"></a>
+<a id="legacy-12-02"></a>
+<a id="legacy-12-04"></a>
+<a id="section-2"></a>
+<a id="section-4"></a>
+<a id="core-3"></a>
 
-```text
-把当前 prompt JSON 存 DB
-→ resume 时再发给模型
-```
+## 3. Session 不等于连接，History 不等于状态
 
-问题是 Prompt 只是 State 的一个投影。
+Session 是一段持续交互的容器，可以关联用户、工作区与多次 Run。HTTP 连接断开，Session 和已经接受的长任务不必因此结束；能否继续由产品约定，而不是网络连接寿命决定。
 
-真正需要持久化的可能还有：
+History 记录过去的消息和事件；State 表示当前情况。历史可以写“曾提出计划 P1，后来改成 P2”，状态只指向当前有效的 P2。上下文再选择模型这次需要的部分，三者不是三个必须各存全文的数据库。
 
-```text
-side effects
-artifact refs
-tool call correlation
-approval
-budget
-workspace version
-pending task
-```
+还要区分**诊断记录**与**业务恢复记录**。“上传成功，回执 report42”不能因诊断采样而丢失；“模型请求耗时 812 毫秒”通常只是排障信息。两者可以通过同一操作标识关联，但可靠性和保留期限不同。
 
-因此：
+<a id="5-snapshot-与-event-log-怎么配合"></a>
+<a id="legacy-12-05"></a>
+<a id="section-5"></a>
+<a id="core-4"></a>
 
-> **Context 是可重新编译的 View；State 才是 Runtime 的事实。**
+## 4. 保存当前视图，还是用事件重建
 
-History（历史）记录发生过的交互；State是从这些交互及外部结果得到的当前视图。Checkpoint（检查点）是某个可继续的状态快照及引用。Trace（执行追踪）用来诊断耗时和失败路径，不是默认恢复输入。相同事件可以服务多个用途，但可靠性、保留和权限要求不同。
-
-例如“上传已成功”是不能因诊断采样而丢的业务回执；“模型调用花了812毫秒”通常是可采样诊断信息。把它们塞进同一个日志字符串，再期待重启时猜出状态，是危险的职责混淆。
-
-Snapshot（快照）加Event Log（事件日志）是一种恢复设计，不是强制架构。简洁事务表也能表达当前状态。如果选事件重建，就要明确哪些事件被可靠记录、顺序怎样确定、快照后如何接续；不是所有调试日志自动成为事件源。
-
----
-
-<a id="section-7"></a>
-
-## 7. Session Store 选什么
-
-<a id="legacy-12-07"></a>
-
-不能只问：
-
-> Redis 还是 MySQL？
-
-要先问数据语义。
-
-#### Redis 适合
+小应用可以用事务表保存当前任务状态和必要交互。另一种设计是维护可靠事件流，并定期保存快照：
 
 ```text
-高频 transient state
-TTL session cache
-lease / heartbeat
-fast coordination
+快照：已处理事件 100 时的状态
+后续：事件 101、102、103
+恢复：加载快照 → 按规定顺序应用 101—103
 ```
 
-#### MySQL / Durable DB 适合
+这种 Snapshot + Event Log 设计减少从头重建的成本，但要求事件不会漏、顺序有定义、处理可重复。普通调试日志并不会自动满足这些条件。
 
-```text
-long-term session metadata
-durable run record
-billing / ownership
-high-value audit facts
-```
+选择取决于审计、恢复与运维需求，不是“所有 Agent History 必须事件溯源”。无论采用哪一种，外部上传与本地状态仍不是天然同一事务；恢复边界在下一章继续分析。
 
-#### Object / Artifact Store
-
-适合：
-
-```text
-large logs
-file snapshots
-model/tool artifact
-```
-
-最终通常是组合，而不是一库包办。
-
----
-
-<a id="section-8"></a>
-
-## 8. Tenant Isolation 为什么必须进入 State Schema
-
-<a id="legacy-12-08"></a>
-
-多租户系统不能只是：
-
-```text
-WHERE user_id = ?
-```
-
-在一个业务代码分支里“记得加”。
-
-建议所有核心 State Object 自带：
-
-```text
-tenant_id
-workspace_id
-user_id
-```
-
-并在：
-
-```text
-storage key
-query filter
-cache key
-tool permission
-artifact path
-trace scope
-```
-
-都显式传播。
-
-对应 HUMAN-A `AGENT-017` Multi-tenant State Isolation。
-
----
-
-<a id="section-9"></a>
-
-## 9. Session Hijack / Cross-tenant Pollution
-
-<a id="legacy-12-09"></a>
-
-经典事故：
-
-```text
-cache key = session:{session_id}
-```
-
-如果 session_id 不是全局不可猜且查询没有 tenant boundary：
-
-```text
-Tenant A
-→ 构造 B 的 session id
-→ 读到 B state
-```
-
-更稳：
-
-```text
-session:{tenant_id}:{session_id}
-```
-
-但 Key 设计仍不能替代服务端授权检查。
-
----
-
-<a id="section-10"></a>
-
-## 10. Concurrency：同一个 Session 同时来两个请求怎么办
-
+<a id="10-concurrency同一个-session-同时来两个请求怎么办"></a>
+<a id="11-state-version-为什么重要"></a>
 <a id="legacy-12-10"></a>
-
-例如：
-
-```text
-Request A: “继续执行任务”
-Request B: “先停止，改需求”
-```
-
-如果两个 Worker 同时修改 State：
-
-```text
-Lost Update
-Out-of-order Event
-Duplicate Tool
-```
-
-可以使用：
-
-```text
-optimistic version
-single owner lease
-serialized event append
-per-run queue
-```
-
-关键是：
-
-> **同一 Run 的 State Transition 必须有并发协议。**
-
----
-
-<a id="section-11"></a>
-
-## 11. State Version 为什么重要
-
 <a id="legacy-12-11"></a>
+<a id="section-10"></a>
+<a id="section-11"></a>
+<a id="core-5"></a>
 
-伪代码：
+## 5. 多个请求同时更新，需要防止覆盖
 
-```text
-read state version=42
-compute update
-write where version=42
-→ success: version=43
-→ fail: someone else updated
-```
+A 读到状态版本 4，准备继续；B 也读到版本 4，并提交取消，状态变成版本 5。A 如果不检查就把自己计算出的结果写回，可能覆盖取消。
 
-这样可以发现 Lost Update。
+可以使用条件更新：只在当前版本仍为 4 时提交 A 的更新。失败说明有并发变化，应重新读取并判断，而不是强制覆盖。也可以按 Run 排队或采用单处理者协议；先选择符合交互需要的最简单方案。
 
-对于长任务还可以维护：
+**ID 说明是哪个对象，版本说明对象是否变化。** run_id、operation_id 和 state_revision 的目的不同；不要求每条事件都记录一整套版本树。一次运行的配置可以引用一份固定快照，各处不必复制完整 Prompt 和工具说明。
 
-```text
-state_generation
-checkpoint_generation
-instruction_generation
-```
-
-后面 Resume（恢复执行） 时很重要。
-
-ID（标识）回答“这是哪个对象”：run7、operation7、artifact7。Version（版本）回答“它是不是已经改变”：并发Worker读到状态版本4，提交时发现变5，就不能覆盖别人的更新。两者不同。
-
-只有存在变化和兼容性风险时才加相应版本。例如一次Run可引用一份不可变配置快照；不必在每条Trace重复整段Prompt和所有工具Schema。状态并发用revision，文件读取用必要的内容标识；事件本身通常只需唯一ID和类型，未必都需要业务版本。不能因“将来可能排查”就保存全部原始输入。
-
-多租户更重要的是可信身份及授权查询：知道session_id不等于有权访问；模型生成的tenant_id不能当认证来源。两个请求更新同一会话时可排队、拒绝并发或做版本检查，先用最简单符合产品语义的方式。
-
-<details>
-<summary>两个产品怎样体现“持久记录不等于全部运行内存”</summary>
-
-Codex固定`Session`保存历史与上下文参考，`persist_rollout_items`把选定RolloutItem交给持久线程记录；模型请求则从历史投影构建。其App Server通过Thread提供跨交互会话语义。这个事实并不承诺自定义外部工具的副作用都有业务事务记录，接入方仍要设计它。
-
-Claude Code用户快照的QueryEngine负责会话生命周期，`query.ts`有消息、工具上下文、重试/压缩跟踪等活动状态；`utils/sessionStorage.ts`承担记录路径。`compact.ts`通过边界和保留消息关系支持压缩后加载，而非序列化所有协程、网络连接和内存缓存。官方支持会话恢复，也不意味着恢复任意外部业务交易。
-
-</details>
-
----
-
-<a id="section-12"></a>
-
-## 12. Cold Resume 与 Warm Resume
-
-<a id="legacy-12-12"></a>
-
-可以区分：
-
-### Warm Resume
-
-```text
-worker 还在
-in-memory objects 还在
-```
-
-### Cold Resume
-
-```text
-进程已经重启
-只剩 durable state
-```
-
-如果系统只支持 Warm Resume：
-
-```text
-真正 crash 后仍恢复不了
-```
-
-所以 Production（生产环境） 设计要问：
-
-> **哪些运行事实只在内存，哪些必须 durable？**
-
-Codex Source Index 对 Thread Instructions 也明确区分 warm resume、cold resume / offline fork、live fork 的 instruction snapshot/provider 继承边界，这说明 Resume 不是简单“重新加载聊天”。
-
----
-
-<a id="section-13"></a>
-
-## 13. Session Retention / Deletion
-
-<a id="legacy-12-13"></a>
-
-Session 也有生命周期：
-
-```text
-active
-idle
-archived
-expired
-deleted
-```
-
-需要定义：
-
-- 保留多久；
-- 是否允许用户删除；
-- artifact 是否联动删除；
-- trace / billing 是否有独立保留规则；
-- Memory（记忆） 是否跟 Session 一起删除。
-
-这些不能都靠一个 Redis TTL 解决。
-
-留存期限服务用途：用户仍需下载的产物、业务要求保留的操作回执、可以清理的大工具结果、必须尽快删除的调试输入，不应统一永久保存。
-
----
-
+<a id="12-cold-resume-与-warm-resume"></a>
+<a id="13-session-retention--deletion"></a>
+<a id="7-session-store-选什么"></a>
+<a id="8-tenant-isolation-为什么必须进入-state-schema"></a>
+<a id="9-session-hijack--cross-tenant-pollution"></a>
+<a id="cold-resume"></a>
 <a id="human-a"></a>
+<a id="legacy-12-07"></a>
+<a id="legacy-12-08"></a>
+<a id="legacy-12-09"></a>
+<a id="legacy-12-12"></a>
+<a id="legacy-12-13"></a>
+<a id="mysql--durable-db-适合"></a>
+<a id="object--artifact-store"></a>
+<a id="redis-适合"></a>
+<a id="section-12"></a>
+<a id="section-13"></a>
+<a id="section-7"></a>
+<a id="section-8"></a>
+<a id="section-9"></a>
+<a id="warm-resume"></a>
+<a id="core-6"></a>
 
-执行状态与历史持久化还对应`AGENT-016`、`AGENT-017`，见研究题库。
+## 6. 隔离与留存要覆盖整个读取路径
 
-## 14. HUMAN-A 信号
+知道 session_id 不代表有访问权。查询状态、读取产物、取得记忆和执行工具时，都要绑定可信身份与授权范围。把租户编号加进缓存键有助于避免冲突，但不能替代服务端授权。
 
-本章主要承接：
+| 存储选择 | 适合的用途 | 需要核对 |
+|---|---|---|
+| 进程内存 | 活动对象、可重建缓存 | 进程结束即丢失 |
+| 文件或 SQLite | 单机历史和任务记录 | 原子写、并发、磁盘和备份 |
+| 事务数据库 | 多处理者状态与操作记录 | 事务和并发更新边界 |
+| 对象存储 | 报告、大日志和文件产物 | 权限、引用与保留期限 |
+| Redis | 快速短期状态或配置适当的持久用途 | TTL、淘汰及持久化丢失窗口 |
 
-- `AGENT-017`：多用户 / 多 Tenant（租户） 的 Memory、Context、Session 与权限隔离；
-- `AGENT-027` 的前置：Checkpoint / Persistence / Resume；
-- `AGENT-004` 的 Event Model 基础。
+Warm resume（热恢复）可以复用仍在运行进程中的部分对象；Cold resume（冷恢复）只能依靠可靠记录重新建立环境。不能只验证热恢复，就承诺进程崩溃也可恢复。
 
-真实面试中常见追问：
+任务结束后的留存也按用途决定：报告、业务回执、诊断数据和记忆未必同期限。删除会话是否联动产物与记忆应明确，不能用一个 Redis TTL 代替所有删除责任。
 
-```text
-Session 存哪？
-多实例怎么恢复？
-多个用户怎么隔离？
-Context 和 State 是一回事吗？
-```
+<a id="summary"></a>
 
----
+## 本章小结
 
+从下一步需要知道什么，推导当前状态；从重启后承诺什么，推导持久化。会话、历史、模型输入和诊断各有用途。并发、权限与留存决定这些记录能否被正确使用。
+
+<a id="15-面试怎么答"></a>
+<a id="qagent-session--state-怎么设计"></a>
+<a id="qagent-state究竟是什么"></a>
+<a id="qstate和persistence有什么区别"></a>
+<a id="q为什么不把trace作为恢复数据库"></a>
+<a id="q每个东西都必须记录版本吗"></a>
 <a id="interview"></a>
 
-## 15. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：Agent Session / State 怎么设计？
+### State 和 Persistence 有什么区别？
 
-🎯 **建议回答**：
+State 是任务当前情况，Persistence 是让必要信息跨重启保留的机制。连接和协程通常重建，操作身份、取消和回执则可能必须保存。不是把全部内存序列化。
 
-> 我会把 Session 当作一段连续交互的 Runtime 容器，而不是聊天文本。State 保存当前 goal、status、budget、active tool、progress、workspace 和 permission 等执行事实；History 用结构化 event 记录已发生事情；Context 是从这些持久状态和其它来源编译出来的 model view。多实例场景要支持 durable persistence、版本控制和 cold resume，多租户要让 tenant/workspace identity 贯穿存储 key、query、tool permission、artifact 和 trace，而不是只靠 Prompt 隔离。
+### 为什么不能靠 Trace 恢复业务？
 
-### Q：Agent State究竟是什么？
+Trace 主要服务诊断，可能采样、脱敏或过期。关键操作与取消要有可靠记录，不能随采样丢掉。可以通过 ID 关联，但要分别定义责任。
 
-🎯 **30 秒回答**：
+### 同一 Session 同时来继续和取消请求，怎么办？
 
-> 它是程序为了继续、停止和判断结果需要知道的当前情况，例如目标、已完成读取、待定工具、取消意图、产物和审批。计划只是其中的未来步骤视图。State不等于全部聊天，也不等于模型上下文；可以包含结果未知，以免程序把不确定当失败重试。
+按 Run 串行处理、条件版本更新或明确单所有者协议，防止旧视图覆盖新取消。先确定交互语义，再选并发机制；不能只依赖共享 JSON。
 
-### Q：State和Persistence有什么区别？
-
-🎯 **30 秒回答**：
-
-> State讲保存什么当前情况；Persistence讲其中哪些写到能跨重启保留的存储。进程内连接等可以丢弃重建，但上传操作身份和回执可能必须持久化。是否保存取决于恢复契约、风险和成本，不要求把运行内存全部备份。
-
-### Q：为什么不把Trace作为恢复数据库？
-
-🎯 **30 秒回答**：
-
-> Trace主要用于诊断，可能采样、脱敏或过期；恢复要有确定的状态和操作记录。关键业务回执不能随Trace采样丢掉，耗时日志却通常不必阻塞执行。可以关联同一ID，但应分别定义数据责任。
-
-### Q：每个东西都必须记录版本吗？
-
-🎯 **30 秒回答**：
-
-> 不必须。ID识别对象，版本处理变更、并发或兼容问题。可以让Run引用一次不可变配置，状态更新用revision；不是每条事件都复制全部版本信息。先问这个变化会影响什么决策，再决定记录粒度。
-
----
-
+<a id="16-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 16. 高频易错点
+## ⚠️ 易错点
 
-⚠️ **Session = Chat History。** Session 还包含 Runtime State / Config / Ownership。
+> ⚠️ Prompt 是状态的一个输入视图，保存 Prompt 不自动保存全部恢复依据。
 
-⚠️ **Context 存下来就是 Checkpoint。** Context 只是 View，不足以恢复外部副作用和执行位置。
+> ⚠️ Session ID、租户缓存键和用户授权不是同一件事，访问必须重新校验。
 
-⚠️ **多租户隔离靠 Prompt。** 必须由 Storage / Permission（权限） enforce。
+> ⚠️ Snapshot 加事件流是可选设计，普通日志不自动成为可靠事件源。
 
-⚠️ **同一个 Session 并发请求自动安全。** 需要版本或 Owner 协议。
-
-⚠️ **State就是Plan的pending/done。** 还包括等待的操作、取消、结果、权限与产物等当前情况。
-
-⚠️ **持久化就是把全部内存存下来。** 保存可恢复的必要信息，连接与协程通常重建。
-
-⚠️ **有Session ID就有访问权。** 身份与授权必须来自可信控制链。
-
-⚠️ **Trace越全，恢复越可靠。** 诊断与恢复目标不同，关键事实需可靠存储。
-
-⚠️ **任何事件必须版本号。** 唯一标识和变更版本不同，只为实际问题引入。
-
----
-
+<a id="17-本章自测"></a>
 <a id="self-test"></a>
 
-## 17. 本章自测
+## 本章自测
 
-<details><summary>1. 为什么 History 更适合做结构化 Event Log？</summary>
+<details><summary>1. A 读取版本 4，B 已提交版本 5 的取消，A 应直接覆盖吗？</summary>
 
-因为 ToolCall、ToolResult、Approval（批准）、StateTransition 等事件需要独立身份和关联关系，才能支持 Trace、Replay、Debug 与 Checkpoint。
-
-</details>
-
-<details><summary>2. Cold Resume 需要比 Warm Resume 多保存什么？</summary>
-
-进程内对象全部丢失，所以必须有足够 durable state 来重建运行：执行位置、状态、artifact、side effect、approval、instruction/context source version 等。
+不能。条件更新应失败，A 重新读取取消状态并按规则停止，不应把旧继续决定写回。
 
 </details>
 
-<details><summary>3. 为什么 Context 不应该作为唯一 Source of Truth？</summary>
+<details><summary>2. 重启以后原 socket 不能恢复，意味着任务一定丢失吗？</summary>
 
-Context 会裁剪、压缩、重排，是模型输入视图；Runtime 正确性依赖结构化 State 和 History，不能只依赖自然语言 Prompt。
-
-</details>
-
-<details><summary>4. 程序重启后读A的结果丢了，一定不能继续吗？</summary>
-
-若A可按授权重新读取，且允许重算，就可以重建；若A当时内容不可再得且影响验收，则需按契约保存快照或承认无法精确恢复。
+不一定。若必要任务状态、操作与产物可靠保存，新进程可以重建连接并核对后继续。
 
 </details>
 
-<details><summary>5. 一个活跃HTTP连接能直接存到JSON里下次恢复吗？</summary>
+<details><summary>3. Trace 采样漏掉上传 Span，还能判断是否已上传吗？</summary>
 
-不能恢复原连接本身。可保存任务身份与事件位置，让重连建立新连接并查询权威状态。
-
-</details>
-
-<details><summary>6. “用户取消”为什么有时比日志耗时更需要持久化？</summary>
-
-长任务可能被另一个Worker接手；取消意图丢失会继续执行不该执行的动作。耗时日志丢失通常只影响诊断，不改变业务授权。
+应该能依靠可靠操作记录与下游核对。若只能靠该 Span 猜，说明诊断与业务事实混用了。
 
 </details>
 
-<details><summary>7. 状态记录中的UNKNOWN是不是脏数据？</summary>
+<a id="12-state--persistence程序怎样记住当前工作"></a>
+<a id="14-human-a-信号"></a>
+<a id="references"></a>
 
-不是，它准确表达尚未确认的结果。必须核对才可变成成功或失败，保留未知比编造失败更安全。
+## 知识回看与权威资料
 
-</details>
+- [检查点与恢复](13-CheckpointResumeAndRecovery.md)：分析快照之间的外部动作窗口。
+- [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence)：对照一种明确的图状态持久化语义。
+- [固定会话与持久化对照](../../../references/agent/implementation-notes.md#chapter-12)：区分被保存的交互与不可原样恢复的运行对象。
 
-<details><summary>8. 两Worker都读取revision4，一个先改到5，另一个怎么办？</summary>
-
-提交时检查版本或锁，发现基线变化就拒绝覆盖并重读。版本用于防丢失更新，不是为了炫耀字段齐全。
-
-</details>
-
-<details><summary>9. 小型一次性报告程序可以不用持久数据库吗？</summary>
-
-可以，前提是明确故障后从头开始及其可接受成本，没有不可重放副作用。不能一边不保存必要状态，一边承诺任意断点恢复。
-
-</details>
 
 ---
 

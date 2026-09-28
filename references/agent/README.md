@@ -116,3 +116,12 @@ Capability 到 Agent 教材的正式映射见 [Runtime Capability Map](runtime-c
 
 正文序号是稳定路径标识。修订记录只说明其基线与实际验证，不代表已重新检查上游全部最新变化。
 <!-- product-evidence:end -->
+
+
+## 课程讲解与固定实现选读
+
+[实现对照](implementation-notes.md)集中保存各章有用途的固定源码选读；[能力映射](runtime-capability-map.md)定位正式主责章节。不要将选读中的私有类名、历史开关或产品参数当成首次学习的必备概念。
+
+课程精修关键事实核验：2026-09-28。JSON Schema 数值范围、MCP 2026-07-28、A2A 1.0.0、框架恢复与工具护栏等按正文官方链接校准；没有重新核验全部上游源码，也没有运行真实模型和外部恢复系统。产品目录与本页既有快照表保留各自范围。
+
+[本轮维护记录](../../guide/project/agent-clarity-refinement-2026-09-28.md)与[证据映射](../../guide/project/agent-clarity-mapping-2026-09-28.json)记录移入、保留和验证边界，不修改真人来源准入、Canonical 归属或冻结计数。

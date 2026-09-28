@@ -1,105 +1,40 @@
-# 05. Tool Registry：工具注册、模型可见说明与按需发现
-
-工具只有两个时，名字和函数放在一个字典里就能工作。工具变成几十、几百个以后，你可能会问：
-
-> 难道每次都把所有工具的全部信息塞给模型？
-
-要回答它，先分清“程序注册了什么”和“模型这一轮看到什么”。
+# 05. 工具注册与发现：程序有的，不一定都给模型看
 
 [← 上一章](04-ToolContractAndValidation.md) · [Agent 目录](../README.md) · [下一章 →](06-ToolExecutionAndFailure.md)
 
----
+报告助手有两个工具时，用名字找到函数并不难。但接入多个资料系统后，可能出现几百项工具，其中好几个都叫 search。每次把它们全部交给模型，会花更多输入预算，也更容易选错。
 
-<a id="section-1"></a>
+先区分两件事：应用知道怎样执行哪些工具；模型这一次知道可以选择哪些工具。
 
-## 1. Registry 解决什么
-
+<a id="1-registry-解决什么"></a>
 <a id="legacy-05-01"></a>
+<a id="section-1"></a>
+<a id="core-1"></a>
 
-Registration（注册）是把一个工具名称和它的实际处理方法加入应用的目录。Registry（注册表）是这个目录；模型并不知道你内存里的函数地址。每次调用模型时，应用再把允许使用的工具说明交给模型。模型返回名字与参数后，Router（路由器）查注册表，Executor（执行器）才调用函数。
+## 1. 注册是在应用里建立执行目录
 
-```text
-开发者定义工具 → 加入应用注册表
-                      ├→ 选择模型可见说明 → 模型生成调用候选
-                      └← 名称查处理器 ← 解析与校验候选
-                                      ↓
-                                  执行与回填
-```
-
-因此常说的“注册工具”其实容易混淆两步：**让程序知道怎么执行**，以及**让模型知道什么可调用**。注册了但本轮不暴露的工具仍可能存在于程序目录中；模型能看见说明也不等于当前参数已获批准。
-
-最小 Tool Runtime（运行时执行系统） 可以手写：
-
-```python
-# 本地目录示意：名字映射到实现；这些函数对象不会直接序列化给模型。
-TOOLS = {
-    "read_file": read_file,
-    "run_tests": run_tests,
-}
-```
-
-但 Production（生产环境） 需要 Registry 管理：
+**Registry（注册表）**把工具身份与实际实现关联起来。**注册**就是把这项关联加入目录。模型不能直接调用你内存里的函数地址；它返回名称和参数后，程序再查目录，找到处理器。
 
 ```text
-identity
-schema
-version
-runtime handler
-permission class
-exposure mode
-search metadata
-health / availability
-provider / tenant scope
+开发者定义工具 → 注册名称、说明和处理器
+                       ├─ 取允许的说明 → 本次模型请求
+                       └─ 名称查处理器 ← 模型返回调用候选
+                                            ↓
+                                        检查与执行
 ```
 
-Registry 是 Host 的能力目录，不等于“模型当前看得见的 Tool List”。
+注册表可以保存函数、连接对象和运行策略；模型侧只接收其 API 支持的可序列化说明。将宿主对象转换成某个使用者所需表示，称为**投影**。这里不需要先记术语，只要能指出“函数留在哪，说明发给谁”。
 
----
-
-<a id="section-2"></a>
-
-## 2. Registry 与 Model-visible Tool Set 必须分开
-
+<a id="2-registry-与-model-visible-tool-set-必须分开"></a>
 <a id="legacy-05-02"></a>
+<a id="section-2"></a>
+<a id="core-2"></a>
 
-假设系统注册 300 个 Tool：
+## 2. 用同一个工具看两份表示
 
-```text
-Registry = 300
-```
+下面的标准库例子没有真实模型或网络，调用候选用字典模拟。它展示注册、说明投影、参数检查与授权拒绝；不是完整模型 SDK。
 
-不代表每轮都发送：
-
-```text
-Model-visible tools = 300
-```
-
-更合理：
-
-```text
-Full Capability Registry
-        ↓
-Policy / Tenant / Environment Filter
-        ↓
-Task / Intent Candidate Set
-        ↓
-Progressive Discovery
-        ↓
-Current Model-visible Tool Set
-```
-
-这能降低：
-
-- Token 成本；
-- Tool 选择混淆；
-- Schema 冲突；
-- Prompt cache 抖动；
-- 暴露不必要高风险能力。
-
-<details>
-<summary>动手看两份对象：注册表与模型说明（标准库示例）</summary>
-
-下面只用 Python 标准库，没有网络、模型API或真实文件写入。模型候选由固定字典模拟；它验证注册、投影、分发与拒绝，不证明模型会正确选择。
+<details><summary>运行例子：注册表、模型说明与调用结果</summary>
 
 ```python
 # runnable-example: registry_projection
@@ -159,456 +94,176 @@ assert dispatch({"name": "read_document", "arguments": {"document_id": 3}}, {"A"
 assert dispatch({"name": "delete_document", "arguments": {}}, {"A"})["status"] == "invalid_tool"
 ```
 
-`registry`里有函数和运行元数据，`visible_specs`里只有说明。`allowed_documents`来自可信应用，不由模型提供。生产框架会自动完成部分包装，但两份对象的职责不会因此消失。
+保存为 `registry_projection.py` 后运行 `python registry_projection.py`。没有异常表示末尾断言成立。要观察说明，可以打印 `json.dumps(visible_specs, ensure_ascii=False)`；它不会包含 `handler` 或 `read_only`。
 
 </details>
 
----
+| 观察位置 | 里面有什么 | 为什么不同 |
+|---|---|---|
+| registry | 工具对象，包括实际函数 | 程序需要真正执行 |
+| visible_specs | 名称、说明和输入 Schema | 模型需要选择与填参数 |
+| allowed_documents | 可信应用允许读取的文档集合 | 不能由模型自己授予 |
+| dispatch 返回 | ok、denied 或参数等错误 | 下一步必须知道实际结果 |
 
-<a id="section-3"></a>
+已注册 B 的读取能力，也不代表当前只允许 A 的任务可以读 B。发现阶段筛掉无权工具能减少误选，执行阶段仍要校验具体资源。
 
-## 3. Router 做什么
-
+<a id="3-router-做什么"></a>
+<a id="4-为什么需要-namespace"></a>
+<a id="9-tool-unavailable-怎么办"></a>
 <a id="legacy-05-03"></a>
-
-Router 不是简单的：
-
-```python
-# 示意查表分发；实际实现还需处理未知工具、版本和授权。
-handler = tools[name]
-```
-
-完整路径：
-
-```text
-Model Tool Call
-→ normalize identity / namespace
-→ resolve version
-→ verify exposure
-→ find runtime handler
-→ permission / policy
-→ dispatch
-```
-
-如果支持 MCP、Built-in Tool、Remote Tool、Code Mode、Subagent（子Agent） Tool，Router 还要统一不同来源。
-
----
-
-<a id="section-4"></a>
-
-## 4. 为什么需要 Namespace
-
 <a id="legacy-05-04"></a>
-
-多个来源可能都有：
-
-```text
-search
-read
-execute
-```
-
-可以使用：
-
-```text
-filesystem.read
-jira.search
-github.search
-mcp.crm.lookup
-```
-
-Namespace 解决：
-
-- collision；
-- provenance；
-- permission；
-- ownership；
-- observability。
-
----
-
-<a id="section-5"></a>
-
-## 5. Tool Exposure 不应该只有“注册 / 未注册”
-
-<a id="legacy-05-05"></a>
-
-成熟 Runtime 往往需要多种暴露模式：
-
-```text
-Direct
-Deferred / Discoverable
-Hidden
-Code-only / Internal
-Tenant-scoped
-Environment-scoped
-```
-
-一个 Tool 可能存在于 Registry，但当前模型不能直接看到。
-
----
-
-<a id="section-6"></a>
-
-## 6. Progressive Discovery 的核心
-
-<a id="legacy-05-06"></a>
-
-当 Tool 数量很大时：
-
-```text
-先给能力目录 / namespace summary
-→ Model / Router 识别需要哪个能力域
-→ Tool Search / Capability Search
-→ 加载少量相关 Schema
-→ 再调用具体 Tool
-```
-
-这和传统数据库：
-
-```text
-先读 catalog
-再访问具体 object
-```
-
-有些相似。
-
-直接给十来个小工具的完整说明，往往最简单。数量或描述体积很大时，可以采用 Progressive discovery（渐进发现）：先向模型提供搜索目录的能力或少量候选摘要，找到相关工具后，再加载候选工具的完整参数说明。
-
-| 路径 | 模型先得到什么 | 后面发生什么 | 适用代价 |
-|---|---|---|---|
-| 直接暴露 | 当前允许工具的完整Schema | 直接选工具 | 简单，但大量Schema占输入预算 |
-| 程序预筛选 | 按任务/权限筛过的少量完整说明 | 模型在候选中选择 | 筛选错可能漏掉正确工具 |
-| 延迟发现 | 搜索工具和摘要/名称等目录信息 | 搜索后加载命中工具 | 多一次发现过程，要测试召回与权限 |
-
-**按需加载的“完整”通常指模型所需完整说明，不是把处理器代码、凭证和所有宿主字段送给模型。** 有的API允许把延迟标记的Schema先提交给服务端，由服务端控制何时呈现给模型；网络请求携带的工具定义、模型实际可见内容、占用/计费方式也不能简单视为相同。
-
----
-
-<a id="section-7"></a>
-
-## 7. Tool Discovery 可以怎么做
-
-<a id="legacy-05-07"></a>
-
-### Rule / Intent Filter
-
-```text
-“查工单” → jira tools
-“改代码” → filesystem + shell + test tools
-```
-
-优点：快、稳定。
-
-### Embedding / Semantic Search
-
-对 Tool name / description / metadata 建索引，根据当前任务召回候选 Tool。
-
-### LLM Router
-
-让一个较小模型先做 capability classification。
-
-### Hybrid
-
-```text
-hard policy filter
-→ rule / intent narrowing
-→ semantic tool retrieval
-→ main model final choose
-```
-
-通常更稳。
-
----
-
-<a id="section-8"></a>
-
-## 8. Discovery 的 Evaluation
-
-<a id="legacy-05-08"></a>
-
-不能只看最终任务成功率。
-
-还应测：
-
-```text
-Tool Recall@K
-Tool Selection Accuracy
-Wrong-tool Rate
-Discovery Latency
-Schema Tokens Loaded
-Fallback Rate
-```
-
-如果正确 Tool 根本没被召回，后面的 Main Agent 再强也没用。
-
-正确工具没进入候选集合，是发现阶段问题；候选齐全但模型选错，是描述与选择问题。分别测候选召回、选择准确性和调用结果，不能看到选错就一律换模型。
-
----
-
-<a id="section-9"></a>
-
-## 9. Tool Unavailable 怎么办
-
 <a id="legacy-05-09"></a>
+<a id="section-3"></a>
+<a id="section-4"></a>
+<a id="section-9"></a>
+<a id="core-3"></a>
 
-候选 Tool 可能：
+## 3. 名称要能唯一指向实现
 
-- server down；
-- permission denied；
-- version mismatch；
-- tenant 不可用；
-- health degraded。
+如果 GitHub 和工单服务都有 `search`，简单“后注册覆盖先注册”会把调用送错地方。可以使用 `github.search`、`jira.search` 这样的命名空间，或维护另外一套稳定身份映射。
 
-Runtime 应区分：
+**Router（路由器）**在这里负责解析调用身份、检查当前是否暴露和兼容，再找到正确处理器。MCP 工具的处理器可以是发往对应客户端的代理；它不是把远端代码装进模型。
 
-```text
-not found
-not exposed
-temporarily unavailable
-permission denied
-unsupported version
-```
+目录变化时，旧候选可能引用已删除工具或旧 Schema。程序应明确返回不存在、不兼容、暂时不可用或权限拒绝；不能把同名请求静默送到不同系统。
 
-然后决定：
+<a id="6-progressive-discovery-的核心"></a>
+<a id="7-tool-discovery-可以怎么做"></a>
+<a id="embedding--semantic-search"></a>
+<a id="hybrid"></a>
+<a id="legacy-05-06"></a>
+<a id="legacy-05-07"></a>
+<a id="llm-router"></a>
+<a id="rule--intent-filter"></a>
+<a id="section-6"></a>
+<a id="section-7"></a>
+<a id="core-4"></a>
 
-```text
-repair route
-fallback capability
-ask user
-fail fast
-```
+## 4. 工具多时，先缩小候选集合
 
-备用工具不能借“恢复”扩大权限。只读来源失效可以选等价来源；替代动作若变成写入或扩大范围，必须重新检查任务与批准。
+只有少量简单工具时，直接提供经过权限筛选的完整说明往往最清楚。工具数量或说明体积很大，再考虑候选筛选与按需发现。
 
----
+| 方式 | 模型先看什么 | 收益 | 代价 |
+|---|---|---|---|
+| 直接暴露 | 当前允许工具的完整说明 | 最少的发现步骤 | 大目录会占输入并增加歧义 |
+| 程序预筛选 | 与任务相关的少量工具 | 控制成本，路径简单 | 筛错可能遗漏必要工具 |
+| 渐进发现 | 搜索目录的工具或轻量摘要 | 需要时才加载详细说明 | 增加发现调用，需检查召回 |
 
-<a id="section-10"></a>
+候选可以按明确规则筛选，也可以对用途做语义检索，或用分类模型辅助。通常先用可信权限缩小范围，再选择适合任务的候选。算法不是越复杂越好；没有真实漏选或预算问题时，不必先建工具向量库。
 
-## 10. Registry 更新与版本问题
+**按需加载的“完整”指完整使用说明，不是凭证、处理器代码和所有宿主字段。** 有的服务接受延迟工具定义，再决定何时让模型看到；请求中发送、模型实际可见和计费处理也要按具体 API 分开核对。
 
+<a id="8-discovery-的-evaluation"></a>
+<a id="legacy-05-08"></a>
+<a id="section-8"></a>
+<a id="core-5"></a>
+
+## 5. 发现失败和选择失败，不要用同一种补救
+
+假设正确工具是“读取批准版本”：
+
+1. 候选集合没有它：检查权限过滤、工具元数据和目录召回。
+2. 候选里有它，模型却选择“读取草案”：检查描述歧义与选择质量。
+3. 已选对但参数错：回到工具契约校验。
+4. 参数正确，服务却不可用：回到执行错误与恢复策略。
+
+用固定任务比较候选召回、选择准确性、错误工具率、发现时延和加载的说明量。不要把所有失败都归因于主模型不够强，也不要只看最终成功率而掩盖目录遗漏。
+
+> ⚠️ 备用工具必须仍在任务允许范围内。只读资料服务失效，不意味着可以自动改用权限更大的通用 Shell。
+
+<a id="10-registry-更新与版本问题"></a>
+<a id="5-tool-exposure-不应该只有注册--未注册"></a>
+<a id="legacy-05-05"></a>
 <a id="legacy-05-12"></a>
+<a id="section-10"></a>
+<a id="section-5"></a>
+<a id="core-6"></a>
 
-新增 / 升级 Tool 时需要考虑：
+## 6. 目录也有生命周期
 
-```text
-schema compatibility
-cache invalidation
-old checkpoint resume
-running session snapshot
-permission policy
-benchmark regression
-```
+工具可以直接可见、需要发现后加载、只供内部调用，或对某个租户和环境不可用。它们是暴露策略，不要求每个项目照抄同一组枚举。
 
-一个长任务不应该在执行中途无意识地从 Tool v1 切到不兼容的 v2。
+长任务开始时可以固定一份能力配置引用。工具升级后，明确哪些变化兼容，旧运行是否继续使用原配置，还是重新发现或暂停。缓存说明能节省工作，但不能让权限、版本和可用性从此永久有效。
 
-可以保存：
+<a id="summary"></a>
 
-```text
-capability_snapshot_id
-schema_version
-resolved_tool_version
-```
+## 本章小结
 
----
+注册解决程序怎样找到实现，暴露解决模型本次知道什么，发现解决如何从大目录找到候选，执行仍要检查具体输入与权限。把这些阶段分开，才能定位“选不到、选错、参数错、执行错”。
 
-<a id="section-11"></a>
-
-## 11. 产品实现与官方资料对照（按需展开）
-
-<details>
-<summary>源码证据：Codex</summary>
-
-<a id="legacy-05-10"></a>
-
-固定快照中的 `ToolRouter` 明确区分：
-
-- full registry；
-- `model_visible_specs`；
-- deferred tool search；
-- namespace；
-- code-mode tool identity。
-
-`ToolExposure` 还能表达：
-
-```text
-Direct
-Deferred
-DeferredModelOnly
-DirectModelOnly
-CodeModeOnly
-Hidden
-```
-
-这直接证明：
-
-> 注册能力与本轮向模型暴露能力是两件事。
-
-### Codex 固定源码：注册表与 model_visible_specs 的真实连接
-
-`codex-rs/core/src/tools/router.rs`中的`ToolRouter`同时保存`registry: ToolRegistry`和`model_visible_specs`。`session/turn.rs::build_prompt`把`tool_router.model_visible_specs()`放进模型请求的`tools`字段；真实工具执行则由Registry和处理器承担。
-
-可以直接跟一项工具：`tools/handlers/plan.rs`的`PlanHandler`定义名字`update_plan`，`spec()`返回说明，`handle()`解析参数并调用内部处理流程。模型看见的是规格，程序保留处理器；计划更新后还会发出`PlanUpdate`事件。这比“工具注册到LLM里”更精确。
-
-该快照还支持不同暴露/延迟发现路径。是否全部直接暴露取决于配置与工具类型，不能把某条路径说成所有Codex调用都使用的唯一机制。
-
-</details>
-
-<details>
-<summary>源码证据：Claude Code</summary>
-
-<a id="legacy-05-11"></a>
-
-固定快照的 `Tool.ts` 中存在 `searchHint`，`ToolUseContext` 还包含 dynamic skill discovery / discovered skill names 等状态。
-
-这与 HUMAN-A 中“Tool/Skill（技能包） > 100 后如何按需发现”高度呼应。
-
-### Claude Code 用户快照：getTools → toolToAPISchema → tool result
-
-`tools.ts::getAllBaseTools()`列出内置工具对象；`getTools()`依据模式、开关和deny规则选择工具。外部MCP工具有自己的连接与合并流程，不在这个内置函数里凭空变成代码。
-
-`utils/api.ts::toolToAPISchema`取工具的名字、`prompt()`生成的描述、输入JSON Schema或由Zod转换的模式，再按能力增加严格模式、延迟加载和缓存等API字段。它使用稳定基础Schema缓存及每请求的覆盖字段，避免无必要地改变请求字节。
-
-`query.ts`把工具对象交给模型调用封装，也交给工具执行器。模型返回`tool_use`后运行时找到实际对象；`TodoWriteTool.ts`说明内部还可更新应用状态，并用单独的结果映射方法生成`tool_result`。这条路径清楚展示“宿主对象”和“模型可见表示”不是同一份数据。
-
-</details>
-
-具体实现以[固定源码与官方索引](../../../references/agent/README.md#reader-revision-20260917)为准。这里区分源码事实、功能开关与教学建议，不把一条实现路径当作所有产品默认行为。
-
----
-
-<a id="human-a"></a>
-
-## 12. HUMAN-A 信号
-
-- `AGENT-019` Tool Lifecycle：10 来源；
-- `AGENT-021` Dynamic Discovery / Progressive Loading：20 来源；
-- `AGENT-024` / `AGENT-025` Tool / Skill / MCP 边界与 Progressive Disclosure。
-
-Verified Chain 中 `S077`、`S214`、`S236`、`S274` 都出现：
-
-```text
-Tool 多了
-→ Discovery / Lazy Loading
-→ Tool unavailable / failure
-→ Schema / Permission / Fallback
-```
-
----
-
+<a id="13-面试怎么答"></a>
+<a id="qcodex-与-claude-code-中哪里能看到这种分离"></a>
+<a id="q两个外部server都提供search怎样处理"></a>
+<a id="q为什么工具多时要分目录候选和调用三个阶段"></a>
+<a id="q加载工具时是否会把所有注册信息都加入上下文"></a>
+<a id="q工具怎样注册并最终调用"></a>
+<a id="q注册发现和调用怎样配合"></a>
 <a id="interview"></a>
 
-## 13. 面试怎么答
+## 🎯 面试怎么回答
 
-### Q：注册、发现和调用怎样配合？
+### 注册工具是不是把函数安装给模型？
 
-🎯 **30 秒回答**：
+不是。应用保存名称到处理器的关联，再把允许工具的说明序列化给模型。模型生成调用候选，宿主查表、校验并执行，结果再回填。
 
-> Tool Registry 是完整能力目录，当前 Model-visible Tool Set 只是它经过 tenant、policy、task 和 discovery 筛选后的一个视图。Tool 数量大时不应该把所有 Schema 一次塞入 Context，而应通过 namespace、intent/rule、semantic tool search 或混合路由做 Progressive Discovery，再把少量候选 Tool 暴露给模型。Router 负责把模型 Tool Call 解析到具体 runtime handler，并做版本、exposure 和 policy 检查。
+### 工具太多时怎样优化？
 
-### Q：工具怎样注册并最终调用？
+先测说明量和误选，再选择权限过滤、任务预筛选或渐进发现。发现后加载模型需要的完整说明，不发送凭证与函数。评估分别看候选召回、选择质量、时延和成本。
 
-🎯 **30 秒回答**：
+### 工具清单已缓存，调用时还要检查吗？
 
-> 先由应用把工具的稳定身份和处理器加入注册目录，再为本次模型请求选择并序列化允许工具的说明。模型返回名字和参数后，路由器按身份找到处理器，经校验与授权后执行，最后规范化结果回填。MCP工具的处理器通常是一个远程调用代理，并不是把远端代码下载进模型。
+需要。缓存主要复用说明，不能保证资源授权、版本和可用性未变。具体调用仍应绑定正确身份和目标，防止清单过期造成错路由。
 
-### Q：加载工具时，是否会把所有注册信息都加入上下文？
-
-🎯 **30 秒回答**：
-
-> 不会自动全部加入。注册表保留实现、连接和运行策略；模型侧主要需要名称、说明、输入格式及支持的可选字段。渐进发现只改变何时暴露候选说明，不意味着最后把凭证、函数和所有元数据都送给模型。还需区分服务端收到延迟定义和模型实际看见它。
-
-### Q：为什么工具多时要分目录、候选和调用三个阶段？
-
-🎯 **30 秒回答**：
-
-> 目录可能很大，而一次任务只需少量工具。先发现候选能节省上下文并降低歧义，但会引入漏召回和额外延迟；候选进入后模型才选择具体调用，执行时仍检查合法性。评估要分别看正确工具能否被找到、找到后能否正确选择，而非只看最终成功率。
-
-### Q：两个外部Server都提供search，怎样处理？
-
-🎯 **30 秒回答**：
-
-> 使用命名空间或稳定工具身份，并保存身份到Server与Client的映射。不要按最后注册覆盖前一项；模型调用应解析到唯一目标。清单变更时检查旧调用兼容性和当前权限，必要时刷新清单或拒绝，而不是把同名调用静默送到另一个系统。
-
-### Q：Codex 与 Claude Code 中，哪里能看到这种分离？
-
-🎯 **30 秒回答**：
-
-> Codex ToolRouter分别保存Registry和model_visible_specs，build_prompt取后者发送；处理器保留本地执行逻辑。Claude Code快照的getTools选择实际对象，toolToAPISchema转换模型说明，调用后再由工具结果映射生成回填。这是源码中可追踪的生命周期，不只是概念图。
-
----
-
+<a id="14-高频易错点"></a>
 <a id="pitfalls"></a>
 
-## 14. 高频易错点
+## ⚠️ 易错点
 
-⚠️ Registry = 当前 Tool List——错；
+> ⚠️ 工具存在于注册表，不等于当前任务可以使用；模型看见说明也不等于参数已获批准。
 
-⚠️ Tool 越多模型越强——可能反而更难选择；
+> ⚠️ 同名工具不能默默互相覆盖，应以稳定身份定位到唯一实现和来源。
 
-⚠️ Discovery 只做 embedding search——不是唯一方案；
+> ⚠️ 候选召回漏掉工具时，单纯改主模型提示通常不能补回缺失能力。
 
-⚠️ Tool Search 命中就直接执行——仍需 Validation / Permission（权限）；
-
-⚠️ 长任务中 Tool Catalog 可以随意变化——会破坏 Resume（恢复执行） / Replay（重放）。
-
-⚠️ **注册就是给模型安装函数。** 注册在应用中发生；模型得到说明并产生调用候选。
-
-⚠️ **延迟加载完成后会发送全部宿主字段。** 完整Schema不等于完整实现、权限对象或凭证。
-
-⚠️ **看不见的工具必然不在注册表。** 注册表可以大于本轮可见工具集。
-
-⚠️ **工具召回不准就是参数描述不好。** 也可能候选筛选阶段已漏掉正确工具。
-
-⚠️ **工具清单被缓存就无需调用时检查。** 权限、版本和可用性仍可能改变。
-
----
-
+<a id="15-本章自测"></a>
 <a id="self-test"></a>
 
-## 15. 本章自测
+## 本章自测
 
-<details><summary>1. 自测：为什么 Deferred Tool 能同时降低 Token 和风险？</summary>
+<details><summary>1. 只有五个简单工具，应立即建设语义发现系统吗？</summary>
 
-因为它既不把所有 Schema 放进每轮 Context，也不默认向模型暴露所有能力；只有经过 Discovery / Policy 后才进入当前可见集合。
-
-</details>
-
-<details><summary>2. 示例里handler为何不出现在visible_specs？</summary>
-
-函数对象不是模型API需要的JSON说明，真实代码在宿主执行。显式挑字段让边界清晰，也避免把内部配置和敏感信息误序列化。
+未必。先直接暴露允许的工具并测量输入成本与误选。只有这些问题真实存在，才比较发现系统的复杂度是否值得。
 
 </details>
 
-<details><summary>3. 工具说明写了只读，但函数实际上发送邮件，应相信谁？</summary>
+<details><summary>2. registry_projection 中读 B 为什么返回 denied？</summary>
 
-这代表契约与实现失配，需要修实现、描述与可信策略并测试。不能因为模型看到只读描述就将其当安全操作；外部说明也可能不可信。
-
-</details>
-
-<details><summary>4. 只有5个简单工具，需要语义发现系统吗？</summary>
-
-未必。直接暴露经权限筛选的说明更容易维护。先测Schema成本和误选，再判断发现系统的复杂度是否有收益。
+应用传入的允许文档集合只有 A。B 存在和工具已注册，都不能替代本次资源授权。
 
 </details>
 
-<details><summary>5. 候选中根本没有正确工具，怎么排查？</summary>
+<details><summary>3. 正确工具在目录里却始终不在候选中，应该先检查什么？</summary>
 
-检查权限误过滤、命名空间、描述关键词和检索召回；对固定查询集观察候选命中。此时单纯调整模型选工具提示通常治不了根因。
-
-</details>
-
-<details><summary>6. MCP工具的本地handler可能是什么？</summary>
-
-它可以是一个调用代理：接收已校验参数，选择对应MCP Client，把请求发送给Server，再转换结果。远端业务实现仍在Server或其后面的系统中。
+检查权限是否误过滤、任务分类和检索是否遗漏、描述是否能被找到；先修发现阶段，而不是假设模型拿到工具后仍不会用。
 
 </details>
 
-<details><summary>7. 同一名字输入Schema升级，旧候选怎么办？</summary>
+<a id="05-tool-registry工具注册模型可见说明与按需发现"></a>
+<a id="11-产品实现与官方资料对照按需展开"></a>
+<a id="12-human-a-信号"></a>
+<a id="claude-code-用户快照gettools--tooltoapischema--tool-result"></a>
+<a id="codex-固定源码注册表与-model_visible_specs-的真实连接"></a>
+<a id="human-a"></a>
+<a id="legacy-05-10"></a>
+<a id="legacy-05-11"></a>
+<a id="section-11"></a>
+<a id="references"></a>
 
-明确版本/兼容性规则。可兼容的变化按约定解析；不兼容时重新发现或返回明确错误，不能悄悄把旧参数解释成新的业务动作。
+## 知识回看与权威资料
 
-</details>
+- [工具契约](04-ToolContractAndValidation.md)：回看说明、输入规则与授权边界。
+- [MCP 完整往返](16-MCPArchitectureAndLifecycle.md)：观察外部目录怎样接到宿主工具系统。
+- [固定注册与投影实现](../../../references/agent/implementation-notes.md#chapter-05)：跟踪注册表、模型可见说明和处理器的实际分离。
+
 
 ---
 
