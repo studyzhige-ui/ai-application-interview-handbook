@@ -15,6 +15,7 @@ jobs:
     env:
       PYTHONUTF8: '1'
       PYTHONUNBUFFERED: '1'
+      PYTHONPYCACHEPREFIX: ${{ runner.temp }}/agent-bytecode-20260928
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,5 +37,5 @@ jobs:
       - name: Apply exact drafts, validate and commit only the work branch
         shell: pwsh
         run: |
-          & $env:AGENT_VALIDATION_PYTHON _agent_refine/apply.py
+          & $env:AGENT_VALIDATION_PYTHON _agent_refine/launch.py
           exit $LASTEXITCODE
