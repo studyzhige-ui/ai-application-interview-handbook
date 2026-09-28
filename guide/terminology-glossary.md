@@ -87,7 +87,7 @@ Coroutine Cancel ≠ External Side Effect 一定撤销
 | **Source of Truth (SoT)** | 多个副本冲突时最终被视为权威的业务事实来源。 |
 | **Primary State** | 业务不可随意丢弃、需要明确持久性与正确性的事实状态。 |
 | **Derived State** | 能从 Primary / Source 重建的派生状态，如 Cache、Search Index、Vector Index。 |
-| **Ephemeral State** | 短生命周期执行状态，如 Lease、临时 Progress、Buffer。 |
+| **Ephemeral State（可丢弃临时状态）** | 丢失后能按业务约定重新获得或放弃的状态，如一次连接的发送缓冲；短寿命或会过期本身不能证明可丢弃。 |
 
 示例：
 
@@ -95,10 +95,10 @@ Coroutine Cancel ≠ External Side Effect 一定撤销
 MySQL / Business DB = 常见 Primary / SoT
 Redis Cache          = Derived
 Vector Index         = Derived Retrieval State
-Lease / Hot Progress = Ephemeral
+Connection Buffer    = 业务允许断线丢弃时才是 Ephemeral
 ```
 
-具体系统可以选择不同 SoT，但必须显式说明，不能因为某个存储更快就默认变成权威状态。
+具体系统可以选择不同 SoT，但必须显式说明，不能因为某个存储更快就默认变成权威状态。租约、登录会话撤销和断点进度可能影响执行权、安全或恢复，必须先说明丢失后的行为，再决定是否可丢弃。见[按恢复责任分类状态](../curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md#2-权威状态与派生状态按恢复方式区分)。
 
 ---
 
@@ -130,7 +130,7 @@ Compensation ≠ Database Rollback
 | **Lock** | 协调并发访问的互斥/同步机制。 | Python / MySQL / Redis 按层解释 |
 | **Lease** | 有过期时间的临时执行/资源所有权。 | AIBE / Agent |
 | **Ownership** | 当前谁被允许推进或修改某个 Task / Run / Resource。 | AIBE / Agent |
-| **Fencing Token / Generation** | 单调递增的所有权版本，用于阻止过期 Owner 在恢复后继续写新状态。 | Redis / AIBE / Agent |
+| **Fencing Token / 领取代际** | 每次执行权交接取得的递增标识；受保护资源在写入时检查它，才能拒绝旧执行者。不是所有叫 Generation 的字段都承担此职责。 | Redis / AIBE / Agent |
 
 `Redis Lock`、`MySQL Lock`、`Python Lock` 不应因为都叫 Lock 就被视为同一抽象层。
 
@@ -203,7 +203,7 @@ Skill
 = 可发现、按需加载的程序性知识 / 资源包
 
 Hook
-= Runtime 生命周期中的扩展点
+= 在约定生命周期事件触发的规则或动作；能否拦截、同步执行或修改结果取决于宿主契约
 ```
 
 这些概念有关联，但不是同义词。
@@ -250,3 +250,33 @@ tests_passed?          → Verification
 Persistence（持久化）是让选定信息活过进程重启，不是把全部内存写入存储。Resume（恢复执行）不是Summary（摘要）；Compaction（上下文压缩）只管理模型输入规模。Trace（执行追踪）用于定位阶段、耗时与失败，不是默认的恢复账本。
 
 关键操作身份与回执按业务可靠性保存；产物按交付需要保存；诊断可采样、脱敏和到期删除。版本用于确实发生的并发、变更或兼容问题，ID用于标识；不要求每个事件复制完整Prompt、工具定义和所有版本。见[状态与持久化](../curriculum/09-agent/docs/12-StateHistoryAndPersistence.md)、[检查点与恢复](../curriculum/09-agent/docs/13-CheckpointResumeAndRecovery.md)、[Trace](../curriculum/09-agent/docs/20-TraceReplayAndDiagnosis.md)。
+
+## 15. Parsing / Schema / Business Validation / Authorization
+
+| 检查 | 负责回答的问题 | 不能替代的判断 |
+|---|---|---|
+| Parsing（解析） | 输入能否读成数据，例如 JSON 是否语法正确 | 必填字段、数值范围、业务状态与权限 |
+| Schema Validation（规则校验） | 是否符合已声明的类型、范围、长度和必填规则 | 未声明的业务约束与执行时授权 |
+| Business Validation（业务校验） | 资源、版本、余额或当前状态是否允许这项动作 | 可信身份是否有权执行 |
+| Authorization（授权） | 可信身份能否对具体对象执行具体动作 | 用户是否已批准该次高风险动作、执行环境是否隔离 |
+
+JSON Schema 可以声明 `minimum` 等数值范围；不能把负数遗漏说成标准本身没有能力。通过规则校验不等于获得授权，批准也必须绑定真正执行的参数和内容。见[工具调用的检查链](../curriculum/09-agent/docs/04-ToolContractAndValidation.md#core-2)与[批准绑定](../curriculum/09-agent/docs/14-PermissionApprovalAndSandbox.md#core-3)。
+
+## 16. Identity / Version / Generation：先声明控制对象
+
+| 标识 | 控制对象与用途 |
+|---|---|
+| Object ID（对象身份） | 区分文档、报告或任务；同一对象可能有多个版本和多个合法操作。 |
+| Operation ID（操作身份） | 标识一次业务意图；同一次动作的重试沿用，防止重复副作用。 |
+| Attempt / Request ID（尝试或请求身份） | 区分某一次执行或传输，服务诊断；不能代替跨重试的业务操作身份。 |
+| State Version（状态版本） | 判断做出决定时依赖的状态是否已经变化，用条件更新拒绝过时写入。 |
+| Ownership Generation（领取代际） | 区分旧、新执行者；配合资源侧校验限制旧执行权。 |
+| Index Generation（索引发布代际） | 标识一组可查询的索引版本，用于发布、切换和回滚；不提供执行权，也不替代当前权限。 |
+
+这些字段不能仅因都是数字或都叫“版本”而互换。见[对象、操作与尝试](../curriculum/10-system-design/docs/04-API数据模型与StateOwnership.md#5-区分对象身份操作身份与尝试身份)、[企业 RAG 的资源身份](../curriculum/10-system-design/docs/17-EnterpriseRAGSystemDesign.md)。
+
+## 17. SLI / SLO / Capacity：测量对象与估算边界
+
+SLI（服务指标）描述按明确事件、分母和窗口计算的实际表现；SLO（服务目标）给出希望达到的门槛。Capacity（处理能力）估算资源能承受的工作量，不因平均在途量或平均耗时可算，就证明尾部时延目标达标。Unknown（结果未知）既不是成功，也不是失败或零费用。
+
+例如“模型输出完成”“报告通过验收”“外部发送已确认”是不同完成事件。见[需求与 SLO](../curriculum/10-system-design/docs/02-Requirement与SLO.md)、[容量估算](../curriculum/10-system-design/docs/03-Workload与CapacityEstimation.md)和[报告助手综合设计](../curriculum/10-system-design/review/README.md#独立设计任务为两个团队交付报告助手)。

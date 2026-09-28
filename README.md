@@ -53,8 +53,8 @@ tools/        研究与质量分析怎样自动化
 | 06 | [Vector Database](curriculum/06-vector-db/README.md) | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
 | 07 | [LLM Foundation](curriculum/07-llm-foundation/README.md) | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
 | 08 | [RAG](curriculum/08-rag/README.md) | 从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。 |
-| 09 | [Agent](curriculum/09-agent/README.md) | 从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。 |
-| 10 | [System Design](curriculum/10-system-design/README.md) | 从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。 |
+| 09 | [Agent](curriculum/09-agent/README.md) | 沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。 |
+| 10 | [System Design](curriculum/10-system-design/README.md) | 从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。 |
 
 目录编号是稳定路径标识；表格按推荐学习顺序排列。正式顺序与 Module Exit Gate 见 [Learning Path](guide/learning-path.md)。
 

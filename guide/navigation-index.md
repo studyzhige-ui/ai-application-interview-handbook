@@ -386,7 +386,7 @@
 
 - [Coding](../practice/coding/README.md)：9 篇正文，题单和练习由模块入口承接。
 - [Git 与开发工作流](../practice/tooling/README.md)：操作指南，不计入课程章数。
-- [References](../references/README.md)：8 个实际资料目录，技术事实与真人面经证据分开。
+- [References](../references/README.md)：9 个实际资料目录，技术事实与真人面经证据分开。
 - [项目记录](project/README.md)与[审计记录](audits/README.md)：按记录的适用基线读取。
 
 ⚠️ 章节数量和入口可达仅证明文档范围与导航一致，不等于完成初学者阅读、真实服务或生产验证。

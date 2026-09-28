@@ -20,8 +20,8 @@
 | 06 | [Vector DB](06-vector-db/README.md) | 理解相似度、精确检索、近似索引与生命周期。 |
 | 07 | [LLM Foundation](07-llm-foundation/README.md) | 理解模型输入、注意力、生成、推理成本与适配。 |
 | 08 | [RAG](08-rag/README.md) | 把外部材料变成可追溯、可评价的回答证据。 |
-| 09 | [Agent](09-agent/README.md) | 组织动态执行、工具、上下文、记忆与恢复。 |
-| 10 | [System Design](10-system-design/README.md) | 从需求和约束推导完整系统方案并验证取舍。 |
+| 09 | [Agent](09-agent/README.md) | 沿模型判断、程序行动、结果回填与验收组织工具、信息、安全和恢复。 |
+| 10 | [System Design](10-system-design/README.md) | 从用户动作与完成条件推导容量、状态和协作，并在条件变化后修正方案。 |
 
 Backend置于MySQL、Redis之后，让事务、唯一约束、缓存与命令原子性先成为已知概念，再进入Outbox、幂等、任务恢复和一致性组合。FastAPI中的外部服务例子先用可替换的测试实现，不要求读者提前掌握这些内部机制。
 
@@ -37,5 +37,7 @@ interview/  口述、追问、易错点和速查
 ```
 
 [Practice](../practice/README.md)与课程并行，让学习转成写代码、运行和调试。 [Products](../products/README.md)沿固定源码快照理解成熟系统，不作为第11个课程模块，也不以某个产品实现替代通用机制。
+
+Agent 的[综合推演](09-agent/review/README.md#综合推演)用于判断工具失败、取消、批准和未知结果应如何继续；System Design 的[独立设计任务](10-system-design/review/README.md#独立设计任务为两个团队交付报告助手)要求从空白纸交付职责、容量、状态及故障方案。两者承接同一条“执行并验证”主线，但不互相替代。
 
 技术事实由[References](../references/README.md)支撑；[Market](../market/README.md)与[Interview](../interview/README.md)提供真实问法和复习权重。它们校准学习深度，不以热度替代必要前置。

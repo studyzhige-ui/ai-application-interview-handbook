@@ -2,7 +2,7 @@
 
 [↑ Handbook 总目录](../README.md)
 
-该目录服务 Market / Interview / Guide 的可复现分析与质量检查，不属于学习 Curriculum。
+该目录提供课程配套同步、导航校验及 Market / Interview / Guide 的可复现分析工具，不属于课程正文。
 
 | Script | 作用 |
 |---|---|
@@ -11,7 +11,9 @@
 | `apply_canonical_audit.py` | 应用 Canonical 审计结果 |
 | `sync_expected_canonical_count.py` | 将 Market Analysis 的 Canonical 计数与已审核审计基线同步（跨平台） |
 | `validate_source_coverage.py` | 校验来源覆盖与映射 |
-| `validate_agent_readability.py` | 校验全仓库 Markdown 链接、Agent 教材可读性与结构 |
+| `validate_agent_readability.py` | 校验 Agent 结构、兼容映射和全仓本地引用；`--run-examples` 仅执行两个命名标准库例子，不证明读者理解 |
+| `sync_agent_materials.py` | 从 questions.json 与正文章节重建三份 Agent 配套文件；默认检查，`--apply` 才写入 |
+| `test_agent_course.py` | 核对 Agent 例子、Schema、配套映射与 Markdown 转换结构；验证依赖见 agent-validation-requirements.txt |
 | `validate_repository_semantics.py` | 按实际文件与生成目录校验课程结构、Market / Canonical 时间边界、旧路径与章节语义漂移 |
 | `fetch_dynamic_official_jobs.mjs` | 从每家公司固定第一手 `job_list_url` 统一搜索、翻页并读取官方职位详情 |
 | `sync_official_2027_agent_jobs.py` | 汇总浏览器与官方 ATS/API，应用严格非算法工程 Gate，并生成 Role Family 全量 JD 层 |
@@ -33,6 +35,33 @@ references/
 
 脚本输出不能替代人工 provenance / Role Scope / Source Quality 审核。
 
+
+## Agent 与 System Design 配套检查
+
+以下命令均从仓库根目录执行。外围同步器只更新共享入口与索引，不代替模块自己的配套生成；不要为消除漂移而把集中问答手工改成第二个编辑源。
+
+```bash
+python tools/sync_agent_materials.py --check
+python tools/validate_agent_readability.py --run-examples
+python tools/sync_outer_navigation.py --check
+python -m unittest discover -s tools -p "test_outer_navigation.py" -v
+```
+
+Agent 的完整回归依赖 [agent-validation-requirements.txt](agent-validation-requirements.txt)，建议在隔离环境安装后执行；阅读正文和上述两个标准库例子不要求安装这些验证依赖。
+
+```bash
+python -m pip install -r tools/agent-validation-requirements.txt
+python tools/test_agent_course.py
+```
+
+System Design 的[实验说明](../curriculum/10-system-design/review/README.md#机制实验)以 Python 3.13 标准库为目标，输入、实现与测试在同一目录，不能将顺序模型测试当作真实服务联调。
+
+```bash
+python curriculum/10-system-design/review/mechanism_lab.py all
+python -m unittest discover -s curriculum/10-system-design/review -p "test_mechanism_lab.py" -v
+```
+
+这些是可手动复现的检查入口，不代表全部命令已经纳入每次 CI。现有工作流的实际执行范围以 [Handbook 验证](../.github/workflows/validate-handbook.yml)与[导航验证](../.github/workflows/validate-navigation.yml)为准。读者是否能从空白纸完成独立设计任务，还需要单独验收。
 
 ## GitHub Actions Runner 策略
 

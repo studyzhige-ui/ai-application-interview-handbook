@@ -7,7 +7,8 @@
     "products/agent/*/README.md",
     "products/agent/*/[0-9][0-9]-*.md",
     "practice/coding/docs/*.md",
-    "references/*/README.md"
+    "references/*/README.md",
+    "curriculum/*/references.md"
   ],
   "curriculum_chapters": 175,
   "modules": [
@@ -951,6 +952,7 @@
       "directory": "09-agent",
       "label": "Agent",
       "review_records": [
+        "guide/project/agent-clarity-refinement-2026-09-28.md",
         "guide/project/agent-reader-revision.md"
       ],
       "readme": "curriculum/09-agent/README.md",
@@ -1112,8 +1114,8 @@
       "directory": "10-system-design",
       "label": "System Design",
       "review_records": [
-        "guide/audits/system-design-reader-first-2026-09-28.md",
-        "guide/audits/system-design-clarity-refinement-2026-09-28.md"
+        "guide/audits/system-design-clarity-refinement-2026-09-28.md",
+        "guide/audits/system-design-reader-first-2026-09-28.md"
       ],
       "readme": "curriculum/10-system-design/README.md",
       "chapter_count": 19,
@@ -1476,7 +1478,8 @@
     "references/mysql/README.md",
     "references/rag/README.md",
     "references/redis/README.md",
-    "references/vector-db/README.md"
+    "references/vector-db/README.md",
+    "curriculum/10-system-design/references.md"
   ],
   "statistics_boundary": "Counts describe tracked learning files, not frozen Canonical questions or independent interview sources."
 }
