@@ -4,7 +4,7 @@ import hashlib, json, os, re, subprocess, sys
 ROOT=Path(__file__).resolve().parent
 os.chdir(ROOT)
 BRANCH='work/agent-clarity-20260928'
-BASE='a6b51b9f00bf3fe7910cfe4ca248e80545f566e3'
+BASE='1a09d90a7ce7690e94dee3e401203264a307a7f1'
 MODULE='curriculum/09-agent'
 VALIDATION='guide/project/agent-clarity-validation-2026-09-28.json'
 REPORT='guide/project/agent-clarity-refinement-2026-09-28.md'
@@ -35,6 +35,20 @@ assert os.environ.get('GITHUB_REPOSITORY')=='studyzhige-ui/ai-application-interv
 assert os.environ.get('GITHUB_REF_NAME')==BRANCH
 assert not git('status','--porcelain').strip()
 assert git('rev-parse','origin/main').strip()==BASE, 'main changed; reconcile before publication'
+# Integrate the inspected System Design commit; only shared generated registries
+# may conflict. Regenerate those from the combined tree below, never choose one
+# module's stale registry as the final version.
+subprocess.run(['git','config','user.name','github-actions[bot]'],check=True)
+subprocess.run(['git','config','user.email','41898282+github-actions[bot]@users.noreply.github.com'],check=True)
+merge=subprocess.run(['git','merge','--no-commit','--no-ff',BASE],text=True,encoding='utf-8',stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+print(merge.stdout,flush=True)
+conflicts=git('diff','--name-only','--diff-filter=U').splitlines()
+assert set(conflicts)<={'guide/navigation-index.json','guide/navigation-index.md'}, 'unexpected merge conflict: '+repr(conflicts)
+if conflicts:
+    subprocess.run(['git','checkout','--theirs','--',*conflicts],check=True)
+    subprocess.run(['git','add','--',*conflicts],check=True)
+elif merge.returncode:
+    raise RuntimeError('main integration failed: '+merge.stdout)
 for p in sorted(Path(MODULE).rglob('*.md')):
     before=p.read_text(encoding='utf-8');after=normalize(before)
     assert normalize(after)==after
@@ -87,9 +101,11 @@ for command in commands:
     results.append({'command':command,'exit_code':result.returncode,'output':result.stdout})
     assert result.returncode==0, 'validation failed: '+repr(command)
 v=json.loads(Path(VALIDATION).read_text(encoding='utf-8'))
+v['publication_base']=BASE
 v['previous_validation_workflow_run']=v['workflow_run']
 v['workflow_run']=os.environ['GITHUB_RUN_ID']
 v['commands']=results
+v['changed_files']=changed
 v['rendering_regression']='CJK strong-emphasis mutation fails before correction; normal and code-literal cases pass'
 v['content_sha256']={p:hashlib.sha256(Path(p).read_bytes()).hexdigest() for p in changed if Path(p).is_file() and p!=VALIDATION}
 v['browser_visual_review']='Separate local review of exact Markdown; workflow checks rendered HTML structure and emphasis, not GitHub production frontend'
