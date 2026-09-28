@@ -16,6 +16,7 @@
 | [LLM Foundation](llm-foundation/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [RAG](rag/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [Agent 与产品源码](agent/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [System Design](../curriculum/10-system-design/references.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 
 证据来源包括：
 

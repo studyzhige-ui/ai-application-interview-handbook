@@ -26,7 +26,7 @@ Canonical 保留 `S001–S279 / 235 ACTIVE` 冻结基线；课程重排不重新
 
 先从最新 `main` 核对受影响正文，再同步入口和生成源。检查完成后通过独立分支与 PR 发布；合并后再次读取 `main`。分支清理先核验确切提交已合并，或确认旧稿被保留内容的后继稿替代；不把同名 PR 的存在当作已经合并。
 
-本次外围核对的基线、发现与验证边界见[外围文档审查记录](peripheral-sync-2026-09-28.md)。历史结论见[历史审计目录](history/README.md)。
+外围核对按轮次记录：见[首轮全仓同步](peripheral-sync-2026-09-28.md)与[Agent / System Design 增量同步](peripheral-sync-agent-system-design-2026-09-28.md)。基线、发现和实际验证范围分别认对应记录，不复用上一轮的链接数量或通过结论。历史结论见[历史审计目录](history/README.md)。
 
 <!-- current-scope:start -->
 ## 可重建的内容范围

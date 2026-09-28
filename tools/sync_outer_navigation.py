@@ -35,8 +35,8 @@ DESCRIPTIONS = {
  '06-vector-db':'向量比较、精确与近似检索、索引、过滤、版本和维护。',
  '07-llm-foundation':'从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。',
  '08-rag':'从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。',
- '09-agent':'从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。',
- '10-system-design':'从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。',
+ '09-agent':'沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。',
+ '10-system-design':'从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。',
 }
 ROUTES = {
  '01-python':'数据与对象 → 函数与执行 → 对象协作与输入边界 → 运行机制、并发与成本',
@@ -47,8 +47,8 @@ ROUTES = {
  '06-vector-db':'向量、距离与精确基线 → 图、倒排与压缩索引 → 索引选择 → 数据、过滤与版本 → 分布式执行、评测与维护',
  '07-llm-foundation':'Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预',
  '08-rag':'任务与语料 → 解析、清洗与切分 → 查询与检索 → 融合、重排与证据组装 → 回答、引用与评测 → 权限、版本和生产治理',
- '09-agent':'任务与执行角色 → 工具契约、发现与受控执行 → 计划、上下文与记忆 → 状态、持久化与恢复 → 安全、协议、扩展与协作 → 诊断、评测与工程落地',
- '10-system-design':'需求与容量 → API、状态和数据 → 缓存、分区与协作 → 一致性、队列、安全与可靠性 → 观测、评估和演进 → 综合系统方案',
+ '09-agent':'任务与自主权 → 反馈循环 → 工具说明、发现与执行 → 计划和模型输入 → 记忆、状态与恢复 → 权限、协议与扩展 → 协作 → 诊断、评测与交付',
+ '10-system-design':'用户动作与完成条件 → 工作量、资源和状态责任 → 正常数据流与协作边界 → 正确性、过载、权限与恢复 → 观察、评估与安全演进 → 不同业务条件下的组合与取舍',
 }
 REFERENCE_NAMES = {'agent':'Agent 与产品源码','fastapi':'FastAPI','backend-engineering':'Backend','mysql':'MySQL','redis':'Redis','vector-db':'Vector DB','llm-foundation':'LLM Foundation','rag':'RAG'}
 
@@ -200,7 +200,8 @@ def inventory(root: Path) -> dict:
         products.append({'name':title(page).split('｜')[0], 'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),'chapters':[p.relative_to(root).as_posix() for p in docs],'reading_order':[p.relative_to(root).as_posix() for p in chapter_order(root,page,docs)],'chapter_metadata':metadata(root,docs),'support':support_entries(root,page.parent),'source_repository':fixed.group(1) if fixed else None,'source_commit':fixed.group(2) if fixed else None,'private_mirror':('私有镜像' in text)})
     coding=sorted((root/'practice/coding/docs').glob('[0-9][0-9]-*.md'))
     refs=[p.relative_to(root).as_posix() for p in sorted((root/'references').glob('*/README.md'))]
-    return {'schema_version':2,'sources':['guide/learning-order.json','curriculum/*/README.md','curriculum/*/docs/*.md','products/agent/*/README.md','products/agent/*/[0-9][0-9]-*.md','practice/coding/docs/*.md','references/*/README.md'],'curriculum_chapters':sum(m['chapter_count'] for m in result),'modules':result,'products':products,'coding_chapters':len(coding),'coding_metadata':metadata(root,coding),'references':refs,'statistics_boundary':'Counts describe tracked learning files, not frozen Canonical questions or independent interview sources.'}
+    refs.extend(p.relative_to(root).as_posix() for p in sorted((root/'curriculum').glob('*/references.md')))
+    return {'schema_version':2,'sources':['guide/learning-order.json','curriculum/*/README.md','curriculum/*/docs/*.md','products/agent/*/README.md','products/agent/*/[0-9][0-9]-*.md','practice/coding/docs/*.md','references/*/README.md','curriculum/*/references.md'],'curriculum_chapters':sum(m['chapter_count'] for m in result),'modules':result,'products':products,'coding_chapters':len(coding),'coding_metadata':metadata(root,coding),'references':refs,'statistics_boundary':'Counts describe tracked learning files, not frozen Canonical questions or independent interview sources.'}
 
 def peripheral_paths(root: Path) -> list[Path]:
     return sorted(p for p in tracked(root) if p.suffix.lower()=='.md' and (p.name.lower()=='readme.md' or p.relative_to(root).as_posix() in {'guide/knowledge-map.md','guide/learning-path.md','guide/terminology-glossary.md',INDEX}|STATUS_PAGES))
@@ -272,9 +273,12 @@ def plan(root: Path, data: dict) -> dict[str,str]:
     path='references/README.md'; text=read(root/path)
     lines=['| 资料入口 | 用途 |','|---|---|']
     rank={m['directory'].split('-',1)[1]:i for i,m in enumerate(data['modules'])}
-    refs=sorted(data['references'],key=lambda p:(rank.get(Path(p).parent.name,99),p))
+    def reference_key(path):
+        name=Path(path).parent.name
+        return name.split('-',1)[1] if path.startswith('curriculum/') else name
+    refs=sorted(data['references'],key=lambda p:(rank.get(reference_key(p),99),p))
     for p in refs:
-        folder=Path(p).parent.name; label=REFERENCE_NAMES.get(folder,title(root/p).split('｜')[0])
+        folder=reference_key(p); label=REFERENCE_NAMES.get(folder,title(root/p).split('｜')[0])
         lines.append(f'| [{label}]({rel(path,p)}) | 核对该模块的官方资料、适用版本与实现边界。 |')
     text=re.sub(r'(## 索引\n).*?(\n证据来源包括：)',lambda m:m.group(1)+'\n'+'\n'.join(lines)+'\n'+m.group(2),text,count=1,flags=re.S)
     put(path,text)

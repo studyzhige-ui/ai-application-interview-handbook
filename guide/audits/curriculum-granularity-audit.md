@@ -31,8 +31,8 @@
 | 06 | [Vector DB](../../curriculum/06-vector-db/README.md) | 16 | 向量、距离与精确基线 → 图、倒排与压缩索引 → 索引选择 → 数据、过滤与版本 → 分布式执行、评测与维护 |
 | 07 | [LLM Foundation](../../curriculum/07-llm-foundation/README.md) | 14 | Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预 |
 | 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | 任务与语料 → 解析、清洗与切分 → 查询与检索 → 融合、重排与证据组装 → 回答、引用与评测 → 权限、版本和生产治理 |
-| 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | 任务与执行角色 → 工具契约、发现与受控执行 → 计划、上下文与记忆 → 状态、持久化与恢复 → 安全、协议、扩展与协作 → 诊断、评测与工程落地 |
-| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 需求与容量 → API、状态和数据 → 缓存、分区与协作 → 一致性、队列、安全与可靠性 → 观测、评估和演进 → 综合系统方案 |
+| 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | 任务与自主权 → 反馈循环 → 工具说明、发现与执行 → 计划和模型输入 → 记忆、状态与恢复 → 权限、协议与扩展 → 协作 → 诊断、评测与交付 |
+| 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | 用户动作与完成条件 → 工作量、资源和状态责任 → 正常数据流与协作边界 → 正确性、过载、权限与恢复 → 观察、评估与安全演进 → 不同业务条件下的组合与取舍 |
 
 合计 **175 篇**；章节标题和顺序可回到各模块入口逐项核对。
 <!-- current-scope:end -->

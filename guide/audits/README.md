@@ -12,6 +12,7 @@
 - [Codex 讲解精修](codex-clarity-refinement-2026-09-27.md)：正常过程前置、可观察材料、工具与记忆顺序、三维暴露及分层验收；
 - [DeepSeek Harness 讲解精修](deepseek-harness-clarity-refinement-2026-09-27.md)：正常路径前置、跨章职责、实验入口与发布事实；
 - [RAG 讲解清晰度精修](rag-clarity-refinement-2026-09-27.md)：条件支持、发布交接、图检索、机制实验与显示验证；
+- [Agent 全模块讲解精修](../project/agent-clarity-refinement-2026-09-28.md)：24 章主线、工具检查边界、集中问答单源与验证范围；
 - [Audit History](history/README.md)：旧版本审计快照，保留当时数字与结论。
 
 审计文件用于验证结构、粒度、覆盖、深度与质量门，不替代 Curriculum 正文。
@@ -23,6 +24,7 @@
 
 - [System Design｜读者优先修订与分层验证记录](system-design-reader-first-2026-09-28.md)
 - [System Design｜讲解清晰度精修与迁移练习验证](system-design-clarity-refinement-2026-09-28.md)
+- [外围文档增量同步｜Agent 与 System Design｜2026-09-28](peripheral-sync-agent-system-design-2026-09-28.md)
 - [外围文档同步｜2026-09-28](peripheral-sync-2026-09-28.md)
 - [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md)
 - [DeerFlow｜读者优先修订与源码核验记录](deerflow-reader-first-2026-09-27.md)

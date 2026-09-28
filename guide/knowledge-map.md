@@ -42,8 +42,8 @@ Curriculum 通用机制
 | 06 | [Vector Database](../curriculum/06-vector-db/README.md) | 16 | 12 | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
 | 07 | [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) | 14 | 23 | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
 | 08 | [RAG](../curriculum/08-rag/README.md) | 14 | 29 | 从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。 |
-| 09 | [Agent](../curriculum/09-agent/README.md) | 24 | 44 | 从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。 |
-| 10 | [System Design](../curriculum/10-system-design/README.md) | 19 | 24 | 从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。 |
+| 09 | [Agent](../curriculum/09-agent/README.md) | 24 | 44 | 沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。 |
+| 10 | [System Design](../curriculum/10-system-design/README.md) | 19 | 24 | 从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。 |
 
 ---
 
@@ -138,10 +138,10 @@ Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → 
 ## 09. [Agent](../curriculum/09-agent/README.md) — 24 章
 <a id="09-agent---24-blocks"></a>
 
-从任务与执行角色建立工具、上下文、记忆、状态、安全、恢复与评测。
+沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。
 
 ```text
-任务与执行角色 → 工具契约、发现与受控执行 → 计划、上下文与记忆 → 状态、持久化与恢复 → 安全、协议、扩展与协作 → 诊断、评测与工程落地
+任务与自主权 → 反馈循环 → 工具说明、发现与执行 → 计划和模型输入 → 记忆、状态与恢复 → 权限、协议与扩展 → 协作 → 诊断、评测与交付
 ```
 
 市场校准：**44 Canonical / 166 independent HUMAN-A flows**。
@@ -149,10 +149,10 @@ Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → 
 ## 10. [System Design](../curriculum/10-system-design/README.md) — 19 章
 <a id="10-system-design---19-blocks"></a>
 
-从需求、容量、状态和数据流推导方案，验证可靠性、成本与演进。
+从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。
 
 ```text
-需求与容量 → API、状态和数据 → 缓存、分区与协作 → 一致性、队列、安全与可靠性 → 观测、评估和演进 → 综合系统方案
+用户动作与完成条件 → 工作量、资源和状态责任 → 正常数据流与协作边界 → 正确性、过载、权限与恢复 → 观察、评估与安全演进 → 不同业务条件下的组合与取舍
 ```
 
 市场校准：**24 Canonical / 71 independent HUMAN-A flows**。
@@ -172,7 +172,7 @@ Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → 
 - v1.0 历史基线结论见 [Final Quality Audit](audits/history/final-quality-audit-2026-09-12.md)；跨模块同名概念统一以 [Terminology Glossary](terminology-glossary.md) 为工作定义。
 
 
-Agent 模块使用 24 章正式学习顺序；历史重组、固定实现对照与核验范围见 [Agent Reader Revision](project/agent-reader-revision.md)。
+Agent 的执行与恢复主线、System Design 的跨组件组合分别在[Agent 综合推演](../curriculum/09-agent/review/README.md#综合推演)和[报告助手独立设计任务](../curriculum/10-system-design/review/README.md#独立设计任务为两个团队交付报告助手)中收束。专项证据按[模块记录索引](audits/content-depth-audit.md)核对；历史重组仍保留在 [Agent Reader Revision](project/agent-reader-revision.md)，不替代后续精修记录。
 
 <!-- learning-inventory:start -->
 ## 当前文件范围

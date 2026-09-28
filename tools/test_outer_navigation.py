@@ -155,4 +155,34 @@ class FullFixtureTests(unittest.TestCase):
         self.apply(changes)
         self.assertEqual(outer.plan(self.root,outer.inventory(self.root)),{})
 
+    def test_module_local_references_are_indexed_without_counting_a_lesson(self):
+        self.put('curriculum/10-system-design/references.md','# System Design｜References\n')
+        data=outer.inventory(self.root)
+        self.assertIn('curriculum/10-system-design/references.md',data['references'])
+        self.assertEqual(data['curriculum_chapters'],10)
+        changes=outer.plan(self.root,data)
+        self.assertIn('(../curriculum/10-system-design/references.md)',changes['references/README.md'])
+        self.apply(changes)
+        self.assertEqual(outer.plan(self.root,outer.inventory(self.root)),{})
+    def test_module_local_reference_links_are_validated(self):
+        self.put('curriculum/10-system-design/references.md','# Sources\n[broken](missing.md)\n')
+        checks=outer.validate(self.root,outer.validation_paths(self.root))
+        self.assertIn({'page':'curriculum/10-system-design/references.md','href':'missing.md'},checks['missing_paths'])
+    def test_review_record_update_propagates_without_body_changes(self):
+        self.put('guide/audits/content-depth-audit.md','# Depth\n')
+        self.put('guide/project/old-review.md','# Historical review\n')
+        self.put('guide/project/new-review.md','# New bounded review\n')
+        path=self.root/'guide/learning-order.json'; data=json.loads(path.read_text())
+        data['modules'][0]['review_records']=['guide/project/old-review.md']
+        self.put('guide/learning-order.json',json.dumps(data))
+        self.apply(outer.plan(self.root,outer.inventory(self.root)))
+        data['modules'][0]['review_records'].insert(0,'guide/project/new-review.md')
+        self.put('guide/learning-order.json',json.dumps(data))
+        changes=outer.plan(self.root,outer.inventory(self.root))
+        self.assertIn('guide/navigation-index.json',changes)
+        depth=changes['guide/audits/content-depth-audit.md']
+        self.assertLess(depth.index('new-review.md'),depth.index('old-review.md'))
+        self.assertFalse(any('/docs/' in p for p in changes))
+        self.assertNotIn('guide/project/old-review.md',changes)
+
 if __name__=='__main__':unittest.main(verbosity=2)

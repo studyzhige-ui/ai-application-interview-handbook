@@ -14,9 +14,15 @@ Curriculum 建立通用模型；Products 在固定源码里对照实现；Practi
 
 面经统计继续使用 `S001–S279 / 235 ACTIVE` 冻结基线；市场总量以[Market](../../market/README.md)为准。冻结的[Canonical 覆盖记录](../../interview/canonical/progress.md)不承担当前课程进度。
 
+## Agent 与 System Design 的衔接
+
+Agent 负责模型判断怎样进入受控行动、结果怎样影响下一步，以及任务在取消、中断或批准后怎样继续。System Design 将这些机制放入容量、权威状态、租户隔离和外部协议中，推导完整方案；不把职责分离自动等同于必须拆成多个服务。
+
+[Agent 综合推演](../../curriculum/09-agent/review/README.md#综合推演)用于定位执行边界，[System Design 独立设计任务](../../curriculum/10-system-design/review/README.md#独立设计任务为两个团队交付报告助手)用于验证跨模块迁移。集中问答、自测与本地实验各有用途；标准库模拟通过不等于真实恢复和生产承诺已兑现。
+
 ## 发布依据
 
-从最新 `main` 读取受影响文件，只合并经过检查的差异。生成文件与生成源一起更新，合并后再次核验。分支完成任务后清理；不因名称像旧分支就丢弃未保留的成果。具体外围同步与分支核对见[2026-09-28 审查记录](../audits/peripheral-sync-2026-09-28.md)。
+从最新 `main` 读取受影响文件，只合并经过检查的差异。生成文件与生成源一起更新，合并后再次核验。分支完成任务后清理；不因名称像旧分支就丢弃未保留的成果。外围同步与分支核对分别保留在[首轮记录](../audits/peripheral-sync-2026-09-28.md)和[Agent / System Design 增量同步记录](../audits/peripheral-sync-agent-system-design-2026-09-28.md)。
 
 <!-- current-scope:start -->
 ## 正式学习主线
