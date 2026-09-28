@@ -1,9 +1,16 @@
-"""Use in-memory transport fixes; never modify the checked-out baseline first."""
+"""Apply bounded transport repairs; never change main or bypass validation."""
 from pathlib import Path
 p = Path(__file__).with_name('apply.py')
 text = p.read_text(encoding='utf-8')
-# Section anchors occur just before their headings in the original. Map them by
-# the heading's explicit number, not by the preceding text segment.
+# The previous interrupted upload omitted the final top-level array bracket.
+# Repair only that known transport envelope; the normal JSON parser and 56-entry
+# assertion still validate the resulting data. No repair logic enters the course.
+needle = "answers = json.loads(read('_agent_refine/interview.json'))"
+replacement = "answers = json.loads(read('_agent_refine/interview.json') + '\\n]')"
+assert text.count(needle) == 1
+text = text.replace(needle, replacement)
+# Section anchors precede their headings in the original. Map them by the
+# explicit section number rather than the preceding text segment.
 old = "    grouped = {}\n    for alias, target in sorted(assignments.items()):"
 new = '''    for old_num, old_title, _ in numbered_sections(old[n]):
         alias = 'section-' + str(old_num)
@@ -20,7 +27,7 @@ new = '''    for old_num, old_title, _ in numbered_sections(old[n]):
     for alias, target in sorted(assignments.items()):'''
 assert old in text
 text = text.replace(old, new)
-# New primary teaching targets are mechanisms, not a generic first paragraph.
+# Teaching targets are the mechanism sections, not a generic first paragraph.
 needle = "    targets = [paths[n-1] + '#core-1' for n in target_chapters]"
 replacement = '''    routes = {
         1:[(2,1),(2,2)], 2:[(1,2)], 3:[(3,1),(3,3)], 4:[(3,5)],
@@ -42,6 +49,5 @@ replacement = '''    routes = {
     targets = [paths[ch-1] + '#core-' + str(sec) for ch,sec in routes[key]]'''
 assert needle in text
 text = text.replace(needle, replacement)
-# Keep the complete failure status visible when a future setup unexpectedly dirties checkout.
 text = text.replace("assert not git('status', '--porcelain').strip(), 'checkout must begin clean'", "assert not git('status', '--porcelain').strip(), 'checkout must begin clean: ' + git('status','--porcelain')")
 exec(compile(text, str(p), 'exec'), {'__name__':'__main__', '__file__':str(p)})
