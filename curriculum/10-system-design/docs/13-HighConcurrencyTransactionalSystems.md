@@ -1,408 +1,139 @@
-# 13｜High-concurrency Transactional Systems：秒杀、库存、Rate Limit、Token Refresh
+# 13｜高并发交易：让有限资源只被合法消耗一次
 
-这一章不是背“秒杀标准答案”，而是训练一类共同问题：
+<a id="13high-concurrency-transactional-systems秒杀库存rate-limittoken-refresh"></a>
 
-> **大量并发请求争夺有限资源，同时要求不能重复、不能越界，并且失败后还能恢复。**
+[← 上一章](12-ObservabilityEvaluation与Evolution.md) · [模块入口](../README.md) · [下一章 →](14-RealtimeReadHeavySystems.md)
 
-对应真人 Scenario 主要包括：
+一场抢购只有 100 件商品，进入页面的人可能有十万。快速返回“抢到了”很容易，难的是支付、取消、重复请求和系统故障同时出现时，库存与订单仍然对应。
 
-```text
-SD-001 Flash Sale / Inventory
-SD-009 Distributed Rate Limiter
-SD-010 Token Refresh Coordination
-SD-011 QR Login
-```
+本章以库存预占为主线，再把同一套“有限资源、唯一裁定、过期与接管”模型迁移到分布式配额、凭证刷新和二维码登录。
 
----
+## 1. 先决定“下单成功”是哪一个阶段
 
-## 1. 共同抽象：Scarce Resource + Concurrent Contention
+本例区分三个阶段：获得有效预占、完成支付、确认已售。预占不是永久售出，支付平台的成功也不等于订单数据库已经收到回调。
 
-四个场景看起来不同：
+初始可售 100、预占 0、已售 0。先不考虑补货与退款，要求三者总和始终为 100，且每份预占最多被支付确认或释放一次。
 
-```text
-库存
-配额
-Access Token Refresh
-二维码状态
-```
+| 动作 | 原状态 | 数量变化 | 必要条件 |
+|---|---|---|---|
+| 预占 1 件 | 可售不少于 1 | 可售减 1、预占加 1 | 操作身份唯一，检查与修改原子成立 |
+| 支付确认 | 该预占有效 | 预占减 1、已售加 1 | 支付结果可靠，未被释放 |
+| 到期释放 | 该预占有效且满足过期规则 | 预占减 1、可售加 1 | 释放状态只转换一次 |
 
-但都可以抽象成：
+这只是一个选定业务模型。若允许预占过期后支付成功，需要另外规定接受订单、退款或人工核对的策略；不能让两个系统各自选择对自己方便的状态。
 
-```text
-很多 Caller
-→ 争夺 / 更新有限状态
-→ 需要确定唯一结果
-→ 要处理重复请求与超时
-```
+## 2. 入口快路径不能取代库存裁定
 
-因此先复用 Part A：
+页面和缓存可快速显示“可能有货”，但最终是否允许预占，要由能够维护不变量的存储或分配协议裁定。缓存过期、复制滞后或客户端重复点击，都不能成为多卖一份的理由。
 
-```text
-Invariant
-→ State Owner
-→ Idempotency
-→ Atomic Update
-→ Hot Path
-→ Backpressure
-→ Failure Recovery
-```
+先从能正确完成事务的简单方案建立基线，再针对已测得瓶颈优化。可以在入口合并重复操作、限制请求、快速拒绝已售罄活动，避免数据库处理明显无效的工作。
 
----
+只有确实需要时，才考虑提前把有限库存分配到多个执行分区。分配总量必须守恒，退回、转移和过期回收也要有唯一身份；否则只是把一次全局超卖变成多处局部超卖。
 
-# 2. 秒杀先写 Invariant
+## 3. 支付回调与释放任务怎样竞争
 
-核心不是 Redis，而是：
+设预占 R 即将到期。支付回调与到期任务同时到达，两者都需要从“有效预占”转换到自己的终态，并在同一裁定边界调整库存。
 
-```text
-confirmed_orders <= sellable_stock
-```
+若支付先成功，R 变为已支付，释放任务不能再增加可售；若释放先成功，迟到支付不能直接把 R 又算成已售，必须进入业务定义的迟到支付处理，例如核对库存或退款。
 
-还要定义：
+重复支付回调不重复增加已售；重复释放不重复增加可售。状态变化、防重记录与库存数量要一起成立，而不是通过三个异步脚本各自修改。
 
-```text
-同一用户是否限购？
-下单占库存还是付款占库存？
-未支付订单多久释放？
-取消订单是否回补？
-```
+**少卖（undersell）**也可能发生：库存预占成功，但订单记录或过期释放丢失，库存长期被占住。修复需要依据可靠预占记录、期限与支付结果核对，不能为提高销量直接把所有“超时”数量加回去。
 
-如果这些没说清，后面所有技术都是空的。
+## 4. 分布式限流：严格上限不一定要求每次远程扣减
 
----
+假设一分钟最多允许 100 次某项调用，可以由中心存储逐次扣减，判断清楚但增加远程依赖；也可以分配互不重叠的额度，例如给 A 40、B 30，中心保留 30。
 
-# 3. 秒杀的最小数据流
+只要分配、消耗和回收保持守恒，且旧额度不能在回收后继续被使用，就能维护硬上限。此时总使用量最多 100，并不是所有本地额度方案都必然超发。
 
-一种常见设计：
+代价是额度闲置与再分配：A 忙、B 空闲时，A 不能直接借用 B 的额度而不记录转移。若每台机器都独立认为自己有完整 100 次，才会把上限复制多遍。
+
+限流还要考虑窗口边界与下游容量。每分钟允许 100 次，并不表示这 100 次同时到来时下游承受得住；请求速率、突发额度与并发槽位需要分别设计。网络故障时严格停止、使用已分配额度或接受一定超发，是不同策略，应明确选择。
+
+限制窗口还要说明时间语义。“每个自然分钟 100 次”的固定计数器，在一分钟末尾与下一分钟开头可能各放行 100 次，短时间内合计 200 次；它并不等于任意连续 60 秒最多 100 次。
+
+一种允许受控突发的最小模型是令牌桶：桶最多容纳 B 个执行资格，以每秒 r 个的速度补充，一次工作消耗一个资格；不足时拒绝或等待。空闲之后最多立即释放 B 个，持续速率由 r 约束。这里的“令牌”是准入额度，不是模型文本 Token，也不是 OAuth 凭证。扣减与补充要在各自裁定边界保持原子，并另外限制在途并发；采用哪个窗口或桶规则，先由业务对突发和上限的定义决定。
+
+## 5. 多实例凭证刷新：协调只减少竞争，不能改变供应商协议
+
+多个实例共享第三方 Access Token（访问凭证），发现快过期时都可能调用 Refresh Token（刷新凭证）接口。可以由一个受控刷新者执行，其余实例有界等待并复用结果，减少集中刷新。
+
+状态至少要保留凭证版本、适用范围、有效期以及刷新操作的进度。刷新者提交结果时检查自己依赖的版本仍适用，避免旧请求晚到覆盖新凭证。
+
+还要区分快过期与已过期：旧凭证在供应商认可的有效期内可能继续服务，但已失效时不能为了可用性强行复用。提前刷新时间来自测量与协议，不是固定通用默认值。
+
+> ⚠️ **刷新超时不能一律重新使用旧 Refresh Token。** 某些 OAuth 部署采用刷新凭证轮换，旧凭证重用可能被视为重放并导致授权撤销。锁、租约或本地幂等键不会自动让第三方刷新接口变成幂等。需要按供应商规则核对结果，无法恢复时重新授权。[OAuth 2.0 安全最佳实践：刷新凭证保护](https://www.rfc-editor.org/rfc/rfc9700.html#section-4.14)
+
+## 6. 二维码登录：一次确认，只能换取一次指定会话
+
+二维码不应直接包含可长期复用的登录凭证。服务生成难以猜测的一次性登录请求，绑定发起浏览器会话和有效期；手机端在已认证身份下扫描，并显示、确认本次登录目标。
+
+一个教学状态模型是：
 
 ```text
-Client
-→ API / Admission
-→ user/item validation
-→ atomic stock reservation
-→ create order intent
-→ async order processing
-→ persist final order
-→ payment / timeout / release
+PENDING（待扫描） → SCANNED（已扫描） → CONFIRMED（已确认） → EXCHANGED（已交换）
+       │                  │                    │
+       └────到期──────────┴────到期────────────┴──→ EXPIRED（已过期）
 ```
 
-这里“atomic stock reservation”可以有不同实现：
+**EXCHANGED 与 EXPIRED 是不同终态。** 已交换完成的记录可以按保留策略清理，但不能把清理理解成登录请求继续走“已交换→已过期→重新可用”。
 
-- DB conditional update；
-- Redis Lua / atomic command；
-- Single-writer / partitioned queue；
+PC 使用与发起会话绑定的凭据查询状态，确认后在原子检查“仍可交换、绑定一致、未过期”的条件下获取会话。两次同时交换只能有一次获得该一次性效果；重复请求如何返回原结果，需在安全范围内另行约定。
 
-没有唯一标准答案。
+TTL 可以帮助清理记录，但交换时仍要检查当前时间与状态。仅靠后台定时删除，过期记录尚未被删除的窗口就可能被错误使用。还要防止二维码替换、会话串绑和未经用户确认的登录；“扫到了”不等于“用户批准了登录”。
 
-选哪个取决于 QPS、正确性、恢复和运维复杂度。
+## 7. 用失败时序验收，而不只看峰值 QPS
 
----
+库存测试应包含最后一件并发争抢、同操作重复请求、支付和释放竞态、支付成功后回调丢失；配额测试检查分配与回收总量；刷新测试覆盖轮换后响应丢失；二维码测试覆盖到期边界与重复交换。
 
-# 4. Redis 预扣不代表库存事实自动一致
+本模块实验提供数量与状态的确定性模型，用于检查规则。真实方案还需要目标数据库事务、多连接竞争、消息与支付沙箱、凭证供应商行为和时钟边界验证。逻辑模型不超卖，不等于真实部署已经完成并发验收。
 
-如果：
+## 本章小结
 
-```text
-Redis stock-- 成功
-DB order 写失败
-```
+高并发正确性依赖有限资源的守恒和状态的唯一裁定。库存、配额、凭证刷新与一次性登录有共同的竞争结构，但外部支付、凭证轮换和授权绑定各有协议，不能把加锁、防重或 TTL 当作万能答案。
 
-需要：
+## 🎯 面试怎么答
 
-```text
-Retry
-or
-Compensation
-or
-Reconciliation
-```
+**问：怎样设计不超卖、可恢复的抢购系统？**
 
-反过来：
+> 先定义预占、支付、释放各自的成功含义和守恒式。最终库存由原子裁定边界决定，稳定操作身份处理重复，支付与释放竞争同一预占终态。缓存与限流保护容量但不裁定库存；外部结果未知先核对，对账修复悬挂预占，并用最后一件、重复回调和迟到支付的时序验证。
 
-```text
-DB order 成功
-Redis 响应丢失
-Client retry
-```
+## ⚠️ 容易混淆的地方
 
-需要 Idempotency 防重复订单。
+- 抢购入口返回成功不等于支付完成，超时释放也不能忽略迟到支付。
+- 本地分配互不重叠且守恒的额度可以维护硬上限，不能笼统断言所有分散限流都必然超发。
+- 二维码已交换与已过期是分支终态；刷新凭证轮换的失败行为由供应商协议决定。
 
-所以真正系统必须有：
+## 本章自测
 
-```text
-operation_id
-order state
-reservation state
-reconciliation
-```
+### 1. 总额度 100，A 获得 40、B 获得 30，中心剩 30。A 用完后要再分配 20，中心可否直接给？若中心先收回 B 的 20，但 B 仍可能使用旧额度，问题在哪里？
 
-而不是只有一段 Lua。
+<details><summary>提示</summary>
 
----
+总量计算与旧拥有者是否真正失效要同时成立。
 
-# 5. Hot Product 怎么防止把 DB 打穿
-
-秒杀最典型是：
-
-```text
-one item
-→ huge traffic
-```
-
-可以：
-
-```text
-Admission Control
-→ reject invalid / over-quota early
-→ in-memory / Redis hot state
-→ queue accepted work
-→ DB only sees bounded throughput
-```
-
-这就是“削峰”的真正含义：
-
-> 不是让总工作消失，而是让下游以稳定速率处理。
-
----
-
-# 6. Distributed Rate Limiter 的系统问题
-
-Rate Limit 不是只会写 Sliding Window。
-
-System Design 需要回答：
-
-```text
-quota 是 global 还是 per-region？
-允许多少误差？
-Redis / limiter 挂了 fail-open 还是 fail-closed？
-低延迟要求多高？
-一个 hot tenant 怎么办？
-```
-
-## Strong Global Limit
-
-如果所有 Region 都访问中央 Counter：
-
-```text
-准确
-但 latency / availability 受中央依赖影响
-```
-
-## Local Token Allocation
-
-中央配额拆成：
-
-```text
-region A gets 1000 tokens
-region B gets 1000 tokens
-```
-
-本地判定很快，但会有：
-
-```text
-unused quota
-rebalancing
-short-term overshoot / underutilization
-```
-
-这是典型 Consistency vs Latency Trade-off。
-
----
-
-# 7. Token Refresh Coordination
-
-多实例服务同时发现：
-
-```text
-access token expired
-```
-
-如果每个实例都 refresh：
-
-```text
-Refresh Stampede
-```
-
-更合理：
-
-```text
-read cached token
-→ near expiry
-→ one owner refreshes
-→ others wait / serve safe old token
-→ publish new token/version
-```
-
-核心问题：
-
-- refresh owner；
-- lease timeout；
-- old token 是否仍有效；
-- refresh 失败怎么办；
-- owner 崩溃怎么办。
-
-这和 Cache Stampede + Distributed Lock 有共通模式。
-
----
-
-# 8. 不一定需要“锁”
-
-可以用：
-
-```text
-singleflight within process
-Redis lock / lease
-DB row / CAS
-versioned token record
-```
-
-如果 Token Provider 自身允许重复 refresh 且返回稳定结果，锁需求会下降。
-
-所以先看 Side Effect 语义，再选协调方式。
-
----
-
-# 9. QR Login 的状态机
-
-二维码登录看似前端题，实际上是状态设计题：
-
-```text
-CREATED
-→ SCANNED
-→ CONFIRMED
-→ EXCHANGED
-→ EXPIRED
-```
-
-PC 端：
-
-```text
-poll / SSE / websocket
-```
-
-手机端：
-
-```text
-authenticated user confirms qr_id
-```
-
-最终 PC 端才能换取 Session / Token。
-
----
-
-# 10. QR Login 的安全边界
-
-要防：
-
-```text
-二维码被复制
-旧二维码重放
-未登录手机伪确认
-PC session 被错误绑定
-```
-
-常见约束：
-
-```text
-short TTL
-one-time exchange
-state transition CAS
-bind device/session nonce
-server-side auth
-```
-
-二维码本身不应该直接携带长期 Credential。
-
----
-
-# 11. Failure Walkthrough：秒杀
-
-主动演练：
-
-### Redis 成功，DB 失败
-
-→ reservation stuck / need compensation or retry。
-
-### DB 成功，Response 丢失
-
-→ Client retry，Idempotency 返回原订单。
-
-### MQ 重复投递
-
-→ order processor 按 order_id / operation_id 去重。
-
-### Hot Key 过载
-
-→ Admission / Local Cache / sharded counter / queue protection。
-
-### Worker 全挂
-
-→ Queue grows；Alert Queue Age；恢复后限速 Drain。
-
----
-
-# 12. 怎样验证没有 Oversell
-
-不是只压测吞吐。
-
-测试必须校验 invariant：
-
-```text
-initial_stock = 10000
-successful_confirmed_orders <= 10000
-unique_user_constraint holds
-no duplicated order for same operation
-all reservations eventually settled/released
-```
-
-Chaos Test：
-
-```text
-kill worker
-lose response
-duplicate message
-slow DB
-restart Redis replica
-```
-
-再验证状态最终收敛。
-
----
-
-# 13. 真人面经影响在哪里
-
-`SD-001` 有 10 个独立来源，是 System Design 强信号之一。
-
-因此这一章特别强化：
-
-```text
-Oversell / Undersell
-Redis + DB consistency
-Order state
-Compensation
-Hot traffic
-Verification
-```
-
-但教材没有把“秒杀”放在第 1 章，而是在学完 Requirement / Capacity / State / Consistency 后才进入综合 Case。
-
----
-
-# 14. 🎯 面试怎么答
-
-> 这类高并发有限资源系统我会先定义业务 invariant，例如库存不能被确认订单超卖，并明确资源真正的 State Owner。入口先做 Admission / 限购，Hot Path 用原子操作或单写模型保护，再把后续订单处理异步化以保护 DB。所有创建类操作都有 operation/idempotency key，Redis、DB、MQ 之间的部分成功通过状态机、Retry、Compensation 和 Reconciliation 收敛。最后压测不仅看 QPS，还会验证库存、订单和 reservation invariant，并注入重复消息、响应丢失和 Worker Crash。
-
----
-
-# 15. 本章自测
-
-<details><summary>1. 为什么“Redis Lua 扣库存成功”还不能证明秒杀设计正确？</summary>
-因为后续订单持久化、支付、消息和补偿仍可能部分失败，需要跨状态系统保持业务 invariant。
 </details>
 
-<details><summary>2. Distributed Rate Limiter 为什么可能允许短期误差？</summary>
-如果追求跨 Region 每次都强同步，会增加延迟和单点依赖；部分系统会用本地配额换取低延迟与高可用。
+<details><summary>参考答案与解释</summary>
+
+中心直接从剩余 30 分配 20 可保持总量。未经协议阻止 B 使用旧额度就回收再分配，会让同一额度被两边消耗；需要有效的转移、过期和旧持有者约束。
+
 </details>
 
-<details><summary>3. QR Login 为什么适合状态机建模？</summary>
-因为创建、扫描、确认、交换、过期是明确单向状态迁移，能防止重复确认和旧二维码重放。
+### 2. 二维码请求到期时间为 100，状态 CONFIRMED，交换请求在逻辑时间 100 到达；业务规则为 now < expires_at 才可用。应返回什么？已在 99 成功交换的请求随后到 101，又该如何理解？
+
+<details><summary>提示</summary>
+
+过期边界按明确比较规则判断，终态不沿清理时间重新变化。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+100 到达已不满足有效条件，应拒绝交换并进入过期终态。99 已交换的请求保持已消费事实，101 的清理或重复访问不能使它重新可交换，也不应把先前成功改写成未发生。
+
+</details>
+
+---
+
+[← 上一章](12-ObservabilityEvaluation与Evolution.md) · [模块入口](../README.md) · [下一章 →](14-RealtimeReadHeavySystems.md)

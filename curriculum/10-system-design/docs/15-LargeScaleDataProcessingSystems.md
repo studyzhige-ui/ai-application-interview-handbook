@@ -1,440 +1,131 @@
-# 15｜Large-scale Data & Processing：10TB Storage、Migration、Dedup、Large-file
+# 15｜大规模数据处理：让容量、查询与恢复共同成立
 
-这一章训练另一类非常容易“Demo 化”的问题：
+<a id="15large-scale-data--processing10tb-storagemigrationdeduplarge-file"></a>
 
-> **数据量一大，原来一次性读完、单事务写完、同步处理完的方案为什么会崩？怎样做分阶段、可恢复、可限速的数据处理系统？**
+[← 上一章](14-RealtimeReadHeavySystems.md) · [模块入口](../README.md) · [下一章 →](16-LLMGateway与MultiTenantAIPlatform.md)
 
-对应真人 Scenario：
+每天新增 10 TB 数据，并且要按团队和时间范围查询。把全部数据放进一个数据库，或者直接换成“大数据平台”，都还没有回答存储多久、查询读多少、失败后从哪里继续。
 
-```text
-SD-006 10TB/day Storage + Time-range Query
-SD-007 Large Batch / Migration
-SD-008 Massive Whitelist / Dedup
-SD-012 Large-file / Long-video Processing
-SD-015 Resource-constrained Secure Compute
-```
+本章围绕持续数据进入与查询建立主线，再处理批量迁移、集合去重和大文件上传。它们共享的困难是：数据多到不能随意全量放入内存，也不能在失败后毫无依据地从头重做。
 
----
+## 1. 先把数据量与保留条件算清楚
 
-## 1. 第一原则：不要把整个数据集当一个任务
-
-如果有：
+以下全部是教学假设：每天新增 10 TB，TB 使用十进制 `10¹² 字节`，保留 30 天，压缩后大小为原始数据的 50%，保存三份副本，不计算索引、日志、备份和临时空间。
 
 ```text
-2000 万 rows
-1TB PDF
-100GB video
+30 天原始量 = 10 TB/天 × 30 天 = 300 TB
+压缩后三副本 = 300 TB × 0.5 × 3 = 450 TB
+平均写入字节率 = 10 × 10¹² / 86,400 ≈ 115.74 MB/秒
 ```
 
-错误：
+平均值不能代替峰值，也不能直接当网络链路规格。复制流量、协议开销、突发与恢复回放都要另外计算。重建索引时还需要新旧数据同时存在的空间，不能把磁盘容量用到恰好等于正常存量。
 
-```text
-one request
-→ load all
-→ process all
-→ one commit
-```
+## 2. 查询模式决定组织方式
 
-正确方向：
+若主要查询是“团队 A 最近一小时的事件”，按时间分区可裁剪历史范围，再利用团队和其他过滤条件缩小扫描。若主要读取某个已知对象，按对象身份定位可能更重要。
 
-```text
-Partition / Chunk
-→ Durable Task
-→ Checkpoint
-→ Bounded Batch
-→ Progress
-→ Retry / Resume
-```
+**行式组织**便于取回单条记录的多个字段；**列式组织**对只扫描部分列的大批聚合有优势，但写入、更新和访问模式也影响实际效果。**倒排索引**把词项或某些条件值映射到匹配记录的集合，能跳过大量不匹配数据，但维护索引本身需要写入与存储成本。
 
----
+比较数据库、搜索或离线处理引擎时，应从需要扫描的字节、过滤选择性、聚合方式、新鲜度、并发和维护成本出发。不能只说“亿级数据所以必须换某产品”，也不能因为一种索引减少扫描，就断言整体瓶颈已经消失。
 
-# 2. 10TB/day Storage 先拆 Hot / Warm / Cold
+## 3. 热冷分层如何影响用户体验
 
-假设：
+热数据是经常读取或需要低延迟访问的数据，冷数据访问较少、可以接受更慢或异步读取。按访问分布和保留要求分层，比按一个固定天数划线更可靠。
 
-```text
-10TB/day
-retention 1 year
-```
+例如最近七天提供交互式查询，历史归档提供异步导出。API 应明确时间范围限制、分页、最大结果量、导出任务与预计状态，不把后台扫描所有历史的请求当成普通毫秒查询。
 
-全部放昂贵在线数据库通常不现实。
+冷数据仍然需要权限、删除和版本管理。归档不是遗忘安全责任，恢复旧归档也不能复活已撤销的访问资格。
 
-可以按访问模式：
+## 4. 批处理要固定读边界，并控制每批资源
 
-```text
-Hot: recent hours/days
-Warm: recent weeks
-Cold: object storage / archive
-```
+导出数千万行时，逐批读取并流式写出，能限制进程内存。内存峰值来自当前批、转换对象、输出缓冲及并发批数，而不是仅由文件总大小决定。
 
-再问：
+按稳定唯一键继续分页，比在不断增长的表上依次跳过很大的偏移更容易定义进度。例如保存最后完成的 ID，并在固定范围内读取更大的 ID。若读取期间允许更新和删除，只有“记住最大 ID”仍不足以得到一致结果：旧 ID 的修改可能被漏掉。
 
-```text
-查询时间范围？
-聚合还是原始明细？
-是否必须秒级？
-```
+可以使用一致快照、明确的高水位与增量日志，或接受并标明弱一致导出的业务策略。选择取决于源系统能力，不把某个分页技巧当作全量迁移协议。
 
-存储层应该由 Query Pattern 驱动。
+## 5. 先提交目标结果，再推进检查点
 
----
+某批处理 ID 101—200。如果先把检查点推进到 200，再写目标，写入失败后恢复者可能从 201 开始，造成永久漏数据。
 
-# 3. Time Partition 与 Retention
+更安全的基本顺序是：读取固定输入批次，按稳定记录身份写目标并确认，再保存“已完成到哪里”。目标已写入、检查点尚未保存时退出，会重复处理该批，因此目标写入必须能识别重复，或者在支持的共同事务边界一起提交。
 
-时序/日志类数据常天然按：
+并行批次还要记录连续完成范围。批次 201—300 先完成，不代表 101—200 已完成；单纯取最大结束 ID 会越过失败空洞。
 
-```text
-date / hour
-```
+增量迁移需要处理旧版本晚到和删除。目标已有版本 3，旧批次版本 2 不能覆盖；删除标记也不能被旧数据复活。切换读写位置前核对增量边界、数量、内容抽样与关键业务约束。仅比较总行数相等，不能证明逐条一致。
 
-分区。
+## 6. 海量集合：先明确允许误判吗
 
-优势：
+判断某个 IP 是否在允许列表里，与过滤明显不存在的候选，有不同准确性要求。
 
-```text
-range pruning
-TTL / drop partition
-cold migration
-batch compaction
-```
+IPv4 的地址空间包含 `2³²` 个可能值，用完整位图每个地址一位，需要 `2³² / 8 = 536,870,912 字节 = 512 MiB`，不含额外元数据。位图适合映射到有限整数空间的成员判断；不能把同一结论套到稀疏的任意长字符串或完整 IPv6 空间。
 
-但当前时间分区可能是写热点，所以还可能需要：
+布隆过滤器用更紧凑的位结构做概率成员判断，可能把不存在对象判断为“可能存在”，应继续查询权威集合；不能因命中过滤器就授权访问。过滤器的容量与误判率配置影响内存，实际产品扩容行为需按版本核对。[Redis Bloom filter 文档](https://redis.io/docs/latest/develop/data-types/probabilistic/bloom-filter/)
 
-```text
-hash + time
-```
+若数据大到内存放不下，又需要精确去重，可以按稳定哈希把数据分桶，使相同对象进入同一桶，再在桶内排序或去重。哈希碰撞不能直接当作对象相同，仍要比较完整身份；桶本身也可能过大，需要继续分批或外部排序。
 
-的二级拆分。
+## 7. 大文件上传：传输成功与业务可用分开
 
----
+大文件分片上传后，服务需要知道上传身份、各分片及其完整性，允许重试失败部分而不是重传全部。完成上传要核对分片集合、顺序和对象校验，再发布可用对象。
 
-# 4. Index 不能无限加
+以 S3 Multipart Upload 为具体参考，上传分片、完成合并与中止上传是不同动作；未完成分片需要按规则清理，且不能把 ETag 一概当成完整对象的 MD5。[S3 分片上传](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpuoverview.html)
 
-10TB/day 如果每个字段都建索引：
+对象已上传也不等于已完成转码、解析、扫描或索引。服务保存对象元数据，建立后续处理任务，再由各阶段确认业务可用。用户重复点击“完成”，应识别同一上传与处理意图，不重复启动昂贵任务。
 
-```text
-write amplification
-storage explosion
-compaction cost
-```
+清理还要区分仍在上传的对象、已完成但未被引用的临时对象，以及按保留规则到期的结果。不能因一次来源访问失败，就把对象当作已删除。
 
-会非常高。
+## 8. 限制批处理对在线系统的干扰
 
-应该从 Query Pattern 选择：
+并发越大不一定越快：数据库连接、磁盘吞吐、网络、外部解析服务都可能成为瓶颈。为批处理设置批大小、并发、速率、失败重试和暂停边界，给在线请求保留必要资源。
 
-```text
-time
-user / device / tenant
-status
-```
+观察扫描与写入字节率、源库查询负载、检查点滞后、每批重试、错误记录、临时空间和最终校验差异。停机恢复、部分批次失败、乱序完成和删除重放都应进入测试条件。
 
-真正必要的索引。
+## 本章小结
 
-冷数据甚至可以接受更高 Query Latency。
+大规模处理先计算保留与峰值，再按查询模式组织数据。流式分批限制资源，稳定身份与版本保护重复和乱序，检查点只能推进已确认的连续工作。概率过滤、精确去重和上传完成各有不同保证，最终仍要验证数据与业务可用性。
 
----
+## 🎯 面试怎么答
 
-# 5. Batch Migration 为什么不能 OFFSET 翻到天荒地老
+**问：大规模数据迁移怎样做到可恢复且不压垮数据库？**
 
-大表：
+> 我先确定源快照或增量边界，按稳定键分批、流式转换，并限制连接和并发。目标按记录身份及版本防重，确认写入后再推进连续检查点，删除也参与版本处理。切换前追平增量并核对关键数据；压测与失败注入检查在线负载、断点恢复和漏数，而不是只看总行数。
 
-```text
-OFFSET 10000000 LIMIT 1000
-```
+## ⚠️ 容易混淆的地方
 
-会越来越慢。
+- 10 TB/天是数据增长量，不是峰值网络带宽；副本、索引、备份与重建空间要分开计算。
+- 最大已见 ID 不等于连续已完成位置，分页技巧不能代替快照与增量协议。
+- 布隆命中不是准确成员证明，上传完成也不是解析或索引完成。
 
-更常用：
+## 本章自测
 
-```text
-WHERE id > last_id
-ORDER BY id
-LIMIT batch
-```
+### 1. 每天 10 TB，保留 30 天，压缩比为 0.5、三副本。按本章十进制单位，数据主体需要多少？能否把刚好相同容量的磁盘视为充分？
 
-即 Keyset / Seek 思路。
+<details><summary>提示</summary>
 
-还要记录：
+只计算题目给出的主体，再列被省略的实际成本。
 
-```text
-checkpoint / last_id
-```
-
-支持 Resume。
-
----
-
-# 6. Batch Size 是 Trade-off
-
-Batch 太小：
-
-```text
-round trip 多
-commit 多
-throughput 低
-```
-
-Batch 太大：
-
-```text
-memory 高
-transaction 长
-lock / log 压力大
-retry 粒度大
-```
-
-所以 Batch Size 必须压测。
-
----
-
-# 7. 数据迁移必须考虑 Source 在继续写
-
-Snapshot 迁移期间：
-
-```text
-old DB still receiving writes
-```
-
-所以常见：
-
-```text
-Snapshot Copy
-→ CDC / Delta Catch-up
-→ Validate
-→ Cutover
-```
-
-否则复制完时数据已经过期。
-
----
-
-# 8. Validation：迁完不代表正确
-
-至少：
-
-```text
-row count
-checksum / sample hash
-business aggregate
-missing / extra keys
-referential check
-```
-
-对于 TB 级数据不能逐条人工比较，需要分区对账。
-
----
-
-# 9. Massive Set / Whitelist 的核心是 Memory Model
-
-例如 10 亿 IP / ID：
-
-先估：
-
-```text
-exact set memory
-```
-
-再判断：
-
-```text
-必须精确 membership？
-允许 false positive？
-需要 enumerate？
-```
-
-如果允许 False Positive：
-
-```text
-Bloom Filter
-```
-
-可以极大节省内存。
-
-但 Bloom Filter：
-
-```text
-false positive possible
-false negative normally no
-```
-
-不能拿来直接代替所有精确授权数据。
-
----
-
-# 10. Dedup：Exact、Approximate、Time-window
-
-去重也要问语义：
-
-```text
-全历史绝对去重？
-24h 内去重？
-近似重复？
-内容相似？
-```
-
-不同需求对应：
-
-```text
-unique key
-set / hash
-Bloom
-content hash
-similarity
-```
-
-不要一看到“去重”就回答 Bloom Filter。
-
----
-
-# 11. Large-file Upload：Data Plane 不应该绕 API Server
-
-大文件如果：
-
-```text
-Client → API Server → Object Storage
-```
-
-API Server 会承担巨大 Bandwidth。
-
-更常见：
-
-```text
-Client
-→ request upload session
-→ signed URL / multipart upload
-→ Object Storage direct upload
-→ finalize metadata
-```
-
-API 负责 Control Plane，不一定搬所有字节。
-
----
-
-# 12. Multipart / Resume
-
-大文件拆：
-
-```text
-part 1
-part 2
-...
-```
-
-每个 Part 有：
-
-```text
-part_number
-checksum
-status
-```
-
-失败只重传部分。
-
-完成后：
-
-```text
-Complete Multipart
-→ durable object
-→ enqueue processing
-```
-
----
-
-# 13. 长视频 / PDF 处理状态机
-
-```text
-UPLOADED
-→ VALIDATED
-→ PARSING / TRANSCODING
-→ EXTRACTING
-→ INDEXING
-→ COMPLETED
-```
-
-每个 Stage：
-
-```text
-bounded concurrency
-checkpoint
-retry policy
-progress
-```
-
-用户查询 Job，而不是保持 HTTP 连接几小时。
-
----
-
-# 14. Resource-constrained Compute
-
-如果 SGX EPC / GPU Memory 等资源有限：
-
-```text
-Task admission
-→ scheduler
-→ resource reservation
-→ execution
-→ release
-```
-
-多租户要防：
-
-```text
-one tenant exhausts scarce memory
-```
-
-所以需要：
-
-```text
-quota
-fair scheduling
-isolation
-backpressure
-```
-
-`SD-015` 虽然是单点真人信号，但它很好地验证了“容量估算 + 多租户隔离 + 调度”这条通用能力。
-
----
-
-# 15. Failure Walkthrough
-
-## Migration Worker 崩溃
-
-→ 从 Checkpoint Resume，不从头重跑。
-
-## Batch 重试
-
-→ Upsert / Idempotent Transform，避免重复写。
-
-## Upload 某 Part 丢失
-
-→ 只重传该 Part。
-
-## Processing 失败
-
-→ durable status + retry / failed state。
-
-## Source 继续更新
-
-→ Delta Catch-up / CDC。
-
----
-
-# 16. 🎯 面试怎么答
-
-> 大规模数据问题我先把 Dataset 拆成 Partition / Chunk 和 Durable Job，不会一次性载入或一个大事务处理。Migration 用 Keyset Batch + Checkpoint，并考虑 Snapshot 期间的 Delta Catch-up；Storage 根据 Hot/Warm/Cold 和真实 Query Pattern 分层；大文件让 Object Storage 承担 Data Plane，用 Multipart + Resume，再把后处理异步化。所有流程都必须有限速、幂等、进度、对账和失败恢复。
-
----
-
-# 17. 本章自测
-
-<details><summary>1. 为什么 Migration 只做 Snapshot Copy 可能漏数据？</summary>
-因为复制期间 Source 仍可能有新写入，需要 CDC / Delta Catch-up 或停写窗口才能收敛。
 </details>
 
-<details><summary>2. 为什么大文件最好直传 Object Storage？</summary>
-避免应用服务器成为高带宽 Data Plane，降低内存、网络和连接压力。
+<details><summary>参考答案与解释</summary>
+
+主体为 450 TB。还需要索引、日志、备份、临时与新旧重建空间、增长余量，因此不能把恰好 450 TB 的总磁盘视为充分。
+
 </details>
 
-<details><summary>3. Bloom Filter 为什么不适合直接做精确权限白名单的唯一真相？</summary>
-因为它允许 False Positive，可能把不在集合中的元素判断为存在，权限场景可能造成越权风险。
+### 2. 并行批次 A 为 101—200、B 为 201—300。B 已提交，A 失败，检查点原为 100。能把恢复位置直接写成 300 吗？如何保留 B 的成果？
+
+<details><summary>提示</summary>
+
+连续完成进度和独立批次完成记录可以分开保存。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+不能跳过 A。记录 B 已完成，但连续进度仍为 100；恢复先处理 A，目标写入保持幂等，随后才把连续边界推进到 300。
+
+</details>
+
+---
+
+[← 上一章](14-RealtimeReadHeavySystems.md) · [模块入口](../README.md) · [下一章 →](16-LLMGateway与MultiTenantAIPlatform.md)

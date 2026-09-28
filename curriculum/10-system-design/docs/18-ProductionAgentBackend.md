@@ -1,532 +1,130 @@
-# 18｜Production Agent Backend 与 Long-running Agent
+# 18｜生产级 Agent 后端：让一次长任务跨越断线、重启与批准
 
-这是 System Design 中最重要的 AI-native 场景之一，对应：
+<a id="18production-agent-backend-与-long-running-agent"></a>
 
-```text
-SD-021 Production Agent Backend
-SD-022 Long-running Agent Runtime
-```
+[← 上一章](17-EnterpriseRAGSystemDesign.md) · [模块入口](../README.md) · [下一章 →](19-VerticalAIAgentPatterns.md)
 
-真人面经信号也最强：Production Agent Backend 13 个独立来源，Long-running Agent 10 个。
+用户让助手整理资料、生成报告，并在自己确认后发送。任务可能持续半小时，中途关闭页面，服务也可能部署重启。最后报告生成了，但邮件是否已经发送，本地记录却不确定。
 
-但本章不重复 Agent Harness 单点原理，而是回答：
+Agent（智能体）的模型循环已经在前置模块讲过。这里的问题是：整套后端怎样保存责任、分配资源，并在中断后根据真实事实继续，而不是从聊天文本猜下一步。
 
-> **怎样把 Agent Loop、State、Tool、Checkpoint、Streaming、Auth、Worker、Queue、Observability 和 Scale 组合成一个真正可运营的后端。**
+## 1. 先把三种生命周期分开
 
----
+浏览器连接可能只持续几分钟，任务 Run 可能持续半小时，用户会话和资料可能保留更久。把任务唯一状态放在 HTTP 处理函数里，就把这些不同寿命绑在了同一个进程和连接上。
 
-## 1. 先定义 Run 是什么
+**Run**在本例中是一项有明确目标、输入版本、预算与终止条件的任务实例；**Step**是其中一次可观察的执行步骤；一次模型调用或工具尝试不等于整个 Run。
 
-Production Agent 最核心的业务实体不是“Chat Message”，而通常是：
+API 负责创建、查询、请求取消和交付事件；任务服务保存状态；调度器分配执行权；工作者负责受控推进；工具与模型网关分别执行能力和模型调用。它们是职责边界，不要求第一天拆成多个微服务。
 
-```text
-AgentRun
-```
+## 2. 数据层保存什么，恢复时就能相信什么
 
-它有：
+| 记录 | 用途 | 不能用什么代替 |
+|---|---|---|
+| Run 与输入版本 | 确定目标、状态和适用资料 | 只保存最后一段聊天摘要 |
+| 检查点与产物引用 | 找到可继续的位置和已完成结果 | 进程中的临时对象路径 |
+| 工具操作账本 | 识别副作用、尝试和外部结果 | 模型说“我已经发送了” |
+| 批准与当前权限 | 决定哪项具体动作可以执行 | 对旧计划的一次笼统同意 |
+| 预算与重试状态 | 限制继续执行的成本 | 重启后重新给完整额度 |
+| 交付事件与游标 | 支持页面恢复观察 | 根据重连重新执行工具 |
 
-```text
-run_id
-tenant_id
-user_id
-agent_id
-status
-input
-goal
-current_step
-checkpoint
-budget
-created_at
-updated_at
-```
+上下文是给模型看的信息，不等于全部执行事实。可学习记忆是跨任务帮助判断的信息，也不应随意覆盖权威业务状态；证据需要保留来源和适用范围。Agent 模块负责各类记忆和上下文机制，本章决定它们怎样接入后端恢复与权限边界。
 
-Run 是跨多轮 Model / Tool 的 Durable Boundary。
+## 3. 正常路径上的持久点在哪里
 
----
+用户创建 Run R，输入为文档 d3，预算为 B。系统先保存 R 与派发依据，再由工作者领取。每一步在实际需要时组装最小上下文，调用模型或工具，并保存可恢复结果。
 
-# 2. 一张 Production Agent 总图
+报告 r7 生成并校验后，Run 进入 WAITING_APPROVAL，不继续占着模型执行槽位。用户批准“把 r7 发给 A”，系统记录批准身份、内容版本、收件人和有效条件，再恢复执行。
+
+发送前创建稳定操作 K，记录将要调用的外部能力与参数；执行后保存可靠回执。只有实际结果与任务完成条件都成立，Run 才能被标记完成。模型产生一个看似完整的最终回答，不是外部发送成功的证据。
+
+## 4. 在最危险的窗口重启一次
 
 ```text
-Client
-  ↓
-API / Auth / Admission
-  ↓
-Run Service
-  ↓
-Scheduler / Queue
-  ↓
-Agent Worker / Runtime
-  ├─ Model Gateway
-  ├─ Tool Gateway
-  ├─ RAG / Memory
-  └─ Sandbox
-  ↓
-Durable State / Checkpoint / Artifact
-  ↓
-Trace / Eval / Usage
+K 已登记 → 外部系统接受发送 → 本地尚未保存回执 → 进程退出
 ```
 
-Streaming 通常从 Runtime Event 转发给 Client，但 Durable State 不能只存在连接内。
+恢复者先取得有效执行权，再读取 K。它看到的是“请求已发出，结果未知”，不是“还没发送”。根据供应商提供的稳定幂等键、可靠查询或对账方式，确认结果后补齐本地状态。
 
----
+没有核对能力时，保留未知并要求人工介入或采用明确业务策略，不能自动承诺既不重发也不漏发。检查点即使每步保存，也无法单独消除外部系统与本地存储之间的故障窗口。
 
-# 3. 为什么不能把 Run 绑死在 HTTP Request
+恢复还要检查输入、工作空间、工具契约、批准、当前权限和预算是否仍适用。仅重新加载消息列表再调用模型，缺少这些裁定依据。[Agent：检查点与恢复](../../09-agent/docs/13-CheckpointResumeAndRecovery.md)
 
-Agent 可能执行：
+## 5. 工作者接管与执行环境重建
 
-```text
-10 秒
-10 分钟
-10 小时
-```
+任务通过租约与代际分配执行权，状态提交拒绝旧代际。执行代码的沙箱或工具环境可以重建，但必要产物必须先保存到可恢复的位置，不能只依赖已经销毁的临时目录。
 
-如果生命周期完全等于：
+新工作者不应继承旧进程持有的全部秘密或无限权限，而应按当前任务需求重新获得最小授权。外部调用仍使用稳定业务操作身份，不能因为沙箱换了一个编号就重做业务效果。
 
-```text
-HTTP connection
-```
+相同任务的两个工作者都活着时，本地代际只能保护实际检查它的资源；外部系统不参与 fencing，仍需要自己的幂等或核对协议。执行隔离、状态排他和外部防重分别验证。
 
-会面临：
+## 6. 长任务预算如何分配
 
-- Client disconnect；
-- Proxy timeout；
-- deploy/restart；
-- worker crash；
-- network change。
+除了总时长，还要限制模型 Token、工具调用次数、外部费用、并发子任务与失败重试。预算在继续工作之前检查，并保存到任务状态；暂停和重启不能把剩余额度重置为初始值。
 
-所以长任务通常是：
+停止条件要同时考虑成功、不可恢复失败、取消、权限失效、等待外部输入以及预算耗尽。等待批准是暂停，不应伪装成模型正在持续工作；若需要继续，先明确批准和资源条件。
 
-```text
-POST /runs
-→ create durable run
-→ return run_id / stream endpoint
-```
+多 Agent 并行会增加合并与冲突责任。只有子任务可相对独立、收益超过协调成本时才拆分，并定义各子任务可访问什么、交付什么以及谁验证最终结果。不能因为目标较长就默认需要多个 Agent。
 
-Run 可以独立于连接继续或被明确 Cancel。
+## 7. 页面断线与用户取消怎样反馈
 
----
+页面重连读取 Run 的当前快照，再按可用游标补事件；不能把重放历史 Token 当作重新调用工具。事件超过保留窗口时重新同步，当前访问权限仍需检查。
 
-# 4. Run State Machine
+取消先阻止新步骤，传播给可取消子任务，然后核对已经发生的外部效果。对用户说明已停止范围、仍在核对的动作和不可撤回结果。一个笼统的 CANCELLED 状态不足以解释“邮件可能已发送”。
 
-```text
-CREATED
-→ QUEUED
-→ RUNNING
-→ WAITING_APPROVAL
-→ RUNNING
-→ SUCCEEDED
-```
+## 8. 版本演进与验证从真实失败链出发
 
-失败：
+发布新工作者时，旧 Run 的检查点和工具结果格式可能仍在使用。先保持读取兼容或提供明确迁移，再逐步切换；无法兼容的任务应进入受控处理，不能静默用新语义解释旧字段。
 
-```text
-RETRYABLE
-FAILED
-CANCEL_REQUESTED
-CANCELLED
-```
+最小验收包含：纯计算中断后重做、报告提交后通知丢失、外部成功后本地崩溃、批准后参数改变、恢复前撤权、旧工作者迟到写入、事件重连和预算耗尽。分别检查权威状态、真实副作用、用户可见结果与费用。
 
-长任务甚至可能：
+这些机制可以先在单体后端内建立。只有独立扩缩容、隔离或团队交付需求出现时再拆服务；生产能力来自可说明且被验证的执行边界，不来自架构图里的框数。
 
-```text
-PAUSED
-→ RESUMED
-```
+## 本章小结
 
-状态必须 Durably Persist。
+生产 Agent 后端把连接、Run 与执行环境解耦，并保存恢复所需的状态、操作、批准和预算。恢复先核对外部事实和当前资格，再继续模型循环；接管、沙箱、事件交付与版本兼容各有责任，最终由真实结果而非模型声明裁定完成。
 
----
+## 🎯 面试怎么答
 
-# 5. Run / Turn / Step / ToolCall
+**问：长时间运行的 Agent 怎样支持重启恢复？**
 
-建议把执行层级拆开：
+> 我把 Run 从 HTTP 连接中独立出来，保存输入版本、检查点、产物、工具操作账本、批准和剩余预算。恢复先取得执行权，拒绝旧代际，核对未知副作用与当前权限，再从安全位置继续。页面只恢复交付，不重做工具；部署要兼容旧任务状态，并用外部成功后本地崩溃等窗口实际验证。
 
-```text
-Run
-└─ Turn / Iteration
-   └─ Step
-      ├─ Model Call
-      └─ Tool Call
-```
+## ⚠️ 容易混淆的地方
 
-这样 Trace 才能回答：
+- 聊天历史和检查点不能单独证明外部效果；恢复后第一步也不应直接调用模型。
+- 批准绑定具体动作与参数，不是对后续所有计划的永久授权。
+- 沙箱重建、Run 接管和外部操作防重解决不同层次的问题。
 
-```text
-第几轮开始偏？
-哪个 Tool 失败？
-Context 在哪一轮爆？
-哪个 Step 产生副作用？
-```
+## 本章自测
 
----
+### 1. 用户批准发送 r7 给 A，任务暂停期间模型把计划改成发送 r8 给 B。恢复时批准记录仍未过期。可以沿用吗？请说明检查哪些绑定。
 
-# 6. Event Model 与 Streaming
+<details><summary>提示</summary>
 
-Runtime 产生：
+有效期只是批准有效的一个条件。
 
-```text
-run_started
-step_started
-model_delta
-tool_call_started
-tool_call_result
-approval_requested
-checkpoint_saved
-run_completed
-```
-
-API 层可以转成：
-
-```text
-SSE / WebSocket
-```
-
-但要区分：
-
-```text
-Transient UI Event
-vs
-Durable Execution Event
-```
-
-不是所有 Token Delta 都需要永久存储，但关键 State Transition / Tool Side Effect 应可审计。
-
----
-
-# 7. Checkpoint 是什么
-
-Checkpoint 不是简单：
-
-```text
-messages.json
-```
-
-它至少要恢复：
-
-```text
-Goal / Constraint
-Current Plan / Step
-Durable State
-Relevant Context / Summary
-Tool Side-effect Record
-Budget
-Permission / Approval State
-Version
-```
-
-否则 Resume 后可能“恢复聊天”，却恢复不了任务正确性。
-
----
-
-# 8. 最危险的 Failure：Tool 成功，Checkpoint 失败
-
-时间线：
-
-```text
-1. Agent calls create_ticket
-2. External system created ticket #123
-3. Runtime crashes before checkpoint
-4. Resume from old checkpoint
-5. Agent calls create_ticket again
-```
-
-结果：
-
-```text
-duplicate ticket
-```
-
-所以 Long-running Agent 必须设计：
-
-```text
-operation_id
-idempotency
-external result lookup
-step state
-compensation
-```
-
-这正是 `SD-022` 的核心 Production 深度。
-
----
-
-# 9. Worker Lease
-
-Scheduler 分配：
-
-```text
-run_id → worker-A
-lease_until=t
-```
-
-Worker Heartbeat。
-
-如果崩溃：
-
-```text
-lease expires
-→ run can be reclaimed
-```
-
-但旧 Worker 可能还活着，所以 State Transition 需要 Version / Fencing，避免两个 Worker 同时推进同一个 Run。
-
----
-
-# 10. Context 与 Artifact 分离
-
-长任务会产生：
-
-```text
-large file
-log
-browser result
-code diff
-image
-```
-
-不应该全部塞进 Model Context。
-
-常见：
-
-```text
-Artifact Store
-→ persist large result
-→ Context stores summary + reference
-→ load on demand
-```
-
-这样控制 Token 和恢复成本。
-
----
-
-# 11. Model Gateway / Tool Gateway
-
-Agent Worker 不应该每种 Provider / Tool 都自己实现可靠性。
-
-可以抽：
-
-```text
-Model Gateway
-→ routing / retry / cost / stream
-
-Tool Gateway / Registry
-→ schema / auth / execute / audit
-```
-
-Agent Harness 负责 Loop 和选择，Gateway 负责稳定能力边界。
-
----
-
-# 12. Permission / Approval
-
-高风险 Tool：
-
-```text
-refund
-send email
-execute shell
-delete resource
-```
-
-Agent Runtime 遇到：
-
-```text
-requires approval
-```
-
-Run 进入：
-
-```text
-WAITING_APPROVAL
-```
-
-用户确认后继续。
-
-批准信息必须持久化，Resume 后不能丢。
-
----
-
-# 13. Multi-tenant Resource Governance
-
-Per Tenant：
-
-```text
-max concurrent runs
-max model tokens
-max steps
-max tool calls
-cost budget
-priority
-```
-
-否则一个无限循环 Agent 可以耗尽全平台 Worker 和 Provider Quota。
-
----
-
-# 14. Backpressure
-
-如果：
-
-```text
-run arrival
->
-worker capacity
-```
-
-Queue Age 增长。
-
-系统应该：
-
-```text
-admission limit
-queue quota
-priority
-scale workers
-reject / schedule later
-```
-
-而不是无限接收。
-
----
-
-# 15. Cancellation
-
-用户 Cancel：
-
-```text
-Run → CANCEL_REQUESTED
-```
-
-Runtime：
-
-- 停止新 Model / Tool Step；
-- 传播 Cancel 到可取消子调用；
-- 等待/处理已提交副作用；
-- 保存最终 Checkpoint；
-- 标记 CANCELLED。
-
-如果外部 Tool 已不可逆完成，Cancellation 不能假装回滚。
-
----
-
-# 16. Observability
-
-一次 Run 至少能查：
-
-```text
-run timeline
-step duration
-model/token/cost
-context size
-tool input/result/error
-retry
-approval
-checkpoint
-state transition
-worker / lease
-```
-
-以及 Outcome：
-
-```text
-success?
-verified?
-human accepted?
-```
-
----
-
-# 17. Evaluation
-
-Production Agent 不能只看：
-
-```text
-final answer looks good
-```
-
-应评估：
-
-```text
-Task Success
-Tool Selection
-Tool Args
-Step Count
-Loop Rate
-Recovery Success
-Cost
-Latency
-Side-effect Correctness
-Human Escalation
-```
-
-长任务还要测试：
-
-```text
-kill worker mid-step
-resume
-cancel
-provider outage
-duplicate event
-```
-
----
-
-# 18. Deployment / Upgrade
-
-如果 Worker 正在跑 V1 Runtime，新版本 V2 发布：
-
-要问：
-
-```text
-old checkpoint can V2 read?
-run pinned to version?
-canary new runs only?
-how to drain workers?
-```
-
-Long-running 系统的 Deploy 不是简单滚动重启。
-
----
-
-# 19. 真人面经如何改变深度
-
-这两个 Canonical 都是全库 System Design 最强信号之一。
-
-因此本章必须深入：
-
-```text
-Checkpoint / Resume
-Cancellation
-Idempotency
-External Side Effect
-State Migration
-Worker Recovery
-Streaming
-Auth
-Observability
-Scale
-```
-
-而不是只画“LLM → Tool → Memory”。
-
----
-
-# 20. 🎯 面试怎么答
-
-> Production Agent 我会把一次执行建模成 Durable AgentRun，而不是绑定单个 HTTP 请求。入口负责 Auth/Admission，Run Service 持久化状态，Scheduler/Queue 分配 Worker，Runtime 调 Model/Tool/RAG，并把关键 Step、Side Effect、Checkpoint 和 Approval 写入 Durable State。Long-running Reliability 的重点是 Tool 成功但 Checkpoint 失败这类边界，所以所有外部副作用都要有 operation id / idempotency / result lookup。Worker 用 lease+version 支持 Reclaim，Context 与大 Artifact 分离，最后用 Trace/Eval 验证 Task Success、Recovery、Cost 和 Side-effect Correctness。
-
----
-
-# 21. 本章自测
-
-<details><summary>1. 为什么 AgentRun 不应该依赖 HTTP Connection 存活？</summary>
-长任务可能跨分钟/小时和部署重启，连接只是交互通道，执行状态必须独立持久化。
 </details>
 
-<details><summary>2. Long-running Agent 最危险的重复副作用窗口是什么？</summary>
-Tool 已成功产生外部副作用，但 Runtime 在保存 Checkpoint 前崩溃，Resume 后可能再次调用 Tool。
+<details><summary>参考答案与解释</summary>
+
+不能直接沿用。核对报告版本、收件人、动作参数、用户身份与当前政策；新动作超出原批准，应重新确认，不能只比较“发邮件”这个工具名。
+
 </details>
 
-<details><summary>3. 为什么 Worker Lease 还需要 Version/Fencing？</summary>
-Lease 过期不代表旧 Worker 一定停止；新旧 Worker 可能并发推进同一 Run，需要版本化状态写保护。
+### 2. Run 重启前剩余预算 12，初始预算 100。外部操作 K 结果未知、预留 8。恢复时能否从 100 重新开始，再把 K 当失败重做？
+
+<details><summary>提示</summary>
+
+预算与操作事实都必须跨重启延续。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+不能。恢复保留剩余额度与未知预留，先核对 K，再按当前授权和预算决定继续。重启不产生新的资源授权，也不证明旧动作失败。
+
+</details>
+
+---
+
+[← 上一章](17-EnterpriseRAGSystemDesign.md) · [模块入口](../README.md) · [下一章 →](19-VerticalAIAgentPatterns.md)

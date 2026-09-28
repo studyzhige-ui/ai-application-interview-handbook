@@ -1,453 +1,133 @@
-# 19｜Vertical AI Agent Patterns：Analysis、Customer Service、Multimodal、Game、Content
+# 19｜垂直 AI 系统：从领域规则推导证据、工具与验收
 
-最后一章不是给五种业务各背一套架构，而是训练：
+<a id="19vertical-ai-agent-patternsanalysiscustomer-servicemultimodalgamecontent"></a>
 
-> **怎样把同一套 Agent / RAG / Tool / State / Eval 原语映射到不同垂直业务，并识别每个业务真正的高风险约束。**
+[← 上一章](18-ProductionAgentBackend.md) · [模块入口](../README.md) · [综合回顾 →](../review/README.md)
 
-对应真人 Scenario：
+同样是“读取资料、调用工具、生成回答”，财务分析、客服退款、PDF 转网页和视频制作的正确结果完全不同。通用 Agent 框架能提供执行机制，却不能替业务定义什么叫完成。
 
-```text
-SD-018 Financial / Data Analysis Agent
-SD-019 AI Customer Service Agent
-SD-020 Multimodal Document / PDF → HTML Agent
-SD-023 Game / Interactive Agent
-SD-024 Content Creation / Video Editing Agent
-```
+本章用一份经营分析报告建立完整过程，再把同样的问题迁移到其他领域。重点不是记住五套架构图，而是识别领域事实、允许动作和验收依据发生了什么变化。
 
----
+## 1. 先把自然语言目标改成可核对任务
 
-## 1. 垂直 Agent 的共同框架
+用户问：“为什么本月收入下降？”直接让模型生成一段解释，很容易得到听起来合理却无法验证的原因。
 
-任何业务都先问：
+先确认本月与上月的时间范围、时区、收入定义、退款处理、币种和比较对象。这里采用教学定义：净收入等于已确认交易收入减退款，全部使用相同货币单位、同一统计窗口，不包含未确认订单。
 
-```text
-Goal 是什么？
-Authoritative Data 在哪？
-哪些能力是 Tool？
-哪些知识是 RAG？
-哪些状态必须持久化？
-哪些动作有副作用？
-什么时候必须 Human Handoff？
-怎样验证结果？
-```
+任务需要交付三个不同层次：算出变化，找出对变化贡献较大的分组，判断哪些原因有证据支持。**分组贡献不是因果证明**，不能因为某渠道收入下降就断言该渠道的营销策略导致了整体下降。
 
-共同骨架：
+## 2. 用确定数据完成一次分析
 
-```text
-User Goal
-→ Intent / Plan
-→ Retrieve / Observe
-→ Tool / Action
-→ Verify
-→ Update State
-→ Stop / Handoff
-```
+以下是虚构数据：
 
-真正差异来自 Domain Invariant。
+| 渠道 | 上月净收入 | 本月净收入 | 变化 |
+|---|---:|---:|---:|
+| A | 800 | 600 | -200 |
+| B | 200 | 300 | +100 |
+| 合计 | 1,000 | 900 | -100 |
 
----
+总体变化率为 `(900 - 1000) / 1000 = -10%`。A 下降 200，B 增长 100 抵消了一部分，合计下降 100。这支持“净收入下降主要由 A 的负向变化贡献”，不支持“某活动一定造成了下降”。
 
-# 2. Financial / Data Analysis Agent
+程序可以可靠地按给定公式计算，但如果选错时间范围或把退款漏掉，算得再精确也不是正确业务答案。确定性计算解决算术一致性，不替代指标定义、数据权限与因果证据。
 
-问题：
+## 3. 把检索、计算与解释分别交给合适的环节
 
-```text
-用户问：为什么 Q3 毛利率下降？
-```
+先检索指标定义和业务背景，确认适用版本；再通过受控查询取得授权数据；使用确定性代码或查询完成汇总与比较；最后让模型组织解释，并把每个关键结论连接到数据和来源。
 
-Agent 可能需要：
+SQL 或其他查询工具要限制可访问表、字段、行范围、扫描量和输出量。模型生成了语法正确的查询，不代表它获得了读取所有员工、供应商或客户数据的权限。
 
-```text
-理解指标
-→ 找财报 / SQL / Spreadsheet
-→ 计算
-→ 交叉验证
-→ 给结论 + Citation
-```
+工具返回应包含可校验的字段、单位、统计范围和必要来源，而不是只给模型一张看不出含义的数字表。数据不完整或定义冲突时，先说明缺口、请求澄清或给出带条件的结果，不能靠流畅文字把缺口填满。
 
-它不是纯 RAG。
+## 4. 结果验收逐项对应原任务
 
----
+报告验收可以检查合计是否相符、变化率分母是否正确、单位是否一致、引用能否追溯、结论是否超出证据，以及敏感数据是否被不必要地披露。
 
-# 3. Analysis Agent 的 Source of Truth
+再改变条件检验可迁移性：上月收入为 0 时普通环比除法无定义，需要另行报告绝对变化或业务认可的指标；退款跨月计入会改变解释；某渠道数据缺失时不能把空值默认为零。
 
-要区分：
+模型自评可以提供辅助线索，但不是最终正确性的唯一裁定。能用代码、规则和来源核验的条件应直接核验；需要专业判断的部分标明责任与不确定性。
 
-```text
-Narrative Knowledge
-→ report / policy / note
+## 5. 客服系统：回答规则与执行业务动作分开
 
-Numeric Fact
-→ database / spreadsheet / calculation
-```
+用户询问能否退款时，RAG 提供适用政策，订单工具提供当前订单事实，业务规则决定资格。模型负责理解和沟通，但高风险退款动作还要检查用户身份、订单归属、金额、批准与稳定操作身份。
 
-如果问题是：
+会话记忆帮助保持上下文，却不能用过去的一次说法覆盖最新订单状态。问题超出政策、事实冲突、用户要求人工或风险过高时，转人工需要同时交付已有事实、待解决问题与已执行动作，不能只发送一个“转人工”标签。
 
-> “2026 Q3 revenue 是多少？”
+回答已给出不等于退款已完成；支付结果未知时沿[一致性章](08-Consistency与Idempotency.md)核对，而不是让模型安慰用户“已经处理好了”。
 
-优先查结构化 Source，而不是让 LLM 从旧文档记忆回答。
+## 6. 多模态 PDF 到 HTML：输出漂亮不等于忠实
 
----
+PDF 解析需要恢复阅读顺序、表格关系、图片说明和来源位置；转成 HTML 后，还要保留内容与结构的对应，而不是只把视觉外观近似拼出来。
 
-# 4. Analysis Agent 的 Verification
+可将正文、表格和图片作为带来源身份的对象处理，生成页面后核对文字遗漏、表格行列、图片引用、标题层级与阅读顺序。扫描件 OCR 的错误率、复杂表格和双栏版面需要代表性样本验证，不能从几页成功样例推断全量准确。
 
-每个结论最好能追：
+输出 HTML 属于不可信内容处理路径，需要按使用环境限制脚本、危险链接和资源访问。解析原理归 [RAG 文档处理](../../08-rag/docs/03-DocumentProcessing.md)，系统设计负责输入、产物、检查、失败重试和安全交付的完整责任。
 
-```text
-Claim
-→ Formula / Query
-→ Source Rows / Evidence
-→ Version / Timestamp
-```
+## 7. 游戏与内容制作：状态一致和产物一致分别是什么
 
-对于计算：
+游戏 Agent 应读取允许观察的环境状态，在动作空间和资源限制内选择行动，再根据实际环境反馈更新状态。模型说“已获得道具”，不能覆盖环境权威记录；评价也不能只看对话是否自然，还要看目标完成、合法动作与失败恢复。
 
-```text
-LLM proposes formula
-→ deterministic code executes
-→ result checked
-```
+内容或视频制作涉及脚本、镜头、角色设定、素材、音轨和最终产物。并行子任务需要共享明确版本的角色与风格约束，再由检查环节发现镜头间不一致、缺失素材或时长冲突。昂贵生成应保存产物身份与检查点，避免一次后期失败就重做所有已合格片段。
 
-不要让模型“心算”关键财务结果。
+多 Agent 只是可选的分工方式。任务可以独立且交付接口清楚时，并行才可能有收益；若每个镜头都依赖全局连续状态，协调成本可能超过并行收益。不能把“拆多个 Agent”当成质量提升的证明。
 
----
+## 8. 用同一组问题比较不同领域
 
-# 5. Customer Service Agent
-
-共同流程：
-
-```text
-User Message
-→ Intent
-→ FAQ / RAG
-→ Order / Account Tool
-→ Response
-→ Handoff if needed
-```
-
-但真正难点是：
-
-```text
-knowledge answer
-vs
-live business fact
-vs
-high-risk action
-```
-
-三者必须分层。
-
----
-
-# 6. Customer Service 的 Tool Boundary
-
-例如：
-
-```text
-“退款规则是什么？”
-→ RAG
-
-“我的订单状态？”
-→ Order Tool
-
-“帮我退款 3000 元”
-→ high-risk Tool + approval / policy
-```
-
-不能让 RAG 文档直接决定实时订单事实，也不能让 LLM 自己凭文本完成退款。
-
----
-
-# 7. Human Handoff
-
-需要明确条件：
-
-```text
-low confidence
-policy conflict
-customer angry / escalation
-high value refund
-identity uncertain
-repeated failure
-```
-
-Handoff 时不要只发最后一句聊天，要带：
-
-```text
-summary
-evidence
-tool results
-action history
-risk flags
-```
-
-让人工不用从头阅读全部历史。
-
----
-
-# 8. Multimodal Document / PDF → HTML Agent
-
-目标可能：
-
-```text
-PDF
-→ text / table / image / layout
-→ structured HTML
-→ verify citations / assets
-```
-
-这里关键不是让一个 Multimodal Model 一次输出整页。
-
-更稳：
-
-```text
-Parse / OCR / Layout
-→ Asset Extraction
-→ Semantic Structure
-→ Generate HTML
-→ Render
-→ Visual / Structural Verify
-```
-
----
-
-# 9. Multimodal 的可追溯性
-
-HTML 中一个表格 / 图片最好能追到：
-
-```text
-source page
-bounding box / element id
-asset file
-extracted text
-```
-
-否则模型改错数字或图像引用时无法定位。
-
-这也是 RAG Lineage 在生成工作流中的延伸。
-
----
-
-# 10. Game / Interactive Agent
-
-Game Agent 的状态通常比普通 Chat 更结构化：
-
-```text
-world state
-player state
-goal
-inventory
-allowed actions
-history
-```
-
-模型不是自由写文本，而是：
-
-```text
-observe state
-→ choose valid action
-→ environment executes
-→ new state
-```
-
-很接近 Agent Runtime + Environment Loop。
-
----
-
-# 11. Game Agent 的 Safety / Validity
-
-Action 必须经过：
-
-```text
-schema validation
-permission / rule check
-environment constraint
-```
-
-模型说：
-
-> “我穿墙到坐标 X。”
-
-不代表 Environment 应执行。
-
-游戏规则才是 Source of Truth。
-
----
-
-# 12. Game Agent Evaluation
-
-不能只看自然语言“像不像人”。
-
-可以看：
-
-```text
-goal completion
-invalid action rate
-resource efficiency
-step count
-stuck / loop rate
-safety violation
-```
-
-如果是 NPC 还可能加：
-
-```text
-persona consistency
-user engagement
-```
-
----
-
-# 13. Content Creation / Video Editing Agent
-
-长内容工作流常：
-
-```text
-Brief
-→ Plan / Storyboard
-→ Asset Search / Generate
-→ Scene / Shot Tasks
-→ Compose
-→ Review
-→ Revise
-→ Export
-```
-
-适合分阶段 State Machine，而不是一个 Prompt 生成全部。
-
----
-
-# 14. SubAgent 怎样拆
-
-可以按职责：
-
-```text
-Planner
-Researcher
-Script Writer
-Asset Agent
-Editor
-Reviewer
-```
-
-但不要为了“多 Agent”而多 Agent。
-
-真正拆分依据：
-
-```text
-Context Isolation
-Tool / Permission Difference
-Parallelism
-Independent Verification
-```
-
-否则只增加通信和状态复杂度。
-
----
-
-# 15. 人物 / 素材一致性
-
-视频生成常遇到：
-
-```text
-character identity drift
-style drift
-asset version drift
-```
-
-需要持久化：
-
-```text
-character spec
-reference assets
-style guide
-scene state
-approved asset version
-```
-
-不能只靠每轮 Prompt 重新描述。
-
----
-
-# 16. Long-running Content Workflow
-
-一个视频任务可能几小时。
-
-因此复用：
-
-```text
-Durable Run
-Checkpoint
-Artifact Store
-Per-step Retry
-Cancellation
-Approval
-Cost Budget
-```
-
-昂贵 Generation Step 还应缓存 / 版本化 Artifact，避免 Resume 后全部重跑。
-
----
-
-# 17. 统一的 Vertical Agent Decision Table
-
-| 业务 | Authoritative State | 高风险动作 | 关键验证 |
+| 设计问题 | 分析报告 | 客服退款 | 文档与内容生产 |
 |---|---|---|---|
-| Analysis | DB / report | financial conclusion | query/formula/citation |
-| Customer Service | order/account system | refund/write action | policy + auth + tool result |
-| Multimodal Doc | original document | publish transformed content | layout/data/asset trace |
-| Game | game environment | state-changing action | action validity + goal |
-| Content | project/asset store | publish/export | artifact consistency + review |
+| 权威事实在哪里 | 指标定义和授权数据 | 政策、订单与支付记录 | 原始来源、素材和产物版本 |
+| 什么动作需要限制 | 查询范围、导出数据 | 退款、改单、通知 | 代码执行、素材使用、发布 |
+| 什么可以直接核验 | 算术、单位、聚合与引用 | 资格、金额、操作结果 | 完整性、结构、格式与一致性 |
+| 未知时怎样继续 | 明示数据缺口或请求澄清 | 核对或转人工 | 重试局部阶段或人工校验 |
+| 规模成本在哪里 | 扫描、查询与模型解释 | 并发会话与工具调用 | OCR、多模态生成、渲染与存储 |
 
----
+新领域不需要先增加一张全新组件清单。先回答这些问题，再从已经学过的状态、容量、权限、恢复和评测机制中选择必要部分，才是系统设计的迁移能力。
 
-# 18. Vertical Agent 最重要的设计原则
+## 本章小结
 
-> **LLM 是决策/生成组件，不是业务事实、权限和环境规则的最终拥有者。**
+垂直系统的差异首先来自领域事实、允许动作和验收标准。分析任务把定义、计算与因果解释分开；客服分清回答和实际动作；文档与内容生产核对来源、结构与产物版本。通用执行机制可以复用，正确性的裁定依据不能照搬。
 
-真实系统仍需要：
+## 🎯 面试怎么答
 
-```text
-Source of Truth
-Validation
-Tool Boundary
-State Machine
-Verification
-Human Handoff
-```
+**问：面对陌生业务，怎样设计 AI Agent 而不是套一个通用架构？**
 
----
+> 我先确认目标、领域定义、权威事实和不可做的动作，再把任务拆成可核对的阶段。确定计算、权限和状态变化由受控机制负责，模型用于理解与组织解释；结果按领域标准验收，未知有澄清或人工路径。只有确有并行收益才引入多 Agent，并重新估算成本、恢复和协调责任。
 
-# 19. 真人面经影响
+## ⚠️ 容易混淆的地方
 
-这些 Scenario 的独立来源不如 Production Agent Backend 高频，但它们证明面试已经从“解释 Agent”走向：
+- 算术正确不等于指标定义正确，分组贡献也不等于因果证明。
+- 模型自评、语法正确的 SQL 和漂亮 HTML 都不是完整业务验收。
+- 多个 Agent 不自动提高质量，权威状态和产物版本不能由自然语言随意覆盖。
 
-```text
-把 Agent 映射到真实业务
-→ 识别 Domain Constraint
-→ 设计 Tool / State / Verification
-```
+## 本章自测
 
-因此教材把它们合成一个迁移能力章节，而不是五篇互相重复的模板。
+### 1. 上月 A=800、B=200，本月 A=600、B=300。请算总变化与变化率，并判断能否据此断言“A 渠道某营销活动导致了收入下降”。
 
----
+<details><summary>提示</summary>
 
-# 20. 🎯 面试怎么答陌生 Vertical Agent
+区分数据支持的分解和需要额外证据的原因。
 
-> 我会先把业务拆成 Goal、Authoritative State、Read/Retrieve、Action Tool、Durable State、High-risk Side Effect 和 Verification。LLM 主要负责理解、规划和生成，但实时事实由业务 Tool/DB 提供，业务规则和权限由确定性系统校验。长任务用 Durable Run/Checkpoint，结果需要 Domain-specific Evaluation；高风险或低置信场景进入 Human Handoff。这样即使业务换成金融、客服、游戏或视频，设计方法仍然可复用。
-
----
-
-# 21. 本章自测
-
-<details><summary>1. 为什么 Analysis Agent 不应该让 LLM 直接算关键财务数字？</summary>
-关键计算应该由确定性代码/查询执行并保留公式和数据来源，LLM 更适合规划和解释。
 </details>
 
-<details><summary>2. 为什么 Customer Service 的退款规则和订单状态不能都只用 RAG？</summary>
-规则文档适合 RAG，但实时订单状态属于业务 Source of Truth，需要实时 Tool/DB；退款还是高风险写操作，需要权限和审批。
+<details><summary>参考答案与解释</summary>
+
+总变化 -100，变化率 -10%；A 贡献 -200、B 抵消 +100。仅凭这些数据不能证明具体营销活动的因果影响，需要活动、流量、价格、退款等相关证据及适当分析。
+
 </details>
 
-<details><summary>3. 多 Agent 什么时候才值得拆？</summary>
-当子任务需要独立 Context、不同 Tool/Permission、可并行执行或独立 Verification 时；否则多 Agent 可能只增加协调成本。
+### 2. 上月某业务净收入为 0、本月为 100，模型给出“环比增长 100%”。应怎样校验和回复？
+
+<details><summary>提示</summary>
+
+普通环比公式的分母为上月值。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+该环比除法分母为 0，不能直接报 100%。可报告从 0 增加到 100、绝对增加 100，并按业务认可的替代口径说明，不自行制造百分比。
+
+</details>
+
+---
+
+[← 上一章](18-ProductionAgentBackend.md) · [模块入口](../README.md) · [综合回顾 →](../review/README.md)

@@ -1,196 +1,280 @@
-# System Design｜Review 与综合自测
+# System Design｜关系重建、综合自测与机制实验
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · [Learning Path](../../../guide/learning-path.md) · [高频面试题 →](../interview/高频面试题.md)
+[← 模块入口](../README.md) · [Handbook](../../../README.md) · [学习路线](../../../guide/learning-path.md) · [面试训练 →](../interview/高频面试题.md)
 
-> **用途：第二遍复习。** Review 不负责重新复制正文，而是要求从空白纸重建主线、机制、Failure / Trade-off 与面试表达。
->
-> **学习路线是可选入口。** 如需整体安排，可参考 [Learning Path](../../../guide/learning-path.md)；本 Review 也可以按个人节奏独立使用。
+本页用于第二遍学习。先不看章末答案，从空白纸画出每张图所表达的关系，再用下面的新条件检验能否推导。图不是固定部署模板；箭头应被解释成具体动作或因果，而不是组件名之间的装饰线。
 
----
-
-> 第一遍按 `docs/01 → 19` 学完整主线；这里不按文件重复，而是把 System Design 压缩成几张必须能从空白纸画出来的图。
-
----
-
-## 图 1｜一题 System Design 的完整思考路径
-
-```mermaid
-flowchart LR
-    A["Requirement"] --> B["SLO / Constraint"]
-    B --> C["Workload / Capacity"]
-    C --> D["API / Data / State"]
-    D --> E["Happy Path"]
-    E --> F["Hot Path / Bottleneck"]
-    F --> G["Consistency / Reliability"]
-    G --> H["Security / Multi-tenancy"]
-    H --> I["Observability / Evaluation"]
-```
-
-如果面试中卡住，回到这条链，不要继续堆组件。
-
----
-
-## 图 2｜State 先分三类
+## 图 1｜设计结论怎样相互依赖
 
 ```mermaid
 flowchart TD
-    A["System State"] --> B["Primary State"]
-    A --> C["Derived State"]
-    A --> D["Ephemeral State"]
-    B --> E["Order / Permission / Task Result"]
-    C --> F["Cache / Index / Ranking View"]
-    D --> G["Session / Lease / Progress"]
+    A["用户动作与完成条件"] --> B["质量目标与不可破坏的规则"]
+    B --> C["工作负载与资源估算"]
+    C --> D["API、数据与状态责任"]
+    D --> E["正常过程与可观察结果"]
+    E --> F["热点、失败与过载"]
+    F --> G["正确性、恢复与权限"]
+    G --> H["指标、实验与安全演进"]
+    H --> B
 ```
 
-你应该能立刻说出每类 State 的 Durability、Consistency 和 Recovery 要求为什么不同。
+例如，模型配额不足不是“再画一个网关”就能解决，它可能要求改变排队和完成时间承诺。最后一条回边表示验证会修正前面的假设。
 
----
-
-## 图 3｜同步与异步边界
+## 图 2｜状态按恢复责任分类
 
 ```mermaid
-flowchart LR
-    A["Client"] --> B["Sync API"]
-    B --> C["Validate / Persist Intent"]
-    C --> D["Queue"]
-    D --> E["Worker"]
-    E --> F["Durable State"]
-    B --> G["202 + task_id"]
-    F --> H["Query / Push Result"]
+flowchart TD
+    A["需要保存的信息"] --> B["权威事实：业务以它作决定"]
+    A --> C["派生视图：由事实重新构建"]
+    A --> D["可丢的临时工作：重算不破坏承诺"]
+    B --> E["订单、有效权限、操作结果、必要任务进度"]
+    C --> F["查询缓存、检索索引、排行视图"]
+    D --> G["请求内暂存、允许重做的纯计算"]
 ```
 
-核心追问：为什么不是整条任务都挂在 HTTP Connection 上？
+Session、Lease 和 Progress 不是天然的临时状态。如果它们承担撤销登录、拒绝旧执行者、跨重启恢复的责任，就必须按相应保证保存或可靠重建。判断依据是丢失后会破坏什么，而不是对象名称。
 
----
-
-## 图 4｜正确性闭环
+## 图 3｜连接结束以后谁继续工作
 
 ```mermaid
-flowchart LR
-    A["Business Invariant"] --> B["State Owner"]
-    B --> C["Atomic Update / Constraint"]
-    C --> D["Idempotency"]
-    D --> E["Retry"]
-    E --> F["Compensation"]
-    F --> G["Reconciliation"]
+flowchart TD
+    A["客户端提交"] --> B["验证身份、权限与参数"]
+    B --> C["同一本地提交保存任务和待发意图"]
+    C --> D["返回可查询任务身份"]
+    C --> E["通知派发，可重复"]
+    E --> F["执行者读取并领取任务"]
+    F --> G["保存可读取结果及状态"]
+    G --> H["查询或推送给仍获授权的用户"]
 ```
 
-System Design 的正确性不只是“用了事务”。
+202 是接口的受理语义，不自动提供持久性。可靠任务是应用另外实现的承诺。通知可以重复，任务查询和执行不能依靠当前连接里的局部变量。
 
----
-
-## 图 5｜过载到级联故障
+## 图 4｜不同错误需要不同保护
 
 ```mermaid
-flowchart LR
-    A["Dependency Slow"] --> B["Queue / Latency Up"]
-    B --> C["Timeout"]
-    C --> D["Retry"]
-    D --> E["More Load"]
+flowchart TD
+    A["不变量与权威状态"] --> B["本地原子更新、唯一约束"]
+    B --> C["重复操作：稳定身份与参数绑定"]
+    B --> D["旧状态写入：版本或执行代际校验"]
+    C --> E["外部结果未知：查询、防重或人工核对"]
+    D --> E
+    E --> F["确定结果后推进；需要时执行补偿"]
+    F --> G["核对事实与业务结果是否一致"]
+```
+
+重试、补偿不是每次失败都必须经过的流水线。重试取决于安全性和剩余预算；补偿是新的业务动作，也可能失败。先确定缺的是执行权、结果依据还是业务纠正。
+
+## 图 5｜故障怎样被请求放大
+
+```mermaid
+flowchart TD
+    A["依赖变慢"] --> B["在途与等待增长"]
+    B --> C["请求超时"]
+    C --> D["无约束重试"]
+    D --> E["依赖收到更多工作"]
     E --> B
-    F["Admission / Load Shedding"] -.-> E
+    F["入口准入、并发与队列上限"] -.-> B
+    G["重试预算、截止时间与隔离"] -.-> D
 ```
 
-你应该能解释为什么 Retry 本身会成为故障放大器。
+停止继续增加工作可以保护已接受任务。快速查询和取消操作也需要自己的可用资源，不能与最昂贵的生成任务争抢全部槽位。
 
----
-
-## 图 6｜AI-native Production Architecture
+## 图 6｜AI 职责怎样组合，而非强制拆服务
 
 ```mermaid
 flowchart TD
-    A["Client"] --> B["Gateway / Auth / Quota"]
-    B --> C["Application / Run Service"]
-    C --> D["Model Gateway"]
-    C --> E["RAG / Vector / Search"]
-    C --> F["Tool Gateway"]
-    C --> G["Queue / Worker"]
-    G --> H["Checkpoint / Artifact / Primary State"]
-    I["Trace / Eval / Cost"] -.-> B
-    I -.-> C
+    A["用户与可信身份"] --> B["入口：受理、查询、取消"]
+    B --> C["应用任务与业务状态"]
+    C --> D["模型能力、配额与费用"]
+    C --> E["检索、证据与当前权限"]
+    C --> F["受控工具与外部操作记录"]
+    C --> G["排队、执行与恢复"]
+    G --> H["检查点、文件版本与结果"]
+    I["指标、追踪、质量评估与审计"] -.-> C
+    I -.-> D
     I -.-> G
 ```
 
----
+框表示责任，可以先在一个进程里实现清楚。需要独立扩容、隔离高风险执行或跨部署恢复时，再拆物理服务。权威业务状态不交给模型自行解释成最终事实。
 
-# 综合自测
+## 综合自测
 
-<details><summary>1. 为什么 System Design 第一件事不是选数据库？</summary>
-因为存储选择依赖数据模型、访问模式、一致性、规模和生命周期。先选产品会把需求硬塞进组件。
+### 1. 相同 QPS，不同模型成本
+
+条件：入口仍为 100 次/s。60 次查询状态，20 次读取报告，20 次提交生成；生成改为两次模型调用，每次输入 2,000 Token、输出 300 Token。假设每次调用平均占一个槽位 8 秒；两次调用顺序执行，稳定负载，无重试。输入、输出每百万 Token 的虚构价格分别为 1 和 4。
+
+任务：给出模型调用率、输入和输出吞吐、平均模型调用在途量、持续一天费用。说明“用户任务在途”和“模型调用在途”为什么不是同一对象。
+
+<details><summary>提示</summary>
+
+把业务提交先展开成调用，再计算每次调用的资源；不要把调用时长与整个任务时长混用。
+
 </details>
 
-<details><summary>2. “强一致”为什么仍然是模糊需求？</summary>
-应该继续定义业务 invariant、read-your-write、允许的 Freshness、哪些写不能重复等具体语义。
+<details><summary>参考答案与解释</summary>
+
+模型 40 次/s；输入 80,000 Token/s，输出 12,000 Token/s；平均调用在途量 40 × 8 = 320；一天费用为 (80,000 + 12,000 × 4) / 1,000,000 × 86,400 = 11,059.2 计价单位。若只有这两段顺序调用，用户任务平均执行时间为 16 秒，20 × 16 也是 320；数值巧合相等不代表对象相同，加入排队、并行或其他步骤后两者会不同。对应第 03、16 章。
+
 </details>
 
-<details><summary>3. 平均 QPS 很低，系统为什么仍可能被打爆？</summary>
-流量可能集中在 HotKey、Hot Tenant 或短时 Burst，平均值掩盖局部峰值。
+### 2. 处理速度提高，积压为什么还没消失
+
+条件：服务正常到达 24 项/s，最多持续完成 30 项/s。一次 50 秒突发到达 42 项/s，突发前无积压；用恒定速率流体模型，不考虑时长波动。
+
+任务：计算新增积压、突发后净消化速率和消化时间；若恢复后到达为 30 项/s，回答“队列不会继续变长”是否等于“已经恢复”。
+
+<details><summary>提示</summary>
+
+处理能力先满足仍然到达的新任务，剩余部分才用于消化历史积压。
+
 </details>
 
-<details><summary>4. Derived State 为什么应该可重建？</summary>
-Cache/Search/Vector Index 等通常为了性能存在，能够从 Source of Truth 重建会显著降低迁移和故障恢复复杂度。
+<details><summary>参考答案与解释</summary>
+
+积压 (42-30) × 50 = 600 项；正常恢复后净消化 6 项/s，需要 100 秒。到达改为 30 时，没有净消化余量，流体模型里积压仍为 600；随机系统更不能据此保证稳定。对应第 09、10 章。
+
 </details>
 
-<details><summary>5. 为什么 Async 不是自动更快？</summary>
-它只是把等待和执行解耦，真实工作量仍然存在，并新增 Queue、Retry、Duplicate、Task State 等复杂度。
+### 3. 用户最近记录与断线补发
+
+条件：用户 U 的源事件有严格递增序号，展示最新三条；已收到 101、103、102、重复 103、104，随后收到迟到的 99。用户 V 也可能有序号 104。源日志保留了未处理事件，用户曾确认收到 100。
+
+任务：写出每一步 U 的窗口；说明 V 为什么不能混入；解释“见过 104”是否证明已完整处理至 104，以及断线恢复时应依据什么。
+
+<details><summary>提示</summary>
+
+区分排序窗口、消息防重、用户作用域和连续处理进度。
+
 </details>
 
-<details><summary>6. Queue 为什么不能解决长期处理能力不足？</summary>
-如果 arrival rate 长期高于 service rate，Queue 只会持续增长，最终仍需要扩容、限流或降载。
+<details><summary>参考答案与解释</summary>
+
+依次为 [101]、[103,101]、[103,102,101]、不变、[104,103,102]、不变。作用域包含可信租户与用户，不只用事件序号。仅见过最大值不能证明不存在缺口；恢复要从确认位置检查保留的连续日志，超出保留窗口时重新获取快照并明确交接边界。对应第 14、15 章。
+
 </details>
 
-<details><summary>7. 为什么 Retry 必须建立在 Idempotency 之上？</summary>
-Timeout 时调用方不知道服务端是否已经成功，直接重试可能重复产生副作用。
+### 4. 新执行者能领取，不等于能重新发送
+
+条件：A 持有执行代际 7，向供应商提交发送 K。供应商可能已完成，但响应丢失；A 暂停，租约到期，B 获得代际 8。供应商查询暂时返回未找到，但并未保证旧请求已经结束。
+
+任务：分别说明 A 的迟到写入怎样被拒绝、B 怎样核对 K、哪些情况下不能自动重做，以及取消任务能否撤回可能已发送的消息。
+
+<details><summary>提示</summary>
+
+代际解决执行者竞争，操作身份与外部协议解决重复业务效果。
+
 </details>
 
-<details><summary>8. Compensation 为什么不是 Rollback？</summary>
-外部动作已经真实发生，补偿只是执行新的反向业务动作，不能保证世界完全恢复原状。
+<details><summary>参考答案与解释</summary>
+
+实际提交资源应核对当前代际，拒绝 7 的旧写入；仅比较“比我上次见过的更大”还要依赖完整的隔离协议，不能凭数字自行证明安全。B 使用稳定的 K 查询或使用供应商明确支持的幂等重放。查询未找到若可能与旧请求竞争，应保留待核对；没有可靠防重或查询保证时转人工处理。取消阻止之后允许停止的工作，不撤回已发生的外部事实。对应第 08、09、18 章。
+
 </details>
 
-<details><summary>9. 为什么 Failover 还要讨论 RPO？</summary>
-副本可能有复制延迟，切换后可能丢最近写，RPO描述可接受的数据损失范围。
+### 5. 回滚索引之后，离职员工还能看吗
+
+条件：g2 上线前员工 U 可读文档 D；随后 U 被撤权，D 的修订 5 被撤回。g2 出现质量问题，需要回滚 g1，g1 中还保存着修订 5 的块和旧权限。g2 上线后另有合法修订 6，只更新了 g2。
+
+任务：说明哪些状态不能跟随回滚；g1 何时才具备回滚资格；命中旧答案缓存时应检查什么。
+
+<details><summary>提示</summary>
+
+内容代际、当前权限、删除限制和增量进度是不同维度。
+
 </details>
 
-<details><summary>10. Cache 故障为什么可能打崩 DB？</summary>
-平时由 Cache 吸收的大量请求会同时回源，形成流量放大，因此需要并发限制和降级。
+<details><summary>参考答案与解释</summary>
+
+当前授权与撤回记录不能回退。g1 必须重新受当前安全状态约束，补齐需要保留的合法增量并验证兼容性与新鲜度；不能因为“还在磁盘上”就认为能直接切回。缓存依赖的来源、版本、权限仍须有效，不能用旧 ACL 放行。对应第 06、11、17 章及 RAG 主讲章。
+
 </details>
 
-<details><summary>11. hash(id) 很均匀为什么不一定是好 Shard Key？</summary>
-如果查询无法按 id 路由，就可能每次 Fan-out 全部分片，查询成本很高。
+### 6. 多等一分钟换取质量，应该选哪一种
+
+条件：方案 A 平均 15 秒完成，固定测试集上任务成功率 70%；方案 B 平均 75 秒完成，成功率 92%。样本来源、用户群和成功标准相同，但尚未进行线上验证。任务分为“现场快速查资料”和“可以离开页面的正式报告”。
+
+任务：提出分场景选择与验证方案；指出还缺少的至少三类数据；说明为什么不能只拿 22 个百分点决定全部流量。
+
+<details><summary>提示</summary>
+
+质量、尾延迟、等待方式和费用应进入同一决策，不把离线均值当成线上承诺。
+
 </details>
 
-<details><summary>12. 为什么 Multi-tenant 不只是 tenant_id Filter？</summary>
-还要处理计算资源、Queue、Cache、Trace、Credential、Quota 和 Noisy Neighbor。
+<details><summary>参考答案与解释</summary>
+
+快速查询可先选满足最低正确性条件的快速路径，提供补充研究入口；正式报告可异步受理较慢但更可靠的路径。需要样本量与不确定性、细分错误风险、P95/P99、用户完成率、费用、过载表现和可用配额。应以有代表性的测试、无副作用回放和受控灰度验证，不能把同一个速度偏好强加给所有用户，也不能降低权限与事实性底线。对应第 02、12、16、19 章。
+
 </details>
 
-<details><summary>13. 为什么 AI API 返回 200 也可能算失败？</summary>
-模型可能给出错误、无依据答案或 Tool 逻辑失败，需要质量与任务成功指标。
+### 7. 一百份库存，只看计数正确够不够
+
+条件：初始库存 100；有 80 份已支付，15 份有效预留，5 份可售。一个预留到期与支付回调同时到达；回调可能重复。
+
+任务：写出数量关系，列出两种合法竞争结果和需要核对的异常结果；说明分布式锁为什么不能单独替代这些规则。
+
+<details><summary>提示</summary>
+
+对同一个预留状态做条件转换，业务操作身份负责跨时间防重。
+
 </details>
 
-<details><summary>14. 为什么 LLM Gateway 不能只做 Provider Proxy？</summary>
-真正的工程价值在 Routing、Quota、Streaming、Cost、Failover、Trace 和能力兼容。
+<details><summary>参考答案与解释</summary>
+
+可售 + 有效预留 + 已支付 = 100。支付先把 HELD 转 PAID，则超时释放不能再成立；释放先把 HELD 转 RELEASED，则迟到的支付成功需要核对并按业务规则退款或重新分配，不能直接再售出同一份。重复回调沿用同一身份，不重复改变库存。锁只能约束某个执行窗口，不能回答锁外重试、旧执行者和外部付款已完成的事实。对应第 08、13 章。
+
 </details>
 
-<details><summary>15. Enterprise RAG 为什么需要 Index Generation？</summary>
-支持离线构建、验证、灰度切换和回滚，避免在线原地升级形成半更新状态。
+### 8. 费用未知时，预算还剩多少
+
+条件：预算 100，K 预留 30，调用断线且真实费用未知。稍后可靠回执确认实际费用 22，同一回执又到达一次。另一个案例中实际费用是 120。
+
+任务：逐步给出已花、保留和可用额度；分别处理重复回执与真实超支，不得通过改小账本数值假装满足预算。
+
+<details><summary>提示</summary>
+
+预留不是已花费，未知也不是免费。真实费用可能超出估算。
+
 </details>
 
-<details><summary>16. AgentRun 为什么必须 Durable？</summary>
-执行可能跨长时间、连接断开、Worker Crash 和部署，不能只依赖进程内状态或 HTTP Connection。
+<details><summary>参考答案与解释</summary>
+
+开始为 0/0/100，预留后 0/30/70，未知时仍为 0/30/70，结算后 22/0/78，重复回执不再扣费。实际 120 时应记 120/0/-20，阻止进一步准入并核对预估失效原因；硬预算需要额外的供应商和准入保证，不能用账本截断实现。对应第 16 章。
+
 </details>
 
-<details><summary>17. Long-running Agent 最危险的重复副作用窗口是什么？</summary>
-Tool 已成功但 Checkpoint 未保存就崩溃，Resume 后可能再次执行同一副作用。
-</details>
+## 机制实验
 
-<details><summary>18. 为什么 Vertical Agent 必须定义 Authoritative State？</summary>
-LLM 不能成为订单、财务数字、游戏状态等业务事实的最终拥有者，真实事实必须来自确定性 Source/Tool。
-</details>
+### 实现、数据与运行条件
 
-<details><summary>19. 架构为什么要记录 Version？</summary>
-Model、Prompt、Index、Service 和 Schema 版本决定行为，没有版本就无法复现 Bad Case 和安全回滚。
-</details>
+[scenarios.json](scenarios.json) 保存教学负载与事件；[mechanism_lab.py](mechanism_lab.py) 是唯一实现；[test_mechanism_lab.py](test_mechanism_lab.py) 导入同一实现做验证。正文不另维护一份程序。实验选择 Python 3.13 标准库，不需要安装依赖、连接真实服务或提供密钥。
 
-<details><summary>20. 一道陌生 System Design 题最可靠的恢复框架是什么？</summary>
-Clarify → Quantify → Model State → Draw Happy Path → Find Bottleneck → Add Correctness/Reliability/Security → Break It → Verify It。
-</details>
+从仓库根目录执行：
+
+```bash
+python curriculum/10-system-design/review/mechanism_lab.py all
+python -m unittest discover -s curriculum/10-system-design/review -p "test_mechanism_lab.py" -v
+```
+
+也可将 `all` 换为 `capacity`、`queue`、`window` 或 `budget`，单独观察一组结果。每次调用重新读取数据、创建对象，没有跨进程保存的状态；再次执行就是重置。修改 JSON 后，输出与原样例断言可能不再相同，应先写出新预期，再运行检查；不要为测试变绿删除旧规则。
+
+### 先预测，再核对输出
+
+| 演示 | 初始条件与操作 | 预期可观察结果 |
+|---|---|---|
+| capacity | 第 03 章的 100 次/s 入口，20 次/s 生成 | 模型 20 次/s，输入 60,000 Token/s，输出 10,000 Token/s；平均在途 200；一天费用 8,640 |
+| queue | 正常 20 项/s，能力 30 项/s；40 项/s 突发 60 秒 | 积压 600 项，恢复后净消化 10 项/s，需 60 秒 |
+| window | 六次事件到达，手算窗口取 3 | 最终序号 [104, 103, 102]，重复与迟到事件不改变最终窗口 |
+| budget | 100 预算、预留 30、未知、结算 22、重复结算 | 最终已花 22、保留 0、可用 78；重复回执不重复扣费 |
+
+CLI 输出 JSON；为保留十进制数值精度，Decimal 数字显示为字符串，例如 `"8640.000"`。它表示数值结果的序列化，不表示调用了真实计费服务。
+
+测试还检查库存守恒、同键不同参数冲突、到期旧执行者写入、二维码合法终态，以及外部结果未知的处理。这些模型用顺序调用显式排列故障时序，没有模拟网络调度器，也没有证明多进程同时提交的原子性。
+
+> ⚠️ **实验边界：** `RecentProjection` 为便于检查，保留全部事件历史，不是有界生产缓存；租户字段是测试输入，不是真实身份认证。`LeaseResource` 的提交函数集中检查代际与逻辑过期时刻，不是分布式锁实现。库存、费用与二维码均为内存状态，进程退出即消失。
+
+### 怎样把实验结论迁移到真实系统
+
+先选择权威存储和约束，把模型里的一次原子状态变化映射成真实事务或条件写入；再用多个独立连接、崩溃注入、重复消息和外部查询分别验证。供应商是否真正接受幂等键、是否保留结果、断线是否继续计费，都必须实测或取得对应版本的明确保证。
+
+局部单元测试、单机模拟、多连接并发、跨系统集成和生产验证是不同层级。运行结果与未执行项见[模块审查记录](../../../guide/audits/system-design-reader-first-2026-09-28.md)。

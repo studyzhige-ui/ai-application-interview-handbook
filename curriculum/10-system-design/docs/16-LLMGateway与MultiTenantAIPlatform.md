@@ -1,442 +1,139 @@
-# 16｜LLM Gateway 与 Multi-tenant AI Platform
+# 16｜LLM 网关：把模型选择、交付和费用放进同一条请求链
 
-这一章对应两个非常典型的 AI-native System Design 场景：
+<a id="16llm-gateway-与-multi-tenant-ai-platform"></a>
 
-```text
-SD-013 Unified Model / LLM Gateway
-SD-014 Multi-tenant AI / Agent Platform
-```
+[← 上一章](15-LargeScaleDataProcessingSystems.md) · [模块入口](../README.md) · [下一章 →](17-EnterpriseRAGSystemDesign.md)
 
-核心问题是：
+三个团队共用两个模型供应商。应用希望只调用一个内部入口：它能选模型、限制费用、处理流式输出，并在一家故障时切换。这个入口如果只是转发 JSON，哪些责任仍然没有被解决？
 
-> **怎样把多个模型 Provider、多个租户、多个 Agent / Application 接到一个统一入口，同时治理 Routing、Streaming、Quota、Cost、Failover 与权限。**
+LLM（大语言模型）网关需要统一业务需要的边界，同时承认不同模型的能力和协议并不相同。本章把前面的身份、容量、未知结果和观测组合成一次模型请求。
 
----
+## 1. 先明确网关管什么，不替谁做决定
 
-## 1. 为什么需要 LLM Gateway
+网关负责模型调用的认证、授权、路由、配额、预算、传输适配与调用记录。它不自动知道一份报告是否符合业务政策，也不应绕过 Agent 的工具批准。
 
-如果每个业务服务都直接接：
+调用方提交任务要求，例如必须支持指定输出结构、工具调用、上下文长度和数据处理区域；网关据此筛选允许的模型，再按质量、延迟和成本策略选择。不能先选最便宜模型，再悄悄丢掉它不支持的功能。
 
-```text
-OpenAI
-Anthropic
-Gemini
-Azure
-Private Model
-```
+模型、提示、工具参数、结果格式和错误分类都要有可比较的内部表达，但**统一接口不等于所有供应商语义相同**。适配层应拒绝不支持的能力或返回显式降级，而不是静默忽略字段。
 
-会重复实现：
+## 2. 一次请求怎样经过网关
 
 ```text
-Auth
-Schema Adapter
-Retry
-Streaming
-Rate Limit
-Cost
-Logging
-Fallback
+业务请求与可信租户身份
+    ↓
+检查模型能力、数据策略和输入预算
+    ↓
+预留租户费用与必要执行资源
+    ↓
+选择供应商，建立一次调用尝试
+    ↓
+转发输出并记录结束原因
+    ↓
+核对实际用量，结算或进入待核对
 ```
 
-Gateway 的价值是提供稳定内部 Contract。
-
----
-
-# 2. Gateway 的核心分层
-
-```text
-Client / Agent / RAG
-        ↓
-Unified LLM API
-        ↓
-Auth / Tenant / Quota
-        ↓
-Request Normalization
-        ↓
-Routing Policy
-        ↓
-Provider Adapter
-        ↓
-Model Provider
-```
+一项业务操作可以有多次调用尝试，每次尝试要记录供应商请求身份、开始时间、实际状态与用量。用户只点击一次，并不意味着供应商只计算一次；重试成本应能归回同一业务任务。
 
-横向：
+## 3. 请求配额、Token 配额与并发槽位分开算
 
-```text
-Trace
-Cost
-Rate Limit
-Fallback
-Safety Policy
-```
+沿用容量章的 20 次模型调用/秒、每次输入 3,000 Token、输出 500 Token。对应请求量为 1,200 次/分钟，输入为 360 万 Token/分钟，输出为 60 万 Token/分钟。
 
----
+**RPM**是每分钟请求量，**TPM**是每分钟 Token 量，具体供应商如何计入输入、输出、预留或其他 Token，要按服务规则核对。不能只确认 RPM 足够，就认定模型容量足够。
 
-# 3. Unified Schema 不等于“所有 Provider 都一样”
+平均调用持续 10 秒时，在途约 200 个；连接和并发限制可能先于 RPM、TPM 成为瓶颈。多租户预算还应防止一人用长上下文占满整个供应商配额。
 
-可以统一：
+输入长度可以在调用前估计并校验，输出则需要最大预算和结束条件。估计误差、工具轮次以及失败重试都应纳入余量；只数客户端最后显示的字符不能代表供应商实际计算量。
 
-```text
-messages
-model capability request
-stream
-max_tokens
-temperature
-metadata
-```
+## 4. 预算预留与结算怎样处理未知结果
 
-但 Provider 可能差异：
+使用虚构预算单位演示，不代表任何真实价格。租户总预算 100，已花费 0，已预留 0。操作 K 需要预留 30：
 
-```text
-tool schema
-reasoning control
-multimodal format
-structured output
-usage reporting
-finish reason
-```
+| 动作 | 已花费 | 已预留 | 可继续分配 |
+|---|---:|---:|---:|
+| 初始 | 0 | 0 | 100 |
+| K 获准开始 | 0 | 30 | 70 |
+| 流中断，用量未知 | 0 | 30 | 70 |
+| 核对 K 实际消耗 22 | 22 | 0 | 78 |
+| 同一结算结果再次到达 | 22 | 0 | 78 |
 
-所以内部 Contract 要有：
+预留与余额检查必须原子进行，避免并发请求各自看到相同余额。相同操作不能预留两遍，结算也不能扣两遍；同一结算身份出现不一致的金额，应进入冲突处理。
 
-```text
-common core
-+
-capability / provider extension
-```
+预留是控制未来支出的手段，不是篡改已经发生费用的理由。实际用量大于预留时仍要记录真实消耗、调整可用额并告警；不能为了余额非负就拒绝保存真实账单。要维护严格硬预算，应在调用前采用足够保守且可执行的上限，结果未知时保留相应占用并安排核对。
 
-而不是把所有差异硬压平。
+## 5. 流式传输要记录三种不同完成
 
----
+网关收到模型内容，客户端收到内容，以及供应商完成计算与返回最终用量，是三个阶段。代理缓冲、网络断线和客户端取消都可能让它们不同步。
 
-# 4. Routing Policy
+以 OpenAI Chat Completions 的 `stream_options.include_usage` 为具体例子，最终用量在额外的末尾数据块中提供；流被中断时可能收不到该数据块。因此“没有最终 usage”不能记为零费用，也不能仅按页面已显示文本认定全部用量。[OpenAI Chat API：流式用量说明](https://developers.openai.com/api/reference/resources/chat)
 
-Routing 可以看：
+该字段是一个供应商 API 的例子，不是所有模型接口的共同默认值。网关应保存调用身份与待核对状态，按供应商实际支持的查询、账单或估算纠偏路径处理；不承诺所有供应商都有逐请求用量查询。
 
-```text
-quality
-latency
-cost
-context size
-tool calling
-multimodal
-region / compliance
-availability
-```
+## 6. 故障转移的时间点决定策略
 
-例如：
+在任何结果尚未对用户或工具执行者产生效果之前，若请求可安全重试且预算允许，可以选择兼容备用模型。即使如此，第一次调用仍可能已经产生计算费用，需要单独核对。
 
-```text
-simple classification → small model
-coding → code-capable model
-image → multimodal model
-provider A 429 → provider B
-```
+已经输出半段文字时，可以明确结束当前尝试，再向用户提供一次新的完整尝试；不能把两家模型的碎片无标识地拼成一个答案。若模型已经提出工具调用，更要按稳定操作身份判断工具是否执行，不能因切换模型重做外部动作。
 
-但 Model Switch 可能改变行为，因此不能只看 HTTP Success。
+备用模型必须满足最低质量和能力条件。服务故障时降低输出质量属于可选策略，跨数据区域或跳过授权则不能被伪装成普通路由切换。
 
----
+## 7. 缓存复用的是哪一层工作
 
-# 5. Failover 的语义风险
+供应商内部的前缀计算缓存与应用自己的答案缓存不是同一层。前者可能减少重复输入处理成本，具体命中与计费规则取决于供应商；后者直接复用既有答案，必须核对当前问题条件、权限、知识与模型配置。
 
-如果 Provider A 超时后切 B：
+检索增强任务仅按问题文字缓存最终答案，可能跨团队泄露内容或复用过期政策。缓存命中后仍要执行适用性与当前授权判断，不能把网关变成绕过业务权限的捷径。
 
-```text
-Prompt / Tool Schema / Sampling
-```
+## 8. 验收覆盖正常、部分输出和费用未知
 
-在 B 上不一定完全等价。
+同一组任务应比较质量、首段可见时间、完整完成时间、错误率、每项业务的总尝试成本与未知用量积压。测试能力不匹配、配额不足、预留竞争、流中断、重复结算和备用模型失败。
 
-所以 Failover 前要定义：
+网关降级必须可观测，费用估算与已确认账单应分开。一次请求返回 200 不代表结构符合要求，也不代表最终用量已经结算完成。
 
-```text
-capability compatible?
-output schema compatible?
-quality acceptable?
-```
+## 本章小结
 
-对于高风险操作，可以宁可失败也不自动换一个行为差异很大的模型。
+LLM 网关统一的是受控调用责任，不是抹平模型差异。能力筛选、Token 与并发预算先于执行，流式内容与用量结算分别记录，未知结果进入核对。路由与缓存服从权限和质量要求，重试费用归回同一业务任务。
 
----
+## 🎯 面试怎么答
 
-# 6. Streaming Gateway
+**问：多租户 LLM 网关如何控制费用并处理流式失败？**
 
-Streaming 链路：
+> 我会按可信租户先做能力与数据策略检查，分别约束请求、Token、并发和预算，调用前原子预留。每次供应商尝试有独立身份，内容交付与最终用量分开记录；流中断不能当零费用，结算防重且未知有核对路径。切换模型要兼容，已输出内容或工具效果不能无标识地重做。
 
-```text
-Provider stream
-→ Gateway normalize events
-→ Client SSE / WebSocket
-```
+## ⚠️ 容易混淆的地方
 
-需要处理：
+- 统一 JSON 接口不代表工具、结构输出、上下文和数据策略完全兼容。
+- RPM 足够不代表 TPM 或并发槽位足够，预留金额也不保证就是实际费用。
+- 客户端取消不证明供应商停止计算，没有 usage 不能自动记零。
 
-```text
-client disconnect
-provider cancel
-usage finalization
-partial output
-trace close
-```
+## 本章自测
 
-不能只把字节透传。
+### 1. 预算 100，K 已预留 30，流中断后没有最终用量。能否立即把可用余额恢复为 100？随后确认用量 22，并重复收到同一结算，余额应是多少？
 
----
+<details><summary>提示</summary>
 
-# 7. Tenant Quota
+结果未知时没有证据证明未发生费用。
 
-多租户 AI Platform 常限制：
-
-```text
-requests/min
-tokens/min
-concurrent runs
-monthly cost
-specific model access
-tool permission
-```
-
-Quota 不应只在月底 Billing 发现超支。
-
-应该在 Admission 时判断：
-
-```text
-request estimated cost
-+ current usage
-+ reserved capacity
-```
-
----
-
-# 8. Token Quota 比 QPS 更接近真实成本
-
-两次请求：
-
-```text
-Request A: 100 tokens
-Request B: 100K tokens
-```
-
-都算 1 QPS，但资源成本完全不同。
-
-所以 Gateway 常要统计：
-
-```text
-input tokens
-output tokens
-context size
-model
-latency
-cost
-```
-
-并做 per-tenant attribution。
-
----
-
-# 9. Multi-tenant Resource Isolation
-
-不仅是数据：
-
-```text
-Model concurrency
-Queue
-Agent workers
-Vector DB namespace
-Redis state
-Tool credentials
-```
-
-都需要 Tenant Scope。
-
-Noisy Neighbor 可能通过：
-
-```text
-huge context
-long agent run
-expensive tool
-```
-
-耗尽共享资源。
-
----
-
-# 10. Workspace / Permission Model
-
-一个 AI Platform 常有：
-
-```text
-Tenant
-└─ Workspace
-   ├─ Users / Roles
-   ├─ Knowledge Base
-   ├─ Agent
-   ├─ Tool Credential
-   └─ Usage / Budget
-```
-
-权限至少区分：
-
-```text
-view agent
-edit prompt
-attach knowledge
-use tool
-approve destructive action
-view trace
-manage credential
-```
-
-不能只做一个 `admin/user`。
-
----
-
-# 11. Agent Routing
-
-Platform 不一定每个请求都进入同一个 Agent。
-
-可能：
-
-```text
-Intent / Policy
-→ FAQ workflow
-→ RAG agent
-→ coding agent
-→ human support
-```
-
-Routing 本身也需要：
-
-```text
-evaluation
-fallback
-trace
-```
-
-而不是让大模型随便选。
-
----
-
-# 12. Cost Control
-
-可以从：
-
-```text
-Model Routing
-Context Compression
-Cache
-Candidate Budget
-Max Agent Steps
-Tool Budget
-Quota
-```
-
-共同治理。
-
-如果只在财务账单层面看成本，已经太晚。
-
----
-
-# 13. Observability
-
-每次调用至少关联：
-
-```text
-tenant_id
-workspace_id
-request_id / run_id
-model requested
-model routed
-provider
-latency
-TTFT
-input/output token
-cost
-retry/fallback
-error
-```
-
-Agent 还需要：
-
-```text
-step/tool/context/checkpoint trace
-```
-
----
-
-# 14. Security
-
-Gateway 是高价值安全边界：
-
-- Provider Credential 不下发给业务；
-- Tenant Model Allowlist；
-- PII / Secret Redaction；
-- Region / Compliance Routing；
-- Prompt / Trace Access Control；
-- Tool Credential Scope。
-
----
-
-# 15. Failure Walkthrough
-
-## Provider 429
-
-→ Queue / Rate Limit / Backoff，不要立即无界 Retry。
-
-## Provider A outage
-
-→ compatible model failover or graceful failure。
-
-## Streaming client disconnect
-
-→ propagate cancel where safe；finalize trace / usage。
-
-## Tenant runaway Agent
-
-→ step/concurrency/cost budget terminates run。
-
-## Usage service temporarily down
-
-→ decide whether fail-open / reserved quota / local buffer；不能默认无限放行。
-
----
-
-# 16. 真人面经影响
-
-`SD-014` Multi-tenant AI Platform 有 5 个独立来源，`SD-013` LLM Gateway 有 3 个。
-
-因此本章特别强调：
-
-```text
-Provider Schema
-Routing
-Streaming
-Rate Limit
-Cost
-Failover
-Tenant Isolation
-Agent Routing
-```
-
-而不是停在“做一个 OpenAI Proxy”。
-
----
-
-# 17. 🎯 面试怎么答
-
-> 我会把 LLM Gateway 设计成稳定内部 Contract + Provider Adapter，统一 Auth、Quota、Routing、Streaming、Trace 和 Cost，但保留 Provider Capability 差异。Routing 按 quality/latency/cost/context/tool/multimodal 等约束决策，Failover 也要先验证能力兼容。多租户平台则从 Workspace、Permission、Quota、Credential 和 Resource Isolation 建模，并把 token、concurrency、agent step 和 cost 作为 Admission Control 的一部分，避免 Noisy Neighbor。
-
----
-
-# 18. 本章自测
-
-<details><summary>1. 为什么 LLM Gateway 不能只统一 HTTP Schema？</summary>
-真正复杂的是能力差异、Routing、Quota、Streaming、Error、Cost、Failover 和 Observability，只改字段名无法解决这些问题。
 </details>
 
-<details><summary>2. 为什么 Model Failover 可能影响正确性？</summary>
-不同模型的 Tool Calling、Structured Output、Context、Safety 和生成行为不完全一致，成功响应不代表业务语义等价。
+<details><summary>参考答案与解释</summary>
+
+不能立即全额释放，按策略保留预留并核对。确认后已花费 22、预留为 0、可用 78；重复结算不再扣款。
+
 </details>
 
-<details><summary>3. 为什么 AI Platform 只做 QPS Limit 不够？</summary>
-请求成本受 Token、模型、Context、Agent Steps 和 Tool 等影响，同样 QPS 的资源消耗可以相差几个数量级。
+### 2. 主模型已向用户发送一段报告，又提出了已执行的建单工具调用，然后连接失败。能否把备用模型从头产生的结果直接接到同一个流里？
+
+<details><summary>提示</summary>
+
+分别考虑文本连续性、工具效果与两次计算费用。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+不能无标识拼接。需结束或显式开启新尝试，先核对已有工具操作避免重复，并继续登记原尝试费用。备用模型必须满足能力与数据策略，不能把切换当作原尝试从未发生。
+
+</details>
+
+---
+
+[← 上一章](15-LargeScaleDataProcessingSystems.md) · [模块入口](../README.md) · [下一章 →](17-EnterpriseRAGSystemDesign.md)

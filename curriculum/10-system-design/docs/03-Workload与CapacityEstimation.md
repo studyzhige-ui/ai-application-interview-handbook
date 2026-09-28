@@ -1,368 +1,161 @@
-# 03｜Workload、Capacity、Hotspot 与数量级估算
+# 03｜工作负载与容量：把请求换算成资源和费用
 
-System Design 不要求你做财务级精确预测，但要求你能判断：
+<a id="03workloadcapacityhotspot-与数量级估算"></a>
 
-> **这是单机问题、分片问题，还是整个架构层级都要改变的问题？**
+[← 上一章](02-Requirement与SLO.md) · [模块入口](../README.md) · [下一章 →](04-API数据模型与StateOwnership.md)
 
-这靠数量级估算，而不是凭感觉。
+报告助手每秒收到 100 次 HTTP 请求。有人据此申请了能处理 100 次模型调用的资源，但请求中大部分只是在查状态。这会高估模型需要的容量。反过来，若每次查询要并行访问十个分片，只看入口 100 QPS 又会低估内部工作量。
 
----
+容量估算的第一步是**追踪一次用户操作会产生多少实际工作**，然后为不同资源分别计算。以下数据全部是教学假设，统一来源和可执行计算见[计算实验](../review/README.md#机制实验)。
 
-## 1. 先把“高并发”翻译成数字
+## 1. 先把入口流量按动作拆开
 
-不要说：
+QPS（Queries Per Second，每秒请求数）在这里表示所指接口每秒收到的请求数，不天然等于模型调用数、数据库查询数或用户数。
 
-> QPS 很高。
+| 动作 | 入口请求数 | 本例每次动作产生的工作 |
+|---|---:|---|
+| 查询任务状态 | 60 次/s | 读取一份小状态，响应约 1,000 B |
+| 读取已有报告 | 20 次/s | 读取报告，响应约 40,000 B |
+| 提交生成任务 | 20 次/s | 新建任务；后台进行一次模型调用，提交响应约 2,000 B |
+| 合计 | 100 次/s | 模型正常到达量是 20 次/s，而不是 100 次/s |
 
-要问：
+这里假设一次生成只调用一次模型。若改成先规划、再生成、再核验的三次调用，就要重新统计调用数、输入量、输出量和重试次数。业务动作数量不变，资源需求仍然可能明显增加。
 
-```text
-DAU / MAU？
-平均 QPS？
-Peak / Average Ratio？
-Read / Write Ratio？
-Payload Size？
-Burst Duration？
-```
+日请求数与平均 QPS 的关系是 `日请求数 / 86,400 s`。这个平均值不能代表峰值：应另外给出持续峰值、突发时长以及流量集中在哪些租户或对象。
 
-例如：
+## 2. 并发占用不是每秒吞吐
 
-```text
-1 亿 DAU
-每人每天 20 次读取
-→ 20 亿 reads/day
-→ 平均约 23K QPS
-→ Peak × 5
-→ 约 115K QPS
-```
-
-这已经和 1000 QPS 是完全不同的问题。
-
----
-
-# 2. 存储估算先看“每天增量”
-
-例如日志系统每天写入：
+假设一项生成平均占用一个执行槽位 10 秒，正常到达量是 20 次/s，且系统进入稳定状态。平均在途量可以用 Little 定律估算：
 
 ```text
-2B events/day
-× 500 bytes
-≈ 1 TB/day raw
+平均在途任务数 = 平均到达率 × 平均停留时间
+                 = 20 次/s × 10 s = 200 个
 ```
 
-再考虑：
+这里的在途量指正在占用模型执行槽位的调用，不包含排队等待的任务；若估算整个任务系统的在途量，还要把等待和其他步骤计入停留时间。
+
+“槽位”表示允许同时处理一项生成的资源许可，不等于一个 CPU 核。即使执行者大部分时间在等模型响应，它也可能占着连接、内存和供应商并发配额。
+
+若有 300 个这样的槽位，且每项工作仍是 10 秒，理想处理能力约为 `300 / 10 = 30 次/s`，正常占用约为 `200 / 300 = 66.7%`。这只是限定假设下的估算，不是跑过压测后的 P99 保证。真实任务时长有分布，资源之间可能互相争用，供应商也可能先触达其他限额。
+
+> ⚠️ **注意：长期平均到达率等于最大处理能力，不是可靠的容量目标。** 在有波动的系统中需要严格余量；否则一次突发就可能留下无法及时消化的积压。排队增长与恢复时间在第 09 章单独推演。[过载与容量余量](https://sre.google/sre-book/handling-overload/)
+
+## 3. 输入 Token 与输出 Token 分开计算
+
+Token 是模型处理文本的计量单位。不同文本的字数、字节数与 Token 数没有固定的一一对应关系；应使用目标模型的计数方式或真实用量记录。
+
+本例每次模型调用平均输入 3,000 Token，输出 500 Token：
+
+| 资源 | 计算 | 结果 |
+|---|---|---:|
+| 输入吞吐 | 20 次/s × 3,000 Token/次 | 60,000 Token/s |
+| 输出吞吐 | 20 次/s × 500 Token/次 | 10,000 Token/s |
+| 每分钟输入量 | 60,000 × 60 | 3,600,000 Token/min |
+| 每分钟输出量 | 10,000 × 60 | 600,000 Token/min |
+
+不能写成 `20 × 3,000 × 500`：输入长度与输出长度是两个分别发生的工作量，把它们相乘会得到没有此处物理意义的平方单位。需要总 Token 量时，在计数口径可相加的前提下求和；计算费用时则各乘各的单价。
+
+假设输入价为每百万 Token **1 计价单位**，输出价为每百万 Token **4 计价单位**。这是虚构价格，不对应任何供应商报价。
 
 ```text
-Index
-Replica
-Compression
-Retention
-Metadata
+每次费用 = 3,000 / 1,000,000 × 1 + 500 / 1,000,000 × 4
+         = 0.005 计价单位
+
+24 小时调用数 = 20 × 86,400 = 1,728,000 次
+24 小时费用 = 1,728,000 × 0.005 = 8,640 计价单位
 ```
 
-如果 90 天：
+估算假设流量持续 24 小时，并且未计缓存折扣、失败尝试、工具调用、存储或检索费用。真实成本需要按每一次实际调用核算。供应商的请求数、Token 和并发限额也可能采用不同窗口或估算规则，不能只把本例总 Token 数塞进任何一家限流器。
+
+## 4. 存储先算记录，再算放大
+
+假设每项任务的元数据平均 2,000 B，保留 30 天。仍按 20 个新任务/s 计算：
 
 ```text
-90 TB raw before overhead
+每天新增元数据 = 20 × 86,400 × 2,000 B = 3.456 GB
+30 天原始元数据 = 3.456 × 30 = 103.68 GB
+若保存三份完整副本，单计这些副本 = 311.04 GB
 ```
 
-于是自然会出现：
+本节 GB 采用十进制，即 1 GB = 1,000,000,000 B；GiB 则是 1,073,741,824 B。两者不要混写。
 
-- Hot / Cold Tier；
-- Object Storage；
-- Time Partition；
-- TTL / Retention；
-- Query Index。
+311.04 GB 还不包括索引、事务日志、备份、临时重建空间和磁盘余量。报告正文与上传资料应按自己的平均大小、数量和保留期另算，不能把“任务记录 2 KB”当作整项业务只占 2 KB。
 
----
+内存也应先确定工作集。例如，常被访问的 200,000 个条目，每个业务载荷 1,000 B，只能推出载荷约为 200 MB；键、对象与索引开销仍需测量。“全量数据很大”不自动意味着全部都要常驻内存。
 
-# 3. 带宽估算
+## 5. 带宽按路径与方向计算
 
-如果接口：
+按第一张表估算面向用户的响应载荷：
 
 ```text
-10K QPS
-× 100KB response
+60 × 1,000 + 20 × 40,000 + 20 × 2,000
+= 900,000 B/s
+= 0.9 MB/s
+= 7.2 Mb/s
 ```
 
-就是：
+B 是字节，b 是比特，1 B = 8 b。本例尚未包含上传流量、HTTP/TLS 开销、模型通信、副本同步和内部跨分片传输。它只能支持“用户响应载荷”的结论，不能被标成整个集群的网卡需求。
 
-```text
-~1 GB/s application payload
-```
+若一个查询访问 10 个分片，就要单独计算内部请求数及返回载荷。读缓存能减少数据库工作，但不能消除用户仍要接收的结果数据。
 
-此时瓶颈可能不是 CPU，而是：
+## 6. 总量之外，还要找集中点与瓶颈
 
-```text
-Network
-Egress Cost
-Serialization
-Client Download
-```
+平均流量相同，全部请求均匀落在十个分片，与 80% 落在同一个热门报告上，是两种容量问题。前者可能通过增加节点分担；后者要先处理热点对象、缓存回源或访问分布。
 
-System Design 不能只算数据库容量。
+最终列出每一层的限制：数据库可持续读写量、执行槽位、模型并发与速率、网络、内存、磁盘及预算。系统能承受的业务到达率受其中最紧的一项约束。增加 Web 实例，只会扩大 Web 这一层的能力，不会自动增加模型配额。
 
----
+估算负责形成可验证假设。下一步应在代表性输入、任务时长、热点比例与失败条件下测量吞吐和尾延迟，再修正假设，而不是把算式包装成生产性能。
 
-# 4. LLM / RAG 系统还要算 Token 与模型调用成本
+## 本章小结
 
-例如：
+先按用户动作展开内部工作，再分别计算平均与峰值流量、并发占用、输入和输出 Token、存储、带宽与成本。每个数字都要带对象、单位和假设；平均估算与单次模拟不能证明真实尾延迟或服务容量。
 
-```text
-100 QPS
-× 3000 input tokens
-× 500 output tokens
-```
+## 🎯 面试怎么答
 
-每天 Token 量非常大。
+**问：设计 AI 服务时，除了 QPS，你还会估算什么？**
 
-于是你需要继续问：
+> 我会先区分入口动作与实际模型、数据库和工具调用次数，再按每次工作量计算 Token、载荷和存储增长。用到达率与平均占用时间估算在途资源，同时检查峰值、热点、供应商限制和预算。输入输出 Token 分别计量计价，重试也计入实际成本；最终用真实工作负载验证瓶颈与尾延迟。
 
-```text
-能否 Cache？
-能否缩短 Context？
-是否所有请求都需要大模型？
-能否 Route 到小模型？
-Rerank Candidate 是否过多？
-```
+## ⚠️ 容易混淆的地方
 
-AI System Design 的 Capacity 不只是 CPU / RAM。
+- 输入 Token 与输出 Token 不连乘；它们分别贡献吞吐与费用。
+- 并发 300 不等于吞吐 300 次/s，必须结合占用时间。
+- 存储副本不是备份，响应载荷也不是整个集群的总带宽。
 
----
+## 本章自测
 
-# 5. Working Set 比总数据量更重要
+### 1. 生成到达量降为 10 次/s，但每次输入变成 6,000 Token、输出变成 1,000 Token，虚构单价不变。请计算输入吞吐、输出吞吐及持续 24 小时的费用，判断是否比本章便宜一半。
 
-系统总数据可能 100TB，但真正热点只有：
+应提交：三个带单位的结果，以及对仅按请求数计配额的判断。
 
-```text
-最近 24h
-Top 1% items
-active sessions
-```
+<details><summary>提示</summary>
 
-这决定：
+每秒请求变少，但单次工作量变大。
 
-```text
-多少数据必须放 Memory / SSD
-多少可以 Cold Storage
-Cache 是否有价值
-```
-
-不要因为总数据大就默认所有东西都要分布式内存化。
-
----
-
-# 6. Hotspot：平均值会骗人
-
-假设：
-
-```text
-100K QPS
-1000 shards
-```
-
-平均每 Shard：
-
-```text
-100 QPS
-```
-
-看起来很轻松。
-
-但如果 30% 流量都打一个 Celebrity / Hot Product：
-
-```text
-30K QPS → one key / partition
-```
-
-系统仍然会崩。
-
-所以必须看：
-
-```text
-Key Distribution
-Tenant Distribution
-Hot Item Distribution
-Time Burst
-```
-
-这就是为什么真人面试经常从 QPS 继续追 HotKey。
-
----
-
-# 7. Capacity Planning 的四个维度
-
-## Compute
-
-```text
-CPU
-GPU
-Thread / Coroutine
-Worker
-```
-
-## Memory
-
-```text
-Cache
-Index
-Buffer
-Queue
-KV Cache
-```
-
-## Storage
-
-```text
-Primary Data
-Replica
-Index
-Log
-Snapshot
-Backup
-```
-
-## Network
-
-```text
-Ingress
-Egress
-Cross-zone
-Fan-out
-Replication
-```
-
-只算其中一个维度通常会漏掉真正瓶颈。
-
----
-
-# 8. Capacity ≠ Throughput
-
-例如 Worker：
-
-```text
-Concurrency = 100
-每任务平均 10s
-```
-
-理论吞吐约：
-
-```text
-10 tasks/s
-```
-
-如果上游每秒进 20 个：
-
-```text
-arrival > service rate
-→ Queue 会持续增长
-```
-
-这就是 Backpressure 章节要解决的问题。
-
----
-
-# 9. Headroom 为什么必要
-
-如果系统平时就跑在：
-
-```text
-95% CPU
-95% DB connections
-95% Provider quota
-```
-
-任何：
-
-```text
-Retry
-Failover
-Burst
-Rebalance
-```
-
-都可能让系统跨过崩溃点。
-
-生产通常需要：
-
-> **正常负载下保留 Failure / Burst Headroom。**
-
-这也是 Google SRE 一直强调过载保护的原因。
-
----
-
-# 10. 压测比“理论 QPS”更可信
-
-估算只是设计起点。
-
-最终 Capacity 需要：
-
-```text
-Load Test
-→ Saturation Point
-→ P95/P99
-→ Error Rate
-→ CPU/Memory/Connection
-→ Downstream Pressure
-```
-
-测试还要覆盖：
-
-```text
-steady state
-burst
-one dependency slow
-one node down
-retry enabled
-```
-
-否则只能证明 Happy Path。
-
----
-
-# 11. AI 系统的特殊 Hotspot
-
-除了普通 HotKey，还可能有：
-
-```text
-某个大型 Tenant
-某个热门 Knowledge Base
-某个昂贵 Model
-某个慢 Tool
-某个超长 Prompt
-某个巨型 PDF
-```
-
-因此 Capacity Metric 应带维度：
-
-```text
-tenant_id
-model
-route
-tool
-kb_id
-```
-
-否则总平均值会掩盖问题。
-
----
-
-# 12. 🎯 面试怎么答
-
-> 我不会一上来报一个拍脑袋 QPS，而会从用户规模、操作频率、Peak Factor、Read/Write Ratio 和 Payload 算数量级；存储则看每天增量、Retention、Replica 和 Index。然后单独检查 HotKey、Hot Tenant 与 Working Set，因为平均值经常掩盖热点。AI 系统还要把 Token、Model QPS、Context Length 和 Provider Quota 放进容量模型。最后所有估算都要通过 Load Test 找到真实 Saturation Point 和 P99，而不是把理论值当事实。
-
----
-
-# 13. 本章自测
-
-<details><summary>1. 为什么平均 QPS 不能直接用于 Shard Capacity？</summary>
-因为流量可能高度倾斜到少数 Key/Tenant/Partition，真正瓶颈由 Hotspot 决定。
 </details>
 
-<details><summary>2. Queue 长度持续增长说明什么？</summary>
-长期看 arrival rate 高于 service rate，系统没有稳定状态，需要扩容、降载、限流或降低单任务成本。
+<details><summary>参考答案与解释</summary>
+
+输入 60,000 Token/s，输出 10,000 Token/s，24 小时仍为 8,640 计价单位。仅看请求数下降会漏掉每次工作量翻倍，不能推出费用减半。
+
 </details>
 
-<details><summary>3. AI Gateway 容量为什么不能只看 HTTP QPS？</summary>
-因为不同 Model、Token 长度和 Streaming Duration 的资源成本差异巨大，同样 1 QPS 的成本可能完全不同。
+### 2. 任务仍按 20 个/s 新增，元数据改为每项 5,000 B，只保留 7 天。请计算十进制原始容量，并列出至少两种尚未计入的占用。
+
+应提交：原始容量的算式、GB 结果与未计入范围。
+
+<details><summary>提示</summary>
+
+先按一天新增量计算，再乘保留天数；不要先猜一个总放大系数。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+20 × 86,400 × 5,000 × 7 = 60,480,000,000 B，即 60.48 GB。尚未计入索引、副本、事务日志、备份、临时重建空间及报告和上传资料正文。
+
+</details>
+
+---
+
+[← 上一章](02-Requirement与SLO.md) · [模块入口](../README.md) · [下一章 →](04-API数据模型与StateOwnership.md)

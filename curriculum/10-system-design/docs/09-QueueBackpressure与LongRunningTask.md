@@ -1,351 +1,133 @@
-# 09｜Queue、Backpressure 与 Long-running Task
+# 09｜队列与长任务：积压怎样形成，工作者怎样安全接管
 
-> **本章定位：System Design 组合层。** 这里训练 Queue / Worker / Long-running Task 怎样进入整体架构。Backpressure、MQ Delivery 与 Durable Task 的完整机制分别回到 [AIBE Backpressure](../../03-backend-engineering/docs/06-Backpressure与RateLimit.md)、[AIBE MQ](../../03-backend-engineering/docs/10-MQ与DeliverySemantics.md) 和 [AIBE Reliable Async Task](../../03-backend-engineering/docs/12-ReliableAsyncTask.md)。
+<a id="09queuebackpressure-与-long-running-task"></a>
 
-异步系统最常见的误区是：
+[← 上一章](08-Consistency与Idempotency.md) · [模块入口](../README.md) · [下一章 →](10-Reliability与Overload.md)
 
-> **有 MQ = 系统就能扛住高峰。**
+报告助手通常每秒接受 20 项生成任务，300 个执行槽位、每项平均占用 10 秒。活动期间到达速度升到每秒 40 项，接口仍然很快返回任务编号，但用户开始等待越来越久。
 
-实际上 Queue 只是把“处理不过来”从同步调用链搬到了缓冲区。真正的问题是：
+队列把“还没执行的工作”保存下来，却不会凭空增加处理能力。本章先计算等待，再把恢复、确认和接管放回同一条任务时间线。
 
-> **上游持续快于下游时，怎样不让 Queue 无限增长、Worker 重复执行、任务长期卡死？**
+## 1. 到达速度、处理能力和积压
 
----
-
-## 1. Queue 解决什么
-
-常见价值：
+沿用[容量章](03-Workload与CapacityEstimation.md)的教学假设：任务成本相同、槽位持续可用、暂不考虑重试和波动。
 
 ```text
-Decouple
-Buffer Burst
-Async Work
-Retry Boundary
-Fan-out
+理想处理能力 = 300 槽位 / 10 秒 = 30 项/秒
+常态到达速度 = 20 项/秒
+突发到达速度 = 40 项/秒
 ```
 
-例如文档 Ingestion：
+突发持续 60 秒时，净积压每秒增加 `40 - 30 = 10` 项，共增加 600 项。恢复每秒 20 项后，一边处理新任务一边清积压，净消化速度是 `30 - 20 = 10` 项/秒，因此理想清空还需 60 秒。
 
-```text
-Upload
-→ enqueue document_id
-→ Parse Worker
-→ Embed Worker
-→ Index Writer
-```
+这不是实测延迟预测。任务大小、供应商限额、故障和公平调度会改变结果；它首先用来判断数量级。随机系统也不能用“平均处理能力恰好等于平均到达”作为稳定保证，应保留余量。
 
-用户不需要同步等几分钟。
+## 2. 队列长度与最老任务年龄分别告诉你什么
 
----
+600 个一秒任务与 600 个一小时任务，排队长度相同，等待代价完全不同。除了长度，还要看最老任务等待了多久、可执行任务的成本、有效处理速率和失败重试量。
 
-# 2. Queue 不能创造处理能力
+**背压（backpressure）**把下游处理不足反馈到上游，使上游减速或暂停。入口拒绝、租户配额、生产者限速、工作者并发上限都可参与，但它们分别位于不同边界。
 
-如果：
+接受任务就是产生待交付责任。队列达到允许的长度、年龄或成本预算时，应提前拒绝、预约执行或降低非关键工作，而不是无限积累后再统一超时。过期任务也要有业务含义：用户允许丢弃的进度刷新，与已受理的付费生成任务不能采用相同清理策略。
 
-```text
-arrival rate = 1000 tasks/s
-service rate = 600 tasks/s
-```
+## 3. 消息确认到底确认了什么
 
-Queue 每秒净增长：
+消息生产者的确认表示代理接受了某次发布；消费者的确认表示消费协议认可该消息已经处理到指定阶段。这两种确认相互独立，并不自动证明业务结果已可靠提交。[RabbitMQ：Publisher confirms 与 consumer acknowledgements](https://www.rabbitmq.com/docs/confirms)
 
-```text
-400 tasks
-```
+本例约定工作者在任务结果已提交后再确认消费。如果先 ACK（确认消费）再保存结果，随后退出，消息可能不再重投而业务未完成；如果结果先提交、ACK 前退出，消息可能重投，工作者应识别已有结果，不重复业务效果。
 
-不管 Queue 多大，迟早会爆。
+因此常见选择是允许重复交付，用状态与幂等保护结果，而不是把“看不到重复消息”当成唯一正确目标。
 
-所以必须监控：
+## 4. 领取、续租与接管要用同一套身份
 
-```text
-Queue Depth
-Queue Age
-Arrival Rate
-Completion Rate
-Retry Rate
-```
+任务 J 初始没有工作者。领取时原子写入执行者 A、代际 20 和租约截止时间；A 定期续租，表明自己仍符合执行协议。它不是每一次业务效果的证明，只是执行权的存活信号。
 
-其中 Queue Age 往往比 Depth 更有业务意义。
+| 时刻 | 发生的动作 | 可接受的结果 |
+|---|---|---|
+| t1 | A 领取 J，获得代际 20 | J 由 A 执行 |
+| t2 | A 暂停，未续租 | 尚不能推断 A 已永久停止 |
+| t3 | 租约到期，B 合法接管，代际变为 21 | B 先核对未完成工作 |
+| t4 | A 恢复，尝试用 20 提交 | 资源边界拒绝旧代际 |
+| t5 | B 用 21 提交已核对结果 | 在状态前提仍成立时接受 |
 
----
+租约截止由权威存储或协调协议裁定，不能让每台机器的随意本地时间独立决定谁有效。网络分区和时钟差异的实际行为需要部署协议验证；配套模型只用一个受控逻辑时间演示条件，不证明真实时钟安全。
 
-# 3. Backpressure 是什么
+## 5. 检查点保存到哪里，决定恢复会重做什么
 
-Backpressure = 下游能力不足时，上游必须感知并减速。
+**检查点（checkpoint）**记录可恢复位置和必要状态。例如报告任务已完成解析、尚未开始生成，保存来源版本、解析结果引用和进度，可以避免重启后重复解析。
 
-可以：
+检查点不是外部世界的快照。若工单已经创建，本地在保存检查点前退出，从旧检查点恢复仍必须先核对工单操作记录。否则“继续运行”会变成“重复做一次”。
 
-```text
-Block
-Reject
-Rate Limit
-Reduce Concurrency
-Pause Consumer / Producer
-Drop Low-priority Work
-Degrade Feature
-```
+恢复顺序应是：读取任务和版本，取得有效执行权，核对未完成副作用，重新检查当前权限与预算，再决定安全重做或继续的位置。不能先恢复模型循环，等出现重复后再补账。
 
-而不是继续无限排队。
+## 6. 重试应该有次数、时间和下一位处理者
 
----
+瞬时连接失败可能值得重试，参数错误需要修正输入，权限撤销不能原样重试，外部结果未知需要核对。把所有异常统一重新入队，会形成永远无法成功的任务循环。
 
-# 4. Concurrency Limit 是容量契约
+**死信队列（dead-letter queue）**或失败记录保存超过自动恢复条件的任务，方便调查、修复和受控重放。移进死信不等于问题已经解决：还需要负责人、告警、保留期限和重放规则。
 
-例如 LLM Provider：
+重试沿用同一业务身份，但每次执行尝试单独记录；有上限的退避减少故障时压力。重放旧任务前重新核对输入版本、当前权限、取消状态和操作记录寿命，避免把过期工作重新激活。
 
-```text
-最多 100 concurrent calls
-```
+## 7. 多租户公平性与长短任务
 
-如果 Worker 开 1000 并发：
+若团队 A 一次提交一万项长任务，严格全局先来先服务可能让团队 B 的一个短任务等很久。可以限制各租户在途数量、按租户轮转或加权调度，并把极长任务分阶段处理。
 
-```text
-429
-→ Retry
-→ 更大流量
-→ Retry Storm
-```
+公平并不等于每个租户永远拿到相同资源。权重、付费等级和最低保障属于业务策略，必须显式定义；超大租户可以采用专属资源池，但仍受上游模型配额和整体成本限制。
 
-因此：
+不要只根据队列长度扩容。若瓶颈是模型供应商每分钟 Token 上限，增加工作者只会产生更多限流和重试。先识别最紧的资源，再决定扩容、减速或拒绝。
 
-```text
-Queue
-→ Worker
-→ Semaphore / Concurrency Limit
-→ Downstream
-```
+## 8. 取消、停机与恢复后的冲击
 
-才是真正受控的消费模型。
+取消排队任务可以阻止领取；取消执行中的任务则需要停止新步骤并核对在途效果。部署停机应先停止新领取，再让可完成任务收束或保存恢复点；超出停机预算的工作通过明确接管协议继续。
 
----
+服务恢复时不能瞬间释放全部积压。旧任务、正常新任务和重试一起涌向依赖，可能再次把系统压垮。按剩余容量逐步放量，持续观察最老任务年龄、成功吞吐和供应商限额，才算完成恢复过程。[SRE：处理过载](https://sre.google/sre-book/handling-overload/)
 
-# 5. At-least-once Delivery 下要接受 Duplicate
+## 本章小结
 
-消息系统常见：
+队列保存等待，不创造容量。先用到达与处理速率估算积压，再用年龄、成本和租户配额限制受理。结果提交与消息确认分开，租约接管不能假设旧工作者停止，恢复必须先核对副作用。失败任务和积压恢复都需要明确的后续处理协议。
 
-```text
-Worker receives
-→ executes side effect
-→ crashes before ACK
-→ message redelivered
-```
+## 🎯 面试怎么答
 
-所以 Consumer 要：
+**问：怎样设计可恢复的长任务系统？**
 
-```text
-idempotent
-or
-state-aware
-```
+> 我会把任务与输入版本可靠保存，限制受理和执行并发，监控队列年龄。工作者用领取代际与租约接管，结果提交后确认消息，并用稳定操作身份处理重复。恢复先核对未知副作用、权限和预算，再从安全检查点继续；失败、取消和部署停机都有明确终态与接管条件。
 
-不能假设“一条消息只来一次”。
+## ⚠️ 容易混淆的地方
 
----
+- 平均到达等于理想处理能力不是稳定和低尾延迟的保证。
+- ACK 不自动证明外部业务完成，租约过期也不证明旧执行者已停止。
+- 死信与自动扩容都不是终点，需要修复、重放规则及真正瓶颈判断。
 
-# 6. Lease / Heartbeat：长任务怎么 Claim
+## 本章自测
 
-对于耗时任务：
+### 1. 理想容量 30 项/秒，原先无积压；40 项/秒持续 60 秒后降至 20 项/秒。计算新增积压和理想清空时间。若之后保持 30 项/秒呢？
 
-```text
-READY
-→ RUNNING(worker-7, lease_until=t)
-```
+<details><summary>提示</summary>
 
-Worker 定期 Heartbeat：
+分别计算突发期间的净增加和恢复期间的净减少。
 
-```text
-extend lease
-```
-
-如果 Worker 崩溃：
-
-```text
-lease expires
-→ another worker may reclaim
-```
-
-这比“从 Queue 拿出来就永久属于这个 Worker”更可靠。
-
----
-
-# 7. Reclaim 会引入重复执行
-
-旧 Worker 可能只是网络分区，实际上还在跑。
-
-Lease 到期后：
-
-```text
-Worker A continues
-Worker B reclaims
-```
-
-于是两个 Worker 同时执行。
-
-所以还需要：
-
-```text
-idempotency
-fencing / version
-compare-and-set state transition
-```
-
-Long-running 可靠性不能只靠 Heartbeat。
-
----
-
-# 8. Task API 的标准形态
-
-提交：
-
-```http
-POST /jobs
-→ 202 Accepted
-→ {job_id}
-```
-
-查询：
-
-```http
-GET /jobs/{id}
-```
-
-返回：
-
-```text
-QUEUED
-RUNNING
-SUCCEEDED
-FAILED
-CANCELLED
-```
-
-可选：
-
-```text
-progress
-current_step
-retry_count
-artifact_url
-error_code
-```
-
----
-
-# 9. Cancellation 要定义到 Step
-
-用户点击 Cancel：
-
-```text
-CANCEL_REQUESTED
-```
-
-Worker 在安全点检查：
-
-```text
-before new step
-before side effect
-between chunks
-```
-
-如果已经进入不可逆动作：
-
-```text
-不能假装立刻停止
-```
-
-需要：
-
-```text
-complete current side effect
-or compensate
-```
-
----
-
-# 10. Priority Queue / Fair Scheduling
-
-多租户系统里，一个大 Tenant 可能塞满 Queue。
-
-如果纯 FIFO：
-
-```text
-Tenant A 100K jobs
-→ Tenant B 的 1 个 job 等几小时
-```
-
-可考虑：
-
-```text
-per-tenant queue
-weighted fair scheduling
-priority class
-quota
-```
-
-否则 Queue 会成为资源隔离漏洞。
-
----
-
-# 11. Dead-letter / Poison Task
-
-某任务每次都失败：
-
-```text
-retry 10000 times
-```
-
-只会浪费资源。
-
-需要：
-
-```text
-max_attempt
-error classification
-DLQ / failed state
-manual / automated remediation
-```
-
-Permanent Error 不应该继续重试。
-
----
-
-# 12. Queue 的 Ordering 要按业务定义
-
-不是所有任务都需要全局顺序。
-
-例如：
-
-```text
-同一 account 的操作要有序
-不同 account 可以并行
-```
-
-可以用：
-
-```text
-partition key = account_id
-```
-
-避免为了“有序”把整个系统变成单线程。
-
----
-
-# 13. 🎯 面试怎么答
-
-> Queue 解决解耦和短期 Burst，但不会创造处理能力。我会同时设计 arrival/service rate、Queue Age、Worker Concurrency 和下游容量，通过 Backpressure、Rate Limit 或 Load Shedding 保持稳定。长任务会用 Durable Task State + Lease/Heartbeat 支持 Worker Crash Recovery，同时用 Idempotency/Fencing 防止 Reclaim 后重复副作用。多租户还要做 Fair Scheduling，Poison Task 则进入 Failed/DLQ，而不是无限 Retry。
-
----
-
-# 14. 本章自测
-
-<details><summary>1. 为什么 Queue Depth 下降不一定代表系统健康？</summary>
-可能是任务被大量丢弃或消费者异常跳过；需要结合 Queue Age、Completion Rate、Error Rate 等判断。
 </details>
 
-<details><summary>2. 为什么 Lease + Heartbeat 仍不能保证任务只执行一次？</summary>
-旧 Worker 可能只是失联但仍在执行，Lease 过期后新 Worker 会 Reclaim，形成并发重复执行。
+<details><summary>参考答案与解释</summary>
+
+增加 600 项；降到 20 后净消化 10 项/秒，需 60 秒。保持 30 时没有净余量，已有 600 项不会在该理想模型中被清空，真实波动还会使情况恶化。
+
 </details>
 
-<details><summary>3. 为什么多租户 Queue 需要 Fairness？</summary>
-否则单个大租户可以占满队列和 Worker，使其他租户长期饥饿，破坏资源隔离和 SLO。
+### 2. 任务结果已经提交，消息 ACK 丢失导致重投。工作者应该重跑模型吗？如果只提交了外部发送请求、结果仍未知，又应该怎样处理？
+
+<details><summary>提示</summary>
+
+区分已确定结果和只知道请求已经发出。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+前者授权并核对已有任务结果后直接复用，不重复生成。后者先按外部操作身份核对，或使用供应商承诺的幂等协议；不能把重投自动解释为前次失败。
+
+</details>
+
+---
+
+[← 上一章](08-Consistency与Idempotency.md) · [模块入口](../README.md) · [下一章 →](10-Reliability与Overload.md)

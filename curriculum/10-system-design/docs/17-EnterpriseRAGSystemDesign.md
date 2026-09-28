@@ -1,505 +1,127 @@
-# 17｜Enterprise / Large-scale RAG System Design
+# 17｜企业 RAG：把知识更新、在线回答与权限治理组合起来
 
-这一章不是重新讲 Chunk / Hybrid / Rerank，而是回答：
+<a id="17enterprise--large-scale-rag-system-design"></a>
 
-> **企业知识问答从 Source 到 Evidence 到答案，怎样同时满足权限、Freshness、规模、成本、可评估和可回滚。**
+[← 上一章](16-LLMGateway与MultiTenantAIPlatform.md) · [模块入口](../README.md) · [下一章 →](18-ProductionAgentBackend.md)
 
-对应真人 Scenario：
+企业已有数百 GB 文档，包含正文 PDF、扫描件、表格和权限受限材料。业务希望员工随时问问题，政策更新后及时生效，撤权不能继续泄露，服务升级还能回滚。
 
-```text
-SD-016 Enterprise Knowledge-base QA
-SD-017 600GB–1TB PDF / Scan Vertical RAG
-```
+这不是只把文件转成向量的问题。RAG（检索增强生成）的内部机制已在对应模块建立，本章负责决定整套系统的工作边界、容量、交接与验收。
 
----
+## 1. 从两条速度不同的链路开始
 
-## 1. 先定义 Scope
-
-企业 RAG 不是“上传文件后问问题”这么简单。
-
-先问：
+**离线或后台知识链路**发现来源变化，解析、清洗、切分、编码并建立可发布资源；**在线回答链路**接收用户问题，在当前权限下检索、组装证据、生成回答并返回引用。
 
 ```text
-Source 有哪些？
-PDF / Wiki / DB / Ticket / Email？
-更新频率？
-权限模型？
-Corpus 多大？
-答案需要 Citation 吗？
-允许旧多久？
-是否多语言 / 多模态？
+来源及当前权限、撤回状态
+    ├─ 后台：发现变化 → 处理新版本 → 构建索引 → 验证 → 发布
+    └─ 在线：身份与问题 → 合法候选 → 证据与版本 → 生成 → 引用检查
 ```
 
-这些问题直接决定架构。
+把两条链路分开，是因为它们的成本、延迟和失败影响不同。大批 OCR 不应占满在线查询资源；后台处理失败也不能让尚且有效的旧知识无条件消失。但已撤回或已无权访问的材料要先阻止使用，不能为了在线命中率继续暴露。
 
----
+## 2. 哪些事实必须由同一身份串起来
 
-# 2. Offline / Online 两条主线
+每个来源需要稳定文档身份、来源版本、权限与删除状态；派生块带文档与版本引用；索引代际记录编码模型、切分配置、块映射和其他兼容资源。
 
-```text
-Offline
-Source
-→ Audit
-→ Parse / OCR
-→ Clean / Chunk
-→ Embed / Sparse Index
-→ Validate
-→ Activate Generation
+**代际（generation）**是一组一起构建与发布的资源清单。请求选择某代际后，查询编码、向量索引和正文映射要相互兼容。新旧向量维数相同，不证明它们处于同一表示空间。
 
-Online
-Query
-→ Permission / Rewrite
-→ Dense + Sparse
-→ Fusion / Rerank
-→ Context / Citation
-→ LLM
-→ Answer
-```
-
-横向：
+业务授权和删除限制由当前安全状态决定，不能冻结在老代际里。普通内容可以按约定使用稳定版本，当前撤权却不能因该请求“早就选了旧索引”而被忽略。
 
-```text
-Version
-Trace
-Evaluation
-Cost
-Freshness
-```
+## 3. 数百 GB 文档怎样估算，而不是直接换算 Token
 
----
+文件字节数包括图片、压缩和布局，不能从“600 GB PDF”直接推断固定数量的 Token 或 embedding 费用。先按文档类型抽样，测每份的页数、可提取文本、OCR 比例、处理时间、失败率和最终块数。
 
-# 3. Source of Truth 与 Retrieval Index
+假设抽样后得到 **100 万个最终文本块**，每个向量 1,024 维、每维 4 字节，仅原始向量值就是 `1,000,000 × 1,024 × 4 = 4.096 GB`。实际还要加索引结构、元数据、正文、复制、备份和重建时新旧共存空间。这些是教学数字，不是从某份真实企业语料测得的结论。
 
-企业知识常来自：
+后台吞吐由最慢阶段决定。解析、OCR、编码各自限流与重试，既控制成本，也让失败可定位。先从样本扩到可代表长尾的数据，再估全量工期与容量；不要先写一个看似精确的“几小时完成”。
 
-```text
-Document System
-Wiki
-Object Storage
-Business DB
-```
+## 4. 在线路径怎样分配质量与延迟预算
 
-这些才是 Source of Truth。
+问题先带可信租户与权限范围进入检索，再按语义、词项等需要获取候选，融合、重排并补充必要上下文，最后在输入预算内生成与校验引用。
 
-Vector / Search Index 是：
+候选数、重排数和最终证据数不是同一个参数。增加候选可能改善召回，也会增加后续处理；压缩上下文可能降低费用，也可能删掉关键例外。具体算法与数值实验回看 [RAG 检索与证据交付](../../08-rag/README.md)，本章用业务质量与端到端时延约束决定资源分配。
 
-```text
-Derived Retrieval State
-```
+缓存要区分知识代际、来源版本与权限条件；模型网关负责调用配额和费用，但不能替代 RAG 对来源适用性和证据质量的判断。
 
-这样 Embedding / Chunk / Index 升级时才能安全 Rebuild。
+## 5. 增量更新要处理重复、乱序和漏通知
 
----
+同一文档更新事件重复到达，用“文档、来源修订、处理配置、目标代际”识别同一处理工作。版本 3 先完成、版本 2 后完成，则在发布边界拒绝过时结果；不同版本不是重复任务，只有幂等键不足以防覆盖。
 
-# 4. 600GB–1TB Corpus 首先是 Data Pipeline 问题
+事件通知降低发现延迟，定时核对来源清单帮助发现漏通知，两者可以驱动同一处理流程。来源暂时不可访问不等于被删除；真正撤回则进入当前限制与清理流程。
 
-不能：
+删除标记和来源修订也参与旧任务检查。重放旧消息不能使文档复活。复杂增量交接的详细过程由[更新、权限与回滚](../../08-rag/docs/12-ProductionGovernance.md)主讲，本章保留选择方案必须知道的前提。
 
-```text
-一个进程
-→ 读所有 PDF
-→ 调 Embedding
-```
+## 6. 全量重建的切换点在哪里
 
-需要：
+一种受控方案是：取得明确快照边界，构建新代际，追平后续变更，确认连续完成到交接点，再原子更新发布控制记录。请求和更新派发按新记录选资源，旧请求在适用条件下继续用旧代际。
 
-```text
-Source Partition
-→ Durable Ingestion Job
-→ Parse Worker
-→ Chunk Worker
-→ Embedding Batch
-→ Index Writer
-→ Validation
-```
+**原子的是控制记录，不是所有外部存储同时写完。** 切换前要先确认正文、词项与向量资源完整且可读取、可搜索；只统计写入 API 成功次数不足以证明查询可见性。
 
-每阶段：
+如果多个来源没有共同日志顺序，不能用一个最大序号假装全部追平，应分别记录它们的边界与完成状态。发布者也要检查控制记录版本，避免迟到发布把更晚的正确代际覆盖。
 
-```text
-checkpoint
-idempotency
-retry
-backpressure
-rate limit
-```
+回滚前再次检查旧代际是否仍有必要增量、配置是否兼容、当前权限与撤回是否生效。旧索引还在，只说明有一份旧资源，不说明可以安全立即回指。
 
----
+## 7. 从故障定位到服务降级
 
-# 5. OCR / Parsing 是第一大 Failure Source
+答错时先找第一处证据丢失：来源缺失、解析错位、检索漏召回、重排误删、上下文截断，还是生成无依据。把所有问题归因于模型幻觉，会掩盖上游缺陷。
 
-扫描 PDF：
+后台积压时，可以对普通内容标明新鲜度并限制更新范围；模型暂时不可用时，业务可能允许只返回已授权的证据与引用。无权访问、引用不受支持或关键来源已撤回时，不应为“始终给答案”而编造结果。
 
-```text
-Image
-→ OCR
-→ Layout / Table
-```
+质量、延迟、每个成功回答成本、来源新鲜度、未知更新与撤权传播都要独立观测。针对重要问题建立可检查的证据和答案条件，不只运行几个相似度样例。
 
-电子 PDF：
+## 8. 最小企业验收怎样选择
 
-```text
-Text layer
-→ parser
-```
+准备两团队、同名不同内容的文档，以及一份更新后带例外条款的政策。测试权限过滤、旧任务晚到、删除重放、代际切换期间查询、回滚后的撤权和缓存适用性。
 
-最终最好统一成：
+再用抽样测得的真实块分布和查询长度做负载测试，分开报告 OCR、向量服务、数据库、模型网关和整体链路的实际版本与结果。本章方案与模型实验不能替代这些服务的真实集成验收。
 
-```text
-Document Model
-├─ page
-├─ block
-├─ text
-├─ table
-├─ image
-└─ lineage
-```
+## 本章小结
 
-这样后续 Chunk 和 Citation 才可追溯。
+企业 RAG 把后台知识处理和在线证据交付分开，再用来源身份、版本、代际与当前安全状态连接。容量来自代表性样本，不从 PDF 字节数猜 Token；增量和全量切换都要有连续进度、可见性与回退条件，质量诊断沿证据链定位。
 
----
+## 🎯 面试怎么答
 
-# 6. Permission 必须进入 Retrieval
+**问：怎样设计大规模企业知识库 RAG？**
 
-错误：
+> 我先分离知识处理与在线回答，明确来源身份、版本、当前权限和发布代际。抽样估算解析、编码、索引和查询成本，在线按质量与延迟分配候选和上下文预算。更新用幂等加版本条件，重建追平并验证查询可见后切控制记录；回滚不恢复旧权限，并用跨租户、删除重放和切换故障验证。
 
-```text
-retrieve global topK
-→ answer
-→ UI hide forbidden source
-```
+## ⚠️ 容易混淆的地方
 
-正确方向：
+- PDF 文件大小不直接等于文本 Token 数，向量原始值也不是完整索引容量。
+- 同维度不保证向量空间兼容，写入成功不一定已经可搜索。
+- 原子发布控制记录不等于跨存储事务，旧代际存在不等于随时可回滚。
 
-```text
-user / group / tenant auth
-→ permission filter / namespace
-→ retrieval
-```
+## 本章自测
 
-并让 Chunk 继承 Source ACL。
+### 1. 100 万块、每向量 1,024 维、每维 4 字节。原始向量值多大？若只有 5 GB 磁盘，能凭这个计算认定足够吗？
 
-Permission 变化也要触发索引/缓存失效。
+<details><summary>提示</summary>
 
----
+区分向量数组和整套可运行索引。
 
-# 7. Large-scale Index 的版本策略
-
-Embedding 或 Chunk 升级时，不推荐在线原地混改：
-
-```text
-Generation V1 serving
-↓
-build V2 offline
-↓
-catch delta
-↓
-quality / count / permission validation
-↓
-canary V2
-↓
-switch
-↓
-keep V1 rollback window
-```
-
-这是大规模 RAG 稳定演进的核心。
-
----
-
-# 8. Incremental Update
-
-如果每次文档变化都全量 Rebuild：
-
-```text
-成本高
-Freshness 差
-```
-
-所以维护：
-
-```text
-document_id
-source_version
-content_hash
-parse_version
-chunk_version
-embedding_version
-```
-
-只处理受影响文档。
-
-但大版本升级仍可能需要 Full Rebuild。
-
----
-
-# 9. Online Retrieval Path
-
-典型：
-
-```text
-Query
-→ classify / rewrite
-→ permission scope
-→ dense + BM25
-→ fusion
-→ candidate budget
-→ rerank
-→ context build
-→ generate
-```
-
-每一步都要有：
-
-```text
-latency budget
-trace
-fallback
-```
-
-例如 Reranker 超时：
-
-```text
-can fallback to fusion ranking
-```
-
-而不是整条请求 500。
-
----
-
-# 10. No-hit / Insufficient Evidence
-
-Enterprise 场景最危险是：
-
-```text
-没证据
-→ 模型仍给出确定答案
-```
-
-需要：
-
-```text
-retrieval confidence
-coverage
-citation support
-business risk
-```
-
-决定：
-
-```text
-answer
-clarify
-fallback to tool
-human handoff
-refuse
-```
-
----
-
-# 11. Citation 不是 UI 装饰
-
-最终 Claim 应能追：
-
-```text
-answer span
-→ context chunk
-→ document version
-→ source
-```
-
-否则：
-
-- 无法审计；
-- 权限变化难处理；
-- Bad Case 无法回放；
-- 文档更新后 Citation 可能悬空。
-
----
-
-# 12. Evaluation 架构
-
-必须分层：
-
-```text
-Parsing Quality
-Chunk Coverage
-Retrieval Recall / NDCG
-Rerank
-Faithfulness
-Answer Correctness
-Citation
-Latency
-Cost
-```
-
-如果 End-to-end 变差，只看一个总分无法定位。
-
----
-
-# 13. Evaluation Dataset 从哪里来
-
-可以结合：
-
-```text
-production queries
-support tickets
-expert questions
-known bad cases
-edge cases
-permission cases
-freshness cases
-```
-
-并固定：
-
-```text
-ground truth / evidence
-expected refusal
-permission scope
-```
-
-LLM Judge 可以辅助，但不能是唯一真相。
-
----
-
-# 14. Cost Model
-
-Offline：
-
-```text
-OCR
-Embedding
-Index Build
-Storage
-Rebuild
-```
-
-Online：
-
-```text
-Rewrite
-Retrieval
-Rerank
-LLM input/output
-```
-
-1TB Corpus 如果频繁全量 Re-embed，成本会非常可观。
-
-因此 Version / Incremental Update 本身就是成本架构。
-
----
-
-# 15. Cache
-
-可以缓存：
-
-```text
-parsed document
-embedding
-retrieval result
-rerank result
-answer
-```
-
-但在线 Cache Key 至少考虑：
-
-```text
-query
-index generation
-permission scope
-model / prompt version
-```
-
-否则容易陈旧或越权。
-
----
-
-# 16. Observability
-
-每个 Query Trace：
-
-```text
-raw query
-rewrite
-permission filter
-candidate ids/scores
-fusion rank
-rerank score
-context ids
-index generation
-answer / citation
-stage latency
-cost
-```
-
-离线：
-
-```text
-parse failure
-embedding throughput
-queue age
-freshness lag
-index activation status
-```
-
----
-
-# 17. Failure Walkthrough
-
-## Embedding Provider 429
-
-→ ingestion backpressure，不要无限 retry。
-
-## New Generation 构建一半失败
-
-→ V1 继续 serving；V2 durable resume。
-
-## ACL 改了
-
-→ Derived Chunk / Cache 必须失效或重新授权。
-
-## Rerank down
-
-→ fallback to fused retrieval if acceptable。
-
-## Vector DB partial shard failure
-
-→ retry / degrade / mark incomplete，不能悄悄假装完整答案。
-
----
-
-# 18. 真人面经影响
-
-Enterprise RAG 有 6 个独立来源，大规模 600GB–1TB RAG 虽是单点信号，但把很多 Production 追问集中在同一题：
-
-```text
-Parsing
-Embedding Cost
-Index Scale
-Hybrid
-Incremental Update
-```
-
-因此本章专门把“规模与运营”做成系统设计闭环，而不是重复 RAG 算法定义。
-
----
-
-# 19. 🎯 面试怎么答
-
-> 企业 RAG 我会拆 Offline Ingestion 和 Online Query 两条链。Source 是权威数据，Index 是可重建派生物；文档带稳定 ID、Version、Lineage 和 ACL。大规模语料用分阶段 Durable Pipeline + Backpressure，Embedding/Chunk 升级构建新 Generation，通过 Delta Catch-up、Evaluation、Canary 后切换。在线 Query 在 Permission Scope 内做 Hybrid/Rerank，并对 No-hit、Rerank Failure、Partial Index 明确 Fallback。最终用 Retrieval Trace、分层 Eval、Freshness 和 Cost 证明系统可运营。
-
----
-
-# 20. 本章自测
-
-<details><summary>1. 为什么大规模 RAG 应构建新 Index Generation，而不是原地全量覆盖？</summary>
-可以让旧版本持续服务，新版本独立构建和验证，并提供可控 Cutover 与 Rollback。
 </details>
 
-<details><summary>2. 为什么 Permission 必须进入 Retriever？</summary>
-如果先召回受限内容再过滤，内容可能已经进入模型 Context，形成真实数据泄漏。
+<details><summary>参考答案与解释</summary>
+
+原始值 4.096 GB，采用十进制单位。不能认定 5 GB 足够，还需索引、元数据、正文、日志、复制与构建余量，并通过实际数据和产品版本测量。
+
 </details>
 
-<details><summary>3. 为什么只看 Answer Correctness 不够定位 RAG Bad Case？</summary>
-错误可能来自 Parsing、Chunk、Retrieval、Rerank、Context 或 Generation，需要分层指标和 Trace 才能归因。
+### 2. g2 发布后发生权限撤销，随后因质量问题准备回滚 g1。g1 未处理发布后的普通内容更新。需要分别检查哪两类问题？
+
+<details><summary>提示</summary>
+
+旧内容是否可用，与旧访问资格是否有效不是同一个问题。
+
 </details>
+
+<details><summary>参考答案与解释</summary>
+
+检查 g1 是否补齐或允许接受缺失的内容变化，并验证资源兼容与质量；权限和删除必须始终使用当前状态，绝不能随 g1 回到旧资格。未满足条件时不能直接回滚。
+
+</details>
+
+---
+
+[← 上一章](16-LLMGateway与MultiTenantAIPlatform.md) · [模块入口](../README.md) · [下一章 →](18-ProductionAgentBackend.md)
