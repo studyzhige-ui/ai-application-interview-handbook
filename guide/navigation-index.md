@@ -375,7 +375,7 @@
 3. [03｜基础练习：读题、实现、测试、解释](../practice/coding/docs/03-basic-exercises.md)
 4. [04｜完整输入输出：把数据协议翻译成程序](../practice/coding/docs/04-acm-input-output.md)
 5. [05｜数据结构：从操作需求到结构选择](../practice/coding/docs/05-data-structures.md)
-6. [06｜算法推导：从正确做法到减少重复工作](../practice/coding/docs/06-problem-solving-and-algorithms.md)
+6. [06｜算法推导：建立能迁移到新题的思考方式](../practice/coding/docs/06-problem-solving-and-algorithms.md)
 7. [07｜Hot100 综合训练：把专题知识变成可调用能力](../practice/coding/docs/07-hot100.md)
 8. [08｜在线笔试：把算法放进完整交付约束](../practice/coding/docs/08-online-assessment.md)
 9. [09｜AI Coding：从可复现失败到可验证交付](../practice/coding/docs/09-ai-coding.md)

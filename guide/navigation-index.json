@@ -1451,8 +1451,8 @@
     },
     {
       "path": "practice/coding/docs/06-problem-solving-and-algorithms.md",
-      "title": "06｜算法推导：从正确做法到减少重复工作",
-      "sha256": "3e6738ba9adbef1b97cad56ff52e0cff9a5722e5bd649c957e4116d89f2f7223"
+      "title": "06｜算法推导：建立能迁移到新题的思考方式",
+      "sha256": "eacec63ee67d8d0a281469afcd104698c4d0fc57bfc786cf08cad3c7545451ea"
     },
     {
       "path": "practice/coding/docs/07-hot100.md",
