@@ -71,6 +71,16 @@ class FullFixtureTests(unittest.TestCase):
         self.assertEqual(data['curriculum_chapters'],10)
         self.assertEqual(data['products'][0]['chapter_count'],4)
         self.assertEqual(data['coding_chapters'],1)
+    def test_inventory_hashes_are_independent_of_checkout_line_endings(self):
+        docs=list(self.root.rglob('*.md'))
+        for p in docs:p.write_bytes(p.read_bytes().replace(b'\r\n',b'\n'))
+        before=outer.inventory(self.root)
+        lf_hashes={p:hashlib.sha256(p.read_bytes()).hexdigest() for p in docs}
+        for p in docs:p.write_bytes(p.read_bytes().replace(b'\n',b'\r\n'))
+        crlf_bytes={p:p.read_bytes() for p in docs}
+        self.assertEqual(outer.inventory(self.root),before)
+        self.assertEqual({p:p.read_bytes() for p in docs},crlf_bytes)
+        self.assertTrue(any(hashlib.sha256(crlf_bytes[p]).hexdigest()!=lf_hashes[p] for p in docs))
     def test_missing_chapter_in_module_index_fails(self):
         self.put('curriculum/01-python/docs/02-new.md','# New\n')
         with self.assertRaises(ValueError):outer.inventory(self.root)

@@ -150,8 +150,9 @@ def chapter_order(root: Path, page: Path, docs: list[Path]) -> list[Path]:
     raise ValueError(f'Module README does not list all chapters: {page}')
 
 def metadata(root: Path, docs: list[Path]) -> list[dict]:
+    # Text fingerprints must not depend on Git checkout LF/CRLF conversion.
     return [{'path':p.relative_to(root).as_posix(), 'title':title(p),
-             'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in docs]
+             'sha256':hashlib.sha256(read(p).encode('utf-8')).hexdigest()} for p in docs]
 
 def support_entries(root: Path, base: Path) -> list[str]:
     result=[]

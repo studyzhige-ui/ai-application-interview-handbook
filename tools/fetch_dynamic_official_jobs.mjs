@@ -344,6 +344,7 @@ async function collectSearchPages(page,keyword,requiredText=""){
   for(let step=0;step<maxSteps;step++){
     await page.waitForTimeout(step===0?650:350);
     await scroll(page);
+    assertNoSecurityChallenge(page.url(),await page.locator("body").innerText().catch(()=>""));
     const pageHits=await jobLinksOnPage(page,keyword,requiredText);
     const signature=pageHits.map(x=>x.href).sort().join("|");
     if(signature && seenSignatures.has(signature)) break;
@@ -369,16 +370,29 @@ async function collectSearchPages(page,keyword,requiredText=""){
         const before=page.url()+"|"+signature;
         await next.click({timeout:1200});
         await page.waitForTimeout(500);
+        assertNoSecurityChallenge(page.url(),await page.locator("body").innerText().catch(()=>""));
         const afterHits=await jobLinksOnPage(page,keyword,requiredText);
         const after=page.url()+"|"+afterHits.map(x=>x.href).sort().join("|");
         if(after!==before){ moved=true; break; }
-      }catch{}
+      }catch(e){
+        if(e?.code==="OFFICIAL_SECURITY_CHALLENGE") throw e;
+      }
     }
     if(!moved) break;
   }
   return hits;
 }
+function assertNoSecurityChallenge(url,body){
+  const guard=String(body||"").slice(0,5000);
+  if(/\/web\/passport\/zp\/(?:security|verify)(?:[/?#.]|$)/i.test(url||"") ||
+     /(?:^|\n)\s*(?:安全验证|访问异常)(?:\s|$)/i.test(guard)){
+    const error=new Error("first-party security challenge; enumeration is incomplete");
+    error.code="OFFICIAL_SECURITY_CHALLENGE";
+    throw error;
+  }
+}
 async function searchInputs(page,options={}){
+  assertNoSecurityChallenge(page.url(),await page.locator("body").innerText().catch(()=>""));
   const prefix=(options.prefix||"").trim();
   const requiredText=(options.requiredText||"").trim();
   const inputs=page.locator("input");
@@ -401,10 +415,9 @@ async function searchInputs(page,options={}){
       await target.fill((prefix ? prefix+" " : "")+q);
       await target.press("Enter").catch(()=>{});
       await page.waitForTimeout(500);
-      const guard=(page.url()+" "+(await page.locator("body").innerText().catch(()=>"")).slice(0,5000));
-      if(/\/web\/passport\/zp\/security|安全验证|访问异常|验证码/i.test(guard)) throw new Error("search blocked by first-party security challenge");
-      terms.push(q);
+      assertNoSecurityChallenge(page.url(),await page.locator("body").innerText().catch(()=>""));
       hits.push(...await collectSearchPages(page,q,requiredText));
+      terms.push(q);
       // Some SPAs replace the search input after navigation/pagination.
       const refreshed=page.locator("input");
       const count=Math.min(await refreshed.count(),40);
@@ -415,7 +428,9 @@ async function searchInputs(page,options={}){
         const type=((await el.getAttribute("type"))||"").toLowerCase();
         if(/(搜索|职位|岗位|keyword|search)/i.test(ph+" "+aria) || type==="search"){ target=el; break; }
       }
-    }catch{}
+    }catch(e){
+      if(e?.code==="OFFICIAL_SECURITY_CHALLENGE") throw e;
+    }
   }
   try{ await target.fill(""); await target.press("Enter").catch(()=>{}); }catch{}
   return {found:true,terms,hits};
@@ -521,6 +536,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
     await page.waitForTimeout(900);
     await scroll(page);
     let beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+    assertNoSecurityChallenge(page.url(),beforeBody);
     let beforeCycle=cycleSnippets(beforeBody);
     await Promise.allSettled(responseTasks);
     const explicitRenderedZero=/(?:找到|共|合计)\s*[（(]?\s*0\s*[)）]?\s*(?:个)?\s*(?:职位|岗位)|(?:暂无|没有|无)\s*(?:在招)?\s*(?:职位|岗位)/i.test(beforeBody);
@@ -663,6 +679,7 @@ async function runPage(context,company,url,rootHost,collector,visited,endpointLo
       if(navAction.clicked){
         await page.waitForTimeout(900);
         beforeBody=(await page.locator("body").innerText().catch(()=>"")).slice(0,80000);
+        assertNoSecurityChallenge(page.url(),beforeBody);
         beforeCycle=[...new Set([...beforeCycle,...cycleSnippets(beforeBody)])];
         await Promise.allSettled(responseTasks);
         let postNavFeishu=endpointLog.some(e=>/\/api\/v1\/search\/job\/posts/i.test(e.url));
