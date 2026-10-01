@@ -2,7 +2,7 @@
 import ast
 import importlib.util
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import subprocess
 import sys
@@ -44,10 +44,17 @@ for path in sorted((MOD/'docs').glob('*.md')):
             # The review bundle is not the entire repo. This one external-to-bundle
             # target was read at the fixed repo snapshot; do not fabricate its content.
             known_repo_targets={'market/interviews/batch-32.md', 'curriculum/04-redis/README.md'}
-            self.assertTrue(resolved.exists() or str(resolved.relative_to(ROOT)) in known_repo_targets,f'{path.name}: {target}')
+            self.assertTrue(resolved.exists() or resolved.relative_to(ROOT).as_posix() in known_repo_targets,f'{path.name}: {target}')
     setattr(ChapterChecks, 'test_chapter_'+path.name[:2],check)
 
 class SQLExtractionChecks(unittest.TestCase):
+    def test_source_ids_are_portable_repository_paths(self):
+        posix = mysql_course.relative_source_id(PurePosixPath('/course/docs/01-SQL.md'), PurePosixPath('/course'))
+        windows = mysql_course.relative_source_id(PureWindowsPath('C:/course/docs/01-SQL.md'), PureWindowsPath('C:/course'))
+        self.assertEqual(posix, 'docs/01-SQL.md')
+        self.assertEqual(windows, posix)
+        self.assertTrue(all(chr(92) not in item['file'] for item in mysql_course.examples().values()))
+
     def test_named_blocks_unique(self):
         items=mysql_course.examples()
         retained=json.loads((ROOT/'guide/project/mysql-sql-source-map-2026-09-27.json').read_text())['retained_previous_names']
@@ -189,7 +196,7 @@ class RevisionContracts(unittest.TestCase):
         data=json.loads((ROOT/'guide/project/mysql-chapter-migration-2026-09-27.json').read_text())
         self.assertEqual(len(data['mapping']),23)
         dest={p for row in data['mapping'] for p in row['new_paths']}
-        self.assertEqual(dest,{str(p.relative_to(ROOT)) for p in (MOD/'docs').glob('*.md')})
+        self.assertEqual(dest,{p.relative_to(ROOT).as_posix() for p in (MOD/'docs').glob('*.md')})
     def test_main_no_language_specific_driver_code(self):
         text='\n'.join(p.read_text() for p in (MOD/'docs').glob('*.md'))
         self.assertNotIn('```python',text)

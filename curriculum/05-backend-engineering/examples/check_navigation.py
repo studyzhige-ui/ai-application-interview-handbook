@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> None:
     chapters = json.loads((ROOT/'chapter-order.json').read_text(encoding='utf-8'))['chapters']
     paths = [c['path'] for c in chapters]
-    actual = {str(p.relative_to(ROOT)) for p in (ROOT/'docs').glob('*.md')}
+    actual = {p.relative_to(ROOT).as_posix() for p in (ROOT/'docs').glob('*.md')}
     if len(paths) != len(set(paths)) or set(paths) != actual:
         raise SystemExit('顺序清单与实际章节不一致')
     readme=(ROOT/'README.md').read_text(encoding='utf-8')

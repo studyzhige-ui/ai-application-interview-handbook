@@ -4,6 +4,10 @@ import re
 
 MODULE = Path(__file__).resolve().parent.parent
 
+def relative_source_id(path, root):
+    """Serialize repository metadata with forward slashes on every platform."""
+    return path.relative_to(root).as_posix()
+
 def examples():
     found = {}
     paths = [*sorted((MODULE / "docs").glob("*.md")), MODULE / "examples" / "experiments.md"]
@@ -17,7 +21,7 @@ def examples():
             if name:
                 if name in found:
                     raise ValueError(f"Duplicate SQL example: {name}")
-                found[name] = {"code": code, "file": str(path.relative_to(MODULE))}
+                found[name] = {"code": code, "file": relative_source_id(path, MODULE)}
     return found
 
 def split_sql(text):

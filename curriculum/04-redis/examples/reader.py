@@ -61,7 +61,7 @@ def export(destination: Path) -> dict:
         if p.exists() and p.read_bytes() != content.encode('utf-8'):
             raise ValueError(f'Refusing to overwrite a different file: {p}')
     for name, content in items.items():
-        (destination/name).write_text(content, encoding='utf-8')
+        (destination/name).write_bytes(content.encode('utf-8'))
     return {'files': len(items), 'destination': str(destination)}
 
 

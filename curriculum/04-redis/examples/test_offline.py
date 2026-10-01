@@ -72,6 +72,15 @@ class SourceChecks(unittest.TestCase):
     def test_lua_identifiers_and_bounded_inputs_present(self):
         values=scripts();self.assertEqual(set(values),{'decrease','release_owner','fixed_window','sliding_window'})
         for name in ['decrease','fixed_window','sliding_window']:self.assertIn('tonumber',values[name]);self.assertIn('math.floor',values[name])
+    def test_export_uses_exact_utf8_bytes_on_every_platform(self):
+        with tempfile.TemporaryDirectory() as directory:
+            destination = Path(directory)
+            export(destination)
+            for name, code in scripts().items():
+                self.assertEqual((destination/(name+'.lua')).read_bytes(), code.encode('utf-8'))
+            self.assertTrue(all(b'\r\n' not in page.read_bytes() for page in destination.iterdir()))
+            export(destination)  # The no-overwrite byte guard must accept its own output.
+
     def test_export_does_not_overwrite_changed_file(self):
         with tempfile.TemporaryDirectory() as d:
             path=Path(d);out=export(path);self.assertGreater(out['files'],20);export(path)
