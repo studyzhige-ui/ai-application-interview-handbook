@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import ast
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -55,8 +56,8 @@ def run_examples() -> dict:
                 script = Path(directory) / "example.py"
                 script.write_text(code, encoding="utf-8")
                 result = subprocess.run(
-                    [sys.executable, "-I", "-S", str(script)], input=options.get("stdin", ""),
-                    capture_output=True, text=True, timeout=10, cwd=directory,
+                    [sys.executable, "-I", "-S", "-X", "utf8", str(script)], input=options.get("stdin", ""),
+                    capture_output=True, text=True, encoding="utf-8", timeout=10, cwd=directory,
                 )
                 expected_error = options.get("error")
                 if expected_error:
@@ -92,8 +93,9 @@ def validate_lab() -> dict:
             Path(directory, "pagination.py").write_text(code, encoding="utf-8")
             Path(directory, "test_pagination.py").write_text(tests, encoding="utf-8")
             result = subprocess.run(
-                [sys.executable, "-m", "unittest", "discover", "-v"],
-                cwd=directory, capture_output=True, text=True, timeout=10,
+                [sys.executable, "-X", "utf8", "-m", "unittest", "discover", "-v"],
+                cwd=directory, capture_output=True, text=True, encoding="utf-8", timeout=10,
+                env={**os.environ, "PYTHONIOENCODING": "utf-8"},
             )
             results[label] = result.returncode
             if label == "starter" and result.returncode == 0:

@@ -190,8 +190,8 @@ def validate_answers(exercises: list[Exercise]) -> int:
             script = Path(directory) / f"{e.eid}.py"
             script.write_text(e.solution + "\n\n" + e.tests + "\n", encoding="utf-8")
             result = subprocess.run(
-                [sys.executable, "-I", "-S", str(script)], capture_output=True,
-                text=True, timeout=10, cwd=directory,
+                [sys.executable, "-I", "-S", "-X", "utf8", str(script)], capture_output=True,
+                text=True, encoding="utf-8", timeout=10, cwd=directory,
             )
             if result.returncode:
                 raise AssertionError(f"{e.eid}:\n{result.stdout}\n{result.stderr}")
