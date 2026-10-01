@@ -104,11 +104,7 @@ validate_order({"order_id": "A100"})  # 合法输入，通过检查
 
 ### 3.2 字段多时，用数据模型集中表达契约
 
-下面使用 **Pydantic v2**，它是第三方库。需要运行示例时，在对应 Python 环境安装：
-
-```bash
-python -m pip install "pydantic>=2,<3"
-```
+下面使用 **Pydantic v2**，默认现有环境已提供所需依赖。这里关注模型怎样执行规则，不展开安装步骤。`Literal["refund"]` 表示只接受这个指定值，接续第 04 章的类型提示。
 
 ```python
 from typing import Literal             # 描述只允许若干指定字面值

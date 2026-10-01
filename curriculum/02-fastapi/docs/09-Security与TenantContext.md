@@ -14,6 +14,50 @@
 
 `HTTPBearer` 能帮你读取 `Authorization: Bearer ...`。**它本身不会替你验证任意 JWT 的签名、有效期、签发方或受众，也不会自动查出用户拥有哪些资源。** [FastAPI 安全教程](https://fastapi.tiangolo.com/tutorial/security/first-steps/)解释了安全依赖与 OpenAPI 的关系。
 
+### 1.1 Bearer 是凭证使用方式，JWT 是一种凭证格式
+
+`Authorization: Bearer <token>` 的关键是“持有这份 token 的一方能够代表它的权限使用它”。攻击者若拿到有效 token，也可能冒用，所以需要 HTTPS、有限有效期和不记录原文的日志策略。Bearer token 可以是随机、不透明的会话标识，也可以采用 JWT；两者不是同义词。
+
+常见**签名 JWT 的紧凑格式**分为三段：
+
+```text
+base64url(header) . base64url(payload) . base64url(signature)
+header：类型、算法与密钥标识等说明
+payload：sub、iss、aud、exp 等 claims（声明）
+signature：对前两段形成的签名或消息认证码
+```
+
+Base64url 是编码，不是加密；拿到 token 的人通常能读出 payload。签名用于检测内容被修改及验证来源，不负责保密；JWT 也存在加密形式，不能把“三段”泛化为所有 JWT。服务应按自己的可信配置选择允许算法和验证密钥，不能让来路不明的 header 决定任意算法或密钥地址。[JWT 规范](https://www.rfc-editor.org/rfc/rfc7519.html) · [JWT 安全实践](https://www.rfc-editor.org/rfc/rfc8725.html)
+
+### 1.2 从 token 到 Principal，中间必须有验证
+
+**Principal（已验证主体）** 是应用认可的身份，例如用户 u1 及其可信访问范围。下面是一条状态过程，不是可以直接复制的密码学实现：
+
+```text
+收到 Bearer token
+→ 从受信任配置选择验证器，验证签名和允许算法
+→ 验证 iss（谁签发）、aud（给谁用）、exp（是否到期）、必要的 nbf 等声明
+→ 验证本应用要求的字段存在且类型正确
+→ 将 sub 对应到当前有效用户，检查停用/撤销及成员关系
+→ 得到 Principal(user=u1, tenant=team-a)
+→ 检查这次动作和目标资源是否允许
+```
+
+签名正确却 aud 指向另一个服务，仍不能用于当前 API；签名正确且尚未到期，也可能因用户已停用或权限变更而需要拒绝。不要先解码 payload 就信任其中的 `tenant_id`。成熟库负责密码学验证，应用仍负责声明规则、可信密钥来源和用户状态。
+
+过期只限制 token 的自然寿命，不自动实现提前撤销。需要即时撤销时，可以检查会话/撤销记录或用户版本；短期 access token 配合受控刷新流程则限制失窃后的时间窗口。JWT 不是天然“无状态又即时撤销”的双重保证。密码登录入口还应使用专门密码哈希算法验证密码、限制尝试频率；不是把明文密码直接用作长期 API token。
+
+### 1.3 Session、Cookie 与 token 不在同一层
+
+| 概念 | 负责什么 | 状态位置与代价 |
+|---|---|---|
+| 服务端 Session | 保存登录会话及当前状态 | 客户端携带不透明会话 ID，服务端查询，可集中撤销 |
+| 签名 token | 携带可验证声明 | 可在本地验证，权限更新与撤销仍需额外策略 |
+| Cookie | 浏览器保存并按范围自动发送值 | 可以承载会话 ID，也可以承载 token；不是认证算法 |
+
+所以“Cookie 还是 JWT”不是完整二选一：JWT 也能放 Cookie 中，Session ID 也能放 Authorization 中。选择时要同时说明凭证格式、保存位置、发送方式、有效期与撤销。Backend 将进一步展开[认证与会话](../../05-backend-engineering/docs/15-AuthSession与TenantBoundary.md)；这里先把身份如何进入 FastAPI 的依赖链讲清楚。
+
+
 ## 2. 让身份成为函数的显式输入
 
 下面用一个很小的字典模拟认证服务。两个字符串都是公开测试数据，不能用于真实系统。
@@ -136,6 +180,15 @@ def hello():
 
 > ⚠️ 启用凭据的跨域交互应明确列出允许的来源、方法和请求头，不直接复制通配配置。`localhost` 与 `127.0.0.1` 也不是同一个主机名，配置必须匹配实际前端地址。
 
+### 浏览器自动带 Cookie，为什么会出现 CSRF
+
+设用户已经登录笔记网站，浏览器保存了它的认证 Cookie。之后用户打开恶意页面，页面诱导浏览器向笔记网站发送一次修改请求；在满足 Cookie 发送规则的情况下，浏览器会自动附带凭证。服务器若只看到“有 Cookie”就执行，会把第三方页面触发的动作误当成用户本意。这就是跨站请求伪造（CSRF）的核心因果。
+
+防护需要验证请求来源和操作意图：状态改变不使用 GET；按实际跨站需求配置 SameSite；校验 Origin/必要时 Referer；使用服务端验证、攻击页面不能取得或伪造的 CSRF token。SameSite 是重要的纵深防护，但 site 与 origin 不同：同为 HTTPS 的 app.example.com 与 api.example.com 可属于同一 site，却因主机不同而不同源。不能把 SameSite 独自当成覆盖所有情形的防线。HttpOnly 限制脚本读取 Cookie，Secure 限制通过 HTTPS 发送，都不证明这次请求由用户主动发起。[OWASP CSRF 防护](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)
+
+CORS 主要控制跨源脚本能否读取响应，不能仅因恶意页面读不到响应，就推断修改请求一定没有发生。显式 Authorization 请求头通常不会被浏览器自动附到跨站表单，因此与自动 Cookie 的 CSRF 暴露面不同；但凭证若被脚本窃取，又是另一类问题。WebSocket 握手也需核对身份和允许的 Origin，不能用普通 CORS 中间件代替。
+
+
 ## 6. 不可信输入与秘密应在哪一层处理
 
 安全不止登录。需要把风险落实到具体边界：
@@ -151,7 +204,7 @@ def hello():
 
 成功请求只能说明存在一条可用路径。权限实验必须主动交换身份和资源：Alice 读取 Bob 的资源、伪造租户请求头、使用无效 token、取消身份凭证、访问不存在的对象。
 
-**练习：** 在示例中添加 `/me`，只返回用户 ID 和所属团队。再添加两个测试：无凭证时 401，Alice 的响应不能包含她使用的 token。接口帮助客户端了解自己，不应该把凭证当作可公开身份字段。
+**身份输出例子：** `/me` 可以直接依赖 CurrentUser 并返回 `{"id": user.id, "tenant_id": user.tenant_id}`。缺凭证时依赖先给出 401；身份有效时只公开 ID 与团队，不把原始 token 放入响应。token 是凭证，不是应公开的用户资料。
 
 ---
 
@@ -179,7 +232,7 @@ def hello():
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. Alice 为什么读笔记 2 得到 404 而不是 200 后隐藏正文？</summary>

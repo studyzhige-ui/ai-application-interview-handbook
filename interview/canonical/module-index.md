@@ -4,24 +4,24 @@
 
 > Canonical 数量描述面试能力粒度；Curriculum Blocks 描述教材认知闭环，两者不会机械相等。
 
-> 课程标题、数量与阅读顺序见[学习资源索引](../../guide/navigation-index.md)。本页只对应冻结能力归属与课程入口；目录编号不代表推荐学习顺序。
+> 课程标题、数量与阅读顺序见[学习资源索引](../../guide/navigation-index.md)。本页只对应冻结能力归属与课程入口；课程入口与统一学习顺序一致；能力归属及冻结统计不变。
 
-| 目录标识 | Module | Canonical File | ACTIVE | Curriculum Entry |
+| 学习顺序 | Module | Canonical File | ACTIVE | Curriculum Entry |
 |---:|---|---|---:|---|
 | 01 | Python Foundation | [python.md](python.md) | 15 | [README](../../curriculum/01-python/README.md) |
 | 02 | FastAPI | [fastapi.md](fastapi.md) | 4 | [README](../../curriculum/02-fastapi/README.md) |
-| 03 | AI Backend Engineering | [ai-backend-engineering.md](ai-backend-engineering.md) | 39 | [README](../../curriculum/03-backend-engineering/README.md) |
-| 04 | MySQL | [mysql.md](mysql.md) | 26 | [README](../../curriculum/04-mysql/README.md) |
-| 05 | Redis | [redis.md](redis.md) | 19 | [README](../../curriculum/05-redis/README.md) |
-| 06 | Vector Database | [vector-db.md](vector-db.md) | 12 | [README](../../curriculum/06-vector-db/README.md) |
-| 07 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | [README](../../curriculum/07-llm-foundation/README.md) |
+| 03 | MySQL | [mysql.md](mysql.md) | 26 | [README](../../curriculum/03-mysql/README.md) |
+| 04 | Redis | [redis.md](redis.md) | 19 | [README](../../curriculum/04-redis/README.md) |
+| 05 | AI Backend Engineering | [ai-backend-engineering.md](ai-backend-engineering.md) | 39 | [README](../../curriculum/05-backend-engineering/README.md) |
+| 06 | LLM Foundation（应用工程深度） | [llm-foundation.md](llm-foundation.md) | 23 | [README](../../curriculum/06-llm-foundation/README.md) |
+| 07 | Vector Database | [vector-db.md](vector-db.md) | 12 | [README](../../curriculum/07-vector-db/README.md) |
 | 08 | RAG | [rag.md](rag.md) | 29 | [README](../../curriculum/08-rag/README.md) |
 | 09 | Agent | [agent-harness.md](agent-harness.md) | 44 | [README](../../curriculum/09-agent/README.md) |
 | 10 | System Design | [system-design.md](system-design.md) | 24 | [README](../../curriculum/10-system-design/README.md) |
 
 **ACTIVE total = 235. Legacy MOVED = 24.**
 
-## 主要 Ownership 边界
+## 主要 Ownership（知识主责）边界
 
 - FastAPI async Runtime 本体 → Python；
 - DB + Cache 一致性 / 通用 Rate Limit / Retry / MQ → AI Backend Engineering；

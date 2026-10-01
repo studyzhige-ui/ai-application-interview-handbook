@@ -1,15 +1,15 @@
 # RAG｜从外部知识到有依据的回答
 
-[← LLM Foundation](../07-llm-foundation/README.md) · [↑ Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [Agent →](../09-agent/README.md)
+[← Vector DB](../07-vector-db/README.md) · [↑ Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [Agent →](../09-agent/README.md)
 
 RAG（检索增强生成）把外部知识中适用、允许读取且能够回溯的内容提供给模型，用于回答具体问题。本模块沿语料处理、检索、证据组装、评测和持续更新建立完整理解，面向 AI Application 与 Agent 工程岗位的学习和实践。
 
 <a id="prerequisites"></a>
 ## 学习前提与模块边界
 
-开始前需要理解文本、列表、函数和基本错误处理；了解 Embedding 把对象编码成向量，以及模型输入长度有限。可以从 [LLM Foundation 的 Embedding 与 Reranker](../07-llm-foundation/docs/09-Embedding与Reranker.md) 回看最小模型。正文会就地解释当前机制需要的前提，不要求先背完所有生产组件。
+开始前需要理解文本、列表、函数和基本错误处理；了解 Embedding 把对象编码成向量，以及模型输入长度有限。可以从 [LLM Foundation 的 Embedding 与 Reranker](../06-llm-foundation/docs/09-Embedding与Reranker.md) 回看最小模型。正文会就地解释当前机制需要的前提，不要求先背完所有生产组件。
 
-向量索引的内部结构、近似搜索和过滤执行在 [Vector DB](../06-vector-db/README.md) 深入学习；模型内部编码与训练归 LLM Foundation；跨步骤的工具执行、持久状态和恢复归 [Agent](../09-agent/README.md)。RAG 负责把这些能力围绕“得到适用证据并可靠回答”组合起来。完整企业部署取舍由 [System Design](../10-system-design/README.md) 承接。
+向量索引的内部结构、近似搜索和过滤执行在 [Vector DB](../07-vector-db/README.md) 深入学习；模型内部编码与训练归 LLM Foundation；跨步骤的工具执行、持久状态和恢复归 [Agent](../09-agent/README.md)。RAG 负责把这些能力围绕“得到适用证据并可靠回答”组合起来。完整企业部署取舍由 [System Design](../10-system-design/README.md) 承接。
 
 全仓学习顺序以 [learning-order.json](../../guide/learning-order.json) 为准，目录前缀保留稳定身份，不等于必须按数字学习。本模块的实际正文顺序为下表顺序。
 

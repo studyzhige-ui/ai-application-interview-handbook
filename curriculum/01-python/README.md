@@ -29,7 +29,7 @@
 
 ## 2. 在十板块中的位置
 
-**Python Foundation** → [FastAPI](../02-fastapi/README.md) → [MySQL](../04-mysql/README.md) → [Redis](../05-redis/README.md) → [AI Backend Engineering](../03-backend-engineering/README.md) → [Vector Database](../06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../07-llm-foundation/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
+**Python Foundation** → [FastAPI](../02-fastapi/README.md) → [MySQL](../03-mysql/README.md) → [Redis](../04-redis/README.md) → [AI Backend Engineering](../05-backend-engineering/README.md) → [LLM Foundation（应用工程深度）](../06-llm-foundation/README.md) → [Vector Database](../07-vector-db/README.md) → [RAG](../08-rag/README.md) → [Agent](../09-agent/README.md) → [System Design](../10-system-design/README.md)
 
 Python 是后续模块的语言与运行时基础。前几章用数字、文本、名单等小例子解释规则；学会规则后，再连接检索、模型接口、工具参数等工程场景，不把后续模块知识作为第一章的隐藏门槛。
 
@@ -63,10 +63,10 @@ Python 是后续模块的语言与运行时基础。前几章用数字、文本�
 
 ```text
 第一阶段｜数据与对象（01—03）
-读懂代码 → 名字／对象／类型 → 容器与引用 → 共享／修改／拷贝
+读懂代码 → 名字／对象／类型 → 标量／文本 → 容器与引用 → 共享／修改／拷贝
                          ↓
 第二阶段｜执行与组织（04—07）
-函数调用 → 参数与作用域 → 数据处理 → 迭代与暂停 → 包装行为与资源范围
+函数调用／递归 → 类型契约／参数与作用域 → 数据处理 → 迭代与暂停 → 包装行为与资源范围
                          ↓
 第三阶段｜对象协作与输入边界（08—10）
 自定义类 → 行为协议 → 异常传播 → 文件／模块 → 结构与业务校验
@@ -88,14 +88,14 @@ Python 是后续模块的语言与运行时基础。前几章用数字、文本�
 | 章节 | 本章要回答的问题 |
 |---|---|
 | [01. Python 基础与对象模型](docs/01-python基础与对象模型.md) | 一行代码做什么？变量、对象、类型怎样关联？相等与同一对象有何不同？ |
-| [02. 核心数据类型与容器](docs/02-核心数据类型与容器.md) | 数据按位置、按键还是按成员组织？引用槽位、哈希和切片怎样影响操作？ |
+| [02. 核心数据类型与容器](docs/02-核心数据类型与容器.md) | 数值与文本遵循什么规则？多项数据按位置、按键还是按成员组织？哈希和切片有什么成本？ |
 | [03. 可变对象、对象身份与深浅拷贝](docs/03-可变对象-对象身份-深浅拷贝.md) | 修改的是名字、外层容器还是内部对象？为什么共享会跨变量、跨调用传播？ |
 
 ### 第二阶段｜执行与组织
 
 | 章节 | 本章要回答的问题 |
 |---|---|
-| [04. 函数、参数、作用域与闭包](docs/04-函数-参数-作用域-闭包.md) | 输入怎样绑定到参数？函数里的名字到哪里查找？外层返回后状态为什么还在？ |
+| [04. 函数、参数、作用域与闭包](docs/04-函数-参数-作用域-闭包.md) | 调用与递归怎样返回？类型提示与默认值有什么区别？名字怎样查找，闭包怎样保留状态？ |
 | [05. Lambda、推导式与常用内置函数](docs/05-lambda-推导式-常用内置函数.md) | 转换、筛选、配对、排序和汇总，各适合什么工具？何时立即构造结果？ |
 | [06. 迭代器、生成器与 yield](docs/06-迭代器-生成器-yield.md) | for 怎样逐项取值？谁保存进度？yield 怎样暂停和恢复？ |
 | [07. 装饰器与上下文管理器](docs/07-装饰器-上下文管理器.md) | 怎样扩展函数又保持契约？怎样在正常和异常退出时管理资源？ |
@@ -132,7 +132,7 @@ Canonical 统计基线（`S001–S279`）：本模块有 **15 道 Primary Canoni
 
 ## 7. 模块边界
 
-Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI](../02-fastapi/README.md)。跨服务超时预算、重试、消息队列、背压、持久后台任务等完整机制进入 [AI Backend Engineering](../03-backend-engineering/README.md)。Agent 循环、工具权限、记忆、检查点与恢复进入 [Agent](../09-agent/README.md)。
+Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI](../02-fastapi/README.md)。跨服务超时预算、重试、消息队列、背压、持久后台任务等完整机制进入 [AI Backend Engineering](../05-backend-engineering/README.md)。Agent 循环、工具权限、记忆、检查点与恢复进入 [Agent](../09-agent/README.md)。
 
 本模块提供读懂这些问题所需的桥梁，但不把 Python 示例冒充成完整的生产业务系统。完整机制在主责模块维护，避免同一问题在多个模块各写一套互相冲突的结论。
 
@@ -146,7 +146,7 @@ Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI]
 | 高频面试题 | [进入](interview/高频面试题.md) | 将理解转成口述与追问 |
 | 面试易错点 | [进入](interview/面试易错点.md) | 校正绝对化或混淆边界的说法 |
 | 面试前速查 | [进入](interview/面试前速查表.md) | 最后阶段快速回忆，不作为零基础教材 |
-| Python 高频 Coding 小题 | [进入](interview/Python高频Coding小题.md) | 额外编码专项训练 |
+| Python 高频 Coding 小题 | [进入](../../practice/python-basics/Python高频Coding小题.md) | 独立的可选写法实践 |
 
 研究、审计与维护记录：[Canonical Questions](../../interview/canonical/python.md)、[真实追问链](../../market/analysis/follow-up-chains.md)、[复习频率参考](../../market/analysis/frequency-ranking.md)、[课程粒度审计](../../guide/audits/curriculum-granularity-audit.md)、[内容深度审计](../../guide/audits/content-depth-audit.md)。读者可理解性与历史迁移记录见 [Python Reader Revision](../../guide/project/python-reader-revision.md)。审计记录验证对应口径，不替代真实学习过程中的可理解性检查。
 
@@ -154,7 +154,7 @@ Python 负责语言与运行时语义；HTTP／ASGI 服务框架进入 [FastAPI]
 
 ## 9. 推荐学习方式
 
-**第一遍只走正文主线。** 按 01 → 13 阅读。看到代码，先说出“输入是什么、这行改变了哪一层、输出应该是什么”，再运行验证。遇到概念断层，记录到具体小节，不要求靠额外搜索把每段代码拼懂。
+**第一遍只走正文主线。** 按 01 → 13 阅读。默认已有代码环境，安装不属于本路线。代码中的输入、状态与输出用于解释规则；需要时可运行观察，不作为继续阅读的前提。遇到概念断层，记录到具体小节，不要求靠额外搜索把每段代码拼懂。
 
 **第二遍重建关系。** 打开 [Review](review/README.md)，先不看答案，用自己的话解释引用链、调用链、取值进度和任务生命周期。只觉得答案熟悉，还不等于能独立解释。
 
@@ -173,7 +173,9 @@ interview/ ✅
 Canonical Coverage ✅
 ```
 
-**代码验证范围：** 代表性示例在 CPython 3.13.5、Pydantic 2.13.4 环境完成 27 组检查，覆盖引用／拷贝、闭包、装饰器、上下文清理、模块缓存、结构校验、DFS／BFS、Top K，以及聚合早停、超时、单源失败、空输入、并发上限、外部取消、spawn 进程入口和进程池桥接。Top K 另与排序结果进行 200 组随机输入对照。
+**此前代表性验证范围：** 示例在 CPython 3.13.5、Pydantic 2.13.4 环境完成 27 组检查，覆盖引用／拷贝、闭包、装饰器、上下文清理、模块缓存、结构校验、DFS／BFS、Top K，以及聚合早停、超时、单源失败、空输入、并发上限、外部取消、spawn 进程入口和进程池桥接。Top K 另与排序结果进行 200 组随机输入对照。
+
+本轮还用 CPython 3.12.14 执行了 [11 组离线基础检查](examples/test_foundations.py)，包含 195 段正文 Python 代码的语法解析，以及数值/文本、递归、默认值、排序、property、哈希、异步迭代、队列和嵌套字典的代表性行为。运行入口为 `python -m unittest discover -s curriculum/01-python/examples -v`，这是维护检查，不是阅读门槛。
 
 这些验证不等于全部教学代码逐段执行，也不构成跨所有 Python 版本／平台的证明；模拟取消与清理不等于对真实下游服务副作用的保证。读者可理解性通过实际学习反馈持续校正，修订与迁移记录见 [Python Reader Revision](../../guide/project/python-reader-revision.md)。
 

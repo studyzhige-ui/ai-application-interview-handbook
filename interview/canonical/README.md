@@ -13,17 +13,17 @@ Mapped Sources     278
 VALID-UNMAPPED       1（S271）
 ```
 
-## 十板块 Ownership
+## 十板块 Ownership（知识主责归属）
 
 | Module | Canonical | Entry |
 |---|---:|---|
 | [Python Foundation](python.md) | 15 | [教材 README](../../curriculum/01-python/README.md) |
 | [FastAPI](fastapi.md) | 4 | [教材 README](../../curriculum/02-fastapi/README.md) |
-| [AI Backend Engineering](ai-backend-engineering.md) | 39 | [教材 README](../../curriculum/03-backend-engineering/README.md) |
-| [MySQL](mysql.md) | 26 | [教材 README](../../curriculum/04-mysql/README.md) |
-| [Redis](redis.md) | 19 | [教材 README](../../curriculum/05-redis/README.md) |
-| [Vector Database](vector-db.md) | 12 | [教材 README](../../curriculum/06-vector-db/README.md) |
-| [LLM Foundation（应用工程深度）](llm-foundation.md) | 23 | [教材 README](../../curriculum/07-llm-foundation/README.md) |
+| [MySQL](mysql.md) | 26 | [教材 README](../../curriculum/03-mysql/README.md) |
+| [Redis](redis.md) | 19 | [教材 README](../../curriculum/04-redis/README.md) |
+| [AI Backend Engineering](ai-backend-engineering.md) | 39 | [教材 README](../../curriculum/05-backend-engineering/README.md) |
+| [LLM Foundation（应用工程深度）](llm-foundation.md) | 23 | [教材 README](../../curriculum/06-llm-foundation/README.md) |
+| [Vector Database](vector-db.md) | 12 | [教材 README](../../curriculum/07-vector-db/README.md) |
 | [RAG](rag.md) | 29 | [教材 README](../../curriculum/08-rag/README.md) |
 | [Agent](agent-harness.md) | 44 | [教材 README](../../curriculum/09-agent/README.md) |
 | [System Design](system-design.md) | 24 | [教材 README](../../curriculum/10-system-design/README.md) |

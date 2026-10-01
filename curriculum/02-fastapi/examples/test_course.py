@@ -514,3 +514,73 @@ def test_cross_field_model_at_http_boundary():
         reply = client.post("/pages", json={"start_page": 2, "end_page": 5})
         assert reply.status_code == 200 and reply.json() == {"start": 2, "end": 5}
     assert calls == [(2, 5)]
+
+
+def test_required_nullable_four_combinations():
+    from pydantic import create_model, ValidationError
+    # These four declarations are the chapter 03 table's four independent contracts.
+    cases = [(str, ..., False, False), (str | None, ..., False, True),
+             (str, "匿名", True, False), (str | None, None, True, True)]
+    for field_type, default, allow_missing, allow_null in cases:
+        model = create_model("Presence", name=(field_type, default))
+        for body, allowed in [({}, allow_missing), ({"name": None}, allow_null),
+                              ({"name": "A"}, True)]:
+            if allowed:
+                model.model_validate(body)
+            else:
+                with pytest.raises(ValidationError):
+                    model.model_validate(body)
+
+
+def test_nested_alias_and_independent_default_lists():
+    from pydantic import ValidationError
+    m = load("nested_contract")
+    one = m.Notebook.model_validate({"ownerId": "u1"})
+    two = m.Notebook.model_validate({"ownerId": "u2"})
+    one.notes.append(m.Note(text="A"))
+    assert two.notes == []
+    assert one.model_dump(by_alias=True) == {"ownerId": "u1", "notes": [{"text": "A"}]}
+    with pytest.raises(ValidationError) as error:
+        m.Notebook.model_validate({"ownerId": "u1", "notes": [{}]})
+    assert error.value.errors()[0]["loc"] == ("notes", 0, "text")
+    with pytest.raises(ValidationError):
+        m.Notebook.model_validate({"ownerId": "u1", "notes": None})
+
+
+def test_patch_missing_and_explicit_null():
+    m = load("patch_contract")
+    assert m.missing.description is m.clear.description is None
+    assert m.missing.model_dump(exclude_unset=True) == {}
+    assert m.clear.model_dump(exclude_unset=True) == {"description": None}
+    assert {**m.stored, **m.missing.model_dump(exclude_unset=True)} == {"description": "原说明"}
+    assert {**m.stored, **m.clear.model_dump(exclude_unset=True)} == {"description": None}
+
+
+def test_datetime_decimal_json_representation():
+    from decimal import Decimal
+    m = load("serialization_contract")
+    assert isinstance(m.quote.model_dump()["amount"], Decimal)
+    assert m.quote.model_dump(mode="json") == {"created_at": "2026-01-01T00:00:00Z", "amount": "1.20"}
+
+
+def test_response_paths_headers_cookie_deletion():
+    m = load("response_paths")
+    with TestClient(m.app) as client:
+        response = client.get("/model")
+        assert response.json() == {"text": "第一条"}
+        assert response.headers["x-format"] == "public-note"
+        assert client.cookies["theme"] == "light"
+        assert "httponly" in response.headers["set-cookie"].lower()
+        assert client.get("/direct").json() == {"text": "第一条"}
+        cleared = client.delete("/theme")
+        assert cleared.status_code == 204 and cleared.content == b""
+        assert "theme" not in client.cookies
+
+
+def test_documented_async_lifespan_test(tmp_path):
+    (tmp_path / "lifespan_app.py").write_text(EXAMPLES["lifespan_app"][0], encoding="utf-8")
+    (tmp_path / "test_lifespan.py").write_text(EXAMPLES["async_lifespan_test"][0], encoding="utf-8")
+    result = subprocess.run([sys.executable, "-m", "pytest", "-q"], cwd=tmp_path,
+                            capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "1 passed" in result.stdout

@@ -53,6 +53,9 @@ async def use_resource(resource: Annotated[Resource, Depends(get_resource)], req
 
 > ⚠️ 传给 Depends 的这个生成器依赖不需要再加 `@asynccontextmanager`。FastAPI 会按依赖语义管理它。应用 lifespan 使用的上下文管理器是另一种调用入口，不要把两个例子的装饰器互换。
 
+这个 `async def + yield` 是[Python 异步生成器](../../01-python/docs/12-线程-进程-协程-async-await.md)。它创建时不执行到结束；框架先推进到唯一 yield，保存暂停位置，使用结束后恢复退出流程。`yield` 表示“暂时把资源借出去”，`finally` 表示“使用范围结束时收回”，不是每条响应数据都重新创建一份依赖。
+
+
 ## 3. function 与 request：清理时机差在哪里
 
 FastAPI 0.141.1 中，带 yield 的依赖默认采用 request scope：
@@ -156,7 +159,15 @@ async def catalog(request: Request):
 
 释放资源不等于吞掉错误。若依赖写了 `except`，记录异常后通常要重新抛出，或转成语义明确的新异常；否则调用者可能失去真实失败信息。
 
-多个资源依次初始化时，后一个失败也要释放前面已经取得的资源。固定数量的资源通常用嵌套上下文管理器即可；动态管理一组资源时，再查 `AsyncExitStack` 的用法。
+多个资源依次初始化时，后一个失败也要释放前面已经取得的资源。设先打开客户端 A，再打开文件 B：
+
+```text
+取得 A → 进入 A 的管理范围 → 尝试取得 B
+  ├─ B 成功：使用 B → 退出 B → 退出 A
+  └─ B 失败：B 尚未进入，不能指望它的退出方法；已经进入的 A 仍要退出
+```
+
+固定数量的资源可用嵌套 `async with`/`with` 表达逆序释放；动态数量可用 `AsyncExitStack` 逐项登记已经成功取得的资源。每个管理器自己还需处理进入阶段的部分失败，不能只写一个位于所有初始化之后的 finally。
 
 强制结束进程、断电等情况可能没有机会运行 finally。依赖清理保证的是程序的结构化退出路径，不能替代持久任务恢复。
 
@@ -176,7 +187,7 @@ async def catalog(request: Request):
 
 设连接池只有 2 个连接。如果两个慢速流都持续占用连接，第三个请求即使 SQL 本身很快，也要先等连接。这说明“处理函数已 return”并没有把资源压力清零。
 
-**练习：** 给 resource_app 增加一个故意抛异常的接口，检查 events 中是否仍出现 release。需要实现流式资源读取时，再展开 scope 实验，比较发送期间资源是否仍然可用。
+**异常路径：** 如果 handler 在取得 resource 后抛错，正常返回被跳过，但依赖退出仍经过 finally，因此 events 仍有 release。请求得到失败响应与资源已经归还可以同时成立。若从未成功取得资源，则由获取阶段处理部分失败，不伪造一次成功借用。
 
 ---
 
@@ -204,7 +215,7 @@ async def catalog(request: Request):
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. 响应里 open_during_handler 为 true，为什么请求结束后资源仍可以是关闭的？</summary>

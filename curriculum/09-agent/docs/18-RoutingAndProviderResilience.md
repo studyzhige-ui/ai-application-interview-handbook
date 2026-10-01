@@ -82,6 +82,27 @@
 
 适配器存在，不代表所有能力能够互换。需要保留无法转换的明确失败路径。
 
+### 同一个逻辑调用怎样转换两次仍不串号
+
+用两个假想供应商格式说明转换责任，字段只用于教学，不冒充真实 SDK。运行时的共同对象是：
+
+```text
+Call(id="c7", name="read_document", args={"doc_id":"A"})
+```
+
+供应商甲返回的参数是 JSON 文本，乙返回的参数是对象：
+
+```text
+甲：{request_id:"a91", function:"read_document", arguments:'{"doc_id":"A"}'}
+乙：{block_id:"b32", action:{name:"read_document", input:{doc_id:"A"}}}
+```
+
+甲的适配器先解析参数文本，再校验为工具输入；乙也不能因已有对象就跳过 Schema、业务及权限检查。各自的外部调用 ID 都映射到运行时 c7，不能用工具名作唯一身份，因为同一轮可能两次读取不同文档。
+
+执行完成得到 `Result(call_id="c7", ok=true, content="A 的正文")` 后，甲格式的结果必须关联 a91，乙格式的结果必须关联 b32。错误也要保留同一关联和可解释类别，而非变成一句与任何调用都无关的文本。
+
+如果甲流式送来参数的前半段 `{"doc_id":`，适配器只累计片段，不构造可执行调用。直到完整调用结束且解析校验通过，运行时才能执行。换到乙时，原来 c7 已完成的业务事实仍在，格式转换不能让它变成一条全新的待执行操作。
+
 <a id="11-circuit-breaker-在-agent-runtime-中怎么用"></a>
 <a id="8-runtime-resilience-先做-error-classification"></a>
 <a id="9-retry-eligibility-为什么比-retry-count-更重要"></a>

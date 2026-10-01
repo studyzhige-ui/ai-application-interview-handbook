@@ -6,7 +6,7 @@
 
 ## 快速入口
 
-[正式课程](curriculum/README.md) · [成熟产品源码](products/README.md) · [Coding / Git 实践](practice/README.md) · [学习路线](guide/learning-path.md) · [知识地图](guide/knowledge-map.md) · [岗位市场](market/README.md) · [Canonical Questions](interview/README.md) · [权威资料](references/README.md)
+[正式课程](curriculum/README.md) · [成熟产品源码](products/README.md) · [Python / 数据库 / Coding 实践](practice/README.md) · [学习路线](guide/learning-path.md) · [知识地图](guide/knowledge-map.md) · [岗位市场](market/README.md) · [Canonical Questions](interview/README.md) · [权威资料](references/README.md)
 
 ---
 
@@ -47,16 +47,16 @@ tools/        研究与质量分析怎样自动化
 |---:|---|---|
 | 01 | [Python Foundation](curriculum/01-python/README.md) | 名字与对象、数据容器、函数、资源和并发执行。 |
 | 02 | [FastAPI](curriculum/02-fastapi/README.md) | 请求与响应、数据校验、资源生命周期、流式交付与接口验证。 |
-| 03 | [MySQL](curriculum/04-mysql/README.md) | 表与查询、索引、事务、并发、恢复与数据增长。 |
-| 04 | [Redis](curriculum/05-redis/README.md) | 数据操作、生命周期、缓存、原子修改、持久化与高可用。 |
-| 05 | [AI Backend Engineering](curriculum/03-backend-engineering/README.md) | 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。 |
-| 06 | [Vector Database](curriculum/06-vector-db/README.md) | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
-| 07 | [LLM Foundation](curriculum/07-llm-foundation/README.md) | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
+| 03 | [MySQL](curriculum/03-mysql/README.md) | 表与查询、索引、事务、并发、恢复与数据增长。 |
+| 04 | [Redis](curriculum/04-redis/README.md) | 数据操作、生命周期、缓存、原子修改、持久化与高可用。 |
+| 05 | [AI Backend Engineering](curriculum/05-backend-engineering/README.md) | 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。 |
+| 06 | [LLM Foundation](curriculum/06-llm-foundation/README.md) | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
+| 07 | [Vector Database](curriculum/07-vector-db/README.md) | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
 | 08 | [RAG](curriculum/08-rag/README.md) | 从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。 |
 | 09 | [Agent](curriculum/09-agent/README.md) | 沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。 |
 | 10 | [System Design](curriculum/10-system-design/README.md) | 从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。 |
 
-目录编号是稳定路径标识；表格按推荐学习顺序排列。正式顺序与 Module Exit Gate 见 [Learning Path](guide/learning-path.md)。
+目录编号、章节顺序与导航保持一致。可选阅读建议见 [Learning Path](guide/learning-path.md)。
 
 ---
 
@@ -71,7 +71,7 @@ Agent 产品源码学习入口：[Agent Products](products/agent/README.md)。
 - [DeepSeek Harness](products/agent/deepseek-harness/README.md)
 - [DeerFlow 2.0](products/agent/deer-flow/README.md)
 
-Products 不承担通用概念的 Primary Ownership，也不作为源码证据仓库。通用机制回到 Curriculum；固定版本、官方规范和源码证据回到 References。
+Products 不承担通用概念的 Primary Ownership（知识主责归属），也不作为源码证据仓库。通用机制回到 Curriculum；固定版本、官方规范和源码证据回到 References。
 
 ---
 
@@ -79,12 +79,10 @@ Products 不承担通用概念的 Primary Ownership，也不作为源码证据�
 
 Practice 与十个正式 Curriculum 模块并行，作为横向实践轨道，不计入 Curriculum 编号。
 
-- [Coding & Problem Solving](practice/coding/README.md)：程序读写与追踪 → 完整输入输出 → 数据结构与算法 → Hot100 → 笔试 → 多文件 AI Coding。
-- [Git + GitHub Desktop](practice/tooling/git-github-desktop-guide.md)：Pull → 开发 → Diff → Commit → Push → Branch / Conflict / .gitignore 的完整初学者工作流。
+- [Coding & Problem Solving](practice/coding/README.md)：独立顺读程序读写、输入输出、结构与算法；Hot100 与笔试为延伸，AI Coding 为可选参考。
+- [Git + GitHub Desktop](practice/tooling/git-github-desktop-guide.md)：按需查询版本管理与协作操作的可选参考。
 
-它回答的是：
-
-> **“知识我懂了，但我能不能真正写、改、提交、调试和协作？”**
+实践按 Python 高频基础、数据库基础操作与 Coding 分类，供读者按需巩固。默认已有代码环境，不以环境搭建或项目交付作为学习门槛。
 
 ---
 

@@ -1,6 +1,6 @@
 # MySQL｜版本与技术事实资料索引
 
-[MySQL 课程](../../curriculum/04-mysql/README.md) · [实验环境](../../curriculum/04-mysql/examples/README.md)
+[MySQL 课程](../../curriculum/03-mysql/README.md) · [实验环境](../../curriculum/03-mysql/examples/README.md)
 
 本索引用于核对 MySQL 与 InnoDB 的技术事实。真人面经决定需要检验哪些问题，不替代官方语义；实验能验证其执行范围，不能自动证明断电、多副本和生产负载下的行为。
 

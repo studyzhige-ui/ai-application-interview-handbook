@@ -60,12 +60,20 @@ class FullFixtureTests(unittest.TestCase):
         put('interview/canonical/README.md','# Frozen\n26 Canonical / 55 independent HUMAN-A flows\n')
         put('market/interviews/batch-old.md','# Historical evidence\n')
         put('practice/tooling/README.md','# Tooling\n')
+        put('practice/python-basics/README.md','# Python basics\n')
+        put('practice/database-basics/README.md','# Database basics\n')
         put('practice/coding/README.md','# Coding\n')
         put('practice/coding/docs/01-fundamentals.md','# Coding lesson\n')
         put('products/agent/sample/README.md','# Example｜Module\nhttps://github.com/example/sample/tree/'+'a'*40+'\n'+''.join(f'| {i} | [Topic {i}]({i:02d}-topic.md) |\n' for i in range(1,5)))
         for i in range(1,5):put(f'products/agent/sample/{i:02d}-topic.md',f'# {i}\n')
     def apply(self,changes):
         for p,t in changes.items():self.put(p,t)
+    def test_private_snapshot_boundary_does_not_depend_on_one_chinese_label(self):
+        path = self.root/'products/agent/sample/README.md'
+        text = path.read_text().replace('example/sample', 'studyzhige-ui/claude-code-source-private')
+        path.write_text(text + '\n授权私人学习快照，不是官方完整源码。\n')
+        self.assertTrue(outer.inventory(self.root)['products'][0]['private_mirror'])
+
     def test_actual_files_determine_counts(self):
         data=outer.inventory(self.root)
         self.assertEqual(data['curriculum_chapters'],10)

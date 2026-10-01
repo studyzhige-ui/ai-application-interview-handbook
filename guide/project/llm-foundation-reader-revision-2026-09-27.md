@@ -51,29 +51,29 @@ Review 由按组件记忆转为重建计算、缓存、检索与干预关系，�
 
 | QID / 原问法摘要 | 抽象机制 | 必要前置 | 正文主要位置 | 原解释及本轮处理 |
 |---|---|---|---|---|
-| LLM-001：为什么用 Token 而不是字符/单词 | 词表与子词、模型—分词器匹配 | 01 | [第 02 章](../../curriculum/07-llm-foundation/docs/02-TokenContext与LongContext.md) | 原有概念保留；补合并过程和计数边界 |
-| LLM-002：Context Window 怎样影响应用设计 | 最终序列与输入/输出预算 | 01–02 | [第 02 章](../../curriculum/07-llm-foundation/docs/02-TokenContext与LongContext.md) | 补完整预算与多轮增长 |
-| LLM-003：Lost in the Middle、长上下文是否代替 RAG | 容量与信息利用、受控位置实验 | 02 | [第 02 章](../../curriculum/07-llm-foundation/docs/02-TokenContext与LongContext.md) | 保留，限定论文条件并补验证方法 |
-| LLM-004：自回归生成怎样进行 | 条件依赖、logits、采样与终止 | 03–04 | [第 05 章](../../curriculum/07-llm-foundation/docs/05-Generation与Decoding.md) | 加深，区分推测解码与逐步依赖 |
-| LLM-005：Transformer 各组件怎样协作 | Embedding、Attention、FFN、归一化与残差 | 02 | [第 03 章](../../curriculum/07-llm-foundation/docs/03-TransformerBlock.md) | 加深对象、形状与跳连 |
-| LLM-006：Q/K/V 和 Attention 怎样计算 | 投影、点积、Softmax、加权和 | 03 | [第 04 章](../../curriculum/07-llm-foundation/docs/04-Attention与Position.md) | 补数值过程、未来掩码和失败条件 |
-| LLM-007：为什么需要多头 | 不同投影与拼接，共享 K/V 的结构差异 | 03–04 | [第 04 章](../../curriculum/07-llm-foundation/docs/04-Attention与Position.md) | 保留并补尺寸与非人工角色边界 |
-| LLM-008：FFN 有什么作用 | 逐位置非线性加工、已含上下文的隐藏状态 | 03 | [第 03 章](../../curriculum/07-llm-foundation/docs/03-TransformerBlock.md) | 补 4→12→4 过程 |
-| LLM-009：位置编码与 RoPE 原理 | 旋转后点积依赖位置差 | 04 | [第 04 章](../../curriculum/07-llm-foundation/docs/04-Attention与Position.md) | 补相对位置等式；未交付完整张量手写训练营 |
-| LLM-010：多模态怎样输入与融合 | 视觉表示、对齐、预算与证据定位 | 03/09 | [第 10 章](../../curriculum/07-llm-foundation/docs/10-MultimodalFoundation.md) | 保留原有分层排障，补图表与坐标案例 |
-| LLM-011：KV 为什么加速，怎样影响并发 | 因果前缀不变、缓存形状和容量 | 04–05 | [第 06 章](../../curriculum/07-llm-foundation/docs/06-KVCache与PrefillDecode.md) | 补时间线、字节单位和结构适用条件 |
-| LLM-012：Prefill 和 Decode 差别 | 已知前缀批量处理、首 Token 与后续依赖 | 05–06 | [第 06 章](../../curriculum/07-llm-foundation/docs/06-KVCache与PrefillDecode.md) | 明确首 Token 从 Prefill 末位置得分采样 |
-| LLM-013：推理引擎、分页和调度怎样选 | 异长请求、KV 分页、抢占、精度和负载 | 06 | [第 07 章](../../curriculum/07-llm-foundation/docs/07-ServingEngine与性能.md) | 补尾块与固定版本语义；真实引擎未运行 |
-| LLM-014：怎样度量推理延迟 | 测量起止、Token 与流分片、分位数 | 05–07 | [第 07 章](../../curriculum/07-llm-foundation/docs/07-ServingEngine与性能.md) | 补时间轴与 TPOT 不适用条件 |
-| LLM-015：Temperature、Top-p 等怎样影响输出 | 重标定分数、截断候选与重新归一化 | 04–05 | [第 05 章](../../curriculum/07-llm-foundation/docs/05-Generation与Decoding.md) | 补分布计算与错误输入验证 |
-| LLM-016：模型 API 应怎样抽象 | 消息语义、能力差异、结果与业务检查 | 01/05 | [第 08 章](../../curriculum/07-llm-foundation/docs/08-ModelAPI与Selection.md) | 补可见成功层级与安全边界 |
-| LLM-017：模型选型依据什么 | 真实任务、独立评测、成本质量延迟 | 07–08 | [第 08 章](../../curriculum/07-llm-foundation/docs/08-ModelAPI与Selection.md) | 补成对比较偏差和单位成功任务成本 |
-| LLM-018：Embedding 模型怎样生成与训练 | Token 表示、池化、对比学习、空间版本 | 03；可先读09桥梁 | [第 09 章](../../curriculum/07-llm-foundation/docs/09-Embedding与Reranker.md) | 补池化算例与难负样本 |
-| LLM-019：Embedding 与 Reranker 差别 | 独立编码与联合交互、候选上限 | 09 | [第 09 章](../../curriculum/07-llm-foundation/docs/09-Embedding与Reranker.md) | 保留主线，补输入截断/校准条件 |
-| LLM-020：何时微调，LoRA 为什么省参数 | 任务目标、梯度、冻结权重与低秩增量 | 12 | [第 13 章](../../curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md) | 补样本监督、初始化和资源边界 |
-| LLM-021：SFT/PPO/DPO/GRPO 与蒸馏 | 示范、偏好、奖励、参考策略及教师信号 | 13 | [第 14 章](../../curriculum/07-llm-foundation/docs/14-PostTraining与Distillation.md) | 补机制而非逐算法新增章节 |
-| LLM-022：幻觉怎样归因与干预 | 证据来源、进入请求、支持关系与真实结果 | 08/11 | [第 12 章](../../curriculum/07-llm-foundation/docs/12-Hallucination与干预边界.md) | 加深分层归因、误拒分母与验证 |
-| LLM-023：怎样优化 Prompt | 完整任务、条件分支、示例和回归 | 08 | [第 11 章](../../curriculum/07-llm-foundation/docs/11-PromptEngineering.md) | 补完整输入与可核验对照 |
+| LLM-001：为什么用 Token 而不是字符/单词 | 词表与子词、模型—分词器匹配 | 01 | [第 02 章](../../curriculum/06-llm-foundation/docs/02-TokenContext与LongContext.md) | 原有概念保留；补合并过程和计数边界 |
+| LLM-002：Context Window 怎样影响应用设计 | 最终序列与输入/输出预算 | 01–02 | [第 02 章](../../curriculum/06-llm-foundation/docs/02-TokenContext与LongContext.md) | 补完整预算与多轮增长 |
+| LLM-003：Lost in the Middle、长上下文是否代替 RAG | 容量与信息利用、受控位置实验 | 02 | [第 02 章](../../curriculum/06-llm-foundation/docs/02-TokenContext与LongContext.md) | 保留，限定论文条件并补验证方法 |
+| LLM-004：自回归生成怎样进行 | 条件依赖、logits、采样与终止 | 03–04 | [第 05 章](../../curriculum/06-llm-foundation/docs/05-Generation与Decoding.md) | 加深，区分推测解码与逐步依赖 |
+| LLM-005：Transformer 各组件怎样协作 | Embedding、Attention、FFN、归一化与残差 | 02 | [第 03 章](../../curriculum/06-llm-foundation/docs/03-TransformerBlock.md) | 加深对象、形状与跳连 |
+| LLM-006：Q/K/V 和 Attention 怎样计算 | 投影、点积、Softmax、加权和 | 03 | [第 04 章](../../curriculum/06-llm-foundation/docs/04-Attention与Position.md) | 补数值过程、未来掩码和失败条件 |
+| LLM-007：为什么需要多头 | 不同投影与拼接，共享 K/V 的结构差异 | 03–04 | [第 04 章](../../curriculum/06-llm-foundation/docs/04-Attention与Position.md) | 保留并补尺寸与非人工角色边界 |
+| LLM-008：FFN 有什么作用 | 逐位置非线性加工、已含上下文的隐藏状态 | 03 | [第 03 章](../../curriculum/06-llm-foundation/docs/03-TransformerBlock.md) | 补 4→12→4 过程 |
+| LLM-009：位置编码与 RoPE 原理 | 旋转后点积依赖位置差 | 04 | [第 04 章](../../curriculum/06-llm-foundation/docs/04-Attention与Position.md) | 补相对位置等式；未交付完整张量手写训练营 |
+| LLM-010：多模态怎样输入与融合 | 视觉表示、对齐、预算与证据定位 | 03/09 | [第 10 章](../../curriculum/06-llm-foundation/docs/10-MultimodalFoundation.md) | 保留原有分层排障，补图表与坐标案例 |
+| LLM-011：KV 为什么加速，怎样影响并发 | 因果前缀不变、缓存形状和容量 | 04–05 | [第 06 章](../../curriculum/06-llm-foundation/docs/06-KVCache与PrefillDecode.md) | 补时间线、字节单位和结构适用条件 |
+| LLM-012：Prefill 和 Decode 差别 | 已知前缀批量处理、首 Token 与后续依赖 | 05–06 | [第 06 章](../../curriculum/06-llm-foundation/docs/06-KVCache与PrefillDecode.md) | 明确首 Token 从 Prefill 末位置得分采样 |
+| LLM-013：推理引擎、分页和调度怎样选 | 异长请求、KV 分页、抢占、精度和负载 | 06 | [第 07 章](../../curriculum/06-llm-foundation/docs/07-ServingEngine与性能.md) | 补尾块与固定版本语义；真实引擎未运行 |
+| LLM-014：怎样度量推理延迟 | 测量起止、Token 与流分片、分位数 | 05–07 | [第 07 章](../../curriculum/06-llm-foundation/docs/07-ServingEngine与性能.md) | 补时间轴与 TPOT 不适用条件 |
+| LLM-015：Temperature、Top-p 等怎样影响输出 | 重标定分数、截断候选与重新归一化 | 04–05 | [第 05 章](../../curriculum/06-llm-foundation/docs/05-Generation与Decoding.md) | 补分布计算与错误输入验证 |
+| LLM-016：模型 API 应怎样抽象 | 消息语义、能力差异、结果与业务检查 | 01/05 | [第 08 章](../../curriculum/06-llm-foundation/docs/08-ModelAPI与Selection.md) | 补可见成功层级与安全边界 |
+| LLM-017：模型选型依据什么 | 真实任务、独立评测、成本质量延迟 | 07–08 | [第 08 章](../../curriculum/06-llm-foundation/docs/08-ModelAPI与Selection.md) | 补成对比较偏差和单位成功任务成本 |
+| LLM-018：Embedding 模型怎样生成与训练 | Token 表示、池化、对比学习、空间版本 | 03；可先读09桥梁 | [第 09 章](../../curriculum/06-llm-foundation/docs/09-Embedding与Reranker.md) | 补池化算例与难负样本 |
+| LLM-019：Embedding 与 Reranker 差别 | 独立编码与联合交互、候选上限 | 09 | [第 09 章](../../curriculum/06-llm-foundation/docs/09-Embedding与Reranker.md) | 保留主线，补输入截断/校准条件 |
+| LLM-020：何时微调，LoRA 为什么省参数 | 任务目标、梯度、冻结权重与低秩增量 | 12 | [第 13 章](../../curriculum/06-llm-foundation/docs/13-FineTuning与LoRA.md) | 补样本监督、初始化和资源边界 |
+| LLM-021：SFT/PPO/DPO/GRPO 与蒸馏 | 示范、偏好、奖励、参考策略及教师信号 | 13 | [第 14 章](../../curriculum/06-llm-foundation/docs/14-PostTraining与Distillation.md) | 补机制而非逐算法新增章节 |
+| LLM-022：幻觉怎样归因与干预 | 证据来源、进入请求、支持关系与真实结果 | 08/11 | [第 12 章](../../curriculum/06-llm-foundation/docs/12-Hallucination与干预边界.md) | 加深分层归因、误拒分母与验证 |
+| LLM-023：怎样优化 Prompt | 完整任务、条件分支、示例和回归 | 08 | [第 11 章](../../curriculum/06-llm-foundation/docs/11-PromptEngineering.md) | 补完整输入与可核验对照 |
 
 ### 3.2 已回读正式来源逐项去向
 

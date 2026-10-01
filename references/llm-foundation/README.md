@@ -1,6 +1,6 @@
 # LLM Foundation｜模型机制与应用边界的技术依据
 
-[← References](../README.md) · [课程入口](../../curriculum/07-llm-foundation/README.md)
+[← References](../README.md) · [课程入口](../../curriculum/06-llm-foundation/README.md)
 
 本索引按读者要核对的问题组织技术证据。论文说明机制或特定实验，库文档说明对应实现，托管接口说明对应产品行为；三者不相互替代。实际教学例子的数值、订单、价格和评测样本均为作者构造的可验算假设，不是论文或生产系统的实测结果。
 
@@ -72,7 +72,7 @@
 
 ## 验证和来源追溯
 
-[系统优化记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md) 与 [讲解清晰度验收记录](../../guide/project/llm-foundation-clarity-refinement-2026-09-27.md) 分别保存各轮实际范围，区分技术核验、源材料回读、示例运行与尚未验证的环境。[正文小实验](../../curriculum/07-llm-foundation/labs/README.md) 不访问外部模型。真人面经仍以 [Market](../../market/README.md) 为正式证据层，不用这些技术文档增加来源数或改变冻结题目统计。
+[系统优化记录](../../guide/project/llm-foundation-reader-revision-2026-09-27.md) 与 [讲解清晰度验收记录](../../guide/project/llm-foundation-clarity-refinement-2026-09-27.md) 分别保存各轮实际范围，区分技术核验、源材料回读、示例运行与尚未验证的环境。[正文小实验](../../curriculum/06-llm-foundation/labs/README.md) 不访问外部模型。真人面经仍以 [Market](../../market/README.md) 为正式证据层，不用这些技术文档增加来源数或改变冻结题目统计。
 
 ## 补充核验：量化与换出
 

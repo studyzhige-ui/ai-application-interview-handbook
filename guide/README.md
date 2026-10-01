@@ -7,7 +7,7 @@ Guide 负责跨模块导航与整个知识系统的一致性，不承载具体�
 ## 学习入口
 
 - [Knowledge Map](knowledge-map.md)：十模块职责、依赖、Products 与实践层的关系。
-- [Learning Path](learning-path.md)：前置关系、三遍学习、13 周安排示例、Exit Gate 与源码学习入口。
+- [Learning Path](learning-path.md)：一条可选阅读路线、前置关系与回顾、实践、源码的使用方式。
 - [Products](../products/README.md)：成熟 AI 系统源码学习总入口。
 - [Terminology Glossary](terminology-glossary.md)：跨模块稳定术语。
 - [Documentation Style Guide](documentation-style-guide.md)：文档写作与结构规范。

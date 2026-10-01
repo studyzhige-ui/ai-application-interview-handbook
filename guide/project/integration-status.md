@@ -27,7 +27,7 @@ Agent 负责模型判断怎样进入受控行动、结果怎样影响下一步�
 <!-- current-scope:start -->
 ## 正式学习主线
 
-[Python](../../curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-fastapi/README.md) → [MySQL](../../curriculum/04-mysql/README.md) → [Redis](../../curriculum/05-redis/README.md) → [Backend](../../curriculum/03-backend-engineering/README.md) → [Vector DB](../../curriculum/06-vector-db/README.md) → [LLM Foundation](../../curriculum/07-llm-foundation/README.md) → [RAG](../../curriculum/08-rag/README.md) → [Agent](../../curriculum/09-agent/README.md) → [System Design](../../curriculum/10-system-design/README.md)
+[Python](../../curriculum/01-python/README.md) → [FastAPI](../../curriculum/02-fastapi/README.md) → [MySQL](../../curriculum/03-mysql/README.md) → [Redis](../../curriculum/04-redis/README.md) → [Backend](../../curriculum/05-backend-engineering/README.md) → [LLM Foundation](../../curriculum/06-llm-foundation/README.md) → [Vector DB](../../curriculum/07-vector-db/README.md) → [RAG](../../curriculum/08-rag/README.md) → [Agent](../../curriculum/09-agent/README.md) → [System Design](../../curriculum/10-system-design/README.md)
 
 课程合计 175 篇；Products 与 Coding 作为独立轨道。正文标题、阅读顺序、配套入口与内容指纹见[机器目录](../navigation-index.json)。
 <!-- current-scope:end -->

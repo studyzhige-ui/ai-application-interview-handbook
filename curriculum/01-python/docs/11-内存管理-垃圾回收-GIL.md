@@ -121,6 +121,17 @@ collected = gc.collect()     # 请求一次收集，返回本次收集相关的�
 print(collected)             # 具体数字取决于整个解释器状态，不是固定示例输出
 ```
 
+### 从组内引用推导“有没有外部入口”
+
+对 A↔B 这一组候选容器，可以用一份**临时计数**理解循环检测：复制候选对象的引用计数，再扣除候选组内部的引用。扣的是分析账本，不是实际修改对象的引用计数。
+
+| 情形 | A 的引用来源 | B 的引用来源 | 扣除组内引用后 |
+|---|---|---|---|
+| `a` 仍在 | 外部 a 加 B | A | A 有外部剩余，B 暂为 0 |
+| `a`、`b` 都删除 | B | A | A、B 都为 0 |
+
+第一种情况不能因为 B 的临时计数为 0 就回收 B：A 从外部可达，沿 A→B，B 也必须保留。收集器还要从有外部剩余的候选继续传播可达性。第二种情况整组都没有外部入口，才成为不可达候选。实际算法还需处理最终化、复活等细节；这里解释的是为什么“彼此持有”不等于“业务还能到达”。这也说明 GC 不需要每次扫描解释器全部对象，候选集合与扫描策略是实现选择。
+
 ### 3.3 为什么手动 collect 不是默认优化方案
 
 频繁收集可能增加扫描、暂停和 CPU 开销；仍被业务容器引用的对象也不会因为你调用 collect 就被随意删除。资源泄漏还可能来自未关闭的文件、连接或第三方本地库，不一定是循环 GC 问题。
@@ -253,6 +264,8 @@ def get_or_build(key, build): # build 是负责创建值的函数对象
 | 大对象长期驻留 | 先查引用与缓存生命周期 | 活对象不会由 GC 替业务擅自清除 |
 
 具体线程、进程、协程和池的使用方式，在下一章逐步运行。当前先能解释“为什么这样选”以及每条结论的前提。
+
+循环检测的实现解释参考：[CPython 循环收集器设计](https://github.com/python/cpython/blob/main/InternalDocs/garbage_collector.md)。本章临时计数图只用于解释候选组内外引用，不绑定某版的代数与阈值。
 
 本章依据：[数据模型与实现边界](https://docs.python.org/3.14/reference/datamodel.html)、[gc 接口](https://docs.python.org/3.14/library/gc.html)、[自由线程构建](https://docs.python.org/3.14/howto/free-threading-python.html)、[threading](https://docs.python.org/3.14/library/threading.html)、[tracemalloc](https://docs.python.org/3.14/library/tracemalloc.html)。
 

@@ -12,8 +12,8 @@
 | [MySQL](mysql/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [Redis](redis/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [Backend](backend-engineering/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
-| [Vector DB](vector-db/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [LLM Foundation](llm-foundation/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
+| [Vector DB](vector-db/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [RAG](rag/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [Agent 与产品源码](agent/README.md) | 核对该模块的官方资料、适用版本与实现边界。 |
 | [System Design](../curriculum/10-system-design/references.md) | 核对该模块的官方资料、适用版本与实现边界。 |

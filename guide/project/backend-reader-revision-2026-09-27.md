@@ -1,6 +1,6 @@
 # Backend Reader Revision｜2026-09-27 系统优化与验收记录
 
-[← Project Records](README.md) · [Backend 课程](../../curriculum/03-backend-engineering/README.md) · [技术参考](../../references/backend-engineering/README.md)
+[← Project Records](README.md) · [Backend 课程](../../curriculum/05-backend-engineering/README.md) · [技术参考](../../references/backend-engineering/README.md)
 
 本记录保存 AI Backend Engineering 的专项审查、系统优化、证据映射与验收边界。教学正文只陈述稳定知识与使用方法；本轮阅读范围、历史基线、运行环境和未验证项目集中记录在这里。
 
@@ -16,7 +16,7 @@
 
 本轮连续读取并审查：
 
-- curriculum/03-backend-engineering/README.md；
+- curriculum/05-backend-engineering/README.md；
 - docs/01–22 全部正文；
 - review/README.md；
 - 三份 interview 材料；

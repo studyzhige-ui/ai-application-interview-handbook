@@ -1,6 +1,6 @@
 # 12. 线程、进程、协程与 async/await：图解与自测
 
-对应正文：[11. 线程、进程、协程与 async/await](../docs/12-线程-进程-协程-async-await.md)
+对应正文：[12. 线程、进程、协程与 async/await](../docs/12-线程-进程-协程-async-await.md)
 
 ## 图解 1：进程 / 线程 / 协程
 
@@ -136,3 +136,11 @@ Lock 保护互斥临界区；RLock 允许同一线程重入同一把锁；Semaph
 
 </details>
 
+
+## 机制回忆
+
+<details><summary>async for 是否一次启动所有项？有界队列在 task_done 时才空出槽位吗？</summary>
+
+async for 通常逐次等待下一项，不自动建立并发任务；异步生成器含 async def 和 yield，不能当作普通协程整体 await。队列 get 取走项目时空出槽位，task_done 则确认该项工作已完成，两者分别服务容量与完成等待。
+
+</details>

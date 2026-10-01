@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "principle": "Learning order follows prerequisites; directory prefixes are stable identifiers, not a mandatory reading order.",
+  "principle": "模块目录编号、正文阅读顺序与导航保持一致；基础课程按前置知识递进。",
   "modules": [
     {
       "directory": "01-python",
@@ -18,38 +18,38 @@
       ]
     },
     {
-      "directory": "04-mysql",
+      "directory": "03-mysql",
       "label": "MySQL",
       "review_records": [
         "guide/project/mysql-reader-revision-2026-09-27.md"
       ]
     },
     {
-      "directory": "05-redis",
+      "directory": "04-redis",
       "label": "Redis",
       "review_records": [
         "guide/project/redis-reader-restructure-2026-09-27.md"
       ]
     },
     {
-      "directory": "03-backend-engineering",
+      "directory": "05-backend-engineering",
       "label": "Backend",
       "review_records": [
         "guide/audits/backend-clarity-refinement-2026-09-28.md"
       ]
     },
     {
-      "directory": "06-vector-db",
-      "label": "Vector DB",
-      "review_records": [
-        "guide/project/vector-db-reader-revision.md"
-      ]
-    },
-    {
-      "directory": "07-llm-foundation",
+      "directory": "06-llm-foundation",
       "label": "LLM Foundation",
       "review_records": [
         "guide/project/llm-foundation-clarity-refinement-2026-09-27.md"
+      ]
+    },
+    {
+      "directory": "07-vector-db",
+      "label": "Vector DB",
+      "review_records": [
+        "guide/project/vector-db-reader-revision.md"
       ]
     },
     {

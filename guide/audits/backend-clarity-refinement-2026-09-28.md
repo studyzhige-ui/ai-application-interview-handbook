@@ -1,6 +1,6 @@
 # Backend｜讲解清晰度精修与验证记录
 
-[课程入口](../../curriculum/03-backend-engineering/README.md) · [技术依据](../../references/backend-engineering/README.md) · [原始重构记录](../project/backend-reader-revision-2026-09-27.md)
+[课程入口](../../curriculum/05-backend-engineering/README.md) · [技术依据](../../references/backend-engineering/README.md) · [原始重构记录](../project/backend-reader-revision-2026-09-27.md)
 
 ## 范围与基线
 

@@ -115,6 +115,33 @@ SSE 和 WebSocket 可能长期不自然结束，所以不能无限等待。可�
 
 HTTPS、转发头和路径前缀通常由代理参与。应用信任转发头时必须限制可信代理来源，否则外部客户端可能伪造协议或地址。若代理把 `/api` 前缀去掉再转给应用，生成文档和 URL 时才需要了解 `root_path` 的具体配置。[代理文档](https://fastapi.tiangolo.com/advanced/behind-a-proxy/)提供了具体边界。
 
+### 6.1 一次带前缀的 HTTPS 请求怎样变化
+
+假设公开入口是 `https://notes.example/api/hello`，代理与应用部署在同一机器，代理终止 TLS 并剥掉 `/api`：
+
+```text
+浏览器：HTTPS /api/hello，Host=notes.example
+→ 可信代理：解密，移除 /api 前缀
+→ 内部网络请求：HTTP /hello → 127.0.0.1:8000
+→ 应用：匹配 /hello，知道公开部署前缀 root_path=/api
+→ 文档与生成的公开 URL：仍要表达外部的 HTTPS、主机和 /api
+```
+
+这三个信息来自不同责任：代理转发外部 Host，受信任的 `X-Forwarded-Proto` 等头提供外部协议/来源，root_path 描述挂载前缀。例如这个“只有同机代理能到达应用”的配置形态：
+
+```bash
+python -m uvicorn main:app --host 127.0.0.1 --port 8000 --proxy-headers --forwarded-allow-ips 127.0.0.1 --root-path /api
+```
+
+`--forwarded-allow-ips` 限制哪些直接连接者可以提供可信转发头；不应在可被公网直连的应用上随意信任 `*`。root_path 不负责配置代理，也不是自动给全部业务路由再加一次 `/api`。若前缀剥除、路由前缀与 root_path 重复或漏配，常见结果是文档页面打开了，却去错误位置取 OpenAPI，或重定向生成内部 HTTP 地址。需要沿实际入口逐跳核对。[代理与 root_path](https://fastapi.tiangolo.com/advanced/behind-a-proxy/)
+
+### 6.2 信号、等待窗口与清理是不同阶段
+
+进程管理器通常通过 SIGTERM 请求退出；Uvicorn 停止接收新连接，并在配置窗口内等待正在进行的请求/任务，然后推进关闭。`--timeout-graceful-shutdown` 限制服务器优雅等待，不是保证所有远端副作用在这个时间内撤销。平台最终强杀窗口还要留出摘流传播和应用清理余量；具体总顺序由部署平台与服务器共同决定。
+
+例如平台总窗口 30 秒，摘流传播预计 5 秒，在途请求等待分配 15 秒，其余留给资源关闭与调度余量。长 SSE/WebSocket 不能默认自然结束，应有终止/重连策略；持久任务的恢复不能依赖最后一刻还来得及写内存。这个算例说明预算分配，不是推荐所有系统照抄同一组秒数。[Uvicorn 退出设置](https://www.uvicorn.org/settings/)
+
+
 ## 7. 部署之前真正需要验证什么
 
 1. 冷启动时必要资源能初始化；初始化失败不会误报成功。
@@ -125,7 +152,7 @@ HTTPS、转发头和路径前缀通常由代理参与。应用信任转发头时
 
 这组检查不是 Kubernetes 专用知识。即使部署在一台虚拟机上，同样需要进程管理、日志、失败重启与有限退出预算。
 
-**练习：** 对健康应用使用 TestClient 上下文。进入时 ready 应为 True，退出后应为 False 且 catalog 被清空。再写出这个实验无法证明的三件事：平台摘流、真实多进程负载、强制杀进程时的清理。
+**生命周期证据：** health_app 在 TestClient 上下文内 ready 为 True，退出后为 False 且 catalog 为空，说明该应用的进入/退出逻辑被执行。它没有平台摘流、真实多进程或强杀路径，不能拿这条绿色测试代替那些证据。
 
 ---
 
@@ -153,7 +180,7 @@ HTTPS、转发头和路径前缀通常由代理参与。应用信任转发头时
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. 2 副本、3worker、每池 20 连接，为什么要考虑 120 而不是 20？</summary>

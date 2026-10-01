@@ -1,6 +1,6 @@
 # Vector Database｜权威资料与版本边界
 
-[← 课程入口](../../curriculum/06-vector-db/README.md) · [实验](../../curriculum/06-vector-db/labs/README.md)
+[← 课程入口](../../curriculum/07-vector-db/README.md) · [实验](../../curriculum/07-vector-db/labs/README.md)
 
 本索引用来回答“这条机制或接口结论依据什么”，不是产品功能清单。教学推导、业务策略和人工构造数值不伪装成官方测试结果；正式面经只证明问题曾被问及，不能充当技术答案的来源。
 
@@ -106,7 +106,7 @@ Qdrant Points 文档用于核对 wait、幂等及条件更新边界；Milvus 一
 <a id="distributed"></a>
 ## 查询、增量与历史数据由哪些层协作？
 
-正文第 13 章先解释新写入、历史查询、后台维护各自处理什么，再在[就地选读案例](../../curriculum/06-vector-db/docs/13-分布式VectorDB.md#milvus-example)中对应 Milvus 的组件。局部 Top-K 的证明是数学推导，不依赖记住某个产品的进程名称。
+正文第 13 章先解释新写入、历史查询、后台维护各自处理什么，再在[就地选读案例](../../curriculum/07-vector-db/docs/13-分布式VectorDB.md#milvus-example)中对应 Milvus 的组件。局部 Top-K 的证明是数学推导，不依赖记住某个产品的进程名称。
 
 **产品边界选读：External Collection（外部集合）。** Milvus 3.0 发布线支持面向外部湖表的查询方式，可以为外部数据建立向量搜索入口，而不要求先将整份原始数据复制进内部集合。因此“数据库负责检索记录”是职责描述，不应扩写成“所有产品模式都必须自行保存原始数据”。是否需要这项能力取决于数据原本存放的位置；连接器、支持格式和刷新过程按官方版本核对，不作为分布式 Top-K 自测的前置。
 

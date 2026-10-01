@@ -24,16 +24,18 @@ Tier B 回答“某个成熟 Agent 产品在指定版本里到底怎样实现”
 
 | 产品 | 源码 | 固定快照 | 完整学习入口 |
 |---|---|---|---|
-| OpenAI Codex | `openai/codex` | `67a709665ac7b50311b93e32612c9a8281684787` | [Products / Codex](../../products/agent/codex/README.md) |
+| OpenAI Codex | `openai/codex` | `cda82a2c6853b484e0ba56d38f13902adfb2a6a1` | [Products / Codex](../../products/agent/codex/README.md) |
 | Claude Code | `studyzhige-ui/claude-code-source-private` | `58231dcce408f805c645cfbc352d2876b517223b` | [Products / Claude Code](../../products/agent/claude-code/README.md) |
-| DeepSeek Harness | `deepseek-ai/deepseek-harness` | `477b4f420553e8a52c2fbccc464d7561b239c443` | [Products / DeepSeek Harness](../../products/agent/deepseek-harness/README.md) |
-| DeerFlow 2.0 | `bytedance/deer-flow` | `e2feca1e567d9bafce657de8ad8bc668bd7ad513` | [Products / DeerFlow](../../products/agent/deer-flow/README.md) · [2026-09-27 核验](../../guide/audits/deerflow-reader-first-2026-09-27.md) |
+| DeepSeek Harness | `deepseek-ai/deepseek-harness` | `639ed015397290b3745d163aafe02ffee4aa3f84` | [Products / DeepSeek Harness](../../products/agent/deepseek-harness/README.md) |
+| DeerFlow 2.0 | `bytedance/deer-flow` | `4d5607229ef1ebe8a66c9b9644b91da9082c3221` | [Products / DeerFlow](../../products/agent/deer-flow/README.md) |
 
 源码索引文件维护自己的固定快照和定位用途：
 
 - [Codex 固定源码与问题索引](codex-source-index-current.md)
 - [Codex 历史源码索引](codex-source-index.md)
 - [Claude Code Source Index](claude-code-source-index.md)
+- [DeepSeek Harness 固定源码与机制](deepseek-harness-source-index.md)
+- [DeerFlow 固定源码与机制](deer-flow-source-index.md)
 
 当源码索引与 Products 教材记录的 commit 不同时，只在各自固定快照内解释结论，不跨版本拼接成一个不存在的实现。
 
@@ -109,12 +111,12 @@ Capability 到 Agent 教材的正式映射见 [Runtime Capability Map](runtime-c
 
 | 产品 | 实际阅读顺序 | 教学修订记录 |
 |---|---|---|
-| [Claude Code](../../products/agent/claude-code/README.md) | [01](../../products/agent/claude-code/01-context-lifecycle.md) → [02](../../products/agent/claude-code/02-memory-lifecycle.md) → [03](../../products/agent/claude-code/03-tool-lifecycle.md) → [04](../../products/agent/claude-code/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/claude-code-clarity-refinement-2026-09-27.md) |
-| [Codex](../../products/agent/codex/README.md) | [01](../../products/agent/codex/01-context-lifecycle.md) → [03](../../products/agent/codex/03-tool-lifecycle.md) → [02](../../products/agent/codex/02-memory-lifecycle.md) → [04](../../products/agent/codex/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/codex-clarity-refinement-2026-09-27.md) |
-| [DeepSeek Harness](../../products/agent/deepseek-harness/README.md) | [01](../../products/agent/deepseek-harness/01-context-lifecycle.md) → [02](../../products/agent/deepseek-harness/02-memory-lifecycle.md) → [03](../../products/agent/deepseek-harness/03-tool-lifecycle.md) → [04](../../products/agent/deepseek-harness/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/deepseek-harness-clarity-refinement-2026-09-27.md) |
-| [DeerFlow 2.0](../../products/agent/deer-flow/README.md) | [01](../../products/agent/deer-flow/01-context-lifecycle.md) → [02](../../products/agent/deer-flow/02-memory-lifecycle.md) → [03](../../products/agent/deer-flow/03-tool-lifecycle.md) → [04](../../products/agent/deer-flow/04-engineering-evaluation.md) | [修订范围与验证](../../guide/audits/deerflow-clarity-refinement-2026-09-27.md) |
+| [Claude Code](../../products/agent/claude-code/README.md) | [01](../../products/agent/claude-code/01-input-and-query-loop.md) → [02](../../products/agent/claude-code/02-tool-execution-and-permissions.md) → [03](../../products/agent/claude-code/03-skills-hooks-and-mcp.md) → [04](../../products/agent/claude-code/04-subagents-and-task-ownership.md) → [05](../../products/agent/claude-code/05-context-and-compaction.md) → [06](../../products/agent/claude-code/06-session-and-auto-memory.md) → [07](../../products/agent/claude-code/07-persistence-and-resume.md) → [08](../../products/agent/claude-code/08-observation-and-delivery.md) | [修订范围与验证](../../guide/audits/claude-code-clarity-refinement-2026-09-27.md) |
+| [Codex](../../products/agent/codex/README.md) | [01](../../products/agent/codex/01-thread-and-turn.md) → [02](../../products/agent/codex/02-tools-and-processes.md) → [03](../../products/agent/codex/03-extensions-and-discovery.md) → [04](../../products/agent/codex/04-agent-collaboration.md) → [05](../../products/agent/codex/05-history-and-recovery.md) → [06](../../products/agent/codex/06-memory-pipeline.md) → [07](../../products/agent/codex/07-delivery-and-review.md) | [修订范围与验证](../../guide/audits/codex-clarity-refinement-2026-09-27.md) |
+| [DeepSeek Harness](../../products/agent/deepseek-harness/README.md) | [01](../../products/agent/deepseek-harness/01-boot-and-agent-loop.md) → [02](../../products/agent/deepseek-harness/02-tools-files-and-jobs.md) → [03](../../products/agent/deepseek-harness/03-skills-mcp-and-ptc.md) → [04](../../products/agent/deepseek-harness/04-plans-goals-and-agents.md) → [05](../../products/agent/deepseek-harness/05-session-and-recovery.md) → [06](../../products/agent/deepseek-harness/06-cross-session-knowledge.md) → [07](../../products/agent/deepseek-harness/07-delivery-and-review.md) | [修订范围与验证](../../guide/audits/deepseek-harness-clarity-refinement-2026-09-27.md) |
+| [DeerFlow](../../products/agent/deer-flow/README.md) | [01](../../products/agent/deer-flow/01-run-and-model-loop.md) → [02](../../products/agent/deer-flow/02-tools-and-resources.md) → [03](../../products/agent/deer-flow/03-skills-and-mcp.md) → [04](../../products/agent/deer-flow/04-native-batch-and-acp.md) → [05](../../products/agent/deer-flow/05-delivery-and-goals.md) → [06](../../products/agent/deer-flow/06-history-and-recovery.md) → [07](../../products/agent/deer-flow/07-memory-pipeline.md) → [08](../../products/agent/deer-flow/08-observation-and-review.md) | [修订范围与验证](../../guide/audits/deerflow-clarity-refinement-2026-09-27.md) |
 
-正文序号是稳定路径标识。修订记录只说明其基线与实际验证，不代表已重新检查上游全部最新变化。
+正文序号与各产品阅读主线保持一致。历史修订记录只说明其基线与实际验证，当前源码依据见产品入口。
 <!-- product-evidence:end -->
 
 

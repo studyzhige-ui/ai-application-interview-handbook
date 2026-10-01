@@ -4,7 +4,7 @@
 
 你写了一个 Python 函数，输入一段文字，返回处理结果。在自己的电脑里调用它很容易。可同学在浏览器里点一下按钮，怎样才能让你的函数执行，并拿到结果？
 
-中间缺的是一个可以接收请求的服务。**FastAPI 把网络请求转换为 Python 函数能够处理的输入，再把函数结果转换为响应。** 我们先做一个能在浏览器里访问的小接口，再沿这次访问认识客户端、服务器和框架。不需要一开始就背完整的生产架构。
+中间缺的是一个可以接收请求的服务。**FastAPI 把网络请求转换为 Python 函数能够处理的输入，再把函数结果转换为响应。** 先看一个可以被浏览器访问的小接口，再沿这次访问认识客户端、服务器和框架。不需要一开始就背完整的生产架构。
 
 ## 1. 一次访问由两边共同完成
 
@@ -16,42 +16,15 @@
 
 一次 HTTP 请求至少要让服务知道方法和路径。`GET /hello` 表示用 GET 方法请求 `/hello` 这个路径；响应除了内容，还包含 `200`、`404` 等状态码。先把这两个方向分开，不必立刻记完所有状态码。[HTTP 与 ASGI 的边界](https://asgi.readthedocs.io/en/latest/specs/www.html)
 
-## 2. 建立练习环境
+## 2. 阅读代码的前提与版本边界
 
-准备一个空文件夹 `fastapi-lab`，在其中打开终端。示例使用 Python 3.11+，课程目标版本是 **FastAPI 0.141.1**，这是 2026-09-25 核验到的最新稳定版本。后续安装和测试都应查看实际环境版本，不把网页上的“最新”当作本机已经升级。[发布记录](https://fastapi.tiangolo.com/release-notes/)
+默认你已有 Python 代码环境，不再从安装、虚拟环境和编辑器开始。正文以 Python 3.11+、FastAPI 0.141.1、Pydantic v2 为示例基线；[可执行例子与回归](../examples/README.md)保留运行参考和版本记录。你可以直接沿下面的输入、处理和输出阅读，不需要先启动服务才能理解下一节。
 
-先创建虚拟环境，让练习依赖与其他项目分开：
-
-```bash
-python -m venv .venv
-```
-
-Windows PowerShell 激活命令：
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-macOS 或 Linux 的 Bash/Zsh 激活命令：
-
-```bash
-source .venv/bin/activate
-```
-
-随后安装本模块要用的库：
-
-```bash
-python -m pip install "fastapi==0.141.1" "uvicorn==0.48.0" "httpx==0.28.1" "pytest==9.0.2" "pydantic==2.13.4" "python-multipart==0.0.29" "websockets==16.0"
-python -c "import fastapi; print(fastapi.__version__)"
-```
-
-第二条命令应输出 `0.141.1`。FastAPI 是框架，Uvicorn 是启动网络服务的程序；HTTPX 和 pytest 用于客户端及测试，multipart 库用于后面的文件上传。`websockets` 为后面的真实 WebSocket 连接提供协议支持。
-
-> ⚠️ **PowerShell 不允许激活脚本时，不必为练习降低整台电脑的安全策略。** 可以不激活，直接用 `.\.venv\Scripts\python.exe` 替代后续命令开头的 `python`。不要把解释器装在一个环境、依赖却装进另一个环境。
+Uvicorn 是加载应用并监听网络的程序，HTTPX 和 TestClient 用来发送或模拟请求，pytest 检查预期行为。它们分别是服务器、客户端和测试工具，不是同一个东西的不同名字。
 
 ## 3. 写一个能回答“你好”的接口
 
-在练习文件夹新建 `main.py`，放入下面的完整代码。
+下面是一份完整的 `main.py`，创建应用并登记一个接口。
 
 ```python
 # example: hello_app
@@ -151,16 +124,48 @@ Uvicorn 将响应发给浏览器
 
 普通接口通过 FastAPI 提供的对象处理请求，不必直接收发 ASGI 消息。中间件和依赖也运行在应用中，不是每增加一个就多部署一台服务器。
 
-<details>
-<summary>按需了解：ASGI 应用的三个调用参数</summary>
+### 5.1 ASGI 是一段事件过程，不只是三个参数名
 
-读中间件源码时可能看到 `app(scope, receive, send)`：`scope` 描述连接或请求，`receive` 接收事件，`send` 发送事件。这是服务器调用应用的接口，不是业务路由的参数声明。[ASGI 规范](https://asgi.readthedocs.io/en/latest/specs/main.html)
+服务器调用 `await app(scope, receive, send)`。`scope` 保存这次交互的元信息；`receive` 是应用等待服务器事件的入口；`send` 是应用把事件交给服务器的入口。请求体可能分批到达，所以它不直接全部塞进 scope。
 
-</details>
+以下是一条 `POST /echo` 的简化过程（省略 ASGI 规范中的其他字段）：
 
-## 6. 做一个能核对结果的小修改
+```text
+scope：type="http", method="POST", path="/echo", headers=[...]
+应用 await receive()
+  ← {type: "http.request", body: b"hi", more_body: False}
+应用处理得到 b"HI"
+应用 await send(...)
+  → {type: "http.response.start", status: 200, headers: [...]}
+应用 await send(...)
+  → {type: "http.response.body", body: b"HI", more_body: False}
+```
 
-**任务：** 保留 `/hello`，再添加 `GET /health`，返回 `{"ok": true}`。这里只证明服务能接收和处理请求，不把它当作完整的生产健康检查。
+`more_body=True` 表示后面还有体数据；最后一块为 False。流式响应就是多次发送 body，而不是反复发送新的 HTTP 状态。响应开始后，应用不能把已交出的状态码和头撤回重发；服务器可以短暂缓冲 start，但业务不应依赖它补救中途失败。第 07 章由此引入流内错误与终止事件。[HTTP ASGI 消息](https://asgi.readthedocs.io/en/latest/specs/www.html)
+
+连接断开可表现为 `receive` 收到 `http.disconnect`，发送时也可能遇到连接关闭错误。二者与任务完成不是同一信号，所以第 12 章还要决定业务是否停止。普通 FastAPI 路由由框架完成这些收发；不需要每个业务函数手工编写 ASGI 消息。
+
+### 5.2 HTTP、WebSocket 与 lifespan 的范围
+
+| scope 类型 | 这次调用覆盖什么 | 典型事件方向 |
+|---|---|---|
+| `http` | 一次请求与响应，底层连接可复用 | 接收请求体，发送响应开始和体 |
+| `websocket` | 一条持续连接 | 收到 connect，接受连接，双向消息，断开 |
+| `lifespan` | 服务器与应用的启动/退出协调 | 收到 startup/shutdown，完成准备/清理后回复 complete |
+
+因此一条 HTTP 长连接可先后承载多个请求 scope；WebSocket 则在一个连接范围里交换多条消息。lifespan 不是给某个用户调用的业务网址，而是应用资源就绪与释放的控制过程。[ASGI 调用模型](https://asgi.readthedocs.io/en/latest/specs/main.html)
+
+## 6. 用一个健康响应看“实现”与“检查”的对应关系
+
+保留 `/hello`，下面的路由让同一个应用也能处理 `GET /health`：
+
+```python
+@app.get("/health")
+def health():
+    return {"ok": True}
+```
+
+这里只说明服务能接收和处理请求，不把它当成完整的生产健康检查。把声明与测试放在一起，能看清“期望返回什么”如何变成可重复的检查。
 
 可以在 `/docs` 中发送请求。也可以新建 `test_main.py`：
 
@@ -177,22 +182,9 @@ def test_health():
     assert response.json() == {"ok": True}
 ```
 
-在同一目录执行 `python -m pytest -q`。`assert` 检查实际结果是否满足预期；尚未补好接口时失败是正常的练习反馈。TestClient 在进程里调用应用，不要求同时启动 Uvicorn，也不证明公网或代理配置正常。
-
-<details>
-<summary>查看 /health 参考实现</summary>
-
-在原来的 `app` 定义后添加：
-
-```python
-@app.get("/health")
-def health():
-    return {"ok": True}
-```
+`assert` 检查实际结果是否满足预期。只加载最初的 hello_app 时，`/health` 返回 404；加入上面的路由后，同一测试得到 200 和 `{"ok":true}`。如需观察，可在同一目录运行 `python -m pytest -q`。TestClient 在进程里调用应用，不要求同时启动 Uvicorn，也不证明公网或代理配置正常。
 
 不要再创建第二个 `app = FastAPI()` 覆盖原对象，否则之前登记的路由可能不在最终启动的应用上。
-
-</details>
 
 ## 7. 能返回 JSON，还不等于完成了整个 AI 系统
 
@@ -225,7 +217,7 @@ FastAPI 解决的是输入、输出和请求生命周期。真正检索资料、
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. 为什么 `python main.py` 执行完就退出，而 Uvicorn 命令会一直运行？</summary>

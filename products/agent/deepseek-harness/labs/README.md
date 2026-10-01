@@ -1,6 +1,8 @@
-# DeepSeek Harness｜从一个恢复测试开始验证
+# DeepSeek Harness｜从一个恢复测试开始验证（历史维护材料）
 
-[← 模块入口](../README.md) · [上下文](../01-context-lifecycle.md) · [记忆](../02-memory-lifecycle.md) · [工具](../03-tool-lifecycle.md) · [工程](../04-engineering-evaluation.md)
+本页脚本固定旧源码快照，只保留当时的维护复核方法，不是当前产品学习主线，也没有在本次修订中运行。当前机制以[产品入口](../README.md)的固定提交为准。
+
+[← 模块入口](../README.md) · [上下文](../01-boot-and-agent-loop.md) · [记忆](../06-cross-session-knowledge.md) · [工具](../02-tools-files-and-jobs.md) · [工程](../07-delivery-and-review.md)
 
 读过恢复章节后，先验证一个很小的问题：**只有工具调用意图，与已经记录调用却没有结果，恢复时是否会得到不同标记？** 这不需要真实模型密钥，也不需要先搭好完整界面。
 
@@ -89,7 +91,7 @@ pnpm exec vitest run packages/core/session/tests/repair.spec.ts -t "marks an ass
 - **安装或原生构建失败：** 记录阻塞，行为测试为未执行。
 - **测试通过：** 只证明这些构造输入下真实恢复函数满足断言，不证明磁盘抗断电、实际模型调用或远端操作恰好一次。
 
-该文件还有已闭合日志、已存在结果、分叉提示与公开恢复入口等用例。第一次闭环完成后，再按[工程章](../04-engineering-evaluation.md#semantic-recovery)的问题扩展读取，不需要一开始就跑全仓库测试。
+该文件还有已闭合日志、已存在结果、分叉提示与公开恢复入口等用例。第一次闭环完成后，再按[工程章](../05-session-and-recovery.md#semantic-recovery)的问题扩展读取，不需要一开始就跑全仓库测试。
 
 ## 3. 再准备一个真实编码任务
 

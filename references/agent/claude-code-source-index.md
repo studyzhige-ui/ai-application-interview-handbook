@@ -1,225 +1,427 @@
-# Claude Code Source Index — Agent Harness / Runtime
+# Claude Code 源码索引｜机制证据与版本边界
 
-> 阅读提示：下文保留早期固定快照研究记录，不能把所有旧抽象当产品协议。当前教学入口见 [Claude Code 模块](../../products/agent/claude-code/README.md)；直接核验范围见 [读者修订记录](../../guide/project/claude-code-reader-revision.md) 与 [2026-09-27 讲解精修记录](../../guide/audits/claude-code-clarity-refinement-2026-09-27.md)。
-更新日期：2026-09-11（下文历史研究记录）；导航校准：2026-09-27。
+[← 产品阅读入口](../../products/agent/claude-code/README.md) · [Agent 资料](README.md)
 
-固定快照：
+固定对象：studyzhige-ui/claude-code-source-private，master 学习快照 58231dcce408f805c645cfbc352d2876b517223b；版本核验日期 2026-10-01。这是授权可读的私有学习快照，不是官方完整公开仓库，也没有确定的官方发行号映射。链接需要相应仓库读取权限。
 
-```text
-repo   = studyzhige-ui/claude-code-source-private
-branch = master
-commit = 58231dcce408f805c645cfbc352d2876b517223b
-```
+## 怎样使用证据
 
-> 本索引记录“去哪里继续读源码”和当前已经能由源码直接支持的 Runtime 抽象。它不是 Claude Code 的完整逆向文档，也不把某个产品实现提升成通用标准。
+正文已经解释对象、条件、消费者与失败去向；这里提供固定提交的核对入口。按范围阅读过一个函数，不等于全面审核该文件、整个仓库或底层服务。工具接口还含输入结构、并发、只读/破坏性、取消/阻塞、进度、结果和上下文修改等合同，不能缩成普通的 `function(args) → value`。
 
-## 1. Query / Conversation Runtime
+- 输入和循环：对应第一章的输入分流、流中派发、续轮与终止
+- 执行和扩展：对应第二、三章的工具池、改写、批准、调度与协议适配
+- 子任务：对应第四章的指定创建、同步转后台、消息恢复和清理路径
+- 连续性：对应第五至七章的预算、压缩、摘要、自动记忆及恢复
+- 观察：对应第八章的工具事件和 SDK 结果生产，不代表内置通用业务验收器
 
-### `QueryEngine.ts`
+## 已知核验边界
 
-源码直接说明 `QueryEngine`：
+- 未构建该私有快照，未运行真实产品、远端 MCP 或生产故障实验
+- reactiveCompact 内部文件未取得；只说明 query 可见的调用顺序与保护条件
+- History Snip、Context Collapse、动态技能激活、团队/跨进程路由只按已核验入口说明，不补造未展开的内部算法
+- 沙箱只核验适配层及 Bash 接入；未把它当作底层 OS 强制隔离的全面审计
+- 子任务的特定同步转后台收尾顺序，不外推为所有后台任务的统一合同
+- MCP 只按所列工具适配、调用和结果范围解释，不宣称全面审核传输或认证实现
+- 官方文档链接属于公开使用背景，其更新不能修改固定快照的源码结论
 
-- owns query lifecycle and session state for a conversation；
-- 一个 conversation 一个 QueryEngine；
-- 每次 `submitMessage()` 开启新 turn；
-- messages、file cache、usage 等状态跨 turn 保留；
-- 配置中显式存在 `maxTurns`、`maxBudgetUsd`、`fallbackModel`、`abortController`、MCP clients、agents、tools 与 `canUseTool`；
-- 运行路径会读取 memory prompt、session storage、system prompt parts、file history、plugin cache 与 compact/snip 相关能力。
+## 固定源码锚点
 
-稳定课程抽象：
+### agent-background
 
-```text
-Conversation Runtime
-= Turn Lifecycle
-+ Persistent Session State
-+ Context Assembly
-+ Tool / Agent Capability Set
-+ Permission Gate
-+ Cancellation
-+ Usage / Cost Boundary
-```
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx#L948-L1049)
 
-相关导航：
+### agent-cleanup
 
-- `query.ts`
-- `utils/queryContext.ts`
-- `utils/processUserInput/processUserInput.ts`
-- `utils/sessionStorage.ts`
-- `memdir/`
-- `services/compact/`
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/runAgent.ts#L695-L850)
 
-## 2. Tool Contract / Runtime Context
+### agent-context
 
-### `Tool.ts`
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/runAgent.ts#L368-L556)
 
-这是当前最重要的 Harness 类型文件之一。源码中可以直接看到：
+### agent-create
 
-- `Tool` 有输入 schema / JSON schema；
-- `call()` 接收 ToolUseContext、permission callback、parent message 和 progress callback；
-- Tool 有 `isConcurrencySafe()`、`isReadOnly()`、`isDestructive()`；
-- `interruptBehavior()` 区分新用户消息到来时 `cancel` 或 `block`；
-- ToolResult 可以返回新消息和 context modifier；
-- ToolUseContext 持有 `AbortController`、MCP connection、agent definitions、session/tool state、file history、permission decision、tool-result budget、nested memory、skill discovery 等；
-- Permission context 显式区分 allow / deny / ask rules 与 permission mode；
-- Tool 搜索使用 `searchHint` 支持 deferred tool discovery；
-- Context 中还存在 dynamic skill discovery 与 tool result content replacement state。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx#L650-L815)
 
-稳定课程抽象：
+### agent-resume
 
-```text
-Tool ≠ function(args) -> value
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SendMessageTool/SendMessageTool.ts#L799-L878)
 
-Production Tool Contract
-= Schema
-+ Execution
-+ Permission
-+ Side-effect Semantics
-+ Concurrency Semantics
-+ Cancellation Semantics
-+ Progress / Result
-+ Context Impact
-```
+### agent-tool
 
-后续定向阅读：
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/AgentTool.tsx)
 
-- `hooks/useCanUseTool.ts`
-- `types/permissions.ts`
-- `utils/permissions/`
-- `utils/toolResultStorage.ts`
-- `services/mcp/types.ts`
+### api-normalize
 
-## 3. Task / Background Execution / Subagent
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts#L1230-L1399)
 
-### `Task.ts`
+### api-request
 
-源码明确区分：
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts#L1698-L1728)
 
-```text
-local_bash
-local_agent
-remote_agent
-in_process_teammate
-local_workflow
-monitor_mcp
-dream
-```
+### api-tools
 
-Task state 包含：
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/claude.ts#L1207-L1257)
 
-```text
-pending / running / completed / failed / killed
-start/end time
-output file + offset
-abort / kill semantics
-```
+### attachments
 
-稳定课程抽象：
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts#L269-L292)；[核对实现 2](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/attachments.ts#L2196-L2429)
 
-> Agent Runtime 中“任务”应是具有身份、状态机、输出位置、取消/终止语义的一级对象，而不是一个普通异步函数。
+### auto-compact
 
-相关导航：
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/autoCompact.ts)
 
-- `tools/AgentTool/`
-- `utils/task/`
-- `state/AppState.ts`
+### auto-dream
 
-## 4. Context / Compaction / Memory
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/autoDream/autoDream.ts#L55-L270)
 
-已确认导航：
+### bash-sandbox
 
-- `QueryEngine.ts` 条件加载 `services/compact/snipCompact.ts` 与 `snipProjection.ts`；
-- `ToolUseContext` 有 `CompactProgressEvent`；
-- `QueryEngine` 会加载 `memdir/memdir.ts` 的 memory prompt；
-- Tool context 显式维护 `loadedNestedMemoryPaths`，避免 CLAUDE.md 一类 nested memory 在繁忙 session 中被反复注入；
-- tool-result budget 有 per-conversation content replacement state。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/BashTool/BashTool.tsx#L860-L920)
 
-这说明成熟 Harness 的 Context 问题至少不是“把 history 拼起来”：
+### budget-algorithm
 
-```text
-Context Source
-→ Selection / Dedup
-→ Budget
-→ Tool Result Offload / Replacement
-→ Compaction
-→ Projection / Replay
-→ Memory Re-injection
-```
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolResultStorage.ts#L575-L907)
 
-后续章节必须继续读具体 compact implementation 后再声称算法细节。
+### budget-replay
 
-## 5. Permission / Filesystem Boundary
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolResultStorage.ts#L938-L1018)
 
-已确认导航：
+### budget-state
 
-- `Tool.ts` 的 `ToolPermissionContext`；
-- `QueryEngine.ts` 引入 `utils/permissions/filesystem.ts`；
-- `CanUseToolFn` 是 Tool execution 的显式输入；
-- Background / async agent 有“不能显示 UI 时避免 permission prompt”等语义。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolResultStorage.ts#L373-L469)
 
-稳定抽象：
+### cache-diagnosis
 
-```text
-Capability Selection
-≠ Permission Decision
-≠ Sandbox Enforcement
-```
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/promptCacheBreakDetection.ts)
 
-三者必须在课程中分开。
+### compact-build
 
-## 6. MCP / Capability Extension
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts)
 
-`Tool.ts` 直接引用 MCP SDK 类型、`MCPServerConnection`、`ServerResource`；QueryEngine 配置中 MCP clients 与普通 tools/agents 并列存在。
+### compact-contract
 
-相关导航：
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L299-L634)
 
-- `services/mcp/`
-- MCP tool conversion / connection lifecycle
-- commands / skills / plugin loader
+### compact-fallback
 
-课程抽象：MCP 是外部能力协议，不等于 Agent Loop，也不等于 Skill。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L1136-L1400)
 
-## 7. Skill / Progressive Capability Loading
+### compact-files
 
-`ToolUseContext` 中显式存在：
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L122-L130)；[核对实现 2](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L1415-L1468)；[核对实现 3](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L1610-L1706)
 
-- `dynamicSkillDirTriggers`
-- `discoveredSkillNames`
-- Tool `searchHint`
+### compact-format
 
-这与真人面经中的“Tool/Skill 太多后如何动态发现和按需加载”形成实现侧呼应。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/prompt.ts#L311-L375)
 
-课程应讲：
+### compact-gates
 
-```text
-Capability Catalog
-→ Discovery
-→ Selection
-→ Progressive Loading
-→ Invocation
-```
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/autoCompact.ts#L156-L352)
 
-而不是把全部 Tool Schema 永久塞进 Context。
+### compact-prompt
 
-## 8. Cancellation / Interruptibility
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/prompt.ts#L12-L140)
 
-源码中的两层信号：
+### compact-reinject
 
-- Conversation / turn 层：`AbortController`；
-- Tool 层：`interruptBehavior(): cancel | block`。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L1470-L1605)
 
-因此 Cancellation 是贯穿 Runtime 和具体 Tool 的协议，不是简单 `task.cancel()`。
+### compact-retry
 
-## 9. Source-study TODO
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/compact.ts#L227-L291)
 
-正式写对应深挖章节前继续读取：
+### compact-threshold
 
-1. `query.ts`：主 Agent Loop 与 model/tool 往返；
-2. `services/compact/*`：触发、替换、projection；
-3. `tools/AgentTool/*`：subagent lifecycle / context inheritance；
-4. `utils/permissions/*`：approval / filesystem decision；
-5. `services/mcp/*`：连接、tool/resource 转换；
-6. `memdir/*`：memory 生命周期；
-7. `utils/sessionStorage.ts`：transcript / persistence；
-8. `utils/toolResultStorage.ts`：large tool-result context budget。
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/autoCompact.ts#L29-L91)
 
-每次新增具体实现结论都应记录当前 pinned commit。
+### context-source
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/context.ts#L153-L190)
+
+### context-wrap
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/api.ts#L437-L475)
+
+### elicitation
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/elicitationHandler.ts)
+
+### engine-boundary
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/QueryEngine.ts#L687-L735)
+
+### engine-input
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/QueryEngine.ts#L397-L640)
+
+### engine-result
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/QueryEngine.ts#L1060-L1155)
+
+### entrypoint
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts#L38-L104)
+
+### executor
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts)
+
+### executor-results
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/StreamingToolExecutor.ts#L263-L445)
+
+### extract-write-check
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/extractMemories/extractMemories.ts#L117-L165)
+
+### extractor
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/extractMemories/extractMemories.ts)
+
+### hook-permission
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolHooks.ts#L319-L439)
+
+### input-accept
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/processUserInput/processUserInput.ts#L85-L267)
+
+### input-call
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L1127-L1227)
+
+### input-hooks
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L755-L937)
+
+### input-normalize
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/processUserInput/processUserInput.ts#L281-L591)
+
+### input-validation
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L606-L730)
+
+### mcp-adapt
+
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts#L1740-L2000)
+
+### mcp-call
+
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts#L1740-L2000)；[核对实现 2](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts#L3029-L3245)
+
+### mcp-client
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts)
+
+### mcp-content
+
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/mcp/client.ts#L2662-L2812)
+
+### memory-build
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts#L268-L350)
+
+### memory-rules
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/memdir.ts#L185-L265)
+
+### memory-select
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/memdir/findRelevantMemories.ts#L18-L147)
+
+### micro-branches
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/microCompact.ts#L250-L294)
+
+### micro-cache
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/microCompact.ts#L294-L398)
+
+### micro-time
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/microCompact.ts#L421-L540)
+
+### official-memory
+
+[查看对应来源](https://code.claude.com/docs/en/memory)
+
+### official-sandbox
+
+[查看对应来源](https://code.claude.com/docs/en/sandboxing)
+
+### official-search
+
+[查看对应来源](https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool)
+
+### permission-order
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/permissions/permissions.ts#L1158-L1318)
+
+### permission-race
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/hooks/toolPermission/handlers/interactiveHandler.ts#L120-L239)
+
+### permission-ui
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/hooks/useCanUseTool.tsx)
+
+### permissions
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/permissions/permissions.ts)
+
+### prefetch-start
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L289-L307)
+
+### query-call
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L650-L870)
+
+### query-compact
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L412-L535)
+
+### query-continue
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L1360-L1730)
+
+### query-deps
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query/deps.ts)
+
+### query-history
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L350-L410)
+
+### query-loop
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L219-L330)
+
+### query-stop
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L1010-L1305)
+
+### query-stream
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L650-L899)
+
+### restore
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionRestore.ts)
+
+### restore-chain
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts#L1824-L1957)
+
+### restore-environment
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionRestore.ts#L332-L552)
+
+### result-budget
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolResultStorage.ts)
+
+### retry
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/api/withRetry.ts)
+
+### run-agent
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/AgentTool/runAgent.ts)
+
+### sandbox
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts)
+
+### sandbox-lifecycle
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sandbox/sandbox-adapter.ts#L695-L817)
+
+### send-message
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SendMessageTool/SendMessageTool.ts)
+
+### session-boundary
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/sessionMemoryCompact.ts#L506-L631)
+
+### session-consume
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/compact/sessionMemoryCompact.ts#L238-L393)
+
+### session-memory
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/SessionMemory/sessionMemory.ts)
+
+### session-produce
+
+[核对实现 1](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/SessionMemory/sessionMemory.ts#L140-L192)；[核对实现 2](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/SessionMemory/sessionMemory.ts#L285-L496)
+
+### session-storage
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts)
+
+### skill-catalog
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts#L638-L800)
+
+### skill-config
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts#L175-L269)
+
+### skill-loader
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/skills/loadSkillsDir.ts)
+
+### skill-modifier
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts#L766-L867)
+
+### skill-run
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts#L432-L840)
+
+### skill-tool
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/SkillTool/SkillTool.ts)
+
+### stop-hook
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query/stopHooks.ts#L65-L170)
+
+### storage
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts)
+
+### stream-fallback
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/query.ts#L705-L743)
+
+### tool-execution
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts)
+
+### tool-map
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/services/tools/toolExecution.ts#L1227-L1590)
+
+### tool-pool
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools.ts#L212-L390)
+
+### tool-search
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/tools/ToolSearchTool/ToolSearchTool.ts)
+
+### tool-search-state
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/toolSearch.ts)
+
+### tool-type
+
+[查看对应来源](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/Tool.ts)
+
+### engine-events
+
+[SDK 事件记录](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/QueryEngine.ts#L765-L835)；[存储的链节点及临时进度分类](https://github.com/studyzhige-ui/claude-code-source-private/blob/58231dcce408f805c645cfbc352d2876b517223b/utils/sessionStorage.ts#L145-L195)

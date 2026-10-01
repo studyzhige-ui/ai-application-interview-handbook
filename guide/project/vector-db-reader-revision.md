@@ -1,6 +1,6 @@
 # Vector DB Reader Revision｜向量数据库模块维护记录
 
-[← Project Records](README.md) · [课程入口](../../curriculum/06-vector-db/README.md) · [技术依据](../../references/vector-db/README.md)
+[← Project Records](README.md) · [课程入口](../../curriculum/07-vector-db/README.md) · [技术依据](../../references/vector-db/README.md)
 
 ## 发布与历史记录
 
@@ -47,6 +47,6 @@ HNSW 的候选探索、IVF 的区域边界、PQ 的编码与距离、过滤四�
 | 本地浏览器阅读版 | Chromium 144.0.7559.96；1440×1000、390×844，共 38 页次 | 33 个折叠块默认关闭、可开合；页面无整体横向溢出，表格和代码允许容器内滚动。IVF、记录操作和 Review 截图另外目视检查。 |
 | 结构与范围 | 16 章路径不变；正文两个 Python 示例内容不变 | 没有用新增章节数或代码数量代替精修；原有数值实验代码与数据未改。 |
 
-复验命令见[实验页](../../curriculum/06-vector-db/labs/README.md)。新增 `test_reader_refinement.py` 从正文读取输入，避免维护另一份逐渐漂移的例子。
+复验命令见[实验页](../../curriculum/07-vector-db/labs/README.md)。新增 `test_reader_refinement.py` 从正文读取输入，避免维护另一份逐渐漂移的例子。
 
 本次未运行 Faiss、Qdrant、pgvector、Milvus 的真实产品测试，也未做多节点、持久化重启、迁移集成或生产压测。没有把历史跳过记为本次通过。本地 HTML 阅读版不等于 GitHub 在线页面或真实手机；外部站点没有做穷尽链接检测。全仓 CI 与最终远端内容校验另外记录在发布 PR 中。

@@ -111,6 +111,36 @@ def test_provider_failure():
 
 `with TestClient(app)` 会执行相应应用启动和关闭。HTTPX `AsyncClient(transport=ASGITransport(app))` 本身不会自动触发 ASGI lifespan，需要另行管理。**测试能收到 200 不证明启动资源已经正确创建。**
 
+### 3.1 异步客户端怎样显式管理生命周期
+
+已有异步测试还需要 await 其他异步对象时，可让客户端和资源处于同一事件循环。下面沿用第 05 章已经解释的 lifespan_app，文件名取为 `lifespan_app.py`，只观察已有 Catalog 的生命周期：
+
+```python
+# example: async_lifespan_test
+import httpx
+import pytest
+from lifespan_app import app
+
+@pytest.fixture
+def anyio_backend():
+    return "asyncio"
+
+@pytest.mark.anyio
+async def test_catalog_with_lifespan():
+    async with app.router.lifespan_context(app):
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://test"
+        ) as client:
+            response = await client.get("/catalog")
+            assert response.json() == {"items": ["笔记", "任务"]}
+            catalog = app.state.catalog
+            assert catalog.closed is False
+    assert catalog.closed is True
+```
+
+外层进入本例 FastAPI 的 lifespan 上下文，先初始化，再创建客户端发送请求；退出时先关闭客户端，最后清理应用资源。这是在测试中直接管理已知应用上下文，并不是测试完整服务器的 ASGI startup/shutdown 握手。复合应用或需要验证握手时，可使用对应的 lifespan 管理工具。只创建 ASGITransport 不会替你执行外层步骤。
+
+
 ## 4. 有流式接口时，分别测试协议和时间
 
 协议测试应该核对媒体类型、每条事件的数据结构、开始与结束、错误分支、序号和业务标识。SSE 解析需要处理空行、注释心跳和分块，不要把空行全部删掉后再猜事件边界。
@@ -159,7 +189,7 @@ def test_dialogue():
 
 替换外部边界，保留你想验证的逻辑。若把路由、服务、适配和响应全部 mock 成想要的样子，测试只证明替身按脚本工作。
 
-**练习：** 故意把计算改成 `value * 3`。成功路径应失败。恢复后把 ge=0 改成 ge=-1，原负数拒绝测试应失败。测试只有能抓住真实回归，才不是装饰。
+**回归反例：** 如果计算从 `value * 2` 错改为 `value * 3`，输入 3 会得到 9，而测试期待 6，因此失败；若下限错放宽为 -1，原来的负数拒绝测试也会失败。断言与需求有对应关系，才能发现真实回归，不能只验证“代码运行过”。
 
 ---
 
@@ -187,7 +217,7 @@ def test_dialogue():
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. 为什么要在错误输入测试中关心有没有调用下游？</summary>

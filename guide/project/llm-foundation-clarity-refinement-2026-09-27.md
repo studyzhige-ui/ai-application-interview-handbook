@@ -18,18 +18,18 @@
 
 | 原问题 | 精修位置与处理 | 读者应能完成的检查 |
 |---|---|---|
-| FFN 只有形状，缺少实际变换 | [03](../../curriculum/07-llm-foundation/docs/03-TransformerBlock.md)：用 2→3→2 加权、ReLU、再加权；比较省去非线性的输出 | 改输入后逐步计算，而非只复述扩维、降维 |
-| 归一化名词集中出现 | [03](../../curriculum/07-llm-foundation/docs/03-TransformerBlock.md)：同一 `[2,4]` 对照 LayerNorm 与 RMSNorm，解释均值、方差、均方根和实际 ε | 解释共同平移为什么影响两种结果不同，并区分概率归一化 |
-| RoPE 直接跳到等式 | [04](../../curriculum/07-llm-foundation/docs/04-Attention与Position.md)：给出四个位置的二维旋转、点积与整体位移对照，再解释相对位置等式 | 在 q、k 内容固定时预测位置差如何影响匹配 |
-| 行列向量约定切换未说明 | [04](../../curriculum/07-llm-foundation/docs/04-Attention与Position.md)、[13](../../curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md)：区分按行组织 H 与单个列向量 x | 说明 HW 与 Wx 的形状约定，不把书写差异当机制冲突 |
-| KV 自测提前要求 LoRA | [06](../../curriculum/07-llm-foundation/docs/06-KVCache与PrefillDecode.md)：改为“模型计算参数改变”；LoRA 的具体缓存影响在 13 章承接 | 仅凭当前缓存条件即可回答 |
-| 实现默认值与核心机制同等突出 | [07](../../curriculum/07-llm-foundation/docs/07-ServingEngine与性能.md)：先讲抢占、重算与卸载代价，固定版本说明就地折叠 | 不读选读细节仍能完成主线自测 |
-| Elo 公式抢占选型主线 | [08](../../curriculum/07-llm-foundation/docs/08-ModelAPI与Selection.md)：保留相对评价用途和偏差，更新公式就地折叠；收束模板重复 | 先判断任务绝对门槛，再使用相对排序 |
-| 多模态案例只有文字，文档流程重复展开 | [10](../../curriculum/07-llm-foundation/docs/10-MultimodalFoundation.md)：补销售图与访问量旁注，围绕表示保留/丢失的信息比较 OCR、版面与视觉 | 区分读数、指标对应与增长计算，不把旁注数值混入 |
-| Prompt 与事实治理重复同类边界 | [11](../../curriculum/07-llm-foundation/docs/11-PromptEngineering.md)、[12](../../curriculum/07-llm-foundation/docs/12-Hallucination与干预边界.md)：前者关注输入改写及对照，后者关注证据、断言与干预 | 从实际差异定位原因，保留授权和外部执行的必要边界 |
-| LoRA 只会算参数数量 | [13](../../curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md)：算 Wx、Ax、B(Ax) 与最终输出，再解释独立变化方向和限制归属 | 理解低秩约束增量而非完整模型；换输入后推导新输出 |
-| 初始化只给梯度结论 | [13](../../curriculum/07-llm-foundation/docs/13-FineTuning与LoRA.md)：以标量乘积演示一侧为零时的影响通路 | 区分起点不扰动与能否取得训练信号 |
-| 后训练章节存在术语堆叠 | [14](../../curriculum/07-llm-foundation/docs/14-PostTraining与Distillation.md)：分开生成、评分、价值、固定参考和采样快照；先算 DPO 对照再读公式 | 解释相对偏好改善为何不保证好答案绝对概率或真实质量提高 |
+| FFN 只有形状，缺少实际变换 | [03](../../curriculum/06-llm-foundation/docs/03-TransformerBlock.md)：用 2→3→2 加权、ReLU、再加权；比较省去非线性的输出 | 改输入后逐步计算，而非只复述扩维、降维 |
+| 归一化名词集中出现 | [03](../../curriculum/06-llm-foundation/docs/03-TransformerBlock.md)：同一 `[2,4]` 对照 LayerNorm 与 RMSNorm，解释均值、方差、均方根和实际 ε | 解释共同平移为什么影响两种结果不同，并区分概率归一化 |
+| RoPE 直接跳到等式 | [04](../../curriculum/06-llm-foundation/docs/04-Attention与Position.md)：给出四个位置的二维旋转、点积与整体位移对照，再解释相对位置等式 | 在 q、k 内容固定时预测位置差如何影响匹配 |
+| 行列向量约定切换未说明 | [04](../../curriculum/06-llm-foundation/docs/04-Attention与Position.md)、[13](../../curriculum/06-llm-foundation/docs/13-FineTuning与LoRA.md)：区分按行组织 H 与单个列向量 x | 说明 HW 与 Wx 的形状约定，不把书写差异当机制冲突 |
+| KV 自测提前要求 LoRA | [06](../../curriculum/06-llm-foundation/docs/06-KVCache与PrefillDecode.md)：改为“模型计算参数改变”；LoRA 的具体缓存影响在 13 章承接 | 仅凭当前缓存条件即可回答 |
+| 实现默认值与核心机制同等突出 | [07](../../curriculum/06-llm-foundation/docs/07-ServingEngine与性能.md)：先讲抢占、重算与卸载代价，固定版本说明就地折叠 | 不读选读细节仍能完成主线自测 |
+| Elo 公式抢占选型主线 | [08](../../curriculum/06-llm-foundation/docs/08-ModelAPI与Selection.md)：保留相对评价用途和偏差，更新公式就地折叠；收束模板重复 | 先判断任务绝对门槛，再使用相对排序 |
+| 多模态案例只有文字，文档流程重复展开 | [10](../../curriculum/06-llm-foundation/docs/10-MultimodalFoundation.md)：补销售图与访问量旁注，围绕表示保留/丢失的信息比较 OCR、版面与视觉 | 区分读数、指标对应与增长计算，不把旁注数值混入 |
+| Prompt 与事实治理重复同类边界 | [11](../../curriculum/06-llm-foundation/docs/11-PromptEngineering.md)、[12](../../curriculum/06-llm-foundation/docs/12-Hallucination与干预边界.md)：前者关注输入改写及对照，后者关注证据、断言与干预 | 从实际差异定位原因，保留授权和外部执行的必要边界 |
+| LoRA 只会算参数数量 | [13](../../curriculum/06-llm-foundation/docs/13-FineTuning与LoRA.md)：算 Wx、Ax、B(Ax) 与最终输出，再解释独立变化方向和限制归属 | 理解低秩约束增量而非完整模型；换输入后推导新输出 |
+| 初始化只给梯度结论 | [13](../../curriculum/06-llm-foundation/docs/13-FineTuning与LoRA.md)：以标量乘积演示一侧为零时的影响通路 | 区分起点不扰动与能否取得训练信号 |
+| 后训练章节存在术语堆叠 | [14](../../curriculum/06-llm-foundation/docs/14-PostTraining与Distillation.md)：分开生成、评分、价值、固定参考和采样快照；先算 DPO 对照再读公式 | 解释相对偏好改善为何不保证好答案绝对概率或真实质量提高 |
 
 新增自测位于 03、04、13、14 章。Review 另用新输入检查 FFN、同增量不同输出，以及 DPO 相对变化；不把这些新条件伪装成真人面试原题。速查表的回看项改为可点击章节链接。
 

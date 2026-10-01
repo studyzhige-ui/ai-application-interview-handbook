@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "purpose": "正文文件编号、阅读顺序及前后导航的统一来源",
+  "chapters": [
+    {
+      "path": "docs/01-AIBackend职责与RequestPath.md",
+      "title": "一次请求完成了什么，后端负责到哪里"
+    },
+    {
+      "path": "docs/02-DataLayering与StateOwnership.md",
+      "title": "哪些状态必须保存，恢复时相信哪一份"
+    },
+    {
+      "path": "docs/03-TCPTLS与HTTPVersions.md",
+      "title": "从字节到安全请求：TCP、TLS 与 HTTP"
+    },
+    {
+      "path": "docs/04-ServiceCommunication与StreamingReliability.md",
+      "title": "怎样传递结果，断线后怎样继续"
+    },
+    {
+      "path": "docs/05-Concurrency与ThreadPool.md",
+      "title": "并发工作由谁执行，等待放在哪里"
+    },
+    {
+      "path": "docs/06-ConnectionPool与ResourceCapacity.md",
+      "title": "连接怎样复用，容量怎样计算"
+    },
+    {
+      "path": "docs/07-Backpressure与RateLimit.md",
+      "title": "到达速度超过处理能力时怎么办"
+    },
+    {
+      "path": "docs/08-TimeoutDeadline与ErrorTaxonomy.md",
+      "title": "等多久，超时之后还发生什么"
+    },
+    {
+      "path": "docs/09-APIIdempotency与SideEffect.md",
+      "title": "怎样识别同一次操作，避免重复副作用"
+    },
+    {
+      "path": "docs/10-RetryCircuitBreaker与Failover.md",
+      "title": "什么时候值得再试，怎样防止故障放大"
+    },
+    {
+      "path": "docs/11-MQ与DeliverySemantics.md",
+      "title": "消息怎样交付，确认到底确认了什么"
+    },
+    {
+      "path": "docs/12-KafkaPartition与Backlog.md",
+      "title": "Kafka 怎样分工、保序与恢复消费"
+    },
+    {
+      "path": "docs/13-ReliableAsyncTask.md",
+      "title": "进程重启后，任务怎样继续推进"
+    },
+    {
+      "path": "docs/14-Consistency与Compensation.md",
+      "title": "多份数据不一致时，怎样恢复业务正确性"
+    },
+    {
+      "path": "docs/15-AuthSession与TenantBoundary.md",
+      "title": "谁能访问什么，权限怎样贯穿请求与任务"
+    },
+    {
+      "path": "docs/16-BackendSecurity.md",
+      "title": "不可信输入怎样被限制在安全边界内"
+    },
+    {
+      "path": "docs/17-ServiceDiscovery与LoadBalancing.md",
+      "title": "多个服务实例怎样被找到和选中"
+    },
+    {
+      "path": "docs/18-Observability与PerformanceDiagnosis.md",
+      "title": "从慢请求的证据定位瓶颈"
+    },
+    {
+      "path": "docs/19-LinuxTroubleshooting.md",
+      "title": "把应用故障追到 Linux 资源"
+    },
+    {
+      "path": "docs/20-ContainerK8s与Deployment.md",
+      "title": "部署、探针与停机怎样配合应用"
+    },
+    {
+      "path": "docs/21-ConfigRelease与ServiceEvolution.md",
+      "title": "配置和版本怎样安全改变"
+    },
+    {
+      "path": "docs/22-CrossLanguageRuntimeMapping.md",
+      "title": "把通用机制映射到 Java、Spring 与 Go"
+    }
+  ]
+}

@@ -9,13 +9,13 @@ import argparse
 import json
 import re
 
-ID_RE = re.compile(r"(?:curriculum/|\.\./)(\d{2}-[a-z-]+)/README\.md")
+ID_RE = re.compile(r"(?:curriculum/|\.\./|\]\()(\d{2}-[a-z-]+)/README\.md")
 ALIASES = {
     "Python Foundation":"01-python", "Python":"01-python", "FastAPI":"02-fastapi",
-    "AI Backend Engineering":"03-backend-engineering", "Backend":"03-backend-engineering",
-    "MySQL":"04-mysql", "Redis":"05-redis", "Vector Database":"06-vector-db",
-    "Vector DB":"06-vector-db", "LLM Foundation（应用工程深度）":"07-llm-foundation",
-    "LLM Foundation":"07-llm-foundation", "Agent":"09-agent", "RAG":"08-rag",
+    "AI Backend Engineering":"05-backend-engineering", "Backend":"05-backend-engineering",
+    "MySQL":"03-mysql", "Redis":"04-redis", "Vector Database":"07-vector-db",
+    "Vector DB":"07-vector-db", "LLM Foundation（应用工程深度）":"06-llm-foundation",
+    "LLM Foundation":"06-llm-foundation", "Agent":"09-agent", "RAG":"08-rag",
     "System Design":"10-system-design",
 }
 
@@ -83,7 +83,7 @@ def planned_changes(root):
     order=[x['directory'] for x in data['modules']]
     labels={x['directory']:x['label'] for x in data['modules']}
     if len(order)!=10 or len(set(order))!=10: raise ValueError('Expected ten unique modules')
-    targets=['README.md','guide/knowledge-map.md']+[f'curriculum/{x}/README.md' for x in order]
+    targets=['README.md','curriculum/README.md','guide/knowledge-map.md']+[f'curriculum/{x}/README.md' for x in order]
     changes={}
     missing=[x for x in targets if not (root/x).is_file()]
     if missing: raise FileNotFoundError('Requires full repository: '+', '.join(missing))

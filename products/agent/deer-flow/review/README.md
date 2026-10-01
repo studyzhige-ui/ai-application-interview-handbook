@@ -1,6 +1,6 @@
 # DeerFlow 回顾｜用状态变化重建系统
 
-[← 产品总览](../README.md) · [工程与评测](../04-engineering-evaluation.md) · [源码小实验](../labs/README.md)
+[← 产品总览](../README.md) · [观察与复盘](../08-observation-and-review.md) · [状态与恢复](../06-history-and-recovery.md)
 
 先不看答案，画出“用户提出任务，工具产生副作用，连接中断，之后重新进入会话”的过程。每一步写清谁在操作、依据什么状态、改变什么，以及失败后还有什么未知。这一页重建已学关系，不新增主线机制。
 
@@ -11,7 +11,7 @@
 3. **动作在哪一刻发生？** 从目录、完整定义画到执行检查，再到沙箱或外部服务；最后画返回消息、收据与预算处理。
 4. **恢复到底恢复什么？** 分开 Run、Checkpoint、Journal、工作区与长期记忆。恢复消息协议，不代表外部世界一致。
 
-第一张图可对照[一次运行轨迹](../01-context-lifecycle.md#run-trace)，恢复图可对照[检查点亲缘与线性恢复](../04-engineering-evaluation.md#checkpoint-recovery)。先自己推演，再回看，不要求凭记忆默写类名。
+第一张图可对照[一次运行轨迹](../01-run-and-model-loop.md#run-trace)，恢复图可对照[检查点亲缘与线性恢复](../06-history-and-recovery.md#checkpoint-recovery)。先自己推演，再回看，不要求凭记忆默写类名。
 
 ## 2. 容易混淆的状态对照
 

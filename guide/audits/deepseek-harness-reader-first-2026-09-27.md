@@ -153,7 +153,7 @@ S242 原帖额外可见反问中的通用 Agent 加 Skill/编排层选型讨论�
 
 **待其他范围处理的具体事项：**
 
-- `curriculum/09-agent/README.md` §2，以及本轮为核实链接读取的 `curriculum/03-backend-engineering/README.md` 前 45 行，仍把 Backend 放在 MySQL/Redis 前，与已读取的全局知识地图“先 MySQL/Redis、后 Backend”不一致。本轮不顺手重写另一模块入口，也不声称全仓库路线一致性已完成。
+- `curriculum/09-agent/README.md` §2，以及本轮为核实链接读取的 `curriculum/05-backend-engineering/README.md` 前 45 行，仍把 Backend 放在 MySQL/Redis 前，与已读取的全局知识地图“先 MySQL/Redis、后 Backend”不一致。本轮不顺手重写另一模块入口，也不声称全仓库路线一致性已完成。
 - S242 原帖作者显示名差异与反问补充，交 Market 维护者追踪同账户证据；未改准入规则或来源快照。
 - 跨租户认证、业务幂等键、数据库事务、网络重连和知识库质量的完整主讲在其他模块；上述登记不是声称接收模块已新增或通过验收。
 

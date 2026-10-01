@@ -47,7 +47,7 @@
         "--check"
       ],
       "exit_code": 0,
-      "output": "{\n  \"python_version\": \"3.12.14\",\n  \"mode\": \"check\",\n  \"curriculum_chapters\": 175,\n  \"module_counts\": {\n    \"01-python\": 13,\n    \"02-fastapi\": 16,\n    \"04-mysql\": 19,\n    \"05-redis\": 18,\n    \"03-backend-engineering\": 22,\n    \"06-vector-db\": 16,\n    \"07-llm-foundation\": 14,\n    \"08-rag\": 14,\n    \"09-agent\": 24,\n    \"10-system-design\": 19\n  },\n  \"product_chapters\": 16,\n  \"coding_chapters\": 9,\n  \"changed_files\": [],\n  \"unchanged_protected_files\": 536,\n  \"protected_content_changes\": [],\n  \"idempotent\": null,\n  \"markdown_pages_scanned\": 430,\n  \"peripheral_pages_scanned\": 430,\n  \"local_links_checked\": 4491,\n  \"missing_paths\": [],\n  \"unresolved_anchors\": [],\n  \"conflict_markers\": []\n}\n"
+      "output": "{\n  \"python_version\": \"3.12.14\",\n  \"mode\": \"check\",\n  \"curriculum_chapters\": 175,\n  \"module_counts\": {\n    \"01-python\": 13,\n    \"02-fastapi\": 16,\n    \"03-mysql\": 19,\n    \"04-redis\": 18,\n    \"05-backend-engineering\": 22,\n    \"07-vector-db\": 16,\n    \"06-llm-foundation\": 14,\n    \"08-rag\": 14,\n    \"09-agent\": 24,\n    \"10-system-design\": 19\n  },\n  \"product_chapters\": 16,\n  \"coding_chapters\": 9,\n  \"changed_files\": [],\n  \"unchanged_protected_files\": 536,\n  \"protected_content_changes\": [],\n  \"idempotent\": null,\n  \"markdown_pages_scanned\": 430,\n  \"peripheral_pages_scanned\": 430,\n  \"local_links_checked\": 4491,\n  \"missing_paths\": [],\n  \"unresolved_anchors\": [],\n  \"conflict_markers\": []\n}\n"
     },
     {
       "command": [

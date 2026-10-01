@@ -5,11 +5,11 @@
   "module_counts": {
     "01-python": 13,
     "02-fastapi": 16,
-    "04-mysql": 19,
-    "05-redis": 18,
-    "03-backend-engineering": 22,
-    "06-vector-db": 16,
-    "07-llm-foundation": 14,
+    "03-mysql": 19,
+    "04-redis": 18,
+    "05-backend-engineering": 22,
+    "07-vector-db": 16,
+    "06-llm-foundation": 14,
     "08-rag": 14,
     "09-agent": 24,
     "10-system-design": 19

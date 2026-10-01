@@ -155,7 +155,7 @@ X=1/2+1/3=5/6；Y=1/3；Z=1/2。顺序 X、Z、Y，三者可区分。若第二�
 
 ## 知识回看与权威资料
 
-回看 [查询规划](06-QueryPlanning.md)，区分术语变体与多子目标；索引内的过滤细节见 [Vector DB：Metadata Filter](../../06-vector-db/docs/10-MetadataFilter.md)。
+回看 [查询规划](06-QueryPlanning.md)，区分术语变体与多子目标；索引内的过滤细节见 [Vector DB：Metadata Filter](../../07-vector-db/docs/10-MetadataFilter.md)。
 
 [Lucene BM25Similarity 10.3.1](https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/search/similarities/BM25Similarity.html)是固定实现参照；[Elastic RRF](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)用于核对排名、平滑常数与候选窗口，不作为所有数据库的 API 约定。
 

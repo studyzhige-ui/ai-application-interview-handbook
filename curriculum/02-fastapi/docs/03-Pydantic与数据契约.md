@@ -16,6 +16,22 @@
 
 Pydantic 主要处理第二类规则，也可表达适合本地完成的字段关联检查。资源是否存在、用户是否拥有它，通常需要额外的可信信息，不能仅靠“JSON 可以解析”推断。
 
+### 必填与可空：先把两条规则分开
+
+**必填（required）** 问“这个字段能否省略”，**可空（nullable）** 问“提供了字段时，值能否是 JSON null”。null 进入 Python 后是 None；缺字段则是没有这条输入，二者不能混为同一个状态。
+
+| Pydantic v2 字段声明 | 能省略吗 | 接受 null 吗 | 省略后的值 |
+|---|---|---|---|
+| `name: str` | 否 | 否 | 没有默认值，拒绝 |
+| `name: str | None` | 否 | 是 | 没有默认值，拒绝 |
+| `name: str = "匿名"` | 是 | 否 | `"匿名"` |
+| `name: str | None = None` | 是 | 是 | None |
+
+因此 `{"name": null}` 可满足第二行，`{}` 却不能；第三行的默认值也不会把显式 null 自动改成匿名。`Optional[str]` 等同 `str | None`，不自动赋默认值。[Pydantic 字段规则](https://docs.pydantic.dev/latest/concepts/fields/)
+
+路径参数必须出现在路径里；查询参数通常是文本，`?name=null` 是四个字符，不是 JSON null。这张四格表首先讨论 JSON 模型字段，不能把传输形式也抹平。
+
+
 ## 2. 定义输入：先明确哪些值允许进来
 
 下面是完整 `main.py`。输入包含 `text` 和 `repeat`，输出只暴露 `result`。
@@ -115,6 +131,52 @@ print(pages.start_page, pages.end_page)  # 2 5
 
 > ⚠️ 给模型或客户端的字段说明不能代替服务端执行校验。跨字段规则也不一定会完整出现在自动生成的 JSON Schema 中；重要约束要写入接口说明，并测试错误响应是否可理解。
 
+### 2.4 嵌套列表与别名：字段形状可以逐层描述
+
+```python
+# example: nested_contract
+from pydantic import BaseModel, Field
+
+class Note(BaseModel):
+    text: str = Field(min_length=1)
+
+class Notebook(BaseModel):
+    owner_id: str = Field(alias="ownerId")
+    notes: list[Note] = Field(default_factory=list)
+
+book = Notebook.model_validate({"ownerId": "u1", "notes": [{"text": "第一条"}]})
+print(book.notes[0].text)                  # 第一条
+print(book.model_dump(by_alias=True))     # {'ownerId': 'u1', 'notes': [{'text': '第一条'}]}
+```
+
+Python 内部用 `owner_id`，这个模型的外部输入使用别名 `ownerId`；输出是否用别名要看序列化设置，这里显式写 `by_alias=True`。嵌套校验会逐项进入 Note：例如 `notes[0]` 缺少 text，错误位置能指出 notes、0、text，而不只是说“整个对象坏了”。`default_factory=list` 在缺省时为每个实例创建列表；不等于传入 null 也自动变成空列表。
+
+别名用于连接命名约定，不能代替字段权限或业务迁移策略。需要同时接受内部名和外部名时，应明确配置并测试，不能默认所有拼写都会被接受。[嵌套模型](https://fastapi.tiangolo.com/tutorial/body-nested-models/) · [字段别名](https://docs.pydantic.dev/latest/concepts/alias/)
+
+### 2.5 PATCH：没有提供，和明确清空，是不同更新
+
+假设现有记录 `{"description": "原说明"}`。本接口约定：省略 description 表示保留，显式 null 表示清空，字符串表示替换。
+
+```python
+# example: patch_contract
+from pydantic import BaseModel
+
+class NotePatch(BaseModel):
+    description: str | None = None
+
+stored = {"description": "原说明"}
+missing = NotePatch.model_validate({})
+clear = NotePatch.model_validate({"description": None})
+print(missing.description, clear.description)       # None None：单看属性分不出来
+print(missing.model_dump(exclude_unset=True))       # {}
+print(clear.model_dump(exclude_unset=True))         # {'description': None}
+print({**stored, **missing.model_dump(exclude_unset=True)})  # 保留原说明
+print({**stored, **clear.model_dump(exclude_unset=True)})    # 清空为 None
+```
+
+模型记录哪些字段实际被提供，`exclude_unset=True` 只取这些字段。`exclude_none=True` 会把明确清空也删掉，`exclude_defaults=True` 会按值是否等于默认值过滤，都不是这里的同一契约。合并后仍要检查完整记录的关联规则和修改权限；`model_copy(update=...)` 也不自动重新校验更新数据。这里解释更新语义，不把字典合并当事务或并发控制。[部分更新](https://fastapi.tiangolo.com/tutorial/body-updates/)
+
+
 ## 3. JSON Content-Type：格式不是靠服务器猜的
 
 发送 JSON 时要带 `Content-Type: application/json`。FastAPI 从 0.132.0 起默认启用严格 Content-Type 检查：缺少相应类型声明的请求，不再默认当作 JSON 解析。[严格 Content-Type](https://fastapi.tiangolo.com/advanced/strict-content-type/)
@@ -160,6 +222,75 @@ print(obj.model_dump_json())     # {"value":2}，得到 JSON 字符串
 
 `model_validate` 是从外部值到模型，`model_dump` 是从模型到 Python 数据。包含日期等对象时，`model_dump(mode="json")` 会生成适合 JSON 的值；不要把 Python 字典、JSON 字符串和已经发出的 HTTP 响应当成同一种东西。
 
+### 5.1 Python 值到 JSON 值，还需要序列化规则
+
+JSON 没有 datetime 或 Decimal 类型。模型的 Python 模式可以保留这些对象；JSON 模式则按类型的序列化规则产生字符串、数字、列表等可编码值。
+
+```python
+# example: serialization_contract
+from datetime import datetime, timezone
+from decimal import Decimal
+from pydantic import BaseModel
+
+class Quote(BaseModel):
+    created_at: datetime
+    amount: Decimal
+
+quote = Quote(created_at=datetime(2026, 1, 1, tzinfo=timezone.utc), amount=Decimal("1.20"))
+print(type(quote.model_dump()["amount"]).__name__)    # Decimal
+print(quote.model_dump(mode="json"))
+# {'created_at': '2026-01-01T00:00:00Z', 'amount': '1.20'}
+```
+
+Pydantic 的这个 JSON 模式将 Decimal 编码成文本以保留十进制表示；客户端必须按契约读取，不能猜它必是 JSON number。若改用别的编码器，规则可能不同。直接给 JSONResponse 一个含 datetime 的普通字典，不会自动执行上面模型的规则；应先显式转换。[Pydantic 序列化](https://docs.pydantic.dev/latest/concepts/serialization/)
+
+### 5.2 同一份内部数据，两条返回路径
+
+```python
+# example: response_paths
+from fastapi import FastAPI, Response
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel
+
+app = FastAPI()
+class PublicNote(BaseModel):
+    text: str
+
+INTERNAL = {"text": "第一条", "internal_debug": "demo-only"}
+
+@app.get("/model", response_model=PublicNote)
+def model_path(response: Response):
+    response.headers["X-Format"] = "public-note"
+    response.set_cookie("theme", "light", httponly=True, samesite="lax")
+    return INTERNAL
+
+@app.get("/direct", response_model=PublicNote)
+def direct_path():
+    public = PublicNote.model_validate(INTERNAL)  # 先显式限定字段
+    return JSONResponse(content=public.model_dump(mode="json"))
+
+@app.delete("/theme", status_code=204)
+def clear_theme():
+    response = Response(status_code=204)
+    response.delete_cookie("theme", path="/")
+    return response
+```
+
+`/model` 的普通数据返回经过 response_model，只留下 text；注入的临时 Response 提供头和 Cookie。`/direct` 已自行构造响应，框架不会再替它过滤 INTERNAL；所以这里先构造 PublicNote，再转成 JSON 兼容值。若直接写 `JSONResponse(content=INTERNAL)`，内部字段就会被发出去。
+
+Cookie 通过 `Set-Cookie` 交给浏览器；后续是否携带取决于 Domain、Path、Secure、SameSite 等范围。删除 Cookie 也需要匹配原有范围。本例 theme 只是本地偏好示意，不建立登录会话；认证 Cookie 的安全策略见第 09 章。
+
+| 返回方式 | 谁负责表示内容 | 常见场景 |
+|---|---|---|
+| 普通对象加 response_model | 模型验证、过滤和序列化 | 结构化 API |
+| JSONResponse / Response | 调用方准备好内容、状态、头 | 明确控制完整响应 |
+| PlainTextResponse / HTMLResponse | 按指定媒体类型返回文本 | 文本或可信 HTML；不会自动替你处理所有 HTML 注入 |
+| FileResponse | 从受控路径交付文件 | 文件下载；不把任意用户路径直接传入 |
+| StreamingResponse | 逐项产生响应体 | 第 07 章的流式交付 |
+
+路由的 `status_code=201` 决定普通返回路径的默认状态，也用于文档；`responses={...}` 可以补充 OpenAPI，但不会自动实现这些分支。直接返回 Response 时，其实际状态与媒体类型由响应对象决定。声明了 404 文档，不等于代码已经会返回 404。[响应与 Cookie](https://fastapi.tiangolo.com/advanced/response-cookies/) · [自定义响应](https://fastapi.tiangolo.com/advanced/custom-response/)
+
+
 ## 6. 业务错误怎样成为稳定响应
 
 不存在的笔记不是 Python 程序崩溃。让业务函数用自己的异常表达问题，再在 Web 边界映射到 HTTP，是一种可测试的分工。
@@ -203,7 +334,7 @@ def get_note(note_id: int):
 
 模型生成的结构化结果也是外部输入。它还要经过解析、结构、业务和权限检查，不能因为来源是模型就直接当成可信 HTTP 响应。
 
-**练习：** 在 `/preview` 中将 repeat 设为严格整数。分别发送数字 `2`、字符串 `"2"`、布尔值 `true`，记录状态；确认错误发生前没有执行字符串重复。答案应该能解释策略变化，而不是只记住三个状态码。
+**策略对照：** 若 repeat 使用 `strict=True`，JSON 数字 `2` 满足整数与范围要求；字符串 `"2"` 和布尔值 `true` 被拒绝为 422，字符串重复的处理函数不会执行。这改变的是输入契约，不是重复计算的算法。
 
 ---
 
@@ -233,7 +364,7 @@ def get_note(note_id: int):
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. 为什么内部返回了 internal_debug，客户端却不应收到？</summary>

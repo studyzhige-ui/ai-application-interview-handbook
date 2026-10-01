@@ -1,6 +1,6 @@
 # 08｜在线笔试：把算法放进完整交付约束
 
-[← 上一章：Hot100 综合训练](07-hot100.md) · [Coding 首页](../README.md) · [下一章：AI Coding →](09-ai-coding.md)
+[← 上一章：Hot100 综合训练](07-hot100.md) · [Coding 首页](../README.md) · [可选参考：AI Coding →](09-ai-coding.md)
 
 
 函数已经在本地算对，提交后却收到 Wrong Answer。原因可能很小：把组数当成数组长度，漏读了一行，或者多打印了“答案是”三个字。

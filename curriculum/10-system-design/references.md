@@ -32,4 +32,4 @@
 
 课程机制实验目标为 Python 3.13 标准库；运行版本和日期以[审查记录](../../guide/audits/system-design-reader-first-2026-09-28.md)为准。没有安装、运行或联调 MySQL、Redis、RabbitMQ、S3、模型供应商和 OAuth 服务，不能据此宣布这些真实服务已验证。
 
-需要学习底层实现时，回到 [Backend](../03-backend-engineering/README.md)、[MySQL](../04-mysql/README.md)、[Redis](../05-redis/README.md)、[Vector DB](../06-vector-db/README.md)、[RAG](../08-rag/README.md)与 [Agent](../09-agent/README.md)。跨模块链接指向主讲范围，不表示本模块已替它们完成全部审查。
+需要学习底层实现时，回到 [Backend](../05-backend-engineering/README.md)、[MySQL](../03-mysql/README.md)、[Redis](../04-redis/README.md)、[Vector DB](../07-vector-db/README.md)、[RAG](../08-rag/README.md)与 [Agent](../09-agent/README.md)。跨模块链接指向主讲范围，不表示本模块已替它们完成全部审查。

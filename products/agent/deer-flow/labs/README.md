@@ -1,6 +1,8 @@
 # DeerFlow 源码小实验｜先预测，再检查真实函数的结果
 
-[← 产品总览](../README.md) · [上下文篇](../01-context-lifecycle.md) · [记忆篇](../02-memory-lifecycle.md) · [工具篇](../03-tool-lifecycle.md)
+本页保留旧源码快照的维护检查方法，不是本次产品学习主线，也未在本轮运行。当前机制与版本以[产品入口](../README.md)为准。
+
+[← 产品总览](../README.md) · [上下文篇](../01-run-and-model-loop.md) · [记忆篇](../07-memory-pipeline.md) · [工具篇](../02-tools-and-resources.md)
 
 本目录复用正文标记的源码片段，以及字节固定的上游摘要配置文件。不维护第二份业务门控实现，不启动完整 DeerFlow，也不连接模型、数据库或沙箱。
 
@@ -84,7 +86,7 @@ python products/agent/deer-flow/labs/verify_source_config.py --source-file /path
 
 配置类默认未启用，`trigger=None`，保留最近 20 条消息。`0.8` 合法，`80` 不合法。允许构造某种配置，不代表服务已加载它、工厂已安装中间件，或本次已达到触发条件。
 
-脚本验证默认值、范围、非法数值与可变默认值隔离，不运行摘要生成或整个工厂。自动触发的流程与失败条件须结合[上下文正文](../01-context-lifecycle.md)和[实际摘要工厂][summary]理解。
+脚本验证默认值、范围、非法数值与可变默认值隔离，不运行摘要生成或整个工厂。自动触发的流程与失败条件须结合[上下文正文](../01-run-and-model-loop.md)和[实际摘要工厂][summary]理解。
 
 </details>
 
@@ -98,7 +100,7 @@ python products/agent/deer-flow/labs/verify_source_config.py --source-file /path
 | 工具往返 | 用户请求后，模型提出 `c1`，工具才执行并回填 | 模型提议与真实执行分开，结果用调用 ID 配对 |
 | delta 恢复 | `C0 → C1 → C2`，选择 C0 恢复 | 先物化，再在当前头部写新状态继续，不把兄弟增量当所选历史 |
 
-第一条是规则推演，不执行 LangGraph；第二条不调用真实工具；第三条不是数据库恢复实验。答案分别在[运行与消息轨迹](../01-context-lifecycle.md#run-trace)和[检查点恢复](../04-engineering-evaluation.md#checkpoint-recovery)。它们验证能否解释步骤，不替代运行证据。
+第一条是规则推演，不执行 LangGraph；第二条不调用真实工具；第三条不是数据库恢复实验。答案分别在[运行与消息轨迹](../01-run-and-model-loop.md#run-trace)和[检查点恢复](../06-history-and-recovery.md#checkpoint-recovery)。它们验证能否解释步骤，不替代运行证据。
 
 ## 6. 下一层验证什么
 

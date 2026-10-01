@@ -1,6 +1,6 @@
 # Vector DB Reader Revision｜向量数据库模块维护记录
 
-[← Project Records](README.md) · [课程入口](../../curriculum/06-vector-db/README.md) · [技术依据](../../references/vector-db/README.md)
+[← Project Records](README.md) · [课程入口](../../curriculum/07-vector-db/README.md) · [技术依据](../../references/vector-db/README.md)
 
 ## 当前交付状态
 
@@ -28,22 +28,22 @@
 
 | 正文 | 本轮处理 | 判断依据与取舍 |
 |---|---|---|
-| [01](../../curriculum/06-vector-db/docs/01-VectorDB在AI应用中的职责.md) | 保留职责分层；补齐问题、资料、表示、授权、来源的完整过程。 | 原稿过早引入检索缩写；小数据是否需要独立服务缺少可判断条件。 |
-| [02](../../curriculum/06-vector-db/docs/02-VectorSpace与Similarity.md) | 用 A/B/C 手算点积、余弦、平方 L2，推导单位化关系；补零向量、维度与返回值边界。 | 原有公式保留，但公式与实际排名、阈值需要连起来。 |
-| [03](../../curriculum/06-vector-db/docs/03-ExactSearch与ANN.md) | 建立同一合法集合下的精确基准；明确最终 K、去重、空目标与候选召回的区别。 | 仅用“ANN 少搜一些”解释不了量化误差；不带过滤的基准会误判。 |
-| [04](../../curriculum/06-vector-db/docs/04-ANN索引谱系.md) | 保留索引地图，改成“访问范围”和“数值表示”两条轴。 | 图、IVF、PQ 不是同一维度的互斥分类；深变体不扩写成百科。 |
-| [05](../../curriculum/06-vector-db/docs/05-HNSW机制与调优.md) | 保留分层图与三参数；加入有限候选宽度的小图及新条件自测。 | 参数效果需要从候选如何留下或被丢弃推导；小图不冒充产品建图结果。 |
-| [06](../../curriculum/06-vector-db/docs/06-IVF原理.md) | 保留训练、添加、查询三阶段；加入中心与真实近邻不同的边界案例。 | nprobe 增大为什么可能有帮助，需要看到另一列表中遗漏的记录。 |
-| [07](../../curriculum/06-vector-db/docs/07-Quantization与PQ.md) | 补从子向量到码字、查表距离的手算，计入共享码本；分开漏搜与量化。 | 压缩倍数不等于全系统容量收益；精算不能恢复未入选对象。 |
-| [08](../../curriculum/06-vector-db/docs/08-IndexSelection.md) | 用明确标注的模拟约束筛选可行配置，再讨论构建、增删、过滤与恢复。 | 不能用品牌或一个规模阈值代替条件化选择。 |
-| [09](../../curriculum/06-vector-db/docs/09-Vector数据建模.md) | 把主键、来源、空间、版本放进记录；集中建立常见读写操作及副作用。 | 字段清单不足以教会读者处理变短文档、重复写与旧事件回流。 |
-| [10](../../curriculum/06-vector-db/docs/10-MetadataFilter.md) | 保留四组对照；补合法 Top-K、物理过滤边界、迭代扫描与扫描上限。 | 先过滤不等于新建小图；返回条数足够不等于召回正确。 |
-| [11](../../curriculum/06-vector-db/docs/11-Partition与TenantIsolation.md) | 保留共享与独立布局，拆开授权、数据布局、资源隔离。 | 集合分开不证明密钥或 CPU 隔离；缓存和降级仍需同一权限范围。 |
-| [12](../../curriculum/06-vector-db/docs/12-VectorIndex生命周期.md) | 修正“删除立即不可见”的绝对结论；补乱序删除、连续增量、配对切换及回滚时效。 | 请求确认、读取可见与物理回收不同；稳定 ID 不能代替原子版本控制。 |
-| [13](../../curriculum/06-vector-db/docs/13-分布式VectorDB.md) | 把局部精确 Top-K 写成有前提的证明；加入部分失败、可比分数和 Milvus 职责。 | “通常够用”不说明为什么；ANN 不继承精确归并保证。 |
-| [14](../../curriculum/06-vector-db/docs/14-性能容量与Production诊断.md) | 保留分层诊断，重算容量单位、单节点与集群、稳态与双代峰值。 | 原始向量体积不是所有产品的 RAM 下限；均值不替代尾延迟。 |
-| [15](../../curriculum/06-vector-db/docs/15-产品与架构选型.md) | 保留产品形态比较，核对稳定版本、开源与托管以及库的持久化和并发边界。 | 不能凭旧印象宣称某产品没有某项能力，也不根据最新功能扩章。 |
-| [16](../../curriculum/06-vector-db/docs/16-GraphDB边界与系统设计.md) | 保留相似与关系查询的边界，连接回最小知识系统；移除错误“前22章”等引用。 | HNSW 的边不是业务事实；GraphRAG 完整策略仍由 RAG 承担。 |
+| [01](../../curriculum/07-vector-db/docs/01-VectorDB在AI应用中的职责.md) | 保留职责分层；补齐问题、资料、表示、授权、来源的完整过程。 | 原稿过早引入检索缩写；小数据是否需要独立服务缺少可判断条件。 |
+| [02](../../curriculum/07-vector-db/docs/02-VectorSpace与Similarity.md) | 用 A/B/C 手算点积、余弦、平方 L2，推导单位化关系；补零向量、维度与返回值边界。 | 原有公式保留，但公式与实际排名、阈值需要连起来。 |
+| [03](../../curriculum/07-vector-db/docs/03-ExactSearch与ANN.md) | 建立同一合法集合下的精确基准；明确最终 K、去重、空目标与候选召回的区别。 | 仅用“ANN 少搜一些”解释不了量化误差；不带过滤的基准会误判。 |
+| [04](../../curriculum/07-vector-db/docs/04-ANN索引谱系.md) | 保留索引地图，改成“访问范围”和“数值表示”两条轴。 | 图、IVF、PQ 不是同一维度的互斥分类；深变体不扩写成百科。 |
+| [05](../../curriculum/07-vector-db/docs/05-HNSW机制与调优.md) | 保留分层图与三参数；加入有限候选宽度的小图及新条件自测。 | 参数效果需要从候选如何留下或被丢弃推导；小图不冒充产品建图结果。 |
+| [06](../../curriculum/07-vector-db/docs/06-IVF原理.md) | 保留训练、添加、查询三阶段；加入中心与真实近邻不同的边界案例。 | nprobe 增大为什么可能有帮助，需要看到另一列表中遗漏的记录。 |
+| [07](../../curriculum/07-vector-db/docs/07-Quantization与PQ.md) | 补从子向量到码字、查表距离的手算，计入共享码本；分开漏搜与量化。 | 压缩倍数不等于全系统容量收益；精算不能恢复未入选对象。 |
+| [08](../../curriculum/07-vector-db/docs/08-IndexSelection.md) | 用明确标注的模拟约束筛选可行配置，再讨论构建、增删、过滤与恢复。 | 不能用品牌或一个规模阈值代替条件化选择。 |
+| [09](../../curriculum/07-vector-db/docs/09-Vector数据建模.md) | 把主键、来源、空间、版本放进记录；集中建立常见读写操作及副作用。 | 字段清单不足以教会读者处理变短文档、重复写与旧事件回流。 |
+| [10](../../curriculum/07-vector-db/docs/10-MetadataFilter.md) | 保留四组对照；补合法 Top-K、物理过滤边界、迭代扫描与扫描上限。 | 先过滤不等于新建小图；返回条数足够不等于召回正确。 |
+| [11](../../curriculum/07-vector-db/docs/11-Partition与TenantIsolation.md) | 保留共享与独立布局，拆开授权、数据布局、资源隔离。 | 集合分开不证明密钥或 CPU 隔离；缓存和降级仍需同一权限范围。 |
+| [12](../../curriculum/07-vector-db/docs/12-VectorIndex生命周期.md) | 修正“删除立即不可见”的绝对结论；补乱序删除、连续增量、配对切换及回滚时效。 | 请求确认、读取可见与物理回收不同；稳定 ID 不能代替原子版本控制。 |
+| [13](../../curriculum/07-vector-db/docs/13-分布式VectorDB.md) | 把局部精确 Top-K 写成有前提的证明；加入部分失败、可比分数和 Milvus 职责。 | “通常够用”不说明为什么；ANN 不继承精确归并保证。 |
+| [14](../../curriculum/07-vector-db/docs/14-性能容量与Production诊断.md) | 保留分层诊断，重算容量单位、单节点与集群、稳态与双代峰值。 | 原始向量体积不是所有产品的 RAM 下限；均值不替代尾延迟。 |
+| [15](../../curriculum/07-vector-db/docs/15-产品与架构选型.md) | 保留产品形态比较，核对稳定版本、开源与托管以及库的持久化和并发边界。 | 不能凭旧印象宣称某产品没有某项能力，也不根据最新功能扩章。 |
+| [16](../../curriculum/07-vector-db/docs/16-GraphDB边界与系统设计.md) | 保留相似与关系查询的边界，连接回最小知识系统；移除错误“前22章”等引用。 | HNSW 的边不是业务事实；GraphRAG 完整策略仍由 RAG 承担。 |
 
 配套材料不替正文补关键机制。Review 用过滤不足、查询缩放、乱序删除、分片缺失和重建峰值重建联系；Interview 把已有知识组织成可读的连续追问，保留训练语义并明确不是逐字原帖。速查用于唤起，不作为第一次学习入口。自测任务与输入在答案外，提示与答案分别默认折叠。
 

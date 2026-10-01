@@ -117,3 +117,19 @@ Runtime Certification 还要求本轮 Browser / Feishu / Moka 缓存通过 `gene
 
 正文、源码与实践资料可被读取和校验，但不会被同步器改写。同步不会重新生成 Market / Canonical，也不自动宣称阅读或实机验证通过。
 <!-- outer-sync:end -->
+
+## 阅读顺序与核心示例回归
+
+`test_learning_system_contract.py` 检查十模块顺序、章节编号与实际阅读顺序、相邻章导航及单一可选路线。`test_coding06_algorithms.py` 直接提取第 06 章实现，用小输入穷举及独立参考算法检查边界，不维护另一份被测实现。
+
+在已有验证依赖的维护环境中运行：
+
+```bash
+python -m unittest discover -s tools -p "test_*.py" -v
+python tools/run_course_regressions.py
+python tools/validate_coding_curriculum.py
+python tools/sync_outer_navigation.py --check
+python curriculum/05-backend-engineering/examples/check_navigation.py
+```
+
+CI 同样执行这些检查。测试覆盖编号、链接、源码示例与有限行为；它们不证明教学已经被每位读者理解，也不把未运行的真实数据库、模型或产品服务记为通过。

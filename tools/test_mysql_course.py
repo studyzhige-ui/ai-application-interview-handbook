@@ -10,7 +10,7 @@ import tempfile
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-MOD = ROOT / 'curriculum/04-mysql'
+MOD = ROOT / 'curriculum/03-mysql'
 EX = MOD / 'examples'
 sys.path.insert(0, str(EX))
 import mysql_course
@@ -43,7 +43,7 @@ for path in sorted((MOD/'docs').glob('*.md')):
             resolved=(path.parent/target.split('#',1)[0]).resolve()
             # The review bundle is not the entire repo. This one external-to-bundle
             # target was read at the fixed repo snapshot; do not fabricate its content.
-            known_repo_targets={'market/interviews/batch-32.md', 'curriculum/05-redis/README.md'}
+            known_repo_targets={'market/interviews/batch-32.md', 'curriculum/04-redis/README.md'}
             self.assertTrue(resolved.exists() or str(resolved.relative_to(ROOT)) in known_repo_targets,f'{path.name}: {target}')
     setattr(ChapterChecks, 'test_chapter_'+path.name[:2],check)
 
@@ -139,7 +139,7 @@ class DeliveryContracts(unittest.TestCase):
     def test_reader_navigation_follows_approved_order(self):
         source=(MOD/'README.md').read_text()
         self.assertIn('[← FastAPI](../02-fastapi/README.md)',source)
-        self.assertIn('[Redis →](../05-redis/README.md)',source)
+        self.assertIn('[Redis →](../04-redis/README.md)',source)
     def test_review_and_interview_survive(self):
         review=(MOD/'review/README.md').read_text()
         self.assertGreaterEqual(review.count('<details>'),20)
@@ -152,16 +152,21 @@ class DeliveryContracts(unittest.TestCase):
     def test_first_writing_has_explicit_reading_and_commit_context(self):
         first=next((MOD/'docs').glob('01-*.md')).read_text()
         second=next((MOD/'docs').glob('02-*.md')).read_text()
-        self.assertIn('下一章建好表以后再运行',first)
+        self.assertIn('下一章会给出建表与状态变化',first)
         self.assertIn('自动提交',first)
         self.assertLess(second.index('basics_create'),second.index('basics_insert'))
         self.assertIn('不作为阅读', (EX/'README.md').read_text())
     def test_all_payload_json_parses(self):
         for path in ROOT.rglob('*.json'):json.loads(path.read_text(encoding='utf-8'))
-    def test_global_stats_and_other_modules_not_payload(self):
-        self.assertFalse((ROOT/'interview/canonical').exists())
-        self.assertFalse((ROOT/'market').exists())
-        self.assertFalse((ROOT/'curriculum/02-fastapi').exists())
+    def test_exporter_scope_excludes_global_stats_and_other_modules(self):
+        # This suite runs in the full handbook, not an isolated delivery bundle.
+        # Assert the exported payload boundary instead of deleting valid modules.
+        result = subprocess.run([sys.executable, str(ROOT/'tools/export_mysql_example.py'), '--list'],
+                                check=True, capture_output=True, text=True)
+        rows = [line.split('\t', 1) for line in result.stdout.splitlines()]
+        self.assertEqual({name for name, _ in rows}, set(mysql_course.examples()))
+        self.assertTrue(all(path.startswith(('docs/', 'examples/')) for _, path in rows))
+        self.assertTrue(all((MOD/path).is_file() for _, path in rows))
 
 class HandCalculationChecks(unittest.TestCase):
     """Plain Python hand-calculation consistency, NOT a SQL/lock simulator."""
@@ -198,7 +203,8 @@ class RevisionContracts(unittest.TestCase):
         text=(ROOT/'guide/knowledge-map.md').read_text()
         self.assertIn('README.md) | 19 | 26 |',text)
         self.assertIn('26 Canonical / 55 independent HUMAN-A flows',text)
-        self.assertIn('181个正文章节',(ROOT/'guide/learning-path.md').read_text())
+        count = sum(1 for p in (ROOT/'curriculum').glob('*/docs/[0-9][0-9]-*.md'))
+        self.assertIn(f'当前合计 {count} 篇', (ROOT/'guide/learning-path.md').read_text())
     def test_no_empty_redirect_chapters(self):
         for path in (MOD/'docs').glob('*.md'):
             self.assertIn('## 本章自测',path.read_text())

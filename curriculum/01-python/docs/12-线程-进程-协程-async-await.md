@@ -142,7 +142,7 @@ def limited_call(job):            # job 是要执行的同步函数
 
 ## 4. 协程与事件循环：不靠新线程来表达等待
 
-### 4.1 async def 定义协程函数，调用先得到协程对象
+### 4.1 不含 yield 的 async def 定义协程函数，调用先得到协程对象
 
 ```python
 import asyncio               # 标准库异步调度工具
@@ -181,6 +181,30 @@ async def bad():             # 错误设计：名字是异步，内部却一直�
 ```
 
 正确方向是将适合的 CPU 工作交给进程池等执行模型；同步阻塞 I/O 则可以移到线程池。仅仅加上 `async def` 不会把同步代码变成非阻塞，也不要把 `time.sleep()` 当成 `await asyncio.sleep()`。
+
+### 4.4 async for：等待下一项，而不是等待整个列表
+
+普通 `for` 调用 `iter/next`；异步数据源可能要等待网络才能给出下一项，因此使用 `__aiter__/__anext__`。`__aiter__` 返回异步迭代器；`__anext__` 返回可等待对象，完成后得到一项，结束时以 `StopAsyncIteration` 报告。
+
+```python
+import asyncio
+
+async def chunks():              # 含 yield 的 async def 是异步生成器函数
+    for text in ["你", "好"]:
+        await asyncio.sleep(0)    # 模拟每一项到来前的异步等待
+        yield text               # 产出这一项，并暂停在这里
+
+async def main():
+    stream = chunks()            # 得到异步生成器；不是协程返回值
+    async for text in stream:    # 逐次等待下一项
+        print(text)              # 依次输出 你、好
+
+asyncio.run(main())
+```
+
+时间线是“请求下一项 → 等待 → yield 你 → 循环体消费 → 再请求 → yield 好 → 再请求 → 结束”。`async for` 本身不创建一批并行任务；消费者通常逐项推动生产者。不能对异步生成器直接 `await chunks()`，也不能用普通 `list(stream)` 消费它。提前退出时，如果生成器持有资源，应使用 `contextlib.aclosing(stream)` 等明确关闭范围，让 `finally` 有确定的收尾机会。
+
+`async with` 对应可等待的 `__aenter__/__aexit__`。第 07 章的“一次 yield 划分获取与清理”也能用 `@contextlib.asynccontextmanager` 表达：获取和清理都可以 await。FastAPI 的异步资源依赖正是接在这两项语言基础上。
 
 ## 5. 多任务调度：按输入顺序收集，还是谁先完成先处理
 
@@ -248,6 +272,19 @@ asyncio.run(main())                   # 脚本入口
 ```
 
 `async with` 是可异步进入／退出的上下文管理协议，不会阻塞着持有普通线程锁去等待。TaskGroup 管任务关系，不自动提供限流、持久化或业务回滚。
+
+### 5.5 异常组为什么不能只按一条异常理解
+
+多个子任务可能在相近时间失败，任务组需要在等待它们收尾后保留多份错误。`ExceptionGroup` 把相关异常组织成一组，`except* ValueError` 可以处理其中匹配的子组；不匹配的部分继续传播。它不是把异常对象变成普通成功结果。
+
+```python
+try:
+    raise ExceptionGroup("两个输入错误", [ValueError("A"), ValueError("B")])
+except* ValueError as group:
+    print(len(group.exceptions))  # 2
+```
+
+这段只展示分组处理语法。TaskGroup 的真实异常组可来自任务和退出过程；取消、KeyboardInterrupt、SystemExit 有专门传播规则，不应笼统说所有错误都变成同一种组。
 
 ## 6. 超时、取消、替代路径：把失败后发生什么讲完整
 
@@ -374,6 +411,18 @@ if __name__ == "__main__":           # 保存为 .py 运行；保护进程入口
 在事件循环线程里等普通 `threading.Lock`，可能阻塞整个循环；尤其不要持有它跨越需要其他协程推进的 await。协程之间常用 `asyncio.Lock`、`asyncio.Semaphore` 与 `async with`。
 
 信号量限制同时执行数，却不限制你提前创建多少 Task。一口气为百万项创建百万任务，即使只放行十个，也已经建立大量排队对象。大规模任务源更适合 **Bounded Queue（有界队列）** 与固定数量 Worker（工作协程）：生产者 `await queue.put(...)` 在队列满时等待，形成 **Backpressure（背压）**。
+
+以容量为 2 的队列和一个工作协程为例，生产者按 A、B、C、D 提交：
+
+```text
+put A、put B 完成 → 队列 [A,B]
+put C 等待       → 生产者暂停，不能继续无界积压
+worker get A     → 队列 [B]，空出一个排队槽位
+put C 完成       → 队列 [B,C]，worker 正在处理 A
+put D 又等待     → 下游处理速度反过来约束上游
+```
+
+槽位在 `get` 取走元素时释放，不是等处理结束；`task_done()` 则表示这项工作已完成，配合 `join()` 等待所有登记工作收尾。队列容量限制的是排队项，实际驻留还包括工作协程正在处理的项。固定 W 个工作协程、队列容量 Q，常见在途上界约为 Q+W 项（另计生产者当前持有项）；每项大小若无界，总内存仍不一定有界。
 
 ### 8.2 create_task 不等于可靠后台任务
 

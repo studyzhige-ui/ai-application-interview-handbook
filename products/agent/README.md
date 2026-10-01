@@ -1,113 +1,53 @@
-# Agent Products｜成熟 Agent 产品源码学习
+# Agent 产品｜沿真实任务理解完整机制
 
-[↑ Products](../README.md) · [Agent Curriculum](../../curriculum/09-agent/README.md) · [Agent References](../../references/agent/README.md) · [Learning Path](../../guide/learning-path.md)
+[↑ Products](../README.md) · [Agent 通用课程](../../curriculum/09-agent/README.md) · [源码与资料](../../references/agent/README.md) · [学习路线](../../guide/learning-path.md)
 
-> 本目录沿固定源码快照学习成熟 Agent 产品怎样把 Context、Memory、Tool、Permission、Persistence、Recovery、Trace 与 Evaluation 组合成真实运行时。
+通用课程把模型、工具、状态和权限分别讲清；这里回到具体产品，看一次用户任务怎样被接纳、执行、交付，失败以后又怎样继续。正文解释过程，源码提供证据，不要求读者自己从文件清单拼出系统。
 
-## 1. 学习对象与职责
+## 选择一条产品主线
 
-[Agent Curriculum](../../curriculum/09-agent/README.md) 建立 Agent 的稳定知识模型；本目录回到完整成熟产品，沿真实数据结构、调用入口、状态变化和 Failure Path 做系统解剖。
-
-这里不重复定义“Context 是什么”“Memory 是什么”，而是追问：
-
-```text
-一个真实用户任务从哪里进入？
-→ 模型这一轮到底看见什么？
-→ 长期信息怎样写入、召回和纠正？
-→ 工具怎样被发现、授权、执行并回填？
-→ 中断、超限、权限拒绝、工具失败以后怎样继续？
-→ Trace / Test / Eval 怎样证明系统行为？
-```
-
-## 2. 固定学习结构
-
-每个产品保持同一组一级观察视角，便于横向比较：
-
-```text
-README.md                   系统地图、源码快照、关键模块与阅读顺序
-01-context-lifecycle.md     上下文从输入到请求、压缩、恢复的完整生命周期
-02-memory-lifecycle.md      记忆从发现、提取、整理到召回、维护、评测的完整生命周期
-03-tool-lifecycle.md        工具从注册、发现、暴露到权限、执行、回填的完整生命周期
-04-engineering-evaluation.md
-                            系统边界、Failure、规模化、诊断与评测
-```
-
-专题文件路径用于稳定引用和横向比较，实际阅读顺序以各产品 README 与上下篇导航为准。章内结构以真实实现和知识依赖决定，不强迫不同产品拥有相同的类名、存储介质或控制流。
-
-## 3. 产品目录与固定源码快照
-
-| 产品 | 固定源码快照 | 学习入口 |
+| 产品 | 第一次阅读的线索 | 最值得分清的边界 |
 |---|---|---|
-| OpenAI Codex | `openai/codex@67a709665ac7b50311b93e32612c9a8281684787` | [进入](codex/README.md) |
-| Claude Code | `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b` | [进入](claude-code/README.md) |
-| DeepSeek Harness | `deepseek-ai/deepseek-harness@477b4f420553e8a52c2fbccc464d7561b239c443` | [进入](deepseek-harness/README.md) |
-| DeerFlow 2.0 | `bytedance/deer-flow@e2feca1e567d9bafce657de8ad8bc668bd7ad513` | [进入](deer-flow/README.md) |
+| [Codex](codex/README.md) | 线程与请求 → 受控执行 → 扩展与子任务 → 历史恢复 → 经验 → 交付 | 请求快照与当前权限；进程寿命与工具返回；日志与查询投影 |
+| [Claude Code](claude-code/README.md) | 输入分流 → 流式工具循环 → 扩展与子任务 → 压缩/记忆 → 保存恢复 → SDK 结果 | 零模型命令与真实请求；参数改写与批准；后台身份与最终结果 |
+| [DeepSeek Harness](deepseek-harness/README.md) | 插件组合 → Inbox 与步骤 → 文件/作业 → 计划/目标/委派 → Session 恢复 → 交付 | 默认组合与可选插件；事件日志与 Surface；同会话目标与独立尝试 |
+| [DeerFlow](deer-flow/README.md) | Run 准入 → 模型与工具 → 三类委派 → 收尾/目标 → 检查点恢复 → 记忆 | 运行归属、工具收据、交付终态；原生 task、batch 与 ACP |
 
-技术证据和版本边界统一回到 [Agent References](../../references/agent/README.md)。
+四款产品各用自己的连续章节，页码与 README、上下章导航一致。上下文、记忆、工具和工程是第二遍比较视角，不再限定每款必须拆成相同四篇。
 
-## 4. 四个产品的架构差异
+## 固定版本与访问边界
 
-四个学习模块使用相同的观察问题进行对照；具体能力是否实现、默认开启或可用，须以各自固定快照和入口条件判断，不能从同名栏目推导能力等价。
+- Codex：[cda82a2c6853b484e0ba56d38f13902adfb2a6a1](https://github.com/openai/codex/tree/cda82a2c6853b484e0ba56d38f13902adfb2a6a1)
+- Claude Code：[58231dcce408f805c645cfbc352d2876b517223b](https://github.com/studyzhige-ui/claude-code-source-private/tree/58231dcce408f805c645cfbc352d2876b517223b)，使用指定的私有学习源码，需访问权限，不等同官方完整公开仓库
+- DeepSeek Harness：[639ed015397290b3745d163aafe02ffee4aa3f84](https://github.com/deepseek-ai/deepseek-harness/tree/639ed015397290b3745d163aafe02ffee4aa3f84)
+- DeerFlow：[4d5607229ef1ebe8a66c9b9644b91da9082c3221](https://github.com/bytedance/deer-flow/tree/4d5607229ef1ebe8a66c9b9644b91da9082c3221)
 
-| 产品 | 核心架构 | 状态与模型视图 | 关键边界 |
-|---|---|---|---|
-| [OpenAI Codex](codex/README.md) | 围绕一条用户请求反复组装输入、调用模型、处理工具结果 | 一次 Turn 可以跨多次模型调用；模型输入、工作历史、持久记录分别承担职责 | 工具许可不等于执行成功；上下文压缩不等于长期记忆 |
-| [Claude Code](claude-code/README.md) | 沿一个代码任务理解输入、工具调用和结果回填 | 保存的对话记录不等于每次完整发送给模型的内容；项目约定与反馈各有保存和注入条件 | 私有学习镜像不等于可构建的官方完整源码；批准必须针对实际执行内容 |
-| [DeepSeek Harness](deepseek-harness/README.md) | 插件装配 Agent、Session 和工具，使一次任务经过多轮工作 | 会话记录输入、结果和执行边界；每次请求只取需要的表示 | Profile 与插件入口决定能力是否安装；恢复记录不代表允许重做副作用 |
-| [DeerFlow 2.0](deer-flow/README.md) | 从 Gateway 默认内嵌运行路径进入 RunWorker，再由 Agent 与有序中间件协作 | Thread、Run、ThreadState 与 ModelRequest 分开；检查点和运行证据服务不同问题 | 默认路径与可选执行模式分开；子任务返回结果后仍要检查验收条件 |
+三个公开仓库在 2026-10-01 02:07 UTC 核验默认分支并固定快照；后续上游变化不自动改变本页结论。源码存在、默认开启、实际部署可用分别核对。本轮没有运行真实产品、模型请求或故障实验。
 
-各产品 README 负责展开本产品的对象模型、真实请求链和源码边界；Context、Memory、Tool、Permission、Recovery 等专题进入对应生命周期文档。
+## 怎样读懂，而不只是记住名称
 
-## 5. 源码事实与工程解释
+跟踪同一任务的每一步：为什么需要它，谁给它什么，它按什么条件改变状态，结果交给谁，何时停止或转入失败恢复。读完正常路径后，再改变一个条件，例如连接目录更新、命令仍运行、子级只交部分结果、保存失败或用户刚修改目标，判断下一步。
 
-产品源码文档不是 API Reference（接口参考手册），也不是把源码字段逐项翻译成中文。文档先讲运行场景和因果关系，再出现必要源码对象。
+正文保留有用的小结、面试表达、误区和自测。第一次连续读一款，第二次按产品入口的问题索引回看；不新增安装任务、项目、实验或课程进度要求。
 
-英文概念第一次出现时给出中文含义；真实类型名、函数名和字段名保持源码命名，用反引号标识。一个源码对象只有在它真正影响生命周期时才展开字段。
+## 第二遍做横向比较
 
-文档中的结论分为三层：
+- 请求：从哪些状态形成输入，什么时候刷新，压缩怎样保住可继续条件
+- 动作：工具怎样被发现、授权、执行，结果如何回到模型，真实资源何时释放
+- 后续信息：是历史恢复、规则文件、会话引用，还是独立记忆流水线
+- 交付：模型停止、工具终态、持久记录和业务正确分别需要什么证据
 
-1. **直接实现事实：** 能定位到固定 commit 的类型、函数、测试或配置。
-2. **跨文件调用链结论：** 由多个源码入口共同确认的真实系统行为。
-3. **工程解释：** 对实现为什么这样设计的教学解释，必须建立在前两类证据上。
+同名能力不代表相同合同。DSH 的跨会话信息不虚构成自动记忆流水线，ACP 不借用原生子任务恢复承诺，所有恢复都要区分内部状态与外部副作用。
 
-Prompt 中出现但没有安装入口、调用方或测试支持的概念，不描述成“完整机制已经生效”。
-
-## 6. 核验规则
-
-- **生命周期完整。** 不按文件名罗列功能，而是追踪信息、状态和调用从产生到结束。
-- **Runtime State、Context、Memory、History、Persistence 分开。** 即使都能落盘，也不混为一个概念。
-- **Prompt 回到生产者。** 说明谁生成、何时注入、角色 / slot、预算、更新条件和失败边界。
-- **Tool 追到结果回填。** 只有 Registry 或 Schema 不算完整 Tool Lifecycle。
-- **Memory 追到写、读、纠正与评测。** 只有向量检索或聊天历史不算完整 Memory Lifecycle。
-- **规模化看预算与按需加载。** 大 Context、大 Tool / Skill Catalog 必须解释如何控制模型可见信息。
-- **Failure Path 与测试属于源码。** Retry、Cancel、Permission、Sandbox、Resume、Trace、Metrics、Tests 一并核验。
-- **固定快照内闭环。** 不把不同 commit 的行为拼成一套不存在的系统。
-
-## 7. 推荐学习方式
-
-完成 [Agent Curriculum](../../curriculum/09-agent/README.md) 与 Review 后，选择一套产品连续阅读：
-
-```text
-产品 README 的系统总图
-→ 按该产品 README 的顺序学习上下文、记忆与工具
-→ 工程边界与评测
-→ 回到 Agent Curriculum 重新解释设计空间
-→ 再进入第二套产品做横向比较
-```
-
-[Codex](codex/README.md) 按“上下文 → 工具 → 记忆 → 工程与评测”阅读：先建立工具与权限的基本过程，再理解后台整理 Agent。其他产品按各自入口的主线阅读，不按共用文件名前缀强制相同顺序。
-
-本目录的学习目标是：
-
-> **输入怎样变成模型可见上下文，长期信息怎样变成记忆，可执行能力怎样安全地变成工具，以及整个系统怎样在失败、超大规模与长期运行下保持可恢复、可诊断、可验证。**
+技术事实和源码索引见 [References](../../references/agent/README.md)；真人面试频率仍由原有市场证据决定，产品代码不增加面试样本计数。
 
 <!-- product-inventory:start -->
 ## 模块范围与访问边界
 
-- [Claude Code](claude-code/README.md)：4 篇专题正文，快照 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。
-- [Codex](codex/README.md)：4 篇专题正文，快照 `openai/codex@67a709665ac7b50311b93e32612c9a8281684787`。
-- [DeepSeek Harness](deepseek-harness/README.md)：4 篇专题正文，快照 `deepseek-ai/deepseek-harness@477b4f420553e8a52c2fbccc464d7561b239c443`。
-- [DeerFlow 2.0](deer-flow/README.md)：4 篇专题正文，快照 `bytedance/deer-flow@e2feca1e567d9bafce657de8ad8bc668bd7ad513`。
+- [Claude Code](claude-code/README.md)：8 篇专题正文，快照 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。
+- [Codex](codex/README.md)：7 篇专题正文，快照 `openai/codex@cda82a2c6853b484e0ba56d38f13902adfb2a6a1`。
+- [DeepSeek Harness](deepseek-harness/README.md)：7 篇专题正文，快照 `deepseek-ai/deepseek-harness@639ed015397290b3745d163aafe02ffee4aa3f84`。
+- [DeerFlow](deer-flow/README.md)：8 篇专题正文，快照 `bytedance/deer-flow@4d5607229ef1ebe8a66c9b9644b91da9082c3221`。
 
-Claude Code 使用学习用私有源码镜像，需相应访问权限；它不等同于可直接构建的官方完整仓库。其他产品也应区分源码快照、安装版本与实际运行验证。
+Claude Code 使用获授权的私人学习快照，需相应访问权限；其重建/整理范围以模块说明为准，不等同于官方完整源码。其他产品也应区分源码快照、安装版本与实际运行验证。
 <!-- product-inventory:end -->

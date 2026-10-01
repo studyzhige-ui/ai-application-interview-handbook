@@ -1,6 +1,6 @@
 # Backend Engineering｜按问题查找技术依据
 
-[返回课程](../../curriculum/03-backend-engineering/README.md) · [原始版本与证据记录](../../guide/project/backend-reader-revision-2026-09-27.md) · [讲解与分层验证](../../guide/audits/backend-clarity-refinement-2026-09-28.md)
+[返回课程](../../curriculum/05-backend-engineering/README.md) · [原始版本与证据记录](../../guide/project/backend-reader-revision-2026-09-27.md) · [讲解与分层验证](../../guide/audits/backend-clarity-refinement-2026-09-28.md)
 
 先在课程中建立对象与状态变化，再按问题回到规范或官方实现。协议保证、框架行为与业务策略分别判断；面经用于校准学习深度，不证明技术答案正确。
 
@@ -25,19 +25,19 @@
 
 ### 一次请求完成了什么，后端负责到哪里
 
-[课程正文](../../curriculum/03-backend-engineering/docs/01-AIBackend职责与RequestPath.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/01-AIBackend职责与RequestPath.md)。
 
 - [HTTP 202](https://www.rfc-editor.org/rfc/rfc9110.html#section-15.3.3)：区分已接受与已完成。
 
 ### 哪些状态必须保存，恢复时相信哪一份
 
-[课程正文](../../curriculum/03-backend-engineering/docs/14-DataLayering与StateOwnership.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/02-DataLayering与StateOwnership.md)。
 
 这是应用设计与实验推导。与之组合的事务、协议和授权行为，回到相关主责章的官方依据；不把业务策略写成产品默认保证。
 
 ### 从字节到安全请求：TCP、TLS 与 HTTP
 
-[课程正文](../../curriculum/03-backend-engineering/docs/02-TCPTLS与HTTPVersions.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/03-TCPTLS与HTTPVersions.md)。
 
 - [TCP 服务模型](https://www.rfc-editor.org/rfc/rfc9293.html#section-2.2)：字节流保证。
 - [建连](https://www.rfc-editor.org/rfc/rfc9293.html#section-3.5)：序列状态协商。
@@ -50,7 +50,7 @@
 
 ### 怎样传递结果，断线后怎样继续
 
-[课程正文](../../curriculum/03-backend-engineering/docs/03-ServiceCommunication与StreamingReliability.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/04-ServiceCommunication与StreamingReliability.md)。
 
 - [gRPC](https://grpc.io/docs/what-is-grpc/core-concepts/)：调用模型。
 - [SSE](https://html.spec.whatwg.org/multipage/server-sent-events.html)：事件格式与重连。
@@ -58,7 +58,7 @@
 
 ### 并发工作由谁执行，等待放在哪里
 
-[课程正文](../../curriculum/03-backend-engineering/docs/04-Concurrency与ThreadPool.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/05-Concurrency与ThreadPool.md)。
 
 - [Future 与执行器](https://docs.python.org/3.13/library/concurrent.futures.html)：结果、异常、完成回调、取消与关闭。
 - [线程与 GIL](https://docs.python.org/3.13/library/threading.html#gil-and-performance-considerations)：Python 实现条件。
@@ -67,7 +67,7 @@
 
 ### 连接怎样复用，容量怎样计算
 
-[课程正文](../../curriculum/03-backend-engineering/docs/05-ConnectionPool与ResourceCapacity.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/06-ConnectionPool与ResourceCapacity.md)。
 
 - [HTTPX 异步客户端](https://www.python-httpx.org/async/)：流响应清理。
 - [资源限制](https://www.python-httpx.org/advanced/resource-limits/)：池大小与复用。
@@ -75,14 +75,14 @@
 
 ### 到达速度超过处理能力时怎么办
 
-[课程正文](../../curriculum/03-backend-engineering/docs/06-Backpressure与RateLimit.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/07-Backpressure与RateLimit.md)。
 
 - [级联故障](https://sre.google/sre-book/addressing-cascading-failures/)：过载传播。
 - [处理过载](https://sre.google/sre-book/handling-overload/)：接纳与丢弃策略。
 
 ### 等多久，超时之后还发生什么
 
-[课程正文](../../curriculum/03-backend-engineering/docs/07-TimeoutDeadline与ErrorTaxonomy.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/08-TimeoutDeadline与ErrorTaxonomy.md)。
 
 - [HTTPX 超时](https://www.python-httpx.org/advanced/timeouts/)：不同等待阶段。
 - [gRPC 截止时间](https://grpc.io/docs/guides/deadlines/)：跨调用预算。
@@ -91,7 +91,7 @@
 
 ### 怎样识别同一次操作，避免重复副作用
 
-[课程正文](../../curriculum/03-backend-engineering/docs/09-APIIdempotency与SideEffect.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/09-APIIdempotency与SideEffect.md)。
 
 - [HTTP 幂等](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2)：效果而非响应字节。
 - [Stripe 幂等](https://docs.stripe.com/api/idempotent_requests)：供应商保留与重用规则示例。
@@ -100,20 +100,20 @@
 
 ### 什么时候值得再试，怎样防止故障放大
 
-[课程正文](../../curriculum/03-backend-engineering/docs/08-RetryCircuitBreaker与Failover.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/10-RetryCircuitBreaker与Failover.md)。
 
 - [SRE 过载处理](https://sre.google/sre-book/handling-overload/)：分层重试放大。
 
 ### 消息怎样交付，确认到底确认了什么
 
-[课程正文](../../curriculum/03-backend-engineering/docs/10-MQ与DeliverySemantics.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/11-MQ与DeliverySemantics.md)。
 
 - [RabbitMQ 确认](https://www.rabbitmq.com/docs/confirms)：生产与消费确认分开。
 - [Kafka 交付](https://kafka.apache.org/42/design/design/#message-delivery-semantics)：交付范围。
 
 ### Kafka 怎样分工、保序与恢复消费
 
-[课程正文](../../curriculum/03-backend-engineering/docs/11-KafkaPartition与Backlog.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/12-KafkaPartition与Backlog.md)。
 
 - [Kafka 4.2 设计](https://kafka.apache.org/42/design/)：分区、传统组与 share group。
 - [KafkaConsumer](https://kafka.apache.org/42/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)：位置、线程安全与恢复。
@@ -121,19 +121,19 @@
 
 ### 进程重启后，任务怎样继续推进
 
-[课程正文](../../curriculum/03-backend-engineering/docs/12-ReliableAsyncTask.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/13-ReliableAsyncTask.md)。
 
 这是应用设计与实验推导。与之组合的事务、协议和授权行为，回到相关主责章的官方依据；不把业务策略写成产品默认保证。
 
 ### 多份数据不一致时，怎样恢复业务正确性
 
-[课程正文](../../curriculum/03-backend-engineering/docs/13-Consistency与Compensation.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/14-Consistency与Compensation.md)。
 
 - [Redis 淘汰](https://redis.io/docs/latest/develop/reference/eviction/)：缓存中的版本依据也可能丢失。
 
 ### 谁能访问什么，权限怎样贯穿请求与任务
 
-[课程正文](../../curriculum/03-backend-engineering/docs/15-AuthSession与TenantBoundary.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/15-AuthSession与TenantBoundary.md)。
 
 - [JWT 安全](https://www.rfc-editor.org/rfc/rfc8725.html)：算法、密钥与令牌用途。
 - [OIDC Core](https://openid.net/specs/openid-connect-core-1_0.html)：身份层与 ID Token。
@@ -142,7 +142,7 @@
 
 ### 不可信输入怎样被限制在安全边界内
 
-[课程正文](../../curriculum/03-backend-engineering/docs/21-BackendSecurity.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/16-BackendSecurity.md)。
 
 - [SQL 注入防护](https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html)：数据与语句结构。
 - [SSRF 防护](https://cheatsheetseries.owasp.org/cheatsheets/Server_Side_Request_Forgery_Prevention_Cheat_Sheet.html)：解析、跳转和出口。
@@ -154,14 +154,14 @@
 
 ### 多个服务实例怎样被找到和选中
 
-[课程正文](../../curriculum/03-backend-engineering/docs/16-ServiceDiscovery与LoadBalancing.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/17-ServiceDiscovery与LoadBalancing.md)。
 
 - [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/)：稳定入口与端点。
 - [Envoy 哈希负载均衡](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/load_balancing/load_balancers)：哈希映射与分布；正文小环不是 Envoy 配置实验。
 
 ### 从慢请求的证据定位瓶颈
 
-[课程正文](../../curriculum/03-backend-engineering/docs/17-Observability与PerformanceDiagnosis.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/18-Observability与PerformanceDiagnosis.md)。
 
 - [SRE 监控](https://sre.google/sre-book/monitoring-distributed-systems/)：症状和证据。
 - [OpenTelemetry](https://opentelemetry.io/docs/concepts/signals/)：信号职责。
@@ -169,7 +169,7 @@
 
 ### 把应用故障追到 Linux 资源
 
-[课程正文](../../curriculum/03-backend-engineering/docs/18-LinuxTroubleshooting.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/19-LinuxTroubleshooting.md)。
 
 - [ps](https://man7.org/linux/man-pages/man1/ps.1.html)：进程列与状态。
 - [loadavg](https://man7.org/linux/man-pages/man5/proc_loadavg.5.html)：负载定义。
@@ -181,7 +181,7 @@
 
 ### 部署、探针与停机怎样配合应用
 
-[课程正文](../../curriculum/03-backend-engineering/docs/19-ContainerK8s与Deployment.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/20-ContainerK8s与Deployment.md)。
 
 - [Docker 对象模型](https://docs.docker.com/get-started/docker-overview/)：镜像与容器。
 - [Deployment](https://kubernetes.io/docs/concepts/workloads/controllers/deployment/)：部署控制。
@@ -191,13 +191,13 @@
 
 ### 配置和版本怎样安全改变
 
-[课程正文](../../curriculum/03-backend-engineering/docs/20-ConfigRelease与ServiceEvolution.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/21-ConfigRelease与ServiceEvolution.md)。
 
 - [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)：环境变量、普通卷、subPath 与应用重载的差别。
 
 ### 把通用机制映射到 Java、Spring 与 Go
 
-[课程正文](../../curriculum/03-backend-engineering/docs/22-CrossLanguageRuntimeMapping.md)。
+[课程正文](../../curriculum/05-backend-engineering/docs/22-CrossLanguageRuntimeMapping.md)。
 
 - [Spring IoC](https://docs.spring.io/spring-framework/reference/core/beans.html)：依赖装配。
 - [Bean 作用域](https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html)：生命周期与销毁。

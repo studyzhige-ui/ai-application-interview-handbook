@@ -29,11 +29,11 @@ STATUS_PAGES = {
 DESCRIPTIONS = {
  '01-python':'名字与对象、数据容器、函数、资源和并发执行。',
  '02-fastapi':'请求与响应、数据校验、资源生命周期、流式交付与接口验证。',
- '04-mysql':'表与查询、索引、事务、并发、恢复与数据增长。',
- '05-redis':'数据操作、生命周期、缓存、原子修改、持久化与高可用。',
- '03-backend-engineering':'在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。',
- '06-vector-db':'向量比较、精确与近似检索、索引、过滤、版本和维护。',
- '07-llm-foundation':'从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。',
+ '03-mysql':'表与查询、索引、事务、并发、恢复与数据增长。',
+ '04-redis':'数据操作、生命周期、缓存、原子修改、持久化与高可用。',
+ '05-backend-engineering':'在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。',
+ '07-vector-db':'向量比较、精确与近似检索、索引、过滤、版本和维护。',
+ '06-llm-foundation':'从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。',
  '08-rag':'从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。',
  '09-agent':'沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。',
  '10-system-design':'从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。',
@@ -41,11 +41,11 @@ DESCRIPTIONS = {
 ROUTES = {
  '01-python':'数据与对象 → 函数与执行 → 对象协作与输入边界 → 运行机制、并发与成本',
  '02-fastapi':'请求与数据契约 → 依赖、资源与执行 → 流式交付与访问控制 → 外部工作、取消与退出 → 测试、部署与综合实践',
- '04-mysql':'表与 SQL → 关系、约束与统计 → 索引与执行计划 → 事务、MVCC、锁与恢复 → 分页、结构演进与批量写入 → 复制、CDC 与分片 → 应用数据建模与跨系统边界',
- '05-redis':'数据与生命周期 → 缓存读取、更新与失效 → 执行成本与多步修改 → 持久化、复制与分片 → 消息、状态与故障判断',
- '03-backend-engineering':'请求责任与持久状态 → 网络与流式交付 → 执行者、容量与等待预算 → 操作身份、幂等与重试 → 消息、可靠任务与一致性 → 安全、观测、部署与演进',
- '06-vector-db':'向量、距离与精确基线 → 图、倒排与压缩索引 → 索引选择 → 数据、过滤与版本 → 分布式执行、评测与维护',
- '07-llm-foundation':'Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预',
+ '03-mysql':'表与 SQL → 关系、约束与统计 → 索引与执行计划 → 事务、MVCC、锁与恢复 → 分页、结构演进与批量写入 → 复制、CDC 与分片 → 应用数据建模与跨系统边界',
+ '04-redis':'数据与生命周期 → 缓存读取、更新与失效 → 执行成本与多步修改 → 持久化、复制与分片 → 消息、状态与故障判断',
+ '05-backend-engineering':'请求责任与持久状态 → 网络与流式交付 → 执行者、容量与等待预算 → 操作身份、幂等与重试 → 消息、可靠任务与一致性 → 安全、观测、部署与演进',
+ '07-vector-db':'向量、距离与精确基线 → 图、倒排与压缩索引 → 索引选择 → 数据、过滤与版本 → 分布式执行、评测与维护',
+ '06-llm-foundation':'Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预',
  '08-rag':'任务与语料 → 解析、清洗与切分 → 查询与检索 → 融合、重排与证据组装 → 回答、引用与评测 → 权限、版本和生产治理',
  '09-agent':'任务与自主权 → 反馈循环 → 工具说明、发现与执行 → 计划和模型输入 → 记忆、状态与恢复 → 权限、协议与扩展 → 协作 → 诊断、评测与交付',
  '10-system-design':'用户动作与完成条件 → 工作量、资源和状态责任 → 正常数据流与协作边界 → 正确性、过载、权限与恢复 → 观察、评估与安全演进 → 不同业务条件下的组合与取舍',
@@ -198,7 +198,7 @@ def inventory(root: Path) -> dict:
         docs=sorted([*page.parent.glob('[0-9][0-9]-*.md'),*(page.parent/'docs').glob('[0-9][0-9]-*.md')])
         text=read(page)
         fixed=re.search(r'https://github\.com/([^/\s]+/[^/\s]+)/(?:tree|blob|commit)/([0-9a-f]{40})',text)
-        products.append({'name':title(page).split('｜')[0], 'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),'chapters':[p.relative_to(root).as_posix() for p in docs],'reading_order':[p.relative_to(root).as_posix() for p in chapter_order(root,page,docs)],'chapter_metadata':metadata(root,docs),'support':support_entries(root,page.parent),'source_repository':fixed.group(1) if fixed else None,'source_commit':fixed.group(2) if fixed else None,'private_mirror':('私有镜像' in text)})
+        products.append({'name':title(page).split('｜')[0], 'readme':page.relative_to(root).as_posix(),'chapter_count':len(docs),'chapters':[p.relative_to(root).as_posix() for p in docs],'reading_order':[p.relative_to(root).as_posix() for p in chapter_order(root,page,docs)],'chapter_metadata':metadata(root,docs),'support':support_entries(root,page.parent),'source_repository':fixed.group(1) if fixed else None,'source_commit':fixed.group(2) if fixed else None,'private_mirror':bool((fixed and fixed.group(1).endswith('/claude-code-source-private')) or any(term in text for term in ('私有镜像', '私有源码', '私人学习快照', '私人快照')))})
     coding=sorted((root/'practice/coding/docs').glob('[0-9][0-9]-*.md'))
     refs=[p.relative_to(root).as_posix() for p in sorted((root/'references').glob('*/README.md'))]
     refs.extend(p.relative_to(root).as_posix() for p in sorted((root/'curriculum').glob('*/references.md')))
@@ -223,7 +223,6 @@ def plan(root: Path, data: dict) -> dict[str,str]:
             text=re.sub(r'^> \*\*课程：.*$',f'> **课程：10 个模块 / {total} 篇正文** · **Products：{len(data["products"])} 套固定源码快照学习模块** · **市场：JD + HUMAN-A 证据** · **面试能力：235 ACTIVE Canonical（冻结统计基线见 Interview）**',text,flags=re.M)
             for identifier,description in DESCRIPTIONS.items():
                 text=re.sub(r'^(\|[^\n]*\]\(curriculum/'+re.escape(identifier)+r'/README\.md\)\s*\|)[^\n]*$',lambda m:m.group(1)+' '+description+' |',text,flags=re.M)
-            text=text.replace('正式顺序与 Module Exit Gate 见','目录编号是稳定路径标识；表格按推荐学习顺序排列。正式顺序与 Module Exit Gate 见') if '目录编号是稳定路径标识；表格按推荐学习顺序排列。' not in text else text
             needle='- [AI Backend Engineering 权威资料](references/backend-engineering/README.md)'
             if needle in text and '(references/mysql/README.md)' not in text:
                 text=text.replace(needle,needle+'\n- [MySQL 官方资料](references/mysql/README.md)与[Redis 官方资料](references/redis/README.md)')
@@ -269,7 +268,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
         put(path,text)
     path='guide/learning-path.md'; text=read(root/path)
     text=re.sub(r'\d+个正文章节',f'{total}个正文章节',text)
-    text=block(text,'learning-inventory','## 章节与配套入口',f'按[学习顺序配置](learning-order.json)和实际正文同步，当前合计 {total} 篇。模块重排只影响学习导航，不改变目录标识或冻结统计。\n\n[学习资源索引](navigation-index.md)列出每个模块的正文、回顾、面试和实验入口；分组与章节内顺序以各模块 README 为准。')
+    text=block(text,'learning-inventory','## 章节与配套入口',f'按[学习顺序配置](learning-order.json)和实际正文同步，当前合计 {total} 篇。目录编号、正文顺序与前后导航保持一致；冻结统计不随导航改变。\n\n[学习资源索引](navigation-index.md)列出每个模块的正文、回顾、面试和实验入口；分组与章节内顺序以各模块 README 为准。')
     put(path,text)
     path='references/README.md'; text=read(root/path)
     lines=['| 资料入口 | 用途 |','|---|---|']
@@ -291,7 +290,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
                     text=re.sub(re.escape(p['source_repository'])+r'@[0-9a-f]{40}',p['source_repository']+'@'+p['source_commit'],text)
             text=text.replace('四个产品都实现了 Context、Tool、Persistence、Permission 和 Multi-Agent 等能力，但它们围绕不同的运行中心组织这些机制。','四个学习模块使用相同的观察问题进行对照；具体能力是否实现、默认开启或可用，须以各自固定快照和入口条件判断，不能从同名栏目推导能力等价。')
         detail='\n'.join(f'- [{p["name"]}]({rel(path,p["readme"])})：{p["chapter_count"]} 篇专题正文，快照 `{p["source_repository"]}@{p["source_commit"]}`。' for p in data['products'])
-        note='Claude Code 使用学习用私有源码镜像，需相应访问权限；它不等同于可直接构建的官方完整仓库。其他产品也应区分源码快照、安装版本与实际运行验证。'
+        note='Claude Code 使用获授权的私人学习快照，需相应访问权限；其重建/整理范围以模块说明为准，不等同于官方完整源码。其他产品也应区分源码快照、安装版本与实际运行验证。'
         text=block(text,'product-inventory','## 模块范围与访问边界',detail+'\n\n'+note)
         put(path,text)
     for path in ['guide/project/README.md','guide/audits/README.md']:
@@ -355,7 +354,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
             record=records.get(slug)
             evidence=f'[修订范围与验证]({rel(path,record)})' if record and (root/record).is_file() else '见产品入口'
             rows.append(f'| [{product["name"]}]({rel(path,product["readme"])}) | {links} | {evidence} |')
-        text=block(text,'product-evidence','## 产品阅读与修订证据', '\n'.join(rows)+'\n\n正文序号是稳定路径标识。修订记录只说明其基线与实际验证，不代表已重新检查上游全部最新变化。')
+        text=block(text,'product-evidence','## 产品阅读与修订证据', '\n'.join(rows)+'\n\n正文序号与各产品阅读主线保持一致。历史修订记录只说明其基线与实际验证，当前源码依据见产品入口。')
         put(path,text)
     path='guide/README.md';text=read(root/path)
     text=block(text,'learning-inventory','## 导航事实来源','[学习资源索引](navigation-index.md)汇总当前课程、产品、实践和资料入口；[学习顺序配置](learning-order.json)决定模块先后，[机器可读目录](navigation-index.json)由现有文件生成。\n\n维护时运行 `python tools/sync_outer_navigation.py --check` 检查生成漂移与全仓 Markdown 本地链接；先查看默认预览，再使用 `--apply` 更新。历史面经统计和正文不属于同步写入范围。')
@@ -373,7 +372,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
     lines+=['','## Products：固定快照中的系统实践','', '| 模块 | 专题正文 | 来源边界 |','|---|---:|---|']
     for p in data['products']:
         lines.append(f'| [{p["name"]}]({rel(INDEX,p["readme"])}) | {p["chapter_count"]} | '+('学习用私有镜像，需访问权限；不等同于官方完整仓库。' if p['private_mirror'] else '固定源码快照；不代表全部环境已运行验证。')+' |')
-    lines+=['','## 正文标题与实际阅读顺序','','顺序优先读取模块 README 的完整目录表；不会被更早的先修链接或文件名字典序改变。']
+    lines+=['','## 正文标题与实际阅读顺序','','顺序读取模块 README 的完整目录表，并检查与章节编号一致；先修链接不改变目录顺序。']
     for item in [*data['modules'],*data['products']]:
         label=item.get('label',item.get('name',''))
         by_path={c['path']:c for c in item['chapter_metadata']}
@@ -388,7 +387,7 @@ def plan(root: Path, data: dict) -> dict[str,str]:
     for rank,chapter in enumerate(data['coding_metadata'],1):
         lines.append(f'{rank}. [{chapter["title"]}]({rel(INDEX,chapter["path"])})')
     lines+=['','</details>']
-    lines+=['','## Practice 与技术依据','',f'- [Coding](../practice/coding/README.md)：{data["coding_chapters"]} 篇正文，题单和练习由模块入口承接。','- [Git 与开发工作流](../practice/tooling/README.md)：操作指南，不计入课程章数。',f'- [References](../references/README.md)：{len(refs)} 个资料入口（含集中资料目录与模块内参考页），技术事实与真人面经证据分开。','- [项目记录](project/README.md)与[审计记录](audits/README.md)：按记录的适用基线读取。','','⚠️ 章节数量和入口可达仅证明文档范围与导航一致，不等于完成初学者阅读、真实服务或生产验证。','']
+    lines+=['','## Practice 与技术依据','',f'- [Coding](../practice/coding/README.md)：{data["coding_chapters"]} 篇正文，题单和练习由模块入口承接。','- [Python 高频基础操作](../practice/python-basics/README.md)：语言与容器的常见写法。','- [数据库基础操作](../practice/database-basics/README.md)：SQL 与 Redis 命令的输入、结果和状态。','- [Git 与开发工作流](../practice/tooling/README.md)：可选参考，不计入课程章数。',f'- [References](../references/README.md)：{len(refs)} 个资料入口（含集中资料目录与模块内参考页），技术事实与真人面经证据分开。','- [项目记录](project/README.md)与[审计记录](audits/README.md)：按记录的适用基线读取。','','⚠️ 章节数量和入口可达仅证明文档范围与导航一致，不等于完成初学者阅读、真实服务或生产验证。','']
     put(INDEX,'\n'.join(lines));put(REGISTRY,json.dumps(data,ensure_ascii=False,indent=2)+'\n')
     return desired
 

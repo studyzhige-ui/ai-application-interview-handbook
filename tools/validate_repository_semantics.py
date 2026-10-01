@@ -65,33 +65,37 @@ if json.loads(read("guide/navigation-index.json")) != current_inventory:
 legacy_products = ROOT / "curriculum/09-agent/products"
 if legacy_products.exists():
     errors.append("legacy products directory still exists under curriculum/09-agent")
-for product in ("codex", "claude-code", "deepseek-harness", "deer-flow"):
-    product_dir = ROOT / "products/agent" / product
-    expected_files = {
-        "README.md",
-        "01-context-lifecycle.md",
-        "02-memory-lifecycle.md",
-        "03-tool-lifecycle.md",
-        "04-engineering-evaluation.md",
-    }
-    actual_files = {p.name for p in product_dir.glob("*.md")} if product_dir.exists() else set()
-    if actual_files != expected_files:
-        errors.append(f"products/agent/{product}: expected {sorted(expected_files)}, found {sorted(actual_files)}")
-
-    product_readme = product_dir / "README.md"
-    if product_readme.exists() and "## 核心设计" not in product_readme.read_text(encoding="utf-8"):
-        errors.append(f"products/agent/{product}/README.md: product README must contain core design")
-
+# Each product defines its own execution/readership sequence. Validate the
+# actual indexed sequence and source boundary, not a forced four-theme template.
+expected_products = {
+    "codex": "openai/codex",
+    "claude-code": "studyzhige-ui/claude-code-source-private",
+    "deepseek-harness": "deepseek-ai/deepseek-harness",
+    "deer-flow": "bytedance/deer-flow",
+}
+indexed_products = {Path(item["readme"]).parent.name: item for item in current_inventory["products"]}
+if set(indexed_products) != set(expected_products):
+    errors.append(f"product modules mismatch: {sorted(indexed_products)}")
 agent_products_readme = read("products/agent/README.md")
-if "## 4. 四个产品的架构差异" not in agent_products_readme:
-    errors.append("products/agent/README.md: missing four-product architecture comparison")
-for product_name in ("OpenAI Codex", "Claude Code", "DeepSeek Harness", "DeerFlow 2.0"):
-    if product_name not in agent_products_readme:
-        errors.append(f"products/agent/README.md: comparison missing {product_name}")
+for product, repository in expected_products.items():
+    item = indexed_products.get(product)
+    if not item:
+        continue
+    if not item["reading_order"] or set(item["reading_order"]) != set(item["chapters"]):
+        errors.append(f"products/agent/{product}: incomplete product-specific reading order")
+    numbers = [int(Path(path).name[:2]) for path in item["reading_order"]]
+    if numbers != list(range(1, len(numbers) + 1)):
+        errors.append(f"products/agent/{product}: chapter numbers differ from reading order")
+    if item["source_repository"] != repository or not re.fullmatch(r"[0-9a-f]{40}", item["source_commit"] or ""):
+        errors.append(f"products/agent/{product}: missing exact source repository/commit boundary")
+    if product == "claude-code" and not item["private_mirror"]:
+        errors.append("Claude Code must retain its private learning-snapshot boundary")
+    if f"({product}/README.md)" not in agent_products_readme:
+        errors.append(f"products/agent/README.md: missing {product} reading entry")
 
 # Current-state semantic checks.
 # Validate every current module heading against the explicit learning order.
-# Directory IDs are stable identifiers, not display ranks or quality badges.
+# Directory prefixes and display ranks follow the same approved reading order.
 import json
 learning_order = json.loads(read("guide/learning-order.json"))["modules"]
 knowledge_map = read("guide/knowledge-map.md")

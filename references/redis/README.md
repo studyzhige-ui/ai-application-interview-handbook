@@ -1,6 +1,6 @@
 # Redis 官方资料｜按需要核对机制与版本
 
-[← Redis 课程](../../curriculum/05-redis/README.md) · [References](../README.md)
+[← Redis 课程](../../curriculum/04-redis/README.md) · [References](../README.md)
 
 本索引用于核对课程中的具体结论，不要求读者先读完官方手册，也不规定使用哪一种应用语言的客户端。教程解释为什么使用和怎样观察，这里给出相应规则的权威依据。
 

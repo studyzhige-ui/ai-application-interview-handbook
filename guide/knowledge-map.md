@@ -2,15 +2,15 @@
 
 [← Handbook 总目录](../README.md) · [成熟产品源码](../products/README.md) · [Coding & Problem Solving](../practice/coding/README.md) · [正式学习路线](learning-path.md) · [审计记录索引](audits/README.md) · [跨模块术语表](terminology-glossary.md) · [Canonical 冻结覆盖](../interview/canonical/progress.md) · [Canonical Index](../interview/canonical/module-index.md)
 
-> 本页按当前正式文件描述十个模块，不以历史验收状态替代后续版本验证。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，实际每天怎样学习见 [Learning Path](learning-path.md)。
+> 本页按当前正式文件描述十个模块，不以历史验收状态替代后续版本验证。这里强调**模块职责、知识依赖与边界**；章节细节进入各模块 README，可选阅读建议见 [Learning Path](learning-path.md)。
 
 ## 总路线
 
-[Python Foundation](../curriculum/01-python/README.md) → [FastAPI](../curriculum/02-fastapi/README.md) → [MySQL](../curriculum/04-mysql/README.md) → [Redis](../curriculum/05-redis/README.md) → [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) → [Vector Database](../curriculum/06-vector-db/README.md) → [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) → [RAG](../curriculum/08-rag/README.md) → [Agent](../curriculum/09-agent/README.md) → [System Design](../curriculum/10-system-design/README.md)
+[Python Foundation](../curriculum/01-python/README.md) → [FastAPI](../curriculum/02-fastapi/README.md) → [MySQL](../curriculum/03-mysql/README.md) → [Redis](../curriculum/04-redis/README.md) → [AI Backend Engineering](../curriculum/05-backend-engineering/README.md) → [LLM Foundation（应用工程深度）](../curriculum/06-llm-foundation/README.md) → [Vector Database](../curriculum/07-vector-db/README.md) → [RAG](../curriculum/08-rag/README.md) → [Agent](../curriculum/09-agent/README.md) → [System Design](../curriculum/10-system-design/README.md)
 
 ### 成熟产品源码层（不计入十模块）
 
-[Products](../products/README.md) 用固定源码快照回答“成熟系统怎样把多个通用机制组合起来”。它不改变十模块的 Primary Ownership，也不把某个产品实现提升成通用标准。
+[Products](../products/README.md) 用固定源码快照回答“成熟系统怎样把多个通用机制组合起来”。它不改变十模块的 Primary Ownership（知识主责归属），也不把某个产品实现提升成通用标准。
 
 Agent 产品源码入口：[Codex](../products/agent/codex/README.md) · [Claude Code](../products/agent/claude-code/README.md) · [DeepSeek Harness](../products/agent/deepseek-harness/README.md) · [DeerFlow 2.0](../products/agent/deer-flow/README.md)。
 
@@ -25,10 +25,10 @@ Curriculum 通用机制
 [Coding & Problem Solving](../practice/coding/README.md) 与知识主线并行：
 
 ```text
-01—03：读写与追踪 Python 程序 → 04：完整输入输出 → 05—06：数据结构与算法 → 07：Hot100 练习 → 08：笔试 → 09：多文件 AI Coding
+01—03：读写与追踪 Python 程序 → 04：完整输入输出 → 05—06：数据结构与算法 → 07：Hot100 练习 → 08：笔试；09：可选多文件 AI Coding 参考
 ```
 
-它不改变十模块的 Primary Ownership / Canonical 统计，只负责把“知道”转成“能写、能跑、能调试、能交付”。Hot100 不是孤立终点，而是从基础阶段按依赖逐步嵌入；见 [Hot100 Curriculum Map](../practice/coding/hot100-map.md)。
+Python 高频基础操作、数据库基础操作与 Coding 各有入口，见 [Practice](../practice/README.md)。Coding 独立顺读；Hot100 是方法的延伸练习，AI Coding 与 Git 是可选参考，不作为基础课的附加完成门槛。Canonical（归一化面试能力条目）和主责统计保持原有范围。
 
 ## 总览
 
@@ -36,11 +36,11 @@ Curriculum 通用机制
 |---:|---|---:|---:|---|
 | 01 | [Python Foundation](../curriculum/01-python/README.md) | 13 | 15 | 名字与对象、数据容器、函数、资源和并发执行。 |
 | 02 | [FastAPI](../curriculum/02-fastapi/README.md) | 16 | 4 | 请求与响应、数据校验、资源生命周期、流式交付与接口验证。 |
-| 03 | [MySQL](../curriculum/04-mysql/README.md) | 19 | 26 | 表与查询、索引、事务、并发、恢复与数据增长。 |
-| 04 | [Redis](../curriculum/05-redis/README.md) | 18 | 19 | 数据操作、生命周期、缓存、原子修改、持久化与高可用。 |
-| 05 | [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) | 22 | 39 | 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。 |
-| 06 | [Vector Database](../curriculum/06-vector-db/README.md) | 16 | 12 | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
-| 07 | [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) | 14 | 23 | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
+| 03 | [MySQL](../curriculum/03-mysql/README.md) | 19 | 26 | 表与查询、索引、事务、并发、恢复与数据增长。 |
+| 04 | [Redis](../curriculum/04-redis/README.md) | 18 | 19 | 数据操作、生命周期、缓存、原子修改、持久化与高可用。 |
+| 05 | [AI Backend Engineering](../curriculum/05-backend-engineering/README.md) | 22 | 39 | 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。 |
+| 06 | [LLM Foundation（应用工程深度）](../curriculum/06-llm-foundation/README.md) | 14 | 23 | 从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。 |
+| 07 | [Vector Database](../curriculum/07-vector-db/README.md) | 16 | 12 | 向量比较、精确与近似检索、索引、过滤、版本和维护。 |
 | 08 | [RAG](../curriculum/08-rag/README.md) | 14 | 29 | 从语料和查询得到候选、证据、回答，再用评测与版本管理验证质量。 |
 | 09 | [Agent](../curriculum/09-agent/README.md) | 24 | 44 | 沿模型判断、程序行动、结果回填与任务验收，建立工具、上下文、记忆、安全和恢复。 |
 | 10 | [System Design](../curriculum/10-system-design/README.md) | 19 | 24 | 从用户动作与完成条件推导容量、状态责任和协作方案，在故障与条件变化中验证取舍。 |
@@ -69,8 +69,8 @@ Curriculum 通用机制
 
 市场校准：**4 Canonical / 3 independent HUMAN-A flows**。
 
-## 03. [MySQL](../curriculum/04-mysql/README.md) — 19 章
-<a id="04-mysql--19-blocks"></a>
+## 03. [MySQL](../curriculum/03-mysql/README.md) — 19 章
+<a id="03-mysql--19-blocks"></a>
 
 表与查询、索引、事务、并发、恢复与数据增长。
 
@@ -80,8 +80,8 @@ Curriculum 通用机制
 
 市场校准：**26 Canonical / 55 independent HUMAN-A flows**。
 
-## 04. [Redis](../curriculum/05-redis/README.md) — 18 章
-<a id="05-redis---18-blocks"></a>
+## 04. [Redis](../curriculum/04-redis/README.md) — 18 章
+<a id="04-redis---18-blocks"></a>
 
 数据操作、生命周期、缓存、原子修改、持久化与高可用。
 
@@ -91,7 +91,7 @@ Curriculum 通用机制
 
 市场校准：**19 Canonical / 69 independent HUMAN-A flows**。
 
-## 05. [AI Backend Engineering](../curriculum/03-backend-engineering/README.md) — 22 章
+## 05. [AI Backend Engineering](../curriculum/05-backend-engineering/README.md) — 22 章
 <a id="03-ai-backend-engineering---22-blocks"></a>
 
 在接口、数据库和缓存之上组织可靠执行、幂等、任务恢复与跨系统协作。
@@ -102,7 +102,18 @@ Curriculum 通用机制
 
 市场校准：**39 Canonical / 125 independent HUMAN-A flows**。
 
-## 06. [Vector Database](../curriculum/06-vector-db/README.md) — 16 章
+## 06. [LLM Foundation（应用工程深度）](../curriculum/06-llm-foundation/README.md) — 14 章
+<a id="06-llm-foundation应用工程深度---14-blocks"></a>
+
+从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。
+
+```text
+Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预
+```
+
+市场校准：**23 Canonical / 82 independent HUMAN-A flows**。
+
+## 07. [Vector Database](../curriculum/07-vector-db/README.md) — 16 章
 <a id="06-vector-database---16-blocks"></a>
 
 向量比较、精确与近似检索、索引、过滤、版本和维护。
@@ -112,17 +123,6 @@ Curriculum 通用机制
 ```
 
 市场校准：**12 Canonical / 37 independent HUMAN-A flows**。
-
-## 07. [LLM Foundation（应用工程深度）](../curriculum/07-llm-foundation/README.md) — 14 章
-<a id="07-llm-foundation应用工程深度---14-blocks"></a>
-
-从 Token、模型计算与生成，理解推理成本、模型选择和训练干预。
-
-```text
-Token 与上下文 → Transformer、注意力与位置 → 生成与解码 → KV 缓存与推理服务 → 模型接口、检索模型与多模态 → Prompt、事实性与训练干预
-```
-
-市场校准：**23 Canonical / 82 independent HUMAN-A flows**。
 
 ## 08. [RAG](../curriculum/08-rag/README.md) — 14 章
 <a id="08-rag---14-blocks"></a>
@@ -177,7 +177,7 @@ Agent 的执行与恢复主线、System Design 的跨组件组合分别在[Agent
 <!-- learning-inventory:start -->
 ## 当前文件范围
 
-10 个课程模块合计 **175 篇正文**。Products 为 **4 套 / 16 篇专题正文**，Coding 为 **9 篇正文**，均作为独立轨道，不加入课程章节合计。
+10 个课程模块合计 **175 篇正文**。Products 为 **4 套 / 30 篇专题正文**，Coding 为 **9 篇正文**，均作为独立轨道，不加入课程章节合计。
 
 完整入口见[学习资源索引](navigation-index.md)。Canonical 列和各模块来源覆盖保留冻结基线，不能相加推算独立面经总量。
 <!-- learning-inventory:end -->

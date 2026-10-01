@@ -4,7 +4,7 @@ from pathlib import Path
 import argparse
 import sys
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "curriculum/04-mysql/examples"))
+sys.path.insert(0, str(ROOT / "curriculum/03-mysql/examples"))
 from mysql_course import examples
 
 def main():

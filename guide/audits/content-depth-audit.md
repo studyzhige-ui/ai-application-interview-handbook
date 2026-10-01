@@ -27,11 +27,11 @@ Python 的基础覆盖整改、MySQL 与 Redis 的 reader-first 重组、Agent �
 |---:|---|---:|---|
 | 01 | [Python](../../curriculum/01-python/README.md) | 13 | [Python Reader Revision｜读者可理解性与课程重组记录](../project/python-reader-revision.md) |
 | 02 | [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | [FastAPI 核心范围与表达复核｜2026-09-26](../project/fastapi-core-scope-review-2026-09-26.md) · [FastAPI｜递进落点与真人面经校验记录](../project/fastapi-interview-alignment-2026-09-26.md) |
-| 03 | [MySQL](../../curriculum/04-mysql/README.md) | 19 | [MySQL 读者视角重组记录｜2026-09-27](../project/mysql-reader-revision-2026-09-27.md) |
-| 04 | [Redis](../../curriculum/05-redis/README.md) | 18 | [Redis｜从零基础阅读过程重组课程](../project/redis-reader-restructure-2026-09-27.md) |
-| 05 | [Backend](../../curriculum/03-backend-engineering/README.md) | 22 | [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md) |
-| 06 | [Vector DB](../../curriculum/06-vector-db/README.md) | 16 | [Vector DB Reader Revision｜向量数据库模块维护记录](../project/vector-db-reader-revision.md) |
-| 07 | [LLM Foundation](../../curriculum/07-llm-foundation/README.md) | 14 | [LLM Foundation｜讲解清晰度精修与验收](../project/llm-foundation-clarity-refinement-2026-09-27.md) |
+| 03 | [MySQL](../../curriculum/03-mysql/README.md) | 19 | [MySQL 读者视角重组记录｜2026-09-27](../project/mysql-reader-revision-2026-09-27.md) |
+| 04 | [Redis](../../curriculum/04-redis/README.md) | 18 | [Redis｜从零基础阅读过程重组课程](../project/redis-reader-restructure-2026-09-27.md) |
+| 05 | [Backend](../../curriculum/05-backend-engineering/README.md) | 22 | [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md) |
+| 06 | [LLM Foundation](../../curriculum/06-llm-foundation/README.md) | 14 | [LLM Foundation｜讲解清晰度精修与验收](../project/llm-foundation-clarity-refinement-2026-09-27.md) |
+| 07 | [Vector DB](../../curriculum/07-vector-db/README.md) | 16 | [Vector DB Reader Revision｜向量数据库模块维护记录](../project/vector-db-reader-revision.md) |
 | 08 | [RAG](../../curriculum/08-rag/README.md) | 14 | [RAG｜讲解清晰度精修验收](rag-clarity-refinement-2026-09-27.md) |
 | 09 | [Agent](../../curriculum/09-agent/README.md) | 24 | [Agent 全模块讲解精修｜2026-09-28](../project/agent-clarity-refinement-2026-09-28.md) · [Agent 内容保留、教学修订与发布记录](../project/agent-reader-revision.md) |
 | 10 | [System Design](../../curriculum/10-system-design/README.md) | 19 | [System Design｜讲解清晰度精修与迁移练习验证](system-design-clarity-refinement-2026-09-28.md) · [System Design｜读者优先修订与分层验证记录](system-design-reader-first-2026-09-28.md) |

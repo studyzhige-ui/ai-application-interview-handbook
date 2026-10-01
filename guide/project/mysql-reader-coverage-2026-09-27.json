@@ -5,7 +5,7 @@
   "reorganized_chapters_read": 20,
   "chapters": [
     {
-      "path": "curriculum/04-mysql/docs/01-数据库与关系表.md",
+      "path": "curriculum/03-mysql/docs/01-数据库与关系表.md",
       "sha256": "39222b94c67edf88ea0c8917cdb4fb1ea43832158cce15b364bfa420aa3a0386",
       "topic": "数据库的身份与第一张表",
       "prior_issue": "原引入假设 Python 列表经验，并把连接、环境检查与数据模型放在同一个开场。",
@@ -15,7 +15,7 @@
       "sql_fences": 1
     },
     {
-      "path": "curriculum/04-mysql/docs/02-单表查询与增删改.md",
+      "path": "curriculum/03-mysql/docs/02-单表查询与增删改.md",
       "sha256": "3f35a9dbc4003bc7d3ee0900f280400ca5703454dd8e8f420b1af4f00d7f04c1",
       "topic": "单表操作",
       "prior_issue": "一章同时处理筛选、JOIN、聚合、窗口和驱动参数，最基本的语句读法被淹没。",
@@ -25,7 +25,7 @@
       "sql_fences": 6
     },
     {
-      "path": "curriculum/04-mysql/docs/03-数据类型约束与表关系.md",
+      "path": "curriculum/03-mysql/docs/03-数据类型约束与表关系.md",
       "sha256": "07544cba28468d69e5735b885ab154c4948c2f9febc39cdd87287d7eab308164",
       "topic": "类型、约束与关系",
       "prior_issue": "列类型与 NULL、CHECK、外键散在初级例子和后期 Schema 中。",
@@ -35,7 +35,7 @@
       "sql_fences": 1
     },
     {
-      "path": "curriculum/04-mysql/docs/04-关联查询与分组统计.md",
+      "path": "curriculum/03-mysql/docs/04-关联查询与分组统计.md",
       "sha256": "47926e4664b00d490fb29326df579e38b16202d51bc708dfc022129e7c9372c8",
       "topic": "关联与统计",
       "prior_issue": "查询例子多，却要求同时切换 SQL 语法、结果形状与 Python 驱动。",
@@ -45,7 +45,7 @@
       "sql_fences": 5
     },
     {
-      "path": "curriculum/04-mysql/docs/05-SQL执行与索引基础.md",
+      "path": "curriculum/03-mysql/docs/05-SQL执行与索引基础.md",
       "sha256": "234bfc6e2c22d9fbdf4085672a8853ed5f52c7800c88895e183fa988c8954f02",
       "topic": "执行与索引入口",
       "prior_issue": "基础定义被多个索引章节反复解释，读者过早面对内部名词。",
@@ -55,7 +55,7 @@
       "sql_fences": 2
     },
     {
-      "path": "curriculum/04-mysql/docs/06-B+树与数据组织.md",
+      "path": "curriculum/03-mysql/docs/06-B+树与数据组织.md",
       "sha256": "3e42c8cc778301d0f8aab89db480190e78ae34c2d278de1858c82337110d531d",
       "topic": "B+ 树与数据组织",
       "prior_issue": "B+ 树、聚簇、二级各章重复说页、主键和回表。",
@@ -65,7 +65,7 @@
       "sql_fences": 1
     },
     {
-      "path": "curriculum/04-mysql/docs/07-联合索引覆盖与下推.md",
+      "path": "curriculum/03-mysql/docs/07-联合索引覆盖与下推.md",
       "sha256": "05df4620ceb0f3ab71706ac750f48548761615f93441aab994fb5b10ae6bccb5",
       "topic": "联合索引与减少回表",
       "prior_issue": "范围、覆盖和 ICP 分散重复，连续切换建索引和清理操作。",
@@ -75,7 +75,7 @@
       "sql_fences": 2
     },
     {
-      "path": "curriculum/04-mysql/docs/08-执行计划与慢查询.md",
+      "path": "curriculum/03-mysql/docs/08-执行计划与慢查询.md",
       "sha256": "2577fa8b6face03382d4ad5233319a5914e91b75d5532278a0c1bd749855baad",
       "topic": "执行计划与慢查询",
       "prior_issue": "优化器与 EXPLAIN 多次预告、每次只解释部分字段。",
@@ -85,7 +85,7 @@
       "sql_fences": 3
     },
     {
-      "path": "curriculum/04-mysql/docs/09-事务与ACID.md",
+      "path": "curriculum/03-mysql/docs/09-事务与ACID.md",
       "sha256": "6167da681fabe09f7cbd4f850323eae3f5b14bfb162f0cef9f2edb6c1ece8863",
       "topic": "事务",
       "prior_issue": "失败结果与语句片段互相穿插，容易把无错误当业务成功。",
@@ -95,7 +95,7 @@
       "sql_fences": 3
     },
     {
-      "path": "curriculum/04-mysql/docs/10-隔离级别与MVCC.md",
+      "path": "curriculum/03-mysql/docs/10-隔离级别与MVCC.md",
       "sha256": "aebd1042fc2ae25ee543b0fcc2113d1e32812326366e722b4092f0f04c2084c8",
       "topic": "隔离与 MVCC",
       "prior_issue": "读视图在隔离和 MVCC 两章重复介绍，脚本步骤打断可见性解释。",
@@ -105,7 +105,7 @@
       "sql_fences": 1
     },
     {
-      "path": "curriculum/04-mysql/docs/11-并发修改锁与死锁.md",
+      "path": "curriculum/03-mysql/docs/11-并发修改锁与死锁.md",
       "sha256": "ec161a27e29efe32e7b73443d57eb49cac761a7b9b91fc0199f766b9dab5a32f",
       "topic": "修改与锁",
       "prior_issue": "范围锁、抢任务与死锁命令较密，等待条件需要读者拼起来。",
@@ -115,7 +115,7 @@
       "sql_fences": 1
     },
     {
-      "path": "curriculum/04-mysql/docs/12-日志提交与恢复.md",
+      "path": "curriculum/03-mysql/docs/12-日志提交与恢复.md",
       "sha256": "e4fa045cb4abaef9be44d55719b5c6105d7b53633a4db4fac62193287058bbd8",
       "topic": "日志与恢复",
       "prior_issue": "日志设置、两阶段提交和备份各自碎片化。",
@@ -125,7 +125,7 @@
       "sql_fences": 0
     },
     {
-      "path": "curriculum/04-mysql/docs/13-分页与查询成本.md",
+      "path": "curriculum/03-mysql/docs/13-分页与查询成本.md",
       "sha256": "96a50b4886d72e3009cd056be1319471f07b31e7ea4a189162522a1927439da8",
       "topic": "分页",
       "prior_issue": "多种完整查询和清理掩盖排序位置这一核心差异。",
@@ -135,7 +135,7 @@
       "sql_fences": 3
     },
     {
-      "path": "curriculum/04-mysql/docs/14-主键索引与表结构演进.md",
+      "path": "curriculum/03-mysql/docs/14-主键索引与表结构演进.md",
       "sha256": "0f4c810d48da0787ea14fdd424784c6cc371cf7ad65b390b3e281a7b2a326f55",
       "topic": "结构演进",
       "prior_issue": "基础关系太晚，高级运维与字段类型混在同章。",
@@ -145,7 +145,7 @@
       "sql_fences": 0
     },
     {
-      "path": "curriculum/04-mysql/docs/15-批量写入与写入成本.md",
+      "path": "curriculum/03-mysql/docs/15-批量写入与写入成本.md",
       "sha256": "606f53b3bd179eca8d9f52497f79947d776842153dec5098f63b3ef22ff34f2e",
       "topic": "批量写入",
       "prior_issue": "写入路径与任务恢复机制混得过深。",
@@ -155,7 +155,7 @@
       "sql_fences": 1
     },
     {
-      "path": "curriculum/04-mysql/docs/16-复制与读写分离.md",
+      "path": "curriculum/03-mysql/docs/16-复制与读写分离.md",
       "sha256": "14925bfa73160344690c047ba0d111302bea1bcf730aa6165ef29b883bdb0050",
       "topic": "复制",
       "prior_issue": "收到、持久化、应用、可见性容易被一个同步词覆盖。",
@@ -165,7 +165,7 @@
       "sql_fences": 0
     },
     {
-      "path": "curriculum/04-mysql/docs/17-CDC与下游同步.md",
+      "path": "curriculum/03-mysql/docs/17-CDC与下游同步.md",
       "sha256": "0927b69d1b2e68397ba3595a5d13e60acecc2d81a2f08ad3fd4c339d7eb99cad",
       "topic": "CDC",
       "prior_issue": "事件字段和各种系统名占比高，全量衔接和删除复活不连贯。",
@@ -175,7 +175,7 @@
       "sql_fences": 0
     },
     {
-      "path": "curriculum/04-mysql/docs/18-分片与扩容.md",
+      "path": "curriculum/03-mysql/docs/18-分片与扩容.md",
       "sha256": "c81f56626807ab7e299fa804ea273fbf6cb46c0d5310d3bccdb7f24b32fcd4cd",
       "topic": "分片",
       "prior_issue": "按旧目录排列，迁移需要的变化衔接在后文。",
@@ -185,7 +185,7 @@
       "sql_fences": 0
     },
     {
-      "path": "curriculum/04-mysql/docs/19-AI应用数据建模.md",
+      "path": "curriculum/03-mysql/docs/19-AI应用数据建模.md",
       "sha256": "2db193c861eb3b0345bdbab4894c23a569a25ddcf7e9b338e1c99f29a021bbaf",
       "topic": "应用建模",
       "prior_issue": "容易恢复成大量实体和字段清单。",

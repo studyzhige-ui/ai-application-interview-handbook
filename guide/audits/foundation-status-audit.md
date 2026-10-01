@@ -23,9 +23,9 @@ Canonical Coverage 是冻结面经能力覆盖，不是课程完成度，更不�
 |---:|---|---:|---|
 | 01 | [Python](../../curriculum/01-python/README.md) | 13 | [Python Reader Revision｜读者可理解性与课程重组记录](../project/python-reader-revision.md) |
 | 02 | [FastAPI](../../curriculum/02-fastapi/README.md) | 16 | [FastAPI 核心范围与表达复核｜2026-09-26](../project/fastapi-core-scope-review-2026-09-26.md) · [FastAPI｜递进落点与真人面经校验记录](../project/fastapi-interview-alignment-2026-09-26.md) |
-| 03 | [MySQL](../../curriculum/04-mysql/README.md) | 19 | [MySQL 读者视角重组记录｜2026-09-27](../project/mysql-reader-revision-2026-09-27.md) |
-| 04 | [Redis](../../curriculum/05-redis/README.md) | 18 | [Redis｜从零基础阅读过程重组课程](../project/redis-reader-restructure-2026-09-27.md) |
-| 05 | [Backend](../../curriculum/03-backend-engineering/README.md) | 22 | [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md) |
+| 03 | [MySQL](../../curriculum/03-mysql/README.md) | 19 | [MySQL 读者视角重组记录｜2026-09-27](../project/mysql-reader-revision-2026-09-27.md) |
+| 04 | [Redis](../../curriculum/04-redis/README.md) | 18 | [Redis｜从零基础阅读过程重组课程](../project/redis-reader-restructure-2026-09-27.md) |
+| 05 | [Backend](../../curriculum/05-backend-engineering/README.md) | 22 | [Backend｜讲解清晰度精修与验证记录](backend-clarity-refinement-2026-09-28.md) |
 
 记录入口不自动授予通过状态；需要查看其基线、修改范围、实际检查和未验证项目。
 <!-- current-scope:end -->

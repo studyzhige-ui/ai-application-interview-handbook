@@ -163,7 +163,7 @@ Starlette 的 `request.is_disconnected()` 可用于检查断开状态，但不�
 
 上面两个 asyncio 实验只验证本地任务，不能代替真实流式断开测试。代理超时、供应商取消和外部动作查询需要对应集成环境。
 
-**练习：** 把 cancellation_demo 中的 `raise` 临时去掉。观察任务是否仍以 CancelledError 结束，再解释为什么调用者可能误认为工作正常完成。该错误实验只用于本地临时文件，不提交为业务实现。
+**取消反例推导：** cancellation_demo 若捕获 CancelledError 后去掉 raise，work 会经 finally 正常返回 None；调用方的 await 不再进入取消异常分支，events 中也没有 observed。调用方可能把停止误当正常完成，这就是保留取消传播的意义。
 
 ---
 
@@ -190,7 +190,7 @@ Starlette 的 `request.is_disconnected()` 可用于检查断开状态，但不�
 
 ## 本章自测
 
-先回答，再展开核对。涉及操作的题目，应能说出预期结果及原因。
+先回答，再展开核对。结合正文例子，说出预期结果及原因即可。
 
 <details>
 <summary>1. 调用 task.cancel() 后，为什么还要 await 这个任务？</summary>
