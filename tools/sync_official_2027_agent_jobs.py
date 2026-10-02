@@ -1908,6 +1908,178 @@ def fetch_anker_campus_html(src: dict) -> list[Job]:
     raise RuntimeError(f"Anker official campus pool has {count} jobs; positive-list adapter required")
 
 
+
+def fetch_tonghuashun_campus_html(src: dict) -> list[Job]:
+    """Enumerate Tonghuashun's first-party campus board from its stable mobile list.
+
+    The desktop campus page publishes the total pool size. The mobile list is
+    server-rendered and exposes every job as series/location/category/cluster.
+    We only accept the snapshot when parsed rows cover the published total, so a
+    partial response can never become ZERO_TARGET_JDS.
+    """
+    desktop_url = src.get("portal") or "https://campus.10jqka.com.cn/"
+    list_url = src.get("search_url") or src.get("job_list_url") or (
+        "https://campus.10jqka.com.cn/mobile/job/list?applyAttribute=1"
+    )
+    session = requests.Session()
+    session.headers.update(HEADERS)
+
+    desktop = session.get(desktop_url, timeout=30)
+    desktop.raise_for_status()
+    desktop_text = _strip_html(desktop.text)
+    total_match = re.search(
+        r"(?:开启新的工作|找到)\s*[（(]?\s*(\d+)\s*[)）]?\s*(?:个职位)?",
+        desktop_text,
+    )
+    if not total_match:
+        raise RuntimeError("Tonghuashun official campus total count not found")
+    total = int(total_match.group(1))
+    if total == 0:
+        return []
+
+    response = session.get(list_url, timeout=30)
+    response.raise_for_status()
+    text_body = _strip_html(response.text)
+    lines = [
+        re.sub(r"\s+", " ", line).strip()
+        for line in text_body.replace("\r", "\n").split("\n")
+        if re.sub(r"\s+", " ", line).strip()
+    ]
+    summary_re = re.compile(
+        r"^(?P<series>[^/\n]{1,80})/"
+        r"(?P<location>[^/\n]{1,80})/"
+        r"(?P<category>[^/\n]{1,80})/"
+        r"(?P<cluster>[^/\n]{1,120})$"
+    )
+    ignored_titles = {
+        "校园招聘", "搜索", "招聘系列", "职位类别", "集群", "工作地点",
+        "2027届校园招聘", "AIME计划", "ACMer摘星计划", "日常实习", "云软件校招",
+    }
+    rows: list[tuple[str, re.Match[str]]] = []
+    for idx, line in enumerate(lines):
+        meta = summary_re.match(line)
+        if not meta or idx == 0:
+            continue
+        title = lines[idx - 1].strip()
+        if not title or title in ignored_titles or title.startswith("开启新的工作"):
+            continue
+        rows.append((title, meta))
+
+    seen: set[tuple[str, str, str, str]] = set()
+    jobs: list[Job] = []
+    for title, meta in rows:
+        gd = meta.groupdict()
+        key = (title, gd["series"], gd["location"], gd["category"])
+        if key in seen:
+            continue
+        seen.add(key)
+        jobs.append(Job(
+            src["company"], title, "",
+            gd["location"],
+            f'{gd["series"]} / {gd["category"]}',
+            gd["cluster"],
+            "", "",
+            list_url,
+            list_url,
+            gd["series"],
+        ))
+
+    if len(jobs) < total:
+        raise RuntimeError(
+            f"Tonghuashun official campus list incomplete: parsed={len(jobs)}, published_total={total}"
+        )
+    return jobs
+
+
+def fetch_zhipin_company_campus_html(src: dict) -> list[Job]:
+    """Enumerate BOSS Zhipin's own first-party campus company result page.
+
+    BOSS job detail pages may redirect automated clients to a security challenge.
+    The fixed company-result page itself is first-party and includes title,
+    company, graduate eligibility and a JD excerpt, so this adapter enumerates
+    those cards without treating a challenged detail page as absence.
+    """
+    start_url = src.get("search_url") or src.get("job_list_url") or src["portal"]
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    current = start_url
+    visited: set[str] = set()
+    seen_jobs: set[str] = set()
+    out: list[Job] = []
+
+    for _ in range(20):
+        if current in visited:
+            break
+        visited.add(current)
+        response = session.get(current, timeout=30)
+        response.raise_for_status()
+        html = response.text
+        page_text = _strip_html(html)
+        if "BOSS直聘校招招聘信息" not in page_text:
+            raise RuntimeError("BOSS first-party campus company page marker missing")
+        if re.search(r"(?:安全验证|访问异常|验证码)", page_text[:3000]):
+            raise RuntimeError("BOSS first-party campus list hit security challenge")
+
+        anchors = list(re.finditer(
+            r'<a\b[^>]*href=["\'](?P<href>[^"\']*/job_detail/[^"\']+)["\'][^>]*>'
+            r'(?P<label>.*?)</a>',
+            html,
+            flags=re.I | re.S,
+        ))
+        if not anchors:
+            raise RuntimeError("BOSS first-party campus page contained no job cards")
+
+        for idx, match in enumerate(anchors):
+            href = urljoin(current, match.group("href"))
+            job_id_match = re.search(r"/job_detail/([^/?#]+)", href)
+            job_id = job_id_match.group(1) if job_id_match else href
+            if job_id in seen_jobs:
+                continue
+
+            title = re.sub(r"\s+", " ", _strip_html(match.group("label"))).strip()
+            end = anchors[idx + 1].start() if idx + 1 < len(anchors) else len(html)
+            card_text = _strip_html(html[match.start():end])
+            card_text = re.sub(r"\n{3,}", "\n\n", card_text).strip()
+
+            if "BOSS直聘" not in card_text:
+                continue
+            if not re.search(r"(?:在校/应届|应届|校招|27届|2027)", card_text, re.I):
+                continue
+            if not title:
+                continue
+
+            seen_jobs.add(job_id)
+            out.append(Job(
+                src["company"], title, job_id,
+                "",
+                "BOSS直聘官方校招 / 在校应届",
+                "",
+                card_text[:12000], "",
+                href,
+                current,
+                "BOSS直聘第一方校招固定职位页",
+            ))
+
+        next_url = ""
+        for link in re.finditer(
+            r'<a\b[^>]*href=["\'](?P<href>[^"\']+)["\'][^>]*>(?P<label>.*?)</a>',
+            html,
+            flags=re.I | re.S,
+        ):
+            label = re.sub(r"\s+", " ", _strip_html(link.group("label"))).strip()
+            if re.fullmatch(r"(?:下一页|下页|Next|›|»)", label, flags=re.I):
+                candidate = urljoin(current, link.group("href"))
+                if urlparse(candidate).hostname in {"m.zhipin.com", "www.zhipin.com"}:
+                    next_url = candidate
+                    break
+        if not next_url:
+            break
+        current = next_url
+
+    if not out:
+        raise RuntimeError("BOSS first-party campus list yielded no own-company graduate jobs")
+    return out
+
 def _find_position_rows_and_total(payload: Any) -> tuple[list[dict[str, Any]], int | None]:
     candidates: list[list[dict[str, Any]]] = []
     totals: list[int] = []
@@ -2000,6 +2172,8 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "byd_campus_api": fetch_byd_campus,
     "meitu_campus_html": fetch_meitu_campus_html,
     "anker_campus_html": fetch_anker_campus_html,
+    "tonghuashun_campus_html": fetch_tonghuashun_campus_html,
+    "zhipin_company_campus_html": fetch_zhipin_company_campus_html,
     "midea_campus_api": fetch_midea_campus_api,
     "hikvision_campus_api": fetch_hikvision_campus,
     "kuaishou_api": fetch_kuaishou,

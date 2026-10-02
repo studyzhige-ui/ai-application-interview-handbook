@@ -990,11 +990,11 @@
     },
     {
       "company": "安克创新",
-      "mode": "portal_only",
+      "mode": "anker_campus_html",
       "portal": "https://career.anker.com.cn/universities/recruitment/new/",
       "official_root": "https://career.anker.com.cn/",
       "browser_probe": true,
-      "note": "安克创新官方2027校园招聘页；以浏览器渲染后的第一方职位池完整分页或明确 0 职位文案作为终点，不用静态 HTML 猜测。",
+      "note": "安克创新官方 2027 届全球校园招聘页；专用第一方 HTML 适配器读取页面公开职位总数，只有明确“找到 0 个职位”才允许形成 ZERO_TARGET_JDS。",
       "job_list_url": "https://career.anker.com.cn/universities/recruitment/new/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -1049,7 +1049,7 @@
       "portal": "https://xiaopeng.jobs.feishu.cn/campus",
       "official_root": "https://www.xiaopeng.com/",
       "browser_probe": true,
-      "note": "小鹏集团官方飞书校园招聘站，直接全量枚举正式校招职位并筛选 Agent/RAG/AI 应用工程。",
+      "note": "小鹏集团官方飞书校园招聘站；优先官方 Feishu ATS 全量接口，若匿名 API 被 405/WAF 阻断，则浏览器在固定第一方职位页完成全部目标关键词穷举后可作为终态枚举证据。",
       "job_list_url": "https://xiaopeng.jobs.feishu.cn/campus",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -1062,7 +1062,8 @@
       "feishu_recruitment_ids": [
         "201"
       ],
-      "feishu_apply_prefix": "https://xiaopeng.jobs.feishu.cn/campus/position"
+      "feishu_apply_prefix": "https://xiaopeng.jobs.feishu.cn/campus/position",
+      "keyword_search_is_terminal": true
     },
     {
       "company": "理想汽车",
@@ -1132,16 +1133,16 @@
     },
     {
       "company": "同花顺",
-      "mode": "portal_only",
+      "mode": "tonghuashun_campus_html",
       "portal": "https://campus.10jqka.com.cn/",
       "official_root": "https://campus.10jqka.com.cn/",
       "browser_probe": true,
-      "note": "同花顺官方校园招聘；算法类 Agent 岗仍受本库算法岗 Gate 排除，持续搜索非算法 Agent/AI 应用工程角色。",
-      "job_list_url": "https://campus.10jqka.com.cn/",
+      "note": "同花顺官方 2027 校园招聘职位池；专用第一方 HTML 适配器以官网总职位数为完整性 Gate，并解析移动职位列表全部岗位后再做非算法 AI/Agent Role Scope 过滤。",
+      "job_list_url": "https://campus.10jqka.com.cn/mobile/job/list?applyAttribute=1",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://campus.10jqka.com.cn/",
-      "search_url": "https://campus.10jqka.com.cn/",
+      "campus_search_url": "https://campus.10jqka.com.cn/mobile/job/list?applyAttribute=1",
+      "search_url": "https://campus.10jqka.com.cn/mobile/job/list?applyAttribute=1",
       "board_scope": "campus",
       "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
       "browser_navigation_timeout_ms": 30000,
@@ -1219,11 +1220,11 @@
     },
     {
       "company": "BOSS直聘/看准科技",
-      "mode": "portal_only",
+      "mode": "zhipin_company_campus_html",
       "portal": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "official_root": "https://www.zhipin.com/",
       "browser_probe": true,
-      "note": "BOSS直聘自身第一方“BOSS直聘校招招聘信息”固定职位页；页面当前直接列出在校/应届岗位。自动化在该固定页上穷举 Agent/智能体/AI应用/RAG/Runtime/MCP 等目标关键词，并只接受职位卡明确属于 BOSS直聘的结果；遇安全验证则阻塞，绝不判 0。",
+      "note": "BOSS直聘自身第一方“BOSS直聘校招招聘信息”固定职位页；专用适配器枚举页面内 BOSS直聘 自身在校/应届职位卡，职位详情遇安全验证时仍以第一方列表页正文作为当前职位证据，绝不把 WAF 当作 0 岗。",
       "job_list_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
