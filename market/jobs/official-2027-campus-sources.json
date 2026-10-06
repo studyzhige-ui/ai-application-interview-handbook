@@ -990,18 +990,19 @@
     },
     {
       "company": "安克创新",
-      "mode": "anker_campus_html",
+      "mode": "portal_only",
       "portal": "https://career.anker.com.cn/universities/recruitment/new/",
       "official_root": "https://career.anker.com.cn/",
       "browser_probe": true,
-      "note": "安克创新官方 2027 届全球校园招聘页；专用第一方 HTML 适配器读取页面公开职位总数，只有明确“找到 0 个职位”才允许形成 ZERO_TARGET_JDS。",
+      "note": "安克创新官方 2027 届全球校园招聘固定职位页；由浏览器读取第一方渲染结果。页面明确 0 职位可直接闭环；非 0 时在该固定页完整关键词穷举/分页后再判定，避免依赖静态 HTML 计数。",
       "job_list_url": "https://career.anker.com.cn/universities/recruitment/new/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
       "campus_search_url": "https://career.anker.com.cn/universities/recruitment/new/",
       "search_url": "https://career.anker.com.cn/universities/recruitment/new/",
       "board_scope": "campus",
-      "business_summary": "充电、影音、智能家居、安防与储能消费电子"
+      "business_summary": "充电、影音、智能家居、安防与储能消费电子",
+      "keyword_search_is_terminal": true
     },
     {
       "company": "大华股份",
@@ -1133,11 +1134,11 @@
     },
     {
       "company": "同花顺",
-      "mode": "tonghuashun_campus_html",
+      "mode": "portal_only",
       "portal": "https://campus.10jqka.com.cn/",
       "official_root": "https://campus.10jqka.com.cn/",
       "browser_probe": true,
-      "note": "同花顺官方 2027 校园招聘职位池；专用第一方 HTML 适配器以官网总职位数为完整性 Gate，并解析移动职位列表全部岗位后再做非算法 AI/Agent Role Scope 过滤。",
+      "note": "同花顺官方 2027 校园招聘固定移动职位列表；由浏览器直接枚举该第一方页面并捕获其 /api/v3/school_recruitment/apply/* XHR，优先全池分页，必要时完整穷举目标关键词；不再依赖静态 HTML 总数。",
       "job_list_url": "https://campus.10jqka.com.cn/mobile/job/list?applyAttribute=1",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -1146,7 +1147,8 @@
       "board_scope": "campus",
       "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
       "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000
+      "browser_company_budget_ms": 90000,
+      "keyword_search_is_terminal": true
     },
     {
       "company": "麒麟软件",
@@ -1220,11 +1222,11 @@
     },
     {
       "company": "BOSS直聘/看准科技",
-      "mode": "zhipin_company_campus_html",
+      "mode": "portal_only",
       "portal": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "official_root": "https://www.zhipin.com/",
       "browser_probe": true,
-      "note": "BOSS直聘自身第一方“BOSS直聘校招招聘信息”固定职位页；专用适配器枚举页面内 BOSS直聘 自身在校/应届职位卡，职位详情遇安全验证时仍以第一方列表页正文作为当前职位证据，绝不把 WAF 当作 0 岗。",
+      "note": "BOSS直聘自身第一方“BOSS直聘校招招聘信息”固定职位页；浏览器在该固定页完整穷举目标关键词并只接受职位卡明确属于 BOSS直聘的在校/应届结果；详情遇安全验证保留第一方列表证据，WAF 绝不判 0。",
       "job_list_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
