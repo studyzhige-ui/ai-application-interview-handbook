@@ -21,7 +21,7 @@
 
 岗位库使用固定 **69 家长期公司扫描池**，覆盖互联网大厂、头部 AI 公司，以及智能硬件/汽车、企业软件、金融科技等与 AI Application / Agent 工程高度相关的知名中大厂。每家公司都必须维护可重复进入的第一方 `search_url`；**公司进入扫描池不要求当前已经有目标岗位**。只有完整搜索 / 分页后才能得到有效的 `ZERO_TARGET_JDS`，页面可达、接口存在或搜索引擎 0 命中都不算完成。
 
-当前升级基线为 **69/69 第一方招聘入口已登记**；原 41 家已核验岗位事实全部保留，新增 28 家进入 `NEEDS_ENUMERATION` 并由自动同步逐公司闭环。公司状态与岗位状态分离为 `HAS_TARGET_JDS / ZERO_TARGET_JDS / NEEDS_ENUMERATION`。详见 [69 家公司扫描池](jobs/company-scan-pool.md) 与 [覆盖审计](jobs/official-2027-coverage-audit.generated.md)。
+固定扫描矩阵为 **69 家，69/69 均必须维护第一方招聘入口**。每轮实际岗位状态由完整第一方枚举重新判定，并与抓取 Runtime 分离为 `HAS_TARGET_JDS / ZERO_TARGET_JDS / NEEDS_ENUMERATION`；迁移阶段的历史公司数量不再作为当前事实。详见 [69 家公司扫描池](jobs/company-scan-pool.md) 与 [覆盖审计](jobs/official-2027-coverage-audit.generated.md)。
 
 ### HUMAN-A Interviews
 
