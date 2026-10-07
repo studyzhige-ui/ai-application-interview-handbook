@@ -6,7 +6,7 @@
 
 ## Prompt / Prompt Engineering
 
-候选来源：**71**
+候选来源：**72**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -81,6 +81,7 @@
 | `S277` | 快手杭州电商｜大模型应用 Java｜一面 + 二面（同一候选人同流程合并）｜面试 2026-03-05 / 03-09，发布 03-15，二面后当晚 OC｜HUMAN-A | 9. Prompt Engineering 有哪些真实实践原则？ |
 | `S284` | 美团｜AI 后端开发工程师｜一面｜发布 2026-09-15｜HUMAN-A | 4. Prompt Test Set 多大才有代表性，怎样构建和回归？ / 去重：全历史未出现当前 URL、作者和“Elo → Prompt Test Set → Context Compression 参数验真 → Redis Cache Refresh”连续题序。 |
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | 3. **Evaluation 开始验参数而不是验名词。** Elo 怎样比较、Prompt Test Set 多大、Context 为什么 80% 压缩、Offline Case 是否代表线上故障，都要求解释实验依据。 |
+| `S347` | 虾皮｜Agent开发｜一面、二面｜HUMAN-A | 12. （原题12）主题：System Prompt/AGENTS.md |
 
 ## Prompt Injection / Prompt Attack
 
@@ -99,7 +100,7 @@
 
 ## Intent Recognition
 
-候选来源：**12**
+候选来源：**15**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -115,10 +116,13 @@
 | `S260` | 阿里灵犀互娱｜AI 应用开发｜暑期二面｜发布 2026-04-10｜HUMAN-A | 3. Intent Recognition Small Model 怎样训练，Dataset 怎样构造？ |
 | `S276` | 蚂蚁国际｜AI 应用开发｜一面｜发布 2026-04-21｜HUMAN-A | 3. Intent Recognition 怎样实现，多路检索相比单路的 Recall 提升如何证明？ |
 | `S285` | 智谱｜AI Native Builder 实习｜一面｜发布 2026-09-16｜HUMAN-A | 5. Intent Recognition / Routing 怎样实现？ |
+| `S312` | 腾讯｜Agent开发（本人timeline明确）｜一面+二面+三面，合为一个Source｜HUMAN-A | 3. （原题3）意图识别实现/准确率 / 5. （原题5）意图识别实现 / 6. （原题6）抽象化提升意图识别原因 |
+| `S320` | 北京金山数娱｜AI应用开发｜一面｜HUMAN-A | 5. （原题5）意图识别 |
+| `S328` | 携程｜Agent开发（秋招）｜一面｜HUMAN-A | 1. （原题1）意图识别实现及好坏标准 |
 
 ## LangGraph / LangChain
 
-候选来源：**49**
+候选来源：**58**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -169,8 +173,17 @@
 | `S281` | 科大讯飞｜Agent 研发工程师 · Harness 方向｜线下一面 + 二面 + HR｜2026-09-11｜HUMAN-A | 6. LangGraph Node / State 怎样设计？ |
 | `S283` | 美团｜AI Agent｜一面｜发布 2026-09-15｜HUMAN-A | 6. LangChain / LangGraph / Raw Agent 怎样取舍？ |
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | - **新旦智能 AI 应用开发**：LangChain 1.0、Hermes Self-evolution / Memory、Harness、Eval、Codex Quality 等题很强，但原始正文持续 Cache Miss，不满足 Verifiable Gate。 |
-| `S287` | 字节跳动｜Agent 开发｜秋招一面｜发布 2026-09-16 15:09｜HUMAN-A | - **百度网络研发 / B站测开等近期 Agent 深挖**：面试中虽出现 LangGraph、OpenClaw、Skill、MCP 或 Agent Evaluation，但岗位主体分别是网络研发 / 测试开发等 Role Scope 外方向。 |
+| `S287` | 字节跳动｜Agent 开发｜秋招一面 + 二面（同一招聘流程）｜发布 2026-09-16 / 09-24｜HUMAN-A | - **百度网络研发 / B站测开等近期 Agent 深挖**：面试中虽出现 LangGraph、OpenClaw、Skill、MCP 或 Agent Evaluation，但岗位主体分别是网络研发 / 测试开发等 Role Scope 外方向。 |
 | `S297` | 字节跳动中国交易与广告｜AI 全栈开发工程师｜一面｜面试 2026-09-16，发布 2026-09-24｜HUMAN-A | - **字节剪映 AI 前端一面｜发布 2026-09-22**：公开话题层可看到自研 Agent Framework、为什么不用 LangGraph、ReAct Loop、Tool Registry、`tool_call` JSON Schema、本地 Tool Execution 与 Context 回填等完整技术链；但 post-specific 原帖 / 作者 Timeline 与“AI 前端”实际工作是否属于本库 AI Application Role Scope 仍未同时稳定闭环，继续待追源，不进入 HUMAN-A。 |
+| `S301` | 字节跳动｜Agent开发后端（日常实习）｜一面｜HUMAN-A | 1. （原题1）LangGraph选型/工作流 |
+| `S302` | 字节跳动｜大模型应用开发（秋招）｜一面｜HUMAN-A | 5. （原题6）主题：LangChain/LangGraph |
+| `S303` | 携程｜Agent开发｜一面｜HUMAN-A | 1. （原题2）LangGraph/RAG/图谱项目 / 3. （原题4）LangGraph选型/状态/checkpoint |
+| `S304` | 新旦智能｜AI应用开发｜一面｜HUMAN-A | 1. （原题1）LangChain选型/替代框架 |
+| `S308` | 小红书｜Agent开发实习生｜两家公司各一面｜HUMAN-A | 4. （原题4）三个LangGraph子图的数据传递 |
+| `S309` | 百度｜Agent开发实习生｜两家公司各一面｜HUMAN-A | 4. （原题4）LangGraph+子Agent相对大Agent/脚本 |
+| `S312` | 腾讯｜Agent开发（本人timeline明确）｜一面+二面+三面，合为一个Source｜HUMAN-A | 2. （原题2）LangChain/LangGraph使用 |
+| `S317` | 斑头雁｜Agent实习生｜一面｜HUMAN-A | 5. 二2 LangChain节点/工具代码 |
+| `S347` | 虾皮｜Agent开发｜一面、二面｜HUMAN-A | 23. （原题23）不选LangChain原因 |
 
 ## A2A
 
@@ -188,7 +201,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**102**
+候选来源：**108**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -287,17 +300,23 @@
 | `S281` | 科大讯飞｜Agent 研发工程师 · Harness 方向｜线下一面 + 二面 + HR｜2026-09-11｜HUMAN-A | 7. AI Coding 在真实项目中的参与度如何证明，生成代码由谁验证？ |
 | `S282` | 快手｜AI 全栈｜秋招一面｜发布 2026-09-15｜HUMAN-A | 真人 / 第一人称证据：岗位标题明确 AI 全栈；作者按本人秋招流程发布，并保留“很多八股说不上来”等现场状态。整场不是只问 AI 名词，而是把 Backend Foundation 与 AI Coding 生产实践混合考察。 / 6. 日常 AI Coding Workflow 怎样组织？ / 去重：全历史未发现当前 URL、作者和“Backend Foundation → AI Coding Production Bad Case”连续流程的同场来源；历史快手 AI 全栈 / Agent 来源均为其他候选人或不同流程。 |
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | - **望尘科技 AI 全栈 9/14**：能从关联页面看到面试时长、Java 与 AI Coding Quality，但原帖直链没有稳定定位，继续零贡献。 / 4. **AI Coding 已进入 Production Verification。** 面试官关心 Bad Case 漏检、Review Bottleneck、真实落地和人类 Review / Test，而不是只问使用了哪个工具。 |
-| `S287` | 字节跳动｜Agent 开发｜秋招一面｜发布 2026-09-16 15:09｜HUMAN-A | 真人 / 第一人称证据：作者页面显示当前身份为“小红书 Agent 开发（实习员工）”；正文明确记录本人字节 Agent 秋招一面，并写“当天下午已约二面”。面试过程中保留与真人面试官讨论 Computer Use、Pi Agent、DeepSeek Harness、AI Coding 方式与团队业务的现场互动，属于候选人本人第一人称招聘流程，不是答案帖、合集或内容账号整理。 / Role Scope：标题直接为“字节 Agent 秋招一面”，技术主体围绕企业 AI 助手、Memory / Context、Agent Harness、Computer Use、AI Coding 与 Agent 工程集成展开，明确通过 AI Application / Agent Role Scope Gate。 / 10. 日常怎样真正使用 AI Coding，从需求、理解代码、修改、验证到 Review 的完整 Workflow 是什么？ |
+| `S287` | 字节跳动｜Agent 开发｜秋招一面 + 二面（同一招聘流程）｜发布 2026-09-16 / 09-24｜HUMAN-A | 真人 / 第一人称证据：作者页面显示当前身份为“小红书 Agent 开发（实习员工）”；正文明确记录本人字节 Agent 秋招一面，并写“当天下午已约二面”。面试过程中保留与真人面试官讨论 Computer Use、Pi Agent、DeepSeek Harness、AI Coding 方式与团队业务的现场互动，属于候选人本人第一人称招聘流程，不是答案帖、合集或内容账号整理。 / Role Scope：标题直接为“字节 Agent 秋招一面”，技术主体围绕企业 AI 助手、Memory / Context、Agent Harness、Computer Use、AI Coding 与 Agent 工程集成展开，明确通过 AI Application / Agent Role Scope Gate。 / 10. 日常怎样真正使用 AI Coding，从需求、理解代码、修改、验证到 Review 的完整 Workflow 是什么？ |
 | `S288` | 蚂蚁｜AI Native / Agent 应用方向｜一面 + 二面（同一招聘流程合并）｜面试 2026-09-15 / 09-21｜HUMAN-A | 4. Agent / Skill / AI Coding 已明显向普通 Backend、Data、Test 岗扩散，因此 Role Scope Gate 必须比过去更严格； |
 | `S289` | 阳光电源｜AI 应用开发工程师｜一面｜面试 2026-09-18 10:00，发布 2026-09-18｜HUMAN-A | 4. **Harness + AI-assisted Engineering Authenticity Verification 是值得继续追的弱信号。** 4399 线索已经把 Harness、SQL 验错、测试指标和“AI 帮你完成后是否真正掌握”放在一起，但 provenance 尚未闭环，因此当前只作为观察，不进入正式频率。 / 5. **Agent / AI 术语继续向普通 Backend / Data / Test 岗扩散。** 这使 Role Scope Gate 更重要，而不是更宽松；出现 Memory / Agent / AI Coding 不能替代目标岗位证据。 |
 | `S291` | Shopee｜Chatbot 研发实习｜一面｜面试 2026-09-18，发布 2026-09-19 16:25｜HUMAN-A | Role Scope：岗位标题为 `chatbot研发实习`，技术主体连续覆盖 Agent、Function Call / Tool / MCP、RAG、AI Coding，并混合 Linux 与 Algorithm Foundation；实际职责明确属于 AI Application / Agent Chatbot 研发，不是普通 Backend 顺带问 AI。 / 9. 平时是否 AI Coding，有什么实际方法？ / 去重：正式编号前再次逐个直接回读 `batch-01.md`～`batch-30.md`。历史已有 Shopee `S081`、`S239` 等 Agent 来源，但均为不同作者、不同月份 / 日期与独立流程；未发现当前 URL、作者或“Agent → Function Call / Tool / MCP → RAG 文档规模 → Linux Process → Kth Largest / Quick Sort 深追 → AI Coding”的连续同场来源。 |
 | `S294` | 度小满｜AI 全栈｜一面｜发布 2026-09-20 17:39｜HUMAN-A | 14. AI-assisted Development 中最有代表性的真实 Case 是什么；采用度、收益、踩坑和 AI 不擅长的部分怎样评价？ / 最终去重：在本轮编号前已直接回读正式 `batch-01.md`～`batch-31.md` 全历史，并与本次恢复的 `batch-32.md` 候选交叉核验。未发现度小满同公司 / 同招聘流程、当前 URL，或“Browser / Network → OS / GMP → MySQL / Redis → Frontend Foundation → AI-assisted Development → AI Q&A System Design → Restore IP”的历史同场来源。同作者不同公司按独立招聘流程分别计数。 |
 | `S295` | 百度｜Agent 后端｜三面｜发布 2026-09-22 09:13｜HUMAN-A | - **普通 Backend / Frontend / Data / Test 岗出现 Agent / Skill / AI Coding**：没有目标 Role Scope 时继续排除；术语扩散不等于目标岗位样本。 / 4. **AI Full-stack 仍然是完整软件工程底座 + AI Feature 的组合。** 度小满把 Network / OS / Go / MySQL / Redis / Frontend Foundation 与 AI-assisted Development、AI Q&A System Design 放在同一场。 |
 | `S297` | 字节跳动中国交易与广告｜AI 全栈开发工程师｜一面｜面试 2026-09-16，发布 2026-09-24｜HUMAN-A | - **近期算法 / SFT / RL / 模型训练岗位、Test / Data / 普通 Backend / Frontend 岗**：仅出现 Agent、MCP、Skill、AI Coding 等术语不能替代目标 Role Scope；不扩大统计边界。 |
+| `S307` | 字节跳动（剪映）｜AI应用开发（日常实习）｜一面｜HUMAN-A | 5. Vibe Coding占比 |
+| `S323` | 快手｜AI应用｜二面｜HUMAN-A | 19. （原题19）AI Coding工具与模型 |
+| `S330` | 字节跳动/剪映｜AI Agent开发，全栈组｜一面、二面、三面｜HUMAN-A | 31. （原题31）近期Agent和AI Coding实践 |
+| `S333` | 字节跳动｜Agent开发秋招｜一面｜HUMAN-A | 10. （原题10）日常AI Coding |
+| `S334` | 科大讯飞｜Agent Harness｜一面｜HUMAN-A | 18. （原题18）AI Coding工具 |
+| `S345` | 亿联网络｜Agent工程师：企业模型中转路由、员工Agent、硬件产品Agent｜两位面试官合并技术面｜HUMAN-A | 10. （原题4.1）AI Coding看法 / 11. （原题4.2）AI Coding项目实践 |
 
 ## Spec-driven Development
 
-候选来源：**14**
+候选来源：**17**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -315,4 +334,7 @@
 | `S196` | 美团｜后端 Agent 开发｜暑期一面｜发布 2026-04-19｜HUMAN-A | 4. Autonomous Agent Development 与 Spec / Structured-document-driven Workflow 各有什么优缺点？ |
 | `S212` | 文远知行｜AI 全栈开发｜三面｜面试 2026-08-18，进入横向｜HUMAN-A | 5. **AI Coding 正和 Harness / SDD / Product Engineering 汇合。** 平安健康问 Coding Agent 自举与 SDD；FOSHO问为什么自研 Coding Agent；小红书 / OPPO把 AI Coding 质量、MVP、上线与前端性能放进同一场。 |
 | `S218` | 美团｜Agent 开发｜日常实习一面｜发布 2026-08-25，75min｜HUMAN-A | 11. Vibe Coding / Spec Coding 怎样进入真实研发流程并保证 AI 生成代码正确？ |
+| `S334` | 科大讯飞｜Agent Harness｜一面｜HUMAN-A | 22. （原题22）主题：TDD/SDD |
+| `S345` | 亿联网络｜Agent工程师：企业模型中转路由、员工Agent、硬件产品Agent｜两位面试官合并技术面｜HUMAN-A | 12. （原题4.3）主题：SDD |
+| `S349` | 字节跳动｜Agent开发实习生｜一面45分钟｜HUMAN-A | 13. （原题13）主题：SDD / 15. （原题15）主题：OpenSpec |
 
