@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-10-07; frozen after final source review",
+  "as_of": "2026-10-07; final after bounded21 original-image follow-up",
   "public_web_query_rows": 181,
   "unique_public_web_query_strings": 181,
   "public_query_groups": {
@@ -24,10 +24,10 @@
     "字节Agent秋招一面 海苔肉松小贝"
   ],
   "xiaohongshu_unique_observed_notes_minimum": 212,
-  "xiaohongshu_partial_originals": 21,
-  "xiaohongshu_original_images_read": 47,
+  "xiaohongshu_partial_originals": 2,
+  "xiaohongshu_original_images_read": 133,
   "original_detail_urls_attempted_union": 160,
-  "original_full_bodies_read_union": 132,
+  "original_full_bodies_read_union": 151,
   "by_platform": {
     "nowcoder": {
       "unique_original_detail_urls_attempted": 87,
@@ -36,8 +36,10 @@
     },
     "xiaohongshu": {
       "unique_original_detail_urls_attempted": 73,
-      "full_original_bodies_read": 52,
-      "without_full_body": 21
+      "full_original_bodies_read": 71,
+      "without_full_body": 2,
+      "remaining_unclassified_queue": 0,
+      "without_full_body_already_excluded": 2
     }
   },
   "discovery_only_xhs_ids": 30,
@@ -232,24 +234,273 @@
     "Multiple interview rounds remain separate original URLs but one recruitment Source; author profiles, topic/company feeds and noninterview timeline posts are not original-interview denominator.",
     "Thirty discovery-only XHS IDs are neither full original reads nor HUMAN-A sources; any later actual original read enters the ordinary URL union once.",
     "No search-hit total or exhaustive platform coverage claim.",
-    "New technical question totals are not reported; retained sequence items include background and undisclosed placeholders."
+    "New technical question totals are not reported; retained sequence items include background and undisclosed placeholders.",
+    "The21 follow-up URLs were already in the160 attempted-detail union; revisit adds neither21 new URLs nor new broad queries.",
+    "132 initial complete reads plus19 newly completed distinct XHS originals equals151; 52+19=71 XHS originals. Two excluded partial originals are still excluded from full-read counts.",
+    "133 counts fully mapped original images for complete posts: initial47 plus follow-up86. Replacement/loading files, repeated downloads and unresolved image mappings do not inflate this figure."
   ],
   "admission_counts": {
-    "new_independent_flows": 54,
+    "new_independent_flows": 60,
     "old_inbox_recovered": 4,
     "existing_flow_supplement": 1,
-    "formal_total_after_this_patch": 355,
-    "unchanged_frozen_canonical_active": 235
+    "formal_total_after_this_patch": 361,
+    "unchanged_frozen_canonical_active": 235,
+    "new_flows_by_platform": {
+      "nowcoder": 32,
+      "xiaohongshu": 28
+    },
+    "followup_new_flows": 6
   },
   "disposition_counts": {
     "old_inbox_refresh": 1,
-    "proposed_admit": 54,
+    "proposed_admit": 60,
     "existing_source_updates": 1,
-    "excluded": 13,
-    "holds": 24,
+    "excluded": 21,
+    "holds": 29,
     "existing_source_duplicates": 5,
-    "candidate_round_supplements": 6
+    "candidate_round_supplements": 6,
+    "followup_duplicates_of_held_flow": 2
   },
   "fidelity_note": "每条按原编号或原图/段落顺序作短句改写。序列项含自介、背景、反问和未披露占位；没有把序列项总和宣称为新增技术题。",
-  "live_visibility_note": "正文曾完整读取不等于当前公开。仅作者可见/删除的3个原帖状态均未准入；完整回读数包含采集时读过、后来复核已不可见的内容，不发布其缓存正文。"
+  "live_visibility_note": "正文曾完整读取不等于当前公开。仅作者可见/删除的3个原帖状态均未准入；完整回读数包含采集时读过、后来复核已不可见的内容，不发布其缓存正文。",
+  "initial_collection_snapshot": {
+    "xiaohongshu_partial_originals": 21,
+    "xiaohongshu_original_images_read": 47,
+    "original_detail_urls_attempted_union": 160,
+    "original_full_bodies_read_union": 132,
+    "by_platform": {
+      "nowcoder": {
+        "unique_original_detail_urls_attempted": 87,
+        "full_original_bodies_read": 80,
+        "without_full_body": 7
+      },
+      "xiaohongshu": {
+        "unique_original_detail_urls_attempted": 73,
+        "full_original_bodies_read": 52,
+        "without_full_body": 21
+      }
+    },
+    "admission_counts": {
+      "new_independent_flows": 54,
+      "old_inbox_recovered": 4,
+      "existing_flow_supplement": 1,
+      "formal_total_after_this_patch": 355,
+      "unchanged_frozen_canonical_active": 235
+    },
+    "disposition_counts": {
+      "old_inbox_refresh": 1,
+      "proposed_admit": 54,
+      "existing_source_updates": 1,
+      "excluded": 13,
+      "holds": 24,
+      "existing_source_duplicates": 5,
+      "candidate_round_supplements": 6
+    }
+  },
+  "bounded_image_followup": {
+    "queue_size": 21,
+    "classified": 21,
+    "complete_original_reads": 19,
+    "not_complete_but_exclusion_decided": 2,
+    "new_unique_query_strings": 0,
+    "new_unique_detail_urls": 0,
+    "new_independent_flows": 6,
+    "holds": 5,
+    "excluded": 8,
+    "duplicates": 2,
+    "remaining": 0,
+    "fully_mapped_original_images_in_complete_reads": 86,
+    "record_count_note": "21 follow-up rows augment initial104 disposition rows to125. Four older Inbox recoveries are separate; only candidateD was in the103-card initial source snapshot.",
+    "records": [
+      {
+        "note_id": "6a85d7f200000000380002d4",
+        "url": "https://www.xiaohongshu.com/explore/6a85d7f200000000380002d4",
+        "author": "sword",
+        "curation": "dedup_clear_new_independent_flow",
+        "full_read": true,
+        "original_images": 9,
+        "image_count_caveat": "9原图；磁盘12文件包含3张加载截图被全分辨率原图替换，不算12图"
+      },
+      {
+        "note_id": "6a97897300000000120377b6",
+        "url": "https://www.xiaohongshu.com/explore/6a97897300000000120377b6",
+        "author": "又又",
+        "curation": "dedup_clear_new_independent_flow",
+        "full_read": true,
+        "original_images": 1,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6aa8e946000000002600b89b",
+        "url": "https://www.xiaohongshu.com/explore/6aa8e946000000002600b89b",
+        "author": "不嘻嘻",
+        "curation": "hold_role_or_first_person",
+        "full_read": true,
+        "original_images": 4,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6aaa6e6d000000002802fb21",
+        "url": "https://www.xiaohongshu.com/explore/6aaa6e6d000000002802fb21",
+        "author": "多吃碳水啵",
+        "curation": "dedup_clear_new_independent_flow",
+        "full_read": true,
+        "original_images": 4,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6aaca06c0000000012037db6",
+        "url": "https://www.xiaohongshu.com/explore/6aaca06c0000000012037db6",
+        "author": "cris要加油",
+        "curation": "exclude_quality_or_scope",
+        "full_read": false,
+        "original_images": 10,
+        "image_count_caveat": "页面计10图，提供10文件但含重复/映射不完整，已据明确合集导流证据排除；不声称全图唯一回读"
+      },
+      {
+        "note_id": "6a801ecd0000000025006f5c",
+        "url": "https://www.xiaohongshu.com/explore/6a801ecd0000000025006f5c",
+        "author": "Mintshoot",
+        "curation": "hold_role_or_first_person",
+        "full_read": true,
+        "original_images": 1,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6aa1235b0000000012025edf",
+        "url": "https://www.xiaohongshu.com/explore/6aa1235b0000000012025edf",
+        "author": "困困",
+        "curation": "exclude_quality_or_scope",
+        "full_read": true,
+        "original_images": 6,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ab0c2670000000036029603",
+        "url": "https://www.xiaohongshu.com/explore/6ab0c2670000000036029603",
+        "author": "多吃碳水啵",
+        "curation": "dedup_clear_new_independent_flow",
+        "full_read": true,
+        "original_images": 4,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6a9a95280000000027009eb2",
+        "url": "https://www.xiaohongshu.com/explore/6a9a95280000000027009eb2",
+        "author": "BiscuiTAT",
+        "curation": "exclude_quality_or_scope",
+        "full_read": true,
+        "original_images": 4,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6abb929d0000000018016a75",
+        "url": "https://www.xiaohongshu.com/explore/6abb929d0000000018016a75",
+        "author": "曦鹤y0g",
+        "curation": "hold_role_or_first_person",
+        "full_read": true,
+        "original_images": 1,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ab3d362000000001303da51",
+        "url": "https://www.xiaohongshu.com/explore/6ab3d362000000001303da51",
+        "author": "momo",
+        "curation": "exclude_quality_or_scope",
+        "full_read": true,
+        "original_images": 1,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6a8f1999000000002303dccb",
+        "url": "https://www.xiaohongshu.com/explore/6a8f1999000000002303dccb",
+        "author": "阿壮碎碎念（备战27秋招版）",
+        "curation": "exclude_quality_or_scope",
+        "full_read": true,
+        "original_images": 15,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6abf58c7000000000a020f68",
+        "url": "https://www.xiaohongshu.com/explore/6abf58c7000000000a020f68",
+        "author": "悲伤土豆鸡肉饭",
+        "curation": "dedup_clear_new_independent_flow",
+        "full_read": true,
+        "original_images": 7,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6abe45bd000000001500ab90",
+        "url": "https://www.xiaohongshu.com/explore/6abe45bd000000001500ab90",
+        "author": "炒肉多",
+        "curation": "duplicate_followup_of_held_flow",
+        "full_read": true,
+        "original_images": 13,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ac470b6000000000a022c1e",
+        "url": "https://www.xiaohongshu.com/explore/6ac470b6000000000a022c1e",
+        "author": "顶尖耐面王～周也",
+        "curation": "duplicate_followup_of_held_flow",
+        "full_read": true,
+        "original_images": 4,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ac5c23900000000010090b8",
+        "url": "https://www.xiaohongshu.com/explore/6ac5c23900000000010090b8",
+        "author": "周也在coding",
+        "curation": "hold_role_or_first_person",
+        "full_read": true,
+        "original_images": 2,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ac5ab5f000000000200c5bc",
+        "url": "https://www.xiaohongshu.com/explore/6ac5ab5f000000000200c5bc",
+        "author": "zed(秋招版)",
+        "curation": "dedup_clear_new_independent_flow",
+        "full_read": true,
+        "original_images": 5,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ac5a1f7000000001a0326d1",
+        "url": "https://www.xiaohongshu.com/explore/6ac5a1f7000000001a0326d1",
+        "author": "zed(秋招版)",
+        "curation": "hold_role_or_first_person",
+        "full_read": true,
+        "original_images": 3,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6a9037b80000000020030f9d",
+        "url": "https://www.xiaohongshu.com/explore/6a9037b80000000020030f9d",
+        "author": "筱淌",
+        "curation": "exclude_quality_or_scope",
+        "full_read": true,
+        "original_images": 1,
+        "image_count_caveat": null
+      },
+      {
+        "note_id": "6ab88d5b000000000a02183a",
+        "url": "https://www.xiaohongshu.com/explore/6ab88d5b000000000a02183a",
+        "author": "ttf",
+        "curation": "exclude_quality_or_scope",
+        "full_read": false,
+        "original_images": 4,
+        "image_count_caveat": "平台4图，明确产品运营岗位后仅读首图即停止；排除充分，不声称其余3图已读"
+      },
+      {
+        "note_id": "6ab0b42e000000002b025e72",
+        "url": "https://www.xiaohongshu.com/explore/6ab0b42e000000002b025e72",
+        "author": "扇贝鱼",
+        "curation": "exclude_quality_or_scope",
+        "full_read": true,
+        "original_images": 1,
+        "image_count_caveat": null
+      }
+    ]
+  }
 }

@@ -100,7 +100,7 @@
 
 ## Intent Recognition
 
-候选来源：**15**
+候选来源：**16**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -119,6 +119,7 @@
 | `S312` | 腾讯｜Agent开发（本人timeline明确）｜一面+二面+三面，合为一个Source｜HUMAN-A | 3. （原题3）意图识别实现/准确率 / 5. （原题5）意图识别实现 / 6. （原题6）抽象化提升意图识别原因 |
 | `S320` | 北京金山数娱｜AI应用开发｜一面｜HUMAN-A | 5. （原题5）意图识别 |
 | `S328` | 携程｜Agent开发（秋招）｜一面｜HUMAN-A | 1. （原题1）意图识别实现及好坏标准 |
+| `S356` | 百度｜AI Agent / Agent Harness｜一面｜HUMAN-A | 5. （原题5）分层架构除意图识别外的工程、效果改进 |
 
 ## LangGraph / LangChain
 
@@ -201,7 +202,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**108**
+候选来源：**110**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -313,6 +314,8 @@
 | `S333` | 字节跳动｜Agent开发秋招｜一面｜HUMAN-A | 10. （原题10）日常AI Coding |
 | `S334` | 科大讯飞｜Agent Harness｜一面｜HUMAN-A | 18. （原题18）AI Coding工具 |
 | `S345` | 亿联网络｜Agent工程师：企业模型中转路由、员工Agent、硬件产品Agent｜两位面试官合并技术面｜HUMAN-A | 10. （原题4.1）AI Coding看法 / 11. （原题4.2）AI Coding项目实践 |
+| `S360` | 快手｜AI全栈开发（Agent）｜['一面', '二面', '三面']｜HUMAN-A | ### 一面｜AI Coding现场题 / ### 二面｜AI Coding现场题 |
+| `S361` | 字节跳动｜Agent开发｜一面约70分钟｜HUMAN-A | 真人 / 第一人称证据：作者叙述自己列举缓存内容后，面试官继续追问具体设计。；现场缓存编码完成后又要求测试和优化，随后讨论日常AI Coding。；记录面试官对候选人听题方式和本人简历项目介绍的具体反馈。 / ### 算法与AI Coding / 2. （原文未编号）平时是否采用Vibe Coding |
 
 ## Spec-driven Development
 
