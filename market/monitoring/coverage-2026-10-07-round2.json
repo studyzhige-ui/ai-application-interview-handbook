@@ -1,0 +1,3739 @@
+{
+  "as_of": "2026-10-07T17:53:24.008081+00:00",
+  "collection_task_date": "2026-10-07",
+  "actual_local_read_date": "2026-10-08 Asia/Shanghai",
+  "baseline_ref": "7d69e2fd73af3c69100a5a866f0e31aaa7157654",
+  "summary": {
+    "formal_baseline": 361,
+    "formal_after": 386,
+    "batches": 37,
+    "new_independent_flows": 25,
+    "new_by_platform": {
+      "nowcoder": 9,
+      "xiaohongshu": 16
+    },
+    "existing_source_supplement_records": 8,
+    "existing_sources_supplemented": [
+      "S123",
+      "S280",
+      "S294",
+      "S295",
+      "S329",
+      "S333"
+    ],
+    "candidate_record_dispositions": {
+      "accepted_new": 25,
+      "excluded": 33,
+      "existing_source_supplement": 8,
+      "hold": 36,
+      "access_blocked": 6,
+      "duplicate": 2
+    },
+    "distinct_originals_attempted": 130,
+    "complete_originals_read": 115,
+    "not_complete": 15,
+    "by_platform": {
+      "nowcoder": {
+        "attempted": 50,
+        "complete": 44
+      },
+      "xiaohongshu": {
+        "attempted": 80,
+        "complete": 71
+      }
+    },
+    "overlap_with_first_pass": {
+      "attempted_ids": 2,
+      "full_in_both": 0
+    },
+    "whole_task_union": {
+      "attempted": 288,
+      "complete": 266,
+      "not_complete": 22
+    },
+    "public_query_records": 86,
+    "distinct_normalized_public_query_record_texts": 86,
+    "public_query_note": "额外公司检索前32条为执行目标规范化回填，并非字节级原始请求；按记录文本去重，不将相同目标重试或原帖打开计作新查询。",
+    "whole_task_public_query_record_text_union": 266,
+    "xiaohongshu_query_summary": {
+      "query_count_distinct_main_strings": 11,
+      "query_sort_passes": 12,
+      "recovery_queries": 1,
+      "search_result_unique_note_ids": 203
+    }
+  },
+  "counting_rules": [
+    "原帖唯一ID去重；重复URL参数、方法重试、轮数或图片数不增加原帖或流程数。",
+    "完整回读指实际读完正文及全部包含信息的原图，不是HTTP取回或页面可达。",
+    "来源质量、岗位范围、本人证据、流程去重与阅读量独立；被排除但完整读过仍计阅读工作量。",
+    "作者页、索引和搜索卡不算面经正文；90张未打开旧卡不算本轮原帖尝试。",
+    "未披露原题、HR、反问和自我介绍的序列位置不等于技术题；不发布新增技术题总量。",
+    "所有候选已与正式361来源及本轮彼此比较；相同高频题不能单独证明复制或同流程。"
+  ],
+  "public_query_records": [
+    "site:nowcoder.com \"FDE\" \"面经\"",
+    "site:nowcoder.com \"Applied AI\" \"面试\"",
+    "site:nowcoder.com \"智能体研发\" \"面经\"",
+    "site:nowcoder.com \"大模型应用\" \"面经\" \"携程\"",
+    "site:nowcoder.com \"面经\" \"AI\" \"转转\"",
+    "site:nowcoder.com \"面经\" \"智能体\" \"实习\" -site:blog.nowcoder.net",
+    "site:nowcoder.com \"面经\" \"Agent\" \"顺丰\"",
+    "site:nowcoder.com \"字节 ai fde社招\"",
+    "site:nowcoder.com \"Agent\" \"顺丰\" \"一面\"",
+    "site:nowcoder.com \"大模型应用\" \"面经\" \"2025\" -答案 -题库 -合集",
+    "site:nowcoder.com \"AI应用\" \"面经\" \"金蝶\"",
+    "site:nowcoder.com \"Agent\" \"面经\" \"得物\"",
+    "site:nowcoder.com \"AI应用\" \"面经\" \"金蝶\" \"一面\"",
+    "site:nowcoder.com \"Agent开发\" \"顺丰\"",
+    "site:nowcoder.com \"Agent开发\" \"招银\"",
+    "site:nowcoder.com \"大模型应用开发\" \"面经\" \"2024\"",
+    "site:nowcoder.com \"Agent开发\" \"顺丰\" \"一面\"",
+    "site:nowcoder.com \"AI应用\" \"面经\" \"用友\"",
+    "site:nowcoder.com \"AI\" \"面经\" \"招银\" \"RAG\"",
+    "site:nowcoder.com \"大模型应用开发\" \"一面\" \"2025\" -答案 -题库 -合集",
+    "site:nowcoder.com \"顺丰 agent开发 一面\"",
+    "site:nowcoder.com \"viture\" \"agent\" \"面\"",
+    "site:nowcoder.com \"小满科技\" \"agent\" \"面\"",
+    "site:nowcoder.com \"自变量\" \"agent平台开发\"",
+    "迅雷 Agent 面经",
+    "百度 AI应用 面经 9月",
+    "FDE 一面 面经",
+    "携程 agent 面经 10",
+    "13170819e3cd4d129c3bd91d4db8b749",
+    "汤鸡佬 百度",
+    "muzimi 智能体",
+    "字节 Agent 10.1 面",
+    "腾讯 Agent 二面 9.2（排除合集/答案）",
+    "百度 Agent 一面 9.2",
+    "小红书 AI应用 一面 9.2",
+    "携程 Agent 一面 9.2",
+    "携程AI应用开发实习一面（OC）",
+    "百度Agent智能体研发日常实习一二面",
+    "百度智能体一面1.13",
+    "13170819e3cd4d129c3bd91d4db8b749 FDE",
+    "AI应用 一面 10-06",
+    "Agent 一面 10-05",
+    "腾讯 Agent 一面 9.26",
+    "百度 Agent 9.26",
+    "百度 智能体研发 面经",
+    "腾讯 Agent开发 面经 09-30",
+    "字节 Agent 9.30 面",
+    "小红书 Agent 面经 09-25",
+    "腾讯 AI应用开发 面经（feed，近60日）",
+    "小红书 Agent 面经（feed，近60日）",
+    "字节 FDE 面试（feed，近60日）",
+    "百度 Harness 面经（feed，近60日）",
+    "腾讯 AI应用开发 一面凉经（排除总结/题库/合集）",
+    "小红书 AI应用 一面9.16",
+    "百度 Agent开发 面经9.24",
+    "字节 Agent开发 面经9.25",
+    "site.nowcoder.com/feed \"小红书\" \"Agent\" \"面经\" \"09-\"",
+    "site.nowcoder.com/feed \"迅雷\" \"AI全栈\" \"面试\"",
+    "site.nowcoder.com/feed \"字节\" \"FDE\" \"面试\" -13170819",
+    "site.nowcoder.com/feed \"腾讯\" \"AI应用\" \"一面\" \"10-\"",
+    "site:nowcoder.com \"迅雷\" \"Agent\" \"面经\" -答案 -合集",
+    "site:nowcoder.com \"携程\" \"AI应用\" \"面经\" -答案 -合集 -933058120102739968",
+    "site:nowcoder.com \"腾讯\" \"FDE\" \"面经\"",
+    "site:nowcoder.com \"字节\" \"AI Native\" \"一面\" \"面经\" -答案",
+    "site:nowcoder.com \"字节AI fde社招面经\"",
+    "site:nowcoder.com \"小红书\" \"Ai native\" \"Recall_15\"",
+    "site:nowcoder.com \"百度\" \"智能体\" \"二面\" \"muzimi\"",
+    "site:nowcoder.com \"腾讯\" \"agent开发\" \"一面\" -赛文X -答案 -合集 -题库",
+    "site:nowcoder.com \"腾讯\" \"agent开发\" \"日常实习\" \"多模态RAG\" -878945851924627456",
+    "site:nowcoder.com \"小红书\" \"upc\" \"PE\"",
+    "site:nowcoder.com \"腾讯/wxg/微信支付/日常实习/一面\"",
+    "site:nowcoder.com \"字节\" \"FDE\" \"面经\" -13170819e3cd4d129c3bd91d4db8b749 -题库 -热榜",
+    "\"腾讯\" \"AI应用\" \"分片键\" \"Shop Number\"",
+    "\"腾讯\" \"两秒、十秒和九十秒\"",
+    "\"腾讯\" \"多agent怎么编排\" \"跨境汇款\"",
+    "\"腾讯\" \"书签记录法\" \"面经\"",
+    "\"腾讯\" \"红包系统\" \"书签\" 面试",
+    "\"腾讯\" \"分库分表\" \"删除中间元素\"",
+    "\"腾讯\" \"跨境汇款\" \"面经\" -总结 -整理 -知乎",
+    "\"面试从容应对\" \"转载\"",
+    "\"九方\" \"测试数据量\" \"面经\"",
+    "\"海尔\" \"Agent\" \"死循环\" \"面试\"",
+    "\"安克\" \"Multi-Agent Debate\" 面试",
+    "site:nowcoder.com 九方智投 agent 面经",
+    "site:nowcoder.com 安克 Agent 面经",
+    "site:nowcoder.com 海尔 Agent 面经"
+  ],
+  "xiaohongshu_query_records": [
+    {
+      "query": "京东 Agent 面经",
+      "sort": "综合",
+      "scroll_batches": 1
+    },
+    {
+      "query": "蚂蚁 Agent 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "阿里 AI应用 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "美团 Agent 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "快手 AI应用 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "小米 Agent 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "华为 Agent 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "FDE 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "知识库 RAG 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "AI后端 面经",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "Agent 面经 10月",
+      "sort": "综合",
+      "scroll_batches": 0
+    },
+    {
+      "query": "Agent 面经 10月/最新",
+      "sort": "最新",
+      "scroll_batches": 0
+    },
+    {
+      "query": "Agent 面经 10月/最新",
+      "sort": "最新",
+      "scroll_batches": 1,
+      "additional_ids_seen": 0,
+      "interpretation": "One normal scroll check produced no additional DOM note IDs; not proof of complete site coverage."
+    },
+    {
+      "query": "中兴一面面经 多吃碳水啵",
+      "purpose": "Reopen one already-seen source after tool reset",
+      "result": "Target card visible; official slider CAPTCHA stopped further original-image inspection."
+    }
+  ],
+  "originals": [
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/3f8ed5409b9042d8994ecfef8d515b50",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/12fbab6848d94244a4b65ef7bc6a8ac4",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/discuss/773264718801707008",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/81a00aeed69f4070af3078cfe832ff23",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/7cab90ca59084f64bc19d1cb13935937",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/93a26b84a6634558b7228bf350c709b5",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/c4c614b12d564af3b37c30c241072973",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/f9be60e7b3c54750a57b37d5d200d1e5",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/e72c4b75edc245349f79e20d44834301",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/89dde87cceb142d09e90dead6e9e5aa3",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/88c55ee65af04ac98c218b9d17c47a71",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/5f3df51243ad425c83e81e359ce82c36",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/64e31a28581b4e21a1e8e1aee236b6b4",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/9c52d114887148bd88dac675229d8dfe",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/c478feeef29340caac7b8c44d5a6c5e4",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/1d05dbe48b314a81804c2ffdd51ab569",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/aa720c49cec348fea797bf0731b06930",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/be11801cff834c7f8731c210e7d15483",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/f3fd1598004b4121b51927908c107a34",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/85b45754b5a64eeea54384378275a7ce",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/6715d77233254a73b7d6b369b17927f4",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/f3a38b6580714965bfeac1cadeadabe9",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/6af8a31964434012a95de8f4c16403b8",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Original complete body read in tool output from live public SSR HTML; full ordered question sequence manually paraphrased and reviewed. Not inferred from file existence or metadata."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/2109cf8eb0254507911fbf86bcbf51e4",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_core"
+      ],
+      "notes": [
+        "Full live original body returned and read during author-provenance correction at17:06; linked author125006155 checked. It is an old excluded post, not a new formal source."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/06b793580fbb4471bef0a0c5f58760ff",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读原文至结尾B端直播C++音视频职责和次日挂；用于和9c239复制链对照"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/13170819e3cd4d129c3bd91d4db8b749",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读HR、三轮技术面、末轮HR及终止offer过程，逐项映射"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/2b1c35eace4a4bb3bd88ee669f163793",
+      "platform": "nowcoder",
+      "full_read": false,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "本轮只人工定位并读取鱼鱼Code 9/24原评论及其作者ID；正文虽已抓取，但不声称本轮完整人工重读"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/3812928d155e4f00b7dfe37cb9807154",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读一面19编号、手撕和反问；职责答复未公开，hold"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/45d2815e4dc54a2fa9161273f6046c97",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读19主问与两反问，补S123已有交叉面题序"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/4d7f1675cf01408283a41aa044f13215",
+      "platform": "nowcoder",
+      "full_read": false,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "抓取有正文但已识别S249重复，未在本轮人工完整回读；不能用public_body=true作全文核验"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/603ec00b8b1f45e3b08bebc4072b5604",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读百度1/13智能体一面及一小时后约二面的说明"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/60f381f558a848ceac18c666268dc7da",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "初次仅壳，SSR公开变体完整读三轮披露内容；二三面仅新增问法，非完整所有问答"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/6204344a50a04c46a6220b2d73c426bc",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读转转FDE九个短问；后经curator确认沿用赛文X来源排除"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/66e688eed16e4708af18c3a5efdb62b3",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读七节问题及两个编码任务，S158同作者关系未明"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/6e4bd17e2fa84e98b315a9113e211687",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读五组面试内容、50分钟软件工厂任务、面评、8/13挂与作者分析"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/discuss/924730985210458112",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读百度9/2一面16主编号及子问，补S295"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/discuss/929431883266424832",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读百度9/15二面所有5节及15序列项，补S295"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/discuss/932692853946351616",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读鱼鱼Code个人招聘时间线，确认携程视频创作岗位及9/23一面、9/24 OC"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/discuss/933058120102739968",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读携程一面至无手撕说明；全部公开技术追问已映射"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/9c23964be69d4cd19f38b1b1e74cd177",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读到第20问，与更早06b793逐题及同缺号13对照，改岗位标题复制链排除"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/aef9769bc0604700bcc8ed4fa8db8377",
+      "platform": "nowcoder",
+      "full_read": false,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "本次HTTP仅标题壳；S248基线已收，不把搜索/合集缓存当当前完整原文"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/b0aba5ebac994002a27bf0892b8991f9",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读自介、21主问与3反问，补S123已有二面"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/bb76c9109b8d4958ad46204f5da8609d",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读百度搜索1/6及1/16两轮、自述薄弱环节与岗位反问"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/da7e0f1b2498442ea389345b613f6f22",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读muzimi_后续求职状态帖，确认百度智能体研发1/13与1/15两轮"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/fa23d7dd47324d11aa66cd9376ff21b8",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "完整读20主问、追问、波兰式和反问，保守作S123同作者补充"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/70ad5ead2f784676b0b399eab877d3d4",
+      "platform": "nowcoder",
+      "full_read": false,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "S298已收；本轮web返回在上下文中被截断，不能计完整人工重读"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/c712eda7fbf44ba69835b6dd2ff7fc4c",
+      "platform": "nowcoder",
+      "full_read": false,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "S290已收；本轮原页打开后未完整人工读取，企业页摘要不替代原帖全文"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/discuss/929475914579136512",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "nowcoder_extra"
+      ],
+      "notes": [
+        "原帖公开正文自介、项目子问、平方根题、反问岗位全部已人工读；识别为S286已收"
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/50bcdc47e7754aa7be59b6318fea514b",
+      "platform": "nowcoder",
+      "full_read": false,
+      "groups": [
+        "curator_originality"
+      ],
+      "notes": [
+        "Prior XHS hold shares S283 representative first9-question sequence. Cannot independently verify remaining questions or cross-account attribution from current shell. No Source increment, no added question evidence."
+      ]
+    },
+    {
+      "url": "https://www.nowcoder.com/feed/main/detail/92efed84eb68493d82132e03b7e43ae0",
+      "platform": "nowcoder",
+      "full_read": true,
+      "groups": [
+        "curator_originality"
+      ],
+      "notes": [
+        "九方更早原作者公开原帖完整回读；XHS同文0新增"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab3a129000000001a026504",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab00cc7000000002a00505f",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a97b14c000000002902e7be",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab3cd62000000001802ad47",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa3f385000000000b00032b",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aace9f400000000250343e4",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab896b300000000150061c4",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab09603000000001203e713",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa7c277000000001103342e",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aadffa400000000260153ed",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab1279b0000000035022705",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab9f69600000000150072fe",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aba740600000000180111f9",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a87c4b700000000080156f8",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a7c5ecd000000002500b9b7",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a848029000000003303216d",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a9a3691000000002900dc8b",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aab67d4000000002a02ff2f",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aba4800000000000202a62f",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab3ac86000000000a026e1c",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab48eff00000000140393b7",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab62556000000001b01ef68",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ac49190000000001203b8b7",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aba4f290000000018012c42",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa3a2de00000000260153b0",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aadfdbd000000002900eaca",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa61cf6000000002802975e",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a93b79c0000000024005c39",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "image_access_blocked"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab1ee3b000000003003ce80",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "image_access_blocked"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa7af1c00000000120341f5",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "image_access_blocked"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa7ab44000000002b003396",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "image_access_blocked"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ac5bb7b0000000018016fff",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "image_access_blocked"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aaa12f30000000026015126",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "image_access_blocked"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa229ee0000000011036825",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aab610d000000001103407d",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a88198b000000003b017ddc",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a9d0c3a0000000011036c96",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a6ff8bd000000003302dea6",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab3bc3500000000180079a2",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab50e440000000018005f2a",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa3ac1f000000002b01277e",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab4d0ff0000000018011bd7",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a8eea60000000002a03ae51",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a7eb87600000000240268c1",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a8d6a1b0000000024005226",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a9ea32b000000001001dc40",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab0f508000000003300a1f1",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab0f4c6000000003302e74c",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a570a900000000007022a2d",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa7a2ee0000000012026776",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a5f950e00000000060121ce",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aafb8d10000000012027bef",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a55e70e000000001700b9cd",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a9a89a900000000120354b1",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab8d9ce00000000180124f6",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab9dfff000000000b00525a",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "existing_source_duplicate"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab7cc1b000000001500ddd4",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ac49ee9000000000d029436",
+      "platform": "xiaohongshu",
+      "full_read": false,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a82c7e1000000000502a0fc",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa22a7d000000001001d757",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aaa326f000000002803554b",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ac5c2eb000000001303f5ca",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab8930f0000000015017f86",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aba13cc0000000015009baa",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aaaab980000000029017fba",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a9f7299000000002a005935",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a9145210000000026005a23",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "existing_source_evidence_or_round_supplement"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6a993b7900000000110302b6",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "existing_source_evidence_or_round_supplement"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa2579b0000000029014c80",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "existing_source_evidence_or_round_supplement"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa7d40b000000002601b231",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "existing_source_evidence_or_round_supplement"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab24065000000003401ba1f",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "existing_source_evidence_or_round_supplement"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa3d6f1000000002502ff06",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aba93b1000000001400210f",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "hold_quality_or_role_or_flow"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6abbc16d000000001a02911d",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ab2188e000000003a022016",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6ac20baa000000001500f821",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6abe4fb8000000000a01d712",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aba1e5b000000001a0252d3",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aacf9ab000000002601be1d",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "quality_candidate_pending_final_dedup"
+      ]
+    },
+    {
+      "url": "https://www.xiaohongshu.com/explore/6aa272af0000000026017f9c",
+      "platform": "xiaohongshu",
+      "full_read": true,
+      "groups": [
+        "xiaohongshu"
+      ],
+      "notes": [
+        "excluded"
+      ]
+    }
+  ],
+  "unopened_prior_xhs_cards": [
+    {
+      "note_id": "6a0320240000000006023ed4",
+      "title": "携程Agent开发二面 35min",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9ce4d50000000026018d6c",
+      "title": "百度agent面经9.6(有答案)",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a55ffcc00000000220095c4",
+      "title": "智元Agent算法-灵犀面经",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a92c5250000000003029aca",
+      "title": "貌似什么也没问，结束一瞬间以为g了",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9fdcf5000000002902fec1",
+      "title": "锐捷网络 Agent开发 AI面",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac5c43c0000000018010650",
+      "title": "Agent面试连环追问，你能坚持到第几关？",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "69fc777f00000000350259d7",
+      "title": "京东AI应用开发一面面经",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a3e89ae0000000006020ed0",
+      "title": "闪购AI应用开发一面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6aa90464000000002b027b34",
+      "title": "一上午面试了六个Agent开发，全是半吊子",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a94fb4e0000000025018dfc",
+      "title": "去哪儿秋招 AI应用开发AI面-面经",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a709352000000002201118c",
+      "title": "复盘字节AI应用开发一二面面试问题",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a16b3be000000003503b65c",
+      "title": "阿里淘天ai应用开发一面5.27",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69f9f8c5000000003503ac05",
+      "title": "携程AI应用开发一面面经",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6aa4a462000000002600925e",
+      "title": "文件",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab23e46000000003b004bb7",
+      "title": "泡池子了",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a43e278000000000702bf02",
+      "title": "阿里高德地图Al应用开发一面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab24111000000003303367e",
+      "title": "Agentic RAG与轨迹测评：Agent面试连环追问",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a23af7d000000000800323a",
+      "title": "Java后端转AI应用开发，面试官真正在考什么",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a81a75d000000003301df48",
+      "title": "AIAgent面试｜28道高频题+项目深挖｜可下载",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a5e3e7c0000000011006555",
+      "title": "大模型二面：Agentic RAG和普通RAG区别？",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a2bb8c3000000000702c270",
+      "title": "鹅厂 agent面试，被问 RAG，有点懵",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69f104770000000022026cf2",
+      "title": "记录下字节大模型面试：RAG篇",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69fe9279000000003501cd49",
+      "title": "面试官问：请详细介绍RAG如何进行数据清洗",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "69626cee000000002200b688",
+      "title": "大厂RAG项目必考面试题（实战干货）",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "695b9815000000001a0366a1",
+      "title": "12个关于RAG的面试题详解！🔥🔥",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a565079000000002103c4ab",
+      "title": "Agent八股之RAG问题带答案",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a992055000000000b0345dd",
+      "title": "Agent RAG八股文 | 11道高频面试题",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9f8102000000000b00d883",
+      "title": "金山软件 AI全栈一面",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9258770000000026035f69",
+      "title": "面经-去哪儿AI面-AI全栈工程师",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a8fff3e00000000260051c3",
+      "title": "一篇笔记读懂字节跳动 AI 全栈工程师！",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "69dcf5aa000000001a02a106",
+      "title": "字节AI全栈工程师面经（4月最新）",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a8d56500000000011012dab",
+      "title": "追觅科技ai agent全栈三面面经",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a97d9340000000028038c3f",
+      "title": "FDE目前都是落地个rag啊？",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a71e64b000000002c007539",
+      "title": "FDE 面经:面试45 分钟 重点问这 10 类问题",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac3820b0000000014002a2a",
+      "title": "FDE怎么进？面试和作品集",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab24aa9000000003a0203b6",
+      "title": "Agent岗面经-FDE怎么接住“我们要上AI”",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a8521ea00000000220123bd",
+      "title": "FDE前沿部署工程师高频面试题63道汇总",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6abc8890000000001b02c32c",
+      "title": "应届生想干fde了",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9f8080000000002a02e279",
+      "title": "FDE面试五关：最难那关通过率只有40%",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a6361ca000000001303f12e",
+      "title": "FDE工作月余有感",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a0d805e000000000800190b",
+      "title": "程序员和应届生尽量不要去做FDE",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9ecd27000000002a006619",
+      "title": "Agent面试，Harness成必考题",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a82ef030000000024024739",
+      "title": "agent面试中考察DeepSeek Harness的相关",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9941570000000012034bb0",
+      "title": "八月字节agent一面试题精选（带答案详解）",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a12c988000000003601c987",
+      "title": "Harness面试真的有难度，一手面试经验分享",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a3a49ea00000000060337f0",
+      "title": "汇总一些DeepSeek Harness岗位面经（附准备",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a9d0e2800000000260189ba",
+      "title": "【专业深挖】harness工程演进",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab0839a00000000120363db",
+      "title": "Agent Harness 面试的时候怎么说",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a4e6cb300000000210099fc",
+      "title": "字节AI应用后端开发一面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a4502e30000000016027711",
+      "title": "美团ai探索后端一面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a5219ab000000001502420c",
+      "title": "美团 Agent一面很难😭",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6a7bf6d600000000290337b2",
+      "title": "一上午面试了6个Agent开发，全是半吊子",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6aab5c5a0000000027015dd8",
+      "title": "去哪儿面经",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab8e0ff0000000012038165",
+      "title": "滴滴后端研发一面凉经",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac4cd52000000001203a15d",
+      "title": "AI开发岗大厂模拟面试复盘，打磨项目表达",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac45fc80000000015012b42",
+      "title": "腾讯数据后台一面面经",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac3cbc10000000015006627",
+      "title": "大三|BAT后端实习|手写八股笔记",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6abf5a4c0000000018007920",
+      "title": "这份Agent简历，我问3个问题就露馅了",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6abe25ce000000000d00bf2c",
+      "title": "美团后端一面｜2026-09-22 发布面经复盘",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6aba56c200000000020297d9",
+      "title": "2026 大厂 AI Agent 面试全攻略",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab91a850000000001008589",
+      "title": "OpenAI面经｜滑窗状态别无限长",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab08d85000000000b00cc12",
+      "title": "一上午面了6个AI大模型开发，全是半吊子",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac5c3d4000000001802bdaf",
+      "title": "腾讯大模型面经｜这些追问提前准备",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac4e1c5000000001203af7a",
+      "title": "被问怎么评估Agent效果，面试官沉默了",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac4b4ed000000001402ebbd",
+      "title": "阿里实习 Timeline｜AI Agent开发实习分享",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac4aad0000000001303edf4",
+      "title": "AI 工程师面试，KV Cache 居然是高频考点？",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6ac0fcc0000000001801b8f3",
+      "title": "这agent网站堪称伟大！！",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6abdf8030000000018005103",
+      "title": "28全栈百度timeline",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6abcc3a7000000001b021f8d",
+      "title": "京东Boss面：说下目前的Agent有那些瓶颈？",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6abb85eb0000000015017c87",
+      "title": "6大Agent面试问题， 很多人都会犯！",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6abb81e100000000120392ac",
+      "title": "Agent半吊子放心，你不会找不到工作的",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6abb7c810000000014039b89",
+      "title": "最后提醒一下Agent开发面试肚子里没墨水的",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6a8eafc8000000002003aa7f",
+      "title": "上岸字节Agent开发OC，突如其来惊喜",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a61d7f4000000000f0063e3",
+      "title": "老乡鸡 Agent 开发工程师一面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab0eb23000000003300bb6a",
+      "title": "字节到底在面什么鬼东西",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6ab0edb50000000034035c58",
+      "title": "字节一面凉经",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6aa3d3f5000000002900ea23",
+      "title": "腾讯宣讲进校园",
+      "next_action": "DEPRIORITIZE_BY_EXPLICIT_TITLE_OR_FRAMING_ONLY",
+      "full_read": false
+    },
+    {
+      "note_id": "6aa003ac0000000012026029",
+      "title": "秋招round1结束",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a92f123000000002303ed46",
+      "title": "8.27 百度后端二面",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a8f16a6000000000a00bbca",
+      "title": "今晚睡个好觉",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a8da151000000002400714f",
+      "title": "高强度面试的一天后",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a85c9be0000000029032bd1",
+      "title": "8.19 百度后端一面",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "6a85c38c000000002c0075b6",
+      "title": "8.19京东后端一面",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "69de48d4000000001d01c75b",
+      "title": "27届春招实习结算环节",
+      "next_action": "RETAIN_SECONDARY_UNRESOLVED_LEAD",
+      "full_read": false
+    },
+    {
+      "note_id": "69d757c70000000023020e20",
+      "title": "4.8字节头条ai全栈开发三面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69d719830000000023013e47",
+      "title": "4.7淘天ai应用二面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69d6691c0000000023013256",
+      "title": "4.7字节头条后台三面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69d603770000000023025706",
+      "title": "4.3小红书产品工程师二面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69d5ff880000000023023894",
+      "title": "4.1淘天ai应用一面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    },
+    {
+      "note_id": "69ca3d30000000001d01b14d",
+      "title": "3.27字节头条后台二面",
+      "next_action": "DEFER_OLDER_LEAD_NOT_EXCLUDED",
+      "full_read": false
+    }
+  ],
+  "blocker": {
+    "type": "官方滑块验证码",
+    "normal_attempts": 3,
+    "outcome": "未通过；停止重试，6条原图未完成",
+    "account_state": "仍见登录账号入口，未观察到登出"
+  },
+  "limitations": [
+    "当前结果窗口和固定线索队列完成分类，不能声称两平台全量覆盖或不存在遗漏。",
+    "90张旧卡仍只读标题/卡片，23较早线索、29次级线索和38标题低优先级线索没有完成原帖核验，均不是最终质量排除。",
+    "6条原图受验证码阻塞；不使用未见图片补题。",
+    "同账号同公司但独立投递不明的S123/S333只补充证据，不作独立流程。"
+  ],
+  "admissions": [
+    {
+      "source_id": "S362",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/3f8ed5409b9042d8994ecfef8d515b50",
+      "author_id": "904587198"
+    },
+    {
+      "source_id": "S363",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/12fbab6848d94244a4b65ef7bc6a8ac4",
+      "author_id": "541665091"
+    },
+    {
+      "source_id": "S364",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/discuss/773264718801707008",
+      "author_id": "696498346"
+    },
+    {
+      "source_id": "S365",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/81a00aeed69f4070af3078cfe832ff23",
+      "author_id": "166137982"
+    },
+    {
+      "source_id": "S366",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/13170819e3cd4d129c3bd91d4db8b749",
+      "author_id": "472439453"
+    },
+    {
+      "source_id": "S367",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/bb76c9109b8d4958ad46204f5da8609d",
+      "author_id": "546148058"
+    },
+    {
+      "source_id": "S368",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/discuss/933058120102739968",
+      "author_id": "641568663"
+    },
+    {
+      "source_id": "S369",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/603ec00b8b1f45e3b08bebc4072b5604",
+      "author_id": "171590444"
+    },
+    {
+      "source_id": "S370",
+      "platform": "nowcoder",
+      "url": "https://www.nowcoder.com/feed/main/detail/92efed84eb68493d82132e03b7e43ae0",
+      "author_id": "369008148"
+    },
+    {
+      "source_id": "S371",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6ab3cd62000000001802ad47",
+      "author_id": "6489ad82000000001f0046fd"
+    },
+    {
+      "source_id": "S372",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6aa3f385000000000b00032b",
+      "author_id": "66485b22000000001e00f7da"
+    },
+    {
+      "source_id": "S373",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6aace9f400000000250343e4",
+      "author_id": "645e4740000000001002a2d0"
+    },
+    {
+      "source_id": "S374",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6aadffa400000000260153ed",
+      "author_id": "6933202d0000000037008182"
+    },
+    {
+      "source_id": "S375",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6ab1279b0000000035022705",
+      "author_id": "64a0f763000000002a0357b2"
+    },
+    {
+      "source_id": "S376",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6ab9f69600000000150072fe",
+      "author_id": "62ccc5180000000002001e5d"
+    },
+    {
+      "source_id": "S377",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6a87c4b700000000080156f8",
+      "author_id": "60b10b9d000000000100af58"
+    },
+    {
+      "source_id": "S378",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6ab50e440000000018005f2a",
+      "author_id": "6618f45b00000000030315ae"
+    },
+    {
+      "source_id": "S379",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6ab4d0ff0000000018011bd7",
+      "author_id": "67b54787000000000e010d00"
+    },
+    {
+      "source_id": "S380",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6a8d6a1b0000000024005226",
+      "author_id": "60b10b9d000000000100af58"
+    },
+    {
+      "source_id": "S381",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6a9ea32b000000001001dc40",
+      "author_id": "6933202d0000000037008182"
+    },
+    {
+      "source_id": "S382",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6a570a900000000007022a2d",
+      "author_id": "673487f4000000001c01b966"
+    },
+    {
+      "source_id": "S383",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6abbc16d000000001a02911d",
+      "author_id": "61683900000000001f03c50d"
+    },
+    {
+      "source_id": "S384",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6ab2188e000000003a022016",
+      "author_id": "61ac4f150000000010004948"
+    },
+    {
+      "source_id": "S385",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6abe4fb8000000000a01d712",
+      "author_id": "6a03672c0000000002002802"
+    },
+    {
+      "source_id": "S386",
+      "platform": "xiaohongshu",
+      "url": "https://www.xiaohongshu.com/explore/6aacf9ab000000002601be1d",
+      "author_id": "5ea032ad0000000001006ca8"
+    }
+  ],
+  "curation_records": [
+    {
+      "packet": "nowcoder_core",
+      "key": "3f8ed5409b9042d8994ecfef8d515b50",
+      "company": "数字马力",
+      "author": "牛客904587198号",
+      "author_id": "904587198",
+      "decision": "dedup_clear_new_flow",
+      "reason": "数字马力无旧公司流程；Java/Python→Markdown/书籍知识→Agent持久化隔离→MCP/Codex题序与旧库不同。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.nowcoder.com/feed/main/detail/3f8ed5409b9042d8994ecfef8d515b50",
+      "title": "数字马力ai研发实习生面经",
+      "source_id": "S362"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "12fbab6848d94244a4b65ef7bc6a8ac4",
+      "company": "蚂蚁",
+      "author": "音律",
+      "author_id": "541665091",
+      "decision": "dedup_clear_new_flow",
+      "reason": "同公司旧S059/S169/S253/S276等项目和日期/作者均不同；当前JVM/代际GC→ES一致性→事务MQ→AI审核链独立，已明确转入目标岗位，保留基础题。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.nowcoder.com/feed/main/detail/12fbab6848d94244a4b65ef7bc6a8ac4",
+      "title": "蚂蚁智能体与大模型暑期实习一面面经",
+      "source_id": "S363"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "773264718801707008",
+      "company": "广州匿名小厂",
+      "author": "做梦都想做梦",
+      "author_id": "696498346",
+      "decision": "dedup_clear_new_flow",
+      "reason": "2025广州AI服务全栈，与S205的2026广州CodingAgent三阶段作业/异步Tool完全不同；匿名公司本身不否决本人明确AI业务。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.nowcoder.com/discuss/773264718801707008",
+      "title": "广州小厂面经（全栈实习）",
+      "source_id": "S364"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "81a00aeed69f4070af3078cfe832ff23",
+      "company": "商汤",
+      "author": "牛客166137982号",
+      "author_id": "166137982",
+      "decision": "dedup_clear_new_flow",
+      "reason": "2024商汤校招，与S113的2026暑期不同；症状语义检索→模型基础→Docker资源→反问落地职责，独立年份/身份/项目。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.nowcoder.com/feed/main/detail/81a00aeed69f4070af3078cfe832ff23",
+      "title": "商汤大模型应用开发工程师校招一面凉经",
+      "source_id": "S365"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "7cab90ca59084f64bc19d1cb13935937",
+      "company": "顺丰",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/7cab90ca59084f64bc19d1cb13935937",
+      "title": "顺丰 agent开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "c4c614b12d564af3b37c30c241072973",
+      "company": "Viture",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/c4c614b12d564af3b37c30c241072973",
+      "title": "viture agent平台开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "f9be60e7b3c54750a57b37d5d200d1e5",
+      "company": "卓驭",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/f9be60e7b3c54750a57b37d5d200d1e5",
+      "title": "卓驭 agent开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "e72c4b75edc245349f79e20d44834301",
+      "company": "平安银行",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/e72c4b75edc245349f79e20d44834301",
+      "title": "平安银行 AI开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "89dde87cceb142d09e90dead6e9e5aa3",
+      "company": "同花顺",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/89dde87cceb142d09e90dead6e9e5aa3",
+      "title": "同花顺 agent开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "5f3df51243ad425c83e81e359ce82c36",
+      "company": "小满科技",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/5f3df51243ad425c83e81e359ce82c36",
+      "title": "小满科技 agent开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "64e31a28581b4e21a1e8e1aee236b6b4",
+      "company": "基元律动",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/64e31a28581b4e21a1e8e1aee236b6b4",
+      "title": "基元律动 agent 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "9c52d114887148bd88dac675229d8dfe",
+      "company": "知识科技",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/9c52d114887148bd88dac675229d8dfe",
+      "title": "知识科技 数据agent 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "1d05dbe48b314a81804c2ffdd51ab569",
+      "company": "自变量",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/1d05dbe48b314a81804c2ffdd51ab569",
+      "title": "自变量 agent平台开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "aa720c49cec348fea797bf0731b06930",
+      "company": "长城证券",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/aa720c49cec348fea797bf0731b06930",
+      "title": "长城证券 AI全栈开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "be11801cff834c7f8731c210e7d15483",
+      "company": "广发证券",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/be11801cff834c7f8731c210e7d15483",
+      "title": "广发证券 AI研发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "f3a38b6580714965bfeac1cadeadabe9",
+      "company": "广州报业",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/f3a38b6580714965bfeac1cadeadabe9",
+      "title": "广州报业 agent开发 一面"
+    },
+    {
+      "packet": "nowcoder_core",
+      "key": "6af8a31964434012a95de8f4c16403b8",
+      "company": "memtensor",
+      "author": "赛文X",
+      "author_id": "125006155",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.nowcoder.com/feed/main/detail/6af8a31964434012a95de8f4c16403b8",
+      "title": "memtensor 全栈开发 一面"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "13170819e3cd4d129c3bd91d4db8b749",
+      "company": "字节跳动",
+      "author": "孝陵第一侍卫",
+      "decision": "dedup_clear_new_flow",
+      "reason": "FDE技术交付岗位由原帖实际职责确认；客户本地模型排障→智能体上架场景现场Prompt/验收→Context/RAG，旧FDE/字节来源未出现同公司同作者项目链。",
+      "source_increment_if_finalized": 1,
+      "baseline_source": null,
+      "author_id": "472439453",
+      "url": "https://www.nowcoder.com/feed/main/detail/13170819e3cd4d129c3bd91d4db8b749",
+      "title": "字节 AI FDE社招：三轮技术面与HR",
+      "source_id": "S366"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "bb76c9109b8d4958ad46204f5da8609d",
+      "company": "百度搜索框架",
+      "author": "汤鸡佬",
+      "decision": "dedup_clear_new_flow",
+      "reason": "百度搜索框架实际Agent职责由反问确认；1/6、1/16同人两轮，左/右视图/LIS常见题不能独立判复制，Claude SDK+Mem0+模型参数指标链不同旧S032/S111/S241等。",
+      "source_increment_if_finalized": 1,
+      "baseline_source": null,
+      "author_id": "546148058",
+      "url": "https://www.nowcoder.com/feed/main/detail/bb76c9109b8d4958ad46204f5da8609d",
+      "title": "百度搜索框架Agent日常实习一二面",
+      "source_id": "S367"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "933058120102739968",
+      "company": "携程",
+      "author": "鱼鱼Code",
+      "decision": "dedup_clear_new_flow",
+      "reason": "与S318 tydou携程SQL/MQ题序相近，但账号不同且鱼鱼本人9/24原评论明确前晚遇到同题，吻合9/23流程及9/24OC。是独立候选人遇到同组题，不据高频题相同误并。",
+      "source_increment_if_finalized": 1,
+      "baseline_source": null,
+      "author_id": "641568663",
+      "url": "https://www.nowcoder.com/discuss/933058120102739968",
+      "title": "携程AI应用开发实习一面（OC）",
+      "source_id": "S368"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "6204344a50a04c46a6220b2d73c426bc",
+      "company": "转转",
+      "author": "赛文X",
+      "decision": "exclude_existing_author_provenance",
+      "reason": "旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": null,
+      "author_id": "125006155",
+      "url": "https://www.nowcoder.com/feed/main/detail/6204344a50a04c46a6220b2d73c426bc",
+      "title": "转转FDE线下面试"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "603ec00b8b1f45e3b08bebc4072b5604",
+      "company": "百度",
+      "author": "muzimi_",
+      "decision": "dedup_clear_new_flow",
+      "reason": "本人后续明确百度智能体研发岗位；1/13缓存/索引/TCP队列/左视图/LIS链及1/15二面状态，与其他百度Source未同场。",
+      "source_increment_if_finalized": 1,
+      "baseline_source": null,
+      "author_id": "171590444",
+      "url": "https://www.nowcoder.com/feed/main/detail/603ec00b8b1f45e3b08bebc4072b5604",
+      "title": "百度智能体研发日常实习一面",
+      "source_id": "S369"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "fa23d7dd47324d11aa66cd9376ff21b8",
+      "company": "小红书",
+      "author": "Recall_15",
+      "decision": "existing_source_supplement",
+      "reason": "S123同作者同公司同视频Agent项目；8/5仅编辑日、轮次未明，无独立投递证据。作为同人同公司补充，0新Source，不断言已证实同次投递。冻结标题元数据保持不动。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": "S123",
+      "author_id": "404242346",
+      "url": "https://www.nowcoder.com/feed/main/detail/fa23d7dd47324d11aa66cd9376ff21b8",
+      "title": "小红书 Rednote AI native面经：S123同作者补充待合流程"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "924730985210458112",
+      "company": "百度",
+      "author": "SOLDIER_627",
+      "decision": "existing_source_supplement",
+      "reason": "S295同作者523469060百度9/2→9/15→9/21连续三轮；补一二面，0新Source。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": "S295",
+      "author_id": "523469060",
+      "url": "https://www.nowcoder.com/discuss/924730985210458112",
+      "title": "百度Agent后端：补S295一面与二面"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "60f381f558a848ceac18c666268dc7da",
+      "company": "腾讯CSIG元宝",
+      "author": "jhvhh",
+      "decision": "hold_role_or_source_quality",
+      "reason": "按采集卡的原始岗位/现场/历史来源排除缺口保留，不因主题匹配升级。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": null,
+      "author_id": "716599274",
+      "url": "https://www.nowcoder.com/feed/main/detail/60f381f558a848ceac18c666268dc7da",
+      "title": "腾讯CSIG元宝内容安全实习三轮技术面"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "3812928d155e4f00b7dfe37cb9807154",
+      "company": "小红书",
+      "author": "upc",
+      "decision": "hold_role_or_source_quality",
+      "reason": "按采集卡的原始岗位/现场/历史来源排除缺口保留，不因主题匹配升级。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": null,
+      "author_id": "459616638",
+      "url": "https://www.nowcoder.com/feed/main/detail/3812928d155e4f00b7dfe37cb9807154",
+      "title": "小红书PE一面"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "6e4bd17e2fa84e98b315a9113e211687",
+      "company": "腾讯WXG微信支付",
+      "author": "jhvhh",
+      "decision": "hold_role_or_source_quality",
+      "reason": "按当前原帖缺口保留；具体见采集卡。腾讯微信支付AI软件工厂任务很强，但实际招聘职责仍为作者推测，不越过岗位Gate。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": null,
+      "author_id": "716599274",
+      "url": "https://www.nowcoder.com/feed/main/detail/6e4bd17e2fa84e98b315a9113e211687",
+      "title": "腾讯WXG微信支付后台实习：AI软件工厂"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "9c23964be69d4cd19f38b1b1e74cd177",
+      "company": "腾讯（原场为CSIG云架构音视频）",
+      "author": "巧了我也是是",
+      "decision": "exclude_copied_or_non_target",
+      "reason": "已查更早原作者相同缺号/题序，原岗位非AI；新AI标题不能制造独立HUMAN-A。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": null,
+      "author_id": "357130392",
+      "url": "https://www.nowcoder.com/feed/main/detail/9c23964be69d4cd19f38b1b1e74cd177",
+      "title": "腾讯27实习AI应用开发一面分享（复制链排除）"
+    },
+    {
+      "packet": "nowcoder_extra",
+      "key": "66e688eed16e4708af18c3a5efdb62b3",
+      "company": "腾讯",
+      "author": "面试从容应对",
+      "decision": "hold_role_or_source_quality",
+      "reason": "按采集卡的原始岗位/现场/历史来源排除缺口保留，不因主题匹配升级。",
+      "source_increment_if_finalized": 0,
+      "baseline_source": "S158",
+      "author_id": "976602869",
+      "url": "https://www.nowcoder.com/feed/main/detail/66e688eed16e4708af18c3a5efdb62b3",
+      "title": "腾讯AI应用开发实习一面分享：S158同作者早贴待原场确认"
+    },
+    {
+      "packet": "nowcoder_curator",
+      "key": "92efed84eb68493d82132e03b7e43ae0",
+      "company": "九方智投",
+      "author": "小红不是绿",
+      "author_id": "369008148",
+      "decision": "dedup_clear_new_flow",
+      "reason": "旧361无该账号或九方流程。定点追源找回比XHS重发更早的本人原帖，RFF误写/学习项目追问与原编号相同，只计该牛客原作者一个流程。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.nowcoder.com/feed/main/detail/92efed84eb68493d82132e03b7e43ae0",
+      "title": null,
+      "source_id": "S370"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab3a129000000001a026504",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人真实性较好但实际目标岗位职责未核实",
+      "source_increment_if_finalized": 0,
+      "company": "美团",
+      "author": "2533",
+      "author_id": "6483162900000000100356f0",
+      "url": "https://www.xiaohongshu.com/explore/6ab3a129000000001a026504",
+      "title": "同济软件大四 ｜ 美团一面凉经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab00cc7000000002a00505f",
+      "decision": "exclude_source_quality",
+      "reason": "正文和4图均为整理题单，没有候选人第一人称复盘、作答状态、日期时长或真人互动叙述；“你的项目”“上段实习”等都是题目对候选人的第二人称，不证明发帖者本人经历",
+      "source_increment_if_finalized": 0,
+      "company": "美团",
+      "author": "Crystal",
+      "author_id": "64a4ca2e0000000025035145",
+      "url": "https://www.xiaohongshu.com/explore/6ab00cc7000000002a00505f",
+      "title": "美团Agent 面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a97b14c000000002902e7be",
+      "decision": "exclude_source_quality",
+      "reason": "没有候选人第一人称或现场经历，正文为两轮考察主题和准备建议",
+      "source_increment_if_finalized": 0,
+      "company": "美团",
+      "author": "中环流浪小妹",
+      "author_id": "647b4f3f0000000012035626",
+      "url": "https://www.xiaohongshu.com/explore/6a97b14c000000002902e7be",
+      "title": "美团Agent面经 一面二面复盘"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab3cd62000000001802ad47",
+      "company": "美团",
+      "author": "shallow",
+      "decision": "dedup_clear_new_flow",
+      "reason": "未见GIL/C++→RAG工业化→未明jev→栈队列→K组反转→Agent调用代码5处错仅发现3处同场链；未披露项目、术语保持缺口。",
+      "source_increment_if_finalized": 1,
+      "author_id": "6489ad82000000001f0046fd",
+      "url": "https://www.xiaohongshu.com/explore/6ab3cd62000000001802ad47",
+      "title": "美团agent开发一面",
+      "source_id": "S371"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa3f385000000000b00032b",
+      "company": "美团",
+      "author": "小红薯66495297",
+      "decision": "dedup_clear_new_flow",
+      "reason": "Checkpoint→MultiAgent→Redis BigKey→BM25→现场Prompt Injection→RestoreIP未写出链未入库；S294同算法属于不同公司和作者。",
+      "source_increment_if_finalized": 1,
+      "author_id": "66485b22000000001e00f7da",
+      "url": "https://www.xiaohongshu.com/explore/6aa3f385000000000b00032b",
+      "title": "美团agent日常实习一面",
+      "source_id": "S372"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aace9f400000000250343e4",
+      "company": "京东",
+      "author": "写代码的草草",
+      "decision": "dedup_clear_new_flow",
+      "reason": "京东旧S025/S056/S125/S185/S198/S247/S262/S274均不同作者/项目；向量库物理隔离→通用平台→AgenticRAG职责层→Skill粒度44项连续链独立。",
+      "source_increment_if_finalized": 1,
+      "author_id": "645e4740000000001002a2d0",
+      "url": "https://www.xiaohongshu.com/explore/6aace9f400000000250343e4",
+      "title": "27届京东Agent后端开发二面",
+      "source_id": "S373"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab896b300000000150061c4",
+      "decision": "hold_role_or_source_quality",
+      "reason": "HOLD_QUALITY_OR_ROLE",
+      "source_increment_if_finalized": 0,
+      "company": "京东",
+      "author": "周也在coding",
+      "author_id": "625bb3290000000021024938",
+      "url": "https://www.xiaohongshu.com/explore/6ab896b300000000150061c4",
+      "title": "京东后端实习（agent）一二面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab09603000000001203e713",
+      "decision": "exclude_source_quality",
+      "reason": "没有候选人第一人称/真实现场状态；正文含AI生成声明且题18标“新增”，无法确认哪些是本人真实被问；声明不是唯一排除理由",
+      "source_increment_if_finalized": 0,
+      "company": "京东",
+      "author": "绵绵冰圆子",
+      "author_id": "6916da1600000000370308d5",
+      "url": "https://www.xiaohongshu.com/explore/6ab09603000000001203e713",
+      "title": "京东AI Agent开发一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa7c277000000001103342e",
+      "decision": "exclude_source_quality",
+      "reason": "完整正文32编号与抹茶小熊同序高度重合，无第一人称经历；图3明确内容来自互联网分享的面经并持续分类汇总，图7是标准网络八股题库；是整理/教学资源内容",
+      "source_increment_if_finalized": 0,
+      "company": "京东",
+      "author": "小鱼在Coding",
+      "author_id": "6260a5680000000010009d0b",
+      "url": "https://www.xiaohongshu.com/explore/6aa7c277000000001103342e",
+      "title": "京东 AI Agent 开发岗面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aadffa400000000260153ed",
+      "company": "小鹏汽车",
+      "author": "朝阳区奶龙（秋招版）",
+      "decision": "dedup_clear_new_flow",
+      "reason": "同作者S346百度及本轮淘宝闪购均不同公司；小鹏旧S024为13分钟chunk逻辑，S321为另一作者端侧二面；当前两轮车载语音助手/单机每秒数百MB消息队列/快慢任务补偿链独立。AI初筛不收问题，真人两轮合并1来源。",
+      "source_increment_if_finalized": 1,
+      "author_id": "6933202d0000000037008182",
+      "url": "https://www.xiaohongshu.com/explore/6aadffa400000000260153ed",
+      "title": "27秋招 小鹏agent岗面经 已oc（左滑图片）",
+      "source_id": "S374"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab1279b0000000035022705",
+      "company": "科大讯飞",
+      "author": "烟酒生（硕博版）",
+      "decision": "dedup_clear_new_flow",
+      "reason": "科大旧S178/S179/S281/S314/S334/S358分别不同账号、项目与题链；本场30分钟按列表问的真人经历，SQL/装饰器/Java缓存/BM25/LoRA/CodingAgent设计链独立，不把像AI的比喻当自动面。",
+      "source_increment_if_finalized": 1,
+      "author_id": "64a0f763000000002a0357b2",
+      "url": "https://www.xiaohongshu.com/explore/6ab1279b0000000035022705",
+      "title": "科大讯飞Agent开发一面",
+      "source_id": "S375"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab9f69600000000150072fe",
+      "company": "理想",
+      "author": "坐标旅人",
+      "decision": "dedup_clear_new_flow",
+      "reason": "理想此前低密度候选为337911061，非当前坐标旅人；动态Skill→我要退了歧义→grill-me→errAnalyst/Codex→DeepSeekHarness连续链未收。S128虽有grill-me概念，系OPPO不同公司/场次。",
+      "source_increment_if_finalized": 1,
+      "author_id": "62ccc5180000000002001e5d",
+      "url": "https://www.xiaohongshu.com/explore/6ab9f69600000000150072fe",
+      "title": "理想Agent开发面经（含timeline）",
+      "source_id": "S376"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aba740600000000180111f9",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人/技术细节充分，但目标Agent应用岗位职责未核实；不把候选人个人Agent项目经历自动当雇主岗位职责",
+      "source_increment_if_finalized": 0,
+      "company": "字节跳动",
+      "author": "喝牛奶会长高吗",
+      "author_id": "61a5e7eb000000001000dee2",
+      "url": "https://www.xiaohongshu.com/explore/6aba740600000000180111f9",
+      "title": "27 秋招字节 AI Agent 一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a87c4b700000000080156f8",
+      "company": "快手",
+      "author": "小徐在coding（字节离职备战秋招版）",
+      "decision": "dedup_clear_new_flow",
+      "reason": "本人设备没配置AI工具而改手写LRU，LangGraph→MCP参数错→人工介入→分表/慢SQL/MQ链独立；与同作者阿里不同公司。",
+      "source_increment_if_finalized": 1,
+      "author_id": "60b10b9d000000000100af58",
+      "url": "https://www.xiaohongshu.com/explore/6a87c4b700000000080156f8",
+      "title": "快手AI应用开发一面面经",
+      "source_id": "S377"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a7c5ecd000000002500b9b7",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人和真人证据充分，但实际部门职责与目标范围存在冲突；仅公开四组技术项目问题，未披露更多深层追问；待确认应用工程职责后再评估正式A档",
+      "source_increment_if_finalized": 0,
+      "company": "快手",
+      "author": "端妃你不要再喝红花了",
+      "author_id": "6727b371000000001d02c315",
+      "url": "https://www.xiaohongshu.com/explore/6a7c5ecd000000002500b9b7",
+      "title": "27秋招快手kstarAI应用研发一面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a848029000000003303216d",
+      "decision": "hold_role_or_source_quality",
+      "reason": "真人本人证据通过，但未能用实际业务或完整题目核实AI应用岗位边界",
+      "source_increment_if_finalized": 0,
+      "company": "快手",
+      "author": "1",
+      "author_id": "610f726f000000000100b814",
+      "url": "https://www.xiaohongshu.com/explore/6a848029000000003303216d",
+      "title": "快手秋招一面（AI应用开发）"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a9a3691000000002900dc8b",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人/现场和技术具体性较好，但实际岗位应用/策略算法边界未核实",
+      "source_increment_if_finalized": 0,
+      "company": "快手",
+      "author": "multi（秋招版）",
+      "author_id": "5b83e6a25424e20001cb15b2",
+      "url": "https://www.xiaohongshu.com/explore/6a9a3691000000002900dc8b",
+      "title": "快star-ai应用1面面经（凉经）"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aab67d4000000002a02ff2f",
+      "decision": "hold_role_or_source_quality",
+      "reason": "虽有第一人称震惊叙述，但全部多轮题单缺逐轮现场/作答变化，缺本人具体项目背景、面试时长/日期/结果；三技术轮和HR呈高度齐整总结，当前无法核实全部轮次属于本人完整实面；不因稀有多模态问题降低A档门槛",
+      "source_increment_if_finalized": 0,
+      "company": "快手",
+      "author": "阿码袋面包通过",
+      "author_id": "61be98a100000000100052bb",
+      "url": "https://www.xiaohongshu.com/explore/6aab67d4000000002a02ff2f",
+      "title": "快手AI Agent面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aba4800000000000202a62f",
+      "decision": "exclude_source_quality",
+      "reason": "完整正文仅标题标签，5图全为分类题单，无本人候选人叙述、具体作答状态、互动或结果；第二人称“你项目”不等于作者本人经历",
+      "source_increment_if_finalized": 0,
+      "company": "小米",
+      "author": "luna今天写日报了吗",
+      "author_id": "6a7c45fd0000000013003806",
+      "url": "https://www.xiaohongshu.com/explore/6aba4800000000000202a62f",
+      "title": "小米AI Agent开发一面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab3ac86000000000a026e1c",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人和真人互动明确，但目标岗位应用/训练边界未核实；一面RAG/Skill细问未给出，二面可读技术多为训练相关，不用来扩目标基础频率",
+      "source_increment_if_finalized": 0,
+      "company": "华为",
+      "author": "山田リョウ",
+      "author_id": "660637b0000000000600e748",
+      "url": "https://www.xiaohongshu.com/explore/6ab3ac86000000000a026e1c",
+      "title": "华为线下面入池"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab48eff00000000140393b7",
+      "decision": "exclude_source_quality",
+      "reason": "真人本人证据充分，但没有可核验的具体技术题或深层追问内容；岗位模型训练与应用职责边界亦不清",
+      "source_increment_if_finalized": 0,
+      "company": "华为",
+      "author": "汐宇🍃",
+      "author_id": "662470ac0000000007005082",
+      "url": "https://www.xiaohongshu.com/explore/6ab48eff00000000140393b7",
+      "title": "华为凉经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab62556000000001b01ef68",
+      "decision": "hold_role_or_source_quality",
+      "reason": "正文为29项题单和轮次时长；没有明确候选人第一人称现场状态或互动；岗位应用边界也需更具体佐证",
+      "source_increment_if_finalized": 0,
+      "company": "华为",
+      "author": "土豆天使怒种西红柿",
+      "author_id": "5f0f04080000000001001a93",
+      "url": "https://www.xiaohongshu.com/explore/6ab62556000000001b01ef68",
+      "title": "华为AI开发面试"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ac49190000000001203b8b7",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人和真人证据强，但主要技术深挖以用时概述，未披露具体问题；可核技术主要为宽泛Redis/MQ/线程池与链表；滑动窗口题面不清，不能据不确定字句归一化具体算法",
+      "source_increment_if_finalized": 0,
+      "company": "华为",
+      "author": "COISINI.",
+      "author_id": "62eba133000000001e01d3a2",
+      "url": "https://www.xiaohongshu.com/explore/6ac49190000000001203b8b7",
+      "title": "华为秋招线下面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aba4f290000000018012c42",
+      "company": "超聚变",
+      "author": "山田リョウ",
+      "decision": "hold_role_quality",
+      "reason": "FDE称谓与候选人RAG实习提问不足确认实际职责以应用落地为主；未给岗位方向答复。",
+      "source_increment_if_finalized": 0,
+      "author_id": "660637b0000000000600e748",
+      "url": "https://www.xiaohongshu.com/explore/6aba4f290000000018012c42",
+      "title": "超聚变 FDE"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa3a2de00000000260153b0",
+      "decision": "hold_role_or_source_quality",
+      "reason": "匿名公司本身不否决；当前缺本人明确经历/状态叙述，题单虽深但候选人身份链还需核实",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "科研fw",
+      "author_id": "619ecdc5000000001000b16d",
+      "url": "https://www.xiaohongshu.com/explore/6aa3a2de00000000260153b0",
+      "title": "秋招第二面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aadfdbd000000002900eaca",
+      "company": "阿里云",
+      "author": "LazyRedeemer",
+      "decision": "hold_role_quality",
+      "reason": "TAM/FDE业务描述包含训练/Agent/云服务保障，实际目标岗位职责未闭环；正文复盘答法与问法混合，质量仍需核，不因可提取技术问法升级。",
+      "source_increment_if_finalized": 0,
+      "author_id": "6402b2c4000000001002976c",
+      "url": "https://www.xiaohongshu.com/explore/6aadfdbd000000002900eaca",
+      "title": "电话技术面竟然…"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa61cf6000000002802975e",
+      "decision": "exclude_source_quality",
+      "reason": "目标方向不匹配；FDE缩写不自动代表Applied AI；除泛项目深挖外只公开SQL留存率，信息密度亦不足",
+      "source_increment_if_finalized": 0,
+      "company": "快手",
+      "author": "Riffizzzzz",
+      "author_id": "650650e7000000001702392d",
+      "url": "https://www.xiaohongshu.com/explore/6aa61cf6000000002802975e",
+      "title": "快手FDE数据研发一面凉经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a93b79c0000000024005c39",
+      "decision": "access_blocked",
+      "reason": "ACCESS_BLOCKED_IMAGE_UNVERIFIED",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "Offer面试官",
+      "author_id": "64d8e1be000000000100f962",
+      "url": "https://www.xiaohongshu.com/explore/6a93b79c0000000024005c39",
+      "title": "蚂蚁 AI Agent 开发秋招一面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab1ee3b000000003003ce80",
+      "decision": "access_blocked",
+      "reason": "ACCESS_BLOCKED_IMAGE_UNVERIFIED",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "程序员峰哥",
+      "author_id": "63572290000000001901d19a",
+      "url": "https://www.xiaohongshu.com/explore/6ab1ee3b000000003003ce80",
+      "title": "科大讯飞贼难Agent面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa7af1c00000000120341f5",
+      "decision": "access_blocked",
+      "reason": "ACCESS_BLOCKED_IMAGE_UNVERIFIED",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "每天学一点面经",
+      "author_id": "68d48f45000000002103ced1",
+      "url": "https://www.xiaohongshu.com/explore/6aa7af1c00000000120341f5",
+      "title": "阿里 Agent 开发面经 9.17"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa7ab44000000002b003396",
+      "decision": "access_blocked",
+      "reason": "ACCESS_BLOCKED_IMAGE_UNVERIFIED",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "每天学一点面经",
+      "author_id": "68d48f45000000002103ced1",
+      "url": "https://www.xiaohongshu.com/explore/6aa7ab44000000002b003396",
+      "title": "小红薯Agent开发一面 9.16"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ac5bb7b0000000018016fff",
+      "decision": "access_blocked",
+      "reason": "ACCESS_BLOCKED_IMAGE_UNVERIFIED",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "neo技术日记",
+      "author_id": "6942696600000000030126be",
+      "url": "https://www.xiaohongshu.com/explore/6ac5bb7b0000000018016fff",
+      "title": "摩尔线程Al Agent 三轮技术面|面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aaa12f30000000026015126",
+      "decision": "access_blocked",
+      "reason": "ACCESS_BLOCKED_IMAGE_UNVERIFIED",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "多吃碳水啵",
+      "author_id": "6618f45b00000000030315ae",
+      "url": "https://www.xiaohongshu.com/explore/6aaa12f30000000026015126",
+      "title": "中兴一面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa229ee0000000011036825",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人经历有证据，但目标岗位实际职责仍不足；项目细节多未披露，不补想象题",
+      "source_increment_if_finalized": 0,
+      "company": "SHEIN",
+      "author": "顶尖耐面王～周也",
+      "author_id": "69cb93880000000032026fd8",
+      "url": "https://www.xiaohongshu.com/explore/6aa229ee0000000011036825",
+      "title": "Shein Agent开发秋招 一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aab610d000000001103407d",
+      "company": "海尔智家",
+      "decision": "hold_author_provenance",
+      "reason": "同账号68ea0465的九方帖已发现完整异账号同文链，尚无本人归属闭环；本帖虽有第一人称和团队反问，暂缓核原作者，不直接声称已证明转载。",
+      "source_increment_if_finalized": 0,
+      "author": "周也要努力！",
+      "author_id": "68ea0465000000003702ad82",
+      "url": "https://www.xiaohongshu.com/explore/6aab610d000000001103407d",
+      "title": "海尔智家 AIAgent开发 秋招一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a88198b000000003b017ddc",
+      "decision": "exclude_source_quality",
+      "reason": "无本人叙事，正文图均以标准答案和准备建议为主，“真实复盘”标签不等于本人证据；时长正文/图片不一致；算法只有常考题、反问为参考，不是真实面试记录",
+      "source_increment_if_finalized": 0,
+      "company": "网易",
+      "author": "勇哥的程序员日记",
+      "author_id": "68e8bce8000000003703380f",
+      "url": "https://www.xiaohongshu.com/explore/6a88198b000000003b017ddc",
+      "title": "网易 Agent 开发（游戏/互娱方向）二面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a9d0c3a0000000011036c96",
+      "decision": "exclude_source_quality",
+      "reason": "正文明确私信索取已整理Agent题库，属于资源导流；没有本人作答/经历/真实现场状态，三轮为题单",
+      "source_increment_if_finalized": 0,
+      "company": "阿里",
+      "author": "唯心不易",
+      "author_id": "6a4f69aa0000000010000400",
+      "url": "https://www.xiaohongshu.com/explore/6a9d0c3a0000000011036c96",
+      "title": "阿里 AI Agent 校招三轮面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a6ff8bd000000003302dea6",
+      "decision": "hold_role_or_source_quality",
+      "reason": "泛述三轮艰难、答浅被冷笑/边界追问，但没有明确本人项目事实、具体答错处、轮次日期/结果；长题单高度全面不替代真人本人质量；先交curator核验",
+      "source_increment_if_finalized": 0,
+      "company": "追觅科技",
+      "author": "程序员峰哥",
+      "author_id": "63572290000000001901d19a",
+      "url": "https://www.xiaohongshu.com/explore/6a6ff8bd000000003302dea6",
+      "title": "追觅科技 AI Agent 全栈三面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab3bc3500000000180079a2",
+      "decision": "hold_role_or_source_quality",
+      "reason": "有一周后挂、压力确认等现场背景，但公开主要是考点/方案汇总；不把NAS架构答案、13→4min业绩或泛主题扩写成未披露实问",
+      "source_increment_if_finalized": 0,
+      "company": "小红书RedStar",
+      "author": "戳戳程序员",
+      "author_id": "694e8e080000000037033210",
+      "url": "https://www.xiaohongshu.com/explore/6ab3bc3500000000180079a2",
+      "title": "1. 小红书RedStar AI全栈一二面面经｜现在面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab50e440000000018005f2a",
+      "company": "蚂蚁",
+      "author": "多吃碳水啵",
+      "decision": "dedup_clear_new_flow",
+      "reason": "作者已有S358科大讯飞、S359小红书，当前蚂蚁为不同公司流程；沙箱/SkillPlugin→缓存故障→浏览器网络→Chatbot设计→线程交替链未见蚂蚁旧场。",
+      "source_increment_if_finalized": 1,
+      "author_id": "6618f45b00000000030315ae",
+      "url": "https://www.xiaohongshu.com/explore/6ab50e440000000018005f2a",
+      "title": "蚂蚁智能体与大模型应用开发一面面经",
+      "source_id": "S378"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa3ac1f000000002b01277e",
+      "decision": "exclude_source_quality",
+      "reason": "真人体验第一人称明确，但无可用具体技术题/追问",
+      "source_increment_if_finalized": 0,
+      "company": "蚂蚁",
+      "author": "EH",
+      "author_id": "62794a8f000000002102257d",
+      "url": "https://www.xiaohongshu.com/explore/6aa3ac1f000000002b01277e",
+      "title": "蚂蚁aiagent一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab4d0ff0000000018011bd7",
+      "company": "蚂蚁集团",
+      "author": "Ocean_Cat（27秋招海头亡）",
+      "author_id": "67b54787000000000e010d00",
+      "decision": "dedup_clear_new_flow",
+      "reason": "独立作者及8/30投递、9/15一面、9/23二面、9/24挂时间线；Skill轨迹筛选聚类→金融财保自进化→Memory文件Review/重排→并发验真链未见旧蚂蚁来源。二面只记状态，不补未公开题。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.xiaohongshu.com/explore/6ab4d0ff0000000018011bd7",
+      "title": "蚂蚁集团，智能体与大模型应用工程面经",
+      "source_id": "S379"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a8eea60000000002a03ae51",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人证据与岗位较好，但只3项具体技术题，实习/Agent/算法深问大多未公开，A档密度不足",
+      "source_increment_if_finalized": 0,
+      "company": "蚂蚁",
+      "author": "嗯嗯",
+      "author_id": "6092a2a1000000000101e96e",
+      "url": "https://www.xiaohongshu.com/explore/6a8eea60000000002a03ae51",
+      "title": "2026/8/25 蚂蚁一面记录"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a7eb87600000000240268c1",
+      "decision": "exclude_source_quality",
+      "reason": "实际岗位应用职责不明且有纯后端错配描述；公开内容为流程概述，无足够具体题面",
+      "source_increment_if_finalized": 0,
+      "company": "阿里",
+      "author": "布吉岛",
+      "author_id": "67322352000000001c019a1b",
+      "url": "https://www.xiaohongshu.com/explore/6a7eb87600000000240268c1",
+      "title": "秋招第二面，阿里AI应用"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a8d6a1b0000000024005226",
+      "company": "阿里控股",
+      "author": "小徐在coding（字节离职备战秋招版）",
+      "decision": "dedup_clear_new_flow",
+      "reason": "约瑟夫环→栈表达式/Dijkstra→Java/Python→长任务重启恢复→推荐召回端到端Agent链未见旧阿里来源；非同作者快手场。",
+      "source_increment_if_finalized": 1,
+      "author_id": "60b10b9d000000000100af58",
+      "url": "https://www.xiaohongshu.com/explore/6a8d6a1b0000000024005226",
+      "title": "阿里控股AI应用研发一面面经",
+      "source_id": "S380"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a9ea32b000000001001dc40",
+      "company": "阿里—淘宝闪购",
+      "author": "朝阳区奶龙（秋招版）",
+      "decision": "dedup_clear_new_flow",
+      "reason": "作者S346百度Harness为不同公司；当前淘宝闪购8/20、8/25及HR独立流程，Intent准确率/错误类别→工具A字段变更→replan/SSE链及个人背景连续。",
+      "source_increment_if_finalized": 1,
+      "author_id": "6933202d0000000037008182",
+      "url": "https://www.xiaohongshu.com/explore/6a9ea32b000000001001dc40",
+      "title": "27秋招 阿里ai研发面经 已意向书（左滑查看",
+      "source_id": "S381"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab0f508000000003300a1f1",
+      "decision": "hold_role_or_source_quality",
+      "reason": "技术题链详细，但未能核实候选人本人和真实现场状态；不单靠具体题量通过HUMAN-A",
+      "source_increment_if_finalized": 0,
+      "company": "淘天",
+      "author": "小小鱼Agent",
+      "author_id": "693140c00000000037004218",
+      "url": "https://www.xiaohongshu.com/explore/6ab0f508000000003300a1f1",
+      "title": "淘天ai应用一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab0f4c6000000003302e74c",
+      "decision": "hold_role_or_source_quality",
+      "reason": "本人/岗位真实明确，但公开技术只笼统课程知识及一道算法追问，信息密度不足A档",
+      "source_increment_if_finalized": 0,
+      "company": "字节跳动—飞书多维表格",
+      "author": "momo",
+      "author_id": "6145fd7c0000000002019aee",
+      "url": "https://www.xiaohongshu.com/explore/6ab0f4c6000000003302e74c",
+      "title": "字节一面凉经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a570a900000000007022a2d",
+      "company": "小绿书（原文别称，未擅自映射）",
+      "author": "坚持的迹寒（Agent版）",
+      "author_id": "673487f4000000001c01b966",
+      "decision": "dedup_clear_new_flow",
+      "reason": "匿名别称“小绿书”保持未映射公司；本人父子三级文档→TinyBERT意图92%评测→LRU记忆淘汰被追问→CC/OC/Hermes→告警Agent代码超窗连续链，旧库无同作者或同场。S329评测集、S214按需加载只是共同主题。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.xiaohongshu.com/explore/6a570a900000000007022a2d",
+      "title": "小绿书agent一面（已挂）",
+      "source_id": "S382"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa7a2ee0000000012026776",
+      "decision": "hold_role_or_source_quality",
+      "reason": "有本人泛叙述和一题“不会”，但三轮题单中的个人项目内容、具体实现/指标/临场连续对话披露有限；60题高度整齐不是单独排除理由；先交curator复核真实性强度，不因数量多降低A档门槛",
+      "source_increment_if_finalized": 0,
+      "company": "小红书",
+      "author": "摸鱼敲代码",
+      "author_id": "6a9285380000000013021800",
+      "url": "https://www.xiaohongshu.com/explore/6aa7a2ee0000000012026776",
+      "title": "小红书Agent开发三轮面经，详细的"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a5f950e00000000060121ce",
+      "decision": "hold_role_or_source_quality",
+      "reason": "真人本人技术内容较强，但四场流程/公司关系未明确；建议curator按一个匿名多场簇保守收或全部HOLD，不能自动四倍计数",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "OSAKO",
+      "author_id": "60eddae50000000001007abb",
+      "url": "https://www.xiaohongshu.com/explore/6a5f950e00000000060121ce",
+      "title": "AI 应用开发一天四面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aafb8d10000000012027bef",
+      "company": "新凯来",
+      "author": "MorningRainn",
+      "author_id": "66021bdb000000000b00c5b7",
+      "decision": "hold_role_scope",
+      "reason": "未明示正式岗位，候选人视频RAG、QLoRA、牙科Agent项目不能证明招聘职责；通过面试截图只补第一人称，不补Role Scope。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.xiaohongshu.com/explore/6aafb8d10000000012027bef",
+      "title": "秋招新凯来全流程面经(已入池)"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a55e70e000000001700b9cd",
+      "decision": "hold_role_or_source_quality",
+      "reason": "岗位范围未核实；图片后3页和正文含查找面经平台的推广/教程内容，需按来源质量规则保守审查",
+      "source_increment_if_finalized": 0,
+      "company": "腾讯云—技术与产品方向",
+      "author": "法玛斯的女主人",
+      "author_id": "5e9cec89000000000100154d",
+      "url": "https://www.xiaohongshu.com/explore/6a55e70e000000001700b9cd",
+      "title": "面完腾讯全栈开发嘴都张不开了（已更新面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a9a89a900000000120354b1",
+      "decision": "exclude_source_quality",
+      "reason": "全文主要标准答案，明确“必问”“美团必考”“精简满分回答”“HR高频精简问答”；无本人经历/互动/状态；回答中的“我”是示范回答，不能当真人候选人证据",
+      "source_increment_if_finalized": 0,
+      "company": "美团",
+      "author": "困困",
+      "author_id": "69a3eff600000000210066d0",
+      "url": "https://www.xiaohongshu.com/explore/6a9a89a900000000120354b1",
+      "title": "美团aiagent开发面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab8d9ce00000000180124f6",
+      "company": "九方智投",
+      "decision": "duplicate_recovered_original",
+      "reason": "与本轮找回牛客92efed84.../369008148同题序、RFF原错字和第13题感受一致；牛客9/24早于XHS9/27，跨账号未证明同人，XHS新增0。",
+      "source_increment_if_finalized": 0,
+      "author": "周也要努力！",
+      "author_id": "68ea0465000000003702ad82",
+      "url": "https://www.xiaohongshu.com/explore/6ab8d9ce00000000180124f6",
+      "title": "九方智投 agent 一面凉经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab9dfff000000000b00525a",
+      "company": "4399",
+      "decision": "duplicate_existing_source",
+      "reason": "S316原作者403525033 b040e00...与本图逐号一致，十万日志/SQL验错/90%指标/内部团队20余人及现场me语境相同；未证实跨账号同人，不作为新第一人称来源。",
+      "source_increment_if_finalized": 0,
+      "author": "顶尖耐面王～周也",
+      "author_id": "69cb93880000000032026fd8",
+      "url": "https://www.xiaohongshu.com/explore/6ab9dfff000000000b00525a",
+      "title": "4399-agent开发面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab7cc1b000000001500ddd4",
+      "decision": "exclude_source_quality",
+      "reason": "EXCLUDE_EXPLICIT_COMPILATION",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "梦嘉的嵌入式笔记",
+      "author_id": "5fcb22b900000000010042b2",
+      "url": "https://www.xiaohongshu.com/explore/6ab7cc1b000000001500ddd4",
+      "title": "影石创新AI Agent 面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ac49ee9000000000d029436",
+      "decision": "exclude_source_quality",
+      "reason": "EXCLUDE_EXPLICIT_REPOST",
+      "source_increment_if_finalized": 0,
+      "company": "未明",
+      "author": "噜噜蹲面经",
+      "author_id": "6aac4a3c000000000301c829",
+      "url": "https://www.xiaohongshu.com/explore/6ac49ee9000000000d029436",
+      "title": "迅雷 Agent 一面｜记忆、RAG、Skill 与 MCP"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a82c7e1000000000502a0fc",
+      "decision": "hold_role_or_source_quality",
+      "reason": "职责边界未核实，正文较多标准备考答法；不以把答案剥离作为自动通过质量的依据",
+      "source_increment_if_finalized": 0,
+      "company": "字节",
+      "author": "zed(秋招版)",
+      "author_id": "699441250000000021021acb",
+      "url": "https://www.xiaohongshu.com/explore/6a82c7e1000000000502a0fc",
+      "title": "字节Agent评测一面复盘"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa22a7d000000001001d757",
+      "company": "安克创新",
+      "decision": "hold_author_provenance",
+      "reason": "同账号68ea0465的九方帖已发现完整异账号同文链，尚无本人归属闭环；本帖本人经历需独立追原，不根据第一人称文字直接放行。",
+      "source_increment_if_finalized": 0,
+      "author": "周也要努力！",
+      "author_id": "68ea0465000000003702ad82",
+      "url": "https://www.xiaohongshu.com/explore/6aa22a7d000000001001d757",
+      "title": "安克创新Agent开发秋招一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aaa326f000000002803554b",
+      "decision": "hold_role_or_source_quality",
+      "reason": "实际岗位智能体算法，应用职责未证实",
+      "source_increment_if_finalized": 0,
+      "company": "百度",
+      "author": "Real",
+      "author_id": "6228beac000000001000fae3",
+      "url": "https://www.xiaohongshu.com/explore/6aaa326f000000002803554b",
+      "title": "9.15 百度智能体算法一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ac5c2eb000000001303f5ca",
+      "decision": "exclude_source_quality",
+      "reason": "无本人叙述、作答状态或可核流程，只有分类题单；作者身份和搬运风险未闭环；不能靠长题单升级",
+      "source_increment_if_finalized": 0,
+      "company": "浩鲸科技",
+      "author": "顶尖耐面王～周也",
+      "author_id": "69cb93880000000032026fd8",
+      "url": "https://www.xiaohongshu.com/explore/6ac5c2eb000000001303f5ca",
+      "title": "浩鲸科技 Agent开发秋招一面"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab8930f0000000015017f86",
+      "decision": "hold_role_or_source_quality",
+      "reason": "正文是完整工程题单加泛面试官评价，无明确本人作答/具体项目状态或结果",
+      "source_increment_if_finalized": 0,
+      "company": "字节",
+      "author": "软软要努力（Agent智能体日记）",
+      "author_id": "66503b280000000007005454",
+      "url": "https://www.xiaohongshu.com/explore/6ab8930f0000000015017f86",
+      "title": "字节agent开发一面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aba13cc0000000015009baa",
+      "company": "小红书",
+      "author": "全栈 agent 大王",
+      "author_id": "61f00f840000000010006f03",
+      "decision": "hold_first_person_role",
+      "reason": "第一人称“没手撕”有线索，但缺具体作答互动，AI全栈实际职责未明；暂缓，不根据昵称判断内容号或虚构。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.xiaohongshu.com/explore/6aba13cc0000000015009baa",
+      "title": "9.22 xhs AI全栈  一面 竟然没有手撕题"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aaaab980000000029017fba",
+      "decision": "hold_role_or_source_quality",
+      "reason": "大段标准答法包装且无本人现场状态；实际职责也未锁定目标应用方向",
+      "source_increment_if_finalized": 0,
+      "company": "字节",
+      "author": "全栈 agent 大王",
+      "author_id": "61f00f840000000010006f03",
+      "url": "https://www.xiaohongshu.com/explore/6aaaab980000000029017fba",
+      "title": "9.15 字节二面面经（AI 全栈）"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a9f7299000000002a005935",
+      "decision": "hold_role_or_source_quality",
+      "reason": "全文题目整理加总结，缺明确本人作答、互动细节与结果；不能由同作者XHS帖借身份证据通过",
+      "source_increment_if_finalized": 0,
+      "company": "字节",
+      "author": "全栈 agent 大王",
+      "author_id": "61f00f840000000010006f03",
+      "url": "https://www.xiaohongshu.com/explore/6a9f7299000000002a005935",
+      "title": "9.07 字节ai全栈1面-面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a9145210000000026005a23",
+      "decision": "existing_source_supplement",
+      "reason": "bffc同账号、诊断Agent同项目与一二三面时间线连续；只补既有S329，零新增。",
+      "source_increment_if_finalized": 0,
+      "company": "字节跳动",
+      "author": "bffc",
+      "author_id": "63ecfa2e000000002601121c",
+      "url": "https://www.xiaohongshu.com/explore/6a9145210000000026005a23",
+      "title": "字节跳动 agent开发工程师 一面面经",
+      "baseline_source": "S329"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6a993b7900000000110302b6",
+      "decision": "existing_source_supplement",
+      "reason": "bffc同账号、诊断Agent同项目与一二三面时间线连续；只补既有S329，零新增。",
+      "source_increment_if_finalized": 0,
+      "company": "字节跳动",
+      "author": "bffc",
+      "author_id": "63ecfa2e000000002601121c",
+      "url": "https://www.xiaohongshu.com/explore/6a993b7900000000110302b6",
+      "title": "字节 agent开发 二面 面经",
+      "baseline_source": "S329"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa2579b0000000029014c80",
+      "decision": "existing_source_supplement",
+      "reason": "SOLDIER_627/Soldier跨平台同场，76/59分钟与故障诊断Skill/视频项目题链完全对应；以完整图片补旧序列，零新增。",
+      "source_increment_if_finalized": 0,
+      "company": "美团",
+      "author": "Soldier",
+      "author_id": "63044ffc0000000012000359",
+      "url": "https://www.xiaohongshu.com/explore/6aa2579b0000000029014c80",
+      "title": "美团AI后端一面",
+      "baseline_source": "S280"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa7d40b000000002601b231",
+      "decision": "existing_source_supplement",
+      "reason": "SOLDIER_627/Soldier跨平台同场，76/59分钟与故障诊断Skill/视频项目题链完全对应；以完整图片补旧序列，零新增。",
+      "source_increment_if_finalized": 0,
+      "company": "美团",
+      "author": "Soldier",
+      "author_id": "63044ffc0000000012000359",
+      "url": "https://www.xiaohongshu.com/explore/6aa7d40b000000002601b231",
+      "title": "美团 AI 后端二面",
+      "baseline_source": "S280"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab24065000000003401ba1f",
+      "decision": "existing_source_supplement",
+      "reason": "Soldier同候选人度小满后续二面44分钟，补到S294，零新增。",
+      "source_increment_if_finalized": 0,
+      "company": "度小满",
+      "author": "Soldier",
+      "author_id": "63044ffc0000000012000359",
+      "url": "https://www.xiaohongshu.com/explore/6ab24065000000003401ba1f",
+      "title": "度小满 AI全栈二面",
+      "baseline_source": "S294"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa3d6f1000000002502ff06",
+      "decision": "existing_source_supplement",
+      "reason": "同账号同公司另一篇一面记录；不同题目不证明独立投递。作为S333同人同公司补充，明确未证实是否同次投递或新BU，零新增。",
+      "source_increment_if_finalized": 0,
+      "company": "字节跳动—抖音",
+      "author": "海苔肉松小贝",
+      "author_id": "5cc41382000000001703feea",
+      "url": "https://www.xiaohongshu.com/explore/6aa3d6f1000000002502ff06",
+      "title": "字节抖音秋招agent开发一面",
+      "baseline_source": "S333"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aba93b1000000001400210f",
+      "company": "美的",
+      "author": "你是笨笨",
+      "author_id": "62a75824000000001b02718b",
+      "decision": "hold_role_scope",
+      "reason": "AI全栈封面与候选人的医疗RAG/知识图谱项目明确，但招聘方实际AI应用职责未明；与第一轮AI全栈普通工程条目同口径暂缓。",
+      "source_increment_if_finalized": 0,
+      "url": "https://www.xiaohongshu.com/explore/6aba93b1000000001400210f",
+      "title": "一面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6abbc16d000000001a02911d",
+      "company": "东方财富",
+      "author": "马甲掉完了",
+      "author_id": "61683900000000001f03c50d",
+      "decision": "dedup_clear_new_flow",
+      "reason": "同公司S315为喜羊羊的Skill路由/数千股票工具/拓扑排序；本场不同账号、明确9月29日，PDF跨页表格→RRF→Sub-Agent文件读写→整文档结构树→旋转链表，未见同场。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.xiaohongshu.com/explore/6abbc16d000000001a02911d",
+      "title": "东方财富一面面经",
+      "source_id": "S383"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ab2188e000000003a022016",
+      "company": "理想",
+      "author": "Anwuzy",
+      "author_id": "61ac4f150000000010004948",
+      "decision": "dedup_clear_new_flow",
+      "reason": "本人理想Agent一面，中期记忆死循环→中长期检索→跨用例冲突/过期→更新触发→Harness/指标，与本批坐标旅人意图识别/Skill/grill-me链和旧理想低密度排除条目不同。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.xiaohongshu.com/explore/6ab2188e000000003a022016",
+      "title": "大结果没拿过 大苦果吃了不少",
+      "source_id": "S384"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6ac20baa000000001500f821",
+      "decision": "exclude_source_quality",
+      "reason": "正文及全部4图只有分轮题库，缺候选人本人经历、作答状态、日期/时长/结果及实际互动证据；详细题目和3轮整齐结构不能替代HUMAN-A身份/质量门槛",
+      "source_increment_if_finalized": 0,
+      "company": "摩尔线程",
+      "author": "冒个泡泡.",
+      "author_id": "697c936e000000001d01da64",
+      "url": "https://www.xiaohongshu.com/explore/6ac20baa000000001500f821",
+      "title": "摩尔线程AI Agent三轮技术面面经"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6abe4fb8000000000a01d712",
+      "company": "字节跳动（HR流转的新Agent部门）",
+      "author": "远山",
+      "author_id": "6a03672c0000000002002802",
+      "decision": "dedup_clear_new_flow",
+      "reason": "旧库未见当前账号。本人明确前次字节二面失败后HR转新Agent部门；工具契约→Loop终止→配置灰度/新闻解读→子Agent幻觉→SSE生命周期→层序遍历链独立，保留转组证据。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.xiaohongshu.com/explore/6abe4fb8000000000a01d712",
+      "title": "字节Agent一面",
+      "source_id": "S385"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aba1e5b000000001a0252d3",
+      "decision": "exclude_source_quality",
+      "reason": "非目标技术面经，无可核技术问法；本人获得意向不等于应用开发样本",
+      "source_increment_if_finalized": 0,
+      "company": "字节跳动",
+      "author": "我猫呢",
+      "author_id": "62a95f4b000000001902ba2b",
+      "url": "https://www.xiaohongshu.com/explore/6aba1e5b000000001a0252d3",
+      "title": "零实习经验被字节捞了，秋招结束！"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aacf9ab000000002601be1d",
+      "company": "字节跳动—小荷健康",
+      "author": "Aurora",
+      "author_id": "5ea032ad0000000001006ca8",
+      "decision": "dedup_clear_new_flow",
+      "reason": "旧库未见作者或小荷本场；医疗安全评测工具→从业务流程追问工程实现→Harness/自动评测→医疗行业工作→可观测性→数据库→LC567，连续独特项目链不同其他字节来源。",
+      "source_increment_if_finalized": 1,
+      "url": "https://www.xiaohongshu.com/explore/6aacf9ab000000002601be1d",
+      "title": "字节跳动 小荷健康Agent开发工程师一面面经",
+      "source_id": "S386"
+    },
+    {
+      "packet": "xiaohongshu",
+      "key": "6aa272af0000000026017f9c",
+      "decision": "exclude_source_quality",
+      "reason": "完整图文题单未见候选人第一人称复盘、作答状态或真人现场互动证据；同批6aa7c277000000001103342e“小鱼在Coding”正文与此图3组技术/Leader及HR全部32个编号高度同序一致；无法确认原作者/原场次，复用风险高",
+      "source_increment_if_finalized": 0,
+      "company": "京东",
+      "author": "抹茶小熊",
+      "author_id": "6a98b8f00000000013022406",
+      "url": "https://www.xiaohongshu.com/explore/6aa272af0000000026017f9c",
+      "title": "京东AI Agent开发岗面经"
+    }
+  ],
+  "frozen_canonical": "unchanged S001–S279 /235 ACTIVE; raw-term-candidates.md deterministic auxiliary index only"
+}

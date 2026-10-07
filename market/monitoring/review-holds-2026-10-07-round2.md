@@ -1,0 +1,290 @@
+# 2026-10-07 第二轮遗漏复查：保留、排除与去重
+
+实际核验为10/7 UTC、北京时间10/8凌晨；本轮25新流程、8条旧来源补充记录（6个Source）、36保留、33排除、2重复、6原图访问阻塞。记录数不是独立流程数。
+
+同一作者多家公司不自动排除；有旧来源排除证据或跨账号同文链时须核作者归属。赛文X沿用已核旧排除，不声称本轮核实收费价格。
+
+## 保留待证
+
+- 腾讯CSIG元宝｜jhvhh｜腾讯CSIG元宝内容安全实习三轮技术面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/60f381f558a848ceac18c666268dc7da
+  - 判定：按采集卡的原始岗位/现场/历史来源排除缺口保留，不因主题匹配升级。
+- 小红书｜upc｜小红书PE一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/3812928d155e4f00b7dfe37cb9807154
+  - 判定：按采集卡的原始岗位/现场/历史来源排除缺口保留，不因主题匹配升级。
+- 腾讯WXG微信支付｜jhvhh｜腾讯WXG微信支付后台实习：AI软件工厂
+  - 原帖：https://www.nowcoder.com/feed/main/detail/6e4bd17e2fa84e98b315a9113e211687
+  - 判定：按当前原帖缺口保留；具体见采集卡。腾讯微信支付AI软件工厂任务很强，但实际招聘职责仍为作者推测，不越过岗位Gate。
+- 腾讯｜面试从容应对｜腾讯AI应用开发实习一面分享：S158同作者早贴待原场确认
+  - 原帖：https://www.nowcoder.com/feed/main/detail/66e688eed16e4708af18c3a5efdb62b3
+  - 判定：按采集卡的原始岗位/现场/历史来源排除缺口保留，不因主题匹配升级。
+  - 既有来源：S158
+- 美团｜2533｜同济软件大四 ｜ 美团一面凉经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab3a129000000001a026504
+  - 判定：本人真实性较好但实际目标岗位职责未核实
+- 京东｜周也在coding｜京东后端实习（agent）一二面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab896b300000000150061c4
+  - 判定：HOLD_QUALITY_OR_ROLE
+- 字节跳动｜喝牛奶会长高吗｜27 秋招字节 AI Agent 一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aba740600000000180111f9
+  - 判定：本人/技术细节充分，但目标Agent应用岗位职责未核实；不把候选人个人Agent项目经历自动当雇主岗位职责
+- 快手｜端妃你不要再喝红花了｜27秋招快手kstarAI应用研发一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a7c5ecd000000002500b9b7
+  - 判定：本人和真人证据充分，但实际部门职责与目标范围存在冲突；仅公开四组技术项目问题，未披露更多深层追问；待确认应用工程职责后再评估正式A档
+- 快手｜1｜快手秋招一面（AI应用开发）
+  - 原帖：https://www.xiaohongshu.com/explore/6a848029000000003303216d
+  - 判定：真人本人证据通过，但未能用实际业务或完整题目核实AI应用岗位边界
+- 快手｜multi（秋招版）｜快star-ai应用1面面经（凉经）
+  - 原帖：https://www.xiaohongshu.com/explore/6a9a3691000000002900dc8b
+  - 判定：本人/现场和技术具体性较好，但实际岗位应用/策略算法边界未核实
+- 快手｜阿码袋面包通过｜快手AI Agent面经
+  - 原帖：https://www.xiaohongshu.com/explore/6aab67d4000000002a02ff2f
+  - 判定：虽有第一人称震惊叙述，但全部多轮题单缺逐轮现场/作答变化，缺本人具体项目背景、面试时长/日期/结果；三技术轮和HR呈高度齐整总结，当前无法核实全部轮次属于本人完整实面；不因稀有多模态问题降低A档门槛
+- 华为｜山田リョウ｜华为线下面入池
+  - 原帖：https://www.xiaohongshu.com/explore/6ab3ac86000000000a026e1c
+  - 判定：本人和真人互动明确，但目标岗位应用/训练边界未核实；一面RAG/Skill细问未给出，二面可读技术多为训练相关，不用来扩目标基础频率
+- 华为｜土豆天使怒种西红柿｜华为AI开发面试
+  - 原帖：https://www.xiaohongshu.com/explore/6ab62556000000001b01ef68
+  - 判定：正文为29项题单和轮次时长；没有明确候选人第一人称现场状态或互动；岗位应用边界也需更具体佐证
+- 华为｜COISINI.｜华为秋招线下面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ac49190000000001203b8b7
+  - 判定：本人和真人证据强，但主要技术深挖以用时概述，未披露具体问题；可核技术主要为宽泛Redis/MQ/线程池与链表；滑动窗口题面不清，不能据不确定字句归一化具体算法
+- 超聚变｜山田リョウ｜超聚变 FDE
+  - 原帖：https://www.xiaohongshu.com/explore/6aba4f290000000018012c42
+  - 判定：FDE称谓与候选人RAG实习提问不足确认实际职责以应用落地为主；未给岗位方向答复。
+- 未明｜科研fw｜秋招第二面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa3a2de00000000260153b0
+  - 判定：匿名公司本身不否决；当前缺本人明确经历/状态叙述，题单虽深但候选人身份链还需核实
+- 阿里云｜LazyRedeemer｜电话技术面竟然…
+  - 原帖：https://www.xiaohongshu.com/explore/6aadfdbd000000002900eaca
+  - 判定：TAM/FDE业务描述包含训练/Agent/云服务保障，实际目标岗位职责未闭环；正文复盘答法与问法混合，质量仍需核，不因可提取技术问法升级。
+- SHEIN｜顶尖耐面王～周也｜Shein Agent开发秋招 一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa229ee0000000011036825
+  - 判定：本人经历有证据，但目标岗位实际职责仍不足；项目细节多未披露，不补想象题
+- 海尔智家｜周也要努力！｜海尔智家 AIAgent开发 秋招一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aab610d000000001103407d
+  - 判定：同账号68ea0465的九方帖已发现完整异账号同文链，尚无本人归属闭环；本帖虽有第一人称和团队反问，暂缓核原作者，不直接声称已证明转载。
+- 追觅科技｜程序员峰哥｜追觅科技 AI Agent 全栈三面
+  - 原帖：https://www.xiaohongshu.com/explore/6a6ff8bd000000003302dea6
+  - 判定：泛述三轮艰难、答浅被冷笑/边界追问，但没有明确本人项目事实、具体答错处、轮次日期/结果；长题单高度全面不替代真人本人质量；仍待本人来源核验
+- 小红书RedStar｜戳戳程序员｜1. 小红书RedStar AI全栈一二面面经｜现在面
+  - 原帖：https://www.xiaohongshu.com/explore/6ab3bc3500000000180079a2
+  - 判定：有一周后挂、压力确认等现场背景，但公开主要是考点/方案汇总；不把NAS架构答案、13→4min业绩或泛主题扩写成未披露实问
+- 蚂蚁｜嗯嗯｜2026/8/25 蚂蚁一面记录
+  - 原帖：https://www.xiaohongshu.com/explore/6a8eea60000000002a03ae51
+  - 判定：本人证据与岗位较好，但只3项具体技术题，实习/Agent/算法深问大多未公开，A档密度不足
+- 淘天｜小小鱼Agent｜淘天ai应用一面
+  - 原帖：https://www.xiaohongshu.com/explore/6ab0f508000000003300a1f1
+  - 判定：技术题链详细，但未能核实候选人本人和真实现场状态；不单靠具体题量通过HUMAN-A
+- 字节跳动—飞书多维表格｜momo｜字节一面凉经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab0f4c6000000003302e74c
+  - 判定：本人/岗位真实明确，但公开技术只笼统课程知识及一道算法追问，信息密度不足A档
+- 小红书｜摸鱼敲代码｜小红书Agent开发三轮面经，详细的
+  - 原帖：https://www.xiaohongshu.com/explore/6aa7a2ee0000000012026776
+  - 判定：有本人泛叙述和一题“不会”，但三轮题单中的个人项目内容、具体实现/指标/临场连续对话披露有限；60题高度整齐不是单独排除理由；仍待本人来源核验，不因数量多降低A档门槛
+- 未明｜OSAKO｜AI 应用开发一天四面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a5f950e00000000060121ce
+  - 判定：真人本人技术内容较强，但四场流程/公司关系未明确；公司和各场关系未明，暂保留核验，不能自动四倍计数
+- 新凯来｜MorningRainn｜秋招新凯来全流程面经(已入池)
+  - 原帖：https://www.xiaohongshu.com/explore/6aafb8d10000000012027bef
+  - 判定：未明示正式岗位，候选人视频RAG、QLoRA、牙科Agent项目不能证明招聘职责；通过面试截图只补第一人称，不补Role Scope。
+- 腾讯云—技术与产品方向｜法玛斯的女主人｜面完腾讯全栈开发嘴都张不开了（已更新面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a55e70e000000001700b9cd
+  - 判定：岗位范围未核实；图片后3页和正文含查找面经平台的推广/教程内容，需按来源质量规则保守审查
+- 字节｜zed(秋招版)｜字节Agent评测一面复盘
+  - 原帖：https://www.xiaohongshu.com/explore/6a82c7e1000000000502a0fc
+  - 判定：职责边界未核实，正文较多标准备考答法；不以把答案剥离作为自动通过质量的依据
+- 安克创新｜周也要努力！｜安克创新Agent开发秋招一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa22a7d000000001001d757
+  - 判定：同账号68ea0465的九方帖已发现完整异账号同文链，尚无本人归属闭环；本帖本人经历需独立追原，不根据第一人称文字直接放行。
+- 百度｜Real｜9.15 百度智能体算法一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aaa326f000000002803554b
+  - 判定：实际岗位智能体算法，应用职责未证实
+- 字节｜软软要努力（Agent智能体日记）｜字节agent开发一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab8930f0000000015017f86
+  - 判定：正文是完整工程题单加泛面试官评价，无明确本人作答/具体项目状态或结果
+- 小红书｜全栈 agent 大王｜9.22 xhs AI全栈  一面 竟然没有手撕题
+  - 原帖：https://www.xiaohongshu.com/explore/6aba13cc0000000015009baa
+  - 判定：第一人称“没手撕”有线索，但缺具体作答互动，AI全栈实际职责未明；暂缓，不根据昵称判断内容号或虚构。
+- 字节｜全栈 agent 大王｜9.15 字节二面面经（AI 全栈）
+  - 原帖：https://www.xiaohongshu.com/explore/6aaaab980000000029017fba
+  - 判定：大段标准答法包装且无本人现场状态；实际职责也未锁定目标应用方向
+- 字节｜全栈 agent 大王｜9.07 字节ai全栈1面-面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a9f7299000000002a005935
+  - 判定：全文题目整理加总结，缺明确本人作答、互动细节与结果；不能由同作者XHS帖借身份证据通过
+- 美的｜你是笨笨｜一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6aba93b1000000001400210f
+  - 判定：AI全栈封面与候选人的医疗RAG/知识图谱项目明确，但招聘方实际AI应用职责未明；与第一轮AI全栈普通工程条目同口径暂缓。
+
+## 排除
+
+- 顺丰｜赛文X｜顺丰 agent开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/7cab90ca59084f64bc19d1cb13935937
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- Viture｜赛文X｜viture agent平台开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/c4c614b12d564af3b37c30c241072973
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 卓驭｜赛文X｜卓驭 agent开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/f9be60e7b3c54750a57b37d5d200d1e5
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 平安银行｜赛文X｜平安银行 AI开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/e72c4b75edc245349f79e20d44834301
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 同花顺｜赛文X｜同花顺 agent开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/89dde87cceb142d09e90dead6e9e5aa3
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 小满科技｜赛文X｜小满科技 agent开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/5f3df51243ad425c83e81e359ce82c36
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 基元律动｜赛文X｜基元律动 agent 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/64e31a28581b4e21a1e8e1aee236b6b4
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 知识科技｜赛文X｜知识科技 数据agent 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/9c52d114887148bd88dac675229d8dfe
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 自变量｜赛文X｜自变量 agent平台开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/1d05dbe48b314a81804c2ffdd51ab569
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 长城证券｜赛文X｜长城证券 AI全栈开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/aa720c49cec348fea797bf0731b06930
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 广发证券｜赛文X｜广发证券 AI研发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/be11801cff834c7f8731c210e7d15483
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 广州报业｜赛文X｜广州报业 agent开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/f3a38b6580714965bfeac1cadeadabe9
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- memtensor｜赛文X｜memtensor 全栈开发 一面
+  - 原帖：https://www.nowcoder.com/feed/main/detail/6af8a31964434012a95de8f4c16403b8
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 转转｜赛文X｜转转FDE线下面试
+  - 原帖：https://www.nowcoder.com/feed/main/detail/6204344a50a04c46a6220b2d73c426bc
+  - 判定：旧排除帖2109cf8eb0254507911fbf86bcbf51e4与当前作者均为125006155；当前总索引仍有专栏、订阅专刊与外部导流。未取得足以消除旧来源排除的证据，整组0贡献；未核实收费价格，不称当前付费墙。
+- 腾讯（原场为CSIG云架构音视频）｜巧了我也是是｜腾讯27实习AI应用开发一面分享（复制链排除）
+  - 原帖：https://www.nowcoder.com/feed/main/detail/9c23964be69d4cd19f38b1b1e74cd177
+  - 判定：已查更早原作者相同缺号/题序，原岗位非AI；新AI标题不能制造独立HUMAN-A。
+- 美团｜Crystal｜美团Agent 面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab00cc7000000002a00505f
+  - 判定：正文和4图均为整理题单，没有候选人第一人称复盘、作答状态、日期时长或真人互动叙述；“你的项目”“上段实习”等都是题目对候选人的第二人称，不证明发帖者本人经历
+- 美团｜中环流浪小妹｜美团Agent面经 一面二面复盘
+  - 原帖：https://www.xiaohongshu.com/explore/6a97b14c000000002902e7be
+  - 判定：没有候选人第一人称或现场经历，正文为两轮考察主题和准备建议
+- 京东｜绵绵冰圆子｜京东AI Agent开发一面
+  - 原帖：https://www.xiaohongshu.com/explore/6ab09603000000001203e713
+  - 判定：没有候选人第一人称/真实现场状态；正文含AI生成声明且题18标“新增”，无法确认哪些是本人真实被问；声明不是唯一排除理由
+- 京东｜小鱼在Coding｜京东 AI Agent 开发岗面经
+  - 原帖：https://www.xiaohongshu.com/explore/6aa7c277000000001103342e
+  - 判定：完整正文32编号与抹茶小熊同序高度重合，无第一人称经历；图3明确内容来自互联网分享的面经并持续分类汇总，图7是标准网络八股题库；是整理/教学资源内容
+- 小米｜luna今天写日报了吗｜小米AI Agent开发一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6aba4800000000000202a62f
+  - 判定：完整正文仅标题标签，5图全为分类题单，无本人候选人叙述、具体作答状态、互动或结果；第二人称“你项目”不等于作者本人经历
+- 华为｜汐宇🍃｜华为凉经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab48eff00000000140393b7
+  - 判定：真人本人证据充分，但没有可核验的具体技术题或深层追问内容；岗位模型训练与应用职责边界亦不清
+- 快手｜Riffizzzzz｜快手FDE数据研发一面凉经
+  - 原帖：https://www.xiaohongshu.com/explore/6aa61cf6000000002802975e
+  - 判定：目标方向不匹配；FDE缩写不自动代表Applied AI；除泛项目深挖外只公开SQL留存率，信息密度亦不足
+- 网易｜勇哥的程序员日记｜网易 Agent 开发（游戏/互娱方向）二面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a88198b000000003b017ddc
+  - 判定：无本人叙事，正文图均以标准答案和准备建议为主，“真实复盘”标签不等于本人证据；时长正文/图片不一致；算法只有常考题、反问为参考，不是真实面试记录
+- 阿里｜唯心不易｜阿里 AI Agent 校招三轮面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a9d0c3a0000000011036c96
+  - 判定：正文明确私信索取已整理Agent题库，属于资源导流；没有本人作答/经历/真实现场状态，三轮为题单
+- 蚂蚁｜EH｜蚂蚁aiagent一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa3ac1f000000002b01277e
+  - 判定：真人体验第一人称明确，但无可用具体技术题/追问
+- 阿里｜布吉岛｜秋招第二面，阿里AI应用
+  - 原帖：https://www.xiaohongshu.com/explore/6a7eb87600000000240268c1
+  - 判定：实际岗位应用职责不明且有纯后端错配描述；公开内容为流程概述，无足够具体题面
+- 美团｜困困｜美团aiagent开发面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a9a89a900000000120354b1
+  - 判定：全文主要标准答案，明确“必问”“美团必考”“精简满分回答”“HR高频精简问答”；无本人经历/互动/状态；回答中的“我”是示范回答，不能当真人候选人证据
+- 未明｜梦嘉的嵌入式笔记｜影石创新AI Agent 面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab7cc1b000000001500ddd4
+  - 判定：EXCLUDE_EXPLICIT_COMPILATION
+- 未明｜噜噜蹲面经｜迅雷 Agent 一面｜记忆、RAG、Skill 与 MCP
+  - 原帖：https://www.xiaohongshu.com/explore/6ac49ee9000000000d029436
+  - 判定：EXCLUDE_EXPLICIT_REPOST
+- 浩鲸科技｜顶尖耐面王～周也｜浩鲸科技 Agent开发秋招一面
+  - 原帖：https://www.xiaohongshu.com/explore/6ac5c2eb000000001303f5ca
+  - 判定：无本人叙述、作答状态或可核流程，只有分类题单；作者身份和搬运风险未闭环；不能靠长题单升级
+- 摩尔线程｜冒个泡泡.｜摩尔线程AI Agent三轮技术面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ac20baa000000001500f821
+  - 判定：正文及全部4图只有分轮题库，缺候选人本人经历、作答状态、日期/时长/结果及实际互动证据；详细题目和3轮整齐结构不能替代HUMAN-A身份/质量门槛
+- 字节跳动｜我猫呢｜零实习经验被字节捞了，秋招结束！
+  - 原帖：https://www.xiaohongshu.com/explore/6aba1e5b000000001a0252d3
+  - 判定：非目标技术面经，无可核技术问法；本人获得意向不等于应用开发样本
+- 京东｜抹茶小熊｜京东AI Agent开发岗面经
+  - 原帖：https://www.xiaohongshu.com/explore/6aa272af0000000026017f9c
+  - 判定：完整图文题单未见候选人第一人称复盘、作答状态或真人现场互动证据；同批6aa7c277000000001103342e“小鱼在Coding”正文与此图3组技术/Leader及HR全部32个编号高度同序一致；无法确认原作者/原场次，复用风险高
+
+## 同文 / 既有来源重复
+
+- 九方智投｜周也要努力！｜九方智投 agent 一面凉经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab8d9ce00000000180124f6
+  - 判定：与本轮找回牛客92efed84.../369008148同题序、RFF原错字和第13题感受一致；牛客9/24早于XHS9/27，跨账号未证明同人，XHS新增0。
+- 4399｜顶尖耐面王～周也｜4399-agent开发面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab9dfff000000000b00525a
+  - 判定：S316原作者403525033 b040e00...与本图逐号一致，十万日志/SQL验错/90%指标/内部团队20余人及现场me语境相同；未证实跨账号同人，不作为新第一人称来源。
+
+## 旧来源补充
+
+- 小红书｜Recall_15｜小红书 Rednote AI native面经：S123同作者补充待合流程
+  - 原帖：https://www.nowcoder.com/feed/main/detail/fa23d7dd47324d11aa66cd9376ff21b8
+  - 判定：S123同作者同公司同视频Agent项目；8/5仅编辑日、轮次未明，无独立投递证据。作为同人同公司补充，0新Source，不断言已证实同次投递。冻结标题元数据保持不动。
+  - 既有来源：S123
+- 百度｜SOLDIER_627｜百度Agent后端：补S295一面与二面
+  - 原帖：https://www.nowcoder.com/discuss/924730985210458112
+  - 判定：S295同作者523469060百度9/2→9/15→9/21连续三轮；补一二面，0新Source。
+  - 既有来源：S295
+- 字节跳动｜bffc｜字节跳动 agent开发工程师 一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a9145210000000026005a23
+  - 判定：bffc同账号、诊断Agent同项目与一二三面时间线连续；只补既有S329，零新增。
+  - 既有来源：S329
+- 字节跳动｜bffc｜字节 agent开发 二面 面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a993b7900000000110302b6
+  - 判定：bffc同账号、诊断Agent同项目与一二三面时间线连续；只补既有S329，零新增。
+  - 既有来源：S329
+- 美团｜Soldier｜美团AI后端一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa2579b0000000029014c80
+  - 判定：SOLDIER_627/Soldier跨平台同场，76/59分钟与故障诊断Skill/视频项目题链完全对应；以完整图片补旧序列，零新增。
+  - 既有来源：S280
+- 美团｜Soldier｜美团 AI 后端二面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa7d40b000000002601b231
+  - 判定：SOLDIER_627/Soldier跨平台同场，76/59分钟与故障诊断Skill/视频项目题链完全对应；以完整图片补旧序列，零新增。
+  - 既有来源：S280
+- 度小满｜Soldier｜度小满 AI全栈二面
+  - 原帖：https://www.xiaohongshu.com/explore/6ab24065000000003401ba1f
+  - 判定：Soldier同候选人度小满后续二面44分钟，补到S294，零新增。
+  - 既有来源：S294
+- 字节跳动—抖音｜海苔肉松小贝｜字节抖音秋招agent开发一面
+  - 原帖：https://www.xiaohongshu.com/explore/6aa3d6f1000000002502ff06
+  - 判定：同账号同公司另一篇一面记录；不同题目不证明独立投递。作为S333同人同公司补充，明确未证实是否同次投递或新BU，零新增。
+  - 既有来源：S333
+
+## 原图访问阻塞
+
+- 未明｜Offer面试官｜蚂蚁 AI Agent 开发秋招一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6a93b79c0000000024005c39
+  - 判定：ACCESS_BLOCKED_IMAGE_UNVERIFIED
+- 未明｜程序员峰哥｜科大讯飞贼难Agent面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ab1ee3b000000003003ce80
+  - 判定：ACCESS_BLOCKED_IMAGE_UNVERIFIED
+- 未明｜每天学一点面经｜阿里 Agent 开发面经 9.17
+  - 原帖：https://www.xiaohongshu.com/explore/6aa7af1c00000000120341f5
+  - 判定：ACCESS_BLOCKED_IMAGE_UNVERIFIED
+- 未明｜每天学一点面经｜小红薯Agent开发一面 9.16
+  - 原帖：https://www.xiaohongshu.com/explore/6aa7ab44000000002b003396
+  - 判定：ACCESS_BLOCKED_IMAGE_UNVERIFIED
+- 未明｜neo技术日记｜摩尔线程Al Agent 三轮技术面|面经
+  - 原帖：https://www.xiaohongshu.com/explore/6ac5bb7b0000000018016fff
+  - 判定：ACCESS_BLOCKED_IMAGE_UNVERIFIED
+- 未明｜多吃碳水啵｜中兴一面面经
+  - 原帖：https://www.xiaohongshu.com/explore/6aaa12f30000000026015126
+  - 判定：ACCESS_BLOCKED_IMAGE_UNVERIFIED
+
+## 尚未打开的卡片
+
+原139张卡片中49条已进入本轮原帖池，90条仍为卡片线索：23条较早、29条次级、38条仅按标题暂降优先级。没有把这些卡片记为已读、已排除或已穷尽。
+
+完整逐条覆盖与未打开ID见 [本轮账本](coverage-2026-10-07-round2.json)。

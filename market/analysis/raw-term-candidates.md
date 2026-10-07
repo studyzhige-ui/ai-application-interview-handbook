@@ -45,7 +45,6 @@
 | `S102` | 腾讯｜AI 后端开发｜二面 50min｜发布 2026-04-01｜HUMAN-A | 3. LLM、Prompt Engineering、RAG、Agent 在真实项目里分别如何实现和优化？ |
 | `S103` | 淘天｜AI 应用开发｜一面｜发布 2026-04-16｜HUMAN-A | 真人 / 第一人称证据：作者以本人淘天 AI 应用一面发布“发面经攒人品”，并记录现场压力和多个 AI Coding 环节；问题从 RAG / Harness 连续进入 Agent 自纠错、Sandbox、Prompt Attack、Multi-Agent 与真实用户量，符合目标岗位且非答案型文章。 / 9. Prompt Attack / Prompt Injection 如何防护？ |
 | `S107` | 字节跳动｜Agent 开发｜实习一面 + 二面（同一候选人同流程合并）｜发布 2026-06-17 / 06-23｜HUMAN-A | 2. 一次请求给模型的 Prompt / Context 由哪些部分组成，哪些必须注入？ / 25. Dynamic Prompt 与 Static Prompt 有何区别？ |
-| `S123` | 小红书｜AI 全栈开发｜业务交叉面 + 二面（同一候选人同流程合并）｜发布 2026-06-25 / 07-01｜HUMAN-A | 7. 视频编辑 Agent 的核心难点是什么，Tool Call / Memory / Prompt Orchestration 怎样组织？ |
 | `S150` | 字节跳动｜后端 Agent 开发｜二面｜发布 2026-05-04｜HUMAN-A | 真人 / 第一人称证据：作者明确以本人“后端 Agent 开发二面”发布，开头写面试很难并“攒人品”；问题从实习持续进入 Prompt、RAG、LLM Foundation、Java Reflection 和高并发 System Design。 / 1. Prompt 调优有哪些真实经验，能否让 AI 反过来帮助优化 Prompt？ |
 | `S152` | 阿里淘天｜Agent 开发｜暑期一面｜发布 2026-04-17｜HUMAN-A | 7. 除 Prompt 外，怎样减少 AI Coding 产生的冗长 / 复杂代码？ |
 | `S155` | 腾讯｜AI 应用开发｜暑期一面｜发布 2026-03-20｜HUMAN-A | 3. Skill 全塞 System Prompt 导致 Context 膨胀时怎么办？ |
@@ -82,10 +81,11 @@
 | `S284` | 美团｜AI 后端开发工程师｜一面｜发布 2026-09-15｜HUMAN-A | 4. Prompt Test Set 多大才有代表性，怎样构建和回归？ / 去重：全历史未出现当前 URL、作者和“Elo → Prompt Test Set → Context Compression 参数验真 → Redis Cache Refresh”连续题序。 |
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | 3. **Evaluation 开始验参数而不是验名词。** Elo 怎样比较、Prompt Test Set 多大、Context 为什么 80% 压缩、Offline Case 是否代表线上故障，都要求解释实验依据。 |
 | `S347` | 虾皮｜Agent开发｜一面、二面｜HUMAN-A | 12. （原题12）主题：System Prompt/AGENTS.md |
+| `S384` | 理想｜Agent秋招（封面）｜一面｜HUMAN-A | 3. （原题3）中期记忆死循环是否考虑把部分内容写System Prompt |
 
 ## Prompt Injection / Prompt Attack
 
-候选来源：**8**
+候选来源：**9**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -97,10 +97,11 @@
 | `S207` | 要务科技｜AI 应用开发实习生｜一面｜面试 2026-09-07，约 46min｜HUMAN-A | 6. Prompt Injection 与高风险写操作怎样治理；为什么应把修改权限留给用户或受控 Tool？ |
 | `S216` | 快手｜AI 应用开发｜秋招一面｜发布 2026-08-20，50min｜HUMAN-A | 4. **Security 与 Runtime Boundary 正在合流。** Tool Result Compression、Permission、Prompt Injection、Sandbox、高风险写操作确认越来越常出现在同一条工程链路。 |
 | `S228` | 快手｜AI 全栈开发（音视频）｜一面 + 二面（同一候选人同流程合并）｜发布 2026-08-31 / 09-07｜HUMAN-A | 12. Agent 必须读取内部算法 / 代码才能诊断时，Prompt Injection 与 Sensitive-data Leakage 怎样从架构层治理？ |
+| `S372` | 美团｜Agent日常实习｜一面｜HUMAN-A | 17. （原题17）这段提示词是否有Prompt Injection风险 / 去重：Checkpoint→MultiAgent→Redis BigKey→BM25→现场Prompt Injection→RestoreIP未写出链未入库；S294同算法属于不同公司和作者。 |
 
 ## Intent Recognition
 
-候选来源：**16**
+候选来源：**22**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -119,11 +120,17 @@
 | `S312` | 腾讯｜Agent开发（本人timeline明确）｜一面+二面+三面，合为一个Source｜HUMAN-A | 3. （原题3）意图识别实现/准确率 / 5. （原题5）意图识别实现 / 6. （原题6）抽象化提升意图识别原因 |
 | `S320` | 北京金山数娱｜AI应用开发｜一面｜HUMAN-A | 5. （原题5）意图识别 |
 | `S328` | 携程｜Agent开发（秋招）｜一面｜HUMAN-A | 1. （原题1）意图识别实现及好坏标准 |
+| `S329` | 字节跳动｜Agent开发｜三面｜HUMAN-A | 2. （原文未编号）Supervisor Agent是意图识别还是路由；路由如何实现 / 13. （原文未编号）口述生活助手意图识别Prompt：输入用户问题，输出JSON枚举旅行/购物/吃饭三选一 |
 | `S356` | 百度｜AI Agent / Agent Harness｜一面｜HUMAN-A | 5. （原题5）分层架构除意图识别外的工程、效果改进 |
+| `S371` | 美团｜Agent开发｜一面｜HUMAN-A | 10. （原题10）是否了解原文称“jev”、可替换意图识别的技术（术语未确认） |
+| `S376` | 理想｜Agent开发｜一面｜HUMAN-A | 1. （原题1）意图识别三路融合如何实现；冲突处理及评分机制 |
+| `S381` | 阿里—淘宝闪购｜AI研发岗（主体为Agent应用工程）｜一面50min、二面40min、HR面50min｜HUMAN-A | 真人 / 第一人称证据：作者给出从8.11投递到9.4意向书的本人流程，明确以自己面试感受作复盘；按50/40/50分钟三轮分开记录，项目沿意图识别准确率→错误类别→执行链路→工具接口变更异常连续追问；二面/HR围绕数学转计算机、实习经历的具体个人背景追问 / 2. （原题2）意图识别如何实现 / 3. （原题3）意图识别准确率如何计算 |
+| `S382` | 小绿书（原文别称，未擅自映射）｜Agent｜一面｜HUMAN-A | 4. （原题3）92%意图识别准确率如何计算，区分单意图与多意图 |
+| `S384` | 理想｜Agent秋招（封面）｜一面｜HUMAN-A | 去重：本人理想Agent一面，中期记忆死循环→中长期检索→跨用例冲突/过期→更新触发→Harness/指标，与本批坐标旅人意图识别/Skill/grill-me链和旧理想低密度排除条目不同。 |
 
 ## LangGraph / LangChain
 
-候选来源：**58**
+候选来源：**65**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -145,7 +152,7 @@
 | `S094` | 美团｜AI 后端开发｜二面｜发布 2026-04-04｜HUMAN-A | - 9 月 8 日百度 AI 测开等虽然包含 Agent / LangGraph / Skill，但岗位属于测试开发，不通过 Role Scope Gate； |
 | `S118` | 阿里平头哥｜AI 应用研发工程师｜暑期一面｜面试 2026-04-28，发布 05-06｜HUMAN-A | 6. 为什么不用 LangChain 完整承载链路，而选择部分能力自研？ |
 | `S121` | 阿里｜Agent 开发暑期实习｜一面｜发布 2026-08-05，已 GG｜HUMAN-A | 真人 / 第一人称证据：作者以本人暑期 Agent 开发一面复盘发布，并明确更新已 GG；问题沿个人项目持续进入 Agent 架构、Vector Search、LangGraph、Memory、异常容错与 Coding，不包含标准答案扩写。 / 6. LangChain 与 LangGraph 分别负责什么，为什么这样选？ |
-| `S123` | 小红书｜AI 全栈开发｜业务交叉面 + 二面（同一候选人同流程合并）｜发布 2026-06-25 / 07-01｜HUMAN-A | 11. LangGraph 在这类 Agent 中承担什么关键职责？ |
+| `S123` | 小红书｜AI 全栈开发｜业务交叉面 + 二面（同一候选人同流程合并）｜发布 2026-06-25 / 07-01｜HUMAN-A | 5. （原题4）LangChain工具调用、Memory与Prompt编排的具体职责 / 17. （原题16）LangGraph关键点 / 22. （原题21）选择LangGraph是否完全依据业务场景 |
 | `S124` | 字节跳动财经｜AI 应用开发后端｜日常实习一面｜发布 2026-05-06｜HUMAN-A | 3. 为什么使用 LangGraph 而不是直接原生编排？ |
 | `S126` | 阿里灵犀｜AI 应用｜暑期一面｜发布 2026-04-03｜HUMAN-A | 真人 / 第一人称证据：作者以明确的阿里灵犀 AI 应用暑期一面问题记录发布，问题从个人实习进入 RAG / LangGraph / LLM Foundation 与业务算法，不是标准答案或合集。 / 3. LangChain 与 LangGraph 的核心概念和工程边界是什么？ |
 | `S136` | 阿里淘天｜AI 应用研发｜一面｜发布 2026-04-17｜HUMAN-A | 真人 / 第一人称证据：作者明确写“一面 2h 没招了、发面经攒人品”；问题从两个本人实习项目深挖到 RAG、LangGraph、Kafka、Text-to-SQL，最后还有约 45 分钟 AI Coding。 / 4. LangGraph State Machine 的 State 怎样流转？ / 5. LangGraph 与 LangChain 的差异和使用场景是什么？ |
@@ -175,6 +182,7 @@
 | `S283` | 美团｜AI Agent｜一面｜发布 2026-09-15｜HUMAN-A | 6. LangChain / LangGraph / Raw Agent 怎样取舍？ |
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | - **新旦智能 AI 应用开发**：LangChain 1.0、Hermes Self-evolution / Memory、Harness、Eval、Codex Quality 等题很强，但原始正文持续 Cache Miss，不满足 Verifiable Gate。 |
 | `S287` | 字节跳动｜Agent 开发｜秋招一面 + 二面（同一招聘流程）｜发布 2026-09-16 / 09-24｜HUMAN-A | - **百度网络研发 / B站测开等近期 Agent 深挖**：面试中虽出现 LangGraph、OpenClaw、Skill、MCP 或 Agent Evaluation，但岗位主体分别是网络研发 / 测试开发等 Role Scope 外方向。 |
+| `S294` | 度小满｜AI 全栈｜一面｜发布 2026-09-20 17:39｜HUMAN-A | 1. （原题3(1)）Agent编排；Plan/ReAct/LangGraph为现成技术还是自研 |
 | `S297` | 字节跳动中国交易与广告｜AI 全栈开发工程师｜一面｜面试 2026-09-16，发布 2026-09-24｜HUMAN-A | - **字节剪映 AI 前端一面｜发布 2026-09-22**：公开话题层可看到自研 Agent Framework、为什么不用 LangGraph、ReAct Loop、Tool Registry、`tool_call` JSON Schema、本地 Tool Execution 与 Context 回填等完整技术链；但 post-specific 原帖 / 作者 Timeline 与“AI 前端”实际工作是否属于本库 AI Application Role Scope 仍未同时稳定闭环，继续待追源，不进入 HUMAN-A。 |
 | `S301` | 字节跳动｜Agent开发后端（日常实习）｜一面｜HUMAN-A | 1. （原题1）LangGraph选型/工作流 |
 | `S302` | 字节跳动｜大模型应用开发（秋招）｜一面｜HUMAN-A | 5. （原题6）主题：LangChain/LangGraph |
@@ -184,7 +192,13 @@
 | `S309` | 百度｜Agent开发实习生｜两家公司各一面｜HUMAN-A | 4. （原题4）LangGraph+子Agent相对大Agent/脚本 |
 | `S312` | 腾讯｜Agent开发（本人timeline明确）｜一面+二面+三面，合为一个Source｜HUMAN-A | 2. （原题2）LangChain/LangGraph使用 |
 | `S317` | 斑头雁｜Agent实习生｜一面｜HUMAN-A | 5. 二2 LangChain节点/工具代码 |
+| `S329` | 字节跳动｜Agent开发｜三面｜HUMAN-A | 2. （原文未编号）介绍LangGraph框架 |
 | `S347` | 虾皮｜Agent开发｜一面、二面｜HUMAN-A | 23. （原题23）不选LangChain原因 |
+| `S372` | 美团｜Agent日常实习｜一面｜HUMAN-A | 8. （原题8）是否采用LangGraph等现成Agent框架 |
+| `S377` | 快手｜AI应用开发｜一面｜HUMAN-A | Role Scope：AI应用开发明确，LangGraph/工具调用修复/Workflow人工干预和失败处理为主要内容，兼有MySQL和MQ基础 / 1. （原题1）介绍LangGraph核心概念及理解 / 去重：本人设备没配置AI工具而改手写LRU，LangGraph→MCP参数错→人工介入→分表/慢SQL/MQ链独立；与同作者阿里不同公司。 |
+| `S380` | 阿里控股｜AI应用研发｜一面｜HUMAN-A | 7. （原题7）LangGraph或Agent开发是否使用栈、队列 |
+| `S383` | 东方财富｜AI应用开发（南京）｜一面｜HUMAN-A | 1. （原题1）LangChain/LangGraph对开发者作用 / 2. （原题2）LangChain如何统一上下文、工具、记忆与状态 |
+| `S385` | 字节跳动（HR流转的新Agent部门）｜Agent开发｜新部门一面｜HUMAN-A | 真人 / 第一人称证据：原文明确“上次的字节二面完很不幸被挂掉了，不过hr说是给我流转到另外一个部门了，但是是做Agent开发相关的”；本人将模型/工程边界用Harness说明，项目未接第三方框架仍被追问LangGraph；面后称高强度且每题需深入模块 / 1. （原题1）LangGraph基本概念 |
 
 ## A2A
 
@@ -202,7 +216,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**110**
+候选来源：**115**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -238,7 +252,7 @@
 | `S117` | 阿里千问事业群｜AI 应用研发工程师｜一面｜发布 2026-04-29｜HUMAN-A | 3. 平时使用 Vibe Coding 还是手写，模型怎样选？ |
 | `S119` | 小红书｜存储云平台·数据库智能化 / Agent｜日常实习一面 + 二面｜面试 2026-07-29 / 08-03｜HUMAN-A | 10. AI Coding 工具的 Context Management 有哪些差异？ |
 | `S120` | 米哈游｜Agent 开发｜提前批一面｜面试 2026-08-01，发布 08-05｜HUMAN-A | 1. AI Coding 在日常研发中如何使用？ / 2. 如何验证 AI Coding 生成代码质量？ |
-| `S123` | 小红书｜AI 全栈开发｜业务交叉面 + 二面（同一候选人同流程合并）｜发布 2026-06-25 / 07-01｜HUMAN-A | 真人 / 第一人称证据：两个页面均由同一作者 `Recall_15` 发布，岗位均为小红书 AI 全栈开发；首轮约 40 分钟，作者记录面试官对业务、AI Coding 和系统上线的具体追问，二面再次约 40 分钟并写“问很细、95% 答上来、希望能过”等现场状态，因此合并为一个招聘流程来源。 / 5. AI Coding 生成的低质量代码有哪些典型问题，怎样人工兜底？ |
+| `S123` | 小红书｜AI 全栈开发｜业务交叉面 + 二面（同一候选人同流程合并）｜发布 2026-06-25 / 07-01｜HUMAN-A | 真人 / 第一人称证据：两个页面均由同一作者 `Recall_15` 发布，岗位均为小红书 AI 全栈开发；首轮约 40 分钟，作者记录面试官对业务、AI Coding 和系统上线的具体追问，二面再次约 40 分钟并写“问很细、95% 答上来、希望能过”等现场状态，因此合并为一个招聘流程来源。 / 9. （原题9）AI Coding各阶段常见陷阱 |
 | `S127` | 汇川技术｜AI 全栈开发工程师｜一面 + 二面｜面试 2026-08-27 / 08-28｜HUMAN-A | 3. OpenSpec / Superpower 等 AI Coding 方法解决什么问题？ |
 | `S128` | OPPO｜AI 全栈开发｜一面｜发布 2026-08-23，次日查看已挂｜HUMAN-A | 真人 / 第一人称证据：候选人记录面试官开场介绍这是较新的 AI Full-stack 岗位，并说明面试不足 30 分钟；作者自评题基本答出但语言组织不佳，次日查看流程已挂。问题把 AI Coding / Skill 与项目上线、团队协作和基础数据结构放在同一场，现场与结果明确。 |
 | `S131` | 小红书社区工程｜AI 与全栈｜一面｜面试 / 发布 2026-03-21｜HUMAN-A | 10. 平时如何使用 AI Coding Tool？ |
@@ -305,7 +319,7 @@
 | `S288` | 蚂蚁｜AI Native / Agent 应用方向｜一面 + 二面（同一招聘流程合并）｜面试 2026-09-15 / 09-21｜HUMAN-A | 4. Agent / Skill / AI Coding 已明显向普通 Backend、Data、Test 岗扩散，因此 Role Scope Gate 必须比过去更严格； |
 | `S289` | 阳光电源｜AI 应用开发工程师｜一面｜面试 2026-09-18 10:00，发布 2026-09-18｜HUMAN-A | 4. **Harness + AI-assisted Engineering Authenticity Verification 是值得继续追的弱信号。** 4399 线索已经把 Harness、SQL 验错、测试指标和“AI 帮你完成后是否真正掌握”放在一起，但 provenance 尚未闭环，因此当前只作为观察，不进入正式频率。 / 5. **Agent / AI 术语继续向普通 Backend / Data / Test 岗扩散。** 这使 Role Scope Gate 更重要，而不是更宽松；出现 Memory / Agent / AI Coding 不能替代目标岗位证据。 |
 | `S291` | Shopee｜Chatbot 研发实习｜一面｜面试 2026-09-18，发布 2026-09-19 16:25｜HUMAN-A | Role Scope：岗位标题为 `chatbot研发实习`，技术主体连续覆盖 Agent、Function Call / Tool / MCP、RAG、AI Coding，并混合 Linux 与 Algorithm Foundation；实际职责明确属于 AI Application / Agent Chatbot 研发，不是普通 Backend 顺带问 AI。 / 9. 平时是否 AI Coding，有什么实际方法？ / 去重：正式编号前再次逐个直接回读 `batch-01.md`～`batch-30.md`。历史已有 Shopee `S081`、`S239` 等 Agent 来源，但均为不同作者、不同月份 / 日期与独立流程；未发现当前 URL、作者或“Agent → Function Call / Tool / MCP → RAG 文档规模 → Linux Process → Kth Largest / Quick Sort 深追 → AI Coding”的连续同场来源。 |
-| `S294` | 度小满｜AI 全栈｜一面｜发布 2026-09-20 17:39｜HUMAN-A | 14. AI-assisted Development 中最有代表性的真实 Case 是什么；采用度、收益、踩坑和 AI 不擅长的部分怎样评价？ / 最终去重：在本轮编号前已直接回读正式 `batch-01.md`～`batch-31.md` 全历史，并与本次恢复的 `batch-32.md` 候选交叉核验。未发现度小满同公司 / 同招聘流程、当前 URL，或“Browser / Network → OS / GMP → MySQL / Redis → Frontend Foundation → AI-assisted Development → AI Q&A System Design → Restore IP”的历史同场来源。同作者不同公司按独立招聘流程分别计数。 |
+| `S294` | 度小满｜AI 全栈｜一面｜发布 2026-09-20 17:39｜HUMAN-A | 14. AI-assisted Development 中最有代表性的真实 Case 是什么；采用度、收益、踩坑和 AI 不擅长的部分怎样评价？ / 3. （原题7(3)）当前AI Coding问题及本人踩坑 / 3. （原题8(3)）AI Coding、手写、算法和协作中哪个最强 |
 | `S295` | 百度｜Agent 后端｜三面｜发布 2026-09-22 09:13｜HUMAN-A | - **普通 Backend / Frontend / Data / Test 岗出现 Agent / Skill / AI Coding**：没有目标 Role Scope 时继续排除；术语扩散不等于目标岗位样本。 / 4. **AI Full-stack 仍然是完整软件工程底座 + AI Feature 的组合。** 度小满把 Network / OS / Go / MySQL / Redis / Frontend Foundation 与 AI-assisted Development、AI Q&A System Design 放在同一场。 |
 | `S297` | 字节跳动中国交易与广告｜AI 全栈开发工程师｜一面｜面试 2026-09-16，发布 2026-09-24｜HUMAN-A | - **近期算法 / SFT / RL / 模型训练岗位、Test / Data / 普通 Backend / Frontend 岗**：仅出现 Agent、MCP、Skill、AI Coding 等术语不能替代目标 Role Scope；不扩大统计边界。 |
 | `S307` | 字节跳动（剪映）｜AI应用开发（日常实习）｜一面｜HUMAN-A | 5. Vibe Coding占比 |
@@ -314,8 +328,13 @@
 | `S333` | 字节跳动｜Agent开发秋招｜一面｜HUMAN-A | 10. （原题10）日常AI Coding |
 | `S334` | 科大讯飞｜Agent Harness｜一面｜HUMAN-A | 18. （原题18）AI Coding工具 |
 | `S345` | 亿联网络｜Agent工程师：企业模型中转路由、员工Agent、硬件产品Agent｜两位面试官合并技术面｜HUMAN-A | 10. （原题4.1）AI Coding看法 / 11. （原题4.2）AI Coding项目实践 |
-| `S360` | 快手｜AI全栈开发（Agent）｜['一面', '二面', '三面']｜HUMAN-A | ### 一面｜AI Coding现场题 / ### 二面｜AI Coding现场题 |
+| `S360` | 快手｜AI全栈开发（Agent）｜一面、二面、三面｜HUMAN-A | ### 一面｜AI Coding现场题 / ### 二面｜AI Coding现场题 |
 | `S361` | 字节跳动｜Agent开发｜一面约70分钟｜HUMAN-A | 真人 / 第一人称证据：作者叙述自己列举缓存内容后，面试官继续追问具体设计。；现场缓存编码完成后又要求测试和优化，随后讨论日常AI Coding。；记录面试官对候选人听题方式和本人简历项目介绍的具体反馈。 / ### 算法与AI Coding / 2. （原文未编号）平时是否采用Vibe Coding |
+| `S362` | 数字马力｜AI研发实习生｜技术一面，48分钟｜HUMAN-A | 20. （原题7，无编号追问按段序2）常用哪些AI Coding工具，比较多个优点 |
+| `S366` | 字节跳动｜AI FDE（Agent客户落地）｜HR初聊+技术一二三面+HR｜HUMAN-A | 真人 / 第一人称证据：作者按第1至第9天串联本人招聘流程；记录具体客户模型报错、现场共享写提示词和AI Coding，最后明确因定级选择在正式offer邮件前终止。 / 10. （原题5）AI Coding制作简单网页，具体需求未披露 |
+| `S373` | 京东｜Agent后端开发 / 知识库与大模型应用后端｜二面｜HUMAN-A | Role Scope：原帖标题为Agent后端；34项以上问题围绕知识库平台、向量检索、Agentic RAG、Skills、LLM应用与模型选型连续深挖，远非传统后端偶问AI Coding |
+| `S381` | 阿里—淘宝闪购｜AI研发岗（主体为Agent应用工程）｜一面50min、二面40min、HR面50min｜HUMAN-A | 记录边界：4/4全部读完；图2一面项目1–7、八股1–3及只写ai coding的手撕栏目；图3二面1–12（12为反问）；图4 HR1–14。图内无印刷页码，按网站下载顺序和内容映射。 / 10. （原题10）常用AI Coding工具 |
+| `S382` | 小绿书（原文别称，未擅自映射）｜Agent｜一面｜HUMAN-A | 16. （原题10）AI Coding使用情况；核心代码为何不由AI生成 |
 
 ## Spec-driven Development
 
