@@ -8526,6 +8526,94 @@
       "urls": [
         "https://www.nowcoder.com/feed/main/detail/03cae4b91e0749369b1cd98928e5bb2d"
       ]
+    },
+    {
+      "source_id": "S400",
+      "heading_raw": "DeepWisdom｜AI / Agent应用工程方向（具体职称未披露）｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S400:batch-38:886",
+          "source_id": "S400",
+          "raw_path": "01-data/raw/batch-38.md",
+          "line_start": 886,
+          "line_end": 916,
+          "original_line_start": 886,
+          "original_line_end": 916,
+          "source_section_sha256": "f46824b0d19f8590e762f8bf86042f273cd6577655d5b57c860576d7951cd840",
+          "is_extension": false
+        }
+      ],
+      "record_count": 8,
+      "urls": [
+        "https://www.nowcoder.com/users/846855047",
+        "https://www.nowcoder.com/feed/main/detail/a23b255944084a97820ebb5e3e516488"
+      ]
+    },
+    {
+      "source_id": "S401",
+      "heading_raw": "Unity中国｜AI Agent开发｜技术一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S401:batch-38:917",
+          "source_id": "S401",
+          "raw_path": "01-data/raw/batch-38.md",
+          "line_start": 917,
+          "line_end": 963,
+          "original_line_start": 917,
+          "original_line_end": 963,
+          "source_section_sha256": "06474cbb1b5233e66eecc1a711a917911560ed486801c467f031e55a094dc5de",
+          "is_extension": false
+        }
+      ],
+      "record_count": 20,
+      "urls": [
+        "https://www.xiaohongshu.com/user/profile/648a7f67000000001c02aeda",
+        "https://www.xiaohongshu.com/explore/6a6b3a60000000003301dcc1"
+      ]
+    },
+    {
+      "source_id": "S402",
+      "heading_raw": "浪潮｜智能体开发｜一面技术面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S402:batch-38:964",
+          "source_id": "S402",
+          "raw_path": "01-data/raw/batch-38.md",
+          "line_start": 964,
+          "line_end": 999,
+          "original_line_start": 964,
+          "original_line_end": 999,
+          "source_section_sha256": "9c636a772c37b73ef7cf4ff9a69314b96955e4aba4f0a4186210251d6e266705",
+          "is_extension": false
+        }
+      ],
+      "record_count": 10,
+      "urls": [
+        "https://www.nowcoder.com/users/634328364",
+        "https://www.nowcoder.com/feed/main/detail/a8854ce3fa4b45cb8d73ec92c798a63b"
+      ]
+    },
+    {
+      "source_id": "S403",
+      "heading_raw": "东成机电｜算法工程师（Agent应用与评测方向）｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S403:batch-38:1000",
+          "source_id": "S403",
+          "raw_path": "01-data/raw/batch-38.md",
+          "line_start": 1000,
+          "line_end": 1036,
+          "original_line_start": 1000,
+          "original_line_end": 1036,
+          "source_section_sha256": "4403137a1258a1bd018e1cbe91b3284dcf9d485cde316ef779b919c4a2605bf5",
+          "is_extension": false
+        }
+      ],
+      "record_count": 14,
+      "urls": [
+        "https://www.xiaohongshu.com/user/profile/648a7f67000000001c02aeda",
+        "https://www.xiaohongshu.com/explore/6a990afd000000002b01d810"
+      ]
     }
   ]
 }

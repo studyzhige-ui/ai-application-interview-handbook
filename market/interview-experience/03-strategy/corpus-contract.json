@@ -399,7 +399,11 @@
     "S396",
     "S397",
     "S398",
-    "S399"
+    "S399",
+    "S400",
+    "S401",
+    "S402",
+    "S403"
   ],
   "raw_sha256": {
     "01-data/raw/batch-01.md": "f923cdfa9e971986c15b4df6a8d6bfeef1ad5dd4876e9ffa3226a260f4077332",
@@ -439,7 +443,7 @@
     "01-data/raw/batch-35.md": "049f43e209ded32e4a6d21c498423e7e8a25565b32339496243d61c1bb2ff7c0",
     "01-data/raw/batch-36.md": "a799ea3cff2a7ae809277922b1452f2f83b12838fa98a4b1cb5fb4574066b23c",
     "01-data/raw/batch-37.md": "4287322d8012f7a29c5f53f3049712913b2c85dced53257d8c9aec84bb84fbd5",
-    "01-data/raw/batch-38.md": "118c572e7f5cae3441a25a4d1f9abdc750ba06c7f4981f92dd27da6b56f4d151"
+    "01-data/raw/batch-38.md": "bf66feff555f78fbe8a4c87fee91a010db37e2301188ff2c6d8d40f602d2abfa"
   },
   "update_policy": "Preserve formal first-source sections verbatim; source-provenance records original baseline spans. New admissions explicitly update the contract.",
   "source_section_sha256": {
@@ -842,7 +846,11 @@
     "S396:batch-38:677": "60a16dfb4ba253ef55d75584fdd8919bce5190470e2ecbe56027f0fe8bc1d2a6",
     "S397:batch-38:717": "ff3f19674a2ad2b758aa7be0a822013c9d9efd2cd28d2b03e2f5df5c3559f81d",
     "S398:batch-38:801": "9c24613ce326c6dbd6dd90aba3a6972beb1254d26893b20cf71ae75c04538dfe",
-    "S399:batch-38:845": "c44bcadd71c7da571c28c695f76d04427e3ec61901d18bd7c8aa0c54893bef46"
+    "S399:batch-38:845": "c44bcadd71c7da571c28c695f76d04427e3ec61901d18bd7c8aa0c54893bef46",
+    "S400:batch-38:886": "f46824b0d19f8590e762f8bf86042f273cd6577655d5b57c860576d7951cd840",
+    "S401:batch-38:917": "06474cbb1b5233e66eecc1a711a917911560ed486801c467f031e55a094dc5de",
+    "S402:batch-38:964": "9c636a772c37b73ef7cf4ff9a69314b96955e4aba4f0a4186210251d6e266705",
+    "S403:batch-38:1000": "4403137a1258a1bd018e1cbe91b3284dcf9d485cde316ef779b919c4a2605bf5"
   },
   "byte_encoding": "UTF-8 with LF line endings, matching preserved Git blob content; repository .gitattributes enforces LF checkout for text.",
   "unnumbered_record_ids": [
