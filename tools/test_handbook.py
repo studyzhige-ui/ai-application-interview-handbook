@@ -12,8 +12,9 @@ class MarkdownTests(unittest.TestCase):
     def test_explicit_anchor(self):
         self.assertIn('core-1',h.anchors('<a id="core-1"></a>'))
     def test_encoded_path(self):
-        p,a=h.resolve(Path('/r'),Path('/r/a/x.md'),'../%E4%B8%AD.md#标题')
-        self.assertEqual(str(p),'/r/中.md');self.assertEqual(a,'标题')
+        root=Path(__file__).resolve().parent
+        p,a=h.resolve(root,root/'a/x.md','../%E4%B8%AD.md#标题')
+        self.assertEqual(p,root/'中.md');self.assertEqual(a,'标题')
     def test_external(self):
         self.assertIsNone(h.resolve(Path('/r'),Path('/r/x.md'),'https://example.com/a'))
     def test_conflict_examples(self):
