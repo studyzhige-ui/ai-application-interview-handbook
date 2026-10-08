@@ -6,7 +6,7 @@
 
 ## Prompt / Prompt Engineering
 
-候选来源：**72**
+候选来源：**73**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -82,6 +82,7 @@
 | `S286` | 小红书｜AI 应用研发（社区搜索 / Agent）｜一面｜面试 / 发布 2026-09-15｜HUMAN-A | 3. **Evaluation 开始验参数而不是验名词。** Elo 怎样比较、Prompt Test Set 多大、Context 为什么 80% 压缩、Offline Case 是否代表线上故障，都要求解释实验依据。 |
 | `S347` | 虾皮｜Agent开发｜一面、二面｜HUMAN-A | 12. （原题12）主题：System Prompt/AGENTS.md |
 | `S384` | 理想｜Agent秋招（封面）｜一面｜HUMAN-A | 3. （原题3）中期记忆死循环是否考虑把部分内容写System Prompt |
+| `S396` | 匿名小公司｜AI Agent开发实习｜未明确｜HUMAN-A | 6. （原题7）学校官网这些信息源，是直接编排到 Skill / Prompt 里面，还是放在一个单独的数据源里进行查询？ |
 
 ## Prompt Injection / Prompt Attack
 
@@ -101,7 +102,7 @@
 
 ## Intent Recognition
 
-候选来源：**22**
+候选来源：**23**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -127,10 +128,11 @@
 | `S381` | 阿里—淘宝闪购｜AI研发岗（主体为Agent应用工程）｜一面50min、二面40min、HR面50min｜HUMAN-A | 真人 / 第一人称证据：作者给出从8.11投递到9.4意向书的本人流程，明确以自己面试感受作复盘；按50/40/50分钟三轮分开记录，项目沿意图识别准确率→错误类别→执行链路→工具接口变更异常连续追问；二面/HR围绕数学转计算机、实习经历的具体个人背景追问 / 2. （原题2）意图识别如何实现 / 3. （原题3）意图识别准确率如何计算 |
 | `S382` | 小绿书（原文别称，未擅自映射）｜Agent｜一面｜HUMAN-A | 4. （原题3）92%意图识别准确率如何计算，区分单意图与多意图 |
 | `S384` | 理想｜Agent秋招（封面）｜一面｜HUMAN-A | 去重：本人理想Agent一面，中期记忆死循环→中长期检索→跨用例冲突/过期→更新触发→Harness/指标，与本批坐标旅人意图识别/Skill/grill-me链和旧理想低密度排除条目不同。 |
+| `S393` | 浙江匿名小厂｜Agent实习｜未明确｜HUMAN-A | 12. （原题12）意图识别 |
 
 ## LangGraph / LangChain
 
-候选来源：**65**
+候选来源：**67**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -199,6 +201,8 @@
 | `S380` | 阿里控股｜AI应用研发｜一面｜HUMAN-A | 7. （原题7）LangGraph或Agent开发是否使用栈、队列 |
 | `S383` | 东方财富｜AI应用开发（南京）｜一面｜HUMAN-A | 1. （原题1）LangChain/LangGraph对开发者作用 / 2. （原题2）LangChain如何统一上下文、工具、记忆与状态 |
 | `S385` | 字节跳动（HR流转的新Agent部门）｜Agent开发｜新部门一面｜HUMAN-A | 真人 / 第一人称证据：原文明确“上次的字节二面完很不幸被挂掉了，不过hr说是给我流转到另外一个部门了，但是是做Agent开发相关的”；本人将模型/工程边界用Harness说明，项目未接第三方框架仍被追问LangGraph；面后称高强度且每题需深入模块 / 1. （原题1）LangGraph基本概念 |
+| `S392` | 匿名小厂｜Agent开发实习｜未明确｜HUMAN-A | 1. （原题1）LangChain LangGraph与手写框架差异 / 2. （原题2）LangChain与LangGraph设计理念场景 |
+| `S398` | 天津匿名小厂｜Agent日常实习｜技术面（未显式编号）｜HUMAN-A | 10. （原题10）LangGraph等框架使用 |
 
 ## A2A
 
@@ -216,7 +220,7 @@
 
 ## AI Coding / Vibe Coding
 
-候选来源：**115**
+候选来源：**117**
 
 | Source | Flow | Match snippets |
 |---|---|---|
@@ -335,6 +339,8 @@
 | `S373` | 京东｜Agent后端开发 / 知识库与大模型应用后端｜二面｜HUMAN-A | Role Scope：原帖标题为Agent后端；34项以上问题围绕知识库平台、向量检索、Agentic RAG、Skills、LLM应用与模型选型连续深挖，远非传统后端偶问AI Coding |
 | `S381` | 阿里—淘宝闪购｜AI研发岗（主体为Agent应用工程）｜一面50min、二面40min、HR面50min｜HUMAN-A | 记录边界：4/4全部读完；图2一面项目1–7、八股1–3及只写ai coding的手撕栏目；图3二面1–12（12为反问）；图4 HR1–14。图内无印刷页码，按网站下载顺序和内容映射。 / 10. （原题10）常用AI Coding工具 |
 | `S382` | 小绿书（原文别称，未擅自映射）｜Agent｜一面｜HUMAN-A | 16. （原题10）AI Coding使用情况；核心代码为何不由AI生成 |
+| `S387` | 字节跳动—抖音电商｜Agent开发｜一面、二面、三面（同一流程）｜HUMAN-A | ### 二面｜B. AI Coding 过程与技术方案评审 / 1. （原题1；原时间戳08:20—08:27）是否收到面前AI Coding题；当前完成进度 / 5. （原题5；原时间戳17:04）完成这道AI Coding题实际花费多久 |
+| `S391` | 匿名｜Agent开发｜一面/二面｜HUMAN-A | - （原题12）项目Vibe Coding使用 |
 
 ## Spec-driven Development
 
