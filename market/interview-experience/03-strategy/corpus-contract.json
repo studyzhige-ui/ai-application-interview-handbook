@@ -844,5 +844,29 @@
     "S398:batch-38:801": "9c24613ce326c6dbd6dd90aba3a6972beb1254d26893b20cf71ae75c04538dfe",
     "S399:batch-38:845": "c44bcadd71c7da571c28c695f76d04427e3ec61901d18bd7c8aa0c54893bef46"
   },
-  "byte_encoding": "UTF-8 with LF line endings, matching preserved Git blob content; repository .gitattributes enforces LF checkout for text."
+  "byte_encoding": "UTF-8 with LF line endings, matching preserved Git blob content; repository .gitattributes enforces LF checkout for text.",
+  "unnumbered_record_ids": [
+    "S391:batch-38:L00473",
+    "S391:batch-38:L00474",
+    "S391:batch-38:L00475",
+    "S391:batch-38:L00476",
+    "S391:batch-38:L00477",
+    "S391:batch-38:L00478",
+    "S391:batch-38:L00479",
+    "S391:batch-38:L00480",
+    "S391:batch-38:L00481",
+    "S391:batch-38:L00482",
+    "S391:batch-38:L00483",
+    "S391:batch-38:L00484",
+    "S391:batch-38:L00485",
+    "S391:batch-38:L00486",
+    "S391:batch-38:L00487",
+    "S391:batch-38:L00491",
+    "S391:batch-38:L00492",
+    "S391:batch-38:L00493",
+    "S391:batch-38:L00494",
+    "S391:batch-38:L00495",
+    "S391:batch-38:L00496"
+  ],
+  "record_layout": "Top-level numbered lines are structural records, including placeholders and editorial text. Explicit unnumbered_record_ids preserve original bullet records. A record is not a classified interview question."
 }

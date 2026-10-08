@@ -1,57 +1,63 @@
 #!/usr/bin/env node
-/**
- * Consume first-party Feishu-family ATS jobs captured from official career
- * pages by Playwright. Feishu search requests require runtime signatures, so
- * replaying unsigned URLs is intentionally avoided.
- */
-import fs from "node:fs";
-import { cacheIsFresh } from "./cache.mjs";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-const BUSINESS = fileURLToPath(new URL("../../../", import.meta.url));
-const businessPath = p => path.join(BUSINESS, p);
+/** Explicit, bounded first-party Feishu ATS list and detail collection. */
+import { collectPaged, runCLI, validateOptions } from "./bounded.mjs";
 
-const cfg=JSON.parse(fs.readFileSync(businessPath("03-strategy/official-2027-campus-sources.json"),"utf8"));
-const browserPath=businessPath("01-data/official-2027-browser-discovery.generated.json");
-const browser=fs.existsSync(browserPath)?JSON.parse(fs.readFileSync(browserPath,"utf8")):{results:[]};
-if(!cacheIsFresh(browser)) throw new Error("Feishu browser input is stale or belongs to another run");
-const out=process.argv[2]||businessPath("01-data/official-2027-feishu-discovery.generated.json");
+function label(value) {
+  if (typeof value === "string") return value;
+  return value?.zh_cn || value?.i18n || value?.en_us || "";
+}
 
-function isFeishuLike(src,result){
-  const urls=[src.portal,src.official_root,...(src.extra_portals||[]),
-    ...(result?.pages||[]).map(p=>p.final_url||p.page_url),
-    ...(result?.endpoints||[]).map(e=>e.url)
-  ].filter(Boolean);
-  return urls.some(u=>/\.jobs\.feishu\.cn|\/api\/v1\/search\/job\/posts/i.test(u));
+export function feishuSpecification(source, overrides = {}) {
+  const host = source.feishu_host || new URL(source.portal).hostname;
+  const channel = overrides.channel || source.feishu_channel || new URL(source.portal).pathname.split("/").filter(Boolean)[0] || "campus";
+  const api = overrides.api || source.api || `https://${host}/api/v1/search/job/posts`;
+  const origin = new URL(api).origin;
+  const detailRoot = overrides.detailRoot || source.feishu_apply_prefix || `${origin}/${channel}/position`;
+  const headers = {
+    "Accept": "application/json, text/plain, */*", "Content-Type": "application/json",
+    "portal-platform": "pc", "portal-channel": channel, "website-path": channel,
+    "Origin": origin, "Referer": source.portal,
+  };
+  return {
+    listRequest(offset, limit) {
+      const body = {
+        keyword: "", limit, offset, portal_type: 3, portal_entrance: 1, language: "zh",
+        job_category_id_list: [], location_code_list: [],
+        subject_id_list: source.feishu_subject_ids || [],
+        recruitment_id_list: overrides.recruitmentIds || source.feishu_recruitment_ids || [],
+      };
+      return { url: api, init: { method: "POST", headers, body: JSON.stringify(body) } };
+    },
+    listData(payload) {
+      if (payload.code !== 0) throw new Error(`First-party ATS code=${payload.code}: ${payload.message || ""}`);
+      const data = payload.data || {};
+      return { rows: data.job_post_list, total: data.count == null ? null : Number(data.count) };
+    },
+    detailRequest(row) {
+      if (row.id == null || row.id === "") return null;
+      return { url: `${origin}/api/v1/job/posts/${encodeURIComponent(row.id)}`, init: { headers } };
+    },
+    detailData(payload) {
+      if (payload.code !== 0) throw new Error(`First-party ATS detail code=${payload.code}: ${payload.message || ""}`);
+      return payload.data?.job_post || payload.data;
+    },
+    normalize(row) {
+      const id = row.id == null ? "" : String(row.id);
+      return {
+        company: source.company, title: row.title || "", job_id: id,
+        location: (row.city_list || []).map(city => label(city?.name)).filter(Boolean).join(" / ") || label(row.city_info?.name),
+        category: label(row.recruit_type?.name), department: label(row.job_category?.name) || label(row.job_function?.name),
+        description: row.description || "", requirements: row.requirement || "",
+        official_url: id ? `${detailRoot.replace(/\/$/, "")}/${encodeURIComponent(id)}/detail` : "", official_api: api,
+      };
+    },
+  };
 }
-function mergeJobs(jobs){
-  const m=new Map();
-  for(const j of jobs||[]){
-    const key=j.job_id||j.official_url||((j.title||"")+"|"+(j.location||""));
-    if(!key)continue;
-    const old=m.get(key);
-    if(!old||(String(j.description||"").length+String(j.requirements||"").length)>
-      (String(old.description||"").length+String(old.requirements||"").length))m.set(key,j);
-  }
-  return [...m.values()];
+
+export async function collectFeishu(source, options, dependencies = {}) {
+  validateOptions(options);
+  if (source.mode !== "feishu_direct") throw new Error("Feishu adapter requires a registered feishu_direct source");
+  return collectPaged(source, options, feishuSpecification(source), dependencies);
 }
-const byCompany=new Map((browser.results||[]).map(x=>[x.company,x]));
-const results=[];
-for(const src of cfg.sources||[]){
-  const b=byCompany.get(src.company);
-  if(!b||!isFeishuLike(src,b))continue;
-  const jobs=mergeJobs(b.jobs||[]);
-  const full=Boolean(b.full_keyword_search);
-  const wholePool=Boolean(b.list_scan_complete) || (b.pages||[]).some(p=>p.signed_feishu_full_pool===true);
-  const complete=wholePool&&["BROWSER_ENUMERATED","BROWSER_ENUMERATED_ZERO"].includes(b.status);
-  results.push({
-    company:src.company,portal:src.portal,
-    status:complete?"OK":"BLOCKED",
-    complete,full_keyword_search:full,whole_pool_complete:wholePool,
-    jobs:complete?jobs:[],
-    discovered_jobs:jobs.length,
-    error:complete?"":"official Feishu page discovered, but complete first-party pool pagination is not yet proven"
-  });
-}
-for(const r of results)console.log("feishu "+r.company+": status="+r.status+" jobs="+r.jobs.length+" discovered="+r.discovered_jobs);
-fs.writeFileSync(out,JSON.stringify({generated_at:new Date().toISOString(),source_commit:process.env.SYNC_SOURCE_SHA||"",run_id:process.env.GITHUB_RUN_ID||"",run_attempt:process.env.GITHUB_RUN_ATTEMPT||"",results},null,2)+"\n","utf8");
+
+await runCLI(import.meta.url, collectFeishu);

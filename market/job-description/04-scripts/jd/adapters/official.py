@@ -1,6 +1,6 @@
 """Configured first-party adapters reused for their request/response contracts.
 
-Filtering, deduplication, persistent state, and rendering belong to other modules.
+No meaning-based filtering occurs here. Manual bounds and raw evidence capture are mandatory.
 """
 from __future__ import annotations
 import json
@@ -9,58 +9,8 @@ import time
 from typing import Any, Callable
 from urllib.parse import urljoin, urlparse, parse_qs
 from ..model import Job, txt
-from ..matching import likely_target_title
-from ..freshness import cache_is_fresh
-from ..paths import XIAOMI_NODE_CACHE, BYTEDANCE_NODE_CACHE
+from ..limits import list_page, pages, job_rows, current_budget
 from .http import requests, HEADERS, TIMEOUT, get_json, post_json, post_form
-
-
-def fetch_xiaomi(src: dict) -> list[Job]:
-    """Read Xiaomi campus jobs fetched by the official Node ATSX adapter.
-
-    Xiaomi's official ATSX endpoint is first-party but its WAF currently treats
-    Python requests differently from browser/Node fetch on GitHub runners.
-    The collection interface therefore runs adapters/xiaomi.mjs first.
-    """
-    cache = XIAOMI_NODE_CACHE
-    if not cache.exists():
-        raise RuntimeError("Xiaomi official Node adapter output missing")
-    payload = json.loads(cache.read_text(encoding="utf-8"))
-    if not cache_is_fresh(payload) or payload.get("complete") is not True:
-        raise RuntimeError("Official Node adapter output is stale or incomplete")
-    if len(payload.get("jobs") or []) < int(payload.get("total") or 0):
-        raise RuntimeError("Official Node adapter output does not cover advertised total")
-    out: list[Job] = []
-    for j in payload.get("jobs") or []:
-        out.append(Job(
-            src["company"], txt(j.get("title")), txt(j.get("job_id")),
-            txt(j.get("location")), txt(j.get("category")), txt(j.get("department")),
-            txt(j.get("description")), txt(j.get("requirements")),
-            txt(j.get("official_url")), txt(j.get("official_api")),
-            txt(j.get("cycle_evidence")),
-        ))
-    return out
-
-
-def fetch_bytedance(src: dict) -> list[Job]:
-    cache = BYTEDANCE_NODE_CACHE
-    if not cache.exists():
-        raise RuntimeError("ByteDance official Node adapter output missing")
-    payload = json.loads(cache.read_text(encoding="utf-8"))
-    if not cache_is_fresh(payload) or payload.get("complete") is not True:
-        raise RuntimeError("Official Node adapter output is stale or incomplete")
-    if len(payload.get("jobs") or []) < int(payload.get("total") or 0):
-        raise RuntimeError("Official Node adapter output does not cover advertised total")
-    out: list[Job] = []
-    for j in payload.get("jobs") or []:
-        out.append(Job(
-            src["company"], txt(j.get("title")), txt(j.get("job_id")),
-            txt(j.get("location")), txt(j.get("category")), txt(j.get("department")),
-            txt(j.get("description")), txt(j.get("requirements")),
-            txt(j.get("official_url")), txt(j.get("official_api")),
-            txt(j.get("cycle_evidence")),
-        ))
-    return out
 
 
 def fetch_kuaishou(src: dict) -> list[Job]:
@@ -75,7 +25,7 @@ def fetch_kuaishou(src: dict) -> list[Job]:
     }
     out: list[Job] = []
     page = 1
-    while page <= 20:
+    while page <= 20 and list_page():
         payload = {
             "recruitSubProjectCodes": [project],
             "pageSize": 500,
@@ -91,7 +41,7 @@ def fetch_kuaishou(src: dict) -> list[Job]:
         rows = result.get("list") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             code = txt(j.get("code"))
             locations = j.get("workLocationDicts") or []
@@ -122,7 +72,7 @@ def fetch_kuaishou(src: dict) -> list[Job]:
 def fetch_baidu(src: dict) -> list[Job]:
     out = []
     page = 1
-    while page <= 30:
+    while page <= 30 and list_page():
         data = post_form(
             src["api"],
             data={"recruitType": "GRADUATE", "pageSize": 20, "curPage": page, "projectType": "", "keyWord": ""},
@@ -132,7 +82,7 @@ def fetch_baidu(src: dict) -> list[Job]:
         rows = d.get("list") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             pid = txt(j.get("jobId") or j.get("postId"))
             out.append(Job(
                 src["company"], txt(j.get("name")), pid,
@@ -151,14 +101,14 @@ def fetch_baidu(src: dict) -> list[Job]:
 def fetch_netease(src: dict) -> list[Job]:
     out = []
     page = 1
-    while page <= 30:
+    while page <= 30 and list_page():
         data = post_json(src["api"], payload={"currentPage": page, "pageSize": 100},
                          headers={"Origin": "https://hr.163.com"})
         d = data.get("data") or {}
         rows = d.get("list") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             out.append(Job(
                 src["company"], txt(j.get("name")), jid,
@@ -180,7 +130,7 @@ def fetch_tencent_campus(src: dict) -> list[Job]:
     headers = {**HEADERS, "Content-Type": "application/json", "Referer": "https://join.qq.com/post.html"}
     out, seen = [], set()
     page = 1
-    while page <= 50:
+    while page <= 50 and list_page():
         body = {
             "keyword": "", "pageIndex": page, "pageSize": 50,
             "recruitType": "40003", "bgIds": [], "productIds": [],
@@ -192,17 +142,13 @@ def fetch_tencent_campus(src: dict) -> list[Job]:
         rows = d.get("positionList") or []
         if not rows:
             break
-        for row in rows:
+        for row in job_rows(rows):
             pid = txt(row.get("postId") or row.get("id"))
             if not pid or pid in seen:
                 continue
             seen.add(pid)
             project = txt(row.get("recruitLabelName") or row.get("projectName") or "校招")
-            if "实习" in project:
-                continue
             title = txt(row.get("positionTitle"))
-            if not likely_target_title(title):
-                continue
             try:
                 detail = get_json(
                     detail_api,
@@ -236,7 +182,7 @@ def fetch_meituan_campus(src: dict) -> list[Job]:
         "X-Requested-With": "XMLHttpRequest",
     }
     out, seen = [], set()
-    for page in range(1, 30):
+    for page in pages(1, 30):
         body = {
             "page": {"pageNo": page, "pageSize": 100},
             "jobShareType": "1", "keywords": "", "cityList": [],
@@ -250,9 +196,7 @@ def fetch_meituan_campus(src: dict) -> list[Job]:
         rows = d.get("list") or []
         if not rows:
             break
-        for j in rows:
-            if str(j.get("jobType") or "") not in ("", "1"):
-                continue
+        for j in job_rows(rows):
             jid = txt(j.get("jobUnionId"))
             if not jid or jid in seen:
                 continue
@@ -280,7 +224,7 @@ def fetch_jd_campus(src: dict) -> list[Job]:
     out = []
     for recruit_type in ("present", "talent"):
         page, seen = 0, set()
-        while page < 30:
+        while page < 30 and list_page():
             payload = {
                 "pageSize": 50, "pageIndex": page,
                 "parameter": {
@@ -294,7 +238,7 @@ def fetch_jd_campus(src: dict) -> list[Job]:
             rows = d.get("items") or []
             if not rows:
                 break
-            for j in rows:
+            for j in job_rows(rows):
                 pid = txt(j.get("publishId") or j.get("reqId"))
                 key = f"{recruit_type}:{pid}"
                 if not pid or key in seen:
@@ -329,7 +273,7 @@ def fetch_pdd_campus(src: dict) -> list[Job]:
     session = requests.Session()
     session.headers.update(headers)
     rows, page = [], 1
-    while page <= 30:
+    while page <= 30 and list_page():
         r = session.post(list_api, json={"page": page, "pageSize": 100, "t": None}, timeout=TIMEOUT)
         r.raise_for_status()
         body = r.json()
@@ -345,7 +289,7 @@ def fetch_pdd_campus(src: dict) -> list[Job]:
         page += 1
 
     out = []
-    for row in rows:
+    for row in job_rows(rows):
         pid = txt(row.get("id"))
         if not pid:
             continue
@@ -377,7 +321,7 @@ def fetch_oppo_campus(src: dict) -> list[Job]:
         "Referer": "https://careers.oppo.com/university/oppo/recruitment/post",
     }
     out, page = [], 1
-    while page <= 20:
+    while page <= 20 and list_page():
         payload = {
             "pageNum": page, "pageSize": 100, "positionName": "",
             "projectList": [], "positionTypeList": [], "workCityCodeList": [],
@@ -388,7 +332,7 @@ def fetch_oppo_campus(src: dict) -> list[Job]:
         rows = d.get("records") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("idProjPosition") or j.get("idRecruitPosition"))
             project = txt(j.get("projectName"))
             out.append(Job(
@@ -412,13 +356,13 @@ def fetch_lenovo(src: dict) -> list[Job]:
         "portal-type": "PC",
     }
     out, page = [], 1
-    while page <= 30:
+    while page <= 30 and list_page():
         data = get_json(api, params={"pageNum": page, "pageSize": 50}, headers=headers)
         d = data.get("result") or {}
         rows = d.get("rows") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             out.append(Job(
                 src["company"], txt(j.get("jobName")), jid, txt(j.get("workPlace")),
@@ -437,12 +381,12 @@ def fetch_lenovo(src: dict) -> list[Job]:
 def fetch_sf(src: dict) -> list[Job]:
     api = "https://campus.sf-express.com/api/web/position/query"
     out, page = [], 1
-    while page <= 20:
+    while page <= 20 and list_page():
         data = get_json(api, params={"pageNum": page, "pageSize": 50}, headers={"Referer": "https://campus.sf-express.com/positionList"})
         rows = data.get("list") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             out.append(Job(
                 src["company"], txt(j.get("positionName")), jid,
@@ -469,7 +413,7 @@ def fetch_alibaba_campus(src: dict) -> list[Job]:
     if not csrf:
         raise RuntimeError("Alibaba campus XSRF-TOKEN missing")
     out, page = [], 1
-    while page <= 30:
+    while page <= 30 and list_page():
         payload = {
             "batchId": batch_id, "pageIndex": page, "pageSize": 50,
             "channel": "campus_group_official_site", "language": "zh",
@@ -480,7 +424,7 @@ def fetch_alibaba_campus(src: dict) -> list[Job]:
         rows = content.get("datas") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             out.append(Job(
                 src["company"], txt(j.get("name")), jid,
@@ -517,7 +461,7 @@ def fetch_xiaohongshu_2027(src: dict) -> list[Job]:
     headers = {**HEADERS, "Origin": "https://job.xiaohongshu.com", "Referer": "https://job.xiaohongshu.com/campus"}
     out: list[Job] = []
     page = 1
-    while page <= 30:
+    while page <= 30 and list_page():
         data = post_json(
             api,
             payload={
@@ -530,11 +474,9 @@ def fetch_xiaohongshu_2027(src: dict) -> list[Job]:
         rows = d.get("list") or []
         if not rows:
             break
-        for row in rows:
+        for row in job_rows(rows):
             pid = txt(row.get("positionId"))
             list_title = txt(row.get("positionName"))
-            if not likely_target_title(list_title):
-                continue
             detail = {}
             if pid:
                 try:
@@ -580,7 +522,7 @@ def fetch_bilibili_2027(src: dict) -> list[Job]:
     headers = {**base_headers, "X-CSRF": token, "Cookie": f"X-CSRF={token}"}
     out: list[Job] = []
     page = 1
-    while page <= 50:
+    while page <= 50 and list_page():
         data = post_json(
             list_api,
             payload={
@@ -598,7 +540,7 @@ def fetch_bilibili_2027(src: dict) -> list[Job]:
         rows = d.get("list") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             jd = txt(j.get("positionDescription"))
             out.append(Job(
@@ -607,7 +549,7 @@ def fetch_bilibili_2027(src: dict) -> list[Job]:
                 txt(j.get("postCodeName")), jd, "",
                 f"{root}/campus/positions/{jid}" if jid else src["portal"],
                 list_api,
-                "哔哩哔哩官方校园招聘全职项目" + (" / 2027" if "2027" in jd else ""),
+                "哔哩哔哩官方校园招聘全职项目",
             ))
         total = int(d.get("total") or 0)
         if page * 100 >= total or len(rows) < 100:
@@ -630,7 +572,7 @@ def fetch_huawei_2027(src: dict) -> list[Job]:
 
     out: list[Job] = []
     page = 1
-    while page <= 50:
+    while page <= 50 and list_page():
         params = {
             "jobType": "0", "jobTypes": "2", "language": "zh_CN",
             "reqTime": int(time.time() * 1000),
@@ -643,12 +585,10 @@ def fetch_huawei_2027(src: dict) -> list[Job]:
         rows = payload.get("result") or []
         if not rows:
             break
-        for row in rows:
+        for row in job_rows(rows):
             jid = txt(row.get("jobId"))
             ds = txt(row.get("dataSource") or "1")
             list_title = txt(row.get("jobname"))
-            if not likely_target_title(list_title):
-                continue
             detail = {}
             if jid:
                 try:
@@ -712,7 +652,7 @@ def fetch_ant_2027(src: dict) -> list[Job]:
     }
     out: list[Job] = []
     page = 1
-    while page <= 80:
+    while page <= 80 and list_page():
         data = post_json(
             api,
             payload={"key": "", "pageIndex": page, "pageSize": 49, "language": "zh"},
@@ -723,7 +663,7 @@ def fetch_ant_2027(src: dict) -> list[Job]:
         rows = data.get("content") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id") or j.get("code"))
             graduation = txt(j.get("graduationTime"))
             out.append(Job(
@@ -762,7 +702,7 @@ def _beisen_fetch_all(
     }
     out: list[Job] = []
     page = 0
-    while page < 50:
+    while page < 50 and list_page():
         body: dict[str, Any] = {
             "PageIndex": page, "PageSize": 100, "KeyWords": "",
             "SpecialType": 0, "PortalId": portal_id,
@@ -776,7 +716,7 @@ def _beisen_fetch_all(
         rows = data.get("Data") or []
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("JobAdId") or j.get("Id"))
             out.append(Job(
                 company, txt(j.get("JobAdName")), jid,
@@ -821,9 +761,8 @@ def fetch_beisen_direct(src: dict) -> list[Job]:
                 if txt(axis.get("Value")) != "Category":
                     continue
                 for item in axis.get("Data") or []:
-                    label = txt(item.get("Text"))
                     cid = txt(item.get("StrValue") or item.get("Value"))
-                    if cid and not re.search(r"社会|社招|实习", label):
+                    if cid:
                         categories.append(cid)
     except Exception:
         categories = []
@@ -850,9 +789,8 @@ def fetch_iflytek_2027(src: dict) -> list[Job]:
                 if txt(axis.get("Value")) != "Category":
                     continue
                 for item in axis.get("Data") or []:
-                    label = txt(item.get("Text"))
                     cid = txt(item.get("StrValue") or item.get("Value"))
-                    if cid and not re.search(r"社会|社招|实习", label):
+                    if cid:
                         categories.append(cid)
     except Exception:
         pass
@@ -871,12 +809,14 @@ def fetch_ctrip_2027(src: dict) -> list[Job]:
         **HEADERS, "Content-Type": "application/json",
         "Origin": "https://careers.ctrip.com", "Referer": "https://careers.ctrip.com/#/campus",
     }
+    if not list_page():
+        return []
     data = post_json(api, payload={"condition": {"pageIndex": 1, "pageSize": 100, "category": "2"}}, headers=headers)
     if txt(data.get("retCode")) != "201":
         raise RuntimeError(data.get("retMessage") or f"Ctrip retCode={data.get('retCode')}")
     d = data.get("retValue") or {}
     out: list[Job] = []
-    for j in d.get("recruitJobAdList") or []:
+    for j in job_rows(d.get("recruitJobAdList") or []):
         jid = txt(j.get("id") or j.get("jobId"))
         mj = txt(j.get("fromId"))
         out.append(Job(
@@ -902,7 +842,7 @@ def fetch_honor_2027(src: dict) -> list[Job]:
     }
     out: list[Job] = []
     page = 1
-    while page <= 100:
+    while page <= 100 and list_page():
         params = {"iSaJAx": "isAjax", "request_locale": "zh_CN", "t": int(time.time() * 1000)}
         # Official Wecruit list endpoint is form-urlencoded with query params.
         rr = requests.post(
@@ -919,11 +859,9 @@ def fetch_honor_2027(src: dict) -> list[Job]:
         rows = pf.get("pageData") or []
         if not rows:
             break
-        for row in rows:
+        for row in job_rows(rows):
             pid = txt(row.get("postId"))
             list_title = txt(row.get("postName"))
-            if not likely_target_title(list_title):
-                continue
             detail: dict[str, Any] = {}
             if pid:
                 try:
@@ -991,7 +929,7 @@ def fetch_feishu_direct(src: dict) -> list[Job]:
     out: list[Job] = []
     offset = 0
     total = None
-    for _ in range(100):
+    for _ in pages(0, 100):
         body: dict[str, Any] = {
             "keyword": "", "limit": 100, "offset": offset,
             "portal_type": 3, "portal_entrance": 1, "language": "zh",
@@ -1010,7 +948,7 @@ def fetch_feishu_direct(src: dict) -> list[Job]:
             total = int(d.get("count") or 0)
         if not rows:
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("id"))
             cities = " / ".join(
                 txt(x.get("name")) for x in (j.get("city_list") or [])
@@ -1054,7 +992,7 @@ def fetch_mihoyo_campus(src: dict) -> list[Job]:
     page = 1
     page_size = 100
     total = None
-    while page <= 100:
+    while page <= 100 and list_page():
         payload = {
             "pageNo": page, "pageSize": page_size,
             "channelDetailIds": [1], "hireType": 1,
@@ -1074,7 +1012,7 @@ def fetch_mihoyo_campus(src: dict) -> list[Job]:
         page += 1
 
     out: list[Job] = []
-    for row in rows:
+    for row in job_rows(rows):
         jid = txt(row.get("id") or row.get("jobId"))
         title = txt(row.get("title") or row.get("jobTitle") or row.get("positionName"))
         cities = " / ".join(
@@ -1085,7 +1023,7 @@ def fetch_mihoyo_campus(src: dict) -> list[Job]:
         desc = txt(row.get("description") or row.get("jobDescription") or row.get("jobSummary"))
         req = txt(row.get("jobRequire") or row.get("requirement") or row.get("jobRequirement"))
         detail: dict[str, Any] = {}
-        if jid and likely_target_title(title):
+        if jid:
             try:
                 dd = post_json(
                     detail_api,
@@ -1148,7 +1086,7 @@ def fetch_byd_campus(src: dict) -> list[Job]:
     rows: list[dict[str, Any]] = []
     page = 1
     page_size = 30
-    while page <= 200:
+    while page <= 200 and list_page():
         payload = {
             "topicCode": "", "batch": "2027", "campusNature": "008501",
             "abroad": "", "degree": "", "jobType": [], "researchDirection": [],
@@ -1166,12 +1104,12 @@ def fetch_byd_campus(src: dict) -> list[Job]:
         page += 1
 
     out: list[Job] = []
-    for row in rows:
+    for row in job_rows(rows):
         outer_id = txt(row.get("id"))
         outer_title = txt(row.get("jobName") or row.get("positionName") or row.get("title"))
         detail_outer: dict[str, Any] = {}
         inner_rows: list[dict[str, Any]] = []
-        if outer_id and likely_target_title(outer_title):
+        if outer_id:
             for attempt in range(2):
                 try:
                     rr = session.get(
@@ -1190,7 +1128,7 @@ def fetch_byd_campus(src: dict) -> list[Job]:
                     if attempt == 0:
                         time.sleep(0.8)
         if inner_rows:
-            for inner in inner_rows:
+            for inner in job_rows(inner_rows):
                 inner_id = txt(inner.get("id"))
                 title = txt(inner.get("jobName") or inner.get("positionName") or outer_title)
                 out.append(Job(
@@ -1239,6 +1177,8 @@ def fetch_ashby_official(src: dict) -> list[Job]:
       }
     }
     """
+    if not list_page():
+        return []
     payload = post_json(
         api,
         payload={
@@ -1258,16 +1198,14 @@ def fetch_ashby_official(src: dict) -> list[Job]:
         for t in (job_board.get("teams") or []) if isinstance(t, dict)
     }
     out: list[Job] = []
-    for row in rows:
+    for row in job_rows(rows):
         if not isinstance(row, dict):
             continue
         jid = txt(row.get("id"))
         title = txt(row.get("title"))
-        # The board list is the exhaustive source of truth. For target-like
-        # postings, the public detail page supplies eligibility/JD text and is
-        # already the first-party evidence URL retained by the persistent index.
+        # Fetch every returned posting detail within the explicit manual bounds.
         description = ""
-        if jid and likely_target_title(title):
+        if jid:
             try:
                 rr = requests.get(
                     f"https://jobs.ashbyhq.com/{board}/{jid}",
@@ -1285,7 +1223,7 @@ def fetch_ashby_official(src: dict) -> list[Job]:
             description, "",
             f"https://jobs.ashbyhq.com/{board}/{jid}" if jid else src.get("portal") or "",
             api,
-            "Ashby 当前公开职位池；目标岗位正文用于核验 new-grad / graduate eligibility",
+            "Ashby 当前公开职位池；原始岗位正文待模型理解",
         ))
     return out
 
@@ -1293,7 +1231,6 @@ def fetch_ashby_official(src: dict) -> list[Job]:
 def fetch_hikvision_campus(src: dict) -> list[Job]:
     """Enumerate Hikvision's current graduate pool through its first-party campus API."""
     root = "https://mcampus.hikvision.com"
-    batch_api = root + "/api/userfacade/crsBatch/findBatchAll"
     list_api = root + "/api/search/crsPositionSearch/getPositionByQuery"
     headers = {
         **HEADERS,
@@ -1302,47 +1239,8 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
         "Origin": root,
     }
     batch_id = txt(src.get("hikvision_batch_id"))
-    batch_data: Any = {}
     if not batch_id:
-        batch_data = get_json(batch_api, params={"jobNature": "应届生"}, headers=headers)
-    def walk_batches(v: Any) -> list[dict[str, Any]]:
-        found: list[dict[str, Any]] = []
-        if isinstance(v, dict):
-            if any(k in v for k in ("batchId", "id")) and any(
-                "2027" in txt(v.get(k)) for k in ("batchName", "name", "title", "batchDesc")
-            ):
-                found.append(v)
-            for x in v.values():
-                found.extend(walk_batches(x))
-        elif isinstance(v, list):
-            for x in v:
-                found.extend(walk_batches(x))
-        return found
-    batches = walk_batches(batch_data) if not batch_id else []
-    if not batch_id and batches:
-        first_batch = batches[0]
-        batch_id = txt(first_batch.get("batchId") or first_batch.get("id"))
-    if not batch_id:
-        # Current official browser discovery exposed this endpoint; if the API
-        # omits the year label, fall back to the first active batch object.
-        def first_id(v: Any) -> str:
-            if isinstance(v, dict):
-                for k in ("batchId", "id"):
-                    if v.get(k):
-                        return txt(v.get(k))
-                for x in v.values():
-                    got = first_id(x)
-                    if got:
-                        return got
-            elif isinstance(v, list):
-                for x in v:
-                    got = first_id(x)
-                    if got:
-                        return got
-            return ""
-        batch_id = first_id(batch_data)
-    if not batch_id:
-        raise RuntimeError("Hikvision current graduate batchId missing")
+        raise RuntimeError("Hikvision requires an explicitly registered hikvision_batch_id; batch names are not inferred")
 
     def rows_from(payload: Any) -> tuple[list[dict[str, Any]], int]:
         if not isinstance(payload, (dict, list)):
@@ -1375,7 +1273,7 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
     out: list[Job] = []
     seen: set[str] = set()
     page = 1
-    while page <= 100:
+    while page <= 100 and list_page():
         form = {
             "pageNum": page, "pageSize": 100, "keyWord": "",
             "jobNature": "应届生", "batchId": batch_id,
@@ -1386,12 +1284,13 @@ def fetch_hikvision_campus(src: dict) -> list[Job]:
         if not rows:
             exhausted = True
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("positionId") or j.get("postAdSn") or j.get("id"))
-            key = jid or (txt(j.get("positionName") or j.get("postName") or j.get("jobName")) + "|" + txt(j.get("workPlace")))
-            if key in seen:
+            key = jid
+            if key and key in seen:
                 continue
-            seen.add(key)
+            if key:
+                seen.add(key)
             title = txt(j.get("positionName") or j.get("postName") or j.get("jobName") or j.get("name"))
             out.append(Job(
                 src["company"], title, jid,
@@ -1432,17 +1331,14 @@ def fetch_meitu_campus_html(src: dict) -> list[Job]:
     )
     out: list[Job] = []
     seen: set[str] = set()
-    for page in range(1, 101):
+    for page in pages(1, 101):
         url = f"https://hr.meitu.com/?page={page}&recruitmentType=campus"
         r = session.get(url, timeout=30)
         r.raise_for_status()
         items = [m.groupdict() for m in pattern.finditer(r.text)]
         if page == 1 and not items:
-            text_body = _strip_html(r.text)
-            if re.search(r"(暂无职位|没有职位|0\\s*个职位|0\\s*jobs?)", text_body, re.I):
-                return []
             raise RuntimeError("Meitu campus HTML contained no parseable job records")
-        for item in items:
+        for item in job_rows(items):
             jid = _decode_js_string(item["job_id"])
             if not jid or jid in seen:
                 continue
@@ -1508,7 +1404,7 @@ def fetch_midea_campus_api(src: dict) -> list[Job]:
     covered = 0
     total = None
     exhausted = False
-    for page in range(1, 101):
+    for page in pages(1, 101):
         body = {
             "keyword": None, "superiorIds": [], "recruitCategoryIds": [],
             "workPlaceCodes": [], "projectRuleId": project_rule_id,
@@ -1527,13 +1423,14 @@ def fetch_midea_campus_api(src: dict) -> list[Job]:
         if not rows:
             exhausted = True
             break
-        for j in rows:
+        for j in job_rows(rows):
             jid = txt(j.get("positionId") or j.get("jobId") or j.get("id"))
             title = txt(j.get("positionName") or j.get("jobName") or j.get("postName") or j.get("title"))
-            key = jid or title
-            if not key or key in seen:
+            key = jid
+            if key and key in seen:
                 continue
-            seen.add(key)
+            if key:
+                seen.add(key)
             out.append(Job(
                 src["company"], title, jid,
                 txt(j.get("workPlace") or j.get("workPlaceName") or j.get("location")),
@@ -1562,7 +1459,6 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "beisen_direct": fetch_beisen_direct,
     "bilibili_api": fetch_bilibili_2027,
     "byd_campus_api": fetch_byd_campus,
-    "bytedance_api": fetch_bytedance,
     "ctrip_2027_api": fetch_ctrip_2027,
     "feishu_direct": fetch_feishu_direct,
     "hikvision_campus_api": fetch_hikvision_campus,
@@ -1583,5 +1479,4 @@ FETCHERS: dict[str, Callable[[dict], list[Job]]] = {
     "tencent_campus_api": fetch_tencent_campus,
     "vivo_2027_api": fetch_vivo_2027,
     "xiaohongshu_2027_api": fetch_xiaohongshu_2027,
-    "xiaomi_api": fetch_xiaomi,
 }

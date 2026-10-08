@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Traceable model-authored interview review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "status", "reviews"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "status": {"enum": ["pending", "partial", "complete"]},
+    "reviews": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["occurrence_id", "reference", "status", "label", "reason", "model", "reviewed_at"],
+        "properties": {
+          "occurrence_id": {"type": "string", "minLength": 1},
+          "reference": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_id", "raw_path", "line_start", "source_section_sha256", "quote"],
+            "properties": {
+              "source_id": {"type": "string", "minLength": 1},
+              "raw_path": {"type": "string", "minLength": 1},
+              "line_start": {"type": "integer", "minimum": 1},
+              "source_section_sha256": {"type": "string", "minLength": 64, "maxLength": 64},
+              "quote": {"type": "string", "minLength": 1}
+            }
+          },
+          "status": {"enum": ["reviewed", "needs_review"]},
+          "label": {"type": ["string", "null"], "minLength": 1},
+          "reason": {"type": "string", "minLength": 1},
+          "model": {"type": "string", "minLength": 1},
+          "reviewed_at": {"type": "string", "format": "date-time"}
+        },
+        "allOf": [
+          {"if": {"properties": {"status": {"const": "reviewed"}}}, "then": {"properties": {"label": {"type": "string", "minLength": 1}}}},
+          {"if": {"properties": {"status": {"const": "needs_review"}}}, "then": {"properties": {"label": {"type": "null"}}}}
+        ]
+      }
+    }
+  }
+}

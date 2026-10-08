@@ -1,62 +1,6 @@
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "cycle": "current-campus",
-  "agent_keywords": [
-    "agent",
-    "智能体",
-    "ai应用",
-    "ai 应用",
-    "大模型应用",
-    "llm应用",
-    "llm 应用",
-    "ai native",
-    "coding agent",
-    "code agent",
-    "rag",
-    "harness",
-    "runtime",
-    "mcp",
-    "skill",
-    "ai全栈",
-    "ai 全栈",
-    "ai开发",
-    "ai 开发",
-    "ai工程",
-    "ai 工程",
-    "ai平台",
-    "ai 平台",
-    "ai devops",
-    "大模型工程",
-    "大模型平台",
-    "ai研发",
-    "ai 研发"
-  ],
-  "hard_exclude_title_keywords": [
-    "算法",
-    "研究员",
-    "research scientist",
-    "scientist",
-    "预训练",
-    "后训练",
-    "post-training",
-    "sft",
-    "dpo",
-    "rlhf",
-    "reward model",
-    "产品经理",
-    "策略产品",
-    "市场经理",
-    "marketing manager",
-    "商务",
-    "采购",
-    "导演",
-    "销售",
-    "运营",
-    "研究",
-    "探索",
-    "产品设计",
-    "训练/"
-  ],
   "sources": [
     {
       "company": "小米",
@@ -73,7 +17,8 @@
       "campus_search_url": "https://xiaomi.jobs.f.mioffice.cn/campus/",
       "search_url": "https://xiaomi.jobs.f.mioffice.cn/campus/",
       "board_scope": "campus",
-      "business_summary": "智能手机、IoT、操作系统、智能汽车与 AI"
+      "business_summary": "智能手机、IoT、操作系统、智能汽车与 AI",
+      "source_id": "official-001"
     },
     {
       "company": "快手",
@@ -92,7 +37,8 @@
       "campus_search_url": "https://campus.kuaishou.cn/recruit/campus/e/",
       "search_url": "https://campus.kuaishou.cn/recruit/campus/e/",
       "board_scope": "campus",
-      "business_summary": "短视频、直播、电商、广告与 AI"
+      "business_summary": "短视频、直播、电商、广告与 AI",
+      "source_id": "official-002"
     },
     {
       "company": "百度",
@@ -107,7 +53,8 @@
       "campus_search_url": "https://talent.baidu.com/jobs/list?projectType=1",
       "search_url": "https://talent.baidu.com/jobs/list?projectType=1",
       "board_scope": "campus",
-      "business_summary": "搜索、生成式 AI、智能云与自动驾驶"
+      "business_summary": "搜索、生成式 AI、智能云与自动驾驶",
+      "source_id": "official-003"
     },
     {
       "company": "腾讯",
@@ -123,7 +70,8 @@
       "campus_search_url": "https://join.qq.com/post.html",
       "search_url": "https://join.qq.com/post.html",
       "board_scope": "campus",
-      "business_summary": "社交、游戏、内容、云计算、金融科技与 AI"
+      "business_summary": "社交、游戏、内容、云计算、金融科技与 AI",
+      "source_id": "official-004"
     },
     {
       "company": "美团",
@@ -139,7 +87,8 @@
       "campus_search_url": "https://zhaopin.meituan.com/web/campus",
       "search_url": "https://zhaopin.meituan.com/web/campus",
       "board_scope": "campus",
-      "business_summary": "本地生活、外卖、即时零售、旅游与配送科技"
+      "business_summary": "本地生活、外卖、即时零售、旅游与配送科技",
+      "source_id": "official-005"
     },
     {
       "company": "网易",
@@ -159,7 +108,8 @@
       "campus_search_url": "https://campus.163.com/",
       "search_url": "https://campus.163.com/",
       "board_scope": "campus",
-      "business_summary": "游戏、音乐、教育、内容与互联网服务"
+      "business_summary": "游戏、音乐、教育、内容与互联网服务",
+      "source_id": "official-006"
     },
     {
       "company": "哔哩哔哩",
@@ -174,7 +124,8 @@
       "campus_search_url": "https://jobs.bilibili.com/campus/positions",
       "search_url": "https://jobs.bilibili.com/campus/positions",
       "board_scope": "campus",
-      "business_summary": "视频社区、直播、游戏与内容生态"
+      "business_summary": "视频社区、直播、游戏与内容生态",
+      "source_id": "official-007"
     },
     {
       "company": "滴滴",
@@ -194,7 +145,8 @@
       "moka_org_id": "didiglobal",
       "moka_site_id": "96064",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-008"
     },
     {
       "company": "拼多多",
@@ -210,7 +162,8 @@
       "campus_search_url": "https://careers.pddglobalhr.com/campus/grad",
       "search_url": "https://careers.pddglobalhr.com/campus/grad",
       "board_scope": "campus",
-      "business_summary": "电商、Temu、供应链与平台技术"
+      "business_summary": "电商、Temu、供应链与平台技术",
+      "source_id": "official-009"
     },
     {
       "company": "华为",
@@ -226,7 +179,8 @@
       "campus_search_url": "https://career.huawei.com/cn/campus-recruitment",
       "search_url": "https://career.huawei.com/cn/campus-recruitment",
       "board_scope": "campus",
-      "business_summary": "通信设备、云、终端、计算、汽车 ICT 与 AI"
+      "business_summary": "通信设备、云、终端、计算、汽车 ICT 与 AI",
+      "source_id": "official-010"
     },
     {
       "company": "小红书",
@@ -242,7 +196,8 @@
       "campus_search_url": "https://job.xiaohongshu.com/campus/position",
       "search_url": "https://job.xiaohongshu.com/campus/position",
       "board_scope": "campus",
-      "business_summary": "内容社区、生活方式、电商与广告"
+      "business_summary": "内容社区、生活方式、电商与广告",
+      "source_id": "official-011"
     },
     {
       "company": "字节跳动",
@@ -258,7 +213,8 @@
       "campus_search_url": "https://jobs.bytedance.com/campus/position",
       "search_url": "https://jobs.bytedance.com/campus/position",
       "board_scope": "campus",
-      "business_summary": "抖音/TikTok、内容平台、云与大模型 AI"
+      "business_summary": "抖音/TikTok、内容平台、云与大模型 AI",
+      "source_id": "official-012"
     },
     {
       "company": "阿里巴巴",
@@ -275,7 +231,8 @@
       "campus_search_url": "https://campus-talent.alibaba.com/campus/position?batchId=100000760001",
       "search_url": "https://campus-talent.alibaba.com/campus/position?batchId=100000760001",
       "board_scope": "campus",
-      "business_summary": "电商、云计算、本地生活、物流与企业 AI"
+      "business_summary": "电商、云计算、本地生活、物流与企业 AI",
+      "source_id": "official-013"
     },
     {
       "company": "蚂蚁集团",
@@ -294,7 +251,8 @@
       "campus_search_url": "https://talent.antgroup.com/campus-full-list",
       "search_url": "https://talent.antgroup.com/campus-full-list",
       "board_scope": "campus",
-      "business_summary": "支付、金融科技、企业科技与 AI"
+      "business_summary": "支付、金融科技、企业科技与 AI",
+      "source_id": "official-014"
     },
     {
       "company": "京东",
@@ -310,7 +268,8 @@
       "campus_search_url": "https://campus.jd.com/",
       "search_url": "https://campus.jd.com/",
       "board_scope": "campus",
-      "business_summary": "电商、物流、零售科技、云与企业服务"
+      "business_summary": "电商、物流、零售科技、云与企业服务",
+      "source_id": "official-015"
     },
     {
       "company": "OPPO",
@@ -326,7 +285,8 @@
       "campus_search_url": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate",
       "search_url": "https://careers.oppo.com/university/oppo/campus/post?recruitType=Graduate",
       "board_scope": "campus",
-      "business_summary": "智能手机、IoT、操作系统与端侧 AI"
+      "business_summary": "智能手机、IoT、操作系统与端侧 AI",
+      "source_id": "official-016"
     },
     {
       "company": "vivo",
@@ -342,7 +302,8 @@
       "campus_search_url": "https://hr-campus.vivo.com/campus/jobs",
       "search_url": "https://hr-campus.vivo.com/campus/jobs",
       "board_scope": "campus",
-      "business_summary": "智能手机、操作系统、IoT 与端侧 AI"
+      "business_summary": "智能手机、操作系统、IoT 与端侧 AI",
+      "source_id": "official-017"
     },
     {
       "company": "金山办公/WPS",
@@ -363,7 +324,8 @@
       "moka_site_id": "41436",
       "moka_site": "campus",
       "moka_locale": "zh-CN",
-      "moka_source_token": "8379ee777457c4d22fc65d4439f660b3"
+      "source_id": "official-018",
+      "moka_requires_runtime_source_parameter": true
     },
     {
       "company": "荣耀",
@@ -379,7 +341,8 @@
       "campus_search_url": "https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html",
       "search_url": "https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/school.html",
       "board_scope": "campus",
-      "business_summary": "智能手机、PC、IoT 与 AI OS"
+      "business_summary": "智能手机、PC、IoT 与 AI OS",
+      "source_id": "official-019"
     },
     {
       "company": "科大讯飞",
@@ -398,7 +361,8 @@
       "campus_search_url": "https://iflytek.zhiye.com/5/jobs",
       "search_url": "https://iflytek.zhiye.com/5/jobs",
       "board_scope": "campus",
-      "business_summary": "语音 AI、大模型、教育、医疗与企业 AI"
+      "business_summary": "语音 AI、大模型、教育、医疗与企业 AI",
+      "source_id": "official-020"
     },
     {
       "company": "携程",
@@ -417,7 +381,8 @@
       "campus_search_url": "https://careers.ctrip.com/#/campus",
       "search_url": "https://careers.ctrip.com/#/campus",
       "board_scope": "campus",
-      "business_summary": "在线旅游、酒店机票与旅行 AI"
+      "business_summary": "在线旅游、酒店机票与旅行 AI",
+      "source_id": "official-021"
     },
     {
       "company": "360",
@@ -433,7 +398,8 @@
       "board_scope": "campus",
       "note": "360 官方 campus.360.cn 当前跳转至 360campus.zhiye.com；固定枚举北森校园职位列表。",
       "business_summary": "网络安全、搜索/浏览器、AI 助手与企业安全",
-      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池",
+      "source_id": "official-022"
     },
     {
       "company": "得物",
@@ -454,7 +420,8 @@
       "campus_search_url": "https://poizon.jobs.feishu.cn/578078/",
       "search_url": "https://poizon.jobs.feishu.cn/578078/",
       "board_scope": "campus",
-      "business_summary": "潮流电商、社区、鉴别与交易服务"
+      "business_summary": "潮流电商、社区、鉴别与交易服务",
+      "source_id": "official-023"
     },
     {
       "company": "DeepSeek",
@@ -474,7 +441,8 @@
       "moka_org_id": "high-flyer",
       "moka_site_id": "140576",
       "moka_site": "social",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-024"
     },
     {
       "company": "月之暗面/Kimi",
@@ -498,7 +466,8 @@
       "moka_org_id": "moonshot",
       "moka_site_id": "148507",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-025"
     },
     {
       "company": "MiniMax",
@@ -520,7 +489,8 @@
       "campus_search_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
       "search_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/?project=7495675705720965415",
       "board_scope": "campus",
-      "business_summary": "多模态大模型、AI 产品与 Agent"
+      "business_summary": "多模态大模型、AI 产品与 Agent",
+      "source_id": "official-026"
     },
     {
       "company": "智谱/Z.ai",
@@ -544,7 +514,8 @@
       "moka_org_id": "zphz",
       "moka_site_id": "148984",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-027"
     },
     {
       "company": "阶跃星辰",
@@ -567,7 +538,8 @@
       "moka_org_id": "step",
       "moka_site_id": "94905",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-028"
     },
     {
       "company": "百川智能",
@@ -588,7 +560,8 @@
       "campus_search_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
       "search_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/?project=7676396828845639987",
       "board_scope": "campus",
-      "business_summary": "大模型与企业/行业 AI 应用"
+      "business_summary": "大模型与企业/行业 AI 应用",
+      "source_id": "official-029"
     },
     {
       "company": "零一万物/01.AI",
@@ -606,7 +579,8 @@
       "campus_search_url": "https://01ai.jobs.feishu.cn/index/",
       "search_url": "https://01ai.jobs.feishu.cn/index/",
       "board_scope": "official_recruiting",
-      "business_summary": "大模型、企业 AI 与 AI 应用"
+      "business_summary": "大模型、企业 AI 与 AI 应用",
+      "source_id": "official-030"
     },
     {
       "company": "商汤科技",
@@ -627,7 +601,8 @@
       "campus_search_url": "https://hr-jobs.sensetime.com/edu/",
       "search_url": "https://hr-jobs.sensetime.com/edu/",
       "board_scope": "campus",
-      "business_summary": "大模型、计算机视觉、AI 基础设施与行业应用"
+      "business_summary": "大模型、计算机视觉、AI 基础设施与行业应用",
+      "source_id": "official-031"
     },
     {
       "company": "生数科技",
@@ -642,7 +617,8 @@
       "search_url": "https://shengshu.jobs.feishu.cn/index/",
       "board_scope": "official_recruiting",
       "note": "生数科技/Genspi 官网人才招聘直接进入 shengshu.jobs.feishu.cn；固定枚举官方飞书招聘池。",
-      "business_summary": "视频生成、多模态生成模型与 Vidu"
+      "business_summary": "视频生成、多模态生成模型与 Vidu",
+      "source_id": "official-032"
     },
     {
       "company": "硅基流动",
@@ -666,7 +642,8 @@
       "moka_org_id": "siliconflow",
       "moka_site_id": "151752",
       "moka_site": "recommendation",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-033"
     },
     {
       "company": "面壁智能",
@@ -681,7 +658,8 @@
       "campus_search_url": "https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH",
       "search_url": "https://modelbest.jobs.feishu.cn/campus/position/list?spread=NEDQRTH",
       "board_scope": "campus",
-      "business_summary": "端侧大模型、小模型与 Agent"
+      "business_summary": "端侧大模型、小模型与 Agent",
+      "source_id": "official-034"
     },
     {
       "company": "Manus",
@@ -697,7 +675,8 @@
       "search_url": "https://jobs.ashbyhq.com/manusai",
       "board_scope": "official_recruiting",
       "business_summary": "通用 AI Agent",
-      "ashby_board_name": "manusai"
+      "ashby_board_name": "manusai",
+      "source_id": "official-035"
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -718,7 +697,8 @@
       "campus_search_url": "https://infinigence.jobs.feishu.cn/088717",
       "search_url": "https://infinigence.jobs.feishu.cn/088717",
       "board_scope": "campus",
-      "business_summary": "AI Infra、异构算力与训练/推理平台"
+      "business_summary": "AI Infra、异构算力与训练/推理平台",
+      "source_id": "official-036"
     },
     {
       "company": "昆仑万维/天工",
@@ -737,7 +717,8 @@
       "campus_search_url": "https://jobs.kunlun.com/459522/position/list",
       "search_url": "https://jobs.kunlun.com/459522/position/list",
       "board_scope": "official_recruiting",
-      "business_summary": "大模型、天工 AI、互联网与海外业务"
+      "business_summary": "大模型、天工 AI、互联网与海外业务",
+      "source_id": "official-037"
     },
     {
       "company": "Shopee",
@@ -760,7 +741,8 @@
       "moka_org_id": "shopee",
       "moka_site_id": "2962",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-038"
     },
     {
       "company": "联想",
@@ -776,7 +758,8 @@
       "campus_search_url": "https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1",
       "search_url": "https://talent.lenovo.com.cn/position?jobTypeName=AI%E5%BC%80%E5%8F%91%E7%B1%BB&projectType=1",
       "board_scope": "campus",
-      "business_summary": "PC、智能设备、服务器、企业基础设施与 AI"
+      "business_summary": "PC、智能设备、服务器、企业基础设施与 AI",
+      "source_id": "official-039"
     },
     {
       "company": "蔚来",
@@ -797,7 +780,8 @@
       "campus_search_url": "https://nio.jobs.feishu.cn/campus/",
       "search_url": "https://nio.jobs.feishu.cn/campus/",
       "board_scope": "campus",
-      "business_summary": "智能电动车、智能驾驶、能源服务与 AI"
+      "business_summary": "智能电动车、智能驾驶、能源服务与 AI",
+      "source_id": "official-040"
     },
     {
       "company": "顺丰",
@@ -813,7 +797,8 @@
       "campus_search_url": "https://campus.sf-express.com/positionList",
       "search_url": "https://campus.sf-express.com/positionList",
       "board_scope": "campus",
-      "business_summary": "快递、物流、供应链科技与 AI"
+      "business_summary": "快递、物流、供应链科技与 AI",
+      "source_id": "official-041"
     },
     {
       "company": "米哈游",
@@ -829,7 +814,8 @@
       "search_url": "https://jobs.mihoyo.com/#/campus/position",
       "board_scope": "campus",
       "business_summary": "游戏、IP、互动娱乐、游戏研发技术与 AI",
-      "extra_job_list_urls": []
+      "extra_job_list_urls": [],
+      "source_id": "official-042"
     },
     {
       "company": "大疆 DJI",
@@ -850,7 +836,8 @@
       "moka_site_id": "143359",
       "moka_site": "campus",
       "moka_locale": "zh-CN",
-      "campus_formal_pool": true
+      "campus_formal_pool": true,
+      "source_id": "official-043"
     },
     {
       "company": "度小满",
@@ -865,7 +852,8 @@
       "campus_search_url": "https://campus.duxiaoman.com/",
       "search_url": "https://campus.duxiaoman.com/",
       "board_scope": "campus",
-      "business_summary": "消费金融、财富管理、支付与金融科技"
+      "business_summary": "消费金融、财富管理、支付与金融科技",
+      "source_id": "official-044"
     },
     {
       "company": "海康威视",
@@ -882,9 +870,8 @@
       "board_scope": "campus",
       "business_summary": "智慧物联、视频技术、企业数字化与 AIoT",
       "extra_job_list_urls": [],
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 120000,
-      "hikvision_batch_id": "e198653730e14820b9e95b29fbc2223f"
+      "hikvision_batch_id": "e198653730e14820b9e95b29fbc2223f",
+      "source_id": "official-045"
     },
     {
       "company": "中兴通讯",
@@ -902,7 +889,8 @@
       "business_summary": "通信网络、算力、云、终端、企业数字化与 AI",
       "extra_job_list_urls": [
         "https://app.mokahr.com/social-recruitment/zte/47588#/jobs?page=1&anchorName=jobsList"
-      ]
+      ],
+      "source_id": "official-046"
     },
     {
       "company": "深信服",
@@ -918,8 +906,7 @@
       "search_url": "https://hr.sangfor.com/schoolRecruitment",
       "board_scope": "campus",
       "business_summary": "网络安全、云计算、企业 IT 与 AI",
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 120000
+      "source_id": "official-047"
     },
     {
       "company": "金蝶",
@@ -939,7 +926,8 @@
       "moka_org_id": "kingdeehr",
       "moka_site_id": "166565",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-048"
     },
     {
       "company": "用友",
@@ -954,7 +942,8 @@
       "campus_search_url": "https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html",
       "search_url": "https://career.yonyou.com/SU67ac41886202cc7916ae3029/pb/school.html",
       "board_scope": "campus",
-      "business_summary": "ERP、BIP、企业软件与企业级 AI"
+      "business_summary": "ERP、BIP、企业软件与企业级 AI",
+      "source_id": "official-049"
     },
     {
       "company": "美图",
@@ -969,7 +958,8 @@
       "campus_search_url": "https://hr.meitu.com/",
       "search_url": "https://hr.meitu.com/",
       "board_scope": "official_recruiting",
-      "business_summary": "图像/视频应用、AI 影像、内容生成与设计工具"
+      "business_summary": "图像/视频应用、AI 影像、内容生成与设计工具",
+      "source_id": "official-050"
     },
     {
       "company": "SHEIN",
@@ -985,8 +975,7 @@
       "search_url": "https://careers.shein.cn/All-Jobs?jobTypeId=CAMPUS",
       "board_scope": "campus",
       "business_summary": "全球时尚电商、供应链平台与电商技术",
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 120000
+      "source_id": "official-051"
     },
     {
       "company": "安克创新",
@@ -1002,7 +991,7 @@
       "search_url": "https://career.anker.com.cn/universities/recruitment/new/",
       "board_scope": "campus",
       "business_summary": "充电、影音、智能家居、安防与储能消费电子",
-      "keyword_search_is_terminal": true
+      "source_id": "official-052"
     },
     {
       "company": "大华股份",
@@ -1017,7 +1006,8 @@
       "campus_search_url": "https://job.dahuatech.com/",
       "search_url": "https://job.dahuatech.com/",
       "board_scope": "official_recruiting",
-      "business_summary": "智慧物联、视频 AI、智慧城市与企业数字化"
+      "business_summary": "智慧物联、视频 AI、智慧城市与企业数字化",
+      "source_id": "official-053"
     },
     {
       "company": "吉利控股",
@@ -1033,8 +1023,6 @@
       "search_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/jobs?commitment%5B0%5D=%E5%85%A8%E8%81%8C&page=1&anchorName=jobsList",
       "board_scope": "campus",
       "business_summary": "汽车、智能电动车、智能座舱与汽车 AI",
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000,
       "moka_endpoint": "https://campus.geely.com/api/outer/ats-apply/website/jobs/v2",
       "moka_org_id": "geely",
       "moka_site_id": "78436",
@@ -1042,7 +1030,8 @@
       "moka_locale": "zh-CN",
       "moka_commitments": [
         "全职"
-      ]
+      ],
+      "source_id": "official-054"
     },
     {
       "company": "小鹏集团",
@@ -1064,7 +1053,7 @@
         "201"
       ],
       "feishu_apply_prefix": "https://xiaopeng.jobs.feishu.cn/campus/position",
-      "keyword_search_is_terminal": true
+      "source_id": "official-055"
     },
     {
       "company": "理想汽车",
@@ -1079,7 +1068,8 @@
       "campus_search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
       "search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
       "board_scope": "campus",
-      "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件"
+      "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件",
+      "source_id": "official-056"
     },
     {
       "company": "海尔集团",
@@ -1099,7 +1089,7 @@
         "https://maker.haier.net/client/campus/customizedptjobs/id/87.html",
         "https://maker.haier.net/client/campusmobile/customizedptresearchlist/sid/87/fid/30.html"
       ],
-      "browser_company_budget_ms": 180000
+      "source_id": "official-057"
     },
     {
       "company": "美的集团",
@@ -1115,7 +1105,8 @@
       "search_url": "https://newpower.midea.com/",
       "board_scope": "campus",
       "business_summary": "智能家居、工业技术、楼宇、机器人与新能源",
-      "midea_project_rule_id": "ecfa0634-f99f-415e-88c4-aa081483594b"
+      "midea_project_rule_id": "ecfa0634-f99f-415e-88c4-aa081483594b",
+      "source_id": "official-058"
     },
     {
       "company": "比亚迪",
@@ -1130,7 +1121,8 @@
       "campus_search_url": "https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ=",
       "search_url": "https://job.byd.com/portal/pc/#/school/schoolPositionList?PCqS+zep8xbS+1I50C7P+rt50gpEX1ceP26yps5NwiQ=",
       "board_scope": "campus",
-      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通"
+      "business_summary": "新能源汽车、电池、新能源、电子与轨道交通",
+      "source_id": "official-059"
     },
     {
       "company": "同花顺",
@@ -1146,9 +1138,7 @@
       "search_url": "https://campus.10jqka.com.cn/mobile/job/list?applyAttribute=1",
       "board_scope": "campus",
       "business_summary": "金融信息服务、证券软件、金融数据与金融 AI",
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 90000,
-      "keyword_search_is_terminal": true
+      "source_id": "official-060"
     },
     {
       "company": "麒麟软件",
@@ -1167,7 +1157,8 @@
       "extra_job_list_urls": [
         "https://kylinos.zhiye.com/campus/jobs"
       ],
-      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池",
+      "source_id": "official-061"
     },
     {
       "company": "普渡机器人",
@@ -1183,7 +1174,8 @@
       "search_url": "https://pudutech.zhiye.com/campus/jobs",
       "board_scope": "campus",
       "business_summary": "商用服务机器人、具身智能与机器人软件",
-      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池",
+      "source_id": "official-062"
     },
     {
       "company": "广联达",
@@ -1203,7 +1195,8 @@
       "moka_org_id": "glodon",
       "moka_site_id": "91966",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-063"
     },
     {
       "company": "挚文集团/陌陌",
@@ -1218,7 +1211,8 @@
       "campus_search_url": "https://campus.hellogroup.com/",
       "search_url": "https://campus.hellogroup.com/",
       "board_scope": "campus",
-      "business_summary": "移动社交、直播与泛娱乐"
+      "business_summary": "移动社交、直播与泛娱乐",
+      "source_id": "official-064"
     },
     {
       "company": "BOSS直聘/看准科技",
@@ -1234,13 +1228,9 @@
       "search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
-      "browser_navigation_timeout_ms": 30000,
-      "browser_company_budget_ms": 180000,
-      "search_prefix": "BOSS直聘 校招",
       "required_company_text": "BOSS直聘",
       "disable_network_job_extraction": true,
-      "include_initial_list": true,
-      "keyword_search_is_terminal": true
+      "source_id": "official-065"
     },
     {
       "company": "作业帮",
@@ -1260,7 +1250,8 @@
       "moka_org_id": "zuoyebang",
       "moka_site_id": "144908",
       "moka_site": "campus",
-      "moka_locale": "zh-CN"
+      "moka_locale": "zh-CN",
+      "source_id": "official-066"
     },
     {
       "company": "影石 Insta360",
@@ -1281,7 +1272,8 @@
       "feishu_recruitment_ids": [
         "201"
       ],
-      "feishu_apply_prefix": "https://arashivision.jobs.feishu.cn/campus/position"
+      "feishu_apply_prefix": "https://arashivision.jobs.feishu.cn/campus/position",
+      "source_id": "official-067"
     },
     {
       "company": "神州数码/神州信息",
@@ -1297,7 +1289,8 @@
       "search_url": "https://dcits.zhiye.com/campus/jobs",
       "board_scope": "campus",
       "business_summary": "IT 基础设施、金融科技、云服务与企业数字化",
-      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池",
+      "source_id": "official-068"
     },
     {
       "company": "合合信息",
@@ -1313,130 +1306,16 @@
       "search_url": "https://intsig.zhiye.com/campus/jobs",
       "board_scope": "campus",
       "business_summary": "OCR/文档 AI、扫描全能王、数据智能与企业服务",
-      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池"
+      "beisen_cycle_evidence": "当前官方校园招聘 / 应届职位池",
+      "source_id": "official-069"
     }
   ],
-  "notes": [
-    "固定公司集中的每家公司都必须维护一个可枚举的第一方招聘职位池 search_url；不允许公司首页占位。",
-    "board_scope=campus 时，官方校园职位池本身就是时间 Gate；board_scope=official_recruiting 时，从当前官方招聘池中继续识别应届/校招或明确欢迎应届生的职位。",
-    "职位发现只使用公司官网直接指向的官方 ATS、公司自有招聘域，或可证明为该公司官方招聘租户的第一方招聘系统；二手聚合内容不进入 JD 正式库。",
-    "完整枚举后 0 个目标岗位才是有效结论；页面可达、接口失败、搜索未跑完都必须视为未打通。"
-  ],
-  "engineering_title_signals": [
-    "开发",
-    "研发",
-    "工程师",
-    "后端",
-    "前端",
-    "全栈",
-    "客户端",
-    "平台",
-    "架构",
-    "infra",
-    "runtime",
-    "harness"
-  ],
-  "strong_agent_keywords": [
-    "agent",
-    "智能体",
-    "ai应用",
-    "ai 应用",
-    "大模型应用",
-    "llm应用",
-    "llm 应用",
-    "ai native",
-    "coding agent",
-    "code agent",
-    "rag",
-    "agent infra",
-    "agent runtime",
-    "agent harness",
-    "ai全栈",
-    "ai 全栈",
-    "ai开发",
-    "ai 开发",
-    "ai工程",
-    "ai 工程",
-    "ai平台",
-    "ai 平台",
-    "ai devops",
-    "大模型工程",
-    "大模型平台",
-    "ai研发",
-    "ai 研发"
-  ],
-  "scope_note": "当前有效官方校园招聘/应届可投职位池；只保留明确非算法 AI 应用 / Agent 软件工程角色。混合官方招聘池必须在 JD 中出现应届/毕业生/new graduate 等资格证据。",
-  "body_agent_signals": [
-    "agent",
-    "智能体",
-    "rag",
-    "mcp",
-    "function calling",
-    "tool calling",
-    "工具调用",
-    "langchain",
-    "langgraph",
-    "llamaindex",
-    "autogen",
-    "multi-agent",
-    "multiagent",
-    "多智能体",
-    "memory",
-    "记忆",
-    "workflow",
-    "工作流",
-    "prompt engineering",
-    "上下文",
-    "context engineering",
-    "agent runtime",
-    "agent harness",
-    "agent infra",
-    "skill",
-    "dify",
-    "coze",
-    "llmops",
-    "大模型api",
-    "模型调用"
-  ],
-  "training_heavy_signals": [
-    "预训练",
-    "pretrain",
-    "pre-training",
-    "后训练",
-    "post-training",
-    "sft",
-    "dpo",
-    "rlhf",
-    "reward model",
-    "模型训练",
-    "强化学习",
-    "agentic rl",
-    "ppo",
-    "grpo",
-    "训练框架"
-  ],
   "year_is_metadata_only": true,
-  "strict_title_allowlist": [
-    "AGI产品研发工程师-应届生-TOP Talent",
-    "AI开发工程师（顺丰科技）",
-    "深信服27届—技术研发工程师（AI潜力方向）",
-    "深信服27届-技术研发工程师（AI潜力方向）",
-    "「2027校招」AI研发工程师"
-  ],
   "expected_company_count": 69,
-  "company_pool_semantics": "fixed long-term scan pool; company inclusion is independent from whether a target JD exists in the current run",
-  "search_keywords": [
-    "agent",
-    "智能体",
-    "ai应用",
-    "ai 应用",
-    "ai全栈",
-    "ai开发",
-    "大模型应用",
-    "rag",
-    "harness",
-    "runtime",
-    "ai devops",
-    "ai平台"
+  "code_collection_enabled_by_default": false,
+  "notes": [
+    "Only explicitly selected registered source IDs may be collected with manual bounds.",
+    "Saved source/board labels are provenance, not model judgments of role eligibility.",
+    "No role selection, title-family grouping, summary rewriting, state refresh or publication is performed by code."
   ]
 }

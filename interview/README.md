@@ -14,3 +14,5 @@
 - [System Design](system-design/README.md)
 
 [真实面试数据与分析](../market/interview-experience/README.md)保存问题来源与统计口径。个人简历及个人项目准备根据真实经历另行展开。
+
+现有正文是已保留的教学整理。全量模型语义分析尚未完成；每次整理保存来源与覆盖范围，正文更新单独审阅。

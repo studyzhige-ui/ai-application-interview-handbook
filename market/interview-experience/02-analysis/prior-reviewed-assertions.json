@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "status": "limited_existing_assertions",
+  "origin": {
+    "path": "03-strategy/record-decisions.json",
+    "sha256": "11f89c72a9a06de837617c15aef73a7e23c1aef5ce61ae9f395904214b6526b4",
+    "reviewer_provenance": "not_recorded; no claim of human or model authorship"
+  },
+  "scope": "Only the existing per-record assertions below are preserved. They are not a full corpus review and do not assign model-review labels. Retired suppressed_family_ids are inert historical context.",
+  "original_document": {
+    "schema_version": 1,
+    "decisions": {
+      "S388:batch-38:L00298": {
+        "disposition": "technical_question",
+        "suppressed_family_ids": [
+          "AGENT-LOOP",
+          "Q-AGENT-LOOP",
+          "FRONTEND-WEB",
+          "Q-FRONTEND-REACT"
+        ],
+        "reason": "原帖拼写 react，原材料明确禁止由这一不确定拼写新增前端 React 或 ReAct 题。保留任务不漂移的实际问法，不作框架语义推断。"
+      },
+      "S333:batch-37:L01784": {
+        "disposition": "technical_topic",
+        "reason": "已披露 SQL 索引设计主题；原文边界明确允许保留主题。未公开 SQL，不能还原查询条件或具体索引。"
+      },
+      "S375:batch-37:L04128": {
+        "disposition": "technical_topic",
+        "reason": "已披露 Python 装饰器现场编程主题，具体功能要求缺失；仅计主题，不补题设。"
+      },
+      "S375:batch-37:L04126": {
+        "disposition": "technical_topic",
+        "reason": "已披露 MySQL 查询现场编程主题，表与题面缺失；仅计主题，不补表结构。"
+      },
+      "S366:batch-37:L03614": {
+        "disposition": "technical_topic",
+        "reason": "已披露 AI Coding 制作简单网页的技术活动，需求未披露；仅计主题，不扩写功能。"
+      },
+      "S376:batch-37:L04179": {
+        "disposition": "technical_topic",
+        "reason": "已披露 Agent 场景设计及模块主题，具体场景未公开；仅计主题。"
+      },
+      "S301:batch-36:L00181": {
+        "disposition": "technical_topic",
+        "reason": "原材料明确披露贪心题型，但题目未披露；仅计算法主题，不补造题设。"
+      },
+      "S371:batch-37:L03882": {
+        "disposition": "technical_topic",
+        "reason": "只披露 RAG 分块主题，原文没有具体问句或子问。"
+      },
+      "S371:batch-37:L03885": {
+        "disposition": "technical_topic",
+        "reason": "只保留披露的 RAG 分块设计主题，不补作者记不清的具体追问。"
+      }
+    }
+  },
+  "references": {
+    "S388:batch-38:L00298": {
+      "source_id": "S388",
+      "raw_path": "01-data/raw/batch-38.md",
+      "line_start": 290,
+      "quote": "（原题1）react如何保证任务不漂移",
+      "source_section_sha256": "8d20ae4824fb3f133326b3112bf0d212b80aaa3cb2668d9ad39b08ed14ebee7a"
+    },
+    "S333:batch-37:L01784": {
+      "source_id": "S333",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 1771,
+      "quote": "（原题13）现场给定SQL应在哪里建索引（未公开SQL）",
+      "source_section_sha256": "3f2103807d85411de7e9982c0af225215265346f1023da1c4d5b1905309a3654"
+    },
+    "S375:batch-37:L04128": {
+      "source_id": "S375",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 4105,
+      "quote": "（原文未编号）手写Python装饰器（未公开功能要求）",
+      "source_section_sha256": "a90e79ad8bb26e59d83d6ebd6cbe1541b7c9637eabe0746ae4f12aa82c180f80"
+    },
+    "S375:batch-37:L04126": {
+      "source_id": "S375",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 4103,
+      "quote": "（原文未编号）手写简单MySQL查询（未公开题面/表）",
+      "source_section_sha256": "a90e79ad8bb26e59d83d6ebd6cbe1541b7c9637eabe0746ae4f12aa82c180f80"
+    },
+    "S366:batch-37:L03614": {
+      "source_id": "S366",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 3591,
+      "quote": "（原题5）AI Coding制作简单网页，具体需求未披露",
+      "source_section_sha256": "c5d3b6df71dab5abab5d65bed39c73a5cfd4aa7f99244d05e51cade19993f8cb"
+    },
+    "S376:batch-37:L04179": {
+      "source_id": "S376",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 4156,
+      "quote": "（原题9）给定具体场景下如何设计Agent及所需模块（场景未公开）",
+      "source_section_sha256": "3190a8fba63303ace0fcfef7919662f603a11caf7d8986910ce52bfd6512a927"
+    },
+    "S301:batch-36:L00181": {
+      "source_id": "S301",
+      "raw_path": "01-data/raw/batch-36.md",
+      "line_start": 178,
+      "quote": "（原题18）简单贪心（原题未披露）",
+      "source_section_sha256": "89f9cf7703e972ea7b1f4916ea87546dea68ab7caefc7759ca9a996eeec1522d"
+    },
+    "S371:batch-37:L03882": {
+      "source_id": "S371",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 3859,
+      "quote": "（原题4）RAG分块相关基础问题（未给细问）",
+      "source_section_sha256": "7d619ba6f7753acb0d103a98dd69edd7058bce96c3ca91a823a453c516111316"
+    },
+    "S371:batch-37:L03885": {
+      "source_id": "S371",
+      "raw_path": "01-data/raw/batch-37.md",
+      "line_start": 3862,
+      "quote": "（原题6）工业上如何设计RAG及分块（作者称记不清具体追问）",
+      "source_section_sha256": "7d619ba6f7753acb0d103a98dd69edd7058bce96c3ca91a823a453c516111316"
+    }
+  }
+}

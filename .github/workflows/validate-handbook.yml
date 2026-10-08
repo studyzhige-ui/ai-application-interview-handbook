@@ -12,7 +12,7 @@ on:
       - '.github/workflows/*.yml'
       - '.gitattributes'
   pull_request:
-    branches: [main]
+    branches: [main, refactor/handbook-architecture-20261008]
     paths:
       - '**/*.md'
       - '**/*.py'
@@ -66,7 +66,7 @@ jobs:
         run: python practice/coding/exercises/validate_coding_curriculum.py
       - name: Test coding notebook rendering
         run: python -m unittest discover -s practice/coding/exercises -p "test_*.py" -v
-      - name: Test interview source extraction and classification regressions
+      - name: Test interview data integrity checks
         run: python -m unittest discover -s market/interview-experience/04-scripts -p "test_*.py" -v
-      - name: Verify interview derivatives and preparation evidence are reproducible
-        run: python market/interview-experience/04-scripts/build_interview_analysis.py --check
+      - name: Verify source preservation, references and counts
+        run: python market/interview-experience/04-scripts/verify_interview_data.py --check

@@ -1,4 +1,4 @@
-"""Lossless normalized job records shared by transport and business logic."""
+"""Extracted transport fields; exact response bytes remain in raw observations."""
 from dataclasses import dataclass
 from typing import Any
 @dataclass
@@ -16,15 +16,9 @@ class Job:
     cycle_evidence: str
 
 
-@dataclass
-class SourceResult:
-    company: str
-    mode: str
-    portal: str
-    status: str
-    fetched: int
-    matched: int
-    error: str = ""
+    def __post_init__(self):
+        from .limits import record_job
+        record_job(self)
 
 
 def txt(v: Any) -> str:

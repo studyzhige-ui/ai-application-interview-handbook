@@ -1,42 +1,10 @@
-# 官方岗位采集与纳入策略
+# JD 原文保全与采集边界
 
-## 1. 数据模型
+1. 原始材料优先。保留已存 JD、来源 URL、职位 ID、原时间戳和状态，不把旧过滤结果改成新的模型判断。
+2. 模型负责理解岗位意义、资格与范围，决定如何整理和引用。代码不使用标题/正文关键词排除岗位，不按标题猜测同一岗位族，不自动改写摘要。
+3. 代码采集当前关闭。未来只能显式选择已登记来源 ID，并给出最大列表页数、最大岗位数、单来源超时与新的输出位置后手动启用。
+4. 采集只使用登记官方来源的列表、分页、详情请求和结构化链接，不扩张为全站抓取。来源项目 ID/栏目参数是已存请求契约，不构成岗位语义判断。
+5. 收到的原始 JSON/HTML 独立保存，提取字段不替代原文。失败、重试、超时和截断保留诊断；失败不代表无岗位，达到上限不代表完整枚举。
+6. 新采集结果不覆盖旧快照，不自动更新公司状态、生成分析、提交或发布。已有 `generated` 快照按历史来源材料阅读，可能带有旧过滤覆盖偏差。
 
-```text
-69 家目标公司第一方招聘 / 校招入口
-        ↓ 岗位存在性核验
-official-company-role-index.*
-        ↓ 第一方 API / ATS / 浏览器补全与 Role Family 去重
-official-2027-agent-jobs.generated.*
-        ↓ 代表性高价值 JD / 面试研究
-ai-agent-jd-market.md
-```
-
-- [69 家公司岗位状态索引](../01-data/official-company-role-index.md)：全部公司保留第一方职位池；已有岗位、完整枚举 0 岗、待枚举分别记录。
-- [全量 Role Family / JD 层](../01-data/official-2027-agent-jobs.generated.md)：保存完整第一方 JD、官方标题和待补正文岗位。
-- [覆盖审计](../02-analysis/official-2027-coverage-audit.generated.md)：检查 69/69 公司扫描覆盖，并把 Runtime 抓取状态与岗位事实分开。
-- [69 家公司扫描池](../02-analysis/company-scan-pool.md)：全量公司名单、主要业务、第一方职位池和当前状态。
-
-## 2. 正式纳入 Gate
-
-代表岗位必须是开发、研发、工程师、全栈、前后端、平台、架构、Infra、Runtime、Harness、FDE 等工程角色，并且职责主体与 Agent / 智能体 / AI 应用 / 大模型应用 / Coding Agent / RAG / MCP / Tool / Workflow 等相关。算法训练、研究、产品、销售、运营等不作为本库的代表工程岗位。
-
-同公司、职责高度一致但城市 / 职位 ID 不同的岗位按 Role Family 合并；所有已知官方 Requisition 仍保留在全量层。
-
-## 9. 可重复官方发现
-
-- [官方 2027 公司源注册表](official-2027-campus-sources.json)
-- [官方动态站发现结果](../01-data/official-2027-agent-jobs.generated.md)
-- [统一同步器](../04-scripts/jd.py)
-- [小米 ATSX Node 适配器](../04-scripts/jd/adapters/xiaomi.mjs)
-- [字节 ATSX Node 适配器](../04-scripts/jd/adapters/bytedance.mjs)
-
-```text
-逐公司确认 2027 官方项目
-→ 官方项目/API全量枚举
-→ Agent/AI应用多关键词 + JD正文召回
-→ 算法/非目标岗排除
-→ 2027届别复核
-→ Role Family 去重
-→ 正式库
-```
+[手动启用与依赖](../04-scripts/README.md) · [已存快照完整性清单](stored-snapshots.json)

@@ -1,13 +1,29 @@
 #!/usr/bin/env python3
-"""Minimal official-JD business interface. Network collection is explicit."""
+"""Stored JD integrity checks; collection is disabled unless explicitly bounded."""
 from __future__ import annotations
 import argparse
+import math
 from pathlib import Path
 import subprocess
 import sys
 import unittest
 
+sys.dont_write_bytecode = True
 SCRIPTS = Path(__file__).resolve().parent
+
+
+def positive_int(value):
+    number = int(value)
+    if number <= 0:
+        raise argparse.ArgumentTypeError("must be positive")
+    return number
+
+
+def positive_number(value):
+    number = float(value)
+    if not math.isfinite(number) or number <= 0:
+        raise argparse.ArgumentTypeError("must be finite and positive")
+    return number
 
 
 def check():
@@ -23,48 +39,38 @@ def check():
     return 0
 
 
-def collect(live):
-    if not live:
-        raise ValueError("Live collection requires --live; use check for offline verification")
-    # Fail before changing a current snapshot if the live dependencies are absent.
-    import requests  # noqa: F401
-    from jd.evidence import preserve_current
-    from jd.pipeline import main as pipeline
-    from jd.audit import main as audit
-    preserve_current()
-    adapters = SCRIPTS / "jd/adapters"
-    subprocess.run(["node", str(adapters / "browser.mjs")], check=True)
-    for name in ("xiaomi", "bytedance", "feishu", "moka"):
-        result = subprocess.run(["node", str(adapters / f"{name}.mjs")], check=False)
-        if result.returncode:
-            print(f"{name} accelerator failed; only fresh complete alternatives may be used", file=sys.stderr)
-    pipeline()
-    preserve_current()
-    return audit()
-
-
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("check", help="Offline contracts, unit tests, and Node syntax/regressions")
-    commands.add_parser("collect", help="Collect, normalize, preserve, render, and audit").add_argument("--live", action="store_true")
-    commands.add_parser("audit", help="Audit saved snapshots and refresh local analysis, without network")
-    commands.add_parser("publish", help="Actions-only stale-safe publication of generated output")
-    args = parser.parse_args()
+    commands = parser.add_subparsers(dest="command")
+    commands.add_parser("check", help="Read-only offline integrity, counts, syntax and fixture tests")
+    commands.add_parser("sources", help="List registered source IDs without network access")
+    collect = commands.add_parser("collect", help="Explicit bounded capture into a new directory; never publishes")
+    collect.add_argument("--enable-code-collection", action="store_true", required=True)
+    collect.add_argument("--source-id", action="append", required=True)
+    collect.add_argument("--max-pages", type=positive_int, required=True)
+    collect.add_argument("--max-jobs", type=positive_int, required=True)
+    collect.add_argument("--timeout-seconds", type=positive_number, required=True)
+    collect.add_argument("--output-dir", type=Path, required=True)
+    args = parser.parse_args(argv)
+    if not args.command:
+        print("Code collection is disabled. Use check or sources for offline inspection.")
+        return 0
     if args.command == "check":
         return check()
-    if args.command == "collect":
-        return collect(args.live)
-    if args.command == "audit":
-        from jd.audit import main as audit
-        return audit()
-    from jd.publication import main as publish
-    return publish()
+    if args.command == "sources":
+        from jd.collection import registry
+        for source_id, source in registry().items():
+            print(f"{source_id}\t{source['company']}\t{source['portal']}")
+        return 0
+    from jd.collection import collect_manual
+    return collect_manual(args.source_id, enabled=args.enable_code_collection,
+                          max_pages=args.max_pages, max_jobs=args.max_jobs,
+                          timeout_seconds=args.timeout_seconds, output=args.output_dir)
 
 
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (ValueError, RuntimeError, subprocess.CalledProcessError) as exc:
+    except (ValueError, RuntimeError, OSError, subprocess.CalledProcessError) as exc:
         print(str(exc), file=sys.stderr)
         raise SystemExit(1)
