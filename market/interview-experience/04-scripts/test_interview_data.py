@@ -93,7 +93,8 @@ class StructuralFixtureTests(unittest.TestCase):
     def write_corpus(self):
         raw_path = "01-data/raw/batch-90.md"
         text = "# Structural fixture\n\n" + "".join(self.blocks)
-        (self.base / raw_path).write_text(text, encoding="utf-8")
+        # The contract hashes exact UTF-8 bytes; avoid Windows newline translation.
+        (self.base / raw_path).write_bytes(text.encode("utf-8"))
         proof, section_hashes, bullet_ids = [], {}, []
         line = 3
         for block in self.blocks:
