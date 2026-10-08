@@ -5,8 +5,24 @@ Run: python -m unittest discover -s practice/coding/exercises -p 'test_coding_pr
 from __future__ import annotations
 
 import unittest
+import tempfile
+from pathlib import Path
 
-from build_coding_practice import SOURCE, explanation_html, extract, inline_html, notebook
+from build_coding_practice import SOURCE, explanation_html, extract, inline_html, notebook, run_isolated
+
+
+class IsolatedExecutionTests(unittest.TestCase):
+    def test_utf8_input_output_and_isolation_are_explicit(self):
+        with tempfile.TemporaryDirectory() as directory:
+            script = Path(directory) / "unicode_probe.py"
+            script.write_text(
+                "import sys\nassert sys.flags.isolated == 1\n"
+                "assert sys.flags.no_site == 1\nassert sys.flags.utf8_mode == 1\n"
+                "print(input())\nprint('错误边界', file=sys.stderr)\n", encoding="utf-8")
+            result = run_isolated(script, input_text="中文输入\n", cwd=directory)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stdout, "中文输入\n")
+        self.assertEqual(result.stderr, "错误边界\n")
 
 
 class ExplanationRendererTests(unittest.TestCase):

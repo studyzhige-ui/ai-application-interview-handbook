@@ -183,16 +183,22 @@ def notebook(exercises: list[Exercise]) -> dict:
     }
 
 
+def run_isolated(script: Path, *, input_text: str = "", cwd=None):
+    """Keep cold execution isolated while making both pipes explicitly UTF-8."""
+    return subprocess.run(
+        [sys.executable, "-I", "-S", "-X", "utf8", str(script)],
+        input=input_text, capture_output=True, text=True, encoding="utf-8",
+        timeout=10, cwd=cwd,
+    )
+
+
 def validate_answers(exercises: list[Exercise]) -> int:
     assertions = 0
     with tempfile.TemporaryDirectory(prefix="coding-answers-") as directory:
         for e in exercises:
             script = Path(directory) / f"{e.eid}.py"
             script.write_text(e.solution + "\n\n" + e.tests + "\n", encoding="utf-8")
-            result = subprocess.run(
-                [sys.executable, "-I", "-S", str(script)], capture_output=True,
-                text=True, timeout=10, cwd=directory,
-            )
+            result = run_isolated(script, cwd=directory)
             if result.returncode:
                 raise AssertionError(f"{e.eid}:\n{result.stdout}\n{result.stderr}")
             assertions += sum(isinstance(node, ast.Assert) for node in ast.walk(ast.parse(e.tests)))

@@ -15,7 +15,7 @@ import subprocess
 import sys
 import tempfile
 
-from build_coding_practice import extract, notebook, validate_answers, SOURCE, TARGET
+from build_coding_practice import extract, notebook, validate_answers, run_isolated, SOURCE, TARGET
 
 ROOT = Path(__file__).resolve().parents[3]
 DOCS = ROOT / "practice/coding/docs"
@@ -54,10 +54,7 @@ def run_examples() -> dict:
                     raise ValueError(f"{path.name}/{index}: input example lacks stdin")
                 script = Path(directory) / "example.py"
                 script.write_text(code, encoding="utf-8")
-                result = subprocess.run(
-                    [sys.executable, "-I", "-S", str(script)], input=options.get("stdin", ""),
-                    capture_output=True, text=True, timeout=10, cwd=directory,
-                )
+                result = run_isolated(script, input_text=options.get("stdin", ""), cwd=directory)
                 expected_error = options.get("error")
                 if expected_error:
                     if result.returncode == 0 or not re.search(
