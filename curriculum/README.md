@@ -1,43 +1,33 @@
-# Curriculum｜十个正式知识模块
+# Curriculum｜通用工程课程
 
-[↑ Handbook](../README.md) · [学习路线](../guide/learning-path.md) · [知识地图](../guide/knowledge-map.md) · [成熟系统源码](../products/README.md)
+[Handbook](../README.md) · [优秀产品学习](../products/README.md) · [编程与开发实践](../practice/README.md) · [面试准备](../interview/README.md)
 
-课程从Python语言能力开始，逐步进入接口、数据、后端可靠性和AI应用。目标是能理解机制、观察行为并独立组合，而不是背一张工具清单。
+从零建立最小完整的工程知识模型，再用真实问题决定学习深度。十个知识域按前置关系编号；课程正文承载连续主线，Review 帮助压缩回忆与迁移应用。
 
 ## 推荐学习顺序
 
-**Python → FastAPI → MySQL → Redis → Backend → Vector DB → LLM Foundation → RAG → Agent → System Design**
+Python → FastAPI → MySQL → Redis → Backend Engineering → LLM Foundation → Vector DB → RAG → Agent → System Design
 
-目录中的数字是稳定标识，不要求按文件浏览器的字典序学习。模块职责与知识覆盖保持独立；学习先后可根据前置关系调整。完整进度安排见学习路线。
-
-| 学习顺序 | 模块 | 本阶段建立的能力 |
-|---:|---|---|
+| 顺序 | 入口 | 核心能力 |
+|---|---|---|
 | 01 | [Python](01-python/README.md) | 理解名字、对象、函数、资源与并发执行。 |
-| 02 | [FastAPI](02-fastapi/README.md) | 把Python能力变成可校验、可观测的网络接口。 |
-| 03 | [MySQL](04-mysql/README.md) | 理解表、查询、约束、事务与持久事实。 |
-| 04 | [Redis](05-redis/README.md) | 理解命令、缓存、短期状态及其边界。 |
-| 05 | [Backend](03-backend-engineering/README.md) | 在数据库与缓存基础上组合幂等、可靠任务和跨系统恢复。 |
-| 06 | [Vector DB](06-vector-db/README.md) | 理解相似度、精确检索、近似索引与生命周期。 |
-| 07 | [LLM Foundation](07-llm-foundation/README.md) | 理解模型输入、注意力、生成、推理成本与适配。 |
-| 08 | [RAG](08-rag/README.md) | 把外部材料变成可追溯、可评价的回答证据。 |
-| 09 | [Agent](09-agent/README.md) | 沿模型判断、程序行动、结果回填与验收组织工具、信息、安全和恢复。 |
-| 10 | [System Design](10-system-design/README.md) | 从用户动作与完成条件推导容量、状态和协作，并在条件变化后修正方案。 |
+| 02 | [FastAPI](02-fastapi/README.md) | 把 Python 能力变成可校验、可观测的网络接口。 |
+| 03 | [MySQL](03-mysql/README.md) | 理解关系表、查询、约束、索引、事务与持久事实。 |
+| 04 | [Redis](04-redis/README.md) | 理解命令、缓存、短期状态、并发与恢复边界。 |
+| 05 | [AI Backend Engineering](05-backend-engineering/README.md) | 组合幂等、可靠任务、容量控制和跨系统恢复。 |
+| 06 | [LLM Foundation](06-llm-foundation/README.md) | 理解模型输入、注意力、生成、推理成本与模型适配。 |
+| 07 | [Vector Database](07-vector-db/README.md) | 理解相似度、精确检索、近似索引与数据生命周期。 |
+| 08 | [RAG](08-rag/README.md) | 把外部材料组织为可追溯、可评价的回答证据。 |
+| 09 | [Agent](09-agent/README.md) | 组织模型判断、程序行动、状态恢复与交付验证。 |
+| 10 | [System Design](10-system-design/README.md) | 从需求推导容量、状态、协作与故障方案。 |
 
-Backend置于MySQL、Redis之后，让事务、唯一约束、缓存与命令原子性先成为已知概念，再进入Outbox、幂等、任务恢复和一致性组合。FastAPI中的外部服务例子先用可替换的测试实现，不要求读者提前掌握这些内部机制。
+MySQL 与 Redis 先建立事务、约束、缓存和命令原子性，Backend Engineering 再组合可靠任务与跨系统恢复。LLM Foundation 先解释 Embedding 的表示机制，Vector DB 再解释如何比较与检索这些向量，随后进入 RAG 与 Agent。
 
-进入Vector DB前，可先阅读[Embedding与Reranker的基础说明](07-llm-foundation/docs/09-Embedding与Reranker.md)中编码输入与向量表示的部分。理解“文档和查询如何变成可比较向量”即可，不要求先学习全部模型训练。遇到评测指标等尚未建立的扩展内容，可以按该模块正文的具体需求回看，不把它们当作此处额外门槛。
+## 怎样使用
 
-## 正文、回顾与实践分别负责什么
-
-```text
-README.md   模块任务、学习主线、入口和边界
-docs/       首次系统学习的展开式正文
-review/     第二遍总图与综合自测
-interview/  口述、追问、易错点和速查
-```
-
-[Practice](../practice/README.md)与课程并行，让学习转成写代码、运行和调试。 [Products](../products/README.md)沿固定源码快照理解成熟系统，不作为第11个课程模块，也不以某个产品实现替代通用机制。
-
-Agent 的[综合推演](09-agent/review/README.md#综合推演)用于判断工具失败、取消、批准和未知结果应如何继续；System Design 的[独立设计任务](10-system-design/review/README.md#独立设计任务为两个团队交付报告助手)要求从空白纸交付职责、容量、状态及故障方案。两者承接同一条“执行并验证”主线，但不互相替代。
-
-技术事实由[References](../references/README.md)支撑；[Market](../market/README.md)与[Interview](../interview/README.md)提供真实问法和复习权重。它们校准学习深度，不以热度替代必要前置。
+- 每个模块的 README 说明目标、前提与阅读入口。
+- docs 保存首次系统学习的完整课程；先理解规则、过程与边界，再做自测。
+- review 保存有实质内容的压缩复习与综合判断，和正文同步使用。
+- [Practice](../practice/README.md)与课程并行，把理解转成独立实现和调试。
+- [Products](../products/README.md)沿真实产品学习机制组合，不替代通用课程。
+- [Market](../market/README.md)提供真实岗位与面试证据；[Interview](../interview/README.md)提供按知识域整理的面试学习材料。

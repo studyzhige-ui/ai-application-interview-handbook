@@ -200,7 +200,7 @@ B 的内容不能授权。程序仍应执行用户与应用允许的范围；模
 
 - [工作流与自主权](02-WorkflowAutonomyAndRuntimeBoundary.md)：用同一任务比较固定步骤和动态行动。
 - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)：核对工作流、Agent 和从简单组合开始的原则。
-- [固定产品实现对照](../../../references/agent/implementation-notes.md#chapter-01)：在明确快照中观察模型之外的执行责任；不是首次学习前提。
+- [固定产品实现对照](../../../products/claude-code/03-tool-lifecycle.md#implementation-chapter-01)：在明确快照中观察模型之外的执行责任；不是首次学习前提。
 
 
 ---

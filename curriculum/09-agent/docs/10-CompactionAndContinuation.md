@@ -81,7 +81,7 @@
 
 若主要压力来自一个巨大工具结果，先缩小结果或外部化，未必需要总结整个会话。已完成阶段适合压成结论；正在等待的调用、尚未解决的约束冲突，要保留足够结构。
 
-微压缩、旧工具结果清理和全文摘要是不同手段：有的无需模型，有的只替换少量内容。具体产品可能组合它们，也可能由功能开关控制。**没有通用的“固定三层”或“达到 90% 必压”标准。** 产品阈值放在[固定实现选读](../../../references/agent/implementation-notes.md#chapter-10)，不作为主线记忆要求。
+微压缩、旧工具结果清理和全文摘要是不同手段：有的无需模型，有的只替换少量内容。具体产品可能组合它们，也可能由功能开关控制。**没有通用的“固定三层”或“达到 90% 必压”标准。** 产品阈值放在[固定实现选读](../../../products/claude-code/01-context-lifecycle.md#implementation-chapter-10)，不作为主线记忆要求。
 
 <a id="10-summary-error-会产生压缩后的错误记忆"></a>
 <a id="7-compaction-correctness-怎样验证"></a>
@@ -220,7 +220,7 @@
 
 - [上下文编排](09-ContextAssemblyAndCache.md)：回看预算、调用关联和大结果外部化。
 - [状态与持久化](12-StateHistoryAndPersistence.md)：区分输入视图和可靠恢复记录。
-- [固定压缩实现](../../../references/agent/implementation-notes.md#chapter-10)：选读不同产品的触发、摘要请求和替代历史路径。
+- [固定压缩实现](../../../products/claude-code/01-context-lifecycle.md#implementation-chapter-10)：选读不同产品的触发、摘要请求和替代历史路径。
 
 
 ---

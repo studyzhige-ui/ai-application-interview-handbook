@@ -1,8 +1,8 @@
 # Coding｜从程序执行到算法与工程交付
 
-[← Handbook 总目录](../../README.md) · [学习路线](../../guide/learning-path.md) · [Python Foundation](../../curriculum/01-python/README.md) · [Hot100 映射](hot100-map.md)
+[← Handbook 总目录](../../README.md) · [Python Foundation](../../curriculum/01-python/README.md) · [Hot100 映射](docs/hot100-map.md)
 
-> 面向初学者的横向实践轨道，与十个 Curriculum 知识模块并行。课程包含 9 章、1 张 Hot100 映射表、22 题基础 Notebook 与一个三文件 AI Coding 练习。
+> 面向初学者的横向实践轨道，与十个 Curriculum 知识模块并行。课程包含 9 章、1 张 Hot100 映射表、22 题基础 Notebook。
 
 ## 1. 本轨道解决什么
 
@@ -48,31 +48,27 @@
 
 [第 03 章 Notebook](exercises/03-basic-exercises.ipynb)与正文 E01–E22 一一对应：任务和样例可见，编写区与测试可运行，参考答案默认折叠。GitHub 提供静态预览，实际运行使用 JupyterLab 等环境的 Python 3 内核；空白函数不能通过测试是预期行为。
 
-[第 09 章分页修复项目](exercises/09-ai-coding-lab/README.md)包含故意有缺陷的初始实现、验收测试与折叠参考实现。按需求调查、复现、修改并重跑，而不是直接复制答案。
+第 09 章用分页问题讲解调查、复现、最小修改与验证；实作时在自己的练习目录建立实现与测试。
 
 代码以 Python 3.10 及以上为实践基线；标准库和平台运行环境仍应实际确认。练习只使用标准库，Notebook 编辑器和内核属于运行环境，不要求为算法额外安装框架。
 
 ## 5. Hot100 怎样贯穿而不打断主线
 
-[100 题映射](hot100-map.md)维护题目快照、前置章节、学习目标与适合的 ACM 改写。基础容器学完才开始两数之和、移动零和分组；结构与算法前提不足时先做最小例子，不为了用上 Hot100 而提前要求陌生语法。
+[100 题映射](docs/hot100-map.md)维护题目快照、前置章节、学习目标与适合的 ACM 改写。基础容器学完才开始两数之和、移动零和分组；结构与算法前提不足时先做最小例子，不为了用上 Hot100 而提前要求陌生语法。
 
 每题可以记录 L（理解）、S（独立实现）、A（完整输入输出）、R（间隔后重建）。不是每题都需要 A，复杂树和链表输入构造可能抢走算法目标；也不为 100 题额外创建 100 份重复 Markdown。
 
 官方题面与在线提交使用 [LeetCode 热题 100](https://leetcode.cn/studyplan/top-100-liked/)。ACM 和 AI Coding 的外部练习入口分别在第 04、08、09 章；不把外部平台动态题量当作课程元数据。
 
-## 6. 维护与验证
+## 6. 练习维护与验证
 
-写作遵循[文档规范](../../guide/documentation-style-guide.md)：先确定整体依赖和章节职责，再写概念、过程、例子、练习与验收。读者反馈是发现同类设计问题的样本，不是只修所点名位置的补丁清单。具体审查记录见[架构审查](../../guide/audits/coding-reader-first-2026-09-23.md)和[小节讲解与排版复审](../../guide/audits/coding-subsection-clarity-2026-09-24.md)。
-
-第 03 章是练习题、样例、测试与答案的唯一维护源。修改后执行：
+第 03 章是练习题、样例、测试与答案的唯一维护源。Notebook 生成器和配套检查就近保存在 exercises。修改练习后，从仓库根目录执行：
 
 ```bash
-python tools/build_coding_practice.py
-python tools/build_coding_practice.py --check
-python tools/validate_coding_curriculum.py
-python -m unittest discover -s tools -p "test_coding_practice_renderer.py" -v
+python practice/coding/exercises/build_coding_practice.py
+python practice/coding/exercises/build_coding_practice.py --check
+python practice/coding/exercises/validate_coding_curriculum.py
+python -m unittest discover -s practice/coding/exercises -p "test_coding_practice_renderer.py" -v
 ```
 
-第二条检查 Notebook 同步并运行参考答案。第三条冷启动运行章节示例，核对指定输出、预期异常、工程练习与本地导航。第四条检查练习答案转换后是否保留段落、列表和提醒。脚本仅应运行可信课程代码。
-
-这些检查能发现失效代码、漏输入、漂移和链接问题，不能证明学习者已经理解。结构审查与实际阅读反馈仍是教材验收的一部分；不能以增加规则声明、字数或测试数量代替内容质量。
+检查分别覆盖 Notebook 同步、22 道参考答案、正文示例执行与答案排版。脚本执行可信课程代码，不作为沙箱；机械检查通过不能替代实际学习和独立解题。

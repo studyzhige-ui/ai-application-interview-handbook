@@ -75,7 +75,7 @@ Microsoft GraphRAG 在构建时可把关系较密集的实体组织成社区，�
 
 三个报告不等于三起独立事故，一起事故可能进入多个报告。要断言“这是最高频风险”，还需要明确事故全集、去重身份和统计口径。Global Search 提供的是跨报告汇总的途径，不自动证明全库完整或频率排名。
 
-DRIFT 将社区信息与局部检索结合来扩展探索；首次学习先掌握 Local 的实体中心和 Global 的跨主题汇总，使用该模式时再查 [官方查询概览](https://microsoft.github.io/graphrag/query/overview/)。课程采用的项目版本与未运行范围见 [资料索引](../../../references/rag/README.md)。
+DRIFT 将社区信息与局部检索结合来扩展探索；首次学习先掌握 Local 的实体中心和 Global 的跨主题汇总，使用该模式时再查 [官方查询概览](https://microsoft.github.io/graphrag/query/overview/)。课程采用的项目版本与未运行范围见 资料索引。
 
 ## 5. 图检索最终仍需要检查证据与权限
 

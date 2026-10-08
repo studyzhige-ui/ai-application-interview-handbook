@@ -218,7 +218,7 @@ Coding Agent 的交付依赖真实仓库理解、受控修改、针对性验证�
 - [多 Agent 工作区](19-MultiAgentAndA2A.md)：理解共享文件和独立控制的区别。
 - [评测](21-EvaluationBenchmarkAndImprovement.md)：设计回归条件与验收证据。
 - [SWE-bench](https://www.swebench.com/)：对照仓库环境与测试驱动的修复评价。
-- [固定 Coding Agent 实现](../../../references/agent/implementation-notes.md#chapter-22)：观察读取、修改、测试和反馈怎样接成循环。
+- [固定 Coding Agent 实现](../../../products/codex/04-engineering-evaluation.md#implementation-chapter-22)：观察读取、修改、测试和反馈怎样接成循环。
 
 
 ---

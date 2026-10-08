@@ -225,4 +225,4 @@ def seen(background: BackgroundTasks):
 - [后台任务](https://fastapi.tiangolo.com/tutorial/background-tasks/)：核对进程内工作与独立任务系统的边界。
 - [后台执行顺序](https://starlette.dev/background/)：理解多任务顺序及异常影响。
 
-真人问题回看：[S293 的海量视频、断点续传和失败清理](../../../market/interviews/batch-32.md)。本章建立上传协议与资源责任；跨机器调度、任务重领和一致性实现由 Backend 承担。
+真人问题回看：[S293 的海量视频、断点续传和失败清理](../../../market/interview-experience/01-data/raw/batch-32.md)。本章建立上传协议与资源责任；跨机器调度、任务重领和一致性实现由 Backend 承担。

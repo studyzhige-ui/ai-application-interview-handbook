@@ -1,6 +1,6 @@
 # FastAPI｜Review总图与综合自测
 
-[← 模块主页](../README.md) · [面试题](../interview/高频面试题.md) · [练习](../examples/README.md)
+[← 模块主页](../README.md) · [面试题](../../../interview/fastapi/01-高频面试题.md)
 
 这一页用于第二遍。先遮住答案，画出请求与资源的路线；哪里说不清，再回对应正文。不要把短答案当作首次学习的完整解释。
 

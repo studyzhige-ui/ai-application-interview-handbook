@@ -1,0 +1,1160 @@
+{
+  "schema_version": 1,
+  "purpose": "Regression fixtures for every declared rule. Test-only examples never enter source input or frequency.",
+  "positive_fixtures": [
+    {
+      "family_id": "PY-CONTAINERS",
+      "text": "Python dict 的 Hash、冲突处理和删除机制如何解释？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S035:batch-03:L00085"
+    },
+    {
+      "family_id": "PY-ITERATION",
+      "text": "Python 装饰器、生成器、上下文管理器和 async I/O 在 Runtime 中分别适合什么场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S032:batch-03:L00027"
+    },
+    {
+      "family_id": "PY-ASYNC",
+      "text": "Python GIL、Lock / RLock、Semaphore 的机制与使用场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00225"
+    },
+    {
+      "family_id": "PY-LANGUAGE",
+      "text": "Python GIL、Lock / RLock、Semaphore 的机制与使用场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00225"
+    },
+    {
+      "family_id": "FASTAPI-LIFECYCLE",
+      "text": "FastAPI Middleware 与 Dependency Injection 的差异是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S064:batch-04:L00276"
+    },
+    {
+      "family_id": "FASTAPI-DEPENDENCY",
+      "text": "FastAPI Middleware 与 Dependency Injection 的差异是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S064:batch-04:L00276"
+    },
+    {
+      "family_id": "MYSQL-INDEX",
+      "text": "HashMap、MySQL B+Tree、联合索引等基础如何解释？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00098"
+    },
+    {
+      "family_id": "MYSQL-TX",
+      "text": "MySQL MVCC 的基本机制是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00274"
+    },
+    {
+      "family_id": "MYSQL-LOG",
+      "text": "MySQL undo / redo / binlog 分别做什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00075"
+    },
+    {
+      "family_id": "MYSQL-SCALE",
+      "text": "实习中的 Database Optimization 具体怎么做，数据量级和是否 Sharding？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00111"
+    },
+    {
+      "family_id": "MYSQL-DESIGN",
+      "text": "针对给定 SQL 怎样设计 Composite Index；如果查询不再使用 `user_id`，原索引还能否有效利用？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00277"
+    },
+    {
+      "family_id": "REDIS-STRUCTURES",
+      "text": "Redis 与 MySQL 混合使用时怎样考虑数据一致性？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00115"
+    },
+    {
+      "family_id": "REDIS-LOCK",
+      "text": "Redis 分布式锁、SETNX 与锁泄露如何处理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S023:batch-02:L00209"
+    },
+    {
+      "family_id": "REDIS-CACHE",
+      "text": "除 LRU 外还了解哪些 Cache Eviction Policy，业务中怎样选择？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00262"
+    },
+    {
+      "family_id": "REDIS-PERSISTENCE",
+      "text": "Redis 的 Sentinel、Cluster、Master-Replica 怎样提供高可用 / 高性能？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00114"
+    },
+    {
+      "family_id": "REDIS-EVICTION",
+      "text": "除 LRU 外还了解哪些 Cache Eviction Policy，业务中怎样选择？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00262"
+    },
+    {
+      "family_id": "BE-NETWORK",
+      "text": "TCP 为什么三次握手 / 四次挥手，四次是否总是必要？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S013:batch-01:L00354"
+    },
+    {
+      "family_id": "BE-STREAM",
+      "text": "SSE / WebSocket / HTTP 从协议层如何比较？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S021:batch-02:L00170"
+    },
+    {
+      "family_id": "BE-CONCURRENCY",
+      "text": "Java 线程池如何运行，如果重新设计线程池会考虑哪些约束？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00074"
+    },
+    {
+      "family_id": "BE-THREADPOOL",
+      "text": "Java 线程池如何运行，如果重新设计线程池会考虑哪些约束？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00074"
+    },
+    {
+      "family_id": "BE-JAVA",
+      "text": "Java 线程池如何运行，如果重新设计线程池会考虑哪些约束？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00074"
+    },
+    {
+      "family_id": "BE-GO",
+      "text": "GMP / GC STW 等 Runtime 基础为什么在 AI Backend 仍然重要？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00200"
+    },
+    {
+      "family_id": "BE-MQ",
+      "text": "异步队列如何防止消息丢失？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00202"
+    },
+    {
+      "family_id": "BE-IDEMPOTENCY",
+      "text": "支付重复请求如何设计 Idempotency？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S011:batch-01:L00314"
+    },
+    {
+      "family_id": "BE-RESILIENCE",
+      "text": "Tool / API 超时、异常应该由 Runtime 如何分类、重试、降级？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00067"
+    },
+    {
+      "family_id": "BE-AUTH",
+      "text": "Authentication 怎样做，Token 如何在前后端传递？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S051:batch-03:L00446"
+    },
+    {
+      "family_id": "BE-DEPLOY",
+      "text": "Linux 怎样查 Process / Port？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S016:batch-02:L00070"
+    },
+    {
+      "family_id": "BE-OBSERVABILITY",
+      "text": "日志预处理用于降低 Token 时，如何防止根因信息被压掉？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S032:batch-03:L00024"
+    },
+    {
+      "family_id": "BE-ARCHITECTURE",
+      "text": "gRPC / tRPC、服务发现、负载均衡如何支撑 Agent Backend？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00199"
+    },
+    {
+      "family_id": "LLM-TRANSFORMER",
+      "text": "Transformer / QKV / Attention 的核心过程如何解释到应用工程需要的深度？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00048"
+    },
+    {
+      "family_id": "LLM-TOKEN",
+      "text": "Tokenization 为什么会把一个词拆成多个 Token？为什么 LLM 使用 Token 而不是字符 / 单词？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00047"
+    },
+    {
+      "family_id": "LLM-INFERENCE",
+      "text": "KV Cache 为什么能加速 LLM 推理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S013:batch-01:L00352"
+    },
+    {
+      "family_id": "LLM-TUNING",
+      "text": "SFT / PPO / DPO / GRPO 等方法分别解决什么问题，应用工程师需要理解到什么程度？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00051"
+    },
+    {
+      "family_id": "LLM-MODEL",
+      "text": "不同基础模型表现不一致时，应用层如何做适配与稳定性治理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00094"
+    },
+    {
+      "family_id": "LLM-PROMPT",
+      "text": "Prompt 优化除了增加规则约束还能做什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00071"
+    },
+    {
+      "family_id": "LLM-FACTUALITY",
+      "text": "Agent 幻觉与 Token 消耗异常如何定位？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00072"
+    },
+    {
+      "family_id": "VDB-EMBEDDING",
+      "text": "RAG 不准确时，Parsing、Chunk、Embedding、Recall、Rerank、Prompt 分别怎样排查和优化？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00293"
+    },
+    {
+      "family_id": "VDB-ANN",
+      "text": "IVF_FLAT 与 HNSW 的核心差异和适用场景是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S054:batch-04:L00064"
+    },
+    {
+      "family_id": "VDB-ENGINE",
+      "text": "为什么用 Vector DB，它与 MySQL / PostgreSQL 的职责有什么差异？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S022:batch-02:L00189"
+    },
+    {
+      "family_id": "RAG-PIPELINE",
+      "text": "Agent Customer-service Project 的 RAG 与最终 Answer Generation 怎样实现？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S006:batch-01:L00141"
+    },
+    {
+      "family_id": "RAG-PARSING",
+      "text": "PDF、图片等异构文档如何解析、存储与检索？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S029:batch-02:L00377"
+    },
+    {
+      "family_id": "RAG-CHUNK",
+      "text": "RAG Chunk Size / Chunk Strategy 如何根据数据和评测确定？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00046"
+    },
+    {
+      "family_id": "RAG-RETRIEVAL",
+      "text": "Retrieval Pipeline 如何实现？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00221"
+    },
+    {
+      "family_id": "RAG-RERANK",
+      "text": "RAG 不准确时，Parsing、Chunk、Embedding、Recall、Rerank、Prompt 分别怎样排查和优化？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00293"
+    },
+    {
+      "family_id": "RAG-QUERY",
+      "text": "多维 Query Rewrite 与需要用户补充信息的查询如何实现？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00219"
+    },
+    {
+      "family_id": "RAG-EVAL",
+      "text": "RAG Chunk Size / Chunk Strategy 如何根据数据和评测确定？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00046"
+    },
+    {
+      "family_id": "RAG-GRAPH",
+      "text": "Hybrid Search、Metadata Filter、GraphRAG 分别解决什么问题？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S037:batch-03:L00123"
+    },
+    {
+      "family_id": "RAG-UPDATE",
+      "text": "RAG 召回过期且危险的运维指令时，系统层如何阻止执行？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S059:batch-04:L00171"
+    },
+    {
+      "family_id": "AGENT-BOUNDARY",
+      "text": "为什么需要 Sub-agent，什么任务才值得拆成 Agent？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00028"
+    },
+    {
+      "family_id": "AGENT-LOOP",
+      "text": "从零设计 Agent Loop 时需要考虑哪些 Runtime 问题？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00030"
+    },
+    {
+      "family_id": "AGENT-RUNTIME",
+      "text": "Claude Code 与其他 Harness 产品在系统设计上有什么区别？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00023"
+    },
+    {
+      "family_id": "AGENT-TOOLS",
+      "text": "Agent Tool Calling 有哪些实现方式？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00026"
+    },
+    {
+      "family_id": "AGENT-SKILLS",
+      "text": "常用 Skill 有哪些，不同 Skill 的结构和职责有什么差异？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00020"
+    },
+    {
+      "family_id": "AGENT-CONTEXT",
+      "text": "如何保证大量 Tool 按需发现、按需调用，而不是全部塞入 Context？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00027"
+    },
+    {
+      "family_id": "AGENT-MEMORY",
+      "text": "短期 / 长期 Memory 如何设计？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00069"
+    },
+    {
+      "family_id": "AGENT-MULTI",
+      "text": "为什么需要 Sub-agent，什么任务才值得拆成 Agent？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00028"
+    },
+    {
+      "family_id": "AGENT-SECURITY",
+      "text": "Agent 的写操作边界如何划分？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00089"
+    },
+    {
+      "family_id": "AGENT-EVAL",
+      "text": "设计一个测试 Agent，真正需要交付哪些能力和验收指标？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00192"
+    },
+    {
+      "family_id": "AGENT-RECOVERY",
+      "text": "Tool / API 超时、异常应该由 Runtime 如何分类、重试、降级？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00067"
+    },
+    {
+      "family_id": "AGENT-CODING",
+      "text": "平时如何使用 AI 辅助编码，是否形成稳定工作流？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00019"
+    },
+    {
+      "family_id": "SD-SCALE",
+      "text": "5000～6000 用户、十几万日请求量下 Agent 服务如何扩容？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00095"
+    },
+    {
+      "family_id": "SD-DESIGN",
+      "text": "Claude Code 与其他 Harness 产品在系统设计上有什么区别？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00023"
+    },
+    {
+      "family_id": "SD-TRADEOFF",
+      "text": "项目真实用了多少 Token，成本如何度量？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S009:batch-01:L00240"
+    },
+    {
+      "family_id": "CODING-ALGORITHM",
+      "text": "数据结构 Coding：List → Tree、Zig-zag Tree Traversal。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00053"
+    },
+    {
+      "family_id": "FRONTEND-WEB",
+      "text": "如果项目主要使用 TypeScript，是否能接受并快速迁移？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S012:batch-01:L00329"
+    },
+    {
+      "family_id": "MYSQL-TX-BASICS",
+      "text": "Transaction 的核心语义是什么，MySQL 如何实现提交与失败回滚？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S090:batch-05:L00348"
+    },
+    {
+      "family_id": "BE-STORAGE",
+      "text": "为什么选择 SQLite 或其他存储，什么时候需要迁移到更完整的数据层？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00096"
+    },
+    {
+      "family_id": "BE-RELEASE",
+      "text": "最近一次线上故障如何定位与处理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00191"
+    },
+    {
+      "family_id": "AGENT-ROUTING",
+      "text": "意图分流如何保证清晰，怎么识别 Query 是模糊还是明确？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00092"
+    },
+    {
+      "family_id": "SD-PROJECT",
+      "text": "Claude Code 与其他 Harness 产品在系统设计上有什么区别？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00023"
+    },
+    {
+      "family_id": "LLM-EVAL",
+      "text": "使用另一个 LLM 做评测时，Judge 本身的正确率与一致性如何验证？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S052:batch-04:L00022"
+    },
+    {
+      "family_id": "OTHER-TECHNICAL",
+      "text": "会议转写从音视频输入到文本、摘要的完整工程链路是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00042"
+    },
+    {
+      "family_id": "Q-PY-GIL",
+      "text": "Python GIL、Lock / RLock、Semaphore 的机制与使用场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00225"
+    },
+    {
+      "family_id": "Q-PY-ASYNCIO",
+      "text": "Python 装饰器、生成器、上下文管理器和 async I/O 在 Runtime 中分别适合什么场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S032:batch-03:L00027"
+    },
+    {
+      "family_id": "Q-PY-DECORATOR",
+      "text": "Python 装饰器、生成器、上下文管理器和 async I/O 在 Runtime 中分别适合什么场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S032:batch-03:L00027"
+    },
+    {
+      "family_id": "Q-PY-GENERATOR",
+      "text": "Python 装饰器、生成器、上下文管理器和 async I/O 在 Runtime 中分别适合什么场景？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S032:batch-03:L00027"
+    },
+    {
+      "family_id": "Q-PY-PARAMETERS",
+      "text": "Python Function Parameters 有哪些形式，调用和绑定规则怎样理解？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S226:batch-16:L00042"
+    },
+    {
+      "family_id": "Q-PY-CONTAINERS",
+      "text": "Python dict 的 Hash、冲突处理和删除机制如何解释？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S035:batch-03:L00085"
+    },
+    {
+      "family_id": "Q-FASTAPI-ASGI",
+      "text": "FastAPI 在 Python 中的底层 Web Server / ASGI 组件是什么，调用链怎样理解？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S238:batch-18:L00092"
+    },
+    {
+      "family_id": "Q-FASTAPI-DI",
+      "text": "FastAPI Middleware 与 Dependency Injection 的差异是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S064:batch-04:L00276"
+    },
+    {
+      "family_id": "Q-FASTAPI-STREAM",
+      "text": "FastAPI + SSE 如何把 LangGraph 各 Node 的中间结果实时推送到前端？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S087:batch-05:L00289"
+    },
+    {
+      "family_id": "Q-MYSQL-BTREE",
+      "text": "HashMap、MySQL B+Tree、联合索引等基础如何解释？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00098"
+    },
+    {
+      "family_id": "Q-MYSQL-COMPOSITE",
+      "text": "HashMap、MySQL B+Tree、联合索引等基础如何解释？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00098"
+    },
+    {
+      "family_id": "Q-MYSQL-COVERING",
+      "text": "Back-to-table Query 为什么涉及 Sequential IO / Random IO，当前场景怎样优化？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00120"
+    },
+    {
+      "family_id": "Q-MYSQL-EXPLAIN",
+      "text": "Slow Query 如何定位和解决，B+Tree 为什么适合数据库索引？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00113"
+    },
+    {
+      "family_id": "Q-MYSQL-MVCC",
+      "text": "MySQL MVCC 的基本机制是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00274"
+    },
+    {
+      "family_id": "Q-MYSQL-ISOLATION",
+      "text": "MySQL 四种 Isolation Level 分别是什么，适用场景和现象有什么差异？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00276"
+    },
+    {
+      "family_id": "Q-MYSQL-LOCK",
+      "text": "数据库行锁、间隙锁和死锁如何工作？ mysql",
+      "context": "",
+      "fixture_kind": "synthetic_unit_test_only_not_evidence"
+    },
+    {
+      "family_id": "Q-MYSQL-LOG",
+      "text": "MySQL undo / redo / binlog 分别做什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00075"
+    },
+    {
+      "family_id": "Q-MYSQL-PAGINATION",
+      "text": "大 Offset 的 `LIMIT` 为什么慢，怎样优化 Deep Pagination？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00283"
+    },
+    {
+      "family_id": "Q-MYSQL-SHARD",
+      "text": "实习中的 Database Optimization 具体怎么做，数据量级和是否 Sharding？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00111"
+    },
+    {
+      "family_id": "Q-REDIS-LOCK",
+      "text": "Redis 分布式锁、SETNX 与锁泄露如何处理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S023:batch-02:L00209"
+    },
+    {
+      "family_id": "Q-REDIS-CONSISTENCY",
+      "text": "缓存穿透 / 击穿 / 雪崩与 Redis / DB 一致性如何治理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S161:batch-09:L00039"
+    },
+    {
+      "family_id": "Q-REDIS-FAILURE",
+      "text": "Redis Cache Penetration / Breakdown / Avalanche 如何治理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S013:batch-01:L00356"
+    },
+    {
+      "family_id": "Q-REDIS-PERSIST",
+      "text": "Redis 丢数据时怎样恢复，持久化和高可用如何理解？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S133:batch-07:L00496"
+    },
+    {
+      "family_id": "Q-REDIS-ZSET",
+      "text": "ZSet 使用 SkipList 时查询 / 插入复杂度怎样分析？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00273"
+    },
+    {
+      "family_id": "Q-REDIS-THREAD",
+      "text": "Redis 支持哪些结构、为什么快、为何常说核心命令单线程；发生 Blocking 会有什么影响？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S188:batch-10:L00293"
+    },
+    {
+      "family_id": "Q-REDIS-CLUSTER",
+      "text": "Redis 的 Sentinel、Cluster、Master-Replica 怎样提供高可用 / 高性能？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00114"
+    },
+    {
+      "family_id": "Q-BE-TCP",
+      "text": "TCP 为什么三次握手 / 四次挥手，四次是否总是必要？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S013:batch-01:L00354"
+    },
+    {
+      "family_id": "Q-BE-TLS",
+      "text": "HTTPS / URL 到页面完整链路与 Agent Backend 的安全边界如何解释？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S015:batch-02:L00047"
+    },
+    {
+      "family_id": "Q-BE-SSE",
+      "text": "SSE / WebSocket / HTTP 从协议层如何比较？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S021:batch-02:L00170"
+    },
+    {
+      "family_id": "Q-BE-THREADPOOL",
+      "text": "Java 线程池如何运行，如果重新设计线程池会考虑哪些约束？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00074"
+    },
+    {
+      "family_id": "Q-BE-PROCESS",
+      "text": "Process 与 Thread 的区别是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S006:batch-01:L00137"
+    },
+    {
+      "family_id": "Q-BE-MQ",
+      "text": "异步队列如何防止消息丢失？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00202"
+    },
+    {
+      "family_id": "Q-BE-IDEMPOTENCY",
+      "text": "支付重复请求如何设计 Idempotency？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S011:batch-01:L00314"
+    },
+    {
+      "family_id": "Q-BE-RATELIMIT",
+      "text": "Redis Lua 如何实现多维限流，Redis 故障时如何保护数据库？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S035:batch-03:L00082"
+    },
+    {
+      "family_id": "Q-BE-RESILIENCE",
+      "text": "Tool / API 超时、异常应该由 Runtime 如何分类、重试、降级？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00067"
+    },
+    {
+      "family_id": "Q-BE-JVM",
+      "text": "JVM Class Loading 怎样完成？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S050:batch-03:L00426"
+    },
+    {
+      "family_id": "Q-BE-JAVALOCK",
+      "text": "为什么生产业务需要谨慎使用 ThreadLocal？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S014:batch-02:L00025"
+    },
+    {
+      "family_id": "Q-BE-GO",
+      "text": "GMP / GC STW 等 Runtime 基础为什么在 AI Backend 仍然重要？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00200"
+    },
+    {
+      "family_id": "Q-LLM-ATTENTION",
+      "text": "Transformer / QKV / Attention 的核心过程如何解释到应用工程需要的深度？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00048"
+    },
+    {
+      "family_id": "Q-LLM-TOKEN",
+      "text": "Tokenization 为什么会把一个词拆成多个 Token？为什么 LLM 使用 Token 而不是字符 / 单词？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00047"
+    },
+    {
+      "family_id": "Q-LLM-TUNING",
+      "text": "Prompt、RAG、Fine-tuning、Workflow、Agent 分别解决什么问题？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S045:batch-03:L00293"
+    },
+    {
+      "family_id": "Q-LLM-LORA",
+      "text": "LoRA 的作用、收益和真实落地情况如何说明？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S052:batch-04:L00025"
+    },
+    {
+      "family_id": "Q-LLM-KVCACHE",
+      "text": "KV Cache 为什么能加速 LLM 推理？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S013:batch-01:L00352"
+    },
+    {
+      "family_id": "Q-LLM-SAMPLING",
+      "text": "Temperature 与 Top-K 如何影响模型生成？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S014:batch-02:L00023"
+    },
+    {
+      "family_id": "Q-LLM-PROMPT",
+      "text": "Prompt 优化除了增加规则约束还能做什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00071"
+    },
+    {
+      "family_id": "Q-LLM-JSON",
+      "text": "Tool Call 为什么通常是 Structured Output，JSON / 固定字段在协议中怎样表示？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S012:batch-01:L00335"
+    },
+    {
+      "family_id": "Q-LLM-HALLUCINATION",
+      "text": "Agent 幻觉与 Token 消耗异常如何定位？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00072"
+    },
+    {
+      "family_id": "Q-VDB-EMBEDDING",
+      "text": "RAG 不准确时，Parsing、Chunk、Embedding、Recall、Rerank、Prompt 分别怎样排查和优化？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00293"
+    },
+    {
+      "family_id": "Q-VDB-HNSW",
+      "text": "IVF_FLAT 与 HNSW 的核心差异和适用场景是什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S054:batch-04:L00064"
+    },
+    {
+      "family_id": "Q-VDB-MILVUS",
+      "text": "为什么用 Vector DB，它与 MySQL / PostgreSQL 的职责有什么差异？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S022:batch-02:L00189"
+    },
+    {
+      "family_id": "Q-RAG-PIPELINE",
+      "text": "完整 RAG System 包含哪些部分，Document Upload / Chunk 怎样实现？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S021:batch-02:L00164"
+    },
+    {
+      "family_id": "Q-RAG-PARSING",
+      "text": "PDF、图片等异构文档如何解析、存储与检索？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S029:batch-02:L00377"
+    },
+    {
+      "family_id": "Q-RAG-CHUNK",
+      "text": "RAG Chunk Size / Chunk Strategy 如何根据数据和评测确定？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00046"
+    },
+    {
+      "family_id": "Q-RAG-OVERLAP",
+      "text": "RAG 为什么会引入父子索引？BM25 与向量检索如何融合？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S018:batch-02:L00108"
+    },
+    {
+      "family_id": "Q-RAG-HYBRID",
+      "text": "RAG 为什么会引入父子索引？BM25 与向量检索如何融合？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S018:batch-02:L00108"
+    },
+    {
+      "family_id": "Q-RAG-RERANK",
+      "text": "RAG 不准确时，Parsing、Chunk、Embedding、Recall、Rerank、Prompt 分别怎样排查和优化？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00293"
+    },
+    {
+      "family_id": "Q-RAG-RRF",
+      "text": "为什么使用 RRF，而不是简单线性加权？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S072:batch-04:L00448"
+    },
+    {
+      "family_id": "Q-RAG-REWRITE",
+      "text": "多维 Query Rewrite 与需要用户补充信息的查询如何实现？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00219"
+    },
+    {
+      "family_id": "Q-RAG-EVAL",
+      "text": "RAG Chunk Size / Chunk Strategy 如何根据数据和评测确定？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00046"
+    },
+    {
+      "family_id": "Q-RAG-UPDATE",
+      "text": "Knowledge Base 持续更新时如何处理向量索引、缓存失效和旧文档召回？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S081:batch-05:L00158"
+    },
+    {
+      "family_id": "Q-AGENT-BOUNDARY",
+      "text": "Agent 在真实研发业务里到底解决什么问题，为什么不是普通客服 / Workflow？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00088"
+    },
+    {
+      "family_id": "Q-AGENT-LOOP",
+      "text": "从零设计 Agent Loop 时需要考虑哪些 Runtime 问题？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00030"
+    },
+    {
+      "family_id": "Q-AGENT-HARNESS",
+      "text": "Claude Code 与其他 Harness 产品在系统设计上有什么区别？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00023"
+    },
+    {
+      "family_id": "Q-AGENT-FRAMEWORK",
+      "text": "为什么自研 Agent Runtime，而不是直接使用 LangGraph 等框架？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00097"
+    },
+    {
+      "family_id": "Q-AGENT-TOOLCALL",
+      "text": "Agent Tool Calling 有哪些实现方式？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00026"
+    },
+    {
+      "family_id": "Q-AGENT-MCP",
+      "text": "MCP 框架如何选，Transport Protocol 如何选？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00196"
+    },
+    {
+      "family_id": "Q-AGENT-SKILL",
+      "text": "常用 Skill 有哪些，不同 Skill 的结构和职责有什么差异？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00020"
+    },
+    {
+      "family_id": "Q-AGENT-ROUTE",
+      "text": "意图分流如何保证清晰，怎么识别 Query 是模糊还是明确？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00092"
+    },
+    {
+      "family_id": "Q-AGENT-CONTEXT",
+      "text": "Context Engineering / To-do List 为什么能帮助模型聚焦？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S008:batch-01:L00222"
+    },
+    {
+      "family_id": "Q-AGENT-COMPACT",
+      "text": "Context 为什么需要压缩，压缩后的信息损失如何检测与恢复？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00070"
+    },
+    {
+      "family_id": "Q-AGENT-MEMORY",
+      "text": "短期 / 长期 Memory 如何设计？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00069"
+    },
+    {
+      "family_id": "Q-AGENT-MULTI",
+      "text": "为什么需要 Sub-agent，什么任务才值得拆成 Agent？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00028"
+    },
+    {
+      "family_id": "Q-AGENT-APPROVAL",
+      "text": "Agent 的写操作边界如何划分？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00089"
+    },
+    {
+      "family_id": "Q-AGENT-SANDBOX",
+      "text": "Prompt Injection 如何泄露 System Prompt 或绕过指令，怎样建立防护边界？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S027:batch-02:L00301"
+    },
+    {
+      "family_id": "Q-AGENT-RECOVERY",
+      "text": "Tool / API 超时、异常应该由 Runtime 如何分类、重试、降级？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S003:batch-01:L00067"
+    },
+    {
+      "family_id": "Q-AGENT-EVAL",
+      "text": "Agent Evaluation 与 RAG Evaluation 分别看什么？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S041:batch-03:L00207"
+    },
+    {
+      "family_id": "Q-AGENT-AICODING",
+      "text": "平时如何使用 AI 辅助编码，是否形成稳定工作流？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S001:batch-01:L00019"
+    },
+    {
+      "family_id": "Q-SD-SCALE",
+      "text": "5000～6000 用户、十几万日请求量下 Agent 服务如何扩容？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S004:batch-01:L00095"
+    },
+    {
+      "family_id": "Q-SD-TRADEOFF",
+      "text": "如何降低 Token 成本？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S009:batch-01:L00241"
+    },
+    {
+      "family_id": "Q-SD-RELIABLE",
+      "text": "单点依赖如何消除？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S030:batch-02:L00402"
+    },
+    {
+      "family_id": "Q-CODING-LRU",
+      "text": "Coding：实现 LRU Cache。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00260"
+    },
+    {
+      "family_id": "Q-CODING-TREE",
+      "text": "数据结构 Coding：List → Tree、Zig-zag Tree Traversal。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00053"
+    },
+    {
+      "family_id": "Q-CODING-LIST",
+      "text": "Coding：按头尾交替规则重排单链表，并满足 `O(n)` / `O(1)`。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S005:batch-01:L00117"
+    },
+    {
+      "family_id": "Q-CODING-SUBSTRING",
+      "text": "Coding：最长无重复子串。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S073:batch-04:L00474"
+    },
+    {
+      "family_id": "Q-CODING-TOPK",
+      "text": "Coding：Top-K / 第 K 大并限制复杂度。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S011:batch-01:L00316"
+    },
+    {
+      "family_id": "Q-FRONTEND-REACT",
+      "text": "（原题2）React/Vue Context避免Props逐层传递的注意点",
+      "context": "08-05发布未标轮次（本轮找回）",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S123:batch-07:L00256"
+    },
+    {
+      "family_id": "BE-OS",
+      "text": "三面继续追进程 / 线程 / 协程、上下文切换、虚拟内存、缺页、页面置换等 OS 基础。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S015:batch-02:L00048"
+    },
+    {
+      "family_id": "BE-COMPUTERSTRUCTURES",
+      "text": "数据结构 Coding：List → Tree、Zig-zag Tree Traversal。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S002:batch-01:L00053"
+    },
+    {
+      "family_id": "SD-FLASHSALE",
+      "text": "秒杀 / 抢购场景最容易出现哪些并发与一致性问题，整体方案怎样设计？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S010:batch-01:L00263"
+    },
+    {
+      "family_id": "BE-ASYNC",
+      "text": "异步队列如何防止消息丢失？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00202"
+    },
+    {
+      "family_id": "BE-OOP",
+      "text": "MCP 是什么，为什么项目选择自行封装而不是 MCP？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S019:batch-02:L00129"
+    },
+    {
+      "family_id": "Q-CODING-SEARCH",
+      "text": "Coding：最大岛屿面积等现场算法。",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S282:batch-27:L00205"
+    },
+    {
+      "family_id": "BE-MEMORY",
+      "text": "GMP / GC STW 等 Runtime 基础为什么在 AI Backend 仍然重要？",
+      "context": "",
+      "fixture_kind": "preserved_source_example",
+      "source_occurrence_id": "S007:batch-01:L00200"
+    }
+  ]
+}

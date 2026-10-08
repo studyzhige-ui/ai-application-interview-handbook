@@ -263,4 +263,4 @@ def get_note(note_id: int):
 - [请求错误处理](https://fastapi.tiangolo.com/tutorial/handling-errors/)：区分请求错误与程序错误。
 - [JSON Content-Type](https://fastapi.tiangolo.com/advanced/strict-content-type/)：核对默认检查及版本前提。
 
-真人问题回看：[S288 的跨字段业务约束与错误反馈](../../../market/interviews/batch-29.md)。原记录讨论 Zod／Schema 的边界；本章用 Pydantic 的页码例子解释可迁移的校验思想，不把这个自拟例子当作面试原题。
+真人问题回看：[S288 的跨字段业务约束与错误反馈](../../../market/interview-experience/01-data/raw/batch-29.md)。原记录讨论 Zod／Schema 的边界；本章用 Pydantic 的页码例子解释可迁移的校验思想，不把这个自拟例子当作面试原题。

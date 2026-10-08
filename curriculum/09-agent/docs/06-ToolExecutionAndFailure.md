@@ -207,7 +207,7 @@
 
 - [工具契约](04-ToolContractAndValidation.md)：回看输入与结果的检查责任。
 - [取消与迟到结果](07-ToolConcurrencyAndCancellation.md)：理解停止等待和外部执行的差别。
-- [固定执行器实现](../../../references/agent/implementation-notes.md#chapter-06)：观察错误分类、结果投影和执行钩子的具体落点。
+- [固定执行器实现](../../../products/codex/03-tool-lifecycle.md#implementation-chapter-06)：观察错误分类、结果投影和执行钩子的具体落点。
 
 
 ---

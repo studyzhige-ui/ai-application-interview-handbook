@@ -199,7 +199,7 @@ Permission/Policy 判断身份和任务允许什么，Approval 确认需要人�
 - [工具契约](04-ToolContractAndValidation.md)：回看静态规则与动态授权的边界。
 - [Docker security](https://docs.docker.com/engine/security/)：核对容器权限与隔离条件。
 - [Claude Code sandboxing](https://code.claude.com/docs/en/sandboxing)：理解文件、网络限制与批准的不同作用。
-- [固定权限实现](../../../references/agent/implementation-notes.md#chapter-14)：选读具体工具策略，不作为通用必部署清单。
+- 固定权限实现：选读具体工具策略，不作为通用必部署清单。
 
 
 ---

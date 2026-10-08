@@ -218,7 +218,7 @@ SWE-bench 等基准的价值，是在明确仓库与测试环境中检查实际�
 - [执行追踪](20-TraceReplayAndDiagnosis.md)：取得定位失败所需的证据。
 - [Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)：核对任务、试验、评分器和结果的分工。
 - [SWE-bench](https://www.swebench.com/)：了解真实仓库环境中的结果验证。
-- [评测与产品证据对照](../../../references/agent/implementation-notes.md#chapter-21)：区分框架提供的观测能力与应用自己的验收标准。
+- 评测与产品证据对照：区分框架提供的观测能力与应用自己的验收标准。
 
 
 ---

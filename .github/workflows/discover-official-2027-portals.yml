@@ -29,10 +29,10 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install chromium
-          node --check tools/fetch_dynamic_official_jobs.mjs
+          node --check market/job-description/04-scripts/jd/adapters/browser.mjs
 
       - name: Exhaust fixed official current-campus job-list pages
-        run: node tools/fetch_dynamic_official_jobs.mjs "${{ runner.temp }}/official-2027-browser-debug.json"
+        run: node market/job-description/04-scripts/jd/adapters/browser.mjs "${{ runner.temp }}/official-2027-browser-debug.json"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -57,10 +57,10 @@ jobs:
         run: |
           npm install --no-save playwright@1.55.0
           npx playwright install chromium --with-deps
-          node --check tools/fetch_dynamic_official_jobs.mjs
+          node --check market/job-description/04-scripts/jd/adapters/browser.mjs
 
       - name: Exhaust fixed official current-campus job-list pages
-        run: node tools/fetch_dynamic_official_jobs.mjs "${{ runner.temp }}/official-2027-browser-debug.json"
+        run: node market/job-description/04-scripts/jd/adapters/browser.mjs "${{ runner.temp }}/official-2027-browser-debug.json"
 
       - uses: actions/upload-artifact@v4
         with:

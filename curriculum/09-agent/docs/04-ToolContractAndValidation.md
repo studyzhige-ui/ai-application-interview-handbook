@@ -213,7 +213,7 @@ JSON 可以解析，但数值违反 minimum=0，在执行该 Schema 的校验阶
 - [JSON Schema 数值规则](https://json-schema.org/understanding-json-schema/reference/numeric)：核对上下界与数字类型。
 - [工具注册与发现](05-ToolRegistrationAndDiscovery.md)：把说明绑定到真实处理器。
 - [工具失败与结果](06-ToolExecutionAndFailure.md)：区分修参数、重试和未知副作用。
-- [固定实现对照](../../../references/agent/implementation-notes.md#chapter-04)：观察模型端说明与宿主执行字段的分离。
+- [固定实现对照](../../../products/claude-code/03-tool-lifecycle.md#implementation-chapter-04)：观察模型端说明与宿主执行字段的分离。
 
 
 ---

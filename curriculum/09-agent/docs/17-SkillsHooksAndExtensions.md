@@ -206,7 +206,7 @@ Skill 组织某类任务的方法与资源，Tool 执行具体动作。技能可
 - [Agent Skills specification](https://agentskills.io/specification)：核对技能说明、脚本与资源的组织。
 - [Claude Code hooks](https://code.claude.com/docs/en/hooks)：对照具体生命周期事件和处理方式。
 - [工具发现](05-ToolRegistrationAndDiscovery.md)：工具候选召回由该章完整说明，不在本章重复。
-- [固定扩展实现对照](../../../references/agent/implementation-notes.md#chapter-17)：将通用分工映射到指定产品快照。
+- [固定扩展实现对照](../../../products/claude-code/03-tool-lifecycle.md#implementation-chapter-17)：将通用分工映射到指定产品快照。
 
 
 ---

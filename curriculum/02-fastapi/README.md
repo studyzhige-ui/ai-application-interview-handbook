@@ -1,103 +1,42 @@
-# FastAPI｜从第一个请求到可靠的API边界
+# FastAPI｜把 Python 能力变成可校验、可观测的网络接口
 
-[← Python](../01-python/README.md) · [Handbook](../../README.md) · [学习路线](../../guide/learning-path.md) · [MySQL →](../04-mysql/README.md)
+[← Python](../01-python/README.md) · [课程目录](../README.md) · [Handbook](../../README.md) · [MySQL →](../03-mysql/README.md)
 
-你已经能用Python处理数据。这个模块继续回答：怎样让其他人通过网络调用这些能力，并在输入错误、等待超时、连接断开和进程退出时保持清楚的行为。
+从第一个请求开始，依次学习路由、数据契约、依赖、资源、流式交付、访问控制、测试与部署。
 
-**目标版本：FastAPI 0.141.1。** 版本资料核验日期：2026-09-25。示例以Python 3.11+为入口，依赖和可执行检查见[练习与验证](examples/README.md)。这里的版本基线不是对所有环境都已通过测试的声明。
+## 学习前提与目标
 
-## 1. 学完后能独立完成什么
+先掌握 Python 函数、异常、类型标注、生成器与 async/await。
 
-从启动一个本地接口开始，逐步建立四种能力：
+学完后应能把 Python 能力变成可校验、可观测的网络接口。
 
-1. 把请求转换为已校验的输入，给出稳定响应和错误。
-2. 明确身份、依赖和资源的所有权，解释并发时谁在执行。
-3. 为流式、双向和后台工作选择适合的交付方式，并定义结束语义。
-4. 用成功与失败测试、可定位的观测和部署边界证明接口行为。
+## 学习顺序
 
-它不是框架接口百科，也不要求你先掌握真实模型、数据库和队列。示例先用可控数据与适配器观察机制；内部事务、缓存一致性和可靠执行在对应模块继续深化。
+1. [01｜从一个可访问的接口理解请求与响应](docs/01-FastAPI职责与ASGI请求链路.md)
+2. [02｜路由与参数：请求怎样变成函数输入](docs/02-Routing与APIContract.md)
+3. [03｜数据契约：校验输入、限制输出、解释错误](docs/03-Pydantic与数据契约.md)
+4. [04｜依赖与中间件：复用前提，不隐藏执行过程](docs/04-Dependency与Middleware.md)
+5. [05｜资源生命周期：何时取得，何时归还](docs/05-ResourceLifecycle.md)
+6. [06｜异步与并发：等待时谁在继续工作](docs/06-AsyncExecution与BlockingBoundary.md)
+7. [07｜流式响应：逐步交付结果与 SSE 事件](docs/07-Streaming与SSE.md)
+8. [08｜WebSocket：让双方在连接中持续交流](docs/08-WebSocket与EventProtocol.md)
+9. [09｜认证、授权与租户：让访问范围可信](docs/09-Security与TenantContext.md)
+10. [10｜连接外部服务：客户端、业务与协议适配](docs/10-ExternalResourceIntegration.md)
+11. [11｜上传与后台任务：接收完成不等于处理完成](docs/11-BackgroundTask与Upload.md)
+12. [12｜超时、断开与取消：请求结束之后发生什么](docs/12-TimeoutCancellation与Disconnect.md)
+13. [13｜测试：让成功、拒绝与失败都有证据](docs/13-Testing.md)
+14. [14｜观测与性能：把慢请求拆成可定位的时间](docs/14-Observability与Performance.md)
+15. [15｜部署与退出：从一个进程到多个实例](docs/15-Deployment与GracefulShutdown.md)
+16. [16｜综合实作：把问答与执行任务接成可验证 API](docs/16-AIServicePatterns.md)
 
-## 2. 进入前需要什么
+## 正文与复习
 
-能够阅读函数、类型标注、异常、类的简单定义、生成器与async/await。忘记某个知识时，根据正文的具体问题回到Python相关章节，不要求先通读一整套新的工具栈。
+首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界，再用章末自测检查能否独立解释。第二遍使用 [Review](review/README.md)重建关系，并改变条件验证结论。
 
-主线顺序为 **Python → FastAPI → MySQL → Redis → Backend → Vector DB → LLM → RAG → Agent → System Design**。Backend放在MySQL、Redis之后，使事务、约束与缓存先于可靠任务和一致性组合。仓库目录数字保留为稳定标识，学习顺序以本路线及模块导航为准。
+面试准备集中在 [本知识域](../../interview/fastapi/README.md)：[高频面试题](../../interview/fastapi/01-高频面试题.md)、[易混易错点](../../interview/fastapi/02-易混易错点.md)与[面试速查](../../interview/fastapi/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
 
-## 学习深度不改变知识出现的位置
+## 版本与验证边界
 
-这是一条连续课程，不是“基础、场景、扩展”三套教材。请求与响应讲清后，再进入输入校验、执行组织、流式交付和失败处理。某项能力是否常用于你的项目，影响练习深度，不改变它的知识归属。
+课程目标版本为 FastAPI 0.141.1，示例以 Python 3.11+ 为入口；版本目标不代表所有环境均已执行验证。
 
-场景选择也是需要学会的知识：例如什么时候用轮询、SSE 或 WebSocket，上传成功与任务完成有何不同。相关的基本机制、安全边界和真实面试追问都在所属章节展开，不能因为标为“按业务使用”就省掉解释。
-
-较长的实现或特定写法放在当前问题旁的折叠区：JSON Lines 接在消息格式比较之后，依赖缓存开关紧跟默认复用行为，ASGI 计时器紧跟计时边界。折叠只帮助控制首次阅读的节奏，不形成独立“扩展章”，也不隐藏理解主线所必需的规则。
-
-## 3. 一次请求的总览
-
-```text
-客户端提出请求
-       ↓
-ASGI服务器接收网络数据
-       ↓
-FastAPI：路由、输入、依赖、身份边界
-       ↓
-业务服务与外部适配
-       ↓
-响应契约：普通 JSON 或按任务选择的事件流
-       ↓
-客户端按协议处理结果
-```
-
-WebSocket承接持续双向通信。资源生命周期横跨相关阶段，错误和取消也可能在不同位置发生。这是职责示意，不把所有校验与依赖求值硬说成全局唯一串行顺序。
-
-## 4. 正式章节
-
-### A｜先走通请求，再理解契约
-
-- [01｜从一个可访问的接口理解请求与响应](docs/01-FastAPI职责与ASGI请求链路.md)
-- [02｜路由与参数：请求怎样变成函数输入](docs/02-Routing与APIContract.md)
-- [03｜数据契约：校验输入、限制输出、解释错误](docs/03-Pydantic与数据契约.md)
-
-### B｜组织执行与资源
-
-- [04｜依赖与中间件：复用前提，不隐藏执行过程](docs/04-Dependency与Middleware.md)
-- [05｜资源生命周期：何时取得，何时归还](docs/05-ResourceLifecycle.md)
-- [06｜异步与并发：等待时谁在继续工作](docs/06-AsyncExecution与BlockingBoundary.md)
-
-### C｜持续交付与访问边界
-
-- [07｜流式响应：逐步交付结果与 SSE 事件](docs/07-Streaming与SSE.md)
-- [08｜WebSocket：让双方在连接中持续交流](docs/08-WebSocket与EventProtocol.md)
-- [09｜认证、授权与租户：让访问范围可信](docs/09-Security与TenantContext.md)
-
-### D｜外部工作与结束语义
-
-- [10｜连接外部服务：客户端、业务与协议适配](docs/10-ExternalResourceIntegration.md)
-- [11｜上传与后台任务：接收完成不等于处理完成](docs/11-BackgroundTask与Upload.md)
-- [12｜超时、断开与取消：请求结束之后发生什么](docs/12-TimeoutCancellation与Disconnect.md)
-
-### E｜验证、运行与综合实践
-
-- [13｜测试：让成功、拒绝与失败都有证据](docs/13-Testing.md)
-- [14｜观测与性能：把慢请求拆成可定位的时间](docs/14-Observability与Performance.md)
-- [15｜部署与退出：从一个进程到多个实例](docs/15-Deployment与GracefulShutdown.md)
-- [16｜综合实作：把问答与执行任务接成可验证 API](docs/16-AIServicePatterns.md)
-
-## 5. 阅读和练习怎样配合
-
-每章先读引入与核心规则，再运行例子，核对输入、输出和状态。应理解正文中的场景选择和失败边界；较长的实现实验可以稍后重做，不必在第一次阅读时记住全部写法。重要错误示例应能说明为什么失败，而不是只记“不要这样写”。章末的小结、🎯面试回答、⚠️易错点和折叠自测各有用途：分别组织理解、压缩表达、纠正误区与主动回忆。
-
-[Review总图与综合自测](review/README.md)用于第二遍重建；[高频面试题](interview/高频面试题.md)、[易错点](interview/面试易错点.md)和[速查表](interview/面试前速查表.md)用于口述与复习，不能替代正文过程。
-
-## 6. 技术事实与面试证据分开
-
-技术事实依据[官方资料与版本索引](../../references/fastapi/README.md)，真人面经用于检查实际问题、知识遗漏和追问深度；面试中的候选人回答不直接作为技术结论。
-
-面经校验不能只看标题中出现 FastAPI 的四道主责题。异步、连接恢复、上传、权限和端到端诊断也会出现在 Python、Backend、Agent 与系统设计问题中。课程应在相关位置解释它们怎样落到 API 层，完整的数据库、消息可靠性和 Agent 内部机制仍在各自主责模块维护。
-
-2026-09-26 本轮以仓库正式库 S001–S297 为检索范围，结合冻结索引、相关收录条目与新增 S280–S297 的问题记录校验正文；范围、来源和落点见[面经校验记录](../../guide/project/fastapi-interview-alignment-2026-09-26.md)。冻结统计仍是 S001–S279 的 4 道 FastAPI 主责 Canonical、3 个独立来源，没有把跨模块问法或新增来源机械计入旧频率。
-
-## 7. 模块边界与验收
-
-FastAPI负责Web契约和应用边界。MySQL负责关系数据、SQL与事务；Redis负责缓存和相关命令机制；Backend负责跨组件可靠性；RAG与Agent分别负责证据与动态执行。
-
-验收时应能从空白文件启动接口，解释正常与拒绝响应，跑一个真实失败测试，说明资源何时释放，并区分协议验证、真实网络验证和未测试的生产条件。文件完整、示例能运行，不等于已经具备整个生产系统。
+技术事实以正文引用的官方资料及适用范围为依据；[Market](../../market/README.md)中的真实岗位与面试材料用于校准学习深度，不能代替技术证明。

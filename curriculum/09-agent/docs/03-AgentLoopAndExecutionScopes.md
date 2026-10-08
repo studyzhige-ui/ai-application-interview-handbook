@@ -129,7 +129,7 @@ Session：同一项目的持续会话
    └─ Turn 2：根据 A 决定后续工作
 ```
 
-这使我们能准确说“工具步骤失败，任务仍可继续”。它不是行业统一对象树。例如 Codex 的 Turn 可以覆盖一次用户输入后的多次推理和工具交互；应用对照产品时，应查作用域，而不是把同名字强行对应。[产品对象对照](../../../references/agent/implementation-notes.md#chapter-03)只作选读。
+这使我们能准确说“工具步骤失败，任务仍可继续”。它不是行业统一对象树。例如 Codex 的 Turn 可以覆盖一次用户输入后的多次推理和工具交互；应用对照产品时，应查作用域，而不是把同名字强行对应。[产品对象对照](../../../products/claude-code/01-context-lifecycle.md#implementation-chapter-03)只作选读。
 
 <a id="5-runtime-不是只有-message还需要-event"></a>
 <a id="6-event-为什么最好是结构化的"></a>

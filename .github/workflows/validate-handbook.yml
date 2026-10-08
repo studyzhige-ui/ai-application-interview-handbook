@@ -2,24 +2,26 @@ name: Validate handbook
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - '**/*.md'
-      - 'tools/**/*.py'
-      - 'tools/**/*.json'
-      - 'tools/**/*.mjs'
-      - 'market/jobs/official-2027-campus-sources.json'
+      - '**/*.py'
+      - '**/*.mjs'
+      - '**/*.json'
+      - '**/*.ipynb'
       - '.github/workflows/*.yml'
+      - '.gitattributes'
   pull_request:
-    branches:
-      - main
+    branches: [main]
     paths:
       - '**/*.md'
-      - 'tools/**/*.py'
-      - 'tools/**/*.json'
-      - 'tools/**/*.mjs'
+      - '**/*.py'
+      - '**/*.mjs'
+      - '**/*.json'
+      - '**/*.ipynb'
       - '.github/workflows/*.yml'
+      - '.gitattributes'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -29,144 +31,42 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate-windows:
-    name: Validate (private / Windows self-hosted)
-    if: github.event.repository.private == true
-    runs-on: [self-hosted, Windows]
+  validate:
+    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted","Windows"]') || fromJSON('["ubuntu-latest"]') }}
+    timeout-minutes: 30
     env:
-      PYTHONUTF8: "1"
-    timeout-minutes: 30
+      PYTHONUTF8: '1'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Check local Windows toolchain
-        shell: powershell
-        run: |
-          python -c "import sys; print(sys.version); assert sys.version_info >= (3, 12)"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          node -e "const major=Number(process.versions.node.split('.')[0]); console.log(process.version); if(major < 22) process.exit(1)"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          git --version
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Compile Python tools
-        run: python -m compileall -q tools
-
-      - name: Test official job audit and summary sync
-        run: python -m unittest discover -s tools -p "test_official_job_audit.py" -v
-
-      - name: Test official job search security handling
-        run: node --test tools/test_official_job_search.mjs
-
-      - name: Check dynamic job fetcher
-        run: node --check tools/fetch_dynamic_official_jobs.mjs
-
-      - name: Check Xiaomi fetcher
-        run: node --check tools/fetch_xiaomi_2027.mjs
-
-      - name: Check ByteDance fetcher
-        run: node --check tools/fetch_bytedance_2027.mjs
-
-      - name: Check Feishu fetcher
-        run: node --check tools/fetch_feishu_official_2027.mjs
-
-      - name: Check Moka fetcher
-        run: node --check tools/fetch_moka_official_2027.mjs
-
-      - name: Validate official job source contracts
-        run: python tools/validate_official_2027_source_contracts.py
-
-      - name: Validate handbook structure and local links
-        run: python tools/validate_agent_readability.py
-
-      - name: Validate repository semantics
-        run: python tools/validate_repository_semantics.py
-
-      - name: Apply canonical audit
-        run: python tools/apply_canonical_audit.py
-
-      - name: Verify canonical audit is reproducible
-        run: git diff --exit-code -- interview/canonical
-
-      - name: Build raw gap candidates
-        run: python tools/build_gap_candidates.py
-
-      - name: Build frozen Canonical analysis
-        run: python tools/build_market_analysis.py
-
-      - name: Validate reviewed source coverage
-        run: python tools/validate_source_coverage.py
-
-      - name: Verify generated market analysis is reproducible
-        run: git diff --exit-code -- market/analysis
-
-  validate-linux:
-    name: Validate (public / Linux GitHub-hosted)
-    if: github.event.repository.private == false
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Set up Python on public runner
+        if: github.event.repository.private == false
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Setup Node.js
+      - name: Set up Node on public runner
+        if: github.event.repository.private == false
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-
-      - name: Compile Python tools
-        run: python -m compileall -q tools
-
-      - name: Test official job audit and summary sync
-        run: python -m unittest discover -s tools -p "test_official_job_audit.py" -v
-
-      - name: Test official job search security handling
-        run: node --test tools/test_official_job_search.mjs
-
-      - name: Check dynamic job fetcher
-        run: node --check tools/fetch_dynamic_official_jobs.mjs
-
-      - name: Check Xiaomi fetcher
-        run: node --check tools/fetch_xiaomi_2027.mjs
-
-      - name: Check ByteDance fetcher
-        run: node --check tools/fetch_bytedance_2027.mjs
-
-      - name: Check Feishu fetcher
-        run: node --check tools/fetch_feishu_official_2027.mjs
-
-      - name: Check Moka fetcher
-        run: node --check tools/fetch_moka_official_2027.mjs
-
-      - name: Validate official job source contracts
-        run: python tools/validate_official_2027_source_contracts.py
-
-      - name: Validate handbook structure and local links
-        run: python tools/validate_agent_readability.py
-
-      - name: Validate repository semantics
-        run: python tools/validate_repository_semantics.py
-
-      - name: Apply canonical audit
-        run: python tools/apply_canonical_audit.py
-
-      - name: Verify canonical audit is reproducible
-        run: git diff --exit-code -- interview/canonical
-
-      - name: Build raw gap candidates
-        run: python tools/build_gap_candidates.py
-
-      - name: Build frozen Canonical analysis
-        run: python tools/build_market_analysis.py
-
-      - name: Validate reviewed source coverage
-        run: python tools/validate_source_coverage.py
-
-      - name: Verify generated market analysis is reproducible
-        run: git diff --exit-code -- market/analysis
+      - name: Check toolchain
+        shell: python
+        run: |
+          import subprocess, sys
+          assert sys.version_info >= (3, 12), sys.version
+          subprocess.run(['node', '-e', 'if(Number(process.versions.node.split(".")[0]) < 22) process.exit(1)'], check=True)
+      - name: Test repository navigation checks
+        run: python -m unittest discover -s tools -p "test_*.py" -v
+      - name: Validate structure, README coverage and local links
+        run: python tools/check_handbook.py
+      - name: Validate official job data and collection contracts offline
+        run: python market/job-description/04-scripts/jd.py check
+      - name: Verify coding examples and notebook synchronization
+        run: python practice/coding/exercises/validate_coding_curriculum.py
+      - name: Test coding notebook rendering
+        run: python -m unittest discover -s practice/coding/exercises -p "test_*.py" -v
+      - name: Test interview source extraction and classification regressions
+        run: python -m unittest discover -s market/interview-experience/04-scripts -p "test_*.py" -v
+      - name: Verify interview derivatives and preparation evidence are reproducible
+        run: python market/interview-experience/04-scripts/build_interview_analysis.py --check

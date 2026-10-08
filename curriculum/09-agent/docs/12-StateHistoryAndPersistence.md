@@ -217,7 +217,7 @@ Trace 主要服务诊断，可能采样、脱敏或过期。关键操作与取�
 
 - [检查点与恢复](13-CheckpointResumeAndRecovery.md)：分析快照之间的外部动作窗口。
 - [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence)：对照一种明确的图状态持久化语义。
-- [固定会话与持久化对照](../../../references/agent/implementation-notes.md#chapter-12)：区分被保存的交互与不可原样恢复的运行对象。
+- [固定会话与持久化对照](../../../products/claude-code/04-engineering-evaluation.md#implementation-chapter-12)：区分被保存的交互与不可原样恢复的运行对象。
 
 
 ---

@@ -215,7 +215,7 @@
 
 - [工具失败](06-ToolExecutionAndFailure.md)：回看单次工具调用的重试资格。
 - [上下文编排](09-ContextAssemblyAndCache.md)：模型切换前重新计量与组织输入。
-- [固定供应商适配对照](../../../references/agent/implementation-notes.md#chapter-18)：检查具体产品后备路径，不从一个配置字段推断全部行为。
+- [固定供应商适配对照](../../../products/claude-code/04-engineering-evaluation.md#implementation-chapter-18)：检查具体产品后备路径，不从一个配置字段推断全部行为。
 
 
 ---

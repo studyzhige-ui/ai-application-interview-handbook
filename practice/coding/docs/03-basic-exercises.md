@@ -1312,4 +1312,4 @@ def sum_by_index(nums):
 - 步骤已想清，但不懂参数和返回值：[Python：函数与参数](../../../curriculum/01-python/docs/04-函数-参数-作用域-闭包.md)。
 - 不清楚列表为什么被一起修改：[Python：可变对象与深浅拷贝](../../../curriculum/01-python/docs/03-可变对象-对象身份-深浅拷贝.md)。
 
-维护者说明：题目、测试与答案以本章为唯一来源，运行 `python tools/build_coding_practice.py` 同步 Notebook，再用 `--check` 验证。学习者不需要执行生成脚本。
+维护者说明：题目、测试与答案以本章为唯一来源，运行 `python practice/coding/exercises/build_coding_practice.py` 同步 Notebook，再用 `--check` 验证。学习者不需要执行生成脚本。

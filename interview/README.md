@@ -1,27 +1,16 @@
-# Interview｜面试能力归一化层
+# 面试准备
 
-[↑ Handbook 总目录](../README.md) · [Market](../market/README.md) · [Curriculum](../curriculum/README.md)
+按知识域练习解释机制、辨析边界和回答追问。先尝试口述，再对照建议回答；条件变化时回到课程模型推导。
 
-> Interview 回答：**大量真实面经怎样变成稳定、可复习、可追问的能力模型？**
+- [Python](python/README.md)
+- [FastAPI](fastapi/README.md)
+- [MySQL](mysql/README.md)
+- [Redis](redis/README.md)
+- [Backend Engineering](backend-engineering/README.md)
+- [LLM Foundation](llm-foundation/README.md)
+- [Vector DB](vector-db/README.md)
+- [RAG](rag/README.md)
+- [Agent](agent/README.md)
+- [System Design](system-design/README.md)
 
-核心入口：
-
-- [Canonical Questions](canonical/README.md)
-- [Module Index](canonical/module-index.md)
-- [冻结审核基线与覆盖记录](canonical/progress.md)
-
-## 中央 Canonical 与模块 Interview 的职责边界
-
-`interview/canonical/`：
-
-- 由 HUMAN-A 市场证据归一化；
-- 管理 QID、Ownership、Source Count、Depth；
-- 服务跨模块统计与课程校准。
-
-`curriculum/<module>/interview/`：
-
-- 面向学习者直接复习；
-- 高频面试题、易错点、面试前速查；
-- 是教材的使用层，不是市场统计数据库。
-
-因此中央 Canonical 与模块 Interview 是 **Evidence Model → Learning Material** 的关系，而不是重复文件。
+[真实面试数据与分析](../market/interview-experience/README.md)保存问题来源与统计口径。个人简历及个人项目准备根据真实经历另行展开。

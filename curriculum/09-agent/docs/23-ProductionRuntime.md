@@ -250,7 +250,7 @@ Worker（任务执行进程）负责推进循环，可以持有临时连接和�
 
 - [恢复](13-CheckpointResumeAndRecovery.md)：核对外部动作、取消与接管的实际协议。
 - [评测](21-EvaluationBenchmarkAndImprovement.md)：把运行承诺变成可重复验证条件。
-- [生产实现对照](../../../references/agent/implementation-notes.md#chapter-23)：观察产品的控制、执行与持久记录，不将其拓扑当统一模板。
+- [生产实现对照](../../../products/codex/04-engineering-evaluation.md#implementation-chapter-23)：观察产品的控制、执行与持久记录，不将其拓扑当统一模板。
 
 
 ---

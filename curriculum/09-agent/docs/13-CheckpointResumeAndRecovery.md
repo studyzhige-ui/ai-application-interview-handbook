@@ -238,7 +238,7 @@ Worker A 网络暂时断开，租约过期，B 接管；A 随后恢复，可能�
 - [状态与持久化](12-StateHistoryAndPersistence.md)：回看业务回执、当前状态和诊断的分工。
 - [LangGraph interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts)：核对恢复单位与中断前副作用。
 - [Agents SDK HITL](https://openai.github.io/openai-agents-python/human_in_the_loop/)：对照待批准运行的保存与继续。
-- [固定恢复实现对照](../../../references/agent/implementation-notes.md#chapter-13)：区分本书恢复设计与产品实际能力。
+- [固定恢复实现对照](../../../products/claude-code/04-engineering-evaluation.md#implementation-chapter-13)：区分本书恢复设计与产品实际能力。
 
 
 ---

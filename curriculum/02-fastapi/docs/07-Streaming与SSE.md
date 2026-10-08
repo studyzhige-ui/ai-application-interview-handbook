@@ -241,4 +241,4 @@ source.addEventListener("end", event => {
 - [JSON Lines](https://fastapi.tiangolo.com/tutorial/stream-json-lines/)：核对逐项校验与媒体类型。
 - [浏览器 EventSource](https://developer.mozilla.org/en-US/docs/Web/API/EventSource)：核对客户端能力与限制。
 
-真人问题回看：[S087 的 FastAPI／SSE 中间结果与断线恢复](../../../market/interviews/batch-05.md)。本章落实事件交付与续接位置；任务检查点怎样恢复执行，仍由 Agent 运行系统负责。
+真人问题回看：[S087 的 FastAPI／SSE 中间结果与断线恢复](../../../market/interview-experience/01-data/raw/batch-05.md)。本章落实事件交付与续接位置；任务检查点怎样恢复执行，仍由 Agent 运行系统负责。
