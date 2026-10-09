@@ -1,0 +1,580 @@
+{
+  "schema_version": 1,
+  "as_of": "2026-10-08",
+  "collection_period_utc": "2026-10-08 11:22–11:36",
+  "baseline_main": "081c28711926b84492689ac49871842f26bf63d8",
+  "publication_parent": "46e02d5d7b4753ffe1a3d1de4f6b7d7abf57c213",
+  "publication_dependency_pr": 48,
+  "scope": "牛客及小红书真人面经有限增量采集；先未归档候选，后新线索；非严格最近72小时扫描，不宣称平台穷尽。",
+  "summary": {
+    "new_independent_flows": 4,
+    "source_ids": [
+      "S400",
+      "S401",
+      "S402",
+      "S403"
+    ],
+    "new_nowcoder": 2,
+    "new_xiaohongshu": 2,
+    "historical_originals": 4,
+    "post_merge_branch_source_total": 403,
+    "batch_total": 38,
+    "inbox": 0,
+    "reviewed_records": 28,
+    "hold_records": 0,
+    "excluded_records": 17,
+    "duplicate_records": 7,
+    "record_count_note": "分流按审核记录/URL计，非独立流程；OSAKO一个URL内第四场明确范围外，前三场必要事实未获证，均已核验后排除本批，不保留待核。"
+  },
+  "nowcoder": {
+    "scope": "本轮有意评估的候选及明显排除来源；搜索结果附带推荐/题解等不枚举为候选。非平台穷尽。",
+    "query_count": 44,
+    "search_queries": [
+      "site.nowcoder.com \"Agent\" \"面经\" \"10-07\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"9.30\"",
+      "site.nowcoder.com \"AI应用\" \"面经\" \"2026\"",
+      "site.nowcoder.com/discuss/ \"Agent\" \"面经\" \"09-30\"",
+      "site.nowcoder.com/feed/main/detail/ \"Agent\" \"面经\" \"10-01\"",
+      "site.nowcoder.com \"成都某中厂agent产品开发实习面经\"",
+      "site.nowcoder.com \"deepwisdom\" \"Sora1016\"",
+      "site.nowcoder.com \"AI应用开发\" \"10-08\"",
+      "site.nowcoder.com \"Agent开发\" \"10-07\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"09-29\"",
+      "site.nowcoder.com \"搜狐畅游 Agent 开发一面\"",
+      "site.nowcoder.com \"校招-阿里云-AI应用开发面经\"",
+      "site.nowcoder.com \"agent\" \"面经\" \"10-06\"",
+      "site.nowcoder.com \"agent\" \"面经\" \"10-05\"",
+      "site.nowcoder.com/feed/main/detail/ \"AI应用\" \"挂\" -答案 -合集 -宝典 -盘点 -付费",
+      "site.nowcoder.com/feed/main/detail/ \"Agent开发\" \"国庆\"",
+      "site.nowcoder.com/discuss/ \"RAG\" \"面试官\" \"09-28\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"09-27\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"09-26\"",
+      "site.nowcoder.com \"字节全栈一面\" \"线程池\" \"RAG\"",
+      "site.nowcoder.com \"阿里 Token Foundry AI应用研发二面面经\"",
+      "site.nowcoder.com \"搜狐畅游\" \"Agent\" \"一面\" \"oc\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"Sora1016\"",
+      "site.nowcoder.com \"Zxsoul\" \"浪潮\"",
+      "site.nowcoder.com \"字节全栈一面\" \"upc\"",
+      "site.nowcoder.com \"快手留用实习一面\" \"AI应用开发\"",
+      "site.nowcoder.com \"Sora1016\" \"面经\" -deepwisdom -c60afbadffaa427996767343c3f2049e",
+      "site.nowcoder.com \"AI应用\" \"一面\" \"本人\" \"09\"",
+      "site.nowcoder.com \"Agent开发\" \"面经\" \"面试官人很好\" -site:ac.nowcoder.com",
+      "site.nowcoder.com \"RAG\" \"面经\" \"小厂\" -答案 -题库",
+      "site.nowcoder.com \"deepwisdom\" \"一面\" \"压缩强度\"",
+      "site.nowcoder.com \"意图识别树\" \"留用\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"金蝶\"",
+      "site.nowcoder.com \"AI应用\" \"面经\" \"度小满\"",
+      "site.nowcoder.com \"Agent开发\" \"面经\" \"作业帮\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"DeepWisdom\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"泪目\" -答案",
+      "site.nowcoder.com \"AI应用\" \"面经\" \"没答上\" -答案 -面经合集",
+      "site.nowcoder.com \"Agent\" \"面经\" \"飞致云\"",
+      "site.nowcoder.com \"Agent\" \"面经\" \"vivo\" \"22\"",
+      "site.nowcoder.com \"Agent凉经\" \"7.6\"",
+      "site.nowcoder.com \"星网锐捷\" \"Agent\" \"面经\"",
+      "site.nowcoder.com \"AI应用\" \"面经\" \"9.29\"",
+      "site.nowcoder.com \"AI应用\" \"面经\" \"9.28\""
+    ],
+    "explicit_original_request_count": 13,
+    "explicit_original_unique_count": 8,
+    "live_full_original_unique_count": 4,
+    "explicit_original_attempts": [
+      {
+        "key": "a8854ce3fa4b45cb8d73ec92c798a63b",
+        "method": "web_open",
+        "outcome": "full_body"
+      },
+      {
+        "key": "930139676764102656",
+        "method": "web_open",
+        "outcome": "inaccessible"
+      },
+      {
+        "key": "58eb5c0382964b3cb7b28e5d505b3743",
+        "method": "web_open",
+        "outcome": "prior_web_render_not_stable_current_original",
+        "previous_reported_outcome": "full_body",
+        "correction": "12:04登录原帖显示删除；旧HTTP存档已核为通用壳，不作为完整原帖。此前web呈现不能证明当前原帖可回读。"
+      },
+      {
+        "key": "a23b255944084a97820ebb5e3e516488",
+        "method": "web_open",
+        "outcome": "shell_only"
+      },
+      {
+        "key": "a8854ce3fa4b45cb8d73ec92c798a63b",
+        "method": "http",
+        "outcome": "full_body"
+      },
+      {
+        "key": "a23b255944084a97820ebb5e3e516488",
+        "method": "http",
+        "outcome": "full_body"
+      },
+      {
+        "key": "a8854ce3fa4b45cb8d73ec92c798a63b",
+        "method": "http",
+        "outcome": "full_body"
+      },
+      {
+        "key": "58eb5c0382964b3cb7b28e5d505b3743",
+        "method": "http",
+        "outcome": "generic_shell_not_full_body",
+        "previous_reported_outcome": "full_body",
+        "correction": "12:04登录原帖显示删除；旧HTTP存档已核为通用壳，不作为完整原帖。此前web呈现不能证明当前原帖可回读。"
+      },
+      {
+        "key": "a01aeac81ad342d88252f899c47f2dc4",
+        "method": "http",
+        "outcome": "shell_only"
+      },
+      {
+        "key": "c60afbadffaa427996767343c3f2049e",
+        "method": "http",
+        "outcome": "shell_only"
+      },
+      {
+        "key": "631e9b79e433415ca3dea24642f94b4c",
+        "method": "http",
+        "outcome": "full_body"
+      },
+      {
+        "key": "18f9c157661241f98684dd3e90423aae",
+        "method": "web_open",
+        "outcome": "cache_miss"
+      },
+      {
+        "key": "18f9c157661241f98684dd3e90423aae",
+        "method": "http",
+        "outcome": "full_body"
+      }
+    ],
+    "records": [
+      {
+        "key": "a23b255944084a97820ebb5e3e516488",
+        "title": "DeepWisdom一面 / Sora1016",
+        "disposition": "recommend_new",
+        "reason": "原帖、作者主页及楼主进度回复已核；8问完整；与S085同人不同公司。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/a23b255944084a97820ebb5e3e516488",
+        "evidence_level": "live_full_html_and_author_profile",
+        "new_flow_increment": 1
+      },
+      {
+        "key": "a8854ce3fa4b45cb8d73ec92c798a63b",
+        "title": "浪潮智能体开发 / Zxsoul",
+        "disposition": "admit",
+        "reason": "The source independently meets HUMAN-A without reconstructing ambiguous questions: specific company/Agent role; actual interviewer composition (HR, team member, manager); 20-minute interview; personal reactions and talent-pool outcome; six unambiguous technical prompts forming a RAG project follow-up chain. The policy says usually at least 5–8 informative prompts, not that every original record must be a complete question. The two uncertain records do not invalidate the six usable prompts.",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/a8854ce3fa4b45cb8d73ec92c798a63b",
+        "evidence_level": "live_logged_in_full_body_comments_and_profile",
+        "new_flow_increment": 1,
+        "previous_disposition": "hold_existing_quality",
+        "previous_reason": "重新完整核验，但与原hold相比没有新增题干；LRU是作者听音后猜测、HashMap追问残缺，不升格。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "Live full original body",
+          "One comment: emoji only, no substantive supplement",
+          "Author profile: all 15 posts and the no-more-content end marker",
+          "Formal raw key, author, title and distinctive wording dedup"
+        ],
+        "source_id": "S402"
+      },
+      {
+        "key": "58eb5c0382964b3cb7b28e5d505b3743",
+        "title": "快手3.25日常一面 / yzxcxy",
+        "disposition": "exclude_deleted_original",
+        "reason": "The logged-in original explicitly says 来晚一步，该内容已经被删除了o(T_T)o on both navigation and reload. The author profile says 这个牛友还没发布过内容. There is no live body/comment thread left to verify role. Exclude under Verifiable rather than carrying an unattempted hold.",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/58eb5c0382964b3cb7b28e5d505b3743",
+        "evidence_level": "live_deleted_original",
+        "new_flow_increment": 0,
+        "previous_disposition": "hold_existing_role",
+        "previous_reason": "真人现场充分；原标题无AI职位或实际职责，仍不能只凭Agent项目深挖判岗位准入。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "Live original navigation",
+          "Ordinary page reload",
+          "Known author profile"
+        ]
+      },
+      {
+        "key": "a01aeac81ad342d88252f899c47f2dc4",
+        "title": "字节全栈一面 / upc",
+        "disposition": "exclude_role_unsubstantiated",
+        "reason": "Body and first-person authenticity are now verified. The author says the department is 中国交易与广告 in a direct reply, but neither body nor comments establish that the full-stack position's core work is AI Service/RAG/Agent. The RAG interview block and personal Agent practice do not establish the job's responsibilities; the author's own question contrasts full-stack and Agent career paths. Exclude because required role evidence is absent, not because the body is inaccessible.",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/a01aeac81ad342d88252f899c47f2dc4",
+        "evidence_level": "live_logged_in_full_body_comments_and_profile",
+        "new_flow_increment": 0,
+        "previous_disposition": "hold_role_and_live_body",
+        "previous_reason": "搜索可读完整正文，直接HTTP仅壳页；全栈岗位未确认AI应用职责，且本人反问全栈还是Agent路线。不能当已完成原帖核验。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "Live full original",
+          "All 11 comments, including initially collapsed 2 replies",
+          "Author profile and related hiring-history titles"
+        ]
+      },
+      {
+        "key": "18f9c157661241f98684dd3e90423aae",
+        "title": "星网锐捷Agent两轮 / erwgsyr",
+        "disposition": "exclude_low_density",
+        "reason": "原Batch33可访问性阻塞已解决：直取完整正文。只有项目时间节点/文档展示/学习带新人概述，没有足够具体技术追问。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/18f9c157661241f98684dd3e90423aae",
+        "evidence_level": "live_full_html_after_web_cache_miss",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "631e9b79e433415ca3dea24642f94b4c",
+        "title": "快手留用AI应用一面 / upc",
+        "disposition": "duplicate",
+        "reason": "S057 Batch04同原帖；不新计。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/631e9b79e433415ca3dea24642f94b4c",
+        "evidence_level": "live_full_html",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "c60afbadffaa427996767343c3f2049e",
+        "title": "快手Data Agent / Sora1016",
+        "disposition": "duplicate_with_access_caveat",
+        "reason": "S085 Batch05；原帖搜索正文+作者主页可读，直取原帖仅壳页。不能把本次直取称完整。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/c60afbadffaa427996767343c3f2049e",
+        "evidence_level": "primary_search_body_author_profile_live_post_shell",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "930139676764102656",
+        "title": "斑头雁Agent实习一面",
+        "disposition": "duplicate_with_access_caveat",
+        "reason": "S317 Batch37；直接web访问失败，旧未归档记录已过期。去重结论来自现库，不是本次正文成功。",
+        "source_url": "https://www.nowcoder.com/discuss/930139676764102656",
+        "evidence_level": "direct_web_inaccessible_existing_batch_confirmed",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "d770696f3495465d9e3d40c3d631d54c",
+        "title": "成都某中厂Agent产品实习",
+        "disposition": "duplicate",
+        "reason": "S233 Batch17；标题与原URL相同。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/d770696f3495465d9e3d40c3d631d54c",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "10b2fcaf73d2401f8636bd0459e1cd08",
+        "title": "9.4某小厂AI Agent HR+技术面",
+        "disposition": "duplicate",
+        "reason": "S217 Batch15同原帖。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/10b2fcaf73d2401f8636bd0459e1cd08",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "ed25d2f60ddc4436b0139a7c52e62a61",
+        "title": "阿里Token Foundry二面",
+        "disposition": "duplicate",
+        "reason": "S144 Batch08同流程二面，DoVideoAI连续题链相同。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/ed25d2f60ddc4436b0139a7c52e62a61",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "925342611194286080",
+        "title": "字节9.3 Agent一面",
+        "disposition": "duplicate",
+        "reason": "Batch05已有原URL，非本轮新增。",
+        "source_url": "https://www.nowcoder.com/discuss/925342611194286080",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "f0648c2e373f4f03a10dd0fffbd235cd",
+        "title": "搜狐畅游Agent一面 / tydou",
+        "disposition": "exclude_existing_low_density",
+        "reason": "旧coverage已exclude_low_density；原帖8项含背景/反问，缺具体展开，未获推翻证据。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/f0648c2e373f4f03a10dd0fffbd235cd",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "24909dbd84b24f23ba18d2e6c8d528b3",
+        "title": "小厂Agent面经 / night_code",
+        "disposition": "exclude_insufficient_first_person_scene",
+        "reason": "The original has detailed RAG prompts, but only the generic preface 继续来分享下之前的面经 and no identifiable company, interview date/round/duration, candidate reaction/result or direct author account of the live interaction. The sole comment requests an answer and has no author reply. Other profile posts do not identify this particular interview. Thus the candidate-first-person real-scene gate is unsubstantiated; do not infer a genuine source from a plausible question chain.",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/24909dbd84b24f23ba18d2e6c8d528b3",
+        "evidence_level": "live_logged_in_full_body_comments_and_profile",
+        "new_flow_increment": 0,
+        "previous_disposition": "hold_first_person",
+        "previous_reason": "原帖搜索14问RAG具体，但只泛称分享之前面经，无足够现场/结果/时间等本人来源证据；未进一步原帖验证，不贡献题目。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "Live full original 14 prompts",
+          "Sole comment",
+          "Complete profile of 6 posts, reaching no-more-content"
+        ]
+      },
+      {
+        "key": "db1ccb5e509a42d29d14216122b61419",
+        "title": "小厂agent面试 / dejavu06",
+        "disposition": "exclude_insufficient_scene_and_role",
+        "reason": "The post contains categories of Java/backend questions and an AI section, but does not provide this interview's candidate reactions, actual dialogue, date/round/result, company identity or actual role duties. All 7 comments are reader reactions rather than author clarification. The profile shows the author has personal hiring experience and also writes tutorials/mock interview material; neither proves that this particular categorized list is a verifiable single real interview. A nearby timeline starts application on May 28, later than this May 25 post, so it cannot silently supply the missing chronology.",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/db1ccb5e509a42d29d14216122b61419",
+        "evidence_level": "live_logged_in_full_body_comments_and_profile",
+        "new_flow_increment": 0,
+        "previous_disposition": "hold_first_person_and_role",
+        "previous_reason": "分类题单，缺具体本人互动与结果；大部分传统Java后端，岗位实际应用职责也未闭环。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "Live full categorized original question list",
+          "All 7 original comments, no author replies",
+          "Author profile and comment index; nearby dated hiring timeline visible"
+        ]
+      },
+      {
+        "key": "01b2ab3205fb4c69ba2aa6e1d32b2e7e",
+        "title": "DeepWisdom harness engineering（测试）",
+        "disposition": "exclude_role_and_density",
+        "reason": "本人社招真实，但是测试路线；6项中仅通用自动化/AI使用/失败分析HTTP场景，目标Agent Runtime职责未证明。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/01b2ab3205fb4c69ba2aa6e1d32b2e7e",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "e5e287131b3e4526a62bbdcb4deb4b3b",
+        "title": "飞致云Agent面筋",
+        "disposition": "exclude_role",
+        "reason": "作者明确入职后是售后技术支持路线、非研发；不能仅因标题Agent开发收录。",
+        "source_url": "https://www.nowcoder.com/feed/main/detail/e5e287131b3e4526a62bbdcb4deb4b3b",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "864594486704291840",
+        "title": "2026 Java后端真题汇总",
+        "disposition": "exclude_aggregation",
+        "reason": "面试官整理多人高频题并招聘；不是候选人本人单一流程。",
+        "source_url": "https://www.nowcoder.com/discuss/864594486704291840",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "882881646637178880",
+        "title": "AI Agent面经7持续更新",
+        "disposition": "exclude_answer_bank",
+        "reason": "Q/A标准答案教学题库，不是真人场次。",
+        "source_url": "https://www.nowcoder.com/discuss/882881646637178880",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "933731739082510336",
+        "title": "三年面试五年模拟 阿里云Agent全解析",
+        "disposition": "exclude_answer_bank",
+        "reason": "答案化解析/模拟定位，不能当原始候选人复盘。",
+        "source_url": "https://www.nowcoder.com/discuss/933731739082510336",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      },
+      {
+        "key": "927003894100525056",
+        "title": "混子转AI开发，我的速通路线",
+        "disposition": "exclude_aggregation",
+        "reason": "跨公司求职与学习经验建议，非可单独复核的完整场次。",
+        "source_url": "https://www.nowcoder.com/discuss/927003894100525056",
+        "evidence_level": "primary_search_render_only",
+        "new_flow_increment": 0
+      }
+    ],
+    "previous_reported_live_full_original_unique_count": 5
+  },
+  "xiaohongshu": {
+    "browser": "dot cloud browser, existing logged-in session",
+    "login_search_body_verified": true,
+    "records": [
+      {
+        "note_id": "6a9641060000000028002c36",
+        "author": "Real",
+        "title": "8.31 字节TikTok Shop AI Agent一面",
+        "source_url": "https://www.xiaohongshu.com/explore/6a9641060000000028002c36",
+        "disposition": "exclude_independent_flow_unsubstantiated",
+        "reason": "本人/岗位/题目可信，但同作者字节S330剪映流程与本场的独立投递、明确结束重启或转组关系仍未披露。9/8手头无面试仅是个人阶段总结，不证明TikTok流程已正式结束或另起招聘流程。排除本批新增，不断言同场重复，不捏造独立性。",
+        "main_post_complete": true,
+        "contains_image_material": false,
+        "source_increment": 0,
+        "previous_disposition": "hold_independent_flow",
+        "previous_reason": "完整文字正文与作者评论；与S330同作者字节招聘流程的独立投递/转组边界仍未闭环，不按不同BU自动新编号。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "原帖全文与全部39条评论及折叠回复",
+          "作者公开主页",
+          "秋招round1结束原帖",
+          "9.14剪映一面全文、20条评论及折叠回复"
+        ],
+        "new_flow_increment": 0
+      },
+      {
+        "note_id": "6ab23e46000000003b004bb7",
+        "author": "Wey",
+        "title": "泡池子了",
+        "source_url": "https://www.xiaohongshu.com/explore/6ab23e46000000003b004bb7",
+        "disposition": "exclude_low_density",
+        "reason": "本人真人复盘明确，但Agent工程问题只概述、未披露具体追问；hash题不清，不够A档。正文已读，未对可能附图主张完整核验。",
+        "main_post_complete": false,
+        "contains_image_material": false,
+        "source_increment": 0
+      },
+      {
+        "note_id": "6a5f950e00000000060121ce",
+        "author": "OSAKO",
+        "title": "AI 应用开发一天四面面经",
+        "source_url": "https://www.xiaohongshu.com/explore/6a5f950e00000000060121ce",
+        "disposition": "exclude_flow_and_role_unsubstantiated",
+        "reason": "候选人真实复盘，但前三场未给可区分雇主/独立投递边界及具体招聘职责；游戏部分作者明确是项目经历，不能当雇主业务。第四场本人说明实际为金融交易后端、Agent由另一部门负责，二面图标题亦为交易后端开发二面。四场不合成一个假流程，不按图片数拆4个来源；整体不满足本批正式收录条件。",
+        "main_post_complete": true,
+        "contains_image_material": true,
+        "source_increment": 0,
+        "previous_disposition": "hold_flow_and_role_boundary",
+        "previous_reason": "4/4正文原图已读，前三场本人Agent runtime追问可信但公司及独立流程未闭环。第四场作者明确实际为金融交易普通后端，Agent属另一部门，排除该场；不把4图计4个来源。置顶二面评论有图，本轮未读该补图，不补二面问题。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "4/4正文原图已读",
+          "置顶第四场二面评论图已展开阅读",
+          "31条评论及折叠回复",
+          "作者公开主页及近期招聘记录标题"
+        ],
+        "new_flow_increment": 0
+      },
+      {
+        "note_id": "6a9f8102000000000b00d883",
+        "author": "AI起点",
+        "title": "金山软件 AI全栈一面",
+        "source_url": "https://www.xiaohongshu.com/explore/6a9f8102000000000b00d883",
+        "disposition": "exclude_answer_packaging",
+        "reason": "8图中1图题单、7图逐题标准答案解析；正文仅话题标签，无本场日期/轮次结果/本人互动。主页明确面经、视频及学习路线整理。属于答案化整理材料，不因技术内容具体升级为真人候选人原始场次；不指控作者伪造。",
+        "main_post_complete": true,
+        "contains_image_material": true,
+        "source_increment": 0,
+        "previous_disposition": "hold_incomplete_images_and_provenance",
+        "previous_reason": "正文仅标签，首图为题单；未完成全部图片及本人归属，不从长题单升级HUMAN-A。与S183有技术主题交集但未认定同文。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "8/8原图全文",
+          "全部2条评论",
+          "作者公开主页定位与置顶/学员反馈标题"
+        ],
+        "new_flow_increment": 0
+      },
+      {
+        "note_id": "6a71a368000000003302f159",
+        "author": "MeGuMin",
+        "title": "追觅27秋招终面（HR面）agent岗",
+        "source_url": "https://www.xiaohongshu.com/explore/6a71a368000000003302f159",
+        "disposition": "exclude_no_technical_detail",
+        "reason": "完整文字及评论可核本人MOVA秋招HR面，但技术细节未披露；无独立A档技术面来源。用于追作者公开主页。",
+        "main_post_complete": true,
+        "contains_image_material": false,
+        "source_increment": 0
+      },
+      {
+        "note_id": "6a6b3a60000000003301dcc1",
+        "author": "MeGuMin",
+        "title": "Unity中国 AI Agent开发 技术面一面",
+        "source_url": "https://www.xiaohongshu.com/explore/6a6b3a60000000003301dcc1",
+        "disposition": "admit",
+        "reason": "完整正文、全部5条可见评论和作者主页；独立审核通过。7/30为发布显示，年份/面试日期未明，原7转写不清、14/17/20非实问留界。",
+        "main_post_complete": true,
+        "contains_image_material": false,
+        "source_increment": 1
+      },
+      {
+        "note_id": "6a990afd000000002b01d810",
+        "author": "MeGuMin",
+        "title": "未命名Agent/算法业务面线索",
+        "source_url": "https://www.xiaohongshu.com/explore/6a990afd000000002b01d810",
+        "disposition": "admit",
+        "reason": "原帖实际可正常读取。封面一面、作者回复公司、本人Agent平台连续追问及招聘方明确客服/海外售后/企业Code Agent业务，满足本人真实性和应用工程职责。原8/9思路非追加实问；原11重复保留。",
+        "main_post_complete": true,
+        "contains_image_material": false,
+        "source_increment": 1,
+        "previous_disposition": "hold_access_blocked",
+        "previous_reason": "作者主页卡片可見；进入原帖后安全限制/访问链接异常/300017，一次普通刷新不恢复，停止小红书；未读正文，不贡献题目。",
+        "reverified": "2026-10-08",
+        "completed_checks": [
+          "从作者主页实时原始href进入",
+          "正文、封面与全部2条评论",
+          "作者明确回复东成机电",
+          "401流程全历史去重与独立审核"
+        ],
+        "new_flow_increment": 1,
+        "source_id": "S403"
+      }
+    ],
+    "limits": "初次采集工作量与后续复核工作量分开；OSAKO第四场二面补图本次已读，因岗位范围外不归档。Wey为初次已排除低密度项，未冒称完整原图核验。",
+    "initial_collection_metrics": {
+      "site_queries": [
+        "Agent 面经",
+        "AI应用 面经",
+        "金山软件 AI全栈一面",
+        "追觅 agent 面经"
+      ],
+      "query_count": 4,
+      "unique_original_attempts": 7,
+      "complete_main_posts": 4,
+      "body_images_read": 4,
+      "partial_image_posts": 1
+    },
+    "reverification_metrics": {
+      "target_posts": 4,
+      "fully_read_target_posts": 4,
+      "all_current_main_post_complete_records": 6,
+      "new_main_body_images_read": 8,
+      "previously_read_body_images_rechecked_by_content": 4,
+      "new_comment_images_read": 1,
+      "new_title_cover_images_read": 1,
+      "pending_target_posts": 0
+    }
+  },
+  "cross_platform_dedup_public_queries": [
+    "\"Unity\" \"MeGuMin\" 面经",
+    "\"Unity\" \"记忆提取\" 面试",
+    "\"Unity中国\" \"AI Agent开发\" 面经"
+  ],
+  "blockers": [
+    "两平台本次登录/站内搜索可用；yzxcxy原帖明确删除，本批排除。",
+    "上轮小红书300017由错误匹配的帖子链接参数导致，已通过页面原始链接纠正；不得继续称全站或持续平台封锁。",
+    "root interview的10个自动证据块同步仍未获授权；market内部派生一致，完整检查有明确范围限制。"
+  ],
+  "quality_boundaries": [
+    "候选人本人+真人面试官+高密度+目标岗位+原帖可核验+全历史独立流程去重",
+    "新增2条发布日期是历史显示，不能说成今日面试。年份/面试日未明保持未明。",
+    "原28序列记录不等于28个独立技术题；Unity原7转写不清和14/17/20非实问留在排除分类。",
+    "不修改课程、JD、题族规则、验证器或root interview教学正文；不merge。"
+  ],
+  "initial_report_summary": {
+    "new_independent_flows": 2,
+    "source_ids": [
+      "S400",
+      "S401"
+    ],
+    "new_nowcoder": 1,
+    "new_xiaohongshu": 1,
+    "historical_originals": 2,
+    "post_merge_branch_source_total": 401,
+    "batch_total": 38,
+    "inbox": 0,
+    "reviewed_records": 28,
+    "hold_records": 9,
+    "excluded_records": 10,
+    "duplicate_records": 7,
+    "record_count_note": "分流按审核记录/URL计，非独立流程；OSAKO一个URL内第四场排除，其余场次待核，不另增审核记录。"
+  },
+  "reverification": "reverification-2026-10-08.json",
+  "historical_blocker_report": [
+    "小红书最后一条原帖访问返回安全限制/访问链接异常/300017，一次普通刷新未恢复；停止该站，不换路线规避。此前完整核验结果保留。",
+    "牛客8个原帖直取中2个仅壳页、1个失败，详见逐项记录；搜索可见不冒充正文成功。",
+    "只授权market面经范围。新生成器还要求10个root interview证据块同步；未修改这些越界文件，因此完整--check有已知失败，market内部派生一致。"
+  ],
+  "original_publication_parent": "f5de8017b939816186f24e9e74b8d6c3f31ad707",
+  "architecture_replay": {
+    "raw_preservation": "403 sources / 404 sections / 38 batches; unchanged from 711df43",
+    "semantic_outputs": "obsolete rule-generated outputs not replayed",
+    "tooling": "mechanical preservation, links and structural counts only"
+  }
+}

@@ -4401,6 +4401,58 @@
       "line_start": 837,
       "line_end": 885,
       "sha256": "c44bcadd71c7da571c28c695f76d04427e3ec61901d18bd7c8aa0c54893bef46"
+    },
+    {
+      "source_id": "S400",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-38.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-38.md",
+      "original_line_start": 886,
+      "original_line_end": 916,
+      "line_start": 886,
+      "line_end": 916,
+      "sha256": "f46824b0d19f8590e762f8bf86042f273cd6577655d5b57c860576d7951cd840",
+      "admission_date": "2026-10-08",
+      "admission_note": "New reviewed historical-source admission, not an architecture-migration baseline section."
+    },
+    {
+      "source_id": "S401",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-38.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-38.md",
+      "original_line_start": 917,
+      "original_line_end": 963,
+      "line_start": 917,
+      "line_end": 963,
+      "sha256": "06474cbb1b5233e66eecc1a711a917911560ed486801c467f031e55a094dc5de",
+      "admission_date": "2026-10-08",
+      "admission_note": "New reviewed historical-source admission, not an architecture-migration baseline section."
+    },
+    {
+      "source_id": "S402",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-38.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-38.md",
+      "original_line_start": 964,
+      "original_line_end": 999,
+      "line_start": 964,
+      "line_end": 999,
+      "sha256": "9c636a772c37b73ef7cf4ff9a69314b96955e4aba4f0a4186210251d6e266705",
+      "admission_date": "2026-10-08",
+      "admission_note": "Completed re-verification of previously unresolved candidate; independent reviewed admission."
+    },
+    {
+      "source_id": "S403",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-38.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-38.md",
+      "original_line_start": 1000,
+      "original_line_end": 1036,
+      "line_start": 1000,
+      "line_end": 1036,
+      "sha256": "4403137a1258a1bd018e1cbe91b3284dcf9d485cde316ef779b919c4a2605bf5",
+      "admission_date": "2026-10-08",
+      "admission_note": "Completed re-verification of previously unresolved candidate; independent reviewed admission."
     }
   ]
 }
