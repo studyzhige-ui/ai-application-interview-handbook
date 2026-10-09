@@ -7,13 +7,36 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 
+def _load_partition(path, reference, filename, snapshot):
+    if reference.get('path') != filename:
+        raise ValueError('Unsupported catalog partition file')
+    raw = path.with_name(filename).read_bytes()
+    if len(raw) != reference.get('bytes') or hashlib.sha256(raw).hexdigest() != reference.get('sha256'):
+        raise ValueError('Catalog partition hash or size mismatch')
+    partition = json.loads(raw)
+    if partition.get('snapshot') != snapshot:
+        raise ValueError('Catalog partition belongs to another snapshot')
+    return partition
+
+
 def load_catalog(path):
     """Load the current library and its hash-pinned non-current observations."""
     path = Path(path)
     current = json.loads(path.read_text(encoding='utf-8'))
+    for company in current['companies']:
+        jobs_file = company.pop('jobs_file', None)
+        if jobs_file is not None:
+            if company['source_id'] != 'official-012' or 'jobs' in company:
+                raise ValueError('Current job partition has an unsupported source or duplicate inline jobs')
+            partition = _load_partition(path, jobs_file, 'bytedance-jds.json', current['snapshot'])
+            if partition.get('source_id') != company['source_id'] or not isinstance(partition.get('jobs'), list):
+                raise ValueError('Current job partition source or jobs mismatch')
+            company['jobs'] = partition['jobs']
     reference = current.pop('supporting_observations', None)
     if reference is None:
         return current
+    if 'historical_observations' in current or any('other_observations' in c for c in current['companies']):
+        raise ValueError('Non-current records are both inline and referenced')
     if reference['path'] != 'source-observations.json':
         raise ValueError('Unsupported observations file')
     raw = path.with_name(reference['path']).read_bytes()
@@ -28,7 +51,16 @@ def load_catalog(path):
         raise ValueError('Supporting observation source IDs are missing or duplicated')
     for company in current['companies']:
         company['other_observations'] = mapping[company['source_id']]
-    current['historical_observations'] = support['historical_observations']
+    history_file = support.get('historical_file')
+    if history_file is not None:
+        if 'historical_observations' in support:
+            raise ValueError('Historical records are both inline and partitioned')
+        history = _load_partition(path, history_file, 'historical-jds.json', current['snapshot'])
+        if not isinstance(history.get('historical_observations'), list):
+            raise ValueError('Historical partition records must be a list')
+        current['historical_observations'] = history['historical_observations']
+    else:
+        current['historical_observations'] = support['historical_observations']
     return current
 
 
@@ -97,7 +129,7 @@ def render_catalog(catalog):
     summary = counts(catalog)
     lines = ['# 校招与实习岗位索引', '',
              f"本次核验：{catalog['snapshot']['checked_at_utc']}。收录 **{summary['current_jobs']} 个去重岗位或官方岗位意向**，来自 **{summary['companies_with_current_jobs']} 个公司或品牌入口**。", '',
-             '完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。', '',
+             '完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。', '',
              '标为“研究交叉”或“多方向”的岗位，只纳入其明确的应用工程职责，不表示整份JD都是纯AI应用研发。届次和资格以官方完整原文为准，历史观察不计本页岗位数。', '']
     labels={'应用与Agent核心研发':'应用研发','评测与测试工具研发':'评测研发','算法或研究与应用工程混合':'研究交叉','多方向或跨职能工程':'多方向'}
     def cell(value):

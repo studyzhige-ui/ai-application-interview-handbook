@@ -35,6 +35,65 @@ class CatalogTests(unittest.TestCase):
             path,_=self.write_split_fixture(directory)
             support=path.parent/'source-observations.json';support.write_bytes(support.read_bytes()+b' ')
             with self.assertRaisesRegex(ValueError,'hash or size'):load_catalog(path)
+    def write_partitioned_fixture(self, directory, change=None):
+        path, original = self.write_split_fixture(directory)
+        original['companies'][0]['source_id'] = 'official-012'
+        original['historical_observations'] = [{'status':'historical','current_pool_eligible':False,'full_text':'旧原文'}]
+        original['counts'] = counts(original)
+        current = copy.deepcopy(original)
+        company = current['companies'][0]
+        jobs = {'snapshot':current['snapshot'],'source_id':company['source_id'],'jobs':company.pop('jobs')}
+        history = {'snapshot':current['snapshot'],'historical_observations':current.pop('historical_observations')}
+        support = {'snapshot':current['snapshot'],'companies':[{'source_id':company['source_id'],'other_observations':company.pop('other_observations')}]}
+        if change: change(current, support, jobs, history)
+        def save(name, value):
+            raw = json.dumps(value, ensure_ascii=False).encode()
+            path.with_name(name).write_bytes(raw)
+            return {'path':name,'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}
+        company['jobs_file'] = save('bytedance-jds.json', jobs)
+        support['historical_file'] = save('historical-jds.json', history)
+        current['supporting_observations'] = save('source-observations.json', support)
+        path.write_text(json.dumps(current), encoding='utf-8')
+        return path, original
+    def test_company_and_history_partitions_preserve_exact_records(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path, original = self.write_partitioned_fixture(directory)
+            self.assertEqual(load_catalog(path), original)
+            self.assertEqual(validate_catalog(load_catalog(path), ['official-012']), [])
+    def test_partition_rejects_modified_bytes(self):
+        for name in ('bytedance-jds.json','historical-jds.json'):
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                path, _ = self.write_partitioned_fixture(directory)
+                target = path.with_name(name); target.write_bytes(target.read_bytes()+b' ')
+                with self.assertRaisesRegex(ValueError, 'hash or size'): load_catalog(path)
+    def test_partition_rejects_wrong_snapshot_source_and_duplicate_storage(self):
+        changes = [
+            lambda c,s,j,h: j.update(snapshot={'checked_at_utc':'different'}),
+            lambda c,s,j,h: h.update(snapshot={'checked_at_utc':'different'}),
+            lambda c,s,j,h: j.update(source_id='another-company'),
+            lambda c,s,j,h: c['companies'][0].update(jobs=[]),
+            lambda c,s,j,h: s.update(historical_observations=[]),
+        ]
+        for i, change in enumerate(changes):
+            with self.subTest(case=i), tempfile.TemporaryDirectory() as directory:
+                path, _ = self.write_partitioned_fixture(directory, change)
+                with self.assertRaises(ValueError): load_catalog(path)
+    def test_partition_cannot_reference_arbitrary_path(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path, _ = self.write_partitioned_fixture(directory)
+            current = json.loads(path.read_text())
+            current['companies'][0]['jobs_file']['path'] = '../outside.json'
+            path.write_text(json.dumps(current))
+            with self.assertRaisesRegex(ValueError, 'Unsupported'): load_catalog(path)
+    def test_current_file_cannot_silently_override_inline_non_current_records(self):
+        for field in ('historical_observations', 'other_observations'):
+            with self.subTest(field=field), tempfile.TemporaryDirectory() as directory:
+                path, _ = self.write_partitioned_fixture(directory)
+                current = json.loads(path.read_text())
+                target = current if field == 'historical_observations' else current['companies'][0]
+                target[field] = [{'full_text':'must not be silently lost'}]
+                path.write_text(json.dumps(current))
+                with self.assertRaisesRegex(ValueError, 'both inline and referenced'): load_catalog(path)
     def test_valid_partial_coverage_and_all_locations(self):
         x=self.fixture();self.assertEqual(validate_catalog(x,['s1']),[])
         self.assertIn('北京、上海',render_catalog(x));self.assertEqual(x['counts']['coverage']['limited'],1)

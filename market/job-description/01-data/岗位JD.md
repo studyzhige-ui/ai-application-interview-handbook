@@ -1,12 +1,12 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T13:47:43Z。收录 **2406 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
+本次核验：2026-10-09T14:08:30Z。收录 **2496 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
-完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
+完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
 标为“研究交叉”或“多方向”的岗位，只纳入其明确的应用工程职责，不表示整份JD都是纯AI应用研发。届次和资格以官方完整原文为准，历史观察不计本页岗位数。
 
-## 小米（73）
+## 小米（108）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -83,6 +83,41 @@
 | [Miclaw-AI agent开发实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621512536052418859/detail) | 实习 | 当前页未明确毕业届次 | 热招 | 应用研发 |
 | [财务信息化解决方案专员实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7616940594250336554/detail) | 实习 | 当前页未明确毕业届次 | 北京 | 多方向 |
 | [AI创新产品实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7605147007258446123/detail) | 实习 | 当前页未明确毕业届次 | 热招 | 应用研发 |
+| [测试开发工程师-实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7670059063572449579/detail) | 实习 | 2027届 | 武汉 | 应用研发 |
+| [大模型算法实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7506408110258176108/detail) | 实习 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-图形AI渲染工程师-软硬件协同](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7678902874160335146/detail) | 校招 | 未披露 | 上海 | 研究交叉 |
+| [顶尖应届-模拟芯片设计工程师（模拟AI）-芯片](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7661962099633178906/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [顶尖应届-AI编译器高级开发工程师-芯片](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7661960636327446810/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-广告算法工程师-互联网](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7661960045332678950/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
+| [顶尖应届-GUI Agent研究工程师-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7647448652848007462/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-OS Agent算法工程师-手机](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7647448266254764298/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-OS Agent算法研究员-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7647448226383874313/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-OS Agent算法工程师-手机](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7647447554070956315/detail) | 校招 | 未披露 | 深圳 | 研究交叉 |
+| [顶尖应届-大模型算法工程师（整车大数据与智能诊断方向）-汽车架构](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646711640880859435/detail) | 校招 | 未披露 | 南京 | 研究交叉 |
+| [顶尖应届-全栈创新工程师-汽车架构](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646710752288246059/detail) | 校招 | 未披露 | 上海 | 研究交叉 |
+| [顶尖应届-车载电源算法工程师-整车](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646710665944484137/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [顶尖应届-大模型算法工程师-智能座舱](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646710458111691014/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-动力大数据AI算法工程师-整车](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646710435811756330/detail) | 校招 | 未披露 | 南京 | 研究交叉 |
+| [顶尖应届-端云协同调度工程师-MiClaw](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709957690345769/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-端云协同调度工程师（Agent OS）-MiClaw](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709717774960938/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-OS Agent工程师-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709706987833642/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-高级安全工程师-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709665162774790/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-AI Agent开发工程师-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709518685194538/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-AI智能软件开发系统研究工程师-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709517426329910/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-大模型算法工程师-软件](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709448982972713/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-性能功耗研发工程师- 相机](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709260970330409/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-低功耗控制工程师-手机](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709242695731492/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-工程优化工程师- 相机](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709242694879524/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届-低功耗控制工程师-手机](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646709039519123766/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [顶尖应届-运动健康算法工程师（大模型）-可穿戴](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646708561045244202/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-视觉生成大模型算法工程师-大模型](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646708207818344713/detail) | 校招 | 未披露 | 武汉 | 研究交叉 |
+| [顶尖应届-Agent infra Engineer-MiMo](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646708188821752083/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [顶尖应届- Agent Harness算法工程师-大模型](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707859220695305/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-视觉理解大模型算法工程师-大模型](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707832113760539/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-大模型算法工程师-生态链](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707815293536518/detail) | 校招 | 未披露 | 武汉 | 研究交叉 |
+| [顶尖应届-AI材料算法研究员-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707812400236809/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 
 ## 快手（59）
 
@@ -312,6 +347,33 @@
 | [【大模型北斗实习】面向真实物理世界的大规模智能体研究（Agent In Real Life）](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153953328&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 应用研发 |
 | [【大模型北斗实习】多模态智能体算法研究与自主规划](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153873069&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 研究交叉 |
 | [【大模型北斗实习】代码大模型](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153761434&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 应用研发 |
+
+## 滴滴（22）
+
+| 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
+| --- | --- | --- | --- | --- |
+| [27届秋招-算法工程师-企业级事业部](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/19df9b41-2fa3-499f-a038-ddbca22b16bc) | 校招 | 2027届秋招 | 天津市 | 研究交叉 |
+| [27届秋招-前端开发工程师-企业级事业部](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/5c3f01e9-76b3-4387-be13-ca6a6ada0dce) | 校招 | 2027届秋招 | 天津市 | 应用研发 |
+| [27届秋招-后端研发工程师-企业级事业部](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/a12af910-7a9c-48ae-89a9-e0bf3c20f433) | 校招 | 2027届秋招 | 天津市 | 多方向 |
+| [27届秋招-测试开发工程师-企业级事业部](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/26474498-9b2b-4287-b4b1-8059de06f676) | 校招 | 2027届秋招 | 天津市 | 多方向 |
+| [27届秋招-研发工程师-AI Dev](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/ae200d70-dd22-4d9b-9652-1df8bd7d5e33) | 校招 | 2027届秋招 | 北京市 | 应用研发 |
+| [27届秋招-Java开发工程师-安全平台](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/a53cc592-6b3f-4afa-a504-4f1ef3bbcc61) | 校招 | 2027届秋招 | 北京市 | 多方向 |
+| [27届秋招-移动安全工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d38617b6-e860-47b9-ae58-0c8c5b91566e) | 校招 | 2027届秋招 | 北京市 | 多方向 |
+| [27届秋招-前端开发工程师-ABC北京](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/aee223cd-008c-497e-8350-f6deea989ba9) | 校招 | 2027届秋招 | 北京市 | 应用研发 |
+| [27届秋招-后端研发工程师（平台技术）](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/17c1445c-a217-47b6-89b3-6bb364682876) | 校招 | 2027届秋招 | 北京市 | 多方向 |
+| [27届秋招-前端开发工程师-ABC杭州](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/3630cf81-eaa2-442e-b429-664b97611904) | 校招 | 2027届秋招 | 浙江·杭州市 | 应用研发 |
+| [27届秋招-测试开发工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d07f19fb-d24d-4b59-bb1a-57ec3368db65) | 校招 | 2027届秋招 | 北京市 | 多方向 |
+| [27届秋招-软件开发工程师-租车](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/752dd689-ee3a-4d81-9774-677c7a6fe5cf) | 校招 | 2027届秋招 | 北京市 | 多方向 |
+| [27届秋招-自动驾驶-Linux 内核工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/dbf520f3-a2a8-4421-96cf-ba4bfb60031a) | 校招 | 2027届 | 北京市 | 多方向 |
+| [27届秋招-安全策略工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/facc0563-303c-4443-be14-6f2f52f4de76) | 校招 | 2027届 | 北京市 | 多方向 |
+| [27届秋招-算法工程师-路线规划](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/cca1f363-5167-4f24-b539-892526af8213) | 校招 | 2027届 | 北京市 | 研究交叉 |
+| [27届秋招-Java开发工程师-AI Dev](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/03392b70-c266-4353-b64a-03cddc92539b) | 校招 | 2027届 | 北京市 | 应用研发 |
+| [27届秋招-站点可靠性工程师(SRE)](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/82dab1ab-6bad-4395-96f2-5b9a2a754c81) | 校招 | 2027届 | 浙江·杭州市、北京市 | 多方向 |
+| [27届秋招-自动驾驶-系统研发工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/2a746387-3d31-4502-8a7a-bfb9c689db73) | 校招 | 2027届 | 北京市 | 评测研发 |
+| [27届秋招-AI算法工程师（国际化外卖-搜索）](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/f43635df-7485-4f4b-89d1-04d69186feae) | 校招 | 2027届 | 北京市 | 研究交叉 |
+| [27届秋招-WEB安全工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/24497b84-fcbf-4a81-b9ef-5e8c3a7bdc6d) | 校招 | 2027届 | 北京市 | 多方向 |
+| [27届秋招-安全研发工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/9bc41307-f8ff-4f48-9c07-f070a31943b6) | 校招 | 2027届 | 北京市 | 多方向 |
+| [27届秋招-AI算法工程师（国际化外卖-推荐）](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/4e0e36c2-8b88-45be-8ad5-0b6efe7f79e5) | 校招 | 2027届 | 北京市、上海市 | 研究交叉 |
 
 ## 拼多多（2）
 
@@ -2006,6 +2068,18 @@
 | [多模态理解算法实习生-GUIagent（北京）-4416(J11977)](https://360campus.zhiye.com/intern/detail?jobAdId=061d493a-b44b-4067-9884-fcea719da239) | 实习 | 未单列届次，见任职要求 | 北京市 | 研究交叉 |
 | [助理安全研究实习生（漏洞挖掘与利用）（北京）-4943(J12021)](https://360campus.zhiye.com/intern/detail?jobAdId=f72493db-7e6b-4070-b55d-2c933cdac4b7) | 实习 | 未单列届次，见任职要求 | 北京市 | 应用研发 |
 
+## 得物（7）
+
+| 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
+| --- | --- | --- | --- | --- |
+| [【27届校招】算法研究员-视觉方向](https://poizon.jobs.feishu.cn/578078/position/7672233920910854450/detail) | 校招 | 2027届 | 上海、杭州 | 研究交叉 |
+| [大模型风控算法工程师](https://poizon.jobs.feishu.cn/578078/position/7677899808254626086/detail) | 实习 | 2027届 | 上海 | 研究交叉 |
+| [【27届校招】中间件AI开发工程师（JAVA方向）](https://poizon.jobs.feishu.cn/578078/position/7673442311870679338/detail) | 校招 | 2027届 | 上海 | 多方向 |
+| [【27届校招】Java开发工程师](https://poizon.jobs.feishu.cn/578078/position/7672235704382769417/detail) | 校招 | 2027届 | 上海、杭州 | 研究交叉 |
+| [【27届校招】Golang开发工程师](https://poizon.jobs.feishu.cn/578078/position/7672234817443055915/detail) | 校招 | 2027届 | 上海、杭州 | 多方向 |
+| [【27届校招】测试开发工程师](https://poizon.jobs.feishu.cn/578078/position/7672233009562749203/detail) | 校招 | 2027届 | 杭州、上海 | 评测研发 |
+| [【研究型实习生】多场景生成式大模型（交易）](https://poizon.jobs.feishu.cn/578078/position/7623981843205654810/detail) | 实习 | 2028届及以后 | 杭州 | 研究交叉 |
+
 ## DeepSeek（5）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
@@ -2442,11 +2516,37 @@
 | [【研发中心】2027届AI应用开发工程师(J24400)](https://job.dahuatech.com/#/CampusApply?id=cc425147-ec13-45d8-b704-f4c6632f0f89) | 校招 | 2027届 | 杭州市 | 应用研发 |
 | [【研发中心】2027届大数据工程师（Agent方向）(J24380)](https://job.dahuatech.com/#/CampusApply?id=8603b805-ba07-4bd3-8a73-6898f9e71132) | 校招 | 2027届 | 杭州市 | 多方向 |
 
-## 小鹏集团（1）
+## 小鹏集团（27）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [【27 届校招】AI 研发工程师](https://xiaopeng.jobs.feishu.cn/398875/position/7676431883702683940/detail) | 校招 | 2027届 | 广州 | 应用研发 |
+| [【27届校招】具身智能仿真平台 Agent 工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7694221963875633418/detail) | 校招 | 2027届 | 深圳、上海、北京 | 应用研发 |
+| [【27届校招】智造专业培训生（Java AI 产品方向）](https://xiaopeng.jobs.feishu.cn/campus/position/7686780962617968923/detail) | 校招 | 2027届 | 广州 | 应用研发 |
+| [【27届校招】大数据开发培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7688913722198411570/detail) | 校招 | 2027届 | 广州 | 多方向 |
+| [【27届校招】AI安全培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7688903470019643658/detail) | 校招 | 2027届 | 广州 | 多方向 |
+| [【27届校招】智造专业培训生（CAA二次开发方向）](https://xiaopeng.jobs.feishu.cn/campus/position/7686778796595251465/detail) | 校招 | 2027届 | 广州 | 多方向 |
+| [【27届校招】具身智能数据Infra工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7666022628972415274/detail) | 校招 | 2027届 | 深圳、上海、北京 | 多方向 |
+| [【27届校招】具身智能AI软件工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7666022623763056938/detail) | 校招 | 2027届 | 深圳、上海 | 多方向 |
+| [【27届校招】具身智能算法工程师/研究员（人机交互）](https://xiaopeng.jobs.feishu.cn/campus/position/7666022189175605547/detail) | 校招 | 2027届 | 深圳、上海、北京 | 研究交叉 |
+| [VLA大模型算法实习生](https://xiaopeng.jobs.feishu.cn/campus/position/7662954587057768740/detail) | 实习 | 未披露 | 深圳 | 研究交叉 |
+| [【27届校招】数据运维工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7659681346491664686/detail) | 校招 | 2027届 | 广州 | 多方向 |
+| [【27届校招】智能座舱研发工程师（广州）](https://xiaopeng.jobs.feishu.cn/campus/position/7658239772268218662/detail) | 校招 | 2027届 | 广州 | 多方向 |
+| [【27届校招】智能座舱研发工程师（北京）](https://xiaopeng.jobs.feishu.cn/campus/position/7658239772267874598/detail) | 校招 | 2027届 | 北京 | 应用研发 |
+| [【27届校招】智能座舱云端Agent研发工程师（北京）](https://xiaopeng.jobs.feishu.cn/campus/position/7658239772267186470/detail) | 校招 | 2027届 | 北京 | 应用研发 |
+| [【27届校招】智能座舱端侧Agent研发工程师（北京）](https://xiaopeng.jobs.feishu.cn/campus/position/7658239766438398235/detail) | 校招 | 2027届 | 北京 | 应用研发 |
+| [【27届校招】语音大模型算法工程师（北京/上海）](https://xiaopeng.jobs.feishu.cn/campus/position/7658239766438054171/detail) | 校招 | 2027届 | 北京、上海 | 研究交叉 |
+| [【27届校招】通用智能AI平台研发工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7658239755087415578/detail) | 校招 | 2027届 | 北京、上海、广州 | 应用研发 |
+| [【27届校招】平台开发工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7658239749740972326/detail) | 校招 | 2027届 | 上海、广州 | 应用研发 |
+| [【27届校招】基座模型/多模态模型算法工程师](https://xiaopeng.jobs.feishu.cn/campus/position/7658239749740284198/detail) | 校招 | 2027届 | 上海、北京、深圳 | 研究交叉 |
+| [【27届校招】 软件工程师（自动驾驶仿真）-北京](https://xiaopeng.jobs.feishu.cn/campus/position/7658239739518257454/detail) | 校招 | 2027届 | 北京 | 应用研发 |
+| [【27届校招】 软件工程师（自动驾驶仿真）-广州](https://xiaopeng.jobs.feishu.cn/campus/position/7658239732674447666/detail) | 校招 | 2027届 | 广州 | 应用研发 |
+| [【27届校招】后端开发工程师（自动驾驶仿真）](https://xiaopeng.jobs.feishu.cn/campus/position/7658239732673415474/detail) | 校招 | 2027届 | 上海、广州 | 应用研发 |
+| [【27届校招】AI前瞻培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7658239651849996570/detail) | 校招 | 2027届 | 上海 | 应用研发 |
+| [【27届校招】智能诊断培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7658239646422829358/detail) | 校招 | 2027届 | 广州 | 多方向 |
+| [【27届校招】整车集成测试培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7658239545108531494/detail) | 校招 | 2027届 | 广州 | 评测研发 |
+| [【27届校招】AI算法培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7658230816728172827/detail) | 校招 | 2027届 | 广州 | 应用研发 |
+| [具身软件系统实习生](https://xiaopeng.jobs.feishu.cn/campus/position/7627121367213001006/detail) | 实习 | 未披露 | 深圳、上海 | 多方向 |
 
 ## 理想汽车（79）
 
