@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T06:47:57.808890+00:00。收录 **2308 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
+本次核验：2026-10-09T11:53:28Z。收录 **2316 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -75,7 +75,7 @@
 | [【留用实习】AI应用开发工程师-前端技术](https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12515) | 实习 | 2027届（官方项目）；详见任职要求 | 北京 | 应用研发 |
 | [【快Star实习】电商AI搜索算法工程师](https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12479) | 实习 | 2027届（官方项目）；详见任职要求 | 杭州 | 应用研发 |
 
-## 百度（33）
+## 百度（35）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -112,8 +112,10 @@
 | [北京-后端开发工程师(J100737)](https://talent.baidu.com/jobs/detail/GRADUATE/72145a13-5eb1-41ce-8853-d00aa7369281) | 校招 | 2027届，2026-09-01至2027-08-31毕业 | 北京市 | 应用研发 |
 | [北京-AI网络工程师(J104899)](https://talent.baidu.com/jobs/detail/GRADUATE/211b04aa-696c-4d8e-9d89-bf324e4910c1) | 校招 | 2027届，2026-09-01至2027-08-31毕业 | 北京市 | 多方向 |
 | [深圳-AI网络工程师(J104904)](https://talent.baidu.com/jobs/detail/GRADUATE/03133d02-d2e2-41e3-b81f-347098401d4d) | 校招 | 2027届，2026-09-01至2027-08-31毕业 | 深圳市 | 多方向 |
+| [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
+| [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（7）
+## 腾讯（13）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -124,6 +126,12 @@
 | [财经线培训生-AI应用开发](https://join.qq.com/post_detail.html?postid=1231428449378641920) | 实习 | 未明确 | 深圳总部 | 应用研发 |
 | [财经线培训生-AI应用开发](https://join.qq.com/post_detail.html?postid=1284634302709277696) | 校招 | 2027校园招聘（官方列表项目） | 深圳总部 | 应用研发 |
 | [Agent开发工程师](https://join.qq.com/post_detail.html?postid=1282707395466077184) | 校招 | 2027校园招聘（官方列表项目） | 深圳总部、北京、上海、广州、成都 | 应用研发 |
+| [AI算法工程](https://join.qq.com/post_detail.html?postid=1282707395466077186) | 校招 | 2027届 | 深圳总部、北京、上海、广州 | 研究交叉 |
+| [AI全栈工程师](https://join.qq.com/post_detail.html?postid=1285602630219236352) | 实习 | 未披露 | 深圳总部、上海、广州 | 应用研发 |
+| [AI全栈工程师](https://join.qq.com/post_detail.html?postid=1283878456077394944) | 实习 | 未披露 | 深圳总部、北京、广州、成都 | 应用研发 |
+| [AI算法工程](https://join.qq.com/post_detail.html?postid=1292202515139771392) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [Coding Agent Research Intern](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Coding-Agent-Research-Intern_R108097) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
+| [WXG-WeLM Agentic 系统](https://join.qq.com/post_detail.html?postid=1274481034578500726) | 校招 | 未披露 | 北京 | 研究交叉 |
 
 ## 美团（89）
 
@@ -2061,28 +2069,28 @@
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
-| [（27届秋招）算法工程师-搜广推方向-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/d71a9c82-13ed-4265-bbd3-98c1c399361b) | 校招 | 2027届 | 北京市 | 应用研发 |
-| [（27届秋招）算法工程师-搜广推方向-上海](https://app.mokahr.com/campus_apply/shopee/2962#/job/22e75101-8b9c-47c9-b842-760f9074df6c) | 校招 | 2027届 | 上海市 | 应用研发 |
+| [（27届秋招）算法工程师-搜广推方向-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/d71a9c82-13ed-4265-bbd3-98c1c399361b) | 校招 | 2027届 | 北京市 | 研究交叉 |
+| [（27届秋招）算法工程师-搜广推方向-上海](https://app.mokahr.com/campus_apply/shopee/2962#/job/22e75101-8b9c-47c9-b842-760f9074df6c) | 校招 | 2027届 | 上海市 | 研究交叉 |
 | [（27届秋招）Agent开发工程师-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/9486e61b-b3d0-4a43-ac93-19a1b2575a57) | 校招 | 2027届 | 北京市 | 应用研发 |
 | [（27届秋招）GRC 自动化合规工程师-深圳](https://app.mokahr.com/campus_apply/shopee/2962#/job/380d0bb3-69a7-4c35-8081-5039e0be2e0c) | 校招 | 2027届 | 深圳市 | 应用研发 |
 | [（27届秋招）AI 基础设施研发工程师-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/d9885a55-bba0-4ac2-aae1-9970cb152b1f) | 校招 | 2027届 | 北京市 | 应用研发 |
-| [（27届秋招）算法工程师-AI应用方向-上海](https://app.mokahr.com/campus_apply/shopee/2962#/job/58a86a9d-0a18-43a9-86d1-71984b2d431c) | 校招 | 2027届 | 上海市 | 应用研发 |
-| [（27届秋招）算法工程师-AI应用方向-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/312d6859-8476-476e-b16f-255510820eb0) | 校招 | 2027届 | 北京市 | 应用研发 |
+| [（27届秋招）算法工程师-AI应用方向-上海](https://app.mokahr.com/campus_apply/shopee/2962#/job/58a86a9d-0a18-43a9-86d1-71984b2d431c) | 校招 | 2027届 | 上海市 | 研究交叉 |
+| [（27届秋招）算法工程师-AI应用方向-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/312d6859-8476-476e-b16f-255510820eb0) | 校招 | 2027届 | 北京市 | 研究交叉 |
 | [（27届秋招）Android开发工程师-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/f4056f11-5f14-41a4-b190-e36831990a36) | 校招 | 2027届 | 北京市 | 应用研发 |
-| [（27届秋招）算法工程师-风控方向-深圳](https://app.mokahr.com/campus_apply/shopee/2962#/job/d9064a42-6120-45d8-8ec5-7a7b99968ea7) | 校招 | 2027届 | 深圳市 | 应用研发 |
+| [（27届秋招）算法工程师-风控方向-深圳](https://app.mokahr.com/campus_apply/shopee/2962#/job/d9064a42-6120-45d8-8ec5-7a7b99968ea7) | 校招 | 2027届 | 深圳市 | 研究交叉 |
 | [（27届秋招）iOS开发工程师-北京](https://app.mokahr.com/campus_apply/shopee/2962#/job/4f2e0991-977e-4286-bd29-b3e11a23cbef) | 校招 | 2027届 | 北京市 | 应用研发 |
-| [（27届秋招）算法工程师-风控方向-上海](https://app.mokahr.com/campus_apply/shopee/2962#/job/bffb01d8-9feb-4b8b-8d51-195bb3ca113b) | 校招 | 2027届 | 上海市 | 应用研发 |
+| [（27届秋招）算法工程师-风控方向-上海](https://app.mokahr.com/campus_apply/shopee/2962#/job/bffb01d8-9feb-4b8b-8d51-195bb3ca113b) | 校招 | 2027届 | 上海市 | 研究交叉 |
 | [（27届秋招）Agent开发工程师-深圳](https://app.mokahr.com/campus_apply/shopee/2962#/job/0a78a233-598a-408c-81c1-77481f270ef3) | 校招 | 2027届 | 深圳市 | 应用研发 |
 | [AI Solutions Engineer (Engineering Infrastructure) - Sea Labs](https://careers.shopee.cn/job-detail/J00291231/1?channel=10001) | 校招 | 未披露 | Jakarta | 应用研发 |
-| [Algorithm Engineer Intern, Search Guide  (May - Dec 2025)](https://careers.shopee.cn/job-detail/J00379432/1?channel=10001) | 实习 | 未披露 | Singapore | 应用研发 |
+| [Algorithm Engineer Intern, Search Guide  (May - Dec 2025)](https://careers.shopee.cn/job-detail/J00379432/1?channel=10001) | 实习 | 未披露 | Singapore | 研究交叉 |
 | [Data Analyst Applied AI Intern, Buyer & Marketing - Business Intelligence (Spring 2027)](https://careers.shopee.cn/job-detail/J02037906/1?channel=10001) | 实习 | 未披露 | Singapore | 应用研发 |
 | [Regional Large Language Model (LLM) Agent & Prompt Engineering Intern (Spring 2027)](https://careers.shopee.cn/job-detail/J02042064/1?channel=10001) | 实习 | 未披露 | Singapore | 应用研发 |
 | [AI Solution Engineer](https://careers.shopee.cn/job-detail/J02047562/1?channel=10001) | 校招 | 未披露 | Jakarta | 应用研发 |
 | [AI Automation & Operations Intelligence Intern - Regional SPX Express (Spring 2027)](https://careers.shopee.cn/job-detail/J02098466/1?channel=10001) | 实习 | 未披露 | Singapore | 多方向 |
 | [AI Automation & Operations Intelligence Intern - Regional SPX Express (Spring 2026)](https://careers.shopee.cn/job-detail/J02105769/1?channel=10001) | 实习 | 未披露 | Singapore | 多方向 |
 | [Automation Compliance Engineer Intern, IT Compliance (Fall 2026/ Spring 2027)](https://careers.shopee.cn/job-detail/J02153415/1?channel=10001) | 实习 | 未披露 | Singapore | 应用研发 |
-| [Chatbot Algorithm Engineer - Marketplace Intelligence and Data (2027 Graduate)](https://careers.shopee.cn/job-detail/J02170656/1?channel=10001) | 校招 | 2027届 | Singapore | 应用研发 |
-| [Algorithm Engineer, SRA - Promotion (2027 Graduate)](https://careers.shopee.cn/job-detail/J02171264/1?channel=10001) | 校招 | 2027届 | Singapore | 应用研发 |
+| [Chatbot Algorithm Engineer - Marketplace Intelligence and Data (2027 Graduate)](https://careers.shopee.cn/job-detail/J02170656/1?channel=10001) | 校招 | 2027届 | Singapore | 研究交叉 |
+| [Algorithm Engineer, SRA - Promotion (2027 Graduate)](https://careers.shopee.cn/job-detail/J02171264/1?channel=10001) | 校招 | 2027届 | Singapore | 研究交叉 |
 | [Backend Engineer, SRA - Promotion (2027 Graduate)](https://careers.shopee.cn/job-detail/J02171637/1?channel=10001) | 校招 | 2027届 | Singapore | 应用研发 |
 | [Cybersecurity Engineer (Web Security) - Information Security (2027 Graduate)](https://careers.shopee.cn/job-detail/J02172090/1?channel=10001) | 校招 | 2027届 | Singapore | 应用研发 |
 | [Chatbot Algorithm Engineer Intern, Marketplace Intelligence & Data (Fall 2026)](https://careers.shopee.cn/job-detail/J02183308/1?channel=10001) | 实习 | 未披露 | Singapore | 应用研发 |
@@ -2227,22 +2235,22 @@
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
-| [AI测试开发工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/366a8b20-f6a9-4c56-a2b6-020a2fcca50e) | 校招 | 2027届 | {'country': '中国', 'province': '上海市', 'city': '浦东新区', 'city_code': 310115} | 应用研发 |
-| [AI测试开发工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/6c748fd3-e45a-4ad0-9843-ad5af2e60313) | 校招 | 2027届 | {'country': '中国', 'province': '北京市', 'city': '北京市', 'city_code': 110000} | 应用研发 |
-| [AI测试开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/be2836f4-b04b-4167-83c9-c2cb455fbd45) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [大前端开发工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/9318543d-f926-40a6-8732-9ab0c50b5ff2) | 校招 | 2027届 | {'country': '中国', 'province': '北京市', 'city': '北京市', 'city_code': 110000} | 应用研发 |
-| [AI DevOps 工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/111df3b5-9381-4082-bdfc-a4c010a5b9a7) | 校招 | 2027届 | {'country': '中国', 'province': '上海市', 'city': '上海市', 'city_code': 310000} | 应用研发 |
-| [AI DevOps 工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/e54c9f76-2333-4427-bad8-d6337b7c95ed) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [测试 Infra 工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/5011b218-ebe6-4321-b190-cf495d7c4d05) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [测试 Infra 工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/bf5d720b-dbac-4e55-be28-589ccecae450) | 校招 | 2027届 | {'country': '中国', 'province': '上海市', 'city': '上海市', 'city_code': 310000} | 应用研发 |
-| [AI DevOps 工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/67c25b26-6a6f-4f91-baef-46c5d9821794) | 校招 | 2027届 | {'country': '中国', 'province': '北京市', 'city': '北京市', 'city_code': 110000} | 应用研发 |
-| [后端开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/2892023c-7cf6-46ea-9b41-999055a170d4) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [Agent 智能作业算法工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/126cafe7-625d-4cd4-a042-c2dbd5046202) | 校招 | 2027届 | {'country': '中国', 'province': '上海市', 'city': '浦东新区', 'city_code': 310115} | 应用研发 |
-| [Agent 智能作业算法工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/31df987f-ed36-4d41-a713-2074f3fec936) | 校招 | 2027届 | {'country': '中国', 'province': '北京市', 'city': '北京市', 'city_code': 110000} | 应用研发 |
-| [Agent 智能作业算法工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/f0102230-d20e-4daf-9d5c-acaf78e518a8) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [AI全栈开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/868688c0-254c-4b00-8473-c774f9abf826) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [大前端开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/3ce17267-5405-4217-8478-eabf54b9fee5) | 校招 | 2027届 | {'country': '中国', 'province': '广东', 'city': '深圳市', 'city_code': 440300} | 应用研发 |
-| [C++开发工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/3b01ef91-a331-4b19-9ae5-d77580724cd4) | 校招 | 2027届 | {'country': '中国', 'province': '北京市', 'city': '北京市', 'city_code': 110000} | 应用研发 |
+| [AI测试开发工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/366a8b20-f6a9-4c56-a2b6-020a2fcca50e) | 校招 | 2027届 | 中国·上海市·浦东新区 | 应用研发 |
+| [AI测试开发工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/6c748fd3-e45a-4ad0-9843-ad5af2e60313) | 校招 | 2027届 | 中国·北京市 | 应用研发 |
+| [AI测试开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/be2836f4-b04b-4167-83c9-c2cb455fbd45) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [大前端开发工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/9318543d-f926-40a6-8732-9ab0c50b5ff2) | 校招 | 2027届 | 中国·北京市 | 应用研发 |
+| [AI DevOps 工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/111df3b5-9381-4082-bdfc-a4c010a5b9a7) | 校招 | 2027届 | 中国·上海市 | 应用研发 |
+| [AI DevOps 工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/e54c9f76-2333-4427-bad8-d6337b7c95ed) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [测试 Infra 工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/5011b218-ebe6-4321-b190-cf495d7c4d05) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [测试 Infra 工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/bf5d720b-dbac-4e55-be28-589ccecae450) | 校招 | 2027届 | 中国·上海市 | 应用研发 |
+| [AI DevOps 工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/67c25b26-6a6f-4f91-baef-46c5d9821794) | 校招 | 2027届 | 中国·北京市 | 应用研发 |
+| [后端开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/2892023c-7cf6-46ea-9b41-999055a170d4) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [Agent 智能作业算法工程师（上海）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/126cafe7-625d-4cd4-a042-c2dbd5046202) | 校招 | 2027届 | 中国·上海市·浦东新区 | 应用研发 |
+| [Agent 智能作业算法工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/31df987f-ed36-4d41-a713-2074f3fec936) | 校招 | 2027届 | 中国·北京市 | 应用研发 |
+| [Agent 智能作业算法工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/f0102230-d20e-4daf-9d5c-acaf78e518a8) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [AI全栈开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/868688c0-254c-4b00-8473-c774f9abf826) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [大前端开发工程师（深圳）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/3ce17267-5405-4217-8478-eabf54b9fee5) | 校招 | 2027届 | 中国·广东·深圳市 | 应用研发 |
+| [C++开发工程师（北京）](https://apply.careers.dji.com/campus-recruitment/dji/143359#/job/3b01ef91-a331-4b19-9ae5-d77580724cd4) | 校招 | 2027届 | 中国·北京市 | 应用研发 |
 
 ## 度小满（4）
 

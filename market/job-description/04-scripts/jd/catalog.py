@@ -102,12 +102,17 @@ def render_catalog(catalog):
     labels={'应用与Agent核心研发':'应用研发','评测与测试工具研发':'评测研发','算法或研究与应用工程混合':'研究交叉','多方向或跨职能工程':'多方向'}
     def cell(value):
         return str(value or '未单列').replace('|', '／').replace('\n', ' ')
+    def location_text(value):
+        if not isinstance(value, dict):
+            return str(value)
+        parts = [str(value[key]) for key in ('country', 'province', 'city') if value.get(key)]
+        return '·'.join(dict.fromkeys(parts)) or '未披露'
     for company in catalog['companies']:
         if not company['jobs']: continue
         lines += [f"## {company['company']}（{len(company['jobs'])}）", '', '| 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |', '| --- | --- | --- | --- | --- |']
         for job in company['jobs']:
             kind={'campus':'校招','internship':'实习'}[job['recruitment_type']]
-            locations='、'.join(str(x) for x in job['locations']) or '未披露'
+            locations='、'.join(location_text(x) for x in job['locations']) or '未披露'
             title=cell(job['title']).replace('[','（').replace(']','）')
             lines.append(f"| [{title}]({job['official_url']}) | {kind} | {cell(job.get('cohort') or '未披露')} | {cell(locations)} | {labels[job['role_track']]} |")
         lines.append('')
