@@ -262,7 +262,7 @@ assert dispatch({"name": "delete_document", "arguments": {}}, {"A"})["status"] =
 
 - [工具契约](04-ToolContractAndValidation.md)：回看说明、输入规则与授权边界。
 - [MCP 完整往返](16-MCPArchitectureAndLifecycle.md)：观察外部目录怎样接到宿主工具系统。
-- [固定注册与投影实现](../../../references/agent/implementation-notes.md#chapter-05)：跟踪注册表、模型可见说明和处理器的实际分离。
+- [固定注册与投影实现](../../../products/claude-code/03-tool-lifecycle.md#implementation-chapter-05)：跟踪注册表、模型可见说明和处理器的实际分离。
 
 
 ---

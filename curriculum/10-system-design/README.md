@@ -1,75 +1,43 @@
-# System Design｜从业务承诺到可验证的 AI 系统方案
+# System Design｜从需求推导容量、状态、协作与故障方案
 
-[← Agent](../09-agent/README.md) · [课程目录](../README.md) · [Handbook](../../README.md) · [学习路线](../../guide/learning-path.md)
+[← Agent](../09-agent/README.md) · [课程目录](../README.md) · [Handbook](../../README.md)
 
-系统设计把接口、存储、模型、检索和执行机制放在同一组业务约束里，说明用户能得到什么、工作怎样完成，以及失败后怎样保持正确。学习目标是能够推导一套方案，解释替代方案和代价，并设计能够检验承诺的实验，而不是记住一幅组件图。
+从用户动作与完成条件建立方案，逐步推导容量、状态归属、数据流、可靠性与 AI 应用设计。
 
-## 学习前提与边界
+## 学习前提与目标
 
-推荐先掌握请求与响应、事务与唯一约束、缓存、异步任务，以及模型、RAG 和 Agent 的基本过程。必要回看入口为 [Backend](../03-backend-engineering/README.md)、[RAG](../08-rag/README.md)和 [Agent](../09-agent/README.md)。各章仍会建立当前问题所需的最小模型，不要求先搭建所有服务。
+在前九个模块基础上练习整体取舍；按具体设计问题回看相关机制。
 
-数据库内部、消息协议与框架 API 在对应模块深入学习；本模块重点是跨组件的数据责任、容量、故障边界和取舍。所有示例业务、负载、价格和结果均明确作为教学假设，不代表已运行的生产系统。
+学完后应能从需求推导容量、状态、协作与故障方案。
 
-## 正文主线
+## 学习顺序
 
-先从报告助手的一次提交建立需求、容量和状态；再讨论数据怎样被缓存、分区、协作与保护；最后改变场景，用同一套机制推导高并发、实时数据、模型网关、企业 RAG 和长期 Agent。
+1. [01｜系统设计：从用户的一次操作推导整套方案](docs/01-SystemDesign职责与答题框架.md)
+2. [02｜需求与 SLO：怎样把“好用”变成可检查的承诺](docs/02-Requirement与SLO.md)
+3. [03｜工作负载与容量：把请求换算成资源和费用](docs/03-Workload与CapacityEstimation.md)
+4. [04｜API 与数据模型：谁拥有事实，谁可以改变它](docs/04-API数据模型与StateOwnership.md)
+5. [05｜数据流与状态机：请求被接受以后，谁继续把它做完](docs/05-DataFlow与StateMachine.md)
+6. [06｜缓存与热点：省下重复工作之后，怎样处理旧结果和回源](docs/06-Cache与HotPath.md)
+7. [07｜分区、路由与聚合：数据拆开后，一次查询要找谁](docs/07-PartitionRouting与Fanout.md)
+8. [08｜一致性与幂等：怎样守住不可破坏的业务条件](docs/08-Consistency与Idempotency.md)
+9. [09｜队列与长任务：积压怎样形成，工作者怎样安全接管](docs/09-QueueBackpressure与LongRunningTask.md)
+10. [10｜可靠性与过载：失败时怎样保护剩余的成功机会](docs/10-Reliability与Overload.md)
+11. [11｜多租户与安全：同一套服务怎样守住不同用户的边界](docs/11-MultiTenancy与Security.md)
+12. [12｜观测、评测与演进：怎样证明方案有效，怎样安全改变它](docs/12-ObservabilityEvaluation与Evolution.md)
+13. [13｜高并发交易：让有限资源只被合法消耗一次](docs/13-HighConcurrencyTransactionalSystems.md)
+14. [14｜实时读模型：怎样让用户看到正确的最近数据](docs/14-RealtimeReadHeavySystems.md)
+15. [15｜大规模数据处理：让容量、查询与恢复共同成立](docs/15-LargeScaleDataProcessingSystems.md)
+16. [16｜LLM 网关：把模型选择、交付和费用放进同一条请求链](docs/16-LLMGateway与MultiTenantAIPlatform.md)
+17. [17｜企业 RAG：把知识更新、在线回答与权限治理组合起来](docs/17-EnterpriseRAGSystemDesign.md)
+18. [18｜生产级 Agent 后端：让一次长任务跨越断线、重启与批准](docs/18-ProductionAgentBackend.md)
+19. [19｜垂直 AI 系统：从领域规则推导证据、工具与验收](docs/19-VerticalAIAgentPatterns.md)
 
-```text
-用户动作与完成条件
-    ↓
-工作量、资源和状态责任
-    ↓
-正常数据流与协作边界
-    ↓
-正确性、过载、权限与恢复
-    ↓
-观察、评估与安全演进
-    ↓
-在不同业务条件下组合与取舍
-```
+## 正文与复习
 
-文件路径保留稳定编号。以下目录和章首、章末导航共同表达实际阅读顺序。
+首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界，再用章末自测检查能否独立解释。第二遍使用 [Review](review/README.md)重建关系，并改变条件验证结论。
 
-| 顺序 | 知识章 | 需要解决的问题 |
-|---:|---|---|
-| 01 | [01｜系统设计：从用户的一次操作推导整套方案](docs/01-SystemDesign职责与答题框架.md) | 怎样从用户的一次操作推导方案，而不是先选组件？ |
-| 02 | [02｜需求与 SLO：怎样把“好用”变成可检查的承诺](docs/02-Requirement与SLO.md) | 如何定义成功、统计窗口、分母与不能降低的正确性要求？ |
-| 03 | [03｜工作负载与容量：把请求换算成资源和费用](docs/03-Workload与CapacityEstimation.md) | 怎样把入口请求换算成调用、并发、Token、存储、带宽和费用？ |
-| 04 | [04｜API 与数据模型：谁拥有事实，谁可以改变它](docs/04-API数据模型与StateOwnership.md) | 对象、操作、任务分别怎样识别，恢复时相信哪一份状态？ |
-| 05 | [05｜数据流与状态机：请求被接受以后，谁继续把它做完](docs/05-DataFlow与StateMachine.md) | 受理、执行、完成和取消怎样分别成为可观察的事实？ |
-| 06 | [06｜缓存与热点：省下重复工作之后，怎样处理旧结果和回源](docs/06-Cache与HotPath.md) | 缓存怎样节省工作，又怎样在更新、失效和热点下出错？ |
-| 07 | [07｜分区、路由与聚合：数据拆开后，一次查询要找谁](docs/07-PartitionRouting与Fanout.md) | 怎样根据访问方式拆数据，并判断跨分片合并是否完整？ |
-| 08 | [08｜一致性与幂等：怎样守住不可破坏的业务条件](docs/08-Consistency与Idempotency.md) | 并发、重复和结果未知分别需要什么正确性机制？ |
-| 09 | [09｜队列与长任务：积压怎样形成，工作者怎样安全接管](docs/09-QueueBackpressure与LongRunningTask.md) | 处理能力不足时工作怎样排队，崩溃后由谁继续？ |
-| 10 | [10｜可靠性与过载：失败时怎样保护剩余的成功机会](docs/10-Reliability与Overload.md) | 慢依赖怎样导致级联故障，何时拒绝、重试、降级或恢复？ |
-| 11 | [11｜多租户与安全：同一套服务怎样守住不同用户的边界](docs/11-MultiTenancy与Security.md) | 数据、权限、执行环境和资源配额怎样形成完整隔离？ |
-| 12 | [12｜观测、评测与演进：怎样证明方案有效，怎样安全改变它](docs/12-ObservabilityEvaluation与Evolution.md) | 如何定位慢与错，证明优化有效，并安全改变系统？ |
-| 13 | [13｜高并发交易：让有限资源只被合法消耗一次](docs/13-HighConcurrencyTransactionalSystems.md) | 库存、限额、共享凭证和二维码怎样竞争有限的执行资格？ |
-| 14 | [14｜实时读模型：怎样让用户看到正确的最近数据](docs/14-RealtimeReadHeavySystems.md) | 最新消息、排行榜、Feed、联想和通知怎样得到及时且正确的视图？ |
-| 15 | [15｜大规模数据处理：让容量、查询与恢复共同成立](docs/15-LargeScaleDataProcessingSystems.md) | 大数据怎样存、查、迁移、去重和分块处理？ |
-| 16 | [16｜LLM 网关：把模型选择、交付和费用放进同一条请求链](docs/16-LLMGateway与MultiTenantAIPlatform.md) | 模型能力、配额、流式交付和费用怎样形成统一入口？ |
-| 17 | [17｜企业 RAG：把知识更新、在线回答与权限治理组合起来](docs/17-EnterpriseRAGSystemDesign.md) | 企业知识怎样在规模、质量、版本和权限之间保持一致？ |
-| 18 | [18｜生产级 Agent 后端：让一次长任务跨越断线、重启与批准](docs/18-ProductionAgentBackend.md) | 长时间 Agent 怎样跨连接、执行者与部署继续工作？ |
-| 19 | [19｜垂直 AI 系统：从领域规则推导证据、工具与验收](docs/19-VerticalAIAgentPatterns.md) | 垂直业务怎样分配确定性计算、模型判断和人工责任？ |
+面试准备集中在 [本知识域](../../interview/system-design/README.md)：[高频面试题](../../interview/system-design/01-高频面试题.md)、[易混易错点](../../interview/system-design/02-易混易错点.md)与[面试速查](../../interview/system-design/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
 
-## 学习、练习与回看
+技术资料提供系统设计的进一步查证入口。
 
-第一次沿正文阅读，先说明输入、状态变化与结果，再改变一个条件，检查原结论是否仍成立。章末“🎯 面试怎么答”组织已经讲过的机制；自测先给完整任务，提示与参考答案分别折叠。
-
-| 入口 | 用途 |
-|---|---|
-| [Review 与综合自测](review/README.md) | 用六张关系图重建主线，再做跨章节推演 |
-| [独立设计任务](review/README.md#独立设计任务为两个团队交付报告助手) | 从空白纸交付职责图、容量、状态与失败方案，并解释条件改变后的取舍 |
-| [机制实验](review/README.md#机制实验) | 核对容量、积压、窗口、防重、代际、预算与二维码状态 |
-| [高频面试题](interview/高频面试题.md) | 沿具体问法与连续追问练习有条件的回答 |
-| [面试易错点](interview/面试易错点.md) | 纠正把不同事实、时间窗口或保证范围混在一起的说法 |
-| [面试前速查表](interview/面试前速查表.md) | 快速唤起机制，不能替代首次学习 |
-| [技术参考](references.md) | 按具体问题查官方语义、适用范围和课程中的使用位置 |
-
-机制实验选择 Python 3.13 标准库，属于本地确定性模型，不依赖数据库或模型账号；它不证明真实数据库并发、消息交付或供应商行为。目标环境、实际执行和未验证范围见[初版审查记录](../../guide/audits/system-design-reader-first-2026-09-28.md)与[讲解精修记录](../../guide/audits/system-design-clarity-refinement-2026-09-28.md)。
-
-## 证据与完成标准
-
-[Market](../../market/README.md)保存正式真人面经，[Canonical](../../interview/canonical/system-design.md)保存归一化问法及其冻结统计。它们校准岗位关注的问题和追问条件，不作为技术答案的证明，也不决定初学者的章节顺序。
-
-完成本模块意味着能独立解释一次正常过程、指出失败窗口、给出带单位的估算，并面对新条件修正方案。目录完整、代码能运行和旧版审计通过，都不能单独证明已经达到这个目标。
+技术事实以正文引用的官方资料及适用范围为依据；[Market](../../market/README.md)中的真实岗位与面试材料用于校准学习深度，不能代替技术证明。

@@ -206,7 +206,7 @@
 - [权限与沙箱](14-PermissionApprovalAndSandbox.md)：理解真实动作边界。
 - [Agents SDK guardrails](https://openai.github.io/openai-agents-python/guardrails/)：核对检查时机和工具覆盖范围。
 - [Claude Code sandboxing](https://code.claude.com/docs/en/sandboxing)：对照环境限制而非仅靠提示。
-- [固定安全实现对照](../../../references/agent/implementation-notes.md#chapter-15)：明确产品能力和通用安全目标的区别。
+- 固定安全实现对照：明确产品能力和通用安全目标的区别。
 
 
 ---

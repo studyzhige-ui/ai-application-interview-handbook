@@ -207,7 +207,7 @@ Trace（调用追踪）关联同一请求各阶段的输入摘要、输出身份
 
 ## 知识回看与权威资料
 
-回看 [版本、撤权与缓存边界](12-ProductionGovernance.md)、[质量与成本的联合比较](11-EndToEndQualityEngineering.md)。通用队列、重试和限流的完整机制见 [Backend 模块](../../03-backend-engineering/README.md)。
+回看 [版本、撤权与缓存边界](12-ProductionGovernance.md)、[质量与成本的联合比较](11-EndToEndQualityEngineering.md)。通用队列、重试和限流的完整机制见 [Backend 模块](../../05-backend-engineering/README.md)。
 
 [PyMuPDF OCR 文档](https://pymupdf.readthedocs.io/en/latest/recipes-ocr.html)用于核对按需 OCR 与结果复用；[HTTP Retry-After](https://www.rfc-editor.org/rfc/rfc9110.html#name-retry-after)用于核对等待提示的含义。本文速率、容量和费用均为教学假设，不是厂商性能承诺。
 

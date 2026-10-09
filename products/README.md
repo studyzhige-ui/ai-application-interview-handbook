@@ -1,81 +1,35 @@
-# Products｜成熟 AI 系统源码学习
+# Products｜优秀产品学习
 
-[↑ Handbook 总目录](../README.md) · [Curriculum](../curriculum/README.md) · [Practice](../practice/README.md) · [References](../references/README.md) · [Learning Path](../guide/learning-path.md)
+[Handbook](../README.md) · [通用课程](../curriculum/README.md) · [实践](../practice/README.md)
 
-> Products 回答：**成熟 AI Application / Agent 产品怎样把多个通用机制组合成可运行、可恢复、可诊断、可验证的完整系统？**
+沿具体产品的固定源码快照，理解上下文、记忆、工具、权限、恢复与验证怎样组成完整运行过程。每个产品由 README 提供介绍、整体概览、阅读入口和源码地址，学习正文直接放在产品目录下。
 
-## 1. 这一层解决什么
+## 产品入口与源码
 
-Curriculum 按知识依赖拆开学习机制；Products 沿真实产品的固定源码快照重新把这些机制组合起来。
-
-```text
-Curriculum
-→ 学清楚 Context / Memory / Tool / Database / Runtime / Evaluation 等通用机制
-→ Products
-→ 沿真实对象、调用链、状态变化和 Failure Path 还原完整系统
-→ Practice / System Design / Interview
-→ 把观察到的工程取舍迁移到自己的实现与表达
-```
-
-Products 的目标不是背产品 API，也不是把源码字段翻译成中文，而是回答：
-
-- 用户任务怎样进入系统并形成一次真实执行；
-- 多个模块怎样共享状态、上下文、权限与持久化边界；
-- 正常路径、失败路径、恢复路径分别由谁负责；
-- 为什么成熟产品会采用不同的工程取舍；
-- 哪些结论属于某个固定版本，哪些可以抽象成更通用的工程知识。
-
-## 2. 与其他层的边界
-
-| 层 | 主要问题 |
-|---|---|
-| [Curriculum](../curriculum/README.md) | 应该系统掌握哪些可迁移机制？ |
-| **Products** | 成熟系统怎样把这些机制组合成真实产品？ |
-| [Practice](../practice/README.md) | 自己怎样实现、修改、调试和交付？ |
-| [References](../references/README.md) | 技术事实、固定版本与源码依据是什么？ |
-| [Market](../market/README.md) | 企业招什么、真实面试问什么？ |
-| [Interview](../interview/README.md) | 怎样把市场证据归一化为可训练能力？ |
-
-Products 不创建新的 Canonical Ownership，不改变 Curriculum 顺序，也不增加 HUMAN-A Source Count。
-
-## 3. 产品类别
-
-| 类别 | 学习范围 | 入口 |
+| 产品 | 学习入口 | 固定源码 |
 |---|---|---|
-| Agent | Coding Agent / Agent Harness / Super Agent Runtime | [进入](agent/README.md) |
+| OpenAI Codex | [OpenAI Codex](codex/README.md) | [openai/codex@67a709665a](https://github.com/openai/codex/tree/67a709665ac7b50311b93e32612c9a8281684787) |
+| Claude Code | [Claude Code](claude-code/README.md) | [studyzhige-ui/claude-code-source-private@58231dcce4](https://github.com/studyzhige-ui/claude-code-source-private/tree/58231dcce408f805c645cfbc352d2876b517223b) |
+| DeepSeek Harness | [DeepSeek Harness](deepseek-harness/README.md) | [deepseek-ai/deepseek-harness@477b4f4205](https://github.com/deepseek-ai/deepseek-harness/tree/477b4f420553e8a52c2fbccc464d7561b239c443) |
+| DeerFlow 2.0 | [DeerFlow 2.0](deer-flow/README.md) | [bytedance/deer-flow@e2feca1e56](https://github.com/bytedance/deer-flow/tree/e2feca1e567d9bafce657de8ad8bc668bd7ad513) |
 
-Agent 类别包含四套成熟源码学习基线：
+Claude Code 使用私有学习镜像，需相应访问权限；它不等同于可直接构建的官方完整仓库。源码快照、安装版本和实际运行验证须分别说明。
 
-- [OpenAI Codex](agent/codex/README.md)
-- [Claude Code](agent/claude-code/README.md)
-- [DeepSeek Harness](agent/deepseek-harness/README.md)
-- [DeerFlow 2.0](agent/deer-flow/README.md)
+## 四个产品的架构差异
 
-## 4. 产品源码学习规则
+四个学习模块使用相同的观察问题进行对照；具体能力是否实现、默认开启或可用，须以各自固定快照和入口条件判断，不能从同名栏目推导能力等价。
 
-每套产品学习遵循同一组约束：
+| 产品 | 核心架构 | 状态与模型视图 | 关键边界 |
+|---|---|---|---|
+| [OpenAI Codex](codex/README.md) | 围绕一条用户请求反复组装输入、调用模型、处理工具结果 | 一次 Turn 可以跨多次模型调用；模型输入、工作历史、持久记录分别承担职责 | 工具许可不等于执行成功；上下文压缩不等于长期记忆 |
+| [Claude Code](claude-code/README.md) | 沿一个代码任务理解输入、工具调用和结果回填 | 保存的对话记录不等于每次完整发送给模型的内容；项目约定与反馈各有保存和注入条件 | 私有学习镜像不等于可构建的官方完整源码；批准必须针对实际执行内容 |
+| [DeepSeek Harness](deepseek-harness/README.md) | 插件装配 Agent、Session 和工具，使一次任务经过多轮工作 | 会话记录输入、结果和执行边界；每次请求只取需要的表示 | Profile 与插件入口决定能力是否安装；恢复记录不代表允许重做副作用 |
+| [DeerFlow 2.0](deer-flow/README.md) | 从 Gateway 默认内嵌运行路径进入 RunWorker，再由 Agent 与有序中间件协作 | Thread、Run、ThreadState 与 ModelRequest 分开；检查点和运行证据服务不同问题 | 默认路径与可选执行模式分开；子任务返回结果后仍要检查验收条件 |
 
-1. **固定源码快照。** 版本敏感事实必须绑定 repo、commit 与核验日期。
-2. **产品语义优先。** 先还原产品自己的对象模型与执行路径，再映射到通用课程术语。
-3. **生命周期优先。** Context、Memory、Tool、Permission、Persistence、Recovery、Trace 与 Evaluation 都追到完整输入、状态变化、输出和失败边界。
-4. **事实与解释分开。** 源码直接事实、跨文件调用链结论、工程解释分别表达。
-5. **Failure 与 Tests 属于系统本身。** Retry、Cancel、Approval、Sandbox、Resume、Replay、Metrics、Tests 都纳入阅读。
-6. **不强迫产品同构。** 没有实现的能力明确写成边界，不为了横向对齐虚构模块。
-7. **证据回到 References。** 源码索引、官方规范和固定版本事实由 References 维护。
+各产品 README 负责展开本产品的对象模型、真实请求链和源码边界；Context、Memory、Tool、Permission、Recovery 等专题进入对应生命周期文档。
 
-## 5. 推荐进入方式
+## 阅读方式
 
-Products 建议在对应 Curriculum 模块建立完整知识主线并完成 Review 后进入。Agent 产品的统一入口是 [Agent Products](agent/README.md)。
+先在通用课程建立相应机制，再沿一个产品的完整任务阅读：输入怎样组织成模型可见信息，程序怎样执行动作，状态怎样保存，失败后怎样恢复，最后凭什么证明完成。第一次按产品 README 的实际顺序阅读；完成一套后再横向比较。
 
-第一次阅读一套产品时，优先保持产品内部的连续顺序，不按自己熟悉的术语跳着找文件；完成一套产品后，再进行跨产品比较。
-
-<!-- product-inventory:start -->
-## 模块范围与访问边界
-
-- [Claude Code](agent/claude-code/README.md)：4 篇专题正文，快照 `studyzhige-ui/claude-code-source-private@58231dcce408f805c645cfbc352d2876b517223b`。
-- [Codex](agent/codex/README.md)：4 篇专题正文，快照 `openai/codex@67a709665ac7b50311b93e32612c9a8281684787`。
-- [DeepSeek Harness](agent/deepseek-harness/README.md)：4 篇专题正文，快照 `deepseek-ai/deepseek-harness@477b4f420553e8a52c2fbccc464d7561b239c443`。
-- [DeerFlow 2.0](agent/deer-flow/README.md)：4 篇专题正文，快照 `bytedance/deer-flow@e2feca1e567d9bafce657de8ad8bc668bd7ad513`。
-
-Claude Code 使用学习用私有源码镜像，需相应访问权限；它不等同于可直接构建的官方完整仓库。其他产品也应区分源码快照、安装版本与实际运行验证。
-<!-- product-inventory:end -->
+固定源码说明版本相关事实；引用的调用链说明系统行为；工程解释应由这些事实支持。产品未实现、未启用或未验证的能力应保留边界，不从同名组件推导能力等价。

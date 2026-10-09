@@ -245,7 +245,7 @@ MCP 侧重应用接入能力、资源和模板，A2A 侧重独立 Agent 系统�
 - [工具并发与取消](07-ToolConcurrencyAndCancellation.md)：回看资源冲突和子任务终止。
 - [MCP](16-MCPArchitectureAndLifecycle.md)：对照能力接入与跨系统任务的区别。
 - [A2A specification](https://a2a-protocol.org/latest/specification/)：核对 1.0.0 对象、操作与绑定。
-- [固定协作实现对照](../../../references/agent/implementation-notes.md#chapter-19)：区分产品内部任务与 A2A 协议。
+- [固定协作实现对照](../../../products/claude-code/04-engineering-evaluation.md#implementation-chapter-19)：区分产品内部任务与 A2A 协议。
 
 
 ---

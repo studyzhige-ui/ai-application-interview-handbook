@@ -223,4 +223,4 @@ WebSocket 解决持续双向交流；身份、消息含义、缓冲上限和业�
 - [WebSocket 接口](https://starlette.dev/websockets/)：核对连接状态和关闭行为。
 - [浏览器 WebSocket](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)：核对客户端消息与关闭事件。
 
-真人问题回看：[S089 的弱网恢复](../../../market/interviews/batch-05.md)、[S297 的 WebSocket／轮询选择与用户最近记录](../../../market/interviews/batch-35.md)。本章解释通信与恢复契约；MQ 去重和数据库／缓存一致性不因此变成 WebSocket 的功能。
+真人问题回看：[S089 的弱网恢复](../../../market/interview-experience/01-data/raw/batch-05.md)、[S297 的 WebSocket／轮询选择与用户最近记录](../../../market/interview-experience/01-data/raw/batch-35.md)。本章解释通信与恢复契约；MQ 去重和数据库／缓存一致性不因此变成 WebSocket 的功能。

@@ -123,8 +123,8 @@ RAG 的目标不是让回答看起来有来源，而是让有效、获准、足�
 
 ## 知识回看与权威资料
 
-回看 [LLM Foundation 的 Embedding 与 Reranker](../../07-llm-foundation/docs/09-Embedding与Reranker.md)，理解“表示”和“候选打分”的区别；在线执行职责转入 [Agent 模块](../../09-agent/README.md)。
+回看 [LLM Foundation 的 Embedding 与 Reranker](../../06-llm-foundation/docs/09-Embedding与Reranker.md)，理解“表示”和“候选打分”的区别；在线执行职责转入 [Agent 模块](../../09-agent/README.md)。
 
-[RAG 原始论文](https://arxiv.org/abs/2005.11401)用于理解检索记忆与参数知识的结合；[本模块资料索引](../../../references/rag/README.md)按后续问题组织技术依据。
+[RAG 原始论文](https://arxiv.org/abs/2005.11401)用于理解检索记忆与参数知识的结合；本模块资料索引按后续问题组织技术依据。
 
 [← 学习前提](../README.md#prerequisites) · [模块目录](../README.md) · [第 02 章 →](02-CorpusGovernance.md)

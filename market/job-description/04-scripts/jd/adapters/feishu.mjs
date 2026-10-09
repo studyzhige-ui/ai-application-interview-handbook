@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+/** Explicit, bounded first-party Feishu ATS list and detail collection. */
+import { collectPaged, runCLI, validateOptions } from "./bounded.mjs";
+
+function label(value) {
+  if (typeof value === "string") return value;
+  return value?.zh_cn || value?.i18n || value?.en_us || "";
+}
+
+export function feishuSpecification(source, overrides = {}) {
+  const host = source.feishu_host || new URL(source.portal).hostname;
+  const channel = overrides.channel || source.feishu_channel || new URL(source.portal).pathname.split("/").filter(Boolean)[0] || "campus";
+  const api = overrides.api || source.api || `https://${host}/api/v1/search/job/posts`;
+  const origin = new URL(api).origin;
+  const detailRoot = overrides.detailRoot || source.feishu_apply_prefix || `${origin}/${channel}/position`;
+  const headers = {
+    "Accept": "application/json, text/plain, */*", "Content-Type": "application/json",
+    "portal-platform": "pc", "portal-channel": channel, "website-path": channel,
+    "Origin": origin, "Referer": source.portal,
+  };
+  return {
+    listRequest(offset, limit) {
+      const body = {
+        keyword: "", limit, offset, portal_type: 3, portal_entrance: 1, language: "zh",
+        job_category_id_list: [], location_code_list: [],
+        subject_id_list: source.feishu_subject_ids || [],
+        recruitment_id_list: overrides.recruitmentIds || source.feishu_recruitment_ids || [],
+      };
+      return { url: api, init: { method: "POST", headers, body: JSON.stringify(body) } };
+    },
+    listData(payload) {
+      if (payload.code !== 0) throw new Error(`First-party ATS code=${payload.code}: ${payload.message || ""}`);
+      const data = payload.data || {};
+      return { rows: data.job_post_list, total: data.count == null ? null : Number(data.count) };
+    },
+    detailRequest(row) {
+      if (row.id == null || row.id === "") return null;
+      return { url: `${origin}/api/v1/job/posts/${encodeURIComponent(row.id)}`, init: { headers } };
+    },
+    detailData(payload) {
+      if (payload.code !== 0) throw new Error(`First-party ATS detail code=${payload.code}: ${payload.message || ""}`);
+      return payload.data?.job_post || payload.data;
+    },
+    normalize(row) {
+      const id = row.id == null ? "" : String(row.id);
+      return {
+        company: source.company, title: row.title || "", job_id: id,
+        location: (row.city_list || []).map(city => label(city?.name)).filter(Boolean).join(" / ") || label(row.city_info?.name),
+        category: label(row.recruit_type?.name), department: label(row.job_category?.name) || label(row.job_function?.name),
+        description: row.description || "", requirements: row.requirement || "",
+        official_url: id ? `${detailRoot.replace(/\/$/, "")}/${encodeURIComponent(id)}/detail` : "", official_api: api,
+      };
+    },
+  };
+}
+
+export async function collectFeishu(source, options, dependencies = {}) {
+  validateOptions(options);
+  if (source.mode !== "feishu_direct") throw new Error("Feishu adapter requires a registered feishu_direct source");
+  return collectPaged(source, options, feishuSpecification(source), dependencies);
+}
+
+await runCLI(import.meta.url, collectFeishu);

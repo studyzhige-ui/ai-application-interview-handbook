@@ -240,4 +240,4 @@ HTTPX 将超时分成连接、读取、写入和等待连接池等维度。它�
 - [HTTPX 超时](https://www.python-httpx.org/advanced/timeouts/)：区分连接、读写与连接池等待。
 - [HTTPX 测试传输](https://www.python-httpx.org/advanced/transports/)：区分模拟协议与真实网络。
 
-真人问题回看：[S294 的 502／504 区分](../../../market/interviews/batch-33.md)、[S060 的模型 API 调用失败排查](../../../market/interviews/batch-04.md)。状态分类要落到响应来源、协议和执行结果，不只是背数字。
+真人问题回看：[S294 的 502／504 区分](../../../market/interview-experience/01-data/raw/batch-33.md)、[S060 的模型 API 调用失败排查](../../../market/interview-experience/01-data/raw/batch-04.md)。状态分类要落到响应来源、协议和执行结果，不只是背数字。

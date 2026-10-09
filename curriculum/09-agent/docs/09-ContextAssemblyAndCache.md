@@ -235,7 +235,7 @@
 
 - [Context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)：理解有限输入中的信息选择与可回读材料。
 - [Prompt caching](https://developers.openai.com/api/docs/guides/prompt-caching)：核对前缀复用及实际供应商条件。
-- [固定请求编排对照](../../../references/agent/implementation-notes.md#chapter-09)：查看两个产品中指令、消息和工具说明的不同落点。
+- [固定请求编排对照](../../../products/claude-code/01-context-lifecycle.md#implementation-chapter-09)：查看两个产品中指令、消息和工具说明的不同落点。
 
 
 ---

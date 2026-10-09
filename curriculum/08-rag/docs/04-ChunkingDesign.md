@@ -39,17 +39,7 @@
 
 对非空文本、窗口 S、重叠 O，要求 `0 ≤ O < S`。长度 N 大于 S 时，块数为 `1 + ceil((N-S)/(S-O))`；不大于 S 时只有一块。`ceil` 表示向上取整。空文本则不应生成一个伪成功的空块。
 
-下面是**可运行的长度演算**，不执行 Tokenizer，也不声称已经切出了语义完整的文档。先按 [实验说明](../examples/README.md)进入 `examples` 目录：
-
-```python
-from rag_lab import window_spans
-
-spans = window_spans(length=1000, size=200, overlap=50)
-assert len(spans) == 7
-assert sum(end - start for start, end in spans) == 1300
-```
-
-函数返回新的区间列表，不修改文档、不写入数据库。实现与测试共用 `rag_lab.py`。
+上述长度演算不执行 Tokenizer，也不声称已经切出了语义完整的文档。
 
 ⚠️ **注意：重叠不等于一定包含完整关系。** 如果例外相隔两页，增加几个字符的重叠无济于事；过大的重叠还会让多个重复片段挤占最终上下文。应修复结构或按关系补全，而不是无限放大重叠。
 

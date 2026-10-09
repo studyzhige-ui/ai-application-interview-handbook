@@ -211,7 +211,7 @@ RAG 是取回资料并辅助生成的方式，也可以用于检索记忆。不�
 
 - [上下文编排](09-ContextAssemblyAndCache.md)：理解被召回的信息如何进入本次请求。
 - [Claude Code memory](https://code.claude.com/docs/en/memory)：对照人维护指令与文件型自动记忆。
-- [固定记忆实现对照](../../../references/agent/implementation-notes.md#chapter-11)：选读文件写入和两阶段提炼，不作为通用自测前提。
+- [固定记忆实现对照](../../../products/claude-code/02-memory-lifecycle.md#implementation-chapter-11)：选读文件写入和两阶段提炼，不作为通用自测前提。
 
 
 ---

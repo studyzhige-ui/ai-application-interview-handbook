@@ -1,43 +1,12 @@
-# Practice｜横向实践体系
+# Practice｜编程训练与开发实践
 
-[↑ Handbook 总目录](../README.md) · [Curriculum](../curriculum/README.md) · [Learning Path](../guide/learning-path.md)
+[Handbook](../README.md) · [通用课程](../curriculum/README.md) · [优秀产品学习](../products/README.md)
 
-> Practice 回答：**学会知识以后，能不能真正做出来？**
+通过独立编写、运行和调试，把课程中的知识用于真实任务。
 
 ## 两条实践线
 
-### 1. Coding & Problem Solving
+- [Coding：编程与问题求解](coding/README.md)：从程序执行、Python 数据操作和基础练习，逐步进入完整输入输出、数据结构、算法、Hot100、在线笔试与 AI Coding。保留 22 题基础 Notebook 与 Hot100 学习映射。
+- [Software：软件使用与开发工作流](software/README.md)：通过编号教程学习常用开发软件。当前从 [Git 与 GitHub Desktop](software/01-GitHub.md)开始，练习同步、查看差异、提交、分支、PR 与冲突处理。
 
-[进入 Coding](coding/README.md)
-
-```text
-Programming Fundamentals
-→ Python Coding
-→ ACM Input / Output
-→ Data Structures
-→ Algorithms
-→ Hot100
-→ Online Assessment
-→ AI Coding
-```
-
-### 2. Developer Workflow / Tooling
-
-[进入 Git + GitHub Desktop 指南](tooling/git-github-desktop-guide.md)
-
-```text
-Fetch / Pull
-→ 写代码与测试
-→ 看 Changes / Diff
-→ Commit
-→ Push
-→ Branch / PR / Conflict
-```
-
-Coding 训练“把问题写成程序”；Tooling 训练“把真实开发过程安全、可追踪地完成”。
-
-<!-- learning-inventory:start -->
-## 配套入口
-
-[Coding](coding/README.md)包含 9 篇正文；练习、Notebook 与渲染版本沿其模块入口使用，不重复计入 Curriculum。开发工作流见 [Tooling](tooling/README.md)。完整资源范围见[学习资源索引](../guide/navigation-index.md)。
-<!-- learning-inventory:end -->
+Coding 训练把问题写成程序；Software 训练用开发工具安全、可追踪地完成工作。按当前任务选择入口，可以与通用课程并行。

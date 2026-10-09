@@ -1,0 +1,116 @@
+# Batch 25 一手面试流程
+
+采集日期：2026-09-10
+
+## S271 字节跳动中国交易与广告·生活服务｜Agent 开发 / Agent 工程师池（前端画像）｜一面｜面试 / 发布 2026-06-08，一面已过｜HUMAN-A
+
+来源：https://www.nowcoder.com/feed/main/detail/b75d87aac5a74076b3a28c692f2f6d3c
+
+真人 / 第一人称证据：作者 `自在极意前端嘉豪` 为东南大学前端候选人，正文先交代自己正在初创公司实习、因 HR 说明岗位是新开的 HC 且侧重前端与 AI Coding 而接面。面试按 0–10min 项目、10–15min React Hook、15–40min Coding、40–50min JS 基础记录，保留“Hook 链表实现答不了”“版本比较 O(1) 思路对但没有写出来”等现场状态。作者在评论区当晚更新“一面过，还有两轮技术一轮 HR”。反问阶段 HR 进一步明确：前端 / 后端 / 客户端进入同一个大池子，**统一按 Agent 工程师招聘，再根据简历技术栈提问**；因此虽然本场问题明显偏前端，Role Scope 仍由招聘流程直接确认。
+
+整场技术问题：
+
+1. 项目深挖：当前项目做了什么，本人负责什么，怎样说明真实产出？
+2. React Hook 使用时需要注意哪些规则？
+3. 为什么 Hook 不能放在条件语句中调用？
+4. 能否手写一段类似 Hook 链表的数据结构 / 执行机制，解释条件调用为什么会破坏顺序？候选人现场未写出。
+5. Coding：比较两个版本号。
+6. 在上一题基础上要求 `O(1)` 额外空间完成版本号比较；候选人想到逐段转数字，但现场没有完整写出。
+7. JavaScript 有哪些基本数据类型？
+8. JavaScript 中判断数据类型有哪些方式？
+9. 为什么 `typeof null === "object"`？
+10. 反问 / 招聘：Agent 工程师大池如何按候选人背景分配前端、后端、客户端和 AI Coding / Agent 能力的考察权重？
+
+去重：已直接回读 `S001–S251`，当前 URL、作者与 6/8 生活服务流程均未入库；“Agent 工程师统一大池招聘 → React Hook 条件调用 / 链表实现 → O(1) 版本比较 → JS 类型”的连续题序未在历史来源形成同场重复。外部继续搜索作者 Timeline，只找到其明确更新一面通过、后续仍有两轮技术面；未找到可稳定核验的同公司后续轮次原帖，因此本批只收当前一面，未来若发现同流程后续轮次应合并而非新增 ID。
+
+---
+
+## S272 阿里千问｜Agent 开发｜日常实习一面｜发布 2026-03-26｜HUMAN-A
+
+来源：https://www.nowcoder.com/feed/main/detail/41b996517ec140bbaf27889bf06b0db0
+
+真人 / 第一人称证据：作者 `lazy_learner` 的账号可串起数月个人求职 Timeline，持续参与多家公司实习 / 春招讨论，并非批量面经或订阅内容账号。本帖明确为“阿里千问 Agent 开发一面-日常实习”，从论文、实习、项目自然进入 Retrieval / Embedding / Rerank / GraphRAG / Multimodal，再现场手写带 Mask 的 Multi-Head Attention 和 RoPE；作者保留“MHA 只写了个大致思路”的现场完成状态，评论区也有同岗位候选人围绕手撕难度互动。
+
+整场技术问题：
+
+1. 论文深挖：研究问题、方法和本人真实贡献是什么？
+2. 实习深挖：真实负责的工作、上下游和难点是什么？
+3. 项目深挖：系统目标、技术路线和本人实现边界是什么？
+4. Retrieval 是否使用 Embedding，具体使用什么 Embedding Model？
+5. Embedding Model 本身通常怎样训练，训练目标是什么？
+6. BGE Reranker 精排模型与 Embedding Model 的作用和推理方式有什么区别？
+7. GraphRAG 与普通 RAG 的核心差异是什么，各适合什么场景？
+8. 多模态系统中的 Schema / 数据组织怎样理解？
+9. Coding / 模型实现：手写带 Mask 的 Multi-Head Attention；候选人现场只写出大致思路。
+10. Coding / 模型实现：手写 RoPE / Rotary Positional Embedding。
+
+去重：已直接回读全部历史 Batch，并对“论文 / 实习 / 项目 → Embedding 训练 → BGE Reranker vs Embedding → GraphRAG → Multimodal Schema → MHA with Mask → RoPE”连续题序做外部精确检索，仅定位到当前原帖，未发现更早同序来源或跨平台镜像。该作者另有腾讯 AI 后台等不同公司流程；不同公司招聘流程独立，不与本来源合并。
+
+---
+
+## S273 腾讯｜AI 后台开发｜暑期实习一面｜发布 2026-04-02｜HUMAN-A
+
+来源：https://www.nowcoder.com/feed/main/detail/184f5a028eb646d480400001efe721ea
+
+真人 / 第一人称证据：作者同为 `lazy_learner`，但这是与 `S272` 不同公司的独立招聘流程。本帖标题明确为“腾讯暑期实习 AI 后台开发一面面经分享”，开头写“努力拥抱 AI 中”，问题按现场 Coding → 实习 / 项目 → 压测 / Cache → MySQL / Redis → JVM / Network 的顺序展开，并在评论区继续讨论压测和 HotKey。虽然本场几乎没有 Agent / RAG 名词，但岗位本身明确为 AI Backend，按 Role Scope Gate 通过；因此真实出现的 Backend Foundation 全部保留。
+
+整场技术问题：
+
+1. Coding：Merge K Sorted Lists / 合并 K 个有序链表。
+2. 实习经历深挖。
+3. 项目的整体 Architecture 与 Request Chain 是什么，Cache 放在哪一层？
+4. 项目怎样做 Load / Stress Test，真实压测指标是什么？
+5. 是否遇到过 HotKey，怎样发现和治理？
+6. Bloom Filter 的基本原理、解决什么问题、主要缺点是什么？
+7. Bloom Filter 存在 False Positive，误判率怎样设定 / 估算并与空间成本权衡？
+8. Cache 与 Database 的 Dual-write Consistency 怎样保证？
+9. Redis Distributed Lock 的基本原理是什么？
+10. MySQL 中实际存哪些数据，项目是否需要 Sharding / 分库分表？
+11. Redis 有哪些常用数据结构，项目实际用了哪些？
+12. MySQL Clustered Index 与 Non-clustered Index 有什么区别？
+13. Back-to-table、SQL Optimization 与 `EXPLAIN` 怎样结合排查？
+14. Java Garbage Collection 的基本机制与常见算法是什么？
+15. HashMap / Hash Table 底层原理是什么，JDK 1.8 之后有什么关键改进？
+16. MySQL Transaction Isolation Level 有哪些？
+17. InnoDB 默认隔离级别下如何处理 Phantom Read？
+18. TCP 三次握手和四次挥手怎样工作？
+19. 如何看待 AI 与程序员的关系，AI Coding 会怎样改变日常研发？
+
+去重：已直接回读 `S001–S251`，URL 和本场题序未入库；外部连续题序检索未发现更早同序来源。需要特别区分：同作者 4/6 另有一篇“腾讯 AI 后端开发”短帖，其“慢查询 → Redis 为什么快 → 缓存雪崩 → 几十亿 int 去重”连续题序可追到 2025 年另一作者腾讯 IEG 后端面经，已判复制链并排除；**本来源只使用 4/2 这篇独立、完整且未发现复制源的原帖**。
+
+---
+
+## S274 京东科技｜AI 全栈 Agent 研发｜一面｜发布 2026-06-11，等待结果｜HUMAN-A
+
+来源：https://www.nowcoder.com/feed/main/detail/e80b257b1c064970a72c9679c2177585
+
+真人 / 第一人称证据：作者 `猫猫不会分布式` 发布时身份显示为美团 Java 开发实习员工，后续公开互动中又显示为小红书 Search PE 产品工程师实习员工，账号持续参与本人求职 / 笔试 / 面试讨论，符合个人候选人 Timeline。正文明确为“京东科技 AI 全栈 Agent 研发一面”，从部门介绍和实习项目验真进入 MySQL、Redis、Kafka、突发流量，再切到 Agent frontier、Bad Case、Evaluation、Tool Context 与 Tool 数量膨胀。作者保留“Tool Context 太长没有回答好、面试官给了前沿 Agent 设计建议”以及反问面试表现、当前仍等待结果等现场痕迹。
+
+整场技术问题：
+
+1. 部门 / 岗位业务介绍后，实习项目的真实背景、本人职责和关键技术点是什么？
+2. 实习中处理过哪些 Slow SQL，具体怎样定位和优化？
+3. 一张表刚创建时查询正常、数据增长后逐渐变慢，可能是什么原因，怎样排查？
+4. UUID 为什么通常不适合作为 InnoDB Primary Key / Clustered Index？
+5. Redis 为什么常被描述为单线程执行命令，它为什么仍然很快？
+6. Redis Cache 与数据库之间怎样保证 Data Consistency？
+7. Kafka 相比其它 MQ 有什么优势？
+8. 实习中 Kafka Partition Count 怎样设置，为什么这样设置？
+9. Kafka Message Backlog / 积压出现时怎样定位和处理？
+10. 服务遭遇未预料的突发流量峰值时，怎样限流、削峰、扩容和保护下游？
+11. 最近关注哪些 Frontier Agent / Agent Engineering 进展？
+12. 实习中的 Agent Bad Case 怎样发现、归因和修复？
+13. Agent Performance / Effect 怎样量化，使用哪些指标和 Evaluation 方法？
+14. Tool Call 返回的 Context 太长时怎样压缩、引用或延迟加载，同时避免丢失任务关键事实？候选人现场未答好，面试官进一步讨论前沿设计。
+15. 当 Tool List 持续膨胀时，怎样优化 Tool Discovery / Selection，而不是把所有 Schema 一次性塞入 Context？
+16. 候选人在 Agent 方向相比普通后端候选人的优势是什么？
+17. 反问 / 反馈：面试官如何评价候选人在 Backend 与 Agent 两方面的表现，当前流程进度如何？
+
+去重：已直接回读 `S001–S251`。历史京东来源虽已有 AI Application / Agent 样本，但当前作者、6/11 京东科技流程和“Slow SQL 随数据增长 → UUID 主键 → Kafka Partition / Backlog → 突发流量 → Agent Bad Case / Evaluation → Tool Context 过长 → Tool List 膨胀”的连续链均独立。对 URL、作者与罕见题序做外部回查未发现更早复制源或同公司后续轮次原帖。
+
+---
+
+> 注：以下批次观察 / 排除说明为采集时的过程记录；其中历史数量描述按采集当时口径保留，出现的来源 ID 已映射到当前正式编号。
+
+---
+

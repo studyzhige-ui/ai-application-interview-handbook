@@ -183,7 +183,7 @@
 
 - [ReAct 原始论文](https://arxiv.org/abs/2210.03629)：理解推理与行动反馈的组织方式。
 - [上下文编排与缓存](09-ContextAssemblyAndCache.md)：计划变更怎样被下一次请求看见，以及何时影响前缀复用。
-- [固定规划与预算对照](../../../references/agent/implementation-notes.md#chapter-08)：区分产品配置和通用控制原则。
+- [固定规划与预算对照](../../../products/claude-code/04-engineering-evaluation.md#implementation-chapter-08)：区分产品配置和通用控制原则。
 
 
 ---

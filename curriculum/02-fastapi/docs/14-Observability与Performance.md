@@ -202,4 +202,4 @@ AI 流式请求应分别观察首个有效内容的时间、总生成时间、�
 - [Starlette 中间件](https://starlette.dev/middleware/)：核对纯 ASGI 包装与状态隔离。
 - [HTTPX 超时](https://www.python-httpx.org/advanced/timeouts/)：把连接池等待与网络读取分开。
 
-真人问题回看：[S293 的 SQL 优化后端到端接口诊断](../../../market/interviews/batch-32.md)、[S066 的应用监控指标](../../../market/interviews/batch-04.md)。实作要能解释测量范围和下一步调查，而不只是列监控工具。
+真人问题回看：[S293 的 SQL 优化后端到端接口诊断](../../../market/interview-experience/01-data/raw/batch-32.md)、[S066 的应用监控指标](../../../market/interview-experience/01-data/raw/batch-04.md)。实作要能解释测量范围和下一步调查，而不只是列监控工具。

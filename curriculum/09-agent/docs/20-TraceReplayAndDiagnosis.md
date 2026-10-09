@@ -216,7 +216,7 @@ Trace 解释发生了什么，Eval 依据任务标准判断做得怎样。轨迹
 
 - [Agents SDK tracing](https://openai.github.io/openai-agents-python/tracing/)：核对采集、敏感信息与导出配置。
 - [状态与持久化](12-StateHistoryAndPersistence.md)：区分诊断和可靠任务记录。
-- [固定追踪实现对照](../../../references/agent/implementation-notes.md#chapter-20)：观察实际关联模型，而非要求所有运行永久保存原始载荷。
+- [固定追踪实现对照](../../../products/codex/01-context-lifecycle.md#implementation-chapter-20)：观察实际关联模型，而非要求所有运行永久保存原始载荷。
 
 
 ---

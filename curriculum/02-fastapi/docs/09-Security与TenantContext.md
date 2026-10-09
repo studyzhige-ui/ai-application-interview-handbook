@@ -208,4 +208,4 @@ def hello():
 - [CORS](https://fastapi.tiangolo.com/tutorial/cors/)：核对来源、预检、凭据和允许项。
 - [安全工具参考](https://fastapi.tiangolo.com/reference/security/)：核对 auto_error 和凭证对象。
 
-真人问题回看：[S288 的读写权限与用户确认](../../../market/interviews/batch-29.md)、[S294 的 CORS](../../../market/interviews/batch-33.md)。这些问题加深的是已有访问边界，不需要另外增加一套安全术语课程。
+真人问题回看：[S288 的读写权限与用户确认](../../../market/interview-experience/01-data/raw/batch-29.md)、[S294 的 CORS](../../../market/interview-experience/01-data/raw/batch-33.md)。这些问题加深的是已有访问边界，不需要另外增加一套安全术语课程。

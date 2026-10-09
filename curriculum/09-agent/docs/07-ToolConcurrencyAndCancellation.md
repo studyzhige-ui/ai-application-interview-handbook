@@ -195,7 +195,7 @@ T1 的取消意图和 T2 的上传成功可以同时成立。正确做法是将�
 
 - [工具错误处理](06-ToolExecutionAndFailure.md)：确定动作是否具有重试资格。
 - [恢复核对](13-CheckpointResumeAndRecovery.md)：处理取消与崩溃留下的未知结果。
-- [固定并发与中断实现](../../../references/agent/implementation-notes.md#chapter-07)：对照工具元数据和取消传播的实现边界。
+- [固定并发与中断实现](../../../products/claude-code/03-tool-lifecycle.md#implementation-chapter-07)：对照工具元数据和取消传播的实现边界。
 
 
 ---

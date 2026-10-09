@@ -111,7 +111,7 @@ A 与 B 恰好占 110，并共同回答问题。如果先按 A、C、B 的坏顺
 
 ## 知识回看与权威资料
 
-回看 [多路检索与融合](07-RetrievalStack.md)理解候选来自哪里；模型级分工见 [Embedding 与 Reranker](../../07-llm-foundation/docs/09-Embedding与Reranker.md)。
+回看 [多路检索与融合](07-RetrievalStack.md)理解候选来自哪里；模型级分工见 [Embedding 与 Reranker](../../06-llm-foundation/docs/09-Embedding与Reranker.md)。
 
 [Sentence Transformers：Retrieve & Re-Rank](https://sbert.net/examples/sentence_transformer/applications/retrieve_rerank/README.html)用于核对联合评分与两阶段检索分工；本文预算数字和坏排序是教学构造，不是模型基准成绩。
 

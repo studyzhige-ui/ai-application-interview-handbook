@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "files": [
+    {
+      "path": "01-data/raw/batch-01.md",
+      "sha256": "f923cdfa9e971986c15b4df6a8d6bfeef1ad5dd4876e9ffa3226a260f4077332",
+      "bytes": 18734
+    },
+    {
+      "path": "01-data/raw/batch-02.md",
+      "sha256": "c9aa139f3e7de2beeee7be11a4476266c68d4f697cd11cacee268b237fbc855c",
+      "bytes": 22442
+    },
+    {
+      "path": "01-data/raw/batch-03.md",
+      "sha256": "6e795ecb3c01a0e1983f9799a5e9eed9b6e1fa01685e53103c82c2f975249b84",
+      "bytes": 25303
+    },
+    {
+      "path": "01-data/raw/batch-04.md",
+      "sha256": "ddd0cdb00ecd389d92dcf13cf28637031b396e94db8b9027142eb76331377fef",
+      "bytes": 25656
+    },
+    {
+      "path": "01-data/raw/batch-05.md",
+      "sha256": "afc8400e2ac28f442211bd570a6cd6c51bef4a1a7a455484a046927b7d30d8ef",
+      "bytes": 26219
+    },
+    {
+      "path": "01-data/raw/batch-06.md",
+      "sha256": "1158da980612c8261044e35f9d1ae491e58fe9b318cd97fed3bf87e1e5166c25",
+      "bytes": 27089
+    },
+    {
+      "path": "01-data/raw/batch-07.md",
+      "sha256": "75700ddb801d4cd19054d6a9410ccdc0e543f32faf228222ea296ca3de0406b1",
+      "bytes": 37228
+    },
+    {
+      "path": "01-data/raw/batch-08.md",
+      "sha256": "02e1b2e8ba58ed35f98e1e8621bda6b43122887a4b4b50ca85ac91583ab2ffc0",
+      "bytes": 20871
+    },
+    {
+      "path": "01-data/raw/batch-09.md",
+      "sha256": "b3d1124a62adb82659f6f9d42e1317b737109f6229b2a468761666a490ecf394",
+      "bytes": 17522
+    },
+    {
+      "path": "01-data/raw/batch-10.md",
+      "sha256": "bfe16ecb2d565023e90d2a3253fc8a591c7c6b1cb46dabbc583abe9b07c5859e",
+      "bytes": 18969
+    },
+    {
+      "path": "01-data/raw/batch-11.md",
+      "sha256": "09866c7d5d5a511ca164c23672c937240a50b676a233b80669aa8b3e83608f05",
+      "bytes": 14679
+    },
+    {
+      "path": "01-data/raw/batch-12.md",
+      "sha256": "ba5bc470e216b5070094a99d3fc7d69cb5898d3f0bf7253216ec07db3374c1d2",
+      "bytes": 6319
+    },
+    {
+      "path": "01-data/raw/batch-13.md",
+      "sha256": "ee6ab115ec80e97bee3df48a846999f5755a1a703902a86a0aea30d74bf920d1",
+      "bytes": 5594
+    },
+    {
+      "path": "01-data/raw/batch-14.md",
+      "sha256": "5834ff43c4a288832b57f3609f0b476d1fda9480ff318d460901848d00ee47bf",
+      "bytes": 10740
+    },
+    {
+      "path": "01-data/raw/batch-15.md",
+      "sha256": "986f5263c347200b9d6099922eb8dbc481436da9ce1de30c9126ffb26faa63c7",
+      "bytes": 13051
+    },
+    {
+      "path": "01-data/raw/batch-16.md",
+      "sha256": "abe26ad2bd39cbbb38a361a75c7a832aadaa4adb9b5f1ab2c5f1cbfc3e567615",
+      "bytes": 10378
+    },
+    {
+      "path": "01-data/raw/batch-17.md",
+      "sha256": "3dc0d8d1af4b954ef9da80312ff61a8fd891cdb33191a90408ccce9980de1f84",
+      "bytes": 10127
+    },
+    {
+      "path": "01-data/raw/batch-18.md",
+      "sha256": "9430227a1452622c8e2ac9a53ee71a8998aa82545f9a4244c023586b4299e747",
+      "bytes": 8947
+    },
+    {
+      "path": "01-data/raw/batch-19.md",
+      "sha256": "9452636871262459d2c3f7b29af6498e695a84e36995d6f245a407007744c780",
+      "bytes": 16497
+    },
+    {
+      "path": "01-data/raw/batch-20.md",
+      "sha256": "fdadcaf856c5c89c80f11ce85f010cabc725ddcba711e36f8b03c78a2f3e8011",
+      "bytes": 5816
+    },
+    {
+      "path": "01-data/raw/batch-21.md",
+      "sha256": "cf6d107f6d25dc17da03a87dc73f216f49213b55c6ec437a36f9855180c55a90",
+      "bytes": 17677
+    },
+    {
+      "path": "01-data/raw/batch-22.md",
+      "sha256": "be3ce5e30cd000cc84b159c7425e18c295d6737cafbfa1e19a30e4cf5b919105",
+      "bytes": 20683
+    },
+    {
+      "path": "01-data/raw/batch-23.md",
+      "sha256": "718f943f824872bb4d2959404de923a13d6c1993b57ff94ac0a2d62552a58889",
+      "bytes": 7518
+    },
+    {
+      "path": "01-data/raw/batch-24.md",
+      "sha256": "feff6233244bd2fb8f9eb558c3b3e6aee4cffa38326e6df2ad3b58fa62213fc6",
+      "bytes": 2451
+    },
+    {
+      "path": "01-data/raw/batch-25.md",
+      "sha256": "8c3e36eefb002fe9a580f4bec74b035c73e991697599a1b89d602d356c35c572",
+      "bytes": 10008
+    },
+    {
+      "path": "01-data/raw/batch-26.md",
+      "sha256": "3d3bf4af92ef26b93840e0f1d55cb49342ae50dea6fe3f784d8ce1ef14b7cc63",
+      "bytes": 11898
+    },
+    {
+      "path": "01-data/raw/batch-27.md",
+      "sha256": "dd58caa62660742eae97902c30a74c26dab0725284469169d0d493a1af6557a1",
+      "bytes": 14098
+    },
+    {
+      "path": "01-data/raw/batch-28.md",
+      "sha256": "b315e95a6fa437c4e8e466c5ab548fa3a7fa7be19dd19e96b1950fdb8b0b48e2",
+      "bytes": 4015
+    },
+    {
+      "path": "01-data/raw/batch-29.md",
+      "sha256": "acf5cb1bd62d8ef6b5b12e02a92bdc913b54b366d499468746e67f0a10464945",
+      "bytes": 4010
+    },
+    {
+      "path": "01-data/raw/batch-30.md",
+      "sha256": "088b9305a7f0148ade16968aaf4d5fa4a45cf8abb622334d232145386ec9534f",
+      "bytes": 2273
+    },
+    {
+      "path": "01-data/raw/batch-31.md",
+      "sha256": "3876799e0a1939800afd0c5890b4f6db68b5d0246806a5da8e7ecb810f41bfad",
+      "bytes": 4302
+    },
+    {
+      "path": "01-data/raw/batch-32.md",
+      "sha256": "d49742b6d1fbb72dfb264fce12cfaab343f2f464534c1af1a1af59bfc66aeb44",
+      "bytes": 4255
+    },
+    {
+      "path": "01-data/raw/batch-33.md",
+      "sha256": "c7d5fa2e61ba9a7140b8bbe6e8373515d5966ffb84268ab4da1ffd414993f4a0",
+      "bytes": 12236
+    },
+    {
+      "path": "01-data/raw/batch-34.md",
+      "sha256": "0acfa797221feb1a99b5dde75727b1a6c54f17637b8fcc2cf25fe7b0c163e9d9",
+      "bytes": 2528
+    },
+    {
+      "path": "01-data/raw/batch-35.md",
+      "sha256": "049f43e209ded32e4a6d21c498423e7e8a25565b32339496243d61c1bb2ff7c0",
+      "bytes": 3560
+    },
+    {
+      "path": "01-data/raw/batch-36.md",
+      "sha256": "a799ea3cff2a7ae809277922b1452f2f83b12838fa98a4b1cb5fb4574066b23c",
+      "bytes": 7673
+    },
+    {
+      "path": "01-data/raw/batch-37.md",
+      "sha256": "4287322d8012f7a29c5f53f3049712913b2c85dced53257d8c9aec84bb84fbd5",
+      "bytes": 240964
+    },
+    {
+      "path": "01-data/raw/batch-38.md",
+      "sha256": "118c572e7f5cae3441a25a4d1f9abdc750ba06c7f4981f92dd27da6b56f4d151",
+      "bytes": 49698
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# 一手面试经历
+
+[← Market](../README.md) · [面试准备成品](../../interview/README.md)
+
+原始材料完整保留，由模型阅读上下文后理解、整理。代码只核验保全、来源链接、稳定 ID 和明确已有的计数，不判断技术题、反问、题族或语义等价。
+
+- [01-data：原始材料与来源索引](01-data/README.md)
+- [02-analysis：已有复核断言与模型整理状态](02-analysis/README.md)
+- [03-strategy：准入原则、保全契约与复核边界](03-strategy/README.md)
+- [04-scripts：离线保全与引用核验](04-scripts/README.md)
+- [05-logs：实际采集记录](05-logs/README.md)
+
+[语料契约](03-strategy/corpus-contract.json)列出当前正式来源及哈希；[来源保全凭证](01-data/source-provenance.json)保留迁移前位置与完整区块哈希。多轮、跨平台补充和同流程扩展不增加独立来源数。原题序、追问、原文缺失、不确定性、作者和 URL 都留在 raw。
+
+全量模型语义复核尚未完成。旧关键词规则及其规范化、排除、题族和频率产物已移除；现有九条逐记录复核断言有限保留，不冒充全量结论。结构记录数不等于面试题数，不据此推断市场频率。

@@ -208,6 +208,6 @@ FastAPI 把业务能力转换成可调用、可校验、可观察的接口。完
 ## 知识回看与权威资料
 
 - [FastAPI 教程总览](https://fastapi.tiangolo.com/tutorial/)：核对接口各部分的官方实现。
-- [后续：MySQL](../../04-mysql/README.md)：建立表、约束和事务基础。
-- [后续：Backend](../../03-backend-engineering/README.md)：在数据库与 Redis 之后学习幂等、可靠任务与恢复。
+- [后续：MySQL](../../03-mysql/README.md)：建立表、约束和事务基础。
+- [后续：Backend](../../05-backend-engineering/README.md)：在数据库与 Redis 之后学习幂等、可靠任务与恢复。
 - [Agent 执行系统](../../09-agent/README.md)：理解循环、工具、记忆与检查点的完整职责。

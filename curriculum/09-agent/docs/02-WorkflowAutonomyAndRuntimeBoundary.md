@@ -196,7 +196,7 @@
 
 - [系统全貌](01-AgentSystemAndResponsibilities.md)：区分模型判断与程序保证。
 - [Building effective agents](https://www.anthropic.com/engineering/building-effective-agents)：比较可组合工作流和动态 Agent 模式。
-- [产品职责对照](../../../references/agent/implementation-notes.md#chapter-02)：查看同一运行时怎样承载多种控制方式。
+- [产品职责对照](../../../products/codex/04-engineering-evaluation.md#implementation-chapter-02)：查看同一运行时怎样承载多种控制方式。
 
 
 ---

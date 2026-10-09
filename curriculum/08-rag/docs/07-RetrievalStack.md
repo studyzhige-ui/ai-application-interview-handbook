@@ -75,16 +75,7 @@ RRF(d) = 对所有命中 d 的路线求和：1 / (c + rank(d))
 
 融合顺序为 A、B、C、D。B 从稠密路第三升到融合第二，是因为另一条路线也强烈支持它；并不是 RRF 已经理解了“例外优先”。如果两路都没找到 B，融合不会创造 B。
 
-在 [实验目录](../examples/README.md)中可独立运行：
-
-```python
-from rag_lab import rrf
-
-scores = rrf([["A", "C", "B"], ["B", "A", "D"]], constant=60)
-assert [item[0] for item in scores] == ["A", "B", "C", "D"]
-```
-
-输入是已有排名，返回按融合分数排序的新列表。函数不执行检索、不调用模型；同一路重复 ID 会被拒绝，防止同一候选在一路中重复计票。并列分数使用固定 ID 顺序打破平局，便于复现。
+融合输入是已有排名，结果是按融合分数排序的新列表；不执行检索、不调用模型。同一路重复 ID 应被拒绝，防止同一候选在一路中重复计票。并列分数使用固定 ID 顺序打破平局，便于复现。
 
 ## 5. 过滤、去重与截断怎样影响结果
 
@@ -155,7 +146,7 @@ X=1/2+1/3=5/6；Y=1/3；Z=1/2。顺序 X、Z、Y，三者可区分。若第二�
 
 ## 知识回看与权威资料
 
-回看 [查询规划](06-QueryPlanning.md)，区分术语变体与多子目标；索引内的过滤细节见 [Vector DB：Metadata Filter](../../06-vector-db/docs/10-MetadataFilter.md)。
+回看 [查询规划](06-QueryPlanning.md)，区分术语变体与多子目标；索引内的过滤细节见 [Vector DB：Metadata Filter](../../07-vector-db/docs/10-MetadataFilter.md)。
 
 [Lucene BM25Similarity 10.3.1](https://lucene.apache.org/core/10_3_1/core/org/apache/lucene/search/similarities/BM25Similarity.html)是固定实现参照；[Elastic RRF](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)用于核对排名、平滑常数与候选窗口，不作为所有数据库的 API 约定。
 
