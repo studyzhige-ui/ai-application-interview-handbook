@@ -15,7 +15,7 @@
 | 了解岗位要求与真实考察重点 | [市场材料与分析](market/README.md) | 官方岗位描述、一手面试记录及可回查的分析 |
 
 ```mermaid
-flowchart LR
+flowchart TB
     C["课程正文"] <--> P["产品研读"]
     C <--> X["编程与开发实践"]
     P <--> X
