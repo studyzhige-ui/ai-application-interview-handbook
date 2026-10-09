@@ -4,6 +4,7 @@ import hashlib
 import json
 from urllib.parse import urlparse
 from .paths import BUSINESS, CONFIG
+from .catalog import validate_catalog, render_catalog, load_catalog
 
 
 def main():
@@ -33,6 +34,11 @@ def main():
         total_bytes += len(raw)
         if len(raw) != entry["bytes"] or hashlib.sha256(raw).hexdigest() != entry["sha256"]:
             errors.append(f"Stored snapshot bytes changed: {entry['path']}")
+    catalog_path = BUSINESS / '01-data/official-jds.json'
+    catalog = load_catalog(catalog_path)
+    errors.extend(validate_catalog(catalog, ids))
+    if (BUSINESS / '01-data/岗位JD.md').read_text(encoding='utf-8') != render_catalog(catalog):
+        errors.append('Readable job index differs from the authoritative catalog')
     print(f"Stored sources={len(sources)}, snapshots={len(manifest['files'])}, bytes={total_bytes}, errors={len(errors)}")
     for error in errors:
         print("ERROR:", error)
