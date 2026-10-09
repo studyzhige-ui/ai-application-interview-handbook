@@ -1,12 +1,12 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T13:33:39Z。收录 **2351 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
+本次核验：2026-10-09T13:47:43Z。收录 **2406 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
 标为“研究交叉”或“多方向”的岗位，只纳入其明确的应用工程职责，不表示整份JD都是纯AI应用研发。届次和资格以官方完整原文为准，历史观察不计本页岗位数。
 
-## 小米（18）
+## 小米（73）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -28,6 +28,61 @@
 | [服务端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670935018218932543/detail) | 校招 | 2027届境外招聘计划 | 新加坡 | 应用研发 |
 | [Agent工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670928909127223588/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 应用研发 |
 | [测试开发工程师-小爱](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924328497793343/detail) | 校招 | 2027届校园招聘计划 | 北京 | 评测研发 |
+| [OS软件工程师（AI Agent方向）](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671295351281731850/detail) | 校招 | 2027届 | 北京 | 应用研发 |
+| [互联框架研发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924719398471979/detail) | 校招 | 2027届 | 北京 | 多方向 |
+| [AI 数据基础架构工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924132817750318/detail) | 校招 | 2027届 | 武汉、北京 | 多方向 |
+| [大模型agent算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924118350465321/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
+| [大模型智能体算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923797172586795/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
+| [可观测性平台研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923711374248228/detail) | 校招 | 2027届 | 武汉 | 多方向 |
+| [云计算开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923711373281572/detail) | 校招 | 2027届 | 武汉 | 多方向 |
+| [服务端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923490631239974/detail) | 校招 | 2027届 | 武汉 | 应用研发 |
+| [大模型算法工程师-Data Agent方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923368716011830/detail) | 校招 | 2027届 | 武汉 | 应用研发 |
+| [AI属性工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918768222570803/detail) | 校招 | 2027届 | 南京 | 应用研发 |
+| [自动化测试架构开发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918384100788507/detail) | 校招 | 2027届 | 南京 | 评测研发 |
+| [云端产品全栈开发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918030076381478/detail) | 校招 | 2027届 | 武汉、南京 | 多方向 |
+| [嵌入式测试开发与AI应用工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670915178993256713/detail) | 校招 | 2027届 | 南京 | 评测研发 |
+| [AI Agent开发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670914994071046451/detail) | 校招 | 2027届 | 南京 | 应用研发 |
+| [图形AI渲染工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670910784603818267/detail) | 校招 | 2027届 | 上海 | 研究交叉 |
+| [AIOS 开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670892428991269146/detail) | 校招 | 2027届 | 南京 | 应用研发 |
+| [多模态大模型算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891732025067803/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
+| [AI研发工程师-手机](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891457062127881/detail) | 校招 | 2027届 | 北京 | 多方向 |
+| [AI Agent开发工程师-Java方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885684991281471/detail) | 校招 | 2027届 | 北京、深圳 | 应用研发 |
+| [客户端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885167280900393/detail) | 校招 | 2027届 | 北京、南京 | 应用研发 |
+| [研究助理实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7694244914909235510/detail) | 实习 | 未披露届别（校招实习） | 北京 | 应用研发 |
+| [算法实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7694106495844256063/detail) | 实习 | 2027届及以后优先 | 上海 | 研究交叉 |
+| [软件开发工程师实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7689008243008162102/detail) | 实习 | 2027届（标题） | 武汉 | 多方向 |
+| [软件开发工程师实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7689034673079666953/detail) | 实习 | 未披露届别（校招实习） | 武汉 | 应用研发 |
+| [AI Agent算法实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7687596167350061355/detail) | 实习 | 2027届（标题） | 北京 | 研究交叉 |
+| [运动开发集成AI与大数据开发工程师实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7685966940888467739/detail) | 实习 | 在读学生，未披露届别 | 上海 | 应用研发 |
+| [底盘电控Ai与大数据开发工程师实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7685707352196909358/detail) | 实习 | 在读学生，未披露届别 | 上海 | 应用研发 |
+| [AI 开发工程师（Agent 方向）](https://xiaomi.jobs.f.mioffice.cn/internship/position/7684925599021975817/detail) | 实习 | 未披露届别（校招实习） | 武汉 | 应用研发 |
+| [测试开发工程师-实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7684085399657367858/detail) | 实习 | 2027/2028届在读 | 武汉 | 评测研发 |
+| [AI Agent研究员实习生-小爱](https://xiaomi.jobs.f.mioffice.cn/internship/position/7681240458697345307/detail) | 实习 | 未披露届别（校招实习） | 北京 | 研究交叉 |
+| [算法工程师-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7680373683199052073/detail) | 实习 | 2027届 | 北京 | 研究交叉 |
+| [存储研发实习](https://xiaomi.jobs.f.mioffice.cn/internship/position/7679032319621794098/detail) | 实习 | 实习；届次未披露 | 北京 | 多方向 |
+| [软件测试工程师](https://xiaomi.jobs.f.mioffice.cn/internship/position/7675568448621955391/detail) | 实习 | 实习；届次未披露 | 南京 | 评测研发 |
+| [顶尖实习-大模型算法研究员（AI Agent方向）- 软件 -实习](https://xiaomi.jobs.f.mioffice.cn/internship/position/7673353748668664110/detail) | 实习 | 实习；届次未披露 | 北京 | 研究交叉 |
+| [安全研发工程师](https://xiaomi.jobs.f.mioffice.cn/internship/position/7673020569734973739/detail) | 实习 | 实习；届次未披露 | 北京 | 应用研发 |
+| [AI属性工程师-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7671097989041998107/detail) | 实习 | 2027届 | 南京 | 应用研发 |
+| [产品经理实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7670443782232803610/detail) | 实习 | 实习；届次未披露 | 北京 | 评测研发 |
+| [嵌入式AI大模型实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7668874156100749594/detail) | 实习 | 实习；届次未披露 | 北京 | 多方向 |
+| [Agentic AI 研究实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7663061127294994729/detail) | 实习 | 实习；届次未披露 | 北京 | 研究交叉 |
+| [算法实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7663053400020879658/detail) | 实习 | 实习；届次未披露 | 北京 | 应用研发 |
+| [Agent算法实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7662658237409380659/detail) | 实习 | 2027届 | 北京 | 研究交叉 |
+| [Agent评估方向算法实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7662657793955268910/detail) | 实习 | 实习；届次未披露 | 北京 | 评测研发 |
+| [agent应用实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7662271237599725834/detail) | 实习 | 2027届 | 北京 | 应用研发 |
+| [AIoT研发实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7654144321172588810/detail) | 实习 | 2027届 | 北京 | 应用研发 |
+| [算法工程师实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7648999528750434623/detail) | 实习 | 2027届 | 武汉 | 研究交叉 |
+| [AI算法研究实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7641553601920043283/detail) | 实习 | 2027届 | 南京 | 研究交叉 |
+| [AI材料算法研究员实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7631051317116602634/detail) | 实习 | 2027届 | 热招 | 应用研发 |
+| [Android 系统性能分析工具开发实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621737635673442566/detail) | 实习 | 当前页未明确毕业届次 | 上海 | 多方向 |
+| [性能与内存DFX设计实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621736273699588388/detail) | 实习 | 当前页未明确毕业届次 | 上海 | 多方向 |
+| [Android 内存问题分析与工具开发实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621736061081667881/detail) | 实习 | 当前页未明确毕业届次 | 上海 | 多方向 |
+| [Miclaw-AI agent开发实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621513426921474355/detail) | 实习 | 当前页未明确毕业届次 | 热招 | 应用研发 |
+| [Miclaw-AI agent开发实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621513292817729798/detail) | 实习 | 当前页未明确毕业届次 | 热招 | 应用研发 |
+| [Miclaw-AI agent开发实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621512536052418859/detail) | 实习 | 当前页未明确毕业届次 | 热招 | 应用研发 |
+| [财务信息化解决方案专员实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7616940594250336554/detail) | 实习 | 当前页未明确毕业届次 | 北京 | 多方向 |
+| [AI创新产品实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7605147007258446123/detail) | 实习 | 当前页未明确毕业届次 | 热招 | 应用研发 |
 
 ## 快手（59）
 
