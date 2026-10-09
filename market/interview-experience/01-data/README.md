@@ -3,6 +3,7 @@
 [← 面经业务](../README.md)
 
 - [raw/](raw/)：完整正式来源与同流程扩展，逐字节保留
+- [questions.json](questions.json)：模型归并的共同回答任务及边界；逐记录支持保存在[模型复核结果](../02-analysis/model-review.json)
 - [sources.json](sources.json)：来源 ID、原始标题、区块位置、原始 URL 与结构记录数
 - [source-provenance.json](source-provenance.json)：每个正式区块的原位置、当前位置及 SHA-256
 - [raw-manifest.json](raw-manifest.json)：批次文件大小及 SHA-256
@@ -12,4 +13,4 @@ raw 是内容依据；索引不复制全文，不含自动语义标签。结构�
 
 编号行按格式定位；原始无编号列表由契约显式列出位置，不靠关键词判断它是不是问题。索引里的记录数只反映这种结构口径。查看某条记录可用 [核验脚本](../04-scripts/README.md) 的 --record 参数。
 
-当前审阅分支正式来源为 **S001–S403，共403个独立招聘流程、38批**；S400–S403为本次已核验增量，下一编号S404。
+当前审阅分支正式来源为 **S001–S403，共403个来源ID、38批**；S400–S403为本次已核验增量，下一编号S404。

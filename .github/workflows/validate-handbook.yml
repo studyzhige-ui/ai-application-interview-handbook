@@ -12,7 +12,7 @@ on:
       - '.github/workflows/*.yml'
       - '.gitattributes'
   pull_request:
-    branches: [main, refactor/handbook-architecture-20261008]
+    branches: [main, refactor/handbook-architecture-20261008, market/human-a-2026-10-08-increment]
     paths:
       - '**/*.md'
       - '**/*.py'
