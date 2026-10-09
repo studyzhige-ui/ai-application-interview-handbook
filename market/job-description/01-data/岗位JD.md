@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T16:28:04Z。收录 **2672 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-09T16:44:34Z。收录 **2675 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -119,7 +119,7 @@
 | [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 
-## 快手（103）
+## 快手（104）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -226,6 +226,7 @@
 | [Java开发实习生（AIGC）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32292) | 实习 | 2027 | 北京 | 应用研发 |
 | [AIGC 算法实习生-【商业化算法部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32798) | 实习 | 2028及以后 | 北京 | 研究交叉 |
 | [搜索算法实习生- 【AI搜】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32400) | 实习 | 未披露 | 更新时间： | 研究交叉 |
+| [AI产品经理实习生-【电商】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30247) | 实习 | 未披露 | 杭州 | 多方向 |
 
 ## 百度（35）
 
@@ -267,7 +268,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（159）
+## 腾讯（161）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -430,6 +431,8 @@
 | [游戏AI—陪伴智能体系统研究](https://join.qq.com/post_detail.html?postid=1296893503255019520) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
 | [Senior Researcher, Large Language Models 107819](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/United-Kingdom-London/Senior-Researcher--Large-Language-Models_R107819) | 校招 | 未披露 | United Kingdom-London | 研究交叉 |
 | [Controllable Video Generation Researcher 107820](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/United-Kingdom-London/Controllable-Video-Generation-Researcher_R107820) | 校招 | 未披露 | United Kingdom-London | 研究交叉 |
+| [微信游戏-用户数据驱动的交互式内容生成研究](https://join.qq.com/post_detail.html?postid=1274481034578500756) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [微信游戏-生成式推荐系统研究](https://join.qq.com/post_detail.html?postid=1274481034578500757) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
 
 ## 美团（89）
 
