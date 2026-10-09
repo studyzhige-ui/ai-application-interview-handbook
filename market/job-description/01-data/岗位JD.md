@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T14:31:06Z。收录 **2503 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-09T14:44:16Z。收录 **2529 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -119,7 +119,7 @@
 | [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 
-## 快手（60）
+## 快手（86）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -183,6 +183,32 @@
 | [音视频点播AI应用实习生-【智能字幕方向】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28896) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
 | [音视频点播AI应用开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26822) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
 | [大模型评测实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/27510) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 评测研发 |
+| [（可灵 AI 专项）AIGC Agent 系统开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/27069) | 实习 | 2026及以后 | 北京 | 应用研发 |
+| [推荐 Agent 开发实习生-【可灵 AI 专项】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31513) | 实习 | 2027/2028届 | 北京 | 应用研发 |
+| [Agent 研发实习生（基础设施方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32575) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 评测研发 |
+| [Agent Harness 开发/优化工程师-【可灵AI专项】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32532) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
+| [Agent后端开发实习生-【MyFlicker】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32178) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
+| [AI Agent算法实习生（智能创作）-【可灵AI专项】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31530) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [Data Agent智能体研发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31084) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
+| [大模型应用算法实习生（Agent方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/25662) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [AI测试Agent开发实习生-【KSIB】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31137) | 实习 | 日常实习；未披露具体毕业届次 | 更新时间： | 评测研发 |
+| [AI Agent研发实习生（AgentOps方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/29755) | 实习 | 日常实习；未披露具体毕业届次 | 杭州 | 评测研发 |
+| [智能创作Agent算法实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31088) | 实习 | 日常实习；未披露具体毕业届次 | 北京、深圳 | 研究交叉 |
+| [智能创作Agent算法工程师-【可灵AI】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/27216) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [AI Agent 开发实习生（电商在线推荐引擎）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/29849) | 实习 | 日常实习；未披露具体毕业届次 | 更新时间： | 应用研发 |
+| [大模型算法实习生 -【反作弊Agent应用】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/25684) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [大模型Agent研发实习生 - 【综效线-企业应用部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28504) | 实习 | 日常实习；未披露具体毕业届次 | 更新时间： | 应用研发 |
+| [多模态大模型智能体应用算法实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/24876) | 实习 | 未披露 | 更新时间： | 应用研发 |
+| [大模型应用Java实习生-【电商】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30428) | 实习 | 日常实习；未披露具体毕业届次 | 杭州 | 应用研发 |
+| [大模型应用算法实习生-快意](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/22672) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [大模型应用算法实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/23998) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [大模型测试实习生（AI质量方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28437) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 评测研发 |
+| [大模型风控应用实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30041) | 实习 | 日常实习；未披露具体毕业届次 | 更新时间： | 研究交叉 |
+| [Java开发实习生（大模型广告应用）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28182) | 实习 | 日常实习；未披露具体毕业届次 | 杭州 | 研究交叉 |
+| [【大模型应用开发工程师实习生（特效方向）】【北京】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26036) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [大模型评测实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26766) | 实习 | 日常实习；未披露具体毕业届次 | 更新时间： | 评测研发 |
+| [大模型评测实习生（可灵）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28056) | 实习 | 日常实习；未披露具体毕业届次 | 更新时间： | 评测研发 |
+| [大模型应用算法实习生-【智能客服】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/13235) | 实习 | 未披露 | 北京 | 研究交叉 |
 
 ## 百度（35）
 

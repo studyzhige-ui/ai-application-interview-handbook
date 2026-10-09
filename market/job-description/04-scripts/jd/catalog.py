@@ -76,6 +76,24 @@ def counts(catalog):
     }
 
 
+def requisition_identity(source_id, job):
+    """Keep official IDs intact; distinguish the two observed Kuaishou ATS pools."""
+    req_id = job.get('req_id')
+    if not isinstance(req_id, str) or not req_id:
+        raise ValueError('missing requisition ID')
+    namespace = 'default'
+    if source_id == 'official-002':
+        parsed = urlparse(job.get('official_url', ''))
+        route = urlparse(parsed.fragment).path.strip('/')
+        if parsed.hostname == 'campus.kuaishou.cn' and route == f'campus/job-info/{req_id}':
+            namespace = 'campus'
+        elif parsed.hostname == 'zhaopin.kuaishou.cn' and route == f'official/trainee/job-info/{req_id}':
+            namespace = 'trainee'
+        else:
+            raise ValueError('unrecognized Kuaishou requisition namespace or URL/ID mismatch')
+    return source_id, namespace, req_id
+
+
 def validate_catalog(catalog, registered_ids):
     errors = []
     if "sourcetoken=" in json.dumps(catalog,ensure_ascii=False).lower():
@@ -90,11 +108,15 @@ def validate_catalog(catalog, registered_ids):
             errors.append(f'{source}: missing explicit coverage level')
         seen = set()
         for job in company.get('jobs', []):
-            identity = job.get('req_id')
-            if not isinstance(identity, str) or not identity or identity in seen:
-                errors.append(f'{source}: missing/duplicate requisition ID {identity}')
-            seen.add(identity)
-            label = f'{source}/{identity}'
+            req_id = job.get('req_id')
+            try:
+                identity = requisition_identity(source, job)
+                if identity in seen:
+                    errors.append(f'{source}: duplicate requisition identity {identity}')
+                seen.add(identity)
+            except ValueError as exc:
+                errors.append(f'{source}: {exc}')
+            label = f'{source}/{req_id}'
             for key in ('title', 'official_url', 'full_text', 'decision_reason',
                         'official_type_evidence', 'checked_at_utc'):
                 if not job.get(key):

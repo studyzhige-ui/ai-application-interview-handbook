@@ -111,6 +111,30 @@ class CatalogTests(unittest.TestCase):
     def test_duplicate_real_requisition_rejected(self):
         x=self.fixture();x['companies'][0]['jobs']*=2;x['counts']=counts(x)
         self.assertTrue(any('duplicate requisition' in e for e in validate_catalog(x,['s1'])))
+    def test_kuaishou_distinct_ats_pools_keep_same_official_id(self):
+        x = self.fixture(); c = x['companies'][0]; c['source_id'] = 'official-002'
+        campus = c['jobs'][0]; campus['req_id'] = '13235'
+        campus['official_url'] = 'https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/13235'
+        trainee = copy.deepcopy(campus)
+        trainee['official_url'] = 'https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/13235'
+        c['jobs'].append(trainee); x['counts'] = counts(x)
+        self.assertEqual(validate_catalog(x, ['official-002']), [])
+        self.assertEqual([j['req_id'] for j in c['jobs']], ['13235', '13235'])
+        self.assertEqual(campus['full_text'], trainee['full_text'])
+        alias = copy.deepcopy(campus)
+        alias['official_url'] = 'https://campus.kuaishou.cn/recruit/campus/e/?utm_source=example#/campus/job-info/13235'
+        c['jobs'].append(alias); x['counts'] = counts(x)
+        self.assertTrue(any('duplicate requisition' in e for e in validate_catalog(x, ['official-002'])))
+        c['jobs'].pop()
+        duplicate = copy.deepcopy(trainee)
+        duplicate['official_url'] += '?utm_source=example'
+        c['jobs'].append(duplicate); x['counts'] = counts(x)
+        self.assertTrue(any('duplicate requisition' in e for e in validate_catalog(x, ['official-002'])))
+    def test_missing_id_and_unrecognized_ats_namespace_are_rejected(self):
+        x = self.fixture(); x['companies'][0]['jobs'][0].pop('req_id')
+        self.assertTrue(any('missing requisition ID' in e for e in validate_catalog(x, ['s1'])))
+        x = self.fixture(); x['companies'][0]['source_id'] = 'official-002'
+        self.assertTrue(any('namespace' in e for e in validate_catalog(x, ['official-002'])))
     def test_unreviewed_candidate_cannot_be_current(self):
         x=self.fixture();x['companies'][0]['jobs'][0]['review_depth']='listing_responsibilities'
         self.assertTrue(any('full-JD' in e for e in validate_catalog(x,['s1'])))
