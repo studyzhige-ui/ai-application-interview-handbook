@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T15:49:39Z。收录 **2641 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-09T16:09:23Z。收录 **2672 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -119,7 +119,7 @@
 | [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 
-## 快手（92）
+## 快手（103）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -215,6 +215,17 @@
 | [大模型算法实习生（AIGC方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30872) | 实习 | 未披露 | 杭州 | 研究交叉 |
 | [广告大模型算法实习生-【AIGC】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28116) | 实习 | 未披露 | 北京 | 研究交叉 |
 | [大模型算法实习生（效果广告）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26801) | 实习 | 未披露 | 杭州 | 研究交叉 |
+| [AI应用服务端开发实习生-【生活服务】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32322) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI应用开发实习生-【生活服务】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31420) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI 应用开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28254) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI全栈开发实习生（前端背景）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32598) | 实习 | 未披露 | 更新时间： | 多方向 |
+| [后端实习生（后端/AI方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32553) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI全栈开发实习生 -【AI生产力中心】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32524) | 实习 | 2028及以后 | 更新时间： | 应用研发 |
+| [后端研发实习生（Java / AIGC 方向）-【生活服务】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32167) | 实习 | 未披露 | 北京 | 应用研发 |
+| [后端开发实习生（可灵AI）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/25912) | 实习 | 未披露 | 北京 | 多方向 |
+| [Java开发实习生（AIGC）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32292) | 实习 | 2027 | 北京 | 应用研发 |
+| [AIGC 算法实习生-【商业化算法部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32798) | 实习 | 2028及以后 | 北京 | 研究交叉 |
+| [搜索算法实习生- 【AI搜】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32400) | 实习 | 未披露 | 更新时间： | 研究交叉 |
 
 ## 百度（35）
 
@@ -256,7 +267,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（139）
+## 腾讯（159）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -399,6 +410,26 @@
 | [游戏AI-多智能体协同规划与言行合理的演绎系统研究](https://join.qq.com/post_detail.html?postid=1231829074687944788) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
 | [微信搜索-大模型AI搜索研究与落地](https://join.qq.com/post_detail.html?postid=1231829074687944857) | 实习 | 未披露 | 北京、广州 | 研究交叉 |
 | [微信-电商多模态大模型研究](https://join.qq.com/post_detail.html?postid=1231829074692139018) | 实习 | 未披露 | 北京、广州 | 研究交叉 |
+| [微信视频号-直播电商大模型驱动的“人货场”智能协同研究](https://join.qq.com/post_detail.html?postid=1231829074692139023) | 实习 | 未披露 | 深圳总部、广州 | 研究交叉 |
+| [优图实验室—面向内容安全的多模态鉴伪大模型研究](https://join.qq.com/post_detail.html?postid=1231829074692139057) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [腾讯天御—基于大模型的移动安全病毒检测研究](https://join.qq.com/post_detail.html?postid=1231829074692139065) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [元宝—基于多模态大模型的搜索关键技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139076) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [元宝—基于视觉思维链的深层逻辑推理VQA框架研究](https://join.qq.com/post_detail.html?postid=1231829074692139080) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [腾讯云—基于大语言模型的边缘安全运维智能体研究与实现](https://join.qq.com/post_detail.html?postid=1231829074692139095) | 实习 | 未披露 | 上海 | 应用研发 |
+| [腾讯云大数据—面向多模态数据处理的实进智能计算引擎关键技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139101) | 实习 | 未披露 | 北京 | 多方向 |
+| [腾讯云大数据-AI Native Data Infra平台关键技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139102) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [腾讯云—下一代AI原生的云产品全链路交互研究](https://join.qq.com/post_detail.html?postid=1231829074692139114) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [腾讯云—微服务平台—AI 服务流量接入与治理基础设施研究](https://join.qq.com/post_detail.html?postid=1231829074692139124) | 实习 | 未披露 | 杭州 | 应用研发 |
+| [游戏智能体技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139152) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [游戏玩法与测试用智能bot](https://join.qq.com/post_detail.html?postid=1231829074692139166) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [企业微信-基于大语言模型的非结构化数据知识挖掘与智能体应用研究](https://join.qq.com/post_detail.html?postid=1236103359740901376) | 实习 | 未披露 | 深圳总部、北京、广州 | 研究交叉 |
+| [腾讯云-OpenClaw轻量云Runtime基础设施与应用技术的研究](https://join.qq.com/post_detail.html?postid=1237440383043269633) | 实习 | 未披露 | 深圳总部 | 应用研发 |
+| [腾讯营销-广告推荐系统经验驱动的自进化 AutoResearch 研究](https://join.qq.com/post_detail.html?postid=1274356458519403520) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [腾讯营销—商业化场景中多模态生成算法研究](https://join.qq.com/post_detail.html?postid=1279259000613217282) | 实习 | 2026–2027届毕业生或实习生 | 深圳总部 | 研究交叉 |
+| [元宝-搜索智能体的动态工具选择与多工具编排学习](https://join.qq.com/post_detail.html?postid=1293212684925501442) | 实习 | 未披露具体毕业年份 | 深圳总部、北京、上海 | 研究交叉 |
+| [游戏AI—陪伴智能体系统研究](https://join.qq.com/post_detail.html?postid=1296893503255019520) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [Senior Researcher, Large Language Models 107819](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/United-Kingdom-London/Senior-Researcher--Large-Language-Models_R107819) | 校招 | 未披露 | United Kingdom-London | 研究交叉 |
+| [Controllable Video Generation Researcher 107820](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/United-Kingdom-London/Controllable-Video-Generation-Researcher_R107820) | 校招 | 未披露 | United Kingdom-London | 研究交叉 |
 
 ## 美团（89）
 
