@@ -4453,6 +4453,32 @@
       "sha256": "4403137a1258a1bd018e1cbe91b3284dcf9d485cde316ef779b919c4a2605bf5",
       "admission_date": "2026-10-08",
       "admission_note": "Completed re-verification of previously unresolved candidate; independent reviewed admission."
+    },
+    {
+      "source_id": "S404",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-39.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-39.md",
+      "original_line_start": 5,
+      "original_line_end": 44,
+      "line_start": 5,
+      "line_end": 44,
+      "sha256": "f9e9e4d7b6e7d1b14aa22c8b80d24e76010abc5ac21829a0df684720a797ff71",
+      "admission_date": "2026-10-09",
+      "admission_note": "Independent HUMAN-A daily admission, read in official logged-in cloud browser; same-process rounds combined."
+    },
+    {
+      "source_id": "S405",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-39.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-39.md",
+      "original_line_start": 45,
+      "original_line_end": 102,
+      "line_start": 45,
+      "line_end": 102,
+      "sha256": "9ec7b383e81f6152d1e10e0dfe32fdbdf98c2b3fb255b7a6109e11e0504c2152",
+      "admission_date": "2026-10-09",
+      "admission_note": "Independent HUMAN-A daily admission, read in official logged-in cloud browser; same-process rounds combined."
     }
   ]
 }
