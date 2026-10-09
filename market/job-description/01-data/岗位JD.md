@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T14:08:30Z。收录 **2496 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-09T14:31:06Z。收录 **2503 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -119,7 +119,7 @@
 | [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 
-## 快手（59）
+## 快手（60）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -182,6 +182,7 @@
 | [Agent 开发实习生（AI工具方向）—【主站】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32888) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
 | [音视频点播AI应用实习生-【智能字幕方向】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28896) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
 | [音视频点播AI应用开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26822) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
+| [大模型评测实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/27510) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 评测研发 |
 
 ## 百度（35）
 
@@ -223,7 +224,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（26）
+## 腾讯（33）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -253,6 +254,13 @@
 | [技术运营](https://join.qq.com/post_detail.html?postid=1284501698043487233) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部 | 多方向 |
 | [Senior Researcher, Large Language Models](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Senior-Researcher--Large-Language-Models_R107808-1) | 校招 | 应届毕业生（2027校园入口；具体年份以详情为准） | Singapore-CapitaSky | 应用研发 |
 | [Senior Researcher, Speech Synthesis and Multimodal LLM](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Senior-Researcher--Speech-Synthesis-and-Multimodal-LLM_R107809-1) | 校招 | 应届毕业生（2027校园入口；具体年份以详情为准） | Singapore-CapitaSky | 研究交叉 |
+| [Coding Agent Research Intern](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Coding-Agent-Research-Intern_R108212) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
+| [Backend Development Intern (6 months)](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Backend-Development-Intern--6-months-_R108169) | 实习 | 未披露 | Singapore-CapitaSky | 应用研发 |
+| [Advertising Product Manager Intern](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Advertising-Product-Manager-Intern_R107938) | 实习 | 2027 | Singapore-CapitaSky | 多方向 |
+| [Game Engineer (Intern)](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Japan-Tokyo-Business-Tower/Game-Engineer--Intern-_R107485-1) | 实习 | 未披露 | Japan-Tokyo-Business Tower | 多方向 |
+| [Data Science Intern](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Data-Science-Intern_R107259-2) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
+| [AI安全技术工程师](https://join.qq.com/post_detail.html?postid=1262101842545295360) | 实习 | 未披露 | 广州 | 多方向 |
+| [AI安全技术工程师](https://join.qq.com/post_detail.html?postid=1212816222497017856) | 实习 | 未披露 | 深圳总部、北京、上海、广州 | 多方向 |
 
 ## 美团（89）
 
@@ -348,7 +356,7 @@
 | [【大模型北斗实习】多模态智能体算法研究与自主规划](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153873069&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 研究交叉 |
 | [【大模型北斗实习】代码大模型](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153761434&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 应用研发 |
 
-## 滴滴（22）
+## 滴滴（21）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -366,7 +374,6 @@
 | [27届秋招-软件开发工程师-租车](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/752dd689-ee3a-4d81-9774-677c7a6fe5cf) | 校招 | 2027届秋招 | 北京市 | 多方向 |
 | [27届秋招-自动驾驶-Linux 内核工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/dbf520f3-a2a8-4421-96cf-ba4bfb60031a) | 校招 | 2027届 | 北京市 | 多方向 |
 | [27届秋招-安全策略工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/facc0563-303c-4443-be14-6f2f52f4de76) | 校招 | 2027届 | 北京市 | 多方向 |
-| [27届秋招-算法工程师-路线规划](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/cca1f363-5167-4f24-b539-892526af8213) | 校招 | 2027届 | 北京市 | 研究交叉 |
 | [27届秋招-Java开发工程师-AI Dev](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/03392b70-c266-4353-b64a-03cddc92539b) | 校招 | 2027届 | 北京市 | 应用研发 |
 | [27届秋招-站点可靠性工程师(SRE)](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/82dab1ab-6bad-4395-96f2-5b9a2a754c81) | 校招 | 2027届 | 浙江·杭州市、北京市 | 多方向 |
 | [27届秋招-自动驾驶-系统研发工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/2a746387-3d31-4502-8a7a-bfb9c689db73) | 校招 | 2027届 | 北京市 | 评测研发 |
