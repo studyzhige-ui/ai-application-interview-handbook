@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T12:08:21Z。收录 **2316 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
+本次核验：2026-10-09T12:15:52Z。收录 **2322 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -14,7 +14,7 @@
 | [AI Agent多模态算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129633626540331/detail) | 校招 | 2027届 | 上海 | 研究交叉 |
 | [Miclaw-软件研发工程师实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621513267564185865/detail) | 实习 | 未披露 | 北京 | 多方向 |
 
-## 快手（56）
+## 快手（59）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -74,6 +74,9 @@
 | [【留用实习】AI测试Agent开发工程师](https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12953) | 实习 | 2027届（官方项目）；详见任职要求 | 北京 | 应用研发 |
 | [【留用实习】AI应用开发工程师-前端技术](https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12515) | 实习 | 2027届（官方项目）；详见任职要求 | 北京 | 应用研发 |
 | [【快Star实习】电商AI搜索算法工程师](https://campus.kuaishou.cn/recruit/campus/e/#/campus/job-info/12479) | 实习 | 2027届（官方项目）；详见任职要求 | 杭州 | 应用研发 |
+| [Agent 开发实习生（AI工具方向）—【主站】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32888) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
+| [音视频点播AI应用实习生-【智能字幕方向】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28896) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 研究交叉 |
+| [音视频点播AI应用开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26822) | 实习 | 日常实习；未披露具体毕业届次 | 北京 | 应用研发 |
 
 ## 百度（35）
 
@@ -2280,13 +2283,16 @@
 | [AI算法工程师（实习生）](https://app.mokahr.com/campus-recruitment/zte/46903#/job/adc0a879-72e5-4aa7-a179-3d7f97eb7c53) | 实习 | 官网实习项目；各子方向届次以正文为准，未统一披露 | 江苏·南京市、四川·成都市、湖北·武汉市、广东·深圳市、湖南·长沙市、上海市、陕西·西安市、天津市、重庆市 | 应用研发 |
 | [网络技术研发工程师（实习生）](https://app.mokahr.com/campus-recruitment/zte/46903#/job/6194366a-80d9-4f83-9a07-a3df12c8c1aa) | 实习 | 官网实习项目；各子方向届次以正文为准，未统一披露 | 陕西·西安市 | 应用研发 |
 
-## 深信服（3）
+## 深信服（6）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [深信服27届-开发工程师（Java/Python/Go）](https://hr.sangfor.com/campucompon/Delivery/4560) | 校招 | 2027届 | 深圳市 | 应用研发 |
 | [深信服27届-AI测试开发工程师](https://hr.sangfor.com/campucompon/Delivery/4572) | 校招 | 2027届 | 深圳市 | 应用研发 |
 | [深信服27届-运维开发工程师](https://hr.sangfor.com/campucompon/Delivery/4543) | 校招 | 2027届 | 深圳市 | 应用研发 |
+| [27届（X-STAR）顶尖人才计划（博士）](https://hr.sangfor.com/campucompon/Delivery/4521) | 校招 | 2027届 | 深圳市、北京市 | 多方向 |
+| [27届（X-STAR）顶尖人才计划（本/硕）](https://hr.sangfor.com/campucompon/Delivery/4520) | 校招 | 2027届 | 深圳市、长沙市、北京市、成都市 | 多方向 |
+| [28届（X-STAR）顶尖人才实习专项](https://hr.sangfor.com/campucompon/Delivery/4375) | 实习 | 2028届 | 深圳市、长沙市、北京市 | 多方向 |
 
 ## 金蝶（23）
 
