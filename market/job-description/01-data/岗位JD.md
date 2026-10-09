@@ -1,18 +1,33 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T12:36:27Z。收录 **2322 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
+本次核验：2026-10-09T13:01:24Z。收录 **2340 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
 标为“研究交叉”或“多方向”的岗位，只纳入其明确的应用工程职责，不表示整份JD都是纯AI应用研发。届次和资格以官方完整原文为准，历史观察不计本页岗位数。
 
-## 小米（3）
+## 小米（18）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [算法工程师（测试方向）-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7641415920032532778/detail) | 实习 | 2027届；博士学历要求 | 南京 | 研究交叉 |
 | [AI Agent多模态算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129633626540331/detail) | 校招 | 2027届 | 上海 | 研究交叉 |
 | [Miclaw-软件研发工程师实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7621513267564185865/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [后台开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7681255943951190335/detail) | 校招 | 2027届校园招聘计划 | 武汉 | 评测研发 |
+| [Agent Harness 开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7678147882801678602/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
+| [大模型网关服务端开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7676005513680030006/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
+| [软件测试工程师-手机小爱](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671294812650473782/detail) | 校招 | 2027届校园招聘计划 | 武汉 | 应用研发 |
+| [AI算法工程师-AICoding/Agents方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671291137243629878/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 研究交叉 |
+| [大模型算法工程师-生态链](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671290581923383615/detail) | 校招 | 2027届校园招聘计划 | 武汉 | 研究交叉 |
+| [基础架构研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289721684068650/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
+| [AI研发工程师-智能风控方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289294427113737/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
+| [Agent Harness 研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671284471720020243/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 应用研发 |
+| [软件开发工程师-影像方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129598676125993/detail) | 校招 | 2027届校园招聘计划 | 西安、上海 | 应用研发 |
+| [Camera Agent算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129480778139967/detail) | 校招 | 页头：2027届校园招聘计划；职位要求：2025/2026应届毕业生（官方届次冲突） | 北京、上海 | 研究交叉 |
+| [芯片物理设计工程师（AI方向）](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129267694897427/detail) | 校招 | 2027届校园招聘计划 | 上海 | 研究交叉 |
+| [服务端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670935018218932543/detail) | 校招 | 2027届境外招聘计划 | 新加坡 | 应用研发 |
+| [Agent工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670928909127223588/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 应用研发 |
+| [测试开发工程师-小爱](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924328497793343/detail) | 校招 | 2027届校园招聘计划 | 北京 | 评测研发 |
 
 ## 快手（59）
 
@@ -118,7 +133,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（13）
+## 腾讯（15）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -135,6 +150,8 @@
 | [AI算法工程](https://join.qq.com/post_detail.html?postid=1292202515139771392) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
 | [Coding Agent Research Intern](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Coding-Agent-Research-Intern_R108097) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
 | [WXG-WeLM Agentic 系统](https://join.qq.com/post_detail.html?postid=1274481034578500726) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [游戏客户端开发](https://join.qq.com/post_detail.html?postid=1282032034373805056) | 校招 | 应届毕业生，具体届次未披露 | 深圳总部、北京、上海、杭州 | 多方向 |
+| [后台开发](https://join.qq.com/post_detail.html?postid=1282707383965295616) | 校招 | 应届毕业生；该详情未披露具体届次 | 深圳总部、北京、上海、广州、成都、武汉、杭州 | 多方向 |
 
 ## 美团（89）
 
@@ -2035,7 +2052,7 @@
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
-| [流式视频Agent实习生](https://shengshu.jobs.feishu.cn/index/position/7670063623927515455/detail) | 实习 | 未明确 | 北京 | 应用研发 |
+| [流式视频Agent实习生](https://shengshu.jobs.feishu.cn/index/position/7670063623927515455/detail) | 实习 | 未明确 | 北京 | 研究交叉 |
 | [Agent算法实习生](https://shengshu.jobs.feishu.cn/index/position/7673925527993157898/detail) | 实习 | 未明确 | 北京 | 应用研发 |
 
 ## 面壁智能（13）
@@ -2283,7 +2300,7 @@
 | [AI算法工程师（实习生）](https://app.mokahr.com/campus-recruitment/zte/46903#/job/adc0a879-72e5-4aa7-a179-3d7f97eb7c53) | 实习 | 官网实习项目；各子方向届次以正文为准，未统一披露 | 江苏·南京市、四川·成都市、湖北·武汉市、广东·深圳市、湖南·长沙市、上海市、陕西·西安市、天津市、重庆市 | 应用研发 |
 | [网络技术研发工程师（实习生）](https://app.mokahr.com/campus-recruitment/zte/46903#/job/6194366a-80d9-4f83-9a07-a3df12c8c1aa) | 实习 | 官网实习项目；各子方向届次以正文为准，未统一披露 | 陕西·西安市 | 应用研发 |
 
-## 深信服（6）
+## 深信服（7）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2293,6 +2310,7 @@
 | [27届（X-STAR）顶尖人才计划（博士）](https://hr.sangfor.com/campucompon/Delivery/4521) | 校招 | 2027届 | 深圳市、北京市 | 多方向 |
 | [27届（X-STAR）顶尖人才计划（本/硕）](https://hr.sangfor.com/campucompon/Delivery/4520) | 校招 | 2027届 | 深圳市、长沙市、北京市、成都市 | 多方向 |
 | [28届（X-STAR）顶尖人才实习专项](https://hr.sangfor.com/campucompon/Delivery/4375) | 实习 | 2028届 | 深圳市、长沙市、北京市 | 多方向 |
+| [深信服27届-安全运营工程师（AI方向）](https://hr.sangfor.com/campucompon/Delivery/4550) | 校招 | 2027届 | 深圳市 | 多方向 |
 
 ## 金蝶（23）
 

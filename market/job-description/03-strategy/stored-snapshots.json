@@ -4,18 +4,18 @@
   "files": [
     {
       "path": "01-data/official-jds.json",
-      "bytes": 11975508,
-      "sha256": "835b8112facbaf0d00db43fe1fe3bc597b0ea6b7dcfc224f2286b2f425d1680e"
+      "bytes": 12047858,
+      "sha256": "a4798cca152fd326d6a4c816620391b840c916dd62e553c5637f49c2e6fb7ba1"
     },
     {
       "path": "01-data/source-observations.json",
-      "bytes": 10683610,
-      "sha256": "582e7dae5acefeb95a38922e4662b71b414422aa495df919851695a7898f2150"
+      "bytes": 11047254,
+      "sha256": "352bb7f23ce222438e8927ddc07c01a2697c6672fb35f92004741d4af1367a18"
     },
     {
       "path": "01-data/岗位JD.md",
-      "bytes": 455767,
-      "sha256": "556fbc313f43068a95949ec85fa21f55d1f733f03877b53eb4ebab9cf1bb3577"
+      "bytes": 459104,
+      "sha256": "35e4b2b51e367627d96da0db661b3a7a5bdc79a4db323da3fed2876c5ebdd986"
     }
   ]
 }
