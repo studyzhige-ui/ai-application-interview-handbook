@@ -172,29 +172,74 @@ def verify_reference(record_id, reference, records):
 
 
 def verify_reviews(base, records):
-    prior = load(base / "02-analysis/prior-reviewed-assertions.json")
-    require(prior["status"] == "limited_existing_assertions", "Prior assertions must retain limited status")
-    require(sha(dumps(prior["original_document"]).encode("utf-8")) == prior["origin"]["sha256"],
-            "Original reviewed assertions changed")
-    decisions = prior["original_document"]["decisions"]
-    require(set(decisions) == set(prior["references"]), "Prior assertion references differ")
-    for record_id, reference in prior["references"].items():
-        verify_reference(record_id, reference, records)
     path = base / "02-analysis/model-review.json"
     review = load(path) if path.exists() else {"schema_version": 1, "status": "pending", "reviews": []}
-    require(set(review) == {"schema_version", "status", "reviews"} and review["schema_version"] == 1,
-            "Invalid model-review document")
+    require(review.get("schema_version") in {1, 2}, "Invalid model-review version")
+    document_fields = {"schema_version", "status", "reviews"}
+    if review["schema_version"] == 2:
+        document_fields |= {"source_groups", "snapshot"}
+    require(set(review) == document_fields, "Invalid model-review document")
     require(review["status"] in {"pending", "partial", "complete"} and isinstance(review["reviews"], list),
             "Invalid model-review status or rows")
+    version = review["schema_version"]
+    questions = {}
+    source_units = {record["source_id"]: record["source_id"] for record in records.values()}
+    grouped_sources, group_ids = set(), set()
+    if version == 2:
+        snapshot = review["snapshot"]
+        require(set(snapshot) == {"baseline_commit", "source_ids", "record_count", "record_ids_sha256"},
+                "Invalid analysis snapshot fields")
+        require(isinstance(snapshot["baseline_commit"], str) and len(snapshot["baseline_commit"]) == 40,
+                "Invalid snapshot commit")
+        require(isinstance(snapshot["source_ids"], list) and snapshot["source_ids"]
+                and len(snapshot["source_ids"]) == len(set(snapshot["source_ids"]))
+                and set(snapshot["source_ids"]) <= set(source_units), "Invalid snapshot source IDs")
+        require(isinstance(snapshot["record_count"], int) and snapshot["record_count"] > 0
+                and isinstance(snapshot["record_ids_sha256"], str) and len(snapshot["record_ids_sha256"]) == 64,
+                "Invalid snapshot record identity")
+        source_units = {sid: sid for sid in snapshot["source_ids"]}
+        require(isinstance(review["source_groups"], list), "Invalid source groups")
+        for group in review["source_groups"]:
+            require(set(group) == {"id", "source_ids", "reason", "verification_urls"}, "Invalid source group fields")
+            require(isinstance(group["id"], str) and group["id"] and group["id"] not in source_units
+                    and group["id"] not in group_ids, "Invalid or duplicate group ID")
+            group_ids.add(group["id"])
+            members = group["source_ids"]
+            require(isinstance(members, list) and len(members) >= 2 and len(members) == len(set(members)),
+                    "Invalid source group membership")
+            require(set(members) <= set(source_units) and not (set(members) & grouped_sources),
+                    "Unknown or repeated grouped source")
+            require(isinstance(group["reason"], str) and group["reason"].strip(), "Missing group rationale")
+            require(isinstance(group["verification_urls"], list) and group["verification_urls"]
+                    and all(isinstance(url, str) and url.startswith("https://") for url in group["verification_urls"]),
+                    "Missing group verification URLs")
+            grouped_sources.update(members)
+            for sid in members:
+                source_units[sid] = group["id"]
+    if version == 2:
+        catalog = load(base / "01-data/questions.json")
+        require(set(catalog) == {"schema_version", "questions"} and catalog["schema_version"] == 1,
+                "Invalid question catalog")
+        for question in catalog["questions"]:
+            require(set(question) == {"id", "domain", "question", "boundary"}, "Invalid question fields")
+            require(all(isinstance(value, str) and value.strip() for value in question.values()),
+                    "Empty question field")
+            require(question["id"] not in questions, "Duplicate question ID")
+            questions[question["id"]] = question
+    question_sources, question_records = defaultdict(set), defaultdict(set)
     seen, completed = set(), set()
     label_records, label_sources = Counter(), defaultdict(set)
     for row in review["reviews"]:
-        require(set(row) == {"occurrence_id", "reference", "status", "label", "reason", "model", "reviewed_at"},
-                "Invalid model-review row fields")
+        row_fields = {"occurrence_id", "reference", "status", "label", "reason", "model", "reviewed_at"}
+        if version == 2:
+            row_fields |= {"domains", "intents"}
+        require(set(row) == row_fields, "Invalid model-review row fields")
         record_id = row["occurrence_id"]
         require(record_id not in seen, f"Duplicate review: {record_id}")
         seen.add(record_id)
         verify_reference(record_id, row["reference"], records)
+        if version == 2:
+            require(records[record_id]["source_id"] in source_units, f"Review outside snapshot: {record_id}")
         require(set(row["reference"]) == {"source_id", "raw_path", "line_start", "source_section_sha256", "quote"},
                 f"Invalid review reference fields: {record_id}")
         require(row["status"] in {"reviewed", "needs_review"}, f"Invalid row status: {record_id}")
@@ -209,13 +254,54 @@ def verify_reviews(base, records):
             label_sources[row["label"]].add(records[record_id]["source_id"])
         else:
             require(row["label"] is None, f"Unfinished review cannot contribute a label: {record_id}")
-    expected_status = "complete" if records and completed == set(records) else "partial" if seen else "pending"
+        if version == 2:
+            require(row["label"] in {"question", "topic", "followup", "background", "answer",
+                    "candidate_question", "author_inference", "undisclosed", "uninterpretable"}
+                    or row["status"] == "needs_review", f"Invalid review kind: {record_id}")
+            if row["status"] == "reviewed" and row["label"] in {"question", "followup"}:
+                require(bool(row["intents"]), f"Explicit question has no catalog mapping: {record_id}")
+            require(isinstance(row["domains"], list) and len(row["domains"]) == len(set(row["domains"]))
+                    and all(isinstance(domain, str) and domain for domain in row["domains"]),
+                    f"Invalid domains: {record_id}")
+            require(isinstance(row["intents"], list), f"Invalid intents: {record_id}")
+            used = set()
+            for intent in row["intents"]:
+                require(set(intent) == {"question_id", "quote", "distinction"}, f"Invalid intent: {record_id}")
+                qid = intent["question_id"]
+                require(qid in questions and qid not in used, f"Unknown or duplicate question reference: {record_id}")
+                used.add(qid)
+                require(isinstance(intent["quote"], str) and intent["quote"].strip()
+                        and intent["quote"] in records[record_id]["raw_text"], f"Invalid intent quote: {record_id}")
+                require(isinstance(intent["distinction"], str) and intent["distinction"].strip(),
+                        f"Missing intent boundary: {record_id}")
+                require(row["status"] == "reviewed" and row["label"] in {"question", "followup"},
+                        f"Only reviewed explicit questions contribute question frequencies: {record_id}")
+                question_sources[qid].add(records[record_id]["source_id"])
+                question_records[qid].add(record_id)
+    if version == 2:
+        require(set(question_sources) == set(questions), "Question catalog contains unsupported entries")
+    if version == 2:
+        complete = (len(completed) == snapshot["record_count"] and
+                    sha(("\n".join(sorted(completed)) + "\n").encode("utf-8")) == snapshot["record_ids_sha256"] and
+                    {records[rid]["source_id"] for rid in completed} == set(snapshot["source_ids"]))
+    else:
+        complete = bool(records) and completed == set(records)
+    expected_status = "complete" if complete else "partial" if seen else "pending"
     require(review["status"] == expected_status, f"Review status must be {expected_status}")
-    return {"prior_assertion_count": len(decisions), "model_review_status": review["status"],
+    result = {"model_review_status": review["status"],
             "model_reviewed_record_count": len(completed), "records_without_completed_model_review": len(records) - len(completed),
             "explicit_reviewed_labels": {label: {"record_count": label_records[label],
                 "source_ids": sorted(label_sources[label]), "source_count": len(label_sources[label])}
                 for label in sorted(label_records)}}
+    if version == 2:
+        result["analysis_snapshot"] = snapshot
+        result["model_review_scope"] = "declared_snapshot"
+        result["conservative_evidence_unit_count"] = len(set(source_units.values()))
+        result["question_frequencies"] = {qid: {"source_count": len(question_sources[qid]),
+            "conservative_unit_count": len({source_units[sid] for sid in question_sources[qid]}),
+            "source_ids": sorted(question_sources[qid]), "record_count": len(question_records[qid])}
+            for qid in sorted(questions)}
+    return result
 
 
 def verify_readme_links(base):
@@ -235,7 +321,7 @@ def verify(base=BUSINESS, write_index=False):
     for relative, value in outputs.items():
         path, expected = base / relative, dumps(value)
         if write_index:
-            path.write_text(expected, encoding="utf-8")
+            path.write_bytes(expected.encode("utf-8"))
         else:
             require(path.exists() and path.read_bytes() == expected.encode("utf-8"), f"Stale structural index: {relative}")
     return summary, records
@@ -247,11 +333,14 @@ def main(argv=None):
     mode.add_argument("--check", action="store_true", help="Read-only verification (the default)")
     mode.add_argument("--write-index", action="store_true", help="Explicitly refresh only sources.json and raw-manifest.json")
     parser.add_argument("--record", help="Print one preserved structural record by stable occurrence ID")
+    parser.add_argument("--statistics", action="store_true", help="Print source-deduplicated counts from explicit model assignments")
     args = parser.parse_args(argv)
     try:
         summary, records = verify(write_index=args.write_index)
         if args.record:
             require(args.record in records, f"Unknown record: {args.record}")
+        if not args.statistics and "question_frequencies" in summary:
+            summary["canonical_question_count"] = len(summary.pop("question_frequencies"))
         print(dumps(records[args.record] if args.record else summary), end="")
         return 0
     except (ValueError, KeyError, TypeError, OSError) as error:
