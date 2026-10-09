@@ -4,28 +4,28 @@
   "files": [
     {
       "path": "01-data/official-jds.json",
-      "bytes": 5092167,
-      "sha256": "479ab7a8a852a7623c0abdf91940c15158d37a3c3d260c3600f5a9a82eb2e0e2"
+      "bytes": 5297095,
+      "sha256": "faaff183524d3a525dda3c6a5e8e599d18bd82143ae51c30c926c1b2ade242ee"
     },
     {
       "path": "01-data/source-observations.json",
-      "bytes": 10837239,
-      "sha256": "db34e809356d6bde5347a903a32754828b237de4e52ff1ee4c6790dd53b26153"
+      "bytes": 10934703,
+      "sha256": "1eb486ac0a05295fa0c55cd6ce737edd1600fdd8a5c105722d16d111db477096"
     },
     {
       "path": "01-data/bytedance-jds.json",
       "bytes": 7929085,
-      "sha256": "7919066c58f5aa15e58262b778850701e57016966ca14d8c754e43ceaa45c9d6"
+      "sha256": "527d47c6fac33e5ec8d353294377db34a752f113428f724eb4782295f3aaf7b6"
     },
     {
       "path": "01-data/historical-jds.json",
       "bytes": 1879987,
-      "sha256": "57fee528f8b6716679f769e30da9119c5bbf08ed9860344bf98528ce174c711d"
+      "sha256": "82003afa6a5768bbac8c17f7a9574b0164c9517d10db090b0630d0856374cd75"
     },
     {
       "path": "01-data/岗位JD.md",
-      "bytes": 501774,
-      "sha256": "cb7f1dd7d77c1bedf8e2d73d7686a7325c200dfb8fab03c111c8a725a737150b"
+      "bytes": 509514,
+      "sha256": "3f9ed7a261b439d20034907bb723822e30796118b1cb5eb155734e0e9cb411ef"
     }
   ]
 }

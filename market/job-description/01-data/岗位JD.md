@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T15:07:44Z。收录 **2568 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-09T15:30:17Z。收录 **2611 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -252,7 +252,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（70）
+## 腾讯（113）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -305,11 +305,8 @@
 | [微信视频号-加热Agent智能投放与素材生成算法研究](https://join.qq.com/post_detail.html?postid=1282064466091287555) | 校招 | 未披露 | 广州 | 研究交叉 |
 | [叙事智能](https://join.qq.com/post_detail.html?postid=1283142377577718784) | 校招 | 未披露 | 深圳总部、上海 | 研究交叉 |
 | [智能NPC记忆、推理与情感](https://join.qq.com/post_detail.html?postid=1283142387409167360) | 校招 | 未披露具体毕业年份 | 深圳总部、上海 | 研究交叉 |
-| [元宝—基于大模型的AI搜索技术研究](https://join.qq.com/post_detail.html?postid=1291815825879448577) | 校招 | 未披露具体毕业年份 | 深圳总部、北京、上海 | 研究交叉 |
 | [腾讯云—面向智能体的数据语义层自动化构建和推理研究](https://join.qq.com/post_detail.html?postid=1292597521964973056) | 校招 | 未披露具体毕业年份 | 深圳总部、北京、上海、成都 | 研究交叉 |
-| [面向长程、复杂决策问题的具身智能体的研究](https://join.qq.com/post_detail.html?postid=1231829074687944758) | 实习 | 未披露具体毕业年份 | 深圳总部 | 研究交叉 |
 | [基于AI大模型的数据库自学习优化器方向研发和探索](https://join.qq.com/post_detail.html?postid=1231829074687944765) | 实习 | 未披露具体毕业年份 | 北京 | 研究交叉 |
-| [腾讯营销-多模态大模型与强化学习驱动的广告投放Agent](https://join.qq.com/post_detail.html?postid=1231829074687944841) | 实习 | 未披露具体毕业年份 | 上海 | 研究交叉 |
 | [腾讯营销-基于Agentic AI的自主进化广告审核专家Agent构建](https://join.qq.com/post_detail.html?postid=1231829074687944846) | 实习 | 未披露具体毕业年份 | 北京 | 应用研发 |
 | [微信-多模态AI搜索研究](https://join.qq.com/post_detail.html?postid=1231829074692139019) | 实习 | 未披露 | 北京、广州 | 研究交叉 |
 | [微信读书-长文本处理技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139029) | 实习 | 未披露 | 北京 | 研究交叉 |
@@ -326,6 +323,52 @@
 | [微信小游戏-多模态交互式 GUI Agent 研究](https://join.qq.com/post_detail.html?postid=1274481034578500754) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
 | [微信小游戏-基于游戏研发管线的Agentic Coding 研究](https://join.qq.com/post_detail.html?postid=1274481034578500755) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
 | [微信小程序Agent-基于大语言模型的小程序功能组件（Skill）生成式编译技术研究](https://join.qq.com/post_detail.html?postid=1274481034578500758) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [Agent赋能安全攻防演练](https://join.qq.com/post_detail.html?postid=1277774706262778882) | 校招 | 未披露 | 深圳总部 | 评测研发 |
+| [混元基座模型-Agent评测方法与评测体系研究](https://join.qq.com/post_detail.html?postid=1277774706287944718) | 校招 | 未披露 | 北京 | 评测研发 |
+| [混元基座模型-多模态Agent评测研究](https://join.qq.com/post_detail.html?postid=1277774706287944719) | 校招 | 未披露 | 北京 | 评测研发 |
+| [混元多模态-多模态Creative Agents研究](https://join.qq.com/post_detail.html?postid=1277774706287944721) | 校招 | 未披露 | 北京 | 应用研发 |
+| [面向 Agent 应用开发的易用 API 抽象与平台化建设](https://join.qq.com/post_detail.html?postid=1277774706287944733) | 校招 | 未披露 | 深圳总部 | 应用研发 |
+| [面向游戏数据科学的智能分析 Agent](https://join.qq.com/post_detail.html?postid=1279259043688719360) | 校招 | 未披露 | 深圳总部 | 应用研发 |
+| [多模态大模型/AI算子智能评测体系构建与Agent自动化升级](https://join.qq.com/post_detail.html?postid=1279259082272121864) | 校招 | 未披露 | 深圳总部 | 评测研发 |
+| [微信搜索-Agent研究](https://join.qq.com/post_detail.html?postid=1280285761769695232) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [微信小微主动推荐 - 主动智能与持续学习 Agent 研究](https://join.qq.com/post_detail.html?postid=1282064456142398464) | 校招 | 未披露 | 广州 | 研究交叉 |
+| [优图实验室-大模型Code Agent模型效果评估与优化研究](https://join.qq.com/post_detail.html?postid=1286682442098688000) | 校招 | 未披露 | 北京、上海 | 研究交叉 |
+| [优图实验室-多模态Code Agent 技术研究](https://join.qq.com/post_detail.html?postid=1286682452181794818) | 校招 | 未披露 | 深圳总部、北京、上海 | 研究交叉 |
+| [混元基座模型-Code&Agent研究](https://join.qq.com/post_detail.html?postid=1289994478656307200) | 校招 | 未披露 | 深圳总部、北京 | 研究交叉 |
+| [腾讯云-适合AI Agent的Infra体系研究](https://join.qq.com/post_detail.html?postid=1291815825879448583) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [WorkBuddy/CodeBuddy—利用强化学习方法基于经验数据训练提升大模型Agent能力研究](https://join.qq.com/post_detail.html?postid=1292597531922250752) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [腾讯云大数据-DataAgent—数据决策智能体关键技术研究](https://join.qq.com/post_detail.html?postid=1292597531922250757) | 校招 | 未披露 | 上海、杭州 | 研究交叉 |
+| [混元-Agent底线与执行安全评估研究](https://join.qq.com/post_detail.html?postid=1292723595709365250) | 校招 | 未披露具体毕业年份 | 深圳总部、北京、上海 | 研究交叉 |
+| [腾讯视频-针对影视制作的agentic system研究](https://join.qq.com/post_detail.html?postid=1231829074687944709) | 实习 | 未披露具体毕业年份 | 深圳总部、北京 | 研究交叉 |
+| [Agent在生成内容识别、人机对抗中的应用研究](https://join.qq.com/post_detail.html?postid=1231829074687944762) | 实习 | 未披露具体毕业年份 | 深圳总部 | 研究交叉 |
+| [Agent赋能安全攻防演练](https://join.qq.com/post_detail.html?postid=1231829074687944763) | 实习 | 未披露具体毕业年份 | 深圳总部 | 研究交叉 |
+| [游戏AI-面向UGC游戏的Vibe Gaming Agent](https://join.qq.com/post_detail.html?postid=1231829074687944790) | 实习 | 未披露具体毕业年份 | 深圳总部 | 研究交叉 |
+| [游戏AI-Agentic AI在游戏场景的探索：感知，推理，决策](https://join.qq.com/post_detail.html?postid=1231829074687944793) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [混元-基于Agent的大模型数据建设范式研究](https://join.qq.com/post_detail.html?postid=1231829074687944796) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [混元基座模型-Agent 研究](https://join.qq.com/post_detail.html?postid=1231829074687944830) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [混元基座模型-Agent前沿评测研究](https://join.qq.com/post_detail.html?postid=1231829074687944832) | 实习 | 未披露 | 北京 | 评测研发 |
+| [腾讯营销-基于大模型Agent的腾讯电商广告推荐研究](https://join.qq.com/post_detail.html?postid=1231829074687944843) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [WXG-WeLM Agentic 系统](https://join.qq.com/post_detail.html?postid=1231829074692139008) | 实习 | 未披露 | 深圳总部、北京、上海 | 研究交叉 |
+| [微信小游戏-多模态交互式 GUI Agent 研究](https://join.qq.com/post_detail.html?postid=1231829074692139040) | 实习 | 未披露 | 深圳总部 | 应用研发 |
+| [微信小游戏-基于游戏研发管线的Agentic Coding 研究](https://join.qq.com/post_detail.html?postid=1231829074692139041) | 实习 | 未披露 | 深圳总部 | 应用研发 |
+| [微信小程序Agent-基于大语言模型的小程序功能组件（Skill）生成式编译技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139045) | 实习 | 未披露 | 北京 | 应用研发 |
+| [元宝—面向真实复杂任务的全栈VLM Agent研究](https://join.qq.com/post_detail.html?postid=1231829074692139079) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [腾讯云大数据—DataAgent-数据决策智能体关键技术研究](https://join.qq.com/post_detail.html?postid=1231829074692139099) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [腾讯云CodeBuddy—利用强化学习方法基于经验数据训练提升大模型Agent能力研究](https://join.qq.com/post_detail.html?postid=1231829074692139103) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [腾讯云—适合 AI Agent 的 Infra 体系研究](https://join.qq.com/post_detail.html?postid=1231829074692139113) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [AI Agent研究](https://join.qq.com/post_detail.html?postid=1231829074692139149) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [游戏数据智能分析与探索Agent](https://join.qq.com/post_detail.html?postid=1231829074692139170) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [混元多模态-AI队友面向数字世界的Agentic应用与研究](https://join.qq.com/post_detail.html?postid=1231837900296284160) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [元宝—多模态模型安全边界的可解释性研究与Agent应用探索](https://join.qq.com/post_detail.html?postid=1233535296004810752) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [混元-Code Agent 攻防研究与沙盒构建](https://join.qq.com/post_detail.html?postid=1243708556705035264) | 实习 | 未披露具体毕业年份 | 深圳总部 | 研究交叉 |
+| [混元-Agent 长程任务评测体系构建 & 自主协作能力持续深化研究](https://join.qq.com/post_detail.html?postid=1243708556705035266) | 实习 | 未披露具体毕业年份 | 深圳总部 | 研究交叉 |
+| [微信小微主动推荐 - 主动智能与持续学习 Agent 研究](https://join.qq.com/post_detail.html?postid=1282757520922109954) | 实习 | 未披露具体毕业年份 | 广州 | 研究交叉 |
+| [微信-小微主动推荐 - 主动智能与持续学习 Agent 研究](https://join.qq.com/post_detail.html?postid=1287215417483756544) | 实习 | 未披露具体毕业年份 | 北京、广州 | 研究交叉 |
+| [混元基座模型——多模态Agent评测研究](https://join.qq.com/post_detail.html?postid=1287771601961893888) | 实习 | 未披露具体毕业年份 | 深圳总部、北京 | 研究交叉 |
+| [混元基座模型-Code&Agent研究](https://join.qq.com/post_detail.html?postid=1293194428185772032) | 实习 | 未披露具体毕业年份 | 深圳总部、北京 | 研究交叉 |
+| [混元基座模型-STEM Agent研究](https://join.qq.com/post_detail.html?postid=1297696816577839104) | 实习 | 未披露 | 深圳总部、北京 | 研究交叉 |
+| [微信搜索-大模型AI搜索研究与落地](https://join.qq.com/post_detail.html?postid=1274481034578500719) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [微信-电商多模态大模型研究](https://join.qq.com/post_detail.html?postid=1274481034578500735) | 校招 | 未披露 | 广州 | 研究交叉 |
 
 ## 美团（89）
 
