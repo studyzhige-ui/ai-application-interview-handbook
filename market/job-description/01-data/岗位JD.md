@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T13:01:24Z。收录 **2340 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
+本次核验：2026-10-09T13:33:39Z。收录 **2351 个去重岗位或官方岗位意向**，来自 **58 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[唯一岗位库](official-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -133,7 +133,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（15）
+## 腾讯（26）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -152,6 +152,17 @@
 | [WXG-WeLM Agentic 系统](https://join.qq.com/post_detail.html?postid=1274481034578500726) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [游戏客户端开发](https://join.qq.com/post_detail.html?postid=1282032034373805056) | 校招 | 应届毕业生，具体届次未披露 | 深圳总部、北京、上海、杭州 | 多方向 |
 | [后台开发](https://join.qq.com/post_detail.html?postid=1282707383965295616) | 校招 | 应届毕业生；该详情未披露具体届次 | 深圳总部、北京、上海、广州、成都、武汉、杭州 | 多方向 |
+| [游戏引擎开发](https://join.qq.com/post_detail.html?postid=1282707420237636608) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海、成都、杭州 | 多方向 |
+| [PC客户端开发](https://join.qq.com/post_detail.html?postid=1282707439695012864) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海、广州 | 多方向 |
+| [前端开发](https://join.qq.com/post_detail.html?postid=1282707439695012865) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海、广州、成都、武汉 | 多方向 |
+| [测试开发](https://join.qq.com/post_detail.html?postid=1283126501084308480) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、北京、上海、广州、成都 | 评测研发 |
+| [运营开发](https://join.qq.com/post_detail.html?postid=1283126506864059392) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、北京、上海、广州 | 多方向 |
+| [数据工程](https://join.qq.com/post_detail.html?postid=1283126531220382720) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、北京、上海、广州 | 多方向 |
+| [技术美术（AI方向）](https://join.qq.com/post_detail.html?postid=1283878428566955009) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、上海、杭州 | 应用研发 |
+| [SRE](https://join.qq.com/post_detail.html?postid=1284317968595231745) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海 | 多方向 |
+| [技术运营](https://join.qq.com/post_detail.html?postid=1284501698043487233) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部 | 多方向 |
+| [Senior Researcher, Large Language Models](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Senior-Researcher--Large-Language-Models_R107808-1) | 校招 | 应届毕业生（2027校园入口；具体年份以详情为准） | Singapore-CapitaSky | 应用研发 |
+| [Senior Researcher, Speech Synthesis and Multimodal LLM](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Senior-Researcher--Speech-Synthesis-and-Multimodal-LLM_R107809-1) | 校招 | 应届毕业生（2027校园入口；具体年份以详情为准） | Singapore-CapitaSky | 研究交叉 |
 
 ## 美团（89）
 
@@ -2221,7 +2232,7 @@
 | --- | --- | --- | --- | --- |
 | [Java开发工程师（顺丰科技）](https://campus.sf-express.com/#/postDetail/2247) | 校招 | 2027届 | 成都市、武汉市、深圳市 | 应用研发 |
 | [AI开发工程师（顺丰科技）](https://campus.sf-express.com/#/postDetail/2239) | 校招 | 2027届 | 武汉市、深圳市 | 应用研发 |
-| [大模型算法工程师-AI智能体方向（博士后）](https://campus.sf-express.com/#/postDetail/2263) | 校招 | 25–27届博士 | 深圳市 | 应用研发 |
+| [大模型算法工程师-AI智能体方向（博士后）](https://campus.sf-express.com/#/postDetail/2263) | 校招 | 25–27届博士 | 深圳市 | 研究交叉 |
 | [星链计划-测试开发工程师](https://campus.sf-express.com/#/postDetail/2412) | 校招 | 2027届 | 上海市 | 应用研发 |
 | [星链计划-AI应用开发工程师](https://campus.sf-express.com/#/postDetail/2411) | 校招 | 2027届 | 上海市 | 应用研发 |
 | [星链计划-agent算法工程师](https://campus.sf-express.com/#/postDetail/2407) | 校招 | 2027届 | 上海市 | 应用研发 |
