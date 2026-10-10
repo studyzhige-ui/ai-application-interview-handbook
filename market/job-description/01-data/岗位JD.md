@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-09T16:44:34Z。收录 **2675 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-10T00:54:08Z。收录 **2744 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -119,7 +119,7 @@
 | [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 
-## 快手（104）
+## 快手（129）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -227,6 +227,31 @@
 | [AIGC 算法实习生-【商业化算法部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32798) | 实习 | 2028及以后 | 北京 | 研究交叉 |
 | [搜索算法实习生- 【AI搜】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32400) | 实习 | 未披露 | 更新时间： | 研究交叉 |
 | [AI产品经理实习生-【电商】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30247) | 实习 | 未披露 | 杭州 | 多方向 |
+| [游戏AI算法实习生-【游戏事业部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26129) | 实习 | 未披露 | 杭州 | 多方向 |
+| [（可灵AI专项）Android大前端开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/25913) | 实习 | 未披露 | 北京 | 多方向 |
+| [AI应用开发实习生 - 【综效线-效率工程部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28766) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI应用开发实习生 - 【效率工程部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26863) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI应用开发后端实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28268) | 实习 | 未披露 | 北京 | 应用研发 |
+| [全栈开发实习生（可灵AI专项）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28650) | 实习 | 未披露 | 北京 | 多方向 |
+| [AI应用开发实习生 - 【综效线-企业应用部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26567) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI应用产品实习生 -【综效线-企业应用部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/26995) | 实习 | 未披露 | 北京 | 多方向 |
+| [全栈研发实习生-【生活服务】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32831) | 实习 | 未披露 | 北京 | 多方向 |
+| [生产后端实习生 -【主站】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32038) | 实习 | 2028届优先 | 北京 | 多方向 |
+| [后端开发实习生（增长创新）-【主站】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31844) | 实习 | 未披露 | 北京 | 多方向 |
+| [Java开发实习生（垂直业务）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/24094) | 实习 | 2027届 | 北京 | 多方向 |
+| [Java开发实习生-【KSIB】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32153) | 实习 | 未披露 | 北京 | 多方向 |
+| [Java 开发实习生（商家平台组）-【生活服务】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/29887) | 实习 | 2026届及以后 | 北京 | 多方向 |
+| [特效渲染实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/32050) | 实习 | 未披露 | 北京 | 多方向 |
+| [全栈开发实习生（大前端背景）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/29992) | 实习 | 未披露 | 北京 | 应用研发 |
+| [广告算法实习生-【电商策略算法部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31567) | 实习 | 2027届 | 北京 | 研究交叉 |
+| [多模态评测算法实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/29924) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [语音算法实习生 - 【综效线-效率工程部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28710) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [算法实习生 - 【综效线-效率工程部】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/28157) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [算法实习生-【反作弊业务中心】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30073) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [Java开发实习生（游戏）-【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/31081) | 实习 | 2027届 | 北京 | 多方向 |
+| [后端Java开发实习生](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/24682) | 实习 | 未披露 | 北京 | 多方向 |
+| [测试开发实习生（品牌营销） - 【商业化】](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30359) | 实习 | 未披露 | 北京 | 多方向 |
+| [服务端开发实习生（海外用户增长方向）](https://zhaopin.kuaishou.cn/recruit/e/#/official/trainee/job-info/30136) | 实习 | 未披露 | 北京 | 多方向 |
 
 ## 百度（35）
 
@@ -268,7 +293,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（161）
+## 腾讯（205）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -433,6 +458,50 @@
 | [Controllable Video Generation Researcher 107820](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/United-Kingdom-London/Controllable-Video-Generation-Researcher_R107820) | 校招 | 未披露 | United Kingdom-London | 研究交叉 |
 | [微信游戏-用户数据驱动的交互式内容生成研究](https://join.qq.com/post_detail.html?postid=1274481034578500756) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
 | [微信游戏-生成式推荐系统研究](https://join.qq.com/post_detail.html?postid=1274481034578500757) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [光子AI-多模态大模型在游戏场景中的研究与应用](https://join.qq.com/post_detail.html?postid=1279259082272121868) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [魔方工作室-游戏视频生成项目](https://join.qq.com/post_detail.html?postid=1279259092594304001) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [腾讯地图-多模态大模型时空轨迹挖掘研究](https://join.qq.com/post_detail.html?postid=1280227308716025858) | 校招 | 未披露具体毕业年份 | 北京 | 研究交叉 |
+| [元宝—VLM think with image研究](https://join.qq.com/post_detail.html?postid=1291815835345992706) | 校招 | 未披露 | 深圳总部、北京、上海 | 研究交叉 |
+| [腾讯云音视频语音识别大模型研究](https://join.qq.com/post_detail.html?postid=1292597531922250755) | 校招 | 未披露 | 深圳总部、上海 | 研究交叉 |
+| [腾讯视频-影视工业Benchmark研究](https://join.qq.com/post_detail.html?postid=1231829074687944707) | 实习 | 未披露 | 深圳总部、北京 | 评测研发 |
+| [游戏资产轻量化算法研究](https://join.qq.com/post_detail.html?postid=1231829074687944751) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [混元-音视频理解 Benchmark 构建](https://join.qq.com/post_detail.html?postid=1231829074687944816) | 实习 | 未披露 | 深圳总部 | 评测研发 |
+| [腾讯金融科技-多模态 coding 生成研究与UI自动化底座优化、场景拓展与融合](https://join.qq.com/post_detail.html?postid=1231829074687944854) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [微信安全-智能体安全研究](https://join.qq.com/post_detail.html?postid=1231829074692139039) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [微信游戏-用户数据驱动的交互式内容生成研究](https://join.qq.com/post_detail.html?postid=1231829074692139042) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [微信游戏-生成式推荐系统研究](https://join.qq.com/post_detail.html?postid=1231829074692139043) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [腾讯云—多模态大模型驱动的智能媒体处理平台研究](https://join.qq.com/post_detail.html?postid=1231829074692139096) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [腾讯云—音视频语音识别大模型研究](https://join.qq.com/post_detail.html?postid=1231829074692139097) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [腾讯云—统一多模态检索研究](https://join.qq.com/post_detail.html?postid=1231829074692139112) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [游戏视频生成项目](https://join.qq.com/post_detail.html?postid=1231829074692139129) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [LLM实时推理](https://join.qq.com/post_detail.html?postid=1231829074692139132) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [语音/对话驱动数字人](https://join.qq.com/post_detail.html?postid=1231829074692139134) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [基于多模态大模型的3D场景智能光照生成与编辑方法研究](https://join.qq.com/post_detail.html?postid=1231829074692139142) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [基于生成式框架进行3D空间的推理与生成](https://join.qq.com/post_detail.html?postid=1231829074692139153) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [多模态大模型在游戏场景中的研究与应用](https://join.qq.com/post_detail.html?postid=1231829074692139156) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [游戏智能NPC-大模型角色意图与社会化自演进方法研究](https://join.qq.com/post_detail.html?postid=1231829074692139159) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [游戏智能NPC-文生动作大模型方法研究](https://join.qq.com/post_detail.html?postid=1231829074692139160) | 实习 | 未披露 | 深圳总部 | 研究交叉 |
+| [微信小微-用户人格建模与个性化对话研究](https://join.qq.com/post_detail.html?postid=1236099085644457987) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [微信小微-基于CodeLLM的小程序主要功能（MCP Tool）生成式编译技术研究](https://join.qq.com/post_detail.html?postid=1295442456116166656) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [元宝—VLM think with image研究](https://join.qq.com/post_detail.html?postid=1298382438912983040) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [Senior Researcher, Speech Synthesis and Multimodal LLM 107821](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/United-Kingdom-London/Senior-Researcher--Speech-Synthesis-and-Multimodal-LLM_R107821) | 校招 | 未披露 | United Kingdom-London | 研究交叉 |
+| [后台开发](https://join.qq.com/post_detail.html?postid=1200791473415778304) | 实习 | 未披露 | 深圳总部、北京、上海、广州、成都、杭州 | 多方向 |
+| [测试开发](https://join.qq.com/post_detail.html?postid=1210569901664899072) | 实习 | 未披露 | 深圳总部、北京、上海、广州、成都 | 多方向 |
+| [游戏客户端开发](https://join.qq.com/post_detail.html?postid=1210569902285656064) | 实习 | 未披露 | 深圳总部、北京、上海、杭州 | 多方向 |
+| [游戏引擎开发](https://join.qq.com/post_detail.html?postid=1210569906312187904) | 实习 | 未披露 | 深圳总部、上海、广州 | 多方向 |
+| [数据工程](https://join.qq.com/post_detail.html?postid=1211674468209135616) | 实习 | 未披露 | 深圳总部、北京、上海、广州 | 多方向 |
+| [前端开发](https://join.qq.com/post_detail.html?postid=1211674475813408768) | 实习 | 未披露 | 深圳总部、北京、上海、广州、成都、武汉 | 多方向 |
+| [运营开发](https://join.qq.com/post_detail.html?postid=1212080150968274944) | 实习 | 未披露 | 深圳总部、北京、上海、广州 | 多方向 |
+| [PC客户端开发](https://join.qq.com/post_detail.html?postid=1212220582939332608) | 实习 | 未披露 | 深圳总部、北京、上海、广州 | 多方向 |
+| [后台开发](https://join.qq.com/post_detail.html?postid=1210646470286783488) | 实习 | 未披露 | 深圳总部、北京、上海、广州、武汉、杭州 | 多方向 |
+| [前端开发](https://join.qq.com/post_detail.html?postid=1211741011563656192) | 实习 | 未披露 | 深圳总部、广州 | 多方向 |
+| [PC客户端开发](https://join.qq.com/post_detail.html?postid=1211741014633886720) | 实习 | 未披露 | 深圳总部 | 多方向 |
+| [测试开发](https://join.qq.com/post_detail.html?postid=1212183855952704512) | 实习 | 未披露 | 深圳总部 | 多方向 |
+| [运营开发](https://join.qq.com/post_detail.html?postid=1212183855952704513) | 实习 | 未披露 | 深圳总部 | 多方向 |
+| [游戏客户端开发](https://join.qq.com/post_detail.html?postid=1212816216566272000) | 实习 | 未披露 | 深圳总部、北京、上海 | 多方向 |
+| [游戏引擎开发](https://join.qq.com/post_detail.html?postid=1224696223685345280) | 实习 | 未披露 | 深圳总部、北京、上海、杭州 | 多方向 |
+| [数据工程](https://join.qq.com/post_detail.html?postid=1281982531969065984) | 实习 | 未披露 | 深圳总部、北京 | 多方向 |
+| [Game ML Researcher Intern 107258](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Game-ML-Researcher-Intern_R107258-1) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
 
 ## 美团（89）
 
