@@ -4,7 +4,7 @@
 
 ## 1. 自动流程
 
-`.github/workflows/sync-official-2027-agent-jobs.yml` 每周二、周五 `01:00 UTC` 自动执行，也支持手动触发。69 个已登记公司/品牌入口按固定规则分为 8 个 shard 并行扫描，使用 GitHub-hosted Ubuntu，不依赖本地 self-hosted runner。
+`.github/workflows/sync-official-2027-agent-jobs.yml` 每周二、周五 `01:00 UTC` 自动执行，也支持手动触发。69 个已登记公司/品牌入口按固定规则分为 16 个 shard 并行扫描，使用 GitHub-hosted Ubuntu，不依赖本地 self-hosted runner。
 
 每个来源都有独立的页数、岗位数和墙钟时间上限。本轮默认上限为每来源 200 页、10000 个岗位/详情、900 秒。来源失败不会中断其余来源；原始 JSON/HTML、请求记录和逐来源结果作为 GitHub Actions artifact 保留 14 天。
 
@@ -64,7 +64,7 @@ python -B market/job-description/04-scripts/jd.py collect \
 
 ```sh
 python -B market/job-description/04-scripts/jd.py scan \
-  --shard-index 0 --shard-count 8 \
+  --shard-index 0 --shard-count 16 \
   --max-pages 200 --max-jobs 10000 --timeout-seconds 900 \
   --output-dir /tmp/jd-scan/shard-0
 
@@ -81,13 +81,7 @@ python -B market/job-description/04-scripts/jd.py reconcile \
 
 来源登记仍在 `../03-strategy/official-2027-campus-sources.json`。当前适配器包括公司专用官方 API、Moka、飞书招聘、北森/Zhiye、Ashby、浏览器动态页以及小米、字节等专用实现。官网改版后，某个适配器可能变成 `BLOCKED` / `PARTIAL` / `INCOMPLETE`；这代表需要维护采集契约，不代表该公司没有岗位。
 
-金山办公/WPS（`official-018`）的 Moka 来源参数不会写进仓库。若希望 GitHub Actions 自动采集该来源，需要在仓库 Secret 中配置：
-
-```text
-JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018
-```
-
-没有该 Secret 时，WPS 会安全地记录为受限/未完成，不影响其他 68 个来源。工具不会生成该参数，也不会从旧文件或 Git 历史恢复。
+金山办公/WPS（`official-018`）当前公开 `jobs/v2` 接口已验证可以匿名读取校园职位池，自动任务不再依赖运行时 source parameter 或仓库 Secret。适配器仍保留“显式私密参数模式”的隔离与脱敏测试，用于未来官网若重新要求该参数时安全恢复，但默认自动采集不会读取或保存这类参数。
 
 BOSS直聘/看准科技（`official-065`）仍保留明确的安全验证边界；如果固定官方入口无法可靠提取职位，记录为受限，不通过绕过 WAF、登录或验证码来制造“完整扫描”。
 
