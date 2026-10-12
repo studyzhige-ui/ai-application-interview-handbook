@@ -222,10 +222,14 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
           total = primary.list.total;
           for (const raw of primary.list.rows) rows.push({ ...normalizeBrowserRow(raw, source, primary.url, listPage.url()), list_capture_id: primary.capture_id });
         }
-        for (const link of links) {
-          if (!link.href || !origins.has(new URL(link.href).origin) || !(source.job_link_selector || jobLinkLike(link.href))) continue;
-          // Link matching is structural; all link labels, including empty labels, are retained.
-          rows.push({ company: source.company, job_id: "", title: link.title, official_url: link.href, raw_list: link, list_capture_id: domCapture.capture_id });
+        if (!primary) {
+          for (const link of links) {
+            if (!link.href || !origins.has(new URL(link.href).origin) || !(source.job_link_selector || jobLinkLike(link.href))) continue;
+            // DOM links are a fallback only when no structured list response was
+            // observed. Mixing them with an authoritative JSON pool can duplicate
+            // the same job before/after its stable ID becomes known.
+            rows.push({ company: source.company, job_id: "", title: link.title, official_url: link.href, raw_list: link, list_capture_id: domCapture.capture_id });
+          }
         }
         return { rows, total, page_url: listPage.url(), raw_html_capture_id: domCapture.capture_id };
       },
