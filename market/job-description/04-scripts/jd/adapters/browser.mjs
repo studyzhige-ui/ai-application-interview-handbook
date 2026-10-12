@@ -194,10 +194,25 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
         const observed = observations; observations = [];
         const rows = [];
         let total = null;
-        for (const observation of observed) {
-          lastObserved = observation;
-          total = observation.list.total;
-          for (const raw of observation.list.rows) rows.push({ ...normalizeBrowserRow(raw, source, observation.url, listPage.url()), list_capture_id: observation.capture_id });
+        // A page can emit job recommendations, dictionaries and the real result list.
+        // Mixing every structurally list-like response inflates counts and can make a
+        // valid page appear larger than its advertised total. Prefer the strongest
+        // single list contract for this page: known Feishu search first, then the
+        // largest advertised pool, then the largest visible row set.
+        const ranked = observed.slice().sort((a, b) => {
+          const aFeishu = /\/api\/v1\/search\/job\/posts/.test(new URL(a.url).pathname) ? 1 : 0;
+          const bFeishu = /\/api\/v1\/search\/job\/posts/.test(new URL(b.url).pathname) ? 1 : 0;
+          if (aFeishu !== bFeishu) return bFeishu - aFeishu;
+          const aTotal = a.list.total == null ? -1 : a.list.total;
+          const bTotal = b.list.total == null ? -1 : b.list.total;
+          if (aTotal !== bTotal) return bTotal - aTotal;
+          return (b.list.rows?.length || 0) - (a.list.rows?.length || 0);
+        });
+        const primary = ranked[0] || null;
+        if (primary) {
+          lastObserved = primary;
+          total = primary.list.total;
+          for (const raw of primary.list.rows) rows.push({ ...normalizeBrowserRow(raw, source, primary.url, listPage.url()), list_capture_id: primary.capture_id });
         }
         for (const link of links) {
           if (!link.href || !origins.has(new URL(link.href).origin) || !(source.job_link_selector || jobLinkLike(link.href))) continue;
