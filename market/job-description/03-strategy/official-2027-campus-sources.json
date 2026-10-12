@@ -871,7 +871,7 @@
       "portal": "https://campus.duxiaoman.com/",
       "official_root": "https://campus.duxiaoman.com/",
       "browser_probe": true,
-      "note": "度小满官方当前校园招聘入口；运行时枚举大模型 AI 应用、AI 全栈、AI Infra 等工程岗位。",
+      "note": "度小满官方2027校园招聘入口；若直达职位页被飞书站点重定向到活动首页，浏览器在同一第一方站点点击“探索职位”进入职位列表，再读取页面自身签名请求。",
       "job_list_url": "https://campus.duxiaoman.com/051736/position/list",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -884,7 +884,8 @@
       "feishu_channel": "051736",
       "feishu_apply_prefix": "https://campus.duxiaoman.com/051736/position",
       "feishu_browser_list_url": "https://campus.duxiaoman.com/051736/position/list",
-      "browser_settle_ms": 2200
+      "browser_settle_ms": 2200,
+      "browser_follow_list_link_selector": "a[href*=\"/051736/position/list\"]"
     },
     {
       "company": "海康威视",
@@ -1268,21 +1269,26 @@
     {
       "company": "BOSS直聘/看准科技",
       "mode": "portal_only",
-      "portal": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
-      "official_root": "https://www.zhipin.com/",
+      "portal": "https://v.zhipin.com/detail/36bccf24515849181nR63tW6GA~~",
+      "official_root": "https://www.zhipin.com/school/",
       "browser_probe": true,
-      "note": "BOSS直聘自身第一方公司职位入口；自动化仅接受明确属于 BOSS直聘/看准科技的职位证据。若第一方页面触发安全验证则记录为受限，不绕过 WAF、登录或验证码。",
-      "job_list_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "note": "BOSS直聘自身2027届校园招聘官方直播职位页。原公司职位页在 GitHub runner 触发安全验证，自动化改用同属 zhipin.com 的第一方2027校招专场作为可核验校园入口；不绕过验证码或 WAF。",
+      "job_list_url": "https://v.zhipin.com/detail/36bccf24515849181nR63tW6GA~~",
       "current_campus_board": true,
-      "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
-      "search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "campus_entry_status": "PUBLIC_CAMPUS_EVENT",
+      "campus_search_url": "https://v.zhipin.com/detail/36bccf24515849181nR63tW6GA~~",
+      "search_url": "https://v.zhipin.com/detail/36bccf24515849181nR63tW6GA~~",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
       "required_company_text": "BOSS直聘",
-      "disable_network_job_extraction": true,
+      "disable_network_job_extraction": false,
       "source_id": "official-065",
-      "browser_settle_ms": 1200
+      "browser_settle_ms": 1500,
+      "extra_job_list_urls": [
+        "https://v.zhipin.com/detail/2076bca3fb5bea401nR63tW0GQ~~",
+        "https://v.zhipin.com/detail/443324565293bf2c1nR63tS_EA~~"
+      ],
+      "dom_total_pattern": "职位[·•]?\\s*([0-9,]+)"
     },
     {
       "company": "作业帮",
