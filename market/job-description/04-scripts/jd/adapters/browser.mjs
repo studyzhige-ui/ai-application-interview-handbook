@@ -58,19 +58,27 @@ export function extractList(payload) {
 
 export function normalizeBrowserRow(row, source, responseUrl, pageUrl) {
   const id = pick(row, ID_KEYS);
+  const feishuSearch = /\/api\/v1\/search\/job\/posts/.test(responseUrl);
   let url = pick(row, URL_KEYS);
-  if (!url && id && /\/api\/v1\/search\/job\/posts/.test(responseUrl)) {
+  if (!url && id && feishuSearch) {
     const origin = new URL(responseUrl).origin;
     const channel = source.feishu_channel || new URL(pageUrl).pathname.split("/").filter(Boolean)[0] || "campus";
     url = `${origin}/${channel}/position/${encodeURIComponent(id)}/detail`;
   }
   try { if (url) url = new URL(url, pageUrl).href; } catch { url = ""; }
+  const location = feishuSearch
+    ? (row.city_list || []).map(city => pick(city, ["name", "i18n_name", "en_name"])).filter(Boolean).join(" / ") || pick(row.city_info, ["name", "i18n_name", "en_name"])
+    : pick(row, ["location", "city", "workCity", "workPlace", "workLocation", "cityName", "workCityName"]);
+  const category = feishuSearch ? pick(row.recruit_type, ["name", "i18n_name", "en_name"]) : "";
+  const department = feishuSearch
+    ? pick(row.job_category, ["name", "i18n_name", "en_name"]) || pick(row.job_function, ["name", "i18n_name", "en_name"])
+    : pick(row, ["department", "departmentName", "deptName", "categoryName", "jobCategory"]);
   return {
     company: source.company, job_id: id, title: pick(row, TITLE_KEYS),
     description: pick(row, DESCRIPTION_KEYS), requirements: pick(row, REQUIREMENT_KEYS),
-    location: pick(row, ["location", "city", "workCity", "workPlace", "workLocation", "cityName", "workCityName"]),
-    department: pick(row, ["department", "departmentName", "deptName", "categoryName", "jobCategory"]),
+    location, category, department,
     official_url: url, official_api: responseUrl, raw_list: row,
+    list_detail_complete: feishuSearch && Object.hasOwn(row, "description") && Object.hasOwn(row, "requirement"),
   };
 }
 
@@ -311,6 +319,12 @@ export async function collectBrowser(source, options, dependencies = {}) {
           const job = { ...row, detail_status: "PENDING" };
           if (!runtime.addJob(job)) continue;
           added++;
+          if (job.list_detail_complete) {
+            delete job.list_detail_complete;
+            job.detail_status = "OK";
+            continue;
+          }
+          delete job.list_detail_complete;
           if (!job.official_url) { job.detail_status = "NEEDS_ADAPTER"; continue; }
           runtime.counts.detail_jobs_attempted++;
           try { Object.assign(job, await runtime.run(() => driver.detail(job)), { detail_status: "OK" }); }
