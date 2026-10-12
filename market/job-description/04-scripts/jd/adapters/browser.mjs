@@ -197,7 +197,17 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
       }
     }
     return {
-      async open(url) { await navigation(listPage, url); },
+      async open(url) {
+        await navigation(listPage, url);
+        if (source.browser_follow_list_link_selector) {
+          const target = listPage.locator(source.browser_follow_list_link_selector).first();
+          const exists = await runtime.run(() => target.count());
+          if (exists && await runtime.run(() => target.isVisible()).catch(() => false)) {
+            await runtime.run(() => target.click({ timeout: runtime.remainingMs() }));
+            await settle(listPage);
+          }
+        }
+      },
       async snapshot() {
         await settle(listPage);
         const body = await runtime.run(() => listPage.locator("body").innerText());
