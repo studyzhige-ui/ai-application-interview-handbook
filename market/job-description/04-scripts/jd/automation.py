@@ -289,7 +289,7 @@ def reconcile(*, input_dir: Path, state_file: Path, queue_file: Path, report_fil
         current_jobs, raw_by_identity = _source_snapshot(source_id, result)
         status = str(result.get("status") or "UNKNOWN")
         complete = result.get("complete") is True
-        has_observation = bool(current_jobs) or status in {"OK", "COLLECTED_UNREVIEWED", "PARTIAL", "LIMITED", "INCOMPLETE"}
+        has_observation = complete or bool(current_jobs)
         baseline_ready = bool(previous_state.get("baseline_ready"))
         new_events = 0
 
