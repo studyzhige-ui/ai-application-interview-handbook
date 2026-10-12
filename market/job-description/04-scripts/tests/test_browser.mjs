@@ -258,6 +258,32 @@ function browserFixture(pages, changes = {}) {
 const browserRows = ["销售", "研究员", "Agent", ""].map((title, index) => ({ title, job_id: String(index), official_url: `https://example.test/job/${index}` }));
 const browserSource = { ...source, mode: "portal_only", portal: "https://example.test/jobs" };
 
+test("browser follows an official position-list navigation when the registered home page has no rows", async () => {
+  const opened = [];
+  let current = "";
+  const driver = {
+    async open(url) { current = url; opened.push(url); },
+    async snapshot() {
+      if (current.endsWith("/home")) return {
+        rows: [], total: null, page_url: current,
+        job_list_navigation_url: "https://example.test/channel/position/list",
+      };
+      return {
+        rows: [{ title: "岗位", job_id: "1", official_url: "https://example.test/job/1" }],
+        total: 1, page_url: current, job_list_navigation_url: current,
+      };
+    },
+    async nextAction() { return null; },
+    async detail() { return { raw_detail_text: "正文", raw_detail_html: "<main>正文</main>" }; },
+    async close() {},
+  };
+  const homeSource = { ...browserSource, portal: "https://example.test/home", job_list_url: "https://example.test/home" };
+  const result = await collectBrowser(homeSource, options(), { driverFactory: () => driver });
+  assert.equal(result.complete, true);
+  assert.deepEqual(opened, ["https://example.test/home", "https://example.test/channel/position/list"]);
+  assert.equal(result.jobs.length, 1);
+});
+
 test("browser visits every structurally identified detail regardless of title", async () => {
   const fixture = browserFixture([{ rows: browserRows, total: 4 }]);
   const result = await collectBrowser(browserSource, options(), fixture);
@@ -631,6 +657,22 @@ test("WPS runtime input cannot be sent to a different endpoint or tenant", async
     env: { [WPS_RUNTIME_PARAMETER_ENV]: dummyParameter }, async fetch() { calls++; },
   }), /restricted to the registered WPS source/);
   assert.equal(calls, 0);
+});
+
+test("ordinary Moka transport failure falls back to its registered browser portal", async () => {
+  const ordinary = {
+    ...wpsSource, source_id: "fixture-moka-browser", moka_requires_runtime_source_parameter: false,
+    portal: "https://app.mokahr.com/campus/fixture/1", job_list_url: "https://app.mokahr.com/campus/fixture/1",
+    moka_endpoint: "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2", moka_org_id: "fixture", moka_site_id: "1",
+  };
+  const fixture = browserFixture([{ rows: [{ title: "岗位", job_id: "b1", official_url: "https://app.mokahr.com/job/b1" }], total: 1 }]);
+  const result = await collectMoka(ordinary, options({ sourceId: ordinary.source_id }), {
+    ...fixture,
+    async fetch() { throw new TypeError("fetch failed"); },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.transport_fallback, "browser_after_moka_transport_failure");
+  assert.equal(result.jobs[0].job_id, "b1");
 });
 
 test("other Moka sources ignore the WPS runtime environment and keep original raw bytes", async () => {
