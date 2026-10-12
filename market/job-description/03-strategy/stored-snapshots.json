@@ -1,51 +1,31 @@
 {
-  "schema_version": 1,
-  "description": "Stored JD source snapshots. Hashes certify preservation, not current model review, live availability or complete market coverage.",
+  "schema_version": 2,
+  "purpose": "Current model-reviewed catalog and deterministic readable index; no semantic decisions in code.",
   "files": [
     {
-      "path": "01-data/curated-official-jds.md",
-      "sha256": "3e64dc44781b4d6356ac9a62f38eef7efc5991a0e4cb764ed73596ea291e8b0a",
-      "bytes": 57891
+      "path": "01-data/official-jds.json",
+      "bytes": 6296674,
+      "sha256": "a3166debca13cb085fd2a3499b45aab64e6211fa49a6097779b821f0cd32c89c"
     },
     {
-      "path": "01-data/official-2027-agent-jobs.generated.json",
-      "sha256": "7a412697bb6bc5f93aa833e56b8d1ebdf9947264e7908f95c79c09445bef2912",
-      "bytes": 1357260
+      "path": "01-data/source-observations.json",
+      "bytes": 14532675,
+      "sha256": "dca7319b3e693694e53f2ec43305c3128256a9bfbd5d7e52162925c7e5696b26"
     },
     {
-      "path": "01-data/official-2027-agent-jobs.generated.md",
-      "sha256": "cc8f0a247b4091ad256b4eecd3eb30b332563eabe86857fcb6842927bdbbe14a",
-      "bytes": 1118623
+      "path": "01-data/bytedance-jds.json",
+      "bytes": 7929085,
+      "sha256": "d379ca5b6e82259bfae09492d49a49ee9c2ba43138d2ec95d89b4707ce500dee"
     },
     {
-      "path": "01-data/official-2027-browser-discovery.generated.json",
-      "sha256": "f81fe67e85e80a03fc3983b2fca5842ee478c478a8d410c15ebb79c922ccd881",
-      "bytes": 2038787
+      "path": "01-data/historical-jds.json",
+      "bytes": 1879987,
+      "sha256": "2ce073dfcf3ed926f3049ceb9d818f45c51d78aaf4c957c71b435348109ef8e1"
     },
     {
-      "path": "01-data/official-2027-feishu-discovery.generated.json",
-      "sha256": "ebc20c25c44e8d642d431a355d0892fef60399231f94f67636fc487161279daa",
-      "bytes": 1403157
-    },
-    {
-      "path": "01-data/official-2027-moka-discovery.generated.json",
-      "sha256": "4c969f96a2704ca841f2d1574d8bb20897cbf5a27a7a732e90ac383da3f30961",
-      "bytes": 3542187
-    },
-    {
-      "path": "01-data/official-company-role-index.json",
-      "sha256": "c5e6554cf82599ec2f99930490d12ff426cff23be38fe86f071288804d010efb",
-      "bytes": 164355
-    },
-    {
-      "path": "01-data/official-company-role-index.md",
-      "sha256": "4cbc392e2327c451ed2ddd55ba83b563af7560b90f70239b43511c37d3a20ed2",
-      "bytes": 12105
-    },
-    {
-      "path": "01-data/official-first-party-role-seeds.json",
-      "sha256": "afe4b298389c7c5c4c91409494f7e8c9f0bd43c7387f7457f8e6e42dc443b20f",
-      "bytes": 4306
+      "path": "01-data/岗位JD.md",
+      "bytes": 533935,
+      "sha256": "df079788d6a5503fde32d179acfe1a8879c8bb5254af13bcd0d433c53758c305"
     }
   ]
 }
