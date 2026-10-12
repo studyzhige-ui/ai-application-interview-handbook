@@ -111,6 +111,23 @@ test("Feishu browser fallback opens the official channel position list", async (
   assert.deepEqual(opened, ["https://fixture.jobs.feishu.cn/123456/position/list"]);
 });
 
+test("Feishu browser fallback honors an explicitly registered browser list URL", async () => {
+  const feishuSource = {
+    source_id: "fixture-feishu-custom", company: "Fixture Feishu", mode: "feishu_direct",
+    portal: "https://fixture.jobs.feishu.cn/", job_list_url: "https://fixture.jobs.feishu.cn/",
+    feishu_host: "fixture.jobs.feishu.cn", feishu_channel: "index",
+    feishu_browser_list_url: "https://fixture.jobs.feishu.cn/692892/position/list",
+  };
+  const opened = [];
+  const fixture = browserFixture([{ rows: [], total: 0 }], { async open(url) { opened.push(url); } });
+  const result = await collectFeishu(feishuSource, options({ sourceId: feishuSource.source_id }), {
+    ...fixture,
+    async fetch() { return response("method changed", 405); },
+  });
+  assert.equal(result.complete, true);
+  assert.deepEqual(opened, [feishuSource.feishu_browser_list_url]);
+});
+
 test("max-jobs bounds retained jobs and detail fetches even if a server ignores limit", async () => {
   let calls = 0;
   const rows = Array.from({ length: 9 }, (_, index) => ({ id: String(index), title: "same title" }));
@@ -289,6 +306,21 @@ test("browser timeout closes the driver and preserves partial rows", async () =>
   assert.equal(result.status, "TIMEOUT");
   assert.equal(result.jobs.length, 1);
   assert.equal(fixture.calls.closed, true);
+});
+
+test("browser can derive advertised total and structural rows from registered DOM selectors", async () => {
+  const rows = [
+    { title: "岗位A", location: "北京", category: "正式" },
+    { title: "岗位B", location: "上海", category: "实习" },
+  ];
+  const fixture = browserFixture([{ rows: rows.map((row, i) => ({ ...row, job_id: String(i), official_url: `https://example.test/job/${i}` })), total: 2 }]);
+  const selected = {
+    ...browserSource,
+    dom_total_pattern: "共\\\\s*([0-9,]+)\\\\s*个职位",
+  };
+  const result = await collectBrowser(selected, options(), fixture);
+  assert.equal(result.complete, true);
+  assert.equal(result.total, 2);
 });
 
 test("browser missing total preserves observations without claiming completeness", async () => {
@@ -472,6 +504,60 @@ test("Feishu pagination waits for the site-issued signed search response before 
   assert.deepEqual(result.jobs.map(job => job.location), ["北京", "上海"]);
   assert.deepEqual(result.jobs.map(job => job.category), ["校招", "实习"]);
   assert.deepEqual(result.jobs.map(job => job.department), ["研发", "工程"]);
+});
+
+test("production browser driver can collect configured DOM job cards and body totals", async () => {
+  const domSource = {
+    ...browserSource,
+    dom_total_pattern: "共\\\\s*([0-9,]+)\\\\s*个职位",
+    dom_job_selector: "li.search-item",
+    dom_title_selector: ".title",
+    dom_location_selector: ".location",
+    dom_category_selector: ".category",
+  };
+  let pages = 0;
+  function pageFixture(isList) {
+    let url = "";
+    return {
+      on() {},
+      async goto(nextUrl) { url = nextUrl; return { status: () => 200 }; },
+      url: () => url, async waitForLoadState() {}, async waitForTimeout() {},
+      async content() { return "<main></main>"; },
+      locator(selector) {
+        if (selector === "body") return { async innerText() { return "职位列表 共2个职位"; } };
+        if (selector === "a[href]") return { async evaluateAll() { return []; } };
+        if (selector === "li.search-item") return { async evaluateAll(fn, config) {
+          const make = values => ({
+            innerText: values.text,
+            textContent: values.text,
+            querySelector(sel) {
+              const map = {
+                ".title": { innerText: values.title, textContent: values.title },
+                ".location": { innerText: values.location, textContent: values.location },
+                ".category": { innerText: values.category, textContent: values.category },
+              };
+              return map[sel] || null;
+            },
+          });
+          return fn([
+            make({ title: "岗位A", location: "北京", category: "正式", text: "岗位A 北京 正式" }),
+            make({ title: "岗位B", location: "上海", category: "实习", text: "岗位B 上海 实习" }),
+          ], config);
+        } };
+        return { last() { return this; }, async count() { return 0; }, async isVisible() { return false; }, async isDisabled() { return false; }, async getAttribute() { return null; } };
+      },
+      getByRole() { return { last() { return this; }, async count() { return 0; } }; },
+      async close() {},
+    };
+  }
+  const context = { async route() {}, async newPage() { return pageFixture(pages++ === 0); } };
+  const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
+  const result = await collectBrowser(domSource, options(), { chromium });
+  assert.equal(result.list_scan_complete, true);
+  assert.equal(result.complete, false);
+  assert.equal(result.total, 2);
+  assert.deepEqual(result.jobs.map(job => [job.title, job.location]), [["岗位A", "北京"], ["岗位B", "上海"]]);
+  assert(result.jobs.every(job => job.detail_status === "NEEDS_ADAPTER"));
 });
 
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {

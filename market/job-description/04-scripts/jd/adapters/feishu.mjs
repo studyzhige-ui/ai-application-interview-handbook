@@ -69,7 +69,7 @@ export async function collectFeishuWithBrowserFallback(source, options, specific
     // Feishu visual sites can use a marketing/home page at the registered portal.
     // The site configuration consistently exposes the actual job collection under
     // /<channel>/position/list, where the page itself emits the signed search call.
-    job_list_url: `https://${host}/${channel}/position/list`,
+    job_list_url: source.feishu_browser_list_url || `https://${host}/${channel}/position/list`,
   };
   const browser = await collectBrowser(listSource, options, dependencies);
   return {

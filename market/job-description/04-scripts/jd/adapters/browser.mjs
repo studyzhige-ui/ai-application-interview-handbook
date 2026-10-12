@@ -142,7 +142,7 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
       return route.continue();
     }));
     const listPage = await runtime.run(() => context.newPage());
-    let pending = [], observations = [], lastObserved = null;
+    let pending = [], observations = [], lastObserved = null, lastDomRowCount = 0;
     function attach(page, kind) {
       page.on("response", response => {
         let origin;
@@ -165,6 +165,10 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
     attach(listPage, "list");
     async function settle(page) {
       await runtime.run(() => page.waitForLoadState("networkidle", { timeout: Math.min(1000, runtime.remainingMs()) })).catch(error => { runtime.check(); });
+      if (page === listPage && source.browser_settle_ms) {
+        const delay = Math.min(Number(source.browser_settle_ms), runtime.remainingMs());
+        if (Number.isFinite(delay) && delay > 0) await runtime.run(() => page.waitForTimeout(delay));
+      }
       const tasks = pending; pending = [];
       await runtime.run(() => Promise.all(tasks));
     }
@@ -202,6 +206,13 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
         const observed = observations; observations = [];
         const rows = [];
         let total = null;
+        if (source.dom_total_pattern) {
+          const match = body.match(new RegExp(source.dom_total_pattern, "i"));
+          if (match?.[1]) {
+            const parsed = Number(String(match[1]).replace(/,/g, ""));
+            if (Number.isSafeInteger(parsed) && parsed >= 0) total = parsed;
+          }
+        }
         // A page can emit job recommendations, dictionaries and the real result list.
         // Mixing every structurally list-like response inflates counts and can make a
         // valid page appear larger than its advertised total. Prefer the strongest
@@ -219,9 +230,46 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
         const primary = ranked[0] || null;
         if (primary) {
           lastObserved = primary;
-          total = primary.list.total;
+          if (primary.list.total != null) total = primary.list.total;
           for (const raw of primary.list.rows) rows.push({ ...normalizeBrowserRow(raw, source, primary.url, listPage.url()), list_capture_id: primary.capture_id });
         }
+        if (source.dom_job_selector) {
+          const domRows = await runtime.run(() => listPage.locator(source.dom_job_selector).evaluateAll((nodes, config) => {
+            const read = (node, selector) => {
+              if (!selector) return "";
+              const element = node.querySelector(selector);
+              return (element?.innerText || element?.textContent || "").trim();
+            };
+            return nodes.map((node, index) => {
+              const link = config.urlSelector ? node.querySelector(config.urlSelector) : node.querySelector("a[href]");
+              return {
+                title: read(node, config.titleSelector),
+                location: read(node, config.locationSelector),
+                category: read(node, config.categorySelector),
+                department: read(node, config.departmentSelector),
+                official_url: link?.href || "",
+                raw_text: (node.innerText || node.textContent || "").trim(),
+                dom_index: index,
+              };
+            });
+          }, {
+            titleSelector: source.dom_title_selector,
+            locationSelector: source.dom_location_selector,
+            categorySelector: source.dom_category_selector,
+            departmentSelector: source.dom_department_selector,
+            urlSelector: source.dom_url_selector,
+          }));
+          lastDomRowCount = domRows.length;
+          for (const row of domRows) {
+            rows.push({
+              company: source.company, job_id: "", title: row.title,
+              location: row.location, category: row.category, department: row.department,
+              description: "", requirements: "", official_url: row.official_url,
+              raw_list: { dom_index: row.dom_index, text: row.raw_text },
+              list_capture_id: domCapture.capture_id,
+            });
+          }
+        } else lastDomRowCount = 0;
         for (const link of links) {
           if (!link.href || !origins.has(new URL(link.href).origin) || !(source.job_link_selector || jobLinkLike(link.href))) continue;
           // Link matching is structural; all link labels, including empty labels, are retained.
@@ -257,6 +305,14 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
           const classes = await runtime.run(() => next.getAttribute("class"));
           if (disabled || ariaDisabled === "true" || /disabled/i.test(classes || "")) continue;
           return async () => { await runtime.run(() => next.click({ timeout: runtime.remainingMs() })); await settle(listPage); };
+        }
+        if (source.dom_infinite_scroll && lastDomRowCount) {
+          return async () => {
+            await runtime.run(() => listPage.evaluate(() => window.scrollTo(0, document.body.scrollHeight)));
+            const delay = Math.min(Number(source.browser_scroll_settle_ms || 1200), runtime.remainingMs());
+            if (Number.isFinite(delay) && delay > 0) await runtime.run(() => listPage.waitForTimeout(delay));
+            await settle(listPage);
+          };
         }
         const replay = nextRequest(lastObserved);
         if (!replay) return null;

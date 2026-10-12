@@ -33,6 +33,12 @@ def selected_sources(ids):
 
 
 def node_adapter(source):
+    explicit = source.get("adapter")
+    if explicit:
+        allowed = {"browser", "feishu", "moka", "xiaomi", "bytedance"}
+        if explicit not in allowed:
+            raise ValueError(f"Unsupported explicit adapter: {explicit}")
+        return explicit
     if source.get("moka_org_id"):
         return "moka"
     return {"portal_only": "browser", "feishu_direct": "feishu", "xiaomi_api": "xiaomi", "bytedance_api": "bytedance"}.get(source["mode"])
