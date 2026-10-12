@@ -15,7 +15,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: official-jd-v2-current-${{ github.ref }}
+  group: official-jd-v3-final-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -30,7 +30,6 @@ jobs:
         shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     env:
       PYTHONUTF8: '1'
-      JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018: ${{ secrets.JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018 }}
     steps:
       - uses: actions/checkout@v4
         with:
