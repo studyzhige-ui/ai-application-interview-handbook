@@ -414,6 +414,62 @@ test("browser snapshot uses one primary job-list response instead of merging rec
   assert.deepEqual(result.jobs.map(job => job.job_id), ["1"]);
 });
 
+test("Feishu pagination waits for the site-issued signed search response before snapshotting", async () => {
+  const rows = [
+    { id: "1", title: "第一页", description: "a" },
+    { id: "2", title: "第二页", description: "b" },
+  ];
+  let listPage, pageIndex = 0, pagesCreated = 0;
+  const signedUrl = index => `https://example.test/api/v1/search/job/posts?offset=${index}&_signature=site-issued-${index}`;
+
+  function makePage(isList) {
+    let url = "", responseHandler = null, responseWaiter = null;
+    async function emitList(index) {
+      const payload = { code: 0, data: { count: 2, job_post_list: [rows[index]] } };
+      const response = {
+        url: () => signedUrl(index), headers: () => ({ "content-type": "application/json" }), status: () => 200,
+        body: async () => Buffer.from(JSON.stringify(payload)),
+        request: () => ({ method: () => "POST", postData: () => JSON.stringify({ offset: index, limit: 1 }) }),
+      };
+      if (responseHandler) await responseHandler(response);
+      if (responseWaiter && responseWaiter.predicate(response)) {
+        const resolve = responseWaiter.resolve; responseWaiter = null; resolve(response);
+      }
+    }
+    const page = {
+      on(event, callback) { if (event === "response") responseHandler = callback; },
+      async goto(nextUrl) { url = nextUrl; if (isList) await emitList(pageIndex); return { status: () => 200 }; },
+      url: () => url,
+      async waitForLoadState() {},
+      async waitForResponse(predicate) { return new Promise(resolve => { responseWaiter = { predicate, resolve }; }); },
+      async content() { return "<main></main>"; },
+      locator(selector) {
+        if (selector === "body") return { async innerText() { return ""; } };
+        if (selector === "a[href]") return { async evaluateAll() { return []; } };
+        if (selector === "li.atsx-pagination-next:not(.atsx-pagination-disabled)") return {
+          last() { return this; },
+          async count() { return isList && pageIndex === 0 ? 1 : 0; },
+          async isVisible() { return isList && pageIndex === 0; },
+          async click() { pageIndex = 1; await emitList(1); },
+        };
+        return {
+          last() { return this; }, async count() { return 0; }, async isVisible() { return false; },
+          async isDisabled() { return false; }, async getAttribute() { return null; },
+        };
+      },
+      getByRole() { return { last() { return this; }, async count() { return 0; } }; },
+      async close() {},
+    };
+    return page;
+  }
+  const context = { async route() {}, async newPage() { const page = makePage(pagesCreated++ === 0); if (!listPage) listPage = page; return page; } };
+  const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
+  const result = await collectBrowser(browserSource, options(), { chromium });
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.jobs.map(job => job.job_id), ["1", "2"]);
+  assert.equal(result.total, 2);
+});
+
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {
   const transportHtml = Buffer.from("<!DOCTYPE html>\r\n<html><body> 原始页面 &amp; </body></html>\n");
   const rows = [{ id: "1", title: "销售", detailUrl: "https://example.test/job/1" }, { id: "2", title: "研究员", detailUrl: "https://example.test/job/2" }];
