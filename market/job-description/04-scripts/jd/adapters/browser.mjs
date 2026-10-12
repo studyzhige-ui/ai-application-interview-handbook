@@ -222,6 +222,20 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
         return { rows, total, page_url: listPage.url(), raw_html_capture_id: domCapture.capture_id };
       },
       async nextAction() {
+        const feishuNext = listPage.locator("li.atsx-pagination-next:not(.atsx-pagination-disabled)").last();
+        if (await runtime.run(() => feishuNext.count()) && await runtime.run(() => feishuNext.isVisible())) {
+          return async () => {
+            await runtime.run(async () => {
+              const response = listPage.waitForResponse(
+                item => /\/api\/v1\/search\/job\/posts/.test(new URL(item.url()).pathname) && item.status() === 200,
+                { timeout: Math.min(5000, runtime.remainingMs()) },
+              ).catch(() => null);
+              await feishuNext.click({ timeout: runtime.remainingMs() });
+              await response;
+            });
+            await settle(listPage);
+          };
+        }
         const candidates = [
           listPage.getByRole("button", { name: /^(?:下一页|下页|next)(?:\s|$)/i }).last(),
           listPage.getByRole("link", { name: /^(?:下一页|下页|next)(?:\s|$)/i }).last(),
