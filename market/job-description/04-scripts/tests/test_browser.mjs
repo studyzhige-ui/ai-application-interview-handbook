@@ -637,6 +637,19 @@ const wpsSource = {
 const privateOptions = () => options({ sourceId: wpsSource.source_id });
 const dummyParameter = 'DUMMY_ONLY_RUNTIME_PARAMETER_"_测试';
 
+test("WPS public mode does not require or transmit a runtime source parameter", async () => {
+  const publicWps = { ...wpsSource, moka_requires_runtime_source_parameter: false };
+  const result = await collectMoka(publicWps, privateOptions(), {
+    env: {},
+    async fetch(url, init) {
+      assert.equal(JSON.parse(init.body).sourceToken, undefined);
+      return response({ data: { jobs: [], jobStats: { total: 0 } } });
+    },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.jobs.length, 0);
+});
+
 test("WPS missing runtime parameter fails before network and ignores legacy source values", async () => {
   let calls = 0;
   await assert.rejects(collectMoka({ ...wpsSource, moka_source_token: "DUMMY_IGNORED_LEGACY_FIELD" }, privateOptions(), {
