@@ -1,5 +1,58 @@
 {
   "entries": {
+    "007544d545df200b60e96c87bab4bf73": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "007544d545df200b60e96c87bab4bf73",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7543477618709612851",
+      "job": {
+        "description": "职位描述：\n1协助参与海外短剧服务端的开发、优化与维护，学习高可用、高性能、高并发系统的构建。\n2在导师指导下参与短剧相关功能模块的开发，如“内容管理”、“用户互动”、“数据统计”等。\n3 与前端、产品、运营等团队协作，了解业务需求，参与功能迭代和优化。\n4 协助进行代码优化、日志分析、基础监控等工作，提升代码质量和系统稳定性。\n5 参与团队的技术讨论、代码评审，学习规范的开发流程和工程实践。\n职位要求：\n1 计算机科学、软件工程或相关专业在校学生，本科及以上学历（应届生或研究生优先）。\n2 熟悉 Golang 基础语法，了解常用标准库，有 Golang 项目经验（课程/个人项目/实习）优先。\n3 具备良好的编程习惯，愿意学习编写高质量、可维护的代码。\n4 了解基本的数据结构和算法，具备一定的问题分析和解决能力。\n5 对后端开发感兴趣，了解至少一种常见框架（如 Gin、Echo）或数据库（MySQL/Redis）者优先。\n6 熟悉 HTTP 协议和 RESTful API 设计，能协助完成简单接口开发。",
+        "detail_status": "OK",
+        "job_id": "7543477618709612851",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7543477618709612851/detail",
+        "title": "短剧平台-golang开发工程师-校招"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "0083506a617c99e490680588b9242652": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "0083506a617c99e490680588b9242652",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7514625348110403879",
+      "job": {
+        "description": "- 负责前沿3D/4D生成算法相关的表示的研究与实现，涵盖Mesh、Point cloud、Voxel、Gaussian splatting等多种表示；\n- 负责3D/4D内容生成模型的设计、训练、评估与优化，包括基于Diffusion、VAE、Transformer等架构;\n- 跟踪3D/4D生成领域的最新研究进展，并将新技术应用于公司产品或科研项目中； \n- 支持团队3D/4D领域的技术分享、代码开源、论文发表等工作。\n\n",
+        "detail_status": "OK",
+        "job_id": "7514625348110403879",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7514625348110403879/detail",
+        "requirements": "- 计算机、人工智能、图形学、电子信息、数学等相关专业硕士或以上学历；\n- 熟悉3D/4D数据表示与处理方法，有3D/4D生成、重建、建模相关经验；\n- 熟悉至少一种深度学习框架（如PyTorch ），有较强的代码实现能力；\n有以下方向的经验者优先：\n- 基于Diffusion / Transformer的3D/4D生成模型；\n- 大规模3D数据清洗与增强；\n- 有顶会（CVPR、ICCV、ECCV、NeurIPS、ICLR、SIGGRAPH等）论文发表或开源项目经验者优先\n- 有强烈的学习动力与创新精神，具备良好的沟通能力与团队协作能力；\n- 有业界经验，熟悉3D AIGC、游戏建模、虚拟资产制作等业务流程；\n- 有高性能模型训练、分布式训练、推理优化经验。",
+        "title": "2050-3D/4D生成算法研究员 / 工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "012e8c1d3d6bb8e309f2653a597c9a3a": {
       "change": "added",
       "company": "网易",
@@ -48,6 +101,35 @@
         "priority": "low",
         "score": 0,
         "signals": []
+      }
+    },
+    "0d85248c13f534103cfe54e577b836bc": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "0d85248c13f534103cfe54e577b836bc",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7516918111956044044",
+      "job": {
+        "description": "岗位职责：\n1.负责 AI视频 业务中的多模态内容理解的研究与开发，包括但不限于：图文/视频等的分类和标签、多模态信息检索以及内容质量识别等相关工作；\n2.负责跟踪和探索多模态大模型前沿问题，参与多模态大模型的设计、训练、调优及评测工作，并推进多模态大模型在业务场景的应用落地；",
+        "detail_status": "OK",
+        "job_id": "7516918111956044044",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7516918111956044044/detail",
+        "requirements": "岗位要求\n1.计算机科学、机器学习、人工智能、应用数学等相关专业，硕士及以上学历；\n2.在计算机视觉、多模态理解等方面有扎实的研究基础，熟悉主流模型和算法，如CLIP、ALBEF、 BEIT3、BLIP、LLAVA等多模态理解&生成算法；\n3.具有多模态大模型的研究和开发经验；\n4.具有极强的好奇心、自驱力、和算法/模型创新能力；\n5.有高质量论文发表者优先（如CVPR，AAAI，NIPS，TIP，ICCV，ECCV等）；\n6.精通至少一种技术语言，包括但不限于Python、C/C++等。",
+        "title": "AI视频 - 多模态理解算法工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
       }
     },
     "0fcec3c05c0584f896d13a9b259f173e": {
@@ -176,6 +258,60 @@
         ]
       }
     },
+    "1e27ff4d0b696a574dfde21d1f0ec64c": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "1e27ff4d0b696a574dfde21d1f0ec64c",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7377228093641804059",
+      "job": {
+        "description": "- Work with our research scientists to conduct groundbreaking research in the AGI field, focusing on Foundation Model 2.0 and Agents.\n- Collaborate closely with our interdisciplinary team to publish influential research findings in top-tiered conferences and journals, making a significant impact on the AGI community.\n- Embrace the entrepreneurial spirit and actively explore technology transfer opportunities into business products.",
+        "detail_status": "OK",
+        "job_id": "7377228093641804059",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7377228093641804059/detail",
+        "requirements": "- Strong interest in a career in computer science;\n- Must meet the PhD admission and academic requirements of the partner universities;\n- Keen to research in fields such as AI, Computer Vision, Deep Learning, Game AI, Natural Language Processing, Reinforcement Learning, Speech Recognition (preferably but not limited to these areas);\n- Proficiency in differentiable programming frameworks like PyTorch, TensorFlow, and JAX;\n- Master’s degree in computer science/engineering, statistics, mathematics, data science, or related fields;\n- Not a recipient of other scholarships or financial awards;\n- For existing PhD candidates at the partner universities, must be less than 2 years into the program and not have passed the Qualifying Examination (QE).",
+        "title": "2050 SG - Skywork 2050 IPP"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "agent"
+        ]
+      }
+    },
+    "20984a52585dec21d218daf997830d2a": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "20984a52585dec21d218daf997830d2a",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7473419781480188214",
+      "job": {
+        "description": "1、参与制定 SM 在海外的整体业务运营规划与发展策略，包括但不限于内容运营、用户运营、产品运营等；\n2、管理本地运营团队，协同各国本地化团队，合理拆解团队分工并制定工作流程，保障团队产出与成长，达成业务目标\n3、对负责国家区域收入和核心运营结果负责\n4、深入研究海外市场生态，结合业务阶段目标，制定核心运营策略并推进落地\n",
+        "detail_status": "OK",
+        "job_id": "7473419781480188214",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7473419781480188214/detail",
+        "requirements": "\n1、1年以上互动娱乐行业运营经验，有出海互娱产品运营管理经验优先\n2、数据敏感，逻辑思维能力、表达能力强，具备良好项目管理与推动能力，熟悉成熟运营玩法；\n3、具有强烈好奇心和自我驱动，并能激发团队创造力，帮助团队成长，带领团队共同完成目标；\n4、结果导向，能承受较大工作压力；\n5、英文可作为工作语言",
+        "title": "StarMaker-海外运营"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "low",
+        "score": 0,
+        "signals": []
+      }
+    },
     "27c453547a8bedca0b916e13267936f2": {
       "change": "added",
       "company": "面壁智能",
@@ -289,6 +425,58 @@
         "title": "短剧平台-H5开发工程师（海外短剧）-校招"
       },
       "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "3016cc1f53bb26f347de6f2c89399d29": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "3016cc1f53bb26f347de6f2c89399d29",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7543477900977637658",
+      "job": {
+        "description": "岗位职责：\n1、多模态视频内容理解，准确理解短剧剧情，为配音质量提升提供内容基础；\n2、跟踪前沿的语音合成算法理论以及多模态大模型，探索创新性的方法，提升语音合成的自然度和情感表达能力；\n3、利用多模态大模型理解短剧的台词情感表达和跨语种时间对齐翻译能力，有效指导更加自然的算法短剧配音效果；\n任职要求：\n1、研究生及以上学历，计算机、信号处理、人工智能、电子工程等相关专业；\n2、熟悉深度学习的基本原理，掌握PyTorch等深度学习框架，掌握文本和多模态大模型的微调技术；\n3、熟练掌握Python、Shell等编程语言，具备良好的编程能力和数据结构、算法设计基础；\n4、有音频信号处理、自然语言处理等相关项目经验者优先；\n5、具备良好的沟通能力和工作主动性，能够与团队成员有效协作。",
+        "detail_status": "OK",
+        "job_id": "7543477900977637658",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7543477900977637658/detail",
+        "title": "短剧平台-大模型算法工程师-校招"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
+    "302cd104c386f1b28cf60eadab87974c": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "302cd104c386f1b28cf60eadab87974c",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7543475209492367667",
+      "job": {
+        "description": "职位描述岗位职责: \n1、结合公司海外短剧APP上架内容，完成投流短视频剪辑，输出有自己创意的视频素材。 \n2、熟悉海外FB,TT,GG,INS等主流媒体视频制作特点。 \n3、具备用户思维和视角，能够洞察用户对短剧的需求，制作出海外用户喜欢的短剧广告素材，对成片质量负责。 \n4、有一定英语或本地语言文案驾驭能力，对短剧兴趣浓厚，是思维跳跃的标题党和段子手。 \n职位要求: \n1、英语能力或海外学习工作经历是加分项，熟悉韩语、印尼语、泰语、德语优先； \n2、有海外短剧/网文广告相关经验是加分项； \n3、具有良好的理解，沟通，分析能力，热爱短视频行业，是短视频重度用户，关注短视频热点，流行趋势，能快速捕捉当下热门视频的爽点； \n4、熟练使用剪映，PR，Cut Pro等剪辑软件，擅长短视频剪辑，包装，特效后期制作； \n5、脑洞大，网感好，创意能力强，能尝试不同的创意表达,较强的主动学习能力和创新意识。 ",
+        "detail_status": "OK",
+        "job_id": "7543475209492367667",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7543475209492367667/detail",
+        "title": "短剧平台-剪辑师（海外短剧）-校招"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
       "previous": null,
       "review_state": "pending",
       "source_id": "official-037",
@@ -481,6 +669,31 @@
         "signals": []
       }
     },
+    "3ad3b2635d0fca58faf65008dd51f488": {
+      "change": "added",
+      "company": "网易",
+      "event_id": "3ad3b2635d0fca58faf65008dd51f488",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:79255",
+      "job": {
+        "description": "1、本科及以上在校生；\n2、喜欢游戏，对各种品类游戏特点有一定了解，熟悉FPS/SLG/乙女/狼人杀游戏更佳；\n3、了解主流社媒平台，对游戏及网络热点敏感。具备视频内容审核能力和把控度，有过短视频内容策划经历更佳；\n4、良好沟通能力、协调解决问题能力；\n5、具有高度责任心和细心，能承受一定工作压力；\n6、越快到岗越好，可一周到岗5天，​稳定实习至少3个月以上，6个月更好。​\n注：了解达人合作行业或有达人对接经验为极大加分项",
+        "job_id": "79255",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79255",
+        "requirements": "学历: ",
+        "title": "内容推广策划实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
     "3c3aecf77cf08acef7b8ce882690716a": {
       "change": "added",
       "company": "面壁智能",
@@ -584,6 +797,86 @@
         "signals": []
       }
     },
+    "441ce0a825a94607f1a694770ad1067d": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "441ce0a825a94607f1a694770ad1067d",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7515373023748262198",
+      "job": {
+        "description": "- 负责交互式视频生成方向的核心算法设计与研发，包括时序一致性建模、动作驱动等；\n- 研究并实现前沿的视频生成模型，如基于Diffusion、Transformer、VAE等架构的视频生成、编辑和增强； \n- 研究大规模diffusion 生成模型的训练与优化，推理加速；\n- Consistency model的研究，few-step sample研究等；\n- 跟踪学术前沿技术，推动技术成果在实际产品和项目中的落地;\n- 支持团队在可控视频领域的技术分享、代码开源、论文发表等工作。\n\n",
+        "detail_status": "OK",
+        "job_id": "7515373023748262198",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7515373023748262198/detail",
+        "requirements": "- 计算机视觉、人工智能、机器学习、电子信息、数学等相关专业硕士及以上学历；\n- 有视频生成、动作合成、视频理解与编辑、多模态生成等方向的项目经验或论文成果；\n- 熟悉至少一种深度学习框架（如 PyTorch），具备扎实的算法实现能力；\n 熟悉以下技术之一者优先：\n- 基于Diffusion或Transformer的视频生成模型（如CogvideoX、HunyuanVideo、Wan等）；\n- 条件生成：Text-to-Video、Image-to-Video、Motion-to-Video；\n- 视频编辑与重定向、场景风格化、视频一致性建模与长视频生成；\n-  有国际顶会论文（CVPR / ICCV / ECCV / NeurIPS / ICLR / SIGGRAPH等）或优秀开源项目经验者优先",
+        "title": "2050-交互视频生成算法实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "4532e43bdcdabb26ae64c9b24b59f617": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "4532e43bdcdabb26ae64c9b24b59f617",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7543477019805354286",
+      "job": {
+        "description": "职位描述：\n1、负责完成自制短剧项目的剧本创作工作，设定富有吸引力的故事主线、精彩的情节以及鲜明的故事角色。撰写详细的分集剧本及梗概、人物小传等，为短剧的拍摄提供完整、高质量的剧本基础；\n2、密切关注市场动态，定期收集、了解市场影视作品及对标项目类型信息；\n3、对流行风向进行深度研究和了解，能够敏锐地捕捉到市场热点与观众喜好的变化，并结合市场趋势提出独到的创意，为公司的短剧项目提供新颖的选题与创作思路；\n职位要求：\n1、有良好的文字创作功底，能够完成短剧项目的创作，且能驾驭多种题材风格等；\n2、具备丰富的想象力与文学创造性，有观影习惯；\n3、有写小说/剧本/策划经验优先，善于捕捉网络热点，能够结合热点内容撰写相关短剧题材，符合互联网传播特点。",
+        "detail_status": "OK",
+        "job_id": "7543477019805354286",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7543477019805354286/detail",
+        "title": "短剧平台-短剧编剧（海外短剧）-校招"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "4646a9aba8249d8327f480af62e7c558": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "4646a9aba8249d8327f480af62e7c558",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7515373366363916556",
+      "job": {
+        "description": "开展强化学习在大模型上的探索工作，通过前沿研究和技术创新，优化RL训练Pipeline，提高模型的复杂推理和通用指令跟随能力。\n开展强化学习在复杂Agent任务（例如Computer Use，Deep Research，AI IDE等）上的落地探索，拓宽大模型的应用边界。\n对学术前沿保持跟进，鼓励将研究工作开源，并撰写论文或技术报告，促进团队内部以及与外部的技术交流。\n\n",
+        "detail_status": "OK",
+        "job_id": "7515373366363916556",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7515373366363916556/detail",
+        "requirements": "跟进RLHF/RFT主流研究方向，熟悉RLHF的pepeline，了解DPO/PPO/GRPO等常见算法的细节与差异，对reasoning model的最新进展有跟进，优先考虑有相关训练算法训练与优化经验的同学。\n有扎实的机器学习、深度学习、强化学习基础，能对训练中的现象进行合理分析，客观给出结论，并针对训练中的问题提出合理的新思路。\n熟悉大模型和RLHF的常见训练框架，例如Deepspeed、Megatron、Verl、Openrlhf等主流框架，编程功底扎实，能快速且正确实现自己的实验需求。\n加分点：\n在NeurIPS/ICML/ICLR/CVPR等国际会议上发表过相关论文者优先； \n有ACM-ICPC，NOI/OI参赛经验者优先；\n有大规模RL落地经验者优先；",
+        "title": "2050-强化学习算法实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 8,
+        "signals": [
+          "agent",
+          "llm"
+        ]
+      }
+    },
     "4709fda4644870328663dacaee4a69f6": {
       "change": "added",
       "company": "昆仑万维/天工",
@@ -657,6 +950,35 @@
         "engineering_signal": false,
         "priority": "low",
         "score": 0,
+        "signals": []
+      }
+    },
+    "4ca403c49f8ad91baf6c5e1270df631a": {
+      "change": "changed",
+      "company": "网易",
+      "event_id": "4ca403c49f8ad91baf6c5e1270df631a",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:60627",
+      "job": {
+        "description": "【任职要求】\n1. 英语能力优秀：英语达到专业八级良好或同等水平，能够独立处理英文商务沟通与日常工作内容；\n2. 熟悉海外社交媒体：了解海外平台的内容生态与运营特点，熟悉 Discord 社群运营者优先；\n3. 具备良好的沟通与执行能力：具备较强的主动性、责任心和团队协作意识，善于沟通协调，能够高效推进多项任务；\n4. 具备AI 工具应用意识与能力：熟悉主流 AI 工具，能够将 AI 应用于信息检索、内容创作、翻译润色、数据整理或工作流优化；有主动探索 AI 新工具和应用场景的习惯（大大加分！）\n5. 具备跨文化理解能力：有海外留学、国际交流经历，或熟悉欧美文化及沟通习惯者优先；\n6. 对游戏及海外营销感兴趣：热爱游戏，对海外内容创作、网红营销或游戏社区运营有热情。",
+        "job_id": "60627",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=60627",
+        "requirements": "学历: ",
+        "title": "全球网红营销实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": {
+        "fingerprint": "9330e03abca41dd0b0d22ba3d2542e6a802b5b9c0af3267b4665b745eea63152",
+        "official_url": "https://hr.163.com/position/detail.html?id=60627",
+        "title": "全球网红营销实习生"
+      },
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
         "signals": []
       }
     },
@@ -822,6 +1144,34 @@
         ]
       }
     },
+    "6d4f344773f1c7bfb810b74b5a12bba7": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "6d4f344773f1c7bfb810b74b5a12bba7",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7516920796661434650",
+      "job": {
+        "description": "岗位职责\n1、参与 AI 视频项目中的文本生成模块研发，设计并优化基于大语言模型（LLM）的剧本生成流程。\n2、探索剧本生成的多模态扩展，将文本生成与视觉、音频等模态结合，提升内容的沉浸感和连贯性。\n3、设计和实现定制化剧本生成功能，根据用户需求生成个性化短剧内容（如角色对白、剧情线等）。\n4、优化生成结果，确保剧本具有创意性、逻辑性和叙事连贯性。\n5、熟悉和应用最新的LLM模型（如qwen2.5, Llama3.1, weaver等）。\n6、针对短剧场景，进行模型微调或后训练（Post-Train），提高剧本生成的质量和效率。\n7、构建和清洗高质量剧本语料库，为模型训练提供支持。通过数据分析评估生成内容的效果，并持续优化生成模型。",
+        "detail_status": "OK",
+        "job_id": "7516920796661434650",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7516920796661434650/detail",
+        "requirements": "岗位要求\n1、硕士及以上学历，计算机、语言学、人工智能等相关专业。\n2、熟悉自然语言处理（NLP）领域的核心任务，如文本生成、语义理解、文本摘要等。\n3、精通深度学习框架（如 PyTorch、TensorFlow），熟悉主流大模型（如 GPT、Qwen、LLama、Deepseek等）。\n加分项\n具备多模态生成的研究或项目背景（如 Text-to-Video、Text-to-Image）。",
+        "title": "AI视频 - NLP算法工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "6eb5ab6ada2270362b8dae07b23ca0f0": {
       "change": "added",
       "company": "面壁智能",
@@ -943,6 +1293,35 @@
         "priority": "low",
         "score": 0,
         "signals": []
+      }
+    },
+    "7aa54c130c0f60de720c7323be644b43": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "7aa54c130c0f60de720c7323be644b43",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7515368624535390474",
+      "job": {
+        "description": "开展强化学习在大模型上的探索工作，通过前沿研究和技术创新，优化RL训练Pipeline，提高模型的复杂推理和通用指令跟随能力。\n开展强化学习在复杂Agent任务（例如Computer Use，Deep Research，AI IDE等）上的落地探索，拓宽大模型的应用边界。\n对学术前沿保持跟进，鼓励将研究工作开源，并撰写论文或技术报告，促进团队内部以及与外部的技术交流。\n\n",
+        "detail_status": "OK",
+        "job_id": "7515368624535390474",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7515368624535390474/detail",
+        "requirements": "跟进RLHF/RFT主流研究方向，熟悉RLHF的pepeline，了解DPO/PPO/GRPO等常见算法的细节与差异，对reasoning model的最新进展有跟进，优先考虑有相关训练算法训练与优化经验的同学。\n有扎实的机器学习、深度学习、强化学习基础，能对训练中的现象进行合理分析，客观给出结论，并针对训练中的问题提出合理的新思路。\n熟悉大模型和RLHF的常见训练框架，例如Deepspeed、Megatron、Verl、Openrlhf等主流框架，编程功底扎实，能快速且正确实现自己的实验需求。\n加分点：\n在NeurIPS/ICML/ICLR/CVPR等国际会议上发表过相关论文者优先； \n有ACM-ICPC，NOI/OI参赛经验者优先；\n有大规模RL落地经验者优先；",
+        "title": "2050-强化学习算法研究员 "
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 8,
+        "signals": [
+          "agent",
+          "llm"
+        ]
       }
     },
     "804aeaeed143cb328283ea94dabe7505": {
@@ -1076,6 +1455,31 @@
         ]
       }
     },
+    "8e3da429bd06a81280e283694b413b56": {
+      "change": "added",
+      "company": "网易",
+      "event_id": "8e3da429bd06a81280e283694b413b56",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:79254",
+      "job": {
+        "description": "1、本科及以上在校生。\n2、喜欢游戏，对各种品类游戏特点有一定了解，熟悉回合制/二次元/RPG游戏更佳。\n3、对主流社媒平台有一定了解，对游戏及网络热点有敏感度；\n4、有较好的沟通能力和文字功底，拥有较强的内容策划和创新思维、有过短视频内容策划经历更佳；\n5、具有高度的责任心和独立处理问题的思维，工作高效，做事细心，能承受一定工作压力；\n6、11月上旬到岗，可一周到岗5天，​稳定实习至少3个月以上​，6个月更好。\n注：了解达人合作行业或有达人对接经验为加分项",
+        "job_id": "79254",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79254",
+        "requirements": "学历: ",
+        "title": "内容推广策划实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
     "8ea3e3cc350a89b2048bebaa4fdb5819": {
       "change": "added",
       "company": "面壁智能",
@@ -1125,6 +1529,84 @@
           "llm",
           "evaluation"
         ]
+      }
+    },
+    "91376881a730c5bdff2bb9b28fe15e0e": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "91376881a730c5bdff2bb9b28fe15e0e",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7543473097866184999",
+      "job": {
+        "description": "岗位职责:\n1、负责公司海外短剧日常投放，包括但不限于在\nFacebook、Google、TikTok、INS等海外渠道为公司的短剧产品进行导量。对广告花费、CPI、ROI等维度负责;\n2、负责短剧推广相关数据分析，分析投放效果并不断优化，制定有效的投放策略，从而实现良好的投收ROI;\n3、有自己的投放思路，和广告素材团队紧密配合，勇于尝试新的广告形式，制定素材创意方向，调动用户情绪引导付费观看后续情节;\n4、能够洞察市场动态，发现竞争对手的推广变化，掌握竞品和行业最新趋势，快速迭代，提升广告投放效果\n职位要求\n1、本科及以上学历，对短剧、小说方向业务感兴趣\n2、有一定英文读写能力，对海外地区文化、人群特点有了解\n4、善于沟通，积极主动，有团队合作意识，能够帮助团队完成共同目标\n5、逻辑清晰，有一定的素材策划能力，数据分析能力海外投放(小说、网文、短剧、游戏，擅长FB和TK)",
+        "detail_status": "OK",
+        "job_id": "7543473097866184999",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7543473097866184999/detail",
+        "title": "短剧平台-优化师（海外短剧）-校招"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "9220f08ea1e560d22a18c384382f4e35": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "9220f08ea1e560d22a18c384382f4e35",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7516919865367578934",
+      "job": {
+        "description": "岗位职责：\n1.数据收集与整理：负责大规模视频数据的收集、清洗、标注及整理工作，确保数据的准确性与多样性；\n2.数据标注与质量控制：制定并优化数据标注流程，监督标注质量，定期进行数据质量评估与反馈；\n3.模型训练支持：协助团队进行视频基座大模型的训练，包括数据预处理、特征提取及模型调优等工作；\n4.跨部门协作：与视频内容创作、产品运营等部门紧密合作，确保数据需求与业务目标的高效对接。",
+        "detail_status": "OK",
+        "job_id": "7516919865367578934",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7516919865367578934/detail",
+        "requirements": "岗位要求：\n1.硕士及以上学历，计算机科学、数据科学、统计学等相关专业；\n2.熟悉视频数据处理流程及常用工具，具备良好的数据敏感度和分析能力；\n3.熟练掌握Python等编程语言，具备良好的编程习惯和代码质量意识；\n4.具备较强的责任心和团队合作精神，能够承受工作压力并持续学习进步。\n加分项：\n有视频数据处理或模型训练相关实习工作经验者优先；\n熟悉深度学习框架（如TensorFlow、PyTorch等）者优先；\n具备良好的英语读写能力者优先。",
+        "title": "AI视频 - 视频数据算法工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
+    "92f6595ca37701a36fdbe673f9bdcdb5": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "92f6595ca37701a36fdbe673f9bdcdb5",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7543475955525912842",
+      "job": {
+        "description": "职位描述：\n1. 主动挖掘和培养作家，跟进作品内容，完成每月内容产出，为爆款率等关键指标负责；\n2. 关注作品表现，引导作者对作品进行精修，跟踪作品推广效果，分析反馈数据；\n3. 与海外投流团队合作，跟进投放数据，优化投放文案，调整付费卡点等；\n4. 关注行业动向，熟知当下热门题材风向，并能及时挖掘书籍内容新风向，规划未来的生产方向；\n5. 其他编辑日常工作；\n职位要求：\n1. 英语能力或海外学习工作经历是加分项，熟悉当下海外网络小说内容与发展趋势，对当下热门题材有了解，具备较强的内容判断能力；\n2. 善于沟通交流，较好的学习能力和抗压能力；\n3. 有写小说经验，在主流平台发表作品者优先录用",
+        "detail_status": "OK",
+        "job_id": "7543475955525912842",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7543475955525912842/detail",
+        "title": "短剧平台-网文编辑（海外网文）-校招"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
       }
     },
     "97edc59de5a9b19193d5c240055139a5": {
@@ -1204,6 +1686,31 @@
           "agent",
           "llm"
         ]
+      }
+    },
+    "9f38a58cd17acc7842676a3a3ebf7aa3": {
+      "change": "added",
+      "company": "网易",
+      "event_id": "9f38a58cd17acc7842676a3a3ebf7aa3",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:79253",
+      "job": {
+        "description": "1、懂得微信公众号、知乎、微博等内容平台运营的基本原则，掌握各平台涨粉的要领\n2、有良好的新闻敏感性，有准确的信息判别能力，懂得判断一篇文章的质量高低\n3、有良好的审美，能够为文本找到有信息增量的配图，对文字、排版、图片甚至有点强迫症式的要求\n4、对工作有耐心和责任感，有职业精神和时间观念，能保持持续的工作热情和好奇心\n5、有百万粉丝级公众号运营工作经验和运营资源的，或能长期实习的，优先录用",
+        "job_id": "79253",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79253",
+        "requirements": "学历: ",
+        "title": "浪潮内容运营实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
       }
     },
     "9f77a147257ed60e73516d009e3b7f4a": {
@@ -1360,6 +1867,32 @@
           "llm",
           "evaluation"
         ]
+      }
+    },
+    "a507a8ad3be9cf9ae36e54ece238c5e9": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "a507a8ad3be9cf9ae36e54ece238c5e9",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7515367431805536551",
+      "job": {
+        "description": "- 负责交互式视频生成方向的核心算法设计与研发，包括时序一致性建模、动作驱动等；\n- 研究并实现前沿的视频生成模型，如基于Diffusion、Transformer、VAE等架构的视频生成、编辑和增强； \n- 研究大规模diffusion 生成模型的训练与优化，推理加速；\n- Consistency model的研究，few-step sample研究等；\n- 跟踪学术前沿技术，推动技术成果在实际产品和项目中的落地;\n- 支持团队在可控视频领域的技术分享、代码开源、论文发表等工作。\n\n",
+        "detail_status": "OK",
+        "job_id": "7515367431805536551",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7515367431805536551/detail",
+        "requirements": "- 计算机视觉、人工智能、机器学习、电子信息、数学等相关专业硕士及以上学历；\n- 有视频生成、动作合成、视频理解与编辑、多模态生成等方向的项目经验或论文成果；\n- 熟悉至少一种深度学习框架（如 PyTorch），具备扎实的算法实现能力；\n\n 熟悉以下技术之一者优先：\n- 基于Diffusion或Transformer的视频生成模型（如CogvideoX、HunyuanVideo、Wan等）；\n- 条件生成：Text-to-Video、Image-to-Video、Motion-to-Video；\n- 视频编辑与重定向、场景风格化、视频一致性建模与长视频生成；\n-  有国际顶会论文（CVPR / ICCV / ECCV / NeurIPS / ICLR / SIGGRAPH等）或优秀开源项目经验者优先",
+        "title": "2050-交互式视频生成算法工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
       }
     },
     "a57a0b615acc1e6df1e7d75c352faa4a": {
@@ -1712,6 +2245,34 @@
         ]
       }
     },
+    "ba1e8218d0c1522285ce1900434ebfb4": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "ba1e8218d0c1522285ce1900434ebfb4",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7515372368076736795",
+      "job": {
+        "description": "- 负责前沿3D/4D生成算法相关的表示的研究与实现，涵盖Mesh、Point cloud、Voxel、Gaussian splatting等多种表示；\n- 负责3D/4D内容生成模型的设计、训练、评估与优化，包括基于Diffusion、VAE、Transformer等架构;\n- 跟踪3D/4D生成领域的最新研究进展，并将新技术应用于公司产品或科研项目中； \n- 支持团队3D/4D领域的技术分享、代码开源、论文发表等工作。\n\n",
+        "detail_status": "OK",
+        "job_id": "7515372368076736795",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7515372368076736795/detail",
+        "requirements": "- 计算机、人工智能、图形学、电子信息、数学等相关专业硕士或以上学历；\n- 熟悉3D/4D数据表示与处理方法，有3D/4D生成、重建、建模相关经验；\n- 熟悉至少一种深度学习框架（如PyTorch ），有较强的代码实现能力；\n有以下方向的经验者优先：\n- 基于Diffusion / Transformer的3D/4D生成模型；\n- 大规模3D数据清洗与增强；\n- 有顶会（CVPR、ICCV、ECCV、NeurIPS、ICLR、SIGGRAPH等）论文发表或开源项目经验者优先\n- 有强烈的学习动力与创新精神，具备良好的沟通能力与团队协作能力；\n- 有业界经验，熟悉3D AIGC、游戏建模、虚拟资产制作等业务流程；\n- 有高性能模型训练、分布式训练、推理优化经验。",
+        "title": "2050-3D/4D生成算法实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "bcfd7116f7e13446dab9948e760780eb": {
       "change": "added",
       "company": "昆仑万维/天工",
@@ -1763,6 +2324,34 @@
         "engineering_signal": false,
         "priority": "medium",
         "score": 4,
+        "signals": [
+          "agent"
+        ]
+      }
+    },
+    "c5da2ff1c79db1928e1878b849382b57": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "c5da2ff1c79db1928e1878b849382b57",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7377226963838486794",
+      "job": {
+        "description": "- Work with our research scientists to conduct groundbreaking research in the AGI field, focusing on\nFoundation Model 2.0 and Agents\n- Collaborate closely with our interdisciplinary team to publish influential research findings in top-tiered\nconferences and journals, significantly impacting the AGI community.\n- Embrace the entrepreneurial spirit and actively explore technology transfer opportunities into business\nproducts.",
+        "detail_status": "OK",
+        "job_id": "7377226963838486794",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=30&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XI7qoiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7377226963838486794/detail",
+        "requirements": "- Demonstrate a strong interest in a career in computer science.\n- Keen to study and perform research in areas such as Artificial Intelligence, Computer Vision, Deep Learning, Game AI, Natural Language Processing, Reinforcement Learning, and Speech Recognition (Preferably but not limited to);\n- Proficiency in differentiable programming frameworks such as PyTorch, TensorFlow, and JAX\n- Possessed Bachelor’s or Master’s Degree in Computer Science/Engineering, Statistics, Mathematics, Data science, or related fields is highly desirable.\n- Not a recipient of, or hold any other scholarship or other award of a monetary nature (Excluding bursary and financial aid);\n- Must meet our Partner University postgraduate admission and academic requirements.\n- Existing PhD candidates must be 2 years or less into the postgraduate program, have not completed QE.",
+        "title": "2050 SG - EDB IPP"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
         "signals": [
           "agent"
         ]
@@ -2118,6 +2707,34 @@
         ]
       }
     },
+    "e0b804b2672d4b86b2f4139efff87cbe": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "e0b804b2672d4b86b2f4139efff87cbe",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7533211104978143527",
+      "job": {
+        "description": "岗位职责：\n多模态视频内容理解，准确理解短剧剧情，为配音质量提升提供内容基础。\n    跟踪前沿的语音合成算法理论以及多模态大模型，探索创新性的方法，提升语音合成的自然度和情感表达能力。\n    利用多模态大模型理解短剧的台词情感表达和跨语种时间对齐翻译能力，有效指导更加自然的算法短剧配音效果。",
+        "detail_status": "OK",
+        "job_id": "7533211104978143527",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7533211104978143527/detail",
+        "requirements": "任职要求：\n 研究生及以上学历，计算机、信号处理、人工智能、电子工程等相关专业。\n    熟悉深度学习的基本原理，掌握PyTorch等深度学习框架，掌握文本和多模态大模型的微调技术。\n    熟练掌握Python、Shell等编程语言，具备良好的编程能力和数据结构、算法设计基础。\n    有音频信号处理、自然语言处理等相关项目经验者优先。\n    具备良好的沟通能力和工作主动性，能够与团队成员有效协作。",
+        "title": "短剧平台-大模型应用算法实习生（短剧）"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "e10c75ae0f58d1a154f7bb69bca85c20": {
       "change": "added",
       "company": "SHEIN",
@@ -2166,6 +2783,32 @@
           "llm",
           "evaluation"
         ]
+      }
+    },
+    "e27ac2ef25672c3e67c84aa54f06dd1c": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "e27ac2ef25672c3e67c84aa54f06dd1c",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7516917309588867379",
+      "job": {
+        "description": "岗位职责：\n 1. 建设大规模的视频生成基础模型，达到业界Sota水准，应用于AI视频业务；\n 2. 进行视频生成相关的数据建设、筛选、打标和评估，以及算法的设计和效果迭代，提升视频生成的效果。",
+        "detail_status": "OK",
+        "job_id": "7516917309588867379",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XL8t4iJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7516917309588867379/detail",
+        "requirements": "岗位要求：\n 1. 计算机、数学、自动化等相关专业的硕士及以上学位，有视频生成、图片生成、多模态预训练、视频理解、图片理解，其中一个或者多个领域的算法研究经验；\n 2. 熟悉视频生成算法实现全流程者优先，提出过相关Sota方法者，发表过相关论文者优先；\n 3. 优秀的代码能力，熟练掌握Pytorch，能快速复现算法，并且能针对性优化；\n 4. 优秀的团队合作能力和持续学习能力，能在团队合作中高效推进项目进展。",
+        "title": "AI视频 - 视频生成算法工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
       }
     },
     "eb658c367f0bae9623ab915017046b4b": {
@@ -2338,6 +2981,34 @@
         "signals": []
       }
     },
+    "fae675f999fa384293e592f33884711f": {
+      "change": "added",
+      "company": "昆仑万维/天工",
+      "event_id": "fae675f999fa384293e592f33884711f",
+      "first_seen_at_utc": "2026-10-12T09:02:57Z",
+      "identity": "id:7516919311517255974",
+      "job": {
+        "description": "岗位职责：\n1. 与算法团队紧密合作，进行视频生成大模型的infra工作，包含视频大模型训练框架的开发适配、训练加速与性能优化、训练任务稳定性提升；\n2. 视频生成、图像生成、大语言模型等模态的优化加速与产品落地，包含推理框架开发与适配、推理加速与性能优化、推理服务部署与稳定性保障；\n3. 跟踪业界前沿技术动态，探索并落地新的优化方案，推动AIGC模型服务的技术创新与效率提升。",
+        "detail_status": "OK",
+        "job_id": "7516919311517255974",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=iInyIwAAAABf.uA03XJNUIiJ8jAAOJS",
+        "official_url": "https://jobs.kunlun.com/459522/position/7516919311517255974/detail",
+        "requirements": "岗位要求：\n1. 计算机科学或相关专业本科及以上学历，具备扎实的编程能力、优秀的架构设计能力以及良好的数据结构与算法基础；\n2. 具备较强的责任意识与自驱力与良好的团队协作与沟通能力;\n3. 了解GPU相关原理、熟悉CUDA或Triton编程，了解 TensorRT、VLLM、SGLang、xDiT等NLP/CV领域主流开源推理加速框架的使用调优者优先；\n3. 对主流的AIGC算法模型有过了解，具备模型训练优化/推理加速相关经验者优先；\n4. 对DiT模型架构和工程优化者优先，例如Flux、HunyuanVideo以及wan2.1等开源模型；\n5. 具备大规模模型训练与优化经验，熟悉FSDP、DeepSpeed、Megatron等分布式训练框架，能够解决分布式训练中的性能瓶颈问题者优先;\n6. 对容器化技术(Docker/k8s)、微服务架构熟悉者优先。",
+        "title": "AI视频 - AI infra 算法工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:02:57Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-037",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "fcc005fea60c479b71fc90bcce2afbae": {
       "change": "added",
       "company": "面壁智能",
@@ -2419,5 +3090,5 @@
   },
   "policy": "Every detected source change is preserved for review. triage only orders work; it never decides inclusion. The reviewed official catalog is not modified by automation.",
   "schema_version": 2,
-  "updated_at_utc": "2026-10-12T08:40:17Z"
+  "updated_at_utc": "2026-10-12T09:02:57Z"
 }

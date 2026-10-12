@@ -1,18 +1,234 @@
 {
   "last_run": {
-    "checked_at_utc": "2026-10-12T08:40:17Z",
+    "checked_at_utc": "2026-10-12T09:02:57Z",
     "received_results": 69,
     "registered_sources": 69,
-    "source_sha": "c33d2ce079b79979edde1f7ba545268b29eadbbc"
+    "source_sha": "8b263d424f13bd3a1a4c12c3c02e3d8d2c69a5ee"
   },
   "schema_version": 2,
   "sources": {
     "official-001": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "小米",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:CT_100758": {
+          "fingerprint": "56adf1885099e43f966194a595305234b0dfe5a15a70d8e652b6c7409c71faa6",
+          "official_url": "",
+          "title": "利雅得"
+        },
+        "id:CT_100772": {
+          "fingerprint": "dec60c37996c140e5201b443ab3ea9e94168d29d46079abc63438c410b53181a",
+          "official_url": "",
+          "title": "波哥大"
+        },
+        "id:CT_100778": {
+          "fingerprint": "1ac27f46af9a5354a502d1a5e70607e637e059ba78131b053a7f7e859a133201",
+          "official_url": "",
+          "title": "巴塞罗那"
+        },
+        "id:CT_100821": {
+          "fingerprint": "07f8c8e961cccef3d237b1b571966190b0d2443e63e6255f01400e598162638a",
+          "official_url": "",
+          "title": "拉合尔"
+        },
+        "id:CT_101464": {
+          "fingerprint": "e42d832b55d403d0dab0b2ba3dcdf93ab8c809337ad75c07d295c93f9d6b8977",
+          "official_url": "",
+          "title": "阿拉木图"
+        },
+        "id:CT_102": {
+          "fingerprint": "c8cc6f2be467ea80cf32f38b588526d103bd7777e703cce2e5f4680dd4b93007",
+          "official_url": "",
+          "title": "莫斯科"
+        },
+        "id:CT_103": {
+          "fingerprint": "f9ebecb09344cfd41194c8a8bef3f5422f7cc43d98d26ad13cedc2538eb4b7d1",
+          "official_url": "",
+          "title": "墨西哥城"
+        },
+        "id:CT_107": {
+          "fingerprint": "83b9455f8d1ea5b774aabcebb7316d0a9e81e49f69fdcb945905d591a73f82e4",
+          "official_url": "",
+          "title": "南京"
+        },
+        "id:CT_11": {
+          "fingerprint": "1c7dfc9b39710f54d4c8023c9695685f13b9720e3784c5114e43190d721f0be3",
+          "official_url": "",
+          "title": "北京"
+        },
+        "id:CT_1102404": {
+          "fingerprint": "1092404e3d96434d406ef27cbf181d4d05678386cc7d4a860f74f18899c17130",
+          "official_url": "",
+          "title": "杜塞尔多夫"
+        },
+        "id:CT_1102472": {
+          "fingerprint": "ff79edeaa52b8f8f0e089c010179ebcef82e49700f4881ae7e21dae1a459e3a1",
+          "official_url": "",
+          "title": "雅加达"
+        },
+        "id:CT_125": {
+          "fingerprint": "2175ae585843d24c9e1aff8125dfc1d74a5dcda956221aa3003c964ada059f7a",
+          "official_url": "",
+          "title": "上海"
+        },
+        "id:CT_128": {
+          "fingerprint": "816781630c8146252d301c2a59a017dc45bcfaf2f9467413d5462724111b7a43",
+          "official_url": "",
+          "title": "深圳"
+        },
+        "id:CT_134": {
+          "fingerprint": "c4589e1ce7aced82f206c4f4ad5a49c9bfd86205a936270481270c2f90a14eda",
+          "official_url": "",
+          "title": "首尔"
+        },
+        "id:CT_136": {
+          "fingerprint": "b9d89d7d9cea633e3994dcc39ea2b61636bb390776ff342d6fb232b6e81d1019",
+          "official_url": "",
+          "title": "台北市"
+        },
+        "id:CT_154": {
+          "fingerprint": "2c8ceb000357d31c0604414c05a210177953c2ebb626094638b2d5cc52bb68a0",
+          "official_url": "",
+          "title": "武汉"
+        },
+        "id:CT_155": {
+          "fingerprint": "7a75937895323adad55f0870dfc91a70fc92563c2f8fbf667562d6aec7699299",
+          "official_url": "",
+          "title": "西安"
+        },
+        "id:CT_159": {
+          "fingerprint": "d390666cacf5b478524421a996db4393d72738d8652022d100653c3023321239",
+          "official_url": "",
+          "title": "中国香港"
+        },
+        "id:CT_163": {
+          "fingerprint": "6b27adbc2f52671c028ea9d620ab37a46aa7cde93ee2f6509149aab5ef456c89",
+          "official_url": "",
+          "title": "新加坡"
+        },
+        "id:CT_2000495": {
+          "fingerprint": "5490f601221be96617676c32bafaa3fca09cd37ce6201ac5859fb484f45ef272",
+          "official_url": "",
+          "title": "布拉格直辖市"
+        },
+        "id:CT_2000706": {
+          "fingerprint": "1c7384597da03819a3e164cf6ea5d4b68946bf354fe01469f16be22aca0da998",
+          "official_url": "",
+          "title": "布加勒斯特"
+        },
+        "id:CT_2000831": {
+          "fingerprint": "c0e2ad4a2986c5a80becf007b845ba755b6181c772f0cbd3100bc85d6ffc3c74",
+          "official_url": "",
+          "title": "利马"
+        },
+        "id:CT_2000940": {
+          "fingerprint": "e6965995f74f6d7a825362a31ed4122e9879b91af33dd619726c8e12d19e7e90",
+          "official_url": "",
+          "title": "贝尔格莱德"
+        },
+        "id:CT_2002611": {
+          "fingerprint": "31b63dead2e5a22de2ae95ebb96f7f67ef2849975542c97bb199fd7d9ce844c0",
+          "official_url": "",
+          "title": "埃尔比勒"
+        },
+        "id:CT_2002784": {
+          "fingerprint": "f20e2766beb534a1b72eaf14c28f55f329112556d674dd7c14052ce883a0f435",
+          "official_url": "",
+          "title": "阿比让"
+        },
+        "id:CT_204": {
+          "fingerprint": "c694b67f9d2aaf14821f927af0b97261d3345c5a7dffca3ee40ef9b269da81d9",
+          "official_url": "",
+          "title": "米兰"
+        },
+        "id:CT_206": {
+          "fingerprint": "75200a2eb2d1ea364412f864cfbfe991f35d7dc20b07560f73c8d1ded096e989",
+          "official_url": "",
+          "title": "伊斯坦布尔"
+        },
+        "id:CT_218": {
+          "fingerprint": "2010932facba54ad9b3629940cb7709276c65e3c6029c430f94d2f65bf2bc0c3",
+          "official_url": "",
+          "title": "约翰内斯堡"
+        },
+        "id:CT_22": {
+          "fingerprint": "ea15de24b77e291e06ee6d213eeeeb32bf56b9ddd21612c1cf35d342de1318c9",
+          "official_url": "",
+          "title": "成都"
+        },
+        "id:CT_226": {
+          "fingerprint": "9b44e9ae97872550aab2cdc92e43d9786e202195dd5c1088f1584214c67eab26",
+          "official_url": "",
+          "title": "慕尼黑"
+        },
+        "id:CT_33": {
+          "fingerprint": "ead9b5d9a24f478e4e57fa517f5dbd88647f4bd50a3ca3e969a5d75a6b177097",
+          "official_url": "",
+          "title": "迪拜"
+        },
+        "id:CT_34": {
+          "fingerprint": "00efce41e5b37bd62bc6dfad021048805e600849f7c618a20b4cab123ae4a6fe",
+          "official_url": "",
+          "title": "东京"
+        },
+        "id:CT_5": {
+          "fingerprint": "0d49cf15f9bbab5e94aabb2f7d9f55d691bcabb815cbb66573e57f27906814fe",
+          "official_url": "",
+          "title": "巴黎"
+        },
+        "id:CT_55": {
+          "fingerprint": "fa11e50802b4d0f3d8ca87b3dd0a627dc318c2a6a96afa688552b1eefb506d18",
+          "official_url": "",
+          "title": "合肥"
+        },
+        "id:CT_60": {
+          "fingerprint": "7711826871ea2f3df9d14414fd6b90c43f8f992bf85802c465bf5f205ac07087",
+          "official_url": "",
+          "title": "胡志明市"
+        },
+        "id:CT_65": {
+          "fingerprint": "45222326f63c5a76cfe55b1697835d75b7eccbf6f9eaaaf0557a9619c44f5359",
+          "official_url": "",
+          "title": "吉隆坡"
+        },
+        "id:CT_77": {
+          "fingerprint": "6b3dc836d756e222dbb71580309754d2970c0a28db4c00da4675e95ead2c60a5",
+          "official_url": "",
+          "title": "卡萨布兰卡"
+        },
+        "id:CT_79": {
+          "fingerprint": "f7946e3d25ffd26124c1a74336cde3247bd3c78cb1b1f3779f7246b066349328",
+          "official_url": "",
+          "title": "开罗"
+        },
+        "id:CT_93": {
+          "fingerprint": "56d274ee25d4c3f97098789fc8012f1cca3e0de0b355eaf119bcf226b5c18de2",
+          "official_url": "",
+          "title": "伦敦"
+        },
+        "id:CT_96": {
+          "fingerprint": "f169ec832097b93483e30c218731660c57aa190f38a2513f2628bef2b29aba43",
+          "official_url": "",
+          "title": "马德里"
+        },
+        "id:CT_97": {
+          "fingerprint": "822c4b9c58fec23f5c05867973d2ea2232913740f63e1d78cf6e93d9502ce250",
+          "official_url": "",
+          "title": "马尼拉"
+        },
+        "id:CT_98": {
+          "fingerprint": "1bc6c3bf1eddf558f0211b54db3f894c4053bb915e78c6b3ef1eaf44b56832c7",
+          "official_url": "",
+          "title": "曼谷"
+        },
+        "id:MDCY00080470": {
+          "fingerprint": "9484bf12a3475ac915d896d14c8f6da7b698e56c7637135dcf90c983ca427992",
+          "official_url": "",
+          "title": "罗安达市"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -1417,7 +1633,7 @@
           "title": "网络传输策略推荐算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -2222,7 +2438,7 @@
           "title": "上海-自动驾驶仿真世界模型算法工程师(J101148)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -6762,7 +6978,7 @@
           "title": "WXG 高性能大规模向量检索系统"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -7752,7 +7968,7 @@
           "title": "行政助理Executive Assistant"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -9337,7 +9553,7 @@
           "title": "资深角色模型设计师-诡影藏锋"
         },
         "id:60627": {
-          "fingerprint": "9330e03abca41dd0b0d22ba3d2542e6a802b5b9c0af3267b4665b745eea63152",
+          "fingerprint": "071f08e3669c6f272badc24dc2e278859fbc2c5ace2e6c0cf1c19a668bdb0080",
           "official_url": "https://hr.163.com/position/detail.html?id=60627",
           "title": "全球网红营销实习生"
         },
@@ -21241,13 +21457,28 @@
           "official_url": "https://hr.163.com/position/detail.html?id=79251",
           "title": "二次元游戏衍生品开发实习生"
         },
+        "id:79253": {
+          "fingerprint": "465805193c92cb5bb3d46dc481edc28bce02317d52860a790bf904a9fb64d28d",
+          "official_url": "https://hr.163.com/position/detail.html?id=79253",
+          "title": "浪潮内容运营实习生"
+        },
+        "id:79254": {
+          "fingerprint": "ca14e6bcdfe253be8d9f2c152fe139f5824bc4aa0592cffdc3d5497bf6213938",
+          "official_url": "https://hr.163.com/position/detail.html?id=79254",
+          "title": "内容推广策划实习生"
+        },
+        "id:79255": {
+          "fingerprint": "1bdca0010bbb0668373f20efb7a405207655a01b273db7fa0caac461b7cc2c84",
+          "official_url": "https://hr.163.com/position/detail.html?id=79255",
+          "title": "内容推广策划实习生"
+        },
         "id:8226": {
           "fingerprint": "bf2ae8577071469a634f7b0544a988dfe7fabc06e9d5d3fc974f609823539437",
           "official_url": "https://hr.163.com/position/detail.html?id=8226",
           "title": "资深/专家客户端性能优化（无限大）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -21707,7 +21938,7 @@
           "title": "企业文化及雇主品牌内容运营【2027届】"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -22302,8 +22533,8 @@
           "title": "27届秋招-商业分析师（国际化外卖）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-009": {
@@ -22492,7 +22723,7 @@
           "title": "客户端研发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -22501,7 +22732,7 @@
       "baseline_ready": false,
       "company": "华为",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -22786,16 +23017,57 @@
           "title": "【REDstar】Agent 应用算法工程师-创新业务"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
     "official-012": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "字节跳动",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:6704215862603155720": {
+          "fingerprint": "074d4b1d854eb22cccc661ed0ff970c5a15042b9bc4b7b162b03fb22c91c7fdc",
+          "official_url": "",
+          "title": "研发"
+        },
+        "id:6704215864629004552": {
+          "fingerprint": "bfc8144b77b655b529aadb2f86160c06b6245b39c26cd96e1f92e8f9edc4ebf3",
+          "official_url": "",
+          "title": "产品"
+        },
+        "id:6704215882479962371": {
+          "fingerprint": "7b80c05cc3066ff4e2830d9ddd7428c991784fe2a1b7a0fa71defb6f559d4506",
+          "official_url": "",
+          "title": "运营"
+        },
+        "id:6704215901438216462": {
+          "fingerprint": "dca635aa3a13875bf1d5a7bdab0b7e908004ceefc16d97dda477ce8302062347",
+          "official_url": "",
+          "title": "市场"
+        },
+        "id:6704215913488451847": {
+          "fingerprint": "e54b4139d3ea78bf190d306a09495a57d593953a531454447e45d9bc3526e284",
+          "official_url": "",
+          "title": "职能 / 支持"
+        },
+        "id:6709824272505768200": {
+          "fingerprint": "9e7965cba12c4d67be90f64d7b38fe2f30c44034497fb8daf2054690ae3d48eb",
+          "official_url": "",
+          "title": "销售"
+        },
+        "id:6709824272514156812": {
+          "fingerprint": "f711c668e50b7cf304690de8ec8a15e5410f462733c6e1b2646b0106926cb6c3",
+          "official_url": "",
+          "title": "设计"
+        },
+        "id:6850051244971526414": {
+          "fingerprint": "f2283d330d6fe381c79a0c677ab23a86d1f2c66d999407539e091fc5e82ed52e",
+          "official_url": "",
+          "title": "游戏策划"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -25150,7 +25422,7 @@
           "title": "游戏文案策划（日系幻想）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -27455,7 +27727,7 @@
           "title": "招聘实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -28685,7 +28957,7 @@
           "title": "大场景重建流式3D基础模型"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -29880,7 +30152,7 @@
           "title": "AI研究员（感知与交互方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -30710,7 +30982,7 @@
           "title": "数据库工程师（IT方向）-27届秋招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -30719,7 +30991,7 @@
       "baseline_ready": false,
       "company": "金山办公/WPS",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "BLOCKED"
     },
@@ -30804,7 +31076,7 @@
           "title": "机器人原创IP孵化与内容创作（漫画/动画）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35234,9 +35506,9 @@
           "title": "中级交付项目经理(J12612)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
-      "last_status": "PARTIAL"
+      "last_status": "COLLECTED_UNREVIEWED"
     },
     "official-021": {
       "baseline_kind": "observed",
@@ -35294,7 +35566,7 @@
           "title": "Eagle Program – Big Data Engineer (2027 Graduates)(MJ036640)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35814,7 +36086,7 @@
           "title": "税务实习生（北京）-4293(J11981)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35823,7 +36095,7 @@
       "baseline_ready": false,
       "company": "得物",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -36018,8 +36290,8 @@
           "title": "AI跨界技术人才"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-025": {
@@ -36498,16 +36770,67 @@
           "title": "Agent Engineer（实习生）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": "2026-10-12T08:40:17Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-026": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "MiniMax",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:7662375990605908265": {
+          "fingerprint": "0247cfc347b416f137bd210d69db85a96619d4d7251bca23ac37f979c5c0f22f",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662375990605908265/detail",
+          "title": "DBA 数据库工程师-2027届"
+        },
+        "id:7662375990618556691": {
+          "fingerprint": "048f7efc856b424c1134d44ab37de621789582849922e60dfb8abbd62cb639ab",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662375990618556691/detail",
+          "title": "K8S 研发工程师-2027届"
+        },
+        "id:7662376183711222058": {
+          "fingerprint": "cdd254a3d916ed97688ce5a87da3114e45616732da5f60ada747183645993937",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662376183711222058/detail",
+          "title": "可观测平台研发工程师-2027届"
+        },
+        "id:7662380007045761343": {
+          "fingerprint": "235495b5d92faf7d09db434fb4cea75ba815a85b5ebe86253517b9b9fd537cca",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662380007045761343/detail",
+          "title": "资源调度研发工程师-2027届"
+        },
+        "id:7670838753011550507": {
+          "fingerprint": "4ad649f651f893166b58c007e003e69256755533658e9ed6e1b6b3371745361f",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7670838753011550507/detail",
+          "title": "存储平台研发工程师-2027 届"
+        },
+        "id:7670898993803970825": {
+          "fingerprint": "db9efb62f6577e2e5c3909988480b49bc62a6f970bfb74dec3da75c7c1ca5188",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7670898993803970825/detail",
+          "title": "AI Talent Partner（招聘与运营）"
+        },
+        "id:7674980747073095986": {
+          "fingerprint": "7fd88bf5aa4cc0d6fed653a8cf84a5f2bfd3fc302dfb56a3d8e6cbdffc1ae743",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7674980747073095986/detail",
+          "title": "大模型算法工程师-2028届实习"
+        },
+        "id:7681599148466571566": {
+          "fingerprint": "8106c835734ddfdfd21ce05aadd6c30e84ae1b96914b17b92fcf5adf0973d172",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7681599148466571566/detail",
+          "title": "大模型算法工程师-预训练-2027届校招"
+        },
+        "id:7684113173146798372": {
+          "fingerprint": "57bffea4b69ee5a27f932bfd6ae1df2db1d3664bace7b4bda6b2775ff1c09263",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7684113173146798372/detail",
+          "title": "Global Marketing"
+        },
+        "id:7690521998430832959": {
+          "fingerprint": "7e43cbbdc58f375ee91956717fb8fec7d2ee182ca57e59247ab3fdde7757a32d",
+          "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7690521998430832959/detail",
+          "title": "AI 招聘实习生（职能方向）"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -36637,8 +36960,8 @@
           "title": "27届校招-预训练算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-028": {
@@ -37287,34 +37610,101 @@
           "title": "运营实习生（专家访谈运营 ）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-029": {
-      "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_kind": "complete",
+      "baseline_ready": true,
       "company": "百川智能",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": null,
-      "last_status": "INCOMPLETE"
+      "jobs": {
+        "id:7676402588783348031": {
+          "fingerprint": "ba6457cc57818347fbf54694a2be5a151c4ac312fa80ac03d9cb1e1f46a6f9a8",
+          "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676402588783348031/detail",
+          "title": "【源点顶尖人才计划】Agent 算法工程师"
+        },
+        "id:7676404547920775460": {
+          "fingerprint": "9094068cbeaef4097b8db3c09a59d6f98ba4527521ea7259be40cae1c315d9eb",
+          "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676404547920775460/detail",
+          "title": "【源点顶尖人才计划】AI 产品经理"
+        },
+        "id:7676404971188963590": {
+          "fingerprint": "a80bc47ef134ea0c2f609d1a1f0bb1ade75d5288dc51959aee355e87635be435",
+          "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676404971188963590/detail",
+          "title": "【源点顶尖人才计划】AI Infra工程师-推理方向"
+        },
+        "id:7676405026578942249": {
+          "fingerprint": "566c17ed2f5fb6fde0d01e4c23f7f36e14fba195f7cf06adb4d2dc93e362805c",
+          "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676405026578942249/detail",
+          "title": "【源点顶尖人才计划】AI Infra工程师-训练方向"
+        },
+        "id:7676405680400009482": {
+          "fingerprint": "b379ad836c57937d003e2e22a276c185573b14faefbf73ab73c732d0f446b0ee",
+          "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676405680400009482/detail",
+          "title": "【源点顶尖人才计划】生命世界模型算法工程师"
+        },
+        "id:7676405896490273078": {
+          "fingerprint": "acd6ea8919bab1d6b5ba36e8e413dec8d3b4e76f14fc839fd81ab586ed89dc06",
+          "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676405896490273078/detail",
+          "title": "【源点顶尖人才计划】大模型算法工程师"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
+      "last_status": "OK"
     },
     "official-030": {
       "baseline_kind": "observed",
       "baseline_ready": false,
       "company": "零一万物/01.AI",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
     "official-031": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "商汤科技",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:CT_11": {
+          "fingerprint": "1c7dfc9b39710f54d4c8023c9695685f13b9720e3784c5114e43190d721f0be3",
+          "official_url": "",
+          "title": "北京"
+        },
+        "id:CT_1103597": {
+          "fingerprint": "c4a084f01e66433ff971a33040eedbcd94c0ad80df65f430b2f2a4d52b4f4c63",
+          "official_url": "",
+          "title": "新界"
+        },
+        "id:CT_125": {
+          "fingerprint": "2175ae585843d24c9e1aff8125dfc1d74a5dcda956221aa3003c964ada059f7a",
+          "official_url": "",
+          "title": "上海"
+        },
+        "id:CT_128": {
+          "fingerprint": "816781630c8146252d301c2a59a017dc45bcfaf2f9467413d5462724111b7a43",
+          "official_url": "",
+          "title": "深圳"
+        },
+        "id:CT_163": {
+          "fingerprint": "6b27adbc2f52671c028ea9d620ab37a46aa7cde93ee2f6509149aab5ef456c89",
+          "official_url": "",
+          "title": "新加坡"
+        },
+        "id:CT_22": {
+          "fingerprint": "ea15de24b77e291e06ee6d213eeeeb32bf56b9ddd21612c1cf35d342de1318c9",
+          "official_url": "",
+          "title": "成都"
+        },
+        "id:CT_52": {
+          "fingerprint": "aa6ecef7161d7ad016da75046690f790093ba6bb099c186d02f3371b2b7a7721",
+          "official_url": "",
+          "title": "杭州"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -37323,7 +37713,7 @@
       "baseline_ready": false,
       "company": "生数科技",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -37458,8 +37848,8 @@
           "title": "解决方案工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-034": {
@@ -37793,7 +38183,7 @@
           "title": "财务实习生\n北京校招实习职能 - 财务职位 ID：A117305\n1、协助财务团队进行日常财务工作，包括但不限于：装订并整理会计凭证、财务入账处理、对接常规审计及尽调审计等。\n2、参与财务数据的收集、整理和分析，提供财务建议。\n3、协助团队进行预算管理和财务规划。\n4、保持与团队成员的良好沟通，确保工作的顺利进行。"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -37802,16 +38192,67 @@
       "baseline_ready": false,
       "company": "Manus",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
     "official-036": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "无问芯穹/Infini-AI",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:7655641063747832106": {
+          "fingerprint": "2414aa36a98b6e2d17a48ddfbb468d234f15463da941d4b5cddf6d18c256a9e3",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7655641063747832106/detail",
+          "title": "解决方案实习生"
+        },
+        "id:7657872405256096010": {
+          "fingerprint": "fa4765abd72d56599c59ba4c9c43baaef4317b1e15c68efc6d85f9c2259f6f93",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7657872405256096010/detail",
+          "title": "agent 评测实习生"
+        },
+        "id:7659239122657184063": {
+          "fingerprint": "cdd96b6e6ed544ef884ed9c9b07117e3d567f047d7040fe7620df4d3bc6ed9eb",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7659239122657184063/detail",
+          "title": "法务实习生"
+        },
+        "id:7660353488697739539": {
+          "fingerprint": "8455b34768f18609e0aaf0872eedf0c11dd2bc78af33cffa04aa8a56a1449e46",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7660353488697739539/detail",
+          "title": "端侧大模型推理实习生"
+        },
+        "id:7667421042629511433": {
+          "fingerprint": "b40f96f5d3729c16c81366be54d166ac53e15a28573a0ef74d171af7a1b0a3ec",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7667421042629511433/detail",
+          "title": "大模型 / 多模态算法 / Agent 方向实习生"
+        },
+        "id:7671203807498373419": {
+          "fingerprint": "ffda31107e6a1bc5746933bdd1c4e11206caf02f69de8fa1e10e0b15b980b464",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7671203807498373419/detail",
+          "title": "市场营销实习生"
+        },
+        "id:7680449713766615346": {
+          "fingerprint": "519b5d5e519292deb15462d7fb1525e140b0f1df18362f11d69e6bc8a4615dd5",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7680449713766615346/detail",
+          "title": "强化学习训练框架研发工程师"
+        },
+        "id:7680450388449986835": {
+          "fingerprint": "1c1696ad81be08e14be61807f76fd7da54877b6dc4ab9cddfa6d6664d17b56b0",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7680450388449986835/detail",
+          "title": "AI infra 推理优化研究员 "
+        },
+        "id:7680450894714292523": {
+          "fingerprint": "9231ab47f1ddc1a4d89b09a887ac0201e0236edd8e829240eb750d9c73cfea7a",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7680450894714292523/detail",
+          "title": "算法Agent研究员"
+        },
+        "id:7680451244021172507": {
+          "fingerprint": "9cda04bc3d65fa6a53acc372f586cb5cdee2b242bbf2069585aba206b4ff4fd0",
+          "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7680451244021172507/detail",
+          "title": "Golang 后端工程师"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -37849,6 +38290,111 @@
           "fingerprint": "074d4b1d854eb22cccc661ed0ff970c5a15042b9bc4b7b162b03fb22c91c7fdc",
           "official_url": "",
           "title": "研发"
+        },
+        "id:7377226963838486794": {
+          "fingerprint": "4197da8d5a3f797c73e3dec1380bc016aa4f6a8cc2537aff380eb4f22adb7af2",
+          "official_url": "https://jobs.kunlun.com/459522/position/7377226963838486794/detail",
+          "title": "2050 SG - EDB IPP"
+        },
+        "id:7377228093641804059": {
+          "fingerprint": "cda125afee8001247229719496419bd9a145e3ddf47e96c46e67132b06d0b78f",
+          "official_url": "https://jobs.kunlun.com/459522/position/7377228093641804059/detail",
+          "title": "2050 SG - Skywork 2050 IPP"
+        },
+        "id:7473419781480188214": {
+          "fingerprint": "578c7df38bb7bf726f11667dab79b6b40163191ce8c0d29d1e26f1b6eedeb1d3",
+          "official_url": "https://jobs.kunlun.com/459522/position/7473419781480188214/detail",
+          "title": "StarMaker-海外运营"
+        },
+        "id:7514625348110403879": {
+          "fingerprint": "c2d21fc98061be8d5335ffd0669513d0405fbf6ae7c9b490985e2160a9e285e8",
+          "official_url": "https://jobs.kunlun.com/459522/position/7514625348110403879/detail",
+          "title": "2050-3D/4D生成算法研究员 / 工程师"
+        },
+        "id:7515367431805536551": {
+          "fingerprint": "2b87d8b7deabf9853964eaa73852e4b7531f9a5bfe8129c5b203b99f73e79dd9",
+          "official_url": "https://jobs.kunlun.com/459522/position/7515367431805536551/detail",
+          "title": "2050-交互式视频生成算法工程师"
+        },
+        "id:7515368624535390474": {
+          "fingerprint": "de8300cd12ec60832642ee84fb6421edad98c444f28d368d0ceab228b1d0d2aa",
+          "official_url": "https://jobs.kunlun.com/459522/position/7515368624535390474/detail",
+          "title": "2050-强化学习算法研究员 "
+        },
+        "id:7515372368076736795": {
+          "fingerprint": "b65e534197f9df585e5e937673c074228aecc50663e25872d7e43232326b895a",
+          "official_url": "https://jobs.kunlun.com/459522/position/7515372368076736795/detail",
+          "title": "2050-3D/4D生成算法实习生"
+        },
+        "id:7515373023748262198": {
+          "fingerprint": "7f70d94437040bfba6323acc16b89502193d08d2617599ab2c441af0bd1ae58a",
+          "official_url": "https://jobs.kunlun.com/459522/position/7515373023748262198/detail",
+          "title": "2050-交互视频生成算法实习生"
+        },
+        "id:7515373366363916556": {
+          "fingerprint": "9c45fc1b3b1cc128507d2b58d2551fedeae407fa327583e21d9d78806f6ac410",
+          "official_url": "https://jobs.kunlun.com/459522/position/7515373366363916556/detail",
+          "title": "2050-强化学习算法实习生"
+        },
+        "id:7516917309588867379": {
+          "fingerprint": "5a9ce1b8f32cb0882f6efbaa01103997323f3cf92430231361aa6efeba86c89b",
+          "official_url": "https://jobs.kunlun.com/459522/position/7516917309588867379/detail",
+          "title": "AI视频 - 视频生成算法工程师"
+        },
+        "id:7516918111956044044": {
+          "fingerprint": "a6e0032eb0962bb850a2a7b1ff723a1388fb649ba9821b97a6fdca91791f7eff",
+          "official_url": "https://jobs.kunlun.com/459522/position/7516918111956044044/detail",
+          "title": "AI视频 - 多模态理解算法工程师"
+        },
+        "id:7516919311517255974": {
+          "fingerprint": "8da711dc5cd9842d41f2020b4f810eef0d22732caa3f03a955c3ec207ac72b02",
+          "official_url": "https://jobs.kunlun.com/459522/position/7516919311517255974/detail",
+          "title": "AI视频 - AI infra 算法工程师"
+        },
+        "id:7516919865367578934": {
+          "fingerprint": "7a7aade4d12931de9147ae93555ea585d6a0597a6cdfe33f8c2c8515222ec5e3",
+          "official_url": "https://jobs.kunlun.com/459522/position/7516919865367578934/detail",
+          "title": "AI视频 - 视频数据算法工程师"
+        },
+        "id:7516920796661434650": {
+          "fingerprint": "abe303b6c5bf48e33e16f6cb4c26dca0d1125ea61d58cfbe4bb2dd282e670599",
+          "official_url": "https://jobs.kunlun.com/459522/position/7516920796661434650/detail",
+          "title": "AI视频 - NLP算法工程师"
+        },
+        "id:7533211104978143527": {
+          "fingerprint": "4400dbb871cf673f1f8f61dfd42beda8342ddc4d27f26f31d060ba42f16755af",
+          "official_url": "https://jobs.kunlun.com/459522/position/7533211104978143527/detail",
+          "title": "短剧平台-大模型应用算法实习生（短剧）"
+        },
+        "id:7543473097866184999": {
+          "fingerprint": "f8c13e1ffe14d1dcb223ed3cbb7ecf1b7c690a238b219b6578908d0c6a36431e",
+          "official_url": "https://jobs.kunlun.com/459522/position/7543473097866184999/detail",
+          "title": "短剧平台-优化师（海外短剧）-校招"
+        },
+        "id:7543475209492367667": {
+          "fingerprint": "18f531b08d4e345f0b18fd0395abb9b1c865ca31eafdc80dc38b4a5cc2ba1b98",
+          "official_url": "https://jobs.kunlun.com/459522/position/7543475209492367667/detail",
+          "title": "短剧平台-剪辑师（海外短剧）-校招"
+        },
+        "id:7543475955525912842": {
+          "fingerprint": "927429a8fe7f9de98ef070d59593dd2cb3756fc2286395a8f4ea98d45a3295df",
+          "official_url": "https://jobs.kunlun.com/459522/position/7543475955525912842/detail",
+          "title": "短剧平台-网文编辑（海外网文）-校招"
+        },
+        "id:7543477019805354286": {
+          "fingerprint": "b9f8fec2d69a54058309a43664dd8fc69a4ded0550be37cdd9443777900c1600",
+          "official_url": "https://jobs.kunlun.com/459522/position/7543477019805354286/detail",
+          "title": "短剧平台-短剧编剧（海外短剧）-校招"
+        },
+        "id:7543477618709612851": {
+          "fingerprint": "6b528c7e285d0e63ba90d96c93c3337c8bff0eb0cbe218bc395da17ce3c31378",
+          "official_url": "https://jobs.kunlun.com/459522/position/7543477618709612851/detail",
+          "title": "短剧平台-golang开发工程师-校招"
+        },
+        "id:7543477900977637658": {
+          "fingerprint": "ac0b50dcd78757972fc738275024bf20c85c65bcc2e83976219486721c61d937",
+          "official_url": "https://jobs.kunlun.com/459522/position/7543477900977637658/detail",
+          "title": "短剧平台-大模型算法工程师-校招"
         },
         "id:7543478233829509385": {
           "fingerprint": "002987c703574506a5a5e49ceaa39935a7bb6e9a03c7699e1b7c534c9fbbd758",
@@ -37951,7 +38497,7 @@
           "title": "社媒营销负责人"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -38206,9 +38752,9 @@
           "title": "（27届秋招）保险产品经理 - 深圳"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": "2026-10-12T08:40:17Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-039": {
       "baseline_kind": "observed",
@@ -38651,16 +39197,807 @@
           "title": "投后财务分析师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
     "official-040": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "蔚来",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:CT_1": {
+          "fingerprint": "b030f5f9e879a1b461304fada79d1e53e483d6cd5ec6d49974d859880d05a0f5",
+          "official_url": "",
+          "title": "鞍山"
+        },
+        "id:CT_10": {
+          "fingerprint": "9d4ce75355f2303d9a01078c8b7d6391449c11521216999bde07307bb9823213",
+          "official_url": "",
+          "title": "宝鸡"
+        },
+        "id:CT_100002": {
+          "fingerprint": "677ef3339637a6535bb8c212c5dbe7f68b18993c4770135d1cf64b8665760b9f",
+          "official_url": "",
+          "title": "滁州"
+        },
+        "id:CT_100003": {
+          "fingerprint": "6b723c293aefc97bce4b416db93a3a223ba391a2110228c688587570cb8ad430",
+          "official_url": "",
+          "title": "宣城"
+        },
+        "id:CT_100004": {
+          "fingerprint": "8e0fccd3ff3214066ea583a20132526b7b5060fd905bcbadee3de9680f178025",
+          "official_url": "",
+          "title": "亳州"
+        },
+        "id:CT_100006": {
+          "fingerprint": "a1a4de834013b117951e2b9072ed9272693468b1164b6396c8cca6bed5ada908",
+          "official_url": "",
+          "title": "淮南"
+        },
+        "id:CT_100008": {
+          "fingerprint": "d634c929bb42a0e243d0da3b535883682f227af05e360e8921fd8ce21ee36ad2",
+          "official_url": "",
+          "title": "铜陵"
+        },
+        "id:CT_100011": {
+          "fingerprint": "8d65b6f290511cead7d0418af72649830795cded5ef395b71f6623f31ef26443",
+          "official_url": "",
+          "title": "兰州市"
+        },
+        "id:CT_100025": {
+          "fingerprint": "2bcb2b2cc48be4c4cf6b336042b12abb2ee206254d38f23500807edc6a650d54",
+          "official_url": "",
+          "title": "韶关"
+        },
+        "id:CT_100026": {
+          "fingerprint": "7ec1552b1d3c26dfafb89141bbfb3bebc068c26c161dbcb2d363a6ad8ed8f397",
+          "official_url": "",
+          "title": "清远"
+        },
+        "id:CT_100027": {
+          "fingerprint": "c036e6bbb74eecf8162af602b916d450a0a5eed6a8ca5b18ca1ec90d57134fdb",
+          "official_url": "",
+          "title": "河源"
+        },
+        "id:CT_100028": {
+          "fingerprint": "4003b2266586a28a3806898e5cd04936861052aa08a68311a28aac627f441156",
+          "official_url": "",
+          "title": "梅州"
+        },
+        "id:CT_100030": {
+          "fingerprint": "22532bf0ea49a0ddf70494892981afd4e9476a7c2e41075f1fd710cd8d21fc71",
+          "official_url": "",
+          "title": "阳江"
+        },
+        "id:CT_100031": {
+          "fingerprint": "407cdc2ea1c5f8e766846c9ab8bd556a254102b30b1fb59377bde384599ecb70",
+          "official_url": "",
+          "title": "潮州"
+        },
+        "id:CT_100032": {
+          "fingerprint": "36ec738453df9580acbfac0f6d1e42ed203ea39b0261933d2eb95c97296f3b33",
+          "official_url": "",
+          "title": "茂名"
+        },
+        "id:CT_100046": {
+          "fingerprint": "c929bbc16c2066a89bc8aa9833e7ad7962032f4d8ef0a612bcb43c5d37222e6f",
+          "official_url": "",
+          "title": "六盘水"
+        },
+        "id:CT_100048": {
+          "fingerprint": "700a19128ff10fa3eb1d82159bb675f0739768ebe23df19aed94d866d35acad6",
+          "official_url": "",
+          "title": "毕节"
+        },
+        "id:CT_100049": {
+          "fingerprint": "afa3626ae0966f6acedfd97f87d5208a70f091bc571c6071aad4926fffd6b484",
+          "official_url": "",
+          "title": "黔西南"
+        },
+        "id:CT_100065": {
+          "fingerprint": "90c112248909cfea176a1159f2ebb8b92c36c32b68e7d0436eccdda74fc9f183",
+          "official_url": "",
+          "title": "三亚"
+        },
+        "id:CT_100080": {
+          "fingerprint": "80c9ff11c6f1f34fef4ade90e6e0fcdc21a67552e972a6478b126d793617e7f6",
+          "official_url": "",
+          "title": "濮阳"
+        },
+        "id:CT_100081": {
+          "fingerprint": "21e31b47473b43f82122ca9768381b222451f16eca7d32ceb875df19d671c598",
+          "official_url": "",
+          "title": "鹤壁"
+        },
+        "id:CT_100084": {
+          "fingerprint": "aa8f14a1da596983722712eaabda4881d3a3f18d7d6f709c57134111949d07c0",
+          "official_url": "",
+          "title": "黄石"
+        },
+        "id:CT_100104": {
+          "fingerprint": "c916c6c8ecac0a5eb3fee293af9671bb5db6c2c87ac696139ba67e70d9ae9b67",
+          "official_url": "",
+          "title": "抚州"
+        },
+        "id:CT_100105": {
+          "fingerprint": "76785b79e86b54c44edcb975eec68865928e73a74210afad6450e41b66ef5448",
+          "official_url": "",
+          "title": "景德镇"
+        },
+        "id:CT_100106": {
+          "fingerprint": "1fd804ca19a46d75c9e0d1486713acde056471a83ac0778e385937dd155bf33f",
+          "official_url": "",
+          "title": "萍乡"
+        },
+        "id:CT_100108": {
+          "fingerprint": "2303633277004a51c61eaccf85eb241e16b9d0769307873c5b3bc6a654a8ff23",
+          "official_url": "",
+          "title": "吉安"
+        },
+        "id:CT_100153": {
+          "fingerprint": "982aa05e3088e19775dfd9a5ffc32b8e19c58909a1069fbdc5ec7a11af17142b",
+          "official_url": "",
+          "title": "延安"
+        },
+        "id:CT_100156": {
+          "fingerprint": "09b53fd0c3d4eeefaea76eb4bf03221215073228e5319cd6e4ac93d667edbad2",
+          "official_url": "",
+          "title": "眉山"
+        },
+        "id:CT_100201": {
+          "fingerprint": "cc16147a3a83964d10f48d0c87c16a08d1e363c9f57badb6391b0ad734cfff51",
+          "official_url": "",
+          "title": "舟山"
+        },
+        "id:CT_100202": {
+          "fingerprint": "f057d4b1f55586d06cc5c412c8e65e501ba8141ca227f7b64650abd1bee97403",
+          "official_url": "",
+          "title": "丽水"
+        },
+        "id:CT_101": {
+          "fingerprint": "dbedd2e443ec02e67b8a882ee90bcab54b154010d4f4e7e13372a5fe6344c1ff",
+          "official_url": "",
+          "title": "绵阳"
+        },
+        "id:CT_105": {
+          "fingerprint": "a28cb59ba9842386ad4778322ef1dd743c6071f3bcc0e9f54d299bbff379eca1",
+          "official_url": "",
+          "title": "南昌"
+        },
+        "id:CT_106": {
+          "fingerprint": "b683b17f4b1cb5cde12167f3e4dec34af10ce1a1512c47b3eafbc5cfc7b59603",
+          "official_url": "",
+          "title": "南充"
+        },
+        "id:CT_107": {
+          "fingerprint": "83b9455f8d1ea5b774aabcebb7316d0a9e81e49f69fdcb945905d591a73f82e4",
+          "official_url": "",
+          "title": "南京"
+        },
+        "id:CT_108": {
+          "fingerprint": "c4fd3fd5901b34298eba19773ab9df8ad239780314e1895861213dc09622b606",
+          "official_url": "",
+          "title": "南宁"
+        },
+        "id:CT_109": {
+          "fingerprint": "728fb2e65d91623dd4ecfcf3bed57cee47442f4163e930bce92a284e8b5e2683",
+          "official_url": "",
+          "title": "南平"
+        },
+        "id:CT_11": {
+          "fingerprint": "1c7dfc9b39710f54d4c8023c9695685f13b9720e3784c5114e43190d721f0be3",
+          "official_url": "",
+          "title": "北京"
+        },
+        "id:CT_110": {
+          "fingerprint": "8ce684b2473cf2f878c6191e7d5f02fc924b10cd56b76f3dcbaca8ed938b4ceb",
+          "official_url": "",
+          "title": "南通"
+        },
+        "id:CT_1103355": {
+          "fingerprint": "338390675708524fcc1fc9967695a4628460a2d6be54d7637f0c3e82676aa669",
+          "official_url": "",
+          "title": "圣何塞"
+        },
+        "id:CT_111": {
+          "fingerprint": "2566f6bdcce3d920acf0677f6629c1c93c971df2e90a33cc5bb73d1b9c6a53f9",
+          "official_url": "",
+          "title": "南阳"
+        },
+        "id:CT_112": {
+          "fingerprint": "c1a7d1f2d01c85bc83f3fc45f67103a4839cca6f79e143d04473f7abd9989c54",
+          "official_url": "",
+          "title": "宁波"
+        },
+        "id:CT_113": {
+          "fingerprint": "5953e90af033c4833b5f5e67d5fad2f66f3f33ec43c38332790a56f8a3c76ef1",
+          "official_url": "",
+          "title": "宁德"
+        },
+        "id:CT_115": {
+          "fingerprint": "5ada9be95e7d4127271479700ca49961c9b55eb0fad7ccc25931171c5003da55",
+          "official_url": "",
+          "title": "平顶山"
+        },
+        "id:CT_116": {
+          "fingerprint": "33dc97ee064cf6928f258845a5544d147be2d512cc3dde87afeff217d33f16f0",
+          "official_url": "",
+          "title": "莆田"
+        },
+        "id:CT_118": {
+          "fingerprint": "f4a7a369a4438d085a4a60213c41439d59521cfd8c99a7e75328907aa37478a2",
+          "official_url": "",
+          "title": "秦皇岛"
+        },
+        "id:CT_119": {
+          "fingerprint": "38ce303124af3ad1ec7770e4471ac04a78bbcf0178c0a9f6515ad920da309e53",
+          "official_url": "",
+          "title": "青岛"
+        },
+        "id:CT_121": {
+          "fingerprint": "4d03782676c9feef5981ad178b2234dfc24fa993114318857061b3c2614cf044",
+          "official_url": "",
+          "title": "泉州"
+        },
+        "id:CT_122": {
+          "fingerprint": "96e141f4f536f98c44eaac5f33c868de2eedbb07975eb7ca7605db97b481ca57",
+          "official_url": "",
+          "title": "日照"
+        },
+        "id:CT_123": {
+          "fingerprint": "2cc5015887d80ca7338ce33f9f36c98e1465aa1f9d1eaba44f21820860d67695",
+          "official_url": "",
+          "title": "汕头"
+        },
+        "id:CT_124": {
+          "fingerprint": "180d33c03c839f84b1ac698b9836799b7317be6052ee6e5bfa226533c5b32d61",
+          "official_url": "",
+          "title": "商丘"
+        },
+        "id:CT_125": {
+          "fingerprint": "2175ae585843d24c9e1aff8125dfc1d74a5dcda956221aa3003c964ada059f7a",
+          "official_url": "",
+          "title": "上海"
+        },
+        "id:CT_126": {
+          "fingerprint": "dd82d520f41438dacd290ff4078e452b862447df06fb2ad7bc455cf016e0d150",
+          "official_url": "",
+          "title": "上饶"
+        },
+        "id:CT_127": {
+          "fingerprint": "33a5053fbd9590ba40163216bfa545f18fa0a89a643b8c1a2c5841b29afe722b",
+          "official_url": "",
+          "title": "绍兴"
+        },
+        "id:CT_128": {
+          "fingerprint": "816781630c8146252d301c2a59a017dc45bcfaf2f9467413d5462724111b7a43",
+          "official_url": "",
+          "title": "深圳"
+        },
+        "id:CT_129": {
+          "fingerprint": "33118b9bc279365a0f968c9714f3d50299492448072688e830a6b2a0a3bfbc5f",
+          "official_url": "",
+          "title": "沈阳"
+        },
+        "id:CT_13": {
+          "fingerprint": "d54b34cf01fa266fc108c10c8b1355b4fb3609e850ed721f05876f55cfa1a7bf",
+          "official_url": "",
+          "title": "滨州"
+        },
+        "id:CT_133": {
+          "fingerprint": "189a84f0966948d00654531012485dea270cc8ed399ead0fbc06b04a4203103b",
+          "official_url": "",
+          "title": "石家庄"
+        },
+        "id:CT_135": {
+          "fingerprint": "a75fe251953f52e820b8d26ab990b35ce0a354ab33b3c4aa10e54459708dca6a",
+          "official_url": "",
+          "title": "宿迁"
+        },
+        "id:CT_137": {
+          "fingerprint": "a72c58edaf0d4e6f9b785a9d42fceab4c95ab4e07412c5f850f13389b1a9088f",
+          "official_url": "",
+          "title": "台州"
+        },
+        "id:CT_139": {
+          "fingerprint": "76aa4d5904235c31823be1d56f4019f56daec640b1d86116471f39bc2d40be98",
+          "official_url": "",
+          "title": "泰州"
+        },
+        "id:CT_141": {
+          "fingerprint": "33c228bb402a8f79b6a696f3dd717010720298d8d9758cb0faf511e6fb59f3e0",
+          "official_url": "",
+          "title": "太原"
+        },
+        "id:CT_142": {
+          "fingerprint": "29c203fcf2204143d7183923209d6483bc9ebaa09e885ff7283b62016ee05cbd",
+          "official_url": "",
+          "title": "唐山"
+        },
+        "id:CT_143": {
+          "fingerprint": "9c8d16d3a6d834b0b9f62622442750133d1bb45691bbd38a492cb8102aaa58a9",
+          "official_url": "",
+          "title": "天津"
+        },
+        "id:CT_146": {
+          "fingerprint": "0901df91c1ddcf6b71d5a9dc827b27fcdbfdf8e59a8624a25101666778db514e",
+          "official_url": "",
+          "title": "威海"
+        },
+        "id:CT_147": {
+          "fingerprint": "0cb55ce8b9255238d17bfe144f680f41fd3f9253df2e7ea44578fef207f4ae25",
+          "official_url": "",
+          "title": "潍坊"
+        },
+        "id:CT_149": {
+          "fingerprint": "5dc8273c5b59c519fb2ae322dd1768b03d684309eda3e78b039ca356a65362a3",
+          "official_url": "",
+          "title": "温州"
+        },
+        "id:CT_15": {
+          "fingerprint": "67ff6e0433e718eddaf672358f9f764173ea9e2564b2576bc1775be28a4a9d24",
+          "official_url": "",
+          "title": "沧州"
+        },
+        "id:CT_150": {
+          "fingerprint": "4a15d947c157505058d80864af7cdfc8b97e32a6f4cf80b1e18a92818b5b7691",
+          "official_url": "",
+          "title": "乌鲁木齐"
+        },
+        "id:CT_151": {
+          "fingerprint": "5abf794696a2d2600f3672e5a8bebe69e6d5eaa703d72dfaeb1aa46e9af1a3c6",
+          "official_url": "",
+          "title": "无锡"
+        },
+        "id:CT_152": {
+          "fingerprint": "25f69d7cc81ec19b3825ed08740090b8dd61c9f1d76589ef0a13373ee9d52201",
+          "official_url": "",
+          "title": "芜湖"
+        },
+        "id:CT_154": {
+          "fingerprint": "2c8ceb000357d31c0604414c05a210177953c2ebb626094638b2d5cc52bb68a0",
+          "official_url": "",
+          "title": "武汉"
+        },
+        "id:CT_155": {
+          "fingerprint": "7a75937895323adad55f0870dfc91a70fc92563c2f8fbf667562d6aec7699299",
+          "official_url": "",
+          "title": "西安"
+        },
+        "id:CT_156": {
+          "fingerprint": "d57455a2e005876d09f193e03112c3b5c9fd59a8699450e9cfc3006522db284b",
+          "official_url": "",
+          "title": "西宁"
+        },
+        "id:CT_158": {
+          "fingerprint": "309e16f84c63111a1e477a12fa51032e9a8c97c1a1bbe4ea7f95a72ab55de8aa",
+          "official_url": "",
+          "title": "厦门"
+        },
+        "id:CT_160": {
+          "fingerprint": "04b3f10145610d3b7e9b611016c68053b492baf5a56bfe2cbbfe5d526a1daa13",
+          "official_url": "",
+          "title": "襄阳"
+        },
+        "id:CT_163": {
+          "fingerprint": "6b27adbc2f52671c028ea9d620ab37a46aa7cde93ee2f6509149aab5ef456c89",
+          "official_url": "",
+          "title": "新加坡"
+        },
+        "id:CT_164": {
+          "fingerprint": "4d55d8291884646d362c737d7797f61ad3ba0e78d313ee78182362c661f1c783",
+          "official_url": "",
+          "title": "新乡"
+        },
+        "id:CT_165": {
+          "fingerprint": "753775236551d3ec03fec2f52c5d27fe0df4d913ba64418c990250e206e6e93d",
+          "official_url": "",
+          "title": "信阳"
+        },
+        "id:CT_167": {
+          "fingerprint": "cf42508d06df309786c2c1deb2849518dc0c362379fb5558dd400323c1d4a9f8",
+          "official_url": "",
+          "title": "徐州"
+        },
+        "id:CT_168": {
+          "fingerprint": "be726ac9b66e38f9cc9a4e62da4565cb91ef3612203b01f557768dd07d18f59d",
+          "official_url": "",
+          "title": "许昌"
+        },
+        "id:CT_170": {
+          "fingerprint": "ebcb1234f1fce4afd129b60117a6b914a72dfe5ce42de7de5eb31971639c62a2",
+          "official_url": "",
+          "title": "烟台"
+        },
+        "id:CT_171": {
+          "fingerprint": "396e171eacbfe2db99b7fe046d88f56849223013e652e58a0d2b4f83071edda9",
+          "official_url": "",
+          "title": "盐城"
+        },
+        "id:CT_172": {
+          "fingerprint": "e9d6e3ebfb95a8e7710c710a533f52afc8d10315485052ad4f36464c189efa5f",
+          "official_url": "",
+          "title": "扬州"
+        },
+        "id:CT_174": {
+          "fingerprint": "0a943c04dd95fed4dba7f5ac7962f05690b1d7c02f0e3b2be7e4869e4c4edfb9",
+          "official_url": "",
+          "title": "宜昌"
+        },
+        "id:CT_175": {
+          "fingerprint": "ee6d317f943900dc75512b05a96c91e86e93bb0f8ca70a4a624f1d3767867b58",
+          "official_url": "",
+          "title": "宜春"
+        },
+        "id:CT_177": {
+          "fingerprint": "795589568378dcff9812da1ae92b5d615d3c319e0d591daae419757f7fa201c3",
+          "official_url": "",
+          "title": "银川"
+        },
+        "id:CT_178": {
+          "fingerprint": "56c86dd52766ed429796d102cda24dc48a42cb9b1b0f74d5870ac550ae0ec64f",
+          "official_url": "",
+          "title": "榆林"
+        },
+        "id:CT_18": {
+          "fingerprint": "3e5beb46aab7adc077640a88924a481bb00b53bea5f1baa20219aee643aff109",
+          "official_url": "",
+          "title": "常州"
+        },
+        "id:CT_180": {
+          "fingerprint": "9a1cf534811bb0edbf5236c25fa588a34325ea1e04ca3677a27e19511d540217",
+          "official_url": "",
+          "title": "运城"
+        },
+        "id:CT_182": {
+          "fingerprint": "c3999f51e2cc38a22900f59b4e3dcc0fbb7f0cd2d79a53160a306ac370c97e14",
+          "official_url": "",
+          "title": "湛江"
+        },
+        "id:CT_183": {
+          "fingerprint": "2af024f3d72778ddb093fdc7ad5490e0bdc02cb62db56e4cd297c66b5ac82a33",
+          "official_url": "",
+          "title": "漳州"
+        },
+        "id:CT_185": {
+          "fingerprint": "3d555528e92a9b811ad0c10d0ee20bb2b8c0b0657f3cef707ac2d8a01a492fbb",
+          "official_url": "",
+          "title": "张家口"
+        },
+        "id:CT_186": {
+          "fingerprint": "9925b2aa67b0039d643d1259c83e456355fed405fd6bd8ec7df7435a4b61db65",
+          "official_url": "",
+          "title": "肇庆"
+        },
+        "id:CT_187": {
+          "fingerprint": "991b4fa73a1be72f8c62471ce81b20350d15acf35369fc1f337c5e8c60dbedda",
+          "official_url": "",
+          "title": "镇江"
+        },
+        "id:CT_188": {
+          "fingerprint": "f8b068c267952b2d620c3e96c8f1e0faf822aad2f75dd212910f04efef99eb96",
+          "official_url": "",
+          "title": "郑州"
+        },
+        "id:CT_189": {
+          "fingerprint": "584658b766c8bb4a774a910146bb3d9be060f9be185d19ab4fa79185e8ea7b42",
+          "official_url": "",
+          "title": "中山"
+        },
+        "id:CT_19": {
+          "fingerprint": "78bf78a7de9a7a82c07d7660b9ca98f1ea8d11439cf572ba7c58d17573a60715",
+          "official_url": "",
+          "title": "长春"
+        },
+        "id:CT_190": {
+          "fingerprint": "397c24032fe7f638eb3654cf018e5ff2063e174626f231a96453b8406e2fedaf",
+          "official_url": "",
+          "title": "重庆"
+        },
+        "id:CT_192": {
+          "fingerprint": "79e2cdb608a3a6e45704540556467c53dda6c040e28432072d3efb94408ff95a",
+          "official_url": "",
+          "title": "珠海"
+        },
+        "id:CT_195": {
+          "fingerprint": "5d86ce4758941991070b4a2d486f67608a6337849308dac9ef1dbb97fb1ebf15",
+          "official_url": "",
+          "title": "淄博"
+        },
+        "id:CT_196": {
+          "fingerprint": "a9d42b1e8cc392e596207a84173bbc6ad404c991198243c023408a11a408535b",
+          "official_url": "",
+          "title": "遵义"
+        },
+        "id:CT_197": {
+          "fingerprint": "2acdd053cdf40dc85bd7e33c75cd8547561703eda419cda5307f664c329921e4",
+          "official_url": "",
+          "title": "衢州"
+        },
+        "id:CT_198": {
+          "fingerprint": "6a787920f0c3757d743780edfa6ab6f8742640f9ac895b18dac819902150b266",
+          "official_url": "",
+          "title": "泸州"
+        },
+        "id:CT_199": {
+          "fingerprint": "76c158f86abd0cc62483cd6946c0e81ecb1580937a696da62f748502ece10b7e",
+          "official_url": "",
+          "title": "苏州"
+        },
+        "id:CT_20": {
+          "fingerprint": "25264814d293f00c2e4c2f881471474f3008772a09af205f2091245451afe580",
+          "official_url": "",
+          "title": "长沙"
+        },
+        "id:CT_200": {
+          "fingerprint": "0a490fcb2eab43ad35ce887381a155f3c331aec6b1db4a59f7617cbb117db740",
+          "official_url": "",
+          "title": "蚌埠"
+        },
+        "id:CT_213": {
+          "fingerprint": "7530aa1c3ad325249c0fa6f8e3af998d057d30fe6237b3d5e9ee579451dd6cda",
+          "official_url": "",
+          "title": "咸阳"
+        },
+        "id:CT_214": {
+          "fingerprint": "5f914beadb1b8992f4013ac89e1813226ee279b753637cef37656fbb41da60f5",
+          "official_url": "",
+          "title": "长治"
+        },
+        "id:CT_219": {
+          "fingerprint": "eefa69cd27ec0a7a3c1d43ad2eb4e24b3ec8f2a5790db8beface5badf768c51c",
+          "official_url": "",
+          "title": "漯河"
+        },
+        "id:CT_22": {
+          "fingerprint": "ea15de24b77e291e06ee6d213eeeeb32bf56b9ddd21612c1cf35d342de1318c9",
+          "official_url": "",
+          "title": "成都"
+        },
+        "id:CT_225": {
+          "fingerprint": "12ed4fc9082f12690591a5213da7b6a8a6e60b61e700b1ec21189666c5c8cb9c",
+          "official_url": "",
+          "title": "乐山"
+        },
+        "id:CT_227": {
+          "fingerprint": "d5d39e16e1cc7993da1c024e7d5d5d775e8d8d85a0c1a738811c148971df8266",
+          "official_url": "",
+          "title": "大理"
+        },
+        "id:CT_23": {
+          "fingerprint": "5f7e54f12c8e511eaef190f11f9e11230342b4e53d081b5431d45d96fd865aab",
+          "official_url": "",
+          "title": "承德"
+        },
+        "id:CT_24": {
+          "fingerprint": "c17011479b0060442ff1aa1660116a5e7d021d724da6dfad57daaeed4d10d443",
+          "official_url": "",
+          "title": "赤峰"
+        },
+        "id:CT_248": {
+          "fingerprint": "9f454851eda6bebd8e8b0945fa3c1dab60af3c1002ca9dd37c75f9c855000c5f",
+          "official_url": "",
+          "title": "揭阳"
+        },
+        "id:CT_25": {
+          "fingerprint": "9627aa0ccf5e97cb593274c7e9db4d091d55d49d182f3e447db7c28022e28265",
+          "official_url": "",
+          "title": "大连"
+        },
+        "id:CT_26": {
+          "fingerprint": "4175827f4feb825eb6bf3f879f4519e3a43b81cc4a991739bffc10d72799bd03",
+          "official_url": "",
+          "title": "大庆"
+        },
+        "id:CT_27": {
+          "fingerprint": "ce8352a54d80bd35785a012792d0b2117e4e5973bb7e857e4947ed0edccb6b07",
+          "official_url": "",
+          "title": "大同"
+        },
+        "id:CT_3": {
+          "fingerprint": "83e9dedc3ce3686025f4260ea2d80fa529649e126a3209e265de12a697fffe1f",
+          "official_url": "",
+          "title": "安阳"
+        },
+        "id:CT_31": {
+          "fingerprint": "4f2c9b8610b70f4abc139bba8b85d7ffdb24fa8e5d7bffaea568769f27bfc797",
+          "official_url": "",
+          "title": "德阳"
+        },
+        "id:CT_32": {
+          "fingerprint": "7941e71763f62b0482ab348e0f46a59c6502d537ba032fe24b1dfb789fc539e8",
+          "official_url": "",
+          "title": "德州"
+        },
+        "id:CT_35": {
+          "fingerprint": "8cc1d36503b08a15201880bf93573ec8837d651a2fe84975d2c9d8927a4abf2a",
+          "official_url": "",
+          "title": "东营"
+        },
+        "id:CT_36": {
+          "fingerprint": "9848b7e77515fd0b11933e0946856147b88fc6c85eac595e09ed98aeedde68d6",
+          "official_url": "",
+          "title": "东莞"
+        },
+        "id:CT_38": {
+          "fingerprint": "006b34f92680829c0bf14d82e31b9fef47ffae5d72896ff5840799b8c26b88e2",
+          "official_url": "",
+          "title": "鄂尔多斯"
+        },
+        "id:CT_39": {
+          "fingerprint": "879c3868ebf8bc38482cc7645fe755cd18ddcbb1342523e9335c640634094c99",
+          "official_url": "",
+          "title": "佛山"
+        },
+        "id:CT_40": {
+          "fingerprint": "fc73d9cee8e9110ae193f73dc473f141ee1e02645eaf7221b161cbe9bdce45ad",
+          "official_url": "",
+          "title": "福州"
+        },
+        "id:CT_42": {
+          "fingerprint": "9b1414fa63f095f29153935701ac009060c7b940fc49f94a222dc50951980f7c",
+          "official_url": "",
+          "title": "阜阳"
+        },
+        "id:CT_43": {
+          "fingerprint": "7142fd41feb4d70e0d3d1bbb75bf226c16324af96829593295525c3550a64b0d",
+          "official_url": "",
+          "title": "赣州"
+        },
+        "id:CT_45": {
+          "fingerprint": "1fa3d92b52d6489f4484793dd4742906b0caa4a9a7a10f8825569430b0f98dbd",
+          "official_url": "",
+          "title": "广州"
+        },
+        "id:CT_46": {
+          "fingerprint": "e4721723384e87486957ce3878508a3329c4d5951e72bc6f1c5026295ad88154",
+          "official_url": "",
+          "title": "桂林"
+        },
+        "id:CT_47": {
+          "fingerprint": "e1ae2d238437bf909e61e86a0d18183c0b3d13c062568702914456825555694c",
+          "official_url": "",
+          "title": "贵阳"
+        },
+        "id:CT_48": {
+          "fingerprint": "7ca20635a2f27ec725b492da6818f418b93688be5235afcf88825cc8a55367c8",
+          "official_url": "",
+          "title": "哈尔滨"
+        },
+        "id:CT_49": {
+          "fingerprint": "e95f700673d340fad48dbe9b0140b3b6c943958d1bc725ec77a528c17fa42346",
+          "official_url": "",
+          "title": "海口"
+        },
+        "id:CT_51": {
+          "fingerprint": "d36e375d8f732a940424bfcf974296a56f2c3408c397611ffa9203d367a43ebf",
+          "official_url": "",
+          "title": "汉中"
+        },
+        "id:CT_52": {
+          "fingerprint": "aa6ecef7161d7ad016da75046690f790093ba6bb099c186d02f3371b2b7a7721",
+          "official_url": "",
+          "title": "杭州"
+        },
+        "id:CT_54": {
+          "fingerprint": "13f13f30197c0c625b49d6787d2204ef62e9582382c29e2fdf32a7b4fa27c2dc",
+          "official_url": "",
+          "title": "菏泽"
+        },
+        "id:CT_55": {
+          "fingerprint": "fa11e50802b4d0f3d8ca87b3dd0a627dc318c2a6a96afa688552b1eefb506d18",
+          "official_url": "",
+          "title": "合肥"
+        },
+        "id:CT_59": {
+          "fingerprint": "be479d06de2dbdbb58df0cb2f2a52db692652da5fed81a8f3f4f884b3ad9c68b",
+          "official_url": "",
+          "title": "呼和浩特"
+        },
+        "id:CT_61": {
+          "fingerprint": "28bd3ada30b73cd8a6bc4f93a01b7c0fa371adc7dcf5e6929c2fa7272f1fbb3c",
+          "official_url": "",
+          "title": "湖州"
+        },
+        "id:CT_62": {
+          "fingerprint": "5612a0d14446a9df72058d905e3c69aab8a523ccfc7911d2298fb8d390a4130f",
+          "official_url": "",
+          "title": "淮安"
+        },
+        "id:CT_63": {
+          "fingerprint": "ddd6b45ea5e66095140361369eda9432f14ed9bd9bae9635cbc0160e732bfedd",
+          "official_url": "",
+          "title": "惠州"
+        },
+        "id:CT_66": {
+          "fingerprint": "6976bcf2f45dc0f77ed3ced3a404bf9ff2967e5ce49ccbf39aa0d26795e9af4d",
+          "official_url": "",
+          "title": "济南"
+        },
+        "id:CT_67": {
+          "fingerprint": "f8555cddd5a9ccd66948dc0ad44f870c9b4b604fd67e3c1c553ffe9f6943e7f0",
+          "official_url": "",
+          "title": "济宁"
+        },
+        "id:CT_68": {
+          "fingerprint": "d6975b1dc30239771d4883edec1d61b446e4d6944947d54515a0f85bb5a9c219",
+          "official_url": "",
+          "title": "嘉兴"
+        },
+        "id:CT_69": {
+          "fingerprint": "041926f42fbed1b0b121eaaeae84bfd321fa647d61f84f084a20f91b120ea992",
+          "official_url": "",
+          "title": "江门"
+        },
+        "id:CT_70": {
+          "fingerprint": "c92ebc9b0e9d4b3c4a9a071b3c5c9c83b6336d435622f12d029cf1420dd4b7ad",
+          "official_url": "",
+          "title": "焦作"
+        },
+        "id:CT_71": {
+          "fingerprint": "4748be9e59f0eb774ffb40e1e77de518a01a1b42107f9700bc8239dd0823f1bc",
+          "official_url": "",
+          "title": "金华"
+        },
+        "id:CT_74": {
+          "fingerprint": "5a3e071d0a0712809dab9f719bd050137da01bf7f023ce1971dfd03b46be81a8",
+          "official_url": "",
+          "title": "九江"
+        },
+        "id:CT_8": {
+          "fingerprint": "f6a243cd8253b96ca1bd8616c716c325dccda9e0829d03fd0425360889d7a524",
+          "official_url": "",
+          "title": "包头"
+        },
+        "id:CT_80": {
+          "fingerprint": "22387721e8e9ebfd94abedfabac67d505f9e3dcfd5eb378a139e85aca568d40f",
+          "official_url": "",
+          "title": "昆明"
+        },
+        "id:CT_84": {
+          "fingerprint": "d33f918b17116d18b845918cae510349956cb8614a28fce20f83f829c712f9fc",
+          "official_url": "",
+          "title": "廊坊"
+        },
+        "id:CT_86": {
+          "fingerprint": "b01905171c39f9a845a2966db2e4cbf2f1f622323e2bdec9273e7bdb2c497999",
+          "official_url": "",
+          "title": "连云港"
+        },
+        "id:CT_87": {
+          "fingerprint": "d2478291e6dac78335d5ddbbb7ab024d6d2f09e89cceb6751cbe52bf752e2307",
+          "official_url": "",
+          "title": "聊城"
+        },
+        "id:CT_89": {
+          "fingerprint": "af63002ab0dbe4bf5987b39f2206a97460dd60506c8071cf5db3dc909f7b3eaa",
+          "official_url": "",
+          "title": "临沂"
+        },
+        "id:CT_90": {
+          "fingerprint": "4119dfa6bb0a52569bf301944d0f75a87bdde2e4ea42b52f7bd75278f47888da",
+          "official_url": "",
+          "title": "柳州"
+        },
+        "id:CT_91": {
+          "fingerprint": "61ec99e0dc0cf8ada479869083143a9bab2373302e324a411ba0ffc231c189c1",
+          "official_url": "",
+          "title": "六安"
+        },
+        "id:CT_92": {
+          "fingerprint": "2112bfa62c32c5497b20fbc498e2828bcb07374e869800c2c337c5b20bd449a9",
+          "official_url": "",
+          "title": "龙岩"
+        },
+        "id:CT_95": {
+          "fingerprint": "47e5604f728eabf8d625989ba67a04490f05449bcf7e7395508a2146c95a5290",
+          "official_url": "",
+          "title": "洛阳"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -39415,7 +40752,7 @@
           "title": "运筹优化算法工程师-运筹大模型方向（博士后）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -40740,7 +42077,7 @@
           "title": "Agent 策略运营实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -41450,8 +42787,8 @@
           "title": "芯片设计工程师（上海）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-044": {
@@ -41459,7 +42796,7 @@
       "baseline_ready": false,
       "company": "度小满",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -41524,7 +42861,7 @@
           "title": ""
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -41729,7 +43066,7 @@
           "title": "海外IT资产工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -41794,7 +43131,7 @@
           "title": "深信服27届-攻防研究工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -42959,8 +44296,8 @@
           "title": "应用支持（深圳）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-049": {
@@ -43029,7 +44366,7 @@
           "title": "友新星实习计划"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43104,9 +44441,9 @@
           "title": "影像产品经理方向 | Future Product Manager"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
-      "last_status": "COLLECTED_UNREVIEWED"
+      "last_status": "PARTIAL"
     },
     "official-051": {
       "baseline_kind": "observed",
@@ -43214,7 +44551,7 @@
           "title": "项目管理专员（广州）-运营策略-2027届"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43223,7 +44560,7 @@
       "baseline_ready": false,
       "company": "安克创新",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43243,7 +44580,7 @@
           "title": "福利待遇"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43252,7 +44589,7 @@
       "baseline_ready": false,
       "company": "吉利控股",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43261,7 +44598,7 @@
       "baseline_ready": false,
       "company": "小鹏集团",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43270,7 +44607,7 @@
       "baseline_ready": false,
       "company": "理想汽车",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -43855,7 +45192,7 @@
           "title": "FDE工程师（AI前线部署工程师）\nAI/算法类 | 应届毕业生 | 新事业生态圈\n工作地点：上海市 青岛市"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -44710,7 +46047,7 @@
           "title": ""
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -52440,7 +53777,7 @@
           "title": "高级物控专员"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -53080,7 +54417,7 @@
           "title": "语音算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -53570,7 +54907,7 @@
           "title": "「2027校招」前端研发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -54980,7 +56317,7 @@
           "title": "部署优化实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -55150,8 +56487,8 @@
           "title": "27届校招-产品需求工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
-      "last_complete_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
+      "last_complete_at_utc": "2026-10-12T09:02:57Z",
       "last_status": "OK"
     },
     "official-064": {
@@ -55235,7 +56572,7 @@
           "title": "【2027校招正式批】前端开发工程师（海外业务）\n2027校招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -55244,7 +56581,7 @@
       "baseline_ready": false,
       "company": "BOSS直聘/看准科技",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -55484,16 +56821,67 @@
           "title": "HRBP[郑州]-27秋招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": "2026-10-12T08:40:17Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-067": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "影石 Insta360",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "jobs": {
+        "id:7663408937623062838": {
+          "fingerprint": "c7ba263d0fc288a881c487ab334cc4db683cc3494143dea6b74b6fb4aad1fcf3",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7663408937623062838/detail",
+          "title": "无线连接工程师-2027校招"
+        },
+        "id:7663409502507403526": {
+          "fingerprint": "4dacbdca4559e9eec42defac8f8b9b1490ede4dcb69cb3d8aca19906fa0dae63",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7663409502507403526/detail",
+          "title": "C++开发工程师（图传方向）-2027校招"
+        },
+        "id:7663425900713396526": {
+          "fingerprint": "17c018eb17c49fb70a3a993f8cc8c38199a60854e3ee05988422f891641498e0",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7663425900713396526/detail",
+          "title": "测试开发工程师（电池）-2027校招"
+        },
+        "id:7663430606786038059": {
+          "fingerprint": "7ab5d4948884b4aa5fc3957846c2802c27ed9a268b8b5786b7313bd81c227f5e",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7663430606786038059/detail",
+          "title": "设计代表-2027校招"
+        },
+        "id:7663454329102485786": {
+          "fingerprint": "7b3a0643c0b0650027e5d3d5c075482a505abfbb4b804429b60fe692f9f5277f",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7663454329102485786/detail",
+          "title": "移动端开发工程师-2027校招"
+        },
+        "id:7663786891687758086": {
+          "fingerprint": "0054d1be1ad905e1f57d442b427e827bac9bb995907450346d02b6d442f75824",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7663786891687758086/detail",
+          "title": "影像算法工程师--2027校招"
+        },
+        "id:7664446037495925035": {
+          "fingerprint": "18995f1ff8a645b7de5447dd729243b33d1a157df0be227325baed8937690372",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7664446037495925035/detail",
+          "title": "影像软件工程师-2027校招"
+        },
+        "id:7664516247107963174": {
+          "fingerprint": "64a17593a69e916e4f48ce0f3856b9bd811ae36a157d18f16bf73fbc427819f2",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7664516247107963174/detail",
+          "title": "区域零售管理专员-2027校招"
+        },
+        "id:7664517332202621203": {
+          "fingerprint": "0d0fbf5ac0f51aba1eff64cb9f7c8d55c25eb6a8076ceb99e5878df98d4e398c",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7664517332202621203/detail",
+          "title": "新零售营销专员（Retail Marketing）-2027校招"
+        },
+        "id:7667853804130650378": {
+          "fingerprint": "23f60bb67c4620084d2dffc210e972a8a75fbeb7646a39e70ebb67af5c44f087",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7667853804130650378/detail",
+          "title": "Marketing Trainee（IT Marketing） -2027"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -57648,7 +59036,7 @@
           "title": "运维工程师(J22823)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -58103,7 +59491,7 @@
           "title": "AIGC实习生(J14583)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T08:40:17Z",
+      "last_attempt_at_utc": "2026-10-12T09:02:57Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     }
