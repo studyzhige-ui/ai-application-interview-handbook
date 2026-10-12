@@ -8,6 +8,7 @@ import test from "node:test";
 import { createCipheriv, createHash } from "node:crypto";
 import { parseArgs, selectSource, collectPaged } from "../jd/adapters/bounded.mjs";
 import { collectByteDance } from "../jd/adapters/bytedance.mjs";
+import { collectFeishu } from "../jd/adapters/feishu.mjs";
 import { collectMoka, WPS_RUNTIME_PARAMETER_ENV } from "../jd/adapters/moka.mjs";
 import { collectBrowser, extractList, nextRequest, assertNoSecurityChallenge } from "../jd/adapters/browser.mjs";
 
@@ -91,6 +92,23 @@ test("Feishu 405 falls back to the registered first-party browser flow", async (
   assert.equal(result.jobs.length, 1);
   assert.equal(result.jobs[0].job_id, "browser-1");
   assert.match(result.direct_attempt.failures[0].error, /HTTP 405/);
+});
+
+test("Feishu browser fallback opens the official channel position list", async () => {
+  const feishuSource = {
+    source_id: "fixture-feishu", company: "Fixture Feishu", mode: "feishu_direct",
+    portal: "https://fixture.jobs.feishu.cn/123456/", job_list_url: "https://fixture.jobs.feishu.cn/123456/",
+    feishu_host: "fixture.jobs.feishu.cn", feishu_channel: "123456",
+  };
+  const opened = [];
+  const fixture = browserFixture([{ rows: [], total: 0 }], { async open(url) { opened.push(url); } });
+  const result = await collectFeishu(feishuSource, options({ sourceId: feishuSource.source_id }), {
+    ...fixture,
+    async fetch() { return response("method changed", 405); },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.transport_fallback, "browser_after_direct_405");
+  assert.deepEqual(opened, ["https://fixture.jobs.feishu.cn/123456/position/list"]);
 });
 
 test("max-jobs bounds retained jobs and detail fetches even if a server ignores limit", async () => {
@@ -394,6 +412,66 @@ test("browser snapshot uses one primary job-list response instead of merging rec
   const result = await collectBrowser(browserSource, options(), { chromium });
   assert.equal(result.complete, true);
   assert.deepEqual(result.jobs.map(job => job.job_id), ["1"]);
+});
+
+test("Feishu pagination waits for the site-issued signed search response before snapshotting", async () => {
+  const rows = [
+    { id: "1", title: "第一页", description: "a", requirement: "ra", city_list: [{ name: "北京" }], recruit_type: { name: "校招" }, job_category: { name: "研发" } },
+    { id: "2", title: "第二页", description: "b", requirement: "rb", city_list: [{ name: "上海" }], recruit_type: { name: "实习" }, job_category: { name: "工程" } },
+  ];
+  let listPage, pageIndex = 0, pagesCreated = 0;
+  const signedUrl = index => `https://example.test/api/v1/search/job/posts?offset=${index}&_signature=site-issued-${index}`;
+
+  function makePage(isList) {
+    let url = "", responseHandler = null, responseWaiter = null;
+    async function emitList(index) {
+      const payload = { code: 0, data: { count: 2, job_post_list: [rows[index]] } };
+      const response = {
+        url: () => signedUrl(index), headers: () => ({ "content-type": "application/json" }), status: () => 200,
+        body: async () => Buffer.from(JSON.stringify(payload)),
+        request: () => ({ method: () => "POST", postData: () => JSON.stringify({ offset: index, limit: 1 }) }),
+      };
+      if (responseHandler) await responseHandler(response);
+      if (responseWaiter && responseWaiter.predicate(response)) {
+        const resolve = responseWaiter.resolve; responseWaiter = null; resolve(response);
+      }
+    }
+    const page = {
+      on(event, callback) { if (event === "response") responseHandler = callback; },
+      async goto(nextUrl) { url = nextUrl; if (isList) await emitList(pageIndex); return { status: () => 200 }; },
+      url: () => url,
+      async waitForLoadState() {},
+      async waitForResponse(predicate) { return new Promise(resolve => { responseWaiter = { predicate, resolve }; }); },
+      async content() { return "<main></main>"; },
+      locator(selector) {
+        if (selector === "body") return { async innerText() { return ""; } };
+        if (selector === "a[href]") return { async evaluateAll() { return []; } };
+        if (selector === "li.atsx-pagination-next:not(.atsx-pagination-disabled)") return {
+          last() { return this; },
+          async count() { return isList && pageIndex === 0 ? 1 : 0; },
+          async isVisible() { return isList && pageIndex === 0; },
+          async click() { pageIndex = 1; await emitList(1); },
+        };
+        return {
+          last() { return this; }, async count() { return 0; }, async isVisible() { return false; },
+          async isDisabled() { return false; }, async getAttribute() { return null; },
+        };
+      },
+      getByRole() { return { last() { return this; }, async count() { return 0; } }; },
+      async close() {},
+    };
+    return page;
+  }
+  const context = { async route() {}, async newPage() { const page = makePage(pagesCreated++ === 0); if (!listPage) listPage = page; return page; } };
+  const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
+  const result = await collectBrowser(browserSource, options(), { chromium });
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.jobs.map(job => job.job_id), ["1", "2"]);
+  assert.equal(result.total, 2);
+  assert.equal(result.counts.detail_jobs_attempted, 0);
+  assert.deepEqual(result.jobs.map(job => job.location), ["北京", "上海"]);
+  assert.deepEqual(result.jobs.map(job => job.category), ["校招", "实习"]);
+  assert.deepEqual(result.jobs.map(job => job.department), ["研发", "工程"]);
 });
 
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {

@@ -62,7 +62,16 @@ export async function collectFeishuWithBrowserFallback(source, options, specific
   const direct405 = direct.jobs.length === 0
     && (direct.failures || []).some(failure => /HTTP 405/.test(String(failure.error || "")));
   if (!direct405) return direct;
-  const browser = await collectBrowser(source, options, dependencies);
+  const host = source.feishu_host || new URL(source.portal).hostname;
+  const channel = source.feishu_channel || new URL(source.portal).pathname.split("/").filter(Boolean)[0] || "campus";
+  const listSource = {
+    ...source,
+    // Feishu visual sites can use a marketing/home page at the registered portal.
+    // The site configuration consistently exposes the actual job collection under
+    // /<channel>/position/list, where the page itself emits the signed search call.
+    job_list_url: `https://${host}/${channel}/position/list`,
+  };
+  const browser = await collectBrowser(listSource, options, dependencies);
   return {
     ...browser,
     transport_fallback: "browser_after_direct_405",
