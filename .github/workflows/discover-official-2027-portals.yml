@@ -1,32 +1,68 @@
-name: Inspect registered official JD sources (collection disabled)
+name: Diagnose one official JD source
 
-# Manual inspection only. Live browser discovery is available through the
-# bounded local CLI documented in market/job-description/04-scripts/README.md.
 on:
   workflow_dispatch:
+    inputs:
+      source_id:
+        description: Registered source ID, for example official-004
+        required: true
+        default: official-004
+        type: string
+      max_pages:
+        description: Maximum list pages for this diagnostic run
+        required: true
+        default: '5'
+        type: string
+      max_jobs:
+        description: Maximum jobs/details for this diagnostic run
+        required: true
+        default: '100'
+        type: string
+      timeout_seconds:
+        description: Per-source wall clock limit
+        required: true
+        default: '300'
+        type: string
 
 permissions:
   contents: read
 
 jobs:
-  inspect-sources:
-    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted", "Windows"]') || fromJSON('["ubuntu-latest"]') }}
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
     env:
-      PYTHONUTF8: "1"
-    timeout-minutes: 5
+      PYTHONUTF8: '1'
+      JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018: ${{ secrets.JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018 }}
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
       - uses: actions/setup-python@v5
-        if: github.event.repository.private == false
         with:
           python-version: '3.12'
-      - name: Check existing Windows Python
-        if: github.event.repository.private == true
-        shell: powershell
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install collection dependencies
         run: |
-          python -c "import sys; assert sys.version_info >= (3, 12)"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: List stored registered source IDs without network collection
-        run: python -B market/job-description/04-scripts/jd.py sources
+          python -m pip install --disable-pip-version-check -r market/job-description/04-scripts/requirements.txt
+          npm install --no-save playwright@1.55.0
+          npx playwright install chromium --with-deps
+      - name: Run bounded source diagnostic
+        run: |
+          python -B market/job-description/04-scripts/jd.py collect \
+            --enable-code-collection \
+            --source-id "${{ inputs.source_id }}" \
+            --max-pages "${{ inputs.max_pages }}" \
+            --max-jobs "${{ inputs.max_jobs }}" \
+            --timeout-seconds "${{ inputs.timeout_seconds }}" \
+            --output-dir "$RUNNER_TEMP/jd-source-diagnostic"
+      - name: Upload diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jd-source-${{ inputs.source_id }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/jd-source-diagnostic
+          if-no-files-found: warn
+          retention-days: 14
