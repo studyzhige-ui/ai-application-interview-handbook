@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { createCipheriv, createHash } from "node:crypto";
-import { parseArgs, selectSource, collectPaged } from "../jd/adapters/bounded.mjs";
+import { parseArgs, selectSource, collectPaged, createRuntime } from "../jd/adapters/bounded.mjs";
 import { collectByteDance } from "../jd/adapters/bytedance.mjs";
 import { collectFeishu } from "../jd/adapters/feishu.mjs";
 import { collectMoka, WPS_RUNTIME_PARAMETER_ENV } from "../jd/adapters/moka.mjs";
@@ -47,6 +47,19 @@ test("all independent enable, source, and numeric bounds are mandatory", () => {
   assert.throws(() => parseArgs([...args, "--unknown", "yes"]), /Unknown/);
   assert.throws(() => selectSource({ sources: [source] }, "unknown"), /registered source/);
   assert.throws(() => selectSource({ sources: [source, source] }, source.source_id), /found 2/);
+});
+
+test("explicit structural collection keys dedupe repeated DOM observations without inventing job IDs", () => {
+  const runtime = createRuntime(source, options());
+  try {
+    assert.equal(runtime.addJob({ title: "same", collection_key: "page-1:0" }), true);
+    assert.equal(runtime.addJob({ title: "same", collection_key: "page-1:0" }), false);
+    assert.equal(runtime.addJob({ title: "same", collection_key: "page-1:1" }), true);
+    assert.equal(runtime.jobs.length, 2);
+    assert(runtime.jobs.every(job => !job.job_id && !job.official_url));
+  } finally {
+    runtime.close();
+  }
 });
 
 test("direct collector calls without the explicit gate make zero requests", async () => {
@@ -700,7 +713,7 @@ test("active source registry contains no stored Moka source parameter", () => {
   const registry = JSON.parse(fs.readFileSync(new URL("../../03-strategy/official-2027-campus-sources.json", import.meta.url), "utf8"));
   assert(registry.sources.every(entry => !Object.hasOwn(entry, "moka_source_token")));
   const wps = registry.sources.find(entry => entry.source_id === "official-018");
-  assert.equal(wps.moka_requires_runtime_source_parameter, true);
+  assert.equal(wps.moka_requires_runtime_source_parameter, false);
   assert.equal(wps.moka_endpoint, wpsSource.moka_endpoint);
   assert.equal(wps.moka_org_id, "wps");
   assert.equal(wps.moka_site_id, "41436");
