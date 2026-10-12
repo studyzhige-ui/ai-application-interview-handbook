@@ -416,8 +416,8 @@ test("browser snapshot uses one primary job-list response instead of merging rec
 
 test("Feishu pagination waits for the site-issued signed search response before snapshotting", async () => {
   const rows = [
-    { id: "1", title: "第一页", description: "a" },
-    { id: "2", title: "第二页", description: "b" },
+    { id: "1", title: "第一页", description: "a", requirement: "ra", city_list: [{ name: "北京" }], recruit_type: { name: "校招" }, job_category: { name: "研发" } },
+    { id: "2", title: "第二页", description: "b", requirement: "rb", city_list: [{ name: "上海" }], recruit_type: { name: "实习" }, job_category: { name: "工程" } },
   ];
   let listPage, pageIndex = 0, pagesCreated = 0;
   const signedUrl = index => `https://example.test/api/v1/search/job/posts?offset=${index}&_signature=site-issued-${index}`;
@@ -468,6 +468,10 @@ test("Feishu pagination waits for the site-issued signed search response before 
   assert.equal(result.complete, true);
   assert.deepEqual(result.jobs.map(job => job.job_id), ["1", "2"]);
   assert.equal(result.total, 2);
+  assert.equal(result.counts.detail_jobs_attempted, 0);
+  assert.deepEqual(result.jobs.map(job => job.location), ["北京", "上海"]);
+  assert.deepEqual(result.jobs.map(job => job.category), ["校招", "实习"]);
+  assert.deepEqual(result.jobs.map(job => job.department), ["研发", "工程"]);
 });
 
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {
