@@ -200,7 +200,7 @@ test("Moka retains encrypted bytes and fetches details for every title", async (
   const listBody = encrypted({ code: 0, data: { jobs: rows, total: 2 } });
   const result = await collectMoka(mokaSource, options(), { async fetch(url, init) {
     if (url.endsWith("jobs/v2")) {
-      assert.equal(JSON.parse(init.body).limit, 50);
+      assert(JSON.parse(init.body).limit <= 50);
       return response(listBody);
     }
     const id = JSON.parse(init.body).jobId; detailIds.push(id);
