@@ -1,37 +1,120 @@
-name: Check stored official JD sources (collection disabled)
+name: Sync official campus and internship JD changes
 
-# No schedule/push trigger and no live collection/publication step.
 on:
+  schedule:
+    - cron: '0 1 * * 2,5'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: official-jd-v2-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  offline-check:
-    runs-on: ${{ github.event.repository.private && fromJSON('["self-hosted", "Windows"]') || fromJSON('["ubuntu-latest"]') }}
+  scan:
+    name: Scan shard ${{ matrix.shard }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
     env:
-      PYTHONUTF8: "1"
-    timeout-minutes: 10
+      PYTHONUTF8: '1'
+      JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018: ${{ secrets.JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018 }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.sha }}
           persist-credentials: false
       - uses: actions/setup-python@v5
-        if: github.event.repository.private == false
         with:
           python-version: '3.12'
       - uses: actions/setup-node@v4
-        if: github.event.repository.private == false
         with:
           node-version: '22'
-      - name: Check existing Windows toolchain
-        if: github.event.repository.private == true
-        shell: powershell
+      - name: Install collection dependencies
         run: |
-          python -c "import sys; assert sys.version_info >= (3, 12)"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          node -e "if (Number(process.versions.node.split('.')[0]) < 22) process.exit(1)"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Read-only snapshot and offline fixture checks
-        run: python -B market/job-description/04-scripts/jd.py check
+          python -m pip install --disable-pip-version-check -r market/job-description/04-scripts/requirements.txt
+          npm install --no-save playwright@1.55.0
+          npx playwright install chromium --with-deps
+      - name: Scan registered source shard
+        run: |
+          mkdir -p "$RUNNER_TEMP/jd-scan"
+          python -B market/job-description/04-scripts/jd.py scan \
+            --shard-index "${{ matrix.shard }}" \
+            --shard-count 8 \
+            --max-pages 200 \
+            --max-jobs 10000 \
+            --timeout-seconds 900 \
+            --output-dir "$RUNNER_TEMP/jd-scan/shard-${{ matrix.shard }}"
+      - name: Preserve raw scan evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jd-scan-${{ matrix.shard }}
+          path: ${{ runner.temp }}/jd-scan/shard-${{ matrix.shard }}
+          if-no-files-found: warn
+          retention-days: 14
+
+  reconcile:
+    name: Reconcile JD scan state
+    needs: scan
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Download available scan shards
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: jd-scan-*
+          path: ${{ runner.temp }}/jd-scans
+      - name: Reconcile baseline and cumulative review queue
+        run: |
+          mkdir -p "$RUNNER_TEMP/jd-scans"
+          python -B market/job-description/04-scripts/jd.py reconcile \
+            --input-dir "$RUNNER_TEMP/jd-scans" \
+            --state-file market/job-description/01-data/automation/scan-state.json \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --report-file market/job-description/02-analysis/automation-status.md
+      - name: Validate repository before publication
+        run: |
+          python -B market/job-description/04-scripts/jd.py check
+          git diff --check
+      - name: Publish generated operational state
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+            echo "main moved during collection; keep artifacts and skip publication. The next scheduled run will reconcile from the new head."
+            exit 0
+          fi
+          git add \
+            market/job-description/01-data/automation/scan-state.json \
+            market/job-description/01-data/automation/review-queue.json \
+            market/job-description/02-analysis/automation-status.md
+          if git diff --cached --quiet; then
+            echo "No generated state change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "market: refresh automated JD scan state"
+          git push origin HEAD:main

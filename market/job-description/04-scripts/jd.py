@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Stored JD integrity checks; collection is disabled unless explicitly bounded."""
+"""Official JD integrity, bounded collection, and GitHub-native incremental scanning."""
 from __future__ import annotations
+
 import argparse
 import math
 from pathlib import Path
@@ -16,6 +17,13 @@ def positive_int(value):
     number = int(value)
     if number <= 0:
         raise argparse.ArgumentTypeError("must be positive")
+    return number
+
+
+def nonnegative_int(value):
+    number = int(value)
+    if number < 0:
+        raise argparse.ArgumentTypeError("must be non-negative")
     return number
 
 
@@ -44,6 +52,7 @@ def main(argv=None):
     commands = parser.add_subparsers(dest="command")
     commands.add_parser("check", help="Read-only offline integrity, counts, syntax and fixture tests")
     commands.add_parser("sources", help="List registered source IDs without network access")
+
     collect = commands.add_parser("collect", help="Explicit bounded capture into a new directory; never publishes")
     collect.add_argument("--enable-code-collection", action="store_true", required=True)
     collect.add_argument("--source-id", action="append", required=True)
@@ -51,9 +60,24 @@ def main(argv=None):
     collect.add_argument("--max-jobs", type=positive_int, required=True)
     collect.add_argument("--timeout-seconds", type=positive_number, required=True)
     collect.add_argument("--output-dir", type=Path, required=True)
+
+    scan = commands.add_parser("scan", help="Collect one deterministic automation shard; source failures remain data")
+    scan.add_argument("--shard-index", type=nonnegative_int, required=True)
+    scan.add_argument("--shard-count", type=positive_int, required=True)
+    scan.add_argument("--max-pages", type=positive_int, required=True)
+    scan.add_argument("--max-jobs", type=positive_int, required=True)
+    scan.add_argument("--timeout-seconds", type=positive_number, required=True)
+    scan.add_argument("--output-dir", type=Path, required=True)
+
+    reconcile = commands.add_parser("reconcile", help="Merge scan artifacts into baseline, pending review queue and status report")
+    reconcile.add_argument("--input-dir", type=Path, required=True)
+    reconcile.add_argument("--state-file", type=Path, required=True)
+    reconcile.add_argument("--queue-file", type=Path, required=True)
+    reconcile.add_argument("--report-file", type=Path, required=True)
+
     args = parser.parse_args(argv)
     if not args.command:
-        print("Code collection is disabled. Use check or sources for offline inspection.")
+        print("Use check/sources for offline inspection, collect for manual capture, or scan/reconcile for automation.")
         return 0
     if args.command == "check":
         return check()
@@ -62,10 +86,35 @@ def main(argv=None):
         for source_id, source in registry().items():
             print(f"{source_id}\t{source['company']}\t{source['portal']}")
         return 0
-    from jd.collection import collect_manual
-    return collect_manual(args.source_id, enabled=args.enable_code_collection,
-                          max_pages=args.max_pages, max_jobs=args.max_jobs,
-                          timeout_seconds=args.timeout_seconds, output=args.output_dir)
+    if args.command == "collect":
+        from jd.collection import collect_manual
+        return collect_manual(
+            args.source_id,
+            enabled=args.enable_code_collection,
+            max_pages=args.max_pages,
+            max_jobs=args.max_jobs,
+            timeout_seconds=args.timeout_seconds,
+            output=args.output_dir,
+        )
+    if args.command == "scan":
+        from jd.automation import scan_shard
+        return scan_shard(
+            shard_index=args.shard_index,
+            shard_count=args.shard_count,
+            max_pages=args.max_pages,
+            max_jobs=args.max_jobs,
+            timeout_seconds=args.timeout_seconds,
+            output=args.output_dir,
+        )
+    from jd.automation import reconcile as reconcile_run
+    summary = reconcile_run(
+        input_dir=args.input_dir,
+        state_file=args.state_file,
+        queue_file=args.queue_file,
+        report_file=args.report_file,
+    )
+    print(f"Reconciled sources={summary['results']}, new events={sum(summary['counts'].get(k, 0) for k in ('added','changed','possibly_removed'))}, pending={summary['pending']}")
+    return 0
 
 
 if __name__ == "__main__":
