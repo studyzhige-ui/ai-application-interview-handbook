@@ -69,8 +69,8 @@ export async function collectFeishuWithBrowserFallback(source, options, specific
   let browserListUrl = specification.browserListUrl || source.job_list_url || source.portal;
   if (source.mode === "feishu_direct") {
     const derived = new URL(`https://${host}/${channel}/position/list`);
-    // Project/subject filters are first-party portal state and must survive the
-    // move from a marketing/home URL to its position-list route.
+    // Project/subject filters are first-party portal state; preserve them when
+    // moving from a marketing/home URL to its official position-list route.
     for (const [key, value] of portal.searchParams) derived.searchParams.append(key, value);
     browserListUrl = derived.href;
   }
