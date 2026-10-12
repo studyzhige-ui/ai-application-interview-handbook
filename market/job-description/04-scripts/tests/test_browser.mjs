@@ -8,6 +8,7 @@ import test from "node:test";
 import { createCipheriv, createHash } from "node:crypto";
 import { parseArgs, selectSource, collectPaged } from "../jd/adapters/bounded.mjs";
 import { collectByteDance } from "../jd/adapters/bytedance.mjs";
+import { collectFeishu } from "../jd/adapters/feishu.mjs";
 import { collectMoka, WPS_RUNTIME_PARAMETER_ENV } from "../jd/adapters/moka.mjs";
 import { collectBrowser, extractList, nextRequest, assertNoSecurityChallenge } from "../jd/adapters/browser.mjs";
 
@@ -91,6 +92,23 @@ test("Feishu 405 falls back to the registered first-party browser flow", async (
   assert.equal(result.jobs.length, 1);
   assert.equal(result.jobs[0].job_id, "browser-1");
   assert.match(result.direct_attempt.failures[0].error, /HTTP 405/);
+});
+
+test("Feishu browser fallback opens the official channel position list", async () => {
+  const feishuSource = {
+    source_id: "fixture-feishu", company: "Fixture Feishu", mode: "feishu_direct",
+    portal: "https://fixture.jobs.feishu.cn/123456/", job_list_url: "https://fixture.jobs.feishu.cn/123456/",
+    feishu_host: "fixture.jobs.feishu.cn", feishu_channel: "123456",
+  };
+  const opened = [];
+  const fixture = browserFixture([{ rows: [], total: 0 }], { async open(url) { opened.push(url); } });
+  const result = await collectFeishu(feishuSource, options({ sourceId: feishuSource.source_id }), {
+    ...fixture,
+    async fetch() { return response("method changed", 405); },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.transport_fallback, "browser_after_direct_405");
+  assert.deepEqual(opened, ["https://fixture.jobs.feishu.cn/123456/position/list"]);
 });
 
 test("max-jobs bounds retained jobs and detail fetches even if a server ignores limit", async () => {
