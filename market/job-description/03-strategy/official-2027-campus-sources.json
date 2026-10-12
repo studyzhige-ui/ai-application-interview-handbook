@@ -184,7 +184,13 @@
       "adapter": "browser",
       "dom_total_pattern": "共\\s*([0-9,]+)\\s*条",
       "job_link_selector": "a[href*=\"/cn/job-details\"]",
-      "browser_settle_ms": 1500
+      "browser_settle_ms": 1000,
+      "dom_job_selector": ".job-list-box .job-item",
+      "dom_title_selector": ".job-name",
+      "dom_location_selector": ".location",
+      "dom_category_selector": ".position-type",
+      "dom_page_selector": ".pager-item-hover-pc.is-active",
+      "page_next_selector": "button:has(.aui-icon-chevron-right)"
     },
     {
       "company": "小红书",
@@ -329,8 +335,8 @@
       "moka_site": "campus",
       "moka_locale": "zh-CN",
       "source_id": "official-018",
-      "moka_requires_runtime_source_parameter": true,
-      "adapter": "browser",
+      "moka_requires_runtime_source_parameter": false,
+      "adapter": "moka",
       "browser_settle_ms": 1800
     },
     {
@@ -693,7 +699,10 @@
       "adapter": "browser",
       "job_link_selector": "a[href*=\"/en/job/\"]",
       "dom_total_pattern": "([0-9,]+)\\s+open\\s+roles",
-      "browser_settle_ms": 1200
+      "browser_settle_ms": 1000,
+      "json_list_detail_complete": true,
+      "json_detail_url_template": "https://careers.manus.im/en/job/{id}",
+      "browser_skip_dom_links": true
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -1060,8 +1069,11 @@
       ],
       "source_id": "official-054",
       "adapter": "browser",
-      "browser_settle_ms": 1800,
-      "dom_total_pattern": "(?:开启新的工作|找到|职位)[^0-9]{0,12}([0-9,]+)"
+      "browser_settle_ms": 1000,
+      "dom_total_pattern": "已选\\s*\\d+\\s*条件\\s*\\|\\s*([0-9,]+)\\s*结果",
+      "browser_ignore_json_lists": true,
+      "job_link_selector": "a[href*=\"#/job/\"]",
+      "page_next_selector": ".sd-Pagination-forward-2Dk1n"
     },
     {
       "company": "小鹏集团",
@@ -1107,8 +1119,8 @@
       "dom_location_selector": ".search-item-info-position",
       "dom_category_selector": ".search-item-job",
       "dom_infinite_scroll": true,
-      "browser_scroll_settle_ms": 1200,
-      "browser_settle_ms": 800
+      "browser_scroll_settle_ms": 900,
+      "browser_settle_ms": 500
     },
     {
       "company": "海尔集团",
@@ -1259,12 +1271,12 @@
       "portal": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "official_root": "https://www.zhipin.com/",
       "browser_probe": true,
-      "note": "BOSS直聘自身 2027 校招公开活动与职位可由官方校园频道核验；自动化只接受明确属于 BOSS直聘/看准科技的第一方岗位证据，遇安全验证保持受限，不绕过 WAF/验证码。",
-      "job_list_url": "https://www.zhipin.com/school/",
+      "note": "BOSS直聘自身第一方公司职位入口；自动化仅接受明确属于 BOSS直聘/看准科技的职位证据。若第一方页面触发安全验证则记录为受限，不绕过 WAF、登录或验证码。",
+      "job_list_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://www.zhipin.com/school/",
-      "search_url": "https://www.zhipin.com/school/",
+      "campus_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
       "required_company_text": "BOSS直聘",
