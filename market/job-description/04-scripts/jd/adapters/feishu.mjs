@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Explicit, bounded first-party Feishu ATS list and detail collection. */
 import { collectPaged, runCLI, validateOptions } from "./bounded.mjs";
+import { collectBrowser } from "./browser.mjs";
 
 function label(value) {
   if (typeof value === "string") return value;
@@ -56,10 +57,29 @@ export function feishuSpecification(source, overrides = {}) {
   };
 }
 
+export async function collectFeishuWithBrowserFallback(source, options, specification, dependencies = {}) {
+  const direct = await collectPaged(source, options, specification, dependencies);
+  const direct405 = direct.jobs.length === 0
+    && (direct.failures || []).some(failure => /HTTP 405/.test(String(failure.error || "")));
+  if (!direct405) return direct;
+  const browser = await collectBrowser(source, options, dependencies);
+  return {
+    ...browser,
+    transport_fallback: "browser_after_direct_405",
+    direct_attempt: {
+      status: direct.status,
+      error: direct.error,
+      stop_reason: direct.stop_reason,
+      counts: direct.counts,
+      failures: direct.failures,
+    },
+  };
+}
+
 export async function collectFeishu(source, options, dependencies = {}) {
   validateOptions(options);
   if (source.mode !== "feishu_direct") throw new Error("Feishu adapter requires a registered feishu_direct source");
-  return collectPaged(source, options, feishuSpecification(source), dependencies);
+  return collectFeishuWithBrowserFallback(source, options, feishuSpecification(source), dependencies);
 }
 
 await runCLI(import.meta.url, collectFeishu);
