@@ -8,7 +8,7 @@ export async function collectXiaomi(source, options, dependencies = {}) {
   if (source.mode !== "xiaomi_api") throw new Error("Xiaomi adapter requires a registered xiaomi_api source");
   return collectFeishuWithBrowserFallback(source, options, feishuSpecification(source, {
     api: "https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts",
-    detailRoot: "https://xiaomi.jobs.f.mioffice.cn/campus/position", channel: "campus",
+    detailRoot: "https://xiaomi.jobs.f.mioffice.cn/campus/position", channel: "campus", browserListUrl: "https://xiaomi.jobs.f.mioffice.cn/campus/position",
     recruitmentIds: source.feishu_recruitment_ids || ["201"],
   }), dependencies);
 }
