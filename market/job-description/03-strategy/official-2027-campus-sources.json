@@ -173,14 +173,18 @@
       "official_root": "https://career.huawei.com/cn/campus-recruitment",
       "browser_probe": true,
       "note": "华为官方校园招聘页明确 2027 届应届生毕业窗口及 2027 招聘启动；现有专用 API 若失效必须由浏览器从此根页重新发现。 官方校园招聘根页已确认2027项目。",
-      "job_list_url": "https://career.huawei.com/cn/campus-recruitment",
+      "job_list_url": "https://career.huawei.com/cn/campus-recruitment-job-list",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://career.huawei.com/cn/campus-recruitment",
-      "search_url": "https://career.huawei.com/cn/campus-recruitment",
+      "campus_search_url": "https://career.huawei.com/cn/campus-recruitment-job-list",
+      "search_url": "https://career.huawei.com/cn/campus-recruitment-job-list",
       "board_scope": "campus",
       "business_summary": "通信设备、云、终端、计算、汽车 ICT 与 AI",
-      "source_id": "official-010"
+      "source_id": "official-010",
+      "adapter": "browser",
+      "dom_total_pattern": "共\\s*([0-9,]+)\\s*条",
+      "job_link_selector": "a[href*=\"/cn/job-details\"]",
+      "browser_settle_ms": 1500
     },
     {
       "company": "小红书",
@@ -312,11 +316,11 @@
       "official_root": "https://join.wps.cn/",
       "browser_probe": true,
       "note": " 官方 campus ATS 职位标题直接标注“面向2027”。",
-      "job_list_url": "https://join.wps.cn/",
+      "job_list_url": "https://join.wps.cn/campus-recruitment/wps/41436#/jobs",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://join.wps.cn/",
-      "search_url": "https://join.wps.cn/",
+      "campus_search_url": "https://join.wps.cn/campus-recruitment/wps/41436#/jobs",
+      "search_url": "https://join.wps.cn/campus-recruitment/wps/41436#/jobs",
       "board_scope": "campus",
       "business_summary": "办公软件、协同办公与办公 AI",
       "moka_endpoint": "https://join.wps.cn/api/outer/ats-apply/website/jobs/v2",
@@ -325,7 +329,9 @@
       "moka_site": "campus",
       "moka_locale": "zh-CN",
       "source_id": "official-018",
-      "moka_requires_runtime_source_parameter": true
+      "moka_requires_runtime_source_parameter": true,
+      "adapter": "browser",
+      "browser_settle_ms": 1800
     },
     {
       "company": "荣耀",
@@ -580,7 +586,9 @@
       "search_url": "https://01ai.jobs.feishu.cn/index/",
       "board_scope": "official_recruiting",
       "business_summary": "大模型、企业 AI 与 AI 应用",
-      "source_id": "official-030"
+      "source_id": "official-030",
+      "feishu_browser_list_url": "https://01ai.jobs.feishu.cn/index/position/list",
+      "browser_settle_ms": 2200
     },
     {
       "company": "商汤科技",
@@ -606,19 +614,24 @@
     },
     {
       "company": "生数科技",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://shengshu.jobs.feishu.cn/index/",
       "official_root": "https://www.genspi.com/zh/about/",
       "browser_probe": true,
-      "job_list_url": "https://shengshu.jobs.feishu.cn/index/",
+      "job_list_url": "https://shengshu.jobs.feishu.cn/692892/position/list",
       "current_campus_board": false,
       "campus_entry_status": "PUBLIC_OFFICIAL_BOARD",
-      "campus_search_url": "https://shengshu.jobs.feishu.cn/index/",
-      "search_url": "https://shengshu.jobs.feishu.cn/index/",
+      "campus_search_url": "https://shengshu.jobs.feishu.cn/692892/position/list",
+      "search_url": "https://shengshu.jobs.feishu.cn/692892/position/list",
       "board_scope": "official_recruiting",
       "note": "生数科技/Genspi 官网人才招聘直接进入 shengshu.jobs.feishu.cn；固定枚举官方飞书招聘池。",
       "business_summary": "视频生成、多模态生成模型与 Vidu",
-      "source_id": "official-032"
+      "source_id": "official-032",
+      "feishu_host": "shengshu.jobs.feishu.cn",
+      "feishu_channel": "692892",
+      "feishu_apply_prefix": "https://shengshu.jobs.feishu.cn/692892/position",
+      "feishu_browser_list_url": "https://shengshu.jobs.feishu.cn/692892/position/list",
+      "browser_settle_ms": 2200
     },
     {
       "company": "硅基流动",
@@ -663,20 +676,24 @@
     },
     {
       "company": "Manus",
-      "mode": "ashby_official",
-      "portal": "https://jobs.ashbyhq.com/manusai",
-      "official_root": "https://www.manus.im/",
+      "mode": "portal_only",
+      "portal": "https://careers.manus.im/en",
+      "official_root": "https://careers.manus.im/en",
       "browser_probe": true,
       "note": "Manus AI 官方 Ashby 招聘板；通过 Ashby 官方公开 Job Postings API 完整枚举当前已发布职位，AI Agent Engineer 正文明确优秀应届毕业生可投。",
-      "job_list_url": "https://jobs.ashbyhq.com/manusai",
+      "job_list_url": "https://careers.manus.im/en/jobs",
       "current_campus_board": false,
       "campus_entry_status": "PUBLIC_OFFICIAL_BOARD",
-      "campus_search_url": "https://jobs.ashbyhq.com/manusai",
-      "search_url": "https://jobs.ashbyhq.com/manusai",
+      "campus_search_url": "https://careers.manus.im/en/jobs",
+      "search_url": "https://careers.manus.im/en/jobs",
       "board_scope": "official_recruiting",
       "business_summary": "通用 AI Agent",
       "ashby_board_name": "manusai",
-      "source_id": "official-035"
+      "source_id": "official-035",
+      "adapter": "browser",
+      "job_link_selector": "a[href*=\"/en/job/\"]",
+      "dom_total_pattern": "([0-9,]+)\\s+open\\s+roles",
+      "browser_settle_ms": 1200
     },
     {
       "company": "无问芯穹/Infini-AI",
@@ -841,19 +858,24 @@
     },
     {
       "company": "度小满",
-      "mode": "portal_only",
+      "mode": "feishu_direct",
       "portal": "https://campus.duxiaoman.com/",
       "official_root": "https://campus.duxiaoman.com/",
       "browser_probe": true,
       "note": "度小满官方当前校园招聘入口；运行时枚举大模型 AI 应用、AI 全栈、AI Infra 等工程岗位。",
-      "job_list_url": "https://campus.duxiaoman.com/",
+      "job_list_url": "https://campus.duxiaoman.com/051736/position/list",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://campus.duxiaoman.com/",
-      "search_url": "https://campus.duxiaoman.com/",
+      "campus_search_url": "https://campus.duxiaoman.com/051736/position/list",
+      "search_url": "https://campus.duxiaoman.com/051736/position/list",
       "board_scope": "campus",
       "business_summary": "消费金融、财富管理、支付与金融科技",
-      "source_id": "official-044"
+      "source_id": "official-044",
+      "feishu_host": "campus.duxiaoman.com",
+      "feishu_channel": "051736",
+      "feishu_apply_prefix": "https://campus.duxiaoman.com/051736/position",
+      "feishu_browser_list_url": "https://campus.duxiaoman.com/051736/position/list",
+      "browser_settle_ms": 2200
     },
     {
       "company": "海康威视",
@@ -979,19 +1001,24 @@
     },
     {
       "company": "安克创新",
-      "mode": "portal_only",
-      "portal": "https://career.anker.com.cn/universities/recruitment/new/",
+      "mode": "feishu_direct",
+      "portal": "https://anker-in.jobs.feishu.cn/campushirecn/position/list",
       "official_root": "https://career.anker.com.cn/",
       "browser_probe": true,
       "note": "安克创新官方 2027 届全球校园招聘固定职位页；由浏览器读取第一方渲染结果。页面明确 0 职位可直接闭环；非 0 时在该固定页完整关键词穷举/分页后再判定，避免依赖静态 HTML 计数。",
-      "job_list_url": "https://career.anker.com.cn/universities/recruitment/new/",
+      "job_list_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/list",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://career.anker.com.cn/universities/recruitment/new/",
-      "search_url": "https://career.anker.com.cn/universities/recruitment/new/",
+      "campus_search_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/list",
+      "search_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/list",
       "board_scope": "campus",
       "business_summary": "充电、影音、智能家居、安防与储能消费电子",
-      "source_id": "official-052"
+      "source_id": "official-052",
+      "feishu_host": "anker-in.jobs.feishu.cn",
+      "feishu_channel": "campushirecn",
+      "feishu_apply_prefix": "https://anker-in.jobs.feishu.cn/campushirecn/position",
+      "feishu_browser_list_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/list",
+      "browser_settle_ms": 2200
     },
     {
       "company": "大华股份",
@@ -1031,7 +1058,10 @@
       "moka_commitments": [
         "全职"
       ],
-      "source_id": "official-054"
+      "source_id": "official-054",
+      "adapter": "browser",
+      "browser_settle_ms": 1800,
+      "dom_total_pattern": "(?:开启新的工作|找到|职位)[^0-9]{0,12}([0-9,]+)"
     },
     {
       "company": "小鹏集团",
@@ -1069,7 +1099,16 @@
       "search_url": "https://www.lixiang.com/employ/campus/list.html?fromJob=1&employchannelcode=H56UNDK&job_mode=1",
       "board_scope": "campus",
       "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件",
-      "source_id": "official-056"
+      "source_id": "official-056",
+      "adapter": "browser",
+      "dom_total_pattern": "共\\s*([0-9,]+)\\s*个职位",
+      "dom_job_selector": "li.search-item",
+      "dom_title_selector": ".search-item-header-title-ellipsis",
+      "dom_location_selector": ".search-item-info-position",
+      "dom_category_selector": ".search-item-job",
+      "dom_infinite_scroll": true,
+      "browser_scroll_settle_ms": 1200,
+      "browser_settle_ms": 800
     },
     {
       "company": "海尔集团",
@@ -1220,17 +1259,18 @@
       "portal": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
       "official_root": "https://www.zhipin.com/",
       "browser_probe": true,
-      "note": "BOSS直聘自身第一方“BOSS直聘校招招聘信息”固定职位页；浏览器在该固定页完整穷举目标关键词并只接受职位卡明确属于 BOSS直聘的在校/应届结果；详情遇安全验证保留第一方列表证据，WAF 绝不判 0。",
-      "job_list_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "note": "BOSS直聘自身 2027 校招公开活动与职位可由官方校园频道核验；自动化只接受明确属于 BOSS直聘/看准科技的第一方岗位证据，遇安全验证保持受限，不绕过 WAF/验证码。",
+      "job_list_url": "https://www.zhipin.com/school/",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
-      "campus_search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
-      "search_url": "https://m.zhipin.com/zhaopin/8d0140fe120765a01nF_2Ni8EQ~~/",
+      "campus_search_url": "https://www.zhipin.com/school/",
+      "search_url": "https://www.zhipin.com/school/",
       "board_scope": "campus",
       "business_summary": "在线招聘、人力资源平台与招聘科技",
       "required_company_text": "BOSS直聘",
       "disable_network_job_extraction": true,
-      "source_id": "official-065"
+      "source_id": "official-065",
+      "browser_settle_ms": 1200
     },
     {
       "company": "作业帮",

@@ -12,7 +12,7 @@ from unittest.mock import patch
 
 SCRIPTS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SCRIPTS))
-from jd.collection import collect_python, collect_manual, selected_sources
+from jd.collection import collect_python, collect_manual, selected_sources, node_adapter
 from jd.limits import Budget
 from jd.adapters.http import requests
 from jd.evidence import preserve_observation
@@ -132,6 +132,12 @@ class CollectionTests(unittest.TestCase):
             self.assertEqual(result["status"], "PARTIAL")
             self.assertIn("timeout", result["limits_hit"])
             self.assertEqual(backend.calls, [])
+
+    def test_explicit_adapter_override_wins_over_legacy_mode_metadata(self):
+        self.assertEqual(node_adapter({"mode": "huawei_api", "adapter": "browser"}), "browser")
+        self.assertEqual(node_adapter({"mode": "portal_only", "adapter": "browser", "moka_org_id": "wps"}), "browser")
+        with self.assertRaisesRegex(ValueError, "Unsupported explicit adapter"):
+            node_adapter({"mode": "portal_only", "adapter": "unknown"})
 
     def test_transport_requires_explicit_scope(self):
         with self.assertRaisesRegex(RuntimeError, "disabled"):
