@@ -79,6 +79,20 @@ test("every title gets detail; exact raw response bytes and complete long fields
   assert.deepEqual(result.jobs[0].raw_list, rows[0]);
 });
 
+test("Feishu 405 falls back to the registered first-party browser flow", async () => {
+  const fallbackRows = [{ title: "普通岗位", job_id: "browser-1", official_url: "https://jobs.bytedance.com/campus/position/browser-1/detail" }];
+  const fixture = browserFixture([{ rows: fallbackRows, total: 1 }]);
+  const result = await collectByteDance(source, options(), {
+    ...fixture,
+    async fetch() { return response("method changed", 405); },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.transport_fallback, "browser_after_direct_405");
+  assert.equal(result.jobs.length, 1);
+  assert.equal(result.jobs[0].job_id, "browser-1");
+  assert.match(result.direct_attempt.failures[0].error, /HTTP 405/);
+});
+
 test("max-jobs bounds retained jobs and detail fetches even if a server ignores limit", async () => {
   let calls = 0;
   const rows = Array.from({ length: 9 }, (_, index) => ({ id: String(index), title: "same title" }));
@@ -339,6 +353,47 @@ test("browser includes both explicit extra portal and extra job-list registry UR
   const result = await collectBrowser(selected, options(), fixture);
   assert.equal(result.complete, true);
   assert.deepEqual(opened, [selected.portal, ...selected.extra_portals, ...selected.extra_job_list_urls]);
+});
+
+test("browser snapshot uses one primary job-list response instead of merging recommendations", async () => {
+  const mainRows = [{ id: "1", title: "主列表岗位", detailUrl: "https://example.test/job/1" }];
+  const recRows = [
+    { id: "r1", title: "推荐1", detailUrl: "https://example.test/job/r1" },
+    { id: "r2", title: "推荐2", detailUrl: "https://example.test/job/r2" },
+  ];
+  let responseHandler, pages = 0;
+  function pageFixture(isList) {
+    let url = "";
+    return {
+      on(event, callback) { if (event === "response") responseHandler = callback; },
+      async goto(nextUrl) {
+        url = nextUrl;
+        if (isList) {
+          const emit = async (responseUrl, payload) => responseHandler({
+            url: () => responseUrl,
+            headers: () => ({ "content-type": "application/json" }),
+            status: () => 200,
+            body: async () => Buffer.from(JSON.stringify(payload)),
+            request: () => ({ method: () => "POST", postData: () => '{"offset":0}' }),
+          });
+          await emit("https://example.test/api/recommendations", { data: { jobs: recRows, total: 2 } });
+          await emit("https://example.test/api/v1/search/job/posts", { code: 0, data: { job_post_list: mainRows, count: 1 } });
+        }
+        return { status: () => 200 };
+      },
+      url: () => url, async waitForLoadState() {}, async content() { return "<main></main>"; },
+      locator(selector) {
+        if (selector === "body") return { async innerText() { return ""; } };
+        return { async evaluateAll() { return []; } };
+      },
+      async close() {},
+    };
+  }
+  const context = { async route() {}, async newPage() { return pageFixture(pages++ === 0); } };
+  const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
+  const result = await collectBrowser(browserSource, options(), { chromium });
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.jobs.map(job => job.job_id), ["1"]);
 });
 
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {
