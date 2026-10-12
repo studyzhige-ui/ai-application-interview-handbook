@@ -8483,6 +8483,35 @@
         ]
       }
     },
+    "1c53bb98c96e3e59538d291108237e30": {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "1c53bb98c96e3e59538d291108237e30",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:7695721524409665843",
+      "job": {
+        "category": "正式",
+        "department": "采购与供应链",
+        "description": "1.负责相关零部件全周期商务工作，包括但不限于预研阶段供应链开发，成本评估，定点定价，合同及订单管理，设变维护，投产保供，售后件，支付，EOP工作\n2.制定，维护并根据公司战略发展需要更新Commoditiy Business Plan\n3.建立并维护合作伙伴库，制定合作伙伴策略，完成合作伙伴定期考评\n4.制定产品的商务策略，推进成本优化，完成公司目标\n6.跨部门协调工作，包括不限于工程，质量，项目，财务，物流，制造，成本核算，产品定义，设计造型及跨品牌团队",
+        "detail_status": "OK",
+        "job_id": "7695721524409665843",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=kAWxiAAAAABHcqOfXubPd5AFsZAAPrX",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7695721524409665843/detail",
+        "requirements": "1.本科及以上学历\n2.为人真诚，对采购及供应链行业感兴趣\n3.熟练使用office等办公软件\n5.有较强的学习能力，抗压能力及应变能力",
+        "title": "校招-产品采购"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
     "1c553aea706209e4f7f7729dc428b8ad": {
       "change": "possibly_removed",
       "company": "蔚来",
@@ -15018,6 +15047,34 @@
         "engineering_signal": true,
         "priority": "low",
         "score": 2,
+        "signals": []
+      }
+    },
+    "2f7242079b802cf7aaa5b5675e5cf607": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "2f7242079b802cf7aaa5b5675e5cf607",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544940",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544940",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ037323",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1. 基于业务、运营等各部门需求，定期提供相关财务数据整理及分析；\n2. 结合宏观微观及其他信息等，分析来自于各区域的业务收入增长点及趋势，并对如何优化相关运营环节以降低成本提出建设性意见；\n3. 协同集团各部门制定并完善相关财务流程（例如：日常报销、固定资产采购和盘点等）；\n4. 复核各子公司的月度及年度财务报表和审计报告。\n\n\n我们期望你：\n1. 会计、金融、工商管理等商科专业优先；\n2. 热爱市场研究，能结合实际业务场景分析问题；\n3. 思维灵活，有较强的逻辑分析能力；\n4. 优秀的沟通和协调能力，维护好合作部门的关系；\n5. 执行力强，能够主动承担工作压力，结果导向；\n6. 任一项加分: 有四大会计师事务所/咨询公司/互联网公司实习经验；优秀的英语听说读写能力。",
+        "title": "财务分析（2027届秋招）(MJ037323)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "low",
+        "score": 0,
         "signals": []
       }
     },
@@ -23006,6 +23063,33 @@
         ]
       }
     },
+    "486169c6a485bf37b045cd9eb953a040": {
+      "change": "added",
+      "company": "网易",
+      "event_id": "486169c6a485bf37b045cd9eb953a040",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:79258",
+      "job": {
+        "description": "1.可连续实习 3-6 个月，每周全职出勤 4-5天者优先 \n2.蛋仔派对深度用户或UGC地图开发者，熟悉乐园生态、乐园编辑器功能，对高校UGC创作者生态及高校年轻群体兴趣偏好有一定理解； \n3.具备基础数据分析与总结能力，有较好的文案或视觉表达能力；能熟练使用 PS/Figma/AIGC能力，独立完成视觉物料输出+活动原型图绘制；视觉传达、数字媒体等相关专业优先。 \n4.具备其他游戏活动运营实习经验优先，有校园活策划/执行经验者优先。 \n5.具备较强的责任心、owner意识和自驱力，能够主动发现问题并推动解决。",
+        "job_id": "79258",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79258",
+        "requirements": "学历: ",
+        "title": "《蛋仔派对》UGC运营实习生（赛事活动方向）"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "488fb49189bbf6e3323bcda44dded51f": {
       "change": "added",
       "company": "蔚来",
@@ -24233,6 +24317,36 @@
         "priority": "low",
         "score": 2,
         "signals": []
+      }
+    },
+    "4c6189aa428edc98f08dbc670366d7f1": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "4c6189aa428edc98f08dbc670366d7f1",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544939",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544939",
+        "location": "Nantong",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ037349",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1. 设计机器人交互流程，迭代机器人能力，持续优化智能客服体验；\n2. 负责机器人日常运营监控，对机器人各项服务指标负责；\n3. 可独立完成基于数据分析的机器人运营报告，基于当地用户心智，提炼问题点并输出合理解决方案；\n4. 与AI产研团队紧密协作，参与产品和算法模型优化流程，提升机器人语义理解能力；\n5. 协调内部业务团队推进智能化项目，完成AI产品优化以及机器人相关反馈处理。\n\n\n我们期望你：\n1. 具备优秀的逻辑思维能力、数据分析能力、独立思考能力及团队合作能力；\n2. 了解大模型等AI技术，熟悉智能对话系统运作机制，有相关实习经验者优先；\n3. 良好的沟通能力，工作主动性高、自驱力强，具备较强的抗压能力，能够伴随业务成长敏捷迭代。",
+        "title": "AI机器人运营（客服智能化方向）（2027届秋招）- 南通(MJ037349)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
       }
     },
     "4c7930c0d57278003dcfba44f4ac43b1": {
@@ -27182,6 +27296,34 @@
       "previous": null,
       "review_state": "pending",
       "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "5424fe760ef6cf5aadd0b75274c087fe": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "5424fe760ef6cf5aadd0b75274c087fe",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544945",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544945",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036669",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1. 设计旅游行业主题数据模型；\n2. 深度参与PB级数据仓库建设、性能优化以及数据治理工作；\n3. 参与实时、近实时数据开发工作，基于Flink、Paimon等技术栈建设实时/近实时数据模型，为业务部门提供报表开发及数据可视化支持；\n4. 负责保证相关主题数据的数据质量，比如准确性、及时性等。\n\n\n我们期望你：\n1. 精通SQL，掌握至少一种OLAP数据库的使用，具备海量数据开发能力；\n2. 掌握数据仓库理论和数仓模型设计，有实际经验者优先；\n3. 拥有Java开发经验/实时数据开发经验/OLAP平台调优经验之一；\n4. 良好的团队合作精神，对解决挑战型问题充满激情。",
+        "title": "数据仓库工程师（2027届秋招）(MJ036669)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
       "triage": {
         "engineering_signal": true,
         "priority": "low",
@@ -31954,6 +32096,39 @@
         "signals": []
       }
     },
+    "62b938cd16c80baee132a36c6878c200": {
+      "change": "changed",
+      "company": "小鹏集团",
+      "event_id": "62b938cd16c80baee132a36c6878c200",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:7685301319297599790",
+      "job": {
+        "category": "正式",
+        "department": "汽车销售与服务",
+        "description": "1、培训支持：协助培训师完成培训实施，包括培训学员通知、答疑、监考等内容；培训时负责跟踪学员学习状态、小组讨论、实操任务完成进度，及时处理突发问题，确保线上培训顺利开展；\n2、沟通反馈：通过线上渠道与学员保持沟通，解答基础疑问，收集课程反馈并整理提交，助力优化培训内容；\n3、作业管理：通过骁龙系统跟踪学员课后作业，分类整理，依据标准初步评审并给出建议，辅助完成最终评定；\n4、课件制作：协助制作线上培训课件、视频，运用视频编辑软件处理素材，优化线上课程展示效果；将培训资料分类上传更新，做好线上资料的更新与维护。\n\n",
+        "detail_status": "OK",
+        "job_id": "7685301319297599790",
+        "location": "广州",
+        "official_api": "https://xiaopeng.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=110&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=kE5miwAAAABHOXScQuE8T5BOZpAAPqR",
+        "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7685301319297599790/detail",
+        "requirements": "1、学历专业：本科或以上，汽车服务工程等汽车相关专业优先； \n2、技能要求：熟练使用办公软件，具有较好语言逻辑和文字功底、能够进行简单课件制作；熟悉剪映等视频编辑软件，了解线上课程制作流程；\n3、能力素质：沟通表达能力强，责任心、耐心佳，时间管理出色，学习与协作能力优。",
+        "title": "【27届校招】培训运营培训生（售后）"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": {
+        "fingerprint": "cb672b15fe19ef32da44d962bb30f38f5668527fccad7fb727b5843c368d4dc0",
+        "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7685301319297599790/detail",
+        "title": "【27届校招】培训运营培训生"
+      },
+      "review_state": "pending",
+      "source_id": "official-055",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
     "62cb29ae133d06f4509a88cddd0e726a": {
       "change": "added",
       "company": "蔚来",
@@ -32297,6 +32472,37 @@
         "priority": "low",
         "score": 0,
         "signals": []
+      }
+    },
+    "63c2922eaa0ded911194e746db0773dd": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "63c2922eaa0ded911194e746db0773dd",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544985",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544985",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036639",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\nResponsibilities:\nWork collaboratively with headquarters and regional marketing teams to define and monitor KPIs and metrics associated with business processes to support the achievement of sales objectives.\nWork collaboratively with the R&D team to understand how data is collected, manipulated, and leveraged for marketing and analytics, and help establish processes to streamline the execution of business efforts — reporting, monitoring, and optimization.\nDevelop a deep understanding of the global and local market landscape by aggregating Trip.com's internal data with data from external sources to uncover actionable insights and recommendations that address marketing challenges.\nConduct performance and user segmentation analysis to identify market demands and growth opportunities; partner with business teams to implement growth initiatives.\nGather and consolidate business data requirements, delivering unified data solutions.\n\nQualifications:\nBachelor's degree or above is required, with at least 1 year of overseas experience. A background in statistics, mathematics, economics, or related fields is preferred.\nStrong data processing skills, with a solid understanding of how data is structured. Proficiency in SQL and at least one visualization tool such as Tableau or Power BI.\nStrong business acumen, with the ability to thoroughly understand and analyze the needs of different market demographics.\nStrong synthesis and inductive reasoning skills, with the ability to handle complex analyses end-to-end: producing comprehensive analysis reports, presenting findings independently, and delivering clear, actionable recommendations.\nStrong cross-team communication skills and English proficiency, with the ability to work effectively in an English-speaking environment.\nStrong execution skills with solid planning and organizational abilities; self-motivated.\nExperience with AI/LLM tools (e.g., ChatGPT, Claude Code, Codex) for data analysis or business insights generation is a plus; familiarity with prompt engineering or AI-assisted workflows is preferred.",
+        "title": "Eagle Program – Business Analyst (2027 Graduates)(MJ036639)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "llm",
+          "memory_context"
+        ]
       }
     },
     "63ef66af707236ccfe466aab9e9cda64": {
@@ -33136,6 +33342,28 @@
         "signals": []
       }
     },
+    "66c50eaed43a74eafd789114b976646c": {
+      "change": "possibly_removed",
+      "company": "小鹏集团",
+      "event_id": "66c50eaed43a74eafd789114b976646c",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:7658239811220343049",
+      "job": null,
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": {
+        "fingerprint": "32ab89bb8b9ddb7c6e85503cfe9d431089bf85821aecb612438d670209eeb877",
+        "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7658239811220343049/detail",
+        "title": "【27届校招】用户研究培训生"
+      },
+      "review_state": "pending",
+      "source_id": "official-055",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "low",
+        "score": 0,
+        "signals": []
+      }
+    },
     "66d39cd927587e8d5809041168e74cb0": {
       "change": "added",
       "company": "小米",
@@ -33432,6 +33660,28 @@
         "engineering_signal": true,
         "priority": "low",
         "score": 2,
+        "signals": []
+      }
+    },
+    "67d995dc1b5fef88ce74583459ffee94": {
+      "change": "possibly_removed",
+      "company": "作业帮",
+      "event_id": "67d995dc1b5fef88ce74583459ffee94",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:4a3d9495-06bf-4f85-b4aa-7a84bd059c5f",
+      "job": null,
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": {
+        "fingerprint": "a1856392a7114186b5e05c39003518d5903cea3349e90edee8edb440955f4b61",
+        "official_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/4a3d9495-06bf-4f85-b4aa-7a84bd059c5f",
+        "title": "大模型算法工程师（自然语言）-27秋招"
+      },
+      "review_state": "pending",
+      "source_id": "official-066",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "low",
+        "score": 0,
         "signals": []
       }
     },
@@ -39118,6 +39368,42 @@
         ]
       }
     },
+    "791c644f5cc382d426e6693003c39692": {
+      "change": "changed",
+      "company": "科大讯飞",
+      "event_id": "791c644f5cc382d426e6693003c39692",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:190842462",
+      "job": {
+        "category": "校园招聘",
+        "cycle_evidence": "科大讯飞官方校园招聘（2027届别由职位/项目正文复核）",
+        "department": "科大讯飞",
+        "description": "1、负责设计、开发和优化AI大模型，包括模型的架构、算法和参数调优；\r\n2、跟踪最新算法研究和技术发展，并在业务场景中选择最适合的算法或通过数据挖掘与合成等优化模型效果；\r\n3、能够理解产品需求，将需求指标转换成算法指标，并将算法指标按照业务需求进行呈现；\r\n4、负责大模型相关算法的研究与关键技术攻关，应用场景涵盖文本、多模态内容生成与理解任务。",
+        "job_id": "190842462",
+        "location": "安徽省·合肥市, 广东省·广州市",
+        "official_api": "https://iflytek.zhiye.com/api/Jobad/GetJobAdPageList",
+        "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842462",
+        "requirements": "1、重点院校硕士及以上学历，计算机、信号处理、自动化、应用数学等相关专业，具备一定的数理统计、模式识别、图像处理等理论知识；\r\n2、熟悉常见深度学习算法和理论，熟练掌握至少一种常见的深度学习框架(Pytorch、TensorFlow等)；\r\n3、具备较好的C/C++或Python编程能力，熟悉数据结构、Linux操作系统等，有一定的代码开发经历，能够快速实现相关算法；\r\n4、从事过AI相关的研发任务，包括研究论文发表、研发项目经历、实习经历等。\r\n我们还希望你：\r\n1、在人工智能会议(包括但不限于ACL、COLING、IJCAI、AAAI、ICLR、NIPS、CVPR、ICCV、INTERSPEECH、ICASSP)或期刊上发表过文章；\r\n2、在国内外知名评测任务或比赛中获得过优异成绩；\r\n3、在智能语音、计算机视觉、自然语言处理等相关方向有较丰富的实际系统研究和开发经验；\r\n此岗位为科大讯飞集团统一招聘岗位，人员通过简历筛选、初试、复试、终审等环节后录用。",
+        "title": "AI研究算法工程师-认知大模型方向(J13383)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": {
+        "fingerprint": "6ac7c125ea8bd68772414e637cc3b78f7a3708ac39c7026acf85595ce715b5c8",
+        "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842462",
+        "title": "AI研究算法工程师-认知大模型方向(J13383)"
+      },
+      "review_state": "pending",
+      "source_id": "official-020",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
     "792da60cc89f520e20fbf03fbd4705d2": {
       "change": "added",
       "company": "蔚来",
@@ -43660,6 +43946,34 @@
         ]
       }
     },
+    "87b03c2f8fa15c7219aff590a02146f6": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "87b03c2f8fa15c7219aff590a02146f6",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544942",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544942",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036670",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1. 构建多维度数据分析体系，通过海量用户行为数据挖掘潜在业务增长点，建立数据监控预警机制； \n2. 搭建AB实验分析框架与因果推断模型，持续迭代优化用户体验策略；\n3. 设计并落地数据驱动的解决方案，应用于用户增长/产品优化/精准营销/用户体验提升等核心业务决策，并完成策略效果量化评估。 \n\n\n我们期望你：\n1. 精通SQL语言，并能在一种主流数据库中运用；\n2. 扎实的统计学基础，有一定机器学习知识，熟练使用Python进行数据清洗、特征工程及机器学习建模；\n3. 良好的学习能力和沟通能力，对互联网相关新技术有热情；\n4. 掌握分布式大数据生态系统（Hadoop/Spark等）者优先。",
+        "title": "数据分析师（技术方向）（2027届秋招）(MJ036670)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
     "87b797f2ccb339bfc759bbb552a01543": {
       "change": "added",
       "company": "影石 Insta360",
@@ -46037,6 +46351,37 @@
         "priority": "low",
         "score": 2,
         "signals": []
+      }
+    },
+    "8da62b1652a2a3cbaa5319f517780b32": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "8da62b1652a2a3cbaa5319f517780b32",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544992",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544992",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036640",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\nResponsibilities:\nOptimize the design and implementation of scalable and efficient data architectures, such as streaming data processing, data pipelines, and distributed systems.\nDevelop a real-time data computing and storage platform, ensuring stability and high availability of OLTP and OLAP data query and analysis services.\nUnderstand the specific reports, analyses, and insights that need to be derived from data, and create data-driven solutions to effectively support operational analytics needs.\nMonitor and enhance the performance of data infrastructure, including query optimization, resource management, and data partitioning strategies.\nCollaborate with cross-functional teams, data scientists, and data engineers to gather data requirements, and provide comprehensive documentation for data infrastructure solutions and best practices.\n\nQualifications:\nBachelor's or master's degree in computer science, data engineering, or a related field is required. Candidates with coursework or specialization in database systems, distributed computing, and cloud technologies are preferred.\nProficiency in programming languages such as Java, C++, or Go, as well as hands-on experience with both SQL and NoSQL database systems, is required. Familiarity with distributed computing frameworks, such as Apache Flink, Apache Spark, Apache Hadoop, and Presto, is a plus. Experience working with cloud platforms, such as AWS, Aliyun, or GCP, is also preferred.\nProficiency in using Git version control tools is required.\nPrior experience with distributed databases, NoSQL, message queues, caching, and TCP/IP principles, with the ability to design complex systems for high concurrency and large data volumes.\nA strong sense of ownership, a collaborative mindset, and excellent analytical and communication skills.\nExperience with AI-assisted development tools (e.g., Claude Code, Codex, GitHub Copilot) to improve coding, debugging, and data pipeline development efficiency is a plus; familiarity with LLM-powered application scenarios (e.g., RAG, AI-driven data processing) is preferred.",
+        "title": "Eagle Program – Big Data Engineer (2027 Graduates)(MJ036640)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "llm",
+          "rag"
+        ]
       }
     },
     "8db0cc3054929252d5cbb9cee0cc9896": {
@@ -48905,6 +49250,34 @@
       "previous": null,
       "review_state": "pending",
       "source_id": "official-031",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "97c73c3d4fa4ffa14055f0c33491b44e": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "97c73c3d4fa4ffa14055f0c33491b44e",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544961",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544961",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036717",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\nYou will be responsible for:\n1. Designing chatbot interaction flows, continuously iterating robot capabilities, and optimizing intelligent customer service experience;\n2. Managing daily operation monitoring of AI Chatbot and taking ownership of key service performance metrics;\n3. Independently completing Chatbot operation reports based on data analysis, identifying key issues from the perspective of local user behaviors and expectations, and providing reasonable solutions;\n4. Working closely with AI product and engineering teams, participating in product and algorithm model optimization processes, and improving the Chatbot’s semantic understanding capabilities;\n5. Coordinating with internal business teams to drive intelligent service projects, optimize AI products, and handle Chatbot-related feedback.\n \nWe are looking for:\n1. Native-level or professional proficiency in Arabic (Modern Standard Arabic, MSA preferred), with a strong understanding of local culture; English proficiency as a working language;\n2. Excellent logical thinking, data analysis, independent problem-solving, and teamwork capabilities;\n3. Knowledge of large language models (LLMs) and AI technologies, familiarity with intelligent conversational systems, and relevant internship experience preferred;\n4. Strong communication skills, proactive mindset, high ownership, resilience under pressure, and the ability to adapt and iterate quickly alongside business growth.",
+        "title": "AI Solution (Customer Service Intelligence) - Arabic (2027 Graduates)(MJ036717)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
       "triage": {
         "engineering_signal": true,
         "priority": "low",
@@ -54373,6 +54746,31 @@
         "signals": []
       }
     },
+    "a78f98e04e3348ec81e54511e429d865": {
+      "change": "added",
+      "company": "网易",
+      "event_id": "a78f98e04e3348ec81e54511e429d865",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:79259",
+      "job": {
+        "description": "1. 本科及以上学历，动画、数字媒体、影视制作或相关专业优先。  \n2. 3年以上游戏或影视行业表情动画制作经验，完整参与过至少2款上线项目的角色表情动画全流程。  \n3. 精通Maya或Blender，熟练运用关键帧动画、动捕数据清理与重铺、面部绑定调试及表情驱动系统优化。  \n4. 深刻理解角色表演逻辑，能通过眉眼、口型、微动态等细节精准还原台词情绪与人设特质。  \n5. 具备跨职能协作意识，可高效对接动作导演、策划、TA及美术团队，推动需求落地并保障交付质量与时效。  \n6. 有相关项目经验，或参与过面部绑定系统搭建、表情工业化流程制定者优先。",
+        "job_id": "79259",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79259",
+        "requirements": "学历: ",
+        "title": "资深动画设计师（表演）-在研项目"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
     "a796d7b1a8bd374a6c2bd62c74ff61a8": {
       "change": "added",
       "company": "商汤科技",
@@ -54716,6 +55114,34 @@
       "previous": null,
       "review_state": "pending",
       "source_id": "official-067",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
+      }
+    },
+    "a862cf95cd2ec30e96058874bbf814b7": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "a862cf95cd2ec30e96058874bbf814b7",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544944",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544944",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036671",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1. 深度参与业务洞察、特征构建、模型研发到算法实现的全过程，不断迭代优化算法效果，并紧密追踪其对核心业务指标的切实提升；\n2. 负责机器学习、深度学习等领域的前沿探索和研究，深入分析并解构实际应用场景，提供全面的技术解决方案；\n3. 对OTA领域及其商户和用户行为建模有兴趣，通过精准的时间序列预测模型，为关键业务决策提供强大的数据驱动支持。\n\n\n我们期望你：\n1. 有扎实的数据结构、数据库、统计学、机器学习算法基础，具备优秀的开发能力；\n2. 熟悉一种或多种编程语言，Python、Java等，熟悉一种或多种主流的分布式深度学习计算框架TensorFlow/PyTorch等；\n3. 有统计、机器学习、深度学习等相关算法建模并成功产生业务价值的经验， 有时序预测/自然语言/运筹优化/强化学习处理相关经验优先；\n4. 具有较高的数据敏感度和数据分析能力，具备出色的业务理解能力，针对特定业务目标，具备独立思考、技术拆解和规划能力；\n5. 具备强烈的责任心，优秀的沟通能力和项目落地能力，思维活跃，学习能力强。",
+        "title": "算法工程师（时间序列方向）（2027届秋招）(MJ036671)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
       "triage": {
         "engineering_signal": true,
         "priority": "low",
@@ -56862,6 +57288,41 @@
           "llm",
           "rag",
           "memory_context"
+        ]
+      }
+    },
+    "aef4828263363294e2479f25e9ccf852": {
+      "change": "changed",
+      "company": "金蝶",
+      "event_id": "aef4828263363294e2479f25e9ccf852",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+      "job": {
+        "category": "全职",
+        "department": "总部",
+        "description": "<p>岗位职责</p><p>1、需求洞察与产品定义：深入理解业务场景，协助完成用户需求调研、市场分析与竞品洞察，挖掘AI技术的落地机会；基于用户痛点与商业目标，参与产品功能定义、路线图规划，输出PRD文档及原型方案；</p><p>2、项目推进与交付管理：作为产品侧接口人，与算法、研发、设计、测试等团队高效协同，跟进需求评审、开发排期与测试验收全流程，确保产品按时高质量上线；</p><p>3、数据驱动与体验迭代：搭建产品核心指标体系（如效率、留存、转化等），通过数据分析、A/B实验验证产品假设，推动功能优化与版本迭代；持续收集用户反馈与业务数据，形成\"数据-分析-优化\"闭环；</p><p>4、技术趋势与竞品跟踪：跟踪LLM、多模态、Agent等行业前沿动态，调研竞品功能与体验，输出分析报告与创新方案。</p><p><br></p><p>任职要求</p><p>1、全日制本科及以上；</p><p>2、对AI技术有浓厚兴趣，了解机器学习、深度学习、大模型（如GPT/LLaMA）、多模态、Agent等基本原理、能力边界与应用潜力；</p><p>3、具备基础数据分析能力（Excel/SQL/Python），能通过数据指导产品决策；</p><p>4、优秀的沟通协调与跨部门协作能力，能适应快节奏工作环境。</p>",
+        "detail_status": "OK",
+        "job_id": "2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+        "location": "深圳市",
+        "official_api": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+        "official_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN#/job/2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+        "title": "管培生-产品经理"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": {
+        "fingerprint": "998467b630332a9c7d55429924221533af48a7a35061caf243d33814cc65b28e",
+        "official_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN#/job/2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+        "title": "管培生-产品经理（产品集成管理）"
+      },
+      "review_state": "pending",
+      "source_id": "official-048",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 8,
+        "signals": [
+          "agent",
+          "llm"
         ]
       }
     },
@@ -64337,6 +64798,34 @@
           "agent",
           "llm"
         ]
+      }
+    },
+    "c6f50950a98fc824478c8f45d86b3efd": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "c6f50950a98fc824478c8f45d86b3efd",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544941",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544941",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036680",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1、负责携程集团数万台（通算+超算）服务器全生命周期运维管理，和服务器管理团队一起，根据不同应用场景为业务发展提供高性价比的服务器设备和杰出的技术服务；\n2、负责携程服务器新产品的研究、测试、适配、引入和推广，评估新品的运营风险、可维护性、易扩展性、稳定性和性价比，制定新品的运营、运维和管理方案；\n3、负责携程所有线上服务器稳定性保障，规划和建设稳定性管理的流程、规范、标准及管理平台，负责服务器设备的性能监控、风险识别和故障处理，保障业务稳定运行；\n4、负责携程所有服务器基础运营服务，规划和建设出稳定、安全、高效的包含基础运营服务架构和服务能力的管理平台，涵盖固件升级、带外管理、带内管理、开关机、重启、重装OS、维修、缩扩容、监控等等工作内容；\n\n\n我们期望你：\n1、理工科背景，计算机、电子信息工程、自动化等相关专业优先；\n2、具备良好的自驱力与学习能力，优秀的沟通、组织和协调能力，参与（实习）过互联网公司的大型项目者优先；\n3、具备较好的计算机编程基础，熟练掌握Python/Go/JAVA等语言之一，了解服务器、交换机、Linux等系统的相关知识，掌握Shell脚本能力，有基于硬件编程经验者优先；\n4、喜欢研究服务器硬件，例如CPU、内存、硬盘、网卡和主板等等，同步最新的硬件技术产品或技术趋势，致力于为业务开展适配出高性价比的服务器；\n5、能通过研发自动化管理工具或管理平台，高效地管理数万台物理服务器，促进服务器全生命周期的自动化运维，提高服务器管理的整体工作效率。",
+        "title": "IDC工程师（服务器运维方向）（2027届秋招）(MJ036680)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "low",
+        "score": 2,
+        "signals": []
       }
     },
     "c719f26dac5bd9ef46072128638e25a4": {
@@ -73618,6 +74107,33 @@
         "signals": []
       }
     },
+    "e80bebfa89698a4f951683748ddfd759": {
+      "change": "added",
+      "company": "网易",
+      "event_id": "e80bebfa89698a4f951683748ddfd759",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:79257",
+      "job": {
+        "description": "1.优先计算机、软件工程专业学生，有较好的技术能力和技术视野，最好掌握c语言；\n2.文字及语言表达能力优秀、信息传递效率高（自然语言描述精准），拆解能力强（擅长剖析底层逻辑），具象化能力强（擅长举例子）；\n3.游戏热烈爱好者，优先独立游戏开发者，参加过gamejam的优先，熟悉蛋仔PC编辑器优先；\n4.学习能力强，对aigc和vibe coding有一定的接触；\n5.有一定的视频剪辑能力",
+        "job_id": "79257",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79257",
+        "requirements": "学历: ",
+        "title": "《蛋仔派对》UGC运营实习生（专业开发者孵化方向）"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "llm"
+        ]
+      }
+    },
     "e8188d5ee9db083a4b3a80f0e7edd005": {
       "change": "added",
       "company": "小米",
@@ -74655,6 +75171,37 @@
         "priority": "low",
         "score": 0,
         "signals": []
+      }
+    },
+    "eb71a06569ce44ea5b2af554c9ec45c8": {
+      "change": "added",
+      "company": "携程",
+      "event_id": "eb71a06569ce44ea5b2af554c9ec45c8",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:30544943",
+      "job": {
+        "category": "2027届应届校招",
+        "cycle_evidence": "携程集团2027届应届校招生",
+        "department": "Trip.com Group",
+        "job_id": "30544943",
+        "location": "Shanghai",
+        "official_api": "https://careers.ctrip.com/api/hrrecruit/getJobAd",
+        "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676",
+        "requirements": "招聘对象：本、硕、博。\n毕业时间：2026 年 9 月至 2027 年 8 月期间毕业（中国大陆以毕业证为准，非中国大陆地区以教育部学位认证为准）且最高学历毕业后无全职工作经验的学生。\n\n\n你将会负责：\n1. 基于自然语言处理和机器学习算法，对旅游场景文本（用户评论、行程单、客服对话等）进行深度语义解析，构建涵盖文本分类、信息抽取、知识图谱构建及智能生成的领域解决方案；\n2. 参与NLP技术在旅游场景的工程化落地，突破智能推荐生成（如行程规划/酒店推荐）、多模态搜索优化（如文本+地理信息）、用户评价情感分析等核心业务，探索AIGC在智能导游、多语言服务等创新场景的应用；\n3. 研发旅游领域智能对话系统，构建融合知识图谱的多轮对话引擎，优化意图识别、槽位填充及强化学习策略算法，提升智能客服的精准度和用户体验；\n4. 搭建高并发智能客户服务系统，实现大模型的高效部署与迭代优化，通过模型压缩（量化/蒸馏）和分布式计算技术保障线上服务性能。\n\n\n我们期望你：\n1. 理解Transformer架构及预训练模型（BERT/GPT系列），掌握文本生成、语义匹配、序列标注等核心任务的SOTA方法；\n2. 熟练使用PyTorch/TensorFlow框架，具备模型服务化（ONNX/TensorRT）和分布式训练（DeepSpeed）的实战经验；\n3. 熟练应用Java开发，掌握C++/Python中至少一门编译型语言，熟悉Linux环境下高性能计算与系统调优。\n在以下方向有突出表现者优先：\n（1）大模型微调（LoRA/P-tuning）及领域适配（旅游知识注入）；\n（2）多模态理解与生成（文本+地理位置/POI信息）；\n（3）智能对话系统的强化学习策略优化；\n（4）有ACL/EMNLP等顶会论文、Kaggle竞赛Top排名，或智能客服/知识图谱系统开发经验者优先。\n4. 有Agent落地实践经验，熟悉Embedding/向量索引等；熟练使用LLamaFactory/Ms-swift/openrRLHF等框架，分析训练结果并制定改进计划。",
+        "title": "算法工程师（NLP方向）（2027届秋招）(MJ036676)"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-021",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 8,
+        "signals": [
+          "agent",
+          "llm"
+        ]
       }
     },
     "ebaf29e7ed9d0c10304b7f57e97ca867": {
@@ -77529,6 +78076,37 @@
         "signals": [
           "agent",
           "llm"
+        ]
+      }
+    },
+    "f5d502867c25c1aae5619375ef198890": {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "f5d502867c25c1aae5619375ef198890",
+      "first_seen_at_utc": "2026-10-12T10:52:30Z",
+      "identity": "id:7695720318284318985",
+      "job": {
+        "category": "正式",
+        "department": "运营管理",
+        "description": "1. 市场与前沿洞察：追踪全球及行业供应链前沿趋势，深入端到端业务构建数据模型，产出前瞻性洞察以支撑高层决策\n2. 新模式与生态运营：运营供应链创新模式与新工具，筹办线上线下活动等以打造创新供应链品牌影响力\n3. 产品与机制搭建：供应链价值链情报系统与经营目标管理工具的规划与落地，实现动态监控与数据驱动的经营盘点\n4. PMO与项目治理：部门内及跨部门战略项目落地，建立并完善包含预警与闭环复盘的PMO治理体系\n5. 战略规划与经营盘点：参与供应链中长期与年度战略规划解码、月度经营分析会，通过运营及产品化督促改进闭环\n6. 团队文化与组织赋能：设计并推广数据驱动与协同共赢的团队文化，搭建知识库并通过培训持续赋能团队能力",
+        "detail_status": "OK",
+        "job_id": "7695720318284318985",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=kAWxiAAAAABHcqOfXubPd5AFsZAAPrX",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7695720318284318985/detail",
+        "requirements": "1. 本科及以上学历，专业不限\n2. 好奇探索： 对新技术、新工具和新业务保持好奇，勇于探索未知、挑战既有认知\n3. 独立判断： 具备独立思考与批判性思维，基于事实和数据做出判断，持续追求更优解\n4. 善用 AI： 积极运用 AI 工具提升效率、优化流程，并沉淀可复用的方法与工作流\n5. 快速学习： 具备快速学习与迭代能力，能够适应变化并在不确定性中持续成长\n6. 跨界融通： 具备跨领域知识迁移与整合能力，打破专业边界，创造业务价值\n7. 具备良好的沟通、表达能力，利他精神，及团队协作精神",
+        "title": "校招-供应链战略运营"
+      },
+      "last_seen_at_utc": "2026-10-12T10:52:30Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "medium",
+        "score": 4,
+        "signals": [
+          "rag"
         ]
       }
     },
@@ -80579,5 +81157,5 @@
   },
   "policy": "Every detected source change is preserved for review. triage only orders work; it never decides inclusion. The reviewed official catalog is not modified by automation.",
   "schema_version": 2,
-  "updated_at_utc": "2026-10-12T10:20:31Z"
+  "updated_at_utc": "2026-10-12T10:52:30Z"
 }

@@ -1,9 +1,9 @@
 {
   "last_run": {
-    "checked_at_utc": "2026-10-12T10:20:31Z",
+    "checked_at_utc": "2026-10-12T10:52:30Z",
     "received_results": 69,
     "registered_sources": 69,
-    "source_sha": "86f4d3affd12a35eac7b125359efd80d412e85e2"
+    "source_sha": "ce800360828fbdaeb359c3afec4e61b32c90813d"
   },
   "schema_version": 2,
   "sources": {
@@ -3923,8 +3923,8 @@
           "title": "数字底盘系统开发工程师-汽车"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-002": {
@@ -5328,7 +5328,7 @@
           "title": "网络传输策略推荐算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -6133,7 +6133,7 @@
           "title": "上海-自动驾驶仿真世界模型算法工程师(J101148)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -10673,7 +10673,7 @@
           "title": "WXG 高性能大规模向量检索系统"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -11663,7 +11663,7 @@
           "title": "行政助理Executive Assistant"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -25172,13 +25172,28 @@
           "official_url": "https://hr.163.com/position/detail.html?id=79256",
           "title": "网易科技短视频剪辑兼运营实习生"
         },
+        "id:79257": {
+          "fingerprint": "83b640740f638c54b348a6928f2101bf53b5220458d06d211f5438404c3a5bfd",
+          "official_url": "https://hr.163.com/position/detail.html?id=79257",
+          "title": "《蛋仔派对》UGC运营实习生（专业开发者孵化方向）"
+        },
+        "id:79258": {
+          "fingerprint": "bf76f37a4723c25cf83f1d81595b30e6f6e37b53021051f2afd4e5fd4d92c3e3",
+          "official_url": "https://hr.163.com/position/detail.html?id=79258",
+          "title": "《蛋仔派对》UGC运营实习生（赛事活动方向）"
+        },
+        "id:79259": {
+          "fingerprint": "237b3a84f2a925e83ccec32f1d2a785bc962b012d9ffb2a3cd54267e5c575ec7",
+          "official_url": "https://hr.163.com/position/detail.html?id=79259",
+          "title": "资深动画设计师（表演）-在研项目"
+        },
         "id:8226": {
           "fingerprint": "bf2ae8577071469a634f7b0544a988dfe7fabc06e9d5d3fc974f609823539437",
           "official_url": "https://hr.163.com/position/detail.html?id=8226",
           "title": "资深/专家客户端性能优化（无限大）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -25638,7 +25653,7 @@
           "title": "企业文化及雇主品牌内容运营【2027届】"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -26233,8 +26248,8 @@
           "title": "27届秋招-商业分析师（国际化外卖）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-009": {
@@ -26423,7 +26438,7 @@
           "title": "客户端研发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -26943,7 +26958,7 @@
           "title": "客户经理（小语种）   应届生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -27228,7 +27243,7 @@
           "title": "【REDstar】Agent 应用算法工程师-创新业务"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -27278,7 +27293,7 @@
           "title": "游戏策划"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -29633,7 +29648,7 @@
           "title": "游戏文案策划（日系幻想）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -31938,7 +31953,7 @@
           "title": "招聘实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -33168,7 +33183,7 @@
           "title": "大场景重建流式3D基础模型"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -34363,7 +34378,7 @@
           "title": "AI研究员（感知与交互方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35193,7 +35208,7 @@
           "title": "数据库工程师（IT方向）-27届秋招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35433,8 +35448,8 @@
           "title": "项目运营实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-019": {
@@ -35518,7 +35533,7 @@
           "title": "机器人原创IP孵化与内容创作（漫画/动画）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -39033,7 +39048,7 @@
           "title": "AI研究算法工程师-具身智能数据方向(J13382)"
         },
         "id:190842462": {
-          "fingerprint": "6ac7c125ea8bd68772414e637cc3b78f7a3708ac39c7026acf85595ce715b5c8",
+          "fingerprint": "bdd5876cebd60581eb7eb4bab31b52eb443b45f6fd9a2d651eb5c0e3152b97e4",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842462",
           "title": "AI研究算法工程师-认知大模型方向(J13383)"
         },
@@ -39948,7 +39963,7 @@
           "title": "中级交付项目经理(J12612)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -40056,9 +40071,59 @@
           "fingerprint": "618d8d07bd1da77601e7ec6ea8c4e132de9d5f3a7b896e8f085b272ce28eb213",
           "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036640",
           "title": "Eagle Program – Big Data Engineer (2027 Graduates)(MJ036640)"
+        },
+        "id:30544939": {
+          "fingerprint": "6f1f687dab954e44207050eeabae5ddf36c51299c3b8075bfa81f2302b7b62f9",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ037349",
+          "title": "AI机器人运营（客服智能化方向）（2027届秋招）- 南通(MJ037349)"
+        },
+        "id:30544940": {
+          "fingerprint": "20db6446dcd4177766ae5ad121262f28712761fd13388b0b7bf0f84c3ddb123d",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ037323",
+          "title": "财务分析（2027届秋招）(MJ037323)"
+        },
+        "id:30544941": {
+          "fingerprint": "2bf530eb298b1d6e63bcb199013e7b9f6d7b9e0fe9e0a75abd7698b254459583",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036680",
+          "title": "IDC工程师（服务器运维方向）（2027届秋招）(MJ036680)"
+        },
+        "id:30544942": {
+          "fingerprint": "fa21cb0fc308af7a322b7e62ae67fe35098d5cdd21469581e0c086b192f6320f",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036670",
+          "title": "数据分析师（技术方向）（2027届秋招）(MJ036670)"
+        },
+        "id:30544943": {
+          "fingerprint": "77f39c1ee6b32a9071d5cb283cc2983a7c402a7f3f1b7559cd8acb197617bced",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676",
+          "title": "算法工程师（NLP方向）（2027届秋招）(MJ036676)"
+        },
+        "id:30544944": {
+          "fingerprint": "e348279fc454d9300819785303defad7a8b77966054988874204eb8ab0ab032c",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036671",
+          "title": "算法工程师（时间序列方向）（2027届秋招）(MJ036671)"
+        },
+        "id:30544945": {
+          "fingerprint": "7d9abf6d3ca7f6932125b9d996e91cb231f2e2e363e7e35b015e196ac1473f84",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036669",
+          "title": "数据仓库工程师（2027届秋招）(MJ036669)"
+        },
+        "id:30544961": {
+          "fingerprint": "1823f60d0e9219469eb5f7a0ba8673b8ee2115553bb21ba82de06c97edaa9775",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036717",
+          "title": "AI Solution (Customer Service Intelligence) - Arabic (2027 Graduates)(MJ036717)"
+        },
+        "id:30544985": {
+          "fingerprint": "0a1f82b97bee0c7895d41c54caf14a7bff2f1ffa64902bbc624805f838723af7",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036639",
+          "title": "Eagle Program – Business Analyst (2027 Graduates)(MJ036639)"
+        },
+        "id:30544992": {
+          "fingerprint": "618d8d07bd1da77601e7ec6ea8c4e132de9d5f3a7b896e8f085b272ce28eb213",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036640",
+          "title": "Eagle Program – Big Data Engineer (2027 Graduates)(MJ036640)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -40578,7 +40643,7 @@
           "title": "税务实习生（北京）-4293(J11981)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -41393,8 +41458,8 @@
           "title": "【27届校招】供应链-项目管理"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-024": {
@@ -41588,8 +41653,8 @@
           "title": "AI跨界技术人才"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-025": {
@@ -42068,8 +42133,8 @@
           "title": "Agent Engineer（实习生）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-026": {
@@ -42578,8 +42643,8 @@
           "title": "AI 招聘实习生（职能方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-027": {
@@ -42708,9 +42773,9 @@
           "title": "27届校招-预训练算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T09:13:46Z",
-      "last_status": "INCOMPLETE"
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
+      "last_status": "OK"
     },
     "official-028": {
       "baseline_kind": "complete",
@@ -43363,8 +43428,8 @@
           "title": "运营实习生（专家访谈运营 ）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-029": {
@@ -43463,8 +43528,8 @@
           "title": "【日常实习】后训练算法实习生-百川模型训练团队"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-030": {
@@ -43728,8 +43793,8 @@
           "title": "Chief of Staff"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-031": {
@@ -44453,8 +44518,8 @@
           "title": "商务运营实习生-深圳"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-032": {
@@ -44462,8 +44527,8 @@
       "baseline_ready": true,
       "company": "生数科技",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-033": {
@@ -44597,8 +44662,8 @@
           "title": "解决方案工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-034": {
@@ -44932,7 +44997,7 @@
           "title": "财务实习生\n北京校招实习职能 - 财务职位 ID：A117305\n1、协助财务团队进行日常财务工作，包括但不限于：装订并整理会计凭证、财务入账处理、对接常规审计及尽调审计等。\n2、参与财务数据的收集、整理和分析，提供财务建议。\n3、协助团队进行预算管理和财务规划。\n4、保持与团队成员的良好沟通，确保工作的顺利进行。"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -45042,8 +45107,8 @@
           "title": "IT Infrastructure Engineer"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-036": {
@@ -45137,7 +45202,7 @@
           "title": "Golang 后端工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -45472,7 +45537,7 @@
           "title": "社媒营销负责人"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -45727,9 +45792,9 @@
           "title": "（27届秋招）保险产品经理 - 深圳"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": "2026-10-12T10:20:31Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-039": {
       "baseline_kind": "observed",
@@ -46172,7 +46237,7 @@
           "title": "投后财务分析师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -50585,10 +50650,20 @@
           "fingerprint": "72ed366e84d64f9896e540ca5f3a3ef5ba6735a87af9f5793cd3a7c6ad6f2508",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7695719064917166390/detail",
           "title": "校招-产品采购（工程开发快速样件方向）"
+        },
+        "id:7695720318284318985": {
+          "fingerprint": "8967c562e6cc8dfa6ed8200f7ee71a603d129dcba0cc2d7a15c517eadc2b4fab",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7695720318284318985/detail",
+          "title": "校招-供应链战略运营"
+        },
+        "id:7695721524409665843": {
+          "fingerprint": "d36c7dd8121d49dfaf8585ac8213a74a2f5e07bd8a5246c9c28a9f1e6961fe0e",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7695721524409665843/detail",
+          "title": "校招-产品采购"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-041": {
@@ -51342,7 +51417,7 @@
           "title": "运筹优化算法工程师-运筹大模型方向（博士后）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -52687,7 +52762,7 @@
           "title": "SDK客户端开发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -53397,16 +53472,16 @@
           "title": "芯片设计工程师（上海）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T09:13:46Z",
-      "last_status": "INCOMPLETE"
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
+      "last_status": "OK"
     },
     "official-044": {
       "baseline_kind": "observed",
       "baseline_ready": false,
       "company": "度小满",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -53471,7 +53546,7 @@
           "title": ""
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -53676,7 +53751,7 @@
           "title": "海外IT资产工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -53741,7 +53816,7 @@
           "title": "深信服27届-攻防研究工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -53941,9 +54016,9 @@
           "title": "应用开发工程师-AI（深圳）"
         },
         "id:2fdcee64-7de5-41e5-b48f-2a8fb9421745": {
-          "fingerprint": "998467b630332a9c7d55429924221533af48a7a35061caf243d33814cc65b28e",
+          "fingerprint": "603988894c77e2075904169ddf047e59de504be04970246fd9b29881f84ab1e1",
           "official_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN#/job/2fdcee64-7de5-41e5-b48f-2a8fb9421745",
-          "title": "管培生-产品经理（产品集成管理）"
+          "title": "管培生-产品经理"
         },
         "id:30b67139-8245-4117-bbbd-2f8dcbf6938d": {
           "fingerprint": "df2207ab92f9d23921a4249aed6b11c4a59fdbda38a3a61db14dbf6af21dc1ef",
@@ -54906,9 +54981,9 @@
           "title": "应用支持（深圳）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T09:13:46Z",
-      "last_status": "INCOMPLETE"
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
+      "last_status": "OK"
     },
     "official-049": {
       "baseline_kind": "observed",
@@ -54976,7 +55051,7 @@
           "title": "友新星实习计划"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -55051,7 +55126,7 @@
           "title": "影像产品经理方向 | Future Product Manager"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "PARTIAL"
     },
@@ -55166,7 +55241,7 @@
           "title": "项目管理专员（广州）-运营策略-2027届"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -57651,8 +57726,8 @@
           "title": "光电系统工程师-北京"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-053": {
@@ -57671,7 +57746,7 @@
           "title": "福利待遇"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -59091,7 +59166,7 @@
           "title": "内容运营岗\n发布于 2026-10-08\n全职\n全职\n|\n本科\n本科\n|\n浙江·杭州市\n浙江·杭州市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "TIMEOUT"
     },
@@ -60325,11 +60400,6 @@
           "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7658239811219998985/detail",
           "title": "【27届校招】油泥模型培训生(上海)"
         },
-        "id:7658239811220343049": {
-          "fingerprint": "32ab89bb8b9ddb7c6e85503cfe9d431089bf85821aecb612438d670209eeb877",
-          "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7658239811220343049/detail",
-          "title": "【27届校招】用户研究培训生"
-        },
         "id:7658239811221031177": {
           "fingerprint": "5a945bc65f8d7e7da24e688c271243315e2454ccb4b809238c48674d54623ea5",
           "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7658239811221031177/detail",
@@ -61541,9 +61611,9 @@
           "title": "【27届校招】电控系统测试工程师"
         },
         "id:7685301319297599790": {
-          "fingerprint": "cb672b15fe19ef32da44d962bb30f38f5668527fccad7fb727b5843c368d4dc0",
+          "fingerprint": "7cc27c5d3c6fbcb81fbf698ad5006f704bd9bef78ea17842cdd3745450ed21dc",
           "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7685301319297599790/detail",
-          "title": "【27届校招】培训运营培训生"
+          "title": "【27届校招】培训运营培训生（售后）"
         },
         "id:7685306581839530294": {
           "fingerprint": "ca1696105072a9f34c18b88c2f3ee5ac3f04d0a2365fe9b98358bbb01ebe091c",
@@ -62131,8 +62201,8 @@
           "title": "【27届校招】制造专业培训生（工艺质量管理方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-056": {
@@ -65046,7 +65116,7 @@
           "title": "变更管理-北京"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -65631,7 +65701,7 @@
           "title": "FDE工程师（AI前线部署工程师）\nAI/算法类 | 应届毕业生 | 新事业生态圈\n工作地点：上海市 青岛市"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -66486,7 +66556,7 @@
           "title": ""
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -74216,7 +74286,7 @@
           "title": "高级物控专员"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -74856,7 +74926,7 @@
           "title": "语音算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -75346,7 +75416,7 @@
           "title": "「2027校招」前端研发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -76756,7 +76826,7 @@
           "title": "部署优化实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -76926,9 +76996,9 @@
           "title": "27届校招-产品需求工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": "2026-10-12T10:20:31Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-064": {
       "baseline_kind": "observed",
@@ -77011,16 +77081,32 @@
           "title": "【2027校招正式批】前端开发工程师（海外业务）\n2027校招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
     "official-065": {
       "baseline_kind": "observed",
-      "baseline_ready": false,
+      "baseline_ready": true,
       "company": "BOSS直聘/看准科技",
-      "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "jobs": {
+        "id:458113780": {
+          "fingerprint": "f5f5434f981bb11c8c5a5523a1e2242f38a534a19ca1b43fe6e621bbcfe5bfca",
+          "official_url": "https://m.zhipin.com/mpa/html/weijd/weijd-job/e120b41d6dcc5f7603Fy2ty-F1pQ",
+          "title": "后端开发工程师"
+        },
+        "id:474955730": {
+          "fingerprint": "64ea9a0733ea7a95239445bec65d944aabc211c57b2068d11f2d8e7c0168e54f",
+          "official_url": "https://m.zhipin.com/mpa/html/weijd/weijd-job/c7b3910d6794092803N-0ti4F1FQ",
+          "title": "Java开发工程师"
+        },
+        "id:474956119": {
+          "fingerprint": "3cc2d24bd64a99075c771de3260da8b71527a17c390779515468807841d9240a",
+          "official_url": "https://m.zhipin.com/mpa/html/weijd/weijd-job/a14a68e21c67c49903N-0ti7EVNZ",
+          "title": "前端开发工程师"
+        }
+      },
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -77078,11 +77164,6 @@
           "fingerprint": "bb991ce52ccaf7c8c4289fd4fbc4e2064f7cf11cc4305560cbf21fe32e603330",
           "official_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/3b0b3e31-e357-4a9b-b5dc-d3d44742d36e",
           "title": "AI全栈开发工程师（企业平台）-27秋招"
-        },
-        "id:4a3d9495-06bf-4f85-b4aa-7a84bd059c5f": {
-          "fingerprint": "a1856392a7114186b5e05c39003518d5903cea3349e90edee8edb440955f4b61",
-          "official_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/4a3d9495-06bf-4f85-b4aa-7a84bd059c5f",
-          "title": "大模型算法工程师（自然语言）-27秋招"
         },
         "id:4ee93d15-c763-41ef-9cdc-abc81a4527f8": {
           "fingerprint": "6ea358498f9ccec762c40e878879028dd5fff65233a453695f1e0e4dba925ddd",
@@ -77260,8 +77341,8 @@
           "title": "HRBP[郑州]-27秋招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-067": {
@@ -79005,8 +79086,8 @@
           "title": "项目实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
-      "last_complete_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
+      "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "OK"
     },
     "official-068": {
@@ -81160,7 +81241,7 @@
           "title": "运维工程师(J22823)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -81615,7 +81696,7 @@
           "title": "AIGC实习生(J14583)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T10:20:31Z",
+      "last_attempt_at_utc": "2026-10-12T10:52:30Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     }
