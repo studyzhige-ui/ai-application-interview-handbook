@@ -8614,6 +8614,50 @@
         "https://www.xiaohongshu.com/user/profile/648a7f67000000001c02aeda",
         "https://www.xiaohongshu.com/explore/6a990afd000000002b01d810"
       ]
+    },
+    {
+      "source_id": "S404",
+      "heading_raw": "中科曙光｜AI Agent｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S404:batch-39:5",
+          "source_id": "S404",
+          "raw_path": "01-data/raw/batch-39.md",
+          "line_start": 5,
+          "line_end": 44,
+          "original_line_start": 5,
+          "original_line_end": 44,
+          "source_section_sha256": "f9e9e4d7b6e7d1b14aa22c8b80d24e76010abc5ac21829a0df684720a797ff71",
+          "is_extension": false
+        }
+      ],
+      "record_count": 16,
+      "urls": [
+        "https://www.nowcoder.com/users/369008148",
+        "https://www.nowcoder.com/feed/main/detail/9ca655a5f5a9472da0c27670c8cc9d8c"
+      ]
+    },
+    {
+      "source_id": "S405",
+      "heading_raw": "Shopee虾皮｜Agent开发｜一面、二面（同一流程）｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S405:batch-39:45",
+          "source_id": "S405",
+          "raw_path": "01-data/raw/batch-39.md",
+          "line_start": 45,
+          "line_end": 102,
+          "original_line_start": 45,
+          "original_line_end": 102,
+          "source_section_sha256": "9ec7b383e81f6152d1e10e0dfe32fdbdf98c2b3fb255b7a6109e11e0504c2152",
+          "is_extension": false
+        }
+      ],
+      "record_count": 34,
+      "urls": [
+        "https://www.xiaohongshu.com/user/profile/60c95a7400000000010079b9",
+        "https://www.xiaohongshu.com/explore/6ac865b1000000000b0061c2"
+      ]
     }
   ]
 }
