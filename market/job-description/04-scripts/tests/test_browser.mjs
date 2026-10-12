@@ -60,7 +60,12 @@ test("every title gets detail; exact raw response bytes and complete long fields
   const details = [], longBody = "  <p>原始职责\r\n&amp;  </p>".repeat(10000);
   const result = await collectByteDance(source, options(), { async fetch(url, init) {
     assert.equal(init.signal.aborted, false);
-    if (url.endsWith("/search/job/posts")) { assert.equal(JSON.parse(init.body).keyword, ""); return response(listBody); }
+    if (url.endsWith("/search/job/posts")) {
+      assert.equal(JSON.parse(init.body).keyword, "");
+      assert.match(init.headers["User-Agent"], /Chrome\/141/);
+      assert.match(init.headers["Accept-Language"], /^zh-CN/);
+      return response(listBody);
+    }
     const id = url.split("/").at(-1); details.push(id);
     return response(detailPayload({ ...rows.find(row => row.id === id), description: longBody, requirement: "\t 原始要求 \n" }));
   } });
@@ -194,7 +199,10 @@ test("Moka retains encrypted bytes and fetches details for every title", async (
   }
   const listBody = encrypted({ code: 0, data: { jobs: rows, total: 2 } });
   const result = await collectMoka(mokaSource, options(), { async fetch(url, init) {
-    if (url.endsWith("jobs/v2")) return response(listBody);
+    if (url.endsWith("jobs/v2")) {
+      assert.equal(JSON.parse(init.body).limit, 50);
+      return response(listBody);
+    }
     const id = JSON.parse(init.body).jobId; detailIds.push(id);
     return response(encrypted({ code: 0, data: { job: { id, title: rows.find(row => row.id === id).title, jobDescription: "  <p>Original &amp; body</p>\n" } } }));
   } });
