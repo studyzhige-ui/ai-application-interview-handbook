@@ -222,6 +222,11 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
           total = primary.list.total;
           for (const raw of primary.list.rows) rows.push({ ...normalizeBrowserRow(raw, source, primary.url, listPage.url()), list_capture_id: primary.capture_id });
         }
+        const jobListNavigationUrl = links.find(link => {
+          try {
+            return origins.has(new URL(link.href).origin) && /\/position\/list(?:[?#]|$)/i.test(new URL(link.href).pathname);
+          } catch { return false; }
+        })?.href || "";
         if (!primary) {
           for (const link of links) {
             if (!link.href || !origins.has(new URL(link.href).origin) || !(source.job_link_selector || jobLinkLike(link.href))) continue;
@@ -231,7 +236,7 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
             rows.push({ company: source.company, job_id: "", title: link.title, official_url: link.href, raw_list: link, list_capture_id: domCapture.capture_id });
           }
         }
-        return { rows, total, page_url: listPage.url(), raw_html_capture_id: domCapture.capture_id };
+        return { rows, total, page_url: listPage.url(), job_list_navigation_url: jobListNavigationUrl, raw_html_capture_id: domCapture.capture_id };
       },
       async nextAction() {
         const feishuNext = listPage.locator("li.atsx-pagination-next:not(.atsx-pagination-disabled)").last();
@@ -306,6 +311,7 @@ export async function collectBrowser(source, options, dependencies = {}) {
     const seeds = [...new Set([source.job_list_url || source.search_url || source.portal, ...(source.extra_portals || []), ...(source.extra_job_list_urls || [])].filter(Boolean))];
     if (!seeds.length) throw new Error("Registered source has no list portal");
     let allListsComplete = true;
+    const followedListNavigation = new Set();
     for (const seed of seeds) {
       runtime.listAttempt();
       await runtime.run(() => driver.open(seed));
@@ -313,6 +319,14 @@ export async function collectBrowser(source, options, dependencies = {}) {
       let seedTotal = null;
       while (true) {
         const snapshot = await runtime.run(() => driver.snapshot());
+        if (!(snapshot.rows || []).length && snapshot.job_list_navigation_url
+            && snapshot.job_list_navigation_url !== snapshot.page_url
+            && !followedListNavigation.has(snapshot.job_list_navigation_url)) {
+          followedListNavigation.add(snapshot.job_list_navigation_url);
+          runtime.listAttempt();
+          await runtime.run(() => driver.open(snapshot.job_list_navigation_url));
+          continue;
+        }
         if (snapshot.total != null) {
           if (seedTotal != null && seedTotal !== snapshot.total) throw new Error("Advertised browser list total changed");
           seedTotal = snapshot.total;
