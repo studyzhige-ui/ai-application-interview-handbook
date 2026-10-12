@@ -56,6 +56,16 @@ class AutomationTests(unittest.TestCase):
             self.assertEqual(queue["entries"], {})
             self.assertIn("首次基线", report)
 
+    def test_empty_partial_first_scan_does_not_establish_baseline(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); scan = root / "scan"
+            write_result(scan, "official-001", [], complete=False, status="PARTIAL")
+            summary, state, queue, report = self.run_reconcile(root, scan)
+            self.assertFalse(state["sources"]["official-001"]["baseline_ready"])
+            self.assertEqual(summary["counts"]["waiting_baseline"], 1)
+            self.assertEqual(queue["entries"], {})
+            self.assertIn("等待后续成功扫描建立基线", report)
+
     def test_added_and_changed_are_queued_and_partial_scan_never_removes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
