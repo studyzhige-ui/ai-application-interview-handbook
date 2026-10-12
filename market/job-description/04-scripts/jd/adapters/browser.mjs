@@ -8,7 +8,7 @@ import { CollectionStop, createRuntime, collectionResult, runCLI, validateOption
 
 const TITLE_KEYS = ["positionName", "jobName", "jobTitle", "positionTitle", "recruitPostName", "postName", "title", "name"];
 const ID_KEYS = ["positionId", "jobId", "postId", "publishId", "reqId", "id", "code"];
-const DESCRIPTION_KEYS = ["description", "jobDescription", "jobDesc", "positionDesc", "responsibility", "responsibilities", "jobDuty", "duty", "workContent", "desc", "postDuty"];
+const DESCRIPTION_KEYS = ["description", "descriptionHtml", "summary", "jobDescription", "jobDesc", "positionDesc", "responsibility", "responsibilities", "jobDuty", "duty", "workContent", "desc", "postDuty"];
 const REQUIREMENT_KEYS = ["requirement", "requirements", "jobRequirement", "positionRequire", "positionDemand", "qualification", "qualifications", "serveRequirement", "request"];
 const URL_KEYS = ["shareUrl", "detailUrl", "jobUrl", "positionUrl", "url", "href", "link"];
 const LIST_KEYS = new Set(["jobs", "job_post_list", "positions", "positionList", "jobList", "listData", "posts", "postList"]);
@@ -65,6 +65,7 @@ export function normalizeBrowserRow(row, source, responseUrl, pageUrl) {
     const channel = source.feishu_channel || new URL(pageUrl).pathname.split("/").filter(Boolean)[0] || "campus";
     url = `${origin}/${channel}/position/${encodeURIComponent(id)}/detail`;
   }
+  if (!url && id && source.json_detail_url_template) url = source.json_detail_url_template.replace("{id}", encodeURIComponent(id));
   try { if (url) url = new URL(url, pageUrl).href; } catch { url = ""; }
   const location = feishuSearch
     ? (row.city_list || []).map(city => pick(city, ["name", "i18n_name", "en_name"])).filter(Boolean).join(" / ") || pick(row.city_info, ["name", "i18n_name", "en_name"])
@@ -78,7 +79,8 @@ export function normalizeBrowserRow(row, source, responseUrl, pageUrl) {
     description: pick(row, DESCRIPTION_KEYS), requirements: pick(row, REQUIREMENT_KEYS),
     location, category, department,
     official_url: url, official_api: responseUrl, raw_list: row,
-    list_detail_complete: feishuSearch && Object.hasOwn(row, "description") && Object.hasOwn(row, "requirement"),
+    list_detail_complete: (feishuSearch && Object.hasOwn(row, "description") && Object.hasOwn(row, "requirement"))
+      || (source.json_list_detail_complete === true && Boolean(pick(row, DESCRIPTION_KEYS))),
   };
 }
 
@@ -218,7 +220,7 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
         // valid page appear larger than its advertised total. Prefer the strongest
         // single list contract for this page: known Feishu search first, then the
         // largest advertised pool, then the largest visible row set.
-        const ranked = observed.slice().sort((a, b) => {
+        const ranked = (source.browser_ignore_json_lists ? [] : observed.slice()).sort((a, b) => {
           const aFeishu = /\/api\/v1\/search\/job\/posts/.test(new URL(a.url).pathname) ? 1 : 0;
           const bFeishu = /\/api\/v1\/search\/job\/posts/.test(new URL(b.url).pathname) ? 1 : 0;
           if (aFeishu !== bFeishu) return bFeishu - aFeishu;
@@ -234,6 +236,10 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
           for (const raw of primary.list.rows) rows.push({ ...normalizeBrowserRow(raw, source, primary.url, listPage.url()), list_capture_id: primary.capture_id });
         }
         if (source.dom_job_selector) {
+          let pageMarker = "";
+          if (source.dom_page_selector) {
+            pageMarker = await runtime.run(() => listPage.locator(source.dom_page_selector).first().innerText()).catch(() => "");
+          }
           const domRows = await runtime.run(() => listPage.locator(source.dom_job_selector).evaluateAll((nodes, config) => {
             const read = (node, selector) => {
               if (!selector) return "";
@@ -250,6 +256,7 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
                 official_url: link?.href || "",
                 raw_text: (node.innerText || node.textContent || "").trim(),
                 dom_index: index,
+                collection_key: [config.pageMarker || "", String(index), (node.innerText || node.textContent || "").trim()].join("\u001f"),
               };
             });
           }, {
@@ -258,6 +265,7 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
             categorySelector: source.dom_category_selector,
             departmentSelector: source.dom_department_selector,
             urlSelector: source.dom_url_selector,
+            pageMarker,
           }));
           lastDomRowCount = domRows.length;
           for (const row of domRows) {
@@ -266,11 +274,12 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
               location: row.location, category: row.category, department: row.department,
               description: "", requirements: "", official_url: row.official_url,
               raw_list: { dom_index: row.dom_index, text: row.raw_text },
+              collection_key: row.collection_key,
               list_capture_id: domCapture.capture_id,
             });
           }
         } else lastDomRowCount = 0;
-        for (const link of links) {
+        for (const link of (source.browser_skip_dom_links && primary ? [] : links)) {
           if (!link.href || !origins.has(new URL(link.href).origin) || !(source.job_link_selector || jobLinkLike(link.href))) continue;
           // Link matching is structural; all link labels, including empty labels, are retained.
           rows.push({ company: source.company, job_id: "", title: link.title, official_url: link.href, raw_list: link, list_capture_id: domCapture.capture_id });
@@ -278,6 +287,21 @@ export async function createPlaywrightDriver(source, runtime, dependencies = {})
         return { rows, total, page_url: listPage.url(), raw_html_capture_id: domCapture.capture_id };
       },
       async nextAction() {
+        if (source.page_next_selector) {
+          const configuredNext = listPage.locator(source.page_next_selector).last();
+          const exists = await runtime.run(() => configuredNext.count());
+          if (exists && await runtime.run(() => configuredNext.isVisible())) {
+            const disabled = await runtime.run(() => configuredNext.isDisabled()).catch(() => false);
+            const ariaDisabled = await runtime.run(() => configuredNext.getAttribute("aria-disabled")).catch(() => null);
+            const classes = await runtime.run(() => configuredNext.getAttribute("class")).catch(() => "");
+            if (!disabled && ariaDisabled !== "true" && !/disabled/i.test(classes || "")) {
+              return async () => {
+                await runtime.run(() => configuredNext.click({ timeout: runtime.remainingMs() }));
+                await settle(listPage);
+              };
+            }
+          }
+        }
         const feishuNext = listPage.locator("li.atsx-pagination-next:not(.atsx-pagination-disabled)").last();
         if (await runtime.run(() => feishuNext.count()) && await runtime.run(() => feishuNext.isVisible())) {
           return async () => {
