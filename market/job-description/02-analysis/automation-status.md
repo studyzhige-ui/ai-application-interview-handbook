@@ -1,5 +1,83 @@
 # JD 自动采集状态
 
-V2 自动采集系统已配置，等待合并后的首次完整扫描建立 69 个官方来源的职位身份/正文指纹基线。
+最近扫描：2026-10-12T08:23:44Z。登记入口 **69** 个，本次收到 **69** 个来源结果。
 
-首次扫描只建立基线，不会把仓库现有职位批量标记成新增。此后新增职位、正文/字段变化，以及仅在明确完整扫描中观察到的可能消失职位会进入 `../01-data/automation/review-queue.json`；正式岗位库不会被自动改写。
+自动化只负责官方来源采集、身份/正文指纹比较和待审队列；不会凭关键词把岗位写入正式 JD 库，也不会因一次失败自动删除正式岗位。
+
+本次新事件：新增 **0**、正文/字段变化 **0**、完整扫描中可能消失 **0**。
+累计待审：**0**（高优先 0 / 中优先 0 / 低优先 0）。
+
+| 来源 | 公司 | 状态 | 本次观察 | 基线身份 | 新事件 | 处理 |
+| --- | --- | --- | ---: | ---: | ---: | --- |
+| official-001 | 小米 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-002 | 快手 | COLLECTED_UNREVIEWED | 279 | 279 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-003 | 百度 | COLLECTED_UNREVIEWED | 159 | 159 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-004 | 腾讯 | COLLECTED_UNREVIEWED | 906 | 906 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-005 | 美团 | COLLECTED_UNREVIEWED | 196 | 196 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-006 | 网易 | COLLECTED_UNREVIEWED | 2686 | 2686 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-007 | 哔哩哔哩 | PARTIAL | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-008 | 滴滴 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-009 | 拼多多 | COLLECTED_UNREVIEWED | 36 | 36 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-010 | 华为 | COLLECTED_UNREVIEWED | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-011 | 小红书 | COLLECTED_UNREVIEWED | 55 | 55 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-012 | 字节跳动 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-013 | 阿里巴巴 | COLLECTED_UNREVIEWED | 469 | 469 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-014 | 蚂蚁集团 | COLLECTED_UNREVIEWED | 459 | 459 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-015 | 京东 | COLLECTED_UNREVIEWED | 244 | 244 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-016 | OPPO | COLLECTED_UNREVIEWED | 237 | 237 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-017 | vivo | COLLECTED_UNREVIEWED | 164 | 164 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-018 | 金山办公/WPS | BLOCKED | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-019 | 荣耀 | COLLECTED_UNREVIEWED | 15 | 15 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-020 | 科大讯飞 | COLLECTED_UNREVIEWED | 884 | 884 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-021 | 携程 | COLLECTED_UNREVIEWED | 10 | 10 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-022 | 360 | COLLECTED_UNREVIEWED | 102 | 102 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-023 | 得物 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-024 | DeepSeek | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-025 | 月之暗面/Kimi | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-026 | MiniMax | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-027 | 智谱/Z.ai | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-028 | 阶跃星辰 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-029 | 百川智能 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-030 | 零一万物/01.AI | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-031 | 商汤科技 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-032 | 生数科技 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-033 | 硅基流动 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-034 | 面壁智能 | INCOMPLETE | 5 | 5 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-035 | Manus | COLLECTED_UNREVIEWED | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-036 | 无问芯穹/Infini-AI | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-037 | 昆仑万维/天工 | INCOMPLETE | 16 | 16 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-038 | Shopee | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-039 | 联想 | COLLECTED_UNREVIEWED | 86 | 86 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-040 | 蔚来 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-041 | 顺丰 | COLLECTED_UNREVIEWED | 149 | 149 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-042 | 米哈游 | COLLECTED_UNREVIEWED | 263 | 263 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-043 | 大疆 DJI | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-044 | 度小满 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-045 | 海康威视 | PARTIAL | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-046 | 中兴通讯 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-047 | 深信服 | INCOMPLETE | 11 | 11 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-048 | 金蝶 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-049 | 用友 | INCOMPLETE | 12 | 12 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-050 | 美图 | COLLECTED_UNREVIEWED | 13 | 13 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-051 | SHEIN | INCOMPLETE | 10 | 10 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-052 | 安克创新 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-053 | 大华股份 | INCOMPLETE | 2 | 2 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-054 | 吉利控股 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-055 | 小鹏集团 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-056 | 理想汽车 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-057 | 海尔集团 | INCOMPLETE | 115 | 115 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-058 | 美的集团 | COLLECTED_UNREVIEWED | 169 | 169 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-059 | 比亚迪 | COLLECTED_UNREVIEWED | 1544 | 1544 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-060 | 同花顺 | INCOMPLETE | 126 | 126 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-061 | 麒麟软件 | COLLECTED_UNREVIEWED | 96 | 96 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-062 | 普渡机器人 | COLLECTED_UNREVIEWED | 280 | 280 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-063 | 广联达 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-064 | 挚文集团/陌陌 | INCOMPLETE | 15 | 15 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-065 | BOSS直聘/看准科技 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-066 | 作业帮 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-067 | 影石 Insta360 | INCOMPLETE | 0 | 0 | 0 | 本次未取得可用岗位观察；等待后续成功扫描建立基线 |
+| official-068 | 神州数码/神州信息 | COLLECTED_UNREVIEWED | 429 | 429 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+| official-069 | 合合信息 | COLLECTED_UNREVIEWED | 89 | 89 | 0 | 首次基线建立，不产生历史岗位新增事件 |
+
+待审原始内容见 ../01-data/automation/review-queue.json；扫描基线见 ../01-data/automation/scan-state.json。
+首次为某来源建立基线时不会把已有职位批量标记成新增。只有后续身份新增、指纹变化，或一次被确认完整的扫描中身份消失，才生成事件。
