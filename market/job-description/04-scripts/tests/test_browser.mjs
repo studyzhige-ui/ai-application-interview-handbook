@@ -752,3 +752,15 @@ test("private incomplete and unparseable responses cannot persist partial runtim
   assert(!JSON.stringify(partial).includes(secretPrefix));
   assert.equal(Buffer.from(partial.captures[0].body_base64, "base64").toString(), "[INCOMPLETE_PRIVATE_RESPONSE_OMITTED]");
 });
+
+
+test("final no-baseline sources use explicit public first-party recovery paths", () => {
+  const registry = JSON.parse(fs.readFileSync(new URL("../../03-strategy/official-2027-campus-sources.json", import.meta.url), "utf8"));
+  const duxiaoman = registry.sources.find(entry => entry.source_id === "official-044");
+  assert.equal(duxiaoman.browser_follow_list_link_selector, 'a[href*="/051736/position/list"]');
+  const boss = registry.sources.find(entry => entry.source_id === "official-065");
+  assert.equal(new URL(boss.job_list_url).hostname, "v.zhipin.com");
+  assert.equal(boss.disable_network_job_extraction, false);
+  assert.equal(boss.extra_job_list_urls.length, 2);
+  assert(boss.extra_job_list_urls.every(url => new URL(url).hostname === "v.zhipin.com"));
+});
