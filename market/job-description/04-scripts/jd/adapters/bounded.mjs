@@ -176,7 +176,9 @@ export async function collectPaged(source, options, specification, dependencies 
     while (true) {
       runtime.check();
       if (runtime.jobs.length >= options.maxJobs) throw new CollectionStop("MAX_JOBS");
-      const size = Math.min(100, options.maxJobs - runtime.jobs.length);
+      const configuredPageSize = specification.pageSize == null ? 100 : Number(specification.pageSize);
+      if (!Number.isSafeInteger(configuredPageSize) || configuredPageSize < 1) throw new Error("Adapter pageSize must be a positive integer");
+      const size = Math.min(configuredPageSize, options.maxJobs - runtime.jobs.length);
       const request = specification.listRequest(offset, size);
       const response = await runtime.request(request.url, request.init, "list");
       const payload = JSON.parse(response.bytes.toString("utf8"));

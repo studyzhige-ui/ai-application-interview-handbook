@@ -84,6 +84,8 @@ export function mokaSpecification(source, sourceParameter = "") {
   const headers = { "Accept": "application/json,*/*", "Content-Type": "application/json" };
   const post = (url, body) => ({ url, init: { method: "POST", headers, body: JSON.stringify(body) } });
   return {
+    // Moka's public jobs/v2 endpoint rejects limit values above 50 with code 102.
+    pageSize: 50,
     decode(payload) {
       const decoded = decryptEnvelope(payload);
       if (decoded?.code != null && decoded.code !== 0) throw new Error(`Moka upstream code=${decoded.code}: ${decoded.msg || ""}`);
