@@ -182,7 +182,7 @@
       "business_summary": "通信设备、云、终端、计算、汽车 ICT 与 AI",
       "source_id": "official-010",
       "adapter": "browser",
-      "dom_total_pattern": "共\\\\s*([0-9,]+)\\\\s*条",
+      "dom_total_pattern": "共\\s*([0-9,]+)\\s*条",
       "job_link_selector": "a[href*=\"/cn/job-details\"]",
       "browser_settle_ms": 1500
     },
@@ -692,7 +692,7 @@
       "source_id": "official-035",
       "adapter": "browser",
       "job_link_selector": "a[href*=\"/en/job/\"]",
-      "dom_total_pattern": "([0-9,]+)\\\\s+open\\\\s+roles",
+      "dom_total_pattern": "([0-9,]+)\\s+open\\s+roles",
       "browser_settle_ms": 1200
     },
     {
@@ -1101,7 +1101,7 @@
       "business_summary": "智能电动车、智能驾驶、具身智能与智能硬件",
       "source_id": "official-056",
       "adapter": "browser",
-      "dom_total_pattern": "共\\\\s*([0-9,]+)\\\\s*个职位",
+      "dom_total_pattern": "共\\s*([0-9,]+)\\s*个职位",
       "dom_job_selector": "li.search-item",
       "dom_title_selector": ".search-item-header-title-ellipsis",
       "dom_location_selector": ".search-item-info-position",

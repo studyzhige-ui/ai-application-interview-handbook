@@ -316,7 +316,7 @@ test("browser can derive advertised total and structural rows from registered DO
   const fixture = browserFixture([{ rows: rows.map((row, i) => ({ ...row, job_id: String(i), official_url: `https://example.test/job/${i}` })), total: 2 }]);
   const selected = {
     ...browserSource,
-    dom_total_pattern: "共\\\\s*([0-9,]+)\\\\s*个职位",
+    dom_total_pattern: "共\\s*([0-9,]+)\\s*个职位",
   };
   const result = await collectBrowser(selected, options(), fixture);
   assert.equal(result.complete, true);
@@ -509,7 +509,7 @@ test("Feishu pagination waits for the site-issued signed search response before 
 test("production browser driver can collect configured DOM job cards and body totals", async () => {
   const domSource = {
     ...browserSource,
-    dom_total_pattern: "共\\\\s*([0-9,]+)\\\\s*个职位",
+    dom_total_pattern: "共\\s*([0-9,]+)\\s*个职位",
     dom_job_selector: "li.search-item",
     dom_title_selector: ".title",
     dom_location_selector: ".location",
