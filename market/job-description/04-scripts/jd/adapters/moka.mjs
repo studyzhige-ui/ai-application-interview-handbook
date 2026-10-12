@@ -2,6 +2,7 @@
 /** Explicit bounded Moka jobs/v2 enumeration and detail, with lossless raw capture. */
 import { createDecipheriv } from "node:crypto";
 import { collectPaged, runCLI, validateOptions } from "./bounded.mjs";
+import { collectBrowser } from "./browser.mjs";
 
 export function decryptEnvelope(envelope) {
   if (!envelope?.data || !envelope?.necromancer) return envelope;
@@ -128,7 +129,22 @@ export async function collectMoka(source, options, dependencies = {}) {
   validateOptions(options);
   const parameter = runtimeParameter(source, dependencies.env || process.env);
   const privacy = parameter ? privateCapturePolicy(parameter) : {};
-  return collectPaged(source, options, mokaSpecification(source, parameter), { ...dependencies, ...privacy });
+  const direct = await collectPaged(source, options, mokaSpecification(source, parameter), { ...dependencies, ...privacy });
+  const transportFailure = !parameter && direct.jobs.length === 0
+    && (direct.failures || []).some(failure => /fetch failed|HTTP (?:403|405|429|5\d\d)/i.test(String(failure.error || "")));
+  if (!transportFailure) return direct;
+  const browser = await collectBrowser(source, options, dependencies);
+  return {
+    ...browser,
+    transport_fallback: "browser_after_moka_transport_failure",
+    direct_attempt: {
+      status: direct.status,
+      error: direct.error,
+      stop_reason: direct.stop_reason,
+      counts: direct.counts,
+      failures: direct.failures,
+    },
+  };
 }
 
 await runCLI(import.meta.url, collectMoka);
