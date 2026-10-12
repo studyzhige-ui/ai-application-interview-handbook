@@ -97,7 +97,7 @@ test("Feishu 405 falls back to the registered first-party browser flow", async (
 test("Feishu browser fallback opens the official channel position list", async () => {
   const feishuSource = {
     source_id: "fixture-feishu", company: "Fixture Feishu", mode: "feishu_direct",
-    portal: "https://fixture.jobs.feishu.cn/123456/", job_list_url: "https://fixture.jobs.feishu.cn/123456/",
+    portal: "https://fixture.jobs.feishu.cn/123456/?project=campus-project", job_list_url: "https://fixture.jobs.feishu.cn/123456/?project=campus-project",
     feishu_host: "fixture.jobs.feishu.cn", feishu_channel: "123456",
   };
   const opened = [];
@@ -108,7 +108,7 @@ test("Feishu browser fallback opens the official channel position list", async (
   });
   assert.equal(result.complete, true);
   assert.equal(result.transport_fallback, "browser_after_direct_405");
-  assert.deepEqual(opened, ["https://fixture.jobs.feishu.cn/123456/position/list"]);
+  assert.deepEqual(opened, ["https://fixture.jobs.feishu.cn/123456/position/list?project=campus-project"]);
 });
 
 test("max-jobs bounds retained jobs and detail fetches even if a server ignores limit", async () => {
@@ -472,6 +472,41 @@ test("Feishu pagination waits for the site-issued signed search response before 
   assert.deepEqual(result.jobs.map(job => job.location), ["北京", "上海"]);
   assert.deepEqual(result.jobs.map(job => job.category), ["校招", "实习"]);
   assert.deepEqual(result.jobs.map(job => job.department), ["研发", "工程"]);
+});
+
+test("structured browser job list suppresses unrelated DOM job links", async () => {
+  const rows = [{ id: "1", title: "API岗位", detailUrl: "https://example.test/job/1" }];
+  let responseHandler, pages = 0;
+  function pageFixture(isList) {
+    let url = "";
+    return {
+      on(event, callback) { if (event === "response") responseHandler = callback; },
+      async goto(nextUrl) {
+        url = nextUrl;
+        if (isList) await responseHandler({
+          url: () => "https://example.test/api/jobs",
+          headers: () => ({ "content-type": "application/json" }),
+          status: () => 200,
+          body: async () => Buffer.from(JSON.stringify({ data: { jobs: rows, total: 1 } })),
+          request: () => ({ method: () => "GET", postData: () => null }),
+        });
+        return { status: () => 200 };
+      },
+      url: () => url, async waitForLoadState() {}, async content() { return "<main></main>"; },
+      locator(selector) {
+        if (selector === "body") return { async innerText() { return ""; } };
+        if (selector === "a[href]") return { async evaluateAll() { return [{ href: "https://example.test/job/unrelated", title: "DOM推荐" }]; } };
+        return { last() { return this; }, async count() { return 0; }, async isVisible() { return false; }, async isDisabled() { return false; }, async getAttribute() { return null; } };
+      },
+      getByRole() { return { last() { return this; }, async count() { return 0; } }; },
+      async close() {},
+    };
+  }
+  const context = { async route() {}, async newPage() { return pageFixture(pages++ === 0); } };
+  const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
+  const result = await collectBrowser(browserSource, options(), { chromium });
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.jobs.map(job => job.job_id), ["1"]);
 });
 
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {
