@@ -871,7 +871,7 @@
       "portal": "https://campus.duxiaoman.com/",
       "official_root": "https://campus.duxiaoman.com/",
       "browser_probe": true,
-      "note": "度小满官方2027校园招聘入口；若直达职位页被飞书站点重定向到活动首页，浏览器在同一第一方站点点击“探索职位”进入职位列表，再读取页面自身签名请求。",
+      "note": "度小满官方2027校园招聘入口。GitHub runner 对旧的 Feishu search API 直连会发生 fetch failed，因此显式使用同一第一方站点的浏览器采集；若职位直链被重定向到活动首页，则点击“探索职位”进入 /051736/position/list，再捕获页面自身签名职位请求。",
       "job_list_url": "https://campus.duxiaoman.com/051736/position/list",
       "current_campus_board": true,
       "campus_entry_status": "PUBLIC_CAMPUS_BOARD",
@@ -885,7 +885,8 @@
       "feishu_apply_prefix": "https://campus.duxiaoman.com/051736/position",
       "feishu_browser_list_url": "https://campus.duxiaoman.com/051736/position/list",
       "browser_settle_ms": 2200,
-      "browser_follow_list_link_selector": "a[href*=\"/051736/position/list\"]"
+      "browser_follow_list_link_selector": "a[href*=\"/051736/position/list\"]",
+      "adapter": "browser"
     },
     {
       "company": "海康威视",
