@@ -3,6 +3,12 @@ name: Sync official campus and internship JD changes
 on:
   schedule:
     - cron: '0 1 * * 2,5'
+  push:
+    branches: [main]
+    paths:
+      - 'market/job-description/03-strategy/official-2027-campus-sources.json'
+      - 'market/job-description/04-scripts/**'
+      - '.github/workflows/sync-official-2027-agent-jobs.yml'
   workflow_dispatch:
 
 permissions:
