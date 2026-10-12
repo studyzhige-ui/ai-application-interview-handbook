@@ -757,6 +757,7 @@ test("private incomplete and unparseable responses cannot persist partial runtim
 test("final no-baseline sources use explicit public first-party recovery paths", () => {
   const registry = JSON.parse(fs.readFileSync(new URL("../../03-strategy/official-2027-campus-sources.json", import.meta.url), "utf8"));
   const duxiaoman = registry.sources.find(entry => entry.source_id === "official-044");
+  assert.equal(duxiaoman.adapter, "browser");
   assert.equal(duxiaoman.browser_follow_list_link_selector, 'a[href*="/051736/position/list"]');
   const boss = registry.sources.find(entry => entry.source_id === "official-065");
   assert.equal(new URL(boss.job_list_url).hostname, "v.zhipin.com");
