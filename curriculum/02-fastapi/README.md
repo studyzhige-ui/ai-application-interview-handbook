@@ -29,9 +29,9 @@
 15. [15｜部署与退出：从一个进程到多个实例](docs/15-Deployment与GracefulShutdown.md)
 16. [16｜综合实作：把问答与执行任务接成可验证 API](docs/16-AIServicePatterns.md)
 
-## 正文与复习
+## 学习与面试
 
-首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界，再用章末自测检查能否独立解释。第二遍使用 [Review](review/README.md)重建关系，并改变条件验证结论。
+首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界；完成每章后，使用章末总结与自测检查是否能独立解释和推导。
 
 面试准备集中在 [本知识域](../../interview/02-fastapi/README.md)：[高频面试题](../../interview/02-fastapi/01-高频面试题.md)、[易混易错点](../../interview/02-fastapi/02-易混易错点.md)与[面试速查](../../interview/02-fastapi/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
 
