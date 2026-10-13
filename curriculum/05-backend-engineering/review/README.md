@@ -1,6 +1,6 @@
 # Review｜从一次失败重建后端主线
 
-[模块主页](../README.md) · [Handbook](../../../README.md) · [表达训练](../../../interview/backend-engineering/01-高频面试题.md)
+[模块主页](../README.md) · [Handbook](../../../README.md) · [表达训练](../../../interview/05-backend-engineering/01-高频面试题.md)
 
 第二遍不要从组件名单开始。先选择一个业务操作，画出谁相信哪份状态、谁占着什么资源、在哪个位置失去证据，再决定需要哪种恢复机制。下面的题目改变正文条件，检验能否迁移已经学过的规则。
 

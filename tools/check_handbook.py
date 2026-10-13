@@ -111,6 +111,8 @@ def check(root: Path) -> list[str]:
         if not product.is_dir(): continue
         if not (product/'README.md').is_file(): errors.append(f'{product.relative_to(root)} missing README')
         if any(p.is_dir() or p.suffix!='.md' for p in product.iterdir()): errors.append(f'{product.relative_to(root)}: product content must be direct Markdown')
+    if {p.name for p in (root/'interview').iterdir()} != {'README.md', *module_names}:
+        errors.append('interview: modules do not match the agreed learning order')
     for domain in (root/'interview').glob('*'):
         if not domain.is_dir(): continue
         expected={'README.md','01-高频面试题.md','02-易混易错点.md','03-面试速查.md'}
