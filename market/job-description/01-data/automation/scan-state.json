@@ -1,9 +1,9 @@
 {
   "last_run": {
-    "checked_at_utc": "2026-10-12T12:43:15Z",
+    "checked_at_utc": "2026-10-13T07:29:43Z",
     "received_results": 69,
     "registered_sources": 69,
-    "source_sha": "b7d7e4986c50740e3a4c08eba2aaa8f85b398dc9"
+    "source_sha": "5306a4cd988d758327e3679a2bedba287b75befd"
   },
   "schema_version": 2,
   "sources": {
@@ -828,9 +828,9 @@
           "title": "电源工程师-手机"
         },
         "id:7670891887793293619": {
-          "fingerprint": "37302316dfd0d6909a13fc1a6dab46e643721f58dd83c79b51a3088fb3d4b68c",
+          "fingerprint": "a83ef5cfa9f60c070afb04ad0a03b9c131ea76047081e7fbb5cf01381793eecf",
           "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891887793293619/detail",
-          "title": "传感器工程师-手机"
+          "title": "传感器工程师（可穿戴）"
         },
         "id:7670891914569632050": {
           "fingerprint": "86a3edc5719c3d2cd4910a124bb3d26bc67c8b2fcfe6216b287256eb0d879d3e",
@@ -3443,7 +3443,7 @@
           "title": "国际法务专员"
         },
         "id:7671293269783185710": {
-          "fingerprint": "e4942f3618dad2d41298db70803641681b26d251ebe409d483346a249ef20e3a",
+          "fingerprint": "74377680620ee6818e82a79b654190d8eb9aea4519a06b7fe0cfc6899547147c",
           "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7671293269783185710/detail",
           "title": "广告算法工程师"
         },
@@ -3732,11 +3732,6 @@
           "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7671490555750861107/detail",
           "title": "Channel Sales Specialist-local"
         },
-        "id:7671524184715217193": {
-          "fingerprint": "a6163f0b584353b5f4ac3d0bc1c76ec2e4894d4ce96755544b1c6646b6baebcd",
-          "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7671524184715217193/detail",
-          "title": "新零售校招生-安徽"
-        },
         "id:7675291324489173254": {
           "fingerprint": "953e9a8d8e5289f5a6698b971a9c8e009c1e485f358000d28397f31f6e46eff8",
           "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7675291324489173254/detail",
@@ -3923,8 +3918,8 @@
           "title": "数字底盘系统开发工程师-汽车"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-002": {
@@ -5328,7 +5323,7 @@
           "title": "网络传输策略推荐算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -6133,7 +6128,7 @@
           "title": "上海-自动驾驶仿真世界模型算法工程师(J101148)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -9583,9 +9578,9 @@
           "title": "微信搜索-Agent研究"
         },
         "id:1281715980657337344": {
-          "fingerprint": "51a68f1acaef2f0ec1cf598d3f18fdd33a104d797f94c5072dfe0aa5201d2563",
+          "fingerprint": "c834ad64069e0f192ccdf324d44ba347a88bd648bd97a3b602b43763b0f03095",
           "official_url": "https://join.qq.com/post_detail.html?postId=1281715980657337344",
-          "title": "腾讯金融科技—面向金融应用场景的大模型综合深度推理能力提升"
+          "title": "金融智能体可验证环境构建与长程强化学习研究"
         },
         "id:1281716041881610240": {
           "fingerprint": "e0f744506599da542cbeb85a78b93fa0e99919e4eebbafaf88d90b9c1c052358",
@@ -9678,7 +9673,7 @@
           "title": "商业分析"
         },
         "id:1282707383965295616": {
-          "fingerprint": "110b45594e5a9e11d400dc2fe8ec02441f2d16c084268fe4249037f58820703b",
+          "fingerprint": "19918696e04832807498d0016e8d5d74fa3e1487fdf4d0dbe42da250f77e28f8",
           "official_url": "https://join.qq.com/post_detail.html?postId=1282707383965295616",
           "title": "后台开发"
         },
@@ -9783,7 +9778,7 @@
           "title": "PC客户端开发"
         },
         "id:1282707439695012865": {
-          "fingerprint": "2e6f10f7f35e7a3c516effd8905a5228a0be512dc43d4b3c85db4ec66bd5da83",
+          "fingerprint": "3497fe2ace0f519bf7fe1a45435984e2ade368c51f45ecdb3744a6b80d54e6c5",
           "official_url": "https://join.qq.com/post_detail.html?postId=1282707439695012865",
           "title": "前端开发"
         },
@@ -10148,7 +10143,7 @@
           "title": "财经线培训生-AI应用开发"
         },
         "id:1284862486247711744": {
-          "fingerprint": "784fab71ce176256fdddccd0fd1751ca7516d9ddd8d1b4ade735d9ae28fc81f8",
+          "fingerprint": "6c52972cfe90ba435848cbfb50c21a0c975d712c4c6073dd72c359c443b99367",
           "official_url": "https://join.qq.com/post_detail.html?postId=1284862486247711744",
           "title": "AI产品经理"
         },
@@ -10613,9 +10608,9 @@
           "title": "秘书"
         },
         "id:1296891635279560704": {
-          "fingerprint": "6eb3e2a0b683ec25d1e8ee5c9cce136ba24f077df8b3b605deeb6aaff6e18978",
+          "fingerprint": "8879e8a3b1a0e2fa1f5cc74f3200b5c0a9e3b54c782c06d7f299ef29017a5c48",
           "official_url": "https://join.qq.com/post_detail.html?postId=1296891635279560704",
-          "title": "面向金融场景的长程交互 Agentic 强化学习训练稳定性研究"
+          "title": "金融 Agent 问题归因与递归自我改进机制研究"
         },
         "id:1296891639222206464": {
           "fingerprint": "ece9b6561b4f249f3d2718b0357550c4d49ca5d489f4fd660a7483db4670caa4",
@@ -10673,7 +10668,7 @@
           "title": "WXG 高性能大规模向量检索系统"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -11663,7 +11658,7 @@
           "title": "行政助理Executive Assistant"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -11892,6 +11887,11 @@
           "official_url": "https://hr.163.com/position/detail.html?id=32984",
           "title": "资深场景编辑设计师（界外狂潮）"
         },
+        "id:33140": {
+          "fingerprint": "c34f36e29d92e92e1d07520c92770954174e676d8b1195495f054b7856a56035",
+          "official_url": "https://hr.163.com/position/detail.html?id=33140",
+          "title": "资深Android开发工程师（多终端业务）"
+        },
         "id:33178": {
           "fingerprint": "98311cc66875c03e7a03f6b545fcb921f9eeb39b4218e5c7075f9314a82a2e6b",
           "official_url": "https://hr.163.com/position/detail.html?id=33178",
@@ -11958,9 +11958,9 @@
           "title": "资深游戏影视编导（雷火）"
         },
         "id:37887": {
-          "fingerprint": "0fd01a83f43a77d5fb3cfd89ca963fb4960a57ccbbb7de837b2ab3ba0ab0ccd6",
+          "fingerprint": "5c50b115fc4475f3b8adf9d9c5f800f3f1194688e6cb7a6e7f95115e925a44db",
           "official_url": "https://hr.163.com/position/detail.html?id=37887",
-          "title": "游戏关卡策划 （永劫无间手游）"
+          "title": "游戏关卡策划 （永劫无间）"
         },
         "id:37904": {
           "fingerprint": "c8dbc16fec5a3beafbad495c4e85bc00b45afa55276cc5f176bf3c04a17448e2",
@@ -13008,9 +13008,9 @@
           "title": "游戏营销策划（创意导演方向）"
         },
         "id:58332": {
-          "fingerprint": "2e743f55d2bd5c2a857c59dba56cbc51856388d89fdbff994ea97e4c355fd7f2",
+          "fingerprint": "33e0b41ff61e6cf2ac92643bfd2353a82b72dbe8785a45fc87fbd2dce07fa37c",
           "official_url": "https://hr.163.com/position/detail.html?id=58332",
-          "title": "高级/资深动作设计师"
+          "title": "资深动作设计师"
         },
         "id:58364": {
           "fingerprint": "eb0dec2654e45a62915e2a9ca696f6b079cd5e37ca92cfe8547a3004cbb6dd82",
@@ -13893,7 +13893,7 @@
           "title": "场景编辑设计师（诡影藏锋）"
         },
         "id:65129": {
-          "fingerprint": "b9bd422e81f52fd22a33cdf631f7988c8d335ca660609c11dc3b4dfcfc1bfaba",
+          "fingerprint": "a8b27cc7f40cdea12c3b43803784119b202b0c4d12b9e44f2a2805dc182ec11a",
           "official_url": "https://hr.163.com/position/detail.html?id=65129",
           "title": "TOB内容运营实习生"
         },
@@ -16248,9 +16248,9 @@
           "title": "运营策划（活动运营）-烈酷工作室"
         },
         "id:73424": {
-          "fingerprint": "404b55ca24022e04f7992c974482e114fdfc7d4016045e9921f5701b7a73a066",
+          "fingerprint": "c6352c75573ecd3ccff1aeca4aa5d0749389aa87390f519b3cd4501defe6994e",
           "official_url": "https://hr.163.com/position/detail.html?id=73424",
-          "title": "高级/资深特效设计师（设计/制作）"
+          "title": "资深特效设计师（设计/制作）"
         },
         "id:73426": {
           "fingerprint": "010f13de5fe7f18e1c8110b66b5182bbeb7590f6e1dc26b7c89ad989f3840c8d",
@@ -18342,6 +18342,11 @@
           "official_url": "https://hr.163.com/position/detail.html?id=76314",
           "title": "资源策划实习生（一梦江湖）"
         },
+        "id:76327": {
+          "fingerprint": "736fd2fffdd99b85846f8579c0d439007e01bbe4c77f5ffca69ed6845e4eda44",
+          "official_url": "https://hr.163.com/position/detail.html?id=76327",
+          "title": "海外短剧商务实习生"
+        },
         "id:76329": {
           "fingerprint": "2f18bb347ee357e0b5848fe67ac221c49ac0a41e74be01be5a027e2fbe3ac98b",
           "official_url": "https://hr.163.com/position/detail.html?id=76329",
@@ -19323,9 +19328,9 @@
           "title": "资深体验设计师（商业化方向-UI）"
         },
         "id:76964": {
-          "fingerprint": "20d04418582cadfd36aa7b2be5f5dde8a9d76654fb765e7c239b32b5ba5a7e06",
+          "fingerprint": "0af17af77f99cecadcc54580fc2e003762ec9c07ae35c3330025c243dd45b0a3",
           "official_url": "https://hr.163.com/position/detail.html?id=76964",
-          "title": "资深体验设计师（内容平台方向-UI）"
+          "title": "资深体验设计师（平台/社区/商业化方向-UI）"
         },
         "id:76967": {
           "fingerprint": "034394c67d8fe4ee7aa25824d576bf7216ef33b62d7f5c94463b74b3eca9428a",
@@ -24533,9 +24538,9 @@
           "title": "长音频创作者产品经理"
         },
         "id:79070": {
-          "fingerprint": "fe7ada7a39952d0049b167a890b93676bdb71f2b8e8f7b8cde91fbc79a056ce3",
+          "fingerprint": "6bc9c1e83f448d48334bd6626071b3f269abcb74eb8d8ed0a949ac42a1f72fc6",
           "official_url": "https://hr.163.com/position/detail.html?id=79070",
-          "title": "高级/资深3D角色制作设计师"
+          "title": "资深3D角色制作设计师"
         },
         "id:79077": {
           "fingerprint": "a68c0d162c67abe8320146b3feb080c17bf681f81409d78ddb4041293b9061b3",
@@ -25187,13 +25192,58 @@
           "official_url": "https://hr.163.com/position/detail.html?id=79259",
           "title": "资深动画设计师（表演）-在研项目"
         },
+        "id:79260": {
+          "fingerprint": "a864bd4cddfe354fb470856c70e342a727356a73390e59c3b75683a127428f09",
+          "official_url": "https://hr.163.com/position/detail.html?id=79260",
+          "title": "浪潮内容运营实习生"
+        },
+        "id:79261": {
+          "fingerprint": "0d70fd5a2dd6708c4ac4d6f25cc4cc79b8189f9c588d17c87611b7d8a3835675",
+          "official_url": "https://hr.163.com/position/detail.html?id=79261",
+          "title": "资深动画设计师（在研风格化-3C）"
+        },
+        "id:79262": {
+          "fingerprint": "e6101c06602a1a51811385fbe0c7b4abf3ffeecb466c864d10cf5010fbf7aa80",
+          "official_url": "https://hr.163.com/position/detail.html?id=79262",
+          "title": "日语运营实习生"
+        },
+        "id:79263": {
+          "fingerprint": "b83e94385a1be115e8500e772e207ab91904d7660d453e07c0d0d2981c05b9c0",
+          "official_url": "https://hr.163.com/position/detail.html?id=79263",
+          "title": "资深概念设计师（角色）-极限战场"
+        },
+        "id:79265": {
+          "fingerprint": "15bbb46b9c43dfb92843a3e307cc367607f75f6f18fbb2618f919be489d5126e",
+          "official_url": "https://hr.163.com/position/detail.html?id=79265",
+          "title": "游戏测试工程师（明日之后）"
+        },
+        "id:79266": {
+          "fingerprint": "2ece7e16727cf69af0bcf1923f6266556ed19caa7d8f3ac4b233fac4d3b8d700",
+          "official_url": "https://hr.163.com/position/detail.html?id=79266",
+          "title": "法律顾问(投资并购/上市合规)"
+        },
+        "id:79267": {
+          "fingerprint": "89b5961a29996f181db02718958872b48841cf169fb51d0527c35296b3e3fb11",
+          "official_url": "https://hr.163.com/position/detail.html?id=79267",
+          "title": "服务端开发工程师（大话3）"
+        },
+        "id:79268": {
+          "fingerprint": "0ca48177d309d7fba3528bbb68a092d619bb61061e73828d488d6922e21c75df",
+          "official_url": "https://hr.163.com/position/detail.html?id=79268",
+          "title": "资深3D角色制作设计师"
+        },
+        "id:79269": {
+          "fingerprint": "fe5f5871434252ffc888940278a1b8225ebb583955077c6bf8cd7142f746c75e",
+          "official_url": "https://hr.163.com/position/detail.html?id=79269",
+          "title": "高级/资深游戏体验设计师（搜打撤在研项目）"
+        },
         "id:8226": {
           "fingerprint": "bf2ae8577071469a634f7b0544a988dfe7fabc06e9d5d3fc974f609823539437",
           "official_url": "https://hr.163.com/position/detail.html?id=8226",
           "title": "资深/专家客户端性能优化（无限大）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -25653,7 +25703,7 @@
           "title": "企业文化及雇主品牌内容运营【2027届】"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -25807,11 +25857,6 @@
           "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/3f928ccc-87bc-4b18-bd72-70bc0b5a062e",
           "title": "27届秋招-策略运营顾问-单车"
         },
-        "id:4471ffdc-f548-4894-8c09-e9d208f67093": {
-          "fingerprint": "6a3a807f7f9b3489ef8d2e74d4e316c81e39acb75adb99fe2726fa071dd52fe2",
-          "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/4471ffdc-f548-4894-8c09-e9d208f67093",
-          "title": "27届秋招-服务设计专员"
-        },
         "id:44bc1691-281f-465a-823f-6e8c8bd7a5b3": {
           "fingerprint": "69a57bc40fe554c03ca5694ba1d2145724290f9d78e687d80907808728c375c1",
           "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/44bc1691-281f-465a-823f-6e8c8bd7a5b3",
@@ -25951,11 +25996,6 @@
           "fingerprint": "1f7130f716cc02ff985fbcfc8c2aa329618b7df60b408ce866474cd112ff732a",
           "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/84a3b703-c978-4dce-bd9f-6c93764c8468",
           "title": "27届秋招-国际化运营分析师（国际化外卖-葡语）"
-        },
-        "id:84bf465f-191e-4bb5-9861-d7904dfae232": {
-          "fingerprint": "1ed37a8ae6a3292801b54e2aad53cf93db48407a243bac181193818fc8937195",
-          "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/84bf465f-191e-4bb5-9861-d7904dfae232",
-          "title": "27届秋招-Operations Analyst（国际化金融-MX信贷）"
         },
         "id:878e9da3-1d9f-469d-b7d5-3dec329a14ab": {
           "fingerprint": "aa3ae5de0c160e82941f0fdbb777b860b9645c463943f17f882f91b5dc890d3e",
@@ -26137,11 +26177,6 @@
           "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d11962b6-a340-46b1-96dc-549bea93ab39",
           "title": "27届秋招-算法工程师（国际化出行-定价）"
         },
-        "id:d38617b6-e860-47b9-ae58-0c8c5b91566e": {
-          "fingerprint": "c85966e7cb80c51b5eee17dd5e9e6c773fae16e30ac40a1e2d1b71bc72ebb0fe",
-          "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d38617b6-e860-47b9-ae58-0c8c5b91566e",
-          "title": "27届秋招-移动安全工程师"
-        },
         "id:d501baff-8aaf-4970-b7fd-ca48367e0caf": {
           "fingerprint": "1cc91a2679a925830a2544f1748d4af9c42760c34857cfb921c07de2bc0cb29a",
           "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d501baff-8aaf-4970-b7fd-ca48367e0caf",
@@ -26248,8 +26283,8 @@
           "title": "27届秋招-商业分析师（国际化外卖）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-009": {
@@ -26438,7 +26473,7 @@
           "title": "客户端研发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -26958,7 +26993,7 @@
           "title": "客户经理（小语种）   应届生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -27243,9 +27278,9 @@
           "title": "【REDstar】Agent 应用算法工程师-创新业务"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
-      "last_status": "PARTIAL"
+      "last_status": "COLLECTED_UNREVIEWED"
     },
     "official-012": {
       "baseline_kind": "observed",
@@ -27343,7 +27378,7 @@
           "title": "特效研发（SDK开发方向）实习生 - TikTok智能创作"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -27498,7 +27533,7 @@
           "title": "芯片/处理器验证工程师"
         },
         "id:199907620045": {
-          "fingerprint": "15abfc5758718c0975dee1ddaa11dcf6591a35a30d1a5ffef92b0829ef2b1919",
+          "fingerprint": "d53d568d076f71908fe4d5cb434e12423d684d9078f9a50319b5708829a3bc86",
           "official_url": "https://campus-talent.alibaba.com/campus/position-detail?positionId=199907620045",
           "title": "面向大模型推理的通用后端运行时系统研究-阿里星/A Star"
         },
@@ -28138,7 +28173,7 @@
           "title": "算法工程师-AI Agent"
         },
         "id:199907700029": {
-          "fingerprint": "86bf550c067b42d371510ed1a49bd35379ec2240650200c1848005d2b5c2f74e",
+          "fingerprint": "be279318a38bab6c48f800ebbc1ac09d31c0b0c1bd056b474cfc2686d0bb90bc",
           "official_url": "https://campus-talent.alibaba.com/campus/position-detail?positionId=199907700029",
           "title": "算法工程师-多模态AIGC"
         },
@@ -29698,7 +29733,7 @@
           "title": "游戏文案策划（日系幻想）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -32003,7 +32038,7 @@
           "title": "招聘实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -32023,7 +32058,7 @@
           "title": "医生运营（健康）"
         },
         "id:present:9028": {
-          "fingerprint": "bb1c20a9f59a3e240d46033ad000f9555b11c6038a1d7f986cb1ec80ab2a1ffc",
+          "fingerprint": "56c187320a0c9461df16423a1b839fe20c0383cd999ea388031ac2d98fc4a0dc",
           "official_url": "https://campus.jd.com/#/details?type=present&id=9028",
           "title": "航空职能"
         },
@@ -32108,7 +32143,7 @@
           "title": "工程项目管理"
         },
         "id:present:9052": {
-          "fingerprint": "6dd040411368787f3ae38f9904ec3f27d2e9927a813df85026ef1fe5cf294769",
+          "fingerprint": "3327a776c70eee3743633b17104d93477f50717083c01399ced74f58492d9083",
           "official_url": "https://campus.jd.com/#/details?type=present&id=9052",
           "title": "销售运营"
         },
@@ -33233,7 +33268,7 @@
           "title": "大场景重建流式3D基础模型"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -34428,7 +34463,7 @@
           "title": "AI研究员（感知与交互方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35258,7 +35293,7 @@
           "title": "数据库工程师（IT方向）-27届秋招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -35306,6 +35341,16 @@
           "fingerprint": "4ed8cb48890656839d6303bea962b211b3408c8ce44cf5f1f7f26b9f6672ae85",
           "official_url": "https://join.wps.cn/campus-recruitment/wps/41436#/job/3b4db58f-1457-45b2-95d2-67920d93c3fa",
           "title": "服务端研发工程师（全栈发展）-面向2027届-珠海"
+        },
+        "id:3ede78fa-510b-45f7-9979-962c3a70af1b": {
+          "fingerprint": "411ca5128be5fa8c3a53ebb6a8018df975512ca9caaf5da079bdb933d4d73b11",
+          "official_url": "https://join.wps.cn/campus-recruitment/wps/41436#/job/3ede78fa-510b-45f7-9979-962c3a70af1b",
+          "title": "精英算法研发工程师（全栈化业务）-面向2027届-武汉"
+        },
+        "id:3f17d6a6-aec4-4a20-8130-eacb17e874ee": {
+          "fingerprint": "86dfbce0c24528f6091f080550735adbb9827011189b917b9e5bff7aea8f7f1e",
+          "official_url": "https://join.wps.cn/campus-recruitment/wps/41436#/job/3f17d6a6-aec4-4a20-8130-eacb17e874ee",
+          "title": "算法工程师（全栈发展）-面向2027届-武汉"
         },
         "id:40faf799-c06b-4f93-9455-79be63ce6b51": {
           "fingerprint": "d1f75031c83e3a0ef61e365f56055542e08726e9c11c9b5a7fe74e2d0845897e",
@@ -35498,8 +35543,8 @@
           "title": "项目运营实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-019": {
@@ -35583,7 +35628,7 @@
           "title": "机器人原创IP孵化与内容创作（漫画/动画）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -38813,14 +38858,14 @@
           "title": "硬件测试工程师(J13438)"
         },
         "id:190842318": {
-          "fingerprint": "4c17e505147e475ae8bd6ba7fe4cee8ac55118d2905e8038ac2111066f184486",
+          "fingerprint": "a7d3a010acc6ca6e42df5f8f416483fb73cf503ec576a0f01e9d53fecec82f65",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842318",
-          "title": "测试开发工程师(J13398)"
+          "title": "测试开发工程师（大量HC）(J13398)"
         },
         "id:190842319": {
-          "fingerprint": "58d62d93d4242f52986b17ed8c60777689eb6a6f4e3c91f7b175c3c9c7730291",
+          "fingerprint": "0130b78df405ce59a8b6907ec7d5bc83e86d2259a2439758db11c14493ca231b",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842319",
-          "title": "AI算法测试开发工程师(J13365)"
+          "title": "AI算法测试开发工程师（大量HC）(J13365)"
         },
         "id:190842323": {
           "fingerprint": "e7010816dd06cfad666bcc669c4663656d57445275b5b99e8d142e7cfbac6625",
@@ -38838,9 +38883,9 @@
           "title": "运营管理师(J13444)"
         },
         "id:190842326": {
-          "fingerprint": "33da021276c5118af83bd4a6ab7518d228fd6db40a307ae561802f8704741f7d",
+          "fingerprint": "268425d6f727f2d20d790c9e2716553622398979ee847444562e319aacc4e0a5",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842326",
-          "title": "运营管理(J13443)"
+          "title": "运营管理（大量HC）(J13443)"
         },
         "id:190842329": {
           "fingerprint": "bbaa59e846278fea3756b99a91c11b5f2061f8d78ea8975c7aa332ae7a3028c3",
@@ -38873,9 +38918,9 @@
           "title": "大模型数据项目经理(J13404)"
         },
         "id:190842349": {
-          "fingerprint": "66360d893c63e75fe85503bd45a1ce0fee4c9cebd4c42c18f46c10185f22499a",
+          "fingerprint": "072ca434aa9c59414d5810114a28fc77b6bc58ef85390cfb3faaa7cc3141ede4",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842349",
-          "title": "AI数据工程师-基座大模型方向(J13364)"
+          "title": "AI数据工程师-基座大模型方向（大量HC）(J13364)"
         },
         "id:190842353": {
           "fingerprint": "64e34374f545d9e7bae75de9ad828b00c97790fb48f385efe33c74f416c8d8cf",
@@ -38948,9 +38993,9 @@
           "title": "零售运营(J13419)"
         },
         "id:190842390": {
-          "fingerprint": "7addc440b9a61632a7a19a0ad66ae6d77a51cfb6800453d481783208813ff6fc",
+          "fingerprint": "0657233339823539f8a45192a3c061eec214380a7dd8ee305890b809d54e3b42",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842390",
-          "title": "客户经理(J13416)"
+          "title": "客户经理（大量HC）(J13416)"
         },
         "id:190842391": {
           "fingerprint": "0c56d0ed9cf9468756f9bbb3dae6022805d99d4030a79d141af584736bdd388b",
@@ -38993,9 +39038,9 @@
           "title": "产品经理(J13399)"
         },
         "id:190842422": {
-          "fingerprint": "dbc4795ec6924f24827b2a9689c30cc0eb2d74154a4931bd5e322f62dbabb77c",
+          "fingerprint": "c5694c30240e43296fb4239c2087bd9969a57dad84f155d5af84ecfb06f93fe3",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842422",
-          "title": "大数据工程师(J13405)"
+          "title": "大数据工程师（大量HC）(J13405)"
         },
         "id:190842424": {
           "fingerprint": "01841a5f8ac42a9b0b95cf1cb00672321e592a2af35e87b1cbdb6afd02b15b91",
@@ -39028,9 +39073,9 @@
           "title": "硬件开发工程师(J13440)"
         },
         "id:190842433": {
-          "fingerprint": "700e70c75c08f99456fbd41a5cdf5ec86d2167d1ec70c447b5885bddf93f6758",
+          "fingerprint": "8c3699d9cc6458c06dce039f28a8e3f9dcb7ac2e30e3e38b775bf58778ffa3ec",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842433",
-          "title": "移动端开发工程师-Android(J13437)"
+          "title": "移动端开发工程师-Android（大量HC）(J13437)"
         },
         "id:190842434": {
           "fingerprint": "964786b5858b61ed86ad3acb556c0d31401ce597b714f145ae144fc478e86f72",
@@ -39053,9 +39098,9 @@
           "title": "安全工程师(J13396)"
         },
         "id:190842438": {
-          "fingerprint": "3d3d48220e8c60b7c6d27ea40f826e37591e905edbc2cb60c1f835a193bb255f",
+          "fingerprint": "0190e95a838eb990f796e85dcf43568ece85ba8a5596e84e45cbd7c4f15b4a33",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842438",
-          "title": "Java开发工程师(J13394)"
+          "title": "Java开发工程师（大量HC）(J13394)"
         },
         "id:190842439": {
           "fingerprint": "874c17925ce46f5559eb2c28bcb6956c5beab8bd032c37e89448368bf083cc46",
@@ -39068,9 +39113,9 @@
           "title": "C++开发工程师(J13392)"
         },
         "id:190842454": {
-          "fingerprint": "06486a13e97af29a43a481e2418ff83885a532e029ca058fe73428d3ecad499c",
+          "fingerprint": "357080a984220866d0f8579a6ed5943ac7dc7b5e284cf288a87ac51b8c5f8bce",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842454",
-          "title": "AI研究算法工程师-智能语音方向(J13389)"
+          "title": "AI研究算法工程师-智能语音方向（大量HC）(J13389)"
         },
         "id:190842455": {
           "fingerprint": "8a00ad4d69df7b515389fe8b8e9d03d28d11fa7ad1bbdc7fcf7bf3be81ab051f",
@@ -39088,9 +39133,9 @@
           "title": "AI研究算法工程师-语音大模型方向(J13388)"
         },
         "id:190842459": {
-          "fingerprint": "76f875bd735f3d1d84ab5df3805fbda21aa0d0356025e8b57e699c4368fbf6c8",
+          "fingerprint": "0a6c48076ae2ea0b0df8027f57b691ef7851784fddb6a53c0ec74434dbbe0cc1",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842459",
-          "title": "AI研究算法工程师-数据方向(J13385)"
+          "title": "AI研究算法工程师-数据方向（大量HC）(J13385)"
         },
         "id:190842460": {
           "fingerprint": "f13b24f63e3ad825999da36e467e73dd8cd3623a91ee7b7a56f7073686bab219",
@@ -39103,9 +39148,9 @@
           "title": "AI研究算法工程师-具身智能数据方向(J13382)"
         },
         "id:190842462": {
-          "fingerprint": "bdd5876cebd60581eb7eb4bab31b52eb443b45f6fd9a2d651eb5c0e3152b97e4",
+          "fingerprint": "39418e1937a2311bceb4f1797c999ff3090c0c722b6a29a534c98e5af461cdee",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842462",
-          "title": "AI研究算法工程师-认知大模型方向(J13383)"
+          "title": "AI研究算法工程师-认知大模型方向（大量HC）(J13383)"
         },
         "id:190842463": {
           "fingerprint": "371782a8df1a1135db5da51f6ed8ae9d383cbc21ee841902487e7d9b299cc9b7",
@@ -39153,9 +39198,9 @@
           "title": "AI研究算法工程师-高性能算子开发方向(J13373)"
         },
         "id:190842472": {
-          "fingerprint": "0ffc07f22461b9aa3b8848aacb74d39c7450f626954464ecbda3858e04be1d43",
+          "fingerprint": "9ada5c21025109d1aeacae9c1b98b4eadff678cb03901b30078cb1d0b518ffb8",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842472",
-          "title": "AI研究算法工程师-多模态大模型方向(J13371)"
+          "title": "AI研究算法工程师-多模态大模型方向（大量HC）(J13371)"
         },
         "id:190842473": {
           "fingerprint": "f397c5bbc004209247a7f8866373bca0abaadb061fc41452ab1a33fda138aa14",
@@ -39163,9 +39208,9 @@
           "title": "AI研究算法工程师-多模态理解方向(J13372)"
         },
         "id:190842474": {
-          "fingerprint": "22cd5dab8d46599e12d8c4f651508288714c1b0e0daee2d2e70234a5eb4b3eca",
+          "fingerprint": "e4aec035cecd8bd0853208ad04016714a69eac0de152dc22b5477a8a6dcd7991",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842474",
-          "title": "AI研究算法工程师-大模型预训练数据研究方向(J13369)"
+          "title": "AI研究算法工程师-大模型预训练数据研究方向（大量HC）(J13369)"
         },
         "id:190842475": {
           "fingerprint": "a5739c2916d40830c6a6ca1c2ef1e084589279cd311f612614ee87c0dce425c1",
@@ -39173,9 +39218,9 @@
           "title": "AI研究算法工程师-大模型训推框架优化方向(J13368)"
         },
         "id:190842476": {
-          "fingerprint": "9134a1671b94fb6185e0da9e6228c428c8bbaf8abafe192a442715c1705f81ad",
+          "fingerprint": "0729d9d891fa3f209ac0f6ef06a7b083766ef136126b73d0fc2a6209cb2077e3",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190842476",
-          "title": "AI研究算法工程师-大模型预训练算法岗位(J13370)"
+          "title": "AI研究算法工程师-大模型预训练算法岗位（大量HC）(J13370)"
         },
         "id:190842477": {
           "fingerprint": "f4a523b371de09e3a82829d2c617531816be09502b9a5d4f72072a08f15a2397",
@@ -39743,9 +39788,9 @@
           "title": "国家智能语音创新中心-机器人系统集成&车载落地工程师-合肥(J14402)"
         },
         "id:190861958": {
-          "fingerprint": "f9253e6446559c1f258cf20b180219c3478cba9087e43aaea7ff0002f81249bb",
+          "fingerprint": "8ddc23b6498fab4fdbd8168bd4c4c42de783ce353b92aefd0397a631d3aa5d21",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190861958",
-          "title": "学科教研员-语文/数学/英语/物理/化学/历史/地理方向(J14408)"
+          "title": "学科教研员-语文/数学/英语/物理/化学/历史/地理方向（大量HC）(J14408)"
         },
         "id:190861961": {
           "fingerprint": "ea090b16c686f58876dec2eabf95e1b42923433b8f5744916bfd7b52ec2f8776",
@@ -39788,9 +39833,9 @@
           "title": "中级售前咨询(J14437)"
         },
         "id:190862398": {
-          "fingerprint": "c3287b9453620daf529ce7853a4c121974c16bc6c5c02b839692a3f69d9d640c",
+          "fingerprint": "91d8225b28253af88de59925ee44939c5627fb859445a55c19a6ea4c12d72dba",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190862398",
-          "title": "AI全栈开发工程师(J14446)"
+          "title": "AI全栈开发工程师（大量HC）(J14446)"
         },
         "id:190862402": {
           "fingerprint": "7389670746ec256bfa2fd1db27763aa5281a690e2b36ca09b1fef91c45e8f744",
@@ -40021,9 +40066,34 @@
           "fingerprint": "4bc6fc24e86147755b91f93f32ad33296e261cce0cc79e86717cd50583bb93c0",
           "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190869895",
           "title": "初中学科主讲老师-数学/英语/语文/物理/化学(J14685)"
+        },
+        "id:190869947": {
+          "fingerprint": "ebbaa693eecd2c21c6a5b58e30c0d6a7fb74c7dfd1697224a87085d445972df0",
+          "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190869947",
+          "title": "高级合规顾问(J14650)"
+        },
+        "id:190869949": {
+          "fingerprint": "9d2731b6603d06f9ac2ea36296bf0bab0845df802c74ed346abcdcaa9d28a8b3",
+          "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190869949",
+          "title": "高级专利工程师(J14649)"
+        },
+        "id:190869954": {
+          "fingerprint": "89abd4742e042b4ae7ccca27d160b16d7c3ff90d9f8949796665d3fcd0d26251",
+          "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190869954",
+          "title": "中级法律顾问-综合法务(J12701)"
+        },
+        "id:190870005": {
+          "fingerprint": "16ce23f2bd21eb8d4048dceebbab5613ab154434360e6a4db9e09c8f0fb28bd3",
+          "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190870005",
+          "title": "中级行政综合专员(J14688)"
+        },
+        "id:190870134": {
+          "fingerprint": "5a3f8b8f2c8a35f15804b1613a91e01423b590470dce5684f414030ad6e27eac",
+          "official_url": "https://iflytek.zhiye.com/campus/detail?jobAdId=190870134",
+          "title": "安全工程师-AI智能体方向(J14695)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -40231,9 +40301,59 @@
           "fingerprint": "618d8d07bd1da77601e7ec6ea8c4e132de9d5f3a7b896e8f085b272ce28eb213",
           "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036640",
           "title": "Eagle Program – Big Data Engineer (2027 Graduates)(MJ036640)"
+        },
+        "id:30560120": {
+          "fingerprint": "6f1f687dab954e44207050eeabae5ddf36c51299c3b8075bfa81f2302b7b62f9",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ037349",
+          "title": "AI机器人运营（客服智能化方向）（2027届秋招）- 南通(MJ037349)"
+        },
+        "id:30560121": {
+          "fingerprint": "20db6446dcd4177766ae5ad121262f28712761fd13388b0b7bf0f84c3ddb123d",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ037323",
+          "title": "财务分析（2027届秋招）(MJ037323)"
+        },
+        "id:30560122": {
+          "fingerprint": "2bf530eb298b1d6e63bcb199013e7b9f6d7b9e0fe9e0a75abd7698b254459583",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036680",
+          "title": "IDC工程师（服务器运维方向）（2027届秋招）(MJ036680)"
+        },
+        "id:30560123": {
+          "fingerprint": "fa21cb0fc308af7a322b7e62ae67fe35098d5cdd21469581e0c086b192f6320f",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036670",
+          "title": "数据分析师（技术方向）（2027届秋招）(MJ036670)"
+        },
+        "id:30560124": {
+          "fingerprint": "77f39c1ee6b32a9071d5cb283cc2983a7c402a7f3f1b7559cd8acb197617bced",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676",
+          "title": "算法工程师（NLP方向）（2027届秋招）(MJ036676)"
+        },
+        "id:30560125": {
+          "fingerprint": "e348279fc454d9300819785303defad7a8b77966054988874204eb8ab0ab032c",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036671",
+          "title": "算法工程师（时间序列方向）（2027届秋招）(MJ036671)"
+        },
+        "id:30560126": {
+          "fingerprint": "7d9abf6d3ca7f6932125b9d996e91cb231f2e2e363e7e35b015e196ac1473f84",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036669",
+          "title": "数据仓库工程师（2027届秋招）(MJ036669)"
+        },
+        "id:30560142": {
+          "fingerprint": "1823f60d0e9219469eb5f7a0ba8673b8ee2115553bb21ba82de06c97edaa9775",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036717",
+          "title": "AI Solution (Customer Service Intelligence) - Arabic (2027 Graduates)(MJ036717)"
+        },
+        "id:30560166": {
+          "fingerprint": "0a1f82b97bee0c7895d41c54caf14a7bff2f1ffa64902bbc624805f838723af7",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036639",
+          "title": "Eagle Program – Business Analyst (2027 Graduates)(MJ036639)"
+        },
+        "id:30560173": {
+          "fingerprint": "618d8d07bd1da77601e7ec6ea8c4e132de9d5f3a7b896e8f085b272ce28eb213",
+          "official_url": "https://careers.ctrip.com/campus#/experienced/job-detail/MJ036640",
+          "title": "Eagle Program – Big Data Engineer (2027 Graduates)(MJ036640)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -40751,9 +40871,19 @@
           "fingerprint": "f1e3d33bee53df1895d33e3bb8a6194be46587451ae95ef2d08ac0384ebb8ac5",
           "official_url": "https://360campus.zhiye.com/campus/detail?jobAdId=351619101",
           "title": "税务实习生（北京）-4293(J11981)"
+        },
+        "id:351619987": {
+          "fingerprint": "66073d50229be4ca20763049f05d7c0fc6d9948ed20283e2a06b10f42e650792",
+          "official_url": "https://360campus.zhiye.com/campus/detail?jobAdId=351619987",
+          "title": "安全服务实习生（温州）-5424(J12489)"
+        },
+        "id:351620082": {
+          "fingerprint": "d3dfa4492093aa13d2b806a40be0d15b92c2bfb0bca8f2be2cb5036779c3ba8f",
+          "official_url": "https://360campus.zhiye.com/campus/detail?jobAdId=351620082",
+          "title": "财务实习生（北京）-4231(J11983)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -41568,8 +41698,8 @@
           "title": "【27届校招】供应链-项目管理"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-024": {
@@ -41763,8 +41893,8 @@
           "title": "AI跨界技术人才"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-025": {
@@ -42243,8 +42373,8 @@
           "title": "Agent Engineer（实习生）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-026": {
@@ -42252,6 +42382,36 @@
       "baseline_ready": true,
       "company": "MiniMax",
       "jobs": {
+        "id:6791698585115281672": {
+          "fingerprint": "e54b4139d3ea78bf190d306a09495a57d593953a531454447e45d9bc3526e284",
+          "official_url": "",
+          "title": "职能 / 支持"
+        },
+        "id:6791702736615344397": {
+          "fingerprint": "f711c668e50b7cf304690de8ec8a15e5410f462733c6e1b2646b0106926cb6c3",
+          "official_url": "",
+          "title": "设计"
+        },
+        "id:6791702736615377165": {
+          "fingerprint": "dca635aa3a13875bf1d5a7bdab0b7e908004ceefc16d97dda477ce8302062347",
+          "official_url": "",
+          "title": "市场"
+        },
+        "id:6791702736615393549": {
+          "fingerprint": "7b80c05cc3066ff4e2830d9ddd7428c991784fe2a1b7a0fa71defb6f559d4506",
+          "official_url": "",
+          "title": "运营"
+        },
+        "id:6791702736615409933": {
+          "fingerprint": "c21be3db2c9b01877fec368658a34544b056094a42a928ab62abf7c0a86c802a",
+          "official_url": "",
+          "title": "产品 / 策划 / 项目"
+        },
+        "id:6791702736615426317": {
+          "fingerprint": "074d4b1d854eb22cccc661ed0ff970c5a15042b9bc4b7b162b03fb22c91c7fdc",
+          "official_url": "",
+          "title": "研发"
+        },
         "id:7352871192115857674": {
           "fingerprint": "1f98dfb26d02734e2a0687db0719af931eac8dc9dab59bb681ab06f73e0e9f69",
           "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7352871192115857674/detail",
@@ -42753,9 +42913,9 @@
           "title": "AI 招聘实习生（职能方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": "2026-10-12T12:43:15Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-027": {
       "baseline_kind": "complete",
@@ -42883,9 +43043,9 @@
           "title": "27届校招-预训练算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T10:52:30Z",
-      "last_status": "INCOMPLETE"
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
+      "last_status": "OK"
     },
     "official-028": {
       "baseline_kind": "complete",
@@ -43538,8 +43698,8 @@
           "title": "运营实习生（专家访谈运营 ）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-029": {
@@ -43636,11 +43796,16 @@
           "fingerprint": "5b699606609f0c47f8537ef8fc832cc7e42de3f8bc17d9154a4dc4f50ec55d8e",
           "official_url": "https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7680029585811360027/detail",
           "title": "【日常实习】后训练算法实习生-百川模型训练团队"
+        },
+        "id:CT_11": {
+          "fingerprint": "1c7dfc9b39710f54d4c8023c9695685f13b9720e3784c5114e43190d721f0be3",
+          "official_url": "",
+          "title": "北京"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": "2026-10-12T12:43:15Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-030": {
       "baseline_kind": "complete",
@@ -43903,8 +44068,8 @@
           "title": "Chief of Staff"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-031": {
@@ -44626,19 +44791,54 @@
           "fingerprint": "8c54a0449309443bc21625d7ed353005c8255cfb958cfc271dbf8312d09f0ad5",
           "official_url": "https://hr-jobs.sensetime.com/edu/position/7690887161617582399/detail",
           "title": "商务运营实习生-深圳"
+        },
+        "id:CT_11": {
+          "fingerprint": "1c7dfc9b39710f54d4c8023c9695685f13b9720e3784c5114e43190d721f0be3",
+          "official_url": "",
+          "title": "北京"
+        },
+        "id:CT_1103597": {
+          "fingerprint": "c4a084f01e66433ff971a33040eedbcd94c0ad80df65f430b2f2a4d52b4f4c63",
+          "official_url": "",
+          "title": "新界"
+        },
+        "id:CT_125": {
+          "fingerprint": "2175ae585843d24c9e1aff8125dfc1d74a5dcda956221aa3003c964ada059f7a",
+          "official_url": "",
+          "title": "上海"
+        },
+        "id:CT_128": {
+          "fingerprint": "816781630c8146252d301c2a59a017dc45bcfaf2f9467413d5462724111b7a43",
+          "official_url": "",
+          "title": "深圳"
+        },
+        "id:CT_163": {
+          "fingerprint": "6b27adbc2f52671c028ea9d620ab37a46aa7cde93ee2f6509149aab5ef456c89",
+          "official_url": "",
+          "title": "新加坡"
+        },
+        "id:CT_22": {
+          "fingerprint": "ea15de24b77e291e06ee6d213eeeeb32bf56b9ddd21612c1cf35d342de1318c9",
+          "official_url": "",
+          "title": "成都"
+        },
+        "id:CT_52": {
+          "fingerprint": "aa6ecef7161d7ad016da75046690f790093ba6bb099c186d02f3371b2b7a7721",
+          "official_url": "",
+          "title": "杭州"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": "2026-10-12T12:43:15Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-032": {
       "baseline_kind": "complete",
       "baseline_ready": true,
       "company": "生数科技",
       "jobs": {},
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-033": {
@@ -44772,8 +44972,8 @@
           "title": "解决方案工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-034": {
@@ -44936,6 +45136,11 @@
           "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7695750179614705947/detail",
           "title": "大语言模型算法研究实习生（法律数据方向）"
         },
+        "id:7695759047416613129": {
+          "fingerprint": "4566942095f534e89a29b29b7590460c202158d51f686c796645f3de2058beda",
+          "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7695759047416613129/detail",
+          "title": "code agent 后训练算法实习生"
+        },
         "id:CT_11": {
           "fingerprint": "1c7dfc9b39710f54d4c8023c9695685f13b9720e3784c5114e43190d721f0be3",
           "official_url": "",
@@ -45056,6 +45261,11 @@
           "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7688270353286924590/detail",
           "title": "强化学习算法实习生（LLM Agent 方向）\n上海校招实习技术 - 算法职位 ID：A87241\n1、面向 agentic 任务（多轮工具调用、代码修复 / SWE、网页搜索与信息检索、长程任务规划等）开展 LLM 的RL 后训练研究；\n2、研究并改进面向多轮、长 horizon、稀疏奖励场景的 RL 算法（GRPO / PPO 及其变体），包括优势估计与 credit assignment、off-policy 修正、探索与熵控制、训练稳定性等问题；\n3、参与 agent 任务的训练数据与评测设计：构造训练任务，设计可验证的奖励信号，分析 rollout 轨迹质量；\n4、独立设计并执行实验：数据构造与筛选、消融实验、训练曲线与 rollout 轨迹分析，定位 reward hacking、训练崩溃等问题并给出改进方案，撰写技术报告；有机会产出论文或开源成果；\n5、跟踪 agent RL 前沿工作并快速复现，在内部训练框架中落地验证。"
         },
+        "url:a6eae7421c96b8f9732e9641": {
+          "fingerprint": "2afe52031bcd0526a59d49371d89f7a2f388f22707af5b7e11f2b040b9203bd3",
+          "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7695759047416613129/detail",
+          "title": "code agent 后训练算法实习生\n北京校招实习技术 - 算法2027校园招聘职位 ID：A29634\n面壁智能基础模型团队，方向聚焦于提升端侧、云侧自研模型的长程 Code Agent 能力。本岗位主要负责长程代码任务的后训练优化，覆盖环境构建、轨迹合成、强化学习与上线后的持续迭代，使模型在多轮交互、多文件修改、长程任务执行、错误恢复与闭环交付中稳定泛化。\n主要负责长程 Code Agent 能力的后训练优化，包括但不限于：\n数据 scaling：构建高质量、多样化的 Agent 环境，用于 SFT 轨迹合成与 RL 训练\n优化 RL 算法，重点包括：\n1.奖励优化：奖励设计、过程奖励与细粒度奖励、长轨迹信用分配等，引导模型习得稳定的解题模式\n2.训练稳定性：通过重要性采样、loss 调整等方法维持梯度稳定；在更快的 infra 优化引入训推差异等不稳定因素时，进一步保证训练稳定\n3.探索优化：优化模型的搜索与采样方式，提升对更优轨迹的探索效率\n4.RL 训练加速：探索 single rollout 或 partial rollout + critic assignment 等方法，降低 rollout 长尾，提升 RL 整体速度\n5.多 Agent 优化：提升模型原生的多 Agent 协作能力，提高 test-time compute 的效率\n6.在线学习与持续学习：在模型部署上线后持续优化性能，形成训练与线上反馈的闭环"
+        },
         "url:ac579a1a8a55a94a8aadfe3c": {
           "fingerprint": "57f6fe955dc13582a76afc1c3192c1c7f2634e005a4b41274a7b9a958fc31934",
           "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7682708160822593811/detail",
@@ -45117,7 +45327,7 @@
           "title": "财务实习生\n北京校招实习职能 - 财务职位 ID：A117305\n1、协助财务团队进行日常财务工作，包括但不限于：装订并整理会计凭证、财务入账处理、对接常规审计及尽调审计等。\n2、参与财务数据的收集、整理和分析，提供财务建议。\n3、协助团队进行预算管理和财务规划。\n4、保持与团队成员的良好沟通，确保工作的顺利进行。"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -45227,8 +45437,8 @@
           "title": "IT Infrastructure Engineer"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-036": {
@@ -45322,7 +45532,7 @@
           "title": "Golang 后端工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -45657,7 +45867,7 @@
           "title": "社媒营销负责人"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -45912,8 +46122,8 @@
           "title": "（27届秋招）保险产品经理 - 深圳"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-039": {
@@ -46017,7 +46227,7 @@
           "title": "自然语言处理"
         },
         "id:2335": {
-          "fingerprint": "a5f9694491ba5d7c20fc86dfd75ff298938b8a69d8e79691bb24bb0bf2f97586",
+          "fingerprint": "0e3373e3babd74076915be1cc08e6dd20a6593f2c8d6baf4557ed527944aba02",
           "official_url": "https://talent.lenovo.com.cn/position/detail?id=2335",
           "title": "算法工程师"
         },
@@ -46057,7 +46267,7 @@
           "title": "数据挖掘工程师"
         },
         "id:2343": {
-          "fingerprint": "da3b7b7100614c90b70ce7ba3e8fd3c78edce26d66cff9ebe9a9ef3fd7dee9ab",
+          "fingerprint": "104e99b77c8e3c941a3dfc36fa173d0ef031df6e553e2e023371c153b6d5a97b",
           "official_url": "https://talent.lenovo.com.cn/position/detail?id=2343",
           "title": "AI知识管理工程师"
         },
@@ -46097,7 +46307,7 @@
           "title": "AI安全工程师"
         },
         "id:2351": {
-          "fingerprint": "9860197031a4093095a4585bf0b7b20d9cb70dfd27c618174c4dbf0b44a08367",
+          "fingerprint": "8eb63891c225ee9020f425005357b2315964f507c7111f9b7534c0ee1347076a",
           "official_url": "https://talent.lenovo.com.cn/position/detail?id=2351",
           "title": "AI应用开发工程师"
         },
@@ -46357,7 +46567,7 @@
           "title": "投后财务分析师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -46981,13 +47191,8 @@
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7667520488911390986/detail",
           "title": "Super Sparks-校招-端侧大模型与AgentOS优化工程师"
         },
-        "id:7673026521367415066": {
-          "fingerprint": "28c3d4bd04bccd7142e32820c66427b8750e389e2086ae93763c944ad13aa110",
-          "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026521367415066/detail",
-          "title": "校招-数据分析师"
-        },
         "id:7673026521368004890": {
-          "fingerprint": "e3e0676bbcf1f15d3268c3a0e6ec107a612ea8e76891cef71c0154953c94ca70",
+          "fingerprint": "c1e0d40de0ffe42d961e5ab896abed2d60b0e6a44553e5eb6182f39992bb4042",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026521368004890/detail",
           "title": "校招-供应链算法工程师"
         },
@@ -47166,11 +47371,6 @@
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026865195927818/detail",
           "title": "校招-全栈开发工程师"
         },
-        "id:7673026865196828938": {
-          "fingerprint": "14097a2344ea61750769d73079bc7025b2ffb5c5427e5ca52f56347c50eb243a",
-          "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026865196828938/detail",
-          "title": "校招-物料计划工程师"
-        },
         "id:7673026880093948186": {
           "fingerprint": "2f9e993e47b100b32eb3fcd8f52a9b73dd199ea121bc11fc46a14dc43dbda374",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026880093948186/detail",
@@ -47275,6 +47475,11 @@
           "fingerprint": "67869f8448205fee2895ecde4ba7ee44b31d86797bf019f13cb210f2c8f1ea89",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026946200111410/detail",
           "title": "校招-软件测试-辅助驾驶域"
+        },
+        "id:7673026946200406322": {
+          "fingerprint": "5d5724f47a6218362bd1039c4b5613d191cee966d7268e046f003f23764afdb6",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7673026946200406322/detail",
+          "title": "校招-软件测试开发"
         },
         "id:7673026946200701234": {
           "fingerprint": "848e77a10915ce00185d5da3a932a18268f4755562161182b61c7780b42d384a",
@@ -47735,11 +47940,6 @@
           "fingerprint": "e7c3b93cc27fff7eea30e4c95b08180fd31c25cf439a55efa974e0b84814adf2",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027139705047322/detail",
           "title": "校招-质量工程师"
-        },
-        "id:7673027139705342234": {
-          "fingerprint": "f0437a24fa3bdd6bacfa51edf106569559509abaaeb8cd4a1045298d758da512",
-          "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027139705342234/detail",
-          "title": "校招-数据科学工程师"
         },
         "id:7673027148605212938": {
           "fingerprint": "27adc92c3e31f5bc3d6ef1a6d124a56ccb5e5bb9f15768e5f15cf016628a9878",
@@ -48205,6 +48405,11 @@
           "fingerprint": "63585e4699bacac2624c139ecc0958f558736c67c33c277334284e76be5dd696",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027321042143514/detail",
           "title": "校招-认证工程师\n"
+        },
+        "id:7673027329026754867": {
+          "fingerprint": "0f214d6f746f0e365f185d99be093c47a053dfbe8534c192cafad295d7890306",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027329026754867/detail",
+          "title": "校招-CAD工具链与AI应用工程师"
         },
         "id:7673027329027066163": {
           "fingerprint": "96500177a664d40eed747577c4f3ad38122d1948a6475ea6367316a24d4cc2c5",
@@ -49041,6 +49246,16 @@
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072005791353151/detail",
           "title": "校招-蔚来顾问-信阳"
         },
+        "id:7676072005791648063": {
+          "fingerprint": "4b684183dfb9c786b66bef682d8404fb34d5ea99d87970e2396ecde8c82dab18",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072005791648063/detail",
+          "title": "校招-蔚来顾问-石家庄"
+        },
+        "id:7676072005791942975": {
+          "fingerprint": "00da04246b7bc4abf201dc21818f5caef8dc543f6c66c160a47c4f0addc18750",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072005791942975/detail",
+          "title": "校招-蔚来顾问-保定"
+        },
         "id:7676072014477920518": {
           "fingerprint": "b87032563c92997b019851bd13542b6c85306d1566de452e4ce5024ab04357ad",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072014477920518/detail",
@@ -49681,6 +49896,16 @@
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072254253615396/detail",
           "title": "校招-乐道顾问-石家庄"
         },
+        "id:7676072254253910308": {
+          "fingerprint": "50d43c0612b9d9c12753b6917a64c77ee213c57eb25ec223e827d098621eca45",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072254253910308/detail",
+          "title": "校招-乐道顾问-保定"
+        },
+        "id:7676072254254516516": {
+          "fingerprint": "c821da821392bdd388ca456a0c449c8fd527594f256e5e077575df5d93687fa7",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072254254516516/detail",
+          "title": "校招-乐道顾问-邢台"
+        },
         "id:7676072264256882985": {
           "fingerprint": "be2f9aa3cce29bbadbc4222aa678bc97f2af4c56b6811f0e5600981c27b77689",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7676072264256882985/detail",
@@ -50211,6 +50436,11 @@
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7678155050254616883/detail",
           "title": "校招-车端AI Agent运行时基座软件开发工程师"
         },
+        "id:7678158229625784619": {
+          "fingerprint": "c3615b40f636626928e042ae2662399dd8daaac60a14afccad57485ce039b9d1",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7678158229625784619/detail",
+          "title": "校招-后端AI工程师"
+        },
         "id:7678266564365879615": {
           "fingerprint": "a3e1fece58f1c6a4367730e003f8cab02991a1d8c1b2bcf0a192e9b249a6ccb5",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7678266564365879615/detail",
@@ -50486,6 +50716,16 @@
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7683748336210266404/detail",
           "title": "校招-乐道顾问-瑞安"
         },
+        "id:7683840266772990250": {
+          "fingerprint": "0ee0a84253e912876c008b4f65cd374ec1ac62e4bf6e980049524e8068e373c5",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7683840266772990250/detail",
+          "title": "校招-蔚来顾问-保定"
+        },
+        "id:7683841930036365619": {
+          "fingerprint": "2e47bed02cb2f3d836a72dd38fba6aebf799cd904225eb37253e0f9529d3b528",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7683841930036365619/detail",
+          "title": "校招-蔚来顾问-保定"
+        },
         "id:7683874573008095524": {
           "fingerprint": "1a509f014e1f08fd53c1f882b7dd5610123c06d032edf69e5e42a7f2317585a0",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7683874573008095524/detail",
@@ -50495,11 +50735,6 @@
           "fingerprint": "72269359972513c6823954fd7e61ca7b4bb13a97db03624432fde132ba303cf2",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7683874596673079590/detail",
           "title": "校招-AI Infra 工程师（大模型推理\\RL方向）"
-        },
-        "id:7684221454271236406": {
-          "fingerprint": "1618be3554ece8a7a35fe8add5d6dd8d6bdf58f61cdc42af1a2b4989be5d2085",
-          "official_url": "https://nio.jobs.feishu.cn/campus/position/7684221454271236406/detail",
-          "title": "校招-现场物流工程师"
         },
         "id:7685223240394721587": {
           "fingerprint": "115ba43ac52d8dd212abb5fca50c23fc407646668189ddcff45731e6e40a8231",
@@ -50785,10 +51020,70 @@
           "fingerprint": "02e5fcb43cbcd584df628ec9b72d5012bb3b88c9e80a4fc022f3f4f0c381eb5f",
           "official_url": "https://nio.jobs.feishu.cn/campus/position/7695740293588945215/detail",
           "title": "校招-数据开发工程师"
+        },
+        "id:7696031416480024875": {
+          "fingerprint": "070b9e8462e5998749a6061a0f750408b8d6b79c1e9397f494896b66826e59a5",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696031416480024875/detail",
+          "title": "校招-乐道顾问-岳阳"
+        },
+        "id:7696032174763706675": {
+          "fingerprint": "c645b96fb0925f131784fab1d144f4598f1d3f1b8ce7be95b7ce9aa6cbe753b9",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696032174763706675/detail",
+          "title": "校招-乐道顾问-常德"
+        },
+        "id:7696032459275847978": {
+          "fingerprint": "d1d0614e0e932122cf4c38450aa8f999f8e19236a02f03853a788ebd054e34d5",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696032459275847978/detail",
+          "title": "校招-乐道顾问-郴州"
+        },
+        "id:7696032546886404362": {
+          "fingerprint": "c822fe9def8a4f92db8d374f97c438a4b4b67a81605a4507549de7f496920183",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696032546886404362/detail",
+          "title": "校招-乐道顾问-株洲"
+        },
+        "id:7696032815608351027": {
+          "fingerprint": "50b1a843c7799e44aa42a29a490e83db3a5f782a318e7398d4499b3c8f56089c",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696032815608351027/detail",
+          "title": "校招-乐道顾问-衡阳"
+        },
+        "id:7696032877931415835": {
+          "fingerprint": "6e8e9106ae5a2d1c2d66079747a6e8b607d5cba4a47ffc0629c9de057204203f",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696032877931415835/detail",
+          "title": "校招-乐道顾问-湘潭"
+        },
+        "id:7696037986816133439": {
+          "fingerprint": "3f867846e22d94da221c75f5d7c1cd5d7ff24536cb456fb971fefd7867794a72",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696037986816133439/detail",
+          "title": "校招-蔚来顾问-吉林"
+        },
+        "id:7696038922653206811": {
+          "fingerprint": "b6cfe4c04428e7366e6f5e857484d8b6b27337d2b42e720a33fa7ed96a295118",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696038922653206811/detail",
+          "title": "校招-乐道顾问-吉林"
+        },
+        "id:7696039337885354281": {
+          "fingerprint": "babc439f38e24d37059c092ea96a027c9668849ff9c14a2cc03f33648ac37059",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696039337885354281/detail",
+          "title": "校招-乐道顾问-邯郸"
+        },
+        "id:7696040293489821988": {
+          "fingerprint": "1d99ba80ab4e244d89e923b61469511f7a4e94085f7f573f54ea214f4468b436",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696040293489821988/detail",
+          "title": "校招-蔚来顾问-邢台"
+        },
+        "id:7696040674056374566": {
+          "fingerprint": "0daa4495031297fe93ef95f21064a7b14ae9fab95aae1ad81cb42322a290a8df",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696040674056374566/detail",
+          "title": "校招-蔚来顾问-邯郸"
+        },
+        "id:7696046777979619593": {
+          "fingerprint": "e2e8c29d8e9d59c4d7f68db37bc641501b2c24387f401334e8bc10accca077fb",
+          "official_url": "https://nio.jobs.feishu.cn/campus/position/7696046777979619593/detail",
+          "title": "校招-乐道顾问-柳州"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-041": {
@@ -51167,7 +51462,7 @@
           "title": "行业运营岗"
         },
         "id:2341": {
-          "fingerprint": "fd30f11a03cfa380c5634343d4a6c445612930b8d990b407be4eef9c81dcf766",
+          "fingerprint": "ef96f15d56e3ec7aa3f34097767e0363088cdb598cd36d81065cdac3a442d9f4",
           "official_url": "https://campus.sf-express.com/#/postDetail/2341",
           "title": "行业运营岗"
         },
@@ -51352,7 +51647,7 @@
           "title": "供应链运营岗-方向1"
         },
         "id:2380": {
-          "fingerprint": "eabab81ae002775af12752dd81bd46a5c9ec52c5daee7a90567dcc3feb2eb124",
+          "fingerprint": "a4170223e2f15820961ab866b60c519b1503bb5b7fc13de42012c3a20c922df6",
           "official_url": "https://campus.sf-express.com/#/postDetail/2380",
           "title": "供应链运营岗-方向2"
         },
@@ -51542,7 +51837,7 @@
           "title": "运筹优化算法工程师-运筹大模型方向（博士后）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -51995,6 +52290,11 @@
           "fingerprint": "64cd9d653cfd9975243fbfd6ed0c6ac287bb59f8dd06e3fc737817995f2961ed",
           "official_url": "https://jobs.mihoyo.com/#/campus/position/8769",
           "title": "数据分析实习生 - 崩坏：星穹铁道+崩坏：因缘精灵"
+        },
+        "id:8779": {
+          "fingerprint": "da15527d456a9a7f15de2b2711a4459a2768cde93860ffb3297192512bfb01ca",
+          "official_url": "https://jobs.mihoyo.com/#/campus/position/8779",
+          "title": "内容运营实习生"
         },
         "id:8817": {
           "fingerprint": "03498be29ff222ed1a18405886c8cbef62151288d2a2b7bbf02de29ef3e8ef42",
@@ -52862,7 +53162,7 @@
           "title": "综合采购实习生"
         },
         "id:9625": {
-          "fingerprint": "1e9e55d8a8ddb81df8206da44d91542c700d1467a6a0d19a1755ab8d78361008",
+          "fingerprint": "a631c0d01378e501032927cd9a8c7f027b71d53591da22d668b491eb26fb6bef",
           "official_url": "https://jobs.mihoyo.com/#/campus/position/9625",
           "title": "Agent 策略运营实习生"
         },
@@ -52887,7 +53187,7 @@
           "title": "SDK客户端开发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -53597,9 +53897,9 @@
           "title": "芯片设计工程师（上海）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T10:52:30Z",
-      "last_status": "INCOMPLETE"
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
+      "last_status": "OK"
     },
     "official-044": {
       "baseline_kind": "complete",
@@ -53771,11 +54071,6 @@
           "official_url": "https://campus.duxiaoman.com/051736/position/7683833082046810378/detail",
           "title": "贷后策略分析师"
         },
-        "id:7685641019308132646": {
-          "fingerprint": "557e620c400a397958c32a8a55cf6c86e74f282bdd6017dff5d35039f906a050",
-          "official_url": "https://campus.duxiaoman.com/051736/position/7685641019308132646/detail",
-          "title": "前端研发工程师-财富业务"
-        },
         "id:7685641508124952851": {
           "fingerprint": "51e133dcae351e70d0603c4d42cadf7f0bad20595b0731877ae4dbcc5ddceb02",
           "official_url": "https://campus.duxiaoman.com/051736/position/7685641508124952851/detail",
@@ -53787,8 +54082,8 @@
           "title": "数据分析岗位"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-045": {
@@ -53847,12 +54142,12 @@
           "title": ""
         },
         "id:软件/嵌入式类": {
-          "fingerprint": "cf433575cdd1bf85e69f8e7b3892ac4981b71a3c596637f8d26053e7cbe04a26",
+          "fingerprint": "2994ce5d9ef69a702bd5febe8c558fe36a1b6f3b86410afba349f82822b992e9",
           "official_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
           "title": ""
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -54057,7 +54352,7 @@
           "title": "海外IT资产工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -54122,7 +54417,7 @@
           "title": "深信服27届-攻防研究工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -55287,7 +55582,7 @@
           "title": "应用支持（深圳）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": "2026-10-12T10:52:30Z",
       "last_status": "INCOMPLETE"
     },
@@ -55357,7 +55652,7 @@
           "title": "友新星实习计划"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -55432,7 +55727,7 @@
           "title": "影像产品经理方向 | Future Product Manager"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "PARTIAL"
     },
@@ -55547,7 +55842,7 @@
           "title": "项目管理专员（广州）-运营策略-2027届"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -58030,10 +58325,15 @@
           "fingerprint": "879e892dace16e379a3112ff6b78a9daa6b6a1efe041dd6b4bfe24a6fc78e952",
           "official_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/7694985374196762930/detail",
           "title": "光电系统工程师-北京"
+        },
+        "id:7695959551010834751": {
+          "fingerprint": "237fd0a282025b96dce84907ec323de32a892c8ca5cce8ce89f03749769bdd88",
+          "official_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/7695959551010834751/detail",
+          "title": "软件项目经理-深圳"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-053": {
@@ -58052,7 +58352,7 @@
           "title": "福利待遇"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -59192,9 +59492,9 @@
           "title": "CAE耐久数字开发岗\n发布于 2026-10-09\n全职\n全职\n|\n硕士\n硕士\n|\n江苏·无锡市\n江苏·无锡市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
         },
         "url:c81b5f4bb5fa36286f94f53f": {
-          "fingerprint": "4af7a849da48140e9569bca3a99858ba036cdae5e5f1568e5b3a1a558aa598f7",
+          "fingerprint": "8be14e1aec389c54ab9ac2b21d2f15ce38ee4c46e9884f4525be8a74fc706cf8",
           "official_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/job/ba78b62f-c108-42ef-8197-71bb54079fca",
-          "title": "营销管培生\n发布于 2026-10-08\n全职\n全职\n|\n硕士\n硕士\n|\n浙江·杭州市\n浙江·杭州市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
+          "title": "急\n营销管培生\n发布于 2026-10-13\n全职\n全职\n|\n硕士\n硕士\n|\n浙江·杭州市\n浙江·杭州市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
         },
         "url:ccbc08c9bbe4500cb6d6def1": {
           "fingerprint": "dba35bf3b2078d91ea48776a11db65d4416576480fc6c53a60508c41e571d270",
@@ -59477,7 +59777,7 @@
           "title": "内容运营岗\n发布于 2026-10-08\n全职\n全职\n|\n本科\n本科\n|\n浙江·杭州市\n浙江·杭州市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "TIMEOUT"
     },
@@ -62542,9 +62842,9 @@
           "title": "【27届校招】内饰饰件培训生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": "2026-10-12T12:43:15Z",
-      "last_status": "OK"
+      "last_status": "INCOMPLETE"
     },
     "official-056": {
       "baseline_kind": "observed",
@@ -62650,6 +62950,11 @@
           "fingerprint": "bed643a971c09f7a599767302984a92c1fe6d90a5670d04970a02b8ff61b1cbe",
           "official_url": "",
           "title": "电控机械开发工程师（部件开发）"
+        },
+        "anon:054bf54af65ab32f1029e086": {
+          "fingerprint": "9834e43c522f87a8832ab406b3bbb8ae03aa2407564fd5edf0c951a54781357a",
+          "official_url": "",
+          "title": "功率模块工艺开发工程师"
         },
         "anon:055c9f9cafa3a4217814e06f": {
           "fingerprint": "05ce6d9e1b298c8702e617ed0dc90680b4ca01787a8de17675229167ffd4ad8d",
@@ -63645,6 +63950,11 @@
           "fingerprint": "29bc6d8b01a9d343ea0b7be3081428def77978af89516caa5fc4575b1a1350fe",
           "official_url": "",
           "title": "增程器工艺开发工程师"
+        },
+        "anon:60f064d2377cd85b99cfcc56": {
+          "fingerprint": "e6975617ba2afe314e82503552857156a2e1792fc545da9243ab131ec3f55a68",
+          "official_url": "",
+          "title": "功率模块封装开发工程师"
         },
         "anon:60f197dac7e5cfecb568ce24": {
           "fingerprint": "e134e617a1bb7790bc49e09d5bbeee8b82b54773120a53a72ec490c97ac01064",
@@ -65467,7 +65777,7 @@
           "title": "变更管理-北京"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -66052,7 +66362,7 @@
           "title": "FDE工程师（AI前线部署工程师）\nAI/算法类 | 应届毕业生 | 新事业生态圈\n工作地点：上海市 青岛市"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -66907,7 +67217,7 @@
           "title": ""
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -74637,7 +74947,7 @@
           "title": "高级物控专员"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -75277,7 +75587,7 @@
           "title": "语音算法工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -75767,7 +76077,7 @@
           "title": "「2027校招」前端研发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -77175,9 +77485,14 @@
           "fingerprint": "2c94c3ccc33d4918674d74335fadcf0d58ea5fdb6f73ab00e1e14113b708254d",
           "official_url": "https://pudutech.zhiye.com/campus/detail?jobAdId=311191528",
           "title": "部署优化实习生"
+        },
+        "id:311193073": {
+          "fingerprint": "80fac81038954b88bfca06dfeb779cfbfc7189904f4bfcb2f68da706a526aa21",
+          "official_url": "https://pudutech.zhiye.com/campus/detail?jobAdId=311193073",
+          "title": "费用实习生"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -77347,8 +77662,8 @@
           "title": "27届校招-产品需求工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-064": {
@@ -77432,7 +77747,7 @@
           "title": "【2027校招正式批】前端开发工程师（海外业务）\n2027校招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -77457,7 +77772,7 @@
           "title": "前端开发工程师"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "INCOMPLETE"
     },
@@ -77621,11 +77936,6 @@
           "official_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/c3c6fbef-a742-4ae8-a942-b52d6b2810c6",
           "title": "后端研发工程师[香港]-27秋招"
         },
-        "id:c4705f60-b7d8-45ee-9221-8fbd5bad7808": {
-          "fingerprint": "bf3dbac36d69d5de568226957cd7c7044be1fb57958eea822a1fdab33b3c0881",
-          "official_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/c4705f60-b7d8-45ee-9221-8fbd5bad7808",
-          "title": "海外投放（市场流量）[北京/上海]-27秋招"
-        },
         "id:cba12bd2-b187-4df5-bf05-f6e9336b1a3a": {
           "fingerprint": "dd667a762cd8070e3095f476cd2f5711d00bd0e05a5ee02f2a06078b788b4fc0",
           "official_url": "https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/cba12bd2-b187-4df5-bf05-f6e9336b1a3a",
@@ -77692,8 +78002,8 @@
           "title": "HRBP[郑州]-27秋招"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-067": {
@@ -78962,9 +79272,9 @@
           "title": "AI知识库运营管培生-2027校招"
         },
         "id:7664585052421196041": {
-          "fingerprint": "c2eefd0b0bdbf3e11f53332ae6148dff7a9eb969919d2564fc56c169f61a1f96",
+          "fingerprint": "b14b9f602993cb1bbb1af566b5787e3f10d78ba5a40b04e190c13c9d138cf6a2",
           "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7664585052421196041/detail",
-          "title": "AI应用产品管培生-2027校招"
+          "title": "AI应用工程师-2027校招"
         },
         "id:7664585856564857151": {
           "fingerprint": "ea280f21f61d7c6b7ba77bde3a3c83b45439d204ff79341d6e78748bce6d64df",
@@ -79435,10 +79745,25 @@
           "fingerprint": "94b0a549e1a5be4d3b17e614ded21c02480a18faf51fd4f71c8f87b15edabcdb",
           "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7695607907291466047/detail",
           "title": "项目实习生"
+        },
+        "id:7695965485209192767": {
+          "fingerprint": "46e376bf77b12313b68ff42d60a60188a672b4614524a9d6003f5354e44f91f1",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7695965485209192767/detail",
+          "title": "用户运营实习生"
+        },
+        "id:7695990217157576986": {
+          "fingerprint": "770bed43c7797c5c7196cf3107f770251928f87a13c8ba2c8ba6b702e1df946b",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7695990217157576986/detail",
+          "title": "研发效能实习生"
+        },
+        "id:7695996961527105801": {
+          "fingerprint": "724da1e22464864cb93fdd4302c651fece3848d20bb1c4d4e39f9c1312b4c2c1",
+          "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7695996961527105801/detail",
+          "title": "社媒运营实习生（售后方向）"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
-      "last_complete_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
+      "last_complete_at_utc": "2026-10-13T07:29:43Z",
       "last_status": "OK"
     },
     "official-068": {
@@ -81592,7 +81917,7 @@
           "title": "运维工程师(J22823)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     },
@@ -82047,7 +82372,7 @@
           "title": "AIGC实习生(J14583)"
         }
       },
-      "last_attempt_at_utc": "2026-10-12T12:43:15Z",
+      "last_attempt_at_utc": "2026-10-13T07:29:43Z",
       "last_complete_at_utc": null,
       "last_status": "COLLECTED_UNREVIEWED"
     }
