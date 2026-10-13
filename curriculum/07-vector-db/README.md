@@ -33,6 +33,6 @@
 
 首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界，再用章末自测检查能否独立解释。第二遍使用 [Review](review/README.md)重建关系，并改变条件验证结论。
 
-面试准备集中在 [本知识域](../../interview/vector-db/README.md)：[高频面试题](../../interview/vector-db/01-高频面试题.md)、[易混易错点](../../interview/vector-db/02-易混易错点.md)与[面试速查](../../interview/vector-db/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
+面试准备集中在 [本知识域](../../interview/07-vector-db/README.md)：[高频面试题](../../interview/07-vector-db/01-高频面试题.md)、[易混易错点](../../interview/07-vector-db/02-易混易错点.md)与[面试速查](../../interview/07-vector-db/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
 
 技术事实以正文引用的官方资料及适用范围为依据；[Market](../../market/README.md)中的真实岗位与面试材料用于校准学习深度，不能代替技术证明。

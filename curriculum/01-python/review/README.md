@@ -1,6 +1,6 @@
 # Python Foundation｜Review 与综合自测
 
-[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · Learning Path（学习路线） · [高频面试题 →](../../../interview/python/01-高频面试题.md)
+[← 模块主页](../README.md) · [↑ Handbook 总目录](../../../README.md) · Learning Path（学习路线） · [高频面试题 →](../../../interview/01-python/01-高频面试题.md)
 
 > **用途：第二遍复习，不是零基础正文的缩写替代品。** 第一次学习请走 [docs/01 → 13](../docs/01-python基础与对象模型.md)；这里用于回忆关系、验证理解，再进入口述训练。
 >
@@ -111,4 +111,4 @@
 
 图解继续采用可在 GitHub 阅读的文字关系图或保守 Mermaid 语法；知识关系是主体，不为装饰引入额外图文件。整体复习节奏可以参考 Learning Path，不绑定固定周次或天数。
 
-下一步：[高频面试题](../../../interview/python/01-高频面试题.md) · [面试易错点](../../../interview/python/02-易混易错点.md) · [面试前速查表](../../../interview/python/03-面试速查.md)。
+下一步：[高频面试题](../../../interview/01-python/01-高频面试题.md) · [面试易错点](../../../interview/01-python/02-易混易错点.md) · [面试前速查表](../../../interview/01-python/03-面试速查.md)。

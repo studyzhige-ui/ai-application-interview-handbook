@@ -30,7 +30,7 @@
 
 首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界，再用章末自测检查能否独立解释。第二遍使用 [Review](review/README.md)重建关系，并改变条件验证结论。
 
-面试准备集中在 [本知识域](../../interview/python/README.md)：[高频面试题](../../interview/python/01-高频面试题.md)、[易混易错点](../../interview/python/02-易混易错点.md)与[面试速查](../../interview/python/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
+面试准备集中在 [本知识域](../../interview/01-python/README.md)：[高频面试题](../../interview/01-python/01-高频面试题.md)、[易混易错点](../../interview/01-python/02-易混易错点.md)与[面试速查](../../interview/01-python/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
 
 ## 版本与验证边界
 
