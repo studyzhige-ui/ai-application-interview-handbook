@@ -37,9 +37,9 @@
 21. [配置和版本怎样安全改变](docs/20-ConfigRelease与ServiceEvolution.md)
 22. [把通用机制映射到 Java、Spring 与 Go](docs/22-CrossLanguageRuntimeMapping.md)
 
-## 正文与复习
+## 学习与面试
 
-首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界，再用章末自测检查能否独立解释。第二遍使用 [Review](review/README.md)重建关系，并改变条件验证结论。
+首次学习沿 docs 的完整主线理解输入、状态变化、结果与失败边界；完成每章后，使用章末总结与自测检查是否能独立解释和推导。
 
 面试准备集中在 [本知识域](../../interview/05-backend-engineering/README.md)：[高频面试题](../../interview/05-backend-engineering/01-高频面试题.md)、[易混易错点](../../interview/05-backend-engineering/02-易混易错点.md)与[面试速查](../../interview/05-backend-engineering/03-面试速查.md)。正文负责完整模型，面试材料负责回答、追问与快速回忆。
 
