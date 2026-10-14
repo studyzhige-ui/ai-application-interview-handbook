@@ -143,6 +143,22 @@ def _prior_exclusions(catalog: dict) -> dict[str, list[dict]]:
     return index
 
 
+
+def _prior_exclusions_by_url_title(catalog: dict) -> dict[tuple[str, str, str], list[dict]]:
+    index: dict[tuple[str, str, str], list[dict]] = {}
+    for company in catalog.get("companies", []):
+        source_id = str(company.get("source_id") or "")
+        for observation in company.get("other_observations", []):
+            if observation.get("decision") != "exclude":
+                continue
+            title = str(observation.get("title") or "").strip()
+            url = canonical_url(observation.get("official_url") or "")
+            if not title or not url:
+                continue
+            index.setdefault((source_id, title, url), []).append(observation)
+    return index
+
+
 def _body_hash_candidates(job: dict) -> set[str]:
     description = str(job.get("description") or "").strip()
     requirements = str(job.get("requirements") or "").strip()
@@ -188,6 +204,7 @@ def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
     catalog = load_catalog(official_file)
     official_by_identity, official_by_stable = _official_keys(catalog)
     prior_exclusions = _prior_exclusions(catalog)
+    prior_exclusions_by_url_title = _prior_exclusions_by_url_title(catalog)
     pending = [
         entry for entry in entries.values()
         if isinstance(entry, dict) and entry.get("review_state") == "pending"
@@ -196,6 +213,7 @@ def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
         "pending_before": len(pending),
         "already_reviewed": 0,
         "reused_exclusions": 0,
+        "identity_migration_exclusions": 0,
         "unpublished_removals": 0,
         "superseded": 0,
         "duplicate_fallbacks": 0,
@@ -246,6 +264,24 @@ def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
                     _mark_reused_exclusion(entry, observation=observation, reason=reason)
                     result["reused_exclusions"] += 1
                     break
+            if entry.get("review_state") == "pending" and entry.get("change") == "added":
+                triage_priority = str((entry.get("triage") or {}).get("priority") or "")
+                title = str(job.get("title") or "").strip()
+                url = canonical_url(job.get("official_url") or "")
+                if triage_priority == "low" and title and url:
+                    migrated = prior_exclusions_by_url_title.get((source_id, title, url), [])
+                    if migrated:
+                        observation = migrated[0]
+                        prior_reason = str(observation.get("decision_reason") or "").strip()
+                        reason = (
+                            "该条为职位身份字段迁移造成的假新增：官方 URL 与职位标题均与此前已完成语义排除的同一职位完全一致，"
+                            "且当前完整 JD 的自动 triage 仍为低优先；复用既有语义排除结论。"
+                        )
+                        if prior_reason:
+                            reason += " 原审核理由：" + prior_reason
+                        _mark_reused_exclusion(entry, observation=observation, reason=reason)
+                        entry["semantic_review"]["kind"] = "identity_migration_prior_exclusion"
+                        result["identity_migration_exclusions"] += 1
             continue
         current_text = _queue_full_text(entry)
         reviewed_text = str(existing.get("full_text") or "").strip()
