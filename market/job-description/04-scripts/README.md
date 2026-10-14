@@ -88,3 +88,12 @@ BOSS直聘/看准科技（`official-065`）仍保留明确的安全验证边界�
 ## 6. 发布安全
 
 自动 workflow 在采集结束后先运行完整 `jd.py check` 和 `git diff --check`。只有工作流启动时的 `main` SHA 仍然是远端最新 `main` 时，才提交三个生成状态文件；若期间人工提交改变了 `main`，本次 raw artifacts 保留，但跳过写回，下一轮从新 `main` 重新扫描。这样不会用旧扫描覆盖人工更新。
+
+
+## 7. ChatGPT 定时语义审计
+
+仓库通过 `01-data/automation/audit-batch.json` 向 ChatGPT 定时任务暴露一个有界小批次，而不是让模型每轮搬运整个多 MB 的 `review-queue.json`。模型必须逐条阅读批次中的完整职责与任职要求，只输出 `include`、`exclude`、`needs_review` 或针对确认消失事件的 `remove` 决策。
+
+ChatGPT 只写 `01-data/automation/audit-decisions.json`。随后 `.github/workflows/apply-jd-semantic-audit.yml` 机械应用结果：更新队列审核状态；对通过审核的岗位写入正式 `official-jds.json`（字节跳动写入其哈希固定分片）；对不再符合范围或已确认消失的正式岗位执行移除；重新生成 `岗位JD.md`；最后运行完整 `jd.py check` 与 `git diff --check` 后才提交。
+
+批次按高、中、低 triage 顺序消费，但 triage 仍只负责排序，不能代替完整 JD 语义判断。已经审核且事件指纹未变化的岗位不会重复进入批次；正文发生变化时会生成新的事件并重新审核。
