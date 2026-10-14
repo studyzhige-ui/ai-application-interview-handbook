@@ -75,9 +75,21 @@ def main(argv=None):
     reconcile.add_argument("--queue-file", type=Path, required=True)
     reconcile.add_argument("--report-file", type=Path, required=True)
 
+    prepare_audit = commands.add_parser("prepare-audit", help="Export a small deterministic pending-JD batch for semantic review")
+    prepare_audit.add_argument("--queue-file", type=Path, required=True)
+    prepare_audit.add_argument("--batch-file", type=Path, required=True)
+    prepare_audit.add_argument("--limit", type=positive_int, default=24)
+
+    apply_audit = commands.add_parser("apply-audit", help="Mechanically apply completed semantic review decisions")
+    apply_audit.add_argument("--queue-file", type=Path, required=True)
+    apply_audit.add_argument("--decisions-file", type=Path, required=True)
+    apply_audit.add_argument("--official-file", type=Path, required=True)
+    apply_audit.add_argument("--bytedance-file", type=Path, required=True)
+    apply_audit.add_argument("--index-file", type=Path, required=True)
+
     args = parser.parse_args(argv)
     if not args.command:
-        print("Use check/sources for offline inspection, collect for manual capture, or scan/reconcile for automation.")
+        print("Use check/sources for offline inspection, collect for manual capture, scan/reconcile for collection, or prepare-audit/apply-audit for semantic review.")
         return 0
     if args.command == "check":
         return check()
@@ -106,6 +118,22 @@ def main(argv=None):
             timeout_seconds=args.timeout_seconds,
             output=args.output_dir,
         )
+    if args.command == "prepare-audit":
+        from jd.review import prepare_batch
+        batch = prepare_batch(queue_file=args.queue_file, batch_file=args.batch_file, limit=args.limit)
+        print(f"Prepared semantic audit batch={batch['batch_id']} count={batch['count']} pending={batch['pending_total']}")
+        return 0
+    if args.command == "apply-audit":
+        from jd.review import apply_decisions
+        result = apply_decisions(
+            queue_file=args.queue_file,
+            decisions_file=args.decisions_file,
+            official_file=args.official_file,
+            bytedance_file=args.bytedance_file,
+            index_file=args.index_file,
+        )
+        print("Applied semantic audit " + " ".join(f"{key}={value}" for key, value in result.items()))
+        return 0
     from jd.automation import reconcile as reconcile_run
     summary = reconcile_run(
         input_dir=args.input_dir,
