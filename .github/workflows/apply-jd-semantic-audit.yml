@@ -72,6 +72,12 @@ jobs:
             --bytedance-file market/job-description/01-data/bytedance-jds.json \
             --index-file market/job-description/01-data/岗位JD.md
 
+      - name: Compact mechanically redundant historical review events
+        run: |
+          python -B market/job-description/04-scripts/jd.py compact-audit \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --official-file market/job-description/01-data/official-jds.json
+
       - name: Prepare next bounded semantic-review batch
         run: |
           python -B market/job-description/04-scripts/jd.py prepare-audit \

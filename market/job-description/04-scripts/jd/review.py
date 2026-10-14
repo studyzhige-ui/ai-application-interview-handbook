@@ -8,9 +8,10 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-from typing import Iterable
+import re
+from urllib.parse import urlsplit
 
-from .automation import job_identity, now_utc
+from .automation import canonical_url, job_identity, now_utc
 from .catalog import load_catalog, render_catalog
 
 AUDIT_SCHEMA_VERSION = 1
@@ -50,6 +51,197 @@ def _write_like(path: Path, payload) -> None:
     else:
         text = json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
     path.write_text(text + "\n", encoding="utf-8")
+
+
+
+def _entry_job(entry: dict) -> dict:
+    job = entry.get("job")
+    return job if isinstance(job, dict) else {}
+
+
+def _stable_key(entry: dict) -> str:
+    """Return a source-scoped requisition key when the transport exposed enough identity."""
+    source_id = str(entry.get("source_id") or "")
+    job = _entry_job(entry)
+    req_id = str(job.get("req_id") or job.get("job_id") or "").strip()
+    if req_id:
+        return f"{source_id}:id:{req_id}"
+
+    url = canonical_url(job.get("official_url") or "")
+    if url:
+        path = urlsplit(url).path
+        match = re.search(r"(?:position|job-info|jobs?|detail)/(\d{5,})", path, re.I)
+        if match:
+            return f"{source_id}:id:{match.group(1)}"
+        return f"{source_id}:url:{url}"
+
+    identity = str(entry.get("identity") or "")
+    return f"{source_id}:identity:{identity}"
+
+
+def _job_quality(entry: dict) -> tuple[int, int, int]:
+    """Prefer stable IDs and separately extracted full JD fields over listing-text fallbacks."""
+    job = _entry_job(entry)
+    req_id = str(job.get("req_id") or job.get("job_id") or "").strip()
+    description = str(job.get("description") or "").strip()
+    requirements = str(job.get("requirements") or "").strip()
+    title = str(job.get("title") or "").strip()
+    full = bool(description or requirements)
+    multiline_title = "\n" in title
+    return (2 if full else 0, 1 if req_id else 0, 0 if multiline_title and not full else 1)
+
+
+def _queue_full_text(entry: dict) -> str:
+    job = _entry_job(entry)
+    return _full_text(job)
+
+
+def _official_keys(catalog: dict) -> tuple[dict[str, dict], dict[str, dict]]:
+    by_identity: dict[str, dict] = {}
+    by_stable: dict[str, dict] = {}
+    for company in catalog.get("companies", []):
+        source_id = str(company.get("source_id") or "")
+        for job in company.get("jobs", []):
+            try:
+                identity = job_identity(source_id, job)
+            except Exception:
+                identity = ""
+            if identity:
+                by_identity[f"{source_id}:{identity}"] = job
+            req_id = str(job.get("req_id") or job.get("job_id") or "").strip()
+            if req_id:
+                by_stable[f"{source_id}:id:{req_id}"] = job
+            url = canonical_url(job.get("official_url") or "")
+            if url:
+                by_stable.setdefault(f"{source_id}:url:{url}", job)
+    return by_identity, by_stable
+
+
+def _mark_ignored(entry: dict, *, reason: str, kind: str) -> None:
+    entry["review_state"] = "ignored"
+    entry["semantic_review"] = {
+        "decision": "ignored",
+        "decision_reason": reason,
+        "reviewed_at_utc": now_utc(),
+        "review_depth": "mechanical_dedup",
+        "kind": kind,
+    }
+
+
+def _mark_reused_review(entry: dict, *, reason: str) -> None:
+    entry["review_state"] = "reviewed"
+    entry["semantic_review"] = {
+        "decision": "include",
+        "decision_reason": reason,
+        "reviewed_at_utc": now_utc(),
+        "review_depth": "reused_existing_full_jd_review",
+        "kind": "already_reviewed_include",
+    }
+
+
+def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
+    """Resolve only mechanically provable backlog redundancy; never infer role eligibility."""
+    queue = _load(queue_file, {"schema_version": 2, "entries": {}})
+    entries = queue.get("entries")
+    if not isinstance(entries, dict):
+        raise ValueError("review queue entries must be an object")
+
+    catalog = load_catalog(official_file)
+    official_by_identity, official_by_stable = _official_keys(catalog)
+    pending = [
+        entry for entry in entries.values()
+        if isinstance(entry, dict) and entry.get("review_state") == "pending"
+    ]
+    result = {
+        "pending_before": len(pending),
+        "already_reviewed": 0,
+        "unpublished_removals": 0,
+        "superseded": 0,
+        "duplicate_fallbacks": 0,
+    }
+
+    # First, reuse prior full-JD review when the same requisition still has byte-equivalent body text.
+    for entry in pending:
+        source_id = str(entry.get("source_id") or "")
+        identity = str(entry.get("identity") or "")
+        stable = _stable_key(entry)
+        existing = official_by_identity.get(f"{source_id}:{identity}") or official_by_stable.get(stable)
+        if entry.get("change") == "possibly_removed":
+            if existing is None:
+                _mark_ignored(
+                    entry,
+                    reason="该职位从未进入正式审核通过库；消失事件无需执行删除。",
+                    kind="unpublished_removal",
+                )
+                result["unpublished_removals"] += 1
+            continue
+        if existing is None:
+            continue
+        current_text = _queue_full_text(entry)
+        reviewed_text = str(existing.get("full_text") or "").strip()
+        if current_text and current_text == reviewed_text:
+            _mark_reused_review(
+                entry,
+                reason="当前完整 JD 正文与正式库中已完成 full_jd 语义审核的同一职位完全一致，复用既有审核结论。",
+            )
+            result["already_reviewed"] += 1
+
+    # Then collapse multiple pending events for the same official requisition.
+    groups: dict[str, list[dict]] = {}
+    for entry in entries.values():
+        if not isinstance(entry, dict) or entry.get("review_state") != "pending":
+            continue
+        if entry.get("change") == "possibly_removed":
+            continue
+        groups.setdefault(_stable_key(entry), []).append(entry)
+
+    for stable, group in groups.items():
+        if len(group) <= 1:
+            continue
+        # Newest event wins among equally complete records; full extracted JD beats listing fallbacks.
+        ranked = sorted(
+            group,
+            key=lambda entry: (
+                _job_quality(entry),
+                str(entry.get("first_seen_at_utc") or ""),
+                str(entry.get("event_id") or ""),
+            ),
+            reverse=True,
+        )
+        keeper = ranked[0]
+        keeper_quality = _job_quality(keeper)
+        for redundant in ranked[1:]:
+            quality = _job_quality(redundant)
+            if quality < keeper_quality:
+                kind = "duplicate_fallback"
+                reason = (
+                    "同一官方职位已有包含稳定职位 ID 且职责/任职要求分字段提取的更完整事件；"
+                    "本条仅为列表页/标题降级重复记录，不再单独语义审核。"
+                )
+                result["duplicate_fallbacks"] += 1
+            else:
+                kind = "superseded"
+                reason = (
+                    "同一官方职位存在更新或等价的待审事件；只保留信息更完整且更新的一条进行完整 JD 语义审核。"
+                )
+                result["superseded"] += 1
+            _mark_ignored(redundant, reason=reason, kind=kind)
+
+    remaining = sum(
+        1 for entry in entries.values()
+        if isinstance(entry, dict) and entry.get("review_state") == "pending"
+    )
+    result["pending_after"] = remaining
+    queue["last_compaction"] = {
+        "checked_at_utc": now_utc(),
+        **result,
+        "policy": (
+            "Compaction only reuses byte-equivalent prior full-JD reviews and removes mechanically "
+            "redundant/superseded queue events. It never decides new role eligibility."
+        ),
+    }
+    _write_json(queue_file, queue)
+    return result
 
 
 def prepare_batch(*, queue_file: Path, batch_file: Path, limit: int) -> dict:

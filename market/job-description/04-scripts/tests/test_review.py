@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from jd.catalog import counts, load_catalog, validate_catalog
-from jd.review import apply_decisions, prepare_batch
+from jd.review import apply_decisions, compact_backlog, prepare_batch
 
 
 class SemanticAuditBridgeTests(unittest.TestCase):
@@ -132,6 +132,10 @@ class SemanticAuditBridgeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             catalog, existing = self.base_catalog()
+            exact_text = "职责：开发Agent服务。\n\n要求：在校生，Python。"
+            existing["full_text"] = exact_text
+            existing["body_sha256"] = hashlib.sha256(exact_text.encode()).hexdigest()
+            existing["engineering_evidence"] = ["开发Agent服务"]
             catalog["companies"][0]["jobs"] = [existing]
             catalog["counts"]["current_jobs"] = 1
             catalog["counts"]["companies_with_current_jobs"] = 1
@@ -193,6 +197,66 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(result["needs_review"], 1)
             q = json.loads((root / "queue.json").read_text())
             self.assertEqual(q["entries"]["e1"]["semantic_review"]["decision"], "needs_review")
+
+    def test_compaction_reuses_exact_existing_review_and_ignores_unpublished_removal(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, existing = self.base_catalog()
+            exact_text = "职责：开发Agent服务。\n\n要求：在校生，Python。"
+            existing["full_text"] = exact_text
+            existing["body_sha256"] = hashlib.sha256(exact_text.encode()).hexdigest()
+            existing["engineering_evidence"] = ["开发Agent服务"]
+            catalog["companies"][0]["jobs"] = [existing]
+            catalog["counts"]["current_jobs"] = 1
+            catalog["counts"]["companies_with_current_jobs"] = 1
+            exact = self.queue_entry(change="changed")
+            removal = {
+                "event_id": "gone",
+                "source_id": "s1",
+                "company": "公司",
+                "identity": "id:not-published",
+                "change": "possibly_removed",
+                "first_seen_at_utc": "2026-10-14T00:00:00Z",
+                "review_state": "pending",
+                "triage": {"priority": "low"},
+                "job": None,
+                "previous": {"fingerprint": "x", "title": "未入库职位"},
+            }
+            queue = {"schema_version": 2, "entries": {"e1": exact, "gone": removal}}
+            self.write_json(root / "official.json", catalog)
+            self.write_json(root / "queue.json", queue)
+            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
+            self.assertEqual(result["already_reviewed"], 1)
+            self.assertEqual(result["unpublished_removals"], 1)
+            stored = json.loads((root / "queue.json").read_text())
+            self.assertEqual(stored["entries"]["e1"]["review_state"], "reviewed")
+            self.assertEqual(stored["entries"]["gone"]["review_state"], "ignored")
+
+    def test_compaction_keeps_full_id_event_over_listing_fallback_for_same_position(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, _ = self.base_catalog()
+            full = self.queue_entry()
+            full["event_id"] = "full"
+            full["job"]["job_id"] = "7683042369134479657"
+            full["identity"] = "id:7683042369134479657"
+            fallback = {
+                **self.queue_entry(),
+                "event_id": "fallback",
+                "identity": "url:abc",
+                "job": {
+                    "title": "Agent工程实习\\n职责和要求被错误拼进标题",
+                    "official_url": "https://example.com/campus/position/7683042369134479657/detail?spread=x",
+                },
+            }
+            queue = {"schema_version": 2, "entries": {"full": full, "fallback": fallback}}
+            self.write_json(root / "official.json", catalog)
+            self.write_json(root / "queue.json", queue)
+            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
+            self.assertEqual(result["duplicate_fallbacks"], 1)
+            stored = json.loads((root / "queue.json").read_text())
+            self.assertEqual(stored["entries"]["full"]["review_state"], "pending")
+            self.assertEqual(stored["entries"]["fallback"]["review_state"], "ignored")
 
 
 if __name__ == "__main__":
