@@ -132,6 +132,10 @@ class SemanticAuditBridgeTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             catalog, existing = self.base_catalog()
+            exact_text = "职责：开发Agent服务。\n\n要求：在校生，Python。"
+            existing["full_text"] = exact_text
+            existing["body_sha256"] = hashlib.sha256(exact_text.encode()).hexdigest()
+            existing["engineering_evidence"] = ["开发Agent服务"]
             catalog["companies"][0]["jobs"] = [existing]
             catalog["counts"]["current_jobs"] = 1
             catalog["counts"]["companies_with_current_jobs"] = 1
