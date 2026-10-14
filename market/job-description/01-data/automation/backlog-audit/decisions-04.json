@@ -2,5 +2,990 @@
   "schema_version": 1,
   "shard_id": "04",
   "source_queue_sha": "7cfcc7f524df10eb3a95183ca6acd28d5caf5fa5",
-  "decisions": []
+  "auditor": "chatgpt-bulk-semantic-audit",
+  "submitted_at_utc": "2026-10-14T14:54:54.770Z",
+  "decisions": [
+    {
+      "event_id": "1f6f229b2fbf809f69ad8c55f80d1a05",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "c41d6b587eee7b9f08ed9c51a28fb30d",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "开发 Agent 编排引擎，支持零/低/高代码的 Agent 搭建",
+        "开发 Ontology 建模工具和统一语义层，实现知识和数据的融合",
+        "开发分布式任务调度系统，支持 Agent 的并发执行"
+      ]
+    },
+    {
+      "event_id": "9808aed14e8a8e1d2420e907a0975685",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "8da62b1652a2a3cbaa5319f517780b32",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "9055dd317491f9db66c6686889ee4b17",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "8d33f04d769b5bbc115958b0c9fd8592",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "分布式推理架构与调度：参与 Prefill/Decode 分离、张量并行、专家并行及多副本调度优化",
+        "深入 vLLM、SGLang 等推理框架源码，建立可复现的性能评测与正确性验证，将优化落实到真实请求的延迟、吞吐和资源成本"
+      ]
+    },
+    {
+      "event_id": "d40b7a93ce739d3e35b8197c048f7320",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "1608fdb07ed081d901e9a0cd8e62d199",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "38333a4016c9a207953ae4b802d833f4",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "338ccd3fa0af042d303c30df293a6247",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-车端大模型与世界模型系统架构工程师 / 正式",
+      "engineering_evidence": [
+        "面向智能辅助驾驶、智能座舱、车端 Agent 等场景，参与设计下一代车端 AI 计算架构",
+        "参与世界模型、VLA 模型、多模态大模型在车端部署的可行性分析，形成技术路线判断、平台需求和 POC 方案。",
+        "推动 AI 模型能力向产品体验和平台架构落地。"
+      ]
+    },
+    {
+      "event_id": "7b3cad8efe1cd50034fca442c89ce17b",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "协助开发和测试 AI Agent、Prompt、Skill",
+        "协助接入 API、模型能力及自动化流程",
+        "参与 AI 能力平台建设及内部推广"
+      ]
+    },
+    {
+      "event_id": "563e0daa98747b599284b9c8d072e482",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b1400f7598697a84ba6224ccfd935440",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b53dc3978b099dc678ea1dd0e29d054a",
+      "decision": "include",
+      "decision_reason": "岗位同时包含算法/研究工作与明确可交付的 AI 应用、Agent、部署或系统工程落地职责。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-算法研发工程师 / 正式",
+      "engineering_evidence": [
+        "你将参与企业知识检索和 Agent 问答能力优化",
+        "参与企业知识库、知识图谱、文档检索的评测体系建设"
+      ]
+    },
+    {
+      "event_id": "857775e96e070f278f434d55f1c1371b",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "参与评测平台与工程体系建设，包括Sandbox环境、任务调度、Judge设计、Trace采集、自动化评测Pipeline等",
+        "负责Agent及大模型能力评测体系建设"
+      ]
+    },
+    {
+      "event_id": "77ea57d089f0b44911db3b279b2f1b97",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：大模型工程师-RL框架&RL推理-2027届 / 正式",
+      "engineering_evidence": [
+        "通用高性能推理 serving——RL Rollout的效率，最终落在一个底座上：一个业界顶尖的高性能推理引擎。",
+        "Agentic（多轮、环境交互、外部状态机感知的推理系统优化、工具调用和环境的速度不稳定性）"
+      ]
+    },
+    {
+      "event_id": "49e77ae1d967a291faa4f6a75eb4b902",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "07183a9de056885f8bb26f435f6bd9df",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "7d25f0ecdbb639900cb1d79dfde54090",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "625c95e5fca647b434c4cf3bb698edb6",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "参与 AI Agent 应用及核心能力的设计与研发，包括 Agent Runtime、Tool Use、Memory、Context Engineering、Workflow / Multi-Agent 等；",
+        "参与 RAG / 知识库系统建设，包括文档解析、Embedding、检索、Rerank、知识组织与效果优化；",
+        "参与 Agent 工程架构建设，提升 Agent 在复杂任务中的效果、稳定性和执行效率；"
+      ]
+    },
+    {
+      "event_id": "b96cbda2f05df575e4fa978e8f00061b",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "055fd6b7be943e004822cafa619d334a",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "fedce93bc4e4b3b506b4501f6d042efe",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：AI研究算法工程师-大模型预训练数据研究方向（大量HC）(J13369) / 校园招聘 / 科大讯飞官方校园招聘（2027届别由职位/项目正文复核）",
+      "engineering_evidence": [
+        "搭建自动化评测框架，全方位评测和监控无监督模型效果，为模型训练提供有效指导。",
+        "迭代完善数据生产链路，搭建标准化、高效的数据治理体系"
+      ]
+    },
+    {
+      "event_id": "c8f650871000893ef014cfe5db08b9ef",
+      "decision": "include",
+      "decision_reason": "岗位同时包含算法/研究工作与明确可交付的 AI 应用、Agent、部署或系统工程落地职责。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：金融 Agent 问题归因与递归自我改进机制研究 / 应届毕业生 青云计划 / 应届毕业生 青云计划",
+      "engineering_evidence": [
+        "首期以金融 Agent 为对象，优化提示词、工具封装、工作流、记忆策略及进化模块代码；",
+        "整体形成“任务执行—证据采集—归因验证—候选修改—独立评估—版本继承”的闭环。"
+      ]
+    },
+    {
+      "event_id": "6006ac5d03a01616ae43c1edd959fa8b",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-数字化工程师（MF2） / 正式",
+      "engineering_evidence": [
+        "通过数字化、AI视觉、数据治理、智能Agent等技术、实现车间降本增效、质量及生产智能化水平提升",
+        "Agent开发及应用：熟练应用各种开源或付费大模型的API调用，能够自主搭建小场景Agent，协助业务完成降本增效。"
+      ]
+    },
+    {
+      "event_id": "5ef0db2bb184f17266e90ae1e404cbde",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "bf442b68a78afccbed8af7b0b3786065",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "cc803e37851f55bbf991393716da2140",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "7857b88922e4d83aec44220cd56c3afa",
+      "decision": "needs_review",
+      "decision_reason": "完整 JD 明确要求构建 Agent Harness 与多 Agent 测试平台，语义范围符合 AI 测试工具工程，但输入未提供可确认 campus 或 internship 的官方招聘类型证据；category 仅为“正式”。"
+    },
+    {
+      "event_id": "c2a77c8857266606d6ecefec1519e855",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：AI推理框架工程师-2027届 / 正式",
+      "engineering_evidence": [
+        "针对特定端到端推理任务，设计并实现符合 zero-overhead 极致标准的高性能推理服务。",
+        "主导端到端推理系统架构的前瞻性研究、核心模块开发以及长期的迭代维护。",
+        "开展相关算法的探索与工程落地工作。"
+      ]
+    },
+    {
+      "event_id": "44227c56e9db7bbca7df52325d5a83a6",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "0fd3ced18530fe388df7a3e7a7739c19",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "557d2bf458cc654c9d0d6ab2a9e36ea1",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-AI芯片加速算法工程师 / 正式",
+      "engineering_evidence": [
+        "参与深度学习引擎适配，完成主流模型移植、性能建模、精度调优，搭建性能分析、自动化测试验证工具",
+        "推动技术落地产品版本，支撑具身智能、Agent 平台等业务落地。"
+      ]
+    },
+    {
+      "event_id": "9c2d4be07b8cebf100a93d0b784d798b",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-大模型评估算法工程师 / 正式",
+      "engineering_evidence": [
+        "负责大模型、多模态模型及Agent智能体全维度能力评测",
+        "搭建自动化评测流程，完成评测数据构建、对抗测试、模型版本对比与回归验证",
+        "针对对话问答、智能Agent工具调用、任务规划等业务场景，定制专属评测方案"
+      ]
+    },
+    {
+      "event_id": "a35fb493e694730cebfd9d0a126abb04",
+      "decision": "include",
+      "decision_reason": "岗位同时包含算法/研究工作与明确可交付的 AI 应用、Agent、部署或系统工程落地职责。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：AI搜索算法工程师-Seed大模型人才校招 / 正式",
+      "engineering_evidence": [
+        "基于AI建设下一代搜索引擎，并服务于AI Agents",
+        "基于LLM/VLM大幅突破搜索排序、召回、内容理解、个性化等任务"
+      ]
+    },
+    {
+      "event_id": "01e69a4102cbf3cfa92e66ea077648d5",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b6c31a14226ec9b0402be345622366e5",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "1b5c0cb1cb905f432195b8a342b8cd22",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "9fb9136e4e5d09d2d23ad1993d7c9d72",
+      "decision": "needs_review",
+      "decision_reason": "完整 JD 明确包含基于 LLM 的剧本生成流程与定制化生成能力研发，语义上属于 LLM 应用工程，但输入未提供可确认 campus 或 internship 的官方招聘类型证据；category 仅为“正式”。"
+    },
+    {
+      "event_id": "50119f096a40894626ce650c9c26555a",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "2a763bcb11d32fb8f23e25cebdd01848",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "ec42c5ce1cc299b133397c6d093a0224",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "d3274876a16d2837911be62ec6c3281f",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "深度参与商汤开源lightx2v引擎（https://github.com/ModelTC/LightX2V/）的社区核心模块开发与调优。",
+        "协助头部客户快速完成业务落地，形成规模化应用效应。",
+        "基于国产算力（沐曦、寒武纪等）生态，开展算子级深度优化与工具链整合，解决精度对齐、算子性能不足等国产化迁移痛点，为客户提供平滑迁移的端到端保障。"
+      ]
+    },
+    {
+      "event_id": "2d738185056ddd12a6e48b215e6b2fa2",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "我们致力于建设面向 AI 训练、推理和 Agent 等场景的 AI Infra 资源管理与调度平台，在保障大规模集群稳定性的同时，极致优化资源分配率与资源利用效率。",
+        "多集群与联邦调度：建设多集群统一资源视图与联邦调度能力，在更大的资源池范围内进行资源调度、负载均衡与故障容灾。"
+      ]
+    },
+    {
+      "event_id": "d90ba590d6b29a58c6849c40bea96e47",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "eb39602ccabf44f651a3d73e71631ea1",
+      "decision": "needs_review",
+      "decision_reason": "完整 JD 明确属于强化学习训练框架与分布式推理基础设施研发，语义范围符合 AI 平台工程，但输入未提供可确认 campus 或 internship 的官方招聘类型证据；category 仅为“正式”。"
+    },
+    {
+      "event_id": "1bfae65563da7f35b99cf9a1027d77e9",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "a410ebafec79a0d0067a67f921d82cc4",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "参与音乐生成技术的自动化评测和评价算法研发，数据集构建和工程化落地。",
+        "2. 参与音频 Caption（音频描述） 模型研发，面向多模态音频理解，完成文本生成、跨模态对齐、评测指标优化等工作。"
+      ]
+    },
+    {
+      "event_id": "6fcca795ea5a2875fbfb88503d73bd8e",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "d693e4a2dcff0b0e35e95bf59e7cb813",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：VR定位算法工程师（AG）-2027校招 / 正式",
+      "engineering_evidence": [
+        "协助 AI 检测/姿态模型在端侧（NPU/DSP）的部署、推理与性能优化；",
+        "学习并参与软件方案设计，逐步理解从算法到量产的端到端流程，与相机、显示、渲染、系统等团队协作；"
+      ]
+    },
+    {
+      "event_id": "3678eb0589975870dc8496560650d044",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e45e9c48f343525377675bd67fa90730",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "面向图纸理解、CAD/BIM 建模及软件操作等场景，参与大模型与 Agent 应用原型的开发和实验。",
+        "基于现有模型 API、工具及 Agent 框架，实现工具调用、多步骤任务执行和结果保存等功能。",
+        "参与任务评测与失败案例分析，检查模型输出和工具执行结果，协助改进提示词、工具接口及执行流程。"
+      ]
+    },
+    {
+      "event_id": "a3539d4bb277bdd082a291d38e5d3d36",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "参与大规模模型的训练框架 设计与研发，优化核心模块性能与系统效率；",
+        "推动分布式训练过程的优化，包括并行策略、混合精度、显存管理等体系设计；",
+        "参与大模型核心基础设施研发的机会；"
+      ]
+    },
+    {
+      "event_id": "4bb95cd95bedfd98b125dd80f87bee61",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-AI软件评测工程师 / 正式",
+      "engineering_evidence": [
+        "参与产品（包含AI智能体）全流程质量保障工作，包括需求分析、设计评审，制定测试计划，设计和执行测试用例，进行缺陷跟踪和软件质量分析等；",
+        "运用多种测试手段高效地保障产品交付质量（含智能体交付效果评测）；",
+        "开发自动化测试脚本，提高测试覆盖率、有效性和效率，降低维护成本；"
+      ]
+    },
+    {
+      "event_id": "31e174a5f550db8fe5f0f1c1023324c9",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "7e88258e92c3143da24ac7aede05ebbb",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "参与 ChatBI 报告中心、上下文管理、场景知识包、报告预览、版本管理、权限校验等模块开发；",
+        "参与后端 API 开发或联调，包括报告元数据、资产文件、版本发布、权限校验、查询记录等模块；",
+        "和业务运营/数据BP协作，把 LLM/Agent 生成的报告、上下文、查询结果以可靠的产品形态交付。"
+      ]
+    },
+    {
+      "event_id": "eefdfb81e3b1aa58f42dad964c5534e8",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "18e184d94b6d164a0b15b3bf94813294",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "716a994dfeee958739e5c5c8cc2983a4",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "8dece9eed9bb3eff82131068736b7037",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "660450e280bb784e15cb26aee99a81b0",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "78c0b5613b583aad82bd3195227c378d",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "43d4dcb50f1832e8254245c48d40923e",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "8b1427b4a4dd28f7633e0bc43e4b60d5",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "21d25c113bdfc3555b4b168acf2d491e",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：嵌入式感知算法工程师（AG）-2027校招 / 正式",
+      "engineering_evidence": [
+        "负责视觉感知算法在嵌入式平台上的工程落地部署工作，包括传统视觉算法（如VIO,建图，规划等）和深度学习算法（如深度估计，检测跟踪等）；",
+        "对于深度学习算法，负责AI模型在端侧的推理部署，包括但不限于模型转换，量化，剪枝，掉点分析，自定义算子实现，运行时调度等；",
+        "输出封装友好、接口友好的基础设施库（如推理框架库、高性能计算库、IPC通信库等）和感知算法业务库（涵盖数据链路调试，业务管线开发等），负责具体算法业务的上线及问题回归。"
+      ]
+    },
+    {
+      "event_id": "d8d25e922be42daedd375d4256edd9d9",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "9fb935d1659aae6d404165f2c1cbb09e",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：【27届校招】Agent开发工程师 / 正式",
+      "engineering_evidence": [
+        "参与公司Agent产品的功能开发，包括工具调用、工作流编排、记忆管理等核心模块；",
+        "协助设计并实现多Agent协同调度逻辑，提升复杂任务的执行效果与稳定性；",
+        "参与Agent框架的模块化封装，将Agent能力抽象为可复用的SDK或API；"
+      ]
+    },
+    {
+      "event_id": "f842902ff473287d30bc7a7e105bb488",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "协助团队开发、测试、优化AI渗透测试工具链、智能体，结合具体项目进行落地验证，提升端到端的自动化和自主化；",
+        "针对渗透测试智能体验证中发现的问题，优化智能体的准确率，降低漏报率；",
+        "参与AI原生安全攻防技术的研究与验证，探索AI技术在AI原生安全中的落地应用。"
+      ]
+    },
+    {
+      "event_id": "af2d8bd498543e43caebd37d93300934",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "7c97fb337a7238eed3e220a3bdb57073",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b116fe23342351e09ec812111421bcf0",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e75b215fd97ab8c6cdecb612506c84f6",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b54c43b814b3be50c3cd8d4b2163b968",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "943a20aab215106d90d47f2eb550d4d9",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "6c569d606f1506ea63e8058dc027afaf",
+      "decision": "include",
+      "decision_reason": "岗位同时包含算法/研究工作与明确可交付的 AI 应用、Agent、部署或系统工程落地职责。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：视觉大模型算法工程师-2027校招 / 正式",
+      "engineering_evidence": [
+        "参与基于大模型/生成模型的图像编辑、图像恢复、图像增强、图像修复算法的研发与交付，包括但不限于去噪、去模糊、超分、人像处理、局部编辑、风格迁移、色彩与光影优化等；",
+        "参与建设下一代 AI修图系统，探索基于多模态大模型的自动修图、偏好理解、多轮交互编辑与复杂工作流编排能力。"
+      ]
+    },
+    {
+      "event_id": "dea80cf9c9994bbceb85d37c5e54b036",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 AI/Agent 评测、安全测试或自动化测试体系的工程建设职责。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-智能辅助驾驶一段式闭环仿真工程师 / 正式",
+      "engineering_evidence": [
+        "参与基于重建/生成方案的闭环仿真能力建设，解决落地过程中关键技术问题，支撑端到端模型迭代",
+        "参与智能辅助驾驶仿真引擎性能优化及架构演进，提升大规模仿真任务执行效率及资源利用率",
+        "参与一段式模型评测能力建设，提升一段式模型评测执行效率与一致性，加速模型迭代效率"
+      ]
+    },
+    {
+      "event_id": "26de0e09673f078a6b641090bf6217da",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "123a6892567e2153f4809dfbae4684b3",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：Agent Harness 开发工程师 / 正式",
+      "engineering_evidence": [
+        "参与下一代小爱服务端架构升级，设计并建设面向文本大模型、多模态模型及 Agent 的 Harness 能力，支撑算法流程的快速编排、灰度验证与持续演进。",
+        "参与服务端关键技术问题攻关，围绕高并发、低延迟、稳定性、可观测性等方向持续优化系统能力。"
+      ]
+    },
+    {
+      "event_id": "e4d2be66353460fcb2db44af6073a111",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-端侧AI芯片推理基座软件开发工程师 / 正式",
+      "engineering_evidence": [
+        "负责大模型（LLM/VLM）在车端 AI 芯片（NPU/GPU/DSP 等）上的推理部署与工程化落地；",
+        "参与端侧推理引擎的适配与开发，完成算子映射、调度与执行优化；",
+        "与算法、芯片、嵌入式团队协作，推动 AI 推理基座在多芯片平台上的适配与复用；"
+      ]
+    },
+    {
+      "event_id": "09fce1053ad1d2ab002476e002c60d38",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-车载ECU AI 基座应用软件开发工程师 / 正式",
+      "engineering_evidence": [
+        "参与 ECU 软件架构设计，推动端侧AI、软件模块化、平台化的软件方案落地；",
+        "参与 AI 推理模块在 ECU 端侧平台的部署与集成，协同完成模型适配与性能优化；",
+        "与硬件、系统、算法、测试团队协作，完成软件在多 ECU、多域控平台上的适配与验证；"
+      ]
+    },
+    {
+      "event_id": "0d7cfde97e7e8262aa4e104b523cdc98",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "67a658e9c82d312bb4e94cb738b93773",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "16f8b7d9f66786fabdca7917d59d1616",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "11bcd3f24e458dcdfcf06e8b675c02e8",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "a0e8f8f6b9b21adca9985a9644bcff3c",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b572bf0f6a4889981eaee947248e4007",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "807d9e04f0d99a76bf30c5f6e618ccc1",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "参与负责高端制造业中软件研发工具的智能体工程项目",
+        "与产品、研发、算法等多团队协作，推动智能化方案在真实业务中的应用落地",
+        "参与负责研发工具体系的人工智能模型训练调优的工程与框架建设"
+      ]
+    },
+    {
+      "event_id": "1d60db46888b8d7edc8ba4b316a71eb9",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "bc442a9ba111634aacf27db838055129",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "afa94e3a82b0e088930830df3b58ac17",
+      "decision": "include",
+      "decision_reason": "岗位同时包含算法/研究工作与明确可交付的 AI 应用、Agent、部署或系统工程落地职责。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：【27届校招】大模型Agentic算法工程师-无限原力 / 正式",
+      "engineering_evidence": [
+        "负责大模型 Agentic Coding技术调研、数据合成、模型训练、效果评估等工作，包括不限于Terminal Coding、SWE Coding & Front-end Coding；",
+        "支持大模型在实际业务场景中的应用落地，负责平台客户的场景建模任务，将模型算法落地到客户的业务场景中。"
+      ]
+    },
+    {
+      "event_id": "c669d36f2ac2624a8dd7366fef8fc5a5",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "7bdade3e864ae7c65b1865de39563d32",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "de5fc6fc3c75c3939ec8032fe9e38526",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "开发全球领先的 AI Agent / AI APP"
+      ]
+    },
+    {
+      "event_id": "4fdae97461e26f71112df8e6306e1906",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "da06d7d01eb40d853188c2bdacbf3d47",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e7dfa5f5f575e887362c70c4c7563699",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e22d4e71fe3cdca684a214f0f27aeffa",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确包含 Agent/LLM/RAG/AI 应用的设计、开发、系统集成或生产落地职责。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：校招-智能装备AI工程师 / 正式",
+      "engineering_evidence": [
+        "推动工业智能体 Agent 的架构设计与开发，实现感知、规划、决策等核心模块",
+        "优化 Agent 在真实产线中的推理与执行效率，提升生产流程自动化水平",
+        "参与工业智能相关软件开发，包括后端服务、Web/移动端或系统集成接口"
+      ]
+    },
+    {
+      "event_id": "69d93238cfa0a0bfebfdc1014a09a38f",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "4f1df23f826dc841ed4476d8c140a86c",
+      "decision": "needs_review",
+      "decision_reason": "完整 JD 明确包含影像 AI Agent 业务设计与软件架构，语义范围符合 Agent 工程，但输入未提供可确认 campus 或 internship 的官方招聘类型证据；category 仅为“正式”。"
+    },
+    {
+      "event_id": "49bed407c9ea5d48b3da6361a6f8ffbc",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e1d5b42add25bf86873b4fb940f62bf3",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "c760aeeb3b309928d6067939e43d6554",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "4457068940f690b848c9dcb0bf536f64",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "f700377fe6e8cfe25b6914d1356fec6f",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e21e2ec74b9b92fbb50955c85fa501fc",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "a862cf95cd2ec30e96058874bbf814b7",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "251e8e215c13b80cdb8ef59518d9d4bd",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b296b5551f5d427c8f9dfb8faaae162d",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "064610f0f6f809b9fae9253eb171b799",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e2b35abb7474e5571c5bbf49173bc508",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "eff8ba6b6fb29631e84bd088b1789a13",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "ad7bf578cc463026ffab35cb45b71206",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "568aa88e22f15eca62dae721b75a4f9b",
+      "decision": "needs_review",
+      "decision_reason": "完整 JD 明确要求研发大模型网关、模型协议转换、动态路由、熔断降级与可观测体系，语义范围符合 AI 平台工程，但输入未提供可确认 campus 或 internship 的官方招聘类型证据；category 仅为“正式”。"
+    },
+    {
+      "event_id": "7342336d89e3964b6779c281ed6e7ec5",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "48b867ab5f975ecf7ee724ee3737a047",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "3142587c9750b4e271a2be4f0a2fd716",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "903ca74a4c171f63d6f914813295ccca",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "560bcbbb58d0d24b839808910a26799a",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "8d80a380603adb3460f3c3c33b5a223b",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "e320f5d65c02f4c7cb8943269e73bdde",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "ebaf29e7ed9d0c10304b7f57e97ca867",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "a15265d8cb2ae032f1bf14b685dbff7d",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "2ca46bd4faf72a5e277a55a0d0175133",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "ccb6337019f7c2a8b4c891e9110ead73",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "a75f0daed4bf986ec2ef9874b449ad8f",
+      "decision": "include",
+      "decision_reason": "岗位同时包含算法/研究工作与明确可交付的 AI 应用、Agent、部署或系统工程落地职责。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方字段/要求明确为校招或应届：Super Sparks-校招-智能体自演进算法研究/NOMI养成研究员 / 正式",
+      "engineering_evidence": [
+        "本课题主要研究构建基于持久化记忆的个性化虚拟伙伴养成技术，深入结合最新的agentic系统，并基于此进行技术创新，实现关键信息的提取、落盘、剪枝等持续迭代流程，使虚拟伙伴可以在长周期交互内容的基础上逐步养成。"
+      ]
+    },
+    {
+      "event_id": "9d379edf1336305170ad2853e1d0bb51",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "be8dc6309bb34c4f935952154c7b9738",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "93165dbbdf6dedeb68a08f3adece48a3",
+      "decision": "include",
+      "decision_reason": "完整 JD 明确承担 AI 平台、训练/推理基础设施、模型部署或相关工程化系统建设。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方字段明确为实习：实习",
+      "engineering_evidence": [
+        "负责视频图像算法在嵌入式端的部署集成，联调；",
+        "优化算法pipeline的各项性能、内存指标；",
+        "对深度学习模型有一定了解，具有嵌入式平台模型部署经验；"
+      ]
+    },
+    {
+      "event_id": "acc84e4cfba303dbd6c6b5aae8249f81",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "8109cfcc56e423f680e9e0e239f9a26e",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "6e535051cd031f942f7d0fbb528ef8cc",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "b3344c1cfd7b63426b863a4564052435",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "3852ec5557049abdfb8b6b9ce72af029",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "c819ed814106d9429aad72326a6c51e4",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "a78f98e04e3348ec81e54511e429d865",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "c799c9be0756c0ea128f2a8bd0a91d8f",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "cd2e504ba6bfa1d786bff3351de27e60",
+      "decision": "needs_review",
+      "decision_reason": "输入缺少完整 description/requirements，仅有职位标题与待复核招聘类别，无法完成完整 JD 语义审核。"
+    },
+    {
+      "event_id": "12584dc617fbcd1ec4e1dc66d259e9a2",
+      "decision": "exclude",
+      "decision_reason": "完整 JD 的核心职责不属于目标 AI 应用/Agent/LLM/RAG/AI 平台工程或 AI 评测测试工具工程范围。"
+    },
+    {
+      "event_id": "c1acb3d7571d497fe8845b114791c394",
+      "decision": "needs_review",
+      "decision_reason": "输入缺少可用的完整 description/requirements，仅有降级的列表页/分类/地点信息，无法完成完整 JD 语义审核。"
+    },
+    {
+      "event_id": "8d18c8b86150dc934b486ea35cd77066",
+      "decision": "needs_review",
+      "decision_reason": "输入缺少可用的完整 description/requirements，仅有降级的列表页/分类/地点信息，无法完成完整 JD 语义审核。"
+    },
+    {
+      "event_id": "6e90bbdafc1f43a733e8e64ab2bbd466",
+      "decision": "needs_review",
+      "decision_reason": "输入缺少可用的完整 description/requirements，仅有降级的列表页/分类/地点信息，无法完成完整 JD 语义审核。"
+    }
+  ]
 }
