@@ -282,6 +282,45 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(stored["entries"]["e1"]["review_state"], "reviewed")
             self.assertEqual(stored["entries"]["e1"]["semantic_review"]["decision"], "exclude")
 
+    def test_compaction_reuses_only_low_priority_identity_migration_exclusion(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, _ = self.base_catalog()
+            catalog["companies"][0]["other_observations"] = [{
+                "req_id": "A-old",
+                "title": "同一职位",
+                "official_url": "https://example.com/campus/position/123456/detail",
+                "decision": "exclude",
+                "decision_reason": "此前已语义确认不属于目标工程岗位。",
+                "review_depth": "listing_responsibilities",
+            }]
+            low = self.queue_entry()
+            low["job"]["job_id"] = "123456"
+            low["job"]["title"] = "同一职位"
+            low["job"]["official_url"] = "https://example.com/campus/position/123456/detail?spread=x"
+            low["identity"] = "id:123456"
+            low["triage"] = {"priority": "low"}
+            queue = {"schema_version": 2, "entries": {"low": low}}
+            self.write_json(root / "official.json", catalog)
+            self.write_json(root / "queue.json", queue)
+            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
+            self.assertEqual(result["identity_migration_exclusions"], 1)
+            stored = json.loads((root / "queue.json").read_text())
+            self.assertEqual(stored["entries"]["low"]["semantic_review"]["decision"], "exclude")
+
+            high = self.queue_entry()
+            high["job"]["job_id"] = "123456"
+            high["job"]["title"] = "同一职位"
+            high["job"]["official_url"] = "https://example.com/campus/position/123456/detail"
+            high["identity"] = "id:123456"
+            high["triage"] = {"priority": "high"}
+            queue = {"schema_version": 2, "entries": {"high": high}}
+            self.write_json(root / "queue.json", queue)
+            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
+            self.assertEqual(result["identity_migration_exclusions"], 0)
+            stored = json.loads((root / "queue.json").read_text())
+            self.assertEqual(stored["entries"]["high"]["review_state"], "pending")
+
 
 if __name__ == "__main__":
     unittest.main()
