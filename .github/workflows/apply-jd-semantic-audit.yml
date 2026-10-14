@@ -1,6 +1,14 @@
 name: Apply ChatGPT semantic JD audit decisions
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'market/job-description/01-data/automation/**'
+      - 'market/job-description/01-data/official-jds.json'
+      - 'market/job-description/01-data/bytedance-jds.json'
+      - 'market/job-description/04-scripts/**'
+      - '.github/workflows/apply-jd-semantic-audit.yml'
   push:
     branches: [main]
     paths:
@@ -20,7 +28,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate-audit-bridge:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JD semantic audit bridge and catalog contracts
+        run: python -B market/job-description/04-scripts/jd.py check
+
   apply:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
