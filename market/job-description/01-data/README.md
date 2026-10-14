@@ -6,7 +6,7 @@
 - [非当前观察](source-observations.json)：排除、不完整和访问失败的核验记录。
 - [历史一手材料](historical-jds.json)：未重新取得的原始事实，不计当前岗位数量。
 - `automation/scan-state.json`：GitHub Actions 自动扫描的职位身份/正文指纹基线；不是正式岗位库。
-- `automation/review-queue.json`：新增、正文变化和可能消失事件的累计待审队列；进入该文件不代表岗位已经被判定为目标岗位。
+- `automation/review-queue.json`：新增、正文变化和可能消失事件的累计待审队列；进入该文件不代表岗位已经被判定为目标岗位。\n- `automation/audit-batch.json`：从待审队列确定性导出的有界完整-JD审计批次，供 ChatGPT 定时任务读取。\n- `automation/audit-decisions.json`：ChatGPT 定时任务写入的语义审计结果收件箱；GitHub Actions 校验并应用后会清空 decisions 并留下应用回执。
 
 当前库的 `companies[].jobs` 是完整阅读后正式纳入的岗位；字节跳动公司的 `jobs_file` 引用同一快照下的完整数组。保全文件的 `companies[].other_observations` 记录非当前观察，`historical_file` 引用历史一手材料。所有引用均校验固定文件名、字节数、SHA-256 和快照，检查时恢复同一逻辑岗位库；每份正文仅存一处。历史记录可能只披露部分字段，不一律称完整 JD。
 
