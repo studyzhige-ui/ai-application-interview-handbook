@@ -1,161 +1,29 @@
 {
-  "batch_id": "574fef6e8bf06eb01a884949",
+  "batch_id": "0a89e14a483879dcbc2ecbcb",
   "count": 24,
   "entries": [
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "0fcec3c05c0584f896d13a9b259f173e",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:8c889f3714e81dad33b4fd86",
+      "company": "蔚来",
+      "event_id": "00be733b3d825db32d418cc88bfc6f59",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027079764494638",
       "job": {
+        "category": "正式",
+        "department": "算法",
+        "description": "负责 iaw 等自主导航任务的业务迭代，包括选路提升、避免走禁行逆行提升、以及动态会车倒车让行能力提升",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613375938431275/detail?spread=NEDQRTH",
-        "title": "大模型数据开发实习生\n北京校招实习技术 - 算法职位 ID：A64255\n1、参与大模型训练数据的构建，不限于数据过滤，质量评估，数据增强等，搭建高效的分布式数据pipeline；\n2、参与模型训练数据标签体系的建设，打造数据自动打标环路，完成海量数据打标和知识库构建；\n3、参与模型数据质量的建设，面向网页，书籍，代码等不同类型数据，打造通用的质量评估策略。"
+        "job_id": "7673027079764494638",
+        "location": "上海 / 北京",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=640&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD78Ld49sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027079764494638/detail",
+        "requirements": "1、深刻理解智能辅助驾驶业务场景，能够将多模态大模型（包括但不限于视觉语言大模型）与智能辅助驾驶能力拓展相结合，明确模型在车端训练评测、云端优化及语料生产等环节中的定位与价值。\n2、具备扎实的计算机科学、人工智能或相关专业理论基础，熟练掌握编程技能与主流深度学习框架，拥有大模型端到端研发与工程落地的完整项目实践经验。\n3、熟悉车端多模态大模型的训练、评测与迭代流程，具备云端大模型性能优化及语料自动化生产能力，能够系统性开展语料质量分析与持续提升工作。\n4、对当前主流大语言模型（LLM）、视觉语言模型（VLM）、视觉语言动作模型（VLA）及强化学习等技术的原理、模型架构与应用场景有深入理解，能够跟踪技术前沿并推动创新性算法在智能辅助驾驶领域的落地应用。\n5、具备强烈的技术自驱力与问题攻坚能力，能够独立分析并解决研发过程中的复杂技术难题；在人工智能、计算机视觉等相关领域有学术论文或技术报告发表者优先。",
+        "title": "校招-大模型算法工程师(一段式导航方向)"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 6,
-        "signals": [
-          "llm",
-          "rag"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "1382dea4a11a41ecf08d70f3f3b5db1f",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:df6f6abbc437cafa04d6ece0",
-      "job": {
-        "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683042369134479657/detail?spread=NEDQRTH",
-        "title": "Agentic Engineering (量化 Infra 方向）实习生\n北京校招实习技术 - 开发职位 ID：A166620\n岗位亮点\n我们正在构建面向大模型量化场景的「自我优化」Agentic 原生基础设施，将量化研发与部署优化从人工驱动升级为自治系统，你将深度参与量化算法研究与工程化、Agentic 范式探索与跨硬件 Infra 建设，打造下一代量化工程体系。\n\n核心职责\n1. 负责大模型量化算法工程化，覆盖 PTQ/QAT/ 低比特量化在大模型及多模态模型的落地，重点针对 GPU/NPU/ 端侧芯片等各类硬件平台设计并优化量化方案，平衡精度与推理性能\n2. 构建 Agent 原生的统一量化研发工作流，实现从量化方案定义到跨硬件落地交付的全流程自治闭环\n3. 搭建标准化量化评测体系，推动基础设施向自我优化的 Agent 驱动系统演进\n4. 跟踪量化与 Agentic Infra 前沿技术，在真实跨硬件量化项目中完成技术落地与迭代"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 11,
-        "signals": [
-          "agent",
-          "llm",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "1d4746be9daef3d65fc605928c787c54",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:5581e900fc16918ca32bc188",
-      "job": {
-        "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683469456987932954/detail?spread=NEDQRTH",
-        "title": "强化学习自进化实习生\n北京校招实习技术 - 算法职位 ID：A85669\n我们正在探索 AI4AI、自进化智能体与长程 Agentic Learning 等前沿方向。你将参与组内核心强化学习项目，与我们一起训练能够持续探索、自我改进并解决复杂任务的智能体。\n工作内容\n1. 参与强化学习算法的设计、实现、实验与迭代\n2. 搭建和优化 RL 训练基础设施，提高训练效率、稳定性与可扩展性\n3. 参与 Agentic Coding、长程 Agent 及自进化系统的训练\n4. 分析训练轨迹、奖励信号和数据分布，定位模型能力瓶颈\n5. 设计和组织高质量训练数据与评测体系\n6. 跟进并复现强化学习、Agent、自进化与具身智能领域的最新工作"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 9,
-        "signals": [
-          "agent",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "317097b8410525333ef2da375554d6c8",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7683042369134479657",
-      "job": {
-        "description": "岗位亮点\n我们正在构建面向大模型量化场景的「自我优化」Agentic 原生基础设施，将量化研发与部署优化从人工驱动升级为自治系统，你将深度参与量化算法研究与工程化、Agentic 范式探索与跨硬件 Infra 建设，打造下一代量化工程体系。\n\n核心职责\n1. 负责大模型量化算法工程化，覆盖 PTQ/QAT/ 低比特量化在大模型及多模态模型的落地，重点针对 GPU/NPU/ 端侧芯片等各类硬件平台设计并优化量化方案，平衡精度与推理性能\n2. 构建 Agent 原生的统一量化研发工作流，实现从量化方案定义到跨硬件落地交付的全流程自治闭环\n3. 搭建标准化量化评测体系，推动基础设施向自我优化的 Agent 驱动系统演进\n4. 跟踪量化与 Agentic Infra 前沿技术，在真实跨硬件量化项目中完成技术落地与迭代",
-        "detail_status": "OK",
-        "job_id": "7683042369134479657",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683042369134479657/detail",
-        "requirements": "1. 硕士及以上学历，计算机 / 人工智能 / 电子工程相关专业\n2. 熟练使用 Python，熟悉 Transformer 架构。了解大语言模型结构特点与计算瓶颈，具备扎实的代码能力\n3， 深入理解模型量化原理，熟悉 PTQ/QAT 等技术，掌握 GPTQ/AWQ/SmoothQuant 等主流量化算法实现\n4. 扎实的加速器硬件和 AI Infra 系统知识，具备对应算子开发与性能调优经验\n5. 具备复杂系统拆解与问题定位能力，对评测敏感，能判断量化指标可信度与实验有效性\n6. 认可 AI Native 方向，具备快速跟进前沿研究与算法复现能力\n\n加分项\n1. 量化相关论文发表或开源项目贡献，具备跨硬件平台软硬协同优化经验\n2. 熟悉 KV Cache/Activation 量化等大模型量化与推理优化技术，有TVM/MLIR/ONNX Runtime 等 AI 编译器相关实践经验\n3. 有 Agent 评测体系 / 量化 Harness 建设经验，或评测体系 / 评测集构建经验（用例生成、LLM-as-judge 等）\n4. 对 Agent 有深入实践（tool use/planning/multi-agent 等），有活跃开源项目或对社区有实质贡献",
-        "title": "Agentic Engineering (量化 Infra 方向）实习生"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 11,
-        "signals": [
-          "agent",
-          "llm",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "33ef0fa877d3d8fd9276024df27fc4b2",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7685613375938431275",
-      "job": {
-        "description": "1、参与大模型训练数据的构建，不限于数据过滤，质量评估，数据增强等，搭建高效的分布式数据pipeline；\n2、参与模型训练数据标签体系的建设，打造数据自动打标环路，完成海量数据打标和知识库构建；\n3、参与模型数据质量的建设，面向网页，书籍，代码等不同类型数据，打造通用的质量评估策略。",
-        "detail_status": "OK",
-        "job_id": "7685613375938431275",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA8P4ref4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613375938431275/detail",
-        "requirements": "1、计算机相关专业，本科及以上在读；\n2、精通Python语言，熟悉Spark、Ray等分布式框架，具备丰富的大规模数据处理实践经验是加分项；\n3、具备良好的逻辑能力，细心严谨，对数据敏感；\n4、具备自主调研能力，以下方向有实践经验或兴趣浓厚优先：大规模文本数据质量提升、文本数据处理。",
-        "title": "大模型数据开发实习生"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 6,
-        "signals": [
-          "llm",
-          "rag"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "3c3aecf77cf08acef7b8ce882690716a",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7683048661333805350",
-      "job": {
-        "description": "1. 核心模块研发（数据合成与质量评审）\n参与工业表面缺陷的训练数据合成链路研发，在真实底图上生成带精确标注的缺陷样本，提升合成数据的真实性与标注可信度。\n参与 LLM-as-Judge 质量评审闭环的设计与实现，筛选合格样本、审计标注质量，让合成数据可稳定进入训练池。\n2. 多模态缺陷检测与模型后训练\n探索用 多模态大模型（VLM）解决工业缺陷目标检测：设计检测 prompt 与输出协议，做零样本 / 少样本检测与后处理优化，提升缺陷的定位精度与召回。\n参与 模型后训练：基于合成与真实数据对 VLM 做 SFT / LoRA 微调或 RL 后训练，构建训练数据、跑通训练链路、验证效果并迭代。\n负责 VLM 缺陷检测 Benchmark 的模型接入、指标计算与报告输出，横评多个开源多模态模型并给出验收结论。\n3. 技术方案与协作\n与团队成员紧密配合，参与方案讨论，提出算法思路，落地方案实施，共同推动项目进展。\n撰写相关技术文档，总结和沉淀研发经验，方便团队成员共享和后续查阅。\n\n你将获得\n前沿技术实践机会：深入参与工业缺陷检测领域的核心链路研发——VLM 合成、多模态评测、LLM-as-Judge、端侧量化部署，接触最前沿技术动态，提升专业技术水平。\n丰富的项目实战经验：在真实工业项目中承担具有挑战性的任务，快速提升技术能力和工程实践水平；完整经历从方案设计、代码实现、跑批评测到报告输出的闭环。\n良好的团队氛围：加入充满活力、鼓励创新的团队，与优秀工程师一起成长，拓展人脉资源。\n实习证明与转正机会：表现优异的实习生将获得转正机会，成为团队正式一员，开启职业发展新篇章。\n\n我们期待你的加入，共同打造安全高效的工业缺陷检测智能质检体系！",
-        "detail_status": "OK",
-        "job_id": "7683048661333805350",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683048661333805350/detail",
-        "requirements": "1. 学历背景\n计算机科学、软件工程、人工智能、自动化等相关专业的在校本科生或研究生。\n\n2. 技术基础\n熟练掌握 Python，具备良好编程习惯；熟练 numpy / PIL / cv2 图像处理基础，会读 transformers 这类大型开源库的源码。\n对 多模态大模型（VLM） 及其应用有一定了解，有 prompt 工程、VLM 调用、模型评测或数据合成相关项目经验者优先。\n了解 目标检测、分割、评测指标（F1/IoU/mAP） 等视觉概念，有实际跑过 benchmark 的经验者更佳。\n了解 模型后训练（SFT / LoRA / RLHF 等）流程，有 PyTorch 训练或微调开源模型经验者优先。\n接触过 扩散模型（Diffusion）、LLM-as-Judge、或端侧部署（RKNN / INT8 量化）任一方向者优先。\n\n3. 软素质\n对开源项目充满热情，有强烈学习意愿和自我驱动力，能主动探索新技术。\n具备良好沟通能力和团队协作精神，能与团队成员有效配合完成工作。\n能够快速理解业务需求，并将其转化为技术实现，为业务发展提供技术支持。\n",
-        "title": "算法研发实习生(多模态\\后训练)"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -168,23 +36,26 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "51df1f38ec0e0081ca82342544bc279b",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7682708160822593811",
+      "company": "商汤科技",
+      "event_id": "0187c7d581d8fa0d417510c2eba59092",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7660717298441996594",
       "job": {
-        "description": "1. 核心模块研发（任务与算力调度） ：\n- 优化智能体的持续任务执行能力。在给定的计算资源和时间范围内，持续改进 Agent Loop 闭环工作流程，AI探索智能体在真实场景中的落地方式，提升其在真实、复杂、长链路任务中的可靠性、执行效率与可控性。\n2. 通用任务能力拓展 ：\n- 针对智能体处理通用任务的目标，负责特定二级或三级方向的深入调研与实现。在 软件开发、报告编写、自动化办公 等场景，探索让智能体具备专业、高效解决能力的方法。\n- 调研并实践如何让智能体更好地完成长链路任务，包括任务拆解、信息收集、工具使用、结果验证和多轮迭代。\n- 参与构建任务评测方案，通过真实案例、离线评测和线上反馈分析 Agent 的问题，持续迭代算法策略和系统实现。\n- 将实验性想法落地为可运行、可验证、可维护的代码，而不仅仅停留在 Demo 或 Prompt 调试层面。\n3. 技术方案与协作 ：\n- 与团队成员紧密配合，参与方案讨论，提出算法思路，落地方案实施，共同推动项目进展。\n- 撰写相关技术文档，总结和沉淀研发经验，方便团队成员共享和后续查阅。",
+        "category": "实习",
+        "department": "算法",
+        "description": "1. 与研究员合作针对集团的生成式AI业务板块中共性痛点和挑战性问题研发创新性解决方案；\n2. 与研究员合作做某一细分领域算法或系统的深入研究，例如但不限于web前端LLM数据合成，Agentic RL算法研究等，当前重点聚焦agentic coding领域，关注swe，terminal bench相关基准\n3. 与研究员合作维护相关研究方向的基准（如代码、评测集等），将创新算法沉淀为论文、技术报告或专利。",
         "detail_status": "OK",
-        "job_id": "7682708160822593811",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7682708160822593811/detail",
-        "requirements": "1. 学历背景 ：计算机科学、软件工程、人工智能等相关专业的在校本科生或研究生。\n2. 技术基础 ：\n- 熟练掌握 Python、Typescript 或 Rust 中的至少一种编程语言，熟练掌握vibe coding，具备良好的编程习惯和工程意识。\n- 对 大语言模型（LLM） 及其应用有一定了解，有Agent、LLM 应用、搜索问答、Harness相关开源项目经验者优先。\n- 了解 LLM、Agent 等相关概念，有相关实践经验者更佳。\n- 能够阅读英文技术资料和开源项目代码，并将调研结果转化为实际方案。\n3. 软素质 ：\n- 对开源项目充满热情，有强烈学习意愿和自我驱动力，能主动探索新技术。\n- 具备良好沟通能力和团队协作精神，能与团队成员有效配合完成工作。\n- 能够快速理解业务需求，并将其转化为技术实现，为业务发展提供技术支持。\n4. 你将获得\n前沿技术实践机会 ：深入参与 AI 智能体领域核心算法研发，接触最前沿技术动态，提升专业技术水平。\n丰富的项目实战经验 ：在真实开源项目中承担具有挑战性的任务，快速提升技术能力和工程实践水平。\n良好的团队氛围 ：加入充满活力、鼓励创新的团队，与优秀工程师一起成长，拓展人脉资源。\n实习证明与转正机会 ：表现优异的实习生将获得转正机会，成为面壁智能正式一员，开启职业发展新篇章。\n我们期待你的加入，共同打造下一代安全高效的端云协同智能体！",
-        "title": "大模型Agent工程实习生"
+        "job_id": "7660717298441996594",
+        "location": "北京 / 上海",
+        "official_api": "https://hr-jobs.sensetime.com/api/v1/search/job/posts?keyword=&limit=10&offset=50&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j3q63gAAAABYDajJxBR8Y496usAAOXD",
+        "official_url": "https://hr-jobs.sensetime.com/edu/position/7660717298441996594/detail",
+        "requirements": "1.26届或之后毕业的硕士、博士，优秀本科生也可，要求同学有强自我驱动力；\n2.论文阅读能力出众，对大模型、Agent、AIGC领域最新进展熟悉，有相关科研/项目经验优先\n3.一周实习5天及以上，6个月及以上实习生",
+        "title": "大模型算法实习生-代码智能"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-031",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -198,180 +69,91 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "54cc9f16e8b1b729a8f4db24327da80a",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:f873488c54b90be1fe608938",
+      "company": "蔚来",
+      "event_id": "01dc0ea42cb4207550cebb6c91adc7d0",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027279396768009",
       "job": {
+        "category": "正式",
+        "department": "算法",
+        "description": "1. 面向智能座舱与车载交互场景，探索大语言模型与 Agent 在真实产品中的应用，负责车载对话系统、任务型助手、多轮交互Agent等方向的研究、训练优化、效果评估与产品迭代。\n2. 跟踪并复现 LLM 后训练与 Agentic Training 前沿技术，包括 On-policy Distillation、Agentic RL、RLHF / RLVR 等，推动其在车载智能体、复杂任务执行、多工具调用和多轮推理决策中的落地。\n3. 参与构建 Agent 能力增强所需的训练与交互环境，包括 Tool 系统、User Simulator、World Model、Reward Function、Agent Harness、任务编排与自动化评测框架等。\n4. 基于实车交互数据和线上反馈，进行问题挖掘、错误归因与方案优化，建设数据生产、模型训练、离线评测、在线分析和失败案例回流的闭环体系，推动大模型能力从“可用”走向“好用、可靠、可持续进化”。",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7689004710846662922/detail?spread=NEDQRTH",
-        "title": "agentic算法实习生\n北京校招实习技术 - 算法职位 ID：A123256\n面壁智能基础模型团队，方向聚焦于提升端侧、云侧自研模型在复杂 Agentic 场景下的表现。通过优化多轮交互、多工具协同、多跳信息检索、多文件操作、长程任务执行、错误恢复与闭环交付等方面的能力，实现模型的跨 harness 泛化。\n\n岗位职责：\n以模型训练为核心，参与 data-infra-algorithm-eval 的全流程闭环：\n1、构建大规模任务与环境合成管线，实现高质量训练数据的快速获取；\n2、优化训练 recipe，探索 mid-train, sft, rl, opd 的有机结合；\n3、形成独到的数据选择及加权策略，逐步拓宽模型的能力边界；\n4、在 agentic training 中持续 scaling，保证大规模异步强化学习的高效与稳定；\n5、设计更为精细的评测和长轨迹信用分配方法，引导模型习得良好的解题模式；"
+        "job_id": "7673027279396768009",
+        "location": "北京 / 上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=550&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.C5o9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027279396768009/detail",
+        "requirements": "1. 研究生及以上学历，计算机、人工智能、自动化、信号处理、数学等相关专业，具备扎实的机器学习与 NLP 基础。\n2. 具备LLM 后训练相关科研或项目经验，熟悉 Reward Modeling、Preference Learning、On-policy Distillation、RLHF / RLVR 等训练流程。\n3. 熟练掌握 Python、Java、TypeScript、JsonScript 等至少一门编程语言，具备良好的工程实现能力。\n4. 熟悉 LLM Agent 与 Agent Harness 技术体系，理解 ReAct、Function Calling、Tool Integrated Reasoning、Reflection、Memory、Planning、多轮交互等范式。\n5. 熟悉 PPO、GRPO、DAPO 等 LLM RL 算法原理，了解 Agentic RL、长程任务学习、稀疏奖励建模、轨迹级优化等方向。\n6. 熟悉 Verl、Slime、ms-swift、OpenRLHF、TRL 等训练或强化学习框架，了解分布式训练、推理服务和评测 infra 者优先。\n7. 具备较强的论文跟踪、技术复现和工程落地能力，有车载语音助手、智能座舱、Voice Agent、多模态交互、高水平论文或开源项目经验者优先。",
+        "title": "校招-座舱大模型后训练/Agentic 算法工程师"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": false,
-        "priority": "high",
-        "score": 7,
-        "signals": [
-          "agent",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "604a82fd6685985982be0ee8fdcc11cf",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:925a0363c44cb63e5a7fed11",
-      "job": {
-        "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685612476641904923/detail?spread=NEDQRTH",
-        "title": "强化学习算法实习生（LLM Agent 方向）\n北京、上海校招实习技术 - 算法职位 ID：A50883\n1、面向 agentic 任务（多轮工具调用、代码修复 / SWE、网页搜索与信息检索、长程任务规划等）开展 LLM 的RL 后训练研究；\n2、研究并改进面向多轮、长 horizon、稀疏奖励场景的 RL 算法（GRPO / PPO 及其变体），包括优势估计与 credit assignment、off-policy 修正、探索与熵控制、训练稳定性等问题；\n3、参与 agent 任务的训练数据与评测设计：构造训练任务，设计可验证的奖励信号，分析 rollout 轨迹质量；\n4、独立设计并执行实验：数据构造与筛选、消融实验、训练曲线与 rollout 轨迹分析，定位 reward hacking、训练崩溃等问题并给出改进方案，撰写技术报告；有机会产出论文或开源成果；\n5、跟踪 agent RL 前沿工作并快速复现，在内部训练框架中落地验证。"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
-        "score": 11,
+        "score": 13,
         "signals": [
           "agent",
           "llm",
-          "evaluation"
+          "evaluation",
+          "memory_context"
         ]
       }
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "686e9c157bb4d4c094414a6026f825d3",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7683469456987932954",
+      "company": "蔚来",
+      "event_id": "01e69a4102cbf3cfa92e66ea077648d5",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7633337685424687401",
       "job": {
-        "description": "我们正在探索 AI4AI、自进化智能体与长程 Agentic Learning 等前沿方向。你将参与组内核心强化学习项目，与我们一起训练能够持续探索、自我改进并解决复杂任务的智能体。\n工作内容\n1. 参与强化学习算法的设计、实现、实验与迭代\n2. 搭建和优化 RL 训练基础设施，提高训练效率、稳定性与可扩展性\n3. 参与 Agentic Coding、长程 Agent 及自进化系统的训练\n4. 分析训练轨迹、奖励信号和数据分布，定位模型能力瓶颈\n5. 设计和组织高质量训练数据与评测体系\n6. 跟进并复现强化学习、Agent、自进化与具身智能领域的最新工作",
+        "category": "实习",
+        "department": "产品经理",
+        "description": "1. 负责领域数字化产品的全周期运营，深度参与 AI 产品体系搭建与迭代，包含产品定义、智能 Agent 设计与落地构建、AI 能力场景化落地等工作。\n2. 承接业务侧用户问题响应与支持，负责异常数据诊断、处理及线上运维，开展 AI 效果工程优化，保障产品与模型服务稳定性。\n3. 负责权限体系、系统配置等基础能力规划与落地，跟进产品细节需求迭代与需求闭环管理，推动产品体验持续优化。\n4. 参与领域数字化产品需求沟通、需求拆解与分析，输出清晰需求结论与业务反馈，对齐研发、数据及算法侧目标。\n5. 开展 AI 产品场景分析与方案设计，输出产品规划、解决方案及产品交付计划，支撑产研数字化与智能化升级。\n6. 负责产品及智能 Agent 的上线测试、交付落地，开展用户支持与赋能培训，提供二线运营保障，跟进系统运维事件全流程闭环。\n7. 基于产品运营数据、AI 效果指标及用户反馈进行持续分析，挖掘业务痛点与产品优化机会，驱动产品迭代与用户体验提升。",
         "detail_status": "OK",
-        "job_id": "7683469456987932954",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683469456987932954/detail",
-        "requirements": "1. 计算机、人工智能、自动化、数学等相关专业在读\n2. 具备扎实的强化学习基础，理解常见算法及其训练机制\n3. 算法能力强，能够快速理解论文并将想法落地为实验\n4. 工程能力强，熟练使用 Python 和 PyTorch，具备良好的代码质量意识\n5. 能独立完成实验设计、训练调试、结果分析与问题定位\n6. 对 Agent、自进化、AI4AI 或具身智能方向有浓厚兴趣\n7. 学习能力强，愿意面对开放性问题和高不确定性的研究任务\n\n加分项\n1. 在强化学习、Agent、AI4AI、自进化或具身智能方向发表过相关论文\n2. 有大规模 RL 训练、分布式训练或 RL Infra 建设经验\n3. 有 LLM Post-training、RLHF、Agentic RL 或 SWE-bench 相关经验\n4. 具备良好的“数据品位”：能够敏锐观察数据、轨迹和训练现象，并据此设计数据配比、采样策略与实验\n5. 有优秀的开源项目、竞赛成绩或可展示的研究成果\n\n我们希望你\n不一定同时精通算法与基础设施，但至少在其中一个方向有突出能力，并愿意深入真实、复杂的强化学习训练问题。\n这里不仅是复现已有方法，你将有机会直接参与前沿方向探索，并对训练方案、数据设计、算法选择和系统实现产生实际影响。",
-        "title": "强化学习自进化实习生"
+        "job_id": "7633337685424687401",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=840&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.mRY9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7633337685424687401/detail",
+        "requirements": "1. 本科及以上学历，计算机、软件工程、车辆工程、数据科学等相关专业优先。\n2. 对 AI 产品、Agent 智能体、数字化产研工具有基本认知，有产品设计、产品运营或 AI 相关项目 / 实习经验优先。\n3. 具备良好的英文读写及沟通能力，可顺畅阅读英文文档、参与跨场景业务沟通。\n4. 具备规范的产品文档撰写能力，可清晰输出需求文档、产品方案及分析报告。\n5. 具备快速学习能力与逻辑思辨能力，对新技术、新场景有较强好奇心与适应力。\n6. 具备优秀的跨团队沟通、协调推进能力，可高效对齐多方资源推动需求落地。\n7. 具备良好的团队协作意识、责任心与执行力，积极进取，可承接日常运营与项目迭代工作。",
+        "title": "实习-领域应用产品经理"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
-        "priority": "high",
-        "score": 11,
-        "signals": [
-          "agent",
-          "llm",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "6f3c987096e51f65deb6c2ba18075303",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:4d1a855daec527e7335e30fb",
-      "job": {
-        "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7680823773248063782/detail?spread=NEDQRTH",
-        "title": "大模型 Agent 算法实习生\n北京校招实习技术 - 算法职位 ID：A214672\n1、参与大模型 Agent 能力优化，探索如何让 Agent 更自主、可靠地完成复杂任务。\n2、从真实工作流、互联网等场景中挖掘有价值的 Agent 任务，参与高质量训练数据与环境构建。\n3、参与 Agent 核心能力与训练方法研究，包括但不限于：\n1）任务与环境构造、Trajectory 生成与筛选；\n2）Long-horizon Agent、错误恢复与自我纠正；\n3）Reward / Verifier、强化学习、Test-time Scaling 等。"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": false,
         "priority": "high",
         "score": 6,
         "signals": [
-          "agent",
-          "llm"
+          "agent"
         ]
       }
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "71b24c6d9ef5e0f1f75461d45c32f317",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:4360c07a05da5bd8d34b2a57",
+      "company": "蔚来",
+      "event_id": "0203702d82f10d0da2d15f0212595a29",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7687440922813073707",
       "job": {
+        "category": "正式",
+        "department": "算法",
+        "description": "负责端到端辅助驾驶模型设计、训练和产品交付。\n重点解决园区场景遇到的各类问题，如闸机通行等，使模型具备同时可以前进、倒车、腾挪的自主能力。\n负责强化学习驱动的驾驶策略优化，推动算法性能提升。\n参与智能辅助驾驶模型的监督微调（SFT）研究与优化，提升模型泛化能力\n参与基础设施完善，包括训练系统、评测系统的开发与优化\n参与闭环仿真与数据驱动迭代，提升数据利用效率，驱动模型性能提升和泛化\n不断探索新算法并实践，提升产品功能表现",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613435107232054/detail?spread=NEDQRTH",
-        "title": "大模型 Agent 数据算法实习生\n北京校招实习技术 - 算法职位 ID：A88573\n1、参与大模型 Agent 能力数据构建，探索如何让大模型更自主、可靠地完成长程复杂任务；\n2、从真实工作流、互联网等场景中挖掘高价值 Agent 任务，参与高质量训练数据、任务与交互环境的构建；\n3、参与 Agent 数据与环境构建相关的方法研究，包括但不限于：\n1）任务与环境构造、Trajectory 生成与筛选；\n2）研究任务与环境的自动化生产方法，探索 Agent 数据与环境的 Scaling Law；\n3）Reward / Verifier 的设计与构建。"
+        "job_id": "7687440922813073707",
+        "location": "上海 / 北京",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD79e0Y9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7687440922813073707/detail",
+        "requirements": "本科及以上学历，计算机、自动化、车辆工程、机器人、人工智能等相关专业\n研究经历和方向涉及轨迹规划模型、生成模型、大语言模型，以及相关的数据算法和训推框架，并在主流方案上有实践经验，如自回归、Diffusion、VLA、世界模型等\n掌握先进强化学习算法和底层原理，如PPO，GRPO，以及其他变种\n扎实的 Python 编程能力，能够熟练使用 PyTorch／TensorFlow 等深度学习框架。\n扎实的论文调研阅读能力，能够跟踪业界的前沿进展并具备算法复现的能力。\n具备将前沿算法研究与量产落地需求相结合的系统性工程能力，对解决复杂实际问题有强烈驱动力",
+        "title": "校招-智能辅助驾驶大模型算法工程师(业务闭环方向)-园区"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": false,
-        "priority": "high",
-        "score": 6,
-        "signals": [
-          "agent",
-          "llm"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "806f4e0e4f9c69db75d6bd2436fa84cd",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7671209200165472553",
-      "job": {
-        "description": "关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从SuperMate智舱到MiniCPM系列模型，从松果派开发板到RoboHarness具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是AI普及的必经之路。\n你需要做什么？\n1. 内容基建 — 维护面壁的内容库和媒体库，让品牌资产\"随调随用\"；\n2. 内容产出 — 撰写新闻稿、媒体brief、活动话术等，你的文字会出现在36氪、极客公园、新华社等媒体上；\n3. 媒体沟通 — 协助媒体对接、采访安排、活动执行，学习怎么把技术故事讲给大众听；\n4. 行业研究 — 追踪AI热点、竞品动态、行业趋势，帮我们保持信息敏感度。",
-        "detail_status": "OK",
-        "job_id": "7671209200165472553",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7671209200165472553/detail",
-        "requirements": "1.AI原生用户：重度使用AI工具，懂vibe coding，会用Agent搭简单工作流，知道怎么让AI当你的\"情报员\"和\"小助手\"；\n2.对AI有执念：不只是用，而是爱琢磨\"还能怎么用\"，有钻研精神；\n好奇PR在干嘛：想了解公关行业运作逻辑，想透过PR的视角看懂AI行业的发展脉络。\n你将获得什么？\n1. 真项目，真作品：直接参与面壁产品发布、行业展会（如WAIC）、媒体活动的实际执行，产出可写进简历的案例；\n2. AI工作流实战课：我们会教你如何把Agent、自动化工具融入真实工作流，让你比同龄人更早建立\"AI原生\"工作习惯；\n3. PR+AI双视角：一边学习公关传播的方法论，一边深度接触端侧智能最前沿的动态和玩家，建立对科技商业的体感；\n4. mentor陪伴成长：有经验丰富的同事带你，从怎么写一封专业的邮件到怎么策划一场活动，手把手教你\"职场基本功\"；\n5. 灵活有趣的工作氛围：我们鼓励用AI提效、反对无效加班，如果你有好想法，随时可以提出来一起试。\n\n请附上一段你平时怎么用AI提高效率的说明（100字以内即可），让我们快速了解你",
-        "title": "PR&品牌传播实习生"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 11,
-        "signals": [
-          "agent",
-          "llm",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "8e3d5704b332088c2f3c8d11c41e8f37",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:e399e24264adf781a8adda3a",
-      "job": {
-        "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7671209200165472553/detail?spread=NEDQRTH",
-        "title": "PR&品牌传播实习生\n北京校招实习市场与销售 - 市场品牌职位 ID：A235549\n关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从SuperMate智舱到MiniCPM系列模型，从松果派开发板到RoboHarness具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是AI普及的必经之路。\n你需要做什么？\n1. 内容基建 — 维护面壁的内容库和媒体库，让品牌资产\"随调随用\"；\n2. 内容产出 — 撰写新闻稿、媒体brief、活动话术等，你的文字会出现在36氪、极客公园、新华社等媒体上；\n3. 媒体沟通 — 协助媒体对接、采访安排、活动执行，学习怎么把技术故事讲给大众听；\n4. 行业研究 — 追踪AI热点、竞品动态、行业趋势，帮我们保持信息敏感度。"
-      },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -384,19 +166,26 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "8f4c8c70a894f735343ee91b15e1fb28",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:da49c4f1a15caf43ccd76bc1",
+      "company": "蔚来",
+      "event_id": "038cd00dd2561ad5ad27835d58c12f83",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027301600348442",
       "job": {
+        "category": "正式",
+        "department": "软件测试",
+        "description": "1. 负责智能座舱全维度测试工作，覆盖常规车机功能、性能、稳定性测试，重点落地座舱AI多模态智能化测试，包含智能语音、视觉感知、车载大模型、场景化智能交互等核心能力评测。\n2. 基于AI软件工程理念，独立使用及轻量化开发适配座舱业务的AI测试工具，覆盖测试全链路智能化提效：依托大模型实现测试用例智能生成、自动化脚本批量产出、测试数据智能构造，同时落地缺陷智能预判、自动分类及初步根因研判，打通从测试准备、执行到问题闭环的全流程AI赋能。\n3. 参与自动化测试工具、测试平台的迭代优化，结合AI赋能DevOps流程，推进测试环节与研发、部署流程深度联动，提升团队整体研发交付效率与测试覆盖率。\n4. 根据产品迭代需求，输出标准化测试计划与用例体系，高效执行测试任务，闭环跟进功能及算法缺陷，联动开发、算法团队完成问题定位、根因分析与优化落地，保障版本高质量交付。\n5. 专项开展AI座舱效果测试与数据分析，利用AI工具自动完成测试结果比对、算法效果优劣研判、批量测试数据统计，智能生成测试总结报告、质量分析报告，精准提炼测试痛点与质量风险，为产品AI算法迭代、交互体验优化、测试流程升级提供有效数据支撑。\n6. 跟进AI软件工程、智能测试新技术，持续优化测试流程与方法论，落地轻量化、智能化、高效化的测试体系，助力团队实现研发测试全域效能提升。",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683048661333805350/detail?spread=NEDQRTH",
-        "title": "算法研发实习生(多模态\\后训练)\n北京校招实习技术职位 ID：A187290\n1. 核心模块研发（数据合成与质量评审）\n参与工业表面缺陷的训练数据合成链路研发，在真实底图上生成带精确标注的缺陷样本，提升合成数据的真实性与标注可信度。\n参与 LLM-as-Judge 质量评审闭环的设计与实现，筛选合格样本、审计标注质量，让合成数据可稳定进入训练池。\n2. 多模态缺陷检测与模型后训练\n探索用 多模态大模型（VLM）解决工业缺陷目标检测：设计检测 prompt 与输出协议，做零样本 / 少样本检测与后处理优化，提升缺陷的定位精度与召回。\n参与 模型后训练：基于合成与真实数据对 VLM 做 SFT / LoRA 微调或 RL 后训练，构建训练数据、跑通训练链路、验证效果并迭代。\n负责 VLM 缺陷检测 Benchmark 的模型接入、指标计算与报告输出，横评多个开源多模态模型并给出验收结论。\n3. 技术方案与协作\n与团队成员紧密配合，参与方案讨论，提出算法思路，落地方案实施，共同推动项目进展。\n撰写相关技术文档，总结和沉淀研发经验，方便团队成员共享和后续查阅。\n\n你将获得\n前沿技术实践机会：深入参与工业缺陷检测领域的核心链路研发——VLM 合成、多模态评测、LLM-as-Judge、端侧量化部署，接触最前沿技术动态，提升专业技术水平。\n丰富的项目实战经验：在真实工业项目中承担具有挑战性的任务，快速提升技术能力和工程实践水平；完整经历从方案设计、代码实现、跑批评测到报告输出的闭环。\n良好的团队氛围：加入充满活力、鼓励创新的团队，与优秀工程师一起成长，拓展人脉资源。\n实习证明与转正机会：表现优异的实习生将获得转正机会，成为团队正式一员，开启职业发展新篇章。\n\n我们期待你的加入，共同打造安全高效的工业缺陷检测智能质检体系！"
+        "job_id": "7673027301600348442",
+        "location": "北京 / 上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=540&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7-g549sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027301600348442/detail",
+        "requirements": "1. 研究生及以上学历，车辆工程、计算机、电子信息、软件工程、人工智能等相关专业。\n2. 熟练掌握标准软件测试流程与方法论，具备智能座舱测试经验；熟悉AI软件工程理念，熟练运用Vibe Coding、各类AI研发测试工具完成测试开发与场景落地，有车载大模型、多模态智能交互实测经验者优先。\n3. 熟练掌握Python/Java任意一种编程语言，具备扎实的自动化测试开发能力；擅长依托AI工具、Vibe Coding模式快速生成代码、用例、脚本，精通AI赋能研发全链路提效思路，可独立完成智能化测试方案设计与落地创新。\n4. 了解智能座舱软硬件架构及车载行业标准，掌握座舱AI核心模块工作原理，具备AI算法评测、智能化场景落地测试经验者优先。\n5. 具备良好的跨团队沟通协作能力与抗压能力，适配快速迭代的研发节奏，可高效完成版本测试、问题攻坚与流程优化工作。\n6. 逻辑清晰、善于问题复盘与总结，具备优秀的自主学习能力，能够快速跟进AI软件工程、智能测试新技术，持续推进测试效能升级。\n7. 加分项：熟练主流AI测试/编码工具，深耕Vibe Coding高效开发模式，具备测试全链路AI智能化改造、研发全域效能提升落地经验，熟悉车载多模态AI评测、数据集优化与大模型效果调优者优先。",
+        "title": "校招-测试开发工程师"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -408,50 +197,31 @@
       }
     },
     {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "9a6d3ee3a86cb400eb7debf81cea3450",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:9db81f820c9f92fa6431cd57",
+      "change": "changed",
+      "company": "昆仑万维/天工",
+      "event_id": "03e05e5586b6094a10450df762872e67",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7545325622134851903",
       "job": {
+        "category": "正式",
+        "department": "算法",
+        "description": "开展强化学习在大模型上的探索工作，通过前沿研究和技术创新，优化RL训练Pipeline，提高模型的复杂推理和通用指令跟随能力。\n开展强化学习在复杂Agent任务（例如Computer Use，Deep Research，AI IDE等）上的落地探索，拓宽大模型的应用边界。\n对学术前沿保持跟进，鼓励将研究工作开源，并撰写论文或技术报告，促进团队内部以及与外部的技术交流。",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683473677028346155/detail?spread=NEDQRTH",
-        "title": "Agentic Infra 实习生\n北京校招实习技术 - 基础架构2026校园招聘职位 ID：A178856\n我们在构建一套“自我优化”的大模型训练系统，你将参与以下核心方向：\n1. 参与模型训练，构造在高性能/infra侧专用的模型\n2. 构建统一的训练 Harness 范式，标准化训练、benchmark 与评测流程\n3. 探索 Agentic Infra，将训练系统从人工驱动升级为 Agent 驱动\n4. 推动训练系统从工具集合向具备自我优化能力的系统演进"
+        "job_id": "7545325622134851903",
+        "location": "北京",
+        "official_api": "https://jobs.kunlun.com/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j-oMeAAAAABYnR5v46tckY.qDGAAOU0",
+        "official_url": "https://jobs.kunlun.com/459522/position/7545325622134851903/detail",
+        "requirements": "跟进RLHF/RFT主流研究方向，熟悉RLHF的pepeline，了解DPO/PPO/GRPO等常见算法的细节与差异，对reasoning model的最新进展有跟进，优先考虑有相关训练算法训练与优化经验的同学。\n有扎实的机器学习、深度学习、强化学习基础，能对训练中的现象进行合理分析，客观给出结论，并针对训练中的问题提出合理的新思路。\n熟悉大模型和RLHF的常见训练框架，例如Deepspeed、Megatron、Verl、Openrlhf等主流框架，编程功底扎实，能快速且正确实现自己的实验需求。\n\n加分点：\n在NeurIPS/ICML/ICLR/CVPR等国际会议上发表过相关论文者优先； \n有ACM-ICPC，NOI/OI参赛经验者优先；\n有大规模RL落地经验者优先；",
+        "title": "2050-Agent算法研究员 "
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034",
-      "triage": {
-        "engineering_signal": true,
-        "priority": "high",
-        "score": 11,
-        "signals": [
-          "agent",
-          "llm",
-          "evaluation"
-        ]
-      }
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "9e47dfdb60604a980e1ded7c1ae2b34e",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7685613435107232054",
-      "job": {
-        "description": "1、参与大模型 Agent 能力数据构建，探索如何让大模型更自主、可靠地完成长程复杂任务；\n2、从真实工作流、互联网等场景中挖掘高价值 Agent 任务，参与高质量训练数据、任务与交互环境的构建；\n3、参与 Agent 数据与环境构建相关的方法研究，包括但不限于：\n1）任务与环境构造、Trajectory 生成与筛选；\n2）研究任务与环境的自动化生产方法，探索 Agent 数据与环境的 Scaling Law；\n3）Reward / Verifier 的设计与构建。",
-        "detail_status": "OK",
-        "job_id": "7685613435107232054",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA8P4ref4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613435107232054/detail",
-        "requirements": "1、本科及以上学历在读，计算机、人工智能、软件工程及相关专业；\n2、具备较强的算法设计与开发能力，熟练使用 Claude Code、Codex 等工具进行开发、实验与数据处理；\n3、具备较强的论文阅读、算法理解与复现能力，有大模型研发、训练或 Agent 相关经验；\n4、在 ACL、EMNLP、NAACL、COLING、NeurIPS、ICML、ICLR 等会议发表过相关工作者优先。",
-        "title": "大模型 Agent 数据算法实习生"
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": {
+        "fingerprint": "6787113c5128697fba20d2243d848e11e4dbbcd11b9e27c5e9f4c3f7948be811",
+        "official_url": "https://jobs.kunlun.com/459522/position/7545325622134851903/detail",
+        "title": "2050-Agent算法研究员 "
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
-      "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-037",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -464,72 +234,189 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "9f77a147257ed60e73516d009e3b7f4a",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:8f0dbec7df0dd02279075905",
+      "company": "蔚来",
+      "event_id": "055fd6b7be943e004822cafa619d334a",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027258018564390",
       "job": {
+        "category": "正式",
+        "department": "产品经理",
+        "description": "你会做什么\n你将参与 Skyworks AI 平台的产品设计，重点围绕 Agent、知识、数据和企业业务场景，帮助团队把复杂的 AI 技术转化成真正好用的产品能力。\n你可能参与的项目包括：\n设计企业 Agent 产品能力\n      例如供应链风险预警 Agent、制造异常分析 Agent、经营分析 Agent，思考它们需要接入哪些数据、知识和工具，以及用户应该如何使用。\n设计 Agent 搭建平台\n      让业务人员可以通过低代码方式配置 Agent，包括选择知识源、配置工具、设置任务流程、查看执行结果等。\n优化知识与数据的使用体验\n      参与 Ontology、知识图谱、语义层等产品设计，让 Agent 更准确地理解企业里的“车、零件、供应商、订单、库存、质量问题”等业务对象。\n设计企业能力市场\n     参与 SkillHub / AgentsMarket 的产品设计，让员工可以发布、搜索、复用企业内部沉淀的 Agent、工具和能力。\n深入业务场景做用户研究\n     和供应链、制造、研发、运营等业务团队沟通，理解真实工作流程，把业务问题转化为产品需求和用户故事。\n你会产出什么\n产品需求文档 PRD\n用户故事和业务流程图\nAgent 配置流程设计\n低保真或高保真交互原型\n竞品分析和产品调研\n产品演示材料和用户培训材料",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7677499254704916778/detail?spread=NEDQRTH",
-        "title": "技术传播实习生（AI 方向｜微博 & X）\n北京校招实习市场与销售 - 市场品牌职位 ID：A90320\n职位描述\n关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从 SuperMate 智舱到 MiniCPM 系列模型，从松果派开发板到 RoboHarness 具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是 AI 普及的必经之路。\n关于这个岗位：这是一个\"懂技术的人做传播\"的岗位。面壁的官方微博和 X 账号正处于从零建设的第一年，发布的核心内容是模型、benchmark 和开源生态，面对的核心受众是开发者与技术从业者。你要做的事情，本质上是把技术事实翻译成传播语言——把一次发版变成一条会被转发的帖子，把一张 benchmark 图变成外行也能看懂的叙事。我们希望你能看懂技术内容；如果你本身就是开发者，那再好不过。\n\n你需要做什么？\n一、双平台内容与发布\n技术内容转译 — 把模型发版说明、benchmark 数据、开源动态转译成平台化表达：微博官宣与热点借势文案、X 英文帖初稿，配合 AI 配图与信息图制作、话题策划及发布排期管理；\n重大节点作战 — 新模型发布、重要合作官宣时，参与完整的传播编排执行：发布时序、矩阵联动、媒体转发跟进，亲历官方声量从零到峰值的全过程；\n数据简报 — 跟踪微博与 X 平台数据（曝光、互动、涨粉、提及），输出周度运营简报，用数据持续优化内容方向。\n二、KOL 建联与选题雷达\n博主挖掘与对接 — 围绕 AI/科技领域挖掘微博与 X 上的垂直博主与技术 KOL，评估账号质量与受众契合度；协助完成英文沟通、合作意向确认与素材对接，维护 KOL 台账；\n热点追踪 — 跟踪大模型行业动态（发版、开源项目、benchmark 争论、社区热议）和两个平台上与面壁相关的讨论，判断哪些值得官方发声、怎么发声，形成每周选题输入。"
+        "job_id": "7673027258018564390",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=570&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.ykY9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027258018564390/detail",
+        "requirements": "我们希望你具备\n2027 届硕士及以上学历，计算机、软件工程、工业工程、管理科学、信息管理等相关专业优先\n对 AI、大模型、Agent 产品有强烈兴趣，日常使用过 ChatGPT、Claude、Cursor、Coze、Dify 等产品\n有较强的逻辑思维，能够把复杂问题拆解清楚\n愿意深入业务一线，能听懂用户问题，并转化成产品方案\n能使用 Figma、Axure、墨刀、飞书文档等工具完成基本产品表达\n\n加分项\n做过 AI 产品、B 端产品、SaaS 产品、数据产品相关项目\n了解 RAG、Agent、知识图谱、Ontology、语义层等概念\n有供应链、制造、汽车、工业软件相关背景\n有个人 AI 产品、技术博客、开源项目或产品分析作品",
+        "title": "校招-AI产品经理（AI平台）"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
-        "score": 7,
+        "score": 10,
         "signals": [
+          "agent",
           "llm",
-          "evaluation"
+          "rag"
         ]
       }
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "a0dc5911c713482d395f6f05ba2e0fca",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "url:2973a496027e7cf5b479c1f2",
+      "company": "影石 Insta360",
+      "event_id": "05ab2c39e4de74b35e1391bde08c247c",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7657126595186903305",
       "job": {
+        "category": "正式",
+        "description": "我们正在寻找对智能硬件、移动应用、跨平台软件、设备连接、影像/音视频、AI 应用体验感兴趣的校园候选人。\n这个岗位不是传统意义上单一的 iOS、Android、C++、前端或后端开发岗位。我们更希望找到具备扎实工程基础、强学习能力和系统性思维的同学，参与从智能硬件设备到移动 App、SDK、云服务、工具链的完整软件体验建设。\n你可能会参与 App 端功能开发，也可能参与跨平台 SDK、设备通信协议、音视频链路、升级系统、数据服务、开发者工具或 AI 与硬件结合的产品能力建设。我们希望你不被某一种技术栈限制，而是愿意围绕真实产品问题，学习并使用合适的技术解决问题。\n【工作内容】\n你将参与智能硬件产品的软件系统建设，包括但不限于：\n 1、参与移动 App、桌面工具、Web 工具或内部平台的功能开发，负责用户可感知的核心体验，包括设备控制、参数设置、内容管理、账号服务、数据展示、智能化功能等；\n2、参与手机、App、SDK 与智能硬件设备之间的连接、通信和控制能力建设，包括蓝牙、Wi-Fi、局域网、USB、私有协议、设备发现、状态同步、指令下发等；\n3、参与跨平台软件能力的设计与开发，为 iOS、Android、桌面端、Unity 或其他业务形态提供统一、稳定、易用的软件接口和基础能力；\n4、根据业务需要，参与拍摄控制、媒体管理、直播链路、音视频传输、解码播放、图像处理、设备文件管理等功能模块的研发；\n5、参与代码架构优化、性能优化、稳定性治理、自动化测试、CI/CD、日志诊断、问题定位、研发工具建设等工作，提升团队整体工程质量；\n6、参与 AI、端侧智能、智能硬件交互、新型连接方式、跨平台框架等方向的技术调研和原型验证，将新技术转化为可落地的产品能力。",
         "detail_status": "OK",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7681562665059322148/detail?spread=NEDQRTH",
-        "title": "具身HarnessAgent算法实习生\n北京校招实习技术职位 ID：A57922\n下一代具身智能体不是被编排的执行器，而是能在真实物理世界中自主完成长程任务、并从每一次失败中进化的自治系统。robot-harness 是承载这一目标的核心引擎，你将参与它从 0 到 1 的建设，并主导其中最具挑战的方向——让 Harness Agent 自己变得更强。\n岗位职责\n1. 参与 robot-harness 核心研发：负责任务上下文管理、Skill 调用协议、执行器抽象与异常恢复机制的设计与实现，并针对端侧算力与实时性约束优化调度开销。\n2. 建设 Harness Agent 具身工作全流程：打通任务定义 → workflow 编排 → 执行 → 验证 → 失败归因 → 修复重试的完整闭环，建设真实轨迹的采集、结构化与失败样本回流的数据闭环，围绕业务场景建立 BenchMark，持续提升长程任务成功率、执行耗时与资源使用效率。\n3. 研究 Harness Agent 自进化机制：探索 Harness、Skill 与 Model 的协同演化——系统如何从自身执行轨迹中自动发现瓶颈、生成改进并验证收益，完成方案设计与实验验证，推动研究成果形成论文并投稿至 CCF A/B 类会议。\n4. 技术方案与协作：与团队紧密配合参与方案讨论，提出算法思路并落地实施；撰写技术文档，沉淀研发经验，方便团队共享与后续查阅。"
+        "job_id": "7657126595186903305",
+        "location": "深圳",
+        "official_api": "https://arashivision.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=300&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=jOtDNAAAAABbnFEj8DSAjozrQyAAOY1",
+        "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7657126595186903305/detail",
+        "requirements": "【岗位要求】\n我们不限定你必须是 iOS、Android、C++、Java、Kotlin、Swift、Go、Python 或前端方向。只要你具备扎实的软件开发基础，并愿意在真实产品中持续学习和成长，都欢迎加入。\n【基础要求】\n1、计算机、软件工程、电子信息、自动化、通信、人工智能、数学等相关专业本科及以上学历，或具备同等软件开发能力。熟悉至少一种主流编程语言，例如： C / C++ / Java / Kotlin / Swift / Objective-C / Python / Go / JavaScript / TypeScript / Rust 等；\n2、具备良好的计算机基础，包括但不限于：数据结构、操作系统、计算机网络、并发编程、数据库、软件工程、面向对象设计等；\n3、具备良好的编码习惯，理解代码可读性、可维护性、模块化设计和基本的工程规范；\n4、对智能硬件、移动互联网、AI 应用、影像产品、机器人、无人机、IoT、可穿戴设备等方向有兴趣；\n5、具备较强的学习能力、问题分析能力和动手能力，愿意面对复杂系统中的真实工程问题。\n \n【加分项】\n具备以下任一经验会优先考虑，但不是必要条件：\n1、有移动端开发经验，例如 iOS / Android App 开发，熟悉 Swift、Objective-C、Kotlin、Java 中任一语言；\n2、有 C / C++ 项目经验，理解内存管理、并发、网络通信、跨平台构建、SDK 封装等；\n3、有智能硬件、IoT、机器人、无人机、相机、运动相机、嵌入式设备相关项目经验；\n4、熟悉蓝牙、Wi-Fi、TCP/UDP、HTTP、WebSocket、USB、串口等通信方式；\n5、有音视频、图像处理、直播、播放器、编解码、OpenGL / Metal / Vulkan / FFmpeg 等相关经验；\n6、熟悉跨平台开发或多端协作，例如 Flutter、React Native、Unity、CMake、JNI、Native SDK 等；\n7、有后端、云服务、数据服务或工具平台开发经验，理解 API 设计、数据库、服务部署、日志监控等；\n8、有开源项目、竞赛项目、个人 App、硬件作品、技术博客或长期维护的工程项目；\n9、对 AI Coding、AI Agent、端侧 AI、LLM 应用、AIGC 与智能硬件结合有探索经验。",
+        "title": "应用开发工程师（AG）-2027校招"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-067",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
-        "score": 11,
+        "score": 8,
         "signals": [
           "agent",
-          "evaluation",
+          "llm"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "07183a9de056885f8bb26f435f6bd9df",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027238186862886",
+      "job": {
+        "category": "正式",
+        "department": "产品经理",
+        "description": "1. 产品规划与需求管理\n- 协助产品经理完成充电产品（桩端及能源产品硬件、充电管理系统、用户体验）的需求收集、整理与文档撰写（PRD / MRD）\n- 参与用户调研、竞品分析，输出结构化的市场洞察报告\n- 跟踪需求开发进度，协调研发、硬件、测试等跨职能团队的沟通对接\n2. AI 能力落地探索\n- 主动研究 AI 大模型、机器学习等技术在充电场景的应用机会（如智能排队预测、动态功率分配、故障诊断、用户用能画像）\n- 协助设计 AI 功能的产品方案，定义数据输入/输出规格与评估指标\n- 跟进 AI 模型迭代效果，推动产品功能持续优化\n3. 技术方案评审支持\n- 依托电力电子专业背景，协助评审充电模块选型、通信协议（OCPP / GB/T 18487）、充电控制策略等技术方案的合理性\n- 辅助撰写硬件功能规格书，与电气工程师进行有效的技术沟通\n4. 数据分析与运营支持\n- 利用 SQL / Python / BI 工具对充电订单、设备状态、用户行为数据进行分析，提炼产品优化建议\n- 协助制作产品迭代报告、商业分析 PPT，支持管理层决策",
+        "detail_status": "OK",
+        "job_id": "7673027238186862886",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=580&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.UzI9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027238186862886/detail",
+        "requirements": "- 学历：本科及以上，2027届应届毕业生\n- 专业：电气工程、电力电子与电力传动、自动化、新能源科学与工程等相关专业优先；计算机 / 人工智能专业且有电力电子相关实习经历者同样欢迎\n- 英文（书面及口语）:良好\n- 计算机能力 Computer Skills: 熟悉各类办公软件及项目管理软件\n- 具备强思维逻辑能力及文案的写作能力；\n专业技能\n- 具备电力电子基础知识，了解 DC-DC /DC-AC 变换器、充电拓扑、电气工程等基本原理，能读懂硬件规格文档\n-对 AI / 机器学习有自主学习意愿和动手实践经验，了解 LLM Prompt Engineering、数据建模等概念；\n- 熟悉 Office / Feishu 套件，并熟悉电气工程软件；\n综合素质\n- 自驱力强：能主动跟进 AI 领域最新动态，将技术趋势转化为产品洞见，而非等待指派任务\n- 沟通表达：能将技术方案清晰转化为产品语言，在跨职能协作中做好\"翻译官\"\n- 结构化思维：面对模糊问题能快速拆解，输出条理清晰的分析框架\n- 学习韧性：充电行业技术迭代快，需要保持对新技术、新标准的持续关注",
+        "title": "校招-产品经理"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "llm",
           "memory_context"
         ]
       }
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "a4abd328ed4b3f93e2e9937de4557ebb",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7683473677028346155",
+      "company": "影石 Insta360",
+      "event_id": "07450adc34d70506ef19cb97eaac9667",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7664585038919764260",
       "job": {
-        "description": "我们在构建一套“自我优化”的大模型训练系统，你将参与以下核心方向：\n1. 参与模型训练，构造在高性能/infra侧专用的模型\n2. 构建统一的训练 Harness 范式，标准化训练、benchmark 与评测流程 \n3. 探索 Agentic Infra，将训练系统从人工驱动升级为 Agent 驱动 \n4. 推动训练系统从工具集合向具备自我优化能力的系统演进 ",
+        "category": "正式",
+        "description": "1、参与AI知识体系的顶层设计与架构搭建，梳理知识分类、标签体系与关联关系，确保知识库结构清晰、覆盖完整，支撑AI应用（Agent、Skill等）的高效调用；\n2、主导AI知识的生产与适配，制定知识采集、撰写、结构化标注的标准流程与质量规范，推动知识内容向AI可理解、可检索、可推理的方向转化，提升知识入库效率与可用性；\n3、负责知识库的日常运营与分发，监控知识调用量、召回率、用户反馈等核心指标，分析知识缺口与冗余，制定知识更新与下线策略，持续优化知识覆盖度与精准度；\n4、统筹多语种知识运营，建立多语言知识的翻译、校对与同步机制，确保各语种知识在准确性、时效性与表达习惯上的一致性，支持全球化业务场景的知识需求；\n5、跟踪AI知识管理、RAG、知识图谱等领域的前沿技术与最佳实践，探索新技术在知识生产与运营中的应用，推动知识库能力持续升级。",
         "detail_status": "OK",
-        "job_id": "7683473677028346155",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683473677028346155/detail",
-        "requirements": "1. 具有较强工程能力，能独立完成复杂系统模块的设计与实现 \n2. 熟练使用 Python，具备扎实的代码能力（C++ / CUDA 为加分项） \n3. 熟悉 PyTorch，有实际训练 / 调试经验 \n4. 理解分布式系统或分布式训练的基本概念 \n5. 对系统问题有良好的拆解能力，能从复杂现象中定位本质问题 \n6. 对 AI Native / Agent 系统有兴趣，认可“用模型解决工程问题”的方向 \n7. 对数据敏感：能判断指标是否可信、实验是否有效，而不是盲目跑实验 \n加分项（重要但不硬性）\n1. 有算子开发经验（CUDA / Triton / Kernel 优化） \n2. 有大模型训练经验（Megatron / DeepSpeed / FSDP 等） \n3. 有性能分析经验（Nsight Systems / Nsight Compute / profiler 等） \n4. 熟悉训练优化手段（FlashAttention / ZeRO / 混合精度 / checkpointing 等） \n5. 对 Agent 有深入理解或实践（tool use / planning / multi-agent 等） \n6. 阅读或改过大型训练框架源码 \n7. 做过 benchmark / profiling / 自动化实验平台相关工作",
-        "title": "Agentic Infra 实习生"
+        "job_id": "7664585038919764260",
+        "location": "深圳",
+        "official_api": "https://arashivision.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=110&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=jOtDNAAAAABbnFEj8DQ8t4zrQyAAOY1",
+        "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7664585038919764260/detail",
+        "requirements": "1、本科及以上学历，专业不限，语言学、翻译、信息管理、传播学等相关专业优先；\n2、英语专八（TEM-8）或同等水平，熟练掌握德、意、西、法、日、韩中的1-2种（优先），可作为工作语言进行知识撰写、翻译与质量把控；\n3、具备良好的结构化思维与信息素养，了解大模型、RAG、知识图谱等AI基础概念，对文字质量与语义准确性有高敏感度，有知识库或内容平台运营实习经历者加分；\n4、跨文化沟通能力强，理解不同语种的表达习惯与文化差异，自驱力强，能高效协调多方推进知识项目落地。",
+        "title": "AI知识库运营管培生-2027校招"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
+      "review_state": "pending",
+      "source_id": "official-067",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 10,
+        "signals": [
+          "agent",
+          "llm",
+          "rag"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "089447d1cc383ecbc24077a3cca22656",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7678155050254616883",
+      "job": {
+        "category": "正式",
+        "department": "软件研发",
+        "description": "工作内容\n- 基于嵌入式平台，负责 AI Agent 智能体在车端场景的运行时基座软件开发；\n- 参与 Agent 运行时的设计与开发（模型调度、工具调用框架、上下文管理、多 Agent 协同调度等）；\n- 开展 Agent 运行时的性能优化与稳定性建设；\n- 参与 Agent 基座与车端操作系统、推理引擎、感知系统的集成；\n- 与算法、产品、系统架构团队协作，推动 Agent 运行时基座在多平台、多车型上的复用与演进；\n- 跟踪 Agent 框架、端侧大模型运行时、Agent 系统软件等前沿技术。\n",
+        "detail_status": "OK",
+        "job_id": "7678155050254616883",
+        "location": "上海 / 合肥",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7..zI9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7678155050254616883/detail",
+        "requirements": "任职要求\n- 全日制本科及以上学历，计算机、软件工程、人工智能、电子信息等相关专业；\n- 扎实的计算机基础，至少熟练掌握一门主流编程语言（C / C++ / Python 等），熟悉至少一种嵌入式操作系统（Linux、FreeRTOS、Sel4等）；\n- 熟悉主流大模型的基本原理与调用方式，了解 Function Calling、Agent 编排、工具调用等关键技术；\n- 了解 LangChain、AutoGen、Dify 等 Agent 框架，或有端侧 Agent 运行时开发经验者优先；\n- 具备较强的学习能力、自驱力和团队协作意识，对智能汽车行业有浓厚兴趣者优先。",
+        "title": "校招-车端AI Agent运行时基座软件开发工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 10,
+        "signals": [
+          "agent",
+          "llm",
+          "memory_context"
+        ]
+      }
+    },
+    {
+      "change": "changed",
+      "company": "面壁智能",
+      "event_id": "08e445aa17ea2f0cfb865b257f56f663",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7694501311970806042",
+      "job": {
+        "category": "实习",
+        "department": "技术",
+        "description": "1. 参与基础模型、多模态、语音、Agent 等方向的评测方案、数据集和自动化工具建设，支持模型研发、版本迭代及真实业务场景的效果评估。\n2. 分析不同模型和版本的能力变化、典型失败模式及潜在风险，为数据构建、模型优化、推理策略和产品迭代提出评测建议，并推动改进效果验证。\n3. 研究模型能力的形成、涌现与退化，探索不同训练阶段、模型规模和推理方式对模型能力变化的影响。\n4. 面向长文本、多轮交互、复杂推理、工具调用和 Agent 长程任务，设计更贴近真实世界、能够揭示模型能力边界的评测任务与环境。\n5. 研究 LLM-as-a-Judge 的偏差、稳定性、可解释性和与人工评测一致性，探索评测数据自动生成、对抗评测和自动化红队等方法。\n6. 跟踪并复现大模型评测领域的前沿研究，与模型、数据、产品和工程团队协作，从实际问题中提炼研究课题，形成实验结论、研究原型或可复用的方法与工具。",
+        "detail_status": "OK",
+        "job_id": "7694501311970806042",
+        "location": "北京",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j9tcAQAAAABYrE4Wxu87jo.bXBAAOUl",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7694501311970806042/detail",
+        "requirements": "1.计算机、人工智能、数学、统计学等相关专业本科及以上在读；\n2.具备机器学习、自然语言处理、计算机视觉、语音、多模态或 Agent 等方向的基础；\n3.熟练掌握 Python，具备数据处理、实验分析和代码实现能力；\n4.善于提出问题、设计实验和分析结果，对大模型技术及其能力边界有强烈兴趣；\n5.具备 AI Native 的工作方式，能够熟练使用大模型及相关工具辅助资料分析、代码开发、数据构造和实验迭代，并能对模型输出进行判断、验证和改进。\n加分项\n1.有大模型、机器学习、自然语言处理、多模态或 Agent 相关项目、科研或实习经历；\n2.了解模型评测、LLM-as-a-Judge、模型对齐、Agent、模型安全或自动化评测等方向；\n3.有评测集构建、数据分析、实验平台开发，或使用大模型辅助研究和工程实践的经验；\n4.有高水平论文、开源项目、算法竞赛、技术报告或其他能够体现研究与实践能力的成果。",
+        "title": "大模型评测算法实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": {
+        "fingerprint": "0d36a0132be7520e53371fd45ab37ac5744a184932e91fccf870fbc2d9eeeaa0",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7694501311970806042/detail",
+        "title": "大模型评测算法实习生"
+      },
       "review_state": "pending",
       "source_id": "official-034",
       "triage": {
@@ -545,23 +432,59 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "a5c6acddc06c7312180df02e6c8b7dfa",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7676905572259858739",
+      "company": "蔚来",
+      "event_id": "09bc6e33678fbfb59df3d31089497911",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7661854032978774310",
       "job": {
-        "description": "我们正在构建以数据为核心的自动化模型增强系统：为后训练生成高质量数据、筛选高价值样本，持续提升模型能力。现有数据远未触及模型的能力上限，数据的构造、评判、配比与闭环仍有大量空白，等你来定义。\n\n工作内容\n-数据合成与构造：设计并实现高质量训练数据的生成链路（模型自生成、教师蒸馏、任务改写、难度爬升、多样性扩展等），持续扩充数据的覆盖面与深度\n-数据质量与筛选：搭建数据裁定与清洗机制（规则校验、执行验证、模型评判、去污染、去重），把数据质量标准沉淀为可复用、可度量的规范\n-SFT 训练与迭代：负责监督微调的实验设计、训练调优与效果归因，探索数据配比、课程式训练、多轮蒸馏等提升手段\n-自增强闭环建设：将生成、筛选、训练、评测、回流打通为自动化流水线，减少人工介入，提高迭代效率\n-前沿跟进：跟进并复现数据合成、蒸馏、self-improvement、post-training 等方向的最新工作，评估是否引入现有链路",
+        "category": "正式",
+        "department": "算法",
+        "description": "职位介绍 (Position Overview)\n我们正在定义和构建下一代智能体原生操作系统（Agent Native OS），致力于将操作系统的核心服务对象从“传统应用”向“AI 智能体”转移。由于该前沿领域横跨底层系统架构（OS Internals）与人工智能基础设施（AI Infra）两大硬核学科。\n我们正在寻找在 操作系统底层 或 AI 基础设施 (MLSys) 任意一端具备深厚学术积累的顶尖博士人才。您将在我们拥有互补背景的跨学科团队中，主导前沿技术的探索与原型验证，攻坚大模型运行时调度、原生 AI 内存管理以及系统级安全隔离等底层基座难题，逐步跨界成长为下一代 Agent OS 的核心架构领军者。\n岗位职责 (Responsibilities)\n下一代智能体系统基座验证： 针对多智能体高并发与强隔离的需求，在系统架构（如基于 seL4 等微内核及其 User-mode VMM 机制）、软硬件协同的异构互联、或智能体可信执行环境（TEE）等关键路径上，完成核心模块的概念验证（PoC）与架构设计。\n跨界融合创新 (OS-Runtime Co-design)：\n如果您是 OS 专家： 带领团队探索分级内存（Tiered Memory / CXL）在 OS 层的管理机制，优化底层文件系统与内存页调度，为 AI 运行时提供极速的 KV Cache 卸载（Offloading / Swapping） 支持，从系统底层突破长上下文（Long Context）带来的内存墙瓶颈。\n如果您是 AI Infra 专家： 打破传统推理框架的局限，探索算子调度、显存碎片管理与底层操作系统的深度协同；研究 PageAttention 等极致内存机制在操作系统原语级别的更优实现。\n面向 Agent 语义的 IPC 与安全沙盒： 研发专为多智能体协作设计的极低延迟跨进程通信机制（如张量传递 Zero-copy Tensor Passing）；并结合 User-mode VMM、WASM 或 TEE 技术，为 Agent 的不受信工具调用（Tool Calling / Code Interpreter）构建毫秒级启动、基于能力（Capability-based）的强隔离执行沙盒。\n学术转化与技术攻坚： 紧跟 MLSys、OSDI、SOSP 等顶级学术会议的最新研究进展，将前沿的软硬协同理论转化为可量产、高可靠的智能体底层软件基础设施。",
         "detail_status": "OK",
-        "job_id": "7676905572259858739",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7676905572259858739/detail",
-        "requirements": "-专业与背景不限；学习能力强，能应对开放性问题和高不确定性的研究任务\n-在数据或工程方向至少一项有突出能力：能从样本设计层面提升模型效果，或能独立搭建稳定高效的数据与训练链路\n-具备数据判断力：能从样本、模型输出和评测结果中发现问题\n-对数据驱动的模型增强、自进化系统、AI4AI 方向有浓厚兴趣\n\n加分项\n-熟悉大模型 post-training 流程，理解 SFT 的训练机制、数据格式与常见失效模式\n-熟悉主流训练框架（如 ms-swift、LLaMA-Factory、DeepSpeed、Megatron 等）及分布式训练\n-有 Agentic Coding、代码生成、SWE-bench / HumanEval / MBPP 等任务的训练或评测经验\n-熟悉评测体系搭建，理解数据污染、评测可复现性等问题并有实际处理经验\n-在相关方向发表过论文，或有优秀的开源项目、竞赛成绩、可展示的研究成果",
-        "title": "AutoTraining 工程师/研究员实习生"
+        "job_id": "7661854032978774310",
+        "location": "上海 / 圣何塞",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=790&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7-.6I9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7661854032978774310/detail",
+        "requirements": "基本要求：\n教育背景： 拥有计算机科学、计算机工程或相关领域的博士学位（Ph.D.）。\n研究与工程能力： 具备深厚的学术研究基础与独立探索前沿技术的能力；同时具备强大的问题解决能力与扎实的系统级编程基础，精通 C/C++ 或 Rust。\n核心技术栈要求（以下两个方向满足其一即可）：\n方向 A：深耕底层操作系统 (OS & Systems Track)\n主攻专长： 对操作系统内核、内存管理（特别是 Tiered Memory, CXL, 虚拟内存子系统）、微内核（如 seL4, Zircon）或底层虚拟化（如 User-mode VMM 设计与实现）有深刻的理论基础与修改底层源码的丰富实践经验。熟悉现代系统安全隔离机制。\n跨界潜力： 对人工智能底层逻辑充满好奇心；愿意在入职后深入学习大语言模型（LLM）的工作原理及其对算力/内存的系统级需求特征。\n方向 B：深耕 AI 基础设施 (AI Infra & MLSys Track)\n主攻专长： 深入理解大语言模型（LLM）的底层显存消耗与调度机制；熟悉主流推理加速框架（如 vLLM, TensorRT, Triton），并在异构计算、分布式张量并行（TP）或分布式 KV Cache 调度方面有深度的系统级优化（非纯算法）经验。\n跨界潜力： 具备扎实的计算机系统结构认知；愿意在入职后打破框架层的局限，向下深入学习微内核机制、底层内存分配与硬件驱动运行逻辑。\n加分项 (Preferred Qualifications)\n顶会发表： 在计算机系统、体系结构或 AI 基础设施领域的顶级学术会议（如 SOSP, OSDI, ASPLOS, MLSys, EuroSys, 等）上有高水平论文发表记录。\n开源贡献： 在顶级系统开源项目（如 Linux Kernel, seL4, 知名 Rust 底层项目）或 AI 基础设施开源项目（如 vLLM, Llama.cpp, Ray）中有核心代码贡献。\n底层优化： 熟悉跨架构开发与指令集级优化（如 x86, Arm, RISC-V）。\n工业界经验： 在校期间有顶尖工业界实验室的实习经历，具备将学术界原型转化为高可用工程代码的成功经验。",
+        "title": "Super Sparks-校招-智能体原生OS研究员/工程师"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 10,
+        "signals": [
+          "agent",
+          "llm",
+          "memory_context"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "0c01fecdea87f5dde48a0437b5f8b351",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7678266564365879615",
+      "job": {
+        "category": "正式",
+        "department": "软件测试",
+        "description": "1. 负责智能辅助驾驶测试工具链、智能测试平台及 AI Agent 的架构设计与核心功能开发，为实车测试、仿真测试提供高效、自动化的测试工具支撑；\n2. 深入理解智能辅助驾驶测试业务场景，挖掘测试流程中的效率瓶颈，设计并开发不限于：智能化测试工具、自动化脚本和数据分析平台，提升测试团队整体工作效率；\n3. 负责 AI Agent 在测试领域的应用探索与落地，结合大语言模型、自动化编排等技术，打造能自主执行测试任务、分析测试结果、辅助问题定位的智能测试助手；\n4. 参与测试问题管理与分析平台的建设，实现测试问题的自动化采集、处理、可视化及深度分析能力，支持测试决策与质量评估；\n5.与团队紧密协作，收集用户反馈，持续迭代优化工具链产品体验，推动测试流程标准化与智能化升级。",
+        "detail_status": "OK",
+        "job_id": "7678266564365879615",
+        "location": "北京",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=150&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.kuo9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7678266564365879615/detail",
+        "requirements": "1. 计算机、软件工程、电子信息、自动化等相关专业本科及以上学历，硕士优先；\n2. 热爱AI技术，对Agent、大模型等前沿技术方向有浓厚兴趣，具备将AI能力应用于实际业务场景的探索精神；\n3. 具备优秀的编程能力，熟练掌握Python、Go、Java、C++等至少一种编程语言，具备良好的代码规范和工程素养；\n4. 熟悉Linux开发环境，了解Docker、Kubernetes等容器化技术，具备后端服务开发或工具平台开发经验；\n5. 了解数据库（MySQL、MongoDB等）、消息队列、缓存等常用中间件，具备分布式系统或大数据处理经验者优先；\n6. 具备产品思维，能够深入理解测试业务需求，主动发现并解决用户痛点，有测试工具、开发者工具或平台类产品开发经验者优先；\n7. 技术追求高，学习能力强，具备良好的问题分析、抽象设计和独立解决复杂技术问题的能力；\n加分项\n1. 有大语言模型、机器学习、自然语言处理等相关项目经验，了解LangChain、AutoGPT等Agent框架；\n2. 有Momenta、理想汽车、小鹏汽车、华为等智能辅助驾驶头部企业实习/工作经验者优先。",
+        "title": "校招-智能测试工具链研发工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -575,23 +498,26 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "a9bbfc6f9a1c4f1850ca2b87524fb151",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7683464224430000422",
+      "company": "蔚来",
+      "event_id": "0c05dc6fd8c6d0dd2e8f0eb01c51fedd",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673028724598720787",
       "job": {
-        "description": "我们相信 AI 正在成为科学研究的直接生产力，用 Agent 与模型训练方法解决真实科学问题正在成为可行路径；沿 AI4AI 的思路，这一过程本身也将日益自动化。你将参与以下两个方向，我们鼓励同时投入两者，胜任其一亦可。\n\n方向一：AI 驱动的科学问题求解\n-参与技术路线的讨论与细化，将方向判断落实为可执行的研究方案\n-运用 Agent、模型后训练与训练等方法，解决真实的科学问题、科学计算与科学软件问题，并沿 AI4AI 的思路推动科学模型构建与训练的自动化\n-领域涵盖核聚变、光学、芯片、生命科学、材料等\n\n方向二：国际学术影响力\n-开展有国际影响力的研究工作，在高水平期刊或会议发表成果\n-撰写 position paper /perspective 类观点论文，阐述对 AI4S 与 AI4AI 方向的判断\n-在相关学术社区建立并维护学术影响力",
+        "category": "正式",
+        "department": "软件研发",
+        "description": "岗位核心目标：\n参与建设面向智能车控的新一代开发范式，围绕物理AI、具身智能、仿真训练与车端部署，探索AI控制算法在真实车辆物理系统中的落地方法。车辆这个轮式具身智能体中的智能底盘、智能车身、座舱执行机构等系统都需要在物理约束下完成感知、决策、控制与执行闭环，岗位将聚焦构建面向车辆运动与执行控制的“车控具身小脑”。\n\n核心职责：\n1. 智能车控新范式开发：参与构建覆盖“被控对象建模、环境建模、训练框架搭建、奖励与权重调整、Sim2Real部署”的完整开发流程，探索物理模型、仿真数据和AI算法结合的车控开发方法。\n2. 物理仿真与训练环境搭建：参与车辆动力学模型、执行器模型、传感器模型和环境模型的构建，搭建支持强化学习、模仿学习、优化控制等算法的训练与验证环境。\n3. AI控制算法开发与验证：参与智能底盘、智能车身、座椅/门窗/热管理等执行器控制、多执行器协同控制、参数辨识、虚拟负载模拟等方向的算法开发，探索AI模型在真实物理系统中的稳定控制与泛化能力。\n4. 虚实迁移与车端部署：参与模型在环、软件在环、硬件在环及实车/台架验证，推动算法从仿真环境迁移到真实硬件和车端系统，完成数据采集、代码调试、板卡联调、执行器测试和问题定位。\n5. 工具链与自动化能力建设：参与开发自动化数据生成、仿真任务调度、训练结果分析、模型评估和部署工具，将个人项目能力沉淀为团队可复用的平台能力。\n6. 问题闭环与技术攻关：针对复杂工程问题，能够主动拆解目标、设计实验、验证假设、分析结果并推动问题闭环解决。",
         "detail_status": "OK",
-        "job_id": "7683464224430000422",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683464224430000422/detail",
-        "requirements": "-专业与背景不限，学习能力强，能应对开放性问题和高不确定性的研究任务\n-有韧性，能在长周期、结果不确定的探索中保持稳定的工作推进\n-具有较强的工程或研究能力：能将技术路线独立实现为可验证的结果，或独立开展高质量的研究工作\n-具备清晰的技术表达与学术写作能力\n-对核聚变、光学、芯片、生命科学、材料等任一科学领域有积累或浓厚兴趣，认可 AI4S 与 AI4AI 的方向\n\n加分项\n-有用 AI 方法完整解决具体科学问题的经历（从问题定义到结果验证）\n-在高水平期刊或会议（如 Nature / Science 系列、NeurIPS、ICML）发表过一作或通讯论文\n-有 position paper、perspective、review 类文章的写作或组织经验\n-有跨学科合作经验，能与领域科学家共同定义问题\n-有活跃的开源项目或学术社区影响力",
-        "title": "AI4S / AI4AI 研究员实习生"
+        "job_id": "7673028724598720787",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=480&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7999I9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673028724598720787/detail",
+        "requirements": "1. 学历与专业：本科及以上学历，车辆工程、自动化、控制工程、机器人、机械电子、计算机、人工智能、电子信息等相关专业优先。\n2. 综合能力：具备软硬件、算法和工程实践的复合能力，既能写代码、做算法，也能理解物理系统、调试硬件、分析数据，并推动方案真正落地。\n3. 编程与建模能力：熟悉 Python、C/C++、Matlab/Simulink 中的一种或多种工具，具备良好的代码实现能力、仿真建模能力和数据分析能力。\n4. 算法与控制基础：具备控制理论、车辆动力学、机器人控制、强化学习、机器学习、优化算法等一个或多个方向基础，理解 PID、状态估计、MPC、强化学习、神经网络等方法者优先。\n5. 动手实践能力：有智能车、机器人、无人机、机械臂、电机控制、传感器采集、嵌入式系统、控制板卡等项目经验者优先，能够完成基础硬件调试和实验验证。\n6. 前沿技术兴趣：对物理AI、具身智能、数字孪生、强化学习、Sim2Real、机器人控制、智能汽车等方向有持续兴趣和项目实践者优先。\n7. 自闭环能力：具备强自驱、强学习和强闭环能力，能够面对模糊问题主动查资料、搭环境、写代码、做实验、复盘结论，并持续推动问题向前。",
+        "title": "校招-车控边缘计算系统研发工程师"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -603,23 +529,126 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "ade910670eec9e7f758c56e69006bad7",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7677499254704916778",
+      "company": "蔚来",
+      "event_id": "0e24f15ef04b6f12b8e73255a6bd0a0a",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027250326210862",
       "job": {
-        "description": "职位描述\n关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从 SuperMate 智舱到 MiniCPM 系列模型，从松果派开发板到 RoboHarness 具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是 AI 普及的必经之路。\n关于这个岗位：这是一个\"懂技术的人做传播\"的岗位。面壁的官方微博和 X 账号正处于从零建设的第一年，发布的核心内容是模型、benchmark 和开源生态，面对的核心受众是开发者与技术从业者。你要做的事情，本质上是把技术事实翻译成传播语言——把一次发版变成一条会被转发的帖子，把一张 benchmark 图变成外行也能看懂的叙事。我们希望你能看懂技术内容；如果你本身就是开发者，那再好不过。\n\n你需要做什么？\n一、双平台内容与发布\n技术内容转译 — 把模型发版说明、benchmark 数据、开源动态转译成平台化表达：微博官宣与热点借势文案、X 英文帖初稿，配合 AI 配图与信息图制作、话题策划及发布排期管理；\n重大节点作战 — 新模型发布、重要合作官宣时，参与完整的传播编排执行：发布时序、矩阵联动、媒体转发跟进，亲历官方声量从零到峰值的全过程；\n数据简报 — 跟踪微博与 X 平台数据（曝光、互动、涨粉、提及），输出周度运营简报，用数据持续优化内容方向。\n二、KOL 建联与选题雷达\n博主挖掘与对接 — 围绕 AI/科技领域挖掘微博与 X 上的垂直博主与技术 KOL，评估账号质量与受众契合度；协助完成英文沟通、合作意向确认与素材对接，维护 KOL 台账；\n热点追踪 — 跟踪大模型行业动态（发版、开源项目、benchmark 争论、社区热议）和两个平台上与面壁相关的讨论，判断哪些值得官方发声、怎么发声，形成每周选题输入。",
+        "category": "正式",
+        "department": "产品经理",
+        "description": "设计 AI 的认知图谱：拒绝让 LLM 瞎猜。你将负责企业级本体语义网络的设计，把复杂的现实业务抽象为 Data-to-AI 的知识语义层，构建让大模型直接对齐物理世界的统一 Schema。\n架构 Agentic 自动化工作流：负责下一代数据 Agent 平台的功能定义。你要攻克的是 ReAct、Plan-and-Solve 等高级推理框架在数据分析场景的落地，让 Agent 拥有多步规划与反思能力。\n打通工具链：设计极度丝滑的 Tool 编排机制，让 Agent 能够作为智能中枢，精准、安全地调用底层异构数据库和复杂 API 矩阵。\n端到端闭环优化：负责 Prompt 工程、上下文优化以及 RAG 系统的链路设计，用指标量化并驱动 Agent 的进化。",
         "detail_status": "OK",
-        "job_id": "7677499254704916778",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7677499254704916778/detail",
-        "requirements": "职位要求\n能看懂技术内容（重要）：能读懂模型发版说明、技术博客和 benchmark 图表的核心信息，知道参数量、量化、端侧部署这些概念大概在说什么——不要求你能写代码，但要求你面对一篇 GitHub README 不发怵，能抓出里面值得对外讲的点；\nAI 原生用户：重度使用 AI 工具，调研、写作、翻译用 AI 是本能；熟练至少一种 AI 出图工具（Midjourney、即梦、可灵、GPT/Gemini 生图等），能独立产出可直接发布的配图与信息图——面试时会请你现场演示自己的 AI 工作流；\n有内容的真实手感：熟悉微博与 X 的内容风格差异，独立运营过账号、写过技术博客或有可展示的内容作品——投递时请附作品或账号链接；\n英文能写能改：英语六级以上、具备优秀的英文读写能力，能独立完成 X 英文帖初稿撰写、博主沟通与 brief 整理（成稿由团队把关）；\n能一起走一段：连续在岗 4 个月以上，每周到岗 4 天以上（北京·海淀，现场办公）；有 owner 精神，理解官方账号每个字的分量。\n\n加分项（满足任意一条请务必在简历中说明）：\n理工科背景，或有编程经验（无论什么语言）；\n自己跑过开源模型：用过 Hugging Face、Ollama、llama.cpp 等，本地部署过任何模型，或用 API 做过小项目；\n用 AI 编程工具（Cursor、Claude Code、Codex 等）做过 vibe coding，独立搭过网页、脚本或小工具；\n关注 AI 技术社区：是 X 技术圈、GitHub、Hugging Face、即刻 AI 圈的活跃读者，说得出最近让你兴奋的开源项目。\n\n你将获得什么？\n离模型最近的传播岗：你会和研发团队直接打交道，第一时间接触未发布的模型与技术细节——对开发者背景的同学，这是一个看清\"技术如何变成影响力\"的独特位置；\n真项目，真作品：直接参与面壁新模型发布、重大合作官宣的传播执行，你参与的内容会被媒体引用、被合作方转发，作品集里是可以指名道姓的案例；\n从零建号的完整经历：亲历官方阵地从冷启动到立起来的全过程——平台定位、内容体系、发布编排、KOL 关系、数据复盘的全链路方法论；\nAI 工作流实战课：我们会教你把 AI 工具真正融入内容生产的每个环节，让你比同龄人更早建立\"AI 原生\"的工作习惯；\nmentor 陪伴成长与灵活氛围：有经验丰富的同事带你；我们鼓励用 AI 提效、反对无效加班，你的工位周围是正在定义端侧 AI 的人。\n\n有自运营账号、技术博客、 AI 生成图像作品、开源项目/跑模型截图的，请一并附上。",
-        "title": "技术传播实习生（AI 方向｜微博 & X）"
+        "job_id": "7673027250326210862",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=570&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.ykY9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027250326210862/detail",
+        "requirements": "原生 AI 项目的 Builder：必须有 AI 项目的实战经验。别只谈接 API，我们需要你真正调过 Prompt 策略、处理过 Agent 陷入死循环的幻觉问题，或者实现过复杂的 RAG 链路。\n技术极客：熟练使用 AI 编程助手，看得懂代码，对 Python、SQL 或是当下最前沿的 Agent 框架有概念或实操经验。\n对数据有结构化洁癖：能够穿透表象看本质，具备顶级的数据抽象能力，对本体建模或知识图谱有极高的敏感度。\n极度拥抱不确定性：每天都在跟最新的 LLM 打交道，具备强大的直觉与自我迭代速度，享受与模型调教和博弈的过程。",
+        "title": "校招-AI数据产品经理"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 12,
+        "signals": [
+          "agent",
+          "llm",
+          "rag",
+          "memory_context"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "0eb9effaabd62c1fe2a28fe21e0f0d66",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7673027294876748042",
+      "job": {
+        "category": "正式",
+        "department": "算法",
+        "description": "负责智能座舱车载语音交互系统的工程化落地，参与语音唤醒、语音识别（ASR）、自然语言理解（NLU）、语音合成（TTS）等核心模块的端侧业务开发与集成。同时参与车载AI Agent（智能体）的开发链路建设，探索大模型技术在车载场景下的工程化应用路径，确保 AI Agent 在车机上具备流畅的交互体验与稳定的服务能力\n岗位职责\n负责车载语音应用（唤醒、识别、语义理解、播报）的Android端开发与集成；\n参与语音链路的整体架构设计与开发，实现多音区控制、连续对话、车辆指令（空调/导航/娱乐）等语音控制逻辑；\n参与车载智能体（Agent）的功能设计与开发，包括任务规划（Planning）、工具调用（Tool Use）、记忆管理（Memory）等核心能力研发；\n探索大模型/Agent/Reasoning在车载场景下对话系统的研究与应用落地。",
+        "detail_status": "OK",
+        "job_id": "7673027294876748042",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=550&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.C5o9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7673027294876748042/detail",
+        "requirements": "学历专业\n计算机科学与技术、软件工程、电子信息、自动化等相关专业，本科及以上学历\n编程能力\n具备扎实的计算机基础知识，熟悉数据结构与算法\n熟悉Java/Kotlin至少一门开发语言，掌握其核心语法与语言特性（泛型、注解、反射、异常处理等）\n了解常用设计模式（如单例、工厂、观察者等），了解MVP、MVVM等主流架构模式的基本思想\nAndroid开发\n熟悉Android应用开发框架，了解Activity、Service、BroadcastReceiver、ContentProvider等核心组件的使用与生命周期管理\n熟悉常用开源框架与库（如Retrofit、OkHttp、Glide等），了解组件化开发基本概念\nAgent/AI方向\n了解至少一种主流Agent开发框架的基本概念（如LangChain、LangGraph等）\n对LLM原生应用开发、Agent架构（如Function Calling、ReAct模式）有基本理解\n了解MCP（模型上下文协议）、A2A（Agent-to-Agent）等Agent交互协议者优先\n综合素质\n具备良好的逻辑思维与问题解决能力，能独立分析并解决开发中的技术问题\n具备优秀的沟通表达与团队协作能力，学习能力强，对技术创新有热情\n加分项\n对车载语音系统架构有基本理解者优先\n有车载类产品或语音开发相关项目经验者优先\n有智能座舱、车载信息系统开发实习经历者优先",
+        "title": "校招-大模型端侧算法开发工程师"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 10,
+        "signals": [
+          "agent",
+          "llm",
+          "memory_context"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "商汤科技",
+      "event_id": "0ef310545956670b6051fc1fa3059f0d",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7659255237010508078",
+      "job": {
+        "category": "正式",
+        "department": "研发",
+        "description": "1.\t参与企业级 AI 应用项目的开发与交付，支持客户场景下的功能实现、系统集成与部署落地；\n2.\t参与后端功能开发，包括接口设计、业务逻辑实现、数据处理、系统联调等；\n3.\t配合团队完成大模型服务、RAG、Agent、知识库、工作流等能力的集成与应用部署；\n4.\t参与项目现场或远程交付支持，协助进行环境部署、问题排查、性能优化和系统运维；\n5.\t与产品、算法、开发、项目经理及客户团队协作，推动项目从方案验证、PoC 到正式交付；\n6.\t沉淀项目交付中的通用能力、工具和模板，提升后续项目复用效率；\n7.\t跟进 AI Coding、自动化测试、部署运维等工程化工具，提升开发与交付效率。",
+        "detail_status": "OK",
+        "job_id": "7659255237010508078",
+        "location": "新界",
+        "official_api": "https://hr-jobs.sensetime.com/api/v1/search/job/posts?keyword=&limit=10&offset=130&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j3q63gAAAABYDajJxBREt496usAAOXD",
+        "official_url": "https://hr-jobs.sensetime.com/edu/position/7659255237010508078/detail",
+        "requirements": "1.\t本科及以上学历，计算机、软件工程、人工智能、信息系统等相关专业优先；\n2.\t熟悉至少一种后端开发语言，如 Python、Java、Go 等，具备扎实的编码基础；\n3.\t熟悉 Web 后端开发基础，包括接口开发、数据库操作、缓存、消息队列等常见技术；\n4.\t熟悉 Linux 基础操作，了解 Docker、服务部署、日志排查等基本工程实践；\n5.\t具备较强的问题定位和解决能力，能够在项目交付过程中快速学习并处理实际问题；\n6.\t具备良好的沟通表达和团队协作能力，愿意参与客户项目交付与跨团队协作；\n7.\t对大模型应用、智能体、RAG、企业级 AI 项目交付方向有兴趣。\n加分项\n1.\t有 Web 应用、后端服务、数据平台或企业系统开发项目经验；\n2.\t有大模型应用、RAG、Agent、知识库问答、模型服务调用等实践经验；\n3.\t熟悉 Docker、Kubernetes、Nginx、MySQL、Redis、Milvus、Elasticsearch 等技术者优先；\n4.\t熟悉 LangGraph、LlamaIndex、LangChain、Dify、Coze、n8n 等工具或框架者优先；\n5.\t有实习经历、开源项目经历、竞赛经历或完整项目交付经验者优先；\n6.\t能够适应一定的项目交付节奏，具备较强的责任心和执行力。",
+        "title": "【27届校招】FDE工程师—亚太业务事业群"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-031",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 10,
+        "signals": [
+          "agent",
+          "llm",
+          "rag"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "102ca18d1e057ce61ca5fecbd68565ef",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7620316524121573651",
+      "job": {
+        "category": "实习",
+        "department": "算法",
+        "description": "设计并实现高性能高鲁棒性的端到端轨迹规划预测模型架构，应用部署到智能辅助驾驶系统当中。\n深入研究面向智能辅助驾驶的端到端轨迹预测规划模型，调研业界最新科研进展，应用VLA, 强化学习, 扩散模型等技术，持续提升模型在各种复杂环境下的自主决策和规划能力，解决闭环和实车测试中的各种issue问题。\n深入研究并改进端到端大模型的训练和评测流程，开发训练和评测基础设施，包括闭环训练，仿真评测等。\n与感知、控制、多传感器融合、软件工程团队协作，将算法集成至车辆软件平台或仿真平台。",
+        "detail_status": "OK",
+        "job_id": "7620316524121573651",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=870&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.QG49sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7620316524121573651/detail",
+        "requirements": "在读硕士或博士（计算机科学、电子工程、自动化、机器学习、机器人学等相关专业）\n熟悉端到端模型的基本架构和训练方案，掌握轨迹规划和轨迹预测基本算法原理。\n掌握强化学习（如PPO, GRPO算法）以及生成式算法（如自回归算法，扩散模型）的基本原理。\n扎实的 Python 编程能力，能够熟练使用 PyTorch／TensorFlow 等深度学习框架。\n扎实的论文调研阅读能力，能够跟踪业界的前沿进展并具备算法复现的能力。\n对智能辅助驾驶系统有浓厚兴趣，具备良好的逻辑思维与算法背景。\n加分项\n有VLA, 强化学习具体项目经验者优先。\n有使用扩散模型／生成模型（如 DDPM、Score Matching、Flow-matching）相关项目经验。\n在顶会或顶级期刊（如 ICRA、ICCV、CVPR、NeurIPS、ICML等）发表过相关论文者优先。",
+        "title": "实习-端到端大模型算法实习生-世界模型预研"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -632,23 +661,58 @@
     },
     {
       "change": "added",
-      "company": "面壁智能",
-      "event_id": "b10e420f0b3dbb04f707766bc2baad5d",
-      "first_seen_at_utc": "2026-10-12T08:40:17Z",
-      "identity": "id:7681283109740185907",
+      "company": "蔚来",
+      "event_id": "128dcb43c55a0217751eb560b1b50f52",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7638946017148160297",
       "job": {
-        "description": "1. 参与流式双工 Omni Agent 的全模态记忆系统研究与落地，使 Agent 能够在音视频与文本持续输入下稳定交互，支撑长时乃至 life-long 使用。\n2. 全模态记忆系统设计：同时管理声音、画面与文本信息，研究记忆的表示、读写与压缩方式。\n3. 流式交互中的上下文管理：决定何时压缩、压缩哪些内容、保留多少、如何读取。\n4. 训练数据构造、SFT / RL 训练与评测：从已有数据/真实交互中生成与筛选 Trajectory，完成记忆相关训练，并评测记忆系统效果。",
+        "category": "实习",
+        "department": "数字技术",
+        "description": "课题介绍\n当前企业面临系统孤岛、AI 无法自主执行、能力无法复用三大挑战。NIO Skyworks 对标微软 Fabric 和 Palantir 构建企业 AI 操作系统，本课题旨在打造平台“大脑”——Autonomy Operating System，实现感知-决策-执行-进化的完整闭环。\n四大核心方向：\n方向一：自主决策引擎 - 多源信息融合、因果推断与反事实推理、多目标优化、不确定性量化。适合决策智能/因果推理/优化算法方向。\n方向二：多 Agent 协同编排 - 任务分解与规划、Agent 能力匹配、动态编排与容错、跨系统协同。适合多 Agent 系统/LLM Agent/任务规划方向。\n方向三：企业状态感知 - 异常检测、时间序列预测、图网络分析、多模态融合。适合时间序列/异常检测/图神经网络方向。\n方向四：自主学习进化 - 反馈循环设计、在线学习、知识沉淀、A/B 测试。适合强化学习/在线学习/知识工程方向。\n预期产出\n技术产出（优先级 P0）:\n- 核心模块开发：自主决策引擎原型、多 Agent 编排引擎原型、状态感知系统原型\n- 技术文档：Autonomy OS 架构设计文档、核心算法技术报告、API 文档和使用指南\n业务产出（优先级 P1）:\n- 场景验证：在 1-2 个真实业务场景（供应链风险预警/用户运营优化/智能制造决策）中验证系统能力\n- 平台集成：将核心模块集成到 Skyworks 平台（AgentSight/KnowledgeSight），支持业务团队使用",
         "detail_status": "OK",
-        "job_id": "7681283109740185907",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7681283109740185907/detail",
-        "requirements": "1. 本科及以上学历在读，计算机、人工智能、软件工程及相关专业。\n2. 具备较强的算法设计与开发能力，熟练 Vibe Coding，能用 Agent 工具高效完成开发、实验、数据处理与文档迭代。\n3. 对深度学习、Transformer、大语言模型有较深入理解，具备论文阅读与算法复现能力；有学术探索精神，愿意把开放问题做成可验证的实验与结论。\n4. 有大模型记忆系统（Memory / Context Compact / RAG-as-memory 等）研究或工程经验者优先；有多模态、流式/双工 Agent 相关经验者优先。\n5. 在 ACL、EMNLP、NAACL、COLING、NeurIPS、ICML、ICLR 等会议发表过相关工作者优先。",
-        "title": "全模态记忆系统实习生"
+        "job_id": "7638946017148160297",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=40&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD78XH49sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7638946017148160297/detail",
+        "requirements": "- 学历：2027 届博士（优先）或硕士，计算机/AI/自动化/运筹学/数学等相关专业优先\n- 必备能力：扎实的数学基础（概率统计、优化、图论）；熟练 Python 及 PyTorch/TensorFlow；深入理解机器学习/深度学习/强化学习；有独立算法建模和系统开发经验；能快速阅读前沿论文并将业务问题转化为技术问题。\n加分项（满足任一即可）:\n- 决策智能：因果推断、优化算法（线性规划/遗传算法/强化学习）、供应链优化\n- 多 Agent：多 Agent 强化学习、LLM Agent 框架（LangChain / AutoGen）、任务规划\n- 时间序列：预测模型（Prophet/LSTM/Transformer）、异常检测、金融风控\n- 知识图谱：Neo4j、图神经网络（GCN/GAT/GraphSAGE）、知识推理\n- 学术成果：顶会论文、Kaggle 获奖、GitHub 开源贡献",
+        "title": "蔚来AGI超星计划-Autonomy Operating System - 企业级自主智能操作系统"
       },
-      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
       "review_state": "pending",
-      "source_id": "official-034",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 8,
+        "signals": [
+          "agent",
+          "llm"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "1402093a3fa5c6dc32eb76016e8a447e",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7665996429010569515",
+      "job": {
+        "category": "正式",
+        "department": "数字技术",
+        "description": "方向：Ontology / Context Engineering / Evaluation / Self-evolving AI\n你要解决的问题\n通用模型不会天然理解一家企业。\n企业里存在数万张表、海量文档、复杂对象关系、不同指标口径、隐含规则和持续变化的业务状态。\n这个岗位需要研究：\n如何让 AI 从异构企业资产中建立语义，找到完整证据，组装正确上下文，完成可靠推理，并从失败中持续学习。\n这不是单一的 RAG 问题，而是语义建模、信息检索、知识表示、推理、评测和学习系统的交叉问题。\n你会参与的工作\n1. 研究从表结构、字段、文档、代码和 API 中自动抽取企业对象、关系、事件、指标与规则；\n2. 研究局部语义与 Canonical Ontology 的自动对齐、冲突识别和增量演进；\n3. 设计面向复杂问题的多阶段召回、查询分解、证据选择和 Context Assemble 算法；\n4. 研究结构化数据、非结构化知识和图谱的联合检索与 Rerank；\n5. 建设 Context、Evidence、Agent、Skill 和业务输出的评测体系；\n6. 从 tracing、用户反馈和业务结果中识别 badcase 根因，并生成资产修正建议；\n7. 推动算法进入真实生产场景，并基于线上数据不断优化。\n重点研究方向\n1.1 Enterprise Ontology Induction\n- 从数仓 Schema、文档和代码中自动发现企业对象及关系；\n- Canonical Ontology 与领域 Ontology 的匹配、融合和冲突处理；\n- 弱监督、主动学习与专家反馈结合的语义治理；\n- Ontology 版本变化的影响分析与质量评估。\n1.2 Semantic Mapping\n- 表、字段、指标、文档、API 与业务对象的跨模态语义匹配；\n- 基于描述、数据分布、查询日志和业务关系的联合建模；\n- Mapping 置信度、可解释性与人工审核优先级；\n- 面向长尾系统的小样本和零样本语义映射。\n1.3 Context Assembly\n- Token 预算约束下的上下文选择和信息压缩；\n- 面向复杂任务的查询分解和多跳证据组装；\n- 事实、关系、规则、历史和 Memory 的动态组合；\n- 面向不同模型和任务的 Context 自适应优化；\n- Context 完整性、相关性、时效性和冗余度评价。\n1.4 Evidence and Trustworthiness\n- 证据召回率、完整性和忠实度评测；\n- 结论与数据、文档、指标及规则之间的可验证绑定；\n- 无法回答、证据冲突和不确定性的识别；\n- 基于业务约束的幻觉检测和答案校验。\n1.5 Agent Evaluation\n- 长链路任务的过程评测和结果评测；\n- Tool Call 正确性、任务完成度和执行风险评价；\n- 从 tracing 中定位失败发生在召回、推理、规划还是执行；\n- 基于生产 badcase 自动构建评测集；\n- Agent 版本回归与线上效果预测。\n1.6 Governed Learning Flywheel\n- 从用户修正和业务结果中提取高价值学习信号；\n- 自动生成 Ontology、Mapping、Rule、Skill 和 Eval Case 的修改建议；\n- 防止错误反馈污染企业核心资产；\n- 人机协同下的受治理自进化机制；\n- 企业长期记忆的沉淀、压缩、冲突消解与遗忘。",
+        "detail_status": "OK",
+        "job_id": "7665996429010569515",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=780&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD78gmY9sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7665996429010569515/detail",
+        "requirements": "我们希望你\n- 来自人工智能、计算机、数学、统计学、信息检索、自然语言处理或相关专业；\n- 对研究问题有敏感度，不满足于调参和套用现成框架；\n- 具备扎实的机器学习、深度学习或信息检索基础；\n- 能阅读和复现高质量论文，也能把算法落到真实系统；\n- 熟练使用 Python、PyTorch 或主流机器学习工具；\n- 能够清晰定义问题、数据、指标、基线和实验方法。\n加分项包括：\n- 在 NLP、IR、Knowledge Graph、Agent、LLM Evaluation、Database AI 等方向有研究经历；\n- 有论文、专利、竞赛、开源项目或高质量研究型项目；\n- 熟悉图学习、表示学习、Rerank、强化学习、因果推断或主动学习；\n- 有构建 benchmark、evaluation framework 或真实数据集的经验。\n\n我们能提供什么\n1. 真实而复杂的问题\n你面对的不是公开数据集上的玩具任务，而是企业研发、供应链、制造、质量、财务和经营中的真实问题。\n这些问题同时具备：\n- 数据规模大；\n- 资产类型复杂；\n- 权限约束严格；\n- 业务口径真实；\n- 错误成本高；\n- 研究价值和工程价值并存。\n2. 从研究到生产的完整闭环\n很多研究止步于离线指标，很多工程止步于功能上线。\n在这里，你可以经历：\n提出问题\n→ 建立数据集与基线\n→ 设计算法或系统\n→ 进入生产场景\n→ 收集 tracing 和 badcase\n→ 验证真实业务价值\n→ 继续迭代\n3. 足够大的个人责任边界\n我们不希望优秀学生只承担边缘模块。\n表现优秀的人可以直接负责：\n- 一项关键算法方向；\n- 一个核心产品模块；\n- 一条端到端技术链路；\n- 一个跨领域研究课题；\n- 一套公开 benchmark 或方法论。\n4. 研究与公开成果机会\n在满足企业安全和数据合规的前提下，我们支持将有普遍价值的问题沉淀为：\n- 学术论文；\n- 技术专利；\n- 公开 benchmark；\n- 开源框架或工具；\n- 高质量技术报告；\n- 行业标准和方法论。\n我们不会为了论文而制造问题，但也不会让真正有研究价值的问题只停留在内部项目中。\n\n我们寻找什么样的人\n我们不只寻找履历最整齐的人。\n我们更看重：\n- 是否能面对没有标准答案的问题；\n- 是否能快速进入陌生领域；\n- 是否有独立判断和研究品味；\n- 是否能把抽象想法变成可验证的系统；\n- 是否愿意对最终结果负责；\n- 是否既追求技术先进性，也理解真实业务约束。\nAGI 超星计划不是为了招募更多执行者，而是寻找未来能够定义产品、定义系统、定义算法方向的人。",
+        "title": "Super Sparks-校招-企业智能算法研究员"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
       "triage": {
         "engineering_signal": true,
         "priority": "high",
@@ -661,10 +725,74 @@
           "memory_context"
         ]
       }
+    },
+    {
+      "change": "added",
+      "company": "蔚来",
+      "event_id": "15f80b1063a6dc79c01f0c9c9c9c7e2a",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7620320073849522441",
+      "job": {
+        "category": "实习",
+        "department": "算法",
+        "description": "围绕智能辅助驾驶场景，负责多模态大模型（包括但不限于视觉语言大模型等）的算法迭代和应用落地，工作职责包括但不限于：车端多模态大模型训练与评测迭代、云端多模态大模型优化与语料自动化生产、语料质量分析与提升等；\n探索大模型的技术前沿与能力边界，创新性拓展智能辅助驾驶能力，推进大模型在智能辅助驾驶领域的落地应用。\n负责VLA模型与算法的研发与优化，包括数据处理、模型设计、训练与部署，提升模型在多种驾驶场景下的性能与稳定性。",
+        "detail_status": "OK",
+        "job_id": "7620320073849522441",
+        "location": "上海",
+        "official_api": "https://nio.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=870&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j2xWJgAAAABYG0QxD7.QG49sVjAAOWu",
+        "official_url": "https://nio.jobs.feishu.cn/campus/position/7620320073849522441/detail",
+        "requirements": "本科及以上学历，计算机、自动化、人工智能、计算机视觉等相关专业背景。\n熟练掌握 Python 编程和Pyorch框架。理解并掌握多模态大语言模型（VLM）/大语言模型（LLM）的基本原理，有相关研究或应用经验。\n有智能辅助驾驶或机器人相关经验者优先。",
+        "title": "实习-端到端大模型算法实习生-VLA方向（上海）"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-040",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "商汤科技",
+      "event_id": "165c76b4985693a2c9c5d437105b66f1",
+      "first_seen_at_utc": "2026-10-12T09:13:46Z",
+      "identity": "id:7683454564120643883",
+      "job": {
+        "category": "实习",
+        "department": "互联网 / 电子 / 网游",
+        "description": "AI 平台开发实习生\n岗位职责：\n- 参与大模型 API 评测平台的开发与维护\n- 协助完成 Python 后端接口及简单前端页面开发\n- 参与第三方模型 API 接入、数据处理和问题排查\n- 编写基础测试及项目文档",
+        "detail_status": "OK",
+        "job_id": "7683454564120643883",
+        "location": "北京",
+        "official_api": "https://hr-jobs.sensetime.com/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=j3q63gAAAABYDajJxBRVII96usAAOXD",
+        "official_url": "https://hr-jobs.sensetime.com/edu/position/7683454564120643883/detail",
+        "requirements": "任职要求：\n- 计算机、软件工程等相关专业在校生\n- 掌握 Python 基础，了解 FastAPI、Flask 等框架之一\n- 了解 HTTP、数据库、Git 和基本前端知识\n- 有较好的学习能力，能够阅读并修改现有代码\n- 对大模型或 AI 应用开发感兴趣\n加分项（非必需）：\n- 使用过 Docker 或 Linux\n- 有个人项目、课程项目或大模型 API 调用经验\n- 每周可实习 4 天以上，连续实习 3 个月以上",
+        "title": "AI平台开发实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T09:13:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-031",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
     }
   ],
-  "generated_at_utc": "2026-10-14T12:51:25Z",
-  "pending_total": 2961,
+  "generated_at_utc": "2026-10-14T13:06:13Z",
+  "pending_total": 2614,
   "policy": "Read the complete job description and requirements for every entry. Do not decide from title or keywords alone. Include only AI application/Agent/LLM/RAG/AI platform engineering/evaluation engineering roles with explicit implementation work. Use needs_review when the JD evidence is insufficient.",
   "schema_version": 1
 }
