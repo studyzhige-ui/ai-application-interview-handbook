@@ -75,6 +75,10 @@ def main(argv=None):
     reconcile.add_argument("--queue-file", type=Path, required=True)
     reconcile.add_argument("--report-file", type=Path, required=True)
 
+    compact_audit = commands.add_parser("compact-audit", help="Resolve mechanically redundant historical review events without role inference")
+    compact_audit.add_argument("--queue-file", type=Path, required=True)
+    compact_audit.add_argument("--official-file", type=Path, required=True)
+
     prepare_audit = commands.add_parser("prepare-audit", help="Export a small deterministic pending-JD batch for semantic review")
     prepare_audit.add_argument("--queue-file", type=Path, required=True)
     prepare_audit.add_argument("--batch-file", type=Path, required=True)
@@ -118,6 +122,11 @@ def main(argv=None):
             timeout_seconds=args.timeout_seconds,
             output=args.output_dir,
         )
+    if args.command == "compact-audit":
+        from jd.review import compact_backlog
+        result = compact_backlog(queue_file=args.queue_file, official_file=args.official_file)
+        print("Compacted semantic audit backlog " + " ".join(f"{key}={value}" for key, value in result.items()))
+        return 0
     if args.command == "prepare-audit":
         from jd.review import prepare_batch
         batch = prepare_batch(queue_file=args.queue_file, batch_file=args.batch_file, limit=args.limit)
