@@ -1,0 +1,670 @@
+{
+  "batch_id": "574fef6e8bf06eb01a884949",
+  "count": 24,
+  "entries": [
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "0fcec3c05c0584f896d13a9b259f173e",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:8c889f3714e81dad33b4fd86",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613375938431275/detail?spread=NEDQRTH",
+        "title": "大模型数据开发实习生\n北京校招实习技术 - 算法职位 ID：A64255\n1、参与大模型训练数据的构建，不限于数据过滤，质量评估，数据增强等，搭建高效的分布式数据pipeline；\n2、参与模型训练数据标签体系的建设，打造数据自动打标环路，完成海量数据打标和知识库构建；\n3、参与模型数据质量的建设，面向网页，书籍，代码等不同类型数据，打造通用的质量评估策略。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "llm",
+          "rag"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "1382dea4a11a41ecf08d70f3f3b5db1f",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:df6f6abbc437cafa04d6ece0",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683042369134479657/detail?spread=NEDQRTH",
+        "title": "Agentic Engineering (量化 Infra 方向）实习生\n北京校招实习技术 - 开发职位 ID：A166620\n岗位亮点\n我们正在构建面向大模型量化场景的「自我优化」Agentic 原生基础设施，将量化研发与部署优化从人工驱动升级为自治系统，你将深度参与量化算法研究与工程化、Agentic 范式探索与跨硬件 Infra 建设，打造下一代量化工程体系。\n\n核心职责\n1. 负责大模型量化算法工程化，覆盖 PTQ/QAT/ 低比特量化在大模型及多模态模型的落地，重点针对 GPU/NPU/ 端侧芯片等各类硬件平台设计并优化量化方案，平衡精度与推理性能\n2. 构建 Agent 原生的统一量化研发工作流，实现从量化方案定义到跨硬件落地交付的全流程自治闭环\n3. 搭建标准化量化评测体系，推动基础设施向自我优化的 Agent 驱动系统演进\n4. 跟踪量化与 Agentic Infra 前沿技术，在真实跨硬件量化项目中完成技术落地与迭代"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "1d4746be9daef3d65fc605928c787c54",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:5581e900fc16918ca32bc188",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683469456987932954/detail?spread=NEDQRTH",
+        "title": "强化学习自进化实习生\n北京校招实习技术 - 算法职位 ID：A85669\n我们正在探索 AI4AI、自进化智能体与长程 Agentic Learning 等前沿方向。你将参与组内核心强化学习项目，与我们一起训练能够持续探索、自我改进并解决复杂任务的智能体。\n工作内容\n1. 参与强化学习算法的设计、实现、实验与迭代\n2. 搭建和优化 RL 训练基础设施，提高训练效率、稳定性与可扩展性\n3. 参与 Agentic Coding、长程 Agent 及自进化系统的训练\n4. 分析训练轨迹、奖励信号和数据分布，定位模型能力瓶颈\n5. 设计和组织高质量训练数据与评测体系\n6. 跟进并复现强化学习、Agent、自进化与具身智能领域的最新工作"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 9,
+        "signals": [
+          "agent",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "317097b8410525333ef2da375554d6c8",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7683042369134479657",
+      "job": {
+        "description": "岗位亮点\n我们正在构建面向大模型量化场景的「自我优化」Agentic 原生基础设施，将量化研发与部署优化从人工驱动升级为自治系统，你将深度参与量化算法研究与工程化、Agentic 范式探索与跨硬件 Infra 建设，打造下一代量化工程体系。\n\n核心职责\n1. 负责大模型量化算法工程化，覆盖 PTQ/QAT/ 低比特量化在大模型及多模态模型的落地，重点针对 GPU/NPU/ 端侧芯片等各类硬件平台设计并优化量化方案，平衡精度与推理性能\n2. 构建 Agent 原生的统一量化研发工作流，实现从量化方案定义到跨硬件落地交付的全流程自治闭环\n3. 搭建标准化量化评测体系，推动基础设施向自我优化的 Agent 驱动系统演进\n4. 跟踪量化与 Agentic Infra 前沿技术，在真实跨硬件量化项目中完成技术落地与迭代",
+        "detail_status": "OK",
+        "job_id": "7683042369134479657",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683042369134479657/detail",
+        "requirements": "1. 硕士及以上学历，计算机 / 人工智能 / 电子工程相关专业\n2. 熟练使用 Python，熟悉 Transformer 架构。了解大语言模型结构特点与计算瓶颈，具备扎实的代码能力\n3， 深入理解模型量化原理，熟悉 PTQ/QAT 等技术，掌握 GPTQ/AWQ/SmoothQuant 等主流量化算法实现\n4. 扎实的加速器硬件和 AI Infra 系统知识，具备对应算子开发与性能调优经验\n5. 具备复杂系统拆解与问题定位能力，对评测敏感，能判断量化指标可信度与实验有效性\n6. 认可 AI Native 方向，具备快速跟进前沿研究与算法复现能力\n\n加分项\n1. 量化相关论文发表或开源项目贡献，具备跨硬件平台软硬协同优化经验\n2. 熟悉 KV Cache/Activation 量化等大模型量化与推理优化技术，有TVM/MLIR/ONNX Runtime 等 AI 编译器相关实践经验\n3. 有 Agent 评测体系 / 量化 Harness 建设经验，或评测体系 / 评测集构建经验（用例生成、LLM-as-judge 等）\n4. 对 Agent 有深入实践（tool use/planning/multi-agent 等），有活跃开源项目或对社区有实质贡献",
+        "title": "Agentic Engineering (量化 Infra 方向）实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "33ef0fa877d3d8fd9276024df27fc4b2",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7685613375938431275",
+      "job": {
+        "description": "1、参与大模型训练数据的构建，不限于数据过滤，质量评估，数据增强等，搭建高效的分布式数据pipeline；\n2、参与模型训练数据标签体系的建设，打造数据自动打标环路，完成海量数据打标和知识库构建；\n3、参与模型数据质量的建设，面向网页，书籍，代码等不同类型数据，打造通用的质量评估策略。",
+        "detail_status": "OK",
+        "job_id": "7685613375938431275",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA8P4ref4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613375938431275/detail",
+        "requirements": "1、计算机相关专业，本科及以上在读；\n2、精通Python语言，熟悉Spark、Ray等分布式框架，具备丰富的大规模数据处理实践经验是加分项；\n3、具备良好的逻辑能力，细心严谨，对数据敏感；\n4、具备自主调研能力，以下方向有实践经验或兴趣浓厚优先：大规模文本数据质量提升、文本数据处理。",
+        "title": "大模型数据开发实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "llm",
+          "rag"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "3c3aecf77cf08acef7b8ce882690716a",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7683048661333805350",
+      "job": {
+        "description": "1. 核心模块研发（数据合成与质量评审）\n参与工业表面缺陷的训练数据合成链路研发，在真实底图上生成带精确标注的缺陷样本，提升合成数据的真实性与标注可信度。\n参与 LLM-as-Judge 质量评审闭环的设计与实现，筛选合格样本、审计标注质量，让合成数据可稳定进入训练池。\n2. 多模态缺陷检测与模型后训练\n探索用 多模态大模型（VLM）解决工业缺陷目标检测：设计检测 prompt 与输出协议，做零样本 / 少样本检测与后处理优化，提升缺陷的定位精度与召回。\n参与 模型后训练：基于合成与真实数据对 VLM 做 SFT / LoRA 微调或 RL 后训练，构建训练数据、跑通训练链路、验证效果并迭代。\n负责 VLM 缺陷检测 Benchmark 的模型接入、指标计算与报告输出，横评多个开源多模态模型并给出验收结论。\n3. 技术方案与协作\n与团队成员紧密配合，参与方案讨论，提出算法思路，落地方案实施，共同推动项目进展。\n撰写相关技术文档，总结和沉淀研发经验，方便团队成员共享和后续查阅。\n\n你将获得\n前沿技术实践机会：深入参与工业缺陷检测领域的核心链路研发——VLM 合成、多模态评测、LLM-as-Judge、端侧量化部署，接触最前沿技术动态，提升专业技术水平。\n丰富的项目实战经验：在真实工业项目中承担具有挑战性的任务，快速提升技术能力和工程实践水平；完整经历从方案设计、代码实现、跑批评测到报告输出的闭环。\n良好的团队氛围：加入充满活力、鼓励创新的团队，与优秀工程师一起成长，拓展人脉资源。\n实习证明与转正机会：表现优异的实习生将获得转正机会，成为团队正式一员，开启职业发展新篇章。\n\n我们期待你的加入，共同打造安全高效的工业缺陷检测智能质检体系！",
+        "detail_status": "OK",
+        "job_id": "7683048661333805350",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683048661333805350/detail",
+        "requirements": "1. 学历背景\n计算机科学、软件工程、人工智能、自动化等相关专业的在校本科生或研究生。\n\n2. 技术基础\n熟练掌握 Python，具备良好编程习惯；熟练 numpy / PIL / cv2 图像处理基础，会读 transformers 这类大型开源库的源码。\n对 多模态大模型（VLM） 及其应用有一定了解，有 prompt 工程、VLM 调用、模型评测或数据合成相关项目经验者优先。\n了解 目标检测、分割、评测指标（F1/IoU/mAP） 等视觉概念，有实际跑过 benchmark 的经验者更佳。\n了解 模型后训练（SFT / LoRA / RLHF 等）流程，有 PyTorch 训练或微调开源模型经验者优先。\n接触过 扩散模型（Diffusion）、LLM-as-Judge、或端侧部署（RKNN / INT8 量化）任一方向者优先。\n\n3. 软素质\n对开源项目充满热情，有强烈学习意愿和自我驱动力，能主动探索新技术。\n具备良好沟通能力和团队协作精神，能与团队成员有效配合完成工作。\n能够快速理解业务需求，并将其转化为技术实现，为业务发展提供技术支持。\n",
+        "title": "算法研发实习生(多模态\\后训练)"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "51df1f38ec0e0081ca82342544bc279b",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7682708160822593811",
+      "job": {
+        "description": "1. 核心模块研发（任务与算力调度） ：\n- 优化智能体的持续任务执行能力。在给定的计算资源和时间范围内，持续改进 Agent Loop 闭环工作流程，AI探索智能体在真实场景中的落地方式，提升其在真实、复杂、长链路任务中的可靠性、执行效率与可控性。\n2. 通用任务能力拓展 ：\n- 针对智能体处理通用任务的目标，负责特定二级或三级方向的深入调研与实现。在 软件开发、报告编写、自动化办公 等场景，探索让智能体具备专业、高效解决能力的方法。\n- 调研并实践如何让智能体更好地完成长链路任务，包括任务拆解、信息收集、工具使用、结果验证和多轮迭代。\n- 参与构建任务评测方案，通过真实案例、离线评测和线上反馈分析 Agent 的问题，持续迭代算法策略和系统实现。\n- 将实验性想法落地为可运行、可验证、可维护的代码，而不仅仅停留在 Demo 或 Prompt 调试层面。\n3. 技术方案与协作 ：\n- 与团队成员紧密配合，参与方案讨论，提出算法思路，落地方案实施，共同推动项目进展。\n- 撰写相关技术文档，总结和沉淀研发经验，方便团队成员共享和后续查阅。",
+        "detail_status": "OK",
+        "job_id": "7682708160822593811",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7682708160822593811/detail",
+        "requirements": "1. 学历背景 ：计算机科学、软件工程、人工智能等相关专业的在校本科生或研究生。\n2. 技术基础 ：\n- 熟练掌握 Python、Typescript 或 Rust 中的至少一种编程语言，熟练掌握vibe coding，具备良好的编程习惯和工程意识。\n- 对 大语言模型（LLM） 及其应用有一定了解，有Agent、LLM 应用、搜索问答、Harness相关开源项目经验者优先。\n- 了解 LLM、Agent 等相关概念，有相关实践经验者更佳。\n- 能够阅读英文技术资料和开源项目代码，并将调研结果转化为实际方案。\n3. 软素质 ：\n- 对开源项目充满热情，有强烈学习意愿和自我驱动力，能主动探索新技术。\n- 具备良好沟通能力和团队协作精神，能与团队成员有效配合完成工作。\n- 能够快速理解业务需求，并将其转化为技术实现，为业务发展提供技术支持。\n4. 你将获得\n前沿技术实践机会 ：深入参与 AI 智能体领域核心算法研发，接触最前沿技术动态，提升专业技术水平。\n丰富的项目实战经验 ：在真实开源项目中承担具有挑战性的任务，快速提升技术能力和工程实践水平。\n良好的团队氛围 ：加入充满活力、鼓励创新的团队，与优秀工程师一起成长，拓展人脉资源。\n实习证明与转正机会 ：表现优异的实习生将获得转正机会，成为面壁智能正式一员，开启职业发展新篇章。\n我们期待你的加入，共同打造下一代安全高效的端云协同智能体！",
+        "title": "大模型Agent工程实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "54cc9f16e8b1b729a8f4db24327da80a",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:f873488c54b90be1fe608938",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7689004710846662922/detail?spread=NEDQRTH",
+        "title": "agentic算法实习生\n北京校招实习技术 - 算法职位 ID：A123256\n面壁智能基础模型团队，方向聚焦于提升端侧、云侧自研模型在复杂 Agentic 场景下的表现。通过优化多轮交互、多工具协同、多跳信息检索、多文件操作、长程任务执行、错误恢复与闭环交付等方面的能力，实现模型的跨 harness 泛化。\n\n岗位职责：\n以模型训练为核心，参与 data-infra-algorithm-eval 的全流程闭环：\n1、构建大规模任务与环境合成管线，实现高质量训练数据的快速获取；\n2、优化训练 recipe，探索 mid-train, sft, rl, opd 的有机结合；\n3、形成独到的数据选择及加权策略，逐步拓宽模型的能力边界；\n4、在 agentic training 中持续 scaling，保证大规模异步强化学习的高效与稳定；\n5、设计更为精细的评测和长轨迹信用分配方法，引导模型习得良好的解题模式；"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "agent",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "604a82fd6685985982be0ee8fdcc11cf",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:925a0363c44cb63e5a7fed11",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685612476641904923/detail?spread=NEDQRTH",
+        "title": "强化学习算法实习生（LLM Agent 方向）\n北京、上海校招实习技术 - 算法职位 ID：A50883\n1、面向 agentic 任务（多轮工具调用、代码修复 / SWE、网页搜索与信息检索、长程任务规划等）开展 LLM 的RL 后训练研究；\n2、研究并改进面向多轮、长 horizon、稀疏奖励场景的 RL 算法（GRPO / PPO 及其变体），包括优势估计与 credit assignment、off-policy 修正、探索与熵控制、训练稳定性等问题；\n3、参与 agent 任务的训练数据与评测设计：构造训练任务，设计可验证的奖励信号，分析 rollout 轨迹质量；\n4、独立设计并执行实验：数据构造与筛选、消融实验、训练曲线与 rollout 轨迹分析，定位 reward hacking、训练崩溃等问题并给出改进方案，撰写技术报告；有机会产出论文或开源成果；\n5、跟踪 agent RL 前沿工作并快速复现，在内部训练框架中落地验证。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "686e9c157bb4d4c094414a6026f825d3",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7683469456987932954",
+      "job": {
+        "description": "我们正在探索 AI4AI、自进化智能体与长程 Agentic Learning 等前沿方向。你将参与组内核心强化学习项目，与我们一起训练能够持续探索、自我改进并解决复杂任务的智能体。\n工作内容\n1. 参与强化学习算法的设计、实现、实验与迭代\n2. 搭建和优化 RL 训练基础设施，提高训练效率、稳定性与可扩展性\n3. 参与 Agentic Coding、长程 Agent 及自进化系统的训练\n4. 分析训练轨迹、奖励信号和数据分布，定位模型能力瓶颈\n5. 设计和组织高质量训练数据与评测体系\n6. 跟进并复现强化学习、Agent、自进化与具身智能领域的最新工作",
+        "detail_status": "OK",
+        "job_id": "7683469456987932954",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683469456987932954/detail",
+        "requirements": "1. 计算机、人工智能、自动化、数学等相关专业在读\n2. 具备扎实的强化学习基础，理解常见算法及其训练机制\n3. 算法能力强，能够快速理解论文并将想法落地为实验\n4. 工程能力强，熟练使用 Python 和 PyTorch，具备良好的代码质量意识\n5. 能独立完成实验设计、训练调试、结果分析与问题定位\n6. 对 Agent、自进化、AI4AI 或具身智能方向有浓厚兴趣\n7. 学习能力强，愿意面对开放性问题和高不确定性的研究任务\n\n加分项\n1. 在强化学习、Agent、AI4AI、自进化或具身智能方向发表过相关论文\n2. 有大规模 RL 训练、分布式训练或 RL Infra 建设经验\n3. 有 LLM Post-training、RLHF、Agentic RL 或 SWE-bench 相关经验\n4. 具备良好的“数据品位”：能够敏锐观察数据、轨迹和训练现象，并据此设计数据配比、采样策略与实验\n5. 有优秀的开源项目、竞赛成绩或可展示的研究成果\n\n我们希望你\n不一定同时精通算法与基础设施，但至少在其中一个方向有突出能力，并愿意深入真实、复杂的强化学习训练问题。\n这里不仅是复现已有方法，你将有机会直接参与前沿方向探索，并对训练方案、数据设计、算法选择和系统实现产生实际影响。",
+        "title": "强化学习自进化实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "6f3c987096e51f65deb6c2ba18075303",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:4d1a855daec527e7335e30fb",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7680823773248063782/detail?spread=NEDQRTH",
+        "title": "大模型 Agent 算法实习生\n北京校招实习技术 - 算法职位 ID：A214672\n1、参与大模型 Agent 能力优化，探索如何让 Agent 更自主、可靠地完成复杂任务。\n2、从真实工作流、互联网等场景中挖掘有价值的 Agent 任务，参与高质量训练数据与环境构建。\n3、参与 Agent 核心能力与训练方法研究，包括但不限于：\n1）任务与环境构造、Trajectory 生成与筛选；\n2）Long-horizon Agent、错误恢复与自我纠正；\n3）Reward / Verifier、强化学习、Test-time Scaling 等。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "agent",
+          "llm"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "71b24c6d9ef5e0f1f75461d45c32f317",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:4360c07a05da5bd8d34b2a57",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613435107232054/detail?spread=NEDQRTH",
+        "title": "大模型 Agent 数据算法实习生\n北京校招实习技术 - 算法职位 ID：A88573\n1、参与大模型 Agent 能力数据构建，探索如何让大模型更自主、可靠地完成长程复杂任务；\n2、从真实工作流、互联网等场景中挖掘高价值 Agent 任务，参与高质量训练数据、任务与交互环境的构建；\n3、参与 Agent 数据与环境构建相关的方法研究，包括但不限于：\n1）任务与环境构造、Trajectory 生成与筛选；\n2）研究任务与环境的自动化生产方法，探索 Agent 数据与环境的 Scaling Law；\n3）Reward / Verifier 的设计与构建。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": false,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "agent",
+          "llm"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "806f4e0e4f9c69db75d6bd2436fa84cd",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7671209200165472553",
+      "job": {
+        "description": "关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从SuperMate智舱到MiniCPM系列模型，从松果派开发板到RoboHarness具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是AI普及的必经之路。\n你需要做什么？\n1. 内容基建 — 维护面壁的内容库和媒体库，让品牌资产\"随调随用\"；\n2. 内容产出 — 撰写新闻稿、媒体brief、活动话术等，你的文字会出现在36氪、极客公园、新华社等媒体上；\n3. 媒体沟通 — 协助媒体对接、采访安排、活动执行，学习怎么把技术故事讲给大众听；\n4. 行业研究 — 追踪AI热点、竞品动态、行业趋势，帮我们保持信息敏感度。",
+        "detail_status": "OK",
+        "job_id": "7671209200165472553",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7671209200165472553/detail",
+        "requirements": "1.AI原生用户：重度使用AI工具，懂vibe coding，会用Agent搭简单工作流，知道怎么让AI当你的\"情报员\"和\"小助手\"；\n2.对AI有执念：不只是用，而是爱琢磨\"还能怎么用\"，有钻研精神；\n好奇PR在干嘛：想了解公关行业运作逻辑，想透过PR的视角看懂AI行业的发展脉络。\n你将获得什么？\n1. 真项目，真作品：直接参与面壁产品发布、行业展会（如WAIC）、媒体活动的实际执行，产出可写进简历的案例；\n2. AI工作流实战课：我们会教你如何把Agent、自动化工具融入真实工作流，让你比同龄人更早建立\"AI原生\"工作习惯；\n3. PR+AI双视角：一边学习公关传播的方法论，一边深度接触端侧智能最前沿的动态和玩家，建立对科技商业的体感；\n4. mentor陪伴成长：有经验丰富的同事带你，从怎么写一封专业的邮件到怎么策划一场活动，手把手教你\"职场基本功\"；\n5. 灵活有趣的工作氛围：我们鼓励用AI提效、反对无效加班，如果你有好想法，随时可以提出来一起试。\n\n请附上一段你平时怎么用AI提高效率的说明（100字以内即可），让我们快速了解你",
+        "title": "PR&品牌传播实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "8e3d5704b332088c2f3c8d11c41e8f37",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:e399e24264adf781a8adda3a",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7671209200165472553/detail?spread=NEDQRTH",
+        "title": "PR&品牌传播实习生\n北京校招实习市场与销售 - 市场品牌职位 ID：A235549\n关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从SuperMate智舱到MiniCPM系列模型，从松果派开发板到RoboHarness具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是AI普及的必经之路。\n你需要做什么？\n1. 内容基建 — 维护面壁的内容库和媒体库，让品牌资产\"随调随用\"；\n2. 内容产出 — 撰写新闻稿、媒体brief、活动话术等，你的文字会出现在36氪、极客公园、新华社等媒体上；\n3. 媒体沟通 — 协助媒体对接、采访安排、活动执行，学习怎么把技术故事讲给大众听；\n4. 行业研究 — 追踪AI热点、竞品动态、行业趋势，帮我们保持信息敏感度。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "8f4c8c70a894f735343ee91b15e1fb28",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:da49c4f1a15caf43ccd76bc1",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683048661333805350/detail?spread=NEDQRTH",
+        "title": "算法研发实习生(多模态\\后训练)\n北京校招实习技术职位 ID：A187290\n1. 核心模块研发（数据合成与质量评审）\n参与工业表面缺陷的训练数据合成链路研发，在真实底图上生成带精确标注的缺陷样本，提升合成数据的真实性与标注可信度。\n参与 LLM-as-Judge 质量评审闭环的设计与实现，筛选合格样本、审计标注质量，让合成数据可稳定进入训练池。\n2. 多模态缺陷检测与模型后训练\n探索用 多模态大模型（VLM）解决工业缺陷目标检测：设计检测 prompt 与输出协议，做零样本 / 少样本检测与后处理优化，提升缺陷的定位精度与召回。\n参与 模型后训练：基于合成与真实数据对 VLM 做 SFT / LoRA 微调或 RL 后训练，构建训练数据、跑通训练链路、验证效果并迭代。\n负责 VLM 缺陷检测 Benchmark 的模型接入、指标计算与报告输出，横评多个开源多模态模型并给出验收结论。\n3. 技术方案与协作\n与团队成员紧密配合，参与方案讨论，提出算法思路，落地方案实施，共同推动项目进展。\n撰写相关技术文档，总结和沉淀研发经验，方便团队成员共享和后续查阅。\n\n你将获得\n前沿技术实践机会：深入参与工业缺陷检测领域的核心链路研发——VLM 合成、多模态评测、LLM-as-Judge、端侧量化部署，接触最前沿技术动态，提升专业技术水平。\n丰富的项目实战经验：在真实工业项目中承担具有挑战性的任务，快速提升技术能力和工程实践水平；完整经历从方案设计、代码实现、跑批评测到报告输出的闭环。\n良好的团队氛围：加入充满活力、鼓励创新的团队，与优秀工程师一起成长，拓展人脉资源。\n实习证明与转正机会：表现优异的实习生将获得转正机会，成为团队正式一员，开启职业发展新篇章。\n\n我们期待你的加入，共同打造安全高效的工业缺陷检测智能质检体系！"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "9a6d3ee3a86cb400eb7debf81cea3450",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:9db81f820c9f92fa6431cd57",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683473677028346155/detail?spread=NEDQRTH",
+        "title": "Agentic Infra 实习生\n北京校招实习技术 - 基础架构2026校园招聘职位 ID：A178856\n我们在构建一套“自我优化”的大模型训练系统，你将参与以下核心方向：\n1. 参与模型训练，构造在高性能/infra侧专用的模型\n2. 构建统一的训练 Harness 范式，标准化训练、benchmark 与评测流程\n3. 探索 Agentic Infra，将训练系统从人工驱动升级为 Agent 驱动\n4. 推动训练系统从工具集合向具备自我优化能力的系统演进"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "9e47dfdb60604a980e1ded7c1ae2b34e",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7685613435107232054",
+      "job": {
+        "description": "1、参与大模型 Agent 能力数据构建，探索如何让大模型更自主、可靠地完成长程复杂任务；\n2、从真实工作流、互联网等场景中挖掘高价值 Agent 任务，参与高质量训练数据、任务与交互环境的构建；\n3、参与 Agent 数据与环境构建相关的方法研究，包括但不限于：\n1）任务与环境构造、Trajectory 生成与筛选；\n2）研究任务与环境的自动化生产方法，探索 Agent 数据与环境的 Scaling Law；\n3）Reward / Verifier 的设计与构建。",
+        "detail_status": "OK",
+        "job_id": "7685613435107232054",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA8P4ref4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7685613435107232054/detail",
+        "requirements": "1、本科及以上学历在读，计算机、人工智能、软件工程及相关专业；\n2、具备较强的算法设计与开发能力，熟练使用 Claude Code、Codex 等工具进行开发、实验与数据处理；\n3、具备较强的论文阅读、算法理解与复现能力，有大模型研发、训练或 Agent 相关经验；\n4、在 ACL、EMNLP、NAACL、COLING、NeurIPS、ICML、ICLR 等会议发表过相关工作者优先。",
+        "title": "大模型 Agent 数据算法实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 8,
+        "signals": [
+          "agent",
+          "llm"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "9f77a147257ed60e73516d009e3b7f4a",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:8f0dbec7df0dd02279075905",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7677499254704916778/detail?spread=NEDQRTH",
+        "title": "技术传播实习生（AI 方向｜微博 & X）\n北京校招实习市场与销售 - 市场品牌职位 ID：A90320\n职位描述\n关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从 SuperMate 智舱到 MiniCPM 系列模型，从松果派开发板到 RoboHarness 具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是 AI 普及的必经之路。\n关于这个岗位：这是一个\"懂技术的人做传播\"的岗位。面壁的官方微博和 X 账号正处于从零建设的第一年，发布的核心内容是模型、benchmark 和开源生态，面对的核心受众是开发者与技术从业者。你要做的事情，本质上是把技术事实翻译成传播语言——把一次发版变成一条会被转发的帖子，把一张 benchmark 图变成外行也能看懂的叙事。我们希望你能看懂技术内容；如果你本身就是开发者，那再好不过。\n\n你需要做什么？\n一、双平台内容与发布\n技术内容转译 — 把模型发版说明、benchmark 数据、开源动态转译成平台化表达：微博官宣与热点借势文案、X 英文帖初稿，配合 AI 配图与信息图制作、话题策划及发布排期管理；\n重大节点作战 — 新模型发布、重要合作官宣时，参与完整的传播编排执行：发布时序、矩阵联动、媒体转发跟进，亲历官方声量从零到峰值的全过程；\n数据简报 — 跟踪微博与 X 平台数据（曝光、互动、涨粉、提及），输出周度运营简报，用数据持续优化内容方向。\n二、KOL 建联与选题雷达\n博主挖掘与对接 — 围绕 AI/科技领域挖掘微博与 X 上的垂直博主与技术 KOL，评估账号质量与受众契合度；协助完成英文沟通、合作意向确认与素材对接，维护 KOL 台账；\n热点追踪 — 跟踪大模型行业动态（发版、开源项目、benchmark 争论、社区热议）和两个平台上与面壁相关的讨论，判断哪些值得官方发声、怎么发声，形成每周选题输入。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "a0dc5911c713482d395f6f05ba2e0fca",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "url:2973a496027e7cf5b479c1f2",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7681562665059322148/detail?spread=NEDQRTH",
+        "title": "具身HarnessAgent算法实习生\n北京校招实习技术职位 ID：A57922\n下一代具身智能体不是被编排的执行器，而是能在真实物理世界中自主完成长程任务、并从每一次失败中进化的自治系统。robot-harness 是承载这一目标的核心引擎，你将参与它从 0 到 1 的建设，并主导其中最具挑战的方向——让 Harness Agent 自己变得更强。\n岗位职责\n1. 参与 robot-harness 核心研发：负责任务上下文管理、Skill 调用协议、执行器抽象与异常恢复机制的设计与实现，并针对端侧算力与实时性约束优化调度开销。\n2. 建设 Harness Agent 具身工作全流程：打通任务定义 → workflow 编排 → 执行 → 验证 → 失败归因 → 修复重试的完整闭环，建设真实轨迹的采集、结构化与失败样本回流的数据闭环，围绕业务场景建立 BenchMark，持续提升长程任务成功率、执行耗时与资源使用效率。\n3. 研究 Harness Agent 自进化机制：探索 Harness、Skill 与 Model 的协同演化——系统如何从自身执行轨迹中自动发现瓶颈、生成改进并验证收益，完成方案设计与实验验证，推动研究成果形成论文并投稿至 CCF A/B 类会议。\n4. 技术方案与协作：与团队紧密配合参与方案讨论，提出算法思路并落地实施；撰写技术文档，沉淀研发经验，方便团队共享与后续查阅。"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "evaluation",
+          "memory_context"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "a4abd328ed4b3f93e2e9937de4557ebb",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7683473677028346155",
+      "job": {
+        "description": "我们在构建一套“自我优化”的大模型训练系统，你将参与以下核心方向：\n1. 参与模型训练，构造在高性能/infra侧专用的模型\n2. 构建统一的训练 Harness 范式，标准化训练、benchmark 与评测流程 \n3. 探索 Agentic Infra，将训练系统从人工驱动升级为 Agent 驱动 \n4. 推动训练系统从工具集合向具备自我优化能力的系统演进 ",
+        "detail_status": "OK",
+        "job_id": "7683473677028346155",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683473677028346155/detail",
+        "requirements": "1. 具有较强工程能力，能独立完成复杂系统模块的设计与实现 \n2. 熟练使用 Python，具备扎实的代码能力（C++ / CUDA 为加分项） \n3. 熟悉 PyTorch，有实际训练 / 调试经验 \n4. 理解分布式系统或分布式训练的基本概念 \n5. 对系统问题有良好的拆解能力，能从复杂现象中定位本质问题 \n6. 对 AI Native / Agent 系统有兴趣，认可“用模型解决工程问题”的方向 \n7. 对数据敏感：能判断指标是否可信、实验是否有效，而不是盲目跑实验 \n加分项（重要但不硬性）\n1. 有算子开发经验（CUDA / Triton / Kernel 优化） \n2. 有大模型训练经验（Megatron / DeepSpeed / FSDP 等） \n3. 有性能分析经验（Nsight Systems / Nsight Compute / profiler 等） \n4. 熟悉训练优化手段（FlashAttention / ZeRO / 混合精度 / checkpointing 等） \n5. 对 Agent 有深入理解或实践（tool use / planning / multi-agent 等） \n6. 阅读或改过大型训练框架源码 \n7. 做过 benchmark / profiling / 自动化实验平台相关工作",
+        "title": "Agentic Infra 实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "a5c6acddc06c7312180df02e6c8b7dfa",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7676905572259858739",
+      "job": {
+        "description": "我们正在构建以数据为核心的自动化模型增强系统：为后训练生成高质量数据、筛选高价值样本，持续提升模型能力。现有数据远未触及模型的能力上限，数据的构造、评判、配比与闭环仍有大量空白，等你来定义。\n\n工作内容\n-数据合成与构造：设计并实现高质量训练数据的生成链路（模型自生成、教师蒸馏、任务改写、难度爬升、多样性扩展等），持续扩充数据的覆盖面与深度\n-数据质量与筛选：搭建数据裁定与清洗机制（规则校验、执行验证、模型评判、去污染、去重），把数据质量标准沉淀为可复用、可度量的规范\n-SFT 训练与迭代：负责监督微调的实验设计、训练调优与效果归因，探索数据配比、课程式训练、多轮蒸馏等提升手段\n-自增强闭环建设：将生成、筛选、训练、评测、回流打通为自动化流水线，减少人工介入，提高迭代效率\n-前沿跟进：跟进并复现数据合成、蒸馏、self-improvement、post-training 等方向的最新工作，评估是否引入现有链路",
+        "detail_status": "OK",
+        "job_id": "7676905572259858739",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7676905572259858739/detail",
+        "requirements": "-专业与背景不限；学习能力强，能应对开放性问题和高不确定性的研究任务\n-在数据或工程方向至少一项有突出能力：能从样本设计层面提升模型效果，或能独立搭建稳定高效的数据与训练链路\n-具备数据判断力：能从样本、模型输出和评测结果中发现问题\n-对数据驱动的模型增强、自进化系统、AI4AI 方向有浓厚兴趣\n\n加分项\n-熟悉大模型 post-training 流程，理解 SFT 的训练机制、数据格式与常见失效模式\n-熟悉主流训练框架（如 ms-swift、LLaMA-Factory、DeepSpeed、Megatron 等）及分布式训练\n-有 Agentic Coding、代码生成、SWE-bench / HumanEval / MBPP 等任务的训练或评测经验\n-熟悉评测体系搭建，理解数据污染、评测可复现性等问题并有实际处理经验\n-在相关方向发表过论文，或有优秀的开源项目、竞赛成绩、可展示的研究成果",
+        "title": "AutoTraining 工程师/研究员实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 11,
+        "signals": [
+          "agent",
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "a9bbfc6f9a1c4f1850ca2b87524fb151",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7683464224430000422",
+      "job": {
+        "description": "我们相信 AI 正在成为科学研究的直接生产力，用 Agent 与模型训练方法解决真实科学问题正在成为可行路径；沿 AI4AI 的思路，这一过程本身也将日益自动化。你将参与以下两个方向，我们鼓励同时投入两者，胜任其一亦可。\n\n方向一：AI 驱动的科学问题求解\n-参与技术路线的讨论与细化，将方向判断落实为可执行的研究方案\n-运用 Agent、模型后训练与训练等方法，解决真实的科学问题、科学计算与科学软件问题，并沿 AI4AI 的思路推动科学模型构建与训练的自动化\n-领域涵盖核聚变、光学、芯片、生命科学、材料等\n\n方向二：国际学术影响力\n-开展有国际影响力的研究工作，在高水平期刊或会议发表成果\n-撰写 position paper /perspective 类观点论文，阐述对 AI4S 与 AI4AI 方向的判断\n-在相关学术社区建立并维护学术影响力",
+        "detail_status": "OK",
+        "job_id": "7683464224430000422",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=10&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA.AWbef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683464224430000422/detail",
+        "requirements": "-专业与背景不限，学习能力强，能应对开放性问题和高不确定性的研究任务\n-有韧性，能在长周期、结果不确定的探索中保持稳定的工作推进\n-具有较强的工程或研究能力：能将技术路线独立实现为可验证的结果，或独立开展高质量的研究工作\n-具备清晰的技术表达与学术写作能力\n-对核聚变、光学、芯片、生命科学、材料等任一科学领域有积累或浓厚兴趣，认可 AI4S 与 AI4AI 的方向\n\n加分项\n-有用 AI 方法完整解决具体科学问题的经历（从问题定义到结果验证）\n-在高水平期刊或会议（如 Nature / Science 系列、NeurIPS、ICML）发表过一作或通讯论文\n-有 position paper、perspective、review 类文章的写作或组织经验\n-有跨学科合作经验，能与领域科学家共同定义问题\n-有活跃的开源项目或学术社区影响力",
+        "title": "AI4S / AI4AI 研究员实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 6,
+        "signals": [
+          "agent"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "ade910670eec9e7f758c56e69006bad7",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7677499254704916778",
+      "job": {
+        "description": "职位描述\n关于面壁：我们是面壁智能，提出「密度定律」的端侧智能公司。从 SuperMate 智舱到 MiniCPM 系列模型，从松果派开发板到 RoboHarness 具身智能，我们正把大模型塞进手机、汽车、机器人和太空舱里。我们相信：端侧智能是 AI 普及的必经之路。\n关于这个岗位：这是一个\"懂技术的人做传播\"的岗位。面壁的官方微博和 X 账号正处于从零建设的第一年，发布的核心内容是模型、benchmark 和开源生态，面对的核心受众是开发者与技术从业者。你要做的事情，本质上是把技术事实翻译成传播语言——把一次发版变成一条会被转发的帖子，把一张 benchmark 图变成外行也能看懂的叙事。我们希望你能看懂技术内容；如果你本身就是开发者，那再好不过。\n\n你需要做什么？\n一、双平台内容与发布\n技术内容转译 — 把模型发版说明、benchmark 数据、开源动态转译成平台化表达：微博官宣与热点借势文案、X 英文帖初稿，配合 AI 配图与信息图制作、话题策划及发布排期管理；\n重大节点作战 — 新模型发布、重要合作官宣时，参与完整的传播编排执行：发布时序、矩阵联动、媒体转发跟进，亲历官方声量从零到峰值的全过程；\n数据简报 — 跟踪微博与 X 平台数据（曝光、互动、涨粉、提及），输出周度运营简报，用数据持续优化内容方向。\n二、KOL 建联与选题雷达\n博主挖掘与对接 — 围绕 AI/科技领域挖掘微博与 X 上的垂直博主与技术 KOL，评估账号质量与受众契合度；协助完成英文沟通、合作意向确认与素材对接，维护 KOL 台账；\n热点追踪 — 跟踪大模型行业动态（发版、开源项目、benchmark 争论、社区热议）和两个平台上与面壁相关的讨论，判断哪些值得官方发声、怎么发声，形成每周选题输入。",
+        "detail_status": "OK",
+        "job_id": "7677499254704916778",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7677499254704916778/detail",
+        "requirements": "职位要求\n能看懂技术内容（重要）：能读懂模型发版说明、技术博客和 benchmark 图表的核心信息，知道参数量、量化、端侧部署这些概念大概在说什么——不要求你能写代码，但要求你面对一篇 GitHub README 不发怵，能抓出里面值得对外讲的点；\nAI 原生用户：重度使用 AI 工具，调研、写作、翻译用 AI 是本能；熟练至少一种 AI 出图工具（Midjourney、即梦、可灵、GPT/Gemini 生图等），能独立产出可直接发布的配图与信息图——面试时会请你现场演示自己的 AI 工作流；\n有内容的真实手感：熟悉微博与 X 的内容风格差异，独立运营过账号、写过技术博客或有可展示的内容作品——投递时请附作品或账号链接；\n英文能写能改：英语六级以上、具备优秀的英文读写能力，能独立完成 X 英文帖初稿撰写、博主沟通与 brief 整理（成稿由团队把关）；\n能一起走一段：连续在岗 4 个月以上，每周到岗 4 天以上（北京·海淀，现场办公）；有 owner 精神，理解官方账号每个字的分量。\n\n加分项（满足任意一条请务必在简历中说明）：\n理工科背景，或有编程经验（无论什么语言）；\n自己跑过开源模型：用过 Hugging Face、Ollama、llama.cpp 等，本地部署过任何模型，或用 API 做过小项目；\n用 AI 编程工具（Cursor、Claude Code、Codex 等）做过 vibe coding，独立搭过网页、脚本或小工具；\n关注 AI 技术社区：是 X 技术圈、GitHub、Hugging Face、即刻 AI 圈的活跃读者，说得出最近让你兴奋的开源项目。\n\n你将获得什么？\n离模型最近的传播岗：你会和研发团队直接打交道，第一时间接触未发布的模型与技术细节——对开发者背景的同学，这是一个看清\"技术如何变成影响力\"的独特位置；\n真项目，真作品：直接参与面壁新模型发布、重大合作官宣的传播执行，你参与的内容会被媒体引用、被合作方转发，作品集里是可以指名道姓的案例；\n从零建号的完整经历：亲历官方阵地从冷启动到立起来的全过程——平台定位、内容体系、发布编排、KOL 关系、数据复盘的全链路方法论；\nAI 工作流实战课：我们会教你把 AI 工具真正融入内容生产的每个环节，让你比同龄人更早建立\"AI 原生\"的工作习惯；\nmentor 陪伴成长与灵活氛围：有经验丰富的同事带你；我们鼓励用 AI 提效、反对无效加班，你的工位周围是正在定义端侧 AI 的人。\n\n有自运营账号、技术博客、 AI 生成图像作品、开源项目/跑模型截图的，请一并附上。",
+        "title": "技术传播实习生（AI 方向｜微博 & X）"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 7,
+        "signals": [
+          "llm",
+          "evaluation"
+        ]
+      }
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "b10e420f0b3dbb04f707766bc2baad5d",
+      "first_seen_at_utc": "2026-10-12T08:40:17Z",
+      "identity": "id:7681283109740185907",
+      "job": {
+        "description": "1. 参与流式双工 Omni Agent 的全模态记忆系统研究与落地，使 Agent 能够在音视频与文本持续输入下稳定交互，支撑长时乃至 life-long 使用。\n2. 全模态记忆系统设计：同时管理声音、画面与文本信息，研究记忆的表示、读写与压缩方式。\n3. 流式交互中的上下文管理：决定何时压缩、压缩哪些内容、保留多少、如何读取。\n4. 训练数据构造、SFT / RL 训练与评测：从已有数据/真实交互中生成与筛选 Trajectory，完成记忆相关训练，并评测记忆系统效果。",
+        "detail_status": "OK",
+        "job_id": "7681283109740185907",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=t5.gHQAAAABg6PIKGA9vz7ef4AAAN1g",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7681283109740185907/detail",
+        "requirements": "1. 本科及以上学历在读，计算机、人工智能、软件工程及相关专业。\n2. 具备较强的算法设计与开发能力，熟练 Vibe Coding，能用 Agent 工具高效完成开发、实验、数据处理与文档迭代。\n3. 对深度学习、Transformer、大语言模型有较深入理解，具备论文阅读与算法复现能力；有学术探索精神，愿意把开放问题做成可验证的实验与结论。\n4. 有大模型记忆系统（Memory / Context Compact / RAG-as-memory 等）研究或工程经验者优先；有多模态、流式/双工 Agent 相关经验者优先。\n5. 在 ACL、EMNLP、NAACL、COLING、NeurIPS、ICML、ICLR 等会议发表过相关工作者优先。",
+        "title": "全模态记忆系统实习生"
+      },
+      "last_seen_at_utc": "2026-10-12T08:40:17Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034",
+      "triage": {
+        "engineering_signal": true,
+        "priority": "high",
+        "score": 15,
+        "signals": [
+          "agent",
+          "llm",
+          "rag",
+          "evaluation",
+          "memory_context"
+        ]
+      }
+    }
+  ],
+  "generated_at_utc": "2026-10-14T12:51:25Z",
+  "pending_total": 2961,
+  "policy": "Read the complete job description and requirements for every entry. Do not decide from title or keywords alone. Include only AI application/Agent/LLM/RAG/AI platform engineering/evaluation engineering roles with explicit implementation work. Use needs_review when the JD evidence is insufficient.",
+  "schema_version": 1
+}
