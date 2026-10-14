@@ -791,8 +791,8 @@
       }
     }
   ],
-  "generated_at_utc": "2026-10-14T13:13:11Z",
-  "pending_total": 1992,
+  "generated_at_utc": "2026-10-14T13:18:19Z",
+  "pending_total": 1128,
   "policy": "Read the complete job description and requirements for every entry. Do not decide from title or keywords alone. Include only AI application/Agent/LLM/RAG/AI platform engineering/evaluation engineering roles with explicit implementation work. Use needs_review when the JD evidence is insufficient.",
   "schema_version": 1
 }
