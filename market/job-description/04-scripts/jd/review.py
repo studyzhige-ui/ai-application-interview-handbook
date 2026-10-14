@@ -313,6 +313,12 @@ def apply_decisions(
     official["last_semantic_audit_at_utc"] = now_utc()
 
     _write_like(bytedance_file, bytedance)
+    partition_raw = bytedance_file.read_bytes()
+    for company in official.get("companies", []):
+        if company.get("source_id") == "official-012" and company.get("jobs_file") is not None:
+            company["jobs_file"]["bytes"] = len(partition_raw)
+            company["jobs_file"]["sha256"] = hashlib.sha256(partition_raw).hexdigest()
+            break
     _write_like(official_file, official)
     _write_json(queue_file, queue)
 
