@@ -128,6 +128,45 @@ def _mark_ignored(entry: dict, *, reason: str, kind: str) -> None:
     }
 
 
+
+def _prior_exclusions(catalog: dict) -> dict[str, list[dict]]:
+    index: dict[str, list[dict]] = {}
+    for company in catalog.get("companies", []):
+        source_id = str(company.get("source_id") or "")
+        for observation in company.get("other_observations", []):
+            if observation.get("decision") != "exclude":
+                continue
+            req_id = str(observation.get("req_id") or observation.get("job_id") or "").strip()
+            if not req_id:
+                continue
+            index.setdefault(f"{source_id}:id:{req_id}", []).append(observation)
+    return index
+
+
+def _body_hash_candidates(job: dict) -> set[str]:
+    description = str(job.get("description") or "").strip()
+    requirements = str(job.get("requirements") or "").strip()
+    candidates = set()
+    if description:
+        candidates.add(description)
+    if description and requirements:
+        candidates.add(f"{description}\n\n{requirements}")
+        candidates.add(f"职位描述\n{description}\n职位要求\n{requirements}")
+    return {hashlib.sha256(text.encode("utf-8")).hexdigest() for text in candidates}
+
+
+def _mark_reused_exclusion(entry: dict, *, observation: dict, reason: str) -> None:
+    entry["review_state"] = "reviewed"
+    entry["semantic_review"] = {
+        "decision": "exclude",
+        "decision_reason": reason,
+        "reviewed_at_utc": now_utc(),
+        "review_depth": "reused_existing_semantic_exclusion",
+        "kind": "prior_semantic_exclusion",
+        "prior_review_depth": observation.get("review_depth"),
+    }
+
+
 def _mark_reused_review(entry: dict, *, reason: str) -> None:
     entry["review_state"] = "reviewed"
     entry["semantic_review"] = {
@@ -148,6 +187,7 @@ def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
 
     catalog = load_catalog(official_file)
     official_by_identity, official_by_stable = _official_keys(catalog)
+    prior_exclusions = _prior_exclusions(catalog)
     pending = [
         entry for entry in entries.values()
         if isinstance(entry, dict) and entry.get("review_state") == "pending"
@@ -155,6 +195,7 @@ def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
     result = {
         "pending_before": len(pending),
         "already_reviewed": 0,
+        "reused_exclusions": 0,
         "unpublished_removals": 0,
         "superseded": 0,
         "duplicate_fallbacks": 0,
@@ -176,6 +217,35 @@ def compact_backlog(*, queue_file: Path, official_file: Path) -> dict:
                 result["unpublished_removals"] += 1
             continue
         if existing is None:
+            job = _entry_job(entry)
+            stable = _stable_key(entry)
+            for observation in prior_exclusions.get(stable, []):
+                review_depth = str(observation.get("review_depth") or "")
+                description = str(job.get("description") or "").strip()
+                exact_duties = (
+                    review_depth == "full_list_duties"
+                    and observation.get("duties_read") is True
+                    and bool(description)
+                    and hashlib.sha256(description.encode("utf-8")).hexdigest()
+                        == observation.get("description_sha256")
+                )
+                exact_full_jd = (
+                    review_depth in {"full_jd", "inherited_full_jd", "full_jd_read"}
+                    and bool(observation.get("body_sha256"))
+                    and observation.get("body_sha256") in _body_hash_candidates(job)
+                )
+                if exact_duties or exact_full_jd:
+                    prior_reason = str(observation.get("decision_reason") or "").strip()
+                    reason = (
+                        "复用同一官方职位此前的语义排除结论：当前职责正文与此前已完整读取职责的记录哈希完全一致。"
+                        if exact_duties else
+                        "复用同一官方职位此前的完整 JD 语义排除结论：当前正文哈希与既有审核记录完全一致。"
+                    )
+                    if prior_reason:
+                        reason += " 原审核理由：" + prior_reason
+                    _mark_reused_exclusion(entry, observation=observation, reason=reason)
+                    result["reused_exclusions"] += 1
+                    break
             continue
         current_text = _queue_full_text(entry)
         reviewed_text = str(existing.get("full_text") or "").strip()
