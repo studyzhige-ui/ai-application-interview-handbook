@@ -258,6 +258,30 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(stored["entries"]["full"]["review_state"], "pending")
             self.assertEqual(stored["entries"]["fallback"]["review_state"], "ignored")
 
+    def test_compaction_reuses_hash_identical_prior_semantic_exclusion(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, _ = self.base_catalog()
+            description = "职责：开发普通存储服务。"
+            catalog["companies"][0]["other_observations"] = [{
+                "req_id": "r1",
+                "decision": "exclude",
+                "decision_reason": "通用存储研发，不属于目标 AI 应用工程。",
+                "review_depth": "full_list_duties",
+                "duties_read": True,
+                "description_sha256": hashlib.sha256(description.encode()).hexdigest(),
+            }]
+            entry = self.queue_entry()
+            entry["job"]["description"] = description
+            queue = {"schema_version": 2, "entries": {"e1": entry}}
+            self.write_json(root / "official.json", catalog)
+            self.write_json(root / "queue.json", queue)
+            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
+            self.assertEqual(result["reused_exclusions"], 1)
+            stored = json.loads((root / "queue.json").read_text())
+            self.assertEqual(stored["entries"]["e1"]["review_state"], "reviewed")
+            self.assertEqual(stored["entries"]["e1"]["semantic_review"]["decision"], "exclude")
+
 
 if __name__ == "__main__":
     unittest.main()
