@@ -1,0 +1,84 @@
+name: Apply ChatGPT semantic JD audit decisions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'market/job-description/01-data/automation/review-queue.json'
+      - 'market/job-description/01-data/automation/audit-decisions.json'
+      - 'market/job-description/04-scripts/jd.py'
+      - 'market/job-description/04-scripts/jd/review.py'
+      - 'market/job-description/04-scripts/tests/test_review.py'
+      - '.github/workflows/apply-jd-semantic-audit.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jd-semantic-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Apply submitted semantic decisions
+        run: |
+          python -B market/job-description/04-scripts/jd.py apply-audit \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --decisions-file market/job-description/01-data/automation/audit-decisions.json \
+            --official-file market/job-description/01-data/official-jds.json \
+            --bytedance-file market/job-description/01-data/bytedance-jds.json \
+            --index-file market/job-description/01-data/岗位JD.md
+
+      - name: Prepare next bounded semantic-review batch
+        run: |
+          python -B market/job-description/04-scripts/jd.py prepare-audit \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --batch-file market/job-description/01-data/automation/audit-batch.json \
+            --limit 24
+
+      - name: Validate repository before publication
+        run: |
+          python -B market/job-description/04-scripts/jd.py check
+          git diff --check
+
+      - name: Publish applied decisions and next batch
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+            echo "main moved during semantic audit; skip publication and let the newer push retry."
+            exit 0
+          fi
+          git add \
+            market/job-description/01-data/automation/review-queue.json \
+            market/job-description/01-data/automation/audit-batch.json \
+            market/job-description/01-data/automation/audit-decisions.json \
+            market/job-description/01-data/official-jds.json \
+            market/job-description/01-data/bytedance-jds.json \
+            market/job-description/01-data/岗位JD.md
+          if git diff --cached --quiet; then
+            echo "No semantic audit state change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "market: apply semantic JD audit"
+          git push origin HEAD:main
