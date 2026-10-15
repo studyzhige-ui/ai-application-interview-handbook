@@ -1,13 +1,4 @@
 {
-  "applied_at_utc": "2026-10-15T08:47:23Z",
-  "decisions": [],
-  "last_batch_id": "historical-needs-review-terminal-2026-10-15",
-  "last_result": {
-    "applied": 33,
-    "excluded": 33,
-    "included": 0,
-    "needs_review": 0,
-    "removed": 0
-  },
-  "schema_version": 1
+  "schema_version": 1,
+  "decisions": []
 }

@@ -1,9 +1,9 @@
 {
+  "schema_version": 1,
   "batch_id": "empty",
   "count": 0,
-  "entries": [],
-  "generated_at_utc": "2026-10-15T08:47:24Z",
   "pending_total": 0,
-  "policy": "Read the complete job description and requirements for every entry. Do not decide from title or keywords alone. Include only AI application/Agent/LLM/RAG/AI platform engineering/evaluation engineering roles with explicit implementation work. For missing complete JD or unverifiable current campus/internship evidence, decide exclude and state the exact evidence gate not met. No needs_review or indefinite re-review; only genuinely changed official evidence makes a new event.",
-  "schema_version": 1
+  "entries": [],
+  "policy": "Read full official JD and qualification; include, exclude, or confirmed remove. No keyword screening, no needs_review.",
+  "generated_at_utc": "2026-10-15T08:47:24Z"
 }

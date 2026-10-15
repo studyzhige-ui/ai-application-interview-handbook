@@ -12,12 +12,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'market/job-description/01-data/automation/review-queue.json'
       - 'market/job-description/01-data/automation/audit-decisions.json'
-      - 'market/job-description/04-scripts/jd.py'
-      - 'market/job-description/04-scripts/jd/review.py'
-      - 'market/job-description/04-scripts/tests/test_review.py'
-      - '.github/workflows/apply-jd-semantic-audit.yml'
   workflow_dispatch:
 
 permissions:
@@ -42,7 +37,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate JD semantic audit bridge and catalog contracts
+      - name: Validate JD GPT screening bridge and catalog contracts
         run: python -B market/job-description/04-scripts/jd.py check
 
   apply:
@@ -72,13 +67,7 @@ jobs:
             --bytedance-file market/job-description/01-data/bytedance-jds.json \
             --index-file market/job-description/01-data/岗位JD.md
 
-      - name: Compact mechanically redundant historical review events
-        run: |
-          python -B market/job-description/04-scripts/jd.py compact-audit \
-            --queue-file market/job-description/01-data/automation/review-queue.json \
-            --official-file market/job-description/01-data/official-jds.json
-
-      - name: Prepare next bounded semantic-review batch
+      - name: Prepare next GPT screening batch
         run: |
           python -B market/job-description/04-scripts/jd.py prepare-audit \
             --queue-file market/job-description/01-data/automation/review-queue.json \
@@ -102,6 +91,21 @@ jobs:
                   item["sha256"] = hashlib.sha256(content).hexdigest()
           manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
+      - name: Refresh current screening backlog count
+        shell: python
+        run: |
+          import json
+          import re
+          from pathlib import Path
+          root = Path("market/job-description")
+          queue = json.loads((root / "01-data/automation/review-queue.json").read_text(encoding="utf-8"))
+          pending = sum(e.get("review_state") == "pending" for e in queue["entries"].values())
+          path = root / "02-analysis/automation-status.md"
+          previous = path.read_text(encoding="utf-8")
+          updated = re.sub(r"(?m)^(?:累计待审|等待 GPT 筛选)：.*$",
+                           f"等待 GPT 筛选：**{pending}** 条。", previous)
+          path.write_text(updated, encoding="utf-8")
+
       - name: Validate repository before publication
         run: |
           python -B market/job-description/04-scripts/jd.py check
@@ -113,19 +117,20 @@ jobs:
         run: |
           git fetch origin main
           if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
-            echo "main moved during semantic audit; skip publication and let the newer push retry."
+            echo "main moved during GPT screening; skip publication and let the newer push retry."
             exit 0
           fi
           git add \
             market/job-description/01-data/automation/review-queue.json \
             market/job-description/01-data/automation/audit-batch.json \
+            market/job-description/02-analysis/automation-status.md \
             market/job-description/01-data/automation/audit-decisions.json \
             market/job-description/01-data/official-jds.json \
             market/job-description/01-data/bytedance-jds.json \
             market/job-description/01-data/岗位JD.md \
             market/job-description/03-strategy/stored-snapshots.json
           if git diff --cached --quiet; then
-            echo "No semantic audit state change."
+            echo "No GPT screening state change."
             exit 0
           fi
           git config user.name "github-actions[bot]"

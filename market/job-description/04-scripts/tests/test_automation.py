@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from jd.automation import canonical_url, job_identity, reconcile, triage
+from jd.automation import canonical_url, job_identity, reconcile
 
 
 def write_result(root: Path, source_id: str, jobs: list[dict], *, complete=False, status="COLLECTED_UNREVIEWED"):
@@ -127,12 +127,20 @@ class AutomationTests(unittest.TestCase):
         self.assertEqual(job_identity("official-002", campus), "campus:99")
         self.assertEqual(job_identity("official-002", trainee), "trainee:99")
 
-    def test_triage_is_priority_only_not_an_inclusion_decision(self):
-        ranked = triage(job("1"))
-        plain = triage(job("2", title="普通岗位", description="负责一般业务支持。"))
-        self.assertEqual(ranked["priority"], "high")
-        self.assertEqual(plain["priority"], "low")
-        self.assertNotIn("decision", ranked)
+    def test_new_event_requires_gpt_screening(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            first = root / "first"
+            write_result(first, "official-001", [job("1")], complete=True, status="OK")
+            self.run_reconcile(root, first)
+            second = root / "second"
+            write_result(second, "official-001", [job("1"), job("2", title="普通后端")], complete=True, status="OK")
+            _, _, queue, _ = self.run_reconcile(root, second)
+            entry = next(iter(queue["entries"].values()))
+            self.assertEqual(entry["review_state"], "pending")
+            self.assertNotIn("triage", entry)
+            self.assertNotIn("decision", entry)
+            self.assertIn("Python", entry["job"]["requirements"])
 
 
 if __name__ == "__main__":

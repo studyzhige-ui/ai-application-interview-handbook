@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 
 from jd.catalog import counts, load_catalog, validate_catalog
-from jd.review import apply_decisions, compact_backlog, prepare_batch
+from jd.review import apply_decisions, prepare_batch
 
 
 class SemanticAuditBridgeTests(unittest.TestCase):
@@ -73,7 +73,7 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             "previous": None,
         }
 
-    def test_prepare_batch_prioritizes_high_and_keeps_full_jd(self):
+    def test_prepare_batch_keeps_full_jd(self):
         with tempfile.TemporaryDirectory() as d:
             queue = {
                 "schema_version": 2,
@@ -124,7 +124,7 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(validate_catalog(loaded, ["s1"]), [])
             self.assertEqual(loaded["companies"][0]["jobs"][0]["req_id"], "r1")
             q = json.loads((root / "queue.json").read_text())
-            self.assertEqual(q["entries"]["e1"]["review_state"], "reviewed")
+            self.assertNotIn("e1", q["entries"])
             self.assertEqual(q["entries"]["e1"]["semantic_review"]["decision"], "include")
             self.assertIn("Agent工程实习", (root / "index.md").read_text())
 
@@ -195,7 +195,7 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             saved = load_catalog(root / "official.json")
             self.assertEqual(len(saved["companies"][0]["jobs"]), 1)
             self.assertEqual(saved["companies"][0]["jobs"][0]["req_id"], "r1")
-            self.assertEqual(json.loads((root / "queue.json").read_text())["entries"]["e1"]["review_state"], "reviewed")
+            self.assertNotIn("e1", json.loads((root / "queue.json").read_text())["entries"])
 
     def test_needs_review_is_rejected_as_new_decision(self):
         with tempfile.TemporaryDirectory() as d:
@@ -248,163 +248,26 @@ class SemanticAuditBridgeTests(unittest.TestCase):
                                   batch_file=root / "batch.json", limit=10)
             self.assertEqual(batch["pending_total"], 0)
 
-    def test_followup_resolves_legacy_needs_review_without_overwriting_final_records(self):
+    def test_one_decision_consumed_once(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             catalog, _ = self.base_catalog()
-            prior = self.queue_entry()
-            prior["review_state"] = "reviewed"
-            prior["semantic_review"] = {"decision": "needs_review", "decision_reason": "待补证"}
-            final = {**self.queue_entry(), "event_id": "e2", "review_state": "reviewed",
-                     "semantic_review": {"decision": "exclude"}}
-            queue = {"schema_version": 2, "entries": {"e1": prior, "e2": final}}
-            decisions = {"schema_version": 1, "followup_for": "needs_review",
-                         "decisions": [
-                             {"event_id": "e1", "decision": "include",
-                              "decision_reason": "已证实为校招Agent岗位",
-                              "role_track": "应用与Agent核心研发",
-                              "recruitment_type": "campus",
-                              "official_type_evidence": "官网2027届校招岗位",
-                              "engineering_evidence": ["开发Agent服务"]},
-                             {"event_id": "e2", "decision": "exclude",
-                              "decision_reason": "不得覆盖原来已确认的决定"}]}
-            for name, value in (("official.json", catalog),
-                                ("bytedance.json", {"source_id": "official-012", "jobs": []}),
-                                ("queue.json", queue), ("decisions.json", decisions)):
-                self.write_json(root / name, value)
-            stats = apply_decisions(queue_file=root / "queue.json",
-                                    decisions_file=root / "decisions.json",
-                                    official_file=root / "official.json",
-                                    bytedance_file=root / "bytedance.json",
-                                    index_file=root / "index.md")
-            self.assertEqual(stats["applied"], 1)
-            self.assertEqual(stats["included"], 1)
-            saved = json.loads((root / "queue.json").read_text())
-            self.assertEqual(saved["entries"]["e1"]["review_state"], "reviewed")
-            self.assertEqual(saved["entries"]["e2"]["semantic_review"]["decision"], "exclude")
-
-    def test_compaction_reuses_exact_existing_review_and_ignores_unpublished_removal(self):
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            catalog, existing = self.base_catalog()
-            exact_text = "职责：开发Agent服务。\n\n要求：在校生，Python。"
-            existing["full_text"] = exact_text
-            existing["body_sha256"] = hashlib.sha256(exact_text.encode()).hexdigest()
-            existing["engineering_evidence"] = ["开发Agent服务"]
-            catalog["companies"][0]["jobs"] = [existing]
-            catalog["counts"]["current_jobs"] = 1
-            catalog["counts"]["companies_with_current_jobs"] = 1
-            exact = self.queue_entry(change="changed")
-            removal = {
-                "event_id": "gone",
-                "source_id": "s1",
-                "company": "公司",
-                "identity": "id:not-published",
-                "change": "possibly_removed",
-                "first_seen_at_utc": "2026-10-14T00:00:00Z",
-                "review_state": "pending",
-                "triage": {"priority": "low"},
-                "job": None,
-                "previous": {"fingerprint": "x", "title": "未入库职位"},
-            }
-            queue = {"schema_version": 2, "entries": {"e1": exact, "gone": removal}}
-            self.write_json(root / "official.json", catalog)
-            self.write_json(root / "queue.json", queue)
-            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
-            self.assertEqual(result["already_reviewed"], 1)
-            self.assertEqual(result["unpublished_removals"], 1)
-            stored = json.loads((root / "queue.json").read_text())
-            self.assertEqual(stored["entries"]["e1"]["review_state"], "reviewed")
-            self.assertEqual(stored["entries"]["gone"]["review_state"], "ignored")
-
-    def test_compaction_keeps_full_id_event_over_listing_fallback_for_same_position(self):
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            catalog, _ = self.base_catalog()
-            full = self.queue_entry()
-            full["event_id"] = "full"
-            full["job"]["job_id"] = "7683042369134479657"
-            full["identity"] = "id:7683042369134479657"
-            fallback = {
-                **self.queue_entry(),
-                "event_id": "fallback",
-                "identity": "url:abc",
-                "job": {
-                    "title": "Agent工程实习\\n职责和要求被错误拼进标题",
-                    "official_url": "https://example.com/campus/position/7683042369134479657/detail?spread=x",
-                },
-            }
-            queue = {"schema_version": 2, "entries": {"full": full, "fallback": fallback}}
-            self.write_json(root / "official.json", catalog)
-            self.write_json(root / "queue.json", queue)
-            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
-            self.assertEqual(result["duplicate_fallbacks"], 1)
-            stored = json.loads((root / "queue.json").read_text())
-            self.assertEqual(stored["entries"]["full"]["review_state"], "pending")
-            self.assertEqual(stored["entries"]["fallback"]["review_state"], "ignored")
-
-    def test_compaction_reuses_hash_identical_prior_semantic_exclusion(self):
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            catalog, _ = self.base_catalog()
-            description = "职责：开发普通存储服务。"
-            catalog["companies"][0]["other_observations"] = [{
-                "req_id": "r1",
-                "decision": "exclude",
-                "decision_reason": "通用存储研发，不属于目标 AI 应用工程。",
-                "review_depth": "full_list_duties",
-                "duties_read": True,
-                "description_sha256": hashlib.sha256(description.encode()).hexdigest(),
-            }]
-            entry = self.queue_entry()
-            entry["job"]["description"] = description
-            queue = {"schema_version": 2, "entries": {"e1": entry}}
-            self.write_json(root / "official.json", catalog)
-            self.write_json(root / "queue.json", queue)
-            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
-            self.assertEqual(result["reused_exclusions"], 1)
-            stored = json.loads((root / "queue.json").read_text())
-            self.assertEqual(stored["entries"]["e1"]["review_state"], "reviewed")
-            self.assertEqual(stored["entries"]["e1"]["semantic_review"]["decision"], "exclude")
-
-    def test_compaction_reuses_only_low_priority_identity_migration_exclusion(self):
-        with tempfile.TemporaryDirectory() as d:
-            root = Path(d)
-            catalog, _ = self.base_catalog()
-            catalog["companies"][0]["other_observations"] = [{
-                "req_id": "A-old",
-                "title": "同一职位",
-                "official_url": "https://example.com/campus/position/123456/detail",
-                "decision": "exclude",
-                "decision_reason": "此前已语义确认不属于目标工程岗位。",
-                "review_depth": "listing_responsibilities",
-            }]
-            low = self.queue_entry()
-            low["job"]["job_id"] = "123456"
-            low["job"]["title"] = "同一职位"
-            low["job"]["official_url"] = "https://example.com/campus/position/123456/detail?spread=x"
-            low["identity"] = "id:123456"
-            low["triage"] = {"priority": "low"}
-            queue = {"schema_version": 2, "entries": {"low": low}}
-            self.write_json(root / "official.json", catalog)
-            self.write_json(root / "queue.json", queue)
-            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
-            self.assertEqual(result["identity_migration_exclusions"], 1)
-            stored = json.loads((root / "queue.json").read_text())
-            self.assertEqual(stored["entries"]["low"]["semantic_review"]["decision"], "exclude")
-
-            high = self.queue_entry()
-            high["job"]["job_id"] = "123456"
-            high["job"]["title"] = "同一职位"
-            high["job"]["official_url"] = "https://example.com/campus/position/123456/detail"
-            high["identity"] = "id:123456"
-            high["triage"] = {"priority": "high"}
-            queue = {"schema_version": 2, "entries": {"high": high}}
-            self.write_json(root / "queue.json", queue)
-            result = compact_backlog(queue_file=root / "queue.json", official_file=root / "official.json")
-            self.assertEqual(result["identity_migration_exclusions"], 0)
-            stored = json.loads((root / "queue.json").read_text())
-            self.assertEqual(stored["entries"]["high"]["review_state"], "pending")
+            for name, payload in (
+                ("official.json", catalog),
+                ("bytedance.json", {"source_id": "official-012", "jobs": []}),
+                ("queue.json", {"schema_version": 2, "entries": {"e1": self.queue_entry()}}),
+                ("decisions.json", {"schema_version": 1, "batch_id": "b1", "decisions": [{
+                    "event_id": "e1", "decision": "exclude", "decision_reason": "不符合目标职责"
+                }]}),
+            ):
+                self.write_json(root / name, payload)
+            args = dict(queue_file=root / "queue.json", decisions_file=root / "decisions.json",
+                        official_file=root / "official.json", bytedance_file=root / "bytedance.json",
+                        index_file=root / "index.md")
+            self.assertEqual(apply_decisions(**args)["excluded"], 1)
+            self.assertEqual(apply_decisions(**args)["applied"], 0)
+            self.assertEqual(prepare_batch(queue_file=root / "queue.json",
+                                          batch_file=root / "batch.json", limit=24)["count"], 0)
 
 
 if __name__ == "__main__":

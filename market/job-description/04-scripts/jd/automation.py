@@ -23,21 +23,6 @@ TRACKING_QUERY_KEYS = {
     "from", "fromjob", "source", "sourcessr", "spread", "channelput",
     "employchannelcode", "anchorname",
 }
-AI_PATTERNS = (
-    ("agent", r"agents?|智能体|agentic|multi[- ]?agent|tool[- ]?calling|function[- ]?call|mcp"),
-    ("llm", r"\bllm\b|大模型|语言模型|生成式\s*ai|generative\s+ai|aigc|copilot"),
-    ("rag", r"\brag\b|检索增强|向量检索|知识库|knowledge\s+base"),
-    ("evaluation", r"评测|测评|benchmark|eval(?:uation)?|harness|回归测试|测试工具"),
-    ("memory_context", r"上下文|context\s+engineering|记忆|memory|prompt\s+engineering"),
-)
-ENGINEERING_PATTERN = re.compile(
-    r"开发|研发|工程|架构|后端|前端|全栈|平台|系统|服务|接口|api\b|sdk\b|"
-    r"部署|运维|可观测|并发|数据库|python\b|java\b|go\b|golang\b|typescript\b|"
-    r"javascript\b|编码|编程|代码|implementation|developer|engineer|backend|frontend|full[- ]?stack",
-    re.I,
-)
-COMPILED_AI = tuple((name, re.compile(pattern, re.I)) for name, pattern in AI_PATTERNS)
-
 
 def now_utc() -> str:
     fixed = os.environ.get("JD_AUTOMATION_NOW")
@@ -126,19 +111,6 @@ def compact_job(job: dict) -> dict:
         "detail_status", "detail_error",
     )
     return {key: job.get(key) for key in keys if key in job and job.get(key) not in (None, "")}
-
-
-def triage(job: dict) -> dict:
-    text = "\n".join(_normalized_text(job.get(key)) for key in ("title", "description", "requirements", "category", "department"))
-    signals = [name for name, pattern in COMPILED_AI if pattern.search(text)]
-    engineering = bool(ENGINEERING_PATTERN.search(text))
-    score = len(signals) * 2 + (2 if engineering else 0)
-    if "agent" in signals:
-        score += 2
-    if "evaluation" in signals:
-        score += 1
-    priority = "high" if score >= 6 else "medium" if score >= 3 else "low"
-    return {"priority": priority, "score": score, "signals": signals, "engineering_signal": engineering}
 
 
 def shard_source_ids(shard_index: int, shard_count: int) -> list[str]:
@@ -248,7 +220,11 @@ def _queue_event(queue: dict, *, checked_at: str, source_id: str, company: str,
     if key in entries:
         entries[key]["last_seen_at_utc"] = checked_at
         return False
-    review = triage(job or previous or {}) if job else {"priority": "low", "score": 0, "signals": [], "engineering_signal": False}
+    # Retain only the latest pending change for each source-scoped job identity.
+    for old_id, old in list(entries.items()):
+        if (old.get("source_id") == source_id and old.get("identity") == identity
+                and old.get("review_state") == "pending"):
+            del entries[old_id]
     entries[key] = {
         "event_id": key,
         "source_id": source_id,
@@ -258,7 +234,6 @@ def _queue_event(queue: dict, *, checked_at: str, source_id: str, company: str,
         "first_seen_at_utc": checked_at,
         "last_seen_at_utc": checked_at,
         "review_state": "pending",
-        "triage": review,
         "job": compact_job(job or {}) if job else None,
         "previous": previous,
     }
@@ -363,15 +338,11 @@ def reconcile(*, input_dir: Path, state_file: Path, queue_file: Path, report_fil
         "received_results": len(results),
     }
     queue["updated_at_utc"] = checked_at
-    queue["policy"] = (
-        "Every detected source change is preserved for review. triage only orders work; it never decides inclusion. "
-        "The reviewed official catalog is not modified by automation."
-    )
+    queue["policy"] = "Official collection only; GPT decides inclusion after reading the complete JD."
     dump_json(state_file, state)
     dump_json(queue_file, queue)
 
     pending = [entry for entry in queue["entries"].values() if entry.get("review_state") == "pending"]
-    priorities = Counter((entry.get("triage") or {}).get("priority", "low") for entry in pending)
     report = [
         "# JD 自动采集状态", "",
         f"最近扫描：{checked_at}。登记入口 **{len(registered)}** 个，本次收到 **{len(results)}** 个来源结果。",
@@ -379,7 +350,7 @@ def reconcile(*, input_dir: Path, state_file: Path, queue_file: Path, report_fil
         "自动化只负责官方来源采集、身份/正文指纹比较和待审队列；不会凭关键词把岗位写入正式 JD 库，也不会因一次失败自动删除正式岗位。",
         "",
         f"本次新事件：新增 **{run_counts['added']}**、正文/字段变化 **{run_counts['changed']}**、完整扫描中可能消失 **{run_counts['possibly_removed']}**。",
-        f"累计待审：**{len(pending)}**（高优先 {priorities['high']} / 中优先 {priorities['medium']} / 低优先 {priorities['low']}）。",
+        f"等待 GPT 筛选：**{len(pending)}** 条。",
         "",
         "| 来源 | 公司 | 状态 | 本次观察 | 基线身份 | 新事件 | 处理 |",
         "| --- | --- | --- | ---: | ---: | ---: | --- |",

@@ -62,7 +62,7 @@ def _validate_automation(registered_ids):
             errors.append(f"Automation event uses unregistered source: {event_id}")
         if entry.get("change") not in {"added", "changed", "possibly_removed"}:
             errors.append(f"Automation event has unsupported change type: {event_id}")
-        if entry.get("review_state") not in {"pending", "reviewed", "needs_review", "ignored"}:
+        if entry.get("review_state") not in {"pending"}:
             errors.append(f"Automation event has unsupported review_state: {event_id}")
     return errors
 
