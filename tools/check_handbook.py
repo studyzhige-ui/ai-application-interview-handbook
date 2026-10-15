@@ -104,13 +104,16 @@ def check(root: Path) -> list[str]:
                 errors.append(f'practice/software: tutorials must be numbered direct Markdown: {p.name}')
     for module in (root/'curriculum').glob('*'):
         if not module.is_dir(): continue
-        expected={'README.md','docs','review'}
+        # Reader-approved curriculum modules contain README.md and docs; review/ is not required.
+        expected={'README.md','docs'}
         found={p.name for p in module.iterdir()}
         if found != expected: errors.append(f'{module.relative_to(root)}: expected README.md/docs/review, got {sorted(found)}')
     for product in (root/'products').glob('*'):
         if not product.is_dir(): continue
         if not (product/'README.md').is_file(): errors.append(f'{product.relative_to(root)} missing README')
         if any(p.is_dir() or p.suffix!='.md' for p in product.iterdir()): errors.append(f'{product.relative_to(root)}: product content must be direct Markdown')
+    if {p.name for p in (root/'interview').iterdir()} != {'README.md', *module_names}:
+        errors.append('interview: modules do not match the agreed learning order')
     for domain in (root/'interview').glob('*'):
         if not domain.is_dir(): continue
         expected={'README.md','01-高频面试题.md','02-易混易错点.md','03-面试速查.md'}

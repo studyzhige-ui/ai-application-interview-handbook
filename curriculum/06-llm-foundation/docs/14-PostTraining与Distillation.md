@@ -1,6 +1,6 @@
 # 14｜后训练与蒸馏：示范、偏好和奖励分别在教什么
 
-[← SFT、LoRA 与训练判断](13-FineTuning与LoRA.md) · [模块首页](../README.md) · [综合复习 →](../review/README.md)
+[← SFT、LoRA 与训练判断](13-FineTuning与LoRA.md) · [模块首页](../README.md)
 
 两份回答都符合 JSON 格式。一份礼貌但编造到达日期，另一份明确说明日期未知。只有“生成合法 JSON”的奖励，分不出这两个结果；只有模仿少数标准答案，也未必覆盖不同措辞下的取舍。
 
@@ -199,4 +199,4 @@ SFT 学示范输出，偏好优化学回答之间的取舍，强化学习根据�
 
 ## 13. 知识回看与资料
 
-训练样本和参数更新回看 [SFT 与 LoRA](13-FineTuning与LoRA.md)，反馈可靠性回看 [事实错误与干预边界](12-Hallucination与干预边界.md)。继续查 [DPO](https://arxiv.org/html/2305.18290)、[GRPO](https://arxiv.org/html/2402.03300v3) 与 [知识蒸馏](https://arxiv.org/abs/1503.02531)。完成本章后，用 [Review](../review/README.md) 的新情境串联整个模型侧主线。
+训练样本和参数更新回看 [SFT 与 LoRA](13-FineTuning与LoRA.md)，反馈可靠性回看 [事实错误与干预边界](12-Hallucination与干预边界.md)。继续查 [DPO](https://arxiv.org/html/2305.18290)、[GRPO](https://arxiv.org/html/2402.03300v3) 与 [知识蒸馏](https://arxiv.org/abs/1503.02531)。完成本章后，可回到 [模型基础模块目录](../README.md)，按主线回看预训练、推理、对齐与部署之间的联系。

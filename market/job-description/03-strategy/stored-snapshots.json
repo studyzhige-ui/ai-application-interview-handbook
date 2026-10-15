@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "01-data/official-jds.json",
-      "bytes": 6296674,
-      "sha256": "a3166debca13cb085fd2a3499b45aab64e6211fa49a6097779b821f0cd32c89c"
+      "bytes": 7060851,
+      "sha256": "7f382e923386f287e2dedb9591b10e067782394511e087ba47dea08e0d54408b"
     },
     {
       "path": "01-data/source-observations.json",
@@ -14,8 +14,8 @@
     },
     {
       "path": "01-data/bytedance-jds.json",
-      "bytes": 7929085,
-      "sha256": "d379ca5b6e82259bfae09492d49a49ee9c2ba43138d2ec95d89b4707ce500dee"
+      "bytes": 7941766,
+      "sha256": "6d709aaa9951ef505841227d164ea76a8113b406e6197050369053ead10ccc1d"
     },
     {
       "path": "01-data/historical-jds.json",
@@ -24,8 +24,8 @@
     },
     {
       "path": "01-data/岗位JD.md",
-      "bytes": 533935,
-      "sha256": "df079788d6a5503fde32d179acfe1a8879c8bb5254af13bcd0d433c53758c305"
+      "bytes": 575366,
+      "sha256": "f20780b9d7c470880dec0148cd6140d3d7f35ed3dee9a48dcceb03defe3d7fea"
     }
   ]
 }

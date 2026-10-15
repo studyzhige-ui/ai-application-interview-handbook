@@ -1,6 +1,5 @@
 {
   "schema_version": 2,
-  "updated_at_utc": null,
-  "policy": "Every detected source change is preserved for review. triage only orders work; it never decides inclusion. The reviewed official catalog is not modified by automation.",
-  "entries": {}
+  "entries": {},
+  "policy": "Official collection sends new/changed positions to GPT. Reviewed events are consumed, not stored indefinitely."
 }

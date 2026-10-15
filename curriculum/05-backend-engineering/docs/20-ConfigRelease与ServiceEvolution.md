@@ -115,6 +115,6 @@ Kubernetes ConfigMap 的消费方式也不同：环境变量不自动改变运�
 
 ## 知识回看与权威资料
 
-- [MySQL 表结构演进](../../03-mysql/docs/14-主键索引与表结构演进.md)：核对旧数据、旧写入者和在线变更的约束。
+- [MySQL 表结构演进](../../03-mysql/docs/10-数据增长后的演进：Schema、索引、批处理与迁移.md)：核对旧数据、旧写入者和在线变更的约束。
 - [可靠任务](12-ReliableAsyncTask.md)：判断旧输入与检查点在新代码下能否继续使用。
 - [Kubernetes ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/)：按环境变量、普通卷与 subPath 区分更新行为。

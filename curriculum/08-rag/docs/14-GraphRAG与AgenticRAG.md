@@ -1,6 +1,6 @@
 # 14｜GraphRAG 与 Agentic RAG：何时需要结构，何时需要继续搜索
 
-[← 第 13 章](13-ScaleCostObservability.md) · [模块目录](../README.md) · [综合复习 →](../review/README.md)
+[← 第 13 章](13-ScaleCostObservability.md) · [模块目录](../README.md)
 
 北辰云知识库已经能回答退款政策，但又出现两类问题：
 
@@ -206,4 +206,4 @@ A 依赖 R，R 依赖 D，B 依赖 D。D 故障可能影响哪些服务，应沿
 
 [Microsoft GraphRAG 查询概览](https://microsoft.github.io/graphrag/query/overview/)、[Local Search](https://microsoft.github.io/graphrag/query/local_search/)与 [Global Search](https://microsoft.github.io/graphrag/query/global_search/)用于核对具体项目的查询粒度和汇总流程；[OWASP 提示注入防护](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html)用于核对不可信材料的执行边界。
 
-[← 第 13 章](13-ScaleCostObservability.md) · [模块目录](../README.md) · [综合复习 →](../review/README.md)
+[← 第 13 章](13-ScaleCostObservability.md) · [模块目录](../README.md)

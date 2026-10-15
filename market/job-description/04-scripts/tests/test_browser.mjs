@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { createCipheriv, createHash } from "node:crypto";
-import { parseArgs, selectSource, collectPaged } from "../jd/adapters/bounded.mjs";
+import { parseArgs, selectSource, collectPaged, createRuntime } from "../jd/adapters/bounded.mjs";
 import { collectByteDance } from "../jd/adapters/bytedance.mjs";
 import { collectFeishu } from "../jd/adapters/feishu.mjs";
 import { collectMoka, WPS_RUNTIME_PARAMETER_ENV } from "../jd/adapters/moka.mjs";
@@ -47,6 +47,19 @@ test("all independent enable, source, and numeric bounds are mandatory", () => {
   assert.throws(() => parseArgs([...args, "--unknown", "yes"]), /Unknown/);
   assert.throws(() => selectSource({ sources: [source] }, "unknown"), /registered source/);
   assert.throws(() => selectSource({ sources: [source, source] }, source.source_id), /found 2/);
+});
+
+test("explicit structural collection keys dedupe repeated DOM observations without inventing job IDs", () => {
+  const runtime = createRuntime(source, options());
+  try {
+    assert.equal(runtime.addJob({ title: "same", collection_key: "page-1:0" }), true);
+    assert.equal(runtime.addJob({ title: "same", collection_key: "page-1:0" }), false);
+    assert.equal(runtime.addJob({ title: "same", collection_key: "page-1:1" }), true);
+    assert.equal(runtime.jobs.length, 2);
+    assert(runtime.jobs.every(job => !job.job_id && !job.official_url));
+  } finally {
+    runtime.close();
+  }
 });
 
 test("direct collector calls without the explicit gate make zero requests", async () => {
@@ -109,6 +122,23 @@ test("Feishu browser fallback opens the official channel position list", async (
   assert.equal(result.complete, true);
   assert.equal(result.transport_fallback, "browser_after_direct_405");
   assert.deepEqual(opened, ["https://fixture.jobs.feishu.cn/123456/position/list?project=campus-project"]);
+});
+
+test("Feishu browser fallback honors an explicitly registered browser list URL", async () => {
+  const feishuSource = {
+    source_id: "fixture-feishu-custom", company: "Fixture Feishu", mode: "feishu_direct",
+    portal: "https://fixture.jobs.feishu.cn/", job_list_url: "https://fixture.jobs.feishu.cn/",
+    feishu_host: "fixture.jobs.feishu.cn", feishu_channel: "index",
+    feishu_browser_list_url: "https://fixture.jobs.feishu.cn/692892/position/list",
+  };
+  const opened = [];
+  const fixture = browserFixture([{ rows: [], total: 0 }], { async open(url) { opened.push(url); } });
+  const result = await collectFeishu(feishuSource, options({ sourceId: feishuSource.source_id }), {
+    ...fixture,
+    async fetch() { return response("method changed", 405); },
+  });
+  assert.equal(result.complete, true);
+  assert.deepEqual(opened, [feishuSource.feishu_browser_list_url]);
 });
 
 test("max-jobs bounds retained jobs and detail fetches even if a server ignores limit", async () => {
@@ -258,32 +288,6 @@ function browserFixture(pages, changes = {}) {
 const browserRows = ["销售", "研究员", "Agent", ""].map((title, index) => ({ title, job_id: String(index), official_url: `https://example.test/job/${index}` }));
 const browserSource = { ...source, mode: "portal_only", portal: "https://example.test/jobs" };
 
-test("browser follows an official position-list navigation when the registered home page has no rows", async () => {
-  const opened = [];
-  let current = "";
-  const driver = {
-    async open(url) { current = url; opened.push(url); },
-    async snapshot() {
-      if (current.endsWith("/home")) return {
-        rows: [], total: null, page_url: current,
-        job_list_navigation_url: "https://example.test/channel/position/list",
-      };
-      return {
-        rows: [{ title: "岗位", job_id: "1", official_url: "https://example.test/job/1" }],
-        total: 1, page_url: current, job_list_navigation_url: current,
-      };
-    },
-    async nextAction() { return null; },
-    async detail() { return { raw_detail_text: "正文", raw_detail_html: "<main>正文</main>" }; },
-    async close() {},
-  };
-  const homeSource = { ...browserSource, portal: "https://example.test/home", job_list_url: "https://example.test/home" };
-  const result = await collectBrowser(homeSource, options(), { driverFactory: () => driver });
-  assert.equal(result.complete, true);
-  assert.deepEqual(opened, ["https://example.test/home", "https://example.test/channel/position/list"]);
-  assert.equal(result.jobs.length, 1);
-});
-
 test("browser visits every structurally identified detail regardless of title", async () => {
   const fixture = browserFixture([{ rows: browserRows, total: 4 }]);
   const result = await collectBrowser(browserSource, options(), fixture);
@@ -315,6 +319,21 @@ test("browser timeout closes the driver and preserves partial rows", async () =>
   assert.equal(result.status, "TIMEOUT");
   assert.equal(result.jobs.length, 1);
   assert.equal(fixture.calls.closed, true);
+});
+
+test("browser can derive advertised total and structural rows from registered DOM selectors", async () => {
+  const rows = [
+    { title: "岗位A", location: "北京", category: "正式" },
+    { title: "岗位B", location: "上海", category: "实习" },
+  ];
+  const fixture = browserFixture([{ rows: rows.map((row, i) => ({ ...row, job_id: String(i), official_url: `https://example.test/job/${i}` })), total: 2 }]);
+  const selected = {
+    ...browserSource,
+    dom_total_pattern: "共\\s*([0-9,]+)\\s*个职位",
+  };
+  const result = await collectBrowser(selected, options(), fixture);
+  assert.equal(result.complete, true);
+  assert.equal(result.total, 2);
 });
 
 test("browser missing total preserves observations without claiming completeness", async () => {
@@ -500,28 +519,44 @@ test("Feishu pagination waits for the site-issued signed search response before 
   assert.deepEqual(result.jobs.map(job => job.department), ["研发", "工程"]);
 });
 
-test("structured browser job list suppresses unrelated DOM job links", async () => {
-  const rows = [{ id: "1", title: "API岗位", detailUrl: "https://example.test/job/1" }];
-  let responseHandler, pages = 0;
+test("production browser driver can collect configured DOM job cards and body totals", async () => {
+  const domSource = {
+    ...browserSource,
+    dom_total_pattern: "共\\s*([0-9,]+)\\s*个职位",
+    dom_job_selector: "li.search-item",
+    dom_title_selector: ".title",
+    dom_location_selector: ".location",
+    dom_category_selector: ".category",
+  };
+  let pages = 0;
   function pageFixture(isList) {
     let url = "";
     return {
-      on(event, callback) { if (event === "response") responseHandler = callback; },
-      async goto(nextUrl) {
-        url = nextUrl;
-        if (isList) await responseHandler({
-          url: () => "https://example.test/api/jobs",
-          headers: () => ({ "content-type": "application/json" }),
-          status: () => 200,
-          body: async () => Buffer.from(JSON.stringify({ data: { jobs: rows, total: 1 } })),
-          request: () => ({ method: () => "GET", postData: () => null }),
-        });
-        return { status: () => 200 };
-      },
-      url: () => url, async waitForLoadState() {}, async content() { return "<main></main>"; },
+      on() {},
+      async goto(nextUrl) { url = nextUrl; return { status: () => 200 }; },
+      url: () => url, async waitForLoadState() {}, async waitForTimeout() {},
+      async content() { return "<main></main>"; },
       locator(selector) {
-        if (selector === "body") return { async innerText() { return ""; } };
-        if (selector === "a[href]") return { async evaluateAll() { return [{ href: "https://example.test/job/unrelated", title: "DOM推荐" }]; } };
+        if (selector === "body") return { async innerText() { return "职位列表 共2个职位"; } };
+        if (selector === "a[href]") return { async evaluateAll() { return []; } };
+        if (selector === "li.search-item") return { async evaluateAll(fn, config) {
+          const make = values => ({
+            innerText: values.text,
+            textContent: values.text,
+            querySelector(sel) {
+              const map = {
+                ".title": { innerText: values.title, textContent: values.title },
+                ".location": { innerText: values.location, textContent: values.location },
+                ".category": { innerText: values.category, textContent: values.category },
+              };
+              return map[sel] || null;
+            },
+          });
+          return fn([
+            make({ title: "岗位A", location: "北京", category: "正式", text: "岗位A 北京 正式" }),
+            make({ title: "岗位B", location: "上海", category: "实习", text: "岗位B 上海 实习" }),
+          ], config);
+        } };
         return { last() { return this; }, async count() { return 0; }, async isVisible() { return false; }, async isDisabled() { return false; }, async getAttribute() { return null; } };
       },
       getByRole() { return { last() { return this; }, async count() { return 0; } }; },
@@ -530,9 +565,12 @@ test("structured browser job list suppresses unrelated DOM job links", async () 
   }
   const context = { async route() {}, async newPage() { return pageFixture(pages++ === 0); } };
   const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
-  const result = await collectBrowser(browserSource, options(), { chromium });
-  assert.equal(result.complete, true);
-  assert.deepEqual(result.jobs.map(job => job.job_id), ["1"]);
+  const result = await collectBrowser(domSource, options(), { chromium });
+  assert.equal(result.list_scan_complete, true);
+  assert.equal(result.complete, false);
+  assert.equal(result.total, 2);
+  assert.deepEqual(result.jobs.map(job => [job.title, job.location]), [["岗位A", "北京"], ["岗位B", "上海"]]);
+  assert(result.jobs.every(job => job.detail_status === "NEEDS_ADAPTER"));
 });
 
 test("production browser driver captures original HTML/JSON bytes and full rendered details offline", async () => {
@@ -599,6 +637,19 @@ const wpsSource = {
 const privateOptions = () => options({ sourceId: wpsSource.source_id });
 const dummyParameter = 'DUMMY_ONLY_RUNTIME_PARAMETER_"_测试';
 
+test("WPS public mode does not require or transmit a runtime source parameter", async () => {
+  const publicWps = { ...wpsSource, moka_requires_runtime_source_parameter: false };
+  const result = await collectMoka(publicWps, privateOptions(), {
+    env: {},
+    async fetch(url, init) {
+      assert.equal(JSON.parse(init.body).sourceToken, undefined);
+      return response({ data: { jobs: [], jobStats: { total: 0 } } });
+    },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.jobs.length, 0);
+});
+
 test("WPS missing runtime parameter fails before network and ignores legacy source values", async () => {
   let calls = 0;
   await assert.rejects(collectMoka({ ...wpsSource, moka_source_token: "DUMMY_IGNORED_LEGACY_FIELD" }, privateOptions(), {
@@ -659,22 +710,6 @@ test("WPS runtime input cannot be sent to a different endpoint or tenant", async
   assert.equal(calls, 0);
 });
 
-test("ordinary Moka transport failure falls back to its registered browser portal", async () => {
-  const ordinary = {
-    ...wpsSource, source_id: "fixture-moka-browser", moka_requires_runtime_source_parameter: false,
-    portal: "https://app.mokahr.com/campus/fixture/1", job_list_url: "https://app.mokahr.com/campus/fixture/1",
-    moka_endpoint: "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2", moka_org_id: "fixture", moka_site_id: "1",
-  };
-  const fixture = browserFixture([{ rows: [{ title: "岗位", job_id: "b1", official_url: "https://app.mokahr.com/job/b1" }], total: 1 }]);
-  const result = await collectMoka(ordinary, options({ sourceId: ordinary.source_id }), {
-    ...fixture,
-    async fetch() { throw new TypeError("fetch failed"); },
-  });
-  assert.equal(result.complete, true);
-  assert.equal(result.transport_fallback, "browser_after_moka_transport_failure");
-  assert.equal(result.jobs[0].job_id, "b1");
-});
-
 test("other Moka sources ignore the WPS runtime environment and keep original raw bytes", async () => {
   const ordinary = { ...wpsSource, source_id: "fixture-other-moka", moka_requires_runtime_source_parameter: false, moka_org_id: "fixture" };
   const raw = ' {"data": {"jobs": [], "total": 0}} \n';
@@ -691,7 +726,7 @@ test("active source registry contains no stored Moka source parameter", () => {
   const registry = JSON.parse(fs.readFileSync(new URL("../../03-strategy/official-2027-campus-sources.json", import.meta.url), "utf8"));
   assert(registry.sources.every(entry => !Object.hasOwn(entry, "moka_source_token")));
   const wps = registry.sources.find(entry => entry.source_id === "official-018");
-  assert.equal(wps.moka_requires_runtime_source_parameter, true);
+  assert.equal(wps.moka_requires_runtime_source_parameter, false);
   assert.equal(wps.moka_endpoint, wpsSource.moka_endpoint);
   assert.equal(wps.moka_org_id, "wps");
   assert.equal(wps.moka_site_id, "41436");
@@ -717,3 +752,96 @@ test("private incomplete and unparseable responses cannot persist partial runtim
   assert(!JSON.stringify(partial).includes(secretPrefix));
   assert.equal(Buffer.from(partial.captures[0].body_base64, "base64").toString(), "[INCOMPLETE_PRIVATE_RESPONSE_OMITTED]");
 });
+
+
+test("final no-baseline sources use explicit public first-party recovery paths", () => {
+  const registry = JSON.parse(fs.readFileSync(new URL("../../03-strategy/official-2027-campus-sources.json", import.meta.url), "utf8"));
+  const duxiaoman = registry.sources.find(entry => entry.source_id === "official-044");
+  assert.equal(duxiaoman.adapter, "browser");
+  assert.equal(duxiaoman.browser_follow_list_link_selector, 'a[href*="/051736/position/list"]');
+  const boss = registry.sources.find(entry => entry.source_id === "official-065");
+  assert.equal(new URL(boss.job_list_url).hostname, "v.zhipin.com");
+  assert.equal(boss.disable_network_job_extraction, false);
+  assert.equal(boss.extra_job_list_urls.length, 2);
+  assert(boss.extra_job_list_urls.every(url => new URL(url).hostname === "v.zhipin.com"));
+});
+
+test("structured browser job list suppresses unrelated DOM job links", async () => {
+  const rows = [{ id: "1", title: "API岗位", detailUrl: "https://example.test/job/1" }];
+  let responseHandler, pages = 0;
+  function pageFixture(isList) {
+    let url = "";
+    return {
+      on(event, callback) { if (event === "response") responseHandler = callback; },
+      async goto(nextUrl) {
+        url = nextUrl;
+        if (isList) await responseHandler({
+          url: () => "https://example.test/api/jobs",
+          headers: () => ({ "content-type": "application/json" }),
+          status: () => 200,
+          body: async () => Buffer.from(JSON.stringify({ data: { jobs: rows, total: 1 } })),
+          request: () => ({ method: () => "GET", postData: () => null }),
+        });
+        return { status: () => 200 };
+      },
+      url: () => url, async waitForLoadState() {}, async content() { return "<main></main>"; },
+      locator(selector) {
+        if (selector === "body") return { async innerText() { return ""; } };
+        if (selector === "a[href]") return { async evaluateAll() { return [{ href: "https://example.test/job/unrelated", title: "DOM推荐" }]; } };
+        return { last() { return this; }, async count() { return 0; }, async isVisible() { return false; }, async isDisabled() { return false; }, async getAttribute() { return null; } };
+      },
+      getByRole() { return { last() { return this; }, async count() { return 0; } }; },
+      async close() {},
+    };
+  }
+  const context = { async route() {}, async newPage() { return pageFixture(pages++ === 0); } };
+  const chromium = { async launch() { return { async newContext() { return context; }, async close() {} }; } };
+  const result = await collectBrowser(browserSource, options(), { chromium });
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.jobs.map(job => job.job_id), ["1"]);
+});
+
+
+test("ordinary Moka transport failure falls back to its registered browser portal", async () => {
+  const ordinary = {
+    ...wpsSource, source_id: "fixture-moka-browser", moka_requires_runtime_source_parameter: false,
+    portal: "https://app.mokahr.com/campus/fixture/1", job_list_url: "https://app.mokahr.com/campus/fixture/1",
+    moka_endpoint: "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2", moka_org_id: "fixture", moka_site_id: "1",
+  };
+  const fixture = browserFixture([{ rows: [{ title: "岗位", job_id: "b1", official_url: "https://app.mokahr.com/job/b1" }], total: 1 }]);
+  const result = await collectMoka(ordinary, options({ sourceId: ordinary.source_id }), {
+    ...fixture,
+    async fetch() { throw new TypeError("fetch failed"); },
+  });
+  assert.equal(result.complete, true);
+  assert.equal(result.transport_fallback, "browser_after_moka_transport_failure");
+  assert.equal(result.jobs[0].job_id, "b1");
+});
+
+
+test("browser follows an official position-list navigation when the registered home page has no rows", async () => {
+  const opened = [];
+  let current = "";
+  const driver = {
+    async open(url) { current = url; opened.push(url); },
+    async snapshot() {
+      if (current.endsWith("/home")) return {
+        rows: [], total: null, page_url: current,
+        job_list_navigation_url: "https://example.test/channel/position/list",
+      };
+      return {
+        rows: [{ title: "岗位", job_id: "1", official_url: "https://example.test/job/1" }],
+        total: 1, page_url: current, job_list_navigation_url: current,
+      };
+    },
+    async nextAction() { return null; },
+    async detail() { return { raw_detail_text: "正文", raw_detail_html: "<main>正文</main>" }; },
+    async close() {},
+  };
+  const homeSource = { ...browserSource, portal: "https://example.test/home", job_list_url: "https://example.test/home" };
+  const result = await collectBrowser(homeSource, options(), { driverFactory: () => driver });
+  assert.equal(result.complete, true);
+  assert.deepEqual(opened, ["https://example.test/home", "https://example.test/channel/position/list"]);
+  assert.equal(result.jobs.length, 1);
+});
+

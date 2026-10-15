@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "batch_id": "empty",
+  "count": 0,
+  "pending_total": 0,
+  "entries": [],
+  "policy": "Read full official JD and qualification; include, exclude, or confirmed remove. No keyword screening, no needs_review.",
+  "generated_at_utc": "2026-10-15T08:47:24Z"
+}

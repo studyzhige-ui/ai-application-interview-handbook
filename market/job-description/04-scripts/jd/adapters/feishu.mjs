@@ -66,11 +66,10 @@ export async function collectFeishuWithBrowserFallback(source, options, specific
   const portal = new URL(source.portal);
   const host = source.feishu_host || portal.hostname;
   const channel = source.feishu_channel || portal.pathname.split("/").filter(Boolean)[0] || "campus";
-  let browserListUrl = specification.browserListUrl || source.job_list_url || source.portal;
-  if (source.mode === "feishu_direct") {
+  let browserListUrl = source.feishu_browser_list_url || specification.browserListUrl || source.job_list_url || source.portal;
+  if (source.mode === "feishu_direct" && !source.feishu_browser_list_url) {
     const derived = new URL(`https://${host}/${channel}/position/list`);
-    // Project/subject filters are first-party portal state; preserve them when
-    // moving from a marketing/home URL to its official position-list route.
+    // Official project filters may determine campus vs. non-campus listings.
     for (const [key, value] of portal.searchParams) derived.searchParams.append(key, value);
     browserListUrl = derived.href;
   }

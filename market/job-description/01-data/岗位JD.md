@@ -1,12 +1,12 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-10T01:43:16Z。收录 **2750 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
+本次核验：2026-10-10T01:43:16Z。收录 **2989 个去重岗位或官方岗位意向**，来自 **59 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
 标为“研究交叉”或“多方向”的岗位，只纳入其明确的应用工程职责，不表示整份JD都是纯AI应用研发。届次和资格以官方完整原文为准，历史观察不计本页岗位数。
 
-## 小米（108）
+## 小米（104）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -16,38 +16,33 @@
 | [后台开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7681255943951190335/detail) | 校招 | 2027届校园招聘计划 | 武汉 | 评测研发 |
 | [Agent Harness 开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7678147882801678602/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
 | [大模型网关服务端开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7676005513680030006/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
-| [软件测试工程师-手机小爱](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671294812650473782/detail) | 校招 | 2027届校园招聘计划 | 武汉 | 应用研发 |
-| [AI算法工程师-AICoding/Agents方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671291137243629878/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 研究交叉 |
+| [AI算法工程师-AICoding/Agents方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671291137243629878/detail) | 校招 | 2027届校园招聘计划 | 武汉 / 北京 | 研究交叉 |
 | [大模型算法工程师-生态链](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671290581923383615/detail) | 校招 | 2027届校园招聘计划 | 武汉 | 研究交叉 |
-| [基础架构研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289721684068650/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
+| [基础架构研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289721684068650/detail) | 校招 | 2027届校园招聘计划 | 北京 | 多方向 |
 | [AI研发工程师-智能风控方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289294427113737/detail) | 校招 | 2027届校园招聘计划 | 北京 | 应用研发 |
-| [Agent Harness 研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671284471720020243/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 应用研发 |
-| [软件开发工程师-影像方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129598676125993/detail) | 校招 | 2027届校园招聘计划 | 西安、上海 | 应用研发 |
-| [Camera Agent算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129480778139967/detail) | 校招 | 页头：2027届校园招聘计划；职位要求：2025/2026应届毕业生（官方届次冲突） | 北京、上海 | 研究交叉 |
-| [芯片物理设计工程师（AI方向）](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129267694897427/detail) | 校招 | 2027届校园招聘计划 | 上海 | 研究交叉 |
+| [Agent Harness 研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671284471720020243/detail) | 校招 | 2027届校园招聘计划 | 武汉 / 北京 | 应用研发 |
+| [软件开发工程师-影像方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129598676125993/detail) | 校招 | 2027届校园招聘计划 | 西安 / 上海 | 多方向 |
+| [Camera Agent算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129480778139967/detail) | 校招 | 页头：2027届校园招聘计划；职位要求：2025/2026应届毕业生（官方届次冲突） | 北京 / 上海 | 研究交叉 |
+| [芯片物理设计工程师（AI方向）](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129267694897427/detail) | 校招 | 2027届校园招聘计划 | 上海 | 多方向 |
 | [服务端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670935018218932543/detail) | 校招 | 2027届境外招聘计划 | 新加坡 | 应用研发 |
-| [Agent工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670928909127223588/detail) | 校招 | 2027届校园招聘计划 | 武汉、北京 | 应用研发 |
+| [Agent工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670928909127223588/detail) | 校招 | 2027届校园招聘计划 | 武汉 / 北京 | 应用研发 |
 | [测试开发工程师-小爱](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924328497793343/detail) | 校招 | 2027届校园招聘计划 | 北京 | 评测研发 |
 | [OS软件工程师（AI Agent方向）](https://xiaomi.jobs.f.mioffice.cn/campus/position/7671295351281731850/detail) | 校招 | 2027届 | 北京 | 应用研发 |
-| [互联框架研发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924719398471979/detail) | 校招 | 2027届 | 北京 | 多方向 |
-| [AI 数据基础架构工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924132817750318/detail) | 校招 | 2027届 | 武汉、北京 | 多方向 |
+| [AI 数据基础架构工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924132817750318/detail) | 校招 | 2027届 | 武汉 / 北京 | 应用研发 |
 | [大模型agent算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924118350465321/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
 | [大模型智能体算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923797172586795/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
-| [可观测性平台研发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923711374248228/detail) | 校招 | 2027届 | 武汉 | 多方向 |
 | [云计算开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923711373281572/detail) | 校招 | 2027届 | 武汉 | 多方向 |
 | [服务端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923490631239974/detail) | 校招 | 2027届 | 武汉 | 应用研发 |
-| [大模型算法工程师-Data Agent方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923368716011830/detail) | 校招 | 2027届 | 武汉 | 应用研发 |
+| [大模型算法工程师-Data Agent方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923368716011830/detail) | 校招 | 2027届 | 武汉 | 研究交叉 |
 | [AI属性工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918768222570803/detail) | 校招 | 2027届 | 南京 | 应用研发 |
 | [自动化测试架构开发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918384100788507/detail) | 校招 | 2027届 | 南京 | 评测研发 |
-| [云端产品全栈开发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918030076381478/detail) | 校招 | 2027届 | 武汉、南京 | 多方向 |
 | [嵌入式测试开发与AI应用工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670915178993256713/detail) | 校招 | 2027届 | 南京 | 评测研发 |
 | [AI Agent开发工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670914994071046451/detail) | 校招 | 2027届 | 南京 | 应用研发 |
-| [图形AI渲染工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670910784603818267/detail) | 校招 | 2027届 | 上海 | 研究交叉 |
+| [图形AI渲染工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670910784603818267/detail) | 校招 | 2027届 | 上海 | 多方向 |
 | [AIOS 开发工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670892428991269146/detail) | 校招 | 2027届 | 南京 | 应用研发 |
-| [多模态大模型算法工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891732025067803/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
 | [AI研发工程师-手机](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891457062127881/detail) | 校招 | 2027届 | 北京 | 多方向 |
-| [AI Agent开发工程师-Java方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885684991281471/detail) | 校招 | 2027届 | 北京、深圳 | 应用研发 |
-| [客户端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885167280900393/detail) | 校招 | 2027届 | 北京、南京 | 应用研发 |
+| [AI Agent开发工程师-Java方向](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885684991281471/detail) | 校招 | 2027届 | 北京 / 深圳 | 应用研发 |
+| [客户端工程师](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885167280900393/detail) | 校招 | 2027届 | 北京 / 南京 | 多方向 |
 | [研究助理实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7694244914909235510/detail) | 实习 | 未披露届别（校招实习） | 北京 | 应用研发 |
 | [算法实习生](https://xiaomi.jobs.f.mioffice.cn/internship/position/7694106495844256063/detail) | 实习 | 2027届及以后优先 | 上海 | 研究交叉 |
 | [软件开发工程师实习生-2027届](https://xiaomi.jobs.f.mioffice.cn/internship/position/7689008243008162102/detail) | 实习 | 2027届（标题） | 武汉 | 多方向 |
@@ -118,6 +113,7 @@
 | [顶尖应届-AI材料算法研究员-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707812400236809/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-垂域Agentic大模型算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607920906/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [顶尖应届-AI材料算法工程师-AI实验室](https://xiaomi.jobs.f.mioffice.cn/toptalent/position/7646707799607232778/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [体系AI工程师-汽车](https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918570079652123/detail) | 校招 | 未披露 | 北京 | 多方向 |
 
 ## 快手（135）
 
@@ -299,7 +295,7 @@
 | [全栈研发（J106354）](https://talent.baidu.com/jobs/detail/INTERN/f0b36f9d-807a-4817-997d-ca8fe8141f8e) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 评测研发 |
 | [全栈开发实习生（J106272）](https://talent.baidu.com/jobs/detail/INTERN/23157d0b-b51b-436a-8e94-17100c9fabdd) | 实习 | 日常实习；全年开放且不限毕业时间 | 北京市 | 应用研发 |
 
-## 腾讯（205）
+## 腾讯（206）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -317,10 +313,9 @@
 | [Coding Agent Research Intern](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Coding-Agent-Research-Intern_R108097) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
 | [WXG-WeLM Agentic 系统](https://join.qq.com/post_detail.html?postid=1274481034578500726) | 校招 | 未披露 | 北京 | 研究交叉 |
 | [游戏客户端开发](https://join.qq.com/post_detail.html?postid=1282032034373805056) | 校招 | 应届毕业生，具体届次未披露 | 深圳总部、北京、上海、杭州 | 多方向 |
-| [后台开发](https://join.qq.com/post_detail.html?postid=1282707383965295616) | 校招 | 应届毕业生；该详情未披露具体届次 | 深圳总部、北京、上海、广州、成都、武汉、杭州 | 多方向 |
 | [游戏引擎开发](https://join.qq.com/post_detail.html?postid=1282707420237636608) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海、成都、杭州 | 多方向 |
 | [PC客户端开发](https://join.qq.com/post_detail.html?postid=1282707439695012864) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海、广州 | 多方向 |
-| [前端开发](https://join.qq.com/post_detail.html?postid=1282707439695012865) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部、北京、上海、广州、成都、武汉 | 多方向 |
+| [前端开发](https://join.qq.com/post_detail.html?postId=1282707439695012865) | 校招 | 2027校园招聘（详情仅标应届毕业生，具体毕业日期未披露） | 深圳总部 北京 上海 广州 成都 | 多方向 |
 | [测试开发](https://join.qq.com/post_detail.html?postid=1283126501084308480) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、北京、上海、广州、成都 | 评测研发 |
 | [运营开发](https://join.qq.com/post_detail.html?postid=1283126506864059392) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、北京、上海、广州 | 多方向 |
 | [数据工程](https://join.qq.com/post_detail.html?postid=1283126531220382720) | 校招 | 应届毕业生（2027校园入口） | 深圳总部、北京、上海、广州 | 多方向 |
@@ -508,6 +503,8 @@
 | [游戏引擎开发](https://join.qq.com/post_detail.html?postid=1224696223685345280) | 实习 | 未披露 | 深圳总部、北京、上海、杭州 | 多方向 |
 | [数据工程](https://join.qq.com/post_detail.html?postid=1281982531969065984) | 实习 | 未披露 | 深圳总部、北京 | 多方向 |
 | [Game ML Researcher Intern 107258](https://tencent.wd1.myworkdayjobs.com/zh-CN/Tencent_Careers/job/Singapore-CapitaSky/Game-ML-Researcher-Intern_R107258-1) | 实习 | 未披露 | Singapore-CapitaSky | 研究交叉 |
+| [金融 Agent 问题归因与递归自我改进机制研究](https://join.qq.com/post_detail.html?postId=1296891635279560704) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
+| [金融智能体可验证环境构建与长程强化学习研究](https://join.qq.com/post_detail.html?postId=1281715980657337344) | 校招 | 未披露 | 深圳总部 | 研究交叉 |
 
 ## 美团（89）
 
@@ -603,7 +600,7 @@
 | [【大模型北斗实习】多模态智能体算法研究与自主规划](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153873069&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 研究交叉 |
 | [【大模型北斗实习】代码大模型](https://zhaopin.meituan.com/web/position/detail?jobUnionId=3153761434&highlightType=campus) | 实习 | 未披露 | 北京市、上海市 | 应用研发 |
 
-## 滴滴（21）
+## 滴滴（20）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -613,7 +610,6 @@
 | [27届秋招-测试开发工程师-企业级事业部](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/26474498-9b2b-4287-b4b1-8059de06f676) | 校招 | 2027届秋招 | 天津市 | 多方向 |
 | [27届秋招-研发工程师-AI Dev](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/ae200d70-dd22-4d9b-9652-1df8bd7d5e33) | 校招 | 2027届秋招 | 北京市 | 应用研发 |
 | [27届秋招-Java开发工程师-安全平台](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/a53cc592-6b3f-4afa-a504-4f1ef3bbcc61) | 校招 | 2027届秋招 | 北京市 | 多方向 |
-| [27届秋招-移动安全工程师](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d38617b6-e860-47b9-ae58-0c8c5b91566e) | 校招 | 2027届秋招 | 北京市 | 多方向 |
 | [27届秋招-前端开发工程师-ABC北京](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/aee223cd-008c-497e-8350-f6deea989ba9) | 校招 | 2027届秋招 | 北京市 | 应用研发 |
 | [27届秋招-后端研发工程师（平台技术）](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/17c1445c-a217-47b6-89b3-6bb364682876) | 校招 | 2027届秋招 | 北京市 | 多方向 |
 | [27届秋招-前端开发工程师-ABC杭州](https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/3630cf81-eaa2-442e-b429-664b97611904) | 校招 | 2027届秋招 | 浙江·杭州市 | 应用研发 |
@@ -778,7 +774,7 @@
 | [【Ace顶尖实习生】GUI Agent在App自动化领域的研究与应用](https://job.xiaohongshu.com/campus/position/19942) | 实习 | Ace顶尖实习生；多数不限年级，详见要求 | 杭州市 | 研究交叉 |
 | [Dots-【Ace顶尖实习生】具备自我迭代能力的大规模科研agent系统探索](https://job.xiaohongshu.com/campus/position/20004) | 实习 | Ace顶尖实习生；多数不限年级，详见要求 | 北京市、上海市、杭州市 | 研究交叉 |
 
-## 字节跳动（1260）
+## 字节跳动（1264）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2042,14 +2038,20 @@
 | [前端开发实习生-豆包](https://jobs.bytedance.com/campus/position/7592131411186026757/detail) | 实习 | 2027届 | 北京 | 应用研发 |
 | [前端开发实习生（AI应用框架方向）-Cross Platform](https://jobs.bytedance.com/campus/position/7592127665005021493/detail) | 实习 | 2027届 | 杭州 | 应用研发 |
 | [前端开发实习生（AI应用框架方向）-Cross Platform](https://jobs.bytedance.com/campus/position/7592127509377796357/detail) | 实习 | 2027届 | 上海 | 应用研发 |
+| [特效研发（SDK开发方向）实习生 - TikTok智能创作](https://jobs.bytedance.com/campus/position/7686420231186729269/detail) | 实习 | 未披露 | 北京 | 应用研发 |
+| [AI搜索算法工程师-Seed大模型人才校招](https://jobs.bytedance.com/campus/position/7622889830527404341/detail) | 校招 | 未披露 | 上海 | 研究交叉 |
+| [代码质量大模型算法实习生-质量技术](https://jobs.bytedance.com/campus/position/7595092459300292869/detail) | 实习 | 未披露 | 杭州 | 研究交叉 |
+| [算法实习生-抖音研发](https://jobs.bytedance.com/campus/position/7599621474668185861/detail) | 实习 | 未披露 | 杭州 | 评测研发 |
 
-## 阿里巴巴（1）
+## 阿里巴巴（3）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [算法工程师-AI Agent](https://campus-talent.alibaba.com/campus/position/199903260012) | 实习 | 2027届；详情显示2026-10-31至2027-10-30 | 北京、广州、杭州、上海 | 应用研发 |
+| [算法工程师-多模态AIGC](https://campus-talent.alibaba.com/campus/position-detail?positionId=199907700029) | 校招 | 未披露 | 北京 / 杭州 | 研究交叉 |
+| [面向大模型推理的通用后端运行时系统研究-阿里星/A Star](https://campus-talent.alibaba.com/campus/position-detail?positionId=199907620045) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
 
-## 蚂蚁集团（83）
+## 蚂蚁集团（84）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2136,6 +2138,7 @@
 | [【蚂蚁星】智能AI算法专家-蚂蚁数科（实习）](https://talent.antgroup.com/campus-position?positionId=26041709649814) | 实习 | 蚂蚁星- Plan A人才计划实习；官方毕业时间 2026-10-31T16:00:00.000+00:00 至 2031-10-30T16:00:00.000+00:00 | 北京、杭州 | 应用研发 |
 | [【蚂蚁星】算法工程师-风控推理大模型-蚂蚁国际（实习）](https://talent.antgroup.com/campus-position?positionId=25062405372431) | 实习 | 蚂蚁星- Plan A人才计划实习；官方毕业时间 2026-10-31T16:00:00.000+00:00 至 2031-10-30T16:00:00.000+00:00 | 上海 | 多方向 |
 | [大模型评测研究实习生](https://talent.antgroup.com/campus-position?positionId=25071405708425) | 实习 | 蚂蚁技术研究院长期研究型实习生项目；官方毕业时间 2025-06-30T16:00:00.000+00:00 至 2030-08-30T16:00:00.000+00:00 | 北京、上海、杭州 | 评测研发 |
+| [模型基准和评估](https://talent.antgroup.com/campus-position?positionId=260721010993684) | 校招 | 未披露 | 北京, 上海, 杭州, 成都 | 评测研发 |
 
 ## 京东（35）
 
@@ -2235,7 +2238,7 @@
 | [多智能体算法工程师（OS产品方向）-实习](https://hr-campus.vivo.com/intern/detail?jobAdId=2c680305-c808-4838-8edc-36260508e278) | 实习 | 在校实习，具体届次以任职要求为准 | 浙江省·杭州市、上海市 | 研究交叉 |
 | [AI算法工程师（系统算法）-实习](https://hr-campus.vivo.com/intern/detail?jobAdId=af338b09-b76e-4ba0-9d98-8f8c36a4262f) | 实习 | 在校实习，具体届次以任职要求为准 | 浙江省·杭州市、广东省·深圳市 | 研究交叉 |
 
-## 金山办公/WPS（11）
+## 金山办公/WPS（13）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2250,6 +2253,8 @@
 | [C++研发工程师（全栈发展）-面向2027届-广州](https://join.wps.cn/) | 校招 | 2027届 | 广东·广州市 | 应用研发 |
 | [C++研发工程师（全栈发展）-面向2027届-珠海](https://join.wps.cn/) | 校招 | 2027届 | 广东·珠海市 | 应用研发 |
 | [多模态大模型算法实习生](https://join.wps.cn/) | 实习 | 未披露 | 广东·珠海市 | 应用研发 |
+| [算法工程师（全栈发展）-面向2027届-武汉](https://join.wps.cn/campus-recruitment/wps/41436#/job/3f17d6a6-aec4-4a20-8130-eacb17e874ee) | 校招 | 未披露 | 武汉市 | 研究交叉 |
+| [精英算法研发工程师（全栈化业务）-面向2027届-武汉](https://join.wps.cn/campus-recruitment/wps/41436#/job/3ede78fa-510b-45f7-9979-962c3a70af1b) | 校招 | 未披露 | 武汉市 | 研究交叉 |
 
 ## 荣耀（13）
 
@@ -2269,7 +2274,7 @@
 | [AI测试开发工程师](https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/posDetail.html?postId=6a83c5361ad6db7cf8056b53) | 校招 | 2027届应届本硕 | 西安市 | 应用研发 |
 | [供应链算法工程师](https://career.honor.com/SU60eea919bef57c1023f6fe78/pb/posDetail.html?postId=6a83b3ea43154813049f1585) | 校招 | 2027届应届本硕 | 深圳市 | 研究交叉 |
 
-## 科大讯飞（12）
+## 科大讯飞（17）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2285,8 +2290,13 @@
 | [【星火X计划】跨模态医学影像大模型研究(J14500)](https://iflytek.zhiye.com/7/detail?jobAdId=30673001-df8e-4ade-85f7-5a4fc900d4f3) | 校招 | 24–27届（正文为准） | 广东省·广州市 | 研究交叉 |
 | [【星火X计划-实习】面向复杂任务的下一代Agent  Harness 关键技术研发(J14623)](https://iflytek.zhiye.com/7/detail?jobAdId=d9b04685-72b3-4fd3-b108-94189876ccc3) | 实习 | 28届及以后（正文为准） | 安徽省·合肥市、北京市 | 应用研发 |
 | [【星火X计划-实习】面向超长程任务的大模型智能体技术研究(J14621)](https://iflytek.zhiye.com/7/detail?jobAdId=5c81cfda-080e-4205-bb1d-a63591329cdf) | 实习 | 28届及以后（正文为准） | 安徽省·合肥市、北京市 | 研究交叉 |
+| [AI全栈开发工程师（大量HC）(J14446)](https://iflytek.zhiye.com/campus/detail?jobAdId=190862398) | 校招 | 未披露 | 安徽省·合肥市, 浙江省·杭州市, 陕西省·西安市, 四川省·成都市 | 应用研发 |
+| [AI研究算法工程师-大模型预训练数据研究方向（大量HC）(J13369)](https://iflytek.zhiye.com/campus/detail?jobAdId=190842474) | 校招 | 未披露 | 安徽省·合肥市, 湖北省·武汉市 | 评测研发 |
+| [安全工程师-AI智能体方向(J14695)](https://iflytek.zhiye.com/campus/detail?jobAdId=190870134) | 校招 | 未披露 | 安徽省·合肥市 | 评测研发 |
+| [AI研究算法工程师-数据方向（大量HC）(J13385)](https://iflytek.zhiye.com/campus/detail?jobAdId=190842459) | 校招 | 未披露 | 安徽省·合肥市, 上海市, 陕西省·西安市 | 评测研发 |
+| [AI算法测试开发工程师（大量HC）(J13365)](https://iflytek.zhiye.com/campus/detail?jobAdId=190842319) | 校招 | 未披露 | 安徽省·合肥市 | 评测研发 |
 
-## 携程（6）
+## 携程（10）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2296,6 +2306,10 @@
 | [云原生研发工程师（AI Agent方向）（2027届秋招）(MJ036678)](https://careers.ctrip.com/#/campus/job-detail/MJ036678) | 校招 | 2027届；2026-09至2027-08毕业且最高学历毕业后无全职工作经验 | 上海 | 应用研发 |
 | [大数据平台开发工程师（AI Agent方向）（2027届秋招）(MJ036677)](https://careers.ctrip.com/#/campus/job-detail/MJ036677) | 校招 | 2027届；2026-09至2027-08毕业且最高学历毕业后无全职工作经验 | 上海 | 应用研发 |
 | [LLM算法工程师（2027届秋招）(MJ036605)](https://careers.ctrip.com/#/campus/job-detail/MJ036605) | 校招 | 2027届；2026-09至2027-08毕业且最高学历毕业后无全职工作经验 | 上海 | 应用研发 |
+| [算法工程师（NLP方向）（2027届秋招）(MJ036676)](https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676) | 校招 | 未披露 | Shanghai | 研究交叉 |
+| [算法工程师（NLP方向）（2027届秋招）(MJ036676)](https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676) | 校招 | 未披露 | Shanghai | 研究交叉 |
+| [算法工程师（NLP方向）（2027届秋招）(MJ036676)](https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676) | 校招 | 未披露 | Shanghai | 研究交叉 |
+| [算法工程师（NLP方向）（2027届秋招）(MJ036676)](https://careers.ctrip.com/campus#/experienced/job-detail/MJ036676) | 校招 | 未披露 | Shanghai | 研究交叉 |
 
 ## 360（20）
 
@@ -2322,7 +2336,7 @@
 | [多模态理解算法实习生-GUIagent（北京）-4416(J11977)](https://360campus.zhiye.com/intern/detail?jobAdId=061d493a-b44b-4067-9884-fcea719da239) | 实习 | 未单列届次，见任职要求 | 北京市 | 研究交叉 |
 | [助理安全研究实习生（漏洞挖掘与利用）（北京）-4943(J12021)](https://360campus.zhiye.com/intern/detail?jobAdId=f72493db-7e6b-4070-b55d-2c933cdac4b7) | 实习 | 未单列届次，见任职要求 | 北京市 | 应用研发 |
 
-## 得物（7）
+## 得物（8）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2333,6 +2347,7 @@
 | [【27届校招】Golang开发工程师](https://poizon.jobs.feishu.cn/578078/position/7672234817443055915/detail) | 校招 | 2027届 | 上海、杭州 | 多方向 |
 | [【27届校招】测试开发工程师](https://poizon.jobs.feishu.cn/578078/position/7672233009562749203/detail) | 校招 | 2027届 | 杭州、上海 | 评测研发 |
 | [【研究型实习生】多场景生成式大模型（交易）](https://poizon.jobs.feishu.cn/578078/position/7623981843205654810/detail) | 实习 | 2028届及以后 | 杭州 | 研究交叉 |
+| [【27届校招】算法工程师(C++方向)](https://poizon.jobs.feishu.cn/578078/position/7672225194286778687/detail) | 校招 | 未披露 | 杭州 | 多方向 |
 
 ## DeepSeek（5）
 
@@ -2360,17 +2375,39 @@
 | [AI Agent Eval实习生](https://app.mokahr.com/campus-recruitment/moonshot/148507#/job/9e43aafe-32e5-4864-a02e-3b5b26e18533) | 实习 | 未明确 | 北京 | 多方向 |
 | [Agent Engineer（实习生）](https://app.mokahr.com/campus-recruitment/moonshot/148507#/job/fe1202c9-16c5-4bef-a3f9-b7aeafdc6be4) | 实习 | 未明确 | 未披露 | 应用研发 |
 
-## MiniMax（7）
+## MiniMax（29）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
-| [Agent前端工程师实习-海螺&minimax design](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7686409262847822123/detail) | 实习 | 2028年及之后毕业优先 | 北京、上海 | 应用研发 |
+| [Agent前端工程师实习-海螺&minimax design](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7686409262847822123/detail) | 实习 | 2028年及之后毕业优先 | 北京 / 上海 | 应用研发 |
 | [Agent系统工程实习生（AI Infra）](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7685277183518427419/detail) | 实习 | 未明确 | 上海 | 应用研发 |
 | [系统研发实习生—AI Infra（工单智能化方向）](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7663392882951014666/detail) | 实习 | 未明确 | 上海 | 应用研发 |
-| [大模型训练数据系统研发实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7560558565114546473/detail) | 实习 | 项目：2028届实习；正文：2027届及以后 | 北京、上海 | 应用研发 |
-| [AGI产品研发工程师-实习-TOP Talent](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7549395711529715995/detail) | 实习 | 未明确 | 上海、北京 | 应用研发 |
-| [AGI产品研发工程师-应届生-TOP Talent](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7546180826527893810/detail) | 校招 | 未明确 | 北京、上海 | 应用研发 |
-| [Agent 服务端开发实习生（AI Agent / AI App）](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7498581238874900763/detail) | 实习 | 项目：2028届实习；正文：2027届本科及以上（官方字段冲突） | 北京、上海 | 应用研发 |
+| [大模型训练数据系统研发实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7560558565114546473/detail) | 实习 | 项目：2028届实习；正文：2027届及以后 | 北京 / 上海 | 应用研发 |
+| [AGI产品研发工程师-实习-TOP Talent](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7549395711529715995/detail) | 实习 | 未明确 | 上海 / 北京 | 应用研发 |
+| [AGI产品研发工程师-应届生-TOP Talent](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7546180826527893810/detail) | 校招 | 未明确 | 北京 / 上海 | 应用研发 |
+| [Agent 服务端开发实习生（AI Agent / AI App）](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7498581238874900763/detail) | 实习 | 项目：2028届实习；正文：2027届本科及以上（官方字段冲突） | 北京 / 上海 | 应用研发 |
+| [AI安全实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7655771634666522923/detail) | 实习 | 未披露 | 北京 / 上海 | 评测研发 |
+| [大模型训练框架工程师-2028届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7682787337483389238/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [可观测平台研发工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662376183711222058/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型数据链路工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7657847492860037414/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型工程师-RL框架&RL推理-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7682701718954953011/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [AI推理框架工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7633405814624373030/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [AI Infra 资源调度研发实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7676446019848030473/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [视频训练研发实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7497187055459879177/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型工程师-RL框架&RL推理-日常实习](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7683006384095807798/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型训练框架工程师-日常实习](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7683006429335570697/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [视频训练研发工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7657843944982956297/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [高性能服务研发实习生-2027 届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7573257185578617142/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型推理研发实习生-2027 届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7573258992060909867/detail) | 实习 | 未披露 | 上海 / 北京 | 多方向 |
+| [大模型工程师-RL框架&RL推理-2028届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7682786920195836186/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型系统研发工程师-实习-TOP Talent](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7497973037862979867/detail) | 实习 | 未披露 | 上海 / 北京 | 多方向 |
+| [大模型算法评测实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7655253685333936403/detail) | 实习 | 未披露 | 上海 / 北京 | 评测研发 |
+| [AI-System 研发实习生](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7637357280128862527/detail) | 实习 | 未披露 | 上海 / 北京 | 多方向 |
+| [K8S 研发工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662375990618556691/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [存储系统研发工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7657839993293064484/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型训练框架工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7682703190769305910/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型系统研发工程师-应届生-TOP Talent](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7497141440938723621/detail) | 校招 | 未披露 | 上海 / 北京 | 多方向 |
+| [云原生 DevOps 研发工程师-2027届](https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7662375475701188905/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
 
 ## 智谱/Z.ai（2）
 
@@ -2394,12 +2431,18 @@
 | [大模型 AI Coding实习生](https://app.mokahr.com/campus-recruitment/step/94905#/job/7009131b-28f3-4bba-a5d0-497f317332ab) | 实习 | 未明确 | 上海市、北京市 | 应用研发 |
 | [实习-AI产品 builder（Agent Skills 搭建方向）](https://app.mokahr.com/campus-recruitment/step/94905#/job/082e8295-2e5a-420a-a2c8-f3ee3f2e9658) | 实习 | 未明确 | 上海市 | 多方向 |
 
-## 百川智能（2）
+## 百川智能（8）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
-| [【源点顶尖人才计划】Agent 算法工程师](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676402588783348031/detail) | 校招 | 2025年至2027年应届生 | 北京 | 应用研发 |
-| [【源点顶尖人才计划】Agent 算法工程师实习生](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676401196006263066/detail) | 实习 | 2027年及以后在校生 | 北京 | 应用研发 |
+| [【源点顶尖人才计划】Agent 算法工程师](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676402588783348031/detail) | 校招 | 2025年至2027年应届生 | 北京 | 研究交叉 |
+| [【源点顶尖人才计划】Agent 算法工程师实习生](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676401196006263066/detail) | 实习 | 2027年及以后在校生 | 北京 | 研究交叉 |
+| [【源点顶尖人才计划】AI Infra工程师-推理方向](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676404971188963590/detail) | 校招 | 未披露 | 北京 | 多方向 |
+| [【源点顶尖人才计划】AI Infra工程师-推理方向实习生](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676398253605538074/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [【源点顶尖人才计划】AI Infra工程师-训练方向实习生](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676398530290092307/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [【日常实习】AI Infra工程师-训练方向实习生](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676395291977582899/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [【日常实习】AI Infra工程师-推理方向实习生](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676395862713010483/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [【源点顶尖人才计划】AI Infra工程师-训练方向](https://cq6qe6bvfr6.jobs.feishu.cn/646926/position/7676405026578942249/detail) | 校招 | 未披露 | 北京 | 多方向 |
 
 ## 零一万物/01.AI（3）
 
@@ -2409,7 +2452,7 @@
 | [前沿部署工程实习生 - 国际业务](https://01ai.jobs.feishu.cn/index/position/7686495536619522310/detail) | 实习 | 未明确 | 北京 | 应用研发 |
 | [开发实习生 - 绿洲](https://01ai.jobs.feishu.cn/index/position/7621822325688158470/detail) | 实习 | 2026/2027届优先 | 北京 | 应用研发 |
 
-## 商汤科技（28）
+## 商汤科技（83）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2441,6 +2484,61 @@
 | [【27届校招】FDE工程师-亚太业务事业群](https://hr-jobs.sensetime.com/edu/position/7659254488749951258/detail) | 校招 | 2027届 | 深圳 | 应用研发 |
 | [【27届校招】智能体研发-亚太业务事业群](https://hr-jobs.sensetime.com/edu/position/7659253281403078975/detail) | 校招 | 2027届 | 深圳 | 应用研发 |
 | [大装置-大模型算法应用实习生](https://hr-jobs.sensetime.com/edu/position/7657098532688709938/detail) | 实习 | 未明确 | 北京 | 应用研发 |
+| [【27届校招】Agent Harness 研究员/算法工程师](https://hr-jobs.sensetime.com/edu/position/7659705475663038746/detail) | 校招 | 2027届 | 北京 / 深圳 / 上海 / 新界 | 研究交叉 |
+| [大模型算法agent实习生](https://hr-jobs.sensetime.com/edu/position/7660462461628483866/detail) | 实习 | 未披露 | 深圳 | 应用研发 |
+| [【27届校招】FDE工程师—亚太业务事业群](https://hr-jobs.sensetime.com/edu/position/7659255237010508078/detail) | 校招 | 2027届 | 新界 | 应用研发 |
+| [【27届校招】大模型 Agent 算法研究员-大装置](https://hr-jobs.sensetime.com/edu/position/7659624252253555007/detail) | 校招 | 2027届 | 北京 / 上海 | 评测研发 |
+| [大装置-AI训练/推理框架研发实习生](https://hr-jobs.sensetime.com/edu/position/7659234146544830762/detail) | 实习 | 未披露 | 北京 / 上海 | 多方向 |
+| [【27届校招】大模型推理系统研究员](https://hr-jobs.sensetime.com/edu/position/7659704210958977299/detail) | 校招 | 2027届 | 北京 / 深圳 / 上海 / 成都 | 研究交叉 |
+| [【27届顶尖】AI网络与通信研究员-大装置](https://hr-jobs.sensetime.com/edu/position/7659358298252265754/detail) | 校招 | 2027届 | 北京 | 研究交叉 |
+| [【27届校招】大模型训练推理研发工程师-无限原力](https://hr-jobs.sensetime.com/edu/position/7659353703599032622/detail) | 校招 | 2027届 | 北京 / 上海 | 多方向 |
+| [【27届校招】大模型训练系统研究员](https://hr-jobs.sensetime.com/edu/position/7659694567370311986/detail) | 校招 | 2027届 | 北京 / 上海 | 多方向 |
+| [【27届校招】大模型强化学习系统研究员](https://hr-jobs.sensetime.com/edu/position/7659692156009695539/detail) | 校招 | 2027届 | 北京 / 深圳 / 上海 / 成都 | 研究交叉 |
+| [研究算法实习生（金融 Agent / 基本面分析方向）](https://hr-jobs.sensetime.com/edu/position/7685294409458469156/detail) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [大模型应用开发实习生](https://hr-jobs.sensetime.com/edu/position/7689053087378327859/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [【27届顶尖】大模型系统研究员-大装置](https://hr-jobs.sensetime.com/edu/position/7659355704914217279/detail) | 校招 | 未披露 | 北京 / 杭州 / 上海 / 深圳 | 多方向 |
+| [大模型训练推理实习生](https://hr-jobs.sensetime.com/edu/position/7660460728536811817/detail) | 实习 | 未披露 | 北京 / 上海 / 成都 | 多方向 |
+| [【27届校招】推理Infra开发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659663872567331135/detail) | 校招 | 未披露 | 北京 / 杭州 | 多方向 |
+| [【27届校招】全栈开发工程师](https://hr-jobs.sensetime.com/edu/position/7659326667522345242/detail) | 校招 | 未披露 | 北京 / 上海 / 深圳 | 应用研发 |
+| [【27届校招】Agent Harness 研究员/算法工程师](https://hr-jobs.sensetime.com/edu/position/7659701067331930410/detail) | 校招 | 未披露 | 北京 / 深圳 / 上海 | 研究交叉 |
+| [【27届校招】算法开发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659349942490614057/detail) | 校招 | 未披露 | 北京 / 上海 | 应用研发 |
+| [视频生成实习研究员](https://hr-jobs.sensetime.com/edu/position/7660461686360983862/detail) | 实习 | 未披露 | 深圳 | 评测研发 |
+| [视觉算法与数字人应用见习算法研究员](https://hr-jobs.sensetime.com/edu/position/7665921257708243246/detail) | 实习 | 未披露 | 北京 / 深圳 / 上海 | 研究交叉 |
+| [【27届校招】算法研究员-MIG](https://hr-jobs.sensetime.com/edu/position/7660092708917512490/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [大模型推理系统研发实习生](https://hr-jobs.sensetime.com/edu/position/7660716510780066089/detail) | 实习 | 未披露 | 北京 / 上海 / 深圳 | 多方向 |
+| [【27届校招】模型推理平台开发工程师（后端）](https://hr-jobs.sensetime.com/edu/position/7659695826600692009/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [【27届校招】大模型推理优化工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659680814178847030/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [【27届校招】大模型Agentic算法工程师](https://hr-jobs.sensetime.com/edu/position/7659700034489305353/detail) | 校招 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [扩散模型训练推理国产芯片infra实习生](https://hr-jobs.sensetime.com/edu/position/7683786062527646003/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [大模型系统实习生-图像视频生成模型训练框架方向](https://hr-jobs.sensetime.com/edu/position/7660446821474879798/detail) | 实习 | 未披露 | 上海 | 多方向 |
+| [推理优化实习生，高性能C++](https://hr-jobs.sensetime.com/edu/position/7656799111640009014/detail) | 实习 | 未披露 | 上海 / 北京 / 杭州 | 多方向 |
+| [Agent Benchmark Research Intern](https://hr-jobs.sensetime.com/edu/position/7665992428080449798/detail) | 实习 | 未披露 | 深圳 | 评测研发 |
+| [Agent 应用算法工程师实习生](https://hr-jobs.sensetime.com/edu/position/7676013110809430281/detail) | 实习 | 未披露 | 深圳 | 应用研发 |
+| [训练推理优化实习生，多模态](https://hr-jobs.sensetime.com/edu/position/7670103435232921899/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [大装置-语音算法研究实习生](https://hr-jobs.sensetime.com/edu/position/7657878068656621862/detail) | 实习 | 未披露 | 深圳 | 评测研发 |
+| [多模态大模型研发实习生](https://hr-jobs.sensetime.com/edu/position/7689000412510341417/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [【27届校招】Agent开发工程师](https://hr-jobs.sensetime.com/edu/position/7659330461617178916/detail) | 校招 | 未披露 | 北京 / 上海 / 深圳 | 应用研发 |
+| [【27届校招】大模型Agentic算法工程师-无限原力](https://hr-jobs.sensetime.com/edu/position/7659703661011028266/detail) | 校招 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [【27届校招】AI云计算开发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659602643371018515/detail) | 校招 | 未披露 | 北京 / 杭州 / 深圳 | 多方向 |
+| [大模型应用算法实习生](https://hr-jobs.sensetime.com/edu/position/7664534821356226862/detail) | 实习 | 未披露 | 北京 | 应用研发 |
+| [大模型评测实习生（AI PPT）](https://hr-jobs.sensetime.com/edu/position/7680871329310902554/detail) | 实习 | 未披露 | 北京 / 深圳 | 评测研发 |
+| [【27届校招】模型推理平台开发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659662079872682246/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [大模型推理系统研发实习生](https://hr-jobs.sensetime.com/edu/position/7686037187834743076/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [【27届校招】大模型应用研发研究员](https://hr-jobs.sensetime.com/edu/position/7659692029673785643/detail) | 校招 | 未披露 | 北京 / 深圳 / 上海 | 研究交叉 |
+| [【27届校招】AI 算法研发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659348824951605530/detail) | 校招 | 未披露 | 北京 / 上海 | 应用研发 |
+| [【27届校招】后端研发工程师（向量检索/分布式系统方向）-SCG](https://hr-jobs.sensetime.com/edu/position/7660081520661449014/detail) | 校招 | 未披露 | 深圳 | 多方向 |
+| [【27届校招】Agent全栈开发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659616422645369139/detail) | 校招 | 未披露 | 北京 / 上海 | 应用研发 |
+| [【27届校招】大模型推理系统研究员](https://hr-jobs.sensetime.com/edu/position/7659698294603925779/detail) | 校招 | 未披露 | 北京 / 深圳 / 上海 / 成都 | 多方向 |
+| [【27届校招】大模型评测算法工程师](https://hr-jobs.sensetime.com/edu/position/7659703325591472434/detail) | 校招 | 未披露 | 北京 / 深圳 / 上海 / 新界 | 评测研发 |
+| [【27届校招】大模型训练推理研发工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659598774713026822/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [【27届校招】大模型强化学习系统研究员](https://hr-jobs.sensetime.com/edu/position/7659701531952597274/detail) | 校招 | 未披露 | 北京 / 深圳 / 上海 / 新界 | 多方向 |
+| [AI平台开发实习生](https://hr-jobs.sensetime.com/edu/position/7683454564120643883/detail) | 实习 | 未披露 | 北京 | 评测研发 |
+| [多模态大模型实习生-深圳](https://hr-jobs.sensetime.com/edu/position/7670437248752601386/detail) | 实习 | 未披露 | 深圳 | 研究交叉 |
+| [训练推理优化实习生，多模态](https://hr-jobs.sensetime.com/edu/position/7685594038246377734/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [大模型算法实习生](https://hr-jobs.sensetime.com/edu/position/7660447855903426842/detail) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [【27届校招】FDE工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659353356489525542/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [【27届顶尖】大模型推理优化工程师-大装置](https://hr-jobs.sensetime.com/edu/position/7659680253195405577/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [大装置-大模型算法应用实习生](https://hr-jobs.sensetime.com/edu/position/7657098532688709938/detail) | 实习 | 未披露 | 北京 | 应用研发 |
 
 ## 生数科技（2）
 
@@ -2449,7 +2547,7 @@
 | [流式视频Agent实习生](https://shengshu.jobs.feishu.cn/index/position/7670063623927515455/detail) | 实习 | 未明确 | 北京 | 研究交叉 |
 | [Agent算法实习生](https://shengshu.jobs.feishu.cn/index/position/7673925527993157898/detail) | 实习 | 未明确 | 北京 | 应用研发 |
 
-## 面壁智能（13）
+## 面壁智能（24）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2466,18 +2564,26 @@
 | [大模型算法实习生-法律智能与自主Agent](https://modelbest.jobs.feishu.cn/campus/position/7615549708789975305/detail?spread=NEDQRTH) | 实习 | 2026届 | 北京 | 应用研发 |
 | [大模型算法实习生-RAG/Agent方向](https://modelbest.jobs.feishu.cn/campus/position/7569805079939909926/detail?spread=NEDQRTH) | 实习 | 2026届 | 北京 | 应用研发 |
 | [大模型算法工程师 - 智能体方向](https://modelbest.jobs.feishu.cn/campus/position/7516643657231911180/detail?spread=NEDQRTH) | 校招 | 2027届 | 北京 | 应用研发 |
+| [多模态推理infra实习生](https://modelbest.jobs.feishu.cn/campus/position/7690767483334265151/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [算法研发实习生(多模态\后训练)](https://modelbest.jobs.feishu.cn/campus/position/7683048661333805350/detail) | 实习 | 未披露 | 北京 | 评测研发 |
+| [大模型Agent工程实习生](https://modelbest.jobs.feishu.cn/campus/position/7682708160822593811/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [Agentic Engineering (量化 Infra 方向）实习生](https://modelbest.jobs.feishu.cn/campus/position/7683042369134479657/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [AutoTraining 工程师/研究员实习生](https://modelbest.jobs.feishu.cn/campus/position/7676905572259858739/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [Agentic Infra 实习生](https://modelbest.jobs.feishu.cn/campus/position/7683473677028346155/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [具身HarnessAgent算法实习生](https://modelbest.jobs.feishu.cn/campus/position/7681562665059322148/detail) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [具身智能数据平台实习生（Infra）](https://modelbest.jobs.feishu.cn/campus/position/7695613731863234843/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [大模型评测算法实习生](https://modelbest.jobs.feishu.cn/campus/position/7694501311970806042/detail) | 实习 | 未披露 | 北京 | 评测研发 |
+| [大模型数据开发实习生](https://modelbest.jobs.feishu.cn/campus/position/7685613375938431275/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [全模态记忆系统实习生](https://modelbest.jobs.feishu.cn/campus/position/7681283109740185907/detail) | 实习 | 未披露 | 北京 | 研究交叉 |
 
-## 无问芯穹/Infini-AI（1）
+## 无问芯穹/Infini-AI（4）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [大模型 / 多模态算法 / Agent 方向实习生](https://infinigence.jobs.feishu.cn/088717/position/7667421042629511433/detail) | 实习 | 未明确 | 北京 | 应用研发 |
-
-## 昆仑万维/天工（1）
-
-| 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
-| --- | --- | --- | --- | --- |
-| [AI视频 - NLP算法工程师](https://jobs.kunlun.com/459522/position/7516920796661434650/detail) | 校招 | 2026校园项目；具体毕业时间未披露 | 北京、深圳 | 应用研发 |
+| [大模型 / 多模态算法 / Agent 方向实习生](https://infinigence.jobs.feishu.cn/088717/position/7667421042629511433/detail) | 实习 | 未披露 | 北京 | 研究交叉 |
+| [端侧大模型推理实习生](https://infinigence.jobs.feishu.cn/088717/position/7660353488697739539/detail) | 实习 | 未披露 | 北京 | 多方向 |
+| [大模型推理框架开发实习生](https://infinigence.jobs.feishu.cn/088717/position/7648918984653326618/detail) | 实习 | 未披露 | 上海 | 多方向 |
 
 ## Shopee（28）
 
@@ -2523,7 +2629,7 @@
 | [AI应用开发工程师](https://talent.lenovo.com.cn/position/detail?id=2351) | 校招 | 毕业时间2026年9月至2027年8月 | 天津、深圳、成都、北京、武汉、上海 | 应用研发 |
 | [AI FDE工程师](https://talent.lenovo.com.cn/position/detail?id=2357) | 校招 | 毕业时间2026年9月至2027年8月 | 苏州 | 应用研发 |
 
-## 蔚来（81）
+## 蔚来（200）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2608,6 +2714,125 @@
 | [实习-大模型安全工程师](https://nio.jobs.feishu.cn/campus/position/7633336911109507364/detail) | 实习 | 蔚来2027届实习生招募 | 上海 | 应用研发 |
 | [实习-AI代码分析](https://nio.jobs.feishu.cn/campus/position/7633336911109196068/detail) | 实习 | 蔚来2027届实习生招募 | 上海 | 应用研发 |
 | [实习-安全产品开发（AI方向）](https://nio.jobs.feishu.cn/campus/position/7633336911108884772/detail) | 实习 | 蔚来2027届实习生招募 | 上海 | 应用研发 |
+| [Super Sparks-校招-企业智能算法研究员](https://nio.jobs.feishu.cn/campus/position/7665996429010569515/detail) | 校招 | 未披露 | 上海 | 研究交叉 |
+| [Super Sparks-校招-企业智能系统研发工程师](https://nio.jobs.feishu.cn/campus/position/7665996543711054118/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-座舱大模型后训练/Agentic 算法工程师](https://nio.jobs.feishu.cn/campus/position/7673027279396768009/detail) | 校招 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [校招-面向AI智能测试开发工程师——嵌入式软件方向](https://nio.jobs.feishu.cn/campus/position/7673026981592729907/detail) | 校招 | 未披露 | 上海 / 合肥 | 评测研发 |
+| [实习-大模型 Agentic 算法工程师](https://nio.jobs.feishu.cn/campus/position/7633340935077873963/detail) | 实习 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [校招-大模型训练框架研发工程师(智能辅助驾驶方向)](https://nio.jobs.feishu.cn/campus/position/7686123644536506666/detail) | 校招 | 2027届 | 上海 / 北京 | 多方向 |
+| [Super Sparks-校招-AI推理引擎算法工程师](https://nio.jobs.feishu.cn/campus/position/7667519736092002602/detail) | 校招 | 未披露 | 北京 / 上海 | 多方向 |
+| [校招-仿真场景引擎工程师](https://nio.jobs.feishu.cn/campus/position/7673027051922360622/detail) | 校招 | 未披露 | 上海 / 北京 | 多方向 |
+| [校招-AI推理引擎开发工程师](https://nio.jobs.feishu.cn/campus/position/7673027294877337866/detail) | 校招 | 未披露 | 北京 | 多方向 |
+| [校招-数据智能开发工程师](https://nio.jobs.feishu.cn/campus/position/7673028696328505606/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [实习-AI软件研发工程师](https://nio.jobs.feishu.cn/campus/position/7633340935079201067/detail) | 实习 | 未披露 | 合肥 / 上海 | 应用研发 |
+| [校招-算法模型评测工程师](https://nio.jobs.feishu.cn/campus/position/7673027059903678746/detail) | 校招 | 未披露 | 上海 / 北京 | 评测研发 |
+| [校招-AI仿真与验证平台软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7678154599974439218/detail) | 校招 | 未披露 | 上海 / 合肥 | 多方向 |
+| [校招-车载语音助手服务开发工程师](https://nio.jobs.feishu.cn/campus/position/7673027287932324142/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-整车属性智能化开发工程师（CAE方向）](https://nio.jobs.feishu.cn/campus/position/7673027329027688755/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [校招-AI模型部署与性能优化工程师](https://nio.jobs.feishu.cn/campus/position/7687434450226317604/detail) | 校招 | 未披露 | 深圳 / 上海 | 多方向 |
+| [蔚来AGI超星计划-基于蔚来能源全场景经营的“大模型&算法”研究](https://nio.jobs.feishu.cn/campus/position/7638946757111941430/detail) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [蔚来AGI超星计划-Harness OS](https://nio.jobs.feishu.cn/campus/position/7638943961831409947/detail) | 实习 | 未披露 | 上海 / 北京 | 应用研发 |
+| [实习-AI应用开发/后端研发实习生](https://nio.jobs.feishu.cn/campus/position/7633341626643122475/detail) | 实习 | 未披露 | 合肥 / 上海 | 应用研发 |
+| [Super Sparks-校招-座舱智能体评测和数据闭环算法研究员](https://nio.jobs.feishu.cn/campus/position/7667519836088420627/detail) | 校招 | 未披露 | 北京 / 上海 | 评测研发 |
+| [校招-Agent安全工程师](https://nio.jobs.feishu.cn/campus/position/7673028714305374518/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [校招-座舱Omni多模态大模型算法工程师](https://nio.jobs.feishu.cn/campus/position/7673027279395866889/detail) | 校招 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [校招-智能硬件测试软件开发（AI 增强）](https://nio.jobs.feishu.cn/campus/position/7673027011972319534/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [校招-车端 AI Agent 与应用生态系统架构工程师](https://nio.jobs.feishu.cn/campus/position/7673028675729656105/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-AI测试开发工程师](https://nio.jobs.feishu.cn/campus/position/7673027365040294153/detail) | 校招 | 未披露 | 合肥 / 武汉 / 上海 / 北京 | 评测研发 |
+| [校招-Agent应用开发工程师（用户移动）](https://nio.jobs.feishu.cn/campus/position/7673028737668090153/detail) | 校招 | 未披露 | 合肥 / 武汉 | 应用研发 |
+| [校招-面向AI智能测试开发工程师——应用软件方向](https://nio.jobs.feishu.cn/campus/position/7673026981592434995/detail) | 校招 | 未披露 | 上海 / 合肥 | 评测研发 |
+| [校招-冲压设备工程师（MF2）](https://nio.jobs.feishu.cn/campus/position/7673026809440635162/detail) | 校招 | 未披露 | 合肥 | 多方向 |
+| [校招-数据工程算法工程师](https://nio.jobs.feishu.cn/campus/position/7673027335571261722/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [校招-AI 中间件研发工程师](https://nio.jobs.feishu.cn/campus/position/7673027263943788810/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [实习-AI中间件研发工程师](https://nio.jobs.feishu.cn/campus/position/7633337712535324982/detail) | 实习 | 未披露 | 上海 | 多方向 |
+| [校招-车端AI Agent运行时基座软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7678155050254616883/detail) | 校招 | 未披露 | 上海 / 合肥 | 应用研发 |
+| [校招-工业化AI算法工程师](https://nio.jobs.feishu.cn/campus/position/7680475106171423026/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [校招-智能汽车AI安全研发工程师](https://nio.jobs.feishu.cn/campus/position/7673027003825670426/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [校招-工程数据分析运营工程师](https://nio.jobs.feishu.cn/campus/position/7673027342273005870/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [蔚来AGI超星计划-基于多模态数据模拟和多模态表达的NOMI Mate具身交互控制研究](https://nio.jobs.feishu.cn/campus/position/7638943698469980443/detail) | 实习 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [校招-车载操作系统AI基座软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7678154331300727050/detail) | 校招 | 未披露 | 上海 / 合肥 | 多方向 |
+| [校招-端侧大模型多平台部署优化](https://nio.jobs.feishu.cn/campus/position/7673027263945263370/detail) | 校招 | 未披露 | 南京 | 多方向 |
+| [校招-AI引擎研发工程师](https://nio.jobs.feishu.cn/campus/position/7673027038047291658/detail) | 校招 | 未披露 | 上海 / 北京 | 多方向 |
+| [实习-语音大模型算法工程师（语音理解）](https://nio.jobs.feishu.cn/campus/position/7633340935078529323/detail) | 实习 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [校招-信息娱乐Agent开发工程师](https://nio.jobs.feishu.cn/campus/position/7673028714304784694/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [实习-大模型安全工程师](https://nio.jobs.feishu.cn/campus/position/7633336911109507364/detail) | 实习 | 未披露 | 上海 | 评测研发 |
+| [校招-跨端Agent开发工程师](https://nio.jobs.feishu.cn/campus/position/7673028714305718582/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-AI平台研发工程师](https://nio.jobs.feishu.cn/campus/position/7673028686119110918/detail) | 校招 | 未披露 | 北京 | 多方向 |
+| [实习-AI平台软件研发工程师](https://nio.jobs.feishu.cn/campus/position/7633337700573874474/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [校招-车端大模型与世界模型系统架构工程师](https://nio.jobs.feishu.cn/campus/position/7673028161060538687/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [校招-算法研发工程师](https://nio.jobs.feishu.cn/campus/position/7673027258018269478/detail) | 校招 | 未披露 | 上海 | 研究交叉 |
+| [校招-数字化工程师（MF2）](https://nio.jobs.feishu.cn/campus/position/7673026809441224986/detail) | 校招 | 未披露 | 合肥 | 多方向 |
+| [校招-AI芯片加速算法工程师](https://nio.jobs.feishu.cn/campus/position/7675586068515588406/detail) | 校招 | 未披露 | 上海 / 合肥 / 杭州 | 多方向 |
+| [校招-大模型评估算法工程师](https://nio.jobs.feishu.cn/campus/position/7673027294877042954/detail) | 校招 | 未披露 | 北京 / 上海 | 评测研发 |
+| [校招-AI软件评测工程师](https://nio.jobs.feishu.cn/campus/position/7673027263944378634/detail) | 校招 | 未披露 | 上海 / 合肥 | 评测研发 |
+| [实习-AI渗透测试实习生](https://nio.jobs.feishu.cn/campus/position/7633336911109818660/detail) | 实习 | 未披露 | 上海 | 评测研发 |
+| [校招-智能辅助驾驶一段式闭环仿真工程师](https://nio.jobs.feishu.cn/campus/position/7673028675730557225/detail) | 校招 | 未披露 | 上海 / 北京 | 评测研发 |
+| [校招-端侧AI芯片推理基座软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7678154498359691566/detail) | 校招 | 未披露 | 上海 / 合肥 | 多方向 |
+| [校招-车载ECU AI 基座应用软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7678154993330211115/detail) | 校招 | 未披露 | 上海 / 合肥 | 多方向 |
+| [实习-工具链AI工程师](https://nio.jobs.feishu.cn/campus/position/7633337677701744938/detail) | 实习 | 未披露 | 上海 / 合肥 / 北京 | 应用研发 |
+| [校招-智能装备AI工程师](https://nio.jobs.feishu.cn/campus/position/7685223240394721587/detail) | 校招 | 未披露 | 合肥 | 应用研发 |
+| [Super Sparks-校招-智能体自演进算法研究/NOMI养成研究员](https://nio.jobs.feishu.cn/campus/position/7667519559041468699/detail) | 校招 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [蔚来AGI超星计划-企业智能系统研发工程师](https://nio.jobs.feishu.cn/campus/position/7663323497515321627/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [Super Sparks-校招-AI安全工程师](https://nio.jobs.feishu.cn/campus/position/7661853615351826742/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [蔚来AGI超星计划-自研斯坦福小镇（用户智能体的构建）](https://nio.jobs.feishu.cn/campus/position/7638946975437572378/detail) | 实习 | 未披露 | 上海 / 北京 | 应用研发 |
+| [校招-Agent应用开发工程师（社区）](https://nio.jobs.feishu.cn/campus/position/7673028746206677267/detail) | 校招 | 未披露 | 合肥 / 武汉 / 上海 / 北京 | 应用研发 |
+| [校招-大模型训练框架开发工程师](https://nio.jobs.feishu.cn/campus/position/7673027038047914250/detail) | 校招 | 未披露 | 北京 | 多方向 |
+| [校招-AI Agent 开发工程师](https://nio.jobs.feishu.cn/campus/position/7678154165688731942/detail) | 校招 | 未披露 | 上海 / 合肥 | 应用研发 |
+| [校招-可信 AI与智能体安全工程师](https://nio.jobs.feishu.cn/campus/position/7673027003826555162/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [校招-大模型推理框架工程师](https://nio.jobs.feishu.cn/campus/position/7677833874889771300/detail) | 校招 | 未披露 | 深圳 / 合肥 / 上海 | 多方向 |
+| [校招-Agent开发工程师-NOMI](https://nio.jobs.feishu.cn/campus/position/7673027287931570478/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [蔚来AGI超星计划-车端智能体框架和应用研究](https://nio.jobs.feishu.cn/campus/position/7638943155555993882/detail) | 实习 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [Super Sparks-校招-车端智能体框架和应用工程师](https://nio.jobs.feishu.cn/campus/position/7664801028949002539/detail) | 校招 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [蔚来AGI超星计划-Agentic Semantic Search](https://nio.jobs.feishu.cn/campus/position/7638945395347523876/detail) | 实习 | 未披露 | 圣何塞 / 上海 / 北京 | 应用研发 |
+| [校招-供应链算法工程师](https://nio.jobs.feishu.cn/campus/position/7673026521368004890/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-多语言大模型算法工程师](https://nio.jobs.feishu.cn/campus/position/7673027287931144494/detail) | 校招 | 未披露 | 北京 | 研究交叉 |
+| [校招-Agentic AI安全应用工程师（Cyber Security方向）](https://nio.jobs.feishu.cn/campus/position/7673027003827144986/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [Super Sparks-校招-高性能AI推理平台研究员/工程师](https://nio.jobs.feishu.cn/campus/position/7661854032978151718/detail) | 校招 | 未披露 | 上海 / 圣何塞 | 多方向 |
+| [校招-测试开发工程师](https://nio.jobs.feishu.cn/campus/position/7673027301600348442/detail) | 校招 | 未披露 | 北京 / 上海 | 评测研发 |
+| [校招-AI Infra 工程师（大模型推理\RL方向）](https://nio.jobs.feishu.cn/campus/position/7683874596673079590/detail) | 校招 | 未披露 | 深圳 / 合肥 / 上海 / 杭州 | 多方向 |
+| [校招-Agent应用开发工程师（销售运营）](https://nio.jobs.feishu.cn/campus/position/7673028737668417833/detail) | 校招 | 未披露 | 合肥 / 武汉 / 上海 / 北京 | 应用研发 |
+| [校招-大模型端侧算法开发工程师](https://nio.jobs.feishu.cn/campus/position/7673027294876748042/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-Physical AI安全研发工程师](https://nio.jobs.feishu.cn/campus/position/7673026997752760622/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [校招-座舱Agent Harness算法工程师](https://nio.jobs.feishu.cn/campus/position/7673027279396161801/detail) | 校招 | 未披露 | 北京 / 上海 | 应用研发 |
+| [校招-测试开发工程师（具身智能应用方向）](https://nio.jobs.feishu.cn/campus/position/7673026938869516554/detail) | 校招 | 未披露 | 上海 | 评测研发 |
+| [校招-大数据分析与应用工程师-智能硬件](https://nio.jobs.feishu.cn/campus/position/7673027020531845422/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-AI 智能平台研发工程师](https://nio.jobs.feishu.cn/campus/position/7673027059904907546/detail) | 校招 | 未披露 | 北京 | 应用研发 |
+| [校招-AIOps工程师](https://nio.jobs.feishu.cn/campus/position/7673027263944968458/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [Super Sparks-校招-多模态智能体交互研究员](https://nio.jobs.feishu.cn/campus/position/7661852823559424319/detail) | 校招 | 未披露 | 上海 | 研究交叉 |
+| [校招-大模型数据闭环工程师](https://nio.jobs.feishu.cn/campus/position/7673027044376676618/detail) | 校招 | 未披露 | 北京 | 多方向 |
+| [校招-AI软件研发工程师（产研&企业治理领域）](https://nio.jobs.feishu.cn/campus/position/7673028696329095430/detail) | 校招 | 未披露 | 上海 / 合肥 | 应用研发 |
+| [Super Sparks-校招-座舱具身智能体算法研究员](https://nio.jobs.feishu.cn/campus/position/7667520185552980234/detail) | 校招 | 未披露 | 北京 / 上海 | 研究交叉 |
+| [校招-全栈开发工程师](https://nio.jobs.feishu.cn/campus/position/7673026865195927818/detail) | 校招 | 未披露 | 上海 | 多方向 |
+| [实习-AI基础设施工程师](https://nio.jobs.feishu.cn/campus/position/7633337700574185770/detail) | 实习 | 未披露 | 上海 | 多方向 |
+| [Super Sparks-校招-智能体原生OS研究员/工程师](https://nio.jobs.feishu.cn/campus/position/7661854032978774310/detail) | 校招 | 未披露 | 上海 / 圣何塞 | 多方向 |
+| [校招-AI平台研发工程师](https://nio.jobs.feishu.cn/campus/position/7677549163089070377/detail) | 校招 | 未披露 | 上海 / 合肥 | 应用研发 |
+| [蔚来AGI超星计划-Autonomy Operating System - 企业级自主智能操作系统](https://nio.jobs.feishu.cn/campus/position/7638946017148160297/detail) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [校招-智能测试工具链研发工程师](https://nio.jobs.feishu.cn/campus/position/7678266564365879615/detail) | 校招 | 未披露 | 北京 | 评测研发 |
+| [Super Sparks-校招-大语言模型后训练/Agentic算法工程师](https://nio.jobs.feishu.cn/campus/position/7664917507270691126/detail) | 校招 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [实习-AI运维应用工程师](https://nio.jobs.feishu.cn/campus/position/7633337712535636278/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [校招-AI软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7673026960070674738/detail) | 校招 | 未披露 | 上海 / 深圳 / 合肥 / 杭州 | 多方向 |
+| [校招-agent研发工程师](https://nio.jobs.feishu.cn/campus/position/7673027038048209162/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-AI 运维应用工程师](https://nio.jobs.feishu.cn/campus/position/7673027263944083722/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-AI软件研发工程师（工业化&供应链领域）](https://nio.jobs.feishu.cn/campus/position/7673028696329390342/detail) | 校招 | 未披露 | 上海 / 合肥 | 应用研发 |
+| [校招-云平台软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7678153484214716678/detail) | 校招 | 未披露 | 上海 / 合肥 | 多方向 |
+| [校招-CAD工具链与AI应用工程师](https://nio.jobs.feishu.cn/campus/position/7673027329026754867/detail) | 校招 | 未披露 | 合肥 | 应用研发 |
+| [校招-媒体软件开发工程师](https://nio.jobs.feishu.cn/campus/position/7687434851364555071/detail) | 校招 | 未披露 | 深圳 / 上海 | 多方向 |
+| [实习-AI安全运营工程师](https://nio.jobs.feishu.cn/campus/position/7633336911110129956/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [蔚来AGI超星计划-基于持久化记忆的NOMI个性化伙伴养成技术研究](https://nio.jobs.feishu.cn/campus/position/7638942940925233451/detail) | 实习 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [蔚来AGI超星计划-企业智能算法研究员](https://nio.jobs.feishu.cn/campus/position/7663323658521807113/detail) | 实习 | 未披露 | 上海 | 研究交叉 |
+| [Super Sparks-校招-AI大模型应用研究员/工程师](https://nio.jobs.feishu.cn/campus/position/7661854032978463014/detail) | 校招 | 未披露 | 上海 / 圣何塞 | 研究交叉 |
+| [校招-Agent应用开发工程师（资源服务）](https://nio.jobs.feishu.cn/campus/position/7673028746206972179/detail) | 校招 | 未披露 | 合肥 / 武汉 / 上海 / 北京 | 应用研发 |
+| [蔚来AGI超星计划-组织知识协同系统](https://nio.jobs.feishu.cn/campus/position/7638945857585809700/detail) | 实习 | 未披露 | 上海 / 北京 | 研究交叉 |
+| [校招-集合通信软件工程师](https://nio.jobs.feishu.cn/campus/position/7675584795712407835/detail) | 校招 | 未披露 | 上海 / 合肥 / 杭州 | 多方向 |
+| [蔚来AGI超星计划-AI Agent安全关键算法和系统研究](https://nio.jobs.feishu.cn/campus/position/7638945392923232539/detail) | 实习 | 未披露 | 上海 | 评测研发 |
+| [Super Sparks-校招-端侧大模型与AgentOS优化工程师](https://nio.jobs.feishu.cn/campus/position/7667520488911390986/detail) | 校招 | 未披露 | 南京 | 多方向 |
+| [实习-AI 数据开发](https://nio.jobs.feishu.cn/campus/position/7633337685424359721/detail) | 实习 | 未披露 | 上海 | 应用研发 |
+| [Super Sparks-校招-智能体Harness Engineering研究员/工程师](https://nio.jobs.feishu.cn/campus/position/7661853188068591935/detail) | 校招 | 未披露 | 上海 | 应用研发 |
+| [校招-大模型工程师](https://nio.jobs.feishu.cn/campus/position/7673027365039999241/detail) | 校招 | 未披露 | 合肥 / 武汉 / 上海 / 北京 | 多方向 |
+| [校招-多模态应用工程师](https://nio.jobs.feishu.cn/campus/position/7673028704662784275/detail) | 校招 | 未披露 | 上海 / 北京 | 多方向 |
+| [实习-AI代码分析](https://nio.jobs.feishu.cn/campus/position/7633336911109196068/detail) | 实习 | 未披露 | 上海 | 评测研发 |
+| [实习-AI原生安全开发](https://nio.jobs.feishu.cn/campus/position/7633337667148892457/detail) | 实习 | 未披露 | 上海 | 评测研发 |
+| [校招-AI Coding与效能平台开发工程师](https://nio.jobs.feishu.cn/campus/position/7673028714306013494/detail) | 校招 | 未披露 | 南京 | 多方向 |
 
 ## 顺丰（11）
 
@@ -2770,7 +2995,7 @@
 | [【研发中心】2027届AI应用开发工程师(J24400)](https://job.dahuatech.com/#/CampusApply?id=cc425147-ec13-45d8-b704-f4c6632f0f89) | 校招 | 2027届 | 杭州市 | 应用研发 |
 | [【研发中心】2027届大数据工程师（Agent方向）(J24380)](https://job.dahuatech.com/#/CampusApply?id=8603b805-ba07-4bd3-8a73-6898f9e71132) | 校招 | 2027届 | 杭州市 | 多方向 |
 
-## 小鹏集团（27）
+## 小鹏集团（28）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2801,6 +3026,7 @@
 | [【27届校招】整车集成测试培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7658239545108531494/detail) | 校招 | 2027届 | 广州 | 评测研发 |
 | [【27届校招】AI算法培训生](https://xiaopeng.jobs.feishu.cn/campus/position/7658230816728172827/detail) | 校招 | 2027届 | 广州 | 应用研发 |
 | [具身软件系统实习生](https://xiaopeng.jobs.feishu.cn/campus/position/7627121367213001006/detail) | 实习 | 未披露 | 深圳、上海 | 多方向 |
+| [具身智能算法研究实习生（智能体）](https://xiaopeng.jobs.feishu.cn/campus/position/7695752833673185563/detail) | 实习 | 未披露 | 上海 / 北京 / 深圳 | 研究交叉 |
 
 ## 理想汽车（79）
 
@@ -3004,24 +3230,32 @@
 | [【2027校招正式批】数据仓库工程师](https://campus.hellogroup.com/campus-recruitment/immomo/54299/#/job/e0d80fb1-6fe9-4887-bbbd-66ed6c3e5a95) | 校招 | 2027 | 未披露 | 多方向 |
 | [【2027校招正式批】全栈开发工程师](https://campus.hellogroup.com/campus-recruitment/immomo/54299/#/job/2a9592a6-2718-4e32-8bfa-fcb355dbc16a) | 校招 | 2027 | 未披露 | 应用研发 |
 
-## 作业帮（5）
+## 作业帮（4）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [AI全栈开发工程师（海外新业务）-27秋招](https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/39072498-6cee-4401-87a7-38416cecdd68) | 校招 | 2027 | 北京市 | 应用研发 |
 | [算法服务后端工程师-27秋招](https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/80e97f59-9ee4-43a5-8bab-2c3c7c0a2a46) | 校招 | 2027 | 北京市 | 应用研发 |
 | [后端研发工程师（香港）-27秋招](https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/c3c6fbef-a742-4ae8-a942-b52d6b2810c6) | 校招 | 2027 | 香港 | 应用研发 |
-| [大模型算法工程师（自然语言）-27秋招](https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/4a3d9495-06bf-4f85-b4aa-7a84bd059c5f) | 校招 | 2027 | 北京市 | 研究交叉 |
 | [大数据研发工程师-27秋招](https://app.mokahr.com/campus-recruitment/zuoyebang/144908?locale=zh-CN#/job/b87bf8a8-67b7-4eb5-bf6c-5dbee5f2e892) | 校招 | 2027 | 北京市 | 多方向 |
 
-## 影石 Insta360（4）
+## 影石 Insta360（13）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
 | [Data agent全栈开发工程师-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7678174819064318246/detail) | 校招 | 2027 | 深圳 | 应用研发 |
 | [视觉大模型算法工程师-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7663398452705200427/detail) | 校招 | 2027 | 深圳 | 研究交叉 |
-| [Devops工程师-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7657131206228134154/detail) | 校招 | 2027 | 深圳 | 应用研发 |
+| [Devops工程师-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7657131206228134154/detail) | 校招 | 2027 | 深圳 | 多方向 |
 | [DataAgent全栈开发实习生](https://arashivision.jobs.feishu.cn/campus/position/7655585206824421682/detail) | 实习 | 未披露 | 深圳 | 应用研发 |
+| [AI算法实习生（振动与力学方向）](https://arashivision.jobs.feishu.cn/campus/position/7657458052065528074/detail) | 实习 | 未披露 | 深圳 | 应用研发 |
+| [AI实习生（数据运营/工作流）](https://arashivision.jobs.feishu.cn/campus/position/7667837696232311059/detail) | 实习 | 未披露 | 深圳 | 多方向 |
+| [VR定位算法工程师（AG）-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7665937890857486638/detail) | 校招 | 未披露 | 深圳 | 多方向 |
+| [嵌入式感知算法工程师（AG）-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7657364045402720521/detail) | 校招 | 未披露 | 深圳 | 多方向 |
+| [嵌入式算法实习生](https://arashivision.jobs.feishu.cn/campus/position/7657522039397501193/detail) | 实习 | 未披露 | 深圳 | 多方向 |
+| [研发效能实习生](https://arashivision.jobs.feishu.cn/campus/position/7695990217157576986/detail) | 实习 | 未披露 | 深圳 | 应用研发 |
+| [AI应用工程师-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7664585052421196041/detail) | 校招 | 未披露 | 深圳 | 应用研发 |
+| [AI平台研发实习生](https://arashivision.jobs.feishu.cn/campus/position/7658194353126787369/detail) | 实习 | 未披露 | 深圳 | 多方向 |
+| [AI模型部署优化工程师-2027校招](https://arashivision.jobs.feishu.cn/campus/position/7663400097892780339/detail) | 校招 | 未披露 | 深圳 | 多方向 |
 
 ## 神州数码/神州信息（9）
 

@@ -1,6 +1,6 @@
 # 24. 框架选型：先问要保证什么，再看谁能实现
 
-[← 上一章](23-ProductionRuntime.md) · [Agent 目录](../README.md) · [综合复习 →](../review/README.md)
+[← 上一章](23-ProductionRuntime.md) · [Agent 目录](../README.md)
 
 一个助手只有两个只读工具，另一个要等待用户批准、跨重启继续并协调多个子任务。它们都叫 Agent，却未必需要同一套框架结构。
 
@@ -219,9 +219,9 @@ Codex、Claude Code 是具体产品实现参考，不应与 SDK 和自研循环�
 - [Agents SDK running](https://openai.github.io/openai-agents-python/running_agents/)与[Sessions](https://openai.github.io/openai-agents-python/sessions/)：分别核对循环和会话项管理。
 - [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence)与[interrupts](https://docs.langchain.com/oss/python/langgraph/interrupts)：核对状态保存和节点重跑。
 - [LangChain agents](https://docs.langchain.com/oss/python/langchain/agents)：核对高层入口与图运行基础。
-- [综合复习](../review/README.md)：脱离框架名称，重新推导控制、状态、执行和验收责任。
+- 可返回 [Agent 模块目录](../README.md)，按控制、状态、执行与验收责任回看主线。
 
 
 ---
 
-[← 上一章](23-ProductionRuntime.md) · [Agent 目录](../README.md) · [综合复习 →](../review/README.md)
+[← 上一章](23-ProductionRuntime.md) · [Agent 目录](../README.md)

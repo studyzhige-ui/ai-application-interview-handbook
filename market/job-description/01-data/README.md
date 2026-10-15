@@ -1,15 +1,14 @@
-# 官方岗位原文与索引
+# 岗位数据
 
-- [岗位索引](岗位JD.md)：按公司列出已完成语义审核并正式纳入的岗位，点击岗位名阅读官网详情。
-- [当前正式岗位库](official-jds.json)：公司覆盖、完整职责与任职要求、招聘ID与地点、类型与届次、模型判断；其中字节跳动岗位通过哈希引用下列分片。
-- [字节跳动当前岗位](bytedance-jds.json)：该公司的完整当前岗位正文。按公司分开存储以保持文件可传输，不另建第二套岗位库存。
-- [非当前观察](source-observations.json)：排除、不完整和访问失败的核验记录。
-- [历史一手材料](historical-jds.json)：未重新取得的原始事实，不计当前岗位数量。
-- `automation/scan-state.json`：GitHub Actions 自动扫描的职位身份/正文指纹基线；不是正式岗位库。
-- `automation/review-queue.json`：新增、正文变化和可能消失事件的累计待审队列；进入该文件不代表岗位已经被判定为目标岗位。
+[岗位JD.md](岗位JD.md) 是可直接打开官方详情的正式索引。[official-jds.json](official-jds.json) 是正式库；[bytedance-jds.json](bytedance-jds.json) 是字节跳动的同一正式库分片，不是另一套数据库。正式岗位保留官方职位 ID、原文、地点、类别、资格依据和 GPT 的工程职责判断。
 
-当前库的 `companies[].jobs` 是完整阅读后正式纳入的岗位；字节跳动公司的 `jobs_file` 引用同一快照下的完整数组。保全文件的 `companies[].other_observations` 记录非当前观察，`historical_file` 引用历史一手材料。所有引用均校验固定文件名、字节数、SHA-256 和快照，检查时恢复同一逻辑岗位库；每份正文仅存一处。历史记录可能只披露部分字段，不一律称完整 JD。
+[source-observations.json](source-observations.json) 保存非当前观察；[historical-jds.json](historical-jds.json) 保存未重新取得的历史材料，均不计入当前正式岗位数量。
 
-岗位库正文保留官方措辞、完整资格和投递说明；发生页面结构提取时分别保留正文哈希与来源捕获哈希。清洁排版不会把未披露信息补成事实。
+自动运行只需要四个中间文件：
 
-自动扫描层与正式岗位库严格分离。自动化可以高频发现来源变化，但不得因为关键词命中直接加入正式库，也不得因为一次网络失败直接删除现有岗位。待审变化完成完整 JD 语义判断后，才进入正式数据更新流程。
+- `automation/scan-state.json`：官方职位的身份与正文指纹，用于下次比较，防止重复抓取和错误删除。
+- `automation/review-queue.json`：尚未交给 GPT 作最终判断的新增或变化职位。
+- `automation/audit-batch.json`：从队列取出的下一批完整 JD，供 GPT 定时任务读取。
+- `automation/audit-decisions.json`：GPT 写回本批纳入、排除或确认下线的结论；GitHub Actions 验证后立即入库并清空收件箱。
+
+**只有两项业务动作：GitHub 采集，GPT 筛选后入库。** 中间 JSON 只是两者交换数据，不代表额外人工审批。只要 JD 未变，不重复审计。网络失败、列表页误抓和不完整详情不会覆盖已有完整正式 JD。

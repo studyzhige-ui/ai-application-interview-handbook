@@ -1,0 +1,139 @@
+name: Apply ChatGPT semantic JD audit decisions
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'market/job-description/01-data/automation/**'
+      - 'market/job-description/01-data/official-jds.json'
+      - 'market/job-description/01-data/bytedance-jds.json'
+      - 'market/job-description/04-scripts/**'
+      - '.github/workflows/apply-jd-semantic-audit.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'market/job-description/01-data/automation/audit-decisions.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jd-semantic-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-audit-bridge:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate JD GPT screening bridge and catalog contracts
+        run: python -B market/job-description/04-scripts/jd.py check
+
+  apply:
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Apply submitted semantic decisions
+        run: |
+          python -B market/job-description/04-scripts/jd.py apply-audit \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --decisions-file market/job-description/01-data/automation/audit-decisions.json \
+            --official-file market/job-description/01-data/official-jds.json \
+            --bytedance-file market/job-description/01-data/bytedance-jds.json \
+            --index-file market/job-description/01-data/岗位JD.md
+
+      - name: Prepare next GPT screening batch
+        run: |
+          python -B market/job-description/04-scripts/jd.py prepare-audit \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --batch-file market/job-description/01-data/automation/audit-batch.json \
+            --limit 24
+
+      - name: Refresh stored snapshot hashes after semantic decisions
+        shell: python
+        run: |
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path("market/job-description")
+          manifest_path = root / "03-strategy/stored-snapshots.json"
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          for item in manifest["files"]:
+              if item["path"] in {"01-data/official-jds.json", "01-data/bytedance-jds.json", "01-data/岗位JD.md"}:
+                  content = (root / item["path"]).read_bytes()
+                  item["bytes"] = len(content)
+                  item["sha256"] = hashlib.sha256(content).hexdigest()
+          manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+      - name: Refresh current screening backlog count
+        shell: python
+        run: |
+          import json
+          import re
+          from pathlib import Path
+          root = Path("market/job-description")
+          queue = json.loads((root / "01-data/automation/review-queue.json").read_text(encoding="utf-8"))
+          pending = sum(e.get("review_state") == "pending" for e in queue["entries"].values())
+          path = root / "02-analysis/automation-status.md"
+          previous = path.read_text(encoding="utf-8")
+          updated = re.sub(r"(?m)^(?:累计待审|等待 GPT 筛选)：.*$",
+                           f"等待 GPT 筛选：**{pending}** 条。", previous)
+          path.write_text(updated, encoding="utf-8")
+
+      - name: Validate repository before publication
+        run: |
+          python -B market/job-description/04-scripts/jd.py check
+          git diff --check
+
+      - name: Publish applied decisions and next batch
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+            echo "main moved during GPT screening; skip publication and let the newer push retry."
+            exit 0
+          fi
+          git add \
+            market/job-description/01-data/automation/review-queue.json \
+            market/job-description/01-data/automation/audit-batch.json \
+            market/job-description/02-analysis/automation-status.md \
+            market/job-description/01-data/automation/audit-decisions.json \
+            market/job-description/01-data/official-jds.json \
+            market/job-description/01-data/bytedance-jds.json \
+            market/job-description/01-data/岗位JD.md \
+            market/job-description/03-strategy/stored-snapshots.json
+          if git diff --cached --quiet; then
+            echo "No GPT screening state change."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "market: apply semantic JD audit"
+          git push origin HEAD:main

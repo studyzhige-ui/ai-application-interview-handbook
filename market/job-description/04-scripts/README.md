@@ -1,96 +1,34 @@
-# JD 自动采集与离线校验
+# 岗位库：GitHub 采集 → GPT 筛选入库
 
-岗位库现在使用 GitHub Actions 维护官方来源的**增量采集层**，不再依赖 Dot、ChatGPT Pro 或额外付费模型 API。采集和语义审核分开：代码负责发现官方职位池变化、保存原文证据、维护身份/正文指纹和待审队列；`official-jds.json` 仍只保存完成完整 JD 语义审核后确认与 AI Agent / AI 应用开发相关的岗位。
+## 1. GitHub 自动采集
 
-## 1. 自动流程
+[采集工作流](../../../.github/workflows/sync-official-2027-agent-jobs.yml) 每周二、周五 01:00 UTC 运行，69 个官方入口分 16 个 shard。原始抓取证据保留为 Actions artifact（14 天）；扫描程序只维护官方身份基线、待筛选队列与下一批完整 JD。
 
-`.github/workflows/sync-official-2027-agent-jobs.yml` 每周二、周五 `01:00 UTC` 自动执行，也支持手动触发。69 个已登记公司/品牌入口按固定规则分为 8 个 shard 并行扫描，使用 GitHub-hosted Ubuntu，不依赖本地 self-hosted runner。
+GitHub 自动采集不会根据标题或关键词决定入库，也不会因为一次采集失败删除职位。入口受阻会保留失败状态。扫描完成后将最新批次写入 `01-data/automation/audit-batch.json`，供 GPT 读取。
 
-每个来源都有独立的页数、岗位数和墙钟时间上限。本轮默认上限为每来源 200 页、10000 个岗位/详情、900 秒。来源失败不会中断其余来源；原始 JSON/HTML、请求记录和逐来源结果作为 GitHub Actions artifact 保留 14 天。
+## 2. GPT 筛选后入库
 
-扫描结束后只更新三个操作文件：
+ChatGPT 定时任务读取 `../01-data/automation/audit-batch.json`，逐条审查完整职责、任职要求及校招/实习资格。符合目标岗位的写 `include`，不符合或关键官方证据缺失的写 `exclude`，对确认消失且已在库中的岗位写 `remove`。不能输出 `needs_review`。
 
-- `../01-data/automation/scan-state.json`：上一次已观察到的官方职位身份与正文指纹基线。
-- `../01-data/automation/review-queue.json`：累计待审的新增、正文变化和“完整扫描中可能消失”事件。
-- `../02-analysis/automation-status.md`：最近一次运行的来源状态和事件汇总。
+GPT **只写** `../01-data/automation/audit-decisions.json`；[入库工作流](../../../.github/workflows/apply-jd-semantic-audit.yml) 将结果一次性用于正式库、岗位索引和数据校验，消费完便清空决策文件，并准备下一批。中间队列中的已处理事件会删除，不再长期积压。无待处理职位时不修改正式库。
 
-首次成功观察某个来源时只建立基线，不把该公司已有的几百或几千个岗位全部误报为“新增”。之后只有新身份、已知身份正文/字段指纹变化，或一次明确完整的扫描中身份消失才生成事件。非完整扫描、403、登录要求、超时、WAF 和适配器失败都不会触发删除判断，旧基线继续保留。
-
-待审队列中的 `triage` 只是排序提示：Agent、LLM/RAG、评测和工程词会提高优先级，但**任何关键词都不直接决定岗位是否进入正式库**。所有检测到的变化都会保留，最终仍按完整职责和任职要求判断。
-
-自动工作流只提交上述操作状态，不直接改写 `official-jds.json`、`bytedance-jds.json`、`source-observations.json`、`岗位JD.md` 或课程分析。这样一次错误抓取不会污染正式岗位库。
-
-## 2. 本地离线检查
-
-从仓库根目录运行：
+## 常用命令
 
 ```sh
-python -B market/job-description/04-scripts/jd.py
 python -B market/job-description/04-scripts/jd.py sources
 python -B market/job-description/04-scripts/jd.py check
 ```
 
-无参数只显示可用入口；`sources` 列出 69 个登记来源；`check` 完全离线，校验正式岗位库、来源登记、自动化状态结构、测试、Node 语法和浏览器 fixture。检查需要 Python 3.12+ 和 Node 22+。
-
-## 3. 手动采集单个或少量来源
-
-安装网络采集依赖：
+离线校验需要 Python 3.12 和 Node 22。手动验证单个官方来源：
 
 ```sh
 python -m pip install -r market/job-description/04-scripts/requirements.txt
 npm install --no-save playwright@1.55.0
 npx playwright install chromium
-```
-
-然后显式给出来源和边界：
-
-```sh
 python -B market/job-description/04-scripts/jd.py collect \
-  --enable-code-collection \
-  --source-id official-004 \
-  --max-pages 5 \
-  --max-jobs 100 \
-  --timeout-seconds 300 \
-  --output-dir /tmp/jd-manual-unique-run
+  --enable-code-collection --source-id official-001 \
+  --max-pages 5 --max-jobs 100 --timeout-seconds 300 \
+  --output-dir /tmp/jd-one-scan
 ```
 
-`collect` 永远写入新的输出目录，不覆盖正式快照，不执行语义分类，也不提交 Git。可重复 `--source-id` 采集少量登记来源。所有边界按单来源计算，失败和截断均保存为非完整状态。
-
-`.github/workflows/discover-official-2027-portals.yml` 现在是同一能力的手动 GitHub 诊断入口：输入一个 `source_id` 即可在 GitHub-hosted runner 上复现采集并下载 artifact。它不定时运行，也不发布数据。
-
-## 4. 自动化内部命令
-
-定时 workflow 使用：
-
-```sh
-python -B market/job-description/04-scripts/jd.py scan \
-  --shard-index 0 --shard-count 8 \
-  --max-pages 200 --max-jobs 10000 --timeout-seconds 900 \
-  --output-dir /tmp/jd-scan/shard-0
-
-python -B market/job-description/04-scripts/jd.py reconcile \
-  --input-dir /tmp/jd-scans \
-  --state-file market/job-description/01-data/automation/scan-state.json \
-  --queue-file market/job-description/01-data/automation/review-queue.json \
-  --report-file market/job-description/02-analysis/automation-status.md
-```
-
-`scan` 负责传输；`reconcile` 负责机械 diff。两者都不做岗位语义纳入判断。
-
-## 5. 69 个入口和特殊来源
-
-来源登记仍在 `../03-strategy/official-2027-campus-sources.json`。当前适配器包括公司专用官方 API、Moka、飞书招聘、北森/Zhiye、Ashby、浏览器动态页以及小米、字节等专用实现。官网改版后，某个适配器可能变成 `BLOCKED` / `PARTIAL` / `INCOMPLETE`；这代表需要维护采集契约，不代表该公司没有岗位。
-
-金山办公/WPS（`official-018`）的 Moka 来源参数不会写进仓库。若希望 GitHub Actions 自动采集该来源，需要在仓库 Secret 中配置：
-
-```text
-JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018
-```
-
-没有该 Secret 时，WPS 会安全地记录为受限/未完成，不影响其他 68 个来源。工具不会生成该参数，也不会从旧文件或 Git 历史恢复。
-
-BOSS直聘/看准科技（`official-065`）仍保留明确的安全验证边界；如果固定官方入口无法可靠提取职位，记录为受限，不通过绕过 WAF、登录或验证码来制造“完整扫描”。
-
-## 6. 发布安全
-
-自动 workflow 在采集结束后先运行完整 `jd.py check` 和 `git diff --check`。只有工作流启动时的 `main` SHA 仍然是远端最新 `main` 时，才提交三个生成状态文件；若期间人工提交改变了 `main`，本次 raw artifacts 保留，但跳过写回，下一轮从新 `main` 重新扫描。这样不会用旧扫描覆盖人工更新。
+手动采集只输出证据，不改正式库。GitHub Actions 的定时扫描入口、GPT 决策入口及输入输出协议共同组成完整自动维护流程。

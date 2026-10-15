@@ -47,16 +47,16 @@
 
 | 域 | 归并题数 | 支持来源数 |
 | --- | ---: | ---: |
-| [python](../../../interview/python/README.md) | 40 | 28 |
-| [fastapi](../../../interview/fastapi/README.md) | 5 | 4 |
-| [mysql](../../../interview/mysql/README.md) | 157 | 94 |
-| [redis](../../../interview/redis/README.md) | 161 | 110 |
-| [backend-engineering](../../../interview/backend-engineering/README.md) | 570 | 216 |
-| [llm-foundation](../../../interview/llm-foundation/README.md) | 204 | 139 |
-| [vector-db](../../../interview/vector-db/README.md) | 35 | 33 |
-| [rag](../../../interview/rag/README.md) | 292 | 185 |
-| [agent](../../../interview/agent/README.md) | 1240 | 338 |
-| [system-design](../../../interview/system-design/README.md) | 158 | 106 |
+| [python](../../../interview/01-python/README.md) | 40 | 28 |
+| [fastapi](../../../interview/02-fastapi/README.md) | 5 | 4 |
+| [mysql](../../../interview/03-mysql/README.md) | 157 | 94 |
+| [redis](../../../interview/04-redis/README.md) | 161 | 110 |
+| [backend-engineering](../../../interview/05-backend-engineering/README.md) | 570 | 216 |
+| [llm-foundation](../../../interview/06-llm-foundation/README.md) | 204 | 139 |
+| [vector-db](../../../interview/07-vector-db/README.md) | 35 | 33 |
+| [rag](../../../interview/08-rag/README.md) | 292 | 185 |
+| [agent](../../../interview/09-agent/README.md) | 1240 | 338 |
+| [system-design](../../../interview/10-system-design/README.md) | 158 | 106 |
 
 以下“考察证据”指保存材料确实支持的任务；“建议深度”是模型据此提出的教学安排。具体来源及官方技术依据在各域备考文档对应题目中，不能把补足的教学内容也算作原帖实问。
 

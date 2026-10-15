@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: official-jd-v2-current-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   scan:
@@ -25,12 +25,11 @@ jobs:
     timeout-minutes: 180
     strategy:
       fail-fast: false
-      max-parallel: 8
+      max-parallel: 16
       matrix:
-        shard: [0, 1, 2, 3, 4, 5, 6, 7]
+        shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
     env:
       PYTHONUTF8: '1'
-      JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018: ${{ secrets.JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -52,7 +51,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/jd-scan"
           python -B market/job-description/04-scripts/jd.py scan \
             --shard-index "${{ matrix.shard }}" \
-            --shard-count 8 \
+            --shard-count 16 \
             --max-pages 200 \
             --max-jobs 10000 \
             --timeout-seconds 900 \
@@ -99,6 +98,12 @@ jobs:
             --state-file market/job-description/01-data/automation/scan-state.json \
             --queue-file market/job-description/01-data/automation/review-queue.json \
             --report-file market/job-description/02-analysis/automation-status.md
+      - name: Prepare next GPT screening batch
+        run: |
+          python -B market/job-description/04-scripts/jd.py prepare-audit \
+            --queue-file market/job-description/01-data/automation/review-queue.json \
+            --batch-file market/job-description/01-data/automation/audit-batch.json \
+            --limit 24
       - name: Validate repository before publication
         run: |
           python -B market/job-description/04-scripts/jd.py check
@@ -115,6 +120,7 @@ jobs:
           git add \
             market/job-description/01-data/automation/scan-state.json \
             market/job-description/01-data/automation/review-queue.json \
+            market/job-description/01-data/automation/audit-batch.json \
             market/job-description/02-analysis/automation-status.md
           if git diff --cached --quiet; then
             echo "No generated state change."

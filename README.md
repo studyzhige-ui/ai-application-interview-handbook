@@ -83,11 +83,11 @@
 
 | 工程基础 | AI 应用技术 |
 | --- | --- |
-| [Python](interview/python/README.md) | [大模型基础](interview/llm-foundation/README.md) |
-| [FastAPI](interview/fastapi/README.md) | [向量数据库](interview/vector-db/README.md) |
-| [MySQL](interview/mysql/README.md) | [RAG](interview/rag/README.md) |
-| [Redis](interview/redis/README.md) | [Agent](interview/agent/README.md) |
-| [后端工程](interview/backend-engineering/README.md) | [系统设计](interview/system-design/README.md) |
+| [Python](interview/01-python/README.md) | [大模型基础](interview/06-llm-foundation/README.md) |
+| [FastAPI](interview/02-fastapi/README.md) | [向量数据库](interview/07-vector-db/README.md) |
+| [MySQL](interview/03-mysql/README.md) | [RAG](interview/08-rag/README.md) |
+| [Redis](interview/04-redis/README.md) | [Agent](interview/09-agent/README.md) |
+| [后端工程](interview/05-backend-engineering/README.md) | [系统设计](interview/10-system-design/README.md) |
 
 先尝试口述，再对照回答；遇到无法解释的机制，回到课程正文。真实问法、教学归纳与必要的基础补足在材料中分别说明，具体考察重点可回查[面经分析](market/interview-experience/02-analysis/README.md)。
 

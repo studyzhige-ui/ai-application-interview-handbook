@@ -14,7 +14,7 @@ const WPS_SOURCE_ID = "official-018";
 export const WPS_RUNTIME_PARAMETER_ENV = "JD_MOKA_SOURCE_PARAMETER_OFFICIAL_018";
 
 function runtimeParameter(source, environment) {
-  if (source.source_id !== WPS_SOURCE_ID && !source.moka_requires_runtime_source_parameter) return "";
+  if (!source.moka_requires_runtime_source_parameter) return "";
   // A runtime value may only reach this exact registered first-party tenant.
   if (source.source_id !== WPS_SOURCE_ID || source.moka_endpoint !== "https://join.wps.cn/api/outer/ats-apply/website/jobs/v2"
       || source.moka_org_id !== "wps" || String(source.moka_site_id) !== "41436") {

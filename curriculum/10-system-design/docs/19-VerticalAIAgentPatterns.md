@@ -2,7 +2,7 @@
 
 <a id="19vertical-ai-agent-patternsanalysiscustomer-servicemultimodalgamecontent"></a>
 
-[← 上一章](18-ProductionAgentBackend.md) · [模块入口](../README.md) · [综合回顾 →](../review/README.md)
+[← 上一章](18-ProductionAgentBackend.md) · [模块入口](../README.md)
 
 同样是“读取资料、调用工具、生成回答”，财务分析、客服退款、PDF 转网页和视频制作的正确结果完全不同。通用 Agent 框架能提供执行机制，却不能替业务定义什么叫完成。
 
@@ -132,4 +132,4 @@ PDF 解析需要恢复阅读顺序、表格关系、图片说明和来源位置�
 
 ---
 
-[← 上一章](18-ProductionAgentBackend.md) · [模块入口](../README.md) · [综合回顾 →](../review/README.md)
+[← 上一章](18-ProductionAgentBackend.md) · [模块入口](../README.md)

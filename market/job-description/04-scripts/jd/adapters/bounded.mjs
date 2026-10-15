@@ -53,7 +53,7 @@ export function createRuntime(source, options, dependencies = {}) {
   const sanitizeCapture = dependencies.sanitizeCapture || (body => ({ bytes: Buffer.from(body), redacted: false }));
   const controller = new AbortController();
   const deadline = Date.now() + options.timeoutSeconds * 1000;
-  const captures = [], failures = [], jobs = [], exactIds = new Set(), exactUrls = new Set();
+  const captures = [], failures = [], jobs = [], exactIds = new Set(), exactUrls = new Set(), structuralKeys = new Set();
   const counts = { list_page_attempts: 0, detail_jobs_attempted: 0, requests: 0 };
   let closed = false;
   const timer = setTimeout(() => controller.abort(new CollectionStop("TIMEOUT", "Collection wall-clock timeout")), options.timeoutSeconds * 1000);
@@ -90,12 +90,17 @@ export function createRuntime(source, options, dependencies = {}) {
     check();
     const id = job.job_id == null ? "" : String(job.job_id);
     const url = job.official_url || "";
+    const structuralKey = job.collection_key == null ? "" : String(job.collection_key);
     // A known ID is authoritative: two distinct IDs may legitimately share a URL.
     // URL-only DOM representations can still deduplicate an already-seen job URL.
-    if (id ? exactIds.has(id) : (url && exactUrls.has(url))) return false;
+    // collection_key is an explicitly source-scoped within-run transport key; it is
+    // never promoted to an official job ID and is only used when the source cannot
+    // expose stable IDs/URLs (for example cumulative infinite-scroll DOM cards).
+    if (id ? exactIds.has(id) : (url ? exactUrls.has(url) : (structuralKey && structuralKeys.has(structuralKey)))) return false;
     if (jobs.length >= options.maxJobs) throw new CollectionStop("MAX_JOBS", "Unique-job limit reached");
     if (id) exactIds.add(id);
     if (url) exactUrls.add(url);
+    if (!id && !url && structuralKey) structuralKeys.add(structuralKey);
     jobs.push(job); // Missing identifiers are preserved; never deduplicate by title/body.
     return true;
   }
