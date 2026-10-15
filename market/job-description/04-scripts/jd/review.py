@@ -21,7 +21,7 @@ ROLE_TRACKS = {
     "算法或研究与应用工程混合",
     "多方向或跨职能工程",
 }
-DECISIONS = {"include", "exclude", "needs_review", "remove"}
+DECISIONS = {"include", "exclude", "remove"}
 PRIORITY_ORDER = {"high": 0, "medium": 1, "low": 2}
 
 
@@ -386,7 +386,9 @@ def prepare_batch(*, queue_file: Path, batch_file: Path, limit: int) -> dict:
             "Read the complete job description and requirements for every entry. "
             "Do not decide from title or keywords alone. Include only AI application/Agent/LLM/RAG/"
             "AI platform engineering/evaluation engineering roles with explicit implementation work. "
-            "Use needs_review when the JD evidence is insufficient."
+            "For missing complete JD or unverifiable current campus/internship evidence, "
+            "decide exclude and state the exact evidence gate not met. No needs_review "
+            "or indefinite re-review; only genuinely changed official evidence makes a new event."
         ),
     }
     _write_json(batch_file, payload)
@@ -528,6 +530,8 @@ def _validate_decision(decision: dict) -> None:
         raise ValueError("Every audit decision needs an event_id")
     if decision.get("decision") not in DECISIONS:
         raise ValueError(f"Unsupported audit decision: {decision.get('decision')}")
+    if not str(decision.get("decision_reason") or "").strip():
+        raise ValueError("Every final audit decision needs a concrete evidence reason")
 
 
 def apply_decisions(
@@ -602,10 +606,11 @@ def apply_decisions(
                 jobs.pop(index)
             counts["removed"] += 1
         else:
-            counts["needs_review"] += 1
+            raise ValueError(f"Unsupported terminal outcome: {outcome}")
 
-        # Inconclusive reviews remain actionable, not silently "reviewed".
-        entry["review_state"] = "needs_review" if outcome == "needs_review" else "reviewed"
+        # Every event has one terminal decision. Missing evidence is an exclusion,
+        # not an endless needs_review retry loop.
+        entry["review_state"] = "reviewed"
         entry["semantic_review"] = {
             "decision": outcome,
             "decision_reason": str(decision.get("decision_reason") or "").strip(),

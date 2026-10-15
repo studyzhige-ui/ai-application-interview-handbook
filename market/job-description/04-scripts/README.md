@@ -92,14 +92,16 @@ BOSS直聘/看准科技（`official-065`）仍保留明确的安全验证边界�
 
 ## 7. ChatGPT 定时语义审计
 
-仓库通过 `01-data/automation/audit-batch.json` 向 ChatGPT 定时任务暴露一个有界小批次，而不是让模型每轮搬运整个多 MB 的 `review-queue.json`。模型必须逐条阅读批次中的完整职责与任职要求，只输出 `include`、`exclude`、`needs_review` 或针对确认消失事件的 `remove` 决策。
+仓库通过 `01-data/automation/audit-batch.json` 向 ChatGPT 定时任务暴露一个有界小批次，而不是让模型每轮搬运整个多 MB 的 `review-queue.json`。模型必须逐条阅读批次中的完整职责与任职要求，只输出 `include`、`exclude`，以及针对已确认消失事件的 `remove` 决策。即使缺失完整 JD、招聘类型不明确或抓到了列表筛选项，也必须说明证据缺口并判定为不予入库（`exclude`），不再输出无限期的 `needs_review`。
 
 ChatGPT 只写 `01-data/automation/audit-decisions.json`。随后 `.github/workflows/apply-jd-semantic-audit.yml` 机械应用结果：更新队列审核状态；对通过审核的岗位写入正式 `official-jds.json`（字节跳动写入其哈希固定分片）；对不再符合范围或已确认消失的正式岗位执行移除；重新生成 `岗位JD.md`；最后运行完整 `jd.py check` 与 `git diff --check` 后才提交。
 
 批次按高、中、低 triage 顺序消费，但 triage 仍只负责排序，不能代替完整 JD 语义判断。已经审核且事件指纹未变化的岗位不会重复进入批次；正文发生变化时会生成新的事件并重新审核。
 
-## 8. 证据不足的待复核事件
+## 8. 终审准入与证据缺口
 
-`needs_review` 不表示岗位已经纳入或排除；它代表缺少招聘资格或完整 JD 证据，必须保持可追踪。审核桥将其标记为独立的 `review_state: needs_review`。常规增量批次只消费新事件（`pending`），避免反复重试同一份缺证原文。取得官方补证后，可提交带 `followup_for: needs_review` 的决策文件重新判定此前该类事件；已明确纳入或排除的记录不允许被此机制覆盖。
+审核输出必须是 **`include` / `exclude`**（确认岗位已下线时可用 `remove`），不再接受新的 `needs_review`。只有取得完整官方 JD、核验具体校招/实习资格、并确认职责中有可交付的 AI 应用/Agent/LLM/RAG/AI 平台或测试评测工具工程工作，才允许 `include`。
 
-历史积压中的 63 条待复核事件有单独的 [专项台账](../02-analysis/needs-review-followup-2026-10-15.md)，其中列明已确认与仍需补证的记录，不以标题猜测或关键词规则强行清零。
+拿不到完整 JD、抓取内容实际上只是地区/职位类别、无法确认属于当前校招/实习批次，均作出明确的 **`exclude` 入库决定**，在 `decision_reason` 里注明“完整 JD 缺失”“非具体职位”“非目标招聘批次”等具体缺口，而不是伪称该岗位技术上不相关。拒绝的审计事件保留历史记录，若官方发布实质改变的完整 JD，扫描会产生新的事件，允许重新进行一次独立语义判断；同一旧事件不能无限重复审核。
+
+历史复核的逐项结论见 [63 条专项终审台账](../02-analysis/needs-review-followup-2026-10-15.md)。此前 `needs_review` 的历史记录仍完整保留审计轨迹，但已由受控复核批次全部终审清零。

@@ -166,20 +166,14 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(result["excluded"], 1)
             self.assertEqual(load_catalog(root / "official.json")["companies"][0]["jobs"], [])
 
-    def test_needs_review_is_recorded_without_guessing(self):
+    def test_needs_review_is_rejected_as_new_decision(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             catalog, _ = self.base_catalog()
             queue = {"schema_version": 2, "entries": {"e1": self.queue_entry()}}
-            decisions = {
-                "schema_version": 1,
-                "batch_id": "b3",
-                "decisions": [{
-                    "event_id": "e1",
-                    "decision": "needs_review",
-                    "decision_reason": "招聘类型证据不足",
-                }],
-            }
+            decisions = {"schema_version": 1, "decisions": [{
+                "event_id": "e1", "decision": "needs_review",
+                "decision_reason": "资格证据缺失"}]}
             for name, value in (
                 ("official.json", catalog),
                 ("bytedance.json", {"source_id": "official-012", "jobs": []}),
@@ -187,17 +181,41 @@ class SemanticAuditBridgeTests(unittest.TestCase):
                 ("decisions.json", decisions),
             ):
                 self.write_json(root / name, value)
-            result = apply_decisions(
-                queue_file=root / "queue.json",
-                decisions_file=root / "decisions.json",
-                official_file=root / "official.json",
-                bytedance_file=root / "bytedance.json",
-                index_file=root / "index.md",
-            )
-            self.assertEqual(result["needs_review"], 1)
-            q = json.loads((root / "queue.json").read_text())
-            self.assertEqual(q["entries"]["e1"]["semantic_review"]["decision"], "needs_review")
-            self.assertEqual(q["entries"]["e1"]["review_state"], "needs_review")
+            with self.assertRaisesRegex(ValueError, "Unsupported audit decision"):
+                apply_decisions(queue_file=root / "queue.json",
+                                decisions_file=root / "decisions.json",
+                                official_file=root / "official.json",
+                                bytedance_file=root / "bytedance.json",
+                                index_file=root / "index.md")
+            self.assertEqual(json.loads((root / "queue.json").read_text())["entries"]["e1"]["review_state"], "pending")
+
+    def test_missing_jd_is_explicit_exclusion_not_a_new_queue_loop(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, _ = self.base_catalog()
+            event = self.queue_entry()
+            event["job"] = {"title": "北京"}
+            queue = {"schema_version": 2, "entries": {"e1": event}}
+            decisions = {"schema_version": 1, "decisions": [{
+                "event_id": "e1", "decision": "exclude",
+                "decision_reason": "只有城市筛选项，缺少具体职位和完整JD"}]}
+            for name, value in (
+                ("official.json", catalog),
+                ("bytedance.json", {"source_id": "official-012", "jobs": []}),
+                ("queue.json", queue),
+                ("decisions.json", decisions),
+            ):
+                self.write_json(root / name, value)
+            stats = apply_decisions(queue_file=root / "queue.json",
+                                    decisions_file=root / "decisions.json",
+                                    official_file=root / "official.json",
+                                    bytedance_file=root / "bytedance.json",
+                                    index_file=root / "index.md")
+            self.assertEqual(stats["excluded"], 1)
+            self.assertEqual(json.loads((root / "queue.json").read_text())["entries"]["e1"]["review_state"], "reviewed")
+            batch = prepare_batch(queue_file=root / "queue.json",
+                                  batch_file=root / "batch.json", limit=10)
+            self.assertEqual(batch["pending_total"], 0)
 
     def test_followup_resolves_legacy_needs_review_without_overwriting_final_records(self):
         with tempfile.TemporaryDirectory() as d:

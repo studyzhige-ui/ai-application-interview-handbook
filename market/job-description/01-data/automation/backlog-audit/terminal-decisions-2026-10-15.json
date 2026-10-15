@@ -1,0 +1,205 @@
+{
+  "schema_version": 1,
+  "batch_id": "historical-needs-review-terminal-2026-10-15",
+  "followup_for": "needs_review",
+  "decisions": [
+    {
+      "event_id": "fe6bf9c207aff92759a601df97718e9a",
+      "decision": "exclude",
+      "decision_reason": "职位为财务/投资分析方向；扫描未取得完整职责，缺乏任何Agent/AI应用工程交付证据。",
+      "evidence_gate": "非目标职能"
+    },
+    {
+      "event_id": "a447744650d6877abd3a679c728fcd02",
+      "decision": "exclude",
+      "decision_reason": "原始记录只有“运营”栏目名称，非可唯一核验的技术职位，也无完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "16561115553f9927dd5c6e1bf58d49d7",
+      "decision": "exclude",
+      "decision_reason": "记录仅为汽车功率模块工艺开发标题，没有完整职责和AI/Agent工程交付证据。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "41de2c7a60a2868144b156838f596c10",
+      "decision": "exclude",
+      "decision_reason": "记录仅为芯片功率模块封装标题，没有完整JD或目标AI应用工程职责证据。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "0c909fcec9c59d89b4aa1fcde71773be",
+      "decision": "exclude",
+      "decision_reason": "页面列表标题为财务BP，缺少目标AI工程任务及完整JD；不符合本库的可核验准入条件。",
+      "evidence_gate": "非目标职能"
+    },
+    {
+      "event_id": "00a911b56e9afd2704fc9ac34cd26094",
+      "decision": "exclude",
+      "decision_reason": "抓取的是城市/筛选项“新界”，不是独立具体岗位；没有招聘ID与完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "747c3ecf87787d57fec0cafed3388b25",
+      "decision": "exclude",
+      "decision_reason": "抓取的是城市筛选项“北京”而非具体岗位，无完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "0488d29fbec30ec4b512f954bf2b7221",
+      "decision": "exclude",
+      "decision_reason": "记录只是校园招聘栏目和目标群体，没有具体岗位标题、ID、职责与任职要求。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "b113e4edb8c7aa15d44caf5e2c56445f",
+      "decision": "exclude",
+      "decision_reason": "仅有“研发”职位类别，无法对应某个具体招聘岗位或完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "0e4271cbae9a72bae02821601cf87d6f",
+      "decision": "exclude",
+      "decision_reason": "原记录是“职能/支持”职位类别而非具体岗位，不存在可审阅的完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "82f2112aa4def82dcf27313d4ff860df",
+      "decision": "exclude",
+      "decision_reason": "城市“成都”是筛选项而非具体招聘岗位，没有职位JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "9fb9136e4e5d09d2d23ad1993d7c9d72",
+      "decision": "exclude",
+      "decision_reason": "完整职责确实包含LLM剧本生成功能研发，但职位来自官方“昆仑万维2026校招”旧项目（/459522），该项目职位列表现为“暂无职位”，不符合当前2027校招/实习岗位的有效来源要求。",
+      "evidence_gate": "过期校招批次"
+    },
+    {
+      "event_id": "eb39602ccabf44f651a3d73e71631ea1",
+      "decision": "exclude",
+      "decision_reason": "完整职责是训练/推理平台研发，但官方无问芯穹当前综合招聘入口将此类 /088717 正式职位列为社招全职，未见该岗位属于校招/实习的对应证据；排除出校招库，不否定其工程相关性。",
+      "evidence_gate": "非目标招聘类型"
+    },
+    {
+      "event_id": "cd2e504ba6bfa1d786bff3351de27e60",
+      "decision": "exclude",
+      "decision_reason": "只有“算法工程师”与校园招聘入口，缺失完整职责和要求；无法判定是纯算法研究还是含明确Agent/LLM工程职责，因此不满足正式收录证据门槛。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "c1acb3d7571d497fe8845b114791c394",
+      "decision": "exclude",
+      "decision_reason": "职位类别筛选项，不是具体JD；未提供AI应用工程岗位的唯一身份和完整职责。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "8d18c8b86150dc934b486ea35cd77066",
+      "decision": "exclude",
+      "decision_reason": "职位类别“市场”，不是具体工程岗位，亦无完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "6e90bbdafc1f43a733e8e64ab2bbd466",
+      "decision": "exclude",
+      "decision_reason": "城市筛选项“上海”，不是可以语义审计的岗位。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "751081f2ac21398502cb65ea883cd167",
+      "decision": "exclude",
+      "decision_reason": "官网确认属于2027应届生招聘且职责方向可能吻合，但仓库事件未抓取该具体岗位的完整职责及任职要求，不满足正式库的可追溯完整JD条件；此次判为不收录，而非不相关。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "e8f2efd6ecb66e20e3e903ba67c503fa",
+      "decision": "exclude",
+      "decision_reason": "城市“新加坡”筛选项，没有对应具体岗位ID和JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "cb5943c89bc8a73e701adaf45f8e21a9",
+      "decision": "exclude",
+      "decision_reason": "只获取岗位标题、地点和类别，没有完整职责/要求，无法核验是否属于目标LLM应用或Agent工程而非芯片算法。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "c98a98b3e2f5954be6750e230ba41800",
+      "decision": "exclude",
+      "decision_reason": "完整职责涉及视频生成模型训练/推理平台工程，但职位源自官方2026校招旧项目 /459522，不能把历史项目的岗位作为当前2027届有效招聘收录。",
+      "evidence_gate": "过期校招批次"
+    },
+    {
+      "event_id": "216ffa0842fdb7cf2e8a6077c278e6f3",
+      "decision": "exclude",
+      "decision_reason": "只有实习岗位标题，未抓到职责和要求；产品实习职位尚无AI应用/Agent工程实现职责的官方证据。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "01f00927438d9c4b4045817ae25cb09a",
+      "decision": "exclude",
+      "decision_reason": "只有城市筛选项“北京”，无具体职位ID或JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "f8381edb97e1f4a484e8c9e3707761ea",
+      "decision": "exclude",
+      "decision_reason": "只有地点“杭州”，不是有效JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "116973b1b7a0d649c6dbcbcc64fd7130",
+      "decision": "exclude",
+      "decision_reason": "岗位列表明确属于营销管培生方向，没有可核验的Agent/LLM工程岗位职责；原抓取为带投递按钮的列表卡片文本。",
+      "evidence_gate": "非目标职能"
+    },
+    {
+      "event_id": "6ea332db27c987cd78747bd144a9bea2",
+      "decision": "exclude",
+      "decision_reason": "官网确认属于2027应届生招聘，存在企业AI知识库建设信息，但扫描事件缺失可存证的完整职责与要求；尚无法核验知识管理/数据治理与实际RAG/Agent工程实现的责任比例，按正式库证据规则不收录。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "b532878a7e58705fbc8d0d4093b2690b",
+      "decision": "exclude",
+      "decision_reason": "仅抓取“研发”栏目，无法对应某一实际招聘职位或审核完整JD。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "b9033f1b2353f458328dbed52fa7516c",
+      "decision": "exclude",
+      "decision_reason": "原记录只含标题/类别/地点，缺失职责与要求；不能判断AI芯片算法是否含实际Agent或AI应用工程研发交付。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "e37404a0b9fafe25a98163c0694e4d12",
+      "decision": "exclude",
+      "decision_reason": "完整职责属于LLM推理引擎开发，但其 /088717 职位处于通用社招全职招聘项目，未验证该具体ID为校招/实习；故不收录至校园JD库。",
+      "evidence_gate": "非目标招聘类型"
+    },
+    {
+      "event_id": "e3c6dfc570ce87510aa911c7a57a05da",
+      "decision": "exclude",
+      "decision_reason": "实际 description 仅有“--”且没有岗位要求；仅凭压铸厂实习标题不能判为AI应用/Agent开发。",
+      "evidence_gate": "缺少完整JD"
+    },
+    {
+      "event_id": "f31849b357f510c4971ae9c1a5bb4be0",
+      "decision": "exclude",
+      "decision_reason": "这是“设计”职位类别而非具体职位，完整JD缺失。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "39dcd9bdeedd618efe5c2bcdb09b1757",
+      "decision": "exclude",
+      "decision_reason": "仅有职位类别“设计”，无法核验具体工程岗位职责。",
+      "evidence_gate": "列表/筛选项"
+    },
+    {
+      "event_id": "3939ae7f6955487f18f80b0de477bf4d",
+      "decision": "exclude",
+      "decision_reason": "城市筛选项“深圳”，无实际招聘JD。",
+      "evidence_gate": "列表/筛选项"
+    }
+  ]
+}
