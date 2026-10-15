@@ -1,0 +1,102 @@
+name: Prune verified stale branches (one time)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/prune-verified-stale-branches.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Delete only unchanged obsolete branches without open PRs
+        shell: python
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          import json
+          import os
+          from urllib.error import HTTPError
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+
+          expected = {
+          "automation/chatgpt-jd-semantic-audit-20261014": "030c3e8975502261e5c6a62ee4d4bf2539e11f88",
+          "automation/compact-jd-backlog-20261014": "6fb182ecbfa006a1e1c09381e1c8e35838584655",
+          "automation/jd-backlog-bulk-audit-20261014": "67ffbdc13afbe41a4a2d3d438774b88eae1718de",
+          "automation/jd-collector-v2-20261012": "fb52da6b56a2d37f8e036b8522ba4b6c9134561f",
+          "automation/jd-duxiaoman-browser-20261012": "ac23daead3a6be5113d2c9b2b43a010c0b5141c1",
+          "automation/jd-final-source-convergence-20261012": "d19b2fd732b0b8ade41d701ad53bbfcc3e3be7c1",
+          "automation/jd-final-two-sources-20261012": "c9c7ec08bb5c874f6660a8ba2a0106237a5d0166",
+          "automation/jd-source-correctness-final-20261012": "82205e061e9d74814bab57147997abf81ab555aa",
+          "automation/jd-v2-ats-fixes-20261012": "22401003fbdf4671f1eb18907ef0f1ac18715f73",
+          "automation/jd-v2-baseline-safety-20261012": "1edc6ebec3b9d8ca1b820faf2072cd237cea970b",
+          "automation/jd-v2-bootstrap-trigger-20261012": "5ea99c341b38c68d6348cf4cc6b60ff443f2902e",
+          "automation/jd-v2-browser-fallback-20261012": "70abea8d02c40e16529fddea9772aed2729ad6e7",
+          "automation/jd-v2-feishu-list-fallback-20261012": "eee74c2af0e774349de1fa3c3fbd67871830cfef",
+          "automation/jd-v2-final-concurrency-20261012": "b03d282ae1caba83bcd7e30e84b20d3d0c9d7549",
+          "automation/jd-v2-latest-scan-wins-20261012": "ddb2da63caf232cdf3480250fae51539c3b8a30f",
+          "automation/reuse-low-priority-identity-migrations-20261014": "098d7e87d0f624e298e9dd35cc411725b2378ffa",
+          "automation/reuse-reviewed-jd-exclusions-20261014": "727751ce7ee3013679716cf340531d6b4a4ecf41",
+          }
+          repo = os.environ["GH_REPO"]
+          token = os.environ["GH_TOKEN"]
+          root = f"https://api.github.com/repos/{repo}"
+
+          def api(path, method="GET"):
+              req = Request(root + path, method=method, headers={
+                  "Authorization": f"Bearer {token}",
+                  "Accept": "application/vnd.github+json",
+                  "X-GitHub-Api-Version": "2022-11-28",
+              })
+              with urlopen(req, timeout=30) as res:
+                  body = res.read()
+                  return json.loads(body) if body else None
+
+          open_heads = set()
+          page = 1
+          while True:
+              pulls = api(f"/pulls?state=open&per_page=100&page={page}")
+              for pr in pulls:
+                  if pr["head"]["repo"] and pr["head"]["repo"]["full_name"] == repo:
+                      open_heads.add(pr["head"]["ref"])
+              if len(pulls) < 100:
+                  break
+              page += 1
+
+          removed = []
+          skipped = []
+          errors = []
+          for branch, sha in expected.items():
+              if branch == "main" or branch in open_heads:
+                  skipped.append((branch, "open PR or protected main"))
+                  continue
+              encoded = quote(branch, safe="/")
+              try:
+                  current = api(f"/git/ref/heads/{encoded}")
+                  if current["object"]["sha"] != sha:
+                      skipped.append((branch, "head changed"))
+                      continue
+                  api(f"/git/refs/heads/{encoded}", method="DELETE")
+                  removed.append(branch)
+                  print(f"DELETED {branch}")
+              except HTTPError as exc:
+                  if exc.code == 404:
+                      print(f"ALREADY ABSENT {branch}")
+                  else:
+                      errors.append((branch, exc.code))
+          print(f"Removed={len(removed)} Skipped={len(skipped)} Errors={len(errors)}")
+          for branch, reason in skipped:
+              print(f"SKIP {branch}: {reason}")
+          for branch, code in errors:
+              print(f"ERROR {branch}: HTTP {code}")
+          if errors:
+              raise SystemExit(1)
