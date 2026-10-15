@@ -3,7 +3,7 @@
   "shard_id": "08",
   "source_queue_sha": "7cfcc7f524df10eb3a95183ca6acd28d5caf5fa5",
   "auditor": "chatgpt-bulk-semantic-audit",
-  "submitted_at_utc": "2026-10-15T02:21:20.121Z",
+  "submitted_at_utc": "2026-10-15T02:22:00.548Z",
   "decisions": [
     {
       "event_id": "9691b4ba66016c5917ff7fa4817b3672",
