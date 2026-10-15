@@ -104,6 +104,61 @@ jobs:
             --queue-file market/job-description/01-data/automation/review-queue.json \
             --batch-file market/job-description/01-data/automation/audit-batch.json \
             --limit 24
+      - name: Avoid timestamp-only operational commits
+        shell: python
+        run: |
+          import json
+          import subprocess
+          from pathlib import Path
+
+          root = Path("market/job-description")
+          paths = [
+              root / "01-data/automation/scan-state.json",
+              root / "01-data/automation/review-queue.json",
+              root / "01-data/automation/audit-batch.json",
+              root / "02-analysis/automation-status.md",
+          ]
+
+          def previous(path):
+              content = subprocess.check_output(["git", "show", f"HEAD:{path.as_posix()}"])
+              return json.loads(content)
+
+          def current(path):
+              return json.loads(path.read_text(encoding="utf-8"))
+
+          def stable_state(data):
+              return {
+                  source_id: {
+                      "baseline_ready": record.get("baseline_ready"),
+                      "baseline_kind": record.get("baseline_kind"),
+                      "jobs": record.get("jobs", {}),
+                  }
+                  for source_id, record in (data.get("sources") or {}).items()
+                  if record.get("baseline_ready") or record.get("jobs")
+              }
+
+          def stable_queue(data):
+              result = {}
+              for event_id, entry in (data.get("entries") or {}).items():
+                  item = dict(entry)
+                  item.pop("last_seen_at_utc", None)
+                  result[event_id] = item
+              return result
+
+          def stable_batch(data):
+              return {
+                  "event_ids": [item.get("event_id") for item in data.get("entries", [])],
+                  "pending_total": data.get("pending_total", 0),
+              }
+
+          if (stable_state(previous(paths[0])) == stable_state(current(paths[0]))
+              and stable_queue(previous(paths[1])) == stable_queue(current(paths[1]))
+              and stable_batch(previous(paths[2])) == stable_batch(current(paths[2]))):
+              subprocess.run(["git", "restore", "--", *[str(path) for path in paths]], check=True)
+              print("No new official JD identities, changes or GPT work; preserve run logs without a commit.")
+          else:
+              print("Substantive identity/baseline or GPT batch change; publish updated scan state.")
+
       - name: Validate repository before publication
         run: |
           python -B market/job-description/04-scripts/jd.py check

@@ -1,0 +1,40 @@
+name: Delete merged PR head branch
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  delete-merged-head:
+    if: >-
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Remove unchanged merged branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "$PR_HEAD" = "main" ] || [ -z "$PR_HEAD" ]; then
+            exit 0
+          fi
+          current=$(gh api "repos/$GH_REPO/git/ref/heads/$PR_HEAD" --jq .object.sha) || {
+            echo "Branch already deleted or not accessible."
+            exit 0
+          }
+          if [ "$current" != "$PR_SHA" ]; then
+            echo "Branch moved after PR merge; leave it intact."
+            exit 0
+          fi
+          gh api --method DELETE "repos/$GH_REPO/git/refs/heads/$PR_HEAD"
+          echo "Deleted merged PR branch $PR_HEAD"
