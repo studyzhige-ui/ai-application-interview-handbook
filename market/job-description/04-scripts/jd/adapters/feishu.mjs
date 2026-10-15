@@ -22,6 +22,7 @@ export function feishuSpecification(source, overrides = {}) {
     "Origin": origin, "Referer": source.portal,
   };
   return {
+    browserListUrl: overrides.browserListUrl || null,
     listRequest(offset, limit) {
       const body = {
         keyword: "", limit, offset, portal_type: 3, portal_entrance: 1, language: "zh",
@@ -62,15 +63,17 @@ export async function collectFeishuWithBrowserFallback(source, options, specific
   const direct405 = direct.jobs.length === 0
     && (direct.failures || []).some(failure => /HTTP 405/.test(String(failure.error || "")));
   if (!direct405) return direct;
-  const host = source.feishu_host || new URL(source.portal).hostname;
-  const channel = source.feishu_channel || new URL(source.portal).pathname.split("/").filter(Boolean)[0] || "campus";
-  const listSource = {
-    ...source,
-    // Feishu visual sites can use a marketing/home page at the registered portal.
-    // The site configuration consistently exposes the actual job collection under
-    // /<channel>/position/list, where the page itself emits the signed search call.
-    job_list_url: source.feishu_browser_list_url || `https://${host}/${channel}/position/list`,
-  };
+  const portal = new URL(source.portal);
+  const host = source.feishu_host || portal.hostname;
+  const channel = source.feishu_channel || portal.pathname.split("/").filter(Boolean)[0] || "campus";
+  let browserListUrl = source.feishu_browser_list_url || specification.browserListUrl || source.job_list_url || source.portal;
+  if (source.mode === "feishu_direct" && !source.feishu_browser_list_url) {
+    const derived = new URL(`https://${host}/${channel}/position/list`);
+    // Official project filters may determine campus vs. non-campus listings.
+    for (const [key, value] of portal.searchParams) derived.searchParams.append(key, value);
+    browserListUrl = derived.href;
+  }
+  const listSource = { ...source, job_list_url: browserListUrl };
   const browser = await collectBrowser(listSource, options, dependencies);
   return {
     ...browser,

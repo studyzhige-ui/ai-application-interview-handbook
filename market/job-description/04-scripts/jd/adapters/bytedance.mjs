@@ -8,7 +8,7 @@ export async function collectByteDance(source, options, dependencies = {}) {
   if (source.mode !== "bytedance_api") throw new Error("ByteDance adapter requires a registered bytedance_api source");
   return collectFeishuWithBrowserFallback(source, options, feishuSpecification(source, {
     api: "https://jobs.bytedance.com/api/v1/search/job/posts",
-    detailRoot: "https://jobs.bytedance.com/campus/position", channel: "campus",
+    detailRoot: "https://jobs.bytedance.com/campus/position", channel: "campus", browserListUrl: "https://jobs.bytedance.com/campus/position",
   }), dependencies);
 }
 
