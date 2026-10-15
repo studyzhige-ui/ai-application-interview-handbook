@@ -97,3 +97,9 @@ BOSS直聘/看准科技（`official-065`）仍保留明确的安全验证边界�
 ChatGPT 只写 `01-data/automation/audit-decisions.json`。随后 `.github/workflows/apply-jd-semantic-audit.yml` 机械应用结果：更新队列审核状态；对通过审核的岗位写入正式 `official-jds.json`（字节跳动写入其哈希固定分片）；对不再符合范围或已确认消失的正式岗位执行移除；重新生成 `岗位JD.md`；最后运行完整 `jd.py check` 与 `git diff --check` 后才提交。
 
 批次按高、中、低 triage 顺序消费，但 triage 仍只负责排序，不能代替完整 JD 语义判断。已经审核且事件指纹未变化的岗位不会重复进入批次；正文发生变化时会生成新的事件并重新审核。
+
+## 8. 证据不足的待复核事件
+
+`needs_review` 不表示岗位已经纳入或排除；它代表缺少招聘资格或完整 JD 证据，必须保持可追踪。审核桥将其标记为独立的 `review_state: needs_review`。常规增量批次只消费新事件（`pending`），避免反复重试同一份缺证原文。取得官方补证后，可提交带 `followup_for: needs_review` 的决策文件重新判定此前该类事件；已明确纳入或排除的记录不允许被此机制覆盖。
+
+历史积压中的 63 条待复核事件有单独的 [专项台账](../02-analysis/needs-review-followup-2026-10-15.md)，其中列明已确认与仍需补证的记录，不以标题猜测或关键词规则强行清零。

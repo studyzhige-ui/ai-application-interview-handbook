@@ -133,5 +133,5 @@ POST 不向通用客户端承诺幂等，业务仍可为它设计稳定操作键
 ## 知识回看与权威资料
 
 - [Redis 租约与旧工作者](../../04-redis/docs/13-分布式锁.md)：区分拿到执行权与证明旧动作未发生。
-- [MySQL 事务](../../03-mysql/docs/09-事务与ACID.md)：核对业务结果与防重记录的原子边界。
+- [MySQL 事务](../../03-mysql/docs/07-事务与并发读取：ACID、隔离级别与 MVCC.md)：核对业务结果与防重记录的原子边界。
 - [HTTP 幂等语义](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2)：区分方法效果和每次响应。

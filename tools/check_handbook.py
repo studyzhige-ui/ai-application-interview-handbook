@@ -104,7 +104,8 @@ def check(root: Path) -> list[str]:
                 errors.append(f'practice/software: tutorials must be numbered direct Markdown: {p.name}')
     for module in (root/'curriculum').glob('*'):
         if not module.is_dir(): continue
-        expected={'README.md','docs','review'}
+        # Reader-approved curriculum modules contain README.md and docs; review/ is not required.
+        expected={'README.md','docs'}
         found={p.name for p in module.iterdir()}
         if found != expected: errors.append(f'{module.relative_to(root)}: expected README.md/docs/review, got {sorted(found)}')
     for product in (root/'products').glob('*'):

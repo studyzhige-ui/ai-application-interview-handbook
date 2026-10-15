@@ -105,5 +105,5 @@ D 接管的是 `(20,50]` 这一段原本交给 B 的键，其他区间保持原�
 ## 知识回看与权威资料
 
 - [状态归属](14-DataLayering与StateOwnership.md)：区分实例内状态与恢复事实。
-- [MySQL 分片与扩容](../../03-mysql/docs/18-分片与扩容.md)：理解改路由之外的数据迁移和切换责任。
+- [MySQL 分片与扩容](../../03-mysql/docs/10-数据增长后的演进：Schema、索引、批处理与迁移.md)：理解改路由之外的数据迁移和切换责任。
 - [Kubernetes Service](https://kubernetes.io/docs/concepts/services-networking/service/)：核对平台候选地址与实际流量转发的分工。

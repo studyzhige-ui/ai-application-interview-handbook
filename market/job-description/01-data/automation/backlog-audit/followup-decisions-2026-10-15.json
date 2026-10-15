@@ -1,0 +1,476 @@
+{
+  "schema_version": 1,
+  "batch_id": "historical-needs-review-followup-2026-10-15",
+  "followup_for": "needs_review",
+  "decisions": [
+    {
+      "event_id": "9d7bebe522bde0900c2450064b094e11",
+      "decision": "exclude",
+      "decision_reason": "核心职责为涂装生产数据与MES数字化，LLM仅属于探索，未明确AI应用系统的工程交付。"
+    },
+    {
+      "event_id": "723ca2d362e450b74f7439d43c67edb7",
+      "decision": "exclude",
+      "decision_reason": "主体是车联网安全、身份治理系统与微服务开发，LLM只作探索，AI应用模块职责不足。"
+    },
+    {
+      "event_id": "e2e9a4ff216fe17611f8222ed013025f",
+      "decision": "exclude",
+      "decision_reason": "主责为汽车互联框架、CarIoT及移动端性能优化，CarClaw未披露Agent研发职责，AI只是能力加分项。"
+    },
+    {
+      "event_id": "bf1c1ae66a85b011dc04cbb4b1c3f210",
+      "decision": "exclude",
+      "decision_reason": "主要是模型量化、剪枝、算子融合和推理框架预研，不属于目标Agent应用或AI评测工程。"
+    },
+    {
+      "event_id": "fe6bf9c207aff92759a601df97718e9a",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "a447744650d6877abd3a679c728fcd02",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "16561115553f9927dd5c6e1bf58d49d7",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "41de2c7a60a2868144b156838f596c10",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "5fa01b3bba6782dcd0c37e7a5cccb35c",
+      "decision": "exclude",
+      "decision_reason": "通用日志指标追踪、告警平台是主责，AI问答和故障辅助定位仅为探索条款而非主要工程交付。"
+    },
+    {
+      "event_id": "4572d4cb9c74b43623a5eb01e1ea1f6c",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670915178993256713/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "2、负责编写自动化测试脚本，包括：操作系统、资源、时序、通信、驱动、系统服务等模块"
+      ]
+    },
+    {
+      "event_id": "aa207b0f4d9099129aa22b98a8af6269",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670891457062127881/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "2. 负责模型端侧落地部署,适配NPU（如Intel平台）,涉及模型量化、精度验证、性能调优等"
+      ]
+    },
+    {
+      "event_id": "0c909fcec9c59d89b4aa1fcde71773be",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "00a911b56e9afd2704fc9ac34cd26094",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "747c3ecf87787d57fec0cafed3388b25",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "fae49a1d4128bc757d44c7389208d616",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7671291137243629878/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、负责代码智能体（Coding Agent）系统全流程研发：数据构建（代码语料清洗、代码/对话/工具轨迹标注）、预训练/持续预训练、指令微调（SFT）与后训练（DPO/ORPO/RLHF/RLAIF"
+      ]
+    },
+    {
+      "event_id": "bd9a4c95aa9fd353f7718b9b19c07a86",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129633626540331/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "负责 AI Agent 智能体系统研发，探索并优化多模态大模型（MLLM）在图像质量评价（IQA）业务场景中的高效微调和推理技术，满足多样化业务需求（拍照、视频等），实现模型在AI Agent工作流中"
+      ]
+    },
+    {
+      "event_id": "12f6555c9e4617f801e847ea74896ffa",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918570079652123/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1. 参与完成AI在电动汽车智造领域的关键技术预研、业务开发工作"
+      ]
+    },
+    {
+      "event_id": "7d49443ead2f56358ecf4348f46fcc94",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918768222570803/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "负责将大模型、智能体等AI能力落地至整车研发流程，提升工程团队研发效率"
+      ]
+    },
+    {
+      "event_id": "0488d29fbec30ec4b512f954bf2b7221",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "b113e4edb8c7aa15d44caf5e2c56445f",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "0e4271cbae9a72bae02821601cf87d6f",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "82f2112aa4def82dcf27313d4ff860df",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "7857b88922e4d83aec44220cd56c3afa",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670918384100788507/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、负责软件自动化测试平台、测试工具、框架的开发与维护，建立标准化测试流程"
+      ]
+    },
+    {
+      "event_id": "9fb9136e4e5d09d2d23ad1993d7c9d72",
+      "decision": "needs_review",
+      "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。"
+    },
+    {
+      "event_id": "eb39602ccabf44f651a3d73e71631ea1",
+      "decision": "needs_review",
+      "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。"
+    },
+    {
+      "event_id": "4f1df23f826dc841ed4476d8c140a86c",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129598676125993/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "4. 负责影像与AI结合的Agent业务设计与软件架构，熟悉Agent的运作原理，有影像智慧化经验优先"
+      ]
+    },
+    {
+      "event_id": "568aa88e22f15eca62dae721b75a4f9b",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7676005513680030006/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1. 负责大模型网关的架构设计与核心代码编写，支撑高并发、低延迟的AI请求调度"
+      ]
+    },
+    {
+      "event_id": "cd2e504ba6bfa1d786bff3351de27e60",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "c1acb3d7571d497fe8845b114791c394",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "8d18c8b86150dc934b486ea35cd77066",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "6e90bbdafc1f43a733e8e64ab2bbd466",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "e1496096f0a387131ffb9a86a356ba4c",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924132817750318/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "参与支撑数亿设备、PB 级数据规模的湖仓一体架构研发，主导 AI Agent 在大数据全链路的落地，作为 Apache 顶级开源项目贡献者，和全球开发者一起定义下一代数据基础设施"
+      ]
+    },
+    {
+      "event_id": "1bbb4817617a010afbbd91dce327b12b",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7671129267694897427/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "2、聚焦IC设计流程智能化升级，将机器学习、强化学习、大模型Agent技术落地到COT中后端核心场景，通过AI自主探索替代传统人工经验与数据模仿模式，优化逻辑综合、UPF/SDC产生、STA分析、布局"
+      ]
+    },
+    {
+      "event_id": "4e7a9b92274347e8c15e3ba82eb75fdc",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923368716011830/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1. 参与分析 Agent（Text-to-SQL / Data Agent）核心能力的研究与研发，探索大模型在企业数据分析场景下规模化、生产级落地的技术路径"
+      ]
+    },
+    {
+      "event_id": "4118847a205b66ab04525791231bdfc6",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885684991281471/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "主要负责AGOP相关的Agent开发,包括但不限AGOP服务、知识库、AACE."
+      ]
+    },
+    {
+      "event_id": "751081f2ac21398502cb65ea883cd167",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "e8f2efd6ecb66e20e3e903ba67c503fa",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "cb5943c89bc8a73e701adaf45f8e21a9",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "c98a98b3e2f5954be6750e230ba41800",
+      "decision": "needs_review",
+      "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。"
+    },
+    {
+      "event_id": "16c020f96ab4916d9d16549e42597fc2",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670914994071046451/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、参与面向真实业务场景的AI Agent应用研发，涵盖需求分析、原型验证、功能实现与上线维护"
+      ]
+    },
+    {
+      "event_id": "c3261fef482828186fe7796fd5298d95",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923490631239974/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1.负责大模型网关核心研发与架构设计，完成需求分析、功能开发、迭代优化，搭建高可用、高性能、可扩展的大模型统一接入管控平台，支撑业务侧模型稳定调用"
+      ]
+    },
+    {
+      "event_id": "216ffa0842fdb7cf2e8a6077c278e6f3",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "01f00927438d9c4b4045817ae25cb09a",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "f8381edb97e1f4a484e8c9e3707761ea",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "e42d5dce722951fc351f9fd239f73939",
+      "decision": "exclude",
+      "decision_reason": "主体是Java后端与使用AI编程工具，Agent在导师指导下探索且交付范围不明，不符合核心Agent工程定位。"
+    },
+    {
+      "event_id": "dbf05fe7bb5d6c9ec04219a571508d50",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670924118350465321/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "探索 Agent Harness 研究与应用的前沿技术，构建可进化的 Agent Harness 技术底座，定义可持续学习 Agent 的基础范式，包括但不限于："
+      ]
+    },
+    {
+      "event_id": "af08ad9dfd204c612cfa5c98c6e88b49",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670935018218932543/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1.负责大模型网关核心研发与架构设计，完成需求分析、功能开发、迭代优化，搭建高可用、高性能、可扩展的大模型统一接入管控平台，支撑业务侧模型稳定调用"
+      ]
+    },
+    {
+      "event_id": "116973b1b7a0d649c6dbcbcc64fd7130",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "6ea332db27c987cd78747bd144a9bea2",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "b532878a7e58705fbc8d0d4093b2690b",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "b9033f1b2353f458328dbed52fa7516c",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "c84f8e1ffa3d1a479852a62a93eb83d6",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7671284471720020243/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、自研 Harness 框架：参与设计和开发面向行业场景的 Agent Harness 产品技术架构，包括 Agent Loop、工具系统、上下文管理、记忆与状态管理等核心模块"
+      ]
+    },
+    {
+      "event_id": "7e286e177c3d75238ca7b7a157b1d9c1",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7671289294427113737/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、参与建设面向零售、服务、整车等业务的 AI 风控工作流与应用平台，围绕风险主动发现、特征与数据分析、风险识别、策略生成与上线、监控复盘、客诉分析与处置辅助等场景，形成端到端闭环"
+      ]
+    },
+    {
+      "event_id": "db9330c69658f65dbc5ab1c726fb2110",
+      "decision": "exclude",
+      "decision_reason": "主要为模型量化/剪枝/蒸馏/推理优化及芯片适配，不属于目标AI应用、Agent或AI评测平台产品开发。"
+    },
+    {
+      "event_id": "e37404a0b9fafe25a98163c0694e4d12",
+      "decision": "needs_review",
+      "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。"
+    },
+    {
+      "event_id": "5cbb341449017891ac8d58eef80bc70b",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923711373281572/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "2. AI Native研发范式建设：落地智能编码、AI评审、智能测试等AI原生应用，推动研发模式从“工具辅助”向“AI驱动”升级，提升代码质量与交付效率"
+      ]
+    },
+    {
+      "event_id": "9d1adb42eb35c443f267fb5cd64dc7c0",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670885167280900393/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、参与 AI 多模态应用客户端长期架构建设，优化架构设计以提升整体迭代效率与运行性能"
+      ]
+    },
+    {
+      "event_id": "4aefe2427b861271e685e42ab39de2bc",
+      "decision": "include",
+      "decision_reason": "完整JD明确承担AI应用、Agent、LLM平台或AI测试工具工程交付；来自小米2027届校园招聘系统而非社招目录。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_recruitment_type": "校招 / 正式 / 2027届校园招聘计划",
+      "official_type_evidence": "小米官方2027届校招项目 https://hr.xiaomi.com/website/campus.html；职位详情 https://xiaomi.jobs.f.mioffice.cn/campus/position/7670923797172586795/detail；该项目职位列表区分“校招/正式/2027届校园招聘计划”。",
+      "engineering_evidence": [
+        "1、Agent Memory：设计快慢双系统记忆架构，优化记忆管理机制、召回策略与压缩方法，统一存储和检索文本、图像、视频、代码等多模态数据"
+      ]
+    },
+    {
+      "event_id": "afa239c13efc128396cb365c521c7146",
+      "decision": "exclude",
+      "decision_reason": "这是一条自由申报AI研究课题的开放通道，缺乏确定工程岗位职责与可交付边界。"
+    },
+    {
+      "event_id": "e3c6dfc570ce87510aa911c7a57a05da",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "f31849b357f510c4971ae9c1a5bb4be0",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "39dcd9bdeedd618efe5c2bcdb09b1757",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    },
+    {
+      "event_id": "3939ae7f6955487f18f80b0de477bf4d",
+      "decision": "needs_review",
+      "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。"
+    }
+  ]
+}

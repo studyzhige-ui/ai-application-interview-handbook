@@ -197,6 +197,42 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(result["needs_review"], 1)
             q = json.loads((root / "queue.json").read_text())
             self.assertEqual(q["entries"]["e1"]["semantic_review"]["decision"], "needs_review")
+            self.assertEqual(q["entries"]["e1"]["review_state"], "needs_review")
+
+    def test_followup_resolves_legacy_needs_review_without_overwriting_final_records(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, _ = self.base_catalog()
+            prior = self.queue_entry()
+            prior["review_state"] = "reviewed"
+            prior["semantic_review"] = {"decision": "needs_review", "decision_reason": "待补证"}
+            final = {**self.queue_entry(), "event_id": "e2", "review_state": "reviewed",
+                     "semantic_review": {"decision": "exclude"}}
+            queue = {"schema_version": 2, "entries": {"e1": prior, "e2": final}}
+            decisions = {"schema_version": 1, "followup_for": "needs_review",
+                         "decisions": [
+                             {"event_id": "e1", "decision": "include",
+                              "decision_reason": "已证实为校招Agent岗位",
+                              "role_track": "应用与Agent核心研发",
+                              "recruitment_type": "campus",
+                              "official_type_evidence": "官网2027届校招岗位",
+                              "engineering_evidence": ["开发Agent服务"]},
+                             {"event_id": "e2", "decision": "exclude",
+                              "decision_reason": "不得覆盖原来已确认的决定"}]}
+            for name, value in (("official.json", catalog),
+                                ("bytedance.json", {"source_id": "official-012", "jobs": []}),
+                                ("queue.json", queue), ("decisions.json", decisions)):
+                self.write_json(root / name, value)
+            stats = apply_decisions(queue_file=root / "queue.json",
+                                    decisions_file=root / "decisions.json",
+                                    official_file=root / "official.json",
+                                    bytedance_file=root / "bytedance.json",
+                                    index_file=root / "index.md")
+            self.assertEqual(stats["applied"], 1)
+            self.assertEqual(stats["included"], 1)
+            saved = json.loads((root / "queue.json").read_text())
+            self.assertEqual(saved["entries"]["e1"]["review_state"], "reviewed")
+            self.assertEqual(saved["entries"]["e2"]["semantic_review"]["decision"], "exclude")
 
     def test_compaction_reuses_exact_existing_review_and_ignores_unpublished_removal(self):
         with tempfile.TemporaryDirectory() as d:

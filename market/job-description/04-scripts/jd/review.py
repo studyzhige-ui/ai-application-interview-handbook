@@ -567,7 +567,14 @@ def apply_decisions(
         entry = queue_entries.get(event_id)
         if not isinstance(entry, dict):
             raise ValueError(f"Unknown audit event: {event_id}")
-        if entry.get("review_state") != "pending":
+        state = entry.get("review_state")
+        previous_review = entry.get("semantic_review") or {}
+        is_followup = (
+            payload.get("followup_for") == "needs_review"
+            and state in {"reviewed", "needs_review"}
+            and previous_review.get("decision") == "needs_review"
+        )
+        if state != "pending" and not is_followup:
             continue
 
         source_id = entry.get("source_id")
@@ -597,7 +604,8 @@ def apply_decisions(
         else:
             counts["needs_review"] += 1
 
-        entry["review_state"] = "reviewed"
+        # Inconclusive reviews remain actionable, not silently "reviewed".
+        entry["review_state"] = "needs_review" if outcome == "needs_review" else "reviewed"
         entry["semantic_review"] = {
             "decision": outcome,
             "decision_reason": str(decision.get("decision_reason") or "").strip(),

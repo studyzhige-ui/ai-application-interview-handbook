@@ -174,6 +174,6 @@ flowchart TD
 ## 知识回看与权威资料
 
 - [状态归属](14-DataLayering与StateOwnership.md)：判断哪份数据是裁决依据，哪份可以重建。
-- [MySQL 复制与读写分离](../../03-mysql/docs/16-复制与读写分离.md)：核对副本进度和事务可见性为什么是不同条件。
+- [MySQL 复制与读写分离](../../03-mysql/docs/09-提交以后：日志、故障恢复、复制与数据同步.md)：核对副本进度和事务可见性为什么是不同条件。
 - [可靠任务](12-ReliableAsyncTask.md)：复习持久发现、检查点与过期执行者的处理。
 - [Redis 淘汰机制](https://redis.io/docs/latest/develop/reference/eviction/)：核对版本依据为何不能只依赖可能被淘汰的缓存；本章版本化读取是应用协议。
