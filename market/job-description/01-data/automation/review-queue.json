@@ -300,13 +300,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "抓取的是城市/筛选项“新界”，不是独立具体岗位；没有招聘ID与完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -1078,13 +1078,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "只有城市筛选项“北京”，无具体职位ID或JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-029",
       "triage": {
@@ -2064,13 +2064,13 @@
         "official_url": "https://mcampus.hikvision.com/#/position?activeTab=0",
         "title": ""
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "记录只是校园招聘栏目和目标群体，没有具体岗位标题、ID、职责与任职要求。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-045",
       "triage": {
@@ -5257,13 +5257,13 @@
       },
       "last_seen_at_utc": "2026-10-12T12:43:15Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "页面列表标题为财务BP，缺少目标AI工程任务及完整JD；不符合本库的可核验准入条件。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-054",
       "triage": {
@@ -6033,13 +6033,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "原记录是“职能/支持”职位类别而非具体岗位，不存在可审阅的完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-026",
       "triage": {
@@ -7265,13 +7265,13 @@
         "official_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/job/ba78b62f-c108-42ef-8197-71bb54079fca",
         "title": "营销管培生\n发布于 2026-10-08\n全职\n全职\n|\n硕士\n硕士\n|\n浙江·杭州市\n浙江·杭州市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "岗位列表明确属于营销管培生方向，没有可核验的Agent/LLM工程岗位职责；原抓取为带投递按钮的列表卡片文本。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-054",
       "triage": {
@@ -9272,13 +9272,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "记录仅为汽车功率模块工艺开发标题，没有完整职责和AI/Agent工程交付证据。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-056",
       "triage": {
@@ -13390,13 +13390,13 @@
       },
       "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "只有实习岗位标题，未抓到职责和要求；产品实习职位尚无AI应用/Agent工程实现职责的官方证据。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -24084,13 +24084,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "城市筛选项“深圳”，无实际招聘JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -24346,13 +24346,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "仅有职位类别“设计”，无法核验具体工程岗位职责。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-026",
       "triage": {
@@ -27699,13 +27699,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "记录仅为芯片功率模块封装标题，没有完整JD或目标AI应用工程职责证据。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-056",
       "triage": {
@@ -47646,13 +47646,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "城市筛选项“上海”，不是可以语义审计的岗位。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -47721,13 +47721,13 @@
         "official_url": "https://talent.lenovo.com.cn/position/detail?id=2343",
         "title": "AI知识管理工程师"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "官网确认属于2027应届生招聘，存在企业AI知识库建设信息，但扫描事件缺失可存证的完整职责与要求；尚无法核验知识管理/数据治理与实际RAG/Agent工程实现的责任比例，按正式库证据规则不收录。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-039",
       "triage": {
@@ -50508,13 +50508,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "抓取的是城市筛选项“北京”而非具体岗位，无完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -50721,13 +50721,13 @@
         "official_url": "https://talent.lenovo.com.cn/position/detail?id=2351",
         "title": "AI应用开发工程师"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "官网确认属于2027应届生招聘且职责方向可能吻合，但仓库事件未抓取该具体岗位的完整职责及任职要求，不满足正式库的可追溯完整JD条件；此次判为不收录，而非不相关。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-039",
       "triage": {
@@ -56841,13 +56841,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "城市“成都”是筛选项而非具体招聘岗位，没有职位JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -61078,13 +61078,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "职位类别“市场”，不是具体工程岗位，亦无完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-026",
       "triage": {
@@ -68988,13 +68988,13 @@
         "official_url": "https://jobs.kunlun.com/459522/position/7516920796661434650/detail",
         "title": "AI视频 - NLP算法工程师"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "完整职责确实包含LLM剧本生成功能研发，但职位来自官方“昆仑万维2026校招”旧项目（/459522），该项目职位列表现为“暂无职位”，不符合当前2027校招/实习岗位的有效来源要求。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-037",
       "triage": {
@@ -71398,13 +71398,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "原始记录只有“运营”栏目名称，非可唯一核验的技术职位，也无完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-026",
       "triage": {
@@ -77097,13 +77097,13 @@
       },
       "last_seen_at_utc": "2026-10-12T10:20:31Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "仅有“研发”职位类别，无法对应某个具体招聘岗位或完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-036",
       "triage": {
@@ -79182,13 +79182,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "仅抓取“研发”栏目，无法对应某一实际招聘职位或审核完整JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-026",
       "triage": {
@@ -80830,13 +80830,13 @@
       },
       "last_seen_at_utc": "2026-10-12T12:43:15Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "原记录只含标题/类别/地点，缺失职责与要求；不能判断AI芯片算法是否含实际Agent或AI应用工程研发交付。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-056",
       "triage": {
@@ -84327,13 +84327,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "职位类别筛选项，不是具体JD；未提供AI应用工程岗位的唯一身份和完整职责。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-026",
       "triage": {
@@ -87098,13 +87098,13 @@
         "official_url": "https://jobs.kunlun.com/459522/position/7516919311517255974/detail",
         "title": "AI视频 - AI infra 算法工程师"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "完整职责涉及视频生成模型训练/推理平台工程，但职位源自官方2026校招旧项目 /459522，不能把历史项目的岗位作为当前2027届有效招聘收录。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-037",
       "triage": {
@@ -87656,13 +87656,13 @@
       },
       "last_seen_at_utc": "2026-10-12T12:43:15Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "只获取岗位标题、地点和类别，没有完整职责/要求，无法核验是否属于目标LLM应用或Agent工程而非芯片算法。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-056",
       "triage": {
@@ -88279,13 +88279,13 @@
         "official_url": "https://talent.lenovo.com.cn/position/detail?id=2335",
         "title": "算法工程师"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "只有“算法工程师”与校园招聘入口，缺失完整职责和要求；无法判定是纯算法研究还是含明确Agent/LLM工程职责，因此不满足正式收录证据门槛。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-039",
       "triage": {
@@ -97002,13 +97002,13 @@
       },
       "last_seen_at_utc": "2026-10-12T09:13:46Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "完整职责属于LLM推理引擎开发，但其 /088717 职位处于通用社招全职招聘项目，未验证该具体ID为校招/实习；故不收录至校园JD库。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-036",
       "triage": {
@@ -97072,13 +97072,13 @@
         "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7589451831748151579/detail",
         "title": "压铸顶岗实习生-广州基地南区"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "实际 description 仅有“--”且没有岗位要求；仅凭压铸厂实习标题不能判为AI应用/Agent开发。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-055",
       "triage": {
@@ -99257,13 +99257,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "城市“新加坡”筛选项，没有对应具体岗位ID和JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -100112,13 +100112,13 @@
         "official_url": "https://infinigence.jobs.feishu.cn/088717/position/7680449713766615346/detail",
         "title": "强化学习训练框架研发工程师"
       },
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "已有完整职责但尚未确认该具体岗位属于校招/实习的官方计划或届次；不得凭“正式”或某个门户路径猜测。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "完整职责是训练/推理平台研发，但官方无问芯穹当前综合招聘入口将此类 /088717 正式职位列为社招全职，未见该岗位属于校招/实习的对应证据；排除出校招库，不否定其工程相关性。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-036",
       "triage": {
@@ -102821,13 +102821,13 @@
       },
       "last_seen_at_utc": "2026-10-12T10:20:31Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "这是“设计”职位类别而非具体职位，完整JD缺失。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-036",
       "triage": {
@@ -104941,13 +104941,13 @@
       },
       "last_seen_at_utc": "2026-10-13T07:29:43Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "只有地点“杭州”，不是有效JD。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-031",
       "triage": {
@@ -107570,13 +107570,13 @@
       },
       "last_seen_at_utc": "2026-10-12T08:40:17Z",
       "previous": null,
-      "review_state": "needs_review",
+      "review_state": "reviewed",
       "semantic_review": {
-        "batch_id": "historical-needs-review-followup-2026-10-15",
-        "decision": "needs_review",
-        "decision_reason": "尚未取得该具体岗位可用的完整职责和任职要求，采集内容可能只有地点、栏目或标题；需补采官方JD后再审。",
+        "batch_id": "historical-needs-review-terminal-2026-10-15",
+        "decision": "exclude",
+        "decision_reason": "职位为财务/投资分析方向；扫描未取得完整职责，缺乏任何Agent/AI应用工程交付证据。",
         "review_depth": "full_jd",
-        "reviewed_at_utc": "2026-10-15T08:00:27Z"
+        "reviewed_at_utc": "2026-10-15T08:39:06Z"
       },
       "source_id": "official-039",
       "triage": {
@@ -108119,7 +108119,7 @@
   },
   "last_compaction": {
     "already_reviewed": 0,
-    "checked_at_utc": "2026-10-15T08:00:28Z",
+    "checked_at_utc": "2026-10-15T08:39:07Z",
     "duplicate_fallbacks": 0,
     "identity_migration_exclusions": 0,
     "pending_after": 0,
