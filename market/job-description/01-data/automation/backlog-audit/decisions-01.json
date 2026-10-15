@@ -1,0 +1,884 @@
+{
+  "schema_version": 1,
+  "shard_id": "01",
+  "source_queue_sha": "7cfcc7f524df10eb3a95183ca6acd28d5caf5fa5",
+  "auditor": "chatgpt-bulk-semantic-audit",
+  "submitted_at_utc": "2026-10-14T13:25:16.112Z",
+  "decisions": [
+    {
+      "event_id": "1402093a3fa5c6dc32eb76016e8a447e",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“建设 Context、Evidence、Agent、Skill 和业务输出的评测体系”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：Super Sparks-校招-企业智能算法研究员；招聘页面：https://nio.jobs.feishu.cn/campus/position/7665996429010569515/detail",
+      "engineering_evidence": [
+        "建设 Context、Evidence、Agent、Skill 和业务输出的评测体系"
+      ]
+    },
+    {
+      "event_id": "ffa8b3b0000469b92129647d69a912bc",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“建设 Agent Runtime SDK、Skill Gateway、MCP Gateway、Sandbox 和 Workflow Engine”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：Super Sparks-校招-企业智能系统研发工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7665996543711054118/detail",
+      "engineering_evidence": [
+        "建设 Agent Runtime SDK、Skill Gateway、MCP Gateway、Sandbox 和 Workflow Engine"
+      ]
+    },
+    {
+      "event_id": "fb8452d3a1a5e40558b3f5e1ae487824",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "63c2922eaa0ded911194e746db0773dd",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "8b45dbde023caa8c5a69f1b25eeb2e14",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "5c3e513b46d3ade9052584c82c1dd2db",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "f5cb2c69233dcc00ee7bd9c397116ff1",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "b3e029cc3ab909b3e6df0a0cc074c52d",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "ea39b5f8a174bf416bae07ef59eaf02d",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "44e32bedbdc7790c7c0d289baf175b67",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“建设面向 Agent 能力的 Harness 系统”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】Agent Harness 研究员/算法工程师；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659705475663038746/detail",
+      "engineering_evidence": [
+        "建设面向 Agent 能力的 Harness 系统"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "d620db7e7e542ad23ac4558391cff662",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "6b9f2b9f2e0f899c8fe9ebf1a486d3a6",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e9a298c57f6fefbe2c6c78664e527cdf",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "283438442b5b9fe80bacac2f0c27012b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "db0f54bb1df3fe07871819a112108bf3",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "01dc0ea42cb4207550cebb6c91adc7d0",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与构建 Agent 能力增强所需的训练与交互环境”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-座舱大模型后训练/Agentic 算法工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7673027279396768009/detail",
+      "engineering_evidence": [
+        "参与构建 Agent 能力增强所需的训练与交互环境"
+      ]
+    },
+    {
+      "event_id": "d008a28748abc4a16738e89a4d2f7cf1",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与创作Agent相关能力建设”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：特效研发（SDK开发方向）实习生 - TikTok智能创作；招聘页面：https://jobs.bytedance.com/campus/position/7686420231186729269/detail",
+      "engineering_evidence": [
+        "参与创作Agent相关能力建设"
+      ]
+    },
+    {
+      "event_id": "2e8f64aa9c77f5f0580759f1bd783780",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "896438b51866e1db1c452b5028caf18f",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与构建面向测试场景的 AI Agent”，具有实际 AI 系统、平台或评测工程交付责任，符合评测与测试工具研发方向。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-面向AI智能测试开发工程师——嵌入式软件方向；招聘页面：https://nio.jobs.feishu.cn/campus/position/7673026981592729907/detail",
+      "engineering_evidence": [
+        "参与构建面向测试场景的 AI Agent"
+      ]
+    },
+    {
+      "event_id": "e0d522c21c7251034220fba463fbd2cf",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "433780d89552b7e84a845c4876fe2228",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“协助沉淀标准化方法、数据集、Benchmark 与Harness”，具有实际 AI 系统、平台或评测工程交付责任，符合评测与测试工具研发方向。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：AI安全实习生；招聘页面：https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7655771634666522923/detail",
+      "engineering_evidence": [
+        "协助沉淀标准化方法、数据集、Benchmark 与Harness"
+      ]
+    },
+    {
+      "event_id": "f2d49d53058fac3f53bcad18a23f0ef2",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与基于大模型的多模态 Agent 研发”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：大模型算法agent实习生；招聘页面：https://hr-jobs.sensetime.com/edu/position/7660462461628483866/detail",
+      "engineering_evidence": [
+        "参与基于大模型的多模态 Agent 研发"
+      ]
+    },
+    {
+      "event_id": "0ef310545956670b6051fc1fa3059f0d",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与企业级 AI 应用项目的开发与交付”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】FDE工程师—亚太业务事业群；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659255237010508078/detail",
+      "engineering_evidence": [
+        "参与企业级 AI 应用项目的开发与交付"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "435506446253b703f7e079ae1eaa916a",
+      "decision": "exclude",
+      "decision_reason": "要求3–5年相关工作经验且无校招/实习身份依据。"
+    },
+    {
+      "event_id": "8b64b6b296f9a4091b1de66ad6e700cc",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "461d9310508426effcd139cac5cb9df6",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "45f824369c9efdc067ab7316cb407b3b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e33e16c6841184c502c84f2f88063cb5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "3599eda1e756a47b2d21fd62ea71f8bf",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“协助设计并实现增强基模agent相关能力的交互环境”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：实习-大模型 Agentic 算法工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7633340935077873963/detail",
+      "engineering_evidence": [
+        "协助设计并实现增强基模agent相关能力的交互环境"
+      ]
+    },
+    {
+      "event_id": "e8ce33dda2d8341a4d3151a2bb1f0b58",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "a577e1034983e72953fe4313e1e404f4",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“负责探索并落地 AI Agent 在大模型训练优化中的应用”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-大模型训练框架研发工程师(智能辅助驾驶方向)；招聘页面：https://nio.jobs.feishu.cn/campus/position/7686123644536506666/detail",
+      "engineering_evidence": [
+        "负责探索并落地 AI Agent 在大模型训练优化中的应用"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "633d9d45439899e4a9a8202567d2bc6d",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "58a239082782b92667063c9e5a8feeb4",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“设计系统化的评测方法（Evals）”，具有实际 AI 系统、平台或评测工程交付责任，符合评测与测试工具研发方向。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】大模型 Agent 算法研究员-大装置；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659624252253555007/detail",
+      "engineering_evidence": [
+        "设计系统化的评测方法（Evals）"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "8674c83f20f18f478eb1d7fb3c6fcd1e",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "fb3eed0c2d431f276f9bc60c18a741e5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "5593d62bfeefc5f21aae4d49eaf47bea",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e2576766151674f2dd0929052d256f98",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "65ff9e2fce7959987e2714638d0ab4df",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与大模型推理框架的开发与优化”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：大装置-AI训练/推理框架研发实习生；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659234146544830762/detail",
+      "engineering_evidence": [
+        "参与大模型推理框架的开发与优化"
+      ]
+    },
+    {
+      "event_id": "b65c53ad9965810d7476ba63d4631a7b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "ff2d3f0d41d26971c97361fe350578dd",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "1eb11ec567c40b30962623a40b2e7714",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "b30599f08225ad325e372d4a1eec1176",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "6e5a07f51354b0cc0a87a06d3b38d528",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "297ebfc3c820277f30143666017d5bc2",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "6e6f374e78b6a980d0b72a24a1b0b0d5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "c446c305711ca05ed1558b6782156803",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "da3463d79d3789d8b688cd8f5d490edb",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与大模型（语言、多模态、生成式图像/视频模型）高性能推理系统的研发”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】大模型推理系统研究员；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659704210958977299/detail",
+      "engineering_evidence": [
+        "参与大模型（语言、多模态、生成式图像/视频模型）高性能推理系统的研发"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "af1a019e766b1f1da0a47f533f730733",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“将研究成果持续转化为云平台 AI 网络能力”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届顶尖】AI网络与通信研究员-大装置；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659358298252265754/detail",
+      "engineering_evidence": [
+        "将研究成果持续转化为云平台 AI 网络能力"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "0e24f15ef04b6f12b8e73255a6bd0a0a",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "a9a01d6154bc135d63e8e510129022b2",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "300a17c98bb2840127644c4028be49c3",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "751ac48dfaf905788f59f7ff13865a3f",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“设计并实现算法原型”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：大模型算法工程师-生态链；招聘页面：https://xiaomi.jobs.f.mioffice.cn/campus/position/7671290581923383615/detail",
+      "engineering_evidence": [
+        "设计并实现算法原型"
+      ]
+    },
+    {
+      "event_id": "5ae1a4fe612e3109d19fb78776b2e1ed",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "369fefddabc63171bc37f0cb341acde8",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "f9a03d3fe9d7491e932b2a68eddd5f4a",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与大模型推理引擎的设计和研发”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：Super Sparks-校招-AI推理引擎算法工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7667519736092002602/detail",
+      "engineering_evidence": [
+        "参与大模型推理引擎的设计和研发"
+      ]
+    },
+    {
+      "event_id": "5ae852f56e9e2e57e282be069c11316f",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“打通 LLM 与仿真引擎之间的语义链路”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-仿真场景引擎工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7673027051922360622/detail",
+      "engineering_evidence": [
+        "打通 LLM 与仿真引擎之间的语义链路"
+      ]
+    },
+    {
+      "event_id": "547789492f4b62ca5d228f5a525986a7",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "11fc7c824ea1c12e280d8d07f4748e6f",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与大模型推理引擎的设计和研发”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-AI推理引擎开发工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7673027294877337866/detail",
+      "engineering_evidence": [
+        "参与大模型推理引擎的设计和研发"
+      ]
+    },
+    {
+      "event_id": "588e88174720a46180c94cd9fdc39c33",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "6b55fad574666c1a67b27405050b35b0",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "f88fde91affdbcf7063de77b68502b36",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与开发大模型训练推理框架”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】大模型训练推理研发工程师-无限原力；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659353703599032622/detail",
+      "engineering_evidence": [
+        "参与开发大模型训练推理框架"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "ddfb66de69b62eb6fc6645e8d6acad8b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "76a17e0e9e0695fca15e5a2e9fcfaaf9",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与语言及多模态大模型训练框架的核心功能开发”，具有实际 AI 系统、平台或评测工程交付责任，符合多方向或跨职能工程方向。",
+      "role_track": "多方向或跨职能工程",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】大模型训练系统研究员；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659694567370311986/detail",
+      "engineering_evidence": [
+        "参与语言及多模态大模型训练框架的核心功能开发"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "5e4d35f993f4379581e1e677fdd55191",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "77394852a4db5222122a333854a5a6c1",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e7dc3a2c7838cd42d5df1a19612856ec",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“基于大模型（LLM）开展数据分析类智能体的设计、开发与案例实践”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-数据智能开发工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7673028696328505606/detail",
+      "engineering_evidence": [
+        "基于大模型（LLM）开展数据分析类智能体的设计、开发与案例实践"
+      ]
+    },
+    {
+      "event_id": "aa82c3d74376ae7de24e472d747ce4e5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "9208dfa4c5451c3b6af79a11c1e7a2f1",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "2bb43b255fffcef16f6a294556ae2d4b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "88856903a3b945be4fd81aaca86036ce",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "35d9eecff563580bc01eaecc5e885dd3",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与构建基于大语言模型的 AI Agent”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：实习-AI软件研发工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7633340935079201067/detail",
+      "engineering_evidence": [
+        "参与构建基于大语言模型的 AI Agent"
+      ]
+    },
+    {
+      "event_id": "165ba74e48d9840856c472ac0559b3c9",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "fb3328cb84046d3009cd42fb0ac20ea1",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "fe79d019d208e0327a2a34989e69de15",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "57bb1a3906657bc21079e452490789d3",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "8efb18f6edf31da20a9e40e08e5a5334",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "3f2df03bec49c5fb4b037b3890a09f5e",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "c431b3a2c20833afe0a2178d62418fbd",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“参与 Agentic RL / 多 Agent 训练框架建设”，具有实际 AI 系统、平台或评测工程交付责任，符合算法或研究与应用工程混合方向。",
+      "role_track": "算法或研究与应用工程混合",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：【27届校招】大模型强化学习系统研究员；招聘页面：https://hr-jobs.sensetime.com/edu/position/7659692156009695539/detail",
+      "engineering_evidence": [
+        "参与 Agentic RL / 多 Agent 训练框架建设"
+      ],
+      "cohort": "2027届"
+    },
+    {
+      "event_id": "9af8b790503853f24dcd1fecad7b63ac",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "2d861f16a84b326e4dbd50abf95e9e41",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“负责部门业务场景 Agent 搭建和多Agent编排设计”，具有实际 AI 系统、平台或评测工程交付责任，符合应用与Agent核心研发方向。",
+      "role_track": "应用与Agent核心研发",
+      "recruitment_type": "internship",
+      "official_type_evidence": "官方职位类别：实习；标题：AI算法实习生（振动与力学方向）；招聘页面：https://arashivision.jobs.feishu.cn/campus/position/7657458052065528074/detail",
+      "engineering_evidence": [
+        "负责部门业务场景 Agent 搭建和多Agent编排设计"
+      ]
+    },
+    {
+      "event_id": "2a1a8d80ead571f85729a99f4335c8c4",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "9aed5542814500b0407f9f6cd5b39d52",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "afc3e823bfd22ceda1c87a938ca1aa41",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e7fd295fec6089219d80542f12f04b88",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "d2aac70bc2682aec9333c5fcb3f521ca",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "1a216b13ad8f462279dd754611343fa6",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "9d7bebe522bde0900c2450064b094e11",
+      "decision": "needs_review",
+      "decision_reason": "制造数据系统与大模型探索并存，未明确实际 LLM/Agent 工程交付。"
+    },
+    {
+      "event_id": "ef59388795f65b3cf621493f1267cf87",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "59b02eca85ffdfd42c0c55f42f73d7ff",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "1c75687c3d8c3d562af4766eff89db8f",
+      "decision": "include",
+      "decision_reason": "完整岗位职责明确包含“负责建设测试工具链，迭代和改进评测框架”，具有实际 AI 系统、平台或评测工程交付责任，符合评测与测试工具研发方向。",
+      "role_track": "评测与测试工具研发",
+      "recruitment_type": "campus",
+      "official_type_evidence": "官方职位类别：正式；标题：校招-算法模型评测工程师；招聘页面：https://nio.jobs.feishu.cn/campus/position/7673027059903678746/detail",
+      "engineering_evidence": [
+        "负责建设测试工具链，迭代和改进评测框架"
+      ]
+    },
+    {
+      "event_id": "3dc638259673e442d8104a49f5aaed10",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "a91fa8be55e02ef10a6ad491980102af",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "0a14f8df6d74ab107a7ee069eb5ab49b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "767f838bcf41131b1c38739b888eee01",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "7a6e135c448cbff803542ad3e1322256",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "ec98f39dedf01a365a10e4abdb24cbde",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "4699b93d6b286a1b1319f12f85546040",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "022c59347f504b2369b8942de223dc14",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "1ab4140b1fcd3e1715ba83c47f7c323c",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "ef1b8bd811ad0832ac9d73f8f97f0d28",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "01c80f759c5dc5c4c6d20c26f1b435f5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "723ca2d362e450b74f7439d43c67edb7",
+      "decision": "needs_review",
+      "decision_reason": "安全系统开发明确，但 LLM 仅为探索，需确认 AI 模块开发范围。"
+    },
+    {
+      "event_id": "e2e9a4ff216fe17611f8222ed013025f",
+      "decision": "needs_review",
+      "decision_reason": "CarClaw 互联开发未明确是否涉及 Agent/LLM 系统实现。"
+    },
+    {
+      "event_id": "0187c7d581d8fa0d417510c2eba59092",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "0cb363434edf03364f6a57c5c7378be4",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "b090a6905fde1bd2e62f6093fefd6de2",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "b39f23c5783090c9badf8bb43d1482f5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "dcdd61621e74f27d4917f960e3d131c5",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "bf1c1ae66a85b011dc04cbb4b1c3f210",
+      "decision": "needs_review",
+      "decision_reason": "仅有模型推理框架技术预研，未明确实际平台工程开发交付。"
+    },
+    {
+      "event_id": "02c5c78d7fb36614edae674dc1d5020a",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "9a69ab498aea32c438c9f04f6da5078a",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "6fb274d71ca0a0eca62f83ec416f0809",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "75c604730b3b7c85c6a1fcf65c50d782",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "5d683c510e116762ce67f9b837ea1e79",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "106fb03e4d80050b5323f9c4d1aa67cd",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e4738a9dd22bf473b68903cb696bd16a",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "0629bb1e9264ee5fe51eadb5feb49a45",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "10f1e32dfea141bdfe6df9483c353245",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "7e2ba103cbf708edfe939769462d98d4",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "1ba9feb2dbbdff7c078fd179bd8a732e",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "4050a93bf3b26102c83c2faa03995f60",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e3dcfd7a37c7977adde5321c760a06ad",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "3a62c7ec8178526429654cb4581717b9",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e89ebe6baec714b490ce4e0b8ffd6715",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "03e890ebaa1591cf244b466e17b62d0e",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "ce2c74ae59fe90abee2a80070b355698",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "2f7242079b802cf7aaa5b5675e5cf607",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "a7be16d8a09277bfe57b05537f8043e7",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "b210e6091fc2180105f7ecbf51fd53ba",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "ed4758bea1054159fe471a17cf0177ab",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "e87a8bf35b4ae4ce12663279a2afc8db",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "3f66b1cac4148c39afccfa8f6092e8ac",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "82bb889e6f8284b45577b14ea966f416",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "6e44a1eeed8b3691fdc9e0ccfbe4e72b",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "3098642ae1c56661c7671512800f1765",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "fcbf97358f6df61c43dce247b44f0d97",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "66cb1dd62401a0b5f09d46360d4c40c4",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "99086cd19aea0a80a9ed5e5f104628cd",
+      "decision": "exclude",
+      "decision_reason": "已审阅完整职责及要求，岗位主要属于模型算法研究/训练、业务职能/产品运营或非目标软件硬件工程，未明确目标 AI 应用、Agent、LLM 平台或 AI 评测工具的工程交付。"
+    },
+    {
+      "event_id": "fe6bf9c207aff92759a601df97718e9a",
+      "decision": "needs_review",
+      "decision_reason": "缺失完整 description 和 requirements，不能以职位标题替代审核。"
+    },
+    {
+      "event_id": "a447744650d6877abd3a679c728fcd02",
+      "decision": "needs_review",
+      "decision_reason": "缺失完整 description 和 requirements，不能以职位标题替代审核。"
+    },
+    {
+      "event_id": "16561115553f9927dd5c6e1bf58d49d7",
+      "decision": "needs_review",
+      "decision_reason": "缺失完整 description 和 requirements，不能以职位标题替代审核。"
+    },
+    {
+      "event_id": "41de2c7a60a2868144b156838f596c10",
+      "decision": "needs_review",
+      "decision_reason": "缺失完整 description 和 requirements，不能以职位标题替代审核。"
+    }
+  ]
+}
