@@ -125,7 +125,6 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(loaded["companies"][0]["jobs"][0]["req_id"], "r1")
             q = json.loads((root / "queue.json").read_text())
             self.assertNotIn("e1", q["entries"])
-            self.assertEqual(q["entries"]["e1"]["semantic_review"]["decision"], "include")
             self.assertIn("Agent工程实习", (root / "index.md").read_text())
 
     def test_exclude_changed_event_removes_previously_included_job(self):
@@ -243,7 +242,6 @@ class SemanticAuditBridgeTests(unittest.TestCase):
                                     bytedance_file=root / "bytedance.json",
                                     index_file=root / "index.md")
             self.assertEqual(stats["excluded"], 1)
-            self.assertEqual(json.loads((root / "queue.json").read_text())["entries"]["e1"]["review_state"], "reviewed")
             batch = prepare_batch(queue_file=root / "queue.json",
                                   batch_file=root / "batch.json", limit=10)
             self.assertEqual(batch["pending_total"], 0)

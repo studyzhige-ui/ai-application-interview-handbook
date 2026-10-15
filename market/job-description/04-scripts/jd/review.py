@@ -51,6 +51,11 @@ def _write_like(path: Path, payload) -> None:
 
 
 
+def _entry_job(entry: dict) -> dict:
+    job = entry.get("job")
+    return job if isinstance(job, dict) else {}
+
+
 def prepare_batch(*, queue_file: Path, batch_file: Path, limit: int) -> dict:
     """Export the next bounded batch of unscreened official JD changes."""
     if limit <= 0:
