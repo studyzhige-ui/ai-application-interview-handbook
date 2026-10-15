@@ -596,7 +596,19 @@ def apply_decisions(
                 jobs[index] = record
             counts["included"] += 1
         elif outcome == "exclude":
-            if index is not None:
+            # A deficient scan event cannot revoke a separately reviewed full JD.
+            # Revocation requires an actual full-JD change or verified ineligibility
+            # already documented in the existing formal record.
+            expired_campus = (
+                index is not None
+                and decision.get("evidence_gate") == "过期校招批次"
+                and "2026" in str(jobs[index].get("cohort") or "")
+            )
+            materially_changed = (
+                entry.get("change") == "changed"
+                and bool(_full_text(_entry_job(entry)))
+            )
+            if index is not None and (expired_campus or materially_changed):
                 jobs.pop(index)
             counts["excluded"] += 1
         elif outcome == "remove":

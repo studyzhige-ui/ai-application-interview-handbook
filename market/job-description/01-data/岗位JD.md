@@ -1,6 +1,6 @@
 # 校招与实习岗位索引
 
-本次核验：2026-10-10T01:43:16Z。收录 **2988 个去重岗位或官方岗位意向**，来自 **59 个公司或品牌入口**。
+本次核验：2026-10-10T01:43:16Z。收录 **2990 个去重岗位或官方岗位意向**，来自 **60 个公司或品牌入口**。
 
 完整职责、任职要求、工程依据和所有官方字段保存在[当前岗位库](official-jds.json)及其引用的[字节跳动岗位分片](bytedance-jds.json)。本页是同源生成的轻量索引，点击岗位名打开官方详情；[综合分析与覆盖范围](../02-analysis/README.md)说明未查全和受限入口。
 
@@ -2585,6 +2585,12 @@
 | [端侧大模型推理实习生](https://infinigence.jobs.feishu.cn/088717/position/7660353488697739539/detail) | 实习 | 未披露 | 北京 | 多方向 |
 | [大模型推理框架开发实习生](https://infinigence.jobs.feishu.cn/088717/position/7648918984653326618/detail) | 实习 | 未披露 | 上海 | 多方向 |
 
+## 昆仑万维/天工（1）
+
+| 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
+| --- | --- | --- | --- | --- |
+| [AI视频 - NLP算法工程师](https://jobs.kunlun.com/459522/position/7516920796661434650/detail) | 校招 | 2026校园项目；具体毕业时间未披露 | 北京、深圳 | 应用研发 |
+
 ## Shopee（28）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
@@ -2618,7 +2624,7 @@
 | [Backend Engineer, Search (2027 Graduate)](https://careers.shopee.cn/job-detail/J02192133/1?channel=10001) | 校招 | 2027届 | Singapore | 应用研发 |
 | [AI & Analytics Engineering Internship (Starting Nov 2026 – Jan 2027), Business Intelligence](https://careers.shopee.cn/job-detail/J02195712/1?channel=10001) | 实习 | 未披露 | Bangkok | 应用研发 |
 
-## 联想（5）
+## 联想（6）
 
 | 岗位与官方链接 | 招聘类型 | 毕业/学历范围 | 地点 | 职责范围 |
 | --- | --- | --- | --- | --- |
@@ -2626,6 +2632,7 @@
 | [AI Agent开发工程师](https://talent.lenovo.com.cn/position/detail?id=2404) | 校招 | 毕业时间2026年9月至2027年8月 | 北京、深圳 | 应用研发 |
 | [AI全栈开发工程师](https://talent.lenovo.com.cn/position/detail?id=2403) | 校招 | 毕业时间2026年9月至2027年8月 | 北京、成都、天津 | 应用研发 |
 | [AI Technology Innovation Engineer](https://talent.lenovo.com.cn/position/detail?id=2398) | 校招 | 毕业时间2026年9月至2027年8月 | 北京 | 应用研发 |
+| [AI应用开发工程师](https://talent.lenovo.com.cn/position/detail?id=2351) | 校招 | 毕业时间2026年9月至2027年8月 | 天津、深圳、成都、北京、武汉、上海 | 应用研发 |
 | [AI FDE工程师](https://talent.lenovo.com.cn/position/detail?id=2357) | 校招 | 毕业时间2026年9月至2027年8月 | 苏州 | 应用研发 |
 
 ## 蔚来（200）

@@ -166,6 +166,37 @@ class SemanticAuditBridgeTests(unittest.TestCase):
             self.assertEqual(result["excluded"], 1)
             self.assertEqual(load_catalog(root / "official.json")["companies"][0]["jobs"], [])
 
+    def test_incomplete_new_observation_preserves_prior_full_jd(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            catalog, existing = self.base_catalog()
+            catalog["companies"][0]["jobs"] = [existing]
+            catalog["counts"]["current_jobs"] = 1
+            catalog["counts"]["companies_with_current_jobs"] = 1
+            event = self.queue_entry(change="added")
+            event["job"] = {"job_id": "r1", "title": "Agent工程实习",
+                            "official_url": "https://example.com/jobs/r1"}
+            queue = {"schema_version": 2, "entries": {"e1": event}}
+            decisions = {"schema_version": 1, "decisions": [{
+                "event_id": "e1", "decision": "exclude",
+                "decision_reason": "只抓到标题，不能覆盖此前正式审阅的完整JD",
+                "evidence_gate": "缺少完整JD"}]}
+            for name, value in (("official.json", catalog),
+                                ("bytedance.json", {"source_id": "official-012", "jobs": []}),
+                                ("queue.json", queue),
+                                ("decisions.json", decisions)):
+                self.write_json(root / name, value)
+            stats = apply_decisions(queue_file=root / "queue.json",
+                                    decisions_file=root / "decisions.json",
+                                    official_file=root / "official.json",
+                                    bytedance_file=root / "bytedance.json",
+                                    index_file=root / "index.md")
+            self.assertEqual(stats["excluded"], 1)
+            saved = load_catalog(root / "official.json")
+            self.assertEqual(len(saved["companies"][0]["jobs"]), 1)
+            self.assertEqual(saved["companies"][0]["jobs"][0]["req_id"], "r1")
+            self.assertEqual(json.loads((root / "queue.json").read_text())["entries"]["e1"]["review_state"], "reviewed")
+
     def test_needs_review_is_rejected_as_new_decision(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
