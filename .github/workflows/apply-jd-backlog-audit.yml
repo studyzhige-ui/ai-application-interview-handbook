@@ -104,6 +104,37 @@ jobs:
             --batch-file market/job-description/01-data/automation/audit-batch.json \
             --limit 24
 
+      - name: Refresh stored snapshot manifest
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+
+          business = Path("market/job-description")
+          manifest_path = business / "03-strategy/stored-snapshots.json"
+          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+          changed = {
+              "01-data/official-jds.json",
+              "01-data/bytedance-jds.json",
+              "01-data/岗位JD.md",
+          }
+          seen = set()
+          for entry in manifest["files"]:
+              if entry["path"] not in changed:
+                  continue
+              raw = (business / entry["path"]).read_bytes()
+              entry["bytes"] = len(raw)
+              entry["sha256"] = hashlib.sha256(raw).hexdigest()
+              seen.add(entry["path"])
+          assert seen == changed, (seen, changed)
+          manifest_path.write_text(
+              json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
       - name: Verify JD subsystem
         shell: bash
         run: |
@@ -133,7 +164,8 @@ jobs:
             market/job-description/01-data/automation/audit-batch.json \
             market/job-description/01-data/official-jds.json \
             market/job-description/01-data/bytedance-jds.json \
-            market/job-description/01-data/岗位JD.md
+            market/job-description/01-data/岗位JD.md \
+            market/job-description/03-strategy/stored-snapshots.json
           if git diff --cached --quiet; then
             echo "No backlog changes to commit."
             exit 0
