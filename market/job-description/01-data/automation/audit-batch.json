@@ -1,9 +1,507 @@
 {
-  "schema_version": 1,
-  "batch_id": "empty",
-  "count": 0,
-  "pending_total": 0,
-  "entries": [],
-  "policy": "Read full official JD and qualification; include, exclude, or confirmed remove. No keyword screening, no needs_review.",
-  "generated_at_utc": "2026-10-15T08:47:24Z"
+  "batch_id": "5f83a399bf2a77d509f499c7",
+  "count": 24,
+  "entries": [
+    {
+      "change": "added",
+      "company": "网易",
+      "event_id": "0025c88afe3836817fe7c23189514744",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:79352",
+      "job": {
+        "description": "1、3-5年以上游戏行业工作经验，有运营活动和商业化策划经验者优先；\n2、长期参与或者主导PVP型SLG运营活动及商业化设计，有1-2个较大的、体现专业能力的设计成果，熟悉产品不同生命周期的运营活动和商业化目的与策略；\n3、对数据敏感，了解用户需求，有敏锐的洞察力和快速学习能力；\n4、熟悉并深度体验过至少一款PVP型SLG(例如COKlike)；\n5、愿意尝试在产品新方向上的开拓、创新，并接受其中的风险和压力。",
+        "job_id": "79352",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79352",
+        "requirements": "学历: ",
+        "title": "资深商业化策划（率土之滨）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006"
+    },
+    {
+      "change": "added",
+      "company": "吉利控股",
+      "event_id": "008cedcd52b2f2f291fffb786684485d",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "url:6920dd2612a262831780985c",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/job/6236342a-c922-4046-b1fe-19e2eee2138b",
+        "title": "电控质量保证岗\n发布于 2026-10-15\n全职\n全职\n|\n硕士\n硕士\n|\n浙江·宁波市\n浙江·宁波市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-054"
+    },
+    {
+      "change": "added",
+      "company": "影石 Insta360",
+      "event_id": "015e50982b2292964dad55488d1d1233",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7657455805260056859",
+      "job": {
+        "category": "实习",
+        "description": "1. 调研全流程执行与独立访谈（定性+定量）：\n  - 负责内部用户调研的闭环项目管理：包含需求拆解、问卷设计、访谈大纲准备、精准用户甄别等；\n  - 专项调研项目，参与从初期选品到产品研发-生产-上市全流程的洞察调研工作，负责产品全生命周期的设计、功能和定位方向；\n  （核心成长路径：入职前期跟随导师深度参与访谈观摩与复盘；熟练后需具备独立主持1v1或FGD用户访谈的能力，并能独立产出洞察结论）\n2. AI工作流共建与数据看板搭建（数字化方向）：\n  - 深度参与“AI+用研”的工作流建设：探索如何利用 AI 工具进行大批量访谈文本的深度清洗、聚类分析和Prompt调教；\n  - 协助从0到1搭建团队内部的洞察数据看板（飞书多维表/BI等），并参与用研精细化SOP的编写与沉淀。\n3. 供应商协同与即时需求响应：\n  - 参与用研/洞察项目的内外部管理与沟通，从初期开始沉淀跨部门协作与项目管理能力；\n  - 响应团队的即时性需求（公开行业报告搜集、竞品用户评价抓取等）。",
+        "detail_status": "OK",
+        "job_id": "7657455805260056859",
+        "location": "深圳",
+        "official_api": "https://arashivision.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=20&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nzK4SwAAAABIRapcsfeCFJ8yuFAAPXx",
+        "official_url": "https://arashivision.jobs.feishu.cn/campus/position/7657455805260056859/detail",
+        "requirements": "1. 背景与学业： 本科及以上在校生，专业不限（统计学、心理学、工业设计、市场营销等优先），能保证连续实习6个月及以上\n2. 核心硬技能：\n  - 用研基础：具备优秀的逻辑结构化能力。对用户访谈、数据处理有实际操作经验或浓厚兴趣，能同时处理理性的数据与感性的原声。\n  - AI与数字化工具：对 AI 工具在工作场景的应用有深度实践或强烈探索欲，有良好的 Prompt 撰写习惯。\n3. 关键软素质：\n  - 务实踏实：具备“既能仰望星空，也能脚踏实地”的心态。面对前期甄别用户、拉群邀约、处理行政流程等务实工作，能够沉下心，有条理地精细化落地。\n  - 行业自驱欲与同理心：对创新设计的产品和品类有浓厚的研究和琢磨兴趣；具备出色的倾听能力，擅长从沟通中捕捉用户未被满足的潜在情绪与真实痛点。",
+        "title": "用户研究实习生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-067"
+    },
+    {
+      "change": "changed",
+      "company": "大疆 DJI",
+      "event_id": "018813f03457df244be0de03761f940f",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:e54c9f76-2333-4427-bad8-d6337b7c95ed",
+      "job": {
+        "department": "研发部",
+        "description": "<p>职位简介：</p><p>你将站在AI和DevOps的交汇点，用最前沿的技术解决最真实的工程问题，影响大疆工程师的日常工作，让每一位工程师都拥有AI驱动的超级研发能力，让软件交付更快、质量更高、体验更好。</p><p><br></p><p>工作职责：</p><p>1. 面向公司主流产品研发的数字化变革，参与到公司内统一DevOps的开发和应用工作；</p><p>2. 面向软件工程领域的智能化变革和转型，参与到AI Agent的设计、开发和落地，打造业界一流的AI DevOps解决方案；</p><p>3. 面向具体应用场景（如Code Review）的Agent设计和开发，包括：场景知识库、工具集、MCP、Skill等建设；</p><p>4. 设计并构建端到端的Agent评测体系，从用户满意度、业务指标等多个维度对Agent进行全面评估，为后续优化提供数据支持和决策依据；</p><p>5. 不断探索学习AI前沿技术方法和行业实践，为团队带来创新思路和解决方案，持续保持技术的先进性与领先性。</p><p><br></p><p>任职要求：</p><p>1. 本科及以上学历，对计算机体系、操作系统、设计模式等有基础的认知；有智能硬件/手机/新能源汽车/机器人等领域项目经验者优先；</p><p>2. 具备卓越的系统设计能力和工程落地能力；</p><p>3. 具备良好的学习能力及团队协作能力，喜欢挑战和创新；</p><p>4. 具备以下一个或者多个领域的开发经验：</p><p>① CICD领域，例如：构建工程(cmake/ninja/bazel/ccache)、构建系统(k8s/docker)、WebIDE、静态检查等；</p><p>② Web开发领域，例如：Django/Vue/Redis/MySQL/Mongo/数据湖等；</p><p>③ AI领域，对LLM应用和AI Agent开发有理解和实践经验：</p><p>a） 深刻理解Agent框架（如OpenCode/ClaudeCode/LangGraph等）及其生态；</p><p>b） 熟悉Agent领域的关键组件，对知识库、Skill、MCP、Prompt Engineering、上下文管理、多Agent协作等有深入理解和落地经验；</p><p>c） 熟悉Agent应用部署和持续评测优化，且具备落地经验。</p>",
+        "detail_status": "OK",
+        "job_id": "e54c9f76-2333-4427-bad8-d6337b7c95ed",
+        "location": "深圳市",
+        "official_api": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+        "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs#/job/e54c9f76-2333-4427-bad8-d6337b7c95ed",
+        "title": "AI DevOps 工程师（深圳）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "d8c998fe2f5ea77ce2f0b7ede77b467aff767549ff4bffaad7a4f9778023c464",
+        "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs#/job/e54c9f76-2333-4427-bad8-d6337b7c95ed",
+        "title": "AI DevOps 工程师（深圳）"
+      },
+      "review_state": "pending",
+      "source_id": "official-043"
+    },
+    {
+      "change": "changed",
+      "company": "360",
+      "event_id": "01ee27ca5b1113fcae0a8cc622c658bf",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:351611202",
+      "job": {
+        "category": "校园招聘",
+        "cycle_evidence": "当前官方校园招聘 / 应届职位池",
+        "department": "智汇云产品部",
+        "description": "1. 参与分布式存储系统、文件系统、块存储、对象存储等核心模块的设计与开发工作；\n2. 负责存储系统的性能优化、故障排查及稳定性保障，提升系统吞吐量、响应速度和可靠性；\n3. 跟踪存储技术前沿动态，探索新技术在存储场景的应用落地；\n4. 编写技术文档，参与代码Review与团队技术分享，推动技术迭代;\n5. 跟进开源社区动态，参与开源项目的二次开发，提升内部系统的稳定性。",
+        "job_id": "351611202",
+        "location": "北京市",
+        "official_api": "https://360campus.zhiye.com/api/Jobad/GetJobAdPageList",
+        "official_url": "https://360campus.zhiye.com/campus/detail?jobAdId=351611202",
+        "requirements": "1. 学历要求：本科及以上学历，计算机、软件工程等相关专业；\n2. 技术基础：\n- 扎实的编程能力，熟练掌握C/C++、Go、Python、Java等至少一种编程语言；\n- 熟悉Linux系统原理及常用命令，了解操作系统内核、文件系统（如Ext4、XFS）优先；\n- 了解分布式系统架构、数据一致性协议（如Paxos、Raft）者优先；\n- 对存储协议（如NVMe、SCSI、iSCSI）、RAID技术有基本认知者优先；\n3. 能力特质：\n- 学习能力强，对存储技术有浓厚兴趣，具备快速掌握新技术的能力；\n- 良好的逻辑思维与问题分析能力，善于通过技术手段解决复杂问题；\n- 具备团队协作精神，沟通表达能力佳，能主动融入技术团队；\n- 具备AI Coding 开发能力，借助AI提升效率。",
+        "title": "27秋-全栈开发工程师（存储方向）（北京）-5397(J12469)"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "a66f3f64dca70ac3ec337584628b97a22f88fead81e0365387a45e91c3dd3b81",
+        "official_url": "https://360campus.zhiye.com/campus/detail?jobAdId=351611202",
+        "title": "27秋招-全栈开发工程师（存储方向）（北京）-5397(J12469)"
+      },
+      "review_state": "pending",
+      "source_id": "official-022"
+    },
+    {
+      "change": "added",
+      "company": "网易",
+      "event_id": "0222713f1001e6540841c8d543b172a3",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:75263",
+      "job": {
+        "description": "1.熟练掌握一门主力语言（C++ / C# / TypeScript / 其他）。\n2.有游戏技术方向的实战经验（如：客户端 + 工具 / 客户端 + 服务端 / 客户端 + 数据等）。\n3.扎实的计算机基础：数据结构、算法、网络、操作系统等。\n4.能读懂陌生代码，乐于重构、敢于对“历史包袱”动刀。\n5.主动拥抱 AI 和新工具，具有良好的自学能力与知识迁移能力。\n加分项：\n1.有跨平台开发经验（PC、主机、移动端、云游戏等）；\n2.理解渲染管线或有图形学背景；\n3.有个人作品、工具、插件或开源贡献。",
+        "job_id": "75263",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=75263",
+        "requirements": "学历: ",
+        "title": "程序类实习生（在研项目）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006"
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "022afd06add42cdac83a4eebb258e917",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7661867208566278427",
+      "job": {
+        "category": "实习",
+        "department": "基础架构",
+        "description": "我们相信下一代软件研发是 Agent 原生的：工具不再是人手的延伸，而是与人协同工作的自治系统。你将参与以下两个互为支撑的核心方向。\n\n方向一：下一代效率工具\n- 构建 Agent 原生的统一工作系统，把研发工作中若干彼此割裂的核心场景收敛为同一条工作流\n- 重新设计人与 Agent 的分工边界：人的角色从\"操作工具\"转向\"给出目标与偏好、验收结果\"\n- 构建支撑一体化的基础设施，状态与上下文在不同场景间的流转\n- 让知识随工作自然沉淀：过程中产生的决策与经验自动转化为可检索、可复用的团队记忆\n\n方向二：Loop Engineering 的下一代范式\n- 探索超越当前 agentic loop（写码 → 验证 → 修复）的软件构建范式，重新思考软件如何被定义、如何被构建、何时算\"完成\"\n- 研究人类输入的最小化：人只提供目标与偏好层面的输入，系统承担从定义到交付的完整构建过程\n- 构建支撑这一范式的核心引擎，以及衡量其收敛速度与构建质量的评测体系\n- 把范式沉淀为可复用的工程方法，在真实项目中持续验证与迭代",
+        "detail_status": "OK",
+        "job_id": "7661867208566278427",
+        "location": "北京",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=40&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nzESbQAAAABIRgB6L2Jldp8xEnAAPXv",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7661867208566278427/detail",
+        "requirements": "- 具有较强工程能力，能独立完成复杂系统模块的设计与实现\n- 熟练使用 Python 或 TypeScript，具备扎实的代码能力（全栈经验为加分项）\n- 对产品有判断力：能从用户场景出发定义工具形态，而不是从技术出发堆功能\n- 对系统问题有良好的拆解能力，能从复杂现象中定位本质问题\n- 认可 AI Native / \"用模型解决工程问题\" 的方向，愿意把自己的日常工作作为第一块试验田\n- 对评测敏感：能判断评测是否忠实于真实目标、闭环是否真的收敛，而不是盲目堆 prompt 和跑实验\n\n加分项（重要但不硬性）\n- 有效率工具 / 协作工具 / IDE / 编辑器类产品的研发经验\n- 深度使用或改造过 Claude Code、Cursor、Codex 等 agentic coding 工具，读过其源码或生态实现\n- 有 Agent harness / agent loop / 评测基准（如 SWE-bench）的建设经验\n- 有评测体系或评测集的建设经验（用例生成、LLM-as-judge 等）\n- 有长时间运行自治 Agent 的实践：自我修复、上下文管理、多轮任务编排\n- 有大模型后训练 / RL 与 Agent 能力构建结合的经验\n- 做过 benchmark / profiling / 自动化实验平台相关工作\n- 有活跃的开源项目或对开源社区有实质贡献",
+        "title": "Agentic Engineering 实习生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034"
+    },
+    {
+      "change": "possibly_removed",
+      "company": "MiniMax",
+      "event_id": "0246b788ac9659aee4593f133126081e",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7676446019848030473",
+      "job": null,
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "3329699a685b32bb92dcc8a34e3957368a0a04a98983b4562be6e97335a41e58",
+        "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7676446019848030473/detail",
+        "title": "AI Infra 资源调度研发实习生"
+      },
+      "review_state": "pending",
+      "source_id": "official-026"
+    },
+    {
+      "change": "possibly_removed",
+      "company": "MiniMax",
+      "event_id": "038e338a3399dec8a9ad0fd48a2d36c8",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7508644072077674778",
+      "job": null,
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "4f11396532cb13948c58cfae3a44cbea17f88bb7fb58d45609011852b92dd019",
+        "official_url": "https://vrfi1sk8a0.jobs.feishu.cn/379481/position/7508644072077674778/detail",
+        "title": "服务器系统实习生"
+      },
+      "review_state": "pending",
+      "source_id": "official-026"
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "042ea4da18dd8cfe9339d060ffcf194b",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7658196001635617078",
+      "job": {
+        "category": "实习",
+        "department": "售前",
+        "description": "1. 原型开发：基于大模型 API（如 GPT、Claude、GLM、DeepSeek、MiniCPM 等），快速构建垂直场景的 AI 应用 Demo，包括但不限于智能问答、文档分析、Agent 流程、知识库助手等。\n2. Prompt 工程与调优：针对具体客户需求，设计、迭代、评估 prompt，提升模型输出的准确性与稳定性。\n3. RAG / Agent 探索：协助搭建检索增强生成系统，探索多步推理、工具调用等 Agent 行为。\n4. 方案材料：整理技术验证报告、撰写解决方案文档、制作对内对外的演示材料，清晰呈现 AI 能力与落地价值。\n5. 前沿跟踪：跟进大模型领域最新进展、开源项目与技术趋势，快速验证其在真实场景中的可行性。",
+        "detail_status": "OK",
+        "job_id": "7658196001635617078",
+        "location": "北京",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=40&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nzESbQAAAABIRgB6L2Jldp8xEnAAPXv",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7658196001635617078/detail",
+        "requirements": "1. 计算机、软件工程、人工智能、自动化、数学等相关技术专业；\n2. 对大模型有强烈的热情与好奇心，愿意主动尝试新技术、新工具，遇到问题能自己先动手折腾；\n3. 会使用大模型工具辅助学习、开发与写作（如 ChatGPT、Claude、文心、DeepSeek 等）；\n4. 具备基础的编程能力（Python 优先），能看懂并跑通简单的代码 / API 调用；\n5. 每周可保证至少 4 天实习，持续 3 个月以上。\n\n加分项：\n做过大模型相关项目、Demo、竞赛（Hackathon、Kaggle、AI 挑战赛等）；\n使用过 Cursor、Claude Code 等 Vibe Coding 工具进行开发；\n了解 RAG、Agent、向量数据库等相关概念或组件。",
+        "title": "解决方案实习生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034"
+    },
+    {
+      "change": "added",
+      "company": "小鹏集团",
+      "event_id": "04a7add83cb438100ea047a548322604",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7696493669176871206",
+      "job": {
+        "category": "正式",
+        "department": "互联网 / 电子 / 网游",
+        "description": "岗位职责\n一、深圳政府事务\n1. 跟踪国家及深圳市新能源、机器人、人工智能等高新领域政策扶持方向与补贴项目，结合业务实际输出政策解读与申报建议；\n2. 协助执行属地政府资金和项目的申报；\n3. 与深圳市科创、工信、企服等政府部门的日常对接与关系维护，争取项目申报支持；\n4. 参与深圳研发职场的部分管理工作，包括员工 NPS 提升、公司社会形象提升等项目的预算制定与执行。\n二、湖南 + 广东省内事务\n协助开展湖南省、广东省相关地市的政府关系维护、政府资金申请与应急事项处理。\n三、横向支撑\n1. 参与对外拜访、来访接待、行业活动等公共事务性工作；\n2. 完成上级交办的其他工作。\n",
+        "detail_status": "OK",
+        "job_id": "7696493669176871206",
+        "location": "深圳",
+        "official_api": "https://xiaopeng.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nyN0PgAAAABIVGYpBgeWpp8jdCAAPYB",
+        "official_url": "https://xiaopeng.jobs.feishu.cn/campus/position/7696493669176871206/detail",
+        "requirements": "硬性条件\n1. 2026 / 2027 届应届毕业生，本科及以上学历。项目管理、政治与公共事务管理、工科类（新能源 / 机器人 / 智能制造相关专业）背景优先；\n2. 能接受应急响应节奏（突发事件需快速响应，包括工作日晚间与周末）。\n软性素质\n1. 沟通协调能力、表达能力、业务知识学习能力俱佳；\n2. 责任心与自驱力强，能在模糊地带主动推进；\n3. 善用各类 AI 工具提升工作效率；\n加分项\n- 香港求学经历\n- 有政府 / 行业协会 / 大型企业实习经验\n- 粤语为母语",
+        "title": "【27届校招】公共事务培训生（深圳）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-055"
+    },
+    {
+      "change": "added",
+      "company": "网易",
+      "event_id": "05062e34426908422a578b4e2e0b4f7a",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:76940",
+      "job": {
+        "description": "1. 本科及以上学历，游戏设计、计算机、数字媒体或相关专业优先  \n2. 5年以上大型MMO或战术竞技类手游系统策划经验，完整参与过至少1款上线项目的核心系统设计与迭代  \n3. 精通系统策划全流程，熟练使用Excel、Axure、MindManager等工具，具备独立撰写系统文档、数值框架及交互逻辑的能力  \n4. 具备强逻辑思维与抽象建模能力，能从玩家行为与商业目标出发，设计平衡性高、可扩展性强、有长期生命力的系统  \n5. 沟通协作意识强，能高效对接程序、美术、运营等多职能团队，主动推动方案落地并持续优化数据表现  \n6. 热爱战术竞技品类，深度体验《荒野行动》及同类产品，熟悉其核心玩法、用户生态与版本演进逻辑者优先",
+        "job_id": "76940",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=76940",
+        "requirements": "学历: ",
+        "title": "资深系统策划"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006"
+    },
+    {
+      "change": "added",
+      "company": "米哈游",
+      "event_id": "05e9fb5671bf5ae9b48a81cd8a6ebee7",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:8526",
+      "job": {
+        "category": "实习",
+        "cycle_evidence": "米哈游官方校园招聘 / 校招渠道 channelDetailIds=1 / 正式岗 hireType=1",
+        "department": "产品策划类",
+        "description": "1.协作AI产品应用的探索，包括不限于AI对工作流提效、AI在C端内容生产与消费的应用\n2.与设计、研发等团队充分协作，帮助制定在AI赋能下的新标准、新流程与机制\n3.将各种AI使用场景，沉淀为可复制的能力，帮助提升个人能力和组织产出",
+        "job_id": "8526",
+        "location": "上海",
+        "official_api": "https://ats.openout.mihoyo.com/ats-portal/v1/job/list",
+        "official_url": "https://jobs.mihoyo.com/#/campus/position/8526",
+        "requirements": "1.在校实习生，有较强的自驱力、创造力和学习能力\n2.AI原住民，ChatGPT/Claude/Midjourney/Cursor 等工具的重度使用者，有AI Native思考的习惯\n3.有AI/大模型技术背景，有个人的AI作品、或在相关公司实习经验者更佳\n4.有较好的用户同理心，对产品体验和用户情绪敏感，有愿望让AI技术 以有温度的方式给到用户\n5.热爱玩游戏，对米哈游及其玩家社区有了解者更佳",
+        "title": "AI 创新产品实习生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-042"
+    },
+    {
+      "change": "added",
+      "company": "吉利控股",
+      "event_id": "0621112bf3a63aeae05620a15a9156a9",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "url:8f4794f6b43bdb159ef0ac6e",
+      "job": {
+        "detail_status": "OK",
+        "official_url": "https://campus.geely.com/campus-recruitment/geely/78436/?locale=zh-CN#/job/50dd4a22-dcd2-4a97-bfc0-4c3fe12ba245",
+        "title": "业务采购岗\n发布于 2026-10-15\n全职\n全职\n|\n硕士\n硕士\n|\n浙江·宁波市\n浙江·宁波市\n允许1个月内投递4个职位，请选择适合的职位进行投递\n立即投递"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-054"
+    },
+    {
+      "change": "possibly_removed",
+      "company": "滴滴",
+      "event_id": "06498a8025344ae3d8cdabc25a650765",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:d11962b6-a340-46b1-96dc-549bea93ab39",
+      "job": null,
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "8cdfa38104ca05d4cd782d4e00bc3a514f3c2425316cb31ffb26c7b97c98eb44",
+        "official_url": "https://campus.didiglobal.com/campus_apply/didiglobal/96064#/job/d11962b6-a340-46b1-96dc-549bea93ab39",
+        "title": "27届秋招-算法工程师（国际化出行-定价）"
+      },
+      "review_state": "pending",
+      "source_id": "official-008"
+    },
+    {
+      "change": "changed",
+      "company": "金蝶",
+      "event_id": "071ba47cda64dee97b9ad2ad2a66d789",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+      "job": {
+        "category": "全职",
+        "department": "金蝶软件（中国）有限公司·管培生",
+        "description": "<p>岗位职责</p><p>1、需求洞察与产品定义：深入理解业务场景，协助完成用户需求调研、市场分析与竞品洞察，挖掘AI技术的落地机会；基于用户痛点与商业目标，参与产品功能定义、路线图规划，输出PRD文档及原型方案；</p><p>2、项目推进与交付管理：作为产品侧接口人，与算法、研发、设计、测试等团队高效协同，跟进需求评审、开发排期与测试验收全流程，确保产品按时高质量上线；</p><p>3、数据驱动与体验迭代：搭建产品核心指标体系（如效率、留存、转化等），通过数据分析、A/B实验验证产品假设，推动功能优化与版本迭代；持续收集用户反馈与业务数据，形成\"数据-分析-优化\"闭环；</p><p>4、技术趋势与竞品跟踪：跟踪LLM、多模态、Agent等行业前沿动态，调研竞品功能与体验，输出分析报告与创新方案。</p><p><br></p><p>任职要求</p><p>1、全日制本科及以上；</p><p>2、对AI技术有浓厚兴趣，了解机器学习、深度学习、大模型（如GPT/LLaMA）、多模态、Agent等基本原理、能力边界与应用潜力；</p><p>3、具备基础数据分析能力（Excel/SQL/Python），能通过数据指导产品决策；</p><p>4、优秀的沟通协调与跨部门协作能力，能适应快节奏工作环境。</p>",
+        "detail_status": "OK",
+        "job_id": "2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+        "location": "深圳市",
+        "official_api": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+        "official_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN#/job/2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+        "title": "管培生-产品经理"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "603988894c77e2075904169ddf047e59de504be04970246fd9b29881f84ab1e1",
+        "official_url": "https://app.mokahr.com/campus-recruitment/kingdeehr/166565?locale=zh-CN#/job/2fdcee64-7de5-41e5-b48f-2a8fb9421745",
+        "title": "管培生-产品经理"
+      },
+      "review_state": "pending",
+      "source_id": "official-048"
+    },
+    {
+      "change": "added",
+      "company": "安克创新",
+      "event_id": "073bab564b631417703695e2bdb2a996",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7696706806730869035",
+      "job": {
+        "category": "实习",
+        "department": "智能制造 / 工业互联网 / 工业自动化",
+        "description": "安克实习生项目是面向正式校招岗位的人才培养与选拔通道。实习期间将按照校招标准进行系统的培养与综合评估，表现优秀者可直接获得校招转正机会，提前锁定正式校招席位。我们以严肃、长期的视角对待每一位实习生，也期待与你共同成长。\n【你将参与】\n核心职责:支持供应计划团队完成日常计划执行与数据跟进,保障订单交付的准确与及时。\n1. 订单交付：销售预测与订单输入的匹配与校准，优化供应资源配置，协同其他部门管理订单承诺、订单需求变更、订单物流发运，统筹解决供应异常；\n2. 供应计划：了解市场需求和项目开发进度，评审订单交期，制定可落地的生产计划和交付计划，识别物料供应交付中的风险异常，保障物料齐套与合理交期；\n3. 采购履行：结合交付策略进行采购订单下达与分配，跟进供应商侧备料及生产排期，识别订单履行过程中的交付风险，及时发现供需缺口并推动闭合；\n4. 物流管理：承接销售或上游部门需求，协同上下游部门策划物流方案并落地实施；优化国际物流网络与仓储布局，提升全局物流运输效率；\n",
+        "detail_status": "OK",
+        "job_id": "7696706806730869035",
+        "location": "长沙",
+        "official_api": "https://anker-in.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=0&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nHztMQAAAABLC.8m8F1Lbpx87SAAPa7",
+        "official_url": "https://anker-in.jobs.feishu.cn/campushirecn/position/7696706806730869035/detail",
+        "requirements": "1.本科及以上在读,每周可到岗 ≥ 5 天,实习期 ≥ 3 个月\n2.具备良好的英文读写能力(能处理英文邮件与报表)\n3.熟练使用 Excel(数据透视表、VLOOKUP 等常用函数),能处理较大体量数据\n4.细心、有责任心,能承受一定工作节奏压力\n以下专业背景优先:供应链管理、物流管理、国际贸易、管理科学与工程、统计学、运筹学、数学等\n有供应链/计划/采购相关实习经历优先\n对供应链领域有长期发展意愿",
+        "title": "供应链管理实习生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-052"
+    },
+    {
+      "change": "possibly_removed",
+      "company": "面壁智能",
+      "event_id": "07dd78846f4532d681f3bf5d911df97d",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "url:9db81f820c9f92fa6431cd57",
+      "job": null,
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "3908ec28d1462ff2ef3d348db2783c788335b3aca648b4b4ece82fcd25e749c1",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7683473677028346155/detail",
+        "title": "Agentic Infra 实习生\n北京校招实习技术 - 基础架构2026校园招聘职位 ID：A178856\n我们在构建一套“自我优化”的大模型训练系统，你将参与以下核心方向：\n1. 参与模型训练，构造在高性能/infra侧专用的模型\n2. 构建统一的训练 Harness 范式，标准化训练、benchmark 与评测流程\n3. 探索 Agentic Infra，将训练系统从人工驱动升级为 Agent 驱动\n4. 推动训练系统从工具集合向具备自我优化能力的系统演进"
+      },
+      "review_state": "pending",
+      "source_id": "official-034"
+    },
+    {
+      "change": "added",
+      "company": "网易",
+      "event_id": "081f7f7130b06b8cfe37237ad555393a",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:74878",
+      "job": {
+        "description": "1. 有成功上线MMO运营经验；\n2. 热爱游戏，游戏经验丰富，深入体验过多款网络游戏，并对游戏有深入分析总结； \n3. 熟练使用各种工具高效的解决系统工作中的各种事务，具有设计项目中开发工具的能力； \n4. 对AI工具有应用落地探索；\n5. 具备优秀的沟通能力和团队合作能力； \n6. 有极高的责任心和抗压能力。",
+        "job_id": "74878",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=74878",
+        "requirements": "学历: ",
+        "title": "系统数值策划（大唐无双）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006"
+    },
+    {
+      "change": "changed",
+      "company": "大疆 DJI",
+      "event_id": "08402ace05277e96cb4f4f8a71acc7fc",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:67c25b26-6a6f-4f91-baef-46c5d9821794",
+      "job": {
+        "department": "研发部",
+        "description": "<p>职位简介：</p><p>你将站在AI和DevOps的交汇点，用最前沿的技术解决最真实的工程问题，影响大疆工程师的日常工作，让每一位工程师都拥有AI驱动的超级研发能力，让软件交付更快、质量更高、体验更好。</p><p><br></p><p>工作职责：</p><p>1. 面向公司主流产品研发的数字化变革，参与到公司内统一DevOps的开发和应用工作；</p><p>2. 面向软件工程领域的智能化变革和转型，参与到AI Agent的设计、开发和落地，打造业界一流的AI DevOps解决方案；</p><p>3. 面向具体应用场景（如Code Review）的Agent设计和开发，包括：场景知识库、工具集、MCP、Skill等建设；</p><p>4. 设计并构建端到端的Agent评测体系，从用户满意度、业务指标等多个维度对Agent进行全面评估，为后续优化提供数据支持和决策依据；</p><p>5. 不断探索学习AI前沿技术方法和行业实践，为团队带来创新思路和解决方案，持续保持技术的先进性与领先性。</p><p><br></p><p>任职要求：</p><p>1. 本科及以上学历，对计算机体系、操作系统、设计模式等有基础的认知；有智能硬件/手机/新能源汽车/机器人等领域项目经验者优先；</p><p>2. 具备卓越的系统设计能力和工程落地能力；</p><p>3. 具备良好的学习能力及团队协作能力，喜欢挑战和创新；</p><p>4. 具备以下一个或者多个领域的开发经验：</p><p>① CICD领域，例如：构建工程(cmake/ninja/bazel/ccache)、构建系统(k8s/docker)、WebIDE、静态检查等；</p><p>② Web开发领域，例如：Django/Vue/Redis/MySQL/Mongo/数据湖等；</p><p>③ AI领域，对LLM应用和AI Agent开发有理解和实践经验：</p><p>a） 深刻理解Agent框架（如OpenCode/ClaudeCode/LangGraph等）及其生态；</p><p>b） 熟悉Agent领域的关键组件，对知识库、Skill、MCP、Prompt Engineering、上下文管理、多Agent协作等有深入理解和落地经验；</p><p>c） 熟悉Agent应用部署和持续评测优化，且具备落地经验。</p>",
+        "detail_status": "OK",
+        "job_id": "67c25b26-6a6f-4f91-baef-46c5d9821794",
+        "location": "北京市",
+        "official_api": "https://app.mokahr.com/api/outer/ats-apply/website/jobs/v2",
+        "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs?source=campus_hotjobs#/job/67c25b26-6a6f-4f91-baef-46c5d9821794",
+        "title": "AI DevOps 工程师（北京）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "e41c28db2a7ae30fd326e11dde87a3aa68091989abea90a9fb56bc5be81dea83",
+        "official_url": "https://careers.dji.com/zh-CN/campus/hot-jobs#/job/67c25b26-6a6f-4f91-baef-46c5d9821794",
+        "title": "AI DevOps 工程师（北京）"
+      },
+      "review_state": "pending",
+      "source_id": "official-043"
+    },
+    {
+      "change": "possibly_removed",
+      "company": "面壁智能",
+      "event_id": "0858d22fd52f792672de769932d08344",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "url:345062712e7de7b23d2518ce",
+      "job": null,
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "19d8c8459c941affa9b60cd2f1a8e5fae2fa0d57caa814b0bed971744c940533",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7686100201592883466/detail",
+        "title": "HR实习生\n北京校招实习职能 - 人力资源职位 ID：A168322\n招聘流程支持：协助发布职位信息，筛选简历，安排面试，跟进候选人反馈，确保招聘流程高效推进；\n数据整理与分析：负责整理招聘及项目相关数据，定期形成报告，为团队决策提供数据支持；"
+      },
+      "review_state": "pending",
+      "source_id": "official-034"
+    },
+    {
+      "change": "changed",
+      "company": "小米",
+      "event_id": "087c7fc64f5fbb8f9286bc587bfe4616",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7675292531886983475",
+      "job": {
+        "category": "正式",
+        "department": "职能类",
+        "description": "1. 培训内容共创：协助团队完成新车上市培训素材的整理与迭代，参与将技术参数转化为一线销售易懂的销售话术和案例库。\n2. 课程开发支持：在导师指导下，参与产品课程、竞品对比手册、实战演练脚本的开发，协助输出标准化的培训工具包。\n3. 实战培训落地：参与动态试驾培训项目的组织与执行，协助模拟销售场景的搭建，确保培训内容贴合一线销售的真实作战需求。\n4. 业务诊断助理：通过数据分析、一线走访或问卷调研，协助识别销售团队在产品知识和转化环节的薄弱点，为培训项目提供优化依据。\n5. 培训效果追踪：负责培训后测数据、学员反馈的收集与复盘，协助撰写项目复盘报告，推动培训内容和形式的持续迭代。",
+        "detail_status": "OK",
+        "job_id": "7675292531886983475",
+        "location": "北京",
+        "official_api": "https://xiaomi.jobs.f.mioffice.cn/api/v1/search/job/posts?keyword=&limit=10&offset=30&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nxQ2GgAAAABIYyQN58PHrp8UNgAAPXT",
+        "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7675292531886983475/detail",
+        "requirements": "1. 车辆工程、市场营销、教育学、心理学等相关专业优先。对汽车有浓厚兴趣，是身边同学公认的“懂车达人”。\n2. 学习转化力：能快速理解复杂的产品技术（如三电系统、智能驾驶），并用通俗、有吸引力的语言向非专业人士讲清楚。有辩论赛、演讲、授课或内容创作经验者加分。\n3. 沟通与推动力：具备良好的跨部门沟通意识，能与产品、销售、市场团队顺畅协作。有学生干部、项目组长或大型活动组织经验者优先。\n4. 逻辑与洞察：善于从零散信息中提炼结构，具备基本的数据分析思维，能用事实和反馈指导工作改进。\n5. 持有C1及以上驾照，驾驶技术熟练，对驾驶体验（加速、转向、底盘反馈）有自己的感知和见解（有赛道/场地驾驶体验者更佳）。",
+        "title": "中国区-汽车培训校招生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "06766cd834f4820b8624c16f9a6cbc0e9239006f1cf6251462d58d1d9dc254ce",
+        "official_url": "https://xiaomi.jobs.f.mioffice.cn/campus/position/7675292531886983475/detail",
+        "title": "中国区-汽车培训师"
+      },
+      "review_state": "pending",
+      "source_id": "official-001"
+    },
+    {
+      "change": "added",
+      "company": "面壁智能",
+      "event_id": "089926d043791ec0e74dd25746f1c730",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:7665999774961338678",
+      "job": {
+        "category": "实习",
+        "department": "技术",
+        "description": "参与基础文本模型的预训练和推理性能优化，主要工作包括：\n\n1、跟进 NVIDIA GPU新硬件特性，基于Hopper、Blackwell等新硬件架构进行性能优化；\n2、分析预训练性能瓶颈，根据trace数据设计和实现性能优化方案；\n3、优化推理引擎的吞吐、延迟和显存利用率，分析并解决性能瓶颈；\n4、开展不同硬件、精度和并行策略下的性能测试，沉淀可复现的测试结果和优化方案；\n5、与算法及基础设施团队合作，将优化方案应用到实际模型训练或部署流程中。",
+        "detail_status": "OK",
+        "job_id": "7665999774961338678",
+        "location": "北京",
+        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=30&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nzESbQAAAABIRgB6L2KAL58xEnAAPXv",
+        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7665999774961338678/detail",
+        "requirements": "1、计算机、人工智能、电子工程等相关专业在读；\n2、熟悉 Transformer 架构，理解预训练和自回归推理的基本流程；\n3、熟练使用 Python，具备良好的工程实现和问题排查能力；\n4、至少满足以下一个方向：\na.熟悉 PyTorch，以及 Megatron-LM、DeepSpeed、FSDP 等训练框架中的一种或多种，了解数据并行、张量并行、流水线并行、ZeRO 等技术；\nb.熟悉 vLLM、SGLang、TensorRT-LLM 等推理引擎中的一种或多种，了解 KV Cache、连续批处理、Paged Attention、量化等技术；\nc.熟悉 GPU 内存层次、线程调度、Tensor Core、算子融合及性能分析方法，具备实际的算子开发或调优经验；\nd.了解 GPU 架构及 CUDA 基础，对算子性能、显存访问和通信开销有基本认识；\ne.能够阅读英文技术文档和开源代码，并通过实验验证结论。",
+        "title": "基础模型预训练加速实习生"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-034"
+    },
+    {
+      "change": "added",
+      "company": "网易",
+      "event_id": "08bced8a7fbe4d42f3579c3b4c9eba49",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:79293",
+      "job": {
+        "description": "1、本科（含本科）以上学历；\n2、5年以上游戏界面从业经验；\n3、优秀的设计能力，出色的沟通能力和团队协作能力，迅速高效的执行力；\n4、工作态度积极主动，性格谦和，待人真诚、宽容；\n5、热爱游戏，至少精通一种网络游戏玩法。",
+        "job_id": "79293",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=79293",
+        "requirements": "学历: ",
+        "title": "资深UI视觉设计师（梦幻端游）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": null,
+      "review_state": "pending",
+      "source_id": "official-006"
+    }
+  ],
+  "generated_at_utc": "2026-10-16T05:30:55Z",
+  "pending_total": 716,
+  "policy": "Read the complete official duties, qualifications and campus/internship evidence. Include only software engineering delivering AI applications, Agent, LLM/RAG, runtime/platform or evaluation tooling. Quote exact engineering evidence. Otherwise exclude with an evidence-based reason; use remove only for a confirmed disappeared position. Never decide by title or keywords, and never return needs_review.",
+  "schema_version": 1
 }
