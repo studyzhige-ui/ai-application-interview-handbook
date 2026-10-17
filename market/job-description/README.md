@@ -7,7 +7,7 @@
 1. **GitHub 自动采集**：定时从官方招聘网站抓取职位 ID、链接、招聘类型、完整职责和任职要求，只向 GPT 提交新增或实质变化的内容。
 2. **GPT 筛选并入库**：逐条阅读完整 JD，符合目标岗位且有官方校招/实习资格证据的职位写入正式库；否则排除。官方确认消失的正式岗位才移除。
 
-[正式岗位索引](01-data/岗位JD.md) · [岗位数据](01-data/README.md) · [采集范围](03-strategy/collection-policy.md) · [自动化说明](04-scripts/README.md) · [运行状态](02-analysis/automation-status.md)
+[官方校招入口目录（69个）](official-campus-links.md) · [正式岗位索引](01-data/岗位JD.md) · [岗位数据](01-data/README.md) · [采集范围](03-strategy/collection-policy.md) · [自动化说明](04-scripts/README.md) · [运行状态](02-analysis/automation-status.md)
 
 采集失败不是零岗位，不得自动删除已入库职位。职位标题或关键词不等于实际工程职责；是否入库始终由 GPT 依据原始完整 JD 判断。
 
