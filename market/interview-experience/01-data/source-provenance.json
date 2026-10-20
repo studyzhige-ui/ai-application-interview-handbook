@@ -4479,6 +4479,32 @@
       "sha256": "9ec7b383e81f6152d1e10e0dfe32fdbdf98c2b3fb255b7a6109e11e0504c2152",
       "admission_date": "2026-10-09",
       "admission_note": "Independent HUMAN-A daily admission, read in official logged-in cloud browser; same-process rounds combined."
+    },
+    {
+      "source_id": "S408",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-40.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-40.md",
+      "original_line_start": 7,
+      "original_line_end": 41,
+      "line_start": 7,
+      "line_end": 41,
+      "sha256": "d1fd9e5ca236813b2c56b17ad4faf28fbe6d6d84f6137dae84a8971625300099",
+      "admission_date": "2026-10-20",
+      "admission_note": "Independent HUMAN-A daily admission reviewed from the original logged-in cloud browser evidence and the complete current formal corpus. Missing unpublished historical labels S406/S407 remain unassigned and are not counted as formal sources."
+    },
+    {
+      "source_id": "S409",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-40.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-40.md",
+      "original_line_start": 42,
+      "original_line_end": 67,
+      "line_start": 42,
+      "line_end": 67,
+      "sha256": "bf5073d59e64fb1fac86bf1e7938b9788a729de79aa8d42910768788313eb04c",
+      "admission_date": "2026-10-20",
+      "admission_note": "Independent HUMAN-A daily admission reviewed from the original logged-in cloud browser evidence and the complete current formal corpus. Missing unpublished historical labels S406/S407 remain unassigned and are not counted as formal sources."
     }
   ]
 }

@@ -195,6 +195,11 @@
       "path": "01-data/raw/batch-39.md",
       "sha256": "5c963eb12a16417d1943a8049d47aa5fa06a9d2c4f9dd0fb671ebb8ee50de5b4",
       "bytes": 8427
+    },
+    {
+      "path": "01-data/raw/batch-40.md",
+      "sha256": "13bd2e1d9231249f99b53e20266ec93cacc6c6ebb5b076ffd20ba46530a815d2",
+      "bytes": 7363
     }
   ]
 }

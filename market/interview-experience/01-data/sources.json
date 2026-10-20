@@ -8658,6 +8658,49 @@
         "https://www.xiaohongshu.com/user/profile/60c95a7400000000010079b9",
         "https://www.xiaohongshu.com/explore/6ac865b1000000000b0061c2"
       ]
+    },
+    {
+      "source_id": "S408",
+      "heading_raw": "百度百科｜Agent Harness研发工程师｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S408:batch-40:7",
+          "source_id": "S408",
+          "raw_path": "01-data/raw/batch-40.md",
+          "line_start": 7,
+          "line_end": 41,
+          "original_line_start": 7,
+          "original_line_end": 41,
+          "source_section_sha256": "d1fd9e5ca236813b2c56b17ad4faf28fbe6d6d84f6137dae84a8971625300099",
+          "is_extension": false
+        }
+      ],
+      "record_count": 10,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad03fba0000000019031a66"
+      ]
+    },
+    {
+      "source_id": "S409",
+      "heading_raw": "小红书｜AI应用工程师｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S409:batch-40:42",
+          "source_id": "S409",
+          "raw_path": "01-data/raw/batch-40.md",
+          "line_start": 42,
+          "line_end": 67,
+          "original_line_start": 42,
+          "original_line_end": 67,
+          "source_section_sha256": "bf5073d59e64fb1fac86bf1e7938b9788a729de79aa8d42910768788313eb04c",
+          "is_extension": false
+        }
+      ],
+      "record_count": 6,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ac901c30000000014002b53",
+        "https://www.xiaohongshu.com/explore/6ab625bf000000000b0054b9"
+      ]
     }
   ]
 }
