@@ -8701,6 +8701,92 @@
         "https://www.xiaohongshu.com/explore/6ac901c30000000014002b53",
         "https://www.xiaohongshu.com/explore/6ab625bf000000000b0054b9"
       ]
+    },
+    {
+      "source_id": "S410",
+      "heading_raw": "淘天｜AI应用研发｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S410:batch-41:7",
+          "source_id": "S410",
+          "raw_path": "01-data/raw/batch-41.md",
+          "line_start": 7,
+          "line_end": 49,
+          "original_line_start": 7,
+          "original_line_end": 49,
+          "source_section_sha256": "f9aa68a4802eb6087831055c079ee7ac0e990a6f1ec5dbec11954869b2feb7b7",
+          "is_extension": false
+        }
+      ],
+      "record_count": 20,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6acf187a000000001a028c66",
+        "https://www.xiaohongshu.com/explore/6a900250000000001f01e975"
+      ]
+    },
+    {
+      "source_id": "S411",
+      "heading_raw": "新凯来｜AI Agent开发工程师｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S411:batch-41:50",
+          "source_id": "S411",
+          "raw_path": "01-data/raw/batch-41.md",
+          "line_start": 50,
+          "line_end": 84,
+          "original_line_start": 50,
+          "original_line_end": 84,
+          "source_section_sha256": "a9155706f2dd0a6c5f16eab14484a30b44c25033e37af3288f0c0e7b36f2335c",
+          "is_extension": false
+        }
+      ],
+      "record_count": 11,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6aca0fa7000000001403b5b4"
+      ]
+    },
+    {
+      "source_id": "S412",
+      "heading_raw": "华为｜AI应用开发｜同日三轮｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S412:batch-41:85",
+          "source_id": "S412",
+          "raw_path": "01-data/raw/batch-41.md",
+          "line_start": 85,
+          "line_end": 123,
+          "original_line_start": 85,
+          "original_line_end": 123,
+          "source_section_sha256": "4634b00e0e39f5e42520ea5644a512ea774693ba5991b02416b2a6ea71984ea6",
+          "is_extension": false
+        }
+      ],
+      "record_count": 15,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad85d9f000000002b00e343"
+      ]
+    },
+    {
+      "source_id": "S413",
+      "heading_raw": "字节跳动｜AI应用全栈｜日常实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S413:batch-41:124",
+          "source_id": "S413",
+          "raw_path": "01-data/raw/batch-41.md",
+          "line_start": 124,
+          "line_end": 185,
+          "original_line_start": 124,
+          "original_line_end": 185,
+          "source_section_sha256": "6b95cf4428a20b5253545e2c303fa5dc88b5472bf8a739ed09b5a65601820243",
+          "is_extension": false
+        }
+      ],
+      "record_count": 41,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad84c85000000002c01c27d",
+        "https://www.xiaohongshu.com/explore/6ac8e7f3000000001c02d2f7"
+      ]
     }
   ]
 }
