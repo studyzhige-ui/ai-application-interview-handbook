@@ -8787,6 +8787,113 @@
         "https://www.xiaohongshu.com/explore/6ad84c85000000002c01c27d",
         "https://www.xiaohongshu.com/explore/6ac8e7f3000000001c02d2f7"
       ]
+    },
+    {
+      "source_id": "S414",
+      "heading_raw": "小红书｜Agent Harness｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S414:batch-42:7",
+          "source_id": "S414",
+          "raw_path": "01-data/raw/batch-42.md",
+          "line_start": 7,
+          "line_end": 47,
+          "original_line_start": 7,
+          "original_line_end": 47,
+          "source_section_sha256": "dc82237e50d4ea90e91f2a66774481f7bcd55501e2995e0210d074ab3b63f7d0",
+          "is_extension": false
+        }
+      ],
+      "record_count": 18,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ac8f8a600000000150096a8"
+      ]
+    },
+    {
+      "source_id": "S415",
+      "heading_raw": "字节跳动｜AI Agent（偏后端）｜秋招正式批一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S415:batch-42:48",
+          "source_id": "S415",
+          "raw_path": "01-data/raw/batch-42.md",
+          "line_start": 48,
+          "line_end": 100,
+          "original_line_start": 48,
+          "original_line_end": 100,
+          "source_section_sha256": "7243285492d13f8ed909e2dd127439f3d7790c1dea576884f79a03b6b6e4e746",
+          "is_extension": false
+        }
+      ],
+      "record_count": 29,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ac8a88d000000001b02c851"
+      ]
+    },
+    {
+      "source_id": "S416",
+      "heading_raw": "字节跳动｜Agent / RAG项目与后端（日常实习）｜集团信息系统一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S416:batch-42:101",
+          "source_id": "S416",
+          "raw_path": "01-data/raw/batch-42.md",
+          "line_start": 101,
+          "line_end": 136,
+          "original_line_start": 101,
+          "original_line_end": 136,
+          "source_section_sha256": "2df48ab11245ac137466104e3112e5659f58f8a373b96b3e4db8c2a39db0ce4f",
+          "is_extension": false
+        }
+      ],
+      "record_count": 14,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6acdafda000000001303d56b",
+        "https://www.xiaohongshu.com/explore/6ad9b987000000002403b0de"
+      ]
+    },
+    {
+      "source_id": "S417",
+      "heading_raw": "新凯来｜AI Agent开发工程师 / Agent应用开发｜校招一面及主管二面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S417:batch-42:137",
+          "source_id": "S417",
+          "raw_path": "01-data/raw/batch-42.md",
+          "line_start": 137,
+          "line_end": 183,
+          "original_line_start": 137,
+          "original_line_end": 183,
+          "source_section_sha256": "33932d4aa358298462cf851f19c5c8c422da2c982e15aa30513622ba2115c0e2",
+          "is_extension": false
+        }
+      ],
+      "record_count": 17,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6accf6c7000000001a028f08",
+        "https://www.xiaohongshu.com/explore/6ad5ee0e000000002a0057f8"
+      ]
+    },
+    {
+      "source_id": "S418",
+      "heading_raw": "小红书｜AI应用开发工程师（大模型AI质效研发方向）｜一面、二面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S418:batch-42:184",
+          "source_id": "S418",
+          "raw_path": "01-data/raw/batch-42.md",
+          "line_start": 184,
+          "line_end": 224,
+          "original_line_start": 184,
+          "original_line_end": 224,
+          "source_section_sha256": "005d06674240775fb9928b7bdaef3ee23ebfe86e15b8a940ba9dc77d8c46ead5",
+          "is_extension": false
+        }
+      ],
+      "record_count": 18,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad96e03000000002d005198"
+      ]
     }
   ]
 }

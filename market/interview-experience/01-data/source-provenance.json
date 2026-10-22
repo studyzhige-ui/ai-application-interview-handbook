@@ -4557,6 +4557,71 @@
       "sha256": "6b95cf4428a20b5253545e2c303fa5dc88b5472bf8a739ed09b5a65601820243",
       "admission_date": "2026-10-21",
       "admission_note": "First formal HUMAN-A admission after original cloud-browser reading and independent review against the complete available formal corpus including open PR81. Lost unpublished S406/S407 remain unassigned; unknown overlap is not asserted to be resolved."
+    },
+    {
+      "source_id": "S414",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-42.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-42.md",
+      "original_line_start": 7,
+      "original_line_end": 47,
+      "line_start": 7,
+      "line_end": 47,
+      "sha256": "dc82237e50d4ea90e91f2a66774481f7bcd55501e2995e0210d074ab3b63f7d0",
+      "admission_date": "2026-10-22",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against all available formal sources including open PR81. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S415",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-42.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-42.md",
+      "original_line_start": 48,
+      "original_line_end": 100,
+      "line_start": 48,
+      "line_end": 100,
+      "sha256": "7243285492d13f8ed909e2dd127439f3d7790c1dea576884f79a03b6b6e4e746",
+      "admission_date": "2026-10-22",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against all available formal sources including open PR81. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S416",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-42.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-42.md",
+      "original_line_start": 101,
+      "original_line_end": 136,
+      "line_start": 101,
+      "line_end": 136,
+      "sha256": "2df48ab11245ac137466104e3112e5659f58f8a373b96b3e4db8c2a39db0ce4f",
+      "admission_date": "2026-10-22",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against all available formal sources including open PR81. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S417",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-42.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-42.md",
+      "original_line_start": 137,
+      "original_line_end": 183,
+      "line_start": 137,
+      "line_end": 183,
+      "sha256": "33932d4aa358298462cf851f19c5c8c422da2c982e15aa30513622ba2115c0e2",
+      "admission_date": "2026-10-22",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against all available formal sources including open PR81. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S418",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-42.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-42.md",
+      "original_line_start": 184,
+      "original_line_end": 224,
+      "line_start": 184,
+      "line_end": 224,
+      "sha256": "005d06674240775fb9928b7bdaef3ee23ebfe86e15b8a940ba9dc77d8c46ead5",
+      "admission_date": "2026-10-22",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against all available formal sources including open PR81. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
     }
   ]
 }
