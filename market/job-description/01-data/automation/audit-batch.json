@@ -496,8 +496,8 @@
       "source_id": "official-068"
     }
   ],
-  "generated_at_utc": "2026-10-20T05:48:25Z",
-  "pending_total": 1124,
+  "generated_at_utc": "2026-10-23T05:51:00Z",
+  "pending_total": 1612,
   "policy": "Read the complete official duties, qualifications and campus/internship evidence. Include only software engineering delivering AI applications, Agent, LLM/RAG, runtime/platform or evaluation tooling. Quote exact engineering evidence. Otherwise exclude with an evidence-based reason; use remove only for a confirmed disappeared position. Never decide by title or keywords, and never return needs_review.",
   "schema_version": 1
 }
