@@ -4635,6 +4635,19 @@
       "sha256": "cb1eca281eef0672e9308dfefe4da1b7362e8813bc64ece1fba48c9bc388e0b4",
       "admission_date": "2026-10-23",
       "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against all available formal sources including open PR81. Two rounds by the same author and employer are one recruitment flow. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S420",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-44.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-44.md",
+      "original_line_start": 7,
+      "original_line_end": 42,
+      "line_start": 7,
+      "line_end": 42,
+      "sha256": "8a68f44a3a1840e40d23c9289095ed09c3b0384dab5b51cd7a805a2a6968358e",
+      "admission_date": "2026-10-24",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against the available formal history including open PR81. One ByteDance first-round recruitment flow; the same author's Rednote posts are excluded from this batch and not combined. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
     }
   ]
 }

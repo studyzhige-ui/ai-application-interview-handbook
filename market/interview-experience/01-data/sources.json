@@ -8916,6 +8916,27 @@
         "https://www.xiaohongshu.com/explore/6ad1d040000000001303e8b9",
         "https://www.xiaohongshu.com/explore/6ad893dd0000000032022e15"
       ]
+    },
+    {
+      "source_id": "S420",
+      "heading_raw": "字节跳动（抖音社交与通讯）｜AI全栈开发实习｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S420:batch-44:7",
+          "source_id": "S420",
+          "raw_path": "01-data/raw/batch-44.md",
+          "line_start": 7,
+          "line_end": 42,
+          "original_line_start": 7,
+          "original_line_end": 42,
+          "source_section_sha256": "8a68f44a3a1840e40d23c9289095ed09c3b0384dab5b51cd7a805a2a6968358e",
+          "is_extension": false
+        }
+      ],
+      "record_count": 16,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad99cdf00000000330334f9"
+      ]
     }
   ]
 }
