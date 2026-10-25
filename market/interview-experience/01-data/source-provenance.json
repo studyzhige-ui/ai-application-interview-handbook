@@ -4648,6 +4648,19 @@
       "sha256": "8a68f44a3a1840e40d23c9289095ed09c3b0384dab5b51cd7a805a2a6968358e",
       "admission_date": "2026-10-24",
       "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against the available formal history including open PR81. One ByteDance first-round recruitment flow; the same author's Rednote posts are excluded from this batch and not combined. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S421",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-45.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-45.md",
+      "original_line_start": 7,
+      "original_line_end": 48,
+      "line_start": 7,
+      "line_end": 48,
+      "sha256": "3f23092fbca8f21c9f82ea664b8ccb1af9f7512eea0ac5b21b02acc996542105",
+      "admission_date": "2026-10-25",
+      "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against the available formal history including open PR81. One Ping An Bank human technical first round; two author-comment additions have unknown original positions and do not add a recruitment flow. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
     }
   ]
 }

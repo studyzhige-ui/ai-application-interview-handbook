@@ -418,7 +418,8 @@
     "S417",
     "S418",
     "S419",
-    "S420"
+    "S420",
+    "S421"
   ],
   "raw_sha256": {
     "01-data/raw/batch-01.md": "f923cdfa9e971986c15b4df6a8d6bfeef1ad5dd4876e9ffa3226a260f4077332",
@@ -464,7 +465,8 @@
     "01-data/raw/batch-41.md": "265c508cdad37f95f12896fe866d04553744160f2b1e028b263aa39730d6534c",
     "01-data/raw/batch-42.md": "ce5253db62641c9030677651ca58ffd1f4bd18787eb23813a61e12dd85a65809",
     "01-data/raw/batch-43.md": "e672f3312af49f30f0732e2a896611b52e591a28ea925c4418b7a8d71d496571",
-    "01-data/raw/batch-44.md": "c2c80701aa768d0529a912c768c0e3c66af2a7989fc8d08cd6da670dd62421e6"
+    "01-data/raw/batch-44.md": "c2c80701aa768d0529a912c768c0e3c66af2a7989fc8d08cd6da670dd62421e6",
+    "01-data/raw/batch-45.md": "fca47adbf99ae05684e203c179c7cd02728e1d397860da418f1ebd9f219cbad2"
   },
   "update_policy": "Preserve formal first-source sections verbatim; source-provenance records original baseline spans. New admissions explicitly update the contract.",
   "source_section_sha256": {
@@ -886,7 +888,8 @@
     "S417:batch-42:137": "33932d4aa358298462cf851f19c5c8c422da2c982e15aa30513622ba2115c0e2",
     "S418:batch-42:184": "005d06674240775fb9928b7bdaef3ee23ebfe86e15b8a940ba9dc77d8c46ead5",
     "S419:batch-43:7": "cb1eca281eef0672e9308dfefe4da1b7362e8813bc64ece1fba48c9bc388e0b4",
-    "S420:batch-44:7": "8a68f44a3a1840e40d23c9289095ed09c3b0384dab5b51cd7a805a2a6968358e"
+    "S420:batch-44:7": "8a68f44a3a1840e40d23c9289095ed09c3b0384dab5b51cd7a805a2a6968358e",
+    "S421:batch-45:7": "3f23092fbca8f21c9f82ea664b8ccb1af9f7512eea0ac5b21b02acc996542105"
   },
   "byte_encoding": "UTF-8 with LF line endings, matching preserved Git blob content; repository .gitattributes enforces LF checkout for text.",
   "unnumbered_record_ids": [

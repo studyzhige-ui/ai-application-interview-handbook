@@ -8937,6 +8937,27 @@
       "urls": [
         "https://www.xiaohongshu.com/explore/6ad99cdf00000000330334f9"
       ]
+    },
+    {
+      "source_id": "S421",
+      "heading_raw": "平安银行｜AI应用研发 / AI Agent开发｜真人一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S421:batch-45:7",
+          "source_id": "S421",
+          "raw_path": "01-data/raw/batch-45.md",
+          "line_start": 7,
+          "line_end": 48,
+          "original_line_start": 7,
+          "original_line_end": 48,
+          "source_section_sha256": "3f23092fbca8f21c9f82ea664b8ccb1af9f7512eea0ac5b21b02acc996542105",
+          "is_extension": false
+        }
+      ],
+      "record_count": 15,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad059050000000012039ea6"
+      ]
     }
   ]
 }
