@@ -4661,6 +4661,19 @@
       "sha256": "3f23092fbca8f21c9f82ea664b8ccb1af9f7512eea0ac5b21b02acc996542105",
       "admission_date": "2026-10-25",
       "admission_note": "First formal HUMAN-A admission after full original cloud-browser reading and independent review against the available formal history including open PR81. One Ping An Bank human technical first round; two author-comment additions have unknown original positions and do not add a recruitment flow. Missing unpublished S406/S407 remain unassigned and are not counted as formal history."
+    },
+    {
+      "source_id": "S422",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-46.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-46.md",
+      "original_line_start": 7,
+      "original_line_end": 58,
+      "line_start": 7,
+      "line_end": 58,
+      "sha256": "9d00ab04366abc6bf1ea127ed3aabbb827495906fdff5de3c1472146f5cbf644",
+      "admission_date": "2026-10-27",
+      "admission_note": "First formal HUMAN-A admission after full cloud-browser original reading and independent review against the available formal history including open PR81. One Huawei AI application recruitment process combines technical first/second and supervisor rounds. Original prose had no question numbers; 22 editorial positions preserve order and missing details. Earlier preparation post is auxiliary evidence only. Missing unpublished S406/S407 remain unassigned and outside formal counts."
     }
   ]
 }

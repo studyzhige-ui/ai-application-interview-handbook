@@ -1,5 +1,5 @@
 {
-  "batch_id": "26f5f7ac704db43e9e7adac1",
+  "batch_id": "5fde60760b141e86cd1e7895",
   "count": 24,
   "entries": [
     {
@@ -129,29 +129,6 @@
       "previous": null,
       "review_state": "pending",
       "source_id": "official-006"
-    },
-    {
-      "change": "added",
-      "company": "面壁智能",
-      "event_id": "022afd06add42cdac83a4eebb258e917",
-      "first_seen_at_utc": "2026-10-16T05:30:46Z",
-      "identity": "id:7661867208566278427",
-      "job": {
-        "category": "实习",
-        "department": "基础架构",
-        "description": "我们相信下一代软件研发是 Agent 原生的：工具不再是人手的延伸，而是与人协同工作的自治系统。你将参与以下两个互为支撑的核心方向。\n\n方向一：下一代效率工具\n- 构建 Agent 原生的统一工作系统，把研发工作中若干彼此割裂的核心场景收敛为同一条工作流\n- 重新设计人与 Agent 的分工边界：人的角色从\"操作工具\"转向\"给出目标与偏好、验收结果\"\n- 构建支撑一体化的基础设施，状态与上下文在不同场景间的流转\n- 让知识随工作自然沉淀：过程中产生的决策与经验自动转化为可检索、可复用的团队记忆\n\n方向二：Loop Engineering 的下一代范式\n- 探索超越当前 agentic loop（写码 → 验证 → 修复）的软件构建范式，重新思考软件如何被定义、如何被构建、何时算\"完成\"\n- 研究人类输入的最小化：人只提供目标与偏好层面的输入，系统承担从定义到交付的完整构建过程\n- 构建支撑这一范式的核心引擎，以及衡量其收敛速度与构建质量的评测体系\n- 把范式沉淀为可复用的工程方法，在真实项目中持续验证与迭代",
-        "detail_status": "OK",
-        "job_id": "7661867208566278427",
-        "location": "北京",
-        "official_api": "https://modelbest.jobs.feishu.cn/api/v1/search/job/posts?keyword=&limit=10&offset=40&job_category_id_list=&tag_id_list=&location_code_list=&subject_id_list=&recruitment_id_list=&portal_type=6&job_function_id_list=&storefront_id_list=&portal_entrance=1&_signature=nzESbQAAAABIRgB6L2Jldp8xEnAAPXv",
-        "official_url": "https://modelbest.jobs.feishu.cn/campus/position/7661867208566278427/detail",
-        "requirements": "- 具有较强工程能力，能独立完成复杂系统模块的设计与实现\n- 熟练使用 Python 或 TypeScript，具备扎实的代码能力（全栈经验为加分项）\n- 对产品有判断力：能从用户场景出发定义工具形态，而不是从技术出发堆功能\n- 对系统问题有良好的拆解能力，能从复杂现象中定位本质问题\n- 认可 AI Native / \"用模型解决工程问题\" 的方向，愿意把自己的日常工作作为第一块试验田\n- 对评测敏感：能判断评测是否忠实于真实目标、闭环是否真的收敛，而不是盲目堆 prompt 和跑实验\n\n加分项（重要但不硬性）\n- 有效率工具 / 协作工具 / IDE / 编辑器类产品的研发经验\n- 深度使用或改造过 Claude Code、Cursor、Codex 等 agentic coding 工具，读过其源码或生态实现\n- 有 Agent harness / agent loop / 评测基准（如 SWE-bench）的建设经验\n- 有评测体系或评测集的建设经验（用例生成、LLM-as-judge 等）\n- 有长时间运行自治 Agent 的实践：自我修复、上下文管理、多轮任务编排\n- 有大模型后训练 / RL 与 Agent 能力构建结合的经验\n- 做过 benchmark / profiling / 自动化实验平台相关工作\n- 有活跃的开源项目或对开源社区有实质贡献",
-        "title": "Agentic Engineering 实习生"
-      },
-      "last_seen_at_utc": "2026-10-16T05:30:46Z",
-      "previous": null,
-      "review_state": "pending",
-      "source_id": "official-034"
     },
     {
       "change": "possibly_removed",
@@ -494,10 +471,33 @@
       "previous": null,
       "review_state": "pending",
       "source_id": "official-068"
+    },
+    {
+      "change": "changed",
+      "company": "网易",
+      "event_id": "0a18a3e11032c94700d4929badf19d6d",
+      "first_seen_at_utc": "2026-10-16T05:30:46Z",
+      "identity": "id:75548",
+      "job": {
+        "description": "1，熟练掌握C++语言、Python语言、着色器语言、数据结构和算法\n2，熟练掌握多种渲染API、现代渲染管线、常见物体和环境的多种渲染方法\n3，熟练掌握3D游戏引擎、场景优化、资源优化、渲染剔除和优化\n4，熟练掌握iOS/Android/Windows环境下，CPU/GPU/内存/显存性能测试、调优方法\n5，了解常见高等数学方法、常见普通物理模型、SIGGRAPH/GDC等图形和游戏领域最新进展\n6，了解常见手机平台下，CPU/GPU/内存/显存硬件实现原理和差别\n7，了解常见手机/主机游戏类型下，不同类型游戏渲染特点\n8，具备优秀的学习能力，稳定踏实进取的技术态度，对自研引擎开发有兴趣者优先\n9，热爱游戏和技术，富有责任感，可以适应一定开发强度",
+        "job_id": "75548",
+        "official_api": "https://hr.163.com/api/hr163/position/queryPage",
+        "official_url": "https://hr.163.com/position/detail.html?id=75548",
+        "requirements": "学历: ",
+        "title": "资深游戏引擎开发（性能/渲染）"
+      },
+      "last_seen_at_utc": "2026-10-16T05:30:46Z",
+      "previous": {
+        "fingerprint": "e50d07904996db0e24ae61a9c0fd715c922012d7e97c23ea628e3c75f39b8ba7",
+        "official_url": "https://hr.163.com/position/detail.html?id=75548",
+        "title": "资深引擎性能开发专家"
+      },
+      "review_state": "pending",
+      "source_id": "official-006"
     }
   ],
-  "generated_at_utc": "2026-10-23T05:51:00Z",
-  "pending_total": 1612,
+  "generated_at_utc": "2026-10-27T06:05:03Z",
+  "pending_total": 2173,
   "policy": "Read the complete official duties, qualifications and campus/internship evidence. Include only software engineering delivering AI applications, Agent, LLM/RAG, runtime/platform or evaluation tooling. Quote exact engineering evidence. Otherwise exclude with an evidence-based reason; use remove only for a confirmed disappeared position. Never decide by title or keywords, and never return needs_review.",
   "schema_version": 1
 }

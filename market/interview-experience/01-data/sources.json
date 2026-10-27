@@ -8958,6 +8958,29 @@
       "urls": [
         "https://www.xiaohongshu.com/explore/6ad059050000000012039ea6"
       ]
+    },
+    {
+      "source_id": "S422",
+      "heading_raw": "华为｜AI应用工程师 / AI应用技术｜一面、二面、业务主管面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S422:batch-46:7",
+          "source_id": "S422",
+          "raw_path": "01-data/raw/batch-46.md",
+          "line_start": 7,
+          "line_end": 58,
+          "original_line_start": 7,
+          "original_line_end": 58,
+          "source_section_sha256": "9d00ab04366abc6bf1ea127ed3aabbb827495906fdff5de3c1472146f5cbf644",
+          "is_extension": false
+        }
+      ],
+      "record_count": 22,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ae0359d000000000701409d",
+        "https://www.xiaohongshu.com/explore/6ac7629c000000000a01eb68",
+        "https://www.xiaohongshu.com/user/profile/673cb3dc000000001c019b90"
+      ]
     }
   ]
 }
