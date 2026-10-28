@@ -4674,6 +4674,32 @@
       "sha256": "9d00ab04366abc6bf1ea127ed3aabbb827495906fdff5de3c1472146f5cbf644",
       "admission_date": "2026-10-27",
       "admission_note": "First formal HUMAN-A admission after full cloud-browser original reading and independent review against the available formal history including open PR81. One Huawei AI application recruitment process combines technical first/second and supervisor rounds. Original prose had no question numbers; 22 editorial positions preserve order and missing details. Earlier preparation post is auxiliary evidence only. Missing unpublished S406/S407 remain unassigned and outside formal counts."
+    },
+    {
+      "source_id": "S423",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-47.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-47.md",
+      "original_line_start": 7,
+      "original_line_end": 41,
+      "line_start": 7,
+      "line_end": 41,
+      "sha256": "0a50b3df846c2a070098900b48fa42dc5eb4d6e39b9b7be24c2bf6f72e68ee47",
+      "admission_date": "2026-10-28",
+      "admission_note": "First formal HUMAN-A admission after complete original cloud-browser body/image/comment reading, same-author process review and independent comparison against all available formal history including open PR81. Separate named-employer internship first-round process; original numbered sequence preserved. Note-interface time is not an asserted interview date. Anonymous earlier posts and job-search background are not separate formal sources or additional questions; missing unpublished S406/S407 remain outside formal counts."
+    },
+    {
+      "source_id": "S424",
+      "is_extension": false,
+      "raw_path": "01-data/raw/batch-47.md",
+      "original_path": "market/interview-experience/01-data/raw/batch-47.md",
+      "original_line_start": 42,
+      "original_line_end": 66,
+      "line_start": 42,
+      "line_end": 66,
+      "sha256": "2d161903fa3d010753c8b5f60217e6f4512a40b7317a0725604a3697ba2866e2",
+      "admission_date": "2026-10-28",
+      "admission_note": "First formal HUMAN-A admission after complete original cloud-browser body/image/comment reading, same-author process review and independent comparison against all available formal history including open PR81. Separate named-employer internship first-round process; original numbered sequence preserved. Note-interface time is not an asserted interview date. Anonymous earlier posts and job-search background are not separate formal sources or additional questions; missing unpublished S406/S407 remain outside formal counts."
     }
   ]
 }

@@ -14,4 +14,4 @@
 
 本次403来源快照的6156条结构记录已完成模型初审，保留5212个明确提问意图，归并为3688个共同回答任务；逐记录判断、来源条件和不确定性可回查。统计口径、相关来源敏感性及教学参考见分析页。结构记录数不等于题数，来源覆盖数不代表市场概率。
 
-当前审阅分支正式来源为 **S001–S405、S408–S422，共420个来源ID、46批**；此前六次增量见[Batch40](01-data/raw/batch-40.md)、[Batch41](01-data/raw/batch-41.md)、[Batch42](01-data/raw/batch-42.md)、[Batch43](01-data/raw/batch-43.md)、[Batch44](01-data/raw/batch-44.md)、[Batch45](01-data/raw/batch-45.md)，本日S422华为AI应用三轮合一见[Batch46](01-data/raw/batch-46.md)。旧未发布S406/S407原件缺失，保留空号且不计正式来源；下一编号S423。403来源模型分析快照不变，未合并前不声称main已包含本日增量。
+当前审阅分支正式来源为 **S001–S405、S408–S424，共422个来源ID、47批**；此前七次增量见[Batch40](01-data/raw/batch-40.md)、[Batch41](01-data/raw/batch-41.md)、[Batch42](01-data/raw/batch-42.md)、[Batch43](01-data/raw/batch-43.md)、[Batch44](01-data/raw/batch-44.md)、[Batch45](01-data/raw/batch-45.md)、[Batch46](01-data/raw/batch-46.md)，本日S423小红书、S424携程两公司Agent实习一面见[Batch47](01-data/raw/batch-47.md)。旧未发布S406/S407原件缺失，保留空号且不计正式来源；下一编号S425。403来源模型分析快照不变，未合并前不声称main已包含本日增量。

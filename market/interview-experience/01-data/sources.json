@@ -8981,6 +8981,51 @@
         "https://www.xiaohongshu.com/explore/6ac7629c000000000a01eb68",
         "https://www.xiaohongshu.com/user/profile/673cb3dc000000001c019b90"
       ]
+    },
+    {
+      "source_id": "S423",
+      "heading_raw": "小红书｜Agent开发实习｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S423:batch-47:7",
+          "source_id": "S423",
+          "raw_path": "01-data/raw/batch-47.md",
+          "line_start": 7,
+          "line_end": 41,
+          "original_line_start": 7,
+          "original_line_end": 41,
+          "source_section_sha256": "0a50b3df846c2a070098900b48fa42dc5eb4d6e39b9b7be24c2bf6f72e68ee47",
+          "is_extension": false
+        }
+      ],
+      "record_count": 13,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6adf6d34000000001201820c",
+        "https://www.xiaohongshu.com/user/profile/64a12611000000002a036946",
+        "https://www.xiaohongshu.com/explore/6ad5e26e00000000290110ab"
+      ]
+    },
+    {
+      "source_id": "S424",
+      "heading_raw": "携程｜Agent开发实习｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S424:batch-47:42",
+          "source_id": "S424",
+          "raw_path": "01-data/raw/batch-47.md",
+          "line_start": 42,
+          "line_end": 66,
+          "original_line_start": 42,
+          "original_line_end": 66,
+          "source_section_sha256": "2d161903fa3d010753c8b5f60217e6f4512a40b7317a0725604a3697ba2866e2",
+          "is_extension": false
+        }
+      ],
+      "record_count": 7,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad82cec0000000033011965",
+        "https://www.xiaohongshu.com/user/profile/64a12611000000002a036946"
+      ]
     }
   ]
 }

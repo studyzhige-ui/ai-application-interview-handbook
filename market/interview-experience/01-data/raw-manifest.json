@@ -230,6 +230,11 @@
       "path": "01-data/raw/batch-46.md",
       "sha256": "89277ea287f2241bb017d57743a2564e465891e31fb4bb90ad8bba97e4dded40",
       "bytes": 5568
+    },
+    {
+      "path": "01-data/raw/batch-47.md",
+      "sha256": "df464ebba02491a8f2abfd3f7cd44715d918f63d3ee6bb14786bafd8b0d57037",
+      "bytes": 6932
     }
   ]
 }
