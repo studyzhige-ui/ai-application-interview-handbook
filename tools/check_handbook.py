@@ -120,6 +120,8 @@ def check(root: Path) -> list[str]:
         if {p.name for p in domain.iterdir()}!=expected: errors.append(f'{domain.relative_to(root)}: invalid preparation files')
     for business in ('job-description','interview-experience'):
         expected={'README.md','01-data','02-analysis','03-strategy','04-scripts','05-logs'}
+        if business == 'job-description':
+            expected.add('official-campus-links.md')
         p=root/'market'/business
         if not p.is_dir() or {x.name for x in p.iterdir() if x.name!='__pycache__'}!=expected: errors.append(f'market/{business}: invalid business layers')
     cache={}
