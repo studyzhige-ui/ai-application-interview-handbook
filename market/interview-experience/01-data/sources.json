@@ -9026,6 +9026,399 @@
         "https://www.xiaohongshu.com/explore/6ad82cec0000000033011965",
         "https://www.xiaohongshu.com/user/profile/64a12611000000002a036946"
       ]
+    },
+    {
+      "source_id": "S425",
+      "heading_raw": "蚂蚁｜Agent 开发｜日常实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S425:batch-48:5",
+          "source_id": "S425",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 5,
+          "line_end": 43,
+          "original_line_start": 5,
+          "original_line_end": 43,
+          "source_section_sha256": "34534e6c6d0f8649c2aaf8ad7ec5b10b6a9c45f917e191ed783f582b2bd42e7c",
+          "is_extension": false
+        }
+      ],
+      "record_count": 12,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/3b05460868c7429193e93f8d09f62794",
+        "https://www.nowcoder.com/users/739473787"
+      ]
+    },
+    {
+      "source_id": "S426",
+      "heading_raw": "海尔｜智家定制生态圈 Agent系统工程师｜秋招一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S426:batch-48:44",
+          "source_id": "S426",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 44,
+          "line_end": 72,
+          "original_line_start": 44,
+          "original_line_end": 72,
+          "source_section_sha256": "161fdb97760d5fee07774a3427e523acebbc282d77c68d8e37a72a567d2c0fa5",
+          "is_extension": false
+        }
+      ],
+      "record_count": 12,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/f05864ee1b43409297abd2610078c790",
+        "https://www.nowcoder.com/users/878293483"
+      ]
+    },
+    {
+      "source_id": "S427",
+      "heading_raw": "字节跳动｜后端 Agent｜一面及二面（同流程候选）｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S427:batch-48:73",
+          "source_id": "S427",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 73,
+          "line_end": 123,
+          "original_line_start": 73,
+          "original_line_end": 123,
+          "source_section_sha256": "d84527c861905e2c1885ff7211750599dd3b45d5699a66ac59f9d468e74a90df",
+          "is_extension": false
+        }
+      ],
+      "record_count": 20,
+      "urls": [
+        "https://www.nowcoder.com/users/666317519",
+        "https://www.nowcoder.com/feed/main/detail/6f9d862d77ec4284a05d07d3ec3cc92e",
+        "https://www.nowcoder.com/feed/main/detail/e1a39b118d6d498d969c7a697be37011"
+      ]
+    },
+    {
+      "source_id": "S428",
+      "heading_raw": "成都未具名小厂｜Agent开发｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S428:batch-48:124",
+          "source_id": "S428",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 124,
+          "line_end": 157,
+          "original_line_start": 124,
+          "original_line_end": 157,
+          "source_section_sha256": "e3acfd39fa4094a34688ca0b829f381113e0ed5a484b0522585976fa9edb65d8",
+          "is_extension": false
+        }
+      ],
+      "record_count": 17,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/34dd692b16c84c059daeb00866533d96",
+        "https://www.nowcoder.com/users/780986614"
+      ]
+    },
+    {
+      "source_id": "S429",
+      "heading_raw": "长鑫存储｜Agent开发实习｜技术面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S429:batch-48:158",
+          "source_id": "S429",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 158,
+          "line_end": 202,
+          "original_line_start": 158,
+          "original_line_end": 202,
+          "source_section_sha256": "f7c824b2dd21c170b4bf3a11e3f4d090768ae7c962e1f9cbd71750018627d6db",
+          "is_extension": false
+        }
+      ],
+      "record_count": 29,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/9d70e1b461fc481dba8f7d6875577d95",
+        "https://www.nowcoder.com/users/189928961"
+      ]
+    },
+    {
+      "source_id": "S430",
+      "heading_raw": "启云方｜AI应用开发｜一面10.30｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S430:batch-48:203",
+          "source_id": "S430",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 203,
+          "line_end": 273,
+          "original_line_start": 203,
+          "original_line_end": 273,
+          "source_section_sha256": "e7f4e4acc625360f30a8e464d46904153a84038526bb0f10b6adfac1dc5c23e3",
+          "is_extension": false
+        }
+      ],
+      "record_count": 56,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/17d995811f6f4b509fdcef6389dcf54c"
+      ]
+    },
+    {
+      "source_id": "S431",
+      "heading_raw": "新东方｜Java开发工程师（AI Agent方向）｜一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S431:batch-48:274",
+          "source_id": "S431",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 274,
+          "line_end": 309,
+          "original_line_start": 274,
+          "original_line_end": 309,
+          "source_section_sha256": "b166eb741b7614a4954858463739d9185e8ab6c30e9ce359035ab71d185540c5",
+          "is_extension": false
+        }
+      ],
+      "record_count": 19,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/be13a125168546249689fa406527859a",
+        "https://www.nowcoder.com/users/459616638"
+      ]
+    },
+    {
+      "source_id": "S432",
+      "heading_raw": "水滴｜北京秋招AI全栈一二面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S432:batch-48:310",
+          "source_id": "S432",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 310,
+          "line_end": 398,
+          "original_line_start": 310,
+          "original_line_end": 398,
+          "source_section_sha256": "95fb6687826939b6ae33eb9e96ed5eba0cc4d5c0c146e0a8dc8e9a8ec8e69aaa",
+          "is_extension": false
+        }
+      ],
+      "record_count": 71,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/c23fe20e7a26451f98cf669d935427c7"
+      ]
+    },
+    {
+      "source_id": "S433",
+      "heading_raw": "小天才｜穿戴方向AI应用工程师：技术一面与HR｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S433:batch-48:399",
+          "source_id": "S433",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 399,
+          "line_end": 444,
+          "original_line_start": 399,
+          "original_line_end": 444,
+          "source_section_sha256": "25bdbe817a9d328599d27b60c2e9f5cb8745f6237fc248fa8e1f6c9e8528f90f",
+          "is_extension": false
+        }
+      ],
+      "record_count": 26,
+      "urls": [
+        "https://www.nowcoder.com/discuss/943115023751053312",
+        "https://www.nowcoder.com/feed/main/detail/cea8ab3a44b847278310b1eb6305b25c"
+      ]
+    },
+    {
+      "source_id": "S434",
+      "heading_raw": "字节Date泛抖音｜Agent全栈实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S434:batch-48:445",
+          "source_id": "S434",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 445,
+          "line_end": 489,
+          "original_line_start": 445,
+          "original_line_end": 489,
+          "source_section_sha256": "794ffe34f25c5958bf95067334bf529b013641c20c4b850442144d7b4ccba361",
+          "is_extension": false
+        }
+      ],
+      "record_count": 31,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/3d554c6d99e74b93a673fa9c39e9d113"
+      ]
+    },
+    {
+      "source_id": "S435",
+      "heading_raw": "萌力无限｜AI应用一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S435:batch-48:490",
+          "source_id": "S435",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 490,
+          "line_end": 509,
+          "original_line_start": 490,
+          "original_line_end": 509,
+          "source_section_sha256": "71929d09319c9cbad07d8bb6789d85abf6ca1f7d012efe71fa5f9e1ede386e92",
+          "is_extension": false
+        }
+      ],
+      "record_count": 5,
+      "urls": [
+        "https://www.nowcoder.com/discuss/943101296721121280",
+        "https://www.nowcoder.com/discuss/943101296721121280?sourceSSR=home"
+      ]
+    },
+    {
+      "source_id": "S436",
+      "heading_raw": "佰聆数据｜助理AI应用开发转正实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S436:batch-48:510",
+          "source_id": "S436",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 510,
+          "line_end": 539,
+          "original_line_start": 510,
+          "original_line_end": 539,
+          "source_section_sha256": "e5f640f448f92406404167fcf4ef63351c6e67609672830c5593897d44d87f34",
+          "is_extension": false
+        }
+      ],
+      "record_count": 13,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/3e95d47e9d4d40e09b1e5f2e8daf06c9",
+        "https://www.nowcoder.com/feed/main/detail/3e95d47e9d4d40e09b1e5f2e8daf06c9?sourceSSR=dynamic"
+      ]
+    },
+    {
+      "source_id": "S437",
+      "heading_raw": "得物｜MLOps与Agent实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S437:batch-48:540",
+          "source_id": "S437",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 540,
+          "line_end": 571,
+          "original_line_start": 540,
+          "original_line_end": 571,
+          "source_section_sha256": "323039d7f93c347510f79d72c2fe005d51e13210279de28bd1f4cfcaeb2b4b7e",
+          "is_extension": false
+        }
+      ],
+      "record_count": 16,
+      "urls": [
+        "https://www.nowcoder.com/feed/main/detail/9b098d808abd4bd3921a6c189b0daaf3"
+      ]
+    },
+    {
+      "source_id": "S438",
+      "heading_raw": "科大讯飞｜Agent开发时间线与面经题图｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S438:batch-48:572",
+          "source_id": "S438",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 572,
+          "line_end": 633,
+          "original_line_start": 572,
+          "original_line_end": 633,
+          "source_section_sha256": "bca2e777f2e3693495980704c3b6b6b5f7be19919c23833ad74185eebe283f35",
+          "is_extension": false
+        }
+      ],
+      "record_count": 40,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6aed5e350000000009021c52"
+      ]
+    },
+    {
+      "source_id": "S439",
+      "heading_raw": "字节跳动｜Agent/后端实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S439:batch-48:634",
+          "source_id": "S439",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 634,
+          "line_end": 672,
+          "original_line_start": 634,
+          "original_line_end": 672,
+          "source_section_sha256": "71372c39264b8475ccc3064bd8a99318fd2554d362df76be96cc87f26c9012da",
+          "is_extension": false
+        }
+      ],
+      "record_count": 16,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6aeda917000000002501d639",
+        "https://www.xiaohongshu.com/explore/6aed5b32000000000b032bae"
+      ]
+    },
+    {
+      "source_id": "S440",
+      "heading_raw": "阿里｜AI应用开发日常实习（同作者一二面）｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S440:batch-48:673",
+          "source_id": "S440",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 673,
+          "line_end": 757,
+          "original_line_start": 673,
+          "original_line_end": 757,
+          "source_section_sha256": "01ee0164ed37a4a891252c9fea1a637286de214c48aa1dad57b858817ef87a65",
+          "is_extension": false
+        }
+      ],
+      "record_count": 52,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ad1e82f000000000b005eb4",
+        "https://www.xiaohongshu.com/explore/6ae00a2f000000001803addc",
+        "https://www.xiaohongshu.com/explore/6ae01320000000001803a09d",
+        "https://www.xiaohongshu.com/explore/6ae00c46000000001803b980",
+        "https://www.xiaohongshu.com/explore/6ae0a3e00000000034024953"
+      ]
+    },
+    {
+      "source_id": "S441",
+      "heading_raw": "蔚来｜Agent开发日常实习一面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S441:batch-48:758",
+          "source_id": "S441",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 758,
+          "line_end": 783,
+          "original_line_start": 758,
+          "original_line_end": 783,
+          "source_section_sha256": "4eb8dc67cb3020a1d641638ac0300b4df79a61e3040790544ee314efd73141f1",
+          "is_extension": false
+        }
+      ],
+      "record_count": 10,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ae6ce5f000000000e02f668"
+      ]
+    },
+    {
+      "source_id": "S442",
+      "heading_raw": "科兴控股｜FDE（AI应用方向）技术面及HR面｜HUMAN-A",
+      "raw_sections": [
+        {
+          "section_id": "S442:batch-48:784",
+          "source_id": "S442",
+          "raw_path": "01-data/raw/batch-48.md",
+          "line_start": 784,
+          "line_end": 819,
+          "original_line_start": 784,
+          "original_line_end": 819,
+          "source_section_sha256": "1dee0d0eaa59b068fee5095876633c4bedfc92a246d7089f49a96fc50b46e9a9",
+          "is_extension": false
+        }
+      ],
+      "record_count": 23,
+      "urls": [
+        "https://www.xiaohongshu.com/explore/6ae2c31a000000003a020917"
+      ]
     }
   ]
 }
